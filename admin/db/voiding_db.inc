@@ -14,7 +14,7 @@ include_once($path_to_root . "/purchasing/includes/purchasing_db.inc");
 include_once($path_to_root . "/inventory/includes/inventory_db.inc");
 include_once($path_to_root . "/manufacturing/includes/manufacturing_db.inc");
 
-function void_transaction(mixed $type, mixed $type_no, mixed $date_, string|array|null $memo_): string|false
+function void_transaction(string|int|float|bool|array|null $type, string|int|float|bool|array|null $type_no, string|int|float|bool|array|null $date_, string|array|null $memo_): string|false
 {
 	global $Refs;
 	$void_entry = get_voided_entry($type, $type_no);
@@ -138,7 +138,7 @@ function void_transaction(mixed $type, mixed $type_no, mixed $date_, string|arra
 /**
  * @return array<array-key, null|string>|false
  */
-function get_voided_entry(mixed $type, mixed $type_no)
+function get_voided_entry(string|int|float|bool|array|null $type, string|int|float|bool|array|null $type_no)
 {
 	$sql = "SELECT * FROM ".TB_PREF."voided WHERE type=".db_escape($type)
 		." AND id=".db_escape($type_no);
@@ -150,7 +150,7 @@ function get_voided_entry(mixed $type, mixed $type_no)
 
 //--------------------------------------------------------------------------------------------------
 
-function add_voided_entry(mixed $type, mixed $type_no, mixed $date_, string|array|null $memo_): void
+function add_voided_entry(string|int|float|bool|null $type, string|int|float|bool|null $type_no, string|int|float|bool|null $date_, string|array|null $memo_): void
 {
 	$date = date2sql($date_);
 	$sql = "INSERT INTO ".TB_PREF."voided (type, id, date_, memo_)

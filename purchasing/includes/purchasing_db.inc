@@ -32,8 +32,8 @@ include_once($path_to_root . "/purchasing/includes/db/suppliers_db.inc");
 // $date_ is display date (non-sql)
 // $amount is in SUPPLIERS'S currency
 
-function add_gl_trans_supplier(mixed $type, string|int|float|null $type_no, mixed $date_, mixed $account, mixed $dimension, mixed $dimension2,  
-	string|int|float|bool|null $amount, mixed $supplier_id, ?string $err_msg="", string|int|float|bool|null $rate=0, mixed $memo="")
+function add_gl_trans_supplier(string|int|float|bool|null $type, string|int|float|null $type_no, string|int|float|bool|null $date_, string|int|float|bool|null $account, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2,  
+	string|int|float|bool|null $amount, string|int|float|bool|null $supplier_id, ?string $err_msg="", string|int|float|bool|null $rate=0, string|int|float|bool|null $memo="")
 {
 	if ($err_msg == "")
 		$err_msg = "The supplier GL transaction could not be inserted";	
@@ -45,7 +45,7 @@ function add_gl_trans_supplier(mixed $type, string|int|float|null $type_no, mixe
 
 //----------------------------------------------------------------------------------------
 
-function get_purchase_price(mixed $supplier_id, mixed $stock_id): float|int
+function get_purchase_price(string|int|float|bool|null $supplier_id, string|int|float|bool|array|null $stock_id): float|int
 {
 	$sql = "SELECT price, conversion_factor FROM ".TB_PREF."purch_data 
 		WHERE supplier_id = ".db_escape($supplier_id) . " 
@@ -66,7 +66,7 @@ function get_purchase_price(mixed $supplier_id, mixed $stock_id): float|int
 /**
  * @return 1|null|string
  */
-function get_purchase_conversion_factor(mixed $supplier_id, mixed $stock_id)
+function get_purchase_conversion_factor(string|int|float|bool|null $supplier_id, string|int|float|bool|array|null $stock_id)
 {
 	$sql = "SELECT conversion_factor FROM ".TB_PREF."purch_data 
 		WHERE supplier_id = ".db_escape($supplier_id)." 
@@ -88,7 +88,7 @@ function get_purchase_conversion_factor(mixed $supplier_id, mixed $stock_id)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_purchase_data(mixed $supplier_id, string|int|float|bool|null $stock_id)
+function get_purchase_data(string|int|float|bool|null $supplier_id, string|int|float|bool|null $stock_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."purch_data 
 		WHERE supplier_id = ".db_escape($supplier_id) . "
@@ -101,7 +101,7 @@ function get_purchase_data(mixed $supplier_id, string|int|float|bool|null $stock
 /**
  * @return null|true
  */
-function add_or_update_purchase_data(mixed $supplier_id, mixed $stock_id, mixed $price, mixed $description="", ?string $uom="")
+function add_or_update_purchase_data(string|int|float|bool|null $supplier_id, string|int|float|bool|null $stock_id, string|int|float|bool|null $price, string|int|float|bool|null $description="", ?string $uom="")
 {
 	$data = get_purchase_data($supplier_id, $stock_id);
 

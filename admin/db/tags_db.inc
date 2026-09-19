@@ -13,7 +13,7 @@
 /**
  * @return bool|mysqli_result
  */
-function add_tag(mixed $type, mixed $name, mixed $description)
+function add_tag(string|int|float|bool|null $type, string|int|float|bool|null $name, string|int|float|bool|null $description)
 {
 	$sql = "INSERT INTO ".TB_PREF."tags (type, name, description)
 		VALUES (".db_escape($type).", ".db_escape($name).", ".db_escape($description).")";
@@ -26,7 +26,7 @@ function add_tag(mixed $type, mixed $name, mixed $description)
 /**
  * @return bool|mysqli_result
  */
-function update_tag(mixed $id, mixed $name, mixed $description, mixed $type=null)
+function update_tag(string|int|float|bool|null $id, string|int|float|bool|null $name, string|int|float|bool|null $description, string|int|float|bool|null $type=null)
 {
 	$sql = "UPDATE ".TB_PREF."tags SET name=".db_escape($name).", 
                                        description=".db_escape($description);
@@ -43,7 +43,7 @@ function update_tag(mixed $id, mixed $name, mixed $description, mixed $type=null
 /**
  * @return bool|mysqli_result
  */
-function get_tags(mixed $type, mixed $all=false)
+function get_tags(string|int|float|bool|null $type, mixed $all=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."tags WHERE type=".db_escape($type);
 	
@@ -59,7 +59,7 @@ function get_tags(mixed $type, mixed $all=false)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_tag(mixed $id)
+function get_tag(string|int|float|bool|null $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."tags WHERE id = ".db_escape($id);
 
@@ -73,7 +73,7 @@ function get_tag(mixed $id)
 /**
  * @return false|null|string
  */
-function get_tag_type(mixed $id)
+function get_tag_type(string|int|float|bool|null $id)
 {
 	$sql = "SELECT type FROM ".TB_PREF."tags WHERE id = ".db_escape($id);
 
@@ -88,7 +88,7 @@ function get_tag_type(mixed $id)
 /**
  * @return null|string
  */
-function get_tag_name(mixed $id)
+function get_tag_name(string|int|float|bool|null $id)
 {
 	$sql = "SELECT name FROM ".TB_PREF."tags WHERE id = ".db_escape($id);
 
@@ -119,7 +119,7 @@ function get_tag_names(string|int|array|null $tags): string
 /**
  * @return false|null|string
  */
-function get_tag_description(mixed $id)
+function get_tag_description(string|int|float|bool|null $id)
 {
 	$sql = "SELECT description FROM ".TB_PREF."tags WHERE id = ".db_escape($id);
 
@@ -131,7 +131,7 @@ function get_tag_description(mixed $id)
 
 //--------------------------------------------------------------------------------------
 
-function delete_tag(mixed $id): void
+function delete_tag(string|int|float|bool|null $id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."tags WHERE id = ".db_escape($id);
 
@@ -192,7 +192,7 @@ function delete_tag_associations(?int $type, mixed $recordid, bool $all=false): 
 /**
  * @return bool|mysqli_result
  */
-function get_records_associated_with_tag(mixed $id)
+function get_records_associated_with_tag(string|int|float|bool|null $id)
 {
 	// Which table we query is based on the tag type
 	$type = get_tag_type($id);

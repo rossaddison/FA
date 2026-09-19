@@ -12,7 +12,7 @@
 
 //--------------------------------------------------------------------------------------
 
-function add_shipper(mixed $shipper_name, mixed $contact, mixed $phone, mixed $phone2, mixed $address): void
+function add_shipper(mixed $shipper_name, mixed $contact, string|int|float|bool|null $phone, string|int|float|bool|null $phone2, mixed $address): void
 {
 	$sql = "INSERT INTO ".TB_PREF."shippers (shipper_name, contact, phone, phone2, address)
 		VALUES (" . db_escape($shipper_name) . ", " .
@@ -26,7 +26,7 @@ function add_shipper(mixed $shipper_name, mixed $contact, mixed $phone, mixed $p
 
 //--------------------------------------------------------------------------------------
 
-function update_shipper(mixed $selected_id, mixed $shipper_name, mixed $contact, mixed $phone, mixed $phone2, mixed $address): void
+function update_shipper(string|int|float|bool|array|null $selected_id, mixed $shipper_name, mixed $contact, string|int|float|bool|null $phone, string|int|float|bool|null $phone2, mixed $address): void
 {
 	$sql = "UPDATE ".TB_PREF."shippers SET shipper_name=" . db_escape($shipper_name). " ,
 		contact =" . db_escape($contact). " ,
@@ -40,7 +40,7 @@ function update_shipper(mixed $selected_id, mixed $shipper_name, mixed $contact,
 
 //--------------------------------------------------------------------------------------
 
-function delete_shipper(mixed $selected_id): void
+function delete_shipper(string|int|float|bool|array|null $selected_id): void
 {
 	$sql="DELETE FROM ".TB_PREF."shippers WHERE shipper_id=".db_escape($selected_id);
 	
@@ -66,7 +66,7 @@ function get_shippers(int|array|null $show_inactive)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_shipper(mixed $selected_id)
+function get_shipper(string|int|float|bool|array|null $selected_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."shippers WHERE shipper_id=".db_escape($selected_id);
 

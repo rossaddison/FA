@@ -12,7 +12,7 @@
 /**
  * @return 0|non-falsy-string
  */
-function get_qoh_on_date(mixed $stock_id, mixed $location=null, mixed $date_=null): int|string
+function get_qoh_on_date(string|int|float|bool|array|null $stock_id, string|int|float|bool|array|null $location=null, string|int|float|bool|array|null $date_=null): int|string
 {
     if ($date_ == null)
         $date_ = Today();
@@ -45,7 +45,7 @@ function get_qoh_on_date(mixed $stock_id, mixed $location=null, mixed $date_=nul
 *	$date - check date; when set to null checks all the stock history.
 **/
 
-function check_negative_stock(mixed $stock_id, mixed $delta_qty, mixed $location=null, mixed $date=null)
+function check_negative_stock(string|int|float|bool|array|null $stock_id, mixed $delta_qty, string|int|float|bool|array|null $location=null, string|int|float|bool|array|null $date=null)
 {
 
 	if ($delta_qty >= 0)
@@ -110,7 +110,7 @@ function get_item_edit_info(string|array|null $stock_id)
 /**
  * @return false|null|string
  */
-function get_unit_cost(mixed $stock_id)
+function get_unit_cost(string|int|float|bool|array|null $stock_id)
 {
 	$sql = "SELECT material_cost
 		FROM ".TB_PREF."stock_master
@@ -127,7 +127,7 @@ function get_unit_cost(mixed $stock_id)
 /**
  * @return false|null|string
  */
-function get_purchase_cost(mixed $stock_id)
+function get_purchase_cost(string|int|float|bool|null $stock_id)
 {
 	$sql = "SELECT purchase_cost
 		FROM ".TB_PREF."stock_master
@@ -141,7 +141,7 @@ function get_purchase_cost(mixed $stock_id)
 
 //--------------------------------------------------------------------------------------
 
-function is_inventory_item(mixed $stock_id): bool
+function is_inventory_item(string|int|float|bool|array|null $stock_id): bool
 {
 	$sql = "SELECT stock_id FROM "
 		.TB_PREF."stock_master
@@ -156,7 +156,7 @@ function is_inventory_item(mixed $stock_id): bool
 /**
  * @return null|string
  */
-function last_negative_stock_begin_date(mixed $stock_id, mixed $to)
+function last_negative_stock_begin_date(string|int|float|bool|null $stock_id, string|int|float|bool|null $to)
 {
 	$to = date2sql($to);
 	$sql ="SET @q = 0";
@@ -179,7 +179,7 @@ function last_negative_stock_begin_date(mixed $stock_id, mixed $to)
 /**
  * @return false|null|string
  */
-function get_already_delivered(mixed $stock_id, mixed $location, mixed $trans_no)
+function get_already_delivered(string|int|float|bool|null $stock_id, string|int|float|bool|null $location, string|int|float|bool|array|null $trans_no)
 {
 	$sql = "SELECT qty
 		FROM ".TB_PREF."stock_moves
@@ -197,7 +197,7 @@ function get_already_delivered(mixed $stock_id, mixed $location, mixed $trans_no
 /**
  * @return -1|false|null|string
  */
-function last_negative_stock_trans_id(mixed $stock_id, mixed $to)
+function last_negative_stock_trans_id(string|int|float|bool|null $stock_id, string|int|float|bool|null $to)
 {
 	$sql = "SELECT * from ".TB_PREF."stock_moves
 		WHERE stock_id=".db_escape($stock_id)." 
@@ -232,7 +232,7 @@ function last_negative_stock_trans_id(mixed $stock_id, mixed $to)
 /**
  * @return false|list<null|string>
  */
-function get_deliveries_between(mixed $stock_id, mixed $from, mixed $to): false|array
+function get_deliveries_between(string|int|float|bool|null $stock_id, string|int|float|bool|null $from, string|int|float|bool|null $to): false|array
 {
 	$from = date2sql($from);
 	$to = date2sql($to);
@@ -247,7 +247,7 @@ function get_deliveries_between(mixed $stock_id, mixed $from, mixed $to): false|
 /*
 	Returns quantity and total cost of $stock_id sales, entered after record with $move_id
 */
-function get_deliveries_from_trans(mixed $stock_id, ?string $move_id): array
+function get_deliveries_from_trans(string|int|float|bool|null $stock_id, ?string $move_id): array
 {
 	// -ve qty is delivery either by ST_CUSTDELIVERY or inventory adjustment
     //Price for GRN and SUPPCREDIT and std_cost for other trans_types
@@ -285,7 +285,7 @@ function get_deliveries_from_trans(mixed $stock_id, ?string $move_id): array
 /**
  * @return false|list<null|string>
  */
-function get_purchases_from_trans(mixed $stock_id, ?string $move_id): false|array
+function get_purchases_from_trans(string|int|float|bool|null $stock_id, ?string $move_id): false|array
 {
 	// Calculate All inward stock moves i.e. qty > 0
 	$sql = "SELECT SUM(qty), SUM(qty*standard_cost)
@@ -303,7 +303,7 @@ function get_purchases_from_trans(mixed $stock_id, ?string $move_id): false|arra
 	This routine fixes stock and COGS balances for all $stock_id sales made during negative inventory status.
 	This is called when delivery is received causing inventory status to be positive again.
 */
-function adjust_deliveries(string|int|float|bool|null $stock_id, string|int|float|bool|null $material_cost, mixed $to): void
+function adjust_deliveries(string|int|float|bool|null $stock_id, string|int|float|bool|null $material_cost, string|int|float|bool|null $to): void
 {
 	global $Refs;
 
@@ -360,7 +360,7 @@ function adjust_deliveries(string|int|float|bool|null $stock_id, string|int|floa
 /**
  * @return array<array-key, null|string>|false
  */
-function get_stock_gl_code(mixed $stock_id)
+function get_stock_gl_code(string|int|float|bool|array|null $stock_id)
 {
 	/*Gets the GL Codes relevant to the item account  */
 	$sql = "SELECT mb_flag, inventory_account, cogs_account,
@@ -374,7 +374,7 @@ function get_stock_gl_code(mixed $stock_id)
 /**
  * @return false|null|string
  */
-function get_purchase_value(mixed $stock_id)
+function get_purchase_value(string|int|float|bool|array|null $stock_id)
 {
 	$sql = "SELECT purchase_cost FROM
 		".TB_PREF."stock_master WHERE stock_id = ".db_escape($stock_id);
@@ -384,7 +384,7 @@ function get_purchase_value(mixed $stock_id)
 	return is_array($row) ? $row[0] : false;
 }
 
-function update_purchase_value(mixed $stock_id, mixed $price): void
+function update_purchase_value(string|int|float|bool|null $stock_id, string|int|float|bool|null $price): void
 {
 	$price = round2($price, user_price_dec());
 	$sql = "UPDATE ".TB_PREF."stock_master SET purchase_cost=".db_escape($price)
@@ -393,7 +393,7 @@ function update_purchase_value(mixed $stock_id, mixed $price): void
 }	
 //-----------------------------------------------------------------------------------------
 
-function handle_negative_inventory(mixed $stock_id, string|int|float|bool|null $quantity, string|int|float|bool|null $standard_cost, mixed $date_): void
+function handle_negative_inventory(string|int|float|bool|null $stock_id, string|int|float|bool|null $quantity, string|int|float|bool|null $standard_cost, string|int|float|bool|null $date_): void
 {
 	//If negative adjustment result in negative or zero inventory
 	//then difference should be adjusted
@@ -440,8 +440,8 @@ function handle_negative_inventory(mixed $stock_id, string|int|float|bool|null $
 // $std_cost - in HOME currency
 // $price - in transaction currency
 
-function add_stock_move(?int $type, mixed $stock_id, mixed $trans_no, mixed $location,
-    mixed $date_, mixed $reference, mixed $quantity, mixed $std_cost, mixed $price=0): int|string
+function add_stock_move(?int $type, string|int|float|bool|null $stock_id, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $location,
+    string|int|float|bool|null $date_, string|int|float|bool|null $reference, string|int|float|bool|null $quantity, mixed $std_cost, string|int|float|bool|null $price=0): int|string
 {
 	$date = date2sql($date_);
 
@@ -457,7 +457,7 @@ function add_stock_move(?int $type, mixed $stock_id, mixed $trans_no, mixed $loc
 	return db_insert_id();
 }
 
-function update_stock_move(mixed $type, mixed $trans_no, mixed $stock_id, mixed $cost): void
+function update_stock_move(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $stock_id, mixed $cost): void
 {
 	$sql = "UPDATE ".TB_PREF."stock_moves SET standard_cost=".db_escape($cost)
 			." WHERE type=".db_escape($type)
@@ -471,7 +471,7 @@ function update_stock_move(mixed $type, mixed $trans_no, mixed $stock_id, mixed 
 /**
  * @return bool|mysqli_result
  */
-function get_stock_moves(?int $type, mixed $type_no)
+function get_stock_moves(?int $type, string|int|float|bool|null $type_no)
 {
 	$sql = "SELECT move.*, item.description, item.mb_flag, item.units, stock.location_name
 		FROM ".TB_PREF."stock_moves move,"
@@ -488,7 +488,7 @@ function get_stock_moves(?int $type, mixed $type_no)
 
 //--------------------------------------------------------------------------------------------------
 
-function void_stock_move(mixed $type, mixed $type_no): void
+function void_stock_move(string|int|float|bool|null $type, string|int|float|bool|null $type_no): void
 {
     $sql = "SELECT move.*, supplier.supplier_id
     		FROM ".TB_PREF."stock_moves move
@@ -526,7 +526,7 @@ function void_stock_move(mixed $type, mixed $type_no): void
 /**
  * @return null|string
  */
-function get_location_name(mixed $loc_code)
+function get_location_name(string|int|float|bool|array|null $loc_code)
 {
 	$sql = "SELECT location_name FROM ".TB_PREF."locations
 		WHERE loc_code=".db_escape($loc_code);
@@ -545,7 +545,7 @@ function get_location_name(mixed $loc_code)
 /**
  * @return -1|null|string
  */
-function get_mb_flag(mixed $stock_id)
+function get_mb_flag(string|int|float|bool|array|null $stock_id)
 {
 	$sql = "SELECT mb_flag FROM ".TB_PREF."stock_master
 		WHERE stock_id = ".db_escape($stock_id);

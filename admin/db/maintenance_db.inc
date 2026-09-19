@@ -264,7 +264,7 @@ function write_lang(): bool
 		$protect - protect users/roles 
 		$return_errors - return errors instead of display them
 */
-function db_import(string|int|float|bool|null $filename, mixed $connection, mixed $force=true, mixed $init=true, mixed $protect=false, mixed $return_errors=false): array|string|bool
+function db_import(string|int|float|bool|null $filename, mixed $connection, mixed $force=true, string|int|float|bool|null $init=true, mixed $protect=false, mixed $return_errors=false): array|string|bool
 {
 	global $db, $SysPrefs;
 
@@ -1007,7 +1007,7 @@ function check_table(string|int|float|bool|null $pref, string|int|float|bool|nul
 /*
 	Update or create setting in simple php config file.
 */
-function update_config_var(mixed $file, mixed $variable, mixed $value, mixed $comment=''): bool
+function update_config_var(mixed $file, mixed $variable, string|int|float|bool|null $value, mixed $comment=''): bool
 {
 	if (!is_file($file) || !is_writeable($file))
 		return false;

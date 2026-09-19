@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_dimension(mixed $reference, mixed $name, mixed $type_, mixed $date_, mixed $due_date, mixed $memo_): int|string
+function add_dimension(string|int|float|bool|null $reference, string|int|float|bool|null $name, mixed $type_, string|int|float|bool|null $date_, mixed $due_date, string|int|float|bool|null $memo_): int|string
 {
 	global $Refs;
 
@@ -33,7 +33,7 @@ function add_dimension(mixed $reference, mixed $name, mixed $type_, mixed $date_
 	return $id;
 }
 
-function update_dimension(mixed $id, mixed $name, mixed $type_, mixed $date_, mixed $due_date, mixed $memo_)
+function update_dimension(string|int|float|bool|null $id, string|int|float|bool|null $name, mixed $type_, string|int|float|bool|null $date_, mixed $due_date, string|int|float|bool|null $memo_)
 {
 	begin_transaction();
 
@@ -55,7 +55,7 @@ function update_dimension(mixed $id, mixed $name, mixed $type_, mixed $date_, mi
 	return $id;
 }
 
-function delete_dimension(mixed $id): void
+function delete_dimension(string|int|float|bool|null $id): void
 {
 	begin_transaction();
 
@@ -73,7 +73,7 @@ function delete_dimension(mixed $id): void
 /**
  * @return array<array-key, null|string>|false
  */
-function get_dimension(mixed $id, bool $allow_null=false)
+function get_dimension(string|int|float|bool|array|null $id, bool $allow_null=false)
 {
     $sql = "SELECT * FROM ".TB_PREF."dimensions	WHERE id=".db_escape($id);
 
@@ -119,14 +119,14 @@ function get_dimensions()
 
 //--------------------------------------------------------------------------------------
 
-function dimension_has_deposits(mixed $id): bool
+function dimension_has_deposits(string|int|float|bool|null $id): bool
 {
 	return dimension_has_payments($id);
 }
 
 //--------------------------------------------------------------------------------------
 
-function dimension_has_payments(mixed $id): bool
+function dimension_has_payments(string|int|float|bool|null $id): bool
 {
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."gl_trans WHERE dimension_id = ".db_escape($id)
 	 . " OR dimension2_id = ".db_escape($id);
@@ -143,7 +143,7 @@ function dimension_is_closed(string|array|null $id): bool
 
 //--------------------------------------------------------------------------------------
 
-function close_dimension(mixed $id): void
+function close_dimension(string|int|float|bool|null $id): void
 {
 	$sql = "UPDATE ".TB_PREF."dimensions SET closed='1' WHERE id = ".db_escape($id);
 	db_query($sql, "could not close dimension");
@@ -151,7 +151,7 @@ function close_dimension(mixed $id): void
 
 //--------------------------------------------------------------------------------------
 
-function reopen_dimension(mixed $id): void
+function reopen_dimension(string|int|float|bool|null $id): void
 {
 	$sql = "UPDATE ".TB_PREF."dimensions SET closed='0' WHERE id = ".db_escape($id);
 	db_query($sql, "could not reopen dimension");
@@ -162,7 +162,7 @@ function reopen_dimension(mixed $id): void
 /**
  * @return bool|mysqli_result
  */
-function get_dimension_balance_all(mixed $id, mixed $from, mixed $to) 
+function get_dimension_balance_all(string|int|float|bool|null $id, string|int|float|bool|null $from, string|int|float|bool|null $to) 
 {
 	$from = date2sql($from);
 	$to = date2sql($to);
@@ -182,7 +182,7 @@ function get_dimension_balance_all(mixed $id, mixed $from, mixed $to)
 /**
  * @return null|string
  */
-function get_dimension_balance(mixed $id, string|array|null $from, string|array|null $to) 
+function get_dimension_balance(string|int|float|bool|null $id, string|array|null $from, string|array|null $to) 
 {
 	$id = db_escape($id);
 	$sql = "SELECT SUM(amount)

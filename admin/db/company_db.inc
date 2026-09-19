@@ -12,7 +12,7 @@
 /*
 	Update main or gl company setup.
 */
-function update_company_prefs(mixed $params): bool
+function update_company_prefs(string|int|float|bool|array|null $params): bool
 {
 	$sql = "UPDATE ".TB_PREF."sys_prefs SET value = ";
 	foreach($params as $name => $value) {
@@ -68,7 +68,7 @@ function get_base_sales_type()
 	return get_company_pref('base_sales');
 }
 
-function get_company_extensions(mixed $id = -1): array {
+function get_company_extensions(string|int|float|bool|array|null $id = -1): array {
 	global $path_to_root;
 
 	$file = $path_to_root.($id == -1 ? '' : '/company/'.(int)$id).'/installed_extensions.php';
@@ -98,7 +98,7 @@ function add_payment_terms(bool $daysOrFoll, mixed $terms, int|float|bool|null $
    	db_query($sql,"The payment term could not be added");
 }
 
-function update_payment_terms(mixed $selected_id, bool $daysOrFoll, mixed $terms, int|float|bool|null $dayNumber): void
+function update_payment_terms(string|int|float|bool|array|null $selected_id, bool $daysOrFoll, mixed $terms, int|float|bool|null $dayNumber): void
 {
 	if ($daysOrFoll) 
 	{
@@ -117,7 +117,7 @@ function update_payment_terms(mixed $selected_id, bool $daysOrFoll, mixed $terms
    	db_query($sql,"The payment term could not be updated");
 }
 
-function delete_payment_terms(mixed $selected_id): void
+function delete_payment_terms(string|int|float|bool|array|null $selected_id): void
 {
 	$sql="DELETE FROM ".TB_PREF."payment_terms WHERE terms_indicator=".db_escape($selected_id);
 	db_query($sql,"could not delete a payment terms");
@@ -126,7 +126,7 @@ function delete_payment_terms(mixed $selected_id): void
 /**
  * @return array<array-key, null|string>|false
  */
-function get_payment_terms(mixed $selected_id)
+function get_payment_terms(string|int|float|bool|array|null $selected_id)
 {
 	$sql = "SELECT *, (t.days_before_due=0) AND (t.day_in_following_month=0) as cash_sale
 	 FROM ".TB_PREF."payment_terms t WHERE terms_indicator=".db_escape($selected_id);
@@ -155,7 +155,7 @@ function get_payment_terms_all(int|array|null $show_inactive)
 /**
  * @return null|string
  */
-function key_in_foreign_table(mixed $id, string|array|null $tables, ?string $stdkey)
+function key_in_foreign_table(string|int|float|bool|array|null $id, string|array|null $tables, ?string $stdkey)
 {
 
 	if (!is_array($tables))

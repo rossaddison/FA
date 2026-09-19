@@ -101,7 +101,7 @@ function display_transfer_items(?string $title, &$order): void
 
 //---------------------------------------------------------------------------------
 
-function transfer_edit_item_controls(&$order, mixed $line_no=-1): void
+function transfer_edit_item_controls(&$order, string|int|float|bool|null $line_no=-1): void
 {
 	global $Ajax;
 	start_row();

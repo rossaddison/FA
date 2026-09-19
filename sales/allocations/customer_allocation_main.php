@@ -51,7 +51,7 @@ if (isset($_POST['customer_id']))
 	$customer_id = $_POST['customer_id'];
 
 //--------------------------------------------------------------------------------
-function systype_name(mixed $dummy, mixed $type)
+function systype_name(string|int|float|bool|array|null $dummy, string|int|float|bool|null $type)
 {
 	global $systypes_array;
 
@@ -63,24 +63,24 @@ function trans_view(mixed $trans)
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
 
-function alloc_link(mixed $row): string
+function alloc_link(array|false|null $row): string
 {
 	return pager_link(_("Allocate"),
 		"/sales/allocations/customer_allocate.php?trans_no="
 			.(string)$row["trans_no"] . "&trans_type=" . (string)$row["type"]. "&debtor_no=" . (string)$row["debtor_no"], ICON_ALLOC);
 }
 
-function amount_total(mixed $row): string
+function amount_total(array|false|null $row): string
 {
 	return price_format($row['type'] == ST_JOURNAL && $row["Total"] < 0 ? -$row["Total"] : $row["Total"]);
 }
 
-function amount_left(mixed $row): string
+function amount_left(array|false|null $row): string
 {
 	return price_format(($row['type'] == ST_JOURNAL && $row["Total"] < 0 ? -$row["Total"] : $row["Total"])-$row["alloc"]);
 }
 
-function check_settled(mixed $row): bool
+function check_settled(array|false|null $row): bool
 {
 	return $row['settled'] == 1;
 }

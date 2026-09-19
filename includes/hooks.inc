@@ -384,7 +384,7 @@ function hook_invoke_last(?string $method, &$data, mixed $opts=null)
 /**
  * @return array<array-key, mixed>
  */
-function hook_db_prewrite(&$cart, mixed $type): array
+function hook_db_prewrite(&$cart, string|int|float|bool|null $type): array
 {
 	return hook_invoke_all('db_prewrite', $cart, $type);
 }
@@ -395,7 +395,7 @@ function hook_db_prewrite(&$cart, mixed $type): array
 /**
  * @return array<array-key, mixed>
  */
-function hook_db_postwrite(&$cart, mixed $type): array
+function hook_db_postwrite(&$cart, string|int|float|bool|null $type): array
 {
 	return hook_invoke_all('db_postwrite', $cart, $type);
 }
@@ -405,7 +405,7 @@ function hook_db_postwrite(&$cart, mixed $type): array
 /**
  * @return array<array-key, mixed>
  */
-function hook_db_prevoid(mixed $type, mixed $type_no): array
+function hook_db_prevoid(string|int|float|bool|null $type, string|int|float|bool|null $type_no): array
 {
 	return hook_invoke_all('db_prevoid', $type, $type_no);
 }
@@ -416,7 +416,7 @@ function hook_db_prevoid(mixed $type, mixed $type_no): array
 //
 //	Alternative exchange rates feeds.
 //
-function hook_retrieve_exrate(mixed $currency, mixed $date)
+function hook_retrieve_exrate(string|int|float|bool|null $currency, string|int|float|bool|null $date)
 {
 	return hook_invoke_last('retrieve_exrate', $currency, $date);
 }
@@ -433,7 +433,7 @@ function hook_tax_report_done(): array
 //
 //	Amount in words displayed on various documents (especially sales invoice)
 //
-function hook_price_in_words(mixed $amount, mixed $document)
+function hook_price_in_words(string|int|float|bool|null $amount, mixed $document)
 {
 	return hook_invoke_last('price_in_words', $amount, $document);
 }
@@ -471,7 +471,7 @@ function hook_authenticate(mixed $login, mixed $password)
 	 * more than one in  the cart.
 	 * If 'skip' is returned, the line will be skipped and not displayed
 	 */
-function hook_get_dispatchable_quantity(mixed $line_item, mixed $location, mixed $date, mixed $qoh) {
+function hook_get_dispatchable_quantity(mixed $line_item, string|int|float|bool|array|null $location, string|int|float|bool|array|null $date, mixed $qoh) {
 		$result =  hook_invoke_first('get_dispatchable_quantity', $line_item, array($location, $date, $qoh));
 		return $result !== null ? $result : hooks::default_get_dispatchable_quantity($line_item, $location, $date, $qoh);
 }

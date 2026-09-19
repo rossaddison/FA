@@ -440,7 +440,7 @@ function check_allocations(): bool
 //
 //	Returns sales or purchase invoice allocations to be reallocated after invoice edition.
 //
-function get_inv_allocations(mixed $trans_no, mixed $trans_type, mixed $person_id): array
+function get_inv_allocations(string|int|float|bool|array|null $trans_no, string|int|float|bool|null $trans_type, string|int|float|bool|null $person_id): array
 {
 	$allocs = array();
 	if ($trans_type == ST_SUPPINVOICE || $trans_type == ST_SUPPCREDIT)

@@ -270,7 +270,7 @@ function pkg_prop(mixed $pkg, mixed $property, mixed $lang=false)
 //	 	or (0=>field1, 1=>field2...)
 //  $outkey - field used as a key in package list. If null 'Package' field is used.
 //
-function get_pkg_or_list(mixed $type = null, mixed $pkgname = null, ?array $filter=array(), mixed $outkey=null, bool $download=true) {
+function get_pkg_or_list(string|int|float|bool|array|null $type = null, mixed $pkgname = null, ?array $filter=array(), mixed $outkey=null, bool $download=true) {
 
 	global $path_to_root, $repo_auth;
 
@@ -402,7 +402,7 @@ function get_pkg_or_list(mixed $type = null, mixed $pkgname = null, ?array $filt
 	return $Packages;
 }
 
-function get_package(mixed $pkgname, mixed $type = null)
+function get_package(mixed $pkgname, string|int|float|bool|null $type = null)
 {
 	return get_pkg_or_list($type, $pkgname);
 }
@@ -426,7 +426,7 @@ function installed_package(string|int|float|bool|null $package): string|null
 /*
 	Remove package from system
 */
-function uninstall_package(mixed $name): bool
+function uninstall_package(string|int|float|bool|null $name): bool
 {
 	$name = installed_package($name);
 	if (!$name) return true; // not installed
@@ -730,7 +730,7 @@ function check_pkg_upgrade(string|int|float|bool|null $current, string|int|float
 //
 //	Returns package info from index file
 //
-function get_package_info(mixed $pkg, mixed $type=null, ?array $filter=array(), mixed $outkey=null, bool $download=true) {
+function get_package_info(mixed $pkg, string|int|float|bool|null $type=null, ?array $filter=array(), mixed $outkey=null, bool $download=true) {
 	return get_pkg_or_list($type, $pkg, $filter, null, false);
 }
 

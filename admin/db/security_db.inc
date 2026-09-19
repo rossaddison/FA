@@ -14,7 +14,7 @@
 /**
  * @return array{areas?: non-empty-list<string>, sections?: non-empty-list<string>, ...<array-key, null|string>}|false
  */
-function get_security_role(mixed $id)
+function get_security_role(string|int|float|bool|array|null $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."security_roles WHERE id=".(int)$id;
 	$ret = db_query($sql, "could not retrieve security roles");
@@ -28,7 +28,7 @@ function get_security_role(mixed $id)
 
 //--------------------------------------------------------------------------------------------------
 
-function add_security_role(mixed $name, mixed $description, ?array $sections, ?array $areas): void
+function add_security_role(string|int|float|bool|null $name, string|int|float|bool|null $description, ?array $sections, ?array $areas): void
 {
 	$sql = "INSERT INTO ".TB_PREF."security_roles (role, description, sections, areas)
 	VALUES ("
@@ -42,7 +42,7 @@ function add_security_role(mixed $name, mixed $description, ?array $sections, ?a
 
 //--------------------------------------------------------------------------------------------------
 
-function update_security_role(mixed $id, mixed $name, mixed $description, array $sections, array $areas): void
+function update_security_role(string|int|float|bool|null $id, string|int|float|bool|null $name, string|int|float|bool|null $description, array $sections, array $areas): void
 {
     	$sql = "UPDATE ".TB_PREF."security_roles SET role=".db_escape($name)
     	.",description=".db_escape($description)

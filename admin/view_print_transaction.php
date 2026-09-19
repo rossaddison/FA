@@ -34,7 +34,7 @@ function view_link(mixed $trans)
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
 
-function prt_link(mixed $row)
+function prt_link(array|false|null $row)
 {
 	if (!isset($row['type']))
 		$row['type'] = $_POST['filterType'];
@@ -45,19 +45,19 @@ function prt_link(mixed $row)
 		return print_document_link($row['trans_no']."-".(string)$row['type'], _("Print"), true, $row['type'], ICON_PRINT);
 }
 
-function gl_view(mixed $row)
+function gl_view(array|false|null $row)
 {
 	if (!isset($row['type']))
 		$row['type'] = $_POST['filterType'];
 	return get_gl_view_str($row["type"], $row["trans_no"]);
 }
 
-function date_view(mixed $row)
+function date_view(array|false|null $row)
 {
 	return $row['trans_date'];
 }
 
-function ref_view(mixed $row)
+function ref_view(array|false|null $row)
 {
 	return $row['ref'];
 }

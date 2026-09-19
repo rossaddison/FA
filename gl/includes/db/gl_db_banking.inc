@@ -9,8 +9,8 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_exchange_variation(mixed $trans_no, mixed $date_, string|int|float|bool|null $acc_id, mixed $account,
-    ?string $currency, mixed $person_type_id=null, mixed $person_id = "", string|array|null $memo=''): bool
+function add_exchange_variation(string|int|float|bool|array|null $trans_no, string|int|float|bool|array|null $date_, string|int|float|bool|null $acc_id, string|int|float|bool|null $account,
+    ?string $currency, mixed $person_type_id=null, string|int|float|bool|null $person_id = "", string|array|null $memo=''): bool
 {
 	if (is_company_currency($currency))
 		return false;
@@ -301,7 +301,7 @@ function add_bank_transfer(string|array|null $from_account, string|array|null $t
 	return $trans_no;
 }
 
-function check_bank_transfer(mixed $trans_no, string|array|null $from_account, string|array|null $to_account, string|array|null $date_,
+function check_bank_transfer(string|int|float|bool|array|null $trans_no, string|array|null $from_account, string|array|null $to_account, string|array|null $date_,
     int|float|null $amount, int|float|bool|null $target_amount=0)
 {
 	$dbResult = get_bank_trans(ST_BANKTRANSFER, $trans_no);
@@ -387,7 +387,7 @@ function update_bank_transfer(
 /**
  * @return false|list{mixed, mixed}
  */
-function write_bank_transaction(string|int|float|bool|null $trans_type, mixed $trans_no, string|array|null $from_account, ?object $items, string|array|null $date_,
+function write_bank_transaction(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no, string|array|null $from_account, ?object $items, string|array|null $date_,
 	string|array|null $person_type_id, string|array|null $person_id, string|array|null $person_detail_id,	string|array|null $ref, string|array|null $memo_, bool $use_transaction=true, int|float|bool|null $settled_amount=null): false|array
 {
 	global $Refs, $SysPrefs;

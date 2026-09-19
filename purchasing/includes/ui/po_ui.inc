@@ -352,7 +352,7 @@ function display_po_summary(&$po, bool $is_self=false, bool $editable=false): vo
 
 //--------------------------------------------------------------------------------
 
-function po_item_controls(&$order, &$rowcounter, mixed $line_no=-1): void
+function po_item_controls(&$order, &$rowcounter, string|int|float|bool|null $line_no=-1): void
 {
    global $Ajax, $SysPrefs;
 

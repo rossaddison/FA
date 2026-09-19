@@ -93,7 +93,7 @@ function handle_submit()
 
 //---------------------------------------------------------------------------------------------
 
-function check_can_delete(mixed $selected_id): bool
+function check_can_delete(string|int|float|bool|array|null $selected_id): bool
 {
 	$myrow = get_fiscalyear($selected_id);
 	// PREVENT DELETES IF DEPENDENT RECORDS IN gl_trans
@@ -178,7 +178,7 @@ function display_fiscalyears(): void
 
 //---------------------------------------------------------------------------------------------
 
-function display_fiscalyear_edit(mixed $selected_id): void
+function display_fiscalyear_edit(string|int|float|bool|array|null $selected_id): void
 {
 	global $Mode;
 

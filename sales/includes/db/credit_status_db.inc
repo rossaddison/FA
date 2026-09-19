@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_credit_status(mixed $description, mixed $disallow_invoicing): void
+function add_credit_status(string|int|float|bool|null $description, mixed $disallow_invoicing): void
 {
 	$sql = "INSERT INTO ".TB_PREF."credit_status (reason_description, dissallow_invoices) 
 		VALUES (".db_escape($description).",".db_escape($disallow_invoicing).")";
@@ -17,7 +17,7 @@ function add_credit_status(mixed $description, mixed $disallow_invoicing): void
 	db_query($sql, "could not add credit status");
 }
 
-function update_credit_status(mixed $status_id, mixed $description, mixed $disallow_invoicing): void
+function update_credit_status(mixed $status_id, string|int|float|bool|null $description, mixed $disallow_invoicing): void
 {
 	$sql = "UPDATE ".TB_PREF."credit_status SET reason_description=".db_escape($description).",
 		dissallow_invoices=".db_escape($disallow_invoicing)." WHERE id=".db_escape($status_id);

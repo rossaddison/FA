@@ -67,7 +67,7 @@ function process_fixed_asset_depreciation(string|array|null $stock_id, ?array $g
 /**
  * @return array<string, null|string>|false
  */
-function get_fixed_asset_move(mixed $stock_id, ?int $tran_type) {
+function get_fixed_asset_move(string|int|float|bool|null $stock_id, ?int $tran_type) {
 
   $sql = "SELECT * FROM ".TB_PREF."stock_moves 
 	    WHERE stock_id=".db_escape($stock_id)."
@@ -85,7 +85,7 @@ function get_fixed_asset_move(mixed $stock_id, ?int $tran_type) {
 /**
  * @return array<string, null|string>|false
  */
-function get_fixed_asset_disposal(mixed $stock_id) {
+function get_fixed_asset_disposal(string|int|float|bool|null $stock_id) {
 
   $sql = "SELECT * FROM ".TB_PREF."stock_moves 
     	WHERE stock_id=".db_escape($stock_id)."
@@ -105,7 +105,7 @@ function get_fixed_asset_disposal(mixed $stock_id) {
 /**
  * @return array<string, null|string>|false
  */
-function get_fixed_asset_purchase(mixed $stock_id) 
+function get_fixed_asset_purchase(string|int|float|bool|null $stock_id) 
 {
   	$sql = "SELECT * 
   		FROM ".TB_PREF."stock_master m, "
@@ -131,7 +131,7 @@ function get_fixed_asset_purchase(mixed $stock_id)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_fixed_asset_class(mixed $id)
+function get_fixed_asset_class(string|int|float|bool|array|null $id)
 {
 	$sql="SELECT * FROM ".TB_PREF."stock_fa_class WHERE fa_class_id=".db_escape($id);
 

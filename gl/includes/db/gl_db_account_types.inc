@@ -12,7 +12,7 @@
 /**
  * @return bool|mysqli_result
  */
-function add_account_type(mixed $id, mixed $name, mixed $class_id, mixed $parent)
+function add_account_type(string|int|float|bool|null $id, string|int|float|bool|null $name, mixed $class_id, mixed $parent)
 {
 	$sql = "INSERT INTO ".TB_PREF."chart_types (id, name, class_id, parent)
 		VALUES (".db_escape($id).", ".db_escape($name).", ".db_escape($class_id).", ".db_escape($parent).")";
@@ -23,7 +23,7 @@ function add_account_type(mixed $id, mixed $name, mixed $class_id, mixed $parent
 /**
  * @return bool|mysqli_result
  */
-function update_account_type(mixed $id, mixed $name, mixed $class_id, mixed $parent, mixed $old_id)
+function update_account_type(string|int|float|bool|null $id, string|int|float|bool|null $name, mixed $class_id, mixed $parent, mixed $old_id)
 {
 	begin_transaction();
 	if ($old_id !== $id)
@@ -94,7 +94,7 @@ function get_account_types(int|bool|array|null $all=false, mixed $class_id=false
 /**
  * @return array<array-key, null|string>|false
  */
-function get_account_type(mixed $id)
+function get_account_type(string|int|float|bool|array|null $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."chart_types WHERE id = ".db_escape($id);
 
@@ -116,7 +116,7 @@ function get_account_type_name(string|array|null $id)
 	return is_array($row) ? $row[0] : false;
 }
 
-function delete_account_type(mixed $id): void
+function delete_account_type(string|int|float|bool|null $id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."chart_types WHERE id = ".db_escape($id);
 
@@ -126,7 +126,7 @@ function delete_account_type(mixed $id): void
 /**
  * @return bool|mysqli_result
  */
-function add_account_class(mixed $id, mixed $name, mixed $ctype)
+function add_account_class(string|int|float|bool|null $id, string|int|float|bool|null $name, mixed $ctype)
 {
 	$sql = "INSERT INTO ".TB_PREF."chart_class (cid, class_name, ctype)
 		VALUES (".db_escape($id).", ".db_escape($name).", ".db_escape($ctype).")";
@@ -137,7 +137,7 @@ function add_account_class(mixed $id, mixed $name, mixed $ctype)
 /**
  * @return bool|mysqli_result
  */
-function update_account_class(mixed $id, mixed $name, mixed $ctype)
+function update_account_class(string|int|float|bool|null $id, string|int|float|bool|null $name, mixed $ctype)
 {
     $sql = "UPDATE ".TB_PREF."chart_class SET class_name=".db_escape($name).",
 		ctype=".db_escape($ctype)." WHERE cid = ".db_escape($id);
@@ -166,7 +166,7 @@ function get_account_classes(int|bool|array|null $all=false, ?int $balance=-1)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_account_class(mixed $id)
+function get_account_class(string|int|float|bool|null $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."chart_class WHERE cid = ".db_escape($id);
 
@@ -188,7 +188,7 @@ function get_account_class_name(?string $id)
 	return $row[0];
 }
 
-function delete_account_class(mixed $id): void
+function delete_account_class(string|int|float|bool|null $id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."chart_class WHERE cid = ".db_escape($id);
 

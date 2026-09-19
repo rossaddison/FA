@@ -29,7 +29,7 @@ $pdeb = $pcre = $cdeb = $ccre = $tdeb = $tcre = $pbal = $cbal = $tbal = 0;
 
 //----------------------------------------------------------------------------------------------------
 
-function display_type (?string $type, ?string $typename, &$dec, &$rep, mixed $from, mixed $to, mixed $zero, mixed $balances, mixed $dimension, mixed $dimension2): void
+function display_type (?string $type, ?string $typename, &$dec, &$rep, string|int|float|bool|array|null $from, string|int|float|bool|array|null $to, mixed $zero, mixed $balances, string|int|float|bool|array|null $dimension, string|int|float|bool|array|null $dimension2): void
 {
 	global $pdeb, $pcre, $cdeb, $ccre, $tdeb, $tcre, $pbal, $cbal, $tbal, $SysPrefs;
 	

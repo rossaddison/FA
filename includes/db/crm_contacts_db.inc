@@ -13,7 +13,7 @@
 /**
  * @return int|null|string
  */
-function add_crm_person(mixed $ref, mixed $name, mixed $name2, mixed $address, mixed $phone, mixed $phone2, mixed $fax, mixed $email, mixed $lang, mixed $notes,
+function add_crm_person(string|int|float|bool|array|null $ref, string|int|float|bool|array|null $name, mixed $name2, mixed $address, string|int|float|bool|array|null $phone, string|int|float|bool|array|null $phone2, mixed $fax, string|int|float|bool|array|null $email, mixed $lang, mixed $notes,
 	mixed $cat_ids=null, mixed $entity=null)
 {
 	$sql = "INSERT INTO ".TB_PREF."crm_persons (ref, name, name2, address,
@@ -43,8 +43,8 @@ function add_crm_person(mixed $ref, mixed $name, mixed $name2, mixed $address, m
 	return $id;
 }
 
-function update_crm_person(mixed $id, mixed $ref, mixed $name, mixed $name2, mixed $address, mixed $phone, mixed $phone2, mixed $fax, mixed $email, 
-	mixed $lang, mixed $notes, mixed $cat_ids, mixed $entity=null, mixed $type=null)
+function update_crm_person(string|int|float|bool|null $id, string|int|float|bool|null $ref, string|int|float|bool|null $name, mixed $name2, mixed $address, string|int|float|bool|null $phone, string|int|float|bool|null $phone2, mixed $fax, string|int|float|bool|null $email, 
+	mixed $lang, mixed $notes, mixed $cat_ids, mixed $entity=null, string|int|float|bool|null $type=null)
 {
 	$sql = "UPDATE ".TB_PREF."crm_persons SET "
 		  ."ref=".db_escape($ref) . ", "
@@ -90,7 +90,7 @@ function delete_crm_person(mixed $person, bool $with_contacts=false)
 /*
 	Retrieve full contact data from database for selected type/action/entity or person
 */
-function get_crm_persons(mixed $type=null, mixed $action=null, mixed $entity=null, mixed $person=null, mixed $unique=false)
+function get_crm_persons(string|int|float|bool|null $type=null, string|int|float|bool|null $action=null, mixed $entity=null, mixed $person=null, mixed $unique=false)
 {
 	$sql = "SELECT t.*, p.*, r.id as contact_id FROM ".TB_PREF."crm_persons p,"
 		.TB_PREF."crm_categories t, "
@@ -127,7 +127,7 @@ function get_crm_persons(mixed $type=null, mixed $action=null, mixed $entity=nul
 /**
  * @return array{contacts: array<array-key, mixed>, ...<array-key, null|string>}|false
  */
-function get_crm_person(mixed $id)
+function get_crm_person(string|int|float|bool|null $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."crm_persons WHERE id=".db_escape($id);
 
@@ -142,7 +142,7 @@ function get_crm_person(mixed $id)
 /*
 	Returns all contacts for given person id
 */
-function get_person_contacts(mixed $id): array
+function get_person_contacts(string|int|float|bool|null $id): array
 {
 	$sql = "SELECT t.id FROM "
 		.TB_PREF."crm_categories t, "
@@ -159,7 +159,7 @@ function get_person_contacts(mixed $id): array
 /**
  * @return bool|mysqli_result
  */
-function update_person_contacts(mixed $id, mixed $cat_ids, mixed $entity_id=null, mixed $type=null)
+function update_person_contacts(string|int|float|bool|null $id, mixed $cat_ids, mixed $entity_id=null, string|int|float|bool|null $type=null)
 {
 	$sql = "DELETE FROM ".TB_PREF."crm_contacts WHERE person_id=".db_escape($id);
 	if ($type)
@@ -211,7 +211,7 @@ function add_crm_category(string|array|null $type, string|array|null $action, st
    	db_query($sql,"The insert of the crm category failed");
 }
 
-function update_crm_category(mixed $selected_id, string|array|null $type, string|array|null $action, string|array|null $name, string|array|null $description): void
+function update_crm_category(string|int|float|bool|array|null $selected_id, string|array|null $type, string|array|null $action, string|array|null $name, string|array|null $description): void
 {
 	$sql = "UPDATE ".TB_PREF."crm_categories SET ";
 	if ($type)
@@ -224,7 +224,7 @@ function update_crm_category(mixed $selected_id, string|array|null $type, string
    	db_query($sql,"The update of the crm category failed");
 }
 
-function delete_crm_category(mixed $selected_id): void
+function delete_crm_category(string|int|float|bool|array|null $selected_id): void
 {
 	// preserve system categories
 	$sql="DELETE FROM ".TB_PREF."crm_categories WHERE system=0 AND id=".db_escape($selected_id);
@@ -245,7 +245,7 @@ function get_crm_categories(int|array|null $show_inactive)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_crm_category(mixed $selected_id)
+function get_crm_category(string|int|float|bool|array|null $selected_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."crm_categories WHERE id=".db_escape($selected_id);
 
@@ -256,7 +256,7 @@ function get_crm_category(mixed $selected_id)
 /**
  * @return false|null|string
  */
-function get_crm_category_name(mixed $id)
+function get_crm_category_name(string|int|float|bool|null $id)
 {
 	$sql = "SELECT name FROM ".TB_PREF."crm_categories WHERE id=".db_escape($id);
 
@@ -287,7 +287,7 @@ function add_crm_contact(?string $type, ?string $action, string|int|null $entity
 /**
  * @return bool|mysqli_result
  */
-function delete_crm_contact(mixed $id)
+function delete_crm_contact(string|int|float|bool|null $id)
 {
 	$sql = "DELETE FROM ".TB_PREF."crm_contacts WHERE id=".db_escape($id);
 
@@ -299,7 +299,7 @@ function delete_crm_contact(mixed $id)
 /**
  * @return bool|mysqli_result
  */
-function delete_crm_contacts(mixed $person_id = null, mixed $type = null, mixed $entity_id=null, mixed $action = null)
+function delete_crm_contacts(string|int|float|bool|null $person_id = null, string|int|float|bool|null $type = null, mixed $entity_id=null, string|int|float|bool|null $action = null)
 {
 	$sql = "DELETE FROM ".TB_PREF."crm_contacts WHERE ";
 
@@ -321,7 +321,7 @@ function delete_crm_contacts(mixed $person_id = null, mixed $type = null, mixed 
 /**
  * @return array<array-key, null|string>|false
  */
-function get_crm_contact(mixed $id)
+function get_crm_contact(string|int|float|bool|null $id)
 {
 	$sql = "SELECT t.type, t.action, p.*, r.person_id, r.id  FROM ".TB_PREF."crm_persons p,"
 		.TB_PREF."crm_categories t, "
@@ -339,7 +339,7 @@ function get_crm_contact(mixed $id)
 /**
  * @return null|string
  */
-function is_crm_category_used(mixed $id)
+function is_crm_category_used(string|int|float|bool|null $id)
 {
 	$row = get_crm_category($id);
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."crm_contacts WHERE type='".$row['type']."' AND action='".$row['action']."'";

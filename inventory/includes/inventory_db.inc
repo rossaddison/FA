@@ -27,7 +27,7 @@ include_once($path_to_root . "/inventory/includes/db/items_units_db.inc");
 /**
  * @return array<array-key, mixed>|null|string
  */
-function item_img_name(mixed $stock_id)
+function item_img_name(string|int|float|bool|array|null $stock_id)
 {
 	$stock_id = strtr($stock_id, "><\\/:|*?", '________');
 	return clean_file_name($stock_id);
@@ -36,7 +36,7 @@ function item_img_name(mixed $stock_id)
 /**
  * @return bool|mysqli_result
  */
-function get_stock_movements(mixed $stock_id, mixed $StockLocation,	mixed $BeforeDate, mixed $AfterDate)
+function get_stock_movements(string|int|float|bool|null $stock_id, mixed $StockLocation,	mixed $BeforeDate, mixed $AfterDate)
 {
 	$before_date = date2sql($BeforeDate);
 	$after_date = date2sql($AfterDate);

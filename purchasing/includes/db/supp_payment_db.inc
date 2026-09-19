@@ -9,8 +9,8 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function write_supp_payment(?int $trans_no, mixed $supplier_id, mixed $bank_account,
-	mixed $date_, mixed $ref, string|int|float|bool|null $supp_amount, int|float|bool|null $supp_discount, string|array|null $memo_, int|float|bool|null $bank_charge=0, int|float|bool|null $bank_amount=0, mixed $dimension=0, mixed $dimension2=0)
+function write_supp_payment(?int $trans_no, string|int|float|bool|array|null $supplier_id, mixed $bank_account,
+	string|int|float|bool|array|null $date_, string|int|float|bool|array|null $ref, string|int|float|bool|null $supp_amount, int|float|bool|null $supp_discount, string|array|null $memo_, int|float|bool|null $bank_charge=0, int|float|bool|null $bank_amount=0, string|int|float|bool|array|null $dimension=0, string|int|float|bool|array|null $dimension2=0)
 {
 	global $Refs;
 
@@ -96,7 +96,7 @@ function write_supp_payment(?int $trans_no, mixed $supplier_id, mixed $bank_acco
 
 //------------------------------------------------------------------------------------------------
 
-function void_supp_payment(mixed $type, mixed $type_no): void
+function void_supp_payment(string|int|float|bool|null $type, string|int|float|bool|null $type_no): void
 {
 	begin_transaction();
 	hook_db_prevoid($type, $type_no);

@@ -94,7 +94,7 @@ function display_order_header(&$Order): void
 
 //---------------------------------------------------------------------------------
 
-function display_gl_items(mixed $title, &$order): void
+function display_gl_items(string|int|float|bool|supp_trans|null $title, &$order): void
 {
 	global $path_to_root;
 

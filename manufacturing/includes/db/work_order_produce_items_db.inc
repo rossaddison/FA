@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function work_order_produce(mixed $woid, mixed $ref, string|int|float|bool|null $quantity, mixed $date_, mixed $memo, int|bool|null $close_wo): void
+function work_order_produce(string|int|float|bool|null $woid, string|int|float|bool|null $ref, string|int|float|bool|null $quantity, string|int|float|bool|null $date_, string|int|float|bool|null $memo, int|bool|null $close_wo): void
 {
 	global $Refs;
 
@@ -105,7 +105,7 @@ function work_order_produce(mixed $woid, mixed $ref, string|int|float|bool|null 
 /**
  * @return array<array-key, null|string>|false
  */
-function get_work_order_produce(mixed $id)
+function get_work_order_produce(string|int|float|bool|null $id)
 {
 	$sql = "SELECT prod.*, wo.stock_id, item.description AS StockDescription, wo.closed
 			FROM ".TB_PREF."wo_manufacture prod,"
@@ -124,7 +124,7 @@ function get_work_order_produce(mixed $id)
 /**
  * @return bool|mysqli_result
  */
-function get_work_order_productions(mixed $woid)
+function get_work_order_productions(string|int|float|bool|null $woid)
 {
 	$sql = "SELECT * FROM ".TB_PREF."wo_manufacture WHERE workorder_id="
 		.db_escape($woid)." ORDER BY id";
@@ -133,7 +133,7 @@ function get_work_order_productions(mixed $woid)
 
 //--------------------------------------------------------------------------------------
 
-function exists_work_order_produce(mixed $id): bool
+function exists_work_order_produce(string|int|float|bool|array|null $id): bool
 {
 	$sql = "SELECT id FROM ".TB_PREF."wo_manufacture WHERE id=".db_escape($id);
 	$result = db_query($sql, "Cannot retreive a wo production");
@@ -151,7 +151,7 @@ function check_void_wo_production(mixed $prod_no)
 
 //--------------------------------------------------------------------------------------------
 
-function void_work_order_produce(mixed $type_no): void
+function void_work_order_produce(string|int|float|bool|null $type_no): void
 {
 	begin_transaction();
 	hook_db_prevoid(ST_MANURECEIVE, $type_no);

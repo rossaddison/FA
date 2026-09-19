@@ -33,7 +33,7 @@ function update_customer_trans_version(?int $type, mixed $versions) {
 // $trans_no = array(num1, num2,...);
 // returns array(num1=>ver1, num2=>ver2...)
 //
-function get_customer_trans_version(mixed $type, mixed $trans_no): array {
+function get_customer_trans_version(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no): array {
 	if (!is_array($trans_no))
 		$trans_no = array( $trans_no );
 
@@ -56,10 +56,10 @@ function get_customer_trans_version(mixed $type, mixed $trans_no): array {
 //----------------------------------------------------------------------------------------
 // $Total, $Tax, $Freight, $discount all in customer's currency
 // date_ is display date (non-sql)
-function write_customer_trans(mixed $trans_type, mixed $trans_no, mixed $debtor_no, mixed $BranchNo,
-	mixed $date_, mixed $reference, mixed $Total, int|float|bool|null $discount=0, string|int|float|bool|null $Tax=0, mixed $Freight=0, string|int|float|bool|null $FreightTax=0,
-	mixed $sales_type=0, mixed $order_no=0, mixed $ship_via=0, mixed $due_date="",
-	string|int|float|bool|null $AllocAmt=0, ?int $rate=0, mixed $dimension_id=0, mixed $dimension2_id=0, mixed $payment_terms=null, mixed $tax_included=0, mixed $prep_amount=0)
+function write_customer_trans(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no, mixed $debtor_no, mixed $BranchNo,
+	string|int|float|bool|null $date_, string|int|float|bool|null $reference, mixed $Total, int|float|bool|null $discount=0, string|int|float|bool|null $Tax=0, mixed $Freight=0, string|int|float|bool|null $FreightTax=0,
+	mixed $sales_type=0, string|int|float|bool|null $order_no=0, mixed $ship_via=0, mixed $due_date="",
+	string|int|float|bool|null $AllocAmt=0, ?int $rate=0, mixed $dimension_id=0, mixed $dimension2_id=0, mixed $payment_terms=null, string|int|float|bool|null $tax_included=0, mixed $prep_amount=0)
 {
 	$new = $trans_no==0;
 	$curr = get_customer_currency($debtor_no);
@@ -124,7 +124,7 @@ function write_customer_trans(mixed $trans_type, mixed $trans_no, mixed $debtor_
 /**
  * @return array<array-key, null|string>|false
  */
-function get_customer_trans(mixed $trans_id, string|int|float|bool|null $trans_type, mixed $customer_id=null)
+function get_customer_trans(string|int|float|bool|array|null $trans_id, string|int|float|bool|null $trans_type, string|int|float|bool|array|null $customer_id=null)
 {
 	global $SysPrefs;
 
@@ -224,7 +224,7 @@ function get_customer_trans(mixed $trans_id, string|int|float|bool|null $trans_t
 
 //----------------------------------------------------------------------------------------
 
-function exists_customer_trans(mixed $type, mixed $type_no): bool
+function exists_customer_trans(string|int|float|bool|array|null $type, string|int|float|bool|array|null $type_no): bool
 {
 	$sql = "SELECT trans_no FROM ".TB_PREF."debtor_trans WHERE type=".db_escape($type)."
 		AND trans_no=".db_escape($type_no);
@@ -241,7 +241,7 @@ function exists_customer_trans(mixed $type, mixed $type_no): bool
 /**
  * @return false|null|string
  */
-function get_customer_trans_order(mixed $type, mixed $type_no)
+function get_customer_trans_order(string|int|float|bool|null $type, string|int|float|bool|null $type_no)
 {
 	$sql = "SELECT order_ FROM ".TB_PREF."debtor_trans WHERE type=".db_escape($type)." AND trans_no=".db_escape($type_no);
 
@@ -257,7 +257,7 @@ function get_customer_trans_order(mixed $type, mixed $type_no)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_customer_details_from_trans(mixed $type, mixed $type_no)
+function get_customer_details_from_trans(string|int|float|bool|null $type, string|int|float|bool|null $type_no)
 {
 	$sql = "SELECT debtor.name, debtor.curr_code, branch.br_name
 		FROM "
@@ -285,7 +285,7 @@ function void_customer_trans(string|int|float|bool|null $type, string|int|float|
 
 //----------------------------------------------------------------------------------------
 
-function clear_customer_trans(mixed $type, mixed $type_no): void
+function clear_customer_trans(string|int|float|bool|null $type, string|int|float|bool|null $type_no): void
 {
 	// Delete
 	$sql = "DELETE FROM ".TB_PREF."debtor_trans WHERE type=".db_escape($type)." AND trans_no=".db_escape($type_no);
@@ -294,7 +294,7 @@ function clear_customer_trans(mixed $type, mixed $type_no): void
 }
 //----------------------------------------------------------------------------------------
 
-function post_void_customer_trans(mixed $type, mixed $type_no): void
+function post_void_customer_trans(string|int|float|bool|null $type, string|int|float|bool|null $type_no): void
 {
 	switch ($type) {
 		case ST_SALESINVOICE :

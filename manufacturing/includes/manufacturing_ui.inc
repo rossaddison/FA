@@ -83,7 +83,7 @@ function display_bom(mixed $item_check): void
 
 //--------------------------------------------------------------------------------------
 
-function display_wo_requirements(mixed $woid, ?string $quantity, bool $show_qoh=false, mixed $date=null): void
+function display_wo_requirements(string|int|float|bool|null $woid, ?string $quantity, bool $show_qoh=false, string|int|float|bool|null $date=null): void
 {
 	global $SysPrefs;
 
@@ -158,7 +158,7 @@ function display_wo_requirements(mixed $woid, ?string $quantity, bool $show_qoh=
 
 //--------------------------------------------------------------------------------------
 
-function display_wo_productions(mixed $woid): void
+function display_wo_productions(string|int|float|bool|null $woid): void
 {
 	global $path_to_root;
 
@@ -201,7 +201,7 @@ function display_wo_productions(mixed $woid): void
 
 //--------------------------------------------------------------------------------------
 
-function display_wo_issues(mixed $woid): void
+function display_wo_issues(string|int|float|bool|null $woid): void
 {
 	global $path_to_root;
 
@@ -237,7 +237,7 @@ function display_wo_issues(mixed $woid): void
 
 //--------------------------------------------------------------------------------------
 
-function display_wo_payments(mixed $woid): void
+function display_wo_payments(string|int|float|bool|null $woid): void
 {
 	global $path_to_root, $wo_cost_types;
 
@@ -273,7 +273,7 @@ function display_wo_payments(mixed $woid): void
 
 //--------------------------------------------------------------------------------------
 
-function display_wo_details(mixed $woid, bool $suppress_view_link=false): void
+function display_wo_details(string|int|float|bool|null $woid, bool $suppress_view_link=false): void
 {
 	global $wo_types_array;
 
@@ -329,7 +329,7 @@ function display_wo_details(mixed $woid, bool $suppress_view_link=false): void
 
 //--------------------------------------------------------------------------------------
 
-function display_wo_details_quick(mixed $woid, bool $suppress_view_link=false): void
+function display_wo_details_quick(string|int|float|bool|null $woid, bool $suppress_view_link=false): void
 {
 	global $wo_types_array;
 

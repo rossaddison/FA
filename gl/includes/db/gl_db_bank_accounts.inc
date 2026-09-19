@@ -12,7 +12,7 @@
 require_once($path_to_root. "/admin/db/attachments_db.inc");
 
 //---------------------------------------------------------------------------------------------
-function clear_dflt_curr_account(mixed $curr_code): void {
+function clear_dflt_curr_account(string|int|float|bool|null $curr_code): void {
 	  $sql = "UPDATE ".TB_PREF."bank_accounts SET dflt_curr_act=0 WHERE bank_curr_code="
 	  .db_escape($curr_code);
 	  db_query($sql, "could not update default currency account");
@@ -38,7 +38,7 @@ function add_bank_account(string|int|float|bool|null $account_code, string|array
 
 //---------------------------------------------------------------------------------------------
 
-function update_bank_account(mixed $id, string|int|float|bool|null $account_code, string|array|null $account_type, string|array|null $bank_account_name, 
+function update_bank_account(string|int|float|bool|array|null $id, string|int|float|bool|null $account_code, string|array|null $account_type, string|array|null $bank_account_name, 
 	string|array|null $bank_name, string|array|null $bank_account_number, string|array|null $bank_address, string|array|null $bank_curr_code, string|array|null $dflt_curr_act, string|array|null $bank_charge_act): void
 {
 	if($dflt_curr_act) 	// only one default account for any currency
@@ -57,7 +57,7 @@ function update_bank_account(mixed $id, string|int|float|bool|null $account_code
 
 //---------------------------------------------------------------------------------------------
 
-function delete_bank_account(mixed $id): void
+function delete_bank_account(string|int|float|bool|array|null $id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."bank_accounts WHERE id=".db_escape($id);
 
@@ -72,7 +72,7 @@ function delete_bank_account(mixed $id): void
 /**
  * @return array<array-key, null|string>|false
  */
-function get_bank_account(mixed $id)
+function get_bank_account(string|int|float|bool|array|null $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."bank_accounts WHERE id=".db_escape($id);
 
@@ -118,7 +118,7 @@ function get_bank_gl_account(string|int|float|bool|null $id)
 /**
  * @return null|string
  */
-function get_bank_charge_account(mixed $id)
+function get_bank_charge_account(string|int|float|bool|array|null $id)
 {
 	$sql = "SELECT bank_charge_act FROM ".TB_PREF."bank_accounts WHERE id=".db_escape($id);
 
@@ -131,7 +131,7 @@ function get_bank_charge_account(mixed $id)
 
 //---------------------------------------------------------------------------------------------
 
-function add_quick_entry(string|int|float|bool|null $description, mixed $type, int|float|bool|null $base_amount, mixed $base_desc, string|int|array|null $bal_type, mixed $usage): void
+function add_quick_entry(string|int|float|bool|null $description, string|int|float|bool|null $type, int|float|bool|null $base_amount, mixed $base_desc, string|int|array|null $bal_type, mixed $usage): void
 {
 	$sql = "INSERT INTO ".TB_PREF."quick_entries (description, type, base_amount, base_desc, bal_type, `usage`) 
 	VALUES (".db_escape($description).", ".db_escape($type).", "
@@ -142,7 +142,7 @@ function add_quick_entry(string|int|float|bool|null $description, mixed $type, i
 
 //---------------------------------------------------------------------------------------------
 
-function update_quick_entry(string|int|float|bool|null $selected_id, mixed $description, mixed $type, int|float|bool|null $base_amount, mixed $base_desc, string|int|array|null $bal_type, mixed $usage): void
+function update_quick_entry(string|int|float|bool|null $selected_id, string|int|float|bool|null $description, string|int|float|bool|null $type, int|float|bool|null $base_amount, mixed $base_desc, string|int|array|null $bal_type, mixed $usage): void
 {
 	$sql = "UPDATE ".TB_PREF."quick_entries	SET description = ".db_escape($description).",
 		type=".db_escape($type).", base_amount=".db_escape($base_amount)
@@ -163,7 +163,7 @@ function delete_quick_entry(string|int|float|bool|null $selected_id): void
 
 //---------------------------------------------------------------------------------------------
 
-function add_quick_entry_line(string|int|float|bool|null $qid, mixed $action, mixed $dest_id, int|float|bool|null $amount, mixed $dim, mixed $dim2, string|array|null $memo): void
+function add_quick_entry_line(string|int|float|bool|null $qid, string|int|float|bool|null $action, mixed $dest_id, int|float|bool|null $amount, mixed $dim, string|int|float|bool|null $dim2, string|array|null $memo): void
 {
 	$sql = "INSERT INTO ".TB_PREF."quick_entry_lines 
 		(qid, action, dest_id, amount, dimension_id, dimension2_id, memo) 
@@ -176,7 +176,7 @@ function add_quick_entry_line(string|int|float|bool|null $qid, mixed $action, mi
 
 //---------------------------------------------------------------------------------------------
 
-function update_quick_entry_line(string|int|float|bool|null $selected_id, mixed $qid, mixed $action, mixed $dest_id, int|float|bool|null $amount, mixed $dim, mixed $dim2, string|array|null $memo): void
+function update_quick_entry_line(string|int|float|bool|null $selected_id, mixed $qid, string|int|float|bool|null $action, mixed $dest_id, int|float|bool|null $amount, mixed $dim, string|int|float|bool|null $dim2, string|array|null $memo): void
 {
 	$sql = "UPDATE ".TB_PREF."quick_entry_lines SET qid = ".db_escape($qid)
 		.", action=".db_escape($action).",
@@ -211,7 +211,7 @@ function has_quick_entries(?string $type=null): bool
 /**
  * @return bool|mysqli_result
  */
-function get_quick_entries(mixed $type = null)
+function get_quick_entries(string|int|float|bool|null $type = null)
 {
 	$sql = "SELECT * FROM ".TB_PREF."quick_entries";
 	if ($type != null)
@@ -224,7 +224,7 @@ function get_quick_entries(mixed $type = null)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_quick_entry(mixed $selected_id)
+function get_quick_entry(string|int|float|bool|array|null $selected_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."quick_entries WHERE id=".db_escape($selected_id);
 
@@ -376,7 +376,7 @@ function get_default_customer_bank_account(string|array|null $cust_id)
 	return $ba['id'];
 }
 
-function get_default_supplier_bank_account(mixed $supplier_id)
+function get_default_supplier_bank_account(string|int|float|bool|array|null $supplier_id)
 {
 	$sql = "SELECT curr_code FROM ".TB_PREF."suppliers WHERE supplier_id=".db_escape($supplier_id);
 	$result = db_query($sql, "could not retreive default supplier currency code");
@@ -422,7 +422,7 @@ function identify_bank_account(mixed $account_number)
 /**
  * @return null|string
  */
-function get_bank_account_currency(mixed $id)
+function get_bank_account_currency(string|int|float|bool|array|null $id)
 {
 	$sql= "SELECT bank_curr_code FROM ".TB_PREF."bank_accounts WHERE id=".db_escape($id);
 	$result = db_query($sql, "retreive bank account currency");

@@ -20,8 +20,8 @@
 	$bank_amount - in bank currency (before charge)
 	$charge - in bank currency
 */
-function write_customer_payment(mixed $trans_no, mixed $customer_id, mixed $branch_id, mixed $bank_account,
-	mixed $date_, mixed $ref, string|int|float|bool|null $amount, int|float|bool|null $discount, string|array|null $memo_, ?int $rate=0, int|float|bool|null $charge=0, int|float|bool|null $bank_amount=0, mixed $dim1=0, mixed $dim2=0)
+function write_customer_payment(string|int|float|bool|array|null $trans_no, string|int|float|bool|array|null $customer_id, string|int|float|bool|array|null $branch_id, mixed $bank_account,
+	string|int|float|bool|array|null $date_, string|int|float|bool|array|null $ref, string|int|float|bool|null $amount, int|float|bool|null $discount, string|array|null $memo_, ?int $rate=0, int|float|bool|null $charge=0, int|float|bool|null $bank_amount=0, mixed $dim1=0, string|int|float|bool|array|null $dim2=0)
 {
 	global $Refs;
 
@@ -121,7 +121,7 @@ function write_customer_payment(mixed $trans_no, mixed $customer_id, mixed $bran
 
 //-------------------------------------------------------------------------------------------------
 
-function void_customer_payment(mixed $type, mixed $type_no): void
+function void_customer_payment(string|int|float|bool|null $type, string|int|float|bool|null $type_no): void
 {
 	begin_transaction();
 

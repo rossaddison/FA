@@ -177,7 +177,7 @@ function update_po(&$po_obj)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_po(mixed $order_no) {
+function get_po(string|int|float|bool|null $order_no) {
     $sql = "SELECT * FROM ".TB_PREF."purch_orders WHERE order_no = ".db_escape($order_no);
     $result = db_query($sql);
 
@@ -186,7 +186,7 @@ function get_po(mixed $order_no) {
 
 //----------------------------------------------------------------------------------------
 
-function read_po_header(mixed $order_no, &$order): bool
+function read_po_header(string|int|float|bool|null $order_no, &$order): bool
 {
     	$sql = "SELECT po.*, supplier.*, loc.location_name 
 		FROM ".TB_PREF."purch_orders po,"
@@ -230,7 +230,7 @@ function read_po_header(mixed $order_no, &$order): bool
 
 //----------------------------------------------------------------------------------------
 
-function read_po_items(mixed $order_no, &$order, bool $open_items_only=false): void
+function read_po_items(string|int|float|bool|null $order_no, &$order, bool $open_items_only=false): void
 {
 	/*now populate the line po array with the purchase order details records */
 
@@ -275,7 +275,7 @@ function read_po_items(mixed $order_no, &$order, bool $open_items_only=false): v
 
 //----------------------------------------------------------------------------------------
 
-function read_po(mixed $order_no, &$order, bool $open_items_only=false): void
+function read_po(string|int|float|bool|array|null $order_no, &$order, bool $open_items_only=false): void
 {
 	$result = read_po_header($order_no, $order);
 
@@ -288,7 +288,7 @@ function read_po(mixed $order_no, &$order, bool $open_items_only=false): void
 /**
  * @return bool|mysqli_result
  */
-function get_po_items(mixed $order_no)
+function get_po_items(string|int|float|bool|null $order_no)
 {
 	$sql = "SELECT item_code, quantity_ordered, quantity_received, qty_invoiced
 		FROM ".TB_PREF."purch_order_details
@@ -315,7 +315,7 @@ function get_short_info(string|array|null $stock_id)
 /**
  * @return non-falsy-string
  */
-function get_sql_for_po_search_completed(string|array|null $from, string|array|null $to, mixed $supplier_id=ALL_TEXT, mixed $location=ALL_TEXT,
+function get_sql_for_po_search_completed(string|array|null $from, string|array|null $to, string|int|float|bool|array|null $supplier_id=ALL_TEXT, string|int|float|bool|array|null $location=ALL_TEXT,
 	string|array|null $order_number = '', string|array|null $stock_id = '', string|bool|array|null $also_closed=false): string
 {
 	$sql = "SELECT 
@@ -378,7 +378,7 @@ function get_sql_for_po_search_completed(string|array|null $from, string|array|n
 	return $sql;
 }
 
-function get_sql_for_po_search(string|array|null $from, string|array|null $to, mixed $supplier_id=ALL_TEXT, mixed $location=ALL_TEXT, string|int|float|bool|null $order_number='', string|array|null $stock_id=''): string
+function get_sql_for_po_search(string|array|null $from, string|array|null $to, string|int|float|bool|array|null $supplier_id=ALL_TEXT, string|int|float|bool|array|null $location=ALL_TEXT, string|int|float|bool|null $order_number='', string|array|null $stock_id=''): string
 {
 	$sql = "SELECT 
 		porder.order_no, 

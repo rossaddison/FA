@@ -51,7 +51,7 @@ function update_customer(string|array|null $customer_id, string|array|null $Cust
 	db_query($sql,"The customer could not be updated");
 }
 
-function delete_customer(mixed $customer_id): void
+function delete_customer(string|int|float|bool|array|null $customer_id): void
 {
 	begin_transaction();
 	delete_entity_contacts('customer', $customer_id);
@@ -68,7 +68,7 @@ function delete_customer(mixed $customer_id): void
 /**
  * @return array<array-key, null|string>|false
  */
-function get_customer_details(mixed $customer_id, string|array|null $to=null, string|bool|array|null $all=true)
+function get_customer_details(string|int|float|bool|array|null $customer_id, string|array|null $to=null, string|bool|array|null $all=true)
 {
 
 	if ($to == null)
@@ -127,7 +127,7 @@ function get_customer_details(mixed $customer_id, string|array|null $to=null, st
 /**
  * @return array<array-key, null|string>|false
  */
-function get_customer(mixed $customer_id)
+function get_customer(string|int|float|bool|array|null $customer_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."debtors_master WHERE debtor_no=".db_escape($customer_id);
 
@@ -139,7 +139,7 @@ function get_customer(mixed $customer_id)
 /**
  * @return false|null|string
  */
-function get_customer_name(mixed $customer_id)
+function get_customer_name(string|int|float|bool|array|null $customer_id)
 {
 	$sql = "SELECT name FROM ".TB_PREF."debtors_master WHERE debtor_no=".db_escape($customer_id);
 
@@ -179,7 +179,7 @@ function get_customer_contacts(?string $customer_id, ?string $action=null): arra
 	return $results;
 }
 
-function get_current_cust_credit(mixed $customer_id)
+function get_current_cust_credit(string|int|float|bool|null $customer_id)
 {
 	$custdet = get_customer_details($customer_id);
 
@@ -189,7 +189,7 @@ function get_current_cust_credit(mixed $customer_id)
 
 }
 
-function is_new_customer(mixed $id): bool
+function is_new_customer(string|int|float|bool|null $id): bool
 {
 	$tables = array('cust_branch', 'debtor_trans', 'recurrent_invoices', 'sales_orders');
 
@@ -199,7 +199,7 @@ function is_new_customer(mixed $id): bool
 /**
  * @return array<array-key, null|string>|false
  */
-function get_customer_by_ref(mixed $reference)
+function get_customer_by_ref(string|int|float|bool|null $reference)
 {
 	$sql = "SELECT * FROM ".TB_PREF."debtors_master WHERE debtor_ref=".db_escape($reference);
 
@@ -210,7 +210,7 @@ function get_customer_by_ref(mixed $reference)
 
 //----------------------------------------------------------------------------------
 
-function get_customer_currency(mixed $customer_id=null, mixed $branch_id=null)
+function get_customer_currency(string|int|float|bool|array|null $customer_id=null, string|int|float|bool|null $branch_id=null)
 {
     $sql = "SELECT curr_code
     	FROM ".TB_PREF."debtors_master cust

@@ -14,8 +14,8 @@ require_once($path_to_root. "/admin/db/attachments_db.inc");
 /*
 	Common entry procedure for all work order types
 */
-function add_work_order(mixed $wo_ref, mixed $loc_code, int|float|bool|null $units_reqd, mixed $stock_id,
-	mixed $type, mixed $date_, mixed $required_by, mixed $memo_, int|float|bool|null $costs, mixed $cr_acc, int|float|bool|null $labour, mixed $cr_lab_acc): int|string
+function add_work_order(mixed $wo_ref, string|int|float|bool|null $loc_code, int|float|bool|null $units_reqd, string|int|float|bool|null $stock_id,
+	string|int|float|bool|null $type, string|int|float|bool|null $date_, mixed $required_by, string|int|float|bool|null $memo_, int|float|bool|null $costs, mixed $cr_acc, int|float|bool|null $labour, mixed $cr_lab_acc): int|string
 {
 	global $Refs;
 
@@ -73,8 +73,8 @@ function add_work_order(mixed $wo_ref, mixed $loc_code, int|float|bool|null $uni
 
 //--------------------------------------------------------------------------------------
 
-function update_work_order(mixed $woid, mixed $loc_code, int|float|bool|null $units_reqd, mixed $stock_id,
-					mixed $date_, mixed $required_by, mixed $memo_): void
+function update_work_order(string|int|float|bool|null $woid, string|int|float|bool|null $loc_code, int|float|bool|null $units_reqd, string|int|float|bool|null $stock_id,
+					string|int|float|bool|null $date_, mixed $required_by, string|int|float|bool|null $memo_): void
 {
 	begin_transaction();
 	$args = func_get_args();
@@ -100,7 +100,7 @@ function update_work_order(mixed $woid, mixed $loc_code, int|float|bool|null $un
 	commit_transaction();
 }
 
-function delete_work_order(mixed $woid, mixed $stock_id, mixed $qty, mixed $date): void
+function delete_work_order(string|int|float|bool|null $woid, string|int|float|bool|null $stock_id, mixed $qty, string|int|float|bool|null $date): void
 {
 	begin_transaction();
 	hook_db_prevoid(ST_WORKORDER, $woid);
@@ -124,7 +124,7 @@ function delete_work_order(mixed $woid, mixed $stock_id, mixed $qty, mixed $date
 /**
  * @return array<array-key, null|string>|false
  */
-function get_work_order(mixed $woid, bool $allow_null=false)
+function get_work_order(string|int|float|bool|array|null $woid, bool $allow_null=false)
 {
     $sql = "SELECT wo.*,st.description As StockItemName,l.location_name,
     		l.delivery_address,l.email, l.contact, st.inventory_account, st.wip_account
@@ -151,7 +151,7 @@ function get_work_order(mixed $woid, bool $allow_null=false)
 
 //--------------------------------------------------------------------------------------
 
-function work_order_has_productions(mixed $woid): bool
+function work_order_has_productions(string|int|float|bool|null $woid): bool
 {
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."wo_manufacture WHERE workorder_id=".db_escape($woid);
 	$result = db_query($sql, "query work order for productions");
@@ -163,7 +163,7 @@ function work_order_has_productions(mixed $woid): bool
 
 //--------------------------------------------------------------------------------------
 
-function work_order_has_issues(mixed $woid): bool
+function work_order_has_issues(string|int|float|bool|null $woid): bool
 {
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."wo_issues WHERE workorder_id=".db_escape($woid);
 	$result = db_query($sql, "query work order for issues");
@@ -174,7 +174,7 @@ function work_order_has_issues(mixed $woid): bool
 
 //--------------------------------------------------------------------------------------
 
-function work_order_has_payments(mixed $woid): bool
+function work_order_has_payments(string|int|float|bool|null $woid): bool
 {
 	$result = get_gl_wo_cost_trans($woid);
 
@@ -183,7 +183,7 @@ function work_order_has_payments(mixed $woid): bool
 
 //--------------------------------------------------------------------------------------
 
-function release_work_order(mixed $woid, mixed $releaseDate, mixed $memo_): void
+function release_work_order(string|int|float|bool|null $woid, mixed $releaseDate, string|int|float|bool|null $memo_): void
 {
 	begin_transaction();
 
@@ -207,7 +207,7 @@ function release_work_order(mixed $woid, mixed $releaseDate, mixed $memo_): void
 
 //--------------------------------------------------------------------------------------
 
-function close_work_order(mixed $woid): void
+function close_work_order(string|int|float|bool|null $woid): void
 {
 	$sql = "UPDATE ".TB_PREF."workorders SET closed=1 WHERE id = ".db_escape($woid);
 	db_query($sql, "could not close work order");
@@ -228,7 +228,7 @@ function work_order_is_closed(?string $woid): bool
 	Update finished items quantity in work order, and close order either if all the order is produced,
 	or on user demand. Returns calculated unit cost on close, or null otherwise.
 */
-function work_order_update_finished_quantity(mixed $woid, mixed $quantity, int|bool|null $force_close=0): int|string
+function work_order_update_finished_quantity(string|int|float|bool|null $woid, string|int|float|bool|null $quantity, int|bool|null $force_close=0): int|string
 {
 
 	$sql = "UPDATE ".TB_PREF."workorders SET units_issued = units_issued + ".db_escape($quantity)."
@@ -244,7 +244,7 @@ function work_order_update_finished_quantity(mixed $woid, mixed $quantity, int|b
 	return db_num_affected_rows();	// returns 1 if WO has been closed
 }
 
-function reopen_work_order(mixed $woid): void
+function reopen_work_order(string|int|float|bool|null $woid): void
 {
 		// FIXME: update_material_cost
 //		update_material_cost($work_order['stock_id'], -$work_order['units_issued'], ... );
@@ -263,7 +263,7 @@ function reopen_work_order(mixed $woid): void
 /*
 	Void all work order related operations
 */
-function void_work_order(mixed $woid): void
+function void_work_order(string|int|float|bool|null $woid): void
 {
 	begin_transaction();
 	hook_db_prevoid(ST_WORKORDER, $woid);
@@ -303,7 +303,7 @@ function void_work_order(mixed $woid): void
 	commit_transaction();
 }
 
-function get_sql_for_work_orders(?int $outstanding_only, string|array|null $stock_id, mixed $location = ALL_TEXT, string|array|null $order_no='', string|array|null $order_ref = '', int|bool|array|null $overdue = false): string
+function get_sql_for_work_orders(?int $outstanding_only, string|array|null $stock_id, string|int|float|bool|array|null $location = ALL_TEXT, string|array|null $order_no='', string|array|null $order_ref = '', int|bool|array|null $overdue = false): string
 {
 	$sql = "SELECT
 		workorder.id,
@@ -387,7 +387,7 @@ function get_sql_for_where_used(string|array|null $stock_id): string
 /**
  * @return float|int<min, max>
  */
-function get_gl_wo_cost(mixed $woid, ?int $cost_type): float|int
+function get_gl_wo_cost(string|int|float|bool|null $woid, ?int $cost_type): float|int
 {
 	$cost = 0;
 	$result = get_gl_wo_cost_trans($woid, $cost_type);

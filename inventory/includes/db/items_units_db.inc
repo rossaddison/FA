@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function write_item_unit(mixed $selected, mixed $abbr, mixed $description, mixed $decimals): void
+function write_item_unit(string|int|float|bool|array|null $selected, mixed $abbr, string|int|float|bool|null $description, mixed $decimals): void
 {
     if($selected!='')
 		$sql = "UPDATE ".TB_PREF."item_units SET
@@ -77,7 +77,7 @@ function get_all_item_units(int|bool|array|null $all=false) {
 /**
  * @return false|null|string
  */
-function get_unit_dec(mixed $stock_id)
+function get_unit_dec(string|int|float|bool|null $stock_id)
 {
 	$sql = "SELECT decimals FROM ".TB_PREF."item_units,	".TB_PREF."stock_master
 		WHERE abbr=units AND stock_id=".db_escape($stock_id)." LIMIT 1";

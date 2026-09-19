@@ -63,8 +63,8 @@ function add_stock_transfer(mixed $Items, string|array|null $location_from, stri
 // std_cost is in HOME currency
 // it seems the standard_cost field is not used at all
 
-function add_stock_transfer_item(int|float|null $transfer_id, mixed $stock_id, mixed $location_from, mixed $location_to,
-	mixed $date_, mixed $reference, mixed $quantity): void
+function add_stock_transfer_item(int|float|null $transfer_id, string|int|float|bool|null $stock_id, mixed $location_from, mixed $location_to,
+	string|int|float|bool|null $date_, string|int|float|bool|null $reference, string|int|float|bool|null $quantity): void
 {
 	add_stock_move(ST_LOCTRANSFER, $stock_id, $transfer_id, $location_from,
        	$date_, $reference, -$quantity, 0);
@@ -81,7 +81,7 @@ function add_stock_transfer_item(int|float|null $transfer_id, mixed $stock_id, m
 /**
  * @return array<array-key, null|string>|false
  */
-function get_stock_transfer(mixed $trans_no)
+function get_stock_transfer(string|int|float|bool|array|null $trans_no)
 {
 	// retrieve common data from any two from/to move records
 	$sql = "SELECT loc_from.*, loc_to.*
@@ -105,7 +105,7 @@ function get_stock_transfer(mixed $trans_no)
 
 //-------------------------------------------------------------------------------------------------------------
 
-function get_stock_transfer_items(mixed $trans_no)
+function get_stock_transfer_items(string|int|float|bool|array|null $trans_no)
 {
 	$result = get_stock_moves(ST_LOCTRANSFER, $trans_no);
 
@@ -119,7 +119,7 @@ function get_stock_transfer_items(mixed $trans_no)
 
 //-------------------------------------------------------------------------------------------------------------
 
-function void_stock_transfer(mixed $type_no): void
+function void_stock_transfer(string|int|float|bool|null $type_no): void
 {
 	hook_db_prevoid(ST_LOCTRANSFER, $type_no);
 	void_stock_move(ST_LOCTRANSFER, $type_no);

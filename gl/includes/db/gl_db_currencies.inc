@@ -53,7 +53,7 @@ function delete_currency(string|int|float|bool|null $curr_code): void
 /**
  * @return array<array-key, null|string>|false
  */
-function get_currency(mixed $curr_code)
+function get_currency(string|int|float|bool|array|null $curr_code)
 {
 	$sql = "SELECT * FROM ".TB_PREF."currencies WHERE curr_abrev=".db_escape($curr_code);
 	$result = db_query($sql, "could not get currency $curr_code");

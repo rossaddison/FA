@@ -12,7 +12,7 @@
 //----------------------------------------------------------------------------------------
 
 function add_cust_allocation(string|int|float|bool|null $amount, mixed $trans_type_from, mixed $trans_no_from,
-	mixed $trans_type_to, mixed $trans_no_to, mixed $person_id, mixed $date_): void
+	mixed $trans_type_to, mixed $trans_no_to, string|int|float|bool|null $person_id, string|int|float|bool|null $date_): void
 {
 	$date = date2sql($date_);
 	$sql = "INSERT INTO ".TB_PREF."cust_allocations (
@@ -50,7 +50,7 @@ function get_cust_allocation(string|int|float|bool|null $trans_id)
 //----------------------------------------------------------------------------------------
 //	Update debtor trans alloc field according to current status of cust_allocations
 //
-function update_debtor_trans_allocation(mixed $trans_type, mixed $trans_no, mixed $person_id): void
+function update_debtor_trans_allocation(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $person_id): void
 {
 	$dec = user_price_dec();
 	$sql = 
@@ -71,14 +71,14 @@ function update_debtor_trans_allocation(mixed $trans_type, mixed $trans_no, mixe
 /**
  * @return null
  */
-function void_cust_allocations(string|int|float|bool|null $type, string|int|float|bool|null $type_no, mixed $date="")
+function void_cust_allocations(string|int|float|bool|null $type, string|int|float|bool|null $type_no, string|int|float|bool|null $date="")
 {
 	return clear_cust_alloctions($type, $type_no, null, $date);
 }
 
 //-------------------------------------------------------------------------------------------------------------
 //
-function clear_cust_alloctions(string|int|float|bool|null $type, string|int|float|bool|null $type_no, mixed $person_id=null, mixed $date=""): void
+function clear_cust_alloctions(string|int|float|bool|null $type, string|int|float|bool|null $type_no, string|int|float|bool|null $person_id=null, string|int|float|bool|null $date=""): void
 {
 	$sql = "UPDATE  ".TB_PREF."cust_allocations ca
 				LEFT JOIN ".TB_PREF."debtor_trans paym ON ca.trans_type_from=paym.type AND ca.trans_no_from=paym.trans_no AND ca.person_id=paym.debtor_no
@@ -108,7 +108,7 @@ function clear_cust_alloctions(string|int|float|bool|null $type, string|int|floa
 }
 //-------------------------------------------------------------------------------------------------------------
 
-function get_allocatable_from_cust_sql(mixed $customer_id, bool $settled): string
+function get_allocatable_from_cust_sql(string|int|float|bool|array|null $customer_id, bool $settled): string
 {
 	$sql = "SELECT
 		trans.type,
@@ -142,7 +142,7 @@ function get_allocatable_from_cust_sql(mixed $customer_id, bool $settled): strin
 	return $sql;
 }
 
-function get_allocatable_sales_orders(mixed $customer_id = null, mixed $trans_no=null, mixed $type=null): string
+function get_allocatable_sales_orders(string|int|float|bool|null $customer_id = null, string|int|float|bool|array|null $trans_no=null, string|int|float|bool|null $type=null): string
 {
 	$sql = "SELECT
 		sorder.trans_type as type,
@@ -189,7 +189,7 @@ function get_allocatable_sales_orders(mixed $customer_id = null, mixed $trans_no
 /**
  * @return bool|mysqli_result
  */
-function get_allocatable_to_cust_transactions(mixed $customer_id = null, mixed $trans_no=null, mixed $type=null)
+function get_allocatable_to_cust_transactions(string|int|float|bool|null $customer_id = null, string|int|float|bool|array|null $trans_no=null, string|int|float|bool|null $type=null)
 {
 	$sql = "SELECT
 		trans.type,
@@ -253,7 +253,7 @@ function get_allocatable_to_cust_transactions(mixed $customer_id = null, mixed $
 /**
  * @return bool|mysqli_result
  */
-function get_allocatable_from_cust_transactions(mixed $customer_id, mixed $trans_no=null, mixed $type=null)
+function get_allocatable_from_cust_transactions(string|int|float|bool|null $customer_id, string|int|float|bool|array|null $trans_no=null, string|int|float|bool|null $type=null)
 {
 
 	$sql = "SELECT
@@ -371,7 +371,7 @@ function get_sql_for_customer_allocation_inquiry(string|array|null $from, string
    	return $sql;
 }
 
-function credit_sales_invoice_allocate(mixed $invoice_no, mixed $credit_no, string|int|float|bool|null $amount, mixed $date): bool
+function credit_sales_invoice_allocate(mixed $invoice_no, mixed $credit_no, string|int|float|bool|null $amount, string|int|float|bool|null $date): bool
 {
 
 	$sql = "SELECT ov_freight+ov_gst+ov_amount+ov_freight_tax as total, alloc, debtor_no FROM ".TB_PREF."debtor_trans

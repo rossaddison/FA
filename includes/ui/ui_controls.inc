@@ -40,7 +40,7 @@ function get_post(string|array $name, string|int|float|bool|array|null $dflt='')
 //---------------------------------------------------------------------------------
 $form_nested = -1;
 
-function start_form(bool $multi=false, bool $dummy=false, mixed $action="", ?string $name=""): void
+function start_form(bool $multi=false, bool $dummy=false, string|int|float|bool|null $action="", ?string $name=""): void
 {
 	// $dummy - leaved for compatibility with 2.0 API
 	global $form_nested;
@@ -133,7 +133,7 @@ function start_outer_table(mixed $class=false, ?string $extra="", string|int|nul
 	echo "<tr valign=top><td>\n"; // outer table
 }
 
-function table_section(mixed $number=1, string|bool|null $width=false): void
+function table_section(string|int|float|bool|null $number=1, string|bool|null $width=false): void
 {
 	if ($number > 1)
 	{
@@ -180,7 +180,7 @@ function meta_forward(string|int|float|bool|null $forward_to, ?string $params=""
 // (for use in wiki help system), otherwise result is array of label 
 // with underlined hotkey letter and access property string.
 //
-function access_string(mixed $label, mixed $clean=false): array|string
+function access_string(string|int|float|bool|null $label, mixed $clean=false): array|string
 {
 	$access = '';
 	$slices = array();
@@ -197,7 +197,7 @@ function access_string(mixed $label, mixed $clean=false): array|string
 	return $clean ? $label : array($label, $access);
 }
 
-function hyperlink_back(mixed $center=true, mixed $no_menu=true, mixed $type_no=0, mixed $trans_no=0, mixed $final=false): void
+function hyperlink_back(mixed $center=true, mixed $no_menu=true, string|int|float|bool|null $type_no=0, string|int|float|bool|array|null $trans_no=0, mixed $final=false): void
 {
 	global $path_to_root;
 
@@ -226,7 +226,7 @@ function hyperlink_back(mixed $center=true, mixed $no_menu=true, mixed $type_no=
 	echo "<br>";
 }
 
-function hyperlink_no_params(mixed $target, mixed $label, bool $center=true): void
+function hyperlink_no_params(mixed $target, string|int|float|bool|null $label, bool $center=true): void
 {
 	$id = default_focus();
 	$pars = access_string($label);
@@ -239,14 +239,14 @@ function hyperlink_no_params(mixed $target, mixed $label, bool $center=true): vo
 		echo "</center>";
 }
 
-function hyperlink_no_params_td(mixed $target, mixed $label): void
+function hyperlink_no_params_td(mixed $target, string|int|float|bool|null $label): void
 {
 	echo "<td>";
 	hyperlink_no_params($target, $label);
 	echo "</td>\n";
 }
 
-function viewer_link(mixed $label, ?string $url='', ?string $class='', string|int|float|bool|null $id='',  string|bool|null $icon=null)
+function viewer_link(string|int|float|bool|null $label, ?string $url='', ?string $class='', string|int|float|bool|null $id='',  string|bool|null $icon=null)
 {
 	global $path_to_root;
 	
@@ -268,7 +268,7 @@ function viewer_link(mixed $label, ?string $url='', ?string $class='', string|in
  return $preview_str;
 }
 
-function menu_link(?string $url, mixed $label, mixed $id=null): string
+function menu_link(?string $url, string|int|float|bool|null $label, string|int|float|bool|null $id=null): string
 {
 	global $path_to_root;
 
@@ -282,7 +282,7 @@ function menu_link(?string $url, mixed $label, mixed $id=null): string
 	return "<a href='$url' class='menu_option' id='$id' $pars[1]>$pars[0]</a>";
 }
 
-function submenu_option(?string $title, ?string $url, mixed $id=null): void
+function submenu_option(?string $title, ?string $url, string|int|float|bool|null $id=null): void
 {
 	display_note( menu_link($url, $title, $id), 0, 1);
 }
@@ -292,7 +292,7 @@ function submenu_view(?string $title, ?int $type, string|array|null $number, str
 	display_note(get_trans_view_str($type, $number, $title, false, 'viewlink', $id), 0, 1);
 }
 
-function submenu_print(?string $title, string|int|null $type, mixed $number, ?string $id=null, ?int $email=0, ?int $extra=0): void
+function submenu_print(?string $title, string|int|null $type, string|int|float|bool|array|null $number, ?string $id=null, ?int $email=0, ?int $extra=0): void
 {
 	display_note(print_document_link($number, $title, true, $type, false, 'printlink', $id, $email, $extra), 0, 1);
 }
@@ -321,7 +321,7 @@ function hyperlink_params_td(?string $target, ?string $label, ?string $params): 
 
 //-----------------------------------------------------------------------------------
 
-function hyperlink_params_separate(string|int|float|bool|null $target, mixed $label, string|int|float|bool|null $params, bool $center=false): void
+function hyperlink_params_separate(string|int|float|bool|null $target, string|int|float|bool|null $label, string|int|float|bool|null $params, bool $center=false): void
 {
 	$id = default_focus();
 
@@ -333,7 +333,7 @@ function hyperlink_params_separate(string|int|float|bool|null $target, mixed $la
 		echo "</center>";
 }
 
-function hyperlink_params_separate_td(mixed $target, mixed $label, mixed $params): void
+function hyperlink_params_separate_td(mixed $target, string|int|float|bool|null $label, string|int|float|bool|null $params): void
 {
 	echo "<td>";
 	hyperlink_params_separate($target, $label, $params);
@@ -471,7 +471,7 @@ function tabbed_content_end(): void {
 	div_end(); // tabs widget
 }
 
-function tab_changed(mixed $name): array|null
+function tab_changed(string|int|float|bool|null $name): array|null
 {
 	$to = find_submit("{$name}_", false);
 	if (!$to) return null;
@@ -646,7 +646,7 @@ function editor_return(mixed $vars, mixed $restore_fun=''): void {
 /**
  * @return 0|array<array-key, mixed>|string
  */
-function confirm_dialog(mixed $submit, mixed $msg): int|array|string {
+function confirm_dialog(mixed $submit, string|int|float|bool|null $msg): int|array|string {
 	if (find_post($submit)) {
 		display_warning($msg);
 		br();
@@ -660,7 +660,7 @@ function confirm_dialog(mixed $submit, mixed $msg): int|array|string {
 	Confirm dialog to be used optionally in final form checking routine.
 	Displays warning conditionally unless it was displayed
 */
-function display_confirmation(mixed $msg): bool
+function display_confirmation(string|int|float|bool|null $msg): bool
 {
 	global $Ajax;
 

@@ -69,7 +69,7 @@ function add_to_order(&$order, string|array|null $new_item, string|int|float|boo
 }
 //---------------------------------------------------------------------------------
 
-function get_customer_details_to_order(&$order, mixed $customer_id, mixed $branch_id): string
+function get_customer_details_to_order(&$order, string|int|float|bool|array|null $customer_id, string|int|float|bool|array|null $branch_id): string
 {
 	global $SysPrefs;
 	
@@ -471,7 +471,7 @@ function display_order_header(&$order, bool $editable, ?string $date_text): stri
 
 //--------------------------------------------------------------------------------
 
-function sales_order_item_controls(&$order, &$rowcounter, mixed $line_no=-1): void
+function sales_order_item_controls(&$order, &$rowcounter, string|int|float|bool|null $line_no=-1): void
 {
     global $Ajax;
 

@@ -32,8 +32,8 @@ include_once($path_to_root . "/sales/includes/db/customers_db.inc");
 // $date_ is display date (non-sql)
 // $amount is in CUSTOMER'S currency
 
-function add_gl_trans_customer(?int $type, mixed $type_no, mixed $date_, mixed $account, mixed $dimension, mixed $dimension2,
-	string|int|float|bool|null $amount, mixed $customer_id, ?string $err_msg="", ?int $rate=0)
+function add_gl_trans_customer(?int $type, string|int|float|bool|null $type_no, string|int|float|bool|null $date_, string|int|float|bool|null $account, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2,
+	string|int|float|bool|null $amount, string|int|float|bool|null $customer_id, ?string $err_msg="", ?int $rate=0)
 {
 	if ($err_msg == "")
 		$err_msg = "The customer GL transaction could not be inserted";
@@ -45,7 +45,7 @@ function add_gl_trans_customer(?int $type, mixed $type_no, mixed $date_, mixed $
 
 //----------------------------------------------------------------------------------------
 
-function get_calculated_price(mixed $stock_id, string|int|float|bool|null $add_pct): int|float
+function get_calculated_price(string|int|float|bool|null $stock_id, string|int|float|bool|null $add_pct): int|float
 {
 	$avg = get_unit_cost($stock_id);
 	if ($avg == 0)
@@ -53,7 +53,7 @@ function get_calculated_price(mixed $stock_id, string|int|float|bool|null $add_p
 	return round2($avg * (1 + $add_pct / 100), user_price_dec());
 }
 
-function round_to_nearest(mixed $price, string|int|float|bool|null $round_to)
+function round_to_nearest(string|int|float|bool|null $price, string|int|float|bool|null $round_to)
 {
 	if ($price == 0)
 		return 0;
@@ -70,7 +70,7 @@ function round_to_nearest(mixed $price, string|int|float|bool|null $round_to)
 
 }
 
-function get_price (mixed $stock_id, mixed $currency, mixed $sales_type_id, mixed $factor=null, mixed $date=null)
+function get_price (string|int|float|bool|array|null $stock_id, string|int|float|bool|array|null $currency, mixed $sales_type_id, mixed $factor=null, string|int|float|bool|array|null $date=null)
 {
 	if ($date == null)
 	    $date = new_doc_date();
@@ -138,8 +138,8 @@ function get_price (mixed $stock_id, mixed $currency, mixed $sales_type_id, mixe
 //  When $std==true price is calculated as a sum of all included stock items,
 //	otherwise all prices set for kits and items are accepted.
 //
-function get_kit_price(mixed $item_code, mixed $currency, mixed $sales_type_id, mixed $factor=null, 
-	mixed $date=null, mixed $std = false)
+function get_kit_price(string|int|float|bool|array|null $item_code, string|int|float|bool|array|null $currency, mixed $sales_type_id, mixed $factor=null, 
+	string|int|float|bool|array|null $date=null, mixed $std = false)
 {
 	$kit_price = 0.00;
 	if (!$std) {
@@ -223,7 +223,7 @@ function get_location(&$cart)
 //
 //	$trans_no - array of trans nums; special case trans_no==0 - new doc
 //
-function read_sales_trans(mixed $doc_type, mixed $trans_no, &$cart): bool
+function read_sales_trans(mixed $doc_type, string|int|float|bool|array|null $trans_no, &$cart): bool
 {
 	if (!is_array($trans_no) && $trans_no)
 		$trans_no = array($trans_no);
@@ -294,7 +294,7 @@ function read_sales_trans(mixed $doc_type, mixed $trans_no, &$cart): bool
 /**
  * @return bool|mysqli_result
  */
-function get_sales_child_lines(mixed $trans_type, mixed $trans_no, bool $lines=true)
+function get_sales_child_lines(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no, bool $lines=true)
 {
 	if (!($ctype = get_child_type($trans_type)))
 		return false;
@@ -323,7 +323,7 @@ function get_sales_child_lines(mixed $trans_type, mixed $trans_no, bool $lines=t
 	return db_query($sql, "can't retrieve child trans");
 }
 
-function get_sales_child_numbers(?int $trans_type, mixed $trans_no): array
+function get_sales_child_numbers(?int $trans_type, string|int|float|bool|array|null $trans_no): array
 {
 	$trans = array();
 	$res = get_sales_child_lines($trans_type, $trans_no, false);
@@ -336,7 +336,7 @@ function get_sales_child_numbers(?int $trans_type, mixed $trans_no): array
 /**
  * @return bool|mysqli_result
  */
-function get_sales_parent_lines(mixed $trans_type, mixed $trans_no, bool $lines=true)
+function get_sales_parent_lines(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no, bool $lines=true)
 {
 	$partype = get_parent_type($trans_type);
 
@@ -362,7 +362,7 @@ function get_sales_parent_lines(mixed $trans_type, mixed $trans_no, bool $lines=
 
 }
 
-function get_sales_parent_numbers(mixed $trans_type, mixed $trans_no): array
+function get_sales_parent_numbers(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no): array
 {
 	$trans = array();
 	$res = get_sales_parent_lines($trans_type, $trans_no, false);

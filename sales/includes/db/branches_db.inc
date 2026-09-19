@@ -111,7 +111,7 @@ function get_cust_branch(string|array|null $customer_id, string|array|null $bran
 /**
  * @return array<array-key, null|string>|false
  */
-function get_branch_accounts(mixed $branch_id)
+function get_branch_accounts(string|int|float|bool|array|null $branch_id)
 {
 	$sql = "SELECT receivables_account,sales_account, sales_discount_account, payment_discount_account 
 		FROM ".TB_PREF."cust_branch WHERE branch_code=".db_escape($branch_id);
@@ -196,7 +196,7 @@ function get_sql_for_customer_branches(string|array|null $customer_id): string
 	$default - return only single record selected with defaults order defined in $defs array,
 	 otherways get all $action contacts
 */
-function get_branch_contacts(mixed $branch_code, ?string $action=null, mixed $customer_id=null, bool $default = true)
+function get_branch_contacts(mixed $branch_code, ?string $action=null, string|int|float|bool|null $customer_id=null, bool $default = true)
 {
 	$defs = array('cust_branch.'.$action, 
 				'customer.'.$action,
@@ -234,7 +234,7 @@ function get_branch_contacts(mixed $branch_code, ?string $action=null, mixed $cu
 	return $results;
 }
 
-function _get_branch_contacts(mixed $branch_code, mixed $action=null, mixed $customer_id=null, mixed $default = false)
+function _get_branch_contacts(mixed $branch_code, string|int|float|bool|null $action=null, string|int|float|bool|null $customer_id=null, mixed $default = false)
 {
 	$sql = "SELECT p.*, r.action, r.type, CONCAT(r.type,'.',r.action) as ext_type 
 		FROM ".TB_PREF."crm_persons p,"
@@ -278,7 +278,7 @@ function _get_branch_contacts(mixed $branch_code, mixed $action=null, mixed $cus
 /**
  * @return array<array-key, null|string>|false
  */
-function get_default_branch(mixed $customer_id, mixed $ar_account=null)
+function get_default_branch(string|int|float|bool|null $customer_id, mixed $ar_account=null)
 {
 	$sql = "SELECT * 
 		FROM ".TB_PREF."cust_branch WHERE debtor_no = ".db_escape($customer_id);

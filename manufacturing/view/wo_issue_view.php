@@ -33,7 +33,7 @@ if ($_GET['trans_no'] != "")
 
 //-------------------------------------------------------------------------------------------------
 
-function display_wo_issue(mixed $issue_no): void
+function display_wo_issue(string|int|float|bool|null $issue_no): void
 {
     $myrow = get_work_order_issue($issue_no);
 
@@ -62,7 +62,7 @@ function display_wo_issue(mixed $issue_no): void
 
 //-------------------------------------------------------------------------------------------------
 
-function display_wo_issue_details(mixed $issue_no): void
+function display_wo_issue_details(string|int|float|bool|null $issue_no): void
 {
     $result = get_work_order_issue_details($issue_no);
 

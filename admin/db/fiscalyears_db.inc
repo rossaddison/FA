@@ -24,7 +24,7 @@ function add_fiscalyear(string|array|null $from_date, string|array|null $to_date
 	db_query($sql, "could not add fiscal year");
 }
 
-function update_fiscalyear(mixed $id, string|array|null $closed): void
+function update_fiscalyear(string|int|float|bool|null $id, string|array|null $closed): void
 {
 	$sql = "UPDATE ".TB_PREF."fiscal_year SET closed=".db_escape($closed)."
 		WHERE id=".db_escape($id);
@@ -45,7 +45,7 @@ function get_all_fiscalyears()
 /**
  * @return array<array-key, null|string>|false
  */
-function get_fiscalyear(mixed $id)
+function get_fiscalyear(string|int|float|bool|null $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."fiscal_year WHERE id=".db_escape($id);
 
@@ -69,7 +69,7 @@ function get_current_fiscalyear()
 }
 
 
-function delete_fiscalyear(mixed $id): void
+function delete_fiscalyear(string|int|float|bool|null $id): void
 {
 	begin_transaction();
 
@@ -80,7 +80,7 @@ function delete_fiscalyear(mixed $id): void
 	commit_transaction();
 }
 
-function is_date_in_fiscalyears(mixed $date, bool $closed=true): bool
+function is_date_in_fiscalyears(string|int|float|bool|array|null $date, bool $closed=true): bool
 {
 	$date = date2sql($date);
 	$sql = "SELECT * FROM ".TB_PREF."fiscal_year WHERE '$date' >= begin AND '$date' <= end";
@@ -90,7 +90,7 @@ function is_date_in_fiscalyears(mixed $date, bool $closed=true): bool
 	return db_fetch($result) !== false;
 }
 
-function get_fiscalyear_begin_for_date(mixed $date): string
+function get_fiscalyear_begin_for_date(string|int|float|bool|array|null $date): string
 {
  	$date = date2sql($date);
 	$sql = "SELECT begin FROM ".TB_PREF."fiscal_year WHERE '$date' >= begin AND '$date' <= end";
@@ -206,7 +206,7 @@ function delete_attachments_and_comments(string|int|null $type_no, string|int|fl
 }	
 
 //---------------------------------------------------------------------------------------------
-function delete_this_fiscalyear(mixed $selected_id): void
+function delete_this_fiscalyear(string|int|float|bool|array|null $selected_id): void
 {
 	global $db_connections;
 	

@@ -35,7 +35,7 @@ if (isset($_GET['stock_id']))
 
 //--------------------------------------------------------------------------------------------------
 
-function display_bom_items(mixed $selected_parent): void
+function display_bom_items(string|int|float|bool|null $selected_parent): void
 {
 	$result = get_bom($selected_parent);
 	div_start('bom');
@@ -73,7 +73,7 @@ function display_bom_items(mixed $selected_parent): void
 	div_end();
 }
 
-function copy_bom_items(mixed $stock_id, mixed $new_stock_id): void
+function copy_bom_items(string|int|float|bool|null $stock_id, mixed $new_stock_id): void
 {
 	$result = get_bom($stock_id);
 	while ($myrow = db_fetch($result))
@@ -88,7 +88,7 @@ function copy_bom_items(mixed $stock_id, mixed $new_stock_id): void
  
 //--------------------------------------------------------------------------------------------------
 
-function on_submit(mixed $selected_parent, mixed $selected_component=-1): void
+function on_submit(string|int|float|bool|null $selected_parent, mixed $selected_component=-1): void
 {
 	if (!check_num('quantity', 0))
 	{

@@ -10,7 +10,7 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-function add_stock_adjustment(mixed $items, string|array|null $location, string|array|null $date_, string|array|null $reference, string|array|null $memo_)
+function add_stock_adjustment(?array $items, string|array|null $location, string|array|null $date_, string|array|null $reference, string|array|null $memo_)
 {
 	global $SysPrefs, $path_to_root, $Refs;
 
@@ -61,7 +61,7 @@ function add_stock_adjustment(mixed $items, string|array|null $location, string|
 
 //-------------------------------------------------------------------------------------------------------------
 
-function void_stock_adjustment(mixed $type_no): void
+function void_stock_adjustment(string|int|float|bool|null $type_no): void
 {
 	hook_db_prevoid(ST_INVADJUST, $type_no);
 	void_gl_trans(ST_INVADJUST, $type_no);
@@ -70,7 +70,7 @@ function void_stock_adjustment(mixed $type_no): void
 
 //-------------------------------------------------------------------------------------------------------------
 
-function get_stock_adjustment_items(mixed $trans_no)
+function get_stock_adjustment_items(string|int|float|bool|array|null $trans_no)
 {
 	$result = get_stock_moves(ST_INVADJUST, $trans_no);
 
@@ -84,8 +84,8 @@ function get_stock_adjustment_items(mixed $trans_no)
 
 //--------------------------------------------------------------------------------------------------
 
-function add_stock_adjustment_item(int|float|null $adj_id, string|int|float|bool|null $stock_id, mixed $location, mixed $date_, mixed $reference,
-	string|int|float|bool|null $quantity, string|int|float|bool|null $standard_cost, mixed $memo_): void
+function add_stock_adjustment_item(int|float|null $adj_id, string|int|float|bool|null $stock_id, string|int|float|bool|null $location, string|int|float|bool|null $date_, string|int|float|bool|null $reference,
+	string|int|float|bool|null $quantity, string|int|float|bool|null $standard_cost, string|int|float|bool|null $memo_): void
 {
 	$mb_flag = get_mb_flag($stock_id);
 

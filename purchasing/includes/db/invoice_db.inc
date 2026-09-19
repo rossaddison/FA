@@ -14,7 +14,7 @@ include_once($path_to_root . "/admin/db/attachments_db.inc");
 
 //--------------------------------------------------------------------------------------------------
 
-function read_supplier_details_to_trans(&$supp_trans, mixed $supplier_id): void
+function read_supplier_details_to_trans(&$supp_trans, string|int|float|bool|array|null $supplier_id): void
 {
 	$sql = "SELECT supp.supp_name, terms.terms, terms.days_before_due, supp.dimension_id, supp.dimension2_id,
 		terms.day_in_following_month, supp.tax_included,
@@ -67,7 +67,7 @@ function read_supplier_details_to_trans(&$supp_trans, mixed $supplier_id): void
 //  Returns:
 // if chg_price is set:	 previous act_price, delivery date and unit_price from PO
 //
-function update_supp_received_items_for_invoice(mixed $id, mixed $po_detail_item, mixed $qty_invoiced, mixed $chg_price=null): array
+function update_supp_received_items_for_invoice(string|int|float|bool|null $id, mixed $po_detail_item, mixed $qty_invoiced, mixed $chg_price=null): array
 {
 	if ($chg_price != null)
 	{
@@ -110,7 +110,7 @@ function update_supp_received_items_for_invoice(mixed $id, mixed $po_detail_item
 	return array($ret, $date, $unit_price);
 }
 
-function get_diff_in_home_currency(mixed $supplier, ?string $old_date, mixed $date, mixed $amount1, mixed $amount2)
+function get_diff_in_home_currency(mixed $supplier, ?string $old_date, string|int|float|bool|null $date, mixed $amount1, mixed $amount2)
 {
 	$dec = user_price_dec();
 	price_decimal_format($amount2, $dec);
@@ -435,7 +435,7 @@ function get_po_invoices_credits(string|int|float|bool|null $po_number)
 //
 // Retrieve tax ovverides from tax register.
 //
-function get_tax_overrides(mixed $trans_type, mixed $trans_no): array
+function get_tax_overrides(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no): array
 {
 	$tax_overrides = array();
 	$sql = "SELECT amount, tax_type_id as id, rate
@@ -542,7 +542,7 @@ function get_matching_invoice_item(?string $stock_id, ?string $po_item_id)
 	return db_fetch($result);  
 }
 
-function void_supp_invoice(mixed $type, mixed $type_no): void
+function void_supp_invoice(string|int|float|bool|null $type, string|int|float|bool|null $type_no): void
 {
 	begin_transaction();
 
@@ -659,7 +659,7 @@ function get_gl_account_info(string|array|null $acc)
 	return db_query($sql,"get account information");
 }
 
-function is_reference_already_there(mixed $supplier_id, string|array|null $supp_reference, string|int|float|bool|null $trans_no=0): bool
+function is_reference_already_there(string|int|float|bool|null $supplier_id, string|array|null $supp_reference, string|int|float|bool|null $trans_no=0): bool
 {
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."supp_trans WHERE supplier_id="
 		.db_escape($supplier_id) . " AND supp_reference=" 

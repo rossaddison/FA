@@ -69,13 +69,13 @@ $document_child_types = array(
 		ST_SUPPINVOICE => ST_SUPPCREDIT,
 );
 
-function get_child_type(mixed $type): int
+function get_child_type(string|int|float|bool|null $type): int
 {
 	global $document_child_types;
 	return isset($document_child_types[$type]) ? $document_child_types[$type] : 0;
 }
 
-function get_parent_type(mixed $type): int
+function get_parent_type(string|int|float|bool|null $type): int
 {
 	global $document_child_types;
 	$child = array_search($type, $document_child_types);
@@ -104,7 +104,7 @@ define('PT_SUPPLIER', 3);
 define('PT_QUICKENTRY', 4);
 define('PT_DIMESION', 5);
 
-function payment_person_currency(mixed $type, mixed $person_id)  {
+function payment_person_currency(string|int|float|bool|null $type, string|int|float|bool|null $person_id)  {
 	switch ($type)
 	{
 		case PT_MISC :
@@ -123,7 +123,7 @@ function payment_person_currency(mixed $type, mixed $person_id)  {
 	}
 }
 
-function payment_person_name(mixed $type, string|int|float|bool|null $person_id, bool $full=true) {
+function payment_person_name(string|int|float|bool|null $type, string|int|float|bool|null $person_id, bool $full=true) {
 	global $payment_person_types;
 
 	switch ($type)
@@ -145,7 +145,7 @@ function payment_person_name(mixed $type, string|int|float|bool|null $person_id,
 	}
 }
 
-function payment_person_has_items(mixed $type) {
+function payment_person_has_items(string|int|float|bool|null $type) {
 	switch ($type)
 	{
 		case PT_MISC :

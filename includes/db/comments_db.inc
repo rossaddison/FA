@@ -14,7 +14,7 @@
 /**
  * @return bool|mysqli_result
  */
-function get_comments(mixed $type, mixed $type_no)
+function get_comments(string|int|float|bool|array|null $type, string|int|float|bool|null $type_no)
 {
 	$sql = "SELECT * FROM ".TB_PREF."comments WHERE type="
 		.db_escape($type)." AND id=".db_escape($type_no);
@@ -24,7 +24,7 @@ function get_comments(mixed $type, mixed $type_no)
 
 //--------------------------------------------------------------------------------------------------
 
-function add_comments(mixed $type, mixed $type_no, mixed $date_, mixed $memo_): void
+function add_comments(string|int|float|bool|null $type, string|int|float|bool|null $type_no, string|int|float|bool|array|null $date_, string|int|float|bool|array|null $memo_): void
 {
 	if ($memo_ != null && $memo_ != "")
 	{
@@ -39,7 +39,7 @@ function add_comments(mixed $type, mixed $type_no, mixed $date_, mixed $memo_): 
 
 //--------------------------------------------------------------------------------------------------
 
-function update_comments(mixed $type, mixed $id, mixed $date_, mixed $memo_): void
+function update_comments(string|int|float|bool|null $type, string|int|float|bool|null $id, string|int|float|bool|null $date_, string|int|float|bool|null $memo_): void
 {
 	if ($date_ == null)
 	{
@@ -58,7 +58,7 @@ function update_comments(mixed $type, mixed $id, mixed $date_, mixed $memo_): vo
 
 //--------------------------------------------------------------------------------------------------
 
-function delete_comments(mixed $type, mixed $type_no): void
+function delete_comments(string|int|float|bool|null $type, string|int|float|bool|array|null $type_no): void
 {
 	$sql = "DELETE FROM ".TB_PREF."comments WHERE type=".db_escape($type)
 		." AND id=".db_escape($type_no);

@@ -13,7 +13,7 @@
 /**
  * @return bool|mysqli_result
  */
-function add_user(string|int|float|bool|null $user_id, mixed $real_name, ?string $password, mixed $phone, mixed $email, mixed $role_id, 
+function add_user(string|int|float|bool|null $user_id, mixed $real_name, ?string $password, string|int|float|bool|null $phone, string|int|float|bool|null $email, mixed $role_id, 
 	mixed $language, mixed $profile, int|array|null $rep_popup, mixed $pos)
 {
 	$sql = "INSERT INTO ".TB_PREF."users (user_id, real_name, password"
@@ -32,7 +32,7 @@ function add_user(string|int|float|bool|null $user_id, mixed $real_name, ?string
 /**
  * @return bool|mysqli_result
  */
-function update_user_password(mixed $id, string|int|float|bool|null $user_id, mixed $password)
+function update_user_password(string|int|float|bool|null $id, string|int|float|bool|null $user_id, mixed $password)
 {
 	$sql = "UPDATE ".TB_PREF."users SET password=".db_escape($password) . ",
 		user_id = ".db_escape($user_id). " WHERE id=".db_escape($id);
@@ -45,7 +45,7 @@ function update_user_password(mixed $id, string|int|float|bool|null $user_id, mi
 /**
  * @return bool|mysqli_result
  */
-function update_user(mixed $id, mixed $user_id, mixed $real_name, mixed $phone, mixed $email, mixed $role_id, 
+function update_user(string|int|float|bool|null $id, mixed $user_id, mixed $real_name, string|int|float|bool|null $phone, string|int|float|bool|null $email, mixed $role_id, 
 	mixed $language, mixed $profile, mixed $rep_popup, mixed $pos)
 {
 	$sql = "UPDATE ".TB_PREF."users SET real_name=".db_escape($real_name).
@@ -97,7 +97,7 @@ function get_users(int|bool|array|null $all=false)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_user(mixed $id)
+function get_user(string|int|float|bool|array|null $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."users WHERE id=".db_escape($id);
 
@@ -171,7 +171,7 @@ function update_user_visitdate(string|int|float|bool|null $user_id): void
 /**
  * @return null|string
  */
-function check_user_activity(mixed $id) 
+function check_user_activity(string|int|float|bool|null $id) 
 {
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."audit_trail WHERE audit_trail.user="
 		. db_escape($id);

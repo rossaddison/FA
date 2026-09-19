@@ -14,7 +14,7 @@ include_once($path_to_root . "/includes/types.inc");
 
 //--------------------------------------------------------------------------------------
 
-function get_supplier_trans_view_str(mixed $type, string|int|float|bool|null $trans_no, mixed $label="", bool $icon=false, 
+function get_supplier_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $label="", bool $icon=false, 
 	?string $class='', string|int|float|bool|null $id='')
 {
 	$viewer = "purchasing/view/";
@@ -40,7 +40,7 @@ function get_supplier_trans_view_str(mixed $type, string|int|float|bool|null $tr
 
 //--------------------------------------------------------------------------------------
 
-function get_gl_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, mixed $label="", bool $force=false, ?string $class='', ?string $id='')
+function get_gl_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $label="", bool $force=false, ?string $class='', ?string $id='')
 {
 	if (!$force && !user_show_gl_info())
 		return "";
@@ -62,7 +62,7 @@ function get_gl_view_str(string|int|float|bool|null $type, string|int|float|bool
 /**
  * @return non-empty-string|null
  */
-function get_gl_view_str_cell(mixed $type, mixed $trans_no, mixed $label="")
+function get_gl_view_str_cell(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $label="")
 {
 	$str = get_gl_view_str($type, $trans_no, $label);
 	if ($str != "")
@@ -74,7 +74,7 @@ function get_gl_view_str_cell(mixed $type, mixed $trans_no, mixed $label="")
 /**
  * @return null|string
  */
-function get_customer_trans_view_str(string|int|float|bool|null $type, mixed $trans_no, mixed $label="", bool $icon=false, 
+function get_customer_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $label="", bool $icon=false, 
 	?string $class='', string|int|float|bool|null $id='')
 {
 	$viewer = "sales/view/";
@@ -111,7 +111,7 @@ function get_customer_trans_view_str(string|int|float|bool|null $type, mixed $tr
 
 //--------------------------------------------------------------------------------------
 
-function get_banking_trans_view_str(mixed $type, string|int|float|bool|null $trans_no, mixed $label="", 
+function get_banking_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $label="", 
 	bool $icon=false, ?string $class='', string|int|float|bool|null $id='')
 {
 	if ($label == "")
@@ -132,7 +132,7 @@ function get_banking_trans_view_str(mixed $type, string|int|float|bool|null $tra
 
 //--------------------------------------------------------------------------------------
 
-function get_inventory_trans_view_str(mixed $type, string|int|float|bool|null $trans_no, mixed $label="", 
+function get_inventory_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $label="", 
 	bool $icon=false, ?string $class='', string|int|float|bool|null $id='')
 {
 	$viewer = "inventory/view/";
@@ -153,7 +153,7 @@ function get_inventory_trans_view_str(mixed $type, string|int|float|bool|null $t
 
 //--------------------------------------------------------------------------------------
 
-function get_manufacturing_trans_view_str(mixed $type, string|int|float|bool|null $trans_no, mixed $label="", 
+function get_manufacturing_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $label="", 
 	bool $icon=false, ?string $class='', string|int|float|bool|null $id='')
 {
 	$viewer = "manufacturing/view/";
@@ -177,7 +177,7 @@ function get_manufacturing_trans_view_str(mixed $type, string|int|float|bool|nul
 
 //--------------------------------------------------------------------------------------
 
-function get_dimensions_trans_view_str(mixed $type, string|int|float|bool|null $trans_no, mixed $label="", bool $icon=false, 
+function get_dimensions_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $label="", bool $icon=false, 
 	?string $class='', string|int|float|bool|null $id='')
 {
 	if ($type == ST_DIMENSION)
@@ -193,7 +193,7 @@ function get_dimensions_trans_view_str(mixed $type, string|int|float|bool|null $
 /*
 	Journal entry or cost update postings link
 */
-function get_journal_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, mixed $label="", bool $icon=false, 
+function get_journal_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $label="", bool $icon=false, 
 	?string $class='', string|int|float|bool|null $id='')
 {
 	if ($type == ST_JOURNAL || $type == ST_COSTUPDATE)
@@ -209,7 +209,7 @@ function get_journal_trans_view_str(string|int|float|bool|null $type, string|int
 
 //--------------------------------------------------------------------------------------
 
-function get_package_view_str(string|int|float|bool|null $pkg, mixed $label="", bool $icon=false, ?string $class='', ?string $id='')
+function get_package_view_str(string|int|float|bool|null $pkg, string|int|float|bool|null $label="", bool $icon=false, ?string $class='', ?string $id='')
 {
 	if ($label == "")
 	{
@@ -222,7 +222,7 @@ function get_package_view_str(string|int|float|bool|null $pkg, mixed $label="", 
 
 //--------------------------------------------------------------------------------------
 
-function get_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", bool $icon=false, 
+function get_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $label="", bool $icon=false, 
 	?string $class='', string|int|float|bool|null $id='')
 {
 	$view_str = get_customer_trans_view_str($type, $trans_no, $label, $icon, $class, $id);
@@ -276,7 +276,7 @@ function check_ui_refresh(?string $name=null): bool
 // When there is no exrate for today, 
 // gets it form ECB and stores in local database.
 //
-function exchange_rate_display(mixed $from_currency, mixed $to_currency, mixed $date_, bool $force_edit=false): void
+function exchange_rate_display(mixed $from_currency, mixed $to_currency, string|int|float|bool|array|null $date_, bool $force_edit=false): void
 {
     global $Ajax, $SysPrefs;
 
@@ -342,7 +342,7 @@ function exchange_rate_display(mixed $from_currency, mixed $to_currency, mixed $
 
 //--------------------------------------------------------------------------------------
 
-function is_voided_display(mixed $type, mixed $id, ?string $label): bool
+function is_voided_display(string|int|float|bool|null $type, string|int|float|bool|array|null $id, ?string $label): bool
 {
 	$void_entry = get_voided_entry($type, $id);
 
@@ -362,7 +362,7 @@ function is_voided_display(mixed $type, mixed $id, ?string $label): bool
 
 //--------------------------------------------------------------------------------------
 
-function comments_display_row(string|int|array|null $type, mixed $id): void
+function comments_display_row(string|int|array|null $type, string|int|float|bool|array|null $id): void
 {
 	$comments = get_comments($type, $id);
 	if ($comments and db_num_rows($comments))
@@ -378,7 +378,7 @@ function comments_display_row(string|int|array|null $type, mixed $id): void
 
 //--------------------------------------------------------------------------------------
 
-function get_comments_string(mixed $type, mixed $type_no): string
+function get_comments_string(string|int|float|bool|null $type, string|int|float|bool|array|null $type_no): string
 {
 	$str_return = "";
 	$result = get_comments($type, $type_no);
@@ -414,7 +414,7 @@ function view_stock_status_cell(string|int|float|bool|null $stock_id, ?string $d
 
 //--------------------------------------------------------------------------------------
 
-function display_debit_or_credit_cells(mixed $value, bool $bold=false): void
+function display_debit_or_credit_cells(string|int|float|bool|null $value, bool $bold=false): void
 {
 	$value = round2($value, user_price_dec());
 	if ($value >= 0)
@@ -486,7 +486,7 @@ function display_supp_trans_tax_details(bool|mysqli_result $tax_items, ?int $col
 
 //--------------------------------------------------------------------------------------
 
-function display_edit_tax_items(mixed $taxes, ?int $columns, mixed $tax_included, ?int $rightspan=0, bool $editable=false): int|float
+function display_edit_tax_items(mixed $taxes, ?int $columns, string|int|float|bool|null $tax_included, ?int $rightspan=0, bool $editable=false): int|float
 {
 	$total = 0;
 
@@ -595,7 +595,7 @@ function display_allocations(bool|mysqli_result $alloc_result, mixed $total, ?st
 
 //--------------------------------------------------------------------------------------
 
-function display_allocations_from(string|int|null $person_type, mixed $person_id, ?int $type, mixed $type_no, mixed $total): void
+function display_allocations_from(string|int|null $person_type, string|int|float|bool|null $person_id, ?int $type, string|int|float|bool|null $type_no, mixed $total): void
 {
 	switch ($person_type)
 	{
@@ -612,7 +612,7 @@ function display_allocations_from(string|int|null $person_type, mixed $person_id
 
 //--------------------------------------------------------------------------------------
 
-function display_allocations_to(?int $person_type, mixed $person_id, string|int|array|null $type, mixed $type_no, mixed $total): void
+function display_allocations_to(?int $person_type, string|int|float|bool|null $person_id, string|int|array|null $type, string|int|float|bool|array|null $type_no, mixed $total): void
 {
 	switch ($person_type)
 	{
@@ -632,7 +632,7 @@ function display_allocations_to(?int $person_type, mixed $person_id, string|int|
 //	Expands selected quick entry $id into GL posings and adds to cart.
 //		returns calculated amount posted to bank GL account.
 //
-function display_quick_entries(&$cart, mixed $id, int|float|bool|null $base, ?string $type, string|array|null $descr=''): int
+function display_quick_entries(&$cart, string|int|float|bool|array|null $id, int|float|bool|null $base, ?string $type, string|array|null $descr=''): int
 {
 	$bank_amount = 0;
 
@@ -681,7 +681,7 @@ function display_quick_entries(&$cart, mixed $id, int|float|bool|null $base, ?st
 
 //--------------------------------------------------------------------------------------
 
-function quickentry_calculate(int|float|bool|null $base, mixed $id, mixed $taxgroup=null, mixed $date=null): array|int
+function quickentry_calculate(int|float|bool|null $base, string|int|float|bool|null $id, mixed $taxgroup=null, string|int|float|bool|null $date=null): array|int
 {
 		$gl_entries = array();
 		$qe = get_quick_entry($id);
@@ -866,7 +866,7 @@ function _number_to_words(int|float|null $number): string
     return $res; 
 } 
 
-function price_in_words(mixed $amount, mixed $document=0)
+function price_in_words(string|int|float|bool|null $amount, mixed $document=0)
 {
 	// use local price_in_words() if the hook is defined
 	$price = hook_price_in_words($amount, $document);
@@ -983,7 +983,7 @@ function set_focus(string $name, ?int $form_no=0): void {
 //	Set default focus on first field $name if not set yet
 //	Returns unique name if $name=null
 //	
-function default_focus(mixed $name=null, ?int $form_no=0) {
+function default_focus(string|int|float|bool|null $name=null, ?int $form_no=0) {
 	static $next; 
 	if ($name==null) 
 		$name = uniqid('_el',true);
@@ -1487,7 +1487,7 @@ document.write(\"<div id='CC'></div>\");";
  return '';
 }
 
-function alert(mixed $msg): void
+function alert(string|int|float|bool|null $msg): void
 {
 	echo "\n<script type=\"text/javascript\">\n"
 		. "<!--\n"
@@ -1498,7 +1498,7 @@ function alert(mixed $msg): void
 
 if (!function_exists('_vd'))
 {
-  	function _vd(mixed $mixed, mixed $title = '', mixed $exit = false): void
+  	function _vd(mixed $mixed, string|int|float|bool|null $title = '', mixed $exit = false): void
   	{
     	$str = (!empty($title) ? ($title .':') : '') .'<pre>';
     	$str .= print_r($mixed, true); //var_dump($mixed);
@@ -1509,14 +1509,14 @@ if (!function_exists('_vd'))
   	}
 }
 
-function _vl(mixed $mixed, mixed $title = '', mixed $exit = false): void
+function _vl(mixed $mixed, string|int|float|bool|null $title = '', mixed $exit = false): void
 {
 	error_log((!empty($title) ? ($title .':') : '') . print_r($mixed, true));
 	if ($exit)
 		exit;
 }
 
-function display_backtrace(mixed $cond=true, mixed $msg=''): void {
+function display_backtrace(mixed $cond=true, string|int|float|bool|null $msg=''): void {
 	if ($cond) {
 		if ($msg) 
 			$str = "<center><span class='headingtext'>$msg</span></center>\n";
@@ -1545,7 +1545,7 @@ if (!isset($payment_services))
 *	Payment link generation. Options provided during invoice generation:
 *	company_email, comment, amount, currency
 */
-function payment_link(mixed $name, mixed $options): string|false|null
+function payment_link(string|int|float|bool|null $name, mixed $options): string|false|null
 {
 	global $payment_services;
 
@@ -1633,7 +1633,7 @@ function payment_link(mixed $name, mixed $options): string|false|null
 	return strtr($link, $patterns);
 }
 
-function trans_editor_link(mixed $type, mixed $trans_no): string
+function trans_editor_link(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no): string
 {
 	global $path_to_root;
 

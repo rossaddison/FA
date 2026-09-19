@@ -223,7 +223,7 @@ function write_sales_invoice(&$invoice)
 
 //--------------------------------------------------------------------------------------------------
 
-function void_sales_invoice(mixed $type, mixed $type_no): void
+function void_sales_invoice(string|int|float|bool|null $type, string|int|float|bool|null $type_no): void
 {
 	begin_transaction();
 
@@ -279,7 +279,7 @@ function void_sales_invoice(mixed $type, mixed $type_no): void
 	commit_transaction();
 }
 
-function is_cust_invoice_credited(mixed $trans_no): int|string
+function is_cust_invoice_credited(string|int|float|bool|array|null $trans_no): int|string
 {
 	return db_num_rows(get_sales_child_lines(ST_SALESINVOICE, $trans_no));
 }
@@ -287,7 +287,7 @@ function is_cust_invoice_credited(mixed $trans_no): int|string
 /**
  * @return false|null|string
  */
-function get_cust_prepayment_invoice_factor(mixed $trans_no)
+function get_cust_prepayment_invoice_factor(string|int|float|bool|array|null $trans_no)
 {
 	$sql = "SELECT IF(dt.prep_amount>0, dt.prep_amount/so.total ,0) 
 		FROM ".TB_PREF."debtor_trans dt

@@ -19,7 +19,7 @@ function display_notification(string|int|float|bool|null $msg, int|bool|null $ce
 	fa_trigger_error($msg, E_USER_NOTICE);
 }
 
-function display_warning(mixed $msg, int|bool|null $center=true): void
+function display_warning(string|int|float|bool|null $msg, int|bool|null $center=true): void
 {
 	fa_trigger_error($msg, E_USER_WARNING);
 }
@@ -29,7 +29,7 @@ function display_notification_centered(?string $msg): void
 	display_notification($msg, true);
 }
 
-function display_caption(mixed $msg): void
+function display_caption(string|int|float|bool|null $msg): void
 {
 	echo "<caption>$msg</caption>\n";
 }
@@ -56,7 +56,7 @@ function display_note(string|int|float|bool|null $msg, ?int $br=0, ?int $br2=0, 
 		echo "<br>";
 }
 
-function stock_item_heading(mixed $stock_id): void
+function stock_item_heading(string|int|float|bool|array|null $stock_id): void
 {
 	if ($stock_id != "") 
 	{

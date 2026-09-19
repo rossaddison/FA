@@ -352,7 +352,7 @@ function price_format(string|int|float|bool|null $number): string {
     return number_format2($number, user_price_dec());
 }
 
-function price_decimal_format(mixed $number, &$dec): string
+function price_decimal_format(string|int|float|bool|null $number, &$dec): string
 {
 	$dec = user_price_dec();
 	$str = strval($number);
@@ -368,7 +368,7 @@ function price_decimal_format(mixed $number, &$dec): string
 
 // 2008-06-15. Added extra parameter $stock_id and reference for $dec
 //--------------------------------------------------------------------
-function qty_format(mixed $number, mixed $stock_id, &$dec): string {
+function qty_format(string|int|float|bool|null $number, string|int|float|bool|array|null $stock_id, &$dec): string {
 	$dec = get_qty_dec($stock_id);
     return number_format2($number, $dec);
 }
@@ -388,16 +388,16 @@ function get_qty_dec(?string $stock_id=null)
 //
 //	Maximum precision format. Strips trailing unsignificant digits.
 //
-function maxprec_format(mixed $number): string {
+function maxprec_format(string|int|float|bool|null $number): string {
     return number_format2($number, 'max');
 }
 
-function exrate_format(mixed $number): string {
+function exrate_format(string|int|float|bool|null $number): string {
     return number_format2($number,
 	$_SESSION["wa_current_user"]->prefs->exrate_dec());
 }
 
-function percent_format(mixed $number): string {
+function percent_format(string|int|float|bool|null $number): string {
     return number_format2($number,
 	$_SESSION["wa_current_user"]->prefs->percent_dec());
 }
@@ -626,7 +626,7 @@ function add_user_js_data(): void {
   add_js_source($js);
 }
 
-function user_js_cache(mixed $id=null): string
+function user_js_cache(string|int|float|bool|null $id=null): string
 {
 	global $path_to_root;
 

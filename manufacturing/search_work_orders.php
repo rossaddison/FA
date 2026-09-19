@@ -88,36 +88,36 @@ end_row();
 end_table();
 
 //-----------------------------------------------------------------------------
-function check_overdue(mixed $row): bool
+function check_overdue(array|false|null $row): bool
 {
 	return (!$row["closed"] 
 		&& date_diff2(Today(), sql2date($row["required_by"]), "d") > 0);
 }
 
-function view_link(mixed $dummy, mixed $order_no)
+function view_link(string|int|float|bool|array|null $dummy, string|int|float|bool|null $order_no)
 {
 	return get_trans_view_str(ST_WORKORDER, $order_no);
 }
 
-function view_stock(mixed $row): string
+function view_stock(array|false|null $row): string
 {
 	return view_stock_status($row["stock_id"], $row["description"], false);
 }
 
-function wo_type_name(mixed $dummy, mixed $type)
+function wo_type_name(string|int|float|bool|array|null $dummy, string|int|float|bool|null $type)
 {
 	global $wo_types_array;
 	
 	return $wo_types_array[$type];
 }
 
-function edit_link(mixed $row)
+function edit_link(array|false|null $row)
 {
 	return  $row['closed'] ? '<i>'._('Closed').'</i>' :
 		trans_editor_link(ST_WORKORDER, $row["id"]);
 }
 
-function release_link(mixed $row): string
+function release_link(array|false|null $row): string
 {
 	return $row["closed"] ? '' : 
 		($row["released"]==0 ?
@@ -128,31 +128,31 @@ function release_link(mixed $row): string
 			"/manufacturing/work_order_issue.php?trans_no=" .(string)$row["id"]));
 }
 
-function produce_link(mixed $row): string
+function produce_link(array|false|null $row): string
 {
 	return $row["closed"] || !$row["released"] ? '' :
 		pager_link(_('Produce'),
 			"/manufacturing/work_order_add_finished.php?trans_no=" .(string)$row["id"]);
 }
 
-function costs_link(mixed $row): string
+function costs_link(array|false|null $row): string
 {
 	return $row["closed"] || !$row["released"] ? '' :
 		pager_link(_('Costs'),
 			"/manufacturing/work_order_costs.php?trans_no=" .(string)$row["id"]);
 }
 
-function view_gl_link(mixed $row)
+function view_gl_link(array|false|null $row)
 {
 	return get_gl_view_str(ST_WORKORDER, $row['id']);
 }
 
-function prt_link(mixed $row)
+function prt_link(array|false|null $row)
 {
 	return print_document_link($row['id'], _("Print"), true, ST_WORKORDER, ICON_PRINT);
 }
 
-function dec_amount(mixed $row, mixed $amount): string
+function dec_amount(array|false|null $row, string|int|float|bool|null $amount): string
 {
 	return number_format2($amount, $row['decimals']);
 }

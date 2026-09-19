@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_tax_type(mixed $name, mixed $sales_gl_code, mixed $purchasing_gl_code, int|float|bool|null $rate): void
+function add_tax_type(string|int|float|bool|null $name, mixed $sales_gl_code, mixed $purchasing_gl_code, int|float|bool|null $rate): void
 {
 	$sql = "INSERT INTO ".TB_PREF."tax_types (name, sales_gl_code, purchasing_gl_code, rate)
 		VALUES (".db_escape($name).", ".db_escape($sales_gl_code)
@@ -18,7 +18,7 @@ function add_tax_type(mixed $name, mixed $sales_gl_code, mixed $purchasing_gl_co
 	db_query($sql, "could not add tax type");
 }
 
-function update_tax_type(mixed $type_id, mixed $name, mixed $sales_gl_code, mixed $purchasing_gl_code, int|float|bool|null $rate): void
+function update_tax_type(string|int|float|bool|null $type_id, string|int|float|bool|null $name, mixed $sales_gl_code, mixed $purchasing_gl_code, int|float|bool|null $rate): void
 {
 	$sql = "UPDATE ".TB_PREF."tax_types SET name=".db_escape($name).",
 		sales_gl_code=".db_escape($sales_gl_code).",
@@ -58,7 +58,7 @@ function get_all_tax_types_simple()
 /**
  * @return array<array-key, null|string>|false
  */
-function get_tax_type(mixed $type_id)
+function get_tax_type(string|int|float|bool|null $type_id)
 {
 	$sql = "SELECT tax_type.*,
 				Chart1.account_name AS SalesAccountName,
@@ -85,7 +85,7 @@ function get_tax_type_rate(?string $type_id)
 	return is_array($row) ? $row[0] : false;
 }
 
-function delete_tax_type(mixed $type_id): void
+function delete_tax_type(string|int|float|bool|null $type_id): void
 {
 	begin_transaction();
 
@@ -107,7 +107,7 @@ function delete_tax_type(mixed $type_id): void
 	than selected tax type.
 	Necessary for pre-2.2 installations.
 */
-function is_tax_gl_unique(string|array|null $gl_code, string|int|array|null $gl_code2=-1, mixed $selected_id=-1): bool {
+function is_tax_gl_unique(string|array|null $gl_code, string|int|array|null $gl_code2=-1, string|int|float|bool|array|null $selected_id=-1): bool {
 
 	$purch_code = $gl_code2== -1 ? $gl_code : $gl_code2;
 

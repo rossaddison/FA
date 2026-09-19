@@ -41,7 +41,7 @@ function clear_allocations(): void
 
 //--------------------------------------------------------------------------------
 
-function edit_allocations_for_transaction(mixed $type, mixed $trans_no): void
+function edit_allocations_for_transaction(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no): void
 {
 	global $systypes_array;
 

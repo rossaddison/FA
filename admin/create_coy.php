@@ -27,7 +27,7 @@ simple_page_mode(true);
 	FIXME: tb_pref_counter should track prefix per database.
 */
 //---------------------------------------------------------------------------------------------
-function check_data(mixed $selected_id): bool
+function check_data(string|int|float|bool|array|null $selected_id): bool
 {
 	global $db_connections, $tb_pref_counter;
 
@@ -75,7 +75,7 @@ function check_data(mixed $selected_id): bool
 /**
  * @return bool|mysqli_result
  */
-function remove_connection(mixed $id) {
+function remove_connection(string|int|float|bool|null $id) {
 	global $db_connections;
 
 	$err = db_drop_db($db_connections[$id]);
@@ -87,7 +87,7 @@ function remove_connection(mixed $id) {
 }
 //---------------------------------------------------------------------------------------------
 
-function handle_submit(mixed $selected_id): bool
+function handle_submit(string|int|float|bool|array|null $selected_id): bool
 {
 	global $db_connections, $def_coy, $tb_pref_counter, $db,
 	    $comp_subdirs, $path_to_root, $Mode;
@@ -289,7 +289,7 @@ function display_companies(): void
 
 //---------------------------------------------------------------------------------------------
 
-function display_company_edit(mixed $selected_id): void
+function display_company_edit(string|int|float|bool|array|null $selected_id): void
 {
 	global $def_coy, $db_connections, $tb_pref_counter;
 

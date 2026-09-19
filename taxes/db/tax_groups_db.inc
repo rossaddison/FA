@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_tax_group(mixed $name, ?array $taxes, ?array $tax_shippings): void
+function add_tax_group(string|int|float|bool|null $name, ?array $taxes, ?array $tax_shippings): void
 {
 	begin_transaction();
 
@@ -23,7 +23,7 @@ function add_tax_group(mixed $name, ?array $taxes, ?array $tax_shippings): void
 	commit_transaction();	
 }
 
-function update_tax_group(mixed $id, mixed $name, ?array $taxes, ?array $tax_shippings): void
+function update_tax_group(string|int|float|bool|null $id, string|int|float|bool|null $name, ?array $taxes, ?array $tax_shippings): void
 {
 	begin_transaction();	
 
@@ -50,7 +50,7 @@ function get_all_tax_groups(int|bool|array|null $all=false)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_tax_group(mixed $type_id)
+function get_tax_group(string|int|float|bool|null $type_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."tax_groups WHERE id=".db_escape($type_id);
 	
@@ -59,7 +59,7 @@ function get_tax_group(mixed $type_id)
 	return db_fetch($result);
 }
 
-function delete_tax_group(mixed $id): void
+function delete_tax_group(string|int|float|bool|null $id): void
 {
 	begin_transaction();
 		
@@ -72,7 +72,7 @@ function delete_tax_group(mixed $id): void
 	commit_transaction();
 }
 
-function add_tax_group_items(mixed $id, ?array $items, ?array $tax_shippings): void
+function add_tax_group_items(string|int|float|bool|null $id, ?array $items, ?array $tax_shippings): void
 {
 	for ($i=0; $i < count($items); $i++) 
 	{
@@ -82,7 +82,7 @@ function add_tax_group_items(mixed $id, ?array $items, ?array $tax_shippings): v
 	}		
 }
 
-function delete_tax_group_items(mixed $id): void
+function delete_tax_group_items(string|int|float|bool|null $id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."tax_group_items WHERE tax_group_id=".db_escape($id);
 	
@@ -118,7 +118,7 @@ function get_tax_group_rates(mixed $group_id=null, bool $tax_shipping=false)
 	return db_query($sql, "cannot get tax types as array");
 }
 
-function get_tax_group_items_as_array(mixed $id): array
+function get_tax_group_items_as_array(string|int|float|bool|null $id): array
 {
 	$ret_tax_array = array();
 	
@@ -134,7 +134,7 @@ function get_tax_group_items_as_array(mixed $id): array
 	return $ret_tax_array;
 }
 
-function get_shipping_tax_as_array(mixed $id=null): array
+function get_shipping_tax_as_array(string|int|float|bool|null $id=null): array
 {
 	$ret_tax_array = array();
 

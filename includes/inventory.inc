@@ -12,12 +12,12 @@
 include_once($path_to_root . "/includes/db/inventory_db.inc");
 
 
-function is_manufactured(mixed $mb_flag): bool
+function is_manufactured(string|int|float|bool|array|null $mb_flag): bool
 {
 	return ($mb_flag == 'M');
 }
 
-function is_purchased(mixed $mb_flag): bool
+function is_purchased(string|int|float|bool|null $mb_flag): bool
 {
 	return ($mb_flag == 'B');
 }
@@ -27,12 +27,12 @@ function is_service(?string $mb_flag): bool
 	return ($mb_flag == 'D');
 }
 
-function is_fixed_asset(mixed $mb_flag): bool
+function is_fixed_asset(string|int|float|bool|array|null $mb_flag): bool
 {
 	return ($mb_flag == 'F');
 }
 
-function has_stock_holding(mixed $mb_flag): bool
+function has_stock_holding(string|int|float|bool|null $mb_flag): bool
 {
 	return is_purchased($mb_flag) || is_manufactured($mb_flag);
 }

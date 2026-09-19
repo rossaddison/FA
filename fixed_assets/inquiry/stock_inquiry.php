@@ -50,14 +50,14 @@ if(get_post('RefreshInquiry'))
 	$Ajax->activate('totals_tbl');
 }
 
-function gl_view(mixed $row)
+function gl_view(array|false|null $row)
 {
   	$row = get_fixed_asset_move($row['stock_id'], ST_JOURNAL);
 
 	return get_gl_view_str(ST_JOURNAL, $row["trans_no"]);
 }
 
-function fa_prepare_row(mixed $row) {
+function fa_prepare_row(array|false|null $row) {
   	$purchase = get_fixed_asset_purchase($row['stock_id']);
   	if ($purchase !== false) {
     	$row['purchase_date'] = $purchase['tran_date'];
@@ -82,19 +82,19 @@ function fa_prepare_row(mixed $row) {
   	return $row;
 }
 
-function fa_link(mixed $row)
+function fa_link(array|false|null $row)
 {
   	$url = "inventory/manage/items.php?FixedAsset=1&stock_id=".(string)$row['stock_id'];
 
   	return viewer_link($row['stock_id'], $url);
 }
 
-function depr_method_title(mixed $row) {
+function depr_method_title(array|false|null $row) {
   	global $depreciation_methods;
   	return $depreciation_methods[$row['depreciation_method']];
 }
 
-function depr_par(mixed $row): string {
+function depr_par(array|false|null $row): string {
 	if ($row['depreciation_method'] == 'D')
 		return $row['depreciation_rate']*$row['depreciation_factor'].'%';
 	elseif ($row['depreciation_method'] == 'N')
@@ -104,7 +104,7 @@ function depr_par(mixed $row): string {
 		return (string)$row['depreciation_rate'].'%';
 }
 
-function status_title(mixed $row): string {
+function status_title(array|false|null $row): string {
 
    	if ($row['inactive'] || ($row['disposal_date'] !== NULL))
 		return _("Disposed"); // disposed or saled
@@ -115,7 +115,7 @@ function status_title(mixed $row): string {
 
 }
 
-function purchase_link(mixed $row)
+function purchase_link(array|false|null $row)
 {
 
   	if ($row['purchase_date'] === NULL)
@@ -124,7 +124,7 @@ function purchase_link(mixed $row)
   	return get_supplier_trans_view_str(ST_SUPPINVOICE, $row["purchase_no"], sql2date($row["purchase_date"]));
 }
 
-function disposal_link(mixed $row)
+function disposal_link(array|false|null $row)
 {
   	if ($row['disposal_date'] === NULL)
     	return "";
@@ -139,17 +139,17 @@ function disposal_link(mixed $row)
   	}
 }
 
-function amount_link(mixed $row): string
+function amount_link(array|false|null $row): string
 {
     return price_format($row['purchase_cost']);
 }
 
-function depr_link(mixed $row): string
+function depr_link(array|false|null $row): string
 {
     return price_format((float)$row['purchase_cost'] - $row['material_cost']);
 }
 
-function balance_link(mixed $row): string
+function balance_link(array|false|null $row): string
 {
     return price_format($row['material_cost']);
 }

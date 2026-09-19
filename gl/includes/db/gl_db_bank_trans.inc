@@ -15,8 +15,8 @@
 // $amount is in $currency
 // $date_ is display date (non-sql)
 
-function add_bank_trans(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $bank_act, mixed $ref, mixed $date_,
-	string|int|float|bool|null $amount, mixed $person_type_id, mixed $person_id, mixed $currency="", mixed $err_msg="", ?int $rate=0): void
+function add_bank_trans(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $bank_act, string|int|float|bool|array|null $ref, string|int|float|bool|array|null $date_,
+	string|int|float|bool|null $amount, mixed $person_type_id, string|int|float|bool|null $person_id, string|int|float|bool|null $currency="", mixed $err_msg="", ?int $rate=0): void
 {
 	$sqlDate = date2sql($date_);
 
@@ -49,7 +49,7 @@ function add_bank_trans(string|int|float|bool|null $type, string|int|float|bool|
 
 //----------------------------------------------------------------------------------------
 
-function exists_bank_trans(mixed $type, mixed $type_no): bool
+function exists_bank_trans(string|int|float|bool|array|null $type, string|int|float|bool|array|null $type_no): bool
 {
 	$sql = "SELECT trans_no
 		FROM ".TB_PREF."bank_trans
@@ -65,7 +65,7 @@ function exists_bank_trans(mixed $type, mixed $type_no): bool
 /**
  * @return bool|mysqli_result
  */
-function get_bank_trans(mixed $type, mixed $trans_no=null, mixed $person_type_id=null, mixed $person_id=null)
+function get_bank_trans(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no=null, mixed $person_type_id=null, string|int|float|bool|null $person_id=null)
 {
 	$sql = "SELECT bt.*, act.*,
 		IFNULL(abs(dt.ov_amount), IFNULL(ABS(st.ov_amount), bt.amount)) settled_amount,
@@ -97,7 +97,7 @@ function get_bank_trans(mixed $type, mixed $trans_no=null, mixed $person_type_id
 /**
  * @return bool|mysqli_result
  */
-function get_bank_trans_for_bank_account(string|int|float|bool|null $bank_account, mixed $from, mixed $to)
+function get_bank_trans_for_bank_account(string|int|float|bool|null $bank_account, string|int|float|bool|null $from, string|int|float|bool|null $to)
 {
 	$from = date2sql($from);
 	$to = date2sql($to);
@@ -119,7 +119,7 @@ function get_bank_trans_for_bank_account(string|int|float|bool|null $bank_accoun
 /**
  * @return null|string
  */
-function get_balance_before_for_bank_account(mixed $bank_account, mixed $from)
+function get_balance_before_for_bank_account(mixed $bank_account, string|int|float|bool|null $from)
 {
 	$from = date2sql($from);
 	$sql = "SELECT SUM(amount)
@@ -135,7 +135,7 @@ function get_balance_before_for_bank_account(mixed $bank_account, mixed $from)
 /**
  * @return null|string
  */
-function get_gl_trans_value(mixed $account, mixed $type, mixed $trans_no)
+function get_gl_trans_value(string|int|float|bool|null $account, string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no)
 {
 	$sql = "SELECT SUM(amount)
 		FROM ".TB_PREF."gl_trans
@@ -227,7 +227,7 @@ function check_bank_account_history(string|int|float|bool|null $delta_amount, st
 /**
 *	Check bank transfer, deposit or customer deposit before voiding.
 **/
-function check_void_bank_trans(mixed $type, mixed $type_no): bool
+function check_void_bank_trans(string|int|float|bool|null $type, string|int|float|bool|null $type_no): bool
 {
 	$moves = get_bank_trans($type, $type_no);
 	while ($trans = db_fetch($moves)) {

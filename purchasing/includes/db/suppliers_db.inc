@@ -86,7 +86,7 @@ function delete_supplier(string|array|null $supplier_id): void
 /**
  * @return array<array-key, null|string>|false
  */
-function get_supplier_details(mixed $supplier_id, string|array|null $to=null, string|bool|array|null $all=true)
+function get_supplier_details(string|int|float|bool|array|null $supplier_id, string|array|null $to=null, string|bool|array|null $all=true)
 {
 
 	if ($to == null)
@@ -139,7 +139,7 @@ function get_supplier_details(mixed $supplier_id, string|array|null $to=null, st
 /**
  * @return array<array-key, null|string>|false
  */
-function get_supplier(mixed $supplier_id)
+function get_supplier(string|int|float|bool|array|null $supplier_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."suppliers WHERE supplier_id=".db_escape($supplier_id);
 
@@ -151,7 +151,7 @@ function get_supplier(mixed $supplier_id)
 /**
  * @return false|null|string
  */
-function get_supplier_name(mixed $supplier_id)
+function get_supplier_name(string|int|float|bool|array|null $supplier_id)
 {
 	$sql = "SELECT supp_name AS name FROM ".TB_PREF."suppliers WHERE supplier_id=".db_escape($supplier_id);
 
@@ -165,7 +165,7 @@ function get_supplier_name(mixed $supplier_id)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_supplier_accounts(mixed $supplier_id)
+function get_supplier_accounts(string|int|float|bool|array|null $supplier_id)
 {
 	$sql = "SELECT payable_account,purchase_account,payment_discount_account, dimension_id, dimension2_id FROM ".TB_PREF."suppliers WHERE supplier_id=".db_escape($supplier_id);
 
@@ -184,21 +184,21 @@ function get_supplier_contacts(?string $supplier_id, ?string $action=null): arra
 	return $results;
 }
 
-function get_current_supp_credit(mixed $supplier_id)
+function get_current_supp_credit(string|int|float|bool|null $supplier_id)
 {
 	$suppdet = get_supplier_details($supplier_id);
 	return $suppdet['cur_credit'];
 
 }
 
-function is_new_supplier(mixed $id): bool
+function is_new_supplier(string|int|float|bool|null $id): bool
 {
 	$tables = array('supp_trans', 'grn_batch', 'purch_orders', 'purch_data');
 
 	return !key_in_foreign_table($id, $tables, 'supplier_id');
 }
 
-function get_supplier_currency(mixed $supplier_id)
+function get_supplier_currency(string|int|float|bool|array|null $supplier_id)
 {
     $sql = "SELECT curr_code FROM ".TB_PREF."suppliers WHERE supplier_id = ".db_escape($supplier_id);
 

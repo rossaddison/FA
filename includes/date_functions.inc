@@ -178,7 +178,7 @@ function Now(): string
 //
 //	Retrieve and optionaly set default date for new document.
 //
-function new_doc_date(mixed $date=null): string
+function new_doc_date(string|int|float|bool|array|null $date=null): string
 {
 	if (isset($date) && $date != '')
 		$_SESSION['_default_date'] = $date;
@@ -189,7 +189,7 @@ function new_doc_date(mixed $date=null): string
 	return $_SESSION['_default_date'];
 }
 
-function is_date_in_fiscalyear(mixed $date, bool $convert=false): int|bool
+function is_date_in_fiscalyear(string|int|float|bool|array|null $date, bool $convert=false): int|bool
 {
 	global $path_to_root;
 	include_once($path_to_root . "/admin/db/fiscalyears_db.inc");
@@ -215,7 +215,7 @@ function is_date_in_fiscalyear(mixed $date, bool $convert=false): int|bool
 	return 1;
 }
 
-function is_date_closed(mixed $date): bool
+function is_date_closed(string|int|float|bool|array|null $date): bool
 {
 	return !date1_greater_date2($date, sql2date(get_company_pref('gl_closing_date')));
 }
@@ -238,7 +238,7 @@ function end_fiscalyear(): string
 	return sql2date($myrow['end']);
 }
 
-function begin_month(mixed $date): string
+function begin_month(string|int|float|bool|array|null $date): string
 {
 	global $SysPrefs;
     list($day, $month, $year) = explode_date_to_dmy($date);
@@ -267,7 +267,7 @@ function days_in_month(string|int|float|bool|null $month, string|int|float|bool|
 	return $days_in_month[$month - 1];
 }
 
-function end_month(mixed $date): string
+function end_month(string|int|float|bool|array|null $date): string
 {
 	global $SysPrefs;
 
@@ -284,7 +284,7 @@ function end_month(mixed $date): string
    	return __date($year, $month, days_in_month($month, $year));
 }
 
-function add_days(mixed $date, string|int|float|bool|null $days): string // accepts negative values as well
+function add_days(string|int|float|bool|array|null $date, string|int|float|bool|null $days): string // accepts negative values as well
 {
 	global $SysPrefs;
     list($day, $month, $year) = explode_date_to_dmy($date);
@@ -301,7 +301,7 @@ function add_days(mixed $date, string|int|float|bool|null $days): string // acce
    	return __date($year, $month, $day);
 }
 
-function add_months(mixed $date, mixed $months) // accepts negative values as well
+function add_months(string|int|float|bool|array|null $date, mixed $months) // accepts negative values as well
 {
 	global $SysPrefs;
 
@@ -325,7 +325,7 @@ function add_months(mixed $date, mixed $months) // accepts negative values as we
    	return __date($year, $month, $day);
 }
 
-function add_years(mixed $date, string|int|float|bool|null $years) // accepts negative values as well
+function add_years(string|int|float|bool|null $date, string|int|float|bool|null $years) // accepts negative values as well
 {
 	global $SysPrefs;
 
@@ -526,7 +526,7 @@ provided that both dates are after 1970. Also only works for dates up to the yea
 	}
 }
 
-function explode_date_to_dmy(mixed $date_): array
+function explode_date_to_dmy(string|int|float|bool|null $date_): array
 {
 	$date = date2sql($date_);
 	if ($date == "") 

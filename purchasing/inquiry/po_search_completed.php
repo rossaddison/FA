@@ -30,7 +30,7 @@ function trans_view(mixed $trans)
 	return get_trans_view_str(ST_PURCHORDER, $trans["order_no"]);
 }
 
-function edit_link(mixed $row) 
+function edit_link(array|false|null $row) 
 {
 	global $page_nested;
 
@@ -38,7 +38,7 @@ function edit_link(mixed $row)
 		trans_editor_link(ST_PURCHORDER, $row["order_no"]);
 }
 
-function receive_link(mixed $row): string 
+function receive_link(array|false|null $row): string 
 {
 	global $page_nested;
 	
@@ -47,7 +47,7 @@ function receive_link(mixed $row): string
 			"/purchasing/po_receive_items.php?PONumber=" . (string)$row["order_no"], ICON_RECEIVE);
 }
 
-function prt_link(mixed $row)
+function prt_link(array|false|null $row)
 {
 	return print_document_link($row['order_no'], _("Print"), true, ST_PURCHORDER, ICON_PRINT);
 }

@@ -131,7 +131,7 @@ function display_bank_header(&$order): void
 }
 //---------------------------------------------------------------------------------
 
-function display_gl_items(mixed $title, &$order): void
+function display_gl_items(string|int|float|bool|supp_trans|null $title, &$order): void
 {
 	global $path_to_root;
 

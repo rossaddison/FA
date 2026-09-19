@@ -66,7 +66,7 @@ function display_supplier_summary(bool|array|null $supplier_record): void
     end_table(1);
 }
 //------------------------------------------------------------------------------------------------
-function systype_name(mixed $dummy, mixed $type)
+function systype_name(string|int|float|bool|array|null $dummy, string|int|float|bool|null $type)
 {
 	global $systypes_array;
 	return $systypes_array[$type];
@@ -77,19 +77,19 @@ function trans_view(mixed $trans)
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
 
-function due_date(mixed $row)
+function due_date(array|false|null $row)
 {
 	return ($row["type"]== ST_SUPPINVOICE) || ($row["type"]== ST_SUPPCREDIT) ? $row["due_date"] : '';
 }
 
-function gl_view(mixed $row)
+function gl_view(array|false|null $row)
 {
 	if ($row['type'] == ST_SUPPRECEIVE && get_voided_entry(ST_SUPPRECEIVE, $row['trans_no']))
 		return set_icon(ICON_REMOVE, _("Voided."));
 	return get_gl_view_str($row["type"], $row["trans_no"]);
 }
 
-function credit_link(mixed $row): string
+function credit_link(array|false|null $row): string
 {
 	global $page_nested;
 
@@ -102,25 +102,25 @@ function credit_link(mixed $row): string
 			: '';
 }
 
-function fmt_amount(mixed $row): string
+function fmt_amount(array|false|null $row): string
 {
 	$value = $row["TotalAmount"];
 	return price_format($value);
 }
 
-function prt_link(mixed $row)
+function prt_link(array|false|null $row)
 {
   	if ($row['type'] == ST_SUPPAYMENT || $row['type'] == ST_BANKPAYMENT || $row['type'] == ST_SUPPCREDIT) 
  		return print_document_link($row['trans_no']."-".(string)$row['type'], _("Print Remittance"), true, ST_SUPPAYMENT, ICON_PRINT);
 }
 
-function check_overdue(mixed $row): bool
+function check_overdue(array|false|null $row): bool
 {
 	return $row['OverDue'] == 1
 		&& (abs($row["TotalAmount"]) - (float)$row["Allocated"] != 0);
 }
 
-function edit_link(mixed $row)
+function edit_link(array|false|null $row)
 {
 	global $page_nested;
 

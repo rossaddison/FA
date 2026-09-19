@@ -116,7 +116,7 @@ function view_link(mixed $trans)
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
 
-function select_link(mixed $row): string
+function select_link(array|false|null $row): string
 {
 	if (!isset($row['type']))
 		$row['type'] = $_POST['filterType'];
@@ -125,24 +125,24 @@ function select_link(mixed $row): string
   	return button('Edit'.(string)$row["trans_no"], _("Select"), _("Select"), ICON_EDIT);
 }
 
-function gl_view(mixed $row)
+function gl_view(array|false|null $row)
 {
 	if (!isset($row['type']))
 		$row['type'] = $_POST['filterType'];
 	return get_gl_view_str($row["type"], $row["trans_no"]);
 }
 
-function date_view(mixed $row)
+function date_view(array|false|null $row)
 {
 	return $row['trans_date'];
 }
 
-function ref_view(mixed $row)
+function ref_view(array|false|null $row)
 {
 	return $row['ref'];
 }
 
-function is_selected(mixed $row) // Function added by faisal
+function is_selected(array|false|null $row) // Function added by faisal
 {
 	global $selected_id;
 	return $row['trans_no'] == $selected_id ? true : false;

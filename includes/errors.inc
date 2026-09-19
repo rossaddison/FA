@@ -15,7 +15,7 @@ $before_box = ''; // temporary container for output html data before error box
 #
 #   Wrapper for trigger_error
 #
-function fa_trigger_error(mixed $msg, string|int|float|bool|null $error_level=E_USER_NOTICE): void
+function fa_trigger_error(string|int|float|bool|null $msg, string|int|float|bool|null $error_level=E_USER_NOTICE): void
 {
     if ($error_level==E_USER_ERROR) {
           error_handler(E_USER_ERROR, $msg, __FILE__, __LINE__); //  E_USER_ERROR is deprecated as trigger_error arg since php 8.4

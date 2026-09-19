@@ -30,7 +30,7 @@ function db_has_currencies(): bool
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."currencies");
 }
 
-function check_db_has_currencies(mixed $msg): void
+function check_db_has_currencies(string|int|float|bool|null $msg): void
 {
 	global $path_to_root;
     if (!db_has_currencies()) 
@@ -121,7 +121,7 @@ function check_db_has_tax_groups(?string $msg): void
     }	
 }
 
-function db_customer_has_branches(mixed $customer_id): bool
+function db_customer_has_branches(string|int|float|bool|array|null $customer_id): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."cust_branch "
 		."WHERE debtor_no=".db_escape($customer_id));
@@ -202,7 +202,7 @@ function db_has_workorders(): bool
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."workorders");
 }
 
-function check_db_has_workorders(mixed $msg): void
+function check_db_has_workorders(string|int|float|bool|null $msg): void
 {
 	global $path_to_root;
     if (!db_has_workorders()) 
@@ -223,7 +223,7 @@ function db_has_dimensions(): bool
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."dimensions");
 }
 
-function check_db_has_dimensions(mixed $msg): void
+function check_db_has_dimensions(string|int|float|bool|null $msg): void
 {
 	global $path_to_root;
     if (!db_has_dimensions()) 
@@ -549,12 +549,12 @@ function db_has_quick_entries(): bool
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."quick_entries");
 }
 
-function db_has_tags(mixed $type): bool
+function db_has_tags(string|int|float|bool|null $type): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."tags WHERE type=".db_escape($type));
 }
 
-function check_db_has_tags(mixed $type, mixed $msg): void
+function check_db_has_tags(string|int|float|bool|null $type, string|int|float|bool|null $msg): void
 {
 	global $path_to_root;
     if (!db_has_tags($type)) 
@@ -576,7 +576,7 @@ function check_empty_result(?string $sql): bool
 //	Integer input check 
 //	Return 1 if number has proper form and is within <min, max> range
 //
-function check_int(mixed $postname, mixed $min=null, mixed $max=null): int {
+function check_int(mixed $postname, mixed $min=null, string|int|float|bool|null $max=null): int {
 	if(!isset($_POST[$postname]))
 	  return 0;
     $num = input_num($postname);
@@ -606,7 +606,7 @@ function check_num(string $postname, int|float|null $min=null, int|float|null $m
     return 1;
 }
 
-function check_is_closed(mixed $type, mixed $type_no, mixed $msg=null): void
+function check_is_closed(string|int|float|bool|null $type, string|int|float|bool|null $type_no, string|int|float|bool|null $msg=null): void
 {
 	global $systypes_array;
 
@@ -646,7 +646,7 @@ function check_deferred_income_act(?string $msg): void
     }
 }
 
-function check_is_editable(mixed $trans_type, mixed $trans_no, mixed $msg=null): void
+function check_is_editable(string|int|float|bool|array|null $trans_type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $msg=null): void
 {
 	if (!$_SESSION['wa_current_user']->can_access('SA_EDITOTHERSTRANS'))
 	{
@@ -664,7 +664,7 @@ function check_is_editable(mixed $trans_type, mixed $trans_no, mixed $msg=null):
 		check_is_closed($trans_type, $trans_no, $msg);
 }
 
-function check_reference(mixed $reference, mixed $trans_type, mixed $trans_no=0, mixed $context=null, mixed $line=null): bool
+function check_reference(string|int|float|bool|array|null $reference, string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no=0, mixed $context=null, mixed $line=null): bool
 {
 	global $Refs;
 
@@ -679,7 +679,7 @@ function check_reference(mixed $reference, mixed $trans_type, mixed $trans_no=0,
 	return true;
 }
 
-function check_sys_pref(mixed $name, mixed $msg, mixed $empty = ''): void
+function check_sys_pref(string|int|float|bool|null $name, string|int|float|bool|null $msg, mixed $empty = ''): void
 {
 	global $path_to_root;
 

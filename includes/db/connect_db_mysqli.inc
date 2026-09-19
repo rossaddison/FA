@@ -105,7 +105,7 @@ function db_fetch_row(mysqli_result $result): array|false
 /**
  * @return array<string, string|null>|false a row keyed by column name
  */
-function db_fetch_assoc(mixed $result): array|false
+function db_fetch_assoc(mysqli_result $result): array|false
 {
 	$ret = mysqli_fetch_assoc($result);
 	return ($ret === null ? false : $ret);
@@ -136,7 +136,7 @@ function db_num_rows(mysqli_result $result): int|string
 	return mysqli_num_rows($result);
 }
 
-function db_num_fields(mixed $result): int
+function db_num_fields(mysqli_result $result): int
 {
 	return mysqli_num_fields($result);
 }
@@ -192,7 +192,7 @@ function db_num_affected_rows(): int|string
 	return mysqli_affected_rows($db);
 }
 
-function db_field_name(mixed $result, string|int|float|bool|null $n): string
+function db_field_name(mysqli_result $result, string|int|float|bool|null $n): string
 {
     $fieldinfo = mysqli_fetch_field_direct($result, $n);
     return $fieldinfo->name;

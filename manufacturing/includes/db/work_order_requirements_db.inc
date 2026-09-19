@@ -12,7 +12,7 @@
 /**
  * @return bool|mysqli_result
  */
-function get_wo_requirements(mixed $woid)
+function get_wo_requirements(string|int|float|bool|array|null $woid)
 {
 	$sql = "SELECT req.*, item.description, item.mb_flag, loc.location_name, 
 			center.name AS WorkCentreDescription,
@@ -33,7 +33,7 @@ function get_wo_requirements(mixed $woid)
 /**
  * @return 0|non-falsy-string
  */
-function get_requirements_costs(mixed $woid): int|string
+function get_requirements_costs(string|int|float|bool|null $woid): int|string
 {
 	$sql = "SELECT SUM(units_req*unit_cost) cost
 		FROM ".TB_PREF."wo_requirements
@@ -47,7 +47,7 @@ function get_requirements_costs(mixed $woid): int|string
 
 //--------------------------------------------------------------------------------------
 
-function create_wo_requirements(mixed $woid, ?string $stock_id): void
+function create_wo_requirements(string|int|float|bool|null $woid, ?string $stock_id): void
 {
 	$sql = "INSERT INTO ".TB_PREF."wo_requirements (workorder_id, stock_id, workcentre, units_req, loc_code)
 		SELECT ".db_escape($woid).", component, workcentre_added, quantity, loc_code
@@ -58,7 +58,7 @@ function create_wo_requirements(mixed $woid, ?string $stock_id): void
 
 //--------------------------------------------------------------------------------------
 
-function delete_wo_requirements(mixed $woid): void
+function delete_wo_requirements(string|int|float|bool|null $woid): void
 {
 	$sql="DELETE FROM ".TB_PREF."wo_requirements WHERE workorder_id=".db_escape($woid);
 	db_query($sql,"The work order requirements could not be deleted");	
@@ -81,7 +81,7 @@ function update_wo_requirement_issued(?string $id, string|int|float|bool|null $q
 
 //--------------------------------------------------------------------------------------
 
-function void_wo_requirements(mixed $woid): void
+function void_wo_requirements(string|int|float|bool|null $woid): void
 {
 	$sql = "UPDATE ".TB_PREF."wo_requirements SET units_issued = 0
 		WHERE workorder_id = ".db_escape($woid);

@@ -13,7 +13,7 @@
 /**
  * @return 0|null|string
  */
-function get_demand_qty(mixed $stock_id, mixed $location)
+function get_demand_qty(string|int|float|bool|null $stock_id, string|int|float|bool|array|null $location)
 {
 	$sql = "SELECT SUM(line.quantity - line.qty_sent) AS QtyDemand
 			FROM ".TB_PREF."sales_order_details line,
@@ -34,7 +34,7 @@ function get_demand_qty(mixed $stock_id, mixed $location)
 $bom_list = array(); 
 $qoh_stock = NULL;
 
-function load_stock_levels(mixed $location): array
+function load_stock_levels(string|int|float|bool|null $location): array
 {
 	$date = date2sql(Today());
 
@@ -54,7 +54,7 @@ function load_stock_levels(mixed $location): array
 }
 
 // recursion fixed. Max 10 recursion levels.
-function stock_demand_manufacture(mixed $stock_id, string|int|float|bool|null $qty, mixed $demand_id, mixed $location, string|int|float|bool|null $level=0) 
+function stock_demand_manufacture(string|int|float|bool|null $stock_id, string|int|float|bool|null $qty, mixed $demand_id, string|int|float|bool|null $location, string|int|float|bool|null $level=0) 
 {
 	global $bom_list, $qoh_stock;
 
@@ -104,7 +104,7 @@ function stock_demand_manufacture(mixed $stock_id, string|int|float|bool|null $q
 }
 
 // recursion fixed by Tom Moulton
-function get_demand_asm_qty(mixed $stock_id, mixed $location) 
+function get_demand_asm_qty(string|int|float|bool|null $stock_id, string|int|float|bool|array|null $location) 
 {
 	$demand_qty = 0.0;
 	$sql = "SELECT line.stk_code, SUM(line.quantity-line.qty_sent) AS Demmand
@@ -130,7 +130,7 @@ function get_demand_asm_qty(mixed $stock_id, mixed $location)
 /**
  * @return 0|null|string
  */
-function get_on_porder_qty(mixed $stock_id, string|array|null $location)
+function get_on_porder_qty(string|int|float|bool|null $stock_id, string|array|null $location)
 {
 	$sql = "SELECT SUM(line.quantity_ordered - line.quantity_received) AS qoo
 		FROM ".TB_PREF."purch_order_details line 
@@ -156,7 +156,7 @@ function get_on_porder_qty(mixed $stock_id, string|array|null $location)
 /**
  * @return float(0)|null|string
  */
-function get_on_worder_qty(mixed $stock_id, string|array|null $location)
+function get_on_worder_qty(string|int|float|bool|null $stock_id, string|array|null $location)
 {
  	$qoo = 0.0;
 	$flag = get_mb_flag($stock_id);
@@ -182,7 +182,7 @@ function get_on_worder_qty(mixed $stock_id, string|array|null $location)
 
 //--------------------------------------------------------------------------------------
 
-function add_bom(mixed $selected_parent, string|array|null $component, string|array|null $workcentre_added, string|array|null $loc_code, int|float|bool|null $quantity): void
+function add_bom(string|int|float|bool|null $selected_parent, string|array|null $component, string|array|null $workcentre_added, string|array|null $loc_code, int|float|bool|null $quantity): void
 {
 	$sql = "INSERT INTO ".TB_PREF."bom (parent, component, workcentre_added, loc_code, quantity)
 		VALUES (".db_escape($selected_parent).", ".db_escape($component) . ","
@@ -193,7 +193,7 @@ function add_bom(mixed $selected_parent, string|array|null $component, string|ar
 }
 //--------------------------------------------------------------------------------------
 
-function update_bom(mixed $selected_parent, mixed $selected_component, string|array|null $workcentre_added, string|array|null $loc_code, int|float|bool|null $quantity): void
+function update_bom(string|int|float|bool|null $selected_parent, mixed $selected_component, string|array|null $workcentre_added, string|array|null $loc_code, int|float|bool|null $quantity): void
 {
 	$sql = "UPDATE ".TB_PREF."bom SET workcentre_added=".db_escape($workcentre_added)
 	 . ",loc_code=".db_escape($loc_code) . ",
@@ -205,7 +205,7 @@ function update_bom(mixed $selected_parent, mixed $selected_component, string|ar
 	db_query($sql,"could not update bom");
 }
 	
-function delete_bom(mixed $selected_id): void
+function delete_bom(string|int|float|bool|array|null $selected_id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."bom WHERE id=".db_escape($selected_id);
 	db_query($sql,"Could not delete this bom components");
@@ -237,7 +237,7 @@ function get_bom(mixed $item)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_component_from_bom(mixed $selected_id)
+function get_component_from_bom(string|int|float|bool|array|null $selected_id)
 {
 	$sql = "SELECT bom.*, item.description
 		FROM ".TB_PREF."bom bom,"
@@ -259,7 +259,7 @@ function has_bom(mixed $item): bool
 
 //--------------------------------------------------------------------------------------
 
-function is_component_already_on_bom(string|array|null $component, string|array|null $workcentre_added, string|array|null $loc_code, mixed $selected_parent): bool
+function is_component_already_on_bom(string|array|null $component, string|array|null $workcentre_added, string|array|null $loc_code, string|int|float|bool|null $selected_parent): bool
 {
 	$sql = "SELECT component
 		FROM ".TB_PREF."bom

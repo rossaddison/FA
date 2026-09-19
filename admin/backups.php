@@ -104,7 +104,7 @@ function get_backup_file_combo(): string
 	return $selector;
 }
 
-function compress_list_row(?string $label, ?string $name, mixed $value=null): void
+function compress_list_row(?string $label, ?string $name, string|int|float|bool|null $value=null): void
 {
 	$ar_comps = array('no'=>_("No"));
 

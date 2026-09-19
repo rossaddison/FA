@@ -97,7 +97,7 @@ function display_langs(): void
 	end_table(1);
 }
 
-function instlang_list_row(?string $label, ?string $name, mixed $value=null): void {
+function instlang_list_row(?string $label, ?string $name, string|int|float|bool|null $value=null): void {
 
 	global $inst_langs;
 

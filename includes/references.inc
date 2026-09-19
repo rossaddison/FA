@@ -433,14 +433,14 @@ class references
 //
 //	Check if reference was not used so far (for other transaction than $trans_no)
 //
-function is_new_reference(mixed $ref, mixed $type, ?int $trans_no=0)
+function is_new_reference(string|int|float|bool|null $ref, string|int|float|bool|null $type, ?int $trans_no=0)
 {
 	global $Refs;
 
 	return $Refs->is_new_reference($ref, $type, $trans_no);
 }
 
-function get_reference(mixed $type, mixed $trans_no)
+function get_reference(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no)
 {
 	global $Refs;
 

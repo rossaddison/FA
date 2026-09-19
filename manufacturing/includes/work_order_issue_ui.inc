@@ -81,7 +81,7 @@ function display_issue_items(?string $title, &$order): void
 
 //---------------------------------------------------------------------------------
 
-function issue_edit_item_controls(&$order, mixed $line_no=-1): void
+function issue_edit_item_controls(&$order, string|int|float|bool|null $line_no=-1): void
 {
 	global $Ajax;
 	start_row();

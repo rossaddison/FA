@@ -186,7 +186,7 @@ if (isset($_POST['delete']))
 	} //end if Delete Customer
 }
 
-function customer_settings(mixed $selected_id): void 
+function customer_settings(string|int|float|bool|array|null $selected_id): void 
 {
 	global $SysPrefs, $path_to_root, $page_nested;
 	

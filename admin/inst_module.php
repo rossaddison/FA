@@ -66,7 +66,7 @@ function local_extension(string|int|null $id): bool
 	return true;
 }
 
-function handle_delete(mixed $id): bool
+function handle_delete(string|int|float|bool|null $id): bool
 {
 	global $path_to_root;
 	

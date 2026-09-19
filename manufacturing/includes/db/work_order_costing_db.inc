@@ -36,7 +36,7 @@ function get_wo_costing(mixed $workorder_id)
 	return db_query($sql, "could not get work order costing");
 }
 
-function delete_wo_costing(mixed $trans_type, mixed $trans_no): void
+function delete_wo_costing(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no): void
 {
 	$sql="DELETE FROM ".TB_PREF."wo_costing WHERE trans_type=".db_escape($trans_type)
 		." AND trans_no=".db_escape($trans_no);
@@ -47,7 +47,7 @@ function delete_wo_costing(mixed $trans_type, mixed $trans_no): void
 /*
 	Updates average material cost for item.
 */
-function update_material_cost(?string $stock_id, string|int|float|bool|null $qty, string|int|float|bool|null $unit_cost, mixed $date): void
+function update_material_cost(?string $stock_id, string|int|float|bool|null $qty, string|int|float|bool|null $unit_cost, string|int|float|bool|null $date): void
 {
 	global $Refs;
 
@@ -116,7 +116,7 @@ function update_material_cost(?string $stock_id, string|int|float|bool|null $qty
 /*
 	Create journal entry for WO related costs.
 */
-function add_wo_costs_journal(mixed $wo_id, int|float|bool|null $amount, mixed $cost_type, mixed $cr_acc, mixed $date, mixed $dim1=0, mixed $dim2=0, mixed $memo = null, mixed $ref= null): void
+function add_wo_costs_journal(mixed $wo_id, int|float|bool|null $amount, mixed $cost_type, mixed $cr_acc, string|int|float|bool|null $date, mixed $dim1=0, string|int|float|bool|null $dim2=0, string|int|float|bool|null $memo = null, string|int|float|bool|null $ref= null): void
 {
 //-------- this should be done by single call to write_journal_entries() using items_cart()
 //
@@ -161,7 +161,7 @@ function add_wo_costs_journal(mixed $wo_id, int|float|bool|null $amount, mixed $
 /*
 	Process component usage: generate and post stock move, update average component cost.
 */
-function work_order_production_gl(mixed $woid, ?string $stock_id, string|int|float|bool|null $quantity, string|int|float|bool|null $date_, string|int|null $rcv_no): void
+function work_order_production_gl(string|int|float|bool|null $woid, ?string $stock_id, string|int|float|bool|null $quantity, string|int|float|bool|null $date_, string|int|null $rcv_no): void
 {
 	global $SysPrefs, $path_to_root;
 
@@ -214,7 +214,7 @@ function work_order_production_gl(mixed $woid, ?string $stock_id, string|int|flo
 /**
  * @return 0|null|string
  */
-function check_wo_costing(mixed $type, mixed $trans_no)
+function check_wo_costing(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no)
 {
 	$sql = "SELECT workorder_id FROM ".TB_PREF."wo_costing WHERE trans_type= ".db_escape($type)." AND trans_no=".db_escape($trans_no);
 	$costs = db_query($sql, 'cannot check WO costing');

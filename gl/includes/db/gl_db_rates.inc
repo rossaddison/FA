@@ -26,7 +26,7 @@ function get_exchange_rate(string|int|float|bool|null $rate_id)
 /**
  * @return 0|null|string
  */
-function get_date_exchange_rate(mixed $curr_code, mixed $date_)
+function get_date_exchange_rate(string|int|float|bool|array|null $curr_code, string|int|float|bool|array|null $date_)
 {
 	$date = date2sql($date_);
 	$sql = "SELECT rate_buy
@@ -47,7 +47,7 @@ function get_date_exchange_rate(mixed $curr_code, mixed $date_)
 /**
  * @return array<string, null|string>|false
  */
-function get_last_exchange_rate(mixed $curr_code, mixed $date_)
+function get_last_exchange_rate(string|int|float|bool|null $curr_code, string|int|float|bool|null $date_)
 {
 	$date = date2sql($date_);
 
@@ -82,7 +82,7 @@ function update_exchange_rate(string|array|null $curr_code, string|array|null $d
 
 //---------------------------------------------------------------------------------------------
 
-function add_exchange_rate(mixed $curr_code, mixed $date_, mixed $buy_rate, mixed $sell_rate): void
+function add_exchange_rate(string|int|float|bool|array|null $curr_code, string|int|float|bool|array|null $date_, mixed $buy_rate, mixed $sell_rate): void
 {
 	if (is_company_currency($curr_code))
 		display_db_error("Exchange rates cannot be set for company currency", "", true);
@@ -97,7 +97,7 @@ function add_exchange_rate(mixed $curr_code, mixed $date_, mixed $buy_rate, mixe
 
 //---------------------------------------------------------------------------------------------
 
-function add_new_exchange_rate(mixed $curr_code, mixed $date_, mixed $ex_rate): void
+function add_new_exchange_rate(string|int|float|bool|null $curr_code, string|int|float|bool|array|null $date_, mixed $ex_rate): void
 {
 	if (is_company_currency($curr_code) || !$ex_rate)
 		return;
@@ -121,7 +121,7 @@ function delete_exchange_rate(string|int|float|bool|null $rate_id): void
 //
 //	amount [home] = amount [curr] * ex_rate
 //
-function retrieve_exrate(mixed $curr_b, mixed $date)
+function retrieve_exrate(mixed $curr_b, string|int|float|bool|null $date)
 {
 	global $SysPrefs;
 
@@ -135,7 +135,7 @@ function retrieve_exrate(mixed $curr_b, mixed $date)
 }
 //-----------------------------------------------------------------------------
 
-function get_extern_rate(string|int|float|bool|null $curr_b, mixed $provider, mixed $date): float|int|string 
+function get_extern_rate(string|int|float|bool|null $curr_b, mixed $provider, string|int|float|bool|null $date): float|int|string 
 {
 	global	$path_to_root;
 

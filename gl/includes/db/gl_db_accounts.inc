@@ -106,7 +106,7 @@ function get_gl_account_name(mixed $code)
 	display_db_error("could not retreive the account name for $code", $sql, true);
 }
 
-function gl_account_in_company_defaults(mixed $acc): bool
+function gl_account_in_company_defaults(string|int|float|bool|null $acc): bool
 {
 	$sql= "SELECT COUNT(*) 
 	FROM ".TB_PREF."sys_prefs
@@ -134,7 +134,7 @@ function gl_account_in_company_defaults(mixed $acc): bool
 	return ($myrow[0] > 0); 
 }
 
-function gl_account_in_stock_category(mixed $acc): bool
+function gl_account_in_stock_category(string|int|float|bool|null $acc): bool
 {
 	$acc = db_escape($acc);
 
@@ -150,7 +150,7 @@ function gl_account_in_stock_category(mixed $acc): bool
 	return ($myrow[0] > 0); 
 }
 
-function gl_account_in_stock_master(mixed $acc): bool
+function gl_account_in_stock_master(string|int|float|bool|null $acc): bool
 {
 	$acc = db_escape($acc);
 
@@ -166,7 +166,7 @@ function gl_account_in_stock_master(mixed $acc): bool
 	return ($myrow[0] > 0); 
 }
 
-function gl_account_in_tax_types(mixed $acc): bool
+function gl_account_in_tax_types(string|int|float|bool|null $acc): bool
 {
 	$acc = db_escape($acc);
 
@@ -180,7 +180,7 @@ function gl_account_in_tax_types(mixed $acc): bool
 	return ($myrow[0] > 0); 
 }
 
-function gl_account_in_cust_branch(mixed $acc): bool
+function gl_account_in_cust_branch(string|int|float|bool|null $acc): bool
 {
 	$acc = db_escape($acc);
 
@@ -196,7 +196,7 @@ function gl_account_in_cust_branch(mixed $acc): bool
 	return ($myrow[0] > 0); 
 }
 
-function gl_account_in_suppliers(mixed $acc): bool
+function gl_account_in_suppliers(string|int|float|bool|null $acc): bool
 {
 	$acc = db_escape($acc);
 
@@ -211,7 +211,7 @@ function gl_account_in_suppliers(mixed $acc): bool
 	return ($myrow[0] > 0); 
 }
 
-function gl_account_in_quick_entry_lines(mixed $acc): bool
+function gl_account_in_quick_entry_lines(string|int|float|bool|null $acc): bool
 {
 	$acc = db_escape($acc);
 
@@ -231,7 +231,7 @@ function gl_account_in_quick_entry_lines(mixed $acc): bool
 /**
  * @return 0|null|string
  */
-function is_subledger_account(mixed $account)
+function is_subledger_account(string|int|float|bool|array|null $account)
 {
 	$sql = "SELECT 1 
 		FROM ".TB_PREF."cust_branch
@@ -249,7 +249,7 @@ function is_subledger_account(mixed $account)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_subaccount_data(mixed $code_id, mixed $person_id)
+function get_subaccount_data(mixed $code_id, string|int|float|bool|null $person_id)
 {
 	$sql = "SELECT debtor_ref as name, branch_code as id 
 		FROM ".TB_PREF."cust_branch branch 

@@ -27,14 +27,14 @@ page(_($help_context = "Customer Transactions"), isset($_GET['customer_id']), fa
 
 //------------------------------------------------------------------------------------------------
 
-function systype_name(mixed $dummy, mixed $type)
+function systype_name(string|int|float|bool|array|null $dummy, string|int|float|bool|null $type)
 {
 	global $systypes_array;
 
 	return $systypes_array[$type];
 }
 
-function order_view(mixed $row)
+function order_view(array|false|null $row)
 {
 	return $row['order_']>0 ?
 		get_customer_trans_view_str(ST_SALESORDER, $row['order_'])
@@ -46,17 +46,17 @@ function trans_view(mixed $trans)
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
 
-function due_date(mixed $row)
+function due_date(array|false|null $row)
 {
 	return	$row["type"] == ST_SALESINVOICE	? $row["due_date"] : '';
 }
 
-function gl_view(mixed $row)
+function gl_view(array|false|null $row)
 {
 	return get_gl_view_str($row["type"], $row["trans_no"]);
 }
 
-function fmt_amount(mixed $row): string
+function fmt_amount(array|false|null $row): string
 {
 	$value =
 	    $row['type']==ST_CUSTCREDIT || $row['type']==ST_CUSTPAYMENT || $row['type']==ST_BANKDEPOSIT ? -$row["TotalAmount"] : $row["TotalAmount"];
@@ -66,7 +66,7 @@ function fmt_amount(mixed $row): string
 /**
  * @return null|string
  */
-function credit_link(mixed $row)
+function credit_link(array|false|null $row)
 {
 	global $page_nested;
 
@@ -83,7 +83,7 @@ function credit_link(mixed $row)
 	}	
 }
 
-function edit_link(mixed $row)
+function edit_link(array|false|null $row)
 {
 	global $page_nested;
 
@@ -97,7 +97,7 @@ function edit_link(mixed $row)
 /**
  * @return null|string
  */
-function copy_link(mixed $row)
+function copy_link(array|false|null $row)
 {
     global $page_nested;
 
@@ -111,7 +111,7 @@ function copy_link(mixed $row)
             . (string)$row['order_'], ICON_DOC);
 }
 
-function prt_link(mixed $row)
+function prt_link(array|false|null $row)
 {
   	if ($row['type'] == ST_CUSTPAYMENT || $row['type'] == ST_BANKDEPOSIT) 
 		return print_document_link($row['trans_no']."-".(string)$row['type'], _("Print Receipt"), true, ST_CUSTPAYMENT, ICON_PRINT);
@@ -121,7 +121,7 @@ function prt_link(mixed $row)
  		return print_document_link($row['trans_no']."-".(string)$row['type'], _("Print"), true, $row['type'], ICON_PRINT);
 }
 
-function check_overdue(mixed $row): bool
+function check_overdue(array|false|null $row): bool
 {
 	return $row['OverDue'] == 1
 		&& floatcmp(ABS($row["TotalAmount"]), $row["Allocated"]) != 0;

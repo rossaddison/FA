@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_item_tax_type(mixed $name, mixed $exempt, ?array $exempt_from): void
+function add_item_tax_type(string|int|float|bool|null $name, mixed $exempt, ?array $exempt_from): void
 {
 	begin_transaction();
 	
@@ -26,7 +26,7 @@ function add_item_tax_type(mixed $name, mixed $exempt, ?array $exempt_from): voi
 	commit_transaction();
 }
 
-function update_item_tax_type(mixed $id, mixed $name, mixed $exempt, ?array $exempt_from): void
+function update_item_tax_type(string|int|float|bool|null $id, string|int|float|bool|null $name, mixed $exempt, ?array $exempt_from): void
 {
 	begin_transaction();
 	
@@ -57,7 +57,7 @@ function get_all_item_tax_types(int|bool|array|null $also_inactive=false)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_item_tax_type(mixed $id)
+function get_item_tax_type(string|int|float|bool|array|null $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."item_tax_types WHERE id=".db_escape($id);
 	
@@ -69,7 +69,7 @@ function get_item_tax_type(mixed $id)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_item_tax_type_for_item(mixed $stock_id)
+function get_item_tax_type_for_item(string|int|float|bool|null $stock_id)
 {
 	$sql = "SELECT item_tax_type.*
 		FROM ".TB_PREF."item_tax_types item_tax_type,"
@@ -82,7 +82,7 @@ function get_item_tax_type_for_item(mixed $stock_id)
 	return db_fetch($result);	
 }
 
-function delete_item_tax_type(mixed $id): void
+function delete_item_tax_type(string|int|float|bool|null $id): void
 {
 	begin_transaction();
 		
@@ -95,7 +95,7 @@ function delete_item_tax_type(mixed $id): void
 	commit_transaction();	
 }
 
-function add_item_tax_type_exemptions(mixed $id, ?array $exemptions): void
+function add_item_tax_type_exemptions(string|int|float|bool|null $id, ?array $exemptions): void
 {
 	for ($i = 0; $i < count($exemptions); $i++) 
 	{
@@ -105,7 +105,7 @@ function add_item_tax_type_exemptions(mixed $id, ?array $exemptions): void
 	}		
 }
 
-function delete_item_tax_type_exemptions(mixed $id): void
+function delete_item_tax_type_exemptions(string|int|float|bool|null $id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."item_tax_type_exemptions WHERE item_tax_type_id=".db_escape($id);
 	
@@ -115,7 +115,7 @@ function delete_item_tax_type_exemptions(mixed $id): void
 /**
  * @return bool|mysqli_result
  */
-function get_item_tax_type_exemptions(mixed $id)
+function get_item_tax_type_exemptions(string|int|float|bool|null $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."item_tax_type_exemptions WHERE item_tax_type_id=".db_escape($id);
 	

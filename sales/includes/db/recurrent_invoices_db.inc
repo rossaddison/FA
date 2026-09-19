@@ -10,7 +10,7 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-function add_recurrent_invoice(mixed $description, mixed $order_no, int|float|bool|null $debtor_no, int|float|bool|null $group_no, int|float|bool|null $days, int|float|bool|null $monthly,
+function add_recurrent_invoice(string|int|float|bool|null $description, string|int|float|bool|null $order_no, int|float|bool|null $debtor_no, int|float|bool|null $group_no, int|float|bool|null $days, int|float|bool|null $monthly,
 	mixed $begin, mixed $end): void
 {
 	$sql = "INSERT INTO ".TB_PREF."recurrent_invoices (description, order_no, debtor_no,
@@ -21,7 +21,7 @@ function add_recurrent_invoice(mixed $description, mixed $order_no, int|float|bo
    	db_query($sql,"The recurrent invoice could not be added");
 }
 
-function update_recurrent_invoice(mixed $selected_id, mixed $description, mixed $order_no, int|float|bool|null $debtor_no, int|float|bool|null $group_no, int|float|bool|null $days, int|float|bool|null $monthly,
+function update_recurrent_invoice(string|int|float|bool|array|null $selected_id, string|int|float|bool|null $description, string|int|float|bool|null $order_no, int|float|bool|null $debtor_no, int|float|bool|null $group_no, int|float|bool|null $days, int|float|bool|null $monthly,
 	mixed $begin, mixed $end): void
 {
 	$sql = "UPDATE ".TB_PREF."recurrent_invoices SET 
@@ -37,7 +37,7 @@ function update_recurrent_invoice(mixed $selected_id, mixed $description, mixed 
    	db_query($sql,"The recurrent invoice could not be updated");
 }
 
-function update_last_sent_recurrent_invoice(mixed $id, mixed $date): void
+function update_last_sent_recurrent_invoice(string|int|float|bool|null $id, string|int|float|bool|array|null $date): void
 {
 	$date = date2sql($date);
 	$sql = "UPDATE ".TB_PREF."recurrent_invoices SET last_sent='$date' WHERE id=".db_escape($id);
@@ -45,7 +45,7 @@ function update_last_sent_recurrent_invoice(mixed $id, mixed $date): void
    	db_query($sql,"The recurrent invoice could not be updated");
 }
 
-function delete_recurrent_invoice(mixed $selected_id): void
+function delete_recurrent_invoice(string|int|float|bool|array|null $selected_id): void
 {
 	$sql="DELETE FROM ".TB_PREF."recurrent_invoices WHERE id=".db_escape($selected_id);
 	db_query($sql,"could not delete recurrent invoice");
@@ -74,7 +74,7 @@ function get_recurrent_invoices(?string $date=null)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_recurrent_invoice(mixed $selected_id)
+function get_recurrent_invoice(string|int|float|bool|array|null $selected_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."recurrent_invoices WHERE id=".db_escape($selected_id);
 
@@ -82,7 +82,7 @@ function get_recurrent_invoice(mixed $selected_id)
 	return db_fetch($result);
 }
 
-function check_recurrent_invoice_description(mixed $description, mixed $id=null): bool
+function check_recurrent_invoice_description(string|int|float|bool|null $description, string|int|float|bool|null $id=null): bool
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."recurrent_invoices WHERE description=".db_escape($description);
 
@@ -177,7 +177,7 @@ function check_recurrent_invoice_prices(string|int|null $id): int
 /*
 	Returns true when sales order is suitable to be pattern for recurrent invoice.
 */
-function check_sales_order_type(mixed $order_no): bool
+function check_sales_order_type(string|int|float|bool|null $order_no): bool
 {
 	$myrow = get_sales_order_header($order_no, ST_SALESORDER);
 

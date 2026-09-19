@@ -13,7 +13,7 @@
 /**
  * @return bool|mysqli_result
  */
-function write_printer_def(mixed $id, string|array|null $name, string|array|null $descr, string|array|null $queue, string|array|null $host, int|float|bool|null $port, int|float|bool|null $timeout)
+function write_printer_def(string|int|float|bool|null $id, string|array|null $name, string|array|null $descr, string|array|null $queue, string|array|null $host, int|float|bool|null $port, int|float|bool|null $timeout)
 {
 	if ($id>0)
 		$sql = "UPDATE ".TB_PREF."printers SET description=".db_escape($descr)
@@ -41,7 +41,7 @@ function get_all_printers()
 /**
  * @return array<array-key, null|string>|false
  */
-function get_printer(mixed $id)
+function get_printer(string|int|float|bool|null $id)
 {
 		$sql = "SELECT * FROM ".TB_PREF."printers
 			WHERE id=".db_escape($id);
@@ -50,7 +50,7 @@ function get_printer(mixed $id)
 		return  db_fetch($result);
 }
 
-function delete_printer(mixed $id): void
+function delete_printer(string|int|float|bool|null $id): void
 {
 	$sql="DELETE FROM ".TB_PREF."printers WHERE id=".db_escape($id);
 	db_query($sql,"could not delete printer definition");
@@ -58,7 +58,7 @@ function delete_printer(mixed $id): void
 //============================================================================
 // printer profiles functions
 //
-function update_printer_profile(mixed $name, ?array $dest): bool
+function update_printer_profile(string|int|float|bool|array|null $name, ?array $dest): bool
 {
 	foreach( $dest as $rep => $printer) {
 		if ($printer != '' || $rep == '') {
@@ -104,7 +104,7 @@ function get_report_printer(mixed $profile, mixed $report)
 /**
  * @return bool|mysqli_result
  */
-function delete_printer_profile(mixed $name)
+function delete_printer_profile(string|int|float|bool|array|null $name)
 {
 	$sql="DELETE FROM ".TB_PREF."print_profiles WHERE profile=".db_escape($name);
 	return db_query($sql,"could not delete printing profile");

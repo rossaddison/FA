@@ -53,7 +53,7 @@ start_form();
 		$supplier_id = $_POST['supplier_id'];
 
 //--------------------------------------------------------------------------------
-function systype_name(mixed $dummy, mixed $type)
+function systype_name(string|int|float|bool|array|null $dummy, string|int|float|bool|null $type)
 {
 	global $systypes_array;
 
@@ -65,24 +65,24 @@ function trans_view(mixed $trans)
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
 
-function alloc_link(mixed $row): string
+function alloc_link(array|false|null $row): string
 {
 	return pager_link(_("Allocate"),
 		"/purchasing/allocations/supplier_allocate.php?trans_no="
  			.(string)$row["trans_no"] . "&trans_type=" . (string)$row["type"]. "&supplier_id=" . (string)$row["supplier_id"], ICON_ALLOC);
 }
 
-function amount_left(mixed $row): string
+function amount_left(array|false|null $row): string
 {
  	return price_format($row['type'] == ST_JOURNAL ?  abs($row["Total"])-(float)$row["alloc"] : -$row["Total"]-$row["alloc"]);
 }
 
-function amount_total(mixed $row): string
+function amount_total(array|false|null $row): string
 {
 	return price_format(-$row["Total"]);
 }
 
-function check_settled(mixed $row): bool
+function check_settled(array|false|null $row): bool
 {
 	return $row['settled'] == 1;
 }

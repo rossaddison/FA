@@ -58,7 +58,7 @@ if (isset($_POST['_DatePaid_changed'])) {
 
 //----------------------------------------------------------------------------------------
 
-function gl_payment_controls(mixed $trans_no): void
+function gl_payment_controls(string|int|float|bool|array|null $trans_no): void
 {
 	global $Refs;
 	
@@ -165,7 +165,7 @@ function gl_payment_controls(mixed $trans_no): void
 
 //----------------------------------------------------------------------------------------
 
-function check_valid_entries(mixed $trans_no): bool
+function check_valid_entries(string|int|float|bool|array|null $trans_no): bool
 {
 	global $Refs, $systypes_array;
 	

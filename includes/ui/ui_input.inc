@@ -141,7 +141,7 @@ function hidden(string|int|float|bool|null $name, string|int|float|bool|null $va
 /**
  * @return non-falsy-string|null
  */
-function submit(mixed $name, mixed $value, mixed $echo=true, mixed $title=false, mixed $atype=false, mixed $icon=false)
+function submit(string|int|float|bool|null $name, string|int|float|bool|null $value, mixed $echo=true, string|int|float|bool|null $title=false, mixed $atype=false, mixed $icon=false)
 {
 	global $path_to_root;
 
@@ -196,7 +196,7 @@ function submit_center(?string $name, ?string $value, bool $echo=true, string|bo
 	if ($echo) echo "</center>";
 }
 
-function submit_center_first(?string $name, mixed $value, string|bool|null $title=false, string|bool|null $async=false, string|bool|null $icon=false): void
+function submit_center_first(?string $name, string|int|float|bool|null $value, string|bool|null $title=false, string|bool|null $async=false, string|bool|null $icon=false): void
 {
 	echo "<center>";
 	submit($name, $value, true, $title, $async, $icon);
@@ -215,7 +215,7 @@ function submit_center_last(?string $name, ?string $value, string|bool|null $tit
 	'upgrade' - use Ctrl-Enter with progress ajax indicator and Escape hotkeys. Nonajax request for OK option is performed.
 	'cancel' - apply to 'RESET' button
 */
-function submit_add_or_update(mixed $add=true, mixed $title=false, mixed $async=false, mixed $clone=false): void
+function submit_add_or_update(mixed $add=true, string|int|float|bool|null $title=false, mixed $async=false, mixed $clone=false): void
 {
 	$cancel = $async;
 
@@ -247,7 +247,7 @@ function submit_add_or_update_center(bool $add=true, string|bool|null $title=fal
 	echo "</center>";
 }
 
-function submit_add_or_update_row(mixed $add=true, mixed $right=true, mixed $extra="", mixed $title=false, mixed $async=false, mixed $clone = false): void
+function submit_add_or_update_row(mixed $add=true, mixed $right=true, mixed $extra="", string|int|float|bool|null $title=false, mixed $async=false, mixed $clone = false): void
 {
 	echo "<tr>";
 	if ($right)
@@ -273,7 +273,7 @@ function submit_row(?string $name, ?string $value, bool $right=true, ?string $ex
 	echo "</tr>\n";
 }
 
-function submit_return(?string $name, mixed $value, string|bool|null $title=false): void
+function submit_return(?string $name, string|int|float|bool|array|null $value, string|bool|null $title=false): void
 {
 	if (@$_REQUEST['popup']) {
 		submit($name, $value, true, $title, 'selector');
@@ -300,7 +300,7 @@ function set_icon(mixed $icon, string|int|float|bool|null $title=false): string
 	return "<img src='$icon' style='vertical-align:middle;width:12px;height:12px;border:0;'".($title ? " title='$title'" : "")." >\n";	
 }
 
-function button(string|int|float|bool|null $name, mixed $value, string|int|float|bool|null $title=false, mixed $icon=false,  string|int|float|bool|null $aspect=''): string
+function button(string|int|float|bool|null $name, string|int|float|bool|null $value, string|int|float|bool|null $title=false, mixed $icon=false,  string|int|float|bool|null $aspect=''): string
 {
 	// php silently changes dots,spaces,'[' and characters 128-159
 	// to underscore in POST names, to maintain compatibility with register_globals
@@ -332,24 +332,24 @@ function button(string|int|float|bool|null $name, mixed $value, string|int|float
 			." >\n";
 }
 
-function button_cell(string|int|float|bool|null $name, mixed $value, string|int|float|bool|null $title=false, mixed $icon=false, ?string $aspect=''): void
+function button_cell(string|int|float|bool|null $name, string|int|float|bool|null $value, string|int|float|bool|null $title=false, mixed $icon=false, ?string $aspect=''): void
 {
 	echo "<td align='center'>";
 	echo button($name, $value, $title, $icon, $aspect);
 	echo "</td>";
 }
 
-function delete_button_cell(string|int|float|bool|null $name, mixed $value, string|bool|null $title=false): void
+function delete_button_cell(string|int|float|bool|null $name, string|int|float|bool|null $value, string|bool|null $title=false): void
 {
 	button_cell($name, $value, $title, ICON_DELETE);
 }
 
-function edit_button_cell(string|int|float|bool|null $name, mixed $value, string|bool|null $title=false): void
+function edit_button_cell(string|int|float|bool|null $name, string|int|float|bool|null $value, string|bool|null $title=false): void
 {
 	button_cell($name, $value, $title, ICON_EDIT);
 }
 
-function select_button_cell(mixed $name, mixed $value, mixed $title=false): void
+function select_button_cell(string|int|float|bool|null $name, string|int|float|bool|null $value, string|int|float|bool|null $title=false): void
 {
 	button_cell($name, $value, $title, ICON_ADD, 'selector');
 }
@@ -366,7 +366,7 @@ function check_value(string|array $name): int|array
 		return (empty($_POST[$name]) ? 0 : 1);
 }
 
-function checkbox(string|int|float|bool|null $label, string|int|float|bool|null $name, mixed $value=null, mixed $submit_on_change=false, string|int|float|bool|null $title=false): string
+function checkbox(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $value=null, string|int|float|bool|null $submit_on_change=false, string|int|float|bool|null $title=false): string
 {
   	global $Ajax;
 
@@ -393,12 +393,12 @@ function checkbox(string|int|float|bool|null $label, string|int|float|bool|null 
 	return $str;
 }
 
-function check(mixed $label, mixed $name, mixed $value=null, mixed $submit_on_change=false, mixed $title=false): void
+function check(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $value=null, string|int|float|bool|null $submit_on_change=false, string|int|float|bool|null $title=false): void
 {
 	echo checkbox($label, $name, $value, $submit_on_change, $title);
 }
 
-function check_cells(string|int|float|bool|null $label, mixed $name, mixed $value=null, bool $submit_on_change=false, string|bool|null $title=false,
+function check_cells(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|array|null $value=null, bool $submit_on_change=false, string|bool|null $title=false,
 	?string $params=''): void
 {
 	if ($label != null)
@@ -408,7 +408,7 @@ function check_cells(string|int|float|bool|null $label, mixed $name, mixed $valu
 	echo "</td>";
 }
 
-function check_row(string|int|float|bool|null $label, mixed $name, mixed $value=null, bool $submit_on_change=false, string|bool|null $title=false): void
+function check_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|array|null $value=null, bool $submit_on_change=false, string|bool|null $title=false): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	echo check_cells(NULL, $name, $value, $submit_on_change, $title);
@@ -450,12 +450,12 @@ function label_cell(string|int|float|bool|null $label, ?string $params="", strin
 	return $label;
 }
 
-function email_cell(mixed $label, mixed $params="", mixed $id=null): void
+function email_cell(string|int|float|bool|null $label, string|int|float|bool|null $params="", string|int|float|bool|null $id=null): void
 {
 	label_cell("<a href='mailto:$label'>$label</a>", $params, $id);
 }
 
-function amount_decimal_cell(mixed $label, ?string $params="", mixed $id=null): void
+function amount_decimal_cell(string|int|float|bool|null $label, ?string $params="", string|int|float|bool|null $id=null): void
 {
 	$dec = 0;
 	label_cell(price_decimal_format($label, $dec), "nowrap align=right ".$params, $id);
@@ -470,7 +470,7 @@ function amount_cell(string|int|float|bool|null $label, ?bool $bold=false, strin
 }
 
 //JAM  Allow entered unit prices to be fractional
-function unit_amount_cell(mixed $label, mixed $bold=false, mixed $params="", mixed $id=null): void
+function unit_amount_cell(string|int|float|bool|null $label, mixed $bold=false, string|int|float|bool|null $params="", string|int|float|bool|null $id=null): void
 {
 	if ($bold)
 		label_cell("<b>".unit_price_format($label)."</b>", "nowrap align=right ".$params, $id);
@@ -479,7 +479,7 @@ function unit_amount_cell(mixed $label, mixed $bold=false, mixed $params="", mix
 }
 
 
-function percent_cell(mixed $label, bool $bold=false, mixed $id=null): void
+function percent_cell(string|int|float|bool|null $label, bool $bold=false, string|int|float|bool|null $id=null): void
 {
 	if ($bold)
 		label_cell("<b>".percent_format($label)."</b>", "nowrap align=right", $id);
@@ -518,7 +518,7 @@ function label_row(string|int|float|bool|null $label, string|int|float|bool|null
 	echo "</tr>\n";
 }
 
-function text_input(string|int|float|bool|null $name, mixed $value=null, string|int|float|bool|null $size='', string|int|float|bool|null $max='', string|int|float|bool|null $title='', string|int|float|bool|null $params=''): string
+function text_input(string|int|float|bool|null $name, string|int|float|bool|array|null $value=null, string|int|float|bool|null $size='', string|int|float|bool|null $max='', string|int|float|bool|null $title='', string|int|float|bool|null $params=''): string
 {
 	if ($value === null)
 		$value = get_post($name);
@@ -530,7 +530,7 @@ function text_input(string|int|float|bool|null $name, mixed $value=null, string|
 
 //-----------------------------------------------------------------------------------
 
-function text_cells(mixed $label, mixed $name, mixed $value=null, mixed $size="", mixed $max="", mixed $title=false, 
+function text_cells(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $value=null, mixed $size="", string|int|float|bool|null $max="", string|int|float|bool|null $title=false, 
 	mixed $labparams="", mixed $post_label="", mixed $inparams=""): void
 {
   	global $Ajax;
@@ -549,7 +549,7 @@ function text_cells(mixed $label, mixed $name, mixed $value=null, mixed $size=""
 	$Ajax->addUpdate($name, $name, $value);
 }
 
-function text_cells_ex(?string $label, string|int|float|bool|null $name, string|int|float|bool|null $size, mixed $max=null, mixed $init=null, string|int|float|bool|null $title=null,
+function text_cells_ex(?string $label, string|int|float|bool|null $name, string|int|float|bool|null $size, string|int|float|bool|null $max=null, string|int|float|bool|null $init=null, string|int|float|bool|null $title=null,
 	mixed $labparams=null, string|int|float|bool|null $post_label=null, string|bool|null $submit_on_change=false): void
 {
   	global $Ajax;
@@ -580,7 +580,7 @@ function text_cells_ex(?string $label, string|int|float|bool|null $name, string|
 	$Ajax->addUpdate($name, $name, $_POST[$name]);
 }
 
-function text_row(string|int|float|bool|null $label, mixed $name, mixed $value, mixed $size, mixed $max, mixed $title=null, ?string $params="", ?string $post_label=""): void
+function text_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|array|null $value, mixed $size, string|int|float|bool|null $max, string|int|float|bool|null $title=null, ?string $params="", ?string $post_label=""): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	text_cells(null, $name, $value, $size, $max, $title, $params, $post_label);
@@ -590,7 +590,7 @@ function text_row(string|int|float|bool|null $label, mixed $name, mixed $value, 
 
 //-----------------------------------------------------------------------------------
 
-function text_row_ex(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $size, mixed $max=null, string|int|float|bool|null $title=null, mixed $value=null, mixed $params=null, string|int|float|bool|null $post_label=null): void
+function text_row_ex(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $size, string|int|float|bool|null $max=null, string|int|float|bool|null $title=null, string|int|float|bool|null $value=null, string|int|float|bool|null $params=null, string|int|float|bool|null $post_label=null): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	text_cells_ex(null, $name, $size, $max, $value, $title, $params, $post_label);
@@ -599,21 +599,21 @@ function text_row_ex(string|int|float|bool|null $label, string|int|float|bool|nu
 }
 
 //-----------------------------------------------------------------------------------
-function email_row(mixed $label, mixed $name, mixed $value, mixed $size, mixed $max, mixed $title=null, ?string $params="", ?string $post_label=""): void
+function email_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $value, mixed $size, string|int|float|bool|null $max, string|int|float|bool|null $title=null, ?string $params="", ?string $post_label=""): void
 {
 	if (get_post($name)) 
 		$label = "<a href='Mailto:".$_POST[$name]."'>$label</a>";
 	text_row($label, $name, $value, $size, $max, $title, $params, $post_label);
 }
 
-function email_row_ex(?string $label, ?string $name, ?int $size, ?int $max=null, string|int|float|bool|null $title=null, mixed $value=null, mixed $params=null, string|int|float|bool|null $post_label=null): void
+function email_row_ex(?string $label, ?string $name, ?int $size, ?int $max=null, string|int|float|bool|null $title=null, string|int|float|bool|null $value=null, string|int|float|bool|null $params=null, string|int|float|bool|null $post_label=null): void
 {
 	if (get_post($name)) 
 		$label = "<a href='Mailto:".$_POST[$name]."'>$label</a>";
 	text_row_ex($label, $name, $size, $max, $title, $value, $params, $post_label);
 }
 
-function link_row(?string $label, ?string $name, mixed $value, ?int $size, ?int $max, mixed $title=null, ?string $params="", ?string $post_label=""): void
+function link_row(?string $label, ?string $name, string|int|float|bool|null $value, ?int $size, ?int $max, string|int|float|bool|null $title=null, ?string $params="", ?string $post_label=""): void
 {
 	$val = get_post($name);
 	if ($val) {
@@ -624,7 +624,7 @@ function link_row(?string $label, ?string $name, mixed $value, ?int $size, ?int 
 	text_row($label, $name, $value, $size, $max, $title, $params, $post_label);
 }
 
-function link_row_ex(mixed $label, mixed $name, mixed $size, mixed $max=null, mixed $title=null, mixed $value=null, mixed $params=null, mixed $post_label=null): void
+function link_row_ex(string|int|float|bool|null $label, string|int|float|bool|null $name, mixed $size, string|int|float|bool|null $max=null, string|int|float|bool|null $title=null, string|int|float|bool|null $value=null, string|int|float|bool|null $params=null, mixed $post_label=null): void
 {
 	$val = get_post($name);
 	if ($val) {
@@ -710,13 +710,13 @@ function password_row(?string $label, ?string $name, string|int|float|bool|null 
 }	
 
 //-----------------------------------------------------------------------------------
-function file_cells(string|int|float|bool|null $label, string|int|float|bool|null $name, mixed $id=""): void
+function file_cells(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $id=""): void
 {
 	if ($id != "")
 		$id = "id='$id'";
 	label_cells($label, "<input type='file' name='$name' $id >");
 }		
-function file_row(string|int|float|bool|null $label, string|int|float|bool|null $name, mixed $id = ""): void
+function file_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $id = ""): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	file_cells(null, $name, $id);
@@ -734,7 +734,7 @@ function file_row(string|int|float|bool|null $label, string|int|float|bool|null 
  	'supplier' - supplier id
  	'branch' - branch_code
 */
-function ref_cells(?string $label, ?string $name, ?string $title=null, mixed $init=null, ?string $params=null, string|bool|null $submit_on_change=false, mixed $type=null, string|array|null $context=null): void
+function ref_cells(?string $label, ?string $name, ?string $title=null, string|int|float|bool|null $init=null, ?string $params=null, string|bool|null $submit_on_change=false, string|int|float|bool|null $type=null, string|array|null $context=null): void
 {
 	global $Ajax, $Refs;
 
@@ -783,7 +783,7 @@ function ref_cells(?string $label, ?string $name, ?string $title=null, mixed $in
 
 //-----------------------------------------------------------------------------------
 
-function ref_row(?string $label, ?string $name, ?string $title=null, mixed $init=null, string|bool|null $submit_on_change=false, mixed $type=null, string|array|null $context = null): void
+function ref_row(?string $label, ?string $name, ?string $title=null, string|int|float|bool|array|null $init=null, string|bool|null $submit_on_change=false, string|int|float|bool|null $type=null, string|array|null $context = null): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	ref_cells(null, $name, $title, $init, null, $submit_on_change, $type, $context);
@@ -803,7 +803,7 @@ function percent_row(?string $label, ?string $name, string|array|null $init=null
 	small_amount_row($label, $name, $_POST[$name], null, "%", user_percent_dec());
 }
 
-function amount_cells_ex(mixed $label, string|int|float|bool|null $name, ?int $size, ?int $max=null, mixed $init=null, mixed $params=null, string|int|float|bool|null $post_label=null, mixed $dec=null): void
+function amount_cells_ex(string|int|float|bool|null $label, string|int|float|bool|null $name, ?int $size, ?int $max=null, string|int|float|bool|null $init=null, string|int|float|bool|null $params=null, string|int|float|bool|null $post_label=null, string|int|float|bool|null $dec=null): void
 {
 	global $Ajax;
 
@@ -844,13 +844,13 @@ function amount_cells_ex(mixed $label, string|int|float|bool|null $name, ?int $s
 
 //-----------------------------------------------------------------------------------
 
-function amount_cells(mixed $label, ?string $name, mixed $init=null, string|int|null $params=null, string|int|float|bool|null $post_label=null, mixed $dec=null): void
+function amount_cells(string|int|float|bool|null $label, ?string $name, string|int|float|bool|null $init=null, string|int|null $params=null, string|int|float|bool|null $post_label=null, string|int|float|bool|null $dec=null): void
 {
 	amount_cells_ex($label, $name, 15, 15, $init, $params, $post_label, $dec);
 }
 
 //JAM  Allow entered unit prices to be fractional
-function unit_amount_cells(?string $label, ?string $name, mixed $init=null, ?string $params=null, string|int|float|bool|null $post_label=null, mixed $dec=null): void
+function unit_amount_cells(?string $label, ?string $name, string|int|float|bool|null $init=null, ?string $params=null, string|int|float|bool|null $post_label=null, string|int|float|bool|null $dec=null): void
 {
 	if (!isset($dec))
 	  	$dec = user_price_dec()+2;
@@ -858,14 +858,14 @@ function unit_amount_cells(?string $label, ?string $name, mixed $init=null, ?str
 	amount_cells_ex($label, $name, 15, 15, $init, $params, $post_label, $dec+2);
 }
 
-function amount_row(mixed $label, ?string $name, mixed $init=null, ?string $params=null, string|int|float|bool|null $post_label=null, mixed $dec=null): void
+function amount_row(string|int|float|bool|null $label, ?string $name, string|int|float|bool|array|null $init=null, ?string $params=null, string|int|float|bool|null $post_label=null, string|int|float|bool|null $dec=null): void
 {
 	echo "<tr>";
 	amount_cells($label, $name, $init, $params, $post_label, $dec);
 	echo "</tr>\n";
 }
 
-function small_amount_row(?string $label, ?string $name, string|int|array|null $init=null, ?string $params=null, ?string $post_label=null, mixed $dec=null): void
+function small_amount_row(?string $label, ?string $name, string|int|array|null $init=null, ?string $params=null, ?string $post_label=null, string|int|float|bool|null $dec=null): void
 {
 	echo "<tr>";
 	small_amount_cells($label, $name, $init, $params, $post_label, $dec);
@@ -874,7 +874,7 @@ function small_amount_row(?string $label, ?string $name, string|int|array|null $
 
 //-----------------------------------------------------------------------------------
 
-function qty_cells(mixed $label, string|int|float|bool|null $name, ?string $init=null, ?string $params=null, string|int|float|bool|null $post_label=null, mixed $dec=null): void
+function qty_cells(string|int|float|bool|null $label, string|int|float|bool|null $name, ?string $init=null, ?string $params=null, string|int|float|bool|null $post_label=null, string|int|float|bool|null $dec=null): void
 {
 	if (!isset($dec))
 	  	$dec = user_qty_dec();
@@ -882,7 +882,7 @@ function qty_cells(mixed $label, string|int|float|bool|null $name, ?string $init
 	amount_cells_ex($label, $name, 15, 15, $init, $params, $post_label, $dec);
 }
 
-function qty_row(?string $label, ?string $name, ?string $init=null, ?string $params=null, string|int|float|bool|null $post_label=null, mixed $dec=null): void
+function qty_row(?string $label, ?string $name, ?string $init=null, ?string $params=null, string|int|float|bool|null $post_label=null, string|int|float|bool|null $dec=null): void
 {
 	if (!isset($dec))
 	  	$dec = user_qty_dec();
@@ -892,7 +892,7 @@ function qty_row(?string $label, ?string $name, ?string $init=null, ?string $par
 	echo "</tr>\n";
 }
 
-function small_qty_row(?string $label, ?string $name, mixed $init=null, mixed $params=null, string|int|float|bool|null $post_label=null, mixed $dec=null): void
+function small_qty_row(?string $label, ?string $name, string|int|float|bool|null $init=null, string|int|float|bool|null $params=null, string|int|float|bool|null $post_label=null, string|int|float|bool|null $dec=null): void
 {
 	if (!isset($dec))
 	  	$dec = user_qty_dec();
@@ -904,14 +904,14 @@ function small_qty_row(?string $label, ?string $name, mixed $init=null, mixed $p
 
 //-----------------------------------------------------------------------------------
 
-function small_amount_cells(?string $label, string|int|float|bool|null $name, mixed $init=null, mixed $params=null, string|int|float|bool|null $post_label=null, mixed $dec=null): void
+function small_amount_cells(?string $label, string|int|float|bool|null $name, string|int|float|bool|array|null $init=null, string|int|float|bool|null $params=null, string|int|float|bool|null $post_label=null, string|int|float|bool|null $dec=null): void
 {
 	amount_cells_ex($label, $name, 7, 12, $init, $params, $post_label, $dec);
 }
 
 //-----------------------------------------------------------------------------------
 
-function small_qty_cells(mixed $label, ?string $name, ?string $init=null, mixed $params=null, string|int|float|bool|null $post_label=null, mixed $dec=null): void
+function small_qty_cells(string|int|float|bool|null $label, ?string $name, ?string $init=null, string|int|float|bool|null $params=null, string|int|float|bool|null $post_label=null, string|int|float|bool|null $dec=null): void
 {
   	if (!isset($dec))
 	  	$dec = user_qty_dec();
@@ -920,7 +920,7 @@ function small_qty_cells(mixed $label, ?string $name, ?string $init=null, mixed 
 
 //-----------------------------------------------------------------------------------
 
-function textarea_cells(string|int|float|bool|null $label, string|int|float|bool|null $name, mixed $value, string|int|float|bool|null $cols, string|int|float|bool|null $rows, ?int $max=255, ?string $title = null, ?string $params=""): void
+function textarea_cells(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $value, string|int|float|bool|null $cols, string|int|float|bool|null $rows, ?int $max=255, ?string $title = null, ?string $params=""): void
 {
   	global $Ajax;
 
@@ -936,7 +936,7 @@ function textarea_cells(string|int|float|bool|null $label, string|int|float|bool
 	$Ajax->addUpdate($name, $name, $value);
 }
 
-function textarea_row(string|int|float|bool|null $label, string|int|float|bool|null $name, mixed $value, string|int|float|bool|null $cols, string|int|float|bool|null $rows, ?int $max=255, ?string $title=null, ?string $params=""): void
+function textarea_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|array|null $value, string|int|float|bool|null $cols, string|int|float|bool|null $rows, ?int $max=255, ?string $title=null, ?string $params=""): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	textarea_cells(null, $name, $value, $cols, $rows, $max, $title, $params);
@@ -949,7 +949,7 @@ function textarea_row(string|int|float|bool|null $label, string|int|float|bool|n
 //  displays value of inactive field as checkbox cell.
 //  Also updates database record after status change.
 //
-function inactive_control_cell(string|int|float|bool|null $id, mixed $value, string|int|float|bool|null $table, string|int|float|bool|null $key): void
+function inactive_control_cell(string|int|float|bool|null $id, string|int|float|bool|null $value, string|int|float|bool|null $table, string|int|float|bool|null $key): void
 {
 	global	$Ajax;
 

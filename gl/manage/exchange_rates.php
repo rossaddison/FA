@@ -26,7 +26,7 @@ page(_($help_context = "Exchange Rates"), false, false, "", $js);
 simple_page_mode(false);
 
 //---------------------------------------------------------------------------------------------
-function check_data(mixed $selected_id): bool
+function check_data(string|int|float|bool|array|null $selected_id): bool
 {
 	if (!is_date($_POST['date_']))
 	{
@@ -89,17 +89,17 @@ function handle_delete(): void
 }
 
 //---------------------------------------------------------------------------------------------
-function edit_link(mixed $row): string 
+function edit_link(array|false|null $row): string 
 {
   return button('Edit'.(string)$row["id"], _("Edit"), true, ICON_EDIT);
 }
 
-function del_link(mixed $row): string 
+function del_link(array|false|null $row): string 
 {
   return button('Delete'.(string)$row["id"], _("Delete"), true, ICON_DELETE);
 }
 
-function display_rates(mixed $curr_code): void
+function display_rates(string|int|float|bool|null $curr_code): void
 {
 
 }

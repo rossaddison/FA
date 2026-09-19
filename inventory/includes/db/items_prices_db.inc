@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_item_price(mixed $stock_id, string|array|null $sales_type_id, mixed $curr_abrev, int|float|bool|null $price): void
+function add_item_price(string|int|float|bool|array|null $stock_id, string|array|null $sales_type_id, mixed $curr_abrev, int|float|bool|null $price): void
 {
 	$sql = "INSERT INTO ".TB_PREF."prices (stock_id, sales_type_id, curr_abrev, price) 
 		VALUES (".db_escape($stock_id).", ".db_escape($sales_type_id)
@@ -36,7 +36,7 @@ function delete_item_price(mixed $price_id): void
 /**
  * @return bool|mysqli_result
  */
-function get_prices(mixed $stock_id)
+function get_prices(string|int|float|bool|array|null $stock_id)
 {
 	$sql = "SELECT pricelist.sales_type, price.* 
 		FROM ".TB_PREF."prices price, "
@@ -63,7 +63,7 @@ function get_stock_price(mixed $price_id)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_stock_price_type_currency(mixed $stock_id, string|array|null $type, mixed $currency)
+function get_stock_price_type_currency(string|int|float|bool|array|null $stock_id, string|array|null $type, string|int|float|bool|array|null $currency)
 {
 	$sql = "SELECT * FROM ".TB_PREF."prices WHERE stock_id=".db_escape($stock_id)."
 		AND sales_type_id=".db_escape($type)."

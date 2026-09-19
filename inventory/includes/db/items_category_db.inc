@@ -9,9 +9,9 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_item_category(mixed $description, mixed $tax_type_id, mixed $sales_account, 
+function add_item_category(string|int|float|bool|null $description, mixed $tax_type_id, mixed $sales_account, 
 	mixed $cogs_account, mixed $inventory_account, mixed $adjustment_account, mixed $wip_account, 
-	mixed $units, mixed $mb_flag, mixed $dim1, mixed $dim2, int|array|null $no_sale, int|array|null $no_purchase): void
+	mixed $units, string|int|float|bool|null $mb_flag, mixed $dim1, string|int|float|bool|null $dim2, int|array|null $no_sale, int|array|null $no_purchase): void
 {
 	$sql = "INSERT INTO ".TB_PREF."stock_category (description, dflt_tax_type,
 			dflt_units, dflt_mb_flag, dflt_sales_act, dflt_cogs_act, 
@@ -35,9 +35,9 @@ function add_item_category(mixed $description, mixed $tax_type_id, mixed $sales_
 	db_query($sql,"an item category could not be added");
 }
 
-function update_item_category(mixed $id, mixed $description, mixed $tax_type_id, 
+function update_item_category(string|int|float|bool|null $id, string|int|float|bool|null $description, mixed $tax_type_id, 
 	mixed $sales_account, mixed $cogs_account, mixed $inventory_account, mixed $adjustment_account, 
-	mixed $wip_account, mixed $units, mixed $mb_flag, mixed $dim1, mixed $dim2, int|array|null $no_sale, int|array|null $no_purchase): void
+	mixed $wip_account, mixed $units, string|int|float|bool|null $mb_flag, mixed $dim1, string|int|float|bool|null $dim2, int|array|null $no_sale, int|array|null $no_purchase): void
 
 {
 	$sql = "UPDATE ".TB_PREF."stock_category SET "
@@ -59,7 +59,7 @@ function update_item_category(mixed $id, mixed $description, mixed $tax_type_id,
 	db_query($sql,"an item category could not be updated");
 }
 
-function delete_item_category(mixed $id): void
+function delete_item_category(string|int|float|bool|null $id): void
 {
 	$sql="DELETE FROM ".TB_PREF."stock_category WHERE category_id=".db_escape($id);
 
@@ -88,7 +88,7 @@ function get_item_categories(int|array|null $show_inactive, bool $fixed_asset=fa
 /**
  * @return array<array-key, null|string>|false
  */
-function get_item_category(mixed $id)
+function get_item_category(string|int|float|bool|array|null $id)
 {
 	$sql="SELECT * FROM ".TB_PREF."stock_category WHERE category_id=".db_escape($id);
 
