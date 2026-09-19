@@ -76,8 +76,8 @@ function handle_delete(mixed $id): bool
 		if (!uninstall_package($ext['package']))
 			return false;
 	} else {
-		@include_once($path_to_root.'/'.$ext['path'].'/hooks.php');
-		$hooks_class = 'hooks_'.$ext['package'];
+		@include_once($path_to_root.'/'.(string)$ext['path'].'/hooks.php');
+		$hooks_class = 'hooks_'.(string)$ext['package'];
 		if (class_exists($hooks_class)) {
 			$hooks = new $hooks_class;
 			$hooks->uninstall_extension(false);
@@ -121,7 +121,7 @@ function display_extensions(mixed $mods): void
 
 		if (!$available && $ext['type'] == 'extension')	{// third-party plugin
 			if (!$installed)
-				button_cell('Local'.$ext['package'], _("Install"), _('Install third-party extension.'), 
+				button_cell('Local'.(string)$ext['package'], _("Install"), _('Install third-party extension.'), 
 					ICON_DOWN);
 			else
 				label_cell('');

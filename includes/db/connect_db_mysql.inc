@@ -28,7 +28,7 @@ function set_global_connection(mixed $company=-1)
 	
 	$server = $connection["host"];
 	if (!empty($connection["port"]))
-		$server .= ":".$connection["port"];
+		$server .= ":".(string)$connection["port"];
 
 	$db = mysql_connect($server, $connection["dbuser"], $connection["dbpassword"]);
 	mysql_select_db($connection["dbname"], $db);
@@ -203,12 +203,12 @@ function db_create_db(mixed $connection)
 {
 	$server = $connection["host"];
 	if (!empty($connection["port"]))
-		$server .= ":".$connection["port"];
+		$server .= ":".(string)$connection["port"];
 	$db = mysql_connect($server, $connection["dbuser"], $connection["dbpassword"]);
 
 	if (!mysql_select_db($connection["dbname"], $db))
 	{
-		$sql = "CREATE DATABASE IF NOT EXISTS `" . $connection["dbname"] . "`"
+		$sql = "CREATE DATABASE IF NOT EXISTS `" . (string)$connection["dbname"] . "`"
 			. " DEFAULT COLLATE '" . get_mysql_collation($connection["collation"]) . "'";
 
 		if (!mysql_query($sql) || !mysql_select_db($connection["dbname"], $db))
@@ -225,7 +225,7 @@ function db_drop_db(mixed $connection)
 
 	if ($connection["tbpref"] == "")
 	{
-		$sql = "DROP DATABASE IF EXISTS " . $connection["dbname"] . "";
+		$sql = "DROP DATABASE IF EXISTS " . (string)$connection["dbname"] . "";
 		return mysql_query($sql);
 	}
 	else

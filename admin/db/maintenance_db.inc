@@ -60,7 +60,7 @@ function array_natsort(mixed $aryData, ?string $strIndex, ?string $strSortBy, bo
 
 function update_admin_password(mixed $conn, ?string $password): void
 {
-	$sql = "UPDATE ".$conn['tbpref']."users SET password=".db_escape($password) . "
+	$sql = "UPDATE ".(string)$conn['tbpref']."users SET password=".db_escape($password) . "
 		WHERE user_id='admin'";
 	db_query($sql, "could not update user password for 'admin'");
 }
@@ -354,7 +354,7 @@ function db_import(mixed $filename, mixed $connection, mixed $force=true, mixed 
 					if ($protect)
 					{
 						foreach($protected as $protbl)
-							if (strpos($line, $connection["tbpref"].$protbl) !== false)
+							if (strpos($line, (string)$connection["tbpref"].$protbl) !== false)
 							{
 								$skip = true; break;
 							}
@@ -549,7 +549,7 @@ function db_unzip(?string $mode, ?string $path): array|string|false
 function db_backup(mixed $conn, mixed $ext='no', mixed $comm='', mixed $path='')
 {
 	if ($conn['tbpref'] != "")
-		$filename = $conn['dbname'] . "_" . $conn['tbpref'] . date("Ymd_Hi") . ".sql";
+		$filename = $conn['dbname'] . "_" . (string)$conn['tbpref'] . date("Ymd_Hi") . ".sql";
 	else
 		$filename = $conn['dbname'] . "_" . date("Ymd_Hi") . ".sql";
 
@@ -584,7 +584,7 @@ function db_export(mixed $conn, ?string $filename, mixed $zip='no', mixed $comme
 		unlink($backupfile);
 
     //create comment
-    $out="# MySQL dump of database '".$conn["dbname"]."' on host '".$conn["host"]."'\n";
+    $out="# MySQL dump of database '".(string)$conn["dbname"]."' on host '".(string)$conn["host"]."'\n";
     $out.="# Backup Date and Time: ".date("Y-m-d H:i")."\n";
     $out.="# Built by " . $SysPrefs->app_title . " " . $version ."\n";
     $out.="# ".$SysPrefs->power_url."\n";

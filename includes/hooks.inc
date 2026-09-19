@@ -240,7 +240,7 @@ function install_hooks(mixed $lang_code=null): void
 	// install hooks provided by active extensions
 	if (isset($installed_extensions) && !empty($installed_extensions)) {
 		foreach($installed_extensions as $ext) {
-			$hook_class = 'hooks_'.$ext['package'];
+			$hook_class = 'hooks_'.(string)$ext['package'];
 			if ($ext['active'] && class_exists($hook_class)) {
 				$Hooks[$ext['package']] = new $hook_class;
 				$Hooks[$ext['package']]->path = $ext['path'];

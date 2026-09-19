@@ -250,7 +250,7 @@ if (isset($_POST['ADD_ITEM']) && can_process())
 		$_POST['RequDate'], $_POST['memo_'], input_num('Costs'), $_POST['cr_acc'], input_num('Labour'), $_POST['cr_lab_acc']);
 
 	new_doc_date($_POST['date_']);
-	meta_forward($_SERVER['PHP_SELF'], "AddedID=$id&type=".$_POST['type']."&date=".$_POST['date_']);
+	meta_forward($_SERVER['PHP_SELF'], "AddedID=$id&type=".(string)$_POST['type']."&date=".(string)$_POST['date_']);
 }
 
 //-------------------------------------------------------------------------------------

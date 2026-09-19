@@ -216,7 +216,7 @@ function db_create_db(mixed $connection): int|mysqli|false
 
 	if (!mysqli_select_db($db, $connection["dbname"]))
 	{
-		$sql = "CREATE DATABASE IF NOT EXISTS `" . $connection["dbname"] . "`"
+		$sql = "CREATE DATABASE IF NOT EXISTS `" . (string)$connection["dbname"] . "`"
 			. " DEFAULT COLLATE '" . get_mysql_collation($connection["collation"]) . "'";
 
 		if (!mysqli_query($db, $sql) || !mysqli_select_db($db, $connection["dbname"]))
@@ -236,7 +236,7 @@ function db_drop_db(mixed $connection): bool|mysqli_result
 	if ($connection["tbpref"] == "")
 	{
 		global $db;
-		$sql = "DROP DATABASE IF EXISTS " . $connection["dbname"] . "";
+		$sql = "DROP DATABASE IF EXISTS " . (string)$connection["dbname"] . "";
 		return mysqli_query($db, $sql);
 	}
 	else

@@ -203,7 +203,7 @@ function print_inventory_purchase(): void
 		}	
 		$rep->AmountCol(5, 6, $trans['qty'], get_qty_dec($trans['stock_id']));
 		$rep->AmountCol(6, 7, $trans['price'], $dec);
-		$amt = $trans['qty'] * $trans['price'];
+		$amt = $trans['qty'] * (float)$trans['price'];
 		$rep->TextCol(7, 8, get_location_name($trans['loc_code']));
 		$rep->NewLine();
 

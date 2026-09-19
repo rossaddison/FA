@@ -495,18 +495,18 @@ function display_edit_tax_items(mixed $taxes, ?int $columns, mixed $tax_included
 		$amount = isset($taxitem['Override']) ? $taxitem['Override'] : $taxitem['Value'];
 		if ($taxitem['Value'] != 0){
 			if ($editable) {
-				if (!isset($_POST['mantax['.$taxitem['tax_type_id'].']']))
-					$_POST['mantax['.$taxitem['tax_type_id'].']'] = price_format($amount);
+				if (!isset($_POST['mantax['.(string)$taxitem['tax_type_id'].']']))
+					$_POST['mantax['.(string)$taxitem['tax_type_id'].']'] = price_format($amount);
 				start_row();
 				if ($tax_included) {
 					$colspan = $columns-1;
-					label_cell(_("Included") . " " . $taxitem['tax_type_name'].":",
+					label_cell(_("Included") . " " . (string)$taxitem['tax_type_name'].":",
 						"colspan={$colspan} align='right'");
-					amount_cells(null, 'mantax['.$taxitem['tax_type_id'].']',
+					amount_cells(null, 'mantax['.(string)$taxitem['tax_type_id'].']',
 						null, "colspan=$columns align=right", '<td></td>', user_price_dec());
 				} else {
 					label_cell($taxitem['tax_type_name'], "colspan=$columns align='right'");
-					amount_cells(null, 'mantax['.$taxitem['tax_type_id'].']',
+					amount_cells(null, 'mantax['.(string)$taxitem['tax_type_id'].']',
 						null, "colspan=$columns align=right", null, user_price_dec());
 					$total +=  round2($amount, user_price_dec());
 				}
@@ -517,7 +517,7 @@ function display_edit_tax_items(mixed $taxes, ?int $columns, mixed $tax_included
 				$value = number_format2($taxitem['Value'],user_price_dec());
 				if ($tax_included)
 				{
-					label_row(_("Included") . " " . $taxitem['tax_type_name']
+					label_row(_("Included") . " " . (string)$taxitem['tax_type_name']
 						. " " . $value , "", "colspan=$columns align=right", "align=right", $rightspan);
 				}
 				else
@@ -1672,7 +1672,7 @@ function company_logo_on_view(): void
 	// Display View Header
 	global $SysPrefs;
 
-	$logo = company_path() . "/images/" . $SysPrefs->prefs['coy_logo'];
+	$logo = company_path() . "/images/" . (string)$SysPrefs->prefs['coy_logo'];
 	$nl = 1;
 	if (!empty($SysPrefs->prefs['company_logo_report']) && $SysPrefs->prefs['coy_logo'] != '' && file_exists($logo))
 	{

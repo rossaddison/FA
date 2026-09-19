@@ -91,12 +91,12 @@ function handle_delete(): void
 //---------------------------------------------------------------------------------------------
 function edit_link(mixed $row): string 
 {
-  return button('Edit'.$row["id"], _("Edit"), true, ICON_EDIT);
+  return button('Edit'.(string)$row["id"], _("Edit"), true, ICON_EDIT);
 }
 
 function del_link(mixed $row): string 
 {
-  return button('Delete'.$row["id"], _("Delete"), true, ICON_DELETE);
+  return button('Delete'.(string)$row["id"], _("Delete"), true, ICON_DELETE);
 }
 
 function display_rates(mixed $curr_code): void

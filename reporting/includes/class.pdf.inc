@@ -92,7 +92,7 @@ class Cpdf extends FPDI {
 		// $local_path_to_root is  set inside find_custom_file.
 		// Select extension domain if po file is provided
 		// otherwise use global translation.
-		if (file_exists($local_path_to_root.'/lang/'.$lang['code'].'/LC_MESSAGES/'.$lang['code'].'.po'))
+		if (file_exists($local_path_to_root.'/lang/'.(string)$lang['code'].'/LC_MESSAGES/'.(string)$lang['code'].'.po'))
 			$GetText->add_domain($lang['code'], $local_path_to_root . "/lang");
 		else
 			$GetText->add_domain($lang['code'], $path_to_root . "/lang", @$lang['version']);

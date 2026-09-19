@@ -832,12 +832,12 @@ class Chart
 			$beta[$i] = ($F - $A * $beta[$i - 1]) / $z;
 		}
 		for ($i = $n - 2; $i > 0; --$i) 
-			$splines[$i]['c'] = $alpha[$i] * $splines[$i + 1]['c'] + $beta[$i];
+			$splines[$i]['c'] = $alpha[$i] * (float)$splines[$i + 1]['c'] + $beta[$i];
 		for ($i = $n - 1; $i > 0; --$i) 
 		{
 			$h_i = $cx[$i] - $cx[$i - 1];
-			$splines[$i]['d'] = ($splines[$i]['c'] - $splines[$i - 1]['c']) / $h_i;
-			$splines[$i]['b'] = $h_i * (2.0 * $splines[$i]['c'] + $splines[$i - 1]['c']) / 6.0 + ($cy[$i] - $cy[$i - 1]) / $h_i;
+			$splines[$i]['d'] = ($splines[$i]['c'] - (float)$splines[$i - 1]['c']) / $h_i;
+			$splines[$i]['b'] = $h_i * (2.0 * (float)$splines[$i]['c'] + $splines[$i - 1]['c']) / 6.0 + ($cy[$i] - $cy[$i - 1]) / $h_i;
 		}
 		for ($x = $minx; $x <= $maxx; $x += $step) 
 		{
@@ -862,7 +862,7 @@ class Chart
 				}
 			}
 			$dx = ($x - $s['x']);
-			$p1[$x] = $s['a'] + ($s['b'] + ($s['c'] / 2.0 + $s['d'] * $dx / 6.0) * $dx) * $dx;
+			$p1[$x] = (float)$s['a'] + ($s['b'] + ($s['c'] / 2.0 + $s['d'] * $dx / 6.0) * $dx) * $dx;
 		}
 		return $p1;
 	}
@@ -1185,10 +1185,10 @@ class Chart
 			if (!empty($this->axis_x)) // Only first serie [0]
 			{
 				if ($this->stream == 'svg')
-					$this->svg->text(((($x1+$x1+$total_len)/2) - (strlen($this->axis_x)*7/2)), $y, $this->axis_x." (".$this->series[0]['label'].")", $this->size, $this->color['title'], false, $this->align);
+					$this->svg->text(((($x1+$x1+$total_len)/2) - (strlen($this->axis_x)*7/2)), $y, $this->axis_x." (".(string)$this->series[0]['label'].")", $this->size, $this->color['title'], false, $this->align);
 				else
 					$this->_imagestring($this->img, $this->size, (($x1+$x1+$total_len)/2 - strlen($this->axis_x)*7/2)+30, $y, 
-					$this->axis_x."-".$this->series[0]['label'], $this->color['title']);
+					$this->axis_x."-".(string)$this->series[0]['label'], $this->color['title']);
 				$y += 25;
 			}
 			foreach ($this->labels as $i => $parameter)

@@ -47,8 +47,8 @@ function check_date(): bool {
 //
 function rec_checkbox(mixed $row): string
 {
-	$name = "rec_" .$row['id'];
-	$hidden = 'last['.$row['id'].']';
+	$name = "rec_" .(string)$row['id'];
+	$hidden = 'last['.(string)$row['id'].']';
 	$value = $row['reconciled'] != '';
 
 // save also in hidden field for testing during 'Reconcile'

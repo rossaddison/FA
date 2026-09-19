@@ -56,7 +56,7 @@ class package extends gzip_file {
 		$cachepath = $this->options['basedir'];
 		$ctrl = get_control_file("$cachepath/_init/config");
 
-		$targetdir = $path_to_root.'/'.$ctrl['InstallPath'];
+		$targetdir = $path_to_root.'/'.(string)$ctrl['InstallPath'];
 
 		if (!is_dir($targetdir))
 			mkdir($targetdir);
@@ -91,7 +91,7 @@ class package extends gzip_file {
 		$cachepath = $this->options['basedir'];
 		$ctrl = get_control_file("$cachepath/_init/config");
 
-		$targetdir = $path_to_root.'/'.$ctrl['InstallPath'];
+		$targetdir = $path_to_root.'/'.(string)$ctrl['InstallPath'];
 
 		$dpackage = new package("$cachepath/_data", $targetdir);
 
@@ -275,11 +275,11 @@ function get_pkg_or_list(mixed $type = null, mixed $pkgname = null, mixed $filte
 	global $path_to_root, $repo_auth;
 
 	$repo =  (isset($repo_auth['scheme']) ? $repo_auth['scheme'] : 'http://')
-			.(isset($repo_auth['login'])  ? $repo_auth['login'].':' : '')
-			.(isset($repo_auth['pass'])   ? $repo_auth['pass'].'@' : '')
-			.(isset($repo_auth['host'])   ? $repo_auth['host'].'/' : '')
-			.(isset($repo_auth['path'])   ? $repo_auth['path'].'/' : '')
-			.$repo_auth['branch'];
+			.(isset($repo_auth['login'])  ? (string)$repo_auth['login'].':' : '')
+			.(isset($repo_auth['pass'])   ? (string)$repo_auth['pass'].'@' : '')
+			.(isset($repo_auth['host'])   ? (string)$repo_auth['host'].'/' : '')
+			.(isset($repo_auth['path'])   ? (string)$repo_auth['path'].'/' : '')
+			.(string)$repo_auth['branch'];
 
 	// first download local copy of repo release file
 	// and check remote signature with local copy of public key
@@ -363,7 +363,7 @@ function get_pkg_or_list(mixed $type = null, mixed $pkgname = null, mixed $filte
 		 // scan subdir list and select packages of given type
 		$pkglist = get_control_file($locindex, 'Package');
 		foreach($pkglist as $name => $pkg) {
-			$pkgfullname = $repo.'/'.$parms['Path']."/".$pkg['Filename'].'.pkg';
+			$pkgfullname = $repo.'/'.(string)$parms['Path']."/".(string)$pkg['Filename'].'.pkg';
 			if (!isset($type) || in_array($pkg['Type'], $type)) {
 				if (empty($filter))
 					$p = $pkg;
@@ -380,7 +380,7 @@ function get_pkg_or_list(mixed $type = null, mixed $pkgname = null, mixed $filte
 				} elseif ($pkgname == $pkg['Package']) {
 					//download package to temp directory
 					if ($download) {
-						$locname = $target_dir.$pkg['Filename'].'.pkg';
+						$locname = $target_dir.(string)$pkg['Filename'].'.pkg';
 						if (!url_copy($pkgfullname, $locname)) {
 							display_error(sprintf(_("Cannot download '%s' file." ), $pkgfullname));
 							return null;
@@ -625,7 +625,7 @@ function install_language(mixed $pkg_name): bool
 				uninstall_package($old_pkg);
 		}
 
-		$package = new package(VARLIB_PATH."/".$pkg['Filename'].'.pkg');
+		$package = new package(VARLIB_PATH."/".(string)$pkg['Filename'].'.pkg');
 		if ($package->install()) {
 			$lang = array(
 				'name' => $pkg['Name'],
@@ -639,7 +639,7 @@ function install_language(mixed $pkg_name): bool
 				$lang['rtl'] = true;
 			$installed_languages[$i] = $lang;
 			write_lang($installed_languages);
-			unlink(VARLIB_PATH."/".$pkg['Filename'].'.pkg');
+			unlink(VARLIB_PATH."/".(string)$pkg['Filename'].'.pkg');
 			$Ajax->activate('lang_tbl');
 		} else {
 			display_error(implode('<br>', $package->error));
@@ -660,7 +660,7 @@ function install_extension(mixed $pkg_name): bool
 	
 	$pkg = get_pkg_or_list(array('extension', 'theme', 'chart'), $pkg_name);
 	if ($pkg) {
-		$package = new package(VARLIB_PATH."/".$pkg['Filename'].'.pkg');
+		$package = new package(VARLIB_PATH."/".(string)$pkg['Filename'].'.pkg');
 		$local_exts = get_company_extensions();
 		if ($package->install()) {
 			$ext_id = array_search_key($pkg['Package'], $local_exts, 'package');
@@ -685,15 +685,15 @@ function install_extension(mixed $pkg_name): bool
 			$local_exts[$ext_id] = $ext;
 			$ret = update_extensions($local_exts);
 
-			if (($ext['active'] == true) && file_exists($path_to_root.'/'.$ext['path'].'/hooks.php'))
+			if (($ext['active'] == true) && file_exists($path_to_root.'/'.(string)$ext['path'].'/hooks.php'))
 			{
 				// we need to include the new hooks file to activate extension
-				include_once($path_to_root.'/'.$ext['path'].'/hooks.php');
+				include_once($path_to_root.'/'.(string)$ext['path'].'/hooks.php');
 				foreach($db_connections as $comp => $db)
 					activate_hooks($ext['package'], $comp);
 			}
 
-			unlink(VARLIB_PATH."/".$pkg['Filename'].'.pkg');
+			unlink(VARLIB_PATH."/".(string)$pkg['Filename'].'.pkg');
 			$Ajax->activate('ext_tbl');
 			return $ret;
 		} else {

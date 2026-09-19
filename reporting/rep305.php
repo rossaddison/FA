@@ -178,7 +178,7 @@ function print_grn_valuation(): void
 			$rep->TextCol(4, 5, "--");
 			$rep->AmountCol(5, 6, $trans['qty_recd'] - $trans['quantity_inv'], $qdec);
 			$rep->AmountCol(7, 8, $trans['unit_price'], $dec);
-			$amt = round2(($trans['qty_recd'] - $trans['quantity_inv']) * $trans['unit_price'], $dec);
+			$amt = round2(($trans['qty_recd'] - $trans['quantity_inv']) * (float)$trans['unit_price'], $dec);
 			$rep->AmountCol(8, 9, $amt, $dec);
 			$total += $amt;
 			$qtotal += $trans['qty_recd'] - $trans['quantity_inv'];

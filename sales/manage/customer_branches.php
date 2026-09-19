@@ -151,19 +151,19 @@ if ($Mode == 'RESET' || get_post('_customer_id_update'))
 }
 
 function branch_email(mixed $row): string {
-	return	'<a href = "mailto:'.$row["email"].'">'.$row["email"].'</a>';
+	return	'<a href = "mailto:'.(string)$row["email"].'">'.(string)$row["email"].'</a>';
 }
 
 function edit_link(mixed $row): string {
-	return button("Edit".$row["branch_code"],_("Edit"), '', ICON_EDIT);
+	return button("Edit".(string)$row["branch_code"],_("Edit"), '', ICON_EDIT);
 }
 
 function del_link(mixed $row): string {
-	return button("Delete".$row["branch_code"],_("Delete"), '', ICON_DELETE);
+	return button("Delete".(string)$row["branch_code"],_("Delete"), '', ICON_DELETE);
 }
 
 function select_link(mixed $row): string {
-	return button("Select".$row["branch_code"], $row["branch_code"], '', ICON_ADD, 'selector');
+	return button("Select".(string)$row["branch_code"], $row["branch_code"], '', ICON_ADD, 'selector');
 }
 
 function branch_settings(mixed $selected_id, mixed $num_branches): void {

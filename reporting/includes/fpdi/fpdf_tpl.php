@@ -200,7 +200,7 @@ class FPDF_TPL extends FPDF {
             'lty' => ($this->h-$_y-$_h) - ($this->h-$h) * ($_h/$h)
         );
         
-        $this->_out(sprintf("q %.4F 0 0 %.4F %.4F %.4F cm", $tData['scaleX'], $tData['scaleY'], $tData['tx']*$this->k, $tData['ty']*$this->k)); // Translate 
+        $this->_out(sprintf("q %.4F 0 0 %.4F %.4F %.4F cm", $tData['scaleX'], $tData['scaleY'], (float)$tData['tx']*$this->k, (float)$tData['ty']*$this->k)); // Translate 
         $this->_out(sprintf('%s%d Do Q', $this->tplprefix, $tplidx));
 
         $this->lastUsedTemplateData = $tData;
@@ -331,7 +331,7 @@ class FPDF_TPL extends FPDF {
             $this->_out('/FormType 1');
             $this->_out(sprintf('/BBox [%.2F %.2F %.2F %.2F]',
                 // llx
-                $tpl['x']*$this->k,
+                (float)$tpl['x']*$this->k,
                 // lly
                 -$tpl['y']*$this->k,
                 // urx
@@ -352,7 +352,7 @@ class FPDF_TPL extends FPDF {
         	if (isset($this->_res['tpl'][$tplidx]['fonts']) && count($this->_res['tpl'][$tplidx]['fonts'])) {
             	$this->_out('/Font <<');
                 foreach($this->_res['tpl'][$tplidx]['fonts'] as $font)
-            		$this->_out('/F'.$font['i'].' '.$font['n'].' 0 R');
+            		$this->_out('/F'.(string)$font['i'].' '.(string)$font['n'].' 0 R');
             	$this->_out('>>');
             }
         	if(isset($this->_res['tpl'][$tplidx]['images']) && count($this->_res['tpl'][$tplidx]['images']) || 
@@ -361,11 +361,11 @@ class FPDF_TPL extends FPDF {
                 $this->_out('/XObject <<');
                 if (isset($this->_res['tpl'][$tplidx]['images']) && count($this->_res['tpl'][$tplidx]['images'])) {
                     foreach($this->_res['tpl'][$tplidx]['images'] as $image)
-              			$this->_out('/I'.$image['i'].' '.$image['n'].' 0 R');
+              			$this->_out('/I'.(string)$image['i'].' '.(string)$image['n'].' 0 R');
                 }
                 if (isset($this->_res['tpl'][$tplidx]['tpls']) && count($this->_res['tpl'][$tplidx]['tpls'])) {
                     foreach($this->_res['tpl'][$tplidx]['tpls'] as $i => $tpl)
-                        $this->_out($this->tplprefix.$i.' '.$tpl['n'].' 0 R');
+                        $this->_out($this->tplprefix.$i.' '.(string)$tpl['n'].' 0 R');
                 }
                 $this->_out('>>');
         	}

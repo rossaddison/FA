@@ -146,7 +146,7 @@ function print_supplier_details_listing(): void
 				$rep->TextCol(0, 1, $adr[0]);
 			$rep->TextCol(1, 2,	_('Currency') . ": " . $myrow['curr_code']);
 			if (isset($contacts[0]))
-				$rep->TextCol(2, 3, $contacts[0]['name']. " " .$contacts[0]['name2']);
+				$rep->TextCol(2, 3, $contacts[0]['name']. " " .(string)$contacts[0]['name2']);
 			if (isset($adr2[0]))	
 				$rep->TextCol(3, 4, $adr2[0]);
 			$rep->NewLine();
@@ -158,7 +158,7 @@ function print_supplier_details_listing(): void
 				$rep->TextCol(1, 2,	_('Dimension') . ": " . $dim['name']);
 			}		
 			if (isset($contacts[0]))
-				$rep->TextCol(2, 3, _('Ph') . ": " . $contacts[0]['phone']);
+				$rep->TextCol(2, 3, _('Ph') . ": " . (string)$contacts[0]['phone']);
 			if (isset($adr2[1]))
 				$rep->TextCol(3, 4, $adr2[1]);
 			$rep->NewLine();
@@ -178,7 +178,7 @@ function print_supplier_details_listing(): void
 				$rep->row = $oldrow;
 			}	
 			if (isset($contacts[0]))
-				$rep->TextCol(2, 3, _('Fax') . ": " . $contacts[0]['fax']);
+				$rep->TextCol(2, 3, _('Fax') . ": " . (string)$contacts[0]['fax']);
 			if (isset($adr2[2]))
 				$rep->TextCol(3, 4, $adr2[2]);
 			if ($more != 0.0 || $less != 0.0)
@@ -189,7 +189,7 @@ function print_supplier_details_listing(): void
 				if (isset($adr[$i]))
 					$rep->TextCol(0, 1, $adr[$i]);
 				if ($i == 3 && isset($contacts[0]) && isset($contacts[0]['email']))	
-					$rep->TextCol(2, 3, _('Email') . ": " . $contacts[0]['email']);
+					$rep->TextCol(2, 3, _('Email') . ": " . (string)$contacts[0]['email']);
 				if (isset($adr2[$i]))
 					$rep->TextCol(3, 4, $adr2[$i]);
 			}	

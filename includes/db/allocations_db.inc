@@ -80,7 +80,7 @@ function reallocate_payments(mixed $trans_no, ?int $trans_type, mixed $alloc_dat
 	foreach($allocs as $alloc)
 	{
 		$amount = min($alloc['amt'], $max_alloc);
-		$remainder = $alloc['amt'] - $amount;
+		$remainder = (float)$alloc['amt'] - $amount;
 
 		$max_alloc = floatcmp($max_alloc, $amount) > 0 ? $max_alloc-$amount : 0;
 

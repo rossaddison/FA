@@ -67,7 +67,7 @@ function alloc_link(mixed $row): string
 {
 	return pager_link(_("Allocate"),
 		"/sales/allocations/customer_allocate.php?trans_no="
-			.$row["trans_no"] . "&trans_type=" . $row["type"]. "&debtor_no=" . $row["debtor_no"], ICON_ALLOC);
+			.(string)$row["trans_no"] . "&trans_type=" . (string)$row["type"]. "&debtor_no=" . (string)$row["debtor_no"], ICON_ALLOC);
 }
 
 function amount_total(mixed $row): string

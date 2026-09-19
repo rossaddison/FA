@@ -76,10 +76,10 @@ function credit_link(mixed $row)
 	{
 		if ($row['type'] == ST_CUSTDELIVERY)
 			return pager_link(_('Invoice'), "/sales/customer_invoice.php?DeliveryNumber=" 
-				.$row['trans_no'], ICON_DOC);
+				.(string)$row['trans_no'], ICON_DOC);
 		else if ($row['type'] == ST_SALESINVOICE)
 			return pager_link(_("Credit This") ,
-			"/sales/customer_credit_invoice.php?InvoiceNumber=". $row['trans_no'], ICON_CREDIT);
+			"/sales/customer_credit_invoice.php?InvoiceNumber=". (string)$row['trans_no'], ICON_CREDIT);
 	}	
 }
 
@@ -105,20 +105,20 @@ function copy_link(mixed $row)
         return '';
     if ($row['type'] == ST_CUSTDELIVERY)
         return pager_link(_("Copy Delivery"), "/sales/sales_order_entry.php?NewDelivery=" 
-            .$row['order_'], ICON_DOC);
+            .(string)$row['order_'], ICON_DOC);
     elseif ($row['type'] == ST_SALESINVOICE)
         return pager_link(_("Copy Invoice"),    "/sales/sales_order_entry.php?NewInvoice="
-            . $row['order_'], ICON_DOC);
+            . (string)$row['order_'], ICON_DOC);
 }
 
 function prt_link(mixed $row)
 {
   	if ($row['type'] == ST_CUSTPAYMENT || $row['type'] == ST_BANKDEPOSIT) 
-		return print_document_link($row['trans_no']."-".$row['type'], _("Print Receipt"), true, ST_CUSTPAYMENT, ICON_PRINT);
+		return print_document_link($row['trans_no']."-".(string)$row['type'], _("Print Receipt"), true, ST_CUSTPAYMENT, ICON_PRINT);
   	elseif ($row['type'] == ST_BANKPAYMENT) // bank payment printout not defined yet.
 		return '';
  	else
- 		return print_document_link($row['trans_no']."-".$row['type'], _("Print"), true, $row['type'], ICON_PRINT);
+ 		return print_document_link($row['trans_no']."-".(string)$row['type'], _("Print"), true, $row['type'], ICON_PRINT);
 }
 
 function check_overdue(mixed $row): bool
@@ -150,9 +150,9 @@ function display_customer_summary(mixed $customer_record): void
 		start_row();
 	    label_cell($customer_record["curr_code"]);
 	    label_cell($customer_record["terms"]);
-		amount_cell($customer_record["Balance"] - $customer_record["Due"]);
-		amount_cell($customer_record["Due"] - $customer_record["Overdue1"]);
-		amount_cell($customer_record["Overdue1"] - $customer_record["Overdue2"]);
+		amount_cell((float)$customer_record["Balance"] - $customer_record["Due"]);
+		amount_cell((float)$customer_record["Due"] - $customer_record["Overdue1"]);
+		amount_cell((float)$customer_record["Overdue1"] - $customer_record["Overdue2"]);
 		amount_cell($customer_record["Overdue2"]);
 		amount_cell($customer_record["Balance"]);
 		end_row();

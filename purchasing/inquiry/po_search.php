@@ -97,7 +97,7 @@ function prt_link(mixed $row)
 function receive_link(mixed $row): string 
 {
   return pager_link( _("Receive"),
-	"/purchasing/po_receive_items.php?PONumber=" . $row["order_no"], ICON_RECEIVE);
+	"/purchasing/po_receive_items.php?PONumber=" . (string)$row["order_no"], ICON_RECEIVE);
 }
 
 function check_overdue(mixed $row): bool

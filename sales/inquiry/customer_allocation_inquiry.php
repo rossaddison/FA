@@ -58,7 +58,7 @@ end_table();
 function check_overdue(mixed $row): bool
 {
 	return ($row['OverDue'] == 1 
-		&& (abs($row["TotalAmount"]) - $row["Allocated"] != 0));
+		&& (abs($row["TotalAmount"]) - (float)$row["Allocated"] != 0));
 }
 
 function order_link(mixed $row)
@@ -97,8 +97,8 @@ function alloc_link(mixed $row)
 {
 	$link = 
 	pager_link(_("Allocation"),
-		"/sales/allocations/customer_allocate.php?trans_no=" . $row["trans_no"] 
-		."&trans_type=" . $row["type"]."&debtor_no=" . $row["debtor_no"], ICON_ALLOC);
+		"/sales/allocations/customer_allocate.php?trans_no=" . (string)$row["trans_no"] 
+		."&trans_type=" . (string)$row["type"]."&debtor_no=" . (string)$row["debtor_no"], ICON_ALLOC);
 
 	if ($row["type"] == ST_CUSTCREDIT && $row['TotalAmount'] > 0)
 	{
@@ -118,9 +118,9 @@ function alloc_link(mixed $row)
 		/*its a negative receipt */
 		return '';
 	} elseif (($row["type"] == ST_SALESINVOICE && ($row['TotalAmount'] - $row['Allocated']) > 0) || 
-		($row["type"] == ST_JOURNAL && (ABS($row['TotalAmount']) - $row['Allocated']) > 0) || $row["type"] == ST_BANKPAYMENT)
+		($row["type"] == ST_JOURNAL && (ABS($row['TotalAmount']) - (float)$row['Allocated']) > 0) || $row["type"] == ST_BANKPAYMENT)
 		return pager_link(_("Payment"),
-			"/sales/customer_payments.php?customer_id=".$row["debtor_no"]."&SInvoice=" . $row["trans_no"]."&Type=".$row["type"], ICON_MONEY);
+			"/sales/customer_payments.php?customer_id=".(string)$row["debtor_no"]."&SInvoice=" . (string)$row["trans_no"]."&Type=".(string)$row["type"], ICON_MONEY);
 
 }
 

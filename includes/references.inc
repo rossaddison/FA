@@ -249,7 +249,7 @@ class references
 		if ($this->_legacy_line($refline))
 			return $refline['pattern'];
 
-		return $this->_parse_next($type, $refline['prefix'].$refline['pattern'], $context);
+		return $this->_parse_next($type, (string)$refline['prefix'].$refline['pattern'], $context);
 	}
 
 	/**
@@ -285,7 +285,7 @@ class references
 		if ($this->_legacy_line($refline))	//legacy non-templated line
 			return strlen(trim($reference)) > 0;
 
-		$regex = preg_quote($refline['prefix'].$refline['pattern']);
+		$regex = preg_quote((string)$refline['prefix'].$refline['pattern']);
 		if (!is_array($context))
 			$context = array('date'=>$context);
 

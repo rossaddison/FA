@@ -44,7 +44,7 @@ function receive_link(mixed $row): string
 	
 	return $page_nested || !$row['OverDue'] ? '' :
 		pager_link( _("Receive"),
-			"/purchasing/po_receive_items.php?PONumber=" . $row["order_no"], ICON_RECEIVE);
+			"/purchasing/po_receive_items.php?PONumber=" . (string)$row["order_no"], ICON_RECEIVE);
 }
 
 function prt_link(mixed $row)

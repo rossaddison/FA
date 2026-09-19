@@ -344,7 +344,7 @@ read_customer_data();
 set_global_customer($_POST['customer_id']);
 if (isset($_POST['HoldAccount']) && $_POST['HoldAccount'] != 0)	
 	display_warning(_("This customer account is on hold."));
-$display_discount_percent = percent_format($_POST['pymt_discount']*100) . "%";
+$display_discount_percent = percent_format((float)$_POST['pymt_discount']*100) . "%";
 
 table_section(2);
 

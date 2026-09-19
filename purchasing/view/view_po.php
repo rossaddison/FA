@@ -30,7 +30,7 @@ if (!isset($_GET['trans_no']))
 if (!empty($SysPrefs->prefs['company_logo_on_views']))
 	company_logo_on_view();
 
-display_heading(_("Purchase Order") . " #" . $_GET['trans_no']);
+display_heading(_("Purchase Order") . " #" . (string)$_GET['trans_no']);
 
 $purchase_order = new purch_order;
 

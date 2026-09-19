@@ -163,9 +163,9 @@ function print_aged_customer_analysis(): void
 		$custrec['Due'] *= $rate;
 		$custrec['Overdue1'] *= $rate;
 		$custrec['Overdue2'] *= $rate;
-		$str = array($custrec["Balance"] - $custrec["Due"],
-			$custrec["Due"]-$custrec["Overdue1"],
-			$custrec["Overdue1"]-$custrec["Overdue2"],
+		$str = array((float)$custrec["Balance"] - $custrec["Due"],
+			(float)$custrec["Due"]-$custrec["Overdue1"],
+			(float)$custrec["Overdue1"]-$custrec["Overdue2"],
 			$custrec["Overdue2"],
 			$custrec["Balance"]);
 		if ($no_zeros && floatcmp(array_sum($str), 0) == 0) continue;
@@ -174,9 +174,9 @@ function print_aged_customer_analysis(): void
 		$rep->TextCol(0, 2, $myrow["name"].($myrow['inactive']==1 ? " ("._("Inactive").")" : ""));
 		if ($convert) $rep->TextCol(2, 3,	$myrow['curr_code']);
 		$rep->fontSize -= 2;
-		$total[0] += ($custrec["Balance"] - $custrec["Due"]);
-		$total[1] += ($custrec["Due"]-$custrec["Overdue1"]);
-		$total[2] += ($custrec["Overdue1"]-$custrec["Overdue2"]);
+		$total[0] += ((float)$custrec["Balance"] - $custrec["Due"]);
+		$total[1] += ((float)$custrec["Due"]-$custrec["Overdue1"]);
+		$total[2] += ((float)$custrec["Overdue1"]-$custrec["Overdue2"]);
 		$total[3] += $custrec["Overdue2"];
 		$total[4] += $custrec["Balance"];
 		for ($i = 0; $i < count($str); $i++)
@@ -197,9 +197,9 @@ function print_aged_customer_analysis(): void
 
 				foreach ($trans as $i => $value)
 					$trans[$i] = (float)$trans[$i] * $rate;
-				$str = array($trans["Balance"] - $trans["Due"],
-					$trans["Due"]-$trans["Overdue1"],
-					$trans["Overdue1"]-$trans["Overdue2"],
+				$str = array($trans["Balance"] - (float)$trans["Due"],
+					$trans["Due"]-(float)$trans["Overdue1"],
+					$trans["Overdue1"]-(float)$trans["Overdue2"],
 					$trans["Overdue2"],
 					$trans["Balance"]);
 				for ($i = 0; $i < count($str); $i++)

@@ -247,20 +247,20 @@ $opts = array(		// default options
 
 	if ($SysPrefs->use_popup_search)
 		$selector = "<select id='$name' autocomplete='off' ".($multi ? "multiple" : '')
-		. ($opts['height']!==false ? ' size="'.$opts['height'].'"' : '')
+		. ($opts['height']!==false ? ' size="'.(string)$opts['height'].'"' : '')
 		. "$disabled name='$name".($multi ? '[]':'')."' class='$class' title='"
-		. $opts['sel_hint']."' $rel>".$selector."</select>\n";
+		. (string)$opts['sel_hint']."' $rel>".$selector."</select>\n";
 	else
 		$selector = "<select autocomplete='off' ".($multi ? "multiple" : '')
-		. ($opts['height']!==false ? ' size="'.$opts['height'].'"' : '')
+		. ($opts['height']!==false ? ' size="'.(string)$opts['height'].'"' : '')
 		. "$disabled name='$name".($multi ? '[]':'')."' class='$class' title='"
-		. $opts['sel_hint']."' $rel>".$selector."</select>\n";
+		. (string)$opts['sel_hint']."' $rel>".$selector."</select>\n";
 	if ($by_id && ($search_box != false || $opts['editable']) ) {
 		// on first display show selector list
 		if (isset($_POST[$search_box]) && $opts['editable'] && $edit) {
 			$selector = "<input type='hidden' name='$name' value='".$_POST[$name]."'>"
 			."<input type='text' $disabled name='{$name}_text' id='{$name}_text' size='".
-				$opts['editable']."' maxlength='".$opts['max']."' $rel value='$edit'>\n";
+				(string)$opts['editable']."' maxlength='".(string)$opts['max']."' $rel value='$edit'>\n";
 				set_focus($name.'_text'); // prevent lost focus
 		} else if (get_post($search_submit ? $search_submit : "_{$name}_button"))
 			set_focus($name); // prevent lost focus
@@ -285,9 +285,9 @@ $opts = array(		// default options
 	$edit_entry = '';
 	if ($search_box != false) {
 		$edit_entry = "<input $disabled type='text' name='$search_box' id='$search_box' size='".
-			$opts['size']."' maxlength='".$opts['max'].
+			(string)$opts['size']."' maxlength='".(string)$opts['max'].
 			"' value='$txt' class='$class' rel='$name' autocomplete='off' title='"
-			.$opts['box_hint']."'"
+			.(string)$opts['box_hint']."'"
 			.(!fallback_mode() && !$by_id ? " style=display:none;":'')
 			.">\n";
 		if ($search_submit != false || $opts['editable']) {
@@ -367,7 +367,7 @@ $opts = array(		// default options
 	}
 
 	if ($opts['editlink'])
-		$selector .= ' '.$opts['editlink'];
+		$selector .= ' '.(string)$opts['editlink'];
 
 	if ($search_box && $opts['cells'])
 		$str = ($edit_entry!='' ? "<td>$edit_entry</td>" : '')."<td nowrap>$selector$img</td>";
@@ -462,9 +462,9 @@ $opts = array(		// default options
 	$_POST[$name] = $multi ? $selected_id : $selected_id[0];
 
 	$selector = "<select autocomplete='off' ".($multi  ? "multiple" : '')
-		. ($opts['height']!==false ? ' size="'.$opts['height'].'"' : '')
+		. ($opts['height']!==false ? ' size="'.(string)$opts['height'].'"' : '')
 		. "$disabled name='$name".($multi ? '[]' : '')."' class='combo' title='"
-		. $opts['sel_hint']."'>".$selector."</select>\n";
+		. (string)$opts['sel_hint']."'>".$selector."</select>\n";
 
 	$Ajax->addUpdate($name, "_{$name}_sel", $selector);
 

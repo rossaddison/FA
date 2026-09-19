@@ -124,7 +124,7 @@ function handle_submit(mixed $selected_id): bool
 		$conn = $db_connections[$selected_id];
 		if (($db = db_create_db($conn)) === false)
 		{
-			display_error(_("Error creating Database: ") . $conn['dbname'] . _(", Please create it manually"));
+			display_error(_("Error creating Database: ") . (string)$conn['dbname'] . _(", Please create it manually"));
 			$error = true;
 		} else {
 			if (strncmp(db_get_version(), "5.6", 3) >= 0) 

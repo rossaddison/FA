@@ -84,7 +84,7 @@ function fa_prepare_row(mixed $row) {
 
 function fa_link(mixed $row)
 {
-  	$url = "inventory/manage/items.php?FixedAsset=1&stock_id=".$row['stock_id'];
+  	$url = "inventory/manage/items.php?FixedAsset=1&stock_id=".(string)$row['stock_id'];
 
   	return viewer_link($row['stock_id'], $url);
 }
@@ -101,7 +101,7 @@ function depr_par(mixed $row): string {
 		return $row['depreciation_rate'].' '._('years'
 		);
 	else
-		return $row['depreciation_rate'].'%';
+		return (string)$row['depreciation_rate'].'%';
 }
 
 function status_title(mixed $row): string {
@@ -146,7 +146,7 @@ function amount_link(mixed $row): string
 
 function depr_link(mixed $row): string
 {
-    return price_format($row['purchase_cost'] - $row['material_cost']);
+    return price_format((float)$row['purchase_cost'] - $row['material_cost']);
 }
 
 function balance_link(mixed $row): string

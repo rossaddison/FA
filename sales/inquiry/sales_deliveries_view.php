@@ -95,7 +95,7 @@ if (get_post('_DeliveryNumber_changed'))
 
 //-----------------------------------------------------------------------------------
 
-start_form(false, false, $_SERVER['PHP_SELF'] ."?OutstandingOnly=".$_POST['OutstandingOnly']);
+start_form(false, false, $_SERVER['PHP_SELF'] ."?OutstandingOnly=".(string)$_POST['OutstandingOnly']);
 
 start_table(TABLESTYLE_NOBORDER);
 start_row();
@@ -130,12 +130,12 @@ function trans_view(mixed $trans, mixed $trans_no)
 
 function batch_checkbox(mixed $row): string
 {
-	$name = "Sel_" .$row['trans_no'];
+	$name = "Sel_" .(string)$row['trans_no'];
 	return $row['Done'] ? '' :
 		"<input type='checkbox' name='$name' value='1' >"
 // add also trans_no => branch code for checking after 'Batch' submit
-	 ."<input name='Sel_[".$row['trans_no']."]' type='hidden' value='"
-	 .$row['branch_code']."'>\n";
+	 ."<input name='Sel_[".(string)$row['trans_no']."]' type='hidden' value='"
+	 .(string)$row['branch_code']."'>\n";
 }
 
 function edit_link(mixed $row)
@@ -153,7 +153,7 @@ function invoice_link(mixed $row): string
 {
 	return $row["Outstanding"]==0 ? '' :
 		pager_link(_('Invoice'), "/sales/customer_invoice.php?DeliveryNumber=" 
-			.$row['trans_no'], ICON_DOC);
+			.(string)$row['trans_no'], ICON_DOC);
 }
 
 function check_overdue(mixed $row): bool

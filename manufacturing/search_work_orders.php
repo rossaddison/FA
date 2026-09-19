@@ -62,7 +62,7 @@ if (isset($_GET["stock_id"]))
 
 //--------------------------------------------------------------------------------------
 
-start_form(false, false, $_SERVER['PHP_SELF'] ."?outstanding_only=$outstanding_only");
+start_form(false, false, (string)$_SERVER['PHP_SELF'] ."?outstanding_only=$outstanding_only");
 
 start_table(TABLESTYLE_NOBORDER);
 start_row();
@@ -122,24 +122,24 @@ function release_link(mixed $row): string
 	return $row["closed"] ? '' : 
 		($row["released"]==0 ?
 		pager_link(_('Release'),
-			"/manufacturing/work_order_release.php?trans_no=" . $row["id"])
+			"/manufacturing/work_order_release.php?trans_no=" . (string)$row["id"])
 		: 
 		pager_link(_('Issue'),
-			"/manufacturing/work_order_issue.php?trans_no=" .$row["id"]));
+			"/manufacturing/work_order_issue.php?trans_no=" .(string)$row["id"]));
 }
 
 function produce_link(mixed $row): string
 {
 	return $row["closed"] || !$row["released"] ? '' :
 		pager_link(_('Produce'),
-			"/manufacturing/work_order_add_finished.php?trans_no=" .$row["id"]);
+			"/manufacturing/work_order_add_finished.php?trans_no=" .(string)$row["id"]);
 }
 
 function costs_link(mixed $row): string
 {
 	return $row["closed"] || !$row["released"] ? '' :
 		pager_link(_('Costs'),
-			"/manufacturing/work_order_costs.php?trans_no=" .$row["id"]);
+			"/manufacturing/work_order_costs.php?trans_no=" .(string)$row["id"]);
 }
 
 function view_gl_link(mixed $row)

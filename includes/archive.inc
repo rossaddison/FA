@@ -72,13 +72,13 @@ class archive
 		if ($this->options['inmemory'] == 0)
 		{
 			if ($this->options['overwrite'] == 0 && 
-				file_exists($this->options['name'] 
+				file_exists((string)$this->options['name'] 
 				. ($this->options['type'] == "pkg" || $this->options['type'] == "gzip" ||$this->options['type'] == "bzip" ? ".tmp" : "")))
 			{
 				$this->error[] = "File {$this->options['name']} already exists.";
 				return 0;
 			}
-			else if (!($this->archive = @fopen($this->options['name'].".tmp", "wb+")))
+			else if (!($this->archive = @fopen((string)$this->options['name'].".tmp", "wb+")))
 			{
 				$this->error[] = "Could not open {$this->options['name']} for writing.".':'.getcwd();
 				return 0;
@@ -101,7 +101,7 @@ class archive
 		if ($this->options['inmemory'] == 0)
 		{
 			fclose($this->archive);
-			unlink($this->options['name'] . ".tmp");
+			unlink((string)$this->options['name'] . ".tmp");
 		}
 	}
 
@@ -188,7 +188,7 @@ class archive
 				unset ($temp, $file);
 			}
 			else if (@file_exists($current))
-				$files[] = array ('name' => $current, 'name2' => $this->options['prepend'] .
+				$files[] = array ('name' => $current, 'name2' => (string)$this->options['prepend'] .
 					preg_replace("/(\.+\/+)+/", "", ($this->options['storepaths'] == 0 && strstr($current, "/")) ?
 					substr($current, strrpos($current, "/") + 1) : $current),
 					'type' => @is_link($current) && $this->options['followlinks'] == 0 ? 2 : 0,
@@ -204,7 +204,7 @@ class archive
 	function parse_dir($dirname)
 	{
 		if ($this->options['storepaths'] == 1 && !preg_match("/^(\.+\/*)+$/", $dirname))
-			$files = array (array ('name' => $dirname, 'name2' => $this->options['prepend'] .
+			$files = array (array ('name' => $dirname, 'name2' => (string)$this->options['prepend'] .
 				preg_replace("/(\.+\/+)+/", "", ($this->options['storepaths'] == 0 && strstr($dirname, "/")) ?
 				substr($dirname, strrpos($dirname, "/") + 1) : $dirname), 'type' => 5, 'stat' => stat($dirname)));
 		else
@@ -225,7 +225,7 @@ class archive
 					$files[] = $file2;
 			}
 			else if (@file_exists($fullname))
-				$files[] = array ('name' => $fullname, 'name2' => $this->options['prepend'] .
+				$files[] = array ('name' => $fullname, 'name2' => (string)$this->options['prepend'] .
 					preg_replace("/(\.+\/+)+/", "", ($this->options['storepaths'] == 0 && strstr($fullname, "/")) ?
 					substr($fullname, strrpos($fullname, "/") + 1) : $fullname),
 					'type' => @is_link($fullname) && $this->options['followlinks'] == 0 ? 2 : 0,

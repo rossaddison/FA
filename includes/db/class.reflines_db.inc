@@ -35,9 +35,9 @@ class reflines_db extends data_set {
 	{
 		$cond = "`id`<>".db_escape($key)." AND `trans_type`=".db_escape($data['trans_type']);
 		if ($data['prefix'] === '')
-			$cond .= " AND `prefix`='".$data['prefix']."'";
+			$cond .= " AND `prefix`='".(string)$data['prefix']."'";
 		else
-			$cond .= "AND ((LOCATE('".$data['prefix']."', CONCAT(`prefix`,`pattern`))=1 OR (`prefix`<>'' AND LOCATE(`prefix`, '".$data['prefix'].$data['pattern']."')=1)))";
+			$cond .= "AND ((LOCATE('".(string)$data['prefix']."', CONCAT(`prefix`,`pattern`))=1 OR (`prefix`<>'' AND LOCATE(`prefix`, '".(string)$data['prefix'].(string)$data['pattern']."')=1)))";
 
 		return db_num_rows($this->get_all($cond)) == 0;
 	}

@@ -259,7 +259,7 @@ div_end();
 
 if ($selected_id != -1)
 {
-	display_heading(_("Quick Entry Lines") . " - " . $_POST['description']);
+	display_heading(_("Quick Entry Lines") . " - " . (string)$_POST['description']);
 	$result = get_quick_entry_lines($selected_id);
 
 	start_table(TABLESTYLE2);

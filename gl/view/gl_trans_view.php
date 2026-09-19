@@ -75,7 +75,7 @@ function display_gl_heading(?array $myrow): void
 	if ($journal)
 	{
 		if ($header['rate'] != 1)
-			label_cells(_('Exchange rate'), $header["rate"].' ', "class='tableheader2'");
+			label_cells(_('Exchange rate'), (string)$header["rate"].' ', "class='tableheader2'");
 		label_cells(_('Source document'), $header["source_ref"], "class='tableheader2'");
 	}
 	end_row();
@@ -86,7 +86,7 @@ $result = get_gl_trans($_GET['type_id'], $_GET['trans_no']);
 
 if (db_num_rows($result) == 0)
 {
-    echo "<p><center>" . _("No general ledger transactions have been created for") . " " .$systypes_array[$_GET['type_id']]." " . _("number") . " " . $_GET['trans_no'] . "</center></p><br><br>";
+    echo "<p><center>" . _("No general ledger transactions have been created for") . " " .$systypes_array[$_GET['type_id']]." " . _("number") . " " . (string)$_GET['trans_no'] . "</center></p><br><br>";
 	end_page(true);
 	exit;
 }

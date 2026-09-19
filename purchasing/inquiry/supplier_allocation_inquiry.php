@@ -88,8 +88,8 @@ function due_date(mixed $row)
 function fmt_balance(mixed $row)
 {
 	$value = ($row["type"] == ST_BANKPAYMENT || $row["type"] == ST_SUPPCREDIT || $row["type"] == ST_SUPPAYMENT)	? -$row["TotalAmount"] - $row["Allocated"]
-		: ($row["type"] == ST_JOURNAL ? abs($row["TotalAmount"]) - $row["Allocated"] :
-			$row["TotalAmount"] - $row["Allocated"]);
+		: ($row["type"] == ST_JOURNAL ? abs($row["TotalAmount"]) - (float)$row["Allocated"] :
+			(float)$row["TotalAmount"] - $row["Allocated"]);
 	return $value;
 }
 
@@ -101,7 +101,7 @@ function alloc_link(mixed $row)
 	$link = 
 	pager_link(_("Allocations"),
 		"/purchasing/allocations/supplier_allocate.php?trans_no=" .
-			$row["trans_no"]. "&trans_type=" . $row["type"]. "&supplier_id=" . $row["supplier_id"], ICON_ALLOC );
+			(string)$row["trans_no"]. "&trans_type=" . (string)$row["type"]. "&supplier_id=" . (string)$row["supplier_id"], ICON_ALLOC );
 
 	if ($row["type"] == ST_BANKPAYMENT || $row["type"] == ST_SUPPAYMENT ||
 		(($row["type"] == ST_SUPPCREDIT || $row["type"] == ST_JOURNAL) && $row["TotalAmount"] < 0))
@@ -109,8 +109,8 @@ function alloc_link(mixed $row)
 
 	$link = 
 	pager_link(_("Payment"),
-		"/purchasing/supplier_payment.php?supplier_id=".$row["supplier_id"]."&PInvoice=" 
-			. $row["trans_no"]."&trans_type=" . $row["type"], ICON_MONEY);
+		"/purchasing/supplier_payment.php?supplier_id=".(string)$row["supplier_id"]."&PInvoice=" 
+			. (string)$row["trans_no"]."&trans_type=" . (string)$row["type"], ICON_MONEY);
 
 	if ($row["type"] == ST_SUPPINVOICE || (($row["type"] == ST_SUPPCREDIT || $row["type"] == ST_JOURNAL) && $row["TotalAmount"] > 0))
 		return floatcmp($row["TotalAmount"], $row["Allocated"]) ? $link : '';

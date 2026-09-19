@@ -178,7 +178,7 @@ function print_inventory_sales(): void
 		$curr = get_customer_currency($trans['debtor_no']);
 		$rate = get_exchange_rate_from_home_currency($curr, sql2date($trans['tran_date']));
 		$trans['amt'] *= $rate;
-		$cb = $trans['amt'] - $trans['cost'];
+		$cb = (float)$trans['amt'] - $trans['cost'];
 		$rep->NewLine();
 		$rep->fontSize -= 2;
 		$rep->TextCol(0, 1, $trans['stock_id']);

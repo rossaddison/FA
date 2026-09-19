@@ -65,7 +65,7 @@ if (isset($_GET["stock_id"]))
 
 //--------------------------------------------------------------------------------------
 
-start_form(false, false, $_SERVER['PHP_SELF'] ."?outstanding_only=$outstanding_only");
+start_form(false, false, (string)$_SERVER['PHP_SELF'] ."?outstanding_only=$outstanding_only");
 
 start_table(TABLESTYLE_NOBORDER);
 start_row();
@@ -115,7 +115,7 @@ function is_overdue(mixed $row): bool
 function edit_link(mixed $row): string
 {
 	return pager_link(_("Edit"),
-			"/dimensions/dimension_entry.php?trans_no=" . $row["id"], ICON_EDIT);
+			"/dimensions/dimension_entry.php?trans_no=" . (string)$row["id"], ICON_EDIT);
 }
 
 function prt_link(mixed $row)

@@ -103,7 +103,7 @@ function can_process(mixed $wo_details): bool
 		return false;
 	}
 	// don't produce more that required. Otherwise change the Work Order.
-	if (input_num('quantity') > ($wo_details["units_reqd"] - $wo_details["units_issued"]))
+	if (input_num('quantity') > ((float)$wo_details["units_reqd"] - $wo_details["units_issued"]))
 	{
 		display_error(_("The production exceeds the quantity needed. Please change the Work Order."));
 		set_focus('quantity');
@@ -162,7 +162,7 @@ if ((isset($_POST['Process']) || isset($_POST['ProcessAndClose'])) && can_proces
 	 $id = work_order_produce($_POST['selected_id'], $_POST['ref'], input_num('quantity'),
 			$_POST['date_'], $_POST['memo_'], $close_wo);
 
-	meta_forward($_SERVER['PHP_SELF'], "AddedID=".$_POST['selected_id']."&date=".$_POST['date_']);
+	meta_forward($_SERVER['PHP_SELF'], "AddedID=".(string)$_POST['selected_id']."&date=".(string)$_POST['date_']);
 }
 
 //-------------------------------------------------------------------------------------

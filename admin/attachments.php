@@ -211,22 +211,22 @@ function trans_view(mixed $trans)
 
 function edit_link(mixed $row): string
 {
-  	return button('Edit'.$row["id"], _("Edit"), _("Edit"), ICON_EDIT);
+  	return button('Edit'.(string)$row["id"], _("Edit"), _("Edit"), ICON_EDIT);
 }
 
 function view_link(mixed $row): string
 {
-  	return button('view'.$row["id"], _("View"), _("View"), ICON_VIEW);
+  	return button('view'.(string)$row["id"], _("View"), _("View"), ICON_VIEW);
 }
 
 function download_link(mixed $row): string
 {
-  	return button('download'.$row["id"], _("Download"), _("Download"), ICON_DOWN);
+  	return button('download'.(string)$row["id"], _("Download"), _("Download"), ICON_DOWN);
 }
 
 function delete_link(mixed $row): string
 {
-  	return button('Delete'.$row["id"], _("Delete"), _("Delete"), ICON_DELETE);
+  	return button('Delete'.(string)$row["id"], _("Delete"), _("Delete"), ICON_DELETE);
 }
 
 function display_rows(mixed $type, mixed $trans_no): void

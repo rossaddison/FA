@@ -42,7 +42,7 @@ function prt_link(mixed $row)
   		$row['type'] == ST_WORKORDER)
  		return print_document_link($row['trans_no'], _("Print"), true, $row['type'], ICON_PRINT);
  	else	
-		return print_document_link($row['trans_no']."-".$row['type'], _("Print"), true, $row['type'], ICON_PRINT);
+		return print_document_link($row['trans_no']."-".(string)$row['type'], _("Print"), true, $row['type'], ICON_PRINT);
 }
 
 function gl_view(mixed $row)

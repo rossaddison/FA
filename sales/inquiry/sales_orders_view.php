@@ -123,13 +123,13 @@ function dispatch_link(mixed $row): string
 	{
 		if ($row['TotDelivered'] < $row['TotQuantity'] && !$page_nested)
 			return pager_link( _("Dispatch"),
-				"/sales/customer_delivery.php?OrderNumber=" .$row['order_no'], ICON_DOC);
+				"/sales/customer_delivery.php?OrderNumber=" .(string)$row['order_no'], ICON_DOC);
 		else
 			return '';
 	}		
 	else
   		return pager_link( _("Sales Order"),
-			"/sales/sales_order_entry.php?OrderNumber=" .$row['order_no'], ICON_DOC);
+			"/sales/sales_order_entry.php?OrderNumber=" .(string)$row['order_no'], ICON_DOC);
 }
 
 function invoice_link(mixed $row): string
@@ -137,7 +137,7 @@ function invoice_link(mixed $row): string
 	global $trans_type;
 	if ($trans_type == ST_SALESORDER)
   		return pager_link( _("Invoice"),
-			"/sales/sales_order_entry.php?NewInvoice=" .$row["order_no"], ICON_DOC);
+			"/sales/sales_order_entry.php?NewInvoice=" .(string)$row["order_no"], ICON_DOC);
 	else
 		return '';
 }
@@ -145,13 +145,13 @@ function invoice_link(mixed $row): string
 function delivery_link(mixed $row): string
 {
   return pager_link( _("Delivery"),
-	"/sales/sales_order_entry.php?NewDelivery=" .$row['order_no'], ICON_DOC);
+	"/sales/sales_order_entry.php?NewDelivery=" .(string)$row['order_no'], ICON_DOC);
 }
 
 function order_link(mixed $row): string
 {
   return pager_link( _("Sales Order"),
-	"/sales/sales_order_entry.php?NewQuoteToSalesOrder=" .$row['order_no'], ICON_DOC);
+	"/sales/sales_order_entry.php?NewQuoteToSalesOrder=" .(string)$row['order_no'], ICON_DOC);
 }
 
 function tmpl_checkbox(mixed $row): string
@@ -163,14 +163,14 @@ function tmpl_checkbox(mixed $row): string
 
 	if ($page_nested)
 		return '';
-	$name = "chgtpl" .$row['order_no'];
+	$name = "chgtpl" .(string)$row['order_no'];
 	$value = $row['type'] ? 1:0;
 
 // save also in hidden field for testing during 'Update'
 
  return checkbox(null, $name, $value, true,
  	_('Set this order as a template for direct deliveries/invoices'))
-	. hidden('last['.$row['order_no'].']', $value, false);
+	. hidden('last['.(string)$row['order_no'].']', $value, false);
 }
 
 function unallocated_prepayments(mixed $row): string
@@ -194,7 +194,7 @@ function invoice_prep_link(mixed $row): string
 	return 
 		$row['inv_payments'] < $row['total'] ?
 		pager_link($row['ord_payments']  ? _("Prepayment Invoice") : _("Final Invoice"),
-		"/sales/customer_invoice.php?InvoicePrepayments=" .$row['order_no'], ICON_DOC) : '';
+		"/sales/customer_invoice.php?InvoicePrepayments=" .(string)$row['order_no'], ICON_DOC) : '';
 }
 
 $id = find_submit('_chgtpl');

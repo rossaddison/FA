@@ -131,7 +131,7 @@ function display_db_pager(&$pager): bool {
 			  else
 		  	  	qty_cell($cell, false, isset($col['dec']) ? $col['dec'] : null); break;
 			case 'email':
-				email_cell($cell,isset( $col['align']) ? "align='" . $col['align'] . "'" : null);
+				email_cell($cell,isset( $col['align']) ? "align='" . (string)$col['align'] . "'" : null);
 				break;
 		    case 'rate':
 				label_cell(number_format2($cell, user_exrate_dec()), "align=center"); break;
@@ -140,7 +140,7 @@ function display_db_pager(&$pager): bool {
 					$pager->inactive_control_cell($row); break;
 		    default:
 			  if (isset( $col['align']))
-			  	  label_cell($cell, "align='" . $col['align'] . "'");
+			  	  label_cell($cell, "align='" . (string)$col['align'] . "'");
 			  else
 			  	  label_cell($cell);
 		    case 'skip':	// column not displayed

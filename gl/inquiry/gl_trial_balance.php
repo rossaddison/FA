@@ -264,7 +264,7 @@ while ($class = db_fetch($classresult))
 if (!check_value('Balance'))
 {
 	start_row("class='inquirybg' style='font-weight:bold'");
-	label_cell(_("Total") ." - ".$_POST['TransToDate'], "colspan=2");
+	label_cell(_("Total") ." - ".(string)$_POST['TransToDate'], "colspan=2");
 	amount_cell($pdeb);
 	amount_cell($pcre);
 	amount_cell($cdeb);
@@ -274,7 +274,7 @@ if (!check_value('Balance'))
 	end_row();
 }
 start_row("class='inquirybg' style='font-weight:bold'");
-label_cell(_("Ending Balance") ." - ".$_POST['TransToDate'], "colspan=2");
+label_cell(_("Ending Balance") ." - ".(string)$_POST['TransToDate'], "colspan=2");
 display_debit_or_credit_cells($pbal);
 display_debit_or_credit_cells($cbal);
 display_debit_or_credit_cells($tbal);

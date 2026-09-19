@@ -275,7 +275,7 @@ function get_site_status(mixed $connections): array
 			$info[$i]['status'] = set_global_connection($i) !== false;
 
 			$info[$i]['name'] = $conn['name'];
-			$info[$i]['table_set'] = $conn['host'].'/'.$conn['dbname'].':'.$conn['tbpref'].'*';
+			$info[$i]['table_set'] = $conn['host'].'/'.(string)$conn['dbname'].':'.(string)$conn['tbpref'].'*';
 			if ($info[$i]['status'])
 			{
 				$info[$i]['version'] = get_company_pref('version_id');

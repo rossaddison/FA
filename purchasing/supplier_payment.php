@@ -95,7 +95,7 @@ if (isset($_GET['AddedID'])) {
 	submenu_view(_("View this Payment"), ST_SUPPAYMENT, $payment_id);
     display_note(get_gl_view_str(ST_SUPPAYMENT, $payment_id, _("View the GL &Journal Entries for this Payment")), 0, 1);
 
-	submenu_option(_("Enter another supplier &payment"), "/purchasing/supplier_payment.php?supplier_id=".$_POST['supplier_id']);
+	submenu_option(_("Enter another supplier &payment"), "/purchasing/supplier_payment.php?supplier_id=".(string)$_POST['supplier_id']);
 
 	submenu_option(_("Enter &Supplier Invoice"), "/purchasing/supplier_invoice.php?New=1");
 	submenu_option(_("Enter direct &Invoice"), "/purchasing/po_entry_items.php?NewInvoice=Yes");

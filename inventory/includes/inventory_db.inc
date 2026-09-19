@@ -103,7 +103,7 @@ function send_reorder_email(mixed $loc, mixed $st_ids, mixed $st_names, mixed $s
 	require_once($path_to_root . "/reporting/includes/class.mail.inc");
 	$company = get_company_prefs();
 	$mail = new email($company['coy_name'], $company['email']);
-	$subject = _("Stocks below Re-Order Level at ") . $loc['location_name'];
+	$subject = _("Stocks below Re-Order Level at ") . (string)$loc['location_name'];
 	$msg = "\n";
 	for ($i = 0; $i < count($st_ids); $i++)
 		$msg .= $st_ids[$i] . " " . $st_names[$i] . ", " . _("Re-Order Level") . ": " . $st_reorder[$i] . ", " . _("Below") . ": " . $st_num[$i] . "\n";

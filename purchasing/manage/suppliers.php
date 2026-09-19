@@ -136,7 +136,7 @@ if (isset($_POST['delete']) && $_POST['delete'] != "")
 		unset($_SESSION['supplier_id']);
 		$supplier_id = '';
 		$Ajax->activate('_page_body');
-		display_notification("#" . $_POST['supplier_id'] . " " . _("Supplier has been deleted."));
+		display_notification("#" . (string)$_POST['supplier_id'] . " " . _("Supplier has been deleted."));
 	} //end if Delete supplier
 }
 

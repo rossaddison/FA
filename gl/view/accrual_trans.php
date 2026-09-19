@@ -13,7 +13,7 @@ $page_security = 'SA_ACCRUALS';
 $path_to_root = "../..";
 include_once($path_to_root . "/includes/session.inc");
 
-$_SESSION['page_title'] = _($help_context = _("Search General Ledger Transactions for account: ").$_GET['act']);
+$_SESSION['page_title'] = _($help_context = _("Search General Ledger Transactions for account: ").(string)$_GET['act']);
 
 page($_SESSION['page_title'], true);
 

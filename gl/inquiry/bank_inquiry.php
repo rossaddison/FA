@@ -80,7 +80,7 @@ $bfw = get_balance_before_for_bank_account($_POST['bank_account'], $_POST['Trans
 
 $credit = $debit = 0;
 start_row("class='inquirybg' style='font-weight:bold'");
-label_cell(_("Opening Balance")." - ".$_POST['TransAfterDate'], "colspan=4");
+label_cell(_("Opening Balance")." - ".(string)$_POST['TransAfterDate'], "colspan=4");
 display_debit_or_credit_cells($bfw);
 label_cell("");
 label_cell("", "colspan=4");
@@ -131,7 +131,7 @@ while ($myrow = db_fetch($result))
 //end of while loop
 
 start_row("class='inquirybg' style='font-weight:bold'");
-label_cell(_("Ending Balance")." - ". $_POST['TransToDate'], "colspan=4");
+label_cell(_("Ending Balance")." - ". (string)$_POST['TransToDate'], "colspan=4");
 amount_cell($debit);
 amount_cell(-$credit);
 //display_debit_or_credit_cells($running_total);

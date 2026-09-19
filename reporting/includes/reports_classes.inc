@@ -531,7 +531,7 @@ function add_custom_reports(&$reports): void
 		$extensions = $installed_extensions;
 		foreach ($extensions as $ext)
 			if (($ext['active'] && $ext['type'] == 'extension')) {
-				$file = $path_to_root.'/'.$ext['path']."/reporting/reports_custom.php";
+				$file = $path_to_root.'/'.(string)$ext['path']."/reporting/reports_custom.php";
 				if (file_exists($file)) {
 					set_ext_domain($ext['path']);
 					include_once($file);

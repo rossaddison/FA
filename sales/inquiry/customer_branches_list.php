@@ -28,7 +28,7 @@ if(get_post("search")) {
   $Ajax->activate("customer_branch_tbl");
 }
 
-start_form(false, false, $_SERVER['PHP_SELF'] . "?" . $_SERVER['QUERY_STRING']);
+start_form(false, false, $_SERVER['PHP_SELF'] . "?" . (string)$_SERVER['QUERY_STRING']);
 
 start_table(TABLESTYLE_NOBORDER);
 

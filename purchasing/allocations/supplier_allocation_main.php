@@ -69,12 +69,12 @@ function alloc_link(mixed $row): string
 {
 	return pager_link(_("Allocate"),
 		"/purchasing/allocations/supplier_allocate.php?trans_no="
- 			.$row["trans_no"] . "&trans_type=" . $row["type"]. "&supplier_id=" . $row["supplier_id"], ICON_ALLOC);
+ 			.(string)$row["trans_no"] . "&trans_type=" . (string)$row["type"]. "&supplier_id=" . (string)$row["supplier_id"], ICON_ALLOC);
 }
 
 function amount_left(mixed $row): string
 {
- 	return price_format($row['type'] == ST_JOURNAL ?  abs($row["Total"])-$row["alloc"] : -$row["Total"]-$row["alloc"]);
+ 	return price_format($row['type'] == ST_JOURNAL ?  abs($row["Total"])-(float)$row["alloc"] : -$row["Total"]-$row["alloc"]);
 }
 
 function amount_total(mixed $row): string

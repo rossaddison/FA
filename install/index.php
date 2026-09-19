@@ -63,7 +63,7 @@ function display_coas(): void
 		label_cell($coa['encoding']);
 		label_cell(is_array($coa['Descr']) ? implode('<br>', $coa['Descr']) :  $coa['Descr']);
 		label_cell($installed ?
-			_("Installed") : checkbox(null, 'coas['.$coa['package'].']'), "align='center'");
+			_("Installed") : checkbox(null, 'coas['.(string)$coa['package'].']'), "align='center'");
 
 		end_row();
 	}
@@ -91,7 +91,7 @@ function display_langs(): void
 		label_cell($lang['encoding']);
 		label_cell(is_array($lang['Descr']) ? implode('<br>', $lang['Descr']) :  $lang['Descr']);
 		label_cell($installed ?
-			_("Installed") : checkbox(null, 'langs['.$lang['package'].']'), "align='center'");
+			_("Installed") : checkbox(null, 'langs['.(string)$lang['package'].']'), "align='center'");
 		end_row();
 	}
 	end_table(1);

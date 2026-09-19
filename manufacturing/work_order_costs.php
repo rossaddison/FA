@@ -108,7 +108,7 @@ if (isset($_POST['process']) && can_process($wo_details) == true)
 	add_wo_costs_journal($_POST['selected_id'], input_num('costs'), $_POST['PaymentType'], 
 		$_POST['cr_acc'], $date, $_POST['dim1'], $_POST['dim2'], $memo, $ref);
 
-	meta_forward($_SERVER['PHP_SELF'], "AddedID=".$_POST['selected_id']);
+	meta_forward($_SERVER['PHP_SELF'], "AddedID=".(string)$_POST['selected_id']);
 }
 
 //-------------------------------------------------------------------------------------

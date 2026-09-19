@@ -30,7 +30,7 @@ if(get_post("search")) {
 
 // Filter form. Use query string so the client_id will not disappear
 // after ajax form post.
-start_form(false, false, $_SERVER['PHP_SELF'] . "?" . $_SERVER['QUERY_STRING']);
+start_form(false, false, $_SERVER['PHP_SELF'] . "?" . (string)$_SERVER['QUERY_STRING']);
 
 start_table(TABLESTYLE_NOBORDER);
 

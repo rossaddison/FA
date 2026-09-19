@@ -116,7 +116,7 @@ $after_qty = $before_qty;
 
 start_row("class='inquirybg'");
 $header_span = $display_location ? 6 : 5;
-label_cell("<b>"._("Quantity on hand before") . " " . $_POST['AfterDate']."</b>", "align=center colspan=$header_span");
+label_cell("<b>"._("Quantity on hand before") . " " . (string)$_POST['AfterDate']."</b>", "align=center colspan=$header_span");
 label_cell("&nbsp;", "colspan=2");
 $dec = get_qty_dec($_POST['stock_id']);
 qty_cell($before_qty, false, $dec);
@@ -181,7 +181,7 @@ while ($myrow = db_fetch($result))
 }
 
 start_row("class='inquirybg'");
-label_cell("<b>"._("Quantity on hand after") . " " . $_POST['BeforeDate']."</b>", "align=center colspan=$header_span");
+label_cell("<b>"._("Quantity on hand after") . " " . (string)$_POST['BeforeDate']."</b>", "align=center colspan=$header_span");
 qty_cell($total_in, false, $dec);
 qty_cell($total_out, false, $dec);
 qty_cell($after_qty, false, $dec);
