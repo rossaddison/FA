@@ -4,6 +4,15 @@
         <extension name=".php"/>
         <extension name=".inc"/>
     </fileExtensions>
+    <globals>
+        <var name="path_to_root" type="string"/>
+        <var name="SysPrefs" type="sys_prefs"/>
+        <var name="Ajax" type="Ajax"/>
+        <var name="Refs" type="references"/>
+        <var name="systypes_array" type="array&lt;int, string&gt;"/>
+        <var name="db" type="mysqli"/>
+        <var name="db_connections" type="array&lt;int, array&lt;string, string&gt;&gt;"/>
+    </globals>
     <projectFiles>
         <directory name="access"/>
         <directory name="admin"/>
