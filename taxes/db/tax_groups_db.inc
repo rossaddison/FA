@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_tax_group(mixed $name, mixed $taxes, mixed $tax_shippings): void
+function add_tax_group(mixed $name, ?array $taxes, ?array $tax_shippings): void
 {
 	begin_transaction();
 
@@ -23,7 +23,7 @@ function add_tax_group(mixed $name, mixed $taxes, mixed $tax_shippings): void
 	commit_transaction();	
 }
 
-function update_tax_group(mixed $id, mixed $name, mixed $taxes, mixed $tax_shippings): void
+function update_tax_group(mixed $id, mixed $name, ?array $taxes, ?array $tax_shippings): void
 {
 	begin_transaction();	
 
@@ -36,7 +36,7 @@ function update_tax_group(mixed $id, mixed $name, mixed $taxes, mixed $tax_shipp
 	commit_transaction();			
 }
 
-function get_all_tax_groups(mixed $all=false)
+function get_all_tax_groups(int|bool|array|null $all=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."tax_groups";
 	if (!$all) $sql .= " WHERE !inactive";
@@ -87,7 +87,7 @@ function delete_tax_group_items(mixed $id): void
 //	Return all tax types with rate value updated according to tax group selected
 //	Call the function without arg to find shipment group taxes.
 //
-function get_tax_group_rates(mixed $group_id=null, mixed $tax_shipping=false)
+function get_tax_group_rates(mixed $group_id=null, bool $tax_shipping=false)
 {
 	global $SysPrefs;
 

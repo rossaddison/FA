@@ -58,7 +58,7 @@ function item_unit_used(mixed $unit): bool {
 	return ($myrow[0] > 0);
 }
 
-function get_all_item_units(mixed $all=false) {
+function get_all_item_units(int|bool|array|null $all=false) {
     $sql = "SELECT * FROM ".TB_PREF."item_units";
 	if (!$all) $sql .= " WHERE !inactive";
 	$sql .= " ORDER BY name";

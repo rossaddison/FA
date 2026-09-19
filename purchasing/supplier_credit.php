@@ -282,7 +282,7 @@ function check_item_data(mixed $n): bool
 	return true;
 }
 
-function commit_item_data(mixed $n): void
+function commit_item_data(string|int|null $n): void
 {
 	if (check_item_data($n))
 	{

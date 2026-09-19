@@ -403,7 +403,7 @@ function tst_extconfig(mixed $install): array
 	return $test;
 }
 
-function display_system_tests(mixed $install = false): bool
+function display_system_tests(bool $install = false): bool
 {
 	global $test_level;
 

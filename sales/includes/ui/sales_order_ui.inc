@@ -135,7 +135,7 @@ function get_customer_details_to_order(&$order, mixed $customer_id, mixed $branc
 
 //---------------------------------------------------------------------------------
 
-function display_order_summary(mixed $title, &$order, mixed $editable_items=false): void
+function display_order_summary(?string $title, &$order, bool $editable_items=false): void
 {
 
 	display_heading($title);
@@ -240,7 +240,7 @@ function display_order_summary(mixed $title, &$order, mixed $editable_items=fals
 
 // ------------------------------------------------------------------------------
 
-function display_order_header(&$order, mixed $editable, mixed $date_text)
+function display_order_header(&$order, bool $editable, ?string $date_text)
 {
 	global $Ajax, $SysPrefs;
 

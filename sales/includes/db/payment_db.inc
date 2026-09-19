@@ -21,7 +21,7 @@
 	$charge - in bank currency
 */
 function write_customer_payment(mixed $trans_no, mixed $customer_id, mixed $branch_id, mixed $bank_account,
-	mixed $date_, mixed $ref, mixed $amount, mixed $discount, mixed $memo_, mixed $rate=0, mixed $charge=0, mixed $bank_amount=0, mixed $dim1=0, mixed $dim2=0)
+	mixed $date_, mixed $ref, mixed $amount, mixed $discount, mixed $memo_, ?int $rate=0, mixed $charge=0, mixed $bank_amount=0, mixed $dim1=0, mixed $dim2=0)
 {
 	global $Refs;
 
@@ -139,7 +139,7 @@ function void_customer_payment(mixed $type, mixed $type_no): void
 	. Bank charge is not stored explicitly in database as of 2.3.xx
 	. Due to roundings the retrieved charge can differ from the original amount when bank_curr!=home_curr && bank_curr!=cust_curr
 */
-function get_cust_bank_charge(mixed $type, mixed $trans_no)
+function get_cust_bank_charge(?int $type, mixed $trans_no)
 {
 
 	// restore charge amount from amounts in bank currency if possible, otherwise calculate from GL posting with exchange rate used for amount posting

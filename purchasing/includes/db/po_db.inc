@@ -12,7 +12,7 @@
 require_once($path_to_root. "/admin/db/attachments_db.inc");
 // ------------------------------------------------------------------------------
 
-function get_supplier_details_to_order(&$order, mixed $supplier_id): void
+function get_supplier_details_to_order(&$order, string|array|null $supplier_id): void
 {
 	$sql = "SELECT curr_code, supp_name, tax_group_id, supp.tax_included, dimension_id, dimension2_id,
 			supp.credit_limit - Sum((ov_amount + ov_gst + ov_discount)) as cur_credit,
@@ -272,7 +272,7 @@ function read_po_items(mixed $order_no, &$order, mixed $open_items_only=false): 
 
 //----------------------------------------------------------------------------------------
 
-function read_po(mixed $order_no, &$order, mixed $open_items_only=false): void
+function read_po(mixed $order_no, &$order, bool $open_items_only=false): void
 {
 	$result = read_po_header($order_no, $order);
 
@@ -295,7 +295,7 @@ function get_po_items(mixed $order_no)
 }
 //----------------------------------------------------------------------------------------
 
-function get_short_info(mixed $stock_id)
+function get_short_info(string|array|null $stock_id)
 {
 	$sql = "SELECT description, units, mb_flag
 		FROM ".TB_PREF."stock_master WHERE stock_id = ".db_escape($stock_id);

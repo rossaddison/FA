@@ -13,7 +13,7 @@
 	item_codes table is used to store both multiply foreign codes (aliases) and 
 	sales kits definition.
 */
-function update_item_code(mixed $id, mixed $item_code, mixed $stock_id, mixed $description, mixed $category, mixed $qty, mixed $foreign=0): void
+function update_item_code(mixed $id, mixed $item_code, mixed $stock_id, mixed $description, mixed $category, mixed $qty, ?int $foreign=0): void
 {
 	$sql = "UPDATE ".TB_PREF."item_codes SET
 	 	item_code = ".db_escape($item_code).",
@@ -33,7 +33,7 @@ function update_item_code(mixed $id, mixed $item_code, mixed $stock_id, mixed $d
 	db_query($sql,"an item code could not be updated");
 }
 
-function add_item_code(mixed $item_code, mixed $stock_id, mixed $description, mixed $category, mixed $qty, mixed $foreign=0): void
+function add_item_code(mixed $item_code, mixed $stock_id, mixed $description, mixed $category, mixed $qty, ?int $foreign=0): void
 {
 	$sql = "INSERT INTO ".TB_PREF."item_codes
 			(item_code, stock_id, description, category_id, quantity, is_foreign) 
@@ -59,7 +59,7 @@ function get_item_code(mixed $id)
 	return db_fetch($result);
 }
 
-function get_all_item_codes(mixed $stock_id, mixed $foreign=1)
+function get_all_item_codes(mixed $stock_id, ?int $foreign=1)
 {
 	$sql="SELECT i.*, c.description as cat_name FROM "
 		.TB_PREF."item_codes as i,"
@@ -110,7 +110,7 @@ function get_item_code_dflts(mixed $stock_id)
 //
 //	Check if kit contains given item, optionally recursive.
 //
-function check_item_in_kit(mixed $old_id, mixed $kit_code, mixed $item_code, mixed $recurse=false): int
+function check_item_in_kit(mixed $old_id, mixed $kit_code, mixed $item_code, bool $recurse=false): int
 {
 	$result = get_item_kit($kit_code);
 	if ($result)

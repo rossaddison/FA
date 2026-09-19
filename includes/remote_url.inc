@@ -76,7 +76,7 @@ function url_get_contents(mixed $url, mixed $timeout=10): string|false|null
 	return $response;
 }
 
-function url_copy(mixed $from, mixed $to, mixed $timeout=10): bool
+function url_copy(?string $from, ?string $to, ?int $timeout=10): bool
 {
 	$f = fopen($to, 'wb');
 	if (!$f || !fwrite($f, url_get_contents($from, $timeout)))

@@ -67,7 +67,7 @@ function add_exchange_variation(mixed $trans_no, mixed $date_, mixed $acc_id, mi
 	return false;
 }
 
-function add_cust_supp_revaluation(mixed $ledger_act, mixed $ex_act, mixed $date, mixed $amount, mixed $person_type_id, mixed $person_id, mixed $memo): void
+function add_cust_supp_revaluation(mixed $ledger_act, mixed $ex_act, mixed $date, ?float $amount, ?int $person_type_id, mixed $person_id, mixed $memo): void
 {
 	global $Refs;
 	if ($amount == 0)
@@ -126,7 +126,7 @@ function get_supp_account_curr_balances(mixed $date)
 	return  $result;
 }
 
-function get_account_home_balance(mixed $person_id, mixed $person_type, mixed $rec_account, mixed $to_date)
+function get_account_home_balance(mixed $person_id, ?int $person_type, mixed $rec_account, mixed $to_date)
 {
 	$to = date2sql($to_date);
 
@@ -143,7 +143,7 @@ function get_account_home_balance(mixed $person_id, mixed $person_type, mixed $r
 // Note: in 2.4.9 sparse 'ref' argument was removed (generated transactions use
 // next references from default refline).
 //
-function add_exchange_variation_all(mixed $date, mixed $memo): array
+function add_exchange_variation_all(string|array|null $date, string|array|null $memo): array
 {
 	begin_transaction();
 	$exchanged = false;
@@ -292,7 +292,7 @@ function add_bank_transfer(mixed $from_account, mixed $to_account, mixed $date_,
 	return $trans_no;
 }
 
-function check_bank_transfer(mixed $trans_no, mixed $from_account, mixed $to_account, mixed $date_,
+function check_bank_transfer(mixed $trans_no, string|array|null $from_account, string|array|null $to_account, string|array|null $date_,
     mixed $amount, mixed $target_amount=0)
 {
 	$dbResult = get_bank_trans(ST_BANKTRANSFER, $trans_no);
@@ -346,8 +346,8 @@ function check_bank_transfer(mixed $trans_no, mixed $from_account, mixed $to_acc
 }
 
 function update_bank_transfer(
-	mixed $trans_no, mixed $from_account, mixed $to_account, mixed $date_,
-	mixed $amount, mixed $ref, mixed $memo_, mixed $dim1, mixed $dim2, mixed $charge=0, mixed $target_amount=0)
+	string|array|null $trans_no, string|array|null $from_account, string|array|null $to_account, string|array|null $date_,
+	mixed $amount, string|array|null $ref, string|array|null $memo_, string|array|null $dim1, string|array|null $dim2, mixed $charge=0, mixed $target_amount=0)
 {
 	begin_transaction();
 	delete_comments(ST_BANKTRANSFER, $trans_no);
@@ -376,7 +376,7 @@ function update_bank_transfer(
 // FIXME -revise code for update case
 //
 function write_bank_transaction(mixed $trans_type, mixed $trans_no, mixed $from_account, mixed $items, mixed $date_,
-	mixed $person_type_id, mixed $person_id, mixed $person_detail_id,	mixed $ref, mixed $memo_, mixed $use_transaction=true, mixed $settled_amount=null)
+	mixed $person_type_id, mixed $person_id, mixed $person_detail_id,	mixed $ref, mixed $memo_, bool $use_transaction=true, mixed $settled_amount=null)
 {
 	global $Refs, $SysPrefs;
 

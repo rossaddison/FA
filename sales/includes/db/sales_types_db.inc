@@ -9,14 +9,14 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_sales_type(mixed $name, mixed $tax_included, mixed $factor): void
+function add_sales_type(mixed $name, int|array|null $tax_included, mixed $factor): void
 {
 	$sql = "INSERT INTO ".TB_PREF."sales_types (sales_type,tax_included,factor) VALUES (".db_escape($name).","
 		.db_escape($tax_included).",".db_escape($factor).")";
 	db_query($sql, "could not add sales type");		
 }
 
-function update_sales_type(mixed $id, mixed $name, mixed $tax_included, mixed $factor): void
+function update_sales_type(mixed $id, mixed $name, int|array|null $tax_included, mixed $factor): void
 {
 
 	$sql = "UPDATE ".TB_PREF."sales_types SET sales_type = ".db_escape($name).",
@@ -25,7 +25,7 @@ function update_sales_type(mixed $id, mixed $name, mixed $tax_included, mixed $f
 	db_query($sql, "could not update sales type");			
 }
 
-function get_all_sales_types(mixed $all=false)
+function get_all_sales_types(int|bool|array|null $all=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."sales_types";
 	if (!$all)
@@ -43,7 +43,7 @@ function get_sales_type(mixed $id)
 	return db_fetch($result);
 }
 
-function get_sales_type_name(mixed $id)
+function get_sales_type_name(string|array|null $id)
 {
 	$sql = "SELECT sales_type FROM ".TB_PREF."sales_types WHERE id=".db_escape($id);
 	

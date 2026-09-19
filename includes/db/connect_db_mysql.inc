@@ -116,7 +116,7 @@ function db_seek(&$result,mixed $record)
 	return mysql_data_seek($result, $record);
 }
 
-function db_free_result(mixed $result): void
+function db_free_result(bool|mysqli_result $result): void
 {
 	if ($result)
 		mysql_free_result($result);
@@ -287,7 +287,7 @@ function db_get_charset(mixed $db)
 	return mysql_client_encoding();
 }
 
-function db_set_charset(mixed $db, mixed $charset)
+function db_set_charset(mixed $db, ?string $charset)
 {
 	return mysql_set_charset($charset, $db);
 }

@@ -110,7 +110,7 @@ function update_supp_received_items_for_invoice(mixed $id, mixed $po_detail_item
 	return array($ret, $date, $unit_price);
 }
 
-function get_diff_in_home_currency(mixed $supplier, mixed $old_date, mixed $date, mixed $amount1, mixed $amount2)
+function get_diff_in_home_currency(mixed $supplier, ?string $old_date, mixed $date, mixed $amount1, mixed $amount2)
 {
 	$dec = user_price_dec();
 	price_decimal_format($amount2, $dec);
@@ -661,7 +661,7 @@ function is_reference_already_there(mixed $supplier_id, mixed $supp_reference, m
 	return $myrow[0] > 0;
 }
 
-function remove_not_invoice_item(mixed $id): void
+function remove_not_invoice_item(string|int|null $id): void
 {
 	begin_transaction();
 

@@ -36,7 +36,7 @@ function delete_supp_allocation(mixed $trans_id): void
 
 //----------------------------------------------------------------------------------------
 
-function get_supp_trans_allocation_balance(mixed $trans_type, mixed $trans_no)
+function get_supp_trans_allocation_balance(?int $trans_type, mixed $trans_no)
 {
 	$sql = "SELECT (ov_amount+ov_gst-ov_discount-alloc) AS BalToAllocate
 		FROM ".TB_PREF."supp_trans WHERE trans_no="
@@ -101,7 +101,7 @@ function clear_supp_alloctions(mixed $type, mixed $type_no, mixed $person_id=nul
 }
 //-------------------------------------------------------------------------------------------------------------
 
-function get_allocatable_from_supp_sql(mixed $supplier_id, mixed $settled): string
+function get_allocatable_from_supp_sql(mixed $supplier_id, bool $settled): string
 {
 	$sql = "SELECT
 		trans.type,

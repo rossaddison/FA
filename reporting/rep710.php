@@ -28,7 +28,7 @@ include_once($path_to_root . "/includes/ui/ui_view.inc");
 
 print_audit_trail();
 
-function getTransactions(mixed $from, mixed $to, mixed $type, mixed $user)
+function getTransactions(mixed $from, mixed $to, string|array|null $type, string|array|null $user)
 {
 	$fromdate = date2sql($from) . " 00:00:00";
 	$todate = date2sql($to). " 23:59.59";

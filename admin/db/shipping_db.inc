@@ -49,7 +49,7 @@ function delete_shipper(mixed $selected_id): void
 
 //--------------------------------------------------------------------------------------
 
-function get_shippers(mixed $show_inactive)
+function get_shippers(int|array|null $show_inactive)
 {
 	$sql = "SELECT * FROM ".TB_PREF."shippers";
 	if (!$show_inactive) $sql .= " WHERE !inactive";

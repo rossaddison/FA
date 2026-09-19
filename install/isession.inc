@@ -51,7 +51,7 @@ function check_page_security(mixed $page_security): void
 /*
  Ensure file is re-read on next request if php caching is active
 */
-function cache_invalidate(mixed $filename): void
+function cache_invalidate(?string $filename): void
 {
     if (function_exists('opcache_invalidate')) // OpCode extension
         opcache_invalidate($filename);

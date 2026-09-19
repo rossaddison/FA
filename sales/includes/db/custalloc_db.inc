@@ -99,7 +99,7 @@ function clear_cust_alloctions(mixed $type, mixed $type_no, mixed $person_id=nul
 }
 //-------------------------------------------------------------------------------------------------------------
 
-function get_allocatable_from_cust_sql(mixed $customer_id, mixed $settled): string
+function get_allocatable_from_cust_sql(mixed $customer_id, bool $settled): string
 {
 	$sql = "SELECT
 		trans.type,
@@ -281,7 +281,7 @@ function get_allocatable_from_cust_transactions(mixed $customer_id, mixed $trans
 	return db_query($sql." ORDER BY trans_no", "Cannot retreive alloc to transactions");
 }
 
-function get_sql_for_customer_allocation_inquiry(mixed $from, mixed $to, mixed $customer, mixed $filterType, mixed $settled): string
+function get_sql_for_customer_allocation_inquiry(mixed $from, mixed $to, mixed $customer, mixed $filterType, int|array|null $settled): string
 {
   	$data_after = date2sql($from);
   	$date_to = date2sql($to);

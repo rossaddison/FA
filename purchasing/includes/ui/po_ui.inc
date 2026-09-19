@@ -64,7 +64,7 @@ function copy_to_cart(): void
 
 //---------------------------------------------------------------------------------------------------
 
-function create_new_po(mixed $trans_type, mixed $trans_no): void
+function create_new_po(?int $trans_type, mixed $trans_no): void
 {
 	global $Refs;
 
@@ -204,7 +204,7 @@ function display_po_header(&$order): void
 
 //---------------------------------------------------------------------------------------------------
 
-function display_po_items(&$order, mixed $editable=true): void
+function display_po_items(&$order, bool $editable=true): void
 {
     display_heading(_("Order Items"));
 
@@ -294,7 +294,7 @@ function display_po_items(&$order, mixed $editable=true): void
 
 //---------------------------------------------------------------------------------------------------
 
-function display_po_summary(&$po, mixed $is_self=false, mixed $editable=false): void
+function display_po_summary(&$po, bool $is_self=false, bool $editable=false): void
 {
     start_table(TABLESTYLE, "width='90%'");
 

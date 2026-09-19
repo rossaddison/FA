@@ -10,7 +10,7 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 //--------------------------------------------------------------------------------------------------
-function pager_link(mixed $link_text, mixed $url, mixed $icon=false): string
+function pager_link(?string $link_text, ?string $url, string|bool|null $icon=false): string
 {
 	global $path_to_root;
 	
@@ -21,7 +21,7 @@ function pager_link(mixed $link_text, mixed $url, mixed $icon=false): string
 	return "<a href='$href'>" . $link_text . "</a>";
 }
 
-function navi_button(mixed $name, mixed $value, mixed $enabled=true, mixed $icon = false): string {
+function navi_button(mixed $name, mixed $value, mixed $enabled=true, string|bool|null $icon = false): string {
 	global $path_to_root;
   	return "<button ". ($enabled ? '':'disabled')
   		." class=\"navibutton\" type=\"submit\""
@@ -30,7 +30,7 @@ function navi_button(mixed $name, mixed $value, mixed $enabled=true, mixed $icon
 		."<span>$value</span></button>\n";
 }
 
-function navi_button_cell(mixed $name, mixed $value, mixed $enabled=true, mixed $align='left'): void {
+function navi_button_cell(?string $name, ?string $value, mixed $enabled=true, ?string $align='left'): void {
 	label_cell(navi_button($name, $value, $enabled), "align='$align'");
 }
 

@@ -56,7 +56,7 @@ function void_customer_trans_details(mixed $type, mixed $type_no): void
 }
 //----------------------------------------------------------------------------------------
 
-function write_customer_trans_detail_item(mixed $debtor_trans_type, mixed $debtor_trans_no, mixed $stock_id, mixed $description,
+function write_customer_trans_detail_item(?int $debtor_trans_type, mixed $debtor_trans_no, mixed $stock_id, mixed $description,
 	mixed $quantity, mixed $unit_price, mixed $unit_tax, mixed $discount_percent, mixed $std_cost, mixed $src_id, mixed $line_id=0): void
 {
 	if ($line_id!=0)

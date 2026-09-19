@@ -28,7 +28,7 @@ function delete_sales_group(mixed $selected_id): void
 	db_query($sql,"could not delete sales group");
 }
 
-function get_sales_groups(mixed $show_inactive)
+function get_sales_groups(int|array|null $show_inactive)
 {
 	$sql = "SELECT * FROM `".TB_PREF."groups`";
 	if (!$show_inactive) $sql .= " WHERE !inactive";
@@ -70,7 +70,7 @@ function delete_sales_area(mixed $selected_id): void
 	db_query($sql,"could not delete sales area");
 }
 
-function get_sales_areas(mixed $show_inactive)
+function get_sales_areas(int|array|null $show_inactive)
 {
 	$sql = "SELECT * FROM ".TB_PREF."areas";
 	if (!$show_inactive) $sql .= " WHERE !inactive";
@@ -85,7 +85,7 @@ function get_sales_area(mixed $selected_id)
 	return db_fetch($result);
 }
 
-function get_area_name(mixed $id)
+function get_area_name(string|array|null $id)
 {
 	$sql = "SELECT description FROM ".TB_PREF."areas WHERE area_code=".db_escape($id);
 
@@ -129,7 +129,7 @@ function delete_salesman(mixed $selected_id): void
 	db_query($sql,"The sales-person could not be deleted");
 }
 
-function get_salesmen(mixed $show_inactive)
+function get_salesmen(int|array|null $show_inactive)
 {
 	$sql = "SELECT * FROM ".TB_PREF."salesman";
 	if (!$show_inactive) $sql .= " WHERE !inactive";
@@ -144,7 +144,7 @@ function get_salesman(mixed $selected_id)
 	return db_fetch($result);
 }
 
-function get_salesman_name(mixed $id)
+function get_salesman_name(string|array|null $id)
 {
 	$sql = "SELECT salesman_name FROM ".TB_PREF."salesman WHERE salesman_code=".db_escape($id);
 

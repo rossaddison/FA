@@ -10,8 +10,8 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-function add_user(mixed $user_id, mixed $real_name, mixed $password, mixed $phone, mixed $email, mixed $role_id, 
-	mixed $language, mixed $profile, mixed $rep_popup, mixed $pos)
+function add_user(mixed $user_id, mixed $real_name, ?string $password, mixed $phone, mixed $email, mixed $role_id, 
+	mixed $language, mixed $profile, int|array|null $rep_popup, mixed $pos)
 {
 	$sql = "INSERT INTO ".TB_PREF."users (user_id, real_name, password"
 		.", phone, email, role_id, language, pos, print_profile, rep_popup)
@@ -68,7 +68,7 @@ function update_user_prefs(mixed $id, mixed $prefs)
 //-----------------------------------------------------------------------------------------------
 
 
-function get_users(mixed $all=false)
+function get_users(int|bool|array|null $all=false)
 {
 	$sql = "SELECT u.*, r.role FROM ".TB_PREF."users u, ".TB_PREF."security_roles r
 		WHERE u.role_id=r.id";

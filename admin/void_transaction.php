@@ -30,7 +30,7 @@ page(_($help_context = "Void a Transaction"), false, false, "", $js);
 
 simple_page_mode(true);
 //----------------------------------------------------------------------------------------
-function exist_transaction(mixed $type, mixed $type_no): bool
+function exist_transaction(string|array|null $type, string|array|null $type_no): bool
 {
 	$void_entry = get_voided_entry($type, $type_no);
 

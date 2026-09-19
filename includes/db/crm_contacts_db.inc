@@ -67,7 +67,7 @@ function update_crm_person(mixed $id, mixed $ref, mixed $name, mixed $name2, mix
 	return $id;
 }
 
-function delete_crm_person(mixed $person, mixed $with_contacts=false)
+function delete_crm_person(mixed $person, bool $with_contacts=false)
 {
 	begin_transaction();
 
@@ -173,7 +173,7 @@ function update_person_contacts(mixed $id, mixed $cat_ids, mixed $entity_id=null
 	return $ret;
 }
 
-function delete_entity_contacts(mixed $class, mixed $entity): void
+function delete_entity_contacts(?string $class, mixed $entity): void
 {
 	// cleanup
 	$res = get_crm_persons($class, null, $entity, null, true);
@@ -219,7 +219,7 @@ function delete_crm_category(mixed $selected_id): void
 	db_query($sql,"could not delete crm category");
 }
 
-function get_crm_categories(mixed $show_inactive)
+function get_crm_categories(int|array|null $show_inactive)
 {
 	$sql = "SELECT * FROM ".TB_PREF."crm_categories";
 	if (!$show_inactive) $sql .= " WHERE !inactive";
@@ -248,7 +248,7 @@ function get_crm_category_name(mixed $id)
 //----------------------------------------------------------------------------------------
 //	Contact is relation between person and entity in some category
 //
-function add_crm_contact(mixed $type, mixed $action, mixed $entity_id, mixed $person_id)
+function add_crm_contact(?string $type, ?string $action, string|int|null $entity_id, string|int|null $person_id)
 {
 	$sql = "INSERT INTO ".TB_PREF."crm_contacts (person_id, type, action, entity_id) VALUES ("
 		.db_escape($person_id) . ","

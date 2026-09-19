@@ -74,7 +74,7 @@ function allocate_payment(mixed $type_from, mixed $no_from, mixed $type_to, mixe
 //  $allocs is table of payments which should be reallocated
 //  $free_remainder should be true if old allacations should be freed when not allocated to new transaction.
 //
-function reallocate_payments(mixed $trans_no, mixed $trans_type, mixed $alloc_date, mixed $max_alloc, mixed $allocs, mixed $person_id, mixed $free_remainder=true): void
+function reallocate_payments(mixed $trans_no, ?int $trans_type, mixed $alloc_date, mixed $max_alloc, mixed $allocs, mixed $person_id, bool $free_remainder=true): void
 {
 
 	foreach($allocs as $alloc)

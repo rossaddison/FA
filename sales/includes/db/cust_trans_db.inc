@@ -12,7 +12,7 @@
 //----------------------------------------------------------------------------------------
 // Mark changes in debtor_trans_details
 //
-function update_customer_trans_version(mixed $type, mixed $versions) {
+function update_customer_trans_version(?int $type, mixed $versions) {
 
 	$sql= 'UPDATE '.TB_PREF. 'debtor_trans SET version=version+1
 			WHERE type='.db_escape($type).' AND (';
@@ -56,7 +56,7 @@ function get_customer_trans_version(mixed $type, mixed $trans_no): array {
 function write_customer_trans(mixed $trans_type, mixed $trans_no, mixed $debtor_no, mixed $BranchNo,
 	mixed $date_, mixed $reference, mixed $Total, mixed $discount=0, mixed $Tax=0, mixed $Freight=0, mixed $FreightTax=0,
 	mixed $sales_type=0, mixed $order_no=0, mixed $ship_via=0, mixed $due_date="",
-	mixed $AllocAmt=0, mixed $rate=0, mixed $dimension_id=0, mixed $dimension2_id=0, mixed $payment_terms=null, mixed $tax_included=0, mixed $prep_amount=0)
+	mixed $AllocAmt=0, ?int $rate=0, mixed $dimension_id=0, mixed $dimension2_id=0, mixed $payment_terms=null, mixed $tax_included=0, mixed $prep_amount=0)
 {
 	$new = $trans_no==0;
 	$curr = get_customer_currency($debtor_no);
@@ -299,7 +299,7 @@ function post_void_customer_trans(mixed $type, mixed $type_no): void
 }
 
 //----------------------------------------------------------------------------------------
-function get_sql_for_customer_inquiry(mixed $from, mixed $to, mixed $cust_id = ALL_TEXT, mixed $filter = ALL_TEXT, mixed $show_voided = 0, mixed $ref=''): string
+function get_sql_for_customer_inquiry(mixed $from, mixed $to, mixed $cust_id = ALL_TEXT, mixed $filter = ALL_TEXT, int|array|null $show_voided = 0, mixed $ref=''): string
 {
     $date_after = date2sql($from);
     $date_to = date2sql($to);

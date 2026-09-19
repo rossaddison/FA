@@ -439,7 +439,7 @@ function display_grn_items_for_selection(&$supp_trans, mixed $k): bool
 //		 = 2 display on view invoice
 //		 = 3 display on view credit
 
-function display_grn_items(&$supp_trans, mixed $mode=0)
+function display_grn_items(&$supp_trans, ?int $mode=0)
 {
 	global $path_to_root;
 

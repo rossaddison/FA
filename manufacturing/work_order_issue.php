@@ -155,7 +155,7 @@ function handle_update_item(): void
 
 //-----------------------------------------------------------------------------------------------
 
-function handle_delete_item(mixed $id): void
+function handle_delete_item(string|int|null $id): void
 {
 	$_SESSION['issue_items']->remove_from_cart($id);
 	line_start_focus();

@@ -11,10 +11,10 @@
 ***********************************************************************/
 require_once($path_to_root. "/admin/db/attachments_db.inc");
 
-function add_supplier(mixed $supp_name, mixed $supp_ref, mixed $address, mixed $supp_address, mixed $gst_no,
-	mixed $website, mixed $supp_account_no, mixed $bank_account, mixed $credit_limit, mixed $dimension_id, mixed $dimension2_id, 
-	mixed $curr_code, mixed $payment_terms, mixed $payable_account, mixed $purchase_account, mixed $payment_discount_account, 
-	mixed $notes, mixed $tax_group_id, mixed $tax_included): void
+function add_supplier(string|array|null $supp_name, string|array|null $supp_ref, string|array|null $address, string|array|null $supp_address, string|array|null $gst_no,
+	string|array|null $website, string|array|null $supp_account_no, string|array|null $bank_account, mixed $credit_limit, string|array|null $dimension_id, string|array|null $dimension2_id, 
+	string|array|null $curr_code, string|array|null $payment_terms, string|array|null $payable_account, string|array|null $purchase_account, string|array|null $payment_discount_account, 
+	string|array|null $notes, string|array|null $tax_group_id, int|array|null $tax_included): void
 {
 	$sql = "INSERT INTO ".TB_PREF."suppliers (supp_name, supp_ref, address, supp_address, gst_no, website,
 		supp_account_no, bank_account, credit_limit, dimension_id, dimension2_id, curr_code,
@@ -43,10 +43,10 @@ function add_supplier(mixed $supp_name, mixed $supp_ref, mixed $address, mixed $
 	db_query($sql,"The supplier could not be added");
 }
 
-function update_supplier(mixed $supplier_id, mixed $supp_name, mixed $supp_ref, mixed $address, mixed $supp_address, mixed $gst_no, 
-	mixed $website, mixed $supp_account_no, mixed $bank_account, mixed $credit_limit, mixed $dimension_id, mixed $dimension2_id, 
-	mixed $curr_code, mixed $payment_terms, mixed $payable_account, mixed $purchase_account, mixed $payment_discount_account, 
-	mixed $notes, mixed $tax_group_id, mixed $tax_included): void
+function update_supplier(string|array|null $supplier_id, string|array|null $supp_name, string|array|null $supp_ref, string|array|null $address, string|array|null $supp_address, string|array|null $gst_no, 
+	string|array|null $website, string|array|null $supp_account_no, string|array|null $bank_account, mixed $credit_limit, string|array|null $dimension_id, string|array|null $dimension2_id, 
+	string|array|null $curr_code, string|array|null $payment_terms, string|array|null $payable_account, string|array|null $purchase_account, string|array|null $payment_discount_account, 
+	string|array|null $notes, string|array|null $tax_group_id, int|array|null $tax_included): void
 {
 	$sql = "UPDATE ".TB_PREF."suppliers SET supp_name=".db_escape($supp_name) . ",
 		supp_ref=".db_escape($supp_ref) . ",
@@ -83,7 +83,7 @@ function delete_supplier(mixed $supplier_id): void
 	commit_transaction();
 }
 
-function get_supplier_details(mixed $supplier_id, mixed $to=null, mixed $all=true)
+function get_supplier_details(mixed $supplier_id, mixed $to=null, string|bool|array|null $all=true)
 {
 
 	if ($to == null)
@@ -162,7 +162,7 @@ function get_supplier_accounts(mixed $supplier_id)
 	return db_fetch($result);
 }
 
-function get_supplier_contacts(mixed $supplier_id, mixed $action=null): array
+function get_supplier_contacts(mixed $supplier_id, ?string $action=null): array
 {
 	$results = array();
 	$res = get_crm_persons('supplier', $action, $supplier_id);

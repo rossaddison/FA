@@ -88,7 +88,7 @@ function check_recurrent_invoice_description(mixed $description, mixed $id=null)
 	return !$row[0];
 }
 
-function recurrent_invoice_ready(mixed $selected_id, mixed $date)
+function recurrent_invoice_ready(string|int|null $selected_id, mixed $date)
 {
 	$date = date2sql($date);
 
@@ -126,7 +126,7 @@ function recurrent_invoice_count(mixed $id)
 	return $result[0];
 }
 
-function check_recurrent_invoice_prices(mixed $id): int
+function check_recurrent_invoice_prices(string|int|null $id): int
 {
 	$errors = 0;
 	$inv = get_recurrent_invoice($id);

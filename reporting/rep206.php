@@ -28,7 +28,7 @@ include_once($path_to_root . "/gl/includes/gl_db.inc");
 
 print_supplier_balances();
 
-function get_open_balance(mixed $supplier_id, mixed $to)
+function get_open_balance(mixed $supplier_id, string|array|null $to)
 {
     $to = date2sql($to);
 
@@ -53,7 +53,7 @@ function get_open_balance(mixed $supplier_id, mixed $to)
     return db_fetch($result);
 }
 
-function getTransactions(mixed $supplier_id, mixed $from, mixed $to)
+function getTransactions(mixed $supplier_id, mixed $from, string|array|null $to)
 {
     $from = date2sql($from);
     $to = date2sql($to);

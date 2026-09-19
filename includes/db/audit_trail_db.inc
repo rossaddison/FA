@@ -10,7 +10,7 @@
 	See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-function add_audit_trail(mixed $trans_type, mixed $trans_no, mixed $trans_date, mixed $descr=''): void
+function add_audit_trail(mixed $trans_type, mixed $trans_no, mixed $trans_date, ?string $descr=''): void
 {
 	$descr = substr($descr, 0, 60);
 	begin_transaction();
@@ -61,7 +61,7 @@ function get_audit_trail_last(mixed $trans_type, mixed $trans_no)
 	Confirm and close for edition all transactions up to date $todate, 
 	and reindex	journal.
 */
-function close_transactions(mixed $todate): int {
+function close_transactions(string|array|null $todate): int {
 
 	begin_transaction();
 

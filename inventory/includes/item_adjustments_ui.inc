@@ -44,7 +44,7 @@ function display_order_header(&$order): void
 
 //---------------------------------------------------------------------------------
 
-function display_adjustment_items(mixed $title, &$order): void
+function display_adjustment_items(?string $title, &$order): void
 {
 	global $path_to_root;
 

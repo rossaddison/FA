@@ -30,7 +30,7 @@ print_order_status_list();
 
 //----------------------------------------------------------------------------------------------------
 
-function GetSalesOrders(mixed $from, mixed $to, mixed $category=0, mixed $location=null, mixed $backorder=0)
+function GetSalesOrders(string|array|null $from, string|array|null $to, string|int|array|null $category=0, string|array|null $location=null, string|int|array|null $backorder=0)
 {
 	$fromdate = date2sql($from);
 	$todate = date2sql($to);

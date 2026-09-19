@@ -16,7 +16,7 @@ function set_global_supplier(mixed $supplier_id): void
 	$_SESSION['wa_global_supplier_id'] = $supplier_id; 
 }
 
-function get_global_supplier(mixed $return_all=true) 
+function get_global_supplier(bool $return_all=true) 
 {
 	if (!isset($_SESSION['wa_global_supplier_id']) || 
 		($return_all == false && $_SESSION['wa_global_supplier_id'] == ALL_TEXT))
@@ -42,7 +42,7 @@ function set_global_customer(mixed $customer_id): void
 	$_SESSION['wa_global_customer_id'] = $customer_id; 
 }
 
-function get_global_customer(mixed $return_all=true) 
+function get_global_customer(bool $return_all=true) 
 {
 	if (!isset($_SESSION['wa_global_customer_id']) || 
 		($return_all == false && $_SESSION['wa_global_customer_id'] == ALL_TEXT))

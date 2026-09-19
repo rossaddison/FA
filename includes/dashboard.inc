@@ -86,7 +86,7 @@ function dashboard(mixed $sel_app): void
 		display_all();
 }
 
-function display_title(mixed $title, mixed $id=false, mixed $type = false, mixed $per = '', mixed $num = false): void
+function display_title(?string $title, mixed $id=false, mixed $type = false, mixed $per = '', mixed $num = false): void
 {
 	br();
 	start_form();
@@ -155,7 +155,7 @@ function table(mixed $width='100%', mixed $twidth=false): void
 	echo "<table width='$width'><tr valign=top><td align='center' $tstyle>";
 }
 
-function td(mixed $width=false): void
+function td(string|bool|null $width=false): void
 {
 	$style = ($width != false) ? "style='width:$width;'" : "";
 	echo "</td><td align='center' $style>\n";
@@ -247,7 +247,7 @@ function display_supplier_topten(): void
 	table_end();
 }
 
-function display_stock_topten(mixed $type=0): void
+function display_stock_topten(?int $type=0): void
 {
 	if ($type == 0)
 	{
@@ -430,7 +430,7 @@ function display_all(): void
 	table_end();
 }
 
-function customer_top(mixed $today, mixed $limit=10, mixed $width='33', &$pg=null): array
+function customer_top(mixed $today, ?int $limit=10, string|int|null $width='33', &$pg=null): array
 {
 	$begin = date2sql(begin_fiscalyear());
 	$today = date2sql($today);
@@ -471,7 +471,7 @@ function customer_top(mixed $today, mixed $limit=10, mixed $width='33', &$pg=nul
 	return array($title, $sales);
 }
 
-function supplier_top(mixed $today, mixed $limit=10, mixed $width='33', &$pg=null): array
+function supplier_top(mixed $today, ?int $limit=10, string|int|null $width='33', &$pg=null): array
 {
 	$begin = date2sql(begin_fiscalyear());
 	$today = date2sql($today);
@@ -513,7 +513,7 @@ function supplier_top(mixed $today, mixed $limit=10, mixed $width='33', &$pg=nul
 	return array($title, $total);
 }
 
-function stock_top(mixed $today, mixed $limit=10, mixed $width='33', mixed $type=0, &$pg=null): array
+function stock_top(mixed $today, ?int $limit=10, string|int|null $width='33', mixed $type=0, &$pg=null): array
 {
 	if ($type == 2)
 		$sec = 'SA_ASSETSANALYTIC';
@@ -606,7 +606,7 @@ function stock_top(mixed $today, mixed $limit=10, mixed $width='33', mixed $type
 	return array($title, $sales, $cost, $res);
 }
 
-function dimension_top(mixed $today, mixed $limit=10, mixed $width='33', &$pg=null): string
+function dimension_top(mixed $today, ?int $limit=10, string|int|null $width='33', &$pg=null): string
 {
 	$begin = date2sql(begin_fiscalyear());
 	$today = date2sql($today);
@@ -653,7 +653,7 @@ function dimension_top(mixed $today, mixed $limit=10, mixed $width='33', &$pg=nu
 	return $title;
 }
 
-function gl_top(mixed $today, mixed $width='33', &$pg=null): string
+function gl_top(mixed $today, string|int|null $width='33', &$pg=null): string
 {
 	$begin = date2sql(begin_fiscalyear());
 	$today = date2sql($today);
@@ -701,7 +701,7 @@ function gl_top(mixed $today, mixed $width='33', &$pg=null): string
 	return $title;
 }
 
-function gl_week_performance(mixed $today, mixed $width="33", mixed $weeks=4): void
+function gl_week_performance(mixed $today, string|int|null $width="33", ?int $weeks=4): void
 {
 	global $SysPrefs;
 	
@@ -741,7 +741,7 @@ function gl_week_performance(mixed $today, mixed $width="33", mixed $weeks=4): v
 	source_graphic($today, $title, _("Week"), $pg, _("Weeks"), $weeks);
 }
 
-function gl_month_performance(mixed $today, mixed $width="33", mixed $months=5): void
+function gl_month_performance(mixed $today, string|int|null $width="33", ?int $months=5): void
 {
 	global $SysPrefs;
 	$pg = new chart('bar', 'g4');
@@ -780,7 +780,7 @@ function gl_month_performance(mixed $today, mixed $width="33", mixed $months=5):
 	source_graphic($today, $title, _("Month"), $pg, _("Months"), $months);
 }
 
-function customer_aging(mixed $today, mixed $width="33"): float
+function customer_aging(mixed $today, string|int|null $width="33"): float
 {
 	$pg = new chart('bar', 'c3');
 	if (isset($_POST['select_c3']))
@@ -842,7 +842,7 @@ function customer_balance(mixed $today)
 	return $row[0];
 }
 
-function supplier_aging(mixed $today, mixed $width="33"): float
+function supplier_aging(mixed $today, string|int|null $width="33"): float
 {
 	$pg = new chart('bar', 's3'); 
 	if (isset($_POST['select_s3']))
@@ -961,7 +961,7 @@ function cash_flow(mixed $today): void
 	source_graphic($today, $title, _("Month"), $pg, _("Months"), $months);
 }
 
-function source_graphic(mixed $today, mixed $title, mixed $x_axis, mixed $pg, mixed $per = '', mixed $num = false): void
+function source_graphic(mixed $today, mixed $title, ?string $x_axis, mixed $pg, ?string $per = '', mixed $num = false): void
 {
 	if (!empty($per))
 		div_start($pg->id);
@@ -1032,7 +1032,7 @@ function customer_trans(mixed $today): void
 	end_table(2);
 }
 
-function calculate_next_invoice(mixed $myrow)
+function calculate_next_invoice(?array $myrow)
 {
 	if ($myrow["last_sent"] == '0000-00-00')
 		$next = sql2date($myrow["begin"]);
@@ -1161,7 +1161,7 @@ function stock_below_reorder(mixed $today, mixed $type): void
 	end_table(2);
 }
 
-function bank_balance(mixed $today, mixed $width): void
+function bank_balance(mixed $today, ?int $width): void
 {
 	$today = date2sql($today);
 	$sql = "SELECT bank_act, bank_account_name, bank_curr_code, SUM(amount) balance FROM ".TB_PREF."bank_trans bt 

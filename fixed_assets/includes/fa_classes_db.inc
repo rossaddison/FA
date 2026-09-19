@@ -19,7 +19,7 @@ function get_fixed_asset_classes()
 	return $result;
 }
 
-function get_fixed_asset_classname(mixed $class)
+function get_fixed_asset_classname(string|array|null $class)
 {
 	$sql="SELECT description FROM ".TB_PREF."stock_fa_class WHERE fa_class_id = ".db_escape($class);
 

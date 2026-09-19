@@ -27,7 +27,7 @@ include_once($path_to_root . "/gl/includes/gl_db.inc");
 
 print_aged_customer_analysis();
 
-function get_invoices(mixed $customer_id, mixed $to, mixed $all=true)
+function get_invoices(mixed $customer_id, string|array|null $to, string|bool|array|null $all=true)
 {
 	$todate = date2sql($to);
 	$PastDueDays1 = get_company_pref('past_due_days');

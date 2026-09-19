@@ -218,7 +218,7 @@ function adjust_shipping_charge(&$delivery, mixed $trans_no): void
 
 //--------------------------------------------------------------------------------------------------
 
-function void_sales_delivery(mixed $type, mixed $type_no, mixed $transactions=true): void
+function void_sales_delivery(mixed $type, mixed $type_no, bool $transactions=true): void
 {
 	if ($transactions)
 		begin_transaction();

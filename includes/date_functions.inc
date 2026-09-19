@@ -189,7 +189,7 @@ function new_doc_date(mixed $date=null): string
 	return $_SESSION['_default_date'];
 }
 
-function is_date_in_fiscalyear(mixed $date, mixed $convert=false): int|bool
+function is_date_in_fiscalyear(mixed $date, bool $convert=false): int|bool
 {
 	global $path_to_root;
 	include_once($path_to_root . "/admin/db/fiscalyears_db.inc");
@@ -451,7 +451,7 @@ function sql_date_comp(mixed $date1, mixed $date2): int
 /*
 	Compare dates in user format.
 */
-function date_comp(mixed $date1, mixed $date2)
+function date_comp(string|array|null $date1, mixed $date2)
 {
 	$date1 = date2sql($date1);
 	$date2 = date2sql($date2);
@@ -491,7 +491,7 @@ function date1_greater_date2 (mixed $date1, mixed $date2): int
 	return 0;
 }
 
-function date_diff2 (mixed $date1, mixed $date2, mixed $period): int 
+function date_diff2 (?string $date1, string|array|null $date2, ?string $period): int 
 {
 
 /* expects dates in the format specified in $DefaultDateFormat - period can be one of 'd','w','y','m'
@@ -537,7 +537,7 @@ function explode_date_to_dmy(mixed $date_): array
 	return array($day, $month, $year);
 }
 
-function div(mixed $a, mixed $b): int 
+function div(mixed $a, ?int $b): int 
 {
     return (int) ($a / $b);
 }

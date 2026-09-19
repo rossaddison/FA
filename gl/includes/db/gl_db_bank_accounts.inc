@@ -80,7 +80,7 @@ function get_bank_account(mixed $id)
 
 //---------------------------------------------------------------------------------------------
 
-function get_bank_accounts(mixed $show_inactive=false)
+function get_bank_accounts(int|bool|array|null $show_inactive=false)
 {
 	$sql = "SELECT account.*, gl_account.account_name
 		FROM ".TB_PREF."bank_accounts account, ".TB_PREF."chart_master gl_account
@@ -186,7 +186,7 @@ function delete_quick_entry_line(mixed $selected_id): void
 //---------------------------------------------------------------------------------------------
 
 
-function has_quick_entries(mixed $type=null): bool
+function has_quick_entries(?string $type=null): bool
 {
 	$sql = "SELECT id FROM ".TB_PREF."quick_entries";
 	if ($type != null)
@@ -295,7 +295,7 @@ function get_sql_for_bank_account_reconcile(mixed $bank_account, mixed $date): s
 
 //---------------------------------------------------------------------------------------------
 
-function update_reconciled_values(mixed $reconcile_id, mixed $reconcile_value, mixed $reconcile_date, mixed $end_balance, mixed $bank_account): void
+function update_reconciled_values(mixed $reconcile_id, ?string $reconcile_value, string|array|null $reconcile_date, mixed $end_balance, string|array|null $bank_account): void
 {
 	$sql = "UPDATE ".TB_PREF."bank_trans SET reconciled=$reconcile_value"
 		." WHERE id=".db_escape($reconcile_id);
@@ -334,7 +334,7 @@ function get_default_bank_account(mixed $curr=null)
 	return db_fetch($result);
 }
 
-function get_default_customer_bank_account(mixed $cust_id)
+function get_default_customer_bank_account(string|array|null $cust_id)
 {
 	$sql = "SELECT curr_code FROM ".TB_PREF."debtors_master WHERE debtor_no=".db_escape($cust_id);
 	$result = db_query($sql, "could not retreive default customer currency code");

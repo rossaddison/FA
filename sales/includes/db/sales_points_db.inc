@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_sales_point(mixed $name, mixed $location, mixed $account, mixed $cash, mixed $credit): void
+function add_sales_point(mixed $name, mixed $location, mixed $account, int|array|null $cash, int|array|null $credit): void
 {
 	$sql = "INSERT INTO ".TB_PREF."sales_pos (pos_name, pos_location, pos_account, cash_sale, credit_sale) VALUES (".db_escape($name)
 			. ",".db_escape($location).",".db_escape($account)
@@ -17,7 +17,7 @@ function add_sales_point(mixed $name, mixed $location, mixed $account, mixed $ca
 	db_query($sql, "could not add point of sale");
 }
 
-function update_sales_point(mixed $id, mixed $name, mixed $location, mixed $account, mixed $cash, mixed $credit): void
+function update_sales_point(mixed $id, mixed $name, mixed $location, mixed $account, int|array|null $cash, int|array|null $credit): void
 {
 
 	$sql = "UPDATE ".TB_PREF."sales_pos SET pos_name=".db_escape($name)
@@ -30,7 +30,7 @@ function update_sales_point(mixed $id, mixed $name, mixed $location, mixed $acco
 	db_query($sql, "could not update sales type");			
 }
 
-function get_all_sales_points(mixed $all=false)
+function get_all_sales_points(int|bool|array|null $all=false)
 {
 	$sql = "SELECT pos.*, loc.location_name, acc.bank_account_name FROM "
 		.TB_PREF."sales_pos as pos

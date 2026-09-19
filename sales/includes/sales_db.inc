@@ -32,8 +32,8 @@ include_once($path_to_root . "/sales/includes/db/customers_db.inc");
 // $date_ is display date (non-sql)
 // $amount is in CUSTOMER'S currency
 
-function add_gl_trans_customer(mixed $type, mixed $type_no, mixed $date_, mixed $account, mixed $dimension, mixed $dimension2,
-	mixed $amount, mixed $customer_id, mixed $err_msg="", mixed $rate=0)
+function add_gl_trans_customer(?int $type, mixed $type_no, mixed $date_, mixed $account, mixed $dimension, mixed $dimension2,
+	mixed $amount, mixed $customer_id, ?string $err_msg="", ?int $rate=0)
 {
 	if ($err_msg == "")
 		$err_msg = "The customer GL transaction could not be inserted";
@@ -169,7 +169,7 @@ function get_kit_price(mixed $item_code, mixed $currency, mixed $sales_type_id, 
 }
 
 //--------------------------------------------------------------------------------------------------
-function update_parent_line(mixed $doc_type, mixed $line_id, mixed $qty_dispatched, mixed $auto=false): bool
+function update_parent_line(mixed $doc_type, mixed $line_id, mixed $qty_dispatched, bool $auto=false): bool
 {
 	$doc_type = get_parent_type($doc_type);
 
@@ -288,7 +288,7 @@ function read_sales_trans(mixed $doc_type, mixed $trans_no, &$cart): bool
 }
 //----------------------------------------------------------------------------------------
 
-function get_sales_child_lines(mixed $trans_type, mixed $trans_no, mixed $lines=true)
+function get_sales_child_lines(mixed $trans_type, mixed $trans_no, bool $lines=true)
 {
 	if (!($ctype = get_child_type($trans_type)))
 		return false;
@@ -327,7 +327,7 @@ function get_sales_child_numbers(mixed $trans_type, mixed $trans_no): array
 	return $trans;
 }
 
-function get_sales_parent_lines(mixed $trans_type, mixed $trans_no, mixed $lines=true)
+function get_sales_parent_lines(mixed $trans_type, mixed $trans_no, bool $lines=true)
 {
 	$partype = get_parent_type($trans_type);
 
@@ -364,7 +364,7 @@ function get_sales_parent_numbers(mixed $trans_type, mixed $trans_no): array
 
 //----------------------------------------------------------------------------------------
 
-function get_sales_child_documents(mixed $trans_type, mixed $trans_no)
+function get_sales_child_documents(?int $trans_type, mixed $trans_no)
 {
 	// FIXME -  credit notes retrieved here should be those linked to invoices containing 
 	// at least one line from related invoice

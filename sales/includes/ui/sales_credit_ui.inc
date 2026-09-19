@@ -152,7 +152,7 @@ function display_credit_header(&$order)
 
 //---------------------------------------------------------------------------------
 
-function display_credit_items(mixed $title, &$order): void
+function display_credit_items(?string $title, &$order): void
 {
     global $path_to_root;
 

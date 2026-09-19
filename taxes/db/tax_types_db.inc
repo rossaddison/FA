@@ -29,7 +29,7 @@ function update_tax_type(mixed $type_id, mixed $name, mixed $sales_gl_code, mixe
 	db_query($sql, "could not update tax type");
 }
 
-function get_all_tax_types(mixed $all=false)
+function get_all_tax_types(int|bool|array|null $all=false)
 {
 	$sql = "SELECT tax_type.*,
 				Chart1.account_name AS SalesAccountName,

@@ -141,7 +141,7 @@ function get_taxes_for_item(mixed $stock_id, mixed $tax_group_items_array): arra
 //-----------------------------------------------------------------------------------
 // return an array of (tax_type_id, tax_type_name, sales_gl_code, purchasing_gl_code, rate, included_in_price, Value) 
 
-function get_tax_for_items(mixed $items, mixed $prices, mixed $shipping_cost, mixed $tax_group, mixed $tax_included=null, mixed $tax_items_array=null, mixed $tax_algorithm = null)
+function get_tax_for_items(mixed $items, mixed $prices, mixed $shipping_cost, mixed $tax_group, mixed $tax_included=null, mixed $tax_items_array=null, ?int $tax_algorithm = null)
 {
 	if (!$tax_algorithm)
 		$tax_algorithm = get_company_pref('tax_algorithm');

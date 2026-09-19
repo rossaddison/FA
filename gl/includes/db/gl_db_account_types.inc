@@ -58,7 +58,7 @@ function update_account_type(mixed $id, mixed $name, mixed $class_id, mixed $par
 	return $ret;
 }
 
-function get_account_types(mixed $all=false, mixed $class_id=false, mixed $parent=false)
+function get_account_types(int|bool|array|null $all=false, mixed $class_id=false, mixed $parent=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."chart_types";
 
@@ -124,7 +124,7 @@ function update_account_class(mixed $id, mixed $name, mixed $ctype)
 	return db_query($sql);
 }
 
-function get_account_classes(mixed $all=false, mixed $balance=-1)
+function get_account_classes(int|bool|array|null $all=false, ?int $balance=-1)
 {
 	$sql = "SELECT * FROM ".TB_PREF."chart_class";
 

@@ -23,7 +23,7 @@ function fa_trigger_error(mixed $msg, mixed $error_level=E_USER_NOTICE): void
         trigger_error($msg, $error_level);
 }
 
-function get_backtrace(mixed $html = false, mixed $skip=0): string
+function get_backtrace(bool $html = false, ?int $skip=0): string
 {
 	$str = '';
 	if ($html) $str .= '<table border=0>';
@@ -186,7 +186,7 @@ function end_flush(): void {
 	cancel_transaction();
 }
 
-function display_db_error(mixed $msg, mixed $sql_statement=null, mixed $exit=true): void
+function display_db_error(mixed $msg, mixed $sql_statement=null, bool $exit=true): void
 {
 	global $db, $SysPrefs, $db_connections;
 
@@ -224,7 +224,7 @@ function display_db_error(mixed $msg, mixed $sql_statement=null, mixed $exit=tru
 		exit;
 }
 
-function frindly_db_error(mixed $db_error): bool
+function frindly_db_error(?int $db_error): bool
 {
 	if ($db_error == DB_DUPLICATE_ERROR) 
 	{
@@ -235,7 +235,7 @@ function frindly_db_error(mixed $db_error): bool
 	return false;
 }
 
-function check_db_error(mixed $msg, mixed $sql_statement, mixed $exit_if_error=true, mixed $rollback_if_error=true)
+function check_db_error(mixed $msg, string|array|null $sql_statement, bool $exit_if_error=true, bool $rollback_if_error=true)
 {
 	global $db, $SysPrefs;
 	$db_error = db_error_no();

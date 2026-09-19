@@ -433,7 +433,7 @@ function handle_update_item(): void
 
 //-----------------------------------------------------------------------------------------------
 
-function handle_delete_item(mixed $id): void
+function handle_delete_item(string|int|null $id): void
 {
 	$_SESSION['journal_items']->remove_gl_item($id);
    	unset($_SESSION['journal_items']->tax_info);

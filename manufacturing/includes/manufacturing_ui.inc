@@ -83,7 +83,7 @@ function display_bom(mixed $item_check): void
 
 //--------------------------------------------------------------------------------------
 
-function display_wo_requirements(mixed $woid, mixed $quantity, mixed $show_qoh=false, mixed $date=null): void
+function display_wo_requirements(mixed $woid, mixed $quantity, bool $show_qoh=false, mixed $date=null): void
 {
 	global $SysPrefs;
 
@@ -273,7 +273,7 @@ function display_wo_payments(mixed $woid): void
 
 //--------------------------------------------------------------------------------------
 
-function display_wo_details(mixed $woid, mixed $suppress_view_link=false): void
+function display_wo_details(mixed $woid, bool $suppress_view_link=false): void
 {
 	global $wo_types_array;
 
@@ -329,7 +329,7 @@ function display_wo_details(mixed $woid, mixed $suppress_view_link=false): void
 
 //--------------------------------------------------------------------------------------
 
-function display_wo_details_quick(mixed $woid, mixed $suppress_view_link=false): void
+function display_wo_details_quick(mixed $woid, bool $suppress_view_link=false): void
 {
 	global $wo_types_array;
 

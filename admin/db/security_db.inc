@@ -25,7 +25,7 @@ function get_security_role(mixed $id)
 
 //--------------------------------------------------------------------------------------------------
 
-function add_security_role(mixed $name, mixed $description, mixed $sections, mixed $areas): void
+function add_security_role(mixed $name, mixed $description, ?array $sections, ?array $areas): void
 {
 	$sql = "INSERT INTO ".TB_PREF."security_roles (role, description, sections, areas)
 	VALUES ("

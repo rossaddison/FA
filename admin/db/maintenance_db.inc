@@ -20,7 +20,7 @@
  */
 define('EXPORT_MAX_INSERT', 50000);
 
-function array_natsort(mixed $aryData, mixed $strIndex, mixed $strSortBy, mixed $strSortType=false)
+function array_natsort(mixed $aryData, ?string $strIndex, ?string $strSortBy, bool $strSortType=false)
 {
    //    if the parameters are invalid
    if (!is_array($aryData) || !$strSortBy)
@@ -58,14 +58,14 @@ function array_natsort(mixed $aryData, mixed $strIndex, mixed $strSortBy, mixed 
    return $aryResult;
 }
 
-function update_admin_password(mixed $conn, mixed $password): void
+function update_admin_password(mixed $conn, ?string $password): void
 {
 	$sql = "UPDATE ".$conn['tbpref']."users SET password=".db_escape($password) . "
 		WHERE user_id='admin'";
 	db_query($sql, "could not update user password for 'admin'");
 }
 
-function write_config_db(mixed $new = false): int
+function write_config_db(bool $new = false): int
 {
 	global $path_to_root, $def_coy, $db_connections, $tb_pref_counter;
 
@@ -174,7 +174,7 @@ function write_extensions(mixed $extensions=null, mixed $company = -1): bool
 //
 // Update per-company list of installed extensions
 //
-function update_extensions(mixed $extensions): bool {
+function update_extensions(?array $extensions): bool {
 	global $db_connections;
 	
 	if (!write_extensions($extensions)) {
@@ -494,7 +494,7 @@ function db_import(mixed $filename, mixed $connection, mixed $force=true, mixed 
 }
 
 // returns the content of the gziped $path backup file. use of $mode see below
-function db_ungzip(mixed $mode, mixed $path): array|string|false
+function db_ungzip(?string $mode, ?string $path): array|string|false
 {
     $file_data = gzfile($path);
     // returns one string or an array of lines
@@ -505,7 +505,7 @@ function db_ungzip(mixed $mode, mixed $path): array|string|false
 }
 
 // returns the content of the ziped $path backup file. use of $mode see below
-function db_unzip(mixed $mode, mixed $path): array|string|false
+function db_unzip(?string $mode, ?string $path): array|string|false
 {
     $all = false;
     $all = implode("", file($path));
@@ -557,7 +557,7 @@ function db_backup(mixed $conn, mixed $ext='no', mixed $comm='', mixed $path='')
 }
 // Generates a dump of $db database
 //
-function db_export(mixed $conn, mixed $filename, mixed $zip='no', mixed $comment='')
+function db_export(mixed $conn, ?string $filename, mixed $zip='no', mixed $comment='')
 {
 
 	global $SysPrefs, $version;
@@ -785,7 +785,7 @@ function db_export(mixed $conn, mixed $filename, mixed $zip='no', mixed $comment
 
 // orders the tables in $tables according to the constraints in $fks
 // $fks musst be filled like this: $fks[tablename][0]=needed_table1; $fks[tablename][1]=needed_table2; ...
-function order_sql_tables(mixed $tables, mixed $fks)
+function order_sql_tables(?array $tables, ?array $fks)
 {
 	// do not order if no contraints exist
 	if (!count($fks))
@@ -834,7 +834,7 @@ function order_sql_tables(mixed $tables, mixed $fks)
 
 // saves the string in $fileData to the file $backupfile as gz file or not ($zip)
 // returns backup file name if name has changed (zip), else TRUE. If saving failed, return value is FALSE
-function save_to_file(mixed $path, mixed $zip, mixed $fileData): bool
+function save_to_file(mixed $path, mixed $zip, ?string $fileData): bool
 {
 
 	$backupfile = basename($path);
@@ -946,7 +946,7 @@ function save_to_file(mixed $path, mixed $zip, mixed $fileData): bool
     }
 }
 
-function create_comp_dirs(mixed $comp_path, mixed $comp_subdirs): void
+function create_comp_dirs(?string $comp_path, ?array $comp_subdirs): void
 {
 		$index = "<?php\nheader(\"Location: ../index.php\");\n";
 	    $cdir = $comp_path;

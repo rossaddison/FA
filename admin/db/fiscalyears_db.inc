@@ -13,7 +13,7 @@ require_once($path_to_root. "/includes/ui/items_cart.inc");
 require_once($path_to_root. "/admin/db/attachments_db.inc");
 
 // fiscal year routines
-function add_fiscalyear(mixed $from_date, mixed $to_date, mixed $closed): void
+function add_fiscalyear(string|array|null $from_date, string|array|null $to_date, string|array|null $closed): void
 {
 	$from = date2sql($from_date);
 	$to = date2sql($to_date);
@@ -24,7 +24,7 @@ function add_fiscalyear(mixed $from_date, mixed $to_date, mixed $closed): void
 	db_query($sql, "could not add fiscal year");
 }
 
-function update_fiscalyear(mixed $id, mixed $closed): void
+function update_fiscalyear(mixed $id, string|array|null $closed): void
 {
 	$sql = "UPDATE ".TB_PREF."fiscal_year SET closed=".db_escape($closed)."
 		WHERE id=".db_escape($id);
@@ -71,7 +71,7 @@ function delete_fiscalyear(mixed $id): void
 	commit_transaction();
 }
 
-function is_date_in_fiscalyears(mixed $date, mixed $closed=true): bool
+function is_date_in_fiscalyears(mixed $date, bool $closed=true): bool
 {
 	$date = date2sql($date);
 	$sql = "SELECT * FROM ".TB_PREF."fiscal_year WHERE '$date' >= begin AND '$date' <= end";
@@ -93,7 +93,7 @@ function get_fiscalyear_begin_for_date(mixed $date)
 		return begin_fiscalyear();
 }
 
-function check_begin_end_date(mixed $date1, mixed $date2): bool
+function check_begin_end_date(string|array|null $date1, string|array|null $date2): bool
 {
 	$sql = "SELECT MAX(end), MIN(begin) FROM ".TB_PREF."fiscal_year";
 	$result = db_query($sql, "could not retrieve last fiscal years");
@@ -115,7 +115,7 @@ function next_begin_date()
 	return add_days(sql2date($row[0]), 1);
 }
 
-function check_years_before(mixed $date, mixed $closed=false): bool
+function check_years_before(string|array|null $date, bool $closed=false): bool
 {
 	$date = date2sql($date);
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."fiscal_year WHERE begin < '$date'";

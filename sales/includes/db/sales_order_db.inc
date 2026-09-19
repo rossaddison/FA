@@ -466,7 +466,7 @@ function get_branch_to_order(mixed $customer_id, mixed $branch_id) {
 	PrepaidOrders
 */
 function get_sql_for_sales_orders_view(mixed $trans_type, mixed $trans_no, mixed $filter, 
-	mixed $stock_item='', mixed $from='', mixed $to='', mixed $ref='', mixed $location=ALL_TEXT, mixed $customer_id=ALL_TEXT, mixed $show_voided = 0, mixed $by_delivery=0, mixed $no_auto=0)
+	mixed $stock_item='', mixed $from='', mixed $to='', mixed $ref='', mixed $location=ALL_TEXT, mixed $customer_id=ALL_TEXT, int|array|null $show_voided = 0, mixed $by_delivery=0, mixed $no_auto=0)
 {
     if ($filter=='OutstandingOnly')
         $order_value = 'Sum(line.unit_price*(line.quantity-line.qty_sent)*(1-line.discount_percent))+freight_cost';
@@ -612,7 +612,7 @@ function is_sales_order_started(mixed $order_no)
 //
 // Mark/unmark sales order as template.
 //
-function sales_order_set_template(mixed $id, mixed $status): void
+function sales_order_set_template(mixed $id, int|bool|array|null $status): void
 {
   	$sql = "UPDATE ".TB_PREF."sales_orders SET type = ".db_escape($status)." WHERE order_no=".db_escape($id);
   	db_query($sql, "Can't change sales order type");
@@ -641,7 +641,7 @@ function is_prepaid_order_open(mixed $order_no)
 	return $result[0];
 }
 
-function last_sales_order_detail(mixed $order, mixed $field)
+function last_sales_order_detail(mixed $order, ?string $field)
 {
         $sql = "SELECT $field
             FROM ".TB_PREF."sales_order_details d

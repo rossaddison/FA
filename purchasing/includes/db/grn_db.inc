@@ -10,7 +10,7 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 //------------------- update average material cost ---------------------------------------------- 
-function update_average_material_cost(mixed $supplier, mixed $stock_id, mixed $price, mixed $qty, mixed $date, mixed $adj_only=false)
+function update_average_material_cost(mixed $supplier, mixed $stock_id, mixed $price, mixed $qty, mixed $date, bool $adj_only=false)
 {
 	// probably this function should be optimized
 	// passing transaction cart as argument. This would
@@ -251,8 +251,8 @@ function set_grn_item_credited(&$entered_grn, mixed $supplier, mixed $transno, m
        	$entered_grn->this_quantity_inv, $mcost, $taxfree_line);
 }
 
-function get_grn_items(mixed $grn_batch_id=0, mixed $supplier_id="", mixed $outstanding_only=false,
-	mixed $is_invoiced_only=false, mixed $invoice_no=0, mixed $begin="", mixed $end="")
+function get_grn_items(mixed $grn_batch_id=0, mixed $supplier_id="", bool $outstanding_only=false,
+	bool $is_invoiced_only=false, mixed $invoice_no=0, string|array|null $begin="", string|array|null $end="")
 {
     $sql = "SELECT grn.*, grn_item.*, po_item.delivery_date as req_del_date,
 		grn_item.quantity_inv".($invoice_no ? "-invoice_item.quantity" : '')."  quantity_inv,

@@ -13,7 +13,7 @@
 //----------------------------------------------------------------------------------------
 
 function add_attachment(mixed $filterType, mixed $trans_no, mixed $description,
-	mixed $filename, mixed $unique_name, mixed $filesize, mixed $filetype): void
+	?string $filename, mixed $unique_name, ?int $filesize, ?string $filetype): void
 {
 	$date = date2sql(Today());
 	$sql = "INSERT INTO ".TB_PREF."attachments (type_no, trans_no, description, filename, unique_name,
@@ -26,7 +26,7 @@ function add_attachment(mixed $filterType, mixed $trans_no, mixed $description,
 //----------------------------------------------------------------------------------------
 
 function update_attachment(mixed $selected_id, mixed $filterType, mixed $trans_no, mixed $description,
-	mixed $filename, mixed $unique_name, mixed $filesize, mixed $filetype): void
+	?string $filename, mixed $unique_name, ?int $filesize, ?string $filetype): void
 {
 	$date = date2sql(Today());
 	$sql = "UPDATE ".TB_PREF."attachments SET

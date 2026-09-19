@@ -29,7 +29,7 @@ include_once($path_to_root . "/inventory/includes/db/items_category_db.inc");
 
 print_work_order_listing();
 
-function getTransactions(mixed $items, mixed $open_only, mixed $location)
+function getTransactions(mixed $items, mixed $open_only, string|array|null $location)
 {
 	$sql = "SELECT
 		workorder.id,
@@ -66,7 +66,7 @@ function getTransactions(mixed $items, mixed $open_only, mixed $location)
 
 }
 
-function print_gl_rows(&$rep, mixed $result, mixed $title): void
+function print_gl_rows(&$rep, mixed $result, ?string $title): void
 {
 	global $systypes_array;
 

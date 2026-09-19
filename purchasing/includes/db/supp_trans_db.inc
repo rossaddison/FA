@@ -13,8 +13,8 @@
 //
 //	FIXME - this should be revised for transaction update case.
 //
-function write_supp_trans(mixed $type, mixed $trans_no, mixed $supplier_id, mixed $date_, mixed $due_date, mixed $reference, mixed $supp_reference,
-	mixed $amount, mixed $amount_tax, mixed $discount, mixed $err_msg="", mixed $rate=0, mixed $included=0)
+function write_supp_trans(mixed $type, ?int $trans_no, mixed $supplier_id, mixed $date_, mixed $due_date, mixed $reference, mixed $supp_reference,
+	mixed $amount, mixed $amount_tax, mixed $discount, ?string $err_msg="", mixed $rate=0, mixed $included=0)
 {
 	$new = $trans_no==0;
 	$date = date2sql($date_);
@@ -113,7 +113,7 @@ function get_supp_trans(mixed $trans_no, mixed $trans_type=-1, mixed $supplier_i
 
 //----------------------------------------------------------------------------------------
 
-function get_supp_payment_before(mixed $supplier_id, mixed $date)
+function get_supp_payment_before(mixed $supplier_id, string|int|null $date)
 {
 	$sql = "SELECT "
 	. TB_PREF . "supp_trans.trans_no,"

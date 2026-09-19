@@ -70,7 +70,7 @@ function delete_dimension(mixed $id): void
 
 //--------------------------------------------------------------------------------------
 
-function get_dimension(mixed $id, mixed $allow_null=false)
+function get_dimension(mixed $id, bool $allow_null=false)
 {
     $sql = "SELECT * FROM ".TB_PREF."dimensions	WHERE id=".db_escape($id);
 
@@ -84,7 +84,7 @@ function get_dimension(mixed $id, mixed $allow_null=false)
 
 //--------------------------------------------------------------------------------------
 
-function get_dimension_string(mixed $id, mixed $html=false, mixed $space=' '): string
+function get_dimension_string(mixed $id, bool $html=false, ?string $space=' '): string
 {
 	if ($id <= 0)
 	{
@@ -129,7 +129,7 @@ function dimension_has_payments(mixed $id): bool
 	return ($row[0] > 0);
 }
 
-function dimension_is_closed(mixed $id): bool
+function dimension_is_closed(string|array|null $id): bool
 {
 	$result = get_dimension($id);
 	return ($result['closed'] == '1');
@@ -170,7 +170,7 @@ function get_dimension_balance_all(mixed $id, mixed $from, mixed $to)
 
 //--------------------------------------------------------------------------------------
 
-function get_dimension_balance(mixed $id, mixed $from, mixed $to) 
+function get_dimension_balance(mixed $id, string|array|null $from, string|array|null $to) 
 {
 	$id = db_escape($id);
 	$sql = "SELECT SUM(amount)
@@ -187,7 +187,7 @@ function get_dimension_balance(mixed $id, mixed $from, mixed $to)
 
 //--------------------------------------------------------------------------------------
 
-function get_sql_for_search_dimensions(mixed $dim, mixed $from, mixed $to, mixed $order='', mixed $type = -1, mixed $open=false, mixed $overdue = false): string
+function get_sql_for_search_dimensions(mixed $dim, mixed $from, mixed $to, mixed $order='', mixed $type = -1, int|bool|array|null $open=false, int|bool|array|null $overdue = false): string
 {
 	$sql = "SELECT dim.id,
 		dim.reference,

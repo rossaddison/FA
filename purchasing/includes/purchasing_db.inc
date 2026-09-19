@@ -33,7 +33,7 @@ include_once($path_to_root . "/purchasing/includes/db/suppliers_db.inc");
 // $amount is in SUPPLIERS'S currency
 
 function add_gl_trans_supplier(mixed $type, mixed $type_no, mixed $date_, mixed $account, mixed $dimension, mixed $dimension2,  
-	mixed $amount, mixed $supplier_id, mixed $err_msg="", mixed $rate=0, mixed $memo="")
+	mixed $amount, mixed $supplier_id, ?string $err_msg="", mixed $rate=0, mixed $memo="")
 {
 	if ($err_msg == "")
 		$err_msg = "The supplier GL transaction could not be inserted";	
@@ -92,7 +92,7 @@ function get_purchase_data(mixed $supplier_id, mixed $stock_id)
 	return db_fetch($result);
 }
 
-function add_or_update_purchase_data(mixed $supplier_id, mixed $stock_id, mixed $price, mixed $description="", mixed $uom="")
+function add_or_update_purchase_data(mixed $supplier_id, mixed $stock_id, mixed $price, mixed $description="", ?string $uom="")
 {
 	$data = get_purchase_data($supplier_id, $stock_id);
 

@@ -39,7 +39,7 @@ print_stock_check();
  * @LastChange	2014-04-13
  */
 
-function barcode_check(mixed $code, mixed $return_value = false, mixed $get_type = false): string|false
+function barcode_check(mixed $code, bool $return_value = false, bool $get_type = false): string|false
 {
 	//Setting return value
 	/*
@@ -131,7 +131,7 @@ function barcode_check(mixed $code, mixed $return_value = false, mixed $get_type
 		return false;
 }
 	
-function getTransactions(mixed $category, mixed $location, mixed $item_like)
+function getTransactions(mixed $category, mixed $location, string|array|null $item_like)
 {
 	$sql = "SELECT item.category_id,
 			category.description AS cat_description,

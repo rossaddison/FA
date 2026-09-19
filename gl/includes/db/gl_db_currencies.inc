@@ -11,8 +11,8 @@
 ***********************************************************************/
 //---------------------------------------------------------------------------------------------
 
-function update_currency(mixed $curr_abrev, mixed $symbol, mixed $currency, mixed $country, 
-	mixed $hundreds_name, mixed $auto_update): void
+function update_currency(string|array|null $curr_abrev, string|array|null $symbol, string|array|null $currency, string|array|null $country, 
+	string|array|null $hundreds_name, int|array|null $auto_update): void
 {
 	$sql = "UPDATE ".TB_PREF."currencies SET currency=".db_escape($currency)
 		.", curr_symbol=".db_escape($symbol).",	country=".db_escape($country)
@@ -25,8 +25,8 @@ function update_currency(mixed $curr_abrev, mixed $symbol, mixed $currency, mixe
 
 //---------------------------------------------------------------------------------------------
 
-function add_currency(mixed $curr_abrev, mixed $symbol, mixed $currency, mixed $country, 
-	mixed $hundreds_name, mixed $auto_update): void
+function add_currency(string|array|null $curr_abrev, string|array|null $symbol, string|array|null $currency, string|array|null $country, 
+	string|array|null $hundreds_name, int|array|null $auto_update): void
 {
 	$sql = "INSERT INTO ".TB_PREF."currencies (curr_abrev, curr_symbol, currency, 
 			country, hundreds_name, auto_update)
@@ -61,7 +61,7 @@ function get_currency(mixed $curr_code)
 
 //---------------------------------------------------------------------------------------------
 
-function get_currencies(mixed $all=false)
+function get_currencies(int|bool|array|null $all=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."currencies";
 	if (!$all) $sql .= " WHERE !inactive";

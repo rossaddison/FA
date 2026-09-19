@@ -27,7 +27,7 @@ include_once($path_to_root . "/gl/includes/gl_db.inc");
 
 print_customer_details_listing();
 
-function get_customer_details_for_report(mixed $area=0, mixed $salesid=0)
+function get_customer_details_for_report(string|int|array|null $area=0, string|int|array|null $salesid=0)
 {
 	$sql = "SELECT debtor.debtor_no,
 			debtor.name,
@@ -83,7 +83,7 @@ function get_contacts_for_branch(mixed $branch): array
 	return $results;
 }
 
-function getTransactions(mixed $debtorno, mixed $branchcode, mixed $date)
+function getTransactions(mixed $debtorno, mixed $branchcode, string|array|null $date)
 {
 	$date = date2sql($date);
 

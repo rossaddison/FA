@@ -70,7 +70,7 @@ function update_record_status(mixed $id, mixed $status, mixed $table, mixed $key
 //	$index  - comma delimited list of columns for total grouping and order
 //  Returns running totals with respective index column
 //
-function running_total_sql(mixed $table, mixed $column, mixed $index): string
+function running_total_sql(?string $table, ?string $column, ?string $index): string
 {
 
 	return "SELECT daily.$index, daily.$column, (@total:=@total+daily.$column) total 

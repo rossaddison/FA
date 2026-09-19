@@ -53,7 +53,7 @@ function get_company_prefs()
 	return get_company_pref(null);
 }
 
-function set_company_pref(mixed $pref, mixed $category, mixed $type, mixed $length, mixed $value)
+function set_company_pref(?string $pref, ?string $category, ?string $type, ?int $length, ?string $value)
 {
 	$sql = "REPLACE `".TB_PREF."sys_prefs` SET `name`=".db_escape($pref).", `category`=".db_escape($category)
 		.", `type`=".db_escape($type).", `length`=".db_escape($length).", `value`=".db_escape($value);
@@ -76,7 +76,7 @@ function get_company_extensions(mixed $id = -1): array {
 	return $installed_extensions;
 }
 
-function add_payment_terms(mixed $daysOrFoll, mixed $terms, mixed $dayNumber): void
+function add_payment_terms(bool $daysOrFoll, mixed $terms, mixed $dayNumber): void
 {
 	if ($daysOrFoll) 
 	{
@@ -95,7 +95,7 @@ function add_payment_terms(mixed $daysOrFoll, mixed $terms, mixed $dayNumber): v
    	db_query($sql,"The payment term could not be added");
 }
 
-function update_payment_terms(mixed $selected_id, mixed $daysOrFoll, mixed $terms, mixed $dayNumber): void
+function update_payment_terms(mixed $selected_id, bool $daysOrFoll, mixed $terms, mixed $dayNumber): void
 {
 	if ($daysOrFoll) 
 	{
@@ -130,7 +130,7 @@ function get_payment_terms(mixed $selected_id)
 	return db_fetch($result);
 }
 
-function get_payment_terms_all(mixed $show_inactive)
+function get_payment_terms_all(int|array|null $show_inactive)
 {
 	$sql = "SELECT * FROM ".TB_PREF."payment_terms";
 	if (!$show_inactive) $sql .= " WHERE !inactive";
@@ -143,7 +143,7 @@ function get_payment_terms_all(mixed $show_inactive)
 		value is name of foreign key field. For numeric keys $stdkey field name is used.
 	$stdkey - standard name of foreign key.
 */
-function key_in_foreign_table(mixed $id, mixed $tables, mixed $stdkey)
+function key_in_foreign_table(mixed $id, string|array|null $tables, ?string $stdkey)
 {
 
 	if (!is_array($tables))

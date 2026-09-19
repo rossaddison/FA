@@ -122,7 +122,7 @@ class package extends gzip_file {
 // Changes field value read from control file (single, or multiline) into 
 // arrays of subfields if needed.
 //
-function ufmt_property(mixed $key, mixed $value)
+function ufmt_property(mixed $key, string|array|null $value)
 {
 	// indexes used in output arrays
 	$sub_fields = array(
@@ -161,7 +161,7 @@ function ufmt_property(mixed $key, mixed $value)
 // Retrieve control file and return as associative array
 //	$index is name of field used as key in result array, or null for numeric keys
 //
-function get_control_file(mixed $file, mixed $index = false): array|null {
+function get_control_file(mixed $file, string|bool|null $index = false): array|null {
 
 	$list = gzopen($file, 'rb');
 	if (!$list) return null;
@@ -267,7 +267,7 @@ function pkg_prop(mixed $pkg, mixed $property, mixed $lang=false)
 //	 	or (0=>field1, 1=>field2...)
 //  $outkey - field used as a key in package list. If null 'Package' field is used.
 //
-function get_pkg_or_list(mixed $type = null, mixed $pkgname = null, mixed $filter=array(), mixed $outkey=null, mixed $download=true) {
+function get_pkg_or_list(mixed $type = null, mixed $pkgname = null, mixed $filter=array(), mixed $outkey=null, bool $download=true) {
 
 	global $path_to_root, $repo_auth;
 
@@ -482,7 +482,7 @@ function get_languages_list()
 //	Return merged list of available and installed extensions as a local 
 // configuration array supplemented with installed versions information.
 //
-function get_extensions_list(mixed $type = null)
+function get_extensions_list(?string $type = null)
 {
 	global $path_to_root;
 
@@ -727,7 +727,7 @@ function check_pkg_upgrade(mixed $current, mixed $available): bool
 //
 //	Returns package info from index file
 //
-function get_package_info(mixed $pkg, mixed $type=null, mixed $filter=array(), mixed $outkey=null, mixed $download=true) {
+function get_package_info(mixed $pkg, mixed $type=null, ?array $filter=array(), mixed $outkey=null, bool $download=true) {
 	return get_pkg_or_list($type, $pkg, $filter, null, false);
 }
 

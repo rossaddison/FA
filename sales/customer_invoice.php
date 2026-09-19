@@ -227,7 +227,7 @@ function check_quantities(): int
  return $ok;
 }
 
-function set_delivery_shipping_sum(mixed $delivery_notes): void 
+function set_delivery_shipping_sum(?array $delivery_notes): void 
 {
     
     $shipping = 0;

@@ -316,7 +316,7 @@ if (get_post('clone')) {
 
 //------------------------------------------------------------------------------------
 
-function check_usage(mixed $stock_id, mixed $dispmsg=true): bool
+function check_usage(mixed $stock_id, bool $dispmsg=true): bool
 {
 	$msg = item_in_foreign_codes($stock_id);
 
@@ -346,7 +346,7 @@ if (isset($_POST['delete']) && strlen($_POST['delete']) > 1)
 	}
 }
 
-function item_settings(&$stock_id, mixed $new_item): void 
+function item_settings(&$stock_id, bool $new_item): void 
 {
 	global $SysPrefs, $path_to_root, $page_nested, $depreciation_methods;
 

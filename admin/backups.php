@@ -104,7 +104,7 @@ function get_backup_file_combo(): string
 	return $selector;
 }
 
-function compress_list_row(mixed $label, mixed $name, mixed $value=null): void
+function compress_list_row(?string $label, ?string $name, mixed $value=null): void
 {
 	$ar_comps = array('no'=>_("No"));
 
@@ -118,7 +118,7 @@ function compress_list_row(mixed $label, mixed $name, mixed $value=null): void
 	echo "</td></tr>";
 }
 
-function download_file(mixed $filename): bool
+function download_file(?string $filename): bool
 {
     if (empty($filename) || !file_exists($filename))
     {

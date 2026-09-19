@@ -407,7 +407,7 @@ function handle_negative_inventory(mixed $stock_id, mixed $quantity, mixed $stan
 // $std_cost - in HOME currency
 // $price - in transaction currency
 
-function add_stock_move(mixed $type, mixed $stock_id, mixed $trans_no, mixed $location,
+function add_stock_move(?int $type, mixed $stock_id, mixed $trans_no, mixed $location,
     mixed $date_, mixed $reference, mixed $quantity, mixed $std_cost, mixed $price=0)
 {
 	$date = date2sql($date_);
@@ -435,7 +435,7 @@ function update_stock_move(mixed $type, mixed $trans_no, mixed $stock_id, mixed 
 
 //--------------------------------------------------------------------------------------------------
 
-function get_stock_moves(mixed $type, mixed $type_no)
+function get_stock_moves(?int $type, mixed $type_no)
 {
 	$sql = "SELECT move.*, item.description, item.mb_flag, item.units, stock.location_name
 		FROM ".TB_PREF."stock_moves move,"

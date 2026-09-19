@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function work_order_produce(mixed $woid, mixed $ref, mixed $quantity, mixed $date_, mixed $memo, mixed $close_wo): void
+function work_order_produce(mixed $woid, mixed $ref, mixed $quantity, mixed $date_, mixed $memo, int|bool|null $close_wo): void
 {
 	global $Refs;
 

@@ -10,7 +10,7 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-function process_fixed_asset_depreciation(mixed $stock_id, mixed $gl_rows, mixed $refline, mixed $memo_)
+function process_fixed_asset_depreciation(string|array|null $stock_id, ?array $gl_rows, string|array|null $refline, string|array|null $memo_)
 {
   global $Refs;
 
@@ -64,7 +64,7 @@ function process_fixed_asset_depreciation(mixed $stock_id, mixed $gl_rows, mixed
 
 //--------------------------------------------------------------------------------------------------
 
-function get_fixed_asset_move(mixed $stock_id, mixed $tran_type) {
+function get_fixed_asset_move(mixed $stock_id, ?int $tran_type) {
 
   $sql = "SELECT * FROM ".TB_PREF."stock_moves 
 	    WHERE stock_id=".db_escape($stock_id)."

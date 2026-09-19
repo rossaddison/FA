@@ -27,7 +27,7 @@ if (!isset($_GET['type_id']) || !isset($_GET['trans_no']))
 	end_page();
 }
 
-function display_gl_heading(mixed $myrow): void
+function display_gl_heading(?array $myrow): void
 {
 	global $systypes_array, $SysPrefs;
 	

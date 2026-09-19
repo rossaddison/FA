@@ -14,17 +14,17 @@ function display_error(mixed $msg, mixed $center=true): void
 	 fa_trigger_error($msg, E_USER_ERROR);
 }
 
-function display_notification(mixed $msg, mixed $center=true): void
+function display_notification(mixed $msg, int|bool|null $center=true): void
 {
 	fa_trigger_error($msg, E_USER_NOTICE);
 }
 
-function display_warning(mixed $msg, mixed $center=true): void
+function display_warning(mixed $msg, int|bool|null $center=true): void
 {
 	fa_trigger_error($msg, E_USER_WARNING);
 }
 
-function display_notification_centered(mixed $msg): void
+function display_notification_centered(?string $msg): void
 {
 	display_notification($msg, true);
 }
@@ -44,7 +44,7 @@ function display_heading2(mixed $msg): void
 	echo "<center><span class='headingtext2'>$msg</span></center>\n";	
 }
 
-function display_note(mixed $msg, mixed $br=0, mixed $br2=0, mixed $extra=""): void
+function display_note(mixed $msg, ?int $br=0, ?int $br2=0, ?string $extra=""): void
 {
 	for ($i = 0; $i < $br; $i++)
 		echo "<br>";

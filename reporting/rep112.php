@@ -29,7 +29,7 @@ include_once($path_to_root . "/includes/data_checks.inc");
 print_receipts();
 
 //----------------------------------------------------------------------------------------------------
-function get_receipt(mixed $type, mixed $trans_no)
+function get_receipt(string|int|null $type, ?string $trans_no)
 {
     $sql = "SELECT trans.*,
 				(trans.ov_amount + trans.ov_gst + trans.ov_freight + trans.ov_freight_tax) AS Total,

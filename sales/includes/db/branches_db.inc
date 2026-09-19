@@ -70,7 +70,7 @@ function delete_branch(mixed $customer_id, mixed $branch_code): void
 	db_query($sql,"could not delete branch");
 }
 
-function branch_in_foreign_table(mixed $customer_id, mixed $branch_code, mixed $table): bool
+function branch_in_foreign_table(mixed $customer_id, mixed $branch_code, ?string $table): bool
 {
 	$sql= "SELECT COUNT(*) FROM ".TB_PREF."$table WHERE branch_code=".db_escape($branch_code)
 		." AND debtor_no = ".db_escape($customer_id);
@@ -93,7 +93,7 @@ function get_branch(mixed $branch_id)
 	return db_fetch($result);
 }
 
-function get_cust_branch(mixed $customer_id, mixed $branch_code)
+function get_cust_branch(string|array|null $customer_id, string|array|null $branch_code)
 {
 	$sql = "SELECT * FROM ".TB_PREF."cust_branch
 		WHERE branch_code=".db_escape($branch_code)."
@@ -131,7 +131,7 @@ function get_cust_branches_from_group(mixed $group_no)
 	return db_query($sql,"could not retreive branches for group " . $group_no);
 }
 
-function get_default_info_for_branch(mixed $customer_id)
+function get_default_info_for_branch(string|array|null $customer_id)
 {
 	$sql = "SELECT name, address, debtor_ref
 		FROM ".TB_PREF."debtors_master WHERE debtor_no = ".db_escape($customer_id);
@@ -178,7 +178,7 @@ function get_sql_for_customer_branches(mixed $customer_id): string
 	$default - return only single record selected with defaults order defined in $defs array,
 	 otherways get all $action contacts
 */
-function get_branch_contacts(mixed $branch_code, mixed $action=null, mixed $customer_id=null, mixed $default = true)
+function get_branch_contacts(mixed $branch_code, ?string $action=null, mixed $customer_id=null, bool $default = true)
 {
 	$defs = array('cust_branch.'.$action, 
 				'customer.'.$action,

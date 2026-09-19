@@ -11,9 +11,9 @@
 ***********************************************************************/
 require_once($path_to_root. "/admin/db/attachments_db.inc");
 
-function add_customer(mixed $CustName, mixed $cust_ref, mixed $address, mixed $tax_id, mixed $curr_code,
-	mixed $dimension_id, mixed $dimension2_id, mixed $credit_status, mixed $payment_terms, mixed $discount, mixed $pymt_discount, 
-	mixed $credit_limit, mixed $sales_type, mixed $notes): void
+function add_customer(string|array|null $CustName, string|array|null $cust_ref, string|array|null $address, string|array|null $tax_id, string|array|null $curr_code,
+	string|array|null $dimension_id, string|array|null $dimension2_id, string|array|null $credit_status, string|array|null $payment_terms, mixed $discount, mixed $pymt_discount, 
+	mixed $credit_limit, string|array|null $sales_type, string|array|null $notes): void
 {
 	$sql = "INSERT INTO ".TB_PREF."debtors_master (name, debtor_ref, address, tax_id,
 		dimension_id, dimension2_id, curr_code, credit_status, payment_terms, discount, 
@@ -28,9 +28,9 @@ function add_customer(mixed $CustName, mixed $cust_ref, mixed $address, mixed $t
 	db_query($sql,"The customer could not be added");
 }
 
-function update_customer(mixed $customer_id, mixed $CustName, mixed $cust_ref, mixed $address, mixed $tax_id, mixed $curr_code,
-	mixed $dimension_id, mixed $dimension2_id, mixed $credit_status, mixed $payment_terms, mixed $discount, mixed $pymt_discount,
-	mixed $credit_limit, mixed $sales_type, mixed $notes): void
+function update_customer(string|array|null $customer_id, string|array|null $CustName, string|array|null $cust_ref, string|array|null $address, string|array|null $tax_id, string|array|null $curr_code,
+	string|array|null $dimension_id, string|array|null $dimension2_id, string|array|null $credit_status, string|array|null $payment_terms, mixed $discount, mixed $pymt_discount,
+	mixed $credit_limit, string|array|null $sales_type, string|array|null $notes): void
 {
 	$sql = "UPDATE ".TB_PREF."debtors_master SET name=" . db_escape($CustName) . ", 
 		debtor_ref=" . db_escape($cust_ref) . ",
@@ -65,7 +65,7 @@ function delete_customer(mixed $customer_id): void
 /*
 	This function probably should be renamed to get_customer_summary
 */
-function get_customer_details(mixed $customer_id, mixed $to=null, mixed $all=true)
+function get_customer_details(mixed $customer_id, mixed $to=null, string|bool|array|null $all=true)
 {
 
 	if ($to == null)
@@ -141,7 +141,7 @@ function get_customer_name(mixed $customer_id)
 	return is_array($row) ? $row[0] : false;
 }
 
-function get_customer_habit(mixed $customer_id)
+function get_customer_habit(string|array|null $customer_id)
 {
 	$sql = "SELECT debtor.pymt_discount, credit_status.dissallow_invoices
 			FROM ".TB_PREF."debtors_master debtor,"
@@ -154,7 +154,7 @@ function get_customer_habit(mixed $customer_id)
 	return db_fetch($result);
 }
 
-function get_customer_contacts(mixed $customer_id, mixed $action=null): array
+function get_customer_contacts(mixed $customer_id, ?string $action=null): array
 {
 	$results = array();
 	$res = get_crm_persons('customer', $action, $customer_id);

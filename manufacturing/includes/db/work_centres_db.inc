@@ -25,7 +25,7 @@ function update_work_centre(mixed $type_id, mixed $name, mixed $description): vo
 	db_query($sql, "could not update work centre");
 }
 
-function get_all_work_centres(mixed $all=false)
+function get_all_work_centres(int|bool|array|null $all=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."workcentres";
 	if (!$all) $sql .= " WHERE !inactive";

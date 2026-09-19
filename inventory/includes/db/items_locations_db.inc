@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_item_location(mixed $loc_code, mixed $location_name, mixed $delivery_address, mixed $phone, mixed $phone2, mixed $fax, mixed $email, mixed $contact, mixed $fixed_asset = 0): void
+function add_item_location(mixed $loc_code, mixed $location_name, mixed $delivery_address, mixed $phone, mixed $phone2, mixed $fax, mixed $email, mixed $contact, int|array|null $fixed_asset = 0): void
 {
 	$sql = "INSERT INTO ".TB_PREF."locations (loc_code, location_name, delivery_address, phone, phone2, fax, email, contact, fixed_asset)
 		VALUES (".db_escape($loc_code).", ".db_escape($location_name).", ".db_escape($delivery_address).", "
@@ -27,7 +27,7 @@ function add_item_location(mixed $loc_code, mixed $location_name, mixed $deliver
 
 //------------------------------------------------------------------------------------
 
-function update_item_location(mixed $loc_code, mixed $location_name, mixed $delivery_address, mixed $phone, mixed $phone2, mixed $fax, mixed $email, mixed $contact, mixed $fixed_asset = 0): void
+function update_item_location(mixed $loc_code, mixed $location_name, mixed $delivery_address, mixed $phone, mixed $phone2, mixed $fax, mixed $email, mixed $contact, int|array|null $fixed_asset = 0): void
 
 {
     $sql = "UPDATE ".TB_PREF."locations SET location_name=".db_escape($location_name).",
@@ -64,7 +64,7 @@ function get_item_location(mixed $item_location)
 
 //------------------------------------------------------------------------------------
 
-function get_item_locations(mixed $show_inactive, mixed $fixed_asset = 0)
+function get_item_locations(int|array|null $show_inactive, mixed $fixed_asset = 0)
 {
 	$sql = "SELECT * FROM ".TB_PREF."locations WHERE fixed_asset = ".db_escape($fixed_asset);
 	if (!$show_inactive) $sql .= " AND !inactive";
@@ -83,7 +83,7 @@ function set_reorder_level(mixed $stock_id, mixed $loc_code, mixed $reorder_leve
 
 //------------------------------------------------------------------------------------
 
-function get_loc_details(mixed $stock_id, mixed $fixed_asset = 0)
+function get_loc_details(mixed $stock_id, ?int $fixed_asset = 0)
 {
 	$sql = "SELECT stock.loc_code, stock.location_name, "
 	.db_escape($stock_id)." as stock_id, reorders.reorder_level

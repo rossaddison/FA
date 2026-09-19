@@ -25,7 +25,7 @@ function update_credit_status(mixed $status_id, mixed $description, mixed $disal
 	db_query($sql, "could not update credit status");
 }
 
-function get_all_credit_status(mixed $all=false)
+function get_all_credit_status(int|bool|array|null $all=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."credit_status";
 	if (!$all) $sql .= " WHERE !inactive";

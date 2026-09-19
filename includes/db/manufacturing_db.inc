@@ -173,7 +173,7 @@ function get_on_worder_qty(mixed $stock_id, mixed $location)
 
 //--------------------------------------------------------------------------------------
 
-function add_bom(mixed $selected_parent, mixed $component, mixed $workcentre_added, mixed $loc_code, mixed $quantity): void
+function add_bom(mixed $selected_parent, string|array|null $component, string|array|null $workcentre_added, string|array|null $loc_code, mixed $quantity): void
 {
 	$sql = "INSERT INTO ".TB_PREF."bom (parent, component, workcentre_added, loc_code, quantity)
 		VALUES (".db_escape($selected_parent).", ".db_escape($component) . ","
@@ -184,7 +184,7 @@ function add_bom(mixed $selected_parent, mixed $component, mixed $workcentre_add
 }
 //--------------------------------------------------------------------------------------
 
-function update_bom(mixed $selected_parent, mixed $selected_component, mixed $workcentre_added, mixed $loc_code, mixed $quantity): void
+function update_bom(mixed $selected_parent, mixed $selected_component, string|array|null $workcentre_added, string|array|null $loc_code, mixed $quantity): void
 {
 	$sql = "UPDATE ".TB_PREF."bom SET workcentre_added=".db_escape($workcentre_added)
 	 . ",loc_code=".db_escape($loc_code) . ",
@@ -244,7 +244,7 @@ function has_bom(mixed $item): bool
 
 //--------------------------------------------------------------------------------------
 
-function is_component_already_on_bom(mixed $component, mixed $workcentre_added, mixed $loc_code, mixed $selected_parent): bool
+function is_component_already_on_bom(string|array|null $component, string|array|null $workcentre_added, string|array|null $loc_code, mixed $selected_parent): bool
 {
 	$sql = "SELECT component
 		FROM ".TB_PREF."bom

@@ -252,7 +252,7 @@ function install_hooks(mixed $lang_code=null): void
 	Non active hooks are not included in $Hooks array, so we can use special function to 
 	activate.
 */
-function activate_hooks(mixed $ext, mixed $comp, mixed $on=true)
+function activate_hooks(mixed $ext, mixed $comp, bool $on=true)
 {
 	global $Hooks;
 
@@ -316,7 +316,7 @@ function hook_invoke_all(mixed $method, &$data, mixed $opts=null): array
 /*
 	Returns first non-null result returned from hook.
 */
-function hook_invoke_first(mixed $method, &$data, mixed $opts=null)
+function hook_invoke_first(?string $method, &$data, ?array $opts=null)
 {
 
 	global $Hooks;
@@ -337,7 +337,7 @@ function hook_invoke_first(mixed $method, &$data, mixed $opts=null)
 	Returns last non-null result returned from modules method. Helps implement hooks overriding by 
 	extensions installed later.
 */
-function hook_invoke_last(mixed $method, &$data, mixed $opts=null)
+function hook_invoke_last(?string $method, &$data, mixed $opts=null)
 {
 
 	global $Hooks;
@@ -430,7 +430,7 @@ function hook_price_in_words(mixed $amount, mixed $document)
 //	If fa_session_manager class is defined in any installed extension, this class provides session handling
 //	for application, otherwise standard php session handling is used.
 //
-function hook_session_start(mixed $company)
+function hook_session_start(string|array|null $company)
 {
 	if (class_exists('fa_session_manager')) {
 		global $SessionManager;

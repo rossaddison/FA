@@ -27,7 +27,7 @@ if (file_exists($path_to_root . "/installed_extensions.php"))
 	include($path_to_root . "/installed_extensions.php");
 //-------------------------------------------------------------------------------------------------
 
-function subpage_title(mixed $txt): void 
+function subpage_title(?string $txt): void 
 {
 	global $path_to_root;
 	
@@ -97,7 +97,7 @@ function display_langs(): void
 	end_table(1);
 }
 
-function instlang_list_row(mixed $label, mixed $name, mixed $value=null): void {
+function instlang_list_row(?string $label, ?string $name, mixed $value=null): void {
 
 	global $inst_langs;
 

@@ -81,7 +81,7 @@ function get_tag_name(mixed $id)
 }
 
 //----------------------------------------------------------------------------------------------------
-function get_tag_names(mixed $tags): string
+function get_tag_names(string|int|array|null $tags): string
 {
 	$str = "";
 	if ($tags == -1)
@@ -132,7 +132,7 @@ function add_tag_associations(mixed $recordid, mixed $tagids): void
 
 //--------------------------------------------------------------------------------------
 
-function update_tag_associations(mixed $type, mixed $recordid, mixed $tagids): void
+function update_tag_associations(?int $type, mixed $recordid, mixed $tagids): void
 {
 	// Delete the old associations
 	delete_tag_associations($type, $recordid, false);
@@ -144,7 +144,7 @@ function update_tag_associations(mixed $type, mixed $recordid, mixed $tagids): v
 // To delete tag associations, we need to specify the tag type.
 // Otherwise we may inadvertantly delete records for another type of tag
 //
-function delete_tag_associations(mixed $type, mixed $recordid, mixed $all=false): void
+function delete_tag_associations(mixed $type, mixed $recordid, bool $all=false): void
 {
 /* multiply table DELETE syntax available since MySQL 4.0.0:
 	$sql = "DELETE ta FROM ".TB_PREF."tag_associations ta 
@@ -195,7 +195,7 @@ function get_records_associated_with_tag(mixed $id)
 
 //--------------------------------------------------------------------------------------
 
-function get_tags_associated_with_record(mixed $type, mixed $recordid)
+function get_tags_associated_with_record(?int $type, mixed $recordid)
 {
 	$sql = "SELECT tags.* FROM ".TB_PREF."tag_associations AS ta 
 				INNER JOIN ".TB_PREF."tags AS tags ON tags.id = ta.tag_id 
@@ -206,7 +206,7 @@ function get_tags_associated_with_record(mixed $type, mixed $recordid)
 
 //--------------------------------------------------------------------------------------
 
-function is_record_in_tags(mixed $tags, mixed $type, mixed $recordid): bool
+function is_record_in_tags(?array $tags, ?int $type, mixed $recordid): bool
 {
 	foreach($tags as $id)
 	{

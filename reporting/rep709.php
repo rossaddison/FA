@@ -28,7 +28,7 @@ include_once($path_to_root . "/gl/includes/gl_db.inc");
 
 print_tax_report();
 
-function getTaxTransactions(mixed $from, mixed $to)
+function getTaxTransactions(string|array|null $from, string|array|null $to)
 {
 	$fromdate = date2sql($from);
 	$todate = date2sql($to);

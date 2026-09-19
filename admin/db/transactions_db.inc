@@ -67,7 +67,7 @@ function transaction_exists(mixed $trans_type, mixed $trans_no)
 //
 //	Returns counterparty (supplier/customer) name for selected transaction.
 //
-function get_counterparty_name(mixed $trans_type, mixed $trans_no, mixed $full=true): string|null
+function get_counterparty_name(mixed $trans_type, mixed $trans_no, bool $full=true): string|null
 {
 	switch($trans_type)
 	{

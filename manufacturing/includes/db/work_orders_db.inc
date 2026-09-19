@@ -121,7 +121,7 @@ function delete_work_order(mixed $woid, mixed $stock_id, mixed $qty, mixed $date
 
 //--------------------------------------------------------------------------------------
 
-function get_work_order(mixed $woid, mixed $allow_null=false)
+function get_work_order(mixed $woid, bool $allow_null=false)
 {
     $sql = "SELECT wo.*,st.description As StockItemName,l.location_name,
     		l.delivery_address,l.email, l.contact, st.inventory_account, st.wip_account
@@ -300,7 +300,7 @@ function void_work_order(mixed $woid): void
 	commit_transaction();
 }
 
-function get_sql_for_work_orders(mixed $outstanding_only, mixed $stock_id, mixed $location = ALL_TEXT, mixed $order_no='', mixed $order_ref = '', mixed $overdue = false): string
+function get_sql_for_work_orders(?int $outstanding_only, mixed $stock_id, mixed $location = ALL_TEXT, mixed $order_no='', mixed $order_ref = '', int|bool|array|null $overdue = false): string
 {
 	$sql = "SELECT
 		workorder.id,
@@ -381,7 +381,7 @@ function get_sql_for_where_used(mixed $stock_id): string
 	return $sql;
 }
 //--------------------------------------------------------------------------------------
-function get_gl_wo_cost(mixed $woid, mixed $cost_type)
+function get_gl_wo_cost(mixed $woid, ?int $cost_type)
 {
 	$cost = 0;
 	$result = get_gl_wo_cost_trans($woid, $cost_type);

@@ -30,7 +30,7 @@ include_once($path_to_root . "/inventory/includes/inventory_db.inc");
 
 inventory_movements();
 
-function fetch_items(mixed $category=0)
+function fetch_items(string|int|array|null $category=0)
 {
 		$sql = "SELECT stock_id, stock.description AS name,
 				stock.category_id,
@@ -45,7 +45,7 @@ function fetch_items(mixed $category=0)
     return db_query($sql,"No transactions were returned");
 }
 
-function trans_qty(mixed $stock_id, mixed $location, mixed $from_date, mixed $to_date, mixed $inward = true)
+function trans_qty(mixed $stock_id, string|array|null $location, string|array|null $from_date, string|array|null $to_date, bool $inward = true)
 {
 	if ($from_date == null)
 		$from_date = Today();

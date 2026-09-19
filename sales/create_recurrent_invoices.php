@@ -75,7 +75,7 @@ function calculate_from(mixed $myrow)
 	return $from;
 }
 
-function calculate_next(mixed $myrow)
+function calculate_next(?array $myrow)
 {
 	if ($myrow["last_sent"] == '0000-00-00')
 		$next = sql2date($myrow["begin"]);

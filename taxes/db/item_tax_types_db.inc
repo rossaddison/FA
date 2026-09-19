@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_item_tax_type(mixed $name, mixed $exempt, mixed $exempt_from): void
+function add_item_tax_type(mixed $name, mixed $exempt, ?array $exempt_from): void
 {
 	begin_transaction();
 	
@@ -26,7 +26,7 @@ function add_item_tax_type(mixed $name, mixed $exempt, mixed $exempt_from): void
 	commit_transaction();
 }
 
-function update_item_tax_type(mixed $id, mixed $name, mixed $exempt, mixed $exempt_from): void
+function update_item_tax_type(mixed $id, mixed $name, mixed $exempt, ?array $exempt_from): void
 {
 	begin_transaction();
 	
@@ -42,7 +42,7 @@ function update_item_tax_type(mixed $id, mixed $name, mixed $exempt, mixed $exem
 	commit_transaction();	
 }
 
-function get_all_item_tax_types(mixed $also_inactive=false)
+function get_all_item_tax_types(int|bool|array|null $also_inactive=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."item_tax_types";
 	if (!$also_inactive)

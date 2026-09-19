@@ -1642,7 +1642,7 @@ function utf8_strlen(mixed $str): int|false
 	return preg_match_all('/[\x00-\x7F\xC0-\xFD]/', $str, $dummy);
 }
 
-function utf8_chr(mixed $uni): string 
+function utf8_chr(?int $uni): string 
 {
 	$r = "";
 	# ASCII range (including control chars)

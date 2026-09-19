@@ -34,7 +34,7 @@ function delete_gl_account(mixed $code): void
 	db_query($sql, "could not delete gl account");
 }
 
-function get_gl_accounts(mixed $from=null, mixed $to=null, mixed $type=null)
+function get_gl_accounts(string|array|null $from=null, string|array|null $to=null, mixed $type=null)
 {
 	$sql = "SELECT coa.*, act_type.name AS AccountTypeName
 		FROM "

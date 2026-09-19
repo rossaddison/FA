@@ -357,7 +357,7 @@ function handle_update_item(): void
 
 //-----------------------------------------------------------------------------------------------
 
-function handle_delete_item(mixed $id): void
+function handle_delete_item(string|int|null $id): void
 {
 	$_SESSION['pay_items']->remove_gl_item($id);
 	line_start_focus();

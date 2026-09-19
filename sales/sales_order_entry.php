@@ -588,7 +588,7 @@ function handle_update_item(): void
 
 //--------------------------------------------------------------------------------
 
-function handle_delete_item(mixed $line_no): void
+function handle_delete_item(string|int|null $line_no): void
 {
     if ($_SESSION['Items']->some_already_delivered($line_no) == 0) {
 	    $_SESSION['Items']->remove_from_cart($line_no);

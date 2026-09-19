@@ -25,7 +25,7 @@ include_once($path_to_root . "/includes/data_checks.inc");
 include_once($path_to_root . "/sales/includes/sales_db.inc");
 
 //----------------------------------------------------------------------------------------------------
-function get_invoice_range(mixed $from, mixed $to, mixed $currency=false)
+function get_invoice_range(?string $from, ?string $to, string|bool|array|null $currency=false)
 {
 	global $SysPrefs;
 
@@ -58,7 +58,7 @@ print_invoices();
 
 //----------------------------------------------------------------------------------------------------
 // Fetch bank account details by bank name (used for XRPL overrides)
-function get_bank_account_by_name(mixed $name) {
+function get_bank_account_by_name(?string $name) {
     $sql = "SELECT * FROM ".TB_PREF."bank_accounts WHERE bank_name = ".db_escape($name);
     $result = db_query($sql, "could not retrieve bank account");
     $row = db_fetch($result);

@@ -26,7 +26,7 @@ include_once($path_to_root . "/inventory/includes/db/items_category_db.inc");
 include_once($path_to_root . "/fixed_assets/includes/fixed_assets_db.inc");
 include_once($path_to_root . "/fixed_assets/includes/fa_classes_db.inc");
 
-function find_last_location(mixed $stock_id, mixed $end_date)
+function find_last_location(mixed $stock_id, string|array|null $end_date)
 {
 	$end_date = date2sql($end_date);
 	$sql = "SELECT loc_code FROM ".TB_PREF."stock_moves WHERE stock_id = ".db_escape($stock_id)." AND

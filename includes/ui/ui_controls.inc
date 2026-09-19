@@ -34,7 +34,7 @@ function get_post(mixed $name, mixed $dflt='')
 //---------------------------------------------------------------------------------
 $form_nested = -1;
 
-function start_form(mixed $multi=false, mixed $dummy=false, mixed $action="", mixed $name=""): void
+function start_form(bool $multi=false, bool $dummy=false, mixed $action="", ?string $name=""): void
 {
 	// $dummy - leaved for compatibility with 2.0 API
 	global $form_nested;
@@ -66,7 +66,7 @@ function output_hidden(): void
 }
 //---------------------------------------------------------------------------------
 
-function end_form(mixed $breaks=0): void
+function end_form(?int $breaks=0): void
 {
 	global $Ajax, $form_nested, $hidden_fields;
 
@@ -119,7 +119,7 @@ function end_table(mixed $breaks=0): void
 		br($breaks);
 }
 
-function start_outer_table(mixed $class=false, mixed $extra="", mixed $padding='2', mixed $spacing='0', mixed $br=false): void
+function start_outer_table(mixed $class=false, ?string $extra="", string|int|null $padding='2', ?string $spacing='0', bool $br=false): void
 {
 	if ($br)
 		br();
@@ -127,7 +127,7 @@ function start_outer_table(mixed $class=false, mixed $extra="", mixed $padding='
 	echo "<tr valign=top><td>\n"; // outer table
 }
 
-function table_section(mixed $number=1, mixed $width=false): void
+function table_section(mixed $number=1, string|bool|null $width=false): void
 {
 	if ($number > 1)
 	{
@@ -139,7 +139,7 @@ function table_section(mixed $number=1, mixed $width=false): void
 	echo "<table class='tablestyle_inner'>\n";
 }	
 
-function end_outer_table(mixed $breaks=0, mixed $close_table=true): void
+function end_outer_table(mixed $breaks=0, bool $close_table=true): void
 {
 	if ($close_table)
 	{
@@ -152,12 +152,12 @@ function end_outer_table(mixed $breaks=0, mixed $close_table=true): void
 //
 //  outer table spacer
 //
-function vertical_space(mixed $params=''): void
+function vertical_space(?string $params=''): void
 {
 	echo "</td></tr><tr><td valign=center $params>";
 }
 
-function meta_forward(mixed $forward_to, mixed $params="", mixed $timeout=0, mixed $return=false): void
+function meta_forward(mixed $forward_to, ?string $params="", ?int $timeout=0, bool $return=false): void
 {
     global $Ajax;
 	echo "<meta http-equiv='Refresh' content='".$timeout."; url=$forward_to?$params'>\n";
@@ -220,7 +220,7 @@ function hyperlink_back(mixed $center=true, mixed $no_menu=true, mixed $type_no=
 	echo "<br>";
 }
 
-function hyperlink_no_params(mixed $target, mixed $label, mixed $center=true): void
+function hyperlink_no_params(mixed $target, mixed $label, bool $center=true): void
 {
 	$id = default_focus();
 	$pars = access_string($label);
@@ -240,7 +240,7 @@ function hyperlink_no_params_td(mixed $target, mixed $label): void
 	echo "</td>\n";
 }
 
-function viewer_link(mixed $label, mixed $url='', mixed $class='', mixed $id='',  mixed $icon=null)
+function viewer_link(mixed $label, ?string $url='', mixed $class='', mixed $id='',  mixed $icon=null)
 {
 	global $path_to_root;
 	
@@ -276,23 +276,23 @@ function menu_link(mixed $url, mixed $label, mixed $id=null): string
 	return "<a href='$url' class='menu_option' id='$id' $pars[1]>$pars[0]</a>";
 }
 
-function submenu_option(mixed $title, mixed $url, mixed $id=null): void
+function submenu_option(?string $title, ?string $url, mixed $id=null): void
 {
 	display_note( menu_link($url, $title, $id), 0, 1);
 }
 
-function submenu_view(mixed $title, mixed $type, mixed $number, mixed $id=null): void
+function submenu_view(?string $title, ?int $type, mixed $number, mixed $id=null): void
 {
 	display_note(get_trans_view_str($type, $number, $title, false, 'viewlink', $id), 0, 1);
 }
 
-function submenu_print(mixed $title, mixed $type, mixed $number, mixed $id=null, mixed $email=0, mixed $extra=0): void
+function submenu_print(?string $title, mixed $type, mixed $number, ?string $id=null, ?int $email=0, ?int $extra=0): void
 {
 	display_note(print_document_link($number, $title, true, $type, false, 'printlink', $id, $email, $extra), 0, 1);
 }
 //-----------------------------------------------------------------------------------
 
-function hyperlink_params(mixed $target, mixed $label, mixed $params, mixed $center=true): void
+function hyperlink_params(mixed $target, mixed $label, mixed $params, bool $center=true): void
 {
 	$id = default_focus();
 	
@@ -306,7 +306,7 @@ function hyperlink_params(mixed $target, mixed $label, mixed $params, mixed $cen
 		echo "</center>";
 }
 
-function hyperlink_params_td(mixed $target, mixed $label, mixed $params): void
+function hyperlink_params_td(?string $target, ?string $label, ?string $params): void
 {
 	echo "<td>";
 	hyperlink_params($target, $label, $params, false);
@@ -315,7 +315,7 @@ function hyperlink_params_td(mixed $target, mixed $label, mixed $params): void
 
 //-----------------------------------------------------------------------------------
 
-function hyperlink_params_separate(mixed $target, mixed $label, mixed $params, mixed $center=false): void
+function hyperlink_params_separate(mixed $target, mixed $label, mixed $params, bool $center=false): void
 {
 	$id = default_focus();
 
@@ -352,12 +352,12 @@ function alt_table_row_color(&$k, mixed $extra_class=null): void
 	echo "<tr class='".implode(' ', $classes)."'>\n";
 }
 
-function table_section_title(mixed $msg, mixed $colspan=2): void
+function table_section_title(mixed $msg, ?int $colspan=2): void
 {
 	echo "<tr><td colspan=$colspan class='tableheader'>$msg</td></tr>\n";
 }
 
-function table_header(mixed $labels, mixed $params=''): void
+function table_header(mixed $labels, ?string $params=''): void
 {
 	start_row();
 	foreach ($labels as $label)
@@ -366,7 +366,7 @@ function table_header(mixed $labels, mixed $params=''): void
 }
 //-----------------------------------------------------------------------------------
 
-function start_row(mixed $param=""): void
+function start_row(?string $param=""): void
 {
 	if ($param != "")
 		echo "<tr $param>\n";
@@ -387,7 +387,7 @@ function br(mixed $num=1): void
 
 $ajax_divs = array();
 
-function div_start(mixed $id='', mixed $trigger=null, mixed $non_ajax=false): void
+function div_start(mixed $id='', ?string $trigger=null, bool $non_ajax=false): void
 {
     global $ajax_divs;
 
@@ -423,7 +423,7 @@ function div_end(): void
 //		sel (hidden) name: _{$name}_sel
 // $tabs - array of tabs; string: tab title or array(tab_title, enabled_status)
 
-function tabbed_content_start(mixed $name, mixed $tabs, mixed $dft=''): void {
+function tabbed_content_start(?string $name, ?array $tabs, ?string $dft=''): void {
     global $Ajax;
 
     $selname = '_'.$name.'_sel';
@@ -476,21 +476,21 @@ function tab_changed(mixed $name): array|null
 /*
 	Check whether tab has been just switched on
 */
-function tab_opened(mixed $name, mixed $tab): bool
+function tab_opened(?string $name, ?string $tab): bool
 {
 	return (get_post('_'.$name.'_sel') != $tab) && (find_submit($name.'_', false) == $tab);
 }
 /*
 	Check whether tab has been just switched off
 */
-function tab_closed(mixed $name, mixed $tab): bool
+function tab_closed(?string $name, ?string $tab): bool
 {
 	return (get_post('_'.$name.'_sel') == $tab) && (find_submit($name.'_', false) != $tab);
 }
 /*
 	Check whether tab is visible on current page
 */
-function tab_visible(mixed $name, mixed $tab): bool
+function tab_visible(?string $name, ?string $tab): bool
 {
 	$new = find_submit($name.'_', false);
 	return (get_post('_'.$name.'_sel') == $tab && !$new) || $new==$tab;
@@ -520,7 +520,7 @@ $popup_editors = array(
 	$caller - optional function key code (available values F1-F12: 112-123,
 		true: default)
 */
-function set_editor(mixed $type, mixed $input, mixed $caller=true): void
+function set_editor(?string $type, mixed $input, mixed $caller=true): void
 {
 	global $path_to_root, $Editors, $popup_editors, $Pagehelp;
 
@@ -542,7 +542,7 @@ function set_editor(mixed $type, mixed $input, mixed $caller=true): void
 	$ctx - optional. name of SESSION context object or array of names of POST 
 		variables saved on call
 */
-function context_call(mixed $call, mixed $ctx=''): void
+function context_call(mixed $call, string|array|null $ctx=''): void
 {
 	if (is_array($ctx)) 
 	{
@@ -666,7 +666,7 @@ function display_confirmation(mixed $msg): bool
 /*
 	Block menu/shortcut links during transaction procesing.
 */
-function page_processing(mixed $msg = false): void
+function page_processing(bool $msg = false): void
 {
 	global $Ajax;
 

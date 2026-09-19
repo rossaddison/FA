@@ -54,7 +54,7 @@ function page(mixed $title, mixed $no_menu=false, mixed $is_index=false, mixed $
 	}
 }
 
-function end_page(mixed $no_menu=false, mixed $is_index=false, mixed $final_screen=false, mixed $type_no=0, mixed $trans_no=0): void
+function end_page(mixed $no_menu=false, bool $is_index=false, bool $final_screen=false, mixed $type_no=0, mixed $trans_no=0): void
 {
 	global $path_to_root, $page_nested;
 
@@ -86,7 +86,7 @@ function add_css_file(mixed $filename): void
 	$css_files[] = $filename;
 }
 
-function cache_js_file(mixed $fpath, mixed $text): bool 
+function cache_js_file(?string $fpath, string|bool|null $text): bool 
 {
 	global $SysPrefs;
 
@@ -120,7 +120,7 @@ function force_open(mixed $fname)
 	return fopen($fname, 'w');
 }
 
-function add_js_file(mixed $filename): void 
+function add_js_file(?string $filename): void 
 {
 	  global $js_static;
 
@@ -129,7 +129,7 @@ function add_js_file(mixed $filename): void
 		$js_static[] = $filename;	
 }
 
-function add_js_ufile(mixed $filename): void 
+function add_js_ufile(?string $filename): void 
 {
 	  global $js_userlib;
 
@@ -358,7 +358,7 @@ function copy_file(mixed $file, mixed $from, mixed $to): bool
 	
 	Returns found file path or null.
 */
-function find_custom_file(mixed $rep): string|null
+function find_custom_file(?string $rep): string|null
 {
 	global $installed_extensions, $path_to_root, $local_path_to_root;
 

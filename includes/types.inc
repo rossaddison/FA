@@ -123,7 +123,7 @@ function payment_person_currency(mixed $type, mixed $person_id)  {
 	}
 }
 
-function payment_person_name(mixed $type, mixed $person_id, mixed $full=true) {
+function payment_person_name(mixed $type, mixed $person_id, bool $full=true) {
 	global $payment_person_types;
 
 	switch ($type)

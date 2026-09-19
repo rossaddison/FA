@@ -658,18 +658,18 @@ function array_insert(&$array, mixed $index, mixed $elements): void
 	$array = array_merge($head, $elements, $array);
 }
 
-function array_remove(&$array, mixed $index, mixed $len=1): void
+function array_remove(&$array, ?int $index, ?int $len=1): void
 {
 	array_splice($array, $index, $len);
 }
 
-function array_substitute(&$array, mixed $index, mixed $len, mixed $elements): void
+function array_substitute(&$array, ?int $index, ?int $len, ?string $elements): void
 {
 	array_splice($array, $index, $len);
 	array_insert($array, $index, $elements);
 }
 
-function array_append(&$array, mixed $elements): void
+function array_append(&$array, ?array $elements): void
 {
 	foreach($elements as $key => $el) {
 		if(is_int($key))
@@ -715,7 +715,7 @@ function array_search_keys(mixed $needle, mixed $haystack, mixed $valuekey=null)
 //	Find first (single) $needle in $haystack or in $haystack[][$valuekey]
 //	returns $haystack element found or null
 //
-function array_search_key(mixed $needle, mixed $haystack, mixed $valuekey=null)
+function array_search_key(mixed $needle, mixed $haystack, ?string $valuekey=null)
 {
 	$keys = array_search_keys($needle, $haystack, $valuekey);
 	return @$keys[0];

@@ -40,7 +40,7 @@ function get_supplier_trans_view_str(mixed $type, mixed $trans_no, mixed $label=
 
 //--------------------------------------------------------------------------------------
 
-function get_gl_view_str(mixed $type, mixed $trans_no, mixed $label="", mixed $force=false, mixed $class='', mixed $id='')
+function get_gl_view_str(mixed $type, mixed $trans_no, mixed $label="", bool $force=false, ?string $class='', ?string $id='')
 {
 	if (!$force && !user_show_gl_info())
 		return "";
@@ -203,7 +203,7 @@ function get_journal_trans_view_str(mixed $type, mixed $trans_no, mixed $label="
 
 //--------------------------------------------------------------------------------------
 
-function get_package_view_str(mixed $pkg, mixed $label="", mixed $icon=false, mixed $class='', mixed $id='')
+function get_package_view_str(mixed $pkg, mixed $label="", bool $icon=false, ?string $class='', ?string $id='')
 {
 	if ($label == "")
 	{
@@ -216,8 +216,8 @@ function get_package_view_str(mixed $pkg, mixed $label="", mixed $icon=false, mi
 
 //--------------------------------------------------------------------------------------
 
-function get_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", mixed $icon=false, 
-	mixed $class='', mixed $id='')
+function get_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", bool $icon=false, 
+	?string $class='', mixed $id='')
 {
 	$view_str = get_customer_trans_view_str($type, $trans_no, $label, $icon, $class, $id);
 	if ($view_str != null)
@@ -270,7 +270,7 @@ function check_ui_refresh(mixed $name=null): bool
 // When there is no exrate for today, 
 // gets it form ECB and stores in local database.
 //
-function exchange_rate_display(mixed $from_currency, mixed $to_currency, mixed $date_, mixed $force_edit=false): void
+function exchange_rate_display(mixed $from_currency, mixed $to_currency, mixed $date_, bool $force_edit=false): void
 {
     global $Ajax, $SysPrefs;
 
@@ -336,7 +336,7 @@ function exchange_rate_display(mixed $from_currency, mixed $to_currency, mixed $
 
 //--------------------------------------------------------------------------------------
 
-function is_voided_display(mixed $type, mixed $id, mixed $label): bool
+function is_voided_display(mixed $type, mixed $id, ?string $label): bool
 {
 	$void_entry = get_voided_entry($type, $id);
 
@@ -356,7 +356,7 @@ function is_voided_display(mixed $type, mixed $id, mixed $label): bool
 
 //--------------------------------------------------------------------------------------
 
-function comments_display_row(mixed $type, mixed $id): void
+function comments_display_row(string|int|array|null $type, mixed $id): void
 {
 	$comments = get_comments($type, $id);
 	if ($comments and db_num_rows($comments))
@@ -387,7 +387,7 @@ function get_comments_string(mixed $type, mixed $type_no): string
 
 //--------------------------------------------------------------------------------------
 
-function view_stock_status(mixed $stock_id, mixed $description=null, mixed $echo=true): string
+function view_stock_status(mixed $stock_id, mixed $description=null, bool $echo=true): string
 {
 	global $path_to_root;
 	if ($description)
@@ -408,7 +408,7 @@ function view_stock_status_cell(mixed $stock_id, mixed $description=null): void
 
 //--------------------------------------------------------------------------------------
 
-function display_debit_or_credit_cells(mixed $value, mixed $bold=false): void
+function display_debit_or_credit_cells(mixed $value, bool $bold=false): void
 {
 	$value = round2($value, user_price_dec());
 	if ($value >= 0)
@@ -425,7 +425,7 @@ function display_debit_or_credit_cells(mixed $value, mixed $bold=false): void
 
 //--------------------------------------------------------------------------------------
 
-function display_customer_trans_tax_details(mixed $tax_items, mixed $columns): void
+function display_customer_trans_tax_details(mixed $tax_items, ?int $columns): void
 {
 	global $SysPrefs;
 
@@ -461,7 +461,7 @@ function display_customer_trans_tax_details(mixed $tax_items, mixed $columns): v
 
 //--------------------------------------------------------------------------------------
 
-function display_supp_trans_tax_details(mixed $tax_items, mixed $columns): void
+function display_supp_trans_tax_details(mixed $tax_items, ?int $columns): void
 {
     while ($tax_item = db_fetch($tax_items))
     {
@@ -480,7 +480,7 @@ function display_supp_trans_tax_details(mixed $tax_items, mixed $columns): void
 
 //--------------------------------------------------------------------------------------
 
-function display_edit_tax_items(mixed $taxes, mixed $columns, mixed $tax_included, mixed $rightspan=0, mixed $editable=false): int|float
+function display_edit_tax_items(mixed $taxes, ?int $columns, mixed $tax_included, ?int $rightspan=0, bool $editable=false): int|float
 {
 	$total = 0;
 
@@ -538,7 +538,7 @@ function display_footer_exit(mixed $space=2): void
 
 //--------------------------------------------------------------------------------------
 
-function display_allocations(mixed $alloc_result, mixed $total, mixed $title, mixed $show_summary=true): void
+function display_allocations(mixed $alloc_result, mixed $total, ?string $title, bool $show_summary=true): void
 {
 	global $systypes_array;
 
@@ -589,7 +589,7 @@ function display_allocations(mixed $alloc_result, mixed $total, mixed $title, mi
 
 //--------------------------------------------------------------------------------------
 
-function display_allocations_from(mixed $person_type, mixed $person_id, mixed $type, mixed $type_no, mixed $total): void
+function display_allocations_from(mixed $person_type, mixed $person_id, ?int $type, mixed $type_no, mixed $total): void
 {
 	switch ($person_type)
 	{
@@ -606,7 +606,7 @@ function display_allocations_from(mixed $person_type, mixed $person_id, mixed $t
 
 //--------------------------------------------------------------------------------------
 
-function display_allocations_to(mixed $person_type, mixed $person_id, mixed $type, mixed $type_no, mixed $total): void
+function display_allocations_to(?int $person_type, mixed $person_id, mixed $type, mixed $type_no, mixed $total): void
 {
 	switch ($person_type)
 	{
@@ -626,7 +626,7 @@ function display_allocations_to(mixed $person_type, mixed $person_id, mixed $typ
 //	Expands selected quick entry $id into GL posings and adds to cart.
 //		returns calculated amount posted to bank GL account.
 //
-function display_quick_entries(&$cart, mixed $id, mixed $base, mixed $type, mixed $descr=''): int
+function display_quick_entries(&$cart, mixed $id, mixed $base, ?string $type, mixed $descr=''): int
 {
 	$bank_amount = 0;
 
@@ -810,7 +810,7 @@ function quickentry_calculate(mixed $base, mixed $id, mixed $taxgroup=null, mixe
 //
 //	Simple English version of number to words conversion.
 //
-function _number_to_words(mixed $number): string 
+function _number_to_words(int|float|null $number): string 
 { 
     $Bn = floor($number / 1000000000); /* Billions (giga) */ 
     $number -= $Bn * 1000000000; 
@@ -968,7 +968,7 @@ function get_js_set_combo_item(): string {
   Setting focus on element $name in $form.
   If $form<0 $name is element id.
 */
-function set_focus(mixed $name, mixed $form_no=0): void {
+function set_focus(mixed $name, ?int $form_no=0): void {
   global $Ajax;
 	$Ajax->addFocus(true, $name);
     $_POST['_focus'] = $name;
@@ -977,7 +977,7 @@ function set_focus(mixed $name, mixed $form_no=0): void {
 //	Set default focus on first field $name if not set yet
 //	Returns unique name if $name=null
 //	
-function default_focus(mixed $name=null, mixed $form_no=0) {
+function default_focus(mixed $name=null, ?int $form_no=0) {
 	static $next; 
 	if ($name==null) 
 		$name = uniqid('_el',true);

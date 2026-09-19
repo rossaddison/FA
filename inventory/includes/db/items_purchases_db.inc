@@ -10,8 +10,8 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-function add_item_purchasing_data(mixed $supplier_id, mixed $stock_id, mixed $price,
-	mixed $suppliers_uom, mixed $conversion_factor, mixed $supplier_description): void
+function add_item_purchasing_data(string|array|null $supplier_id, string|array|null $stock_id, mixed $price,
+	string|array|null $suppliers_uom, mixed $conversion_factor, string|array|null $supplier_description): void
 {
 	$supp_desc = db_escape($supplier_description);
 	if (strlen($supp_desc) > 50) // to be fixed and removed in 2.5
@@ -26,8 +26,8 @@ function add_item_purchasing_data(mixed $supplier_id, mixed $stock_id, mixed $pr
 	db_query($sql,"The supplier purchasing details could not be added");
 }
 
-function update_item_purchasing_data(mixed $selected_id, mixed $stock_id, mixed $price,
-	mixed $suppliers_uom, mixed $conversion_factor, mixed $supplier_description): void
+function update_item_purchasing_data(mixed $selected_id, string|array|null $stock_id, mixed $price,
+	string|array|null $suppliers_uom, mixed $conversion_factor, string|array|null $supplier_description): void
 {
 	$supp_desc = db_escape($supplier_description);
 	if (strlen($supp_desc) > 50) // to be fixed and removed in 2.5
@@ -41,7 +41,7 @@ function update_item_purchasing_data(mixed $selected_id, mixed $stock_id, mixed 
 	db_query($sql,"The supplier purchasing details could not be updated");
 }
 
-function delete_item_purchasing_data(mixed $selected_id, mixed $stock_id): void
+function delete_item_purchasing_data(mixed $selected_id, string|array|null $stock_id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."purch_data WHERE supplier_id=".db_escape($selected_id)."
 		AND stock_id=".db_escape($stock_id);

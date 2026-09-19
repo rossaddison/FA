@@ -58,7 +58,7 @@ function get_last_exchange_rate(mixed $curr_code, mixed $date_)
 
 //---------------------------------------------------------------------------------------------
 
-function update_exchange_rate(mixed $curr_code, mixed $date_, mixed $buy_rate, mixed $sell_rate): void
+function update_exchange_rate(string|array|null $curr_code, string|array|null $date_, mixed $buy_rate, mixed $sell_rate): void
 {
 	if (is_company_currency($curr_code))
 		display_db_error("Exchange rates cannot be set for company currency", "", true);
@@ -257,7 +257,7 @@ function get_sql_for_exchange_rates(mixed $curr): string
 	return $sql;	 
 }
 
-function getInnerStr(mixed $str, mixed $start, mixed $end): string 
+function getInnerStr(string|bool|null $str, ?string $start, mixed $end): string 
 {
 	// $start must be the first occurrence
 	// $start must not be part of $end
