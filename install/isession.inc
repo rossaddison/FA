@@ -33,7 +33,7 @@ function html_specials_encode(string|int|float|bool|null $str): string
 	return htmlspecialchars($str, ENT_QUOTES, $_SESSION['language']->encoding=='iso-8859-2' ? 'ISO-8859-1' : $_SESSION['language']->encoding);
 }
 
-function html_cleanup(&$parms): void
+function html_cleanup(array &$parms): void
 {
 	foreach($parms as $name => $value) {
 		if (is_array($value))

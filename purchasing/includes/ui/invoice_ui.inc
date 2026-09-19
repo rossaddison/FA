@@ -11,7 +11,7 @@
 ***********************************************************************/
 //--------------------------------------------------------------------------------------------------
 
-function copy_from_trans(&$supp_trans): void
+function copy_from_trans(?supp_trans &$supp_trans): void
 {
 	$_POST['Comments'] = $supp_trans->Comments;
 	$_POST['tran_date'] = $supp_trans->tran_date;
@@ -30,7 +30,7 @@ function copy_from_trans(&$supp_trans): void
 
 //--------------------------------------------------------------------------------------------------
 
-function copy_to_trans(&$supp_trans): void
+function copy_to_trans(?supp_trans &$supp_trans): void
 {
 	$supp_trans->Comments = $_POST['Comments'];
 	$supp_trans->tran_date = $_POST['tran_date'];
@@ -71,7 +71,7 @@ function copy_to_trans(&$supp_trans): void
 
 //--------------------------------------------------------------------------------------------------
 
-function invoice_header(&$supp_trans): void
+function invoice_header(?supp_trans &$supp_trans): void
 {
 	global $Ajax, $Refs;
 	
@@ -163,7 +163,7 @@ function invoice_header(&$supp_trans): void
 
 //--------------------------------------------------------------------------------------------------
 
-function invoice_totals(&$supp_trans): void
+function invoice_totals(supp_trans &$supp_trans): void
 {
 	global $Ajax;
 
@@ -195,7 +195,7 @@ function invoice_totals(&$supp_trans): void
 }
 
 //--------------------------------------------------------------------------------------------------
-function display_gl_controls(&$supp_trans, string|int|float|bool|null $k): void
+function display_gl_controls(supp_trans &$supp_trans, string|int|float|bool|null $k): void
 {
 	$accs = get_supplier_accounts($supp_trans->supplier_id);
     if (!isset($_POST['gl_code']))
@@ -228,7 +228,7 @@ function display_gl_controls(&$supp_trans, string|int|float|bool|null $k): void
 //		 = 2 display on view invoice
 //		 = 3 display on view credit
 
-function display_gl_items(&$supp_trans, string|int|float|bool|items_cart|null $mode=0)
+function display_gl_items(supp_trans &$supp_trans, string|int|float|bool|items_cart|null $mode=0)
 {
 	global $path_to_root, $Ajax;
 
@@ -350,7 +350,7 @@ function display_gl_items(&$supp_trans, string|int|float|bool|items_cart|null $m
 
 //--------------//-----------------------------------------------------------------------------------------
 
-function display_grn_items_for_selection(&$supp_trans, string|int|float|bool|null $k): bool
+function display_grn_items_for_selection(supp_trans &$supp_trans, string|int|float|bool|null $k): bool
 {
 	if ($supp_trans->trans_type == ST_SUPPINVOICE)	// outstanding grns and eventually for selected invoice
 		$result = get_grn_items(0, $supp_trans->supplier_id, true, false, $supp_trans->trans_no);
@@ -442,7 +442,7 @@ function display_grn_items_for_selection(&$supp_trans, string|int|float|bool|nul
 /**
  * @return 0|float
  */
-function display_grn_items(&$supp_trans, ?int $mode=0): int|float
+function display_grn_items(supp_trans &$supp_trans, ?int $mode=0): int|float
 {
 	global $path_to_root;
 

@@ -342,7 +342,7 @@ function hyperlink_params_separate_td(string|int|float|bool|null $target, string
 
 //--------------------------------------------------------------------------------------------------
 
-function alt_table_row_color(&$k, ?string $extra_class=null): void
+function alt_table_row_color(int|string|null &$k, ?string $extra_class=null): void
 {
 	$classes = $extra_class ? array($extra_class) : array();
 	if ($k == 1)

@@ -352,7 +352,7 @@ function price_format(string|int|float|bool|null $number): string {
     return number_format2($number, user_price_dec());
 }
 
-function price_decimal_format(string|int|float|bool|null $number, &$dec): string
+function price_decimal_format(string|int|float|bool|null $number, int|string|null &$dec): string
 {
 	$dec = user_price_dec();
 	$str = strval($number);
@@ -368,7 +368,7 @@ function price_decimal_format(string|int|float|bool|null $number, &$dec): string
 
 // 2008-06-15. Added extra parameter $stock_id and reference for $dec
 //--------------------------------------------------------------------
-function qty_format(string|int|float|bool|null $number, string|int|float|bool|array|null $stock_id, &$dec): string {
+function qty_format(string|int|float|bool|null $number, string|int|float|bool|array|null $stock_id, int|string|null &$dec): string {
 	$dec = get_qty_dec($stock_id);
     return number_format2($number, $dec);
 }
@@ -650,7 +650,7 @@ function session_timeout()
 //	Inserts $elements into $array at position $index.
 //	$elements is list of any objects
 //
-function array_insert(&$array, ?int $index, string|array|null $elements): void
+function array_insert(array &$array, ?int $index, string|array|null $elements): void
 {
 	if (!is_array($elements)) $elements = array($elements);
 
@@ -658,18 +658,18 @@ function array_insert(&$array, ?int $index, string|array|null $elements): void
 	$array = array_merge($head, $elements, $array);
 }
 
-function array_remove(&$array, ?int $index, ?int $len=1): void
+function array_remove(array &$array, ?int $index, ?int $len=1): void
 {
 	array_splice($array, $index, $len);
 }
 
-function array_substitute(&$array, ?int $index, ?int $len, ?string $elements): void
+function array_substitute(array &$array, ?int $index, ?int $len, ?string $elements): void
 {
 	array_splice($array, $index, $len);
 	array_insert($array, $index, $elements);
 }
 
-function array_append(&$array, ?array $elements): void
+function array_append(array &$array, ?array $elements): void
 {
 	foreach($elements as $key => $el) {
 		if(is_int($key))
@@ -722,7 +722,7 @@ function array_search_key(string|int|float|bool|null $needle, ?array $haystack, 
 }
 
 // Recalculate report columns if orientation is landscape.
-function recalculate_cols(&$cols): void
+function recalculate_cols(array &$cols): void
 {
 	$factor = (user_pagesize() == "A4" ? 1.4 : 1.3);
 	foreach($cols as $key => $col)

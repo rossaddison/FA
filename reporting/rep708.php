@@ -29,7 +29,7 @@ $pdeb = $pcre = $cdeb = $ccre = $tdeb = $tcre = $pbal = $cbal = $tbal = 0;
 
 //----------------------------------------------------------------------------------------------------
 
-function display_type (?string $type, ?string $typename, &$dec, &$rep, string|int|float|bool|array|null $from, string|int|float|bool|array|null $to, string|int|float|bool|array|FrontReport|null $zero, string|int|float|bool|array|null $balances, string|int|float|bool|array|null $dimension, string|int|float|bool|array|null $dimension2): void
+function display_type (?string $type, ?string $typename, int|string|null &$dec, FrontReport &$rep, string|int|float|bool|array|null $from, string|int|float|bool|array|null $to, string|int|float|bool|array|FrontReport|null $zero, string|int|float|bool|array|null $balances, string|int|float|bool|array|null $dimension, string|int|float|bool|array|null $dimension2): void
 {
 	global $pdeb, $pcre, $cdeb, $ccre, $tdeb, $tcre, $pbal, $cbal, $tbal, $SysPrefs;
 	

@@ -12,7 +12,7 @@
 include_once($path_to_root . "/sales/includes/cart_class.inc");
 
 //--------------------------------------------------------------------------------
-function add_to_order(&$order, string|array|null $new_item, string|int|float|bool|null $new_item_qty, string|int|float|bool|array|null $price, string|int|float|bool|null $discount, string|array|null $description=''): void
+function add_to_order(Cart &$order, string|array|null $new_item, string|int|float|bool|null $new_item_qty, string|int|float|bool|array|null $price, string|int|float|bool|null $discount, string|array|null $description=''): void
 {
 	// calculate item price to sum of kit element prices factor for 
 	// value distribution over all exploded kit items
@@ -69,7 +69,7 @@ function add_to_order(&$order, string|array|null $new_item, string|int|float|boo
 }
 //---------------------------------------------------------------------------------
 
-function get_customer_details_to_order(&$order, string|int|float|bool|array|null $customer_id, string|int|float|bool|array|null $branch_id): string
+function get_customer_details_to_order(Cart &$order, string|int|float|bool|array|null $customer_id, string|int|float|bool|array|null $branch_id): string
 {
 	global $SysPrefs;
 	
@@ -135,7 +135,7 @@ function get_customer_details_to_order(&$order, string|int|float|bool|array|null
 
 //---------------------------------------------------------------------------------
 
-function display_order_summary(?string $title, &$order, bool $editable_items=false): void
+function display_order_summary(?string $title, Cart &$order, bool $editable_items=false): void
 {
 
 	display_heading($title);
@@ -240,7 +240,7 @@ function display_order_summary(?string $title, &$order, bool $editable_items=fal
 
 // ------------------------------------------------------------------------------
 
-function display_order_header(&$order, bool $editable, ?string $date_text): string
+function display_order_header(Cart &$order, bool $editable, ?string $date_text): string
 {
 	global $Ajax, $SysPrefs;
 
@@ -471,7 +471,7 @@ function display_order_header(&$order, bool $editable, ?string $date_text): stri
 
 //--------------------------------------------------------------------------------
 
-function sales_order_item_controls(&$order, &$rowcounter, string|int|float|bool|null $line_no=-1): void
+function sales_order_item_controls(Cart &$order, int|string|null &$rowcounter, string|int|float|bool|null $line_no=-1): void
 {
     global $Ajax;
 
@@ -569,7 +569,7 @@ function sales_order_item_controls(&$order, &$rowcounter, string|int|float|bool|
 
 //--------------------------------------------------------------------------------
 
-function display_delivery_details(&$order): void
+function display_delivery_details(Cart &$order): void
 {
 	global $Ajax;
 

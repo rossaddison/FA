@@ -14,7 +14,7 @@ include_once($path_to_root . "/includes/ui/items_cart.inc");
 
 //--------------------------------------------------------------------------------
 
-function add_to_order(&$order, string|array|null $new_item, int|float|bool|null $new_item_qty, string|int|float|bool|array|null $standard_cost): void
+function add_to_order(items_cart &$order, string|array|null $new_item, int|float|bool|null $new_item_qty, string|int|float|bool|array|null $standard_cost): void
 {
     if ($order->find_cart_item($new_item))
          display_error(_("For Part :") . $new_item . " " . "This item is already on this document. You can change the quantity on the existing line if necessary.");
@@ -24,7 +24,7 @@ function add_to_order(&$order, string|array|null $new_item, int|float|bool|null 
 
 //--------------------------------------------------------------------------------
 
-function display_order_header(&$order): void
+function display_order_header(items_cart &$order): void
 {
 	global $Refs;
 
@@ -44,7 +44,7 @@ function display_order_header(&$order): void
 
 //---------------------------------------------------------------------------------
 
-function display_adjustment_items(?string $title, &$order): void
+function display_adjustment_items(?string $title, items_cart &$order): void
 {
 	global $path_to_root;
 
@@ -136,7 +136,7 @@ function display_adjustment_items(?string $title, &$order): void
 
 //---------------------------------------------------------------------------------
 
-function adjustment_edit_item_controls(&$order, string|int|float|bool|null $line_no=-1): void
+function adjustment_edit_item_controls(items_cart &$order, string|int|float|bool|null $line_no=-1): void
 {
 	global $Ajax;
 	start_row();

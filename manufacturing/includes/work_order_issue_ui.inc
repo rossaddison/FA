@@ -14,7 +14,7 @@ include_once($path_to_root . "/includes/ui/items_cart.inc");
 
 //--------------------------------------------------------------------------------
 
-function add_to_issue(&$order, string|array|null $new_item, int|float|bool|null $new_item_qty, int|float|bool|null $standard_cost): void
+function add_to_issue(items_cart &$order, string|array|null $new_item, int|float|bool|null $new_item_qty, int|float|bool|null $standard_cost): void
 {
     if ($order->find_cart_item($new_item))
          display_error(_("For Part :") . $new_item . " " . "This item is already on this issue.  You can change the quantity issued of the existing line if necessary.");
@@ -23,7 +23,7 @@ function add_to_issue(&$order, string|array|null $new_item, int|float|bool|null 
 }
 //---------------------------------------------------------------------------------
 
-function display_issue_items(?string $title, &$order): void
+function display_issue_items(?string $title, items_cart &$order): void
 {
 	global $path_to_root;
 
@@ -81,7 +81,7 @@ function display_issue_items(?string $title, &$order): void
 
 //---------------------------------------------------------------------------------
 
-function issue_edit_item_controls(&$order, string|int|float|bool|null $line_no=-1): void
+function issue_edit_item_controls(items_cart &$order, string|int|float|bool|null $line_no=-1): void
 {
 	global $Ajax;
 	start_row();

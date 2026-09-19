@@ -430,7 +430,7 @@ function display_all(): void
 	table_end();
 }
 
-function customer_top(?string $today, ?int $limit=10, string|int|null $width='33', &$pg=null): array
+function customer_top(?string $today, ?int $limit=10, string|int|null $width='33', ?object &$pg=null): array
 {
 	$begin = date2sql(begin_fiscalyear());
 	$today = date2sql($today);
@@ -471,7 +471,7 @@ function customer_top(?string $today, ?int $limit=10, string|int|null $width='33
 	return array($title, $sales);
 }
 
-function supplier_top(?string $today, ?int $limit=10, string|int|null $width='33', &$pg=null): array
+function supplier_top(?string $today, ?int $limit=10, string|int|null $width='33', ?object &$pg=null): array
 {
 	$begin = date2sql(begin_fiscalyear());
 	$today = date2sql($today);
@@ -513,7 +513,7 @@ function supplier_top(?string $today, ?int $limit=10, string|int|null $width='33
 	return array($title, $total);
 }
 
-function stock_top(?string $today, ?int $limit=10, string|int|null $width='33', ?int $type=0, &$pg=null): array
+function stock_top(?string $today, ?int $limit=10, string|int|null $width='33', ?int $type=0, ?object &$pg=null): array
 {
 	if ($type == 2)
 		$sec = 'SA_ASSETSANALYTIC';
@@ -606,7 +606,7 @@ function stock_top(?string $today, ?int $limit=10, string|int|null $width='33', 
 	return array($title, $sales, $cost, $res);
 }
 
-function dimension_top(?string $today, ?int $limit=10, string|int|null $width='33', &$pg=null): string
+function dimension_top(?string $today, ?int $limit=10, string|int|null $width='33', ?object &$pg=null): string
 {
 	$begin = date2sql(begin_fiscalyear());
 	$today = date2sql($today);
@@ -653,7 +653,7 @@ function dimension_top(?string $today, ?int $limit=10, string|int|null $width='3
 	return $title;
 }
 
-function gl_top(?string $today, string|int|null $width='33', &$pg=null): string
+function gl_top(?string $today, string|int|null $width='33', ?object &$pg=null): string
 {
 	$begin = date2sql(begin_fiscalyear());
 	$today = date2sql($today);

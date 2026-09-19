@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------------
 // insert/update sales delivery
 //
-function write_sales_delivery(&$delivery,string|int|float|bool|null $bo_policy)
+function write_sales_delivery(Cart &$delivery,string|int|float|bool|null $bo_policy)
 {
 	global $Refs;
 
@@ -205,7 +205,7 @@ function write_sales_delivery(&$delivery,string|int|float|bool|null $bo_policy)
 }
 
 //--------------------------------------------------------------------------------------------------
-function adjust_shipping_charge(&$delivery, string|int|float|bool|null $trans_no): void
+function adjust_shipping_charge(Cart &$delivery, string|int|float|bool|null $trans_no): void
 {
   	$sql = "SELECT sum(ov_freight) as freight FROM ".TB_PREF."debtor_trans WHERE order_ = $trans_no AND type = " . ST_CUSTDELIVERY . " AND debtor_no = " . $delivery->customer_id;
   	$result = db_query($sql, "Can not find delivery notes");

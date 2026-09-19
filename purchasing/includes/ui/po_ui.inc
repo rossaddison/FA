@@ -91,7 +91,7 @@ function create_new_po(?int $trans_type, string|int|array|null $trans_no): void
 
 //---------------------------------------------------------------------------------------------------
 
-function display_po_header(&$order): void
+function display_po_header(?purch_order &$order): void
 {
 	global $Ajax, $Refs;
 
@@ -204,7 +204,7 @@ function display_po_header(&$order): void
 
 //---------------------------------------------------------------------------------------------------
 
-function display_po_items(&$order, bool $editable=true): void
+function display_po_items(purch_order &$order, bool $editable=true): void
 {
     display_heading(_("Order Items"));
 
@@ -294,7 +294,7 @@ function display_po_items(&$order, bool $editable=true): void
 
 //---------------------------------------------------------------------------------------------------
 
-function display_po_summary(&$po, bool $is_self=false, bool $editable=false): void
+function display_po_summary(purch_order &$po, bool $is_self=false, bool $editable=false): void
 {
     start_table(TABLESTYLE, "width='90%'");
 
@@ -352,7 +352,7 @@ function display_po_summary(&$po, bool $is_self=false, bool $editable=false): vo
 
 //--------------------------------------------------------------------------------
 
-function po_item_controls(&$order, &$rowcounter, string|int|float|bool|null $line_no=-1): void
+function po_item_controls(purch_order &$order, int|string|null &$rowcounter, string|int|float|bool|null $line_no=-1): void
 {
    global $Ajax, $SysPrefs;
 

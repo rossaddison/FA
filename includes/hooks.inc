@@ -274,7 +274,7 @@ function activate_hooks(string|int|float|bool|null $ext, string|int|float|bool|a
 /*
 	Calls hook $method defined in extension $ext (if any)
 */
-function hook_invoke(string|int|float|bool|null $ext, string|int|float|bool|null $method, &$data, ?array $opts=null)
+function hook_invoke(string|int|float|bool|null $ext, string|int|float|bool|null $method, mixed &$data, ?array $opts=null)
 {
 
 	global $Hooks;
@@ -291,7 +291,7 @@ function hook_invoke(string|int|float|bool|null $ext, string|int|float|bool|null
 /*
 	Calls hook $methods defined in all extensions (if any)
 */
-function hook_invoke_all(string|int|float|bool|null $method, &$data, array|int|null $opts=null): array
+function hook_invoke_all(string|int|float|bool|null $method, mixed &$data, array|int|null $opts=null): array
 {
 
 	global $Hooks;
@@ -316,7 +316,7 @@ function hook_invoke_all(string|int|float|bool|null $method, &$data, array|int|n
 /*
 	Returns first non-null result returned from hook.
 */
-function hook_invoke_first(?string $method, &$data, ?array $opts=null)
+function hook_invoke_first(?string $method, mixed &$data, ?array $opts=null)
 {
 
 	global $Hooks;
@@ -337,7 +337,7 @@ function hook_invoke_first(?string $method, &$data, ?array $opts=null)
 	Returns last non-null result returned from modules method. Helps implement hooks overriding by 
 	extensions installed later.
 */
-function hook_invoke_last(?string $method, &$data, array|string|null $opts=null)
+function hook_invoke_last(?string $method, mixed &$data, array|string|null $opts=null)
 {
 
 	global $Hooks;

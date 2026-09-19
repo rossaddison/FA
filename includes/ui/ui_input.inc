@@ -979,7 +979,7 @@ function inactive_control_row(array $th): void {
 //
 //	Inserts additional column header when display of inactive records is on.
 //
-function inactive_control_column(&$th): void {
+function inactive_control_column(array &$th): void {
 	global $Ajax;
 	
 	if (check_value('show_inactive')) 

@@ -14,7 +14,7 @@ include_once($path_to_root . "/admin/db/attachments_db.inc");
 
 //--------------------------------------------------------------------------------------------------
 
-function read_supplier_details_to_trans(&$supp_trans, string|int|float|bool|array|null $supplier_id): void
+function read_supplier_details_to_trans(supp_trans &$supp_trans, string|int|float|bool|array|null $supplier_id): void
 {
 	$sql = "SELECT supp.supp_name, terms.terms, terms.days_before_due, supp.dimension_id, supp.dimension2_id,
 		terms.day_in_following_month, supp.tax_included,
@@ -124,7 +124,7 @@ function get_diff_in_home_currency(string|int|float|bool|null $supplier, ?string
 	return $diff;
 }
 //----------------------------------------------------------------------------------------
-function add_supp_invoice(&$supp_trans)
+function add_supp_invoice(supp_trans &$supp_trans)
 {
 	global $Refs;
 
@@ -456,7 +456,7 @@ function get_tax_overrides(string|int|float|bool|null $trans_type, string|int|fl
 /**
  * @return null
  */
-function read_supp_invoice(string|int|float|bool|null $trans_no, string|int|float|bool|null $trans_type, &$supp_trans)
+function read_supp_invoice(string|int|float|bool|null $trans_no, string|int|float|bool|null $trans_type, supp_trans &$supp_trans)
 {
 	$sql = "SELECT trans.*, supp_name, dimension_id, dimension2_id, curr_code
 		FROM ".TB_PREF."supp_trans trans,"

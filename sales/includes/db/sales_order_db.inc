@@ -11,7 +11,7 @@
 ***********************************************************************/
 require_once($path_to_root. "/admin/db/attachments_db.inc");
 //----------------------------------------------------------------------------------------
-function add_sales_order(&$order)
+function add_sales_order(Cart &$order)
 {
 	global $SysPrefs, $path_to_root, $Refs;
 
@@ -306,7 +306,7 @@ function get_sales_order_details(string|int|float|bool|array|null $order_no, str
 }
 //----------------------------------------------------------------------------------------
 
-function read_sales_order(string|int|float|bool|null $order_no, &$order, string|int|float|bool|null $trans_type): bool
+function read_sales_order(string|int|float|bool|null $order_no, Cart &$order, string|int|float|bool|null $trans_type): bool
 {
 
 	$myrow = get_sales_order_header($order_no, $trans_type);

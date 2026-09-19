@@ -521,7 +521,7 @@ function gl_systypes_list(string|int|float|bool|null $name, string|int|float|boo
 /*
 	Add extension/custom reports to report manager.
 */
-function add_custom_reports(&$reports): void
+function add_custom_reports(array &$reports): void
 {
 	global $installed_extensions, $path_to_root;
 	

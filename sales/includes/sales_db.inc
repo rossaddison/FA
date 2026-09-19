@@ -201,7 +201,7 @@ function update_parent_line(string|int|float|bool|null $doc_type, string|int|flo
 /**
  * @return array<array-key, null|string>|false|null
  */
-function get_location(&$cart)
+function get_location(Cart &$cart)
 {
 	$sql = "SELECT location.*
 		FROM ".TB_PREF."stock_moves move,"
@@ -223,7 +223,7 @@ function get_location(&$cart)
 //
 //	$trans_no - array of trans nums; special case trans_no==0 - new doc
 //
-function read_sales_trans(string|int|float|bool|null $doc_type, string|int|float|bool|array|null $trans_no, &$cart): bool
+function read_sales_trans(string|int|float|bool|null $doc_type, string|int|float|bool|array|null $trans_no, Cart &$cart): bool
 {
 	if (!is_array($trans_no) && $trans_no)
 		$trans_no = array($trans_no);

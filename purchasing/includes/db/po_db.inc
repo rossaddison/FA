@@ -12,7 +12,7 @@
 require_once($path_to_root. "/admin/db/attachments_db.inc");
 // ------------------------------------------------------------------------------
 
-function get_supplier_details_to_order(&$order, string|array|null $supplier_id): void
+function get_supplier_details_to_order(?purch_order &$order, string|array|null $supplier_id): void
 {
 	$sql = "SELECT curr_code, supp_name, tax_group_id, supp.tax_included, dimension_id, dimension2_id,
 			supp.credit_limit - Sum((ov_amount + ov_gst + ov_discount)) as cur_credit,
@@ -64,7 +64,7 @@ function delete_po(mixed $po): void
 
 //----------------------------------------------------------------------------------------
 
-function add_po(&$po_obj)
+function add_po(purch_order &$po_obj)
 {
 	global $Refs;
 
@@ -120,7 +120,7 @@ function add_po(&$po_obj)
 
 //----------------------------------------------------------------------------------------
 
-function update_po(&$po_obj)
+function update_po(purch_order &$po_obj)
 {
 	begin_transaction();
 	hook_db_prewrite($po_obj, ST_PURCHORDER);
@@ -186,7 +186,7 @@ function get_po(string|int|float|bool|null $order_no) {
 
 //----------------------------------------------------------------------------------------
 
-function read_po_header(string|int|float|bool|null $order_no, &$order): bool
+function read_po_header(string|int|float|bool|null $order_no, purch_order &$order): bool
 {
     	$sql = "SELECT po.*, supplier.*, loc.location_name 
 		FROM ".TB_PREF."purch_orders po,"
@@ -230,7 +230,7 @@ function read_po_header(string|int|float|bool|null $order_no, &$order): bool
 
 //----------------------------------------------------------------------------------------
 
-function read_po_items(string|int|float|bool|null $order_no, &$order, bool $open_items_only=false): void
+function read_po_items(string|int|float|bool|null $order_no, purch_order &$order, bool $open_items_only=false): void
 {
 	/*now populate the line po array with the purchase order details records */
 
@@ -275,7 +275,7 @@ function read_po_items(string|int|float|bool|null $order_no, &$order, bool $open
 
 //----------------------------------------------------------------------------------------
 
-function read_po(string|int|float|bool|array|null $order_no, &$order, bool $open_items_only=false): void
+function read_po(string|int|float|bool|array|null $order_no, purch_order &$order, bool $open_items_only=false): void
 {
 	$result = read_po_header($order_no, $order);
 

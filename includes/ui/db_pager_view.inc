@@ -39,7 +39,7 @@ function navi_button_cell(?string $name, ?string $value, string|int|float|bool|n
 //
 //    Sql paged table view. Call this function inside form.
 //
-function display_db_pager(&$pager): bool {
+function display_db_pager(object &$pager): bool {
     global	$path_to_root;
 
 	$pager->select_records();

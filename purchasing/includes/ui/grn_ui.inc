@@ -11,7 +11,7 @@
 ***********************************************************************/
 //---------------------------------------------------------------------------------------------------
 
-function display_grn_summary(&$po): void
+function display_grn_summary(purch_order &$po): void
 {
 
    start_table(TABLESTYLE2, "width='90%'");
@@ -42,7 +42,7 @@ function display_grn_summary(&$po): void
     end_table(1);
 }
 
-function edit_grn_summary(&$po): void
+function edit_grn_summary(purch_order &$po): void
 {
 	global $Refs;
 	

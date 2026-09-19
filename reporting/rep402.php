@@ -69,7 +69,7 @@ function getTransactions(string|int|array|null $items, string|array|null $open_o
 
 }
 
-function print_gl_rows(&$rep, string|bool|mysqli_result|null $result, ?string $title): void
+function print_gl_rows(FrontReport &$rep, string|bool|mysqli_result|null $result, ?string $title): void
 {
 	global $systypes_array;
 

@@ -14,7 +14,7 @@ include_once($path_to_root . "/includes/ui/items_cart.inc");
 
 //--------------------------------------------------------------------------------
 
-function display_order_header(&$Order): void
+function display_order_header(?items_cart &$Order): void
 {
 	global $Ajax;
 
@@ -94,7 +94,7 @@ function display_order_header(&$Order): void
 
 //---------------------------------------------------------------------------------
 
-function display_gl_items(string|int|float|bool|supp_trans|null $title, &$order): void
+function display_gl_items(string|int|float|bool|supp_trans|null $title, ?items_cart &$order): void
 {
 	global $path_to_root;
 
@@ -189,7 +189,7 @@ function display_gl_items(string|int|float|bool|supp_trans|null $title, &$order)
 
 //---------------------------------------------------------------------------------
 
-function gl_edit_item_controls(&$order, string|int|float|bool|null $dim, array|string|null $sub_accounts, string|int|float|bool|null $Index=null): void
+function gl_edit_item_controls(?items_cart &$order, string|int|float|bool|null $dim, array|string|null $sub_accounts, string|int|float|bool|null $Index=null): void
 {
 	global $Ajax;
 	start_row();

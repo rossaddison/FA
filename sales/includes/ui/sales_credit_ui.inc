@@ -13,7 +13,7 @@ include_once($path_to_root . "/includes/ui.inc");
 
 // ------------------------------------------------------------------------------
 
-function display_credit_header(&$order): string
+function display_credit_header(Cart &$order): string
 {
 	global $Ajax, $Refs;
 
@@ -152,7 +152,7 @@ function display_credit_header(&$order): string
 
 //---------------------------------------------------------------------------------
 
-function display_credit_items(?string $title, &$order): void
+function display_credit_items(?string $title, Cart &$order): void
 {
     global $path_to_root;
 
@@ -233,7 +233,7 @@ function display_credit_items(?string $title, &$order): void
 
 //---------------------------------------------------------------------------------
 
-function credit_edit_item_controls(&$order, string|int|float|bool|null $rowcounter, string|int|float|bool|null $line_no=-1): void
+function credit_edit_item_controls(Cart &$order, string|int|float|bool|null $rowcounter, string|int|float|bool|null $line_no=-1): void
 {
 	global $Ajax;
 	alt_table_row_color($rowcounter);
