@@ -1627,17 +1627,17 @@ class SVG
 // modified by Bagram Siadat.
 // The function has been further modified and several bugs are fixed.
 
-function is_arabic(mixed $text): int|false
+function is_arabic(string|int|float|bool|null $text): int|false
 {
 	return preg_match('/\p{Arabic}/u', $text);
 } 
 
-function is_hebrew(mixed $text): int|false
+function is_hebrew(string|int|float|bool|null $text): int|false
 {
 	return preg_match('/\p{Hebrew}/u', $text);
 } 
 
-function utf8_strlen(mixed $str): int|false 
+function utf8_strlen(string|int|float|bool|null $str): int|false 
 {
 	return preg_match_all('/[\x00-\x7F\xC0-\xFD]/', $str, $dummy);
 }

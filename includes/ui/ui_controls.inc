@@ -287,7 +287,7 @@ function submenu_option(?string $title, ?string $url, mixed $id=null): void
 	display_note( menu_link($url, $title, $id), 0, 1);
 }
 
-function submenu_view(?string $title, ?int $type, mixed $number, mixed $id=null): void
+function submenu_view(?string $title, ?int $type, mixed $number, string|int|float|bool|null $id=null): void
 {
 	display_note(get_trans_view_str($type, $number, $title, false, 'viewlink', $id), 0, 1);
 }
@@ -548,7 +548,7 @@ function set_editor(?string $type, mixed $input, mixed $caller=true): void
 	$ctx - optional. name of SESSION context object or array of names of POST 
 		variables saved on call
 */
-function context_call(mixed $call, string|array|null $ctx=''): void
+function context_call(string|int|float|bool|null $call, string|array|null $ctx=''): void
 {
 	if (is_array($ctx)) 
 	{

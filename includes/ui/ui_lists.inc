@@ -679,7 +679,7 @@ function customer_branches_list_row(?string $label, mixed $customer_id, ?string 
 
 //------------------------------------------------------------------------------------------------
 
-function locations_list(mixed $name, mixed $selected_id=null, mixed $all_option=false, mixed $submit_on_change=false, mixed $fixed_asset=false)
+function locations_list(string|int|float|bool|null $name, mixed $selected_id=null, mixed $all_option=false, mixed $submit_on_change=false, mixed $fixed_asset=false)
 {
 
 	$sql = "SELECT loc_code, location_name, inactive FROM ".TB_PREF."locations WHERE fixed_asset=".(int)$fixed_asset;
@@ -710,7 +710,7 @@ function locations_list_row(?string $label, ?string $name, mixed $selected_id=nu
 
 //-----------------------------------------------------------------------------------------------
 
-function currencies_list(mixed $name, mixed $selected_id=null, mixed $submit_on_change=false, bool $exclude_home_curr=false)
+function currencies_list(string|int|float|bool|null $name, mixed $selected_id=null, mixed $submit_on_change=false, bool $exclude_home_curr=false)
 {
 	$sql = "SELECT curr_abrev, currency, inactive FROM ".TB_PREF."currencies";
 	if ($exclude_home_curr)
@@ -743,7 +743,7 @@ function currencies_list_row(?string $label, ?string $name, mixed $selected_id=n
 
 //---------------------------------------------------------------------------------------------------
 
-function fiscalyears_list(mixed $name, mixed $selected_id=null, bool $submit_on_change=false)
+function fiscalyears_list(string|int|float|bool|null $name, mixed $selected_id=null, bool $submit_on_change=false)
 {
 
 	$sql = "SELECT * FROM ".TB_PREF."fiscal_year";
@@ -783,7 +783,7 @@ function fiscalyears_list_row(?string $label, ?string $name, mixed $selected_id=
 }
 //------------------------------------------------------------------------------------
 
-function dimensions_list(mixed $name, mixed $selected_id=null, mixed $no_option=false, mixed $showname=' ',
+function dimensions_list(string|int|float|bool|null $name, mixed $selected_id=null, mixed $no_option=false, mixed $showname=' ',
 	mixed $submit_on_change=false, mixed $showclosed=false, mixed $showtype=1)
 {
 	$sql = "SELECT id, CONCAT(reference,'  ',name) as ref FROM ".TB_PREF."dimensions";
@@ -1090,7 +1090,7 @@ function stock_units_list_row(?string $label, ?string $name, mixed $value=null, 
 
 //------------------------------------------------------------------------------------
 
-function stock_purchasable_fa_list_cells(mixed $label, ?string $name, mixed $selected_id=null, bool $all_option=false,
+function stock_purchasable_fa_list_cells(string|int|float|bool|null $label, ?string $name, mixed $selected_id=null, bool $all_option=false,
 	bool $submit_on_change=false, bool $all=false, bool $editkey = false, mixed $exclude_items = array()): void
 {
 	// Check if a fixed asset has been bought.
@@ -1175,7 +1175,7 @@ function stock_depreciable_fa_list_cells(?string $label, ?string $name, mixed $s
 
 //------------------------------------------------------------------------------------
 
-function tax_types_list(mixed $name, mixed $selected_id=null, mixed $none_option=false, mixed $submit_on_change=false)
+function tax_types_list(string|int|float|bool|null $name, mixed $selected_id=null, mixed $none_option=false, mixed $submit_on_change=false)
 {
 	$sql = "SELECT id, CONCAT(name, ' (',rate,'%)') as name FROM ".TB_PREF."tax_types";
 
@@ -1208,7 +1208,7 @@ function tax_types_list_row(?string $label, ?string $name, mixed $selected_id=nu
 
 //------------------------------------------------------------------------------------
 
-function tax_groups_list(mixed $name, mixed $selected_id=null,
+function tax_groups_list(string|int|float|bool|null $name, mixed $selected_id=null,
 	mixed $none_option=false, mixed $submit_on_change=false)
 {
 	$sql = "SELECT id, name, inactive FROM ".TB_PREF."tax_groups";
@@ -1241,7 +1241,7 @@ function tax_groups_list_row(?string $label, ?string $name, mixed $selected_id=n
 
 //------------------------------------------------------------------------------------
 
-function item_tax_types_list(mixed $name, mixed $selected_id=null, mixed $show_inactive = false)
+function item_tax_types_list(string|int|float|bool|null $name, mixed $selected_id=null, mixed $show_inactive = false)
 {
 	$sql ="SELECT id, name FROM ".TB_PREF."item_tax_types";
 	if (!$show_inactive)
@@ -1268,7 +1268,7 @@ function item_tax_types_list_row(?string $label, ?string $name, mixed $selected_
 
 //------------------------------------------------------------------------------------
 
-function shippers_list(mixed $name, mixed $selected_id=null)
+function shippers_list(string|int|float|bool|null $name, mixed $selected_id=null)
 {
 	$sql = "SELECT shipper_id, shipper_name, inactive FROM ".TB_PREF."shippers";
 	return combo_input($name, $selected_id, $sql, 'shipper_id', 'shipper_name', 
@@ -1293,7 +1293,7 @@ function shippers_list_row(?string $label, ?string $name, mixed $selected_id=nul
 
 //-------------------------------------------------------------------------------------
 
-function sales_persons_list(mixed $name, mixed $selected_id=null, mixed $spec_opt=false)
+function sales_persons_list(string|int|float|bool|null $name, mixed $selected_id=null, mixed $spec_opt=false)
 {
 	$sql = "SELECT salesman_code, salesman_name, inactive FROM ".TB_PREF."salesman";
 	return combo_input($name, $selected_id, $sql, 'salesman_code', 'salesman_name', 
@@ -1320,7 +1320,7 @@ function sales_persons_list_row(?string $label, ?string $name, mixed $selected_i
 
 //------------------------------------------------------------------------------------
 
-function sales_areas_list(mixed $name, mixed $selected_id=null, mixed $special_option=false)
+function sales_areas_list(string|int|float|bool|null $name, mixed $selected_id=null, mixed $special_option=false)
 {
 	$sql = "SELECT area_code, description, inactive FROM ".TB_PREF."areas";
 	return combo_input($name, $selected_id, $sql, 'area_code', 'description', 
@@ -1346,7 +1346,7 @@ function sales_areas_list_row(?string $label, ?string $name, mixed $selected_id=
 
 //------------------------------------------------------------------------------------
 
-function sales_groups_list(mixed $name, mixed $selected_id=null, mixed $special_option=false)
+function sales_groups_list(string|int|float|bool|null $name, mixed $selected_id=null, mixed $special_option=false)
 {
 	$sql = "SELECT id, description, inactive FROM `".TB_PREF."groups`";
 	return combo_input($name, $selected_id, $sql, 'id', 'description', array(
@@ -1378,7 +1378,7 @@ function _format_template_items(mixed $row): string
 	return ($row[0] . "&nbsp;- &nbsp;" . _("Amount") . "&nbsp;".$row[1]);
 }
 
-function templates_list(mixed $name, mixed $selected_id=null, mixed $special_option=false)
+function templates_list(string|int|float|bool|null $name, mixed $selected_id=null, mixed $special_option=false)
 {
 	$sql = "SELECT sorder.order_no,	Sum(line.unit_price*line.quantity*(1-line.discount_percent)) AS OrderValue
 		FROM ".TB_PREF."sales_orders as sorder, ".TB_PREF."sales_order_details as line
@@ -1408,13 +1408,13 @@ function templates_list_row(?string $label, ?string $name, mixed $selected_id=nu
 
 //------------------------------------------------------------------------------------
 
-function workorders_list(mixed $name, mixed $selected_id=null)
+function workorders_list(string|int|float|bool|null $name, mixed $selected_id=null)
 {
 	$sql = "SELECT id, wo_ref FROM ".TB_PREF."workorders WHERE closed=0";
 	return combo_input($name, $selected_id, $sql, 'id', 'wo_ref', array());
 }
 
-function workorders_list_cells(string|int|float|bool|null $label, mixed $name, mixed $selected_id=null): void
+function workorders_list_cells(string|int|float|bool|null $label, string|int|float|bool|null $name, mixed $selected_id=null): void
 {
 	if ($label != null)
 		echo "<td>$label</td>\n";
@@ -1432,7 +1432,7 @@ function workorders_list_row(mixed $label, mixed $name, mixed $selected_id=null)
 
 //------------------------------------------------------------------------------------
 
-function payment_terms_list(mixed $name, mixed $selected_id=null)
+function payment_terms_list(string|int|float|bool|null $name, mixed $selected_id=null)
 {
 	$sql = "SELECT terms_indicator, terms, inactive FROM ".TB_PREF."payment_terms";
 	return combo_input($name, $selected_id, $sql, 'terms_indicator', 'terms', array());
@@ -1456,7 +1456,7 @@ function payment_terms_list_row(?string $label, ?string $name, string|array|null
 
 //------------------------------------------------------------------------------------
 
-function credit_status_list(mixed $name, mixed $selected_id=null)
+function credit_status_list(string|int|float|bool|null $name, mixed $selected_id=null)
 {
 	$sql ="SELECT id, reason_description, inactive FROM ".TB_PREF."credit_status";
 	return combo_input($name, $selected_id, $sql, 'id', 'reason_description', array());
@@ -1480,7 +1480,7 @@ function credit_status_list_row(?string $label, ?string $name, string|int|array|
 
 //-----------------------------------------------------------------------------------------------
 
-function sales_types_list(mixed $name, mixed $selected_id=null, mixed $submit_on_change=false, mixed $special_option=false)
+function sales_types_list(string|int|float|bool|null $name, mixed $selected_id=null, mixed $submit_on_change=false, mixed $special_option=false)
 {
 	$sql = "SELECT id, sales_type, inactive FROM ".TB_PREF."sales_types";
 
@@ -1548,7 +1548,7 @@ function bank_reconciliation_list_row($label, $account, $name, $selected_id=null
 */
 //-----------------------------------------------------------------------------------------------
 
-function workcenter_list(mixed $name, mixed $selected_id=null, mixed $all_option=false)
+function workcenter_list(string|int|float|bool|null $name, mixed $selected_id=null, mixed $all_option=false)
 {
 
 	$sql = "SELECT id, name, inactive FROM ".TB_PREF."workcentres";
@@ -1579,7 +1579,7 @@ function workcenter_list_row(?string $label, ?string $name, mixed $selected_id=n
 
 //-----------------------------------------------------------------------------------------------
 
-function bank_accounts_list(mixed $name, mixed $selected_id=null, mixed $submit_on_change=false, mixed $spec_option=false)
+function bank_accounts_list(string|int|float|bool|null $name, mixed $selected_id=null, mixed $submit_on_change=false, mixed $spec_option=false)
 {
 	$sql = "SELECT id, bank_account_name, bank_curr_code, inactive
 		FROM ".TB_PREF."bank_accounts";
@@ -1688,7 +1688,7 @@ function sale_payment_list_cells(?string $label, ?string $name, ?int $category, 
 }
 //-----------------------------------------------------------------------------------------------
 
-function class_list(mixed $name, mixed $selected_id=null, mixed $submit_on_change=false)
+function class_list(string|int|float|bool|null $name, mixed $selected_id=null, mixed $submit_on_change=false)
 {
 	$sql = "SELECT cid, class_name FROM ".TB_PREF."chart_class";
 
@@ -1717,7 +1717,7 @@ function class_list_row(?string $label, ?string $name, mixed $selected_id=null, 
 }
 
 //-----------------------------------------------------------------------------------------------
-function stock_categories_list(mixed $name, mixed $selected_id=null, mixed $spec_opt=false, mixed $submit_on_change=false, mixed $fixed_asset=false)
+function stock_categories_list(string|int|float|bool|null $name, mixed $selected_id=null, mixed $spec_opt=false, mixed $submit_on_change=false, mixed $fixed_asset=false)
 {
 	$where_opts = array();
 	if ($fixed_asset)
@@ -1753,7 +1753,7 @@ function stock_categories_list_row(?string $label, ?string $name, mixed $selecte
 }
 
 //-----------------------------------------------------------------------------------------------
-function fixed_asset_classes_list(mixed $name, mixed $selected_id=null, mixed $spec_opt=false, mixed $submit_on_change=false)
+function fixed_asset_classes_list(string|int|float|bool|null $name, mixed $selected_id=null, mixed $spec_opt=false, mixed $submit_on_change=false)
 {
 	$sql = "SELECT c.fa_class_id, CONCAT(c.fa_class_id,' - ',c.description) `desc`, CONCAT(p.fa_class_id,' - ',p.description) `class`, c.inactive FROM "
 		.TB_PREF."stock_fa_class c LEFT JOIN ".TB_PREF."stock_fa_class p ON c.parent_id=p.fa_class_id";
@@ -1784,7 +1784,7 @@ function fixed_asset_classes_list_row(?string $label, ?string $name, mixed $sele
 
 //-----------------------------------------------------------------------------------------------
 
-function gl_account_types_list(mixed $name, mixed $selected_id=null, mixed $all_option=false, mixed $all=true)
+function gl_account_types_list(string|int|float|bool|null $name, mixed $selected_id=null, mixed $all_option=false, mixed $all=true)
 {
 
 	$sql = "SELECT id, name FROM ".TB_PREF."chart_types";
@@ -1816,7 +1816,7 @@ function gl_account_types_list_row(?string $label, ?string $name, mixed $selecte
 }
 
 //-----------------------------------------------------------------------------------------------
-function gl_all_accounts_list(mixed $name, mixed $selected_id=null, mixed $skip_bank_accounts=false,
+function gl_all_accounts_list(string|int|float|bool|null $name, mixed $selected_id=null, mixed $skip_bank_accounts=false,
 	mixed $cells=false, mixed $all_option=false, mixed $submit_on_change=false, mixed $all=false, mixed $type_id=false)
 {
 	if ($skip_bank_accounts)
@@ -1877,7 +1877,7 @@ function gl_all_accounts_list_row(?string $label, ?string $name, mixed $selected
 	echo "</tr>\n";
 }
 
-function yesno_list(mixed $name, mixed $selected_id=null, mixed $name_yes="", mixed $name_no="", mixed $submit_on_change=false): string
+function yesno_list(string|int|float|bool|null $name, mixed $selected_id=null, string|int|float|bool|null $name_yes="", string|int|float|bool|null $name_no="", mixed $submit_on_change=false): string
 {
 	$items = array();
 	$items['0'] = strlen($name_no) ? $name_no : _("No");
@@ -1889,7 +1889,7 @@ function yesno_list(mixed $name, mixed $selected_id=null, mixed $name_yes="", mi
 			'async' => false ) ); // FIX?
 }
 
-function yesno_list_cells(?string $label, mixed $name, mixed $selected_id=null, mixed $name_yes="", mixed $name_no="", bool $submit_on_change=false): void
+function yesno_list_cells(?string $label, string|int|float|bool|null $name, mixed $selected_id=null, string|int|float|bool|null $name_yes="", string|int|float|bool|null $name_no="", bool $submit_on_change=false): void
 {
 	if ($label != null)
 		echo "<td>$label</td>\n";
@@ -1898,7 +1898,7 @@ function yesno_list_cells(?string $label, mixed $name, mixed $selected_id=null, 
 	echo "</td>\n";
 }
 
-function yesno_list_row(?string $label, ?string $name, mixed $selected_id=null, mixed $name_yes="", mixed $name_no="", bool $submit_on_change=false): void
+function yesno_list_row(?string $label, ?string $name, mixed $selected_id=null, string|int|float|bool|null $name_yes="", string|int|float|bool|null $name_no="", bool $submit_on_change=false): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	yesno_list_cells(null, $name, $selected_id, $name_yes, $name_no, $submit_on_change);
@@ -1907,7 +1907,7 @@ function yesno_list_row(?string $label, ?string $name, mixed $selected_id=null, 
 
 //------------------------------------------------------------------------------------------------
 
-function languages_list(mixed $name, mixed $selected_id=null, mixed $all_option=false): string
+function languages_list(string|int|float|bool|null $name, mixed $selected_id=null, mixed $all_option=false): string
 {
 	global $installed_languages;
 
@@ -1919,7 +1919,7 @@ function languages_list(mixed $name, mixed $selected_id=null, mixed $all_option=
 	return array_selector($name, $selected_id, $items);
 }
 
-function languages_list_cells(string|int|float|bool|null $label, mixed $name, mixed $selected_id=null, mixed $all_option=false): void
+function languages_list_cells(string|int|float|bool|null $label, string|int|float|bool|null $name, mixed $selected_id=null, mixed $all_option=false): void
 {
 	if ($label != null)
 		echo "<td>$label</td>\n";
@@ -1928,7 +1928,7 @@ function languages_list_cells(string|int|float|bool|null $label, mixed $name, mi
 	echo "</td>\n";
 }
 
-function languages_list_row(string|int|float|bool|null $label, mixed $name, mixed $selected_id=null, mixed $all_option=false): void
+function languages_list_row(string|int|float|bool|null $label, string|int|float|bool|null $name, mixed $selected_id=null, mixed $all_option=false): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	languages_list_cells(null, $name, $selected_id, $all_option);
@@ -1937,7 +1937,7 @@ function languages_list_row(string|int|float|bool|null $label, mixed $name, mixe
 
 //------------------------------------------------------------------------------------------------
 
-function bank_account_types_list(mixed $name, mixed $selected_id=null): string
+function bank_account_types_list(string|int|float|bool|null $name, mixed $selected_id=null): string
 {
 	global $bank_account_types;
 
@@ -1961,7 +1961,7 @@ function bank_account_types_list_row(?string $label, ?string $name, mixed $selec
 }
 
 //------------------------------------------------------------------------------------------------
-function payment_person_types_list(mixed $name, mixed $selected_id=null, mixed $submit_on_change=false): string
+function payment_person_types_list(string|int|float|bool|null $name, mixed $selected_id=null, mixed $submit_on_change=false): string
 {
 	global $payment_person_types;
 
@@ -2080,7 +2080,7 @@ function pagesizes_list_row(?string $label, ?string $name, string|int|null $valu
 	echo "</td></tr>\n";
 }
 
-function systypes_list(mixed $name, mixed $value=null, mixed $spec_opt=false, mixed $submit_on_change=false, mixed $exclude=array()): string
+function systypes_list(string|int|float|bool|null $name, mixed $value=null, mixed $spec_opt=false, mixed $submit_on_change=false, array $exclude=array()): string
 {
 	global $systypes_array;
 
@@ -2096,7 +2096,7 @@ function systypes_list(mixed $name, mixed $value=null, mixed $spec_opt=false, mi
 	);
 }
 
-function systypes_list_cells(?string $label, mixed $name, mixed $value=null, bool $submit_on_change=false, ?array $exclude=array()): void
+function systypes_list_cells(?string $label, string|int|float|bool|null $name, mixed $value=null, bool $submit_on_change=false, ?array $exclude=array()): void
 {
 	if ($label != null)
 		echo "<td>$label</td>\n";
@@ -2105,7 +2105,7 @@ function systypes_list_cells(?string $label, mixed $name, mixed $value=null, boo
 	echo "</td>\n";
 }
 
-function systypes_list_row(string|int|float|bool|null $label, mixed $name, mixed $value=null, bool $submit_on_change=false, ?array $exclude=array()): void
+function systypes_list_row(string|int|float|bool|null $label, string|int|float|bool|null $name, mixed $value=null, bool $submit_on_change=false, ?array $exclude=array()): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	systypes_list_cells(null, $name, $value, $submit_on_change, $exclude);
@@ -2229,7 +2229,7 @@ function credit_type_list_row(?string $label, ?string $name, mixed $selected=nul
 	echo "</tr>\n";
 }
 
-function number_list(mixed $name, mixed $selected, mixed $from, mixed $to, mixed $no_option=false): string
+function number_list(string|int|float|bool|null $name, mixed $selected, mixed $from, mixed $to, mixed $no_option=false): string
 {
 	$items = array();
 	for ($i = $from; $i <= $to; $i++)
@@ -2302,7 +2302,7 @@ function printers_list(?string $name, mixed $selected_id=null, string|bool|null 
 
 //------------------------------------------------------------------------------------------------
 
-function quick_entries_list(mixed $name, mixed $selected_id=null, string|int|float|bool|null $type=null, mixed $submit_on_change=false)
+function quick_entries_list(string|int|float|bool|null $name, mixed $selected_id=null, string|int|float|bool|null $type=null, mixed $submit_on_change=false)
 {
 	$where = false;
 	$sql = "SELECT id, description FROM ".TB_PREF."quick_entries";
@@ -2381,7 +2381,7 @@ function class_types_list_row(?string $label, ?string $name, mixed $selected_id=
 
 //------------------------------------------------------------------------------------------------
 
-function security_roles_list(mixed $name, mixed $selected_id=null, mixed $new_item=false, mixed $submit_on_change=false,
+function security_roles_list(string|int|float|bool|null $name, mixed $selected_id=null, mixed $new_item=false, mixed $submit_on_change=false,
 	mixed $show_inactive = false)
 {
 
@@ -2430,7 +2430,7 @@ function tab_list_row(?string $label, ?string $name, mixed $selected_id=null): v
 
 //-----------------------------------------------------------------------------------------------
 
-function tag_list(mixed $name, mixed $height, mixed $type, mixed $multi=false, mixed $all=false, mixed $spec_opt = false): string
+function tag_list(string|int|float|bool|null $name, mixed $height, mixed $type, mixed $multi=false, mixed $all=false, mixed $spec_opt = false): string
 {
 	// Get tags
 	global $path_to_root;
@@ -2489,7 +2489,7 @@ function extset_list(?string $name, mixed $value=null, bool $submit_on_change=fa
 		));
 }
 
-function crm_category_types_list(mixed $name, mixed $selected_id=null, mixed $filter=array(), bool $submit_on_change=true)
+function crm_category_types_list(string|int|float|bool|null $name, mixed $selected_id=null, mixed $filter=array(), bool $submit_on_change=true)
 {
 
 	$sql = "SELECT id, name, type, inactive FROM ".TB_PREF."crm_categories";
@@ -2518,7 +2518,7 @@ function crm_category_types_list(mixed $name, mixed $selected_id=null, mixed $fi
 	 	));
 }
 
-function crm_category_types_list_row(string|int|float|bool|null $label, mixed $name, mixed $selected_id=null, mixed $filter=array(), bool $submit_on_change=true): void
+function crm_category_types_list_row(string|int|float|bool|null $label, string|int|float|bool|null $name, mixed $selected_id=null, mixed $filter=array(), bool $submit_on_change=true): void
 {
 	echo "<tr><td class='label'>$label</td><td>";
 	echo crm_category_types_list($name, $selected_id, $filter, $submit_on_change);
@@ -2568,7 +2568,7 @@ function coa_list_row(?string $label, ?string $name, mixed $value=null): void
 	echo "</td></tr>\n";
 }
 
-function payment_services(mixed $name): string
+function payment_services(string|int|float|bool|null $name): string
 {
 	global $payment_services;
 
@@ -2580,7 +2580,7 @@ function payment_services(mixed $name): string
 		));
 }
 
-function tax_algorithm_list(mixed $name, mixed $value=null, mixed $submit_on_change = false): string
+function tax_algorithm_list(string|int|float|bool|null $name, mixed $value=null, mixed $submit_on_change = false): string
 {
 	global $tax_algorithms;
 	
@@ -2643,7 +2643,7 @@ function refline_list_row(?string $label, ?string $name, ?int $type, mixed $sele
 
 //----------------------------------------------------------------------------------------------
 
-function subledger_list(mixed $name, mixed $account, mixed $selected_id=null)
+function subledger_list(string|int|float|bool|null $name, mixed $account, mixed $selected_id=null)
 {
 
 	$type = is_subledger_account($account);

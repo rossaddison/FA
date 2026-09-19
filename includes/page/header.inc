@@ -87,7 +87,7 @@ function send_scripts(): void
     echo $js;
 }
 
-function page_header(string|int|float|bool|null $title, mixed $no_menu=false, mixed $is_index=false, string|int|float|bool|null $onload="", mixed $js="", mixed $css=''): void
+function page_header(string|int|float|bool|null $title, mixed $no_menu=false, mixed $is_index=false, string|int|float|bool|null $onload="", mixed $js="", string|int|float|bool|null $css=''): void
 {
 	// titles and screen header
 	global $path_to_root, $SysPrefs, $db_connections;

@@ -15,7 +15,7 @@ $before_box = ''; // temporary container for output html data before error box
 #
 #   Wrapper for trigger_error
 #
-function fa_trigger_error(mixed $msg, mixed $error_level=E_USER_NOTICE): void
+function fa_trigger_error(mixed $msg, string|int|float|bool|null $error_level=E_USER_NOTICE): void
 {
     if ($error_level==E_USER_ERROR) {
           error_handler(E_USER_ERROR, $msg, __FILE__, __LINE__); //  E_USER_ERROR is deprecated as trigger_error arg since php 8.4
@@ -235,7 +235,7 @@ function frindly_db_error(?int $db_error): bool
 	return false;
 }
 
-function check_db_error(mixed $msg, string|array|null $sql_statement, bool $exit_if_error=true, bool $rollback_if_error=true): int
+function check_db_error(string|int|float|bool|null $msg, string|array|null $sql_statement, bool $exit_if_error=true, bool $rollback_if_error=true): int
 {
 	global $db, $SysPrefs;
 	$db_error = db_error_no();

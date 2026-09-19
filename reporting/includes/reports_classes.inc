@@ -500,7 +500,7 @@ class Report
 }
 
 //------------------------------------------------------------------------------------------------
-function gl_systypes_list(mixed $name, mixed $value=null, mixed $spec_opt=false): string
+function gl_systypes_list(string|int|float|bool|null $name, mixed $value=null, mixed $spec_opt=false): string
 {
 	global $systypes_array;
 	

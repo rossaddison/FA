@@ -74,7 +74,7 @@ function update_supp_trans_allocation(mixed $trans_type, mixed $trans_no, mixed 
 /**
  * @return null
  */
-function void_supp_allocations(mixed $type, mixed $type_no, mixed $date="")
+function void_supp_allocations(string|int|float|bool|null $type, string|int|float|bool|null $type_no, mixed $date="")
 {
 	return clear_supp_alloctions($type, $type_no, null, $date);
 }

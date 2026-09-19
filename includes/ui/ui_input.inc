@@ -24,7 +24,7 @@
 //    If var is found returns variable name with prefix stripped,
 //    and null or -1 otherwise.
 //
-function find_submit(mixed $prefix, mixed $numeric=true): int|string|null
+function find_submit(string|int|float|bool|null $prefix, mixed $numeric=true): int|string|null
 {
 
     foreach($_POST as $postkey=>$postval )
@@ -300,7 +300,7 @@ function set_icon(mixed $icon, string|int|float|bool|null $title=false): string
 	return "<img src='$icon' style='vertical-align:middle;width:12px;height:12px;border:0;'".($title ? " title='$title'" : "")." >\n";	
 }
 
-function button(mixed $name, mixed $value, string|int|float|bool|null $title=false, mixed $icon=false,  string|int|float|bool|null $aspect=''): string
+function button(string|int|float|bool|null $name, mixed $value, string|int|float|bool|null $title=false, mixed $icon=false,  string|int|float|bool|null $aspect=''): string
 {
 	// php silently changes dots,spaces,'[' and characters 128-159
 	// to underscore in POST names, to maintain compatibility with register_globals
@@ -332,19 +332,19 @@ function button(mixed $name, mixed $value, string|int|float|bool|null $title=fal
 			." >\n";
 }
 
-function button_cell(mixed $name, mixed $value, mixed $title=false, mixed $icon=false, ?string $aspect=''): void
+function button_cell(string|int|float|bool|null $name, mixed $value, string|int|float|bool|null $title=false, mixed $icon=false, ?string $aspect=''): void
 {
 	echo "<td align='center'>";
 	echo button($name, $value, $title, $icon, $aspect);
 	echo "</td>";
 }
 
-function delete_button_cell(mixed $name, mixed $value, string|bool|null $title=false): void
+function delete_button_cell(string|int|float|bool|null $name, mixed $value, string|bool|null $title=false): void
 {
 	button_cell($name, $value, $title, ICON_DELETE);
 }
 
-function edit_button_cell(mixed $name, mixed $value, string|bool|null $title=false): void
+function edit_button_cell(string|int|float|bool|null $name, mixed $value, string|bool|null $title=false): void
 {
 	button_cell($name, $value, $title, ICON_EDIT);
 }
@@ -590,7 +590,7 @@ function text_row(string|int|float|bool|null $label, mixed $name, mixed $value, 
 
 //-----------------------------------------------------------------------------------
 
-function text_row_ex(string|int|float|bool|null $label, mixed $name, mixed $size, mixed $max=null, mixed $title=null, mixed $value=null, mixed $params=null, mixed $post_label=null): void
+function text_row_ex(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $size, mixed $max=null, string|int|float|bool|null $title=null, mixed $value=null, mixed $params=null, string|int|float|bool|null $post_label=null): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	text_cells_ex(null, $name, $size, $max, $value, $title, $params, $post_label);
@@ -606,7 +606,7 @@ function email_row(mixed $label, mixed $name, mixed $value, mixed $size, mixed $
 	text_row($label, $name, $value, $size, $max, $title, $params, $post_label);
 }
 
-function email_row_ex(?string $label, ?string $name, ?int $size, ?int $max=null, mixed $title=null, mixed $value=null, mixed $params=null, mixed $post_label=null): void
+function email_row_ex(?string $label, ?string $name, ?int $size, ?int $max=null, string|int|float|bool|null $title=null, mixed $value=null, mixed $params=null, string|int|float|bool|null $post_label=null): void
 {
 	if (get_post($name)) 
 		$label = "<a href='Mailto:".$_POST[$name]."'>$label</a>";
@@ -641,7 +641,7 @@ function link_row_ex(mixed $label, mixed $name, mixed $size, mixed $max=null, mi
 //  When $check!=null current date is displayed in red when set to other 
 //	than current date.
 //	
-function date_cells(?string $label, string|int|float|bool|null $name, ?string $title = null, string|bool|null $check=null, mixed $inc_days=0, 
+function date_cells(?string $label, string|int|float|bool|null $name, ?string $title = null, string|bool|null $check=null, string|int|float|bool|null $inc_days=0, 
 	?int $inc_months=0, ?int $inc_years=0, ?string $params=null, bool $submit_on_change=false): void
 {
 	global $path_to_root, $Ajax;
@@ -692,7 +692,7 @@ function date_cells(?string $label, string|int|float|bool|null $name, ?string $t
 	$Ajax->addUpdate($name, $name, $_POST[$name]);
 }
 
-function date_row(string|int|float|bool|null $label, mixed $name, ?string $title=null, string|bool|null $check=null, mixed $inc_days=0, ?int $inc_months=0, 
+function date_row(string|int|float|bool|null $label, string|int|float|bool|null $name, ?string $title=null, string|bool|null $check=null, string|int|float|bool|null $inc_days=0, ?int $inc_months=0, 
 	?int $inc_years=0, ?string $params=null, bool $submit_on_change=false): void
 {
 	echo "<tr><td class='label'>$label</td>";
@@ -710,13 +710,13 @@ function password_row(?string $label, ?string $name, string|int|float|bool|null 
 }	
 
 //-----------------------------------------------------------------------------------
-function file_cells(mixed $label, string|int|float|bool|null $name, mixed $id=""): void
+function file_cells(string|int|float|bool|null $label, string|int|float|bool|null $name, mixed $id=""): void
 {
 	if ($id != "")
 		$id = "id='$id'";
 	label_cells($label, "<input type='file' name='$name' $id >");
 }		
-function file_row(string|int|float|bool|null $label, mixed $name, mixed $id = ""): void
+function file_row(string|int|float|bool|null $label, string|int|float|bool|null $name, mixed $id = ""): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	file_cells(null, $name, $id);
@@ -844,13 +844,13 @@ function amount_cells_ex(mixed $label, string|int|float|bool|null $name, ?int $s
 
 //-----------------------------------------------------------------------------------
 
-function amount_cells(mixed $label, ?string $name, mixed $init=null, string|int|null $params=null, mixed $post_label=null, mixed $dec=null): void
+function amount_cells(mixed $label, ?string $name, mixed $init=null, string|int|null $params=null, string|int|float|bool|null $post_label=null, mixed $dec=null): void
 {
 	amount_cells_ex($label, $name, 15, 15, $init, $params, $post_label, $dec);
 }
 
 //JAM  Allow entered unit prices to be fractional
-function unit_amount_cells(?string $label, ?string $name, mixed $init=null, ?string $params=null, mixed $post_label=null, mixed $dec=null): void
+function unit_amount_cells(?string $label, ?string $name, mixed $init=null, ?string $params=null, string|int|float|bool|null $post_label=null, mixed $dec=null): void
 {
 	if (!isset($dec))
 	  	$dec = user_price_dec()+2;
@@ -858,7 +858,7 @@ function unit_amount_cells(?string $label, ?string $name, mixed $init=null, ?str
 	amount_cells_ex($label, $name, 15, 15, $init, $params, $post_label, $dec+2);
 }
 
-function amount_row(mixed $label, ?string $name, mixed $init=null, ?string $params=null, mixed $post_label=null, mixed $dec=null): void
+function amount_row(mixed $label, ?string $name, mixed $init=null, ?string $params=null, string|int|float|bool|null $post_label=null, mixed $dec=null): void
 {
 	echo "<tr>";
 	amount_cells($label, $name, $init, $params, $post_label, $dec);
@@ -874,7 +874,7 @@ function small_amount_row(?string $label, ?string $name, string|int|array|null $
 
 //-----------------------------------------------------------------------------------
 
-function qty_cells(mixed $label, mixed $name, ?string $init=null, ?string $params=null, mixed $post_label=null, mixed $dec=null): void
+function qty_cells(mixed $label, string|int|float|bool|null $name, ?string $init=null, ?string $params=null, string|int|float|bool|null $post_label=null, mixed $dec=null): void
 {
 	if (!isset($dec))
 	  	$dec = user_qty_dec();
@@ -882,7 +882,7 @@ function qty_cells(mixed $label, mixed $name, ?string $init=null, ?string $param
 	amount_cells_ex($label, $name, 15, 15, $init, $params, $post_label, $dec);
 }
 
-function qty_row(?string $label, ?string $name, ?string $init=null, ?string $params=null, mixed $post_label=null, mixed $dec=null): void
+function qty_row(?string $label, ?string $name, ?string $init=null, ?string $params=null, string|int|float|bool|null $post_label=null, mixed $dec=null): void
 {
 	if (!isset($dec))
 	  	$dec = user_qty_dec();
@@ -892,7 +892,7 @@ function qty_row(?string $label, ?string $name, ?string $init=null, ?string $par
 	echo "</tr>\n";
 }
 
-function small_qty_row(?string $label, ?string $name, mixed $init=null, mixed $params=null, mixed $post_label=null, mixed $dec=null): void
+function small_qty_row(?string $label, ?string $name, mixed $init=null, mixed $params=null, string|int|float|bool|null $post_label=null, mixed $dec=null): void
 {
 	if (!isset($dec))
 	  	$dec = user_qty_dec();
@@ -904,14 +904,14 @@ function small_qty_row(?string $label, ?string $name, mixed $init=null, mixed $p
 
 //-----------------------------------------------------------------------------------
 
-function small_amount_cells(mixed $label, mixed $name, mixed $init=null, mixed $params=null, mixed $post_label=null, mixed $dec=null): void
+function small_amount_cells(mixed $label, string|int|float|bool|null $name, mixed $init=null, mixed $params=null, string|int|float|bool|null $post_label=null, mixed $dec=null): void
 {
 	amount_cells_ex($label, $name, 7, 12, $init, $params, $post_label, $dec);
 }
 
 //-----------------------------------------------------------------------------------
 
-function small_qty_cells(mixed $label, ?string $name, ?string $init=null, mixed $params=null, mixed $post_label=null, mixed $dec=null): void
+function small_qty_cells(mixed $label, ?string $name, ?string $init=null, mixed $params=null, string|int|float|bool|null $post_label=null, mixed $dec=null): void
 {
   	if (!isset($dec))
 	  	$dec = user_qty_dec();
@@ -936,7 +936,7 @@ function textarea_cells(string|int|float|bool|null $label, string|int|float|bool
 	$Ajax->addUpdate($name, $name, $value);
 }
 
-function textarea_row(string|int|float|bool|null $label, mixed $name, mixed $value, mixed $cols, mixed $rows, ?int $max=255, ?string $title=null, ?string $params=""): void
+function textarea_row(string|int|float|bool|null $label, string|int|float|bool|null $name, mixed $value, string|int|float|bool|null $cols, string|int|float|bool|null $rows, ?int $max=255, ?string $title=null, ?string $params=""): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	textarea_cells(null, $name, $value, $cols, $rows, $max, $title, $params);
@@ -949,7 +949,7 @@ function textarea_row(string|int|float|bool|null $label, mixed $name, mixed $val
 //  displays value of inactive field as checkbox cell.
 //  Also updates database record after status change.
 //
-function inactive_control_cell(string|int|float|bool|null $id, mixed $value, mixed $table, mixed $key): void
+function inactive_control_cell(string|int|float|bool|null $id, mixed $value, string|int|float|bool|null $table, string|int|float|bool|null $key): void
 {
 	global	$Ajax;
 

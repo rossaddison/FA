@@ -28,7 +28,7 @@ function output_html(mixed $text): string
 
 //-----------------------------------------------------------------------------
 
-function html_specials_encode(mixed $str): string
+function html_specials_encode(string|int|float|bool|null $str): string
 {
 	return htmlspecialchars($str, ENT_QUOTES, $_SESSION['language']->encoding=='iso-8859-2' ? 'ISO-8859-1' : $_SESSION['language']->encoding);
 }

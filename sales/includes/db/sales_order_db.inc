@@ -306,7 +306,7 @@ function get_sales_order_details(mixed $order_no, mixed $trans_type) {
 }
 //----------------------------------------------------------------------------------------
 
-function read_sales_order(mixed $order_no, &$order, mixed $trans_type): bool
+function read_sales_order(mixed $order_no, &$order, string|int|float|bool|null $trans_type): bool
 {
 
 	$myrow = get_sales_order_header($order_no, $trans_type);

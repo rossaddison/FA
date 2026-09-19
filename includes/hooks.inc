@@ -274,7 +274,7 @@ function activate_hooks(string|int|float|bool|null $ext, mixed $comp, bool $on=t
 /*
 	Calls hook $method defined in extension $ext (if any)
 */
-function hook_invoke(mixed $ext, mixed $method, &$data, mixed $opts=null)
+function hook_invoke(mixed $ext, string|int|float|bool|null $method, &$data, mixed $opts=null)
 {
 
 	global $Hooks;
@@ -291,7 +291,7 @@ function hook_invoke(mixed $ext, mixed $method, &$data, mixed $opts=null)
 /*
 	Calls hook $methods defined in all extensions (if any)
 */
-function hook_invoke_all(mixed $method, &$data, mixed $opts=null): array
+function hook_invoke_all(string|int|float|bool|null $method, &$data, mixed $opts=null): array
 {
 
 	global $Hooks;

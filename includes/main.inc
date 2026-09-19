@@ -306,7 +306,7 @@ function js_compress(string|bool|null $sJS): string|null
 	Check if file can be updated, restoring subdirectories 
 	if needed. Returns 1 when no confilcts, -1 when file exists and is writable
 */
-function check_write(mixed $path)
+function check_write(string|int|float|bool|null $path)
 {
 	if ($path == ''//|| $path == '.' || $path == '..'
 	) return 0;

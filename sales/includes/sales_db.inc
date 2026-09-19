@@ -33,7 +33,7 @@ include_once($path_to_root . "/sales/includes/db/customers_db.inc");
 // $amount is in CUSTOMER'S currency
 
 function add_gl_trans_customer(?int $type, mixed $type_no, mixed $date_, mixed $account, mixed $dimension, mixed $dimension2,
-	mixed $amount, mixed $customer_id, ?string $err_msg="", ?int $rate=0)
+	string|int|float|bool|null $amount, mixed $customer_id, ?string $err_msg="", ?int $rate=0)
 {
 	if ($err_msg == "")
 		$err_msg = "The customer GL transaction could not be inserted";

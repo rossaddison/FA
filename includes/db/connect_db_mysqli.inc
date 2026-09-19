@@ -192,7 +192,7 @@ function db_num_affected_rows(): int|string
 	return mysqli_affected_rows($db);
 }
 
-function db_field_name(mixed $result, mixed $n): string
+function db_field_name(mixed $result, string|int|float|bool|null $n): string
 {
     $fieldinfo = mysqli_fetch_field_direct($result, $n);
     return $fieldinfo->name;

@@ -77,7 +77,7 @@ function add_gl_trans(mixed $type, mixed $trans_id, mixed $date_, mixed $account
 // $amount is in HOME currency
 
 function add_gl_trans_std_cost(?int $type, mixed $trans_id, mixed $date_, mixed $account, mixed $dimension, mixed $dimension2,
-	mixed $memo_,	mixed $amount, ?int $person_type_id=null, mixed $person_id=null, ?string $err_msg="")
+	mixed $memo_,	string|int|float|bool|null $amount, ?int $person_type_id=null, mixed $person_id=null, ?string $err_msg="")
 {
 
 	if ($amount != 0)

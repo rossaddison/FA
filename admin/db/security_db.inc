@@ -42,7 +42,7 @@ function add_security_role(mixed $name, mixed $description, ?array $sections, ?a
 
 //--------------------------------------------------------------------------------------------------
 
-function update_security_role(mixed $id, mixed $name, mixed $description, mixed $sections, mixed $areas): void
+function update_security_role(mixed $id, mixed $name, mixed $description, array $sections, array $areas): void
 {
     	$sql = "UPDATE ".TB_PREF."security_roles SET role=".db_escape($name)
     	.",description=".db_escape($description)

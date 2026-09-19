@@ -345,7 +345,7 @@ function add_years(mixed $date, string|int|float|bool|null $years) // accepts ne
 
 //_______________________________________________________________
 
-function sql2date(mixed $date_): string 
+function sql2date(string|int|float|bool|null $date_): string 
 {
 	global $SysPrefs;
 
@@ -432,7 +432,7 @@ and converts to a yyyy/mm/dd format */
  *	Return +1 if sql date1>date2, -1 if date1<date2,
  *  or 0 if dates are equal.
  */
-function sql_date_comp(mixed $date1, string|int|null $date2): int
+function sql_date_comp(string|int|float|bool|null $date1, string|int|null $date2): int
 {
 	@list($year1, $month1, $day1) = explode("-", $date1);
 	@list($year2, $month2, $day2) = explode("-", $date2);

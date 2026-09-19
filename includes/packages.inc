@@ -709,7 +709,7 @@ function install_extension(mixed $pkg_name): bool
 /*
 	Returns true if newer package version is available
 */
-function check_pkg_upgrade(mixed $current, mixed $available): bool
+function check_pkg_upgrade(string|int|float|bool|null $current, string|int|float|bool|null $available): bool
 {
 	if ($available == NULL)
 		return false;
@@ -737,7 +737,7 @@ function get_package_info(mixed $pkg, mixed $type=null, ?array $filter=array(), 
 /*
 	Check basic extension source compatibility.
 */
-function check_src_ext_version(mixed $ext_v): bool
+function check_src_ext_version(string|int|float|bool|null $ext_v): bool
 {
     global $src_version;
     if ($ext_v != '-') {

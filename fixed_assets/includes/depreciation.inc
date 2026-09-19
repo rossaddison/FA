@@ -10,7 +10,7 @@
   See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
  ***********************************************************************/
 
-function next_depreciation_date(mixed $depreciation_date): int|false {
+function next_depreciation_date(string|int|float|bool|null $depreciation_date): int|false {
 
   $start = strtotime($depreciation_date);
 
