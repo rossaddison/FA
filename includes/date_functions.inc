@@ -48,7 +48,7 @@ function __date(string|int|float|bool|null $year, mixed $month, mixed $day): str
 		return $year.$sep.$tmonths[$month].$sep.$day;
 }
 
-function is_date(mixed $date_): int 
+function is_date(?string $date_): int 
 {
 	global $SysPrefs;
 
@@ -375,7 +375,7 @@ function sql2date(string|int|float|bool|null $date_): string
 } // end function sql2date
 
 
-function date2sql(mixed $date_): string|int
+function date2sql(?string $date_): string|int
 {
 	global $SysPrefs, $tmonths;
 /* takes a date in a the format specified in $DefaultDateFormat

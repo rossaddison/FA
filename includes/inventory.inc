@@ -22,7 +22,7 @@ function is_purchased(mixed $mb_flag): bool
 	return ($mb_flag == 'B');
 }
 
-function is_service(mixed $mb_flag): bool
+function is_service(?string $mb_flag): bool
 {
 	return ($mb_flag == 'D');
 }

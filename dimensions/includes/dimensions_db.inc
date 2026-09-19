@@ -87,7 +87,7 @@ function get_dimension(mixed $id, bool $allow_null=false)
 
 //--------------------------------------------------------------------------------------
 
-function get_dimension_string(mixed $id, bool $html=false, ?string $space=' '): string
+function get_dimension_string(int|string|null $id, bool $html=false, ?string $space=' '): string
 {
 	if ($id <= 0)
 	{

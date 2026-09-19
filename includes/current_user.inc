@@ -307,7 +307,7 @@ function round2(string|int|float|bool|null $number, string|int|float|bool|null $
 	(defualt is 0). When $decimals is set to 'max' maximum available precision is used 
 	(decimals depend on value) and trailing zeros are trimmed.
 */
-function number_format2(mixed $number, mixed $decimals=0): string
+function number_format2(string|int|float|bool|null $number, int|string $decimals=0): string
 {
 	global $SysPrefs;
 	$tsep = $SysPrefs->thoseps[user_tho_sep()];
@@ -348,7 +348,7 @@ function fallback_mode(): bool {
     return $_SESSION["wa_current_user"]->ui_mode==0;
 }
 
-function price_format(mixed $number): string {
+function price_format(string|int|float|bool|null $number): string {
     return number_format2($number, user_price_dec());
 }
 
@@ -374,7 +374,7 @@ function qty_format(mixed $number, mixed $stock_id, &$dec): string {
 }
 
 // and get_qty_dec
-function get_qty_dec(mixed $stock_id=null)
+function get_qty_dec(?string $stock_id=null)
 {
 	global $path_to_root;
 	include_once($path_to_root."/inventory/includes/db/items_units_db.inc");
@@ -682,7 +682,7 @@ function array_append(&$array, ?array $elements): void
 //	Search $needle in $haystack or in $haystack[][$valuekey]
 //	returns $needle found or null.
 //
-function array_search_value(mixed $needle, mixed $haystack, mixed $valuekey=null)
+function array_search_value(string|int|float|bool|null $needle, ?array $haystack, string|int|null $valuekey=null)
 {
 	if (is_array($haystack)) {
 		foreach($haystack as $key => $value) {

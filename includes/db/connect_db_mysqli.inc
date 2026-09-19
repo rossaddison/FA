@@ -46,7 +46,7 @@ function set_global_connection(mixed $company=-1): mysqli|false
 
 //DB wrapper functions to change only once for whole application
 
-function db_query(mixed $sql, mixed $err_msg=null): mysqli_result|bool
+function db_query(string $sql, ?string $err_msg=null): mysqli_result|bool
 {
 	global $db, $SysPrefs, $sql_queries, $Ajax,	$db_connections, $db_last_inserted_id;
 
@@ -96,7 +96,7 @@ function db_query(mixed $sql, mixed $err_msg=null): mysqli_result|bool
 /**
  * @return list<string|null>|false a row with numeric keys; mysqli returns every column as a string or null
  */
-function db_fetch_row(mixed $result): array|false
+function db_fetch_row(mysqli_result $result): array|false
 {
 	$ret = mysqli_fetch_row($result);
 	return ($ret === null ? false : $ret);
@@ -114,7 +114,7 @@ function db_fetch_assoc(mixed $result): array|false
 /**
  * @return array<array-key, string|null>|false a row keyed by column name and by position
  */
-function db_fetch(mixed $result): array|false
+function db_fetch(mysqli_result $result): array|false
 {
 	$ret = mysqli_fetch_array($result);
 	return ($ret === null ? false : $ret);
@@ -131,7 +131,7 @@ function db_free_result(bool|mysqli_result $result): void
 		mysqli_free_result($result);
 }
 
-function db_num_rows(mixed $result): int|string
+function db_num_rows(mysqli_result $result): int|string
 {
 	return mysqli_num_rows($result);
 }
@@ -141,7 +141,7 @@ function db_num_fields(mixed $result): int
 	return mysqli_num_fields($result);
 }
 
-function db_escape(mixed $value = "", mixed $nullify = false): string
+function db_escape(string|int|float|bool|null $value = "", ?bool $nullify = false): string
 {
 	global $db;
 
@@ -281,7 +281,7 @@ function db_escape_function(mixed $string)
 	Set mysql client encoding.
 	Default is is encoding used by default language.
 */
-function db_set_encoding(mixed $ui_encoding=null): void
+function db_set_encoding(?string $ui_encoding=null): void
 {
 	global $db, $dflt_lang, $installed_languages;
 

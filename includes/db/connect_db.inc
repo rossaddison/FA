@@ -12,10 +12,7 @@
 //$path_to_root="..";
 define('MAX_DEADLOCK_RETRY', 3);
 
-if (function_exists('mysqli_connect'))
-	include_once("connect_db_mysqli.inc");
-else
-	include_once("connect_db_mysql.inc"); // use deprecated mysql_* API as fallback on old servers
+include_once("connect_db_mysqli.inc"); // the mysql_* API was removed in PHP 7
 
 /**
  * @return null|string

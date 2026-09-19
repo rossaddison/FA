@@ -89,7 +89,7 @@ function simple_page_mode(bool $numeric_id = true): void
  * @param T $dflt
  * @return T|int|float|false
  */
-function input_num(mixed $postname=null, mixed $dflt=0)
+function input_num(?string $postname=null, int|float|string|null $dflt=0)
 {
 	if (!isset($_POST[$postname]) || $_POST[$postname] == "")
 	  	return $dflt;
@@ -105,7 +105,7 @@ function input_num(mixed $postname=null, mixed $dflt=0)
 //
 $hidden_fields = array();
 
-function hidden(string|int|float|bool|null $name, mixed $value=null, mixed $echo=true): ?string
+function hidden(string|int|float|bool|null $name, string|int|float|bool|null $value=null, bool $echo=true): ?string
 {
   	global $Ajax, $hidden_fields;
 	
@@ -355,7 +355,7 @@ function select_button_cell(mixed $name, mixed $value, mixed $title=false): void
 }
 //-----------------------------------------------------------------------------------
 
-function check_value(mixed $name): int|array
+function check_value(string|array $name): int|array
 {
 	if (is_array($name)) {
 		$ret = array();
@@ -436,7 +436,7 @@ function labelheader_cell(string|int|float|bool|null $label, ?string $params="")
 	echo "<td class='tableheader' $params>$label</td>\n";
 }
 
-function label_cell(mixed $label, mixed $params="", mixed $id=null)
+function label_cell(string|int|float|bool|null $label, ?string $params="", string|int|null $id=null): string|int|float|bool|null
 {
     global $Ajax;
 
@@ -461,7 +461,7 @@ function amount_decimal_cell(mixed $label, ?string $params="", mixed $id=null): 
 	label_cell(price_decimal_format($label, $dec), "nowrap align=right ".$params, $id);
 }
 
-function amount_cell(mixed $label, mixed $bold=false, mixed $params="", mixed $id=null): void
+function amount_cell(string|int|float|bool|null $label, ?bool $bold=false, string $params="", string|int|null $id=null): void
 {
 	if ($bold)
 		label_cell("<b>".price_format($label)."</b>", "nowrap align=right ".$params, $id);
@@ -487,7 +487,7 @@ function percent_cell(mixed $label, bool $bold=false, mixed $id=null): void
 		label_cell(percent_format($label), "nowrap align=right", $id);
 }
 // 2008-06-15. Changed
-function qty_cell(mixed $label, string|bool|null $bold=false, mixed $dec=null, mixed $id=null): void
+function qty_cell(string|int|float|bool|null $label, string|bool|null $bold=false, int|string|null $dec=null, string|int|null $id=null): void
 {
 	if (!isset($dec))
 		$dec = get_qty_dec();
@@ -497,14 +497,14 @@ function qty_cell(mixed $label, string|bool|null $bold=false, mixed $dec=null, m
 		label_cell(number_format2($label, $dec), "nowrap align=right", $id);
 }
 
-function label_cells(string|int|float|bool|null $label, mixed $value, string|int|float|bool|null $params="", ?string $params2="", ?string $id=null): void
+function label_cells(string|int|float|bool|null $label, string|int|float|bool|null $value, string|int|float|bool|null $params="", ?string $params2="", ?string $id=null): void
 {
 	if ($label != null)
 		echo "<td $params>$label</td>\n";
 	label_cell($value, $params2, $id);
 }
 
-function label_row(mixed $label, mixed $value, ?string $params="", ?string $params2="", string|int|null $leftfill=0, ?string $id=null): void
+function label_row(string|int|float|bool|null $label, string|int|float|bool|null $value, ?string $params="", ?string $params2="", string|int|null $leftfill=0, ?string $id=null): void
 {
 	echo "<tr>";
 	if ($params == "")

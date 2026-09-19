@@ -974,7 +974,7 @@ function get_js_set_combo_item(): string {
   Setting focus on element $name in $form.
   If $form<0 $name is element id.
 */
-function set_focus(mixed $name, ?int $form_no=0): void {
+function set_focus(string $name, ?int $form_no=0): void {
   global $Ajax;
 	$Ajax->addFocus(true, $name);
     $_POST['_focus'] = $name;

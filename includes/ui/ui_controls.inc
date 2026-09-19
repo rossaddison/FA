@@ -22,7 +22,7 @@
  * @param T $dflt
  * @return ($name is string ? (T is float ? int|float|false : string|array<array-key, mixed>|T) : array<array-key, mixed>)
  */
-function get_post(mixed $name, mixed $dflt='')
+function get_post(string|array $name, string|int|float|bool|array|null $dflt='')
 {
 	if (is_array($name)) {
 		$ret = array();
@@ -103,7 +103,7 @@ function check_csrf_token(): bool
 	return true;
 }
 
-function start_table(mixed $class=false, string|int|float|bool|null $extra="", string|int|null $padding='2', ?string $spacing='0'): void
+function start_table(int|string|bool $class=false, string|int|float|bool|null $extra="", string|int|null $padding='2', ?string $spacing='0'): void
 {
 	echo "<center><table";
 	if ($class == TABLESTYLE_NOBORDER)
@@ -117,7 +117,7 @@ function start_table(mixed $class=false, string|int|float|bool|null $extra="", s
 	echo " cellpadding='$padding' cellspacing='$spacing'>\n";
 }
 
-function end_table(mixed $breaks=0): void
+function end_table(int|bool $breaks=0): void
 {
 	echo "</table></center>\n";
 	output_hidden();
@@ -342,7 +342,7 @@ function hyperlink_params_separate_td(mixed $target, mixed $label, mixed $params
 
 //--------------------------------------------------------------------------------------------------
 
-function alt_table_row_color(&$k, mixed $extra_class=null): void
+function alt_table_row_color(&$k, ?string $extra_class=null): void
 {
 	$classes = $extra_class ? array($extra_class) : array();
 	if ($k == 1)
@@ -363,7 +363,7 @@ function table_section_title(string|int|float|bool|null $msg, ?int $colspan=2): 
 	echo "<tr><td colspan=$colspan class='tableheader'>$msg</td></tr>\n";
 }
 
-function table_header(mixed $labels, ?string $params=''): void
+function table_header(array $labels, ?string $params=''): void
 {
 	start_row();
 	foreach ($labels as $label)

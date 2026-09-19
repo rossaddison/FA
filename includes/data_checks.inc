@@ -593,7 +593,7 @@ function check_int(mixed $postname, mixed $min=null, mixed $max=null): int {
 //	Return 1 if number has proper form and is within <min, max> range
 //	Empty/not defined fields are defaulted to $dflt value.
 //
-function check_num(mixed $postname, mixed $min=null, mixed $max=null, ?int $dflt=0): int {
+function check_num(string $postname, int|float|null $min=null, int|float|null $max=null, ?int $dflt=0): int {
 	if(!isset($_POST[$postname]))
 	  return 0;
     $num = input_num($postname, $dflt);

@@ -30,7 +30,7 @@ $js_static = array('JsHttpRequest.js', 'behaviour.js', 'utils.js', 'inserts.js')
 // additional js source included in header
 $js_lib = $js_userlib = array();
 
-function page(mixed $title, mixed $no_menu=false, mixed $is_index=false, mixed $onload="", mixed $js="", mixed $script_only=false, mixed $css=''): void
+function page(string $title, ?bool $no_menu=false, bool $is_index=false, string $onload="", string $js="", bool $script_only=false, string $css=''): void
 {
 
    	global $path_to_root, $page_security, $page_nested;
@@ -54,7 +54,7 @@ function page(mixed $title, mixed $no_menu=false, mixed $is_index=false, mixed $
 	}
 }
 
-function end_page(mixed $no_menu=false, bool $is_index=false, bool $final_screen=false, mixed $type_no=0, mixed $trans_no=0): void
+function end_page(bool|int|null $no_menu=false, bool $is_index=false, bool $final_screen=false, int|string $type_no=0, int|string|array $trans_no=0): void
 {
 	global $path_to_root, $page_nested;
 

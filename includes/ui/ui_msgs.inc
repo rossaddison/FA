@@ -9,12 +9,12 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function display_error(mixed $msg, mixed $center=true): void
+function display_error(string|int|float|bool|null $msg, bool $center=true): void
 {
 	 fa_trigger_error($msg, E_USER_ERROR);
 }
 
-function display_notification(mixed $msg, int|bool|null $center=true): void
+function display_notification(string|int|float|bool|null $msg, int|bool|null $center=true): void
 {
 	fa_trigger_error($msg, E_USER_NOTICE);
 }

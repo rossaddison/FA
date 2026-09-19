@@ -30,7 +30,7 @@ function update_company_prefs(mixed $params): bool
 	$prefs can be preference name, array of names, or null for all preferences.
 	
 */
-function get_company_pref(mixed $prefs = null)
+function get_company_pref(?string $prefs = null)
 {
 	global $SysPrefs, $db_version;
 
