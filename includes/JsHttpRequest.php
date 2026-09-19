@@ -107,7 +107,7 @@ class JsHttpRequest
             // Check if headers are already sent (see Content-Type library usage).
             // If true - generate a debug message and exit.
             $file = $line = null;
-            $headersSent = version_compare(PHP_VERSION, "4.3.0") < 0? headers_sent() : headers_sent($file, $line);
+            $headersSent = headers_sent($file, $line);
             if ($headersSent) {
                 fa_trigger_error(
                     "HTTP headers are already sent" . ($line !== null? " in $file on line $line" : " somewhere in the script") . ". "

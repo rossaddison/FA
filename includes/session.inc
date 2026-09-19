@@ -24,10 +24,7 @@ class SessionManager
 		$https = isset($secure) ? $secure : (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
 
 		// Set session cookie options
-		if (version_compare(PHP_VERSION, '5.2', '<')) // avoid failure on older php versions
-			session_set_cookie_params($limit, $path, $domain, $https);
-		else
-			session_set_cookie_params($limit, $path, $domain, $https, true);
+		session_set_cookie_params($limit, $path, $domain, $https, true);
 
 		session_start();
 
@@ -307,22 +304,6 @@ function set_page_security($value=null, $trans = array(), $gtrans = array())
 	}
 }
 
-//-----------------------------------------------------------------------------
-//	Removing magic quotes from nested arrays/variables
-//
-function strip_quotes($data)
-{
-	if(version_compare(phpversion(), '5.4', '<') && get_magic_quotes_gpc()) {
-		if(is_array($data)) {
-			foreach($data as $k => $v) {
-				$data[$k] = strip_quotes($data[$k]);
-			}
-		} else
-			return stripslashes($data);
-	}
-	return $data;
-}
-
 /*
 	htmlspecialchars does not support certain encodings.
 	ISO-8859-2 fortunately has the same special characters positions as 
@@ -591,6 +572,4 @@ if (!defined('FA_LOGOUT_PHP_FILE')){
 	}
 }
 
-// POST vars cleanup needed for direct reuse.
 // We quote all values later with db_escape() before db update.
-$_POST = strip_quotes($_POST);

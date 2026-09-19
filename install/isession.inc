@@ -27,20 +27,6 @@ function output_html($text)
 }
 
 //-----------------------------------------------------------------------------
-//	Removing magic quotes from nested arrays/variables
-//
-function strip_quotes($data)
-{
-	if(version_compare(phpversion(), '5.4', '<') && get_magic_quotes_gpc()) {
-		if(is_array($data)) {
-			foreach($data as $k => $v) {
-				$data[$k] = strip_quotes($data[$k]);
-			}
-		} else
-			return stripslashes($data);
-	}
-	return $data;
-}
 
 function html_specials_encode($str)
 {
@@ -181,5 +167,4 @@ html_cleanup($_SERVER);
 
 // POST vars cleanup needed for direct reuse.
 // We quote all values later with db_escape() before db update.
-	$_POST = strip_quotes($_POST);
 

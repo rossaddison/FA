@@ -179,8 +179,7 @@ function js_compress($sJS)
 	
 		//loop through line's characters and take out any literal strings, replace them with ___i___ where i is the index of this string
 		$len = strlen($line);
-		if (version_compare(PHP_VERSION, '7.0.0') >= 0) // uninitialized string offser error fix. @Braath Waate
-			$line .= chr(32);
+		$line .= chr(32); // uninitialized string offset error fix. @Braath Waate
 		
 		for($j=0;$j<$len;$j++)
 		{
@@ -409,20 +408,9 @@ function clean_file_name($filename) {
 */
 function generate_password()
 {
-	if (PHP_VERSION >= '5.3')
-		$bytes = openssl_random_pseudo_bytes(8, $cstrong);
-	else
-		$bytes = sprintf("08%x", mt_rand(0,0xffffffff));
+	$bytes = random_bytes(8);
 
 	return  base64_encode($bytes);
-}
-
-if (!function_exists('array_fill_keys')) // since 5.2
-{
-	function array_fill_keys($keys, $value)
-	{
-		return (object)array_combine($keys, array_fill(count($keys), $value));
-	}
 }
 
 /*
