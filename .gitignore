@@ -19,3 +19,6 @@ installed_extensions.php
 config.php
 config_db.php
 !index.php
+vendor/
+composer.lock
+.psalm-cache/

@@ -1,0 +1,21 @@
+{
+    "name": "frontaccounting/frontaccounting",
+    "description": "FrontAccounting 2.4: web based accounting for small and medium businesses.",
+    "type": "project",
+    "license": "GPL-3.0-or-later",
+    "require": {
+        "php": ">=8.5",
+        "ext-gd": "*",
+        "ext-mbstring": "*",
+        "ext-mysqli": "*"
+    },
+    "require-dev": {
+        "vimeo/psalm": "6.17.2"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "scripts": {
+        "psalm": "psalm --no-cache"
+    }
+}

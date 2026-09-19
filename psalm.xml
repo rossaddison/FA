@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<psalm errorLevel="1" phpVersion="8.5" findUnusedBaselineEntry="false" findUnusedCode="false">
+    <fileExtensions>
+        <extension name=".php"/>
+        <extension name=".inc"/>
+    </fileExtensions>
+    <projectFiles>
+        <directory name="access"/>
+        <directory name="admin"/>
+        <directory name="applications"/>
+        <directory name="dimensions"/>
+        <directory name="fixed_assets"/>
+        <directory name="gl"/>
+        <directory name="includes"/>
+        <directory name="install"/>
+        <directory name="inventory"/>
+        <directory name="manufacturing"/>
+        <directory name="purchasing"/>
+        <directory name="reporting"/>
+        <directory name="sales"/>
+        <directory name="taxes"/>
+        <file name="index.php"/>
+        <file name="frontaccounting.php"/>
+        <file name="version.php"/>
+        <file name="config.default.php"/>
+        <ignoreFiles>
+            <directory name="modules"/>
+            <directory name="tmp"/>
+            <directory name="company"/>
+            <directory name="lang"/>
+            <directory name="themes"/>
+            <directory name="js"/>
+            <directory name="includes/lang"/>
+        </ignoreFiles>
+    </projectFiles>
+</psalm>
