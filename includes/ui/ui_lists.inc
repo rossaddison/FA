@@ -377,7 +377,7 @@ $opts = array(		// default options
 	Helper function.
 	Returns true if selector $name is subject to update.
 */
-function list_updated(mixed $name)
+function list_updated(mixed $name): bool
 {
 	return isset($_POST['_'.$name.'_update']) || isset($_POST['_'.$name.'_button']);
 }

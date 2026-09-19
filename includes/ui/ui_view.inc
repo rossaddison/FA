@@ -886,7 +886,7 @@ function price_in_words(mixed $amount, mixed $document=0)
     return _number_to_words(intval($amount)) . $frac;
 }
 
-function get_js_open_window(mixed $width, mixed $height)
+function get_js_open_window(mixed $width, mixed $height): string
 {
 	$js ="function openWindow(url, title)\n"
 		. "{\n"

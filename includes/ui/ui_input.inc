@@ -24,7 +24,7 @@
 //    If var is found returns variable name with prefix stripped,
 //    and null or -1 otherwise.
 //
-function find_submit(mixed $prefix, mixed $numeric=true)
+function find_submit(mixed $prefix, mixed $numeric=true): int|string|null
 {
 
     foreach($_POST as $postkey=>$postval )
@@ -100,7 +100,7 @@ function input_num(mixed $postname=null, mixed $dflt=0)
 //
 $hidden_fields = array();
 
-function hidden(mixed $name, mixed $value=null, mixed $echo=true)
+function hidden(mixed $name, mixed $value=null, mixed $echo=true): ?string
 {
   	global $Ajax, $hidden_fields;
 	
@@ -109,10 +109,11 @@ function hidden(mixed $name, mixed $value=null, mixed $echo=true)
 	
   	$ret = "<input type=\"hidden\" name=\"$name\" value=\"$value\">";
 	$Ajax->addUpdate($name, $name, $value);
-	if ($echo)
-			$hidden_fields[] = $ret;
-	else
-		return $ret;
+	if ($echo) {
+		$hidden_fields[] = $ret;
+		return null;
+	}
+	return $ret;
 }
 /*
 	Universal submit form button.

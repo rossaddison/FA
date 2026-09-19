@@ -170,7 +170,7 @@ function db_error_msg(mixed $conn)
 	return mysqli_error($conn);
 }
 
-function db_insert_id()
+function db_insert_id(): int|string
 {
 	global $db_last_inserted_id, $SysPrefs, $db;
 

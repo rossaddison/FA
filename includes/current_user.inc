@@ -336,7 +336,7 @@ if (!floatcmp($value1, $value2))
 
 define('FLOAT_COMP_DELTA', 0.004);
 
-function floatcmp(mixed $a, mixed $b)
+function floatcmp(mixed $a, mixed $b): int
 {
     return $a - $b > FLOAT_COMP_DELTA ? 1 : ($b - $a > FLOAT_COMP_DELTA ? -1 : 0);
 }
@@ -445,7 +445,7 @@ function user_qty_dec()
 	return $_SESSION["wa_current_user"]->prefs->qty_dec();
 }
 
-function user_price_dec()
+function user_price_dec(): int|string
 {
 	global $SysPrefs;
 
@@ -530,7 +530,7 @@ function user_theme()
 	return isset($_SESSION["wa_current_user"]) ? $_SESSION["wa_current_user"]->prefs->get_theme() : 'default';
 }
 
-function user_pagesize()
+function user_pagesize(): int|string
 {
 	return $_SESSION["wa_current_user"]->prefs->get_pagesize();
 }
@@ -750,7 +750,7 @@ function flush_dir(mixed $path, mixed $wipe = false): void
 	Returns current path to company private folder.
 	(Current path can change after chdir).
 */
-function company_path(mixed $comp=null)
+function company_path(mixed $comp=null): string
 {
 	global $path_to_root, $SysPrefs;
 

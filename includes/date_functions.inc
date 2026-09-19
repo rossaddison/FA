@@ -48,7 +48,7 @@ function __date(mixed $year, mixed $month, mixed $day)
 		return $year.$sep.$tmonths[$month].$sep.$day;
 }
 
-function is_date(mixed $date_) 
+function is_date(mixed $date_): int 
 {
 	global $SysPrefs;
 
@@ -154,7 +154,7 @@ function is_date(mixed $date_)
 	}
 } //end of is_date function
 
-function Today() 
+function Today(): string 
 {
 	global $SysPrefs;
 
@@ -178,7 +178,7 @@ function Now()
 //
 //	Retrieve and optionaly set default date for new document.
 //
-function new_doc_date(mixed $date=null)
+function new_doc_date(mixed $date=null): string
 {
 	if (isset($date) && $date != '')
 		$_SESSION['_default_date'] = $date;
@@ -189,7 +189,7 @@ function new_doc_date(mixed $date=null)
 	return $_SESSION['_default_date'];
 }
 
-function is_date_in_fiscalyear(mixed $date, mixed $convert=false)
+function is_date_in_fiscalyear(mixed $date, mixed $convert=false): int|bool
 {
 	global $path_to_root;
 	include_once($path_to_root . "/admin/db/fiscalyears_db.inc");
@@ -284,7 +284,7 @@ function end_month(mixed $date)
    	return __date($year, $month, days_in_month($month, $year));
 }
 
-function add_days(mixed $date, mixed $days) // accepts negative values as well
+function add_days(mixed $date, mixed $days): string // accepts negative values as well
 {
 	global $SysPrefs;
     list($day, $month, $year) = explode_date_to_dmy($date);
@@ -345,7 +345,7 @@ function add_years(mixed $date, mixed $years) // accepts negative values as well
 
 //_______________________________________________________________
 
-function sql2date(mixed $date_) 
+function sql2date(mixed $date_): string 
 {
 	global $SysPrefs;
 
@@ -375,7 +375,7 @@ function sql2date(mixed $date_)
 } // end function sql2date
 
 
-function date2sql(mixed $date_)
+function date2sql(mixed $date_): string|int
 {
 	global $SysPrefs, $tmonths;
 /* takes a date in a the format specified in $DefaultDateFormat
