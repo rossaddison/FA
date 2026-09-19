@@ -502,7 +502,7 @@ function &new_db_pager($name, $sql, $coldef, $table = null, $key = null, $page_l
 //
 //	Force pager initialization.
 //
-function refresh_pager($name): void
+function refresh_pager(mixed $name): void
 {
 	if (isset($_SESSION[$name]))
 		$_SESSION[$name]->ready = false;

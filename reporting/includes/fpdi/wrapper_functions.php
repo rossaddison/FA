@@ -25,7 +25,7 @@ if (!defined("PHP_VER_LOWER43"))
 /**
  * ensure that strspn works correct if php-version < 4.3
  */
-function _strspn($str1, $str2, $start=null, $length=null) {
+function _strspn(mixed $str1, mixed $str2, mixed $start=null, mixed $length=null) {
     $numargs = func_num_args();
 
     if (PHP_VER_LOWER43 == 1) {
@@ -49,7 +49,7 @@ function _strspn($str1, $str2, $start=null, $length=null) {
 /**
  * ensure that strcspn works correct if php-version < 4.3
  */
-function _strcspn($str1, $str2, $start=null, $length=null) {
+function _strcspn(mixed $str1, mixed $str2, mixed $start=null, mixed $length=null) {
     $numargs = func_num_args();
 
     if (PHP_VER_LOWER43 == 1) {

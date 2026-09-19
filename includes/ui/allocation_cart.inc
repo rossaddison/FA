@@ -299,7 +299,7 @@ class allocation_item
 
 //--------------------------------------------------------------------------------
 
-function show_allocatable($show_totals): void {
+function show_allocatable(mixed $show_totals): void {
 
 	global $systypes_array;
 	
@@ -440,7 +440,7 @@ function check_allocations()
 //
 //	Returns sales or purchase invoice allocations to be reallocated after invoice edition.
 //
-function get_inv_allocations($trans_no, $trans_type, $person_id)
+function get_inv_allocations(mixed $trans_no, mixed $trans_type, mixed $person_id)
 {
 	$allocs = array();
 	if ($trans_type == ST_SUPPINVOICE || $trans_type == ST_SUPPCREDIT)

@@ -27,43 +27,43 @@ page(_($help_context = "Customer Transactions"), isset($_GET['customer_id']), fa
 
 //------------------------------------------------------------------------------------------------
 
-function systype_name($dummy, $type)
+function systype_name(mixed $dummy, mixed $type)
 {
 	global $systypes_array;
 
 	return $systypes_array[$type];
 }
 
-function order_view($row)
+function order_view(mixed $row)
 {
 	return $row['order_']>0 ?
 		get_customer_trans_view_str(ST_SALESORDER, $row['order_'])
 		: "";
 }
 
-function trans_view($trans)
+function trans_view(mixed $trans)
 {
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
 
-function due_date($row)
+function due_date(mixed $row)
 {
 	return	$row["type"] == ST_SALESINVOICE	? $row["due_date"] : '';
 }
 
-function gl_view($row)
+function gl_view(mixed $row)
 {
 	return get_gl_view_str($row["type"], $row["trans_no"]);
 }
 
-function fmt_amount($row)
+function fmt_amount(mixed $row)
 {
 	$value =
 	    $row['type']==ST_CUSTCREDIT || $row['type']==ST_CUSTPAYMENT || $row['type']==ST_BANKDEPOSIT ? -$row["TotalAmount"] : $row["TotalAmount"];
     return price_format($value);
 }
 
-function credit_link($row)
+function credit_link(mixed $row)
 {
 	global $page_nested;
 
@@ -80,7 +80,7 @@ function credit_link($row)
 	}	
 }
 
-function edit_link($row)
+function edit_link(mixed $row)
 {
 	global $page_nested;
 
@@ -91,7 +91,7 @@ function edit_link($row)
 			trans_editor_link($row['type'], $row['trans_no']);
 }
 
-function copy_link($row)
+function copy_link(mixed $row)
 {
     global $page_nested;
 
@@ -105,7 +105,7 @@ function copy_link($row)
             . $row['order_'], ICON_DOC);
 }
 
-function prt_link($row)
+function prt_link(mixed $row)
 {
   	if ($row['type'] == ST_CUSTPAYMENT || $row['type'] == ST_BANKDEPOSIT) 
 		return print_document_link($row['trans_no']."-".$row['type'], _("Print Receipt"), true, ST_CUSTPAYMENT, ICON_PRINT);
@@ -115,14 +115,14 @@ function prt_link($row)
  		return print_document_link($row['trans_no']."-".$row['type'], _("Print"), true, $row['type'], ICON_PRINT);
 }
 
-function check_overdue($row)
+function check_overdue(mixed $row)
 {
 	return $row['OverDue'] == 1
 		&& floatcmp(ABS($row["TotalAmount"]), $row["Allocated"]) != 0;
 }
 //------------------------------------------------------------------------------------------------
 
-function display_customer_summary($customer_record): void
+function display_customer_summary(mixed $customer_record): void
 {
 	$past1 = get_company_pref('past_due_days');
 	$past2 = 2 * $past1;

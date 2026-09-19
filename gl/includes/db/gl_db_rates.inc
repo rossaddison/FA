@@ -11,7 +11,7 @@
 ***********************************************************************/
 include_once($path_to_root . "/includes/remote_url.inc");
 //---------------------------------------------------------------------------------------------
-function get_exchange_rate($rate_id)
+function get_exchange_rate(mixed $rate_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."exchange_rates WHERE id=".db_escape($rate_id);
 	$result = db_query($sql, "could not get exchange rate for $rate_id");
@@ -20,7 +20,7 @@ function get_exchange_rate($rate_id)
 }
 
 // Retrieves buy exchange rate for given currency/date, zero if no result
-function get_date_exchange_rate($curr_code, $date_)
+function get_date_exchange_rate(mixed $curr_code, mixed $date_)
 {
 	$date = date2sql($date_);
 	$sql = "SELECT rate_buy
@@ -38,7 +38,7 @@ function get_date_exchange_rate($curr_code, $date_)
 /*
 	Return last exchange rate of $currency not later than $date.
 */
-function get_last_exchange_rate($curr_code, $date_)
+function get_last_exchange_rate(mixed $curr_code, mixed $date_)
 {
 	$date = date2sql($date_);
 
@@ -58,7 +58,7 @@ function get_last_exchange_rate($curr_code, $date_)
 
 //---------------------------------------------------------------------------------------------
 
-function update_exchange_rate($curr_code, $date_, $buy_rate, $sell_rate): void
+function update_exchange_rate(mixed $curr_code, mixed $date_, mixed $buy_rate, mixed $sell_rate): void
 {
 	if (is_company_currency($curr_code))
 		display_db_error("Exchange rates cannot be set for company currency", "", true);
@@ -73,7 +73,7 @@ function update_exchange_rate($curr_code, $date_, $buy_rate, $sell_rate): void
 
 //---------------------------------------------------------------------------------------------
 
-function add_exchange_rate($curr_code, $date_, $buy_rate, $sell_rate): void
+function add_exchange_rate(mixed $curr_code, mixed $date_, mixed $buy_rate, mixed $sell_rate): void
 {
 	if (is_company_currency($curr_code))
 		display_db_error("Exchange rates cannot be set for company currency", "", true);
@@ -88,7 +88,7 @@ function add_exchange_rate($curr_code, $date_, $buy_rate, $sell_rate): void
 
 //---------------------------------------------------------------------------------------------
 
-function add_new_exchange_rate($curr_code, $date_, $ex_rate): void
+function add_new_exchange_rate(mixed $curr_code, mixed $date_, mixed $ex_rate): void
 {
 	if (is_company_currency($curr_code) || !$ex_rate)
 		return;
@@ -99,7 +99,7 @@ function add_new_exchange_rate($curr_code, $date_, $ex_rate): void
 
 //---------------------------------------------------------------------------------------------
 
-function delete_exchange_rate($rate_id): void
+function delete_exchange_rate(mixed $rate_id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."exchange_rates WHERE id=".db_escape($rate_id);
 	db_query($sql, "could not delete exchange rate $rate_id");
@@ -112,7 +112,7 @@ function delete_exchange_rate($rate_id): void
 //
 //	amount [home] = amount [curr] * ex_rate
 //
-function retrieve_exrate($curr_b, $date)
+function retrieve_exrate(mixed $curr_b, mixed $date)
 {
 	global $SysPrefs;
 
@@ -126,7 +126,7 @@ function retrieve_exrate($curr_b, $date)
 }
 //-----------------------------------------------------------------------------
 
-function get_extern_rate($curr_b, $provider, $date) 
+function get_extern_rate(mixed $curr_b, mixed $provider, mixed $date) 
 {
 	global	$path_to_root;
 
@@ -248,7 +248,7 @@ function get_extern_rate($curr_b, $provider, $date)
 
 //-----------------------------------------------------------------------------
 
-function get_sql_for_exchange_rates($curr)
+function get_sql_for_exchange_rates(mixed $curr)
 {
 	$sql = "SELECT date_, rate_buy, id
 		FROM ".TB_PREF."exchange_rates "
@@ -257,7 +257,7 @@ function get_sql_for_exchange_rates($curr)
 	return $sql;	 
 }
 
-function getInnerStr($str, $start, $end) 
+function getInnerStr(mixed $str, mixed $start, mixed $end) 
 {
 	// $start must be the first occurrence
 	// $start must not be part of $end

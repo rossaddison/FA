@@ -11,10 +11,10 @@
 ***********************************************************************/
 require_once($path_to_root. "/admin/db/attachments_db.inc");
 
-function add_supplier($supp_name, $supp_ref, $address, $supp_address, $gst_no,
-	$website, $supp_account_no, $bank_account, $credit_limit, $dimension_id, $dimension2_id, 
-	$curr_code, $payment_terms, $payable_account, $purchase_account, $payment_discount_account, 
-	$notes, $tax_group_id, $tax_included): void
+function add_supplier(mixed $supp_name, mixed $supp_ref, mixed $address, mixed $supp_address, mixed $gst_no,
+	mixed $website, mixed $supp_account_no, mixed $bank_account, mixed $credit_limit, mixed $dimension_id, mixed $dimension2_id, 
+	mixed $curr_code, mixed $payment_terms, mixed $payable_account, mixed $purchase_account, mixed $payment_discount_account, 
+	mixed $notes, mixed $tax_group_id, mixed $tax_included): void
 {
 	$sql = "INSERT INTO ".TB_PREF."suppliers (supp_name, supp_ref, address, supp_address, gst_no, website,
 		supp_account_no, bank_account, credit_limit, dimension_id, dimension2_id, curr_code,
@@ -43,10 +43,10 @@ function add_supplier($supp_name, $supp_ref, $address, $supp_address, $gst_no,
 	db_query($sql,"The supplier could not be added");
 }
 
-function update_supplier($supplier_id, $supp_name, $supp_ref, $address, $supp_address, $gst_no, 
-	$website, $supp_account_no, $bank_account, $credit_limit, $dimension_id, $dimension2_id, 
-	$curr_code, $payment_terms, $payable_account, $purchase_account, $payment_discount_account, 
-	$notes, $tax_group_id, $tax_included): void
+function update_supplier(mixed $supplier_id, mixed $supp_name, mixed $supp_ref, mixed $address, mixed $supp_address, mixed $gst_no, 
+	mixed $website, mixed $supp_account_no, mixed $bank_account, mixed $credit_limit, mixed $dimension_id, mixed $dimension2_id, 
+	mixed $curr_code, mixed $payment_terms, mixed $payable_account, mixed $purchase_account, mixed $payment_discount_account, 
+	mixed $notes, mixed $tax_group_id, mixed $tax_included): void
 {
 	$sql = "UPDATE ".TB_PREF."suppliers SET supp_name=".db_escape($supp_name) . ",
 		supp_ref=".db_escape($supp_ref) . ",
@@ -72,7 +72,7 @@ function update_supplier($supplier_id, $supp_name, $supp_ref, $address, $supp_ad
 	db_query($sql,"The supplier could not be updated");
 }
 
-function delete_supplier($supplier_id): void
+function delete_supplier(mixed $supplier_id): void
 {
 	begin_transaction();
 	delete_entity_contacts('supplier', $supplier_id);
@@ -83,7 +83,7 @@ function delete_supplier($supplier_id): void
 	commit_transaction();
 }
 
-function get_supplier_details($supplier_id, $to=null, $all=true)
+function get_supplier_details(mixed $supplier_id, mixed $to=null, mixed $all=true)
 {
 
 	if ($to == null)
@@ -133,7 +133,7 @@ function get_supplier_details($supplier_id, $to=null, $all=true)
     return $supp;
 }
 
-function get_supplier($supplier_id)
+function get_supplier(mixed $supplier_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."suppliers WHERE supplier_id=".db_escape($supplier_id);
 
@@ -142,7 +142,7 @@ function get_supplier($supplier_id)
 	return db_fetch($result);
 }
 
-function get_supplier_name($supplier_id)
+function get_supplier_name(mixed $supplier_id)
 {
 	$sql = "SELECT supp_name AS name FROM ".TB_PREF."suppliers WHERE supplier_id=".db_escape($supplier_id);
 
@@ -153,7 +153,7 @@ function get_supplier_name($supplier_id)
 	return is_array($row) ? $row[0] : false;
 }
 
-function get_supplier_accounts($supplier_id)
+function get_supplier_accounts(mixed $supplier_id)
 {
 	$sql = "SELECT payable_account,purchase_account,payment_discount_account, dimension_id, dimension2_id FROM ".TB_PREF."suppliers WHERE supplier_id=".db_escape($supplier_id);
 
@@ -162,7 +162,7 @@ function get_supplier_accounts($supplier_id)
 	return db_fetch($result);
 }
 
-function get_supplier_contacts($supplier_id, $action=null)
+function get_supplier_contacts(mixed $supplier_id, mixed $action=null)
 {
 	$results = array();
 	$res = get_crm_persons('supplier', $action, $supplier_id);
@@ -172,21 +172,21 @@ function get_supplier_contacts($supplier_id, $action=null)
 	return $results;
 }
 
-function get_current_supp_credit($supplier_id)
+function get_current_supp_credit(mixed $supplier_id)
 {
 	$suppdet = get_supplier_details($supplier_id);
 	return $suppdet['cur_credit'];
 
 }
 
-function is_new_supplier($id)
+function is_new_supplier(mixed $id)
 {
 	$tables = array('supp_trans', 'grn_batch', 'purch_orders', 'purch_data');
 
 	return !key_in_foreign_table($id, $tables, 'supplier_id');
 }
 
-function get_supplier_currency($supplier_id)
+function get_supplier_currency(mixed $supplier_id)
 {
     $sql = "SELECT curr_code FROM ".TB_PREF."suppliers WHERE supplier_id = ".db_escape($supplier_id);
 
@@ -196,7 +196,7 @@ function get_supplier_currency($supplier_id)
 	return $myrow ? $myrow[0] : get_company_currency();
 }
 
-function get_suppliers_search($supplier)
+function get_suppliers_search(mixed $supplier)
 {
 	global $SysPrefs;
 

@@ -14,8 +14,8 @@ require_once($path_to_root. "/admin/db/attachments_db.inc");
 /*
 	Common entry procedure for all work order types
 */
-function add_work_order($wo_ref, $loc_code, $units_reqd, $stock_id,
-	$type, $date_, $required_by, $memo_, $costs, $cr_acc, $labour, $cr_lab_acc)
+function add_work_order(mixed $wo_ref, mixed $loc_code, mixed $units_reqd, mixed $stock_id,
+	mixed $type, mixed $date_, mixed $required_by, mixed $memo_, mixed $costs, mixed $cr_acc, mixed $labour, mixed $cr_lab_acc)
 {
 	global $Refs;
 
@@ -73,8 +73,8 @@ function add_work_order($wo_ref, $loc_code, $units_reqd, $stock_id,
 
 //--------------------------------------------------------------------------------------
 
-function update_work_order($woid, $loc_code, $units_reqd, $stock_id,
-					$date_, $required_by, $memo_): void
+function update_work_order(mixed $woid, mixed $loc_code, mixed $units_reqd, mixed $stock_id,
+					mixed $date_, mixed $required_by, mixed $memo_): void
 {
 	begin_transaction();
 	$args = func_get_args();
@@ -100,7 +100,7 @@ function update_work_order($woid, $loc_code, $units_reqd, $stock_id,
 	commit_transaction();
 }
 
-function delete_work_order($woid, $stock_id, $qty, $date): void
+function delete_work_order(mixed $woid, mixed $stock_id, mixed $qty, mixed $date): void
 {
 	begin_transaction();
 	hook_db_prevoid(ST_WORKORDER, $woid);
@@ -121,7 +121,7 @@ function delete_work_order($woid, $stock_id, $qty, $date): void
 
 //--------------------------------------------------------------------------------------
 
-function get_work_order($woid, $allow_null=false)
+function get_work_order(mixed $woid, mixed $allow_null=false)
 {
     $sql = "SELECT wo.*,st.description As StockItemName,l.location_name,
     		l.delivery_address,l.email, l.contact, st.inventory_account, st.wip_account
@@ -148,7 +148,7 @@ function get_work_order($woid, $allow_null=false)
 
 //--------------------------------------------------------------------------------------
 
-function work_order_has_productions($woid)
+function work_order_has_productions(mixed $woid)
 {
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."wo_manufacture WHERE workorder_id=".db_escape($woid);
 	$result = db_query($sql, "query work order for productions");
@@ -160,7 +160,7 @@ function work_order_has_productions($woid)
 
 //--------------------------------------------------------------------------------------
 
-function work_order_has_issues($woid)
+function work_order_has_issues(mixed $woid)
 {
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."wo_issues WHERE workorder_id=".db_escape($woid);
 	$result = db_query($sql, "query work order for issues");
@@ -171,7 +171,7 @@ function work_order_has_issues($woid)
 
 //--------------------------------------------------------------------------------------
 
-function work_order_has_payments($woid)
+function work_order_has_payments(mixed $woid)
 {
 	$result = get_gl_wo_cost_trans($woid);
 
@@ -180,7 +180,7 @@ function work_order_has_payments($woid)
 
 //--------------------------------------------------------------------------------------
 
-function release_work_order($woid, $releaseDate, $memo_): void
+function release_work_order(mixed $woid, mixed $releaseDate, mixed $memo_): void
 {
 	begin_transaction();
 
@@ -204,7 +204,7 @@ function release_work_order($woid, $releaseDate, $memo_): void
 
 //--------------------------------------------------------------------------------------
 
-function close_work_order($woid): void
+function close_work_order(mixed $woid): void
 {
 	$sql = "UPDATE ".TB_PREF."workorders SET closed=1 WHERE id = ".db_escape($woid);
 	db_query($sql, "could not close work order");
@@ -212,7 +212,7 @@ function close_work_order($woid): void
 
 //--------------------------------------------------------------------------------------
 
-function work_order_is_closed($woid)
+function work_order_is_closed(mixed $woid)
 {
 	$sql = "SELECT closed FROM ".TB_PREF."workorders WHERE id = ".db_escape($woid);
 	$result = db_query($sql, "could not query work order");
@@ -225,7 +225,7 @@ function work_order_is_closed($woid)
 	Update finished items quantity in work order, and close order either if all the order is produced,
 	or on user demand. Returns calculated unit cost on close, or null otherwise.
 */
-function work_order_update_finished_quantity($woid, $quantity, $force_close=0)
+function work_order_update_finished_quantity(mixed $woid, mixed $quantity, mixed $force_close=0)
 {
 
 	$sql = "UPDATE ".TB_PREF."workorders SET units_issued = units_issued + ".db_escape($quantity)."
@@ -241,7 +241,7 @@ function work_order_update_finished_quantity($woid, $quantity, $force_close=0)
 	return db_num_affected_rows();	// returns 1 if WO has been closed
 }
 
-function reopen_work_order($woid): void
+function reopen_work_order(mixed $woid): void
 {
 		// FIXME: update_material_cost
 //		update_material_cost($work_order['stock_id'], -$work_order['units_issued'], ... );
@@ -260,7 +260,7 @@ function reopen_work_order($woid): void
 /*
 	Void all work order related operations
 */
-function void_work_order($woid): void
+function void_work_order(mixed $woid): void
 {
 	begin_transaction();
 	hook_db_prevoid(ST_WORKORDER, $woid);
@@ -300,7 +300,7 @@ function void_work_order($woid): void
 	commit_transaction();
 }
 
-function get_sql_for_work_orders($outstanding_only, $stock_id, $location = ALL_TEXT, $order_no='', $order_ref = '', $overdue = false)
+function get_sql_for_work_orders(mixed $outstanding_only, mixed $stock_id, mixed $location = ALL_TEXT, mixed $order_no='', mixed $order_ref = '', mixed $overdue = false)
 {
 	$sql = "SELECT
 		workorder.id,
@@ -362,7 +362,7 @@ function get_sql_for_work_orders($outstanding_only, $stock_id, $location = ALL_T
 	return $sql;
 }
 
-function get_sql_for_where_used($stock_id)
+function get_sql_for_where_used(mixed $stock_id)
 {
 	$sql = "SELECT 
 			bom.parent,
@@ -381,7 +381,7 @@ function get_sql_for_where_used($stock_id)
 	return $sql;
 }
 //--------------------------------------------------------------------------------------
-function get_gl_wo_cost($woid, $cost_type)
+function get_gl_wo_cost(mixed $woid, mixed $cost_type)
 {
 	$cost = 0;
 	$result = get_gl_wo_cost_trans($woid, $cost_type);

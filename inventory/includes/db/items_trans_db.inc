@@ -11,8 +11,8 @@
 ***********************************************************************/
 //-------------------------------------------------------------------------------------------------------------
 
-function stock_cost_update($stock_id, $material_cost, $labour_cost, $overhead_cost,
-	$last_cost, $refline, $memo_)
+function stock_cost_update(mixed $stock_id, mixed $material_cost, mixed $labour_cost, mixed $overhead_cost,
+	mixed $last_cost, mixed $refline, mixed $memo_)
 {
 	$mb_flag = get_mb_flag($stock_id);
 

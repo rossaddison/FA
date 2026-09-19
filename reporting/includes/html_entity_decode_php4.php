@@ -58,7 +58,7 @@
  * @param $num unicode value to convert.
  * @return string converted
  */
-function code_to_utf8($num) {
+function code_to_utf8(mixed $num) {
 	if ($num <= 0x7F) {
 		return chr($num);
 	} elseif ($num <= 0x7FF) {
@@ -77,7 +77,7 @@ function code_to_utf8($num) {
  * @param $text_to_convert Text to convert.
  * @return string converted
  */
-function html_entity_decode_php4($text_to_convert) {
+function html_entity_decode_php4(mixed $text_to_convert) {
 	$htmlentities_table = array (
 		"&Aacute;" => "".chr(195).chr(129)."",
 		"&aacute;" => "".chr(195).chr(161)."",

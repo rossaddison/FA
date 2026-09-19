@@ -50,14 +50,14 @@ if(get_post('RefreshInquiry'))
 	$Ajax->activate('totals_tbl');
 }
 
-function gl_view($row)
+function gl_view(mixed $row)
 {
   	$row = get_fixed_asset_move($row['stock_id'], ST_JOURNAL);
 
 	return get_gl_view_str(ST_JOURNAL, $row["trans_no"]);
 }
 
-function fa_prepare_row($row) {
+function fa_prepare_row(mixed $row) {
   	$purchase = get_fixed_asset_purchase($row['stock_id']);
   	if ($purchase !== false) {
     	$row['purchase_date'] = $purchase['tran_date'];
@@ -82,19 +82,19 @@ function fa_prepare_row($row) {
   	return $row;
 }
 
-function fa_link($row)
+function fa_link(mixed $row)
 {
   	$url = "inventory/manage/items.php?FixedAsset=1&stock_id=".$row['stock_id'];
 
   	return viewer_link($row['stock_id'], $url);
 }
 
-function depr_method_title($row) {
+function depr_method_title(mixed $row) {
   	global $depreciation_methods;
   	return $depreciation_methods[$row['depreciation_method']];
 }
 
-function depr_par($row) {
+function depr_par(mixed $row) {
 	if ($row['depreciation_method'] == 'D')
 		return $row['depreciation_rate']*$row['depreciation_factor'].'%';
 	elseif ($row['depreciation_method'] == 'N')
@@ -104,7 +104,7 @@ function depr_par($row) {
 		return $row['depreciation_rate'].'%';
 }
 
-function status_title($row) {
+function status_title(mixed $row) {
 
    	if ($row['inactive'] || ($row['disposal_date'] !== NULL))
 		return _("Disposed"); // disposed or saled
@@ -115,7 +115,7 @@ function status_title($row) {
 
 }
 
-function purchase_link($row)
+function purchase_link(mixed $row)
 {
 
   	if ($row['purchase_date'] === NULL)
@@ -124,7 +124,7 @@ function purchase_link($row)
   	return get_supplier_trans_view_str(ST_SUPPINVOICE, $row["purchase_no"], sql2date($row["purchase_date"]));
 }
 
-function disposal_link($row)
+function disposal_link(mixed $row)
 {
   	if ($row['disposal_date'] === NULL)
     	return "";
@@ -139,17 +139,17 @@ function disposal_link($row)
   	}
 }
 
-function amount_link($row)
+function amount_link(mixed $row)
 {
     return price_format($row['purchase_cost']);
 }
 
-function depr_link($row)
+function depr_link(mixed $row)
 {
     return price_format($row['purchase_cost'] - $row['material_cost']);
 }
 
-function balance_link($row)
+function balance_link(mixed $row)
 {
     return price_format($row['material_cost']);
 }

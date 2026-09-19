@@ -25,7 +25,7 @@ if (user_use_date_picker())
 
 page(_($help_context = "Create and Print Recurrent Invoices"), false, false, "", $js);
 
-function create_recurrent_invoices($customer_id, $branch_id, $order_no, $tmpl_no, $date, $from, $to, $memo)
+function create_recurrent_invoices(mixed $customer_id, mixed $branch_id, mixed $order_no, mixed $tmpl_no, mixed $date, mixed $from, mixed $to, mixed $memo)
 {
 	global $Refs, $SysPrefs;
 
@@ -66,7 +66,7 @@ function create_recurrent_invoices($customer_id, $branch_id, $order_no, $tmpl_no
 	return $invno;
 }
 
-function calculate_from($myrow)
+function calculate_from(mixed $myrow)
 {
 	if ($myrow["last_sent"] == '0000-00-00')
 		$from = sql2date($myrow["begin"]);
@@ -75,7 +75,7 @@ function calculate_from($myrow)
 	return $from;
 }
 
-function calculate_next($myrow)
+function calculate_next(mixed $myrow)
 {
 	if ($myrow["last_sent"] == '0000-00-00')
 		$next = sql2date($myrow["begin"]);

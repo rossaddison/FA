@@ -32,8 +32,8 @@ include_once($path_to_root . "/sales/includes/db/customers_db.inc");
 // $date_ is display date (non-sql)
 // $amount is in CUSTOMER'S currency
 
-function add_gl_trans_customer($type, $type_no, $date_, $account, $dimension, $dimension2,
-	$amount, $customer_id, $err_msg="", $rate=0)
+function add_gl_trans_customer(mixed $type, mixed $type_no, mixed $date_, mixed $account, mixed $dimension, mixed $dimension2,
+	mixed $amount, mixed $customer_id, mixed $err_msg="", mixed $rate=0)
 {
 	if ($err_msg == "")
 		$err_msg = "The customer GL transaction could not be inserted";
@@ -45,7 +45,7 @@ function add_gl_trans_customer($type, $type_no, $date_, $account, $dimension, $d
 
 //----------------------------------------------------------------------------------------
 
-function get_calculated_price($stock_id, $add_pct)
+function get_calculated_price(mixed $stock_id, mixed $add_pct)
 {
 	$avg = get_unit_cost($stock_id);
 	if ($avg == 0)
@@ -53,7 +53,7 @@ function get_calculated_price($stock_id, $add_pct)
 	return round2($avg * (1 + $add_pct / 100), user_price_dec());
 }
 
-function round_to_nearest($price, $round_to)
+function round_to_nearest(mixed $price, mixed $round_to)
 {
 	if ($price == 0)
 		return 0;
@@ -70,7 +70,7 @@ function round_to_nearest($price, $round_to)
 
 }
 
-function get_price ($stock_id, $currency, $sales_type_id, $factor=null, $date=null)
+function get_price (mixed $stock_id, mixed $currency, mixed $sales_type_id, mixed $factor=null, mixed $date=null)
 {
 	if ($date == null)
 	    $date = new_doc_date();
@@ -138,8 +138,8 @@ function get_price ($stock_id, $currency, $sales_type_id, $factor=null, $date=nu
 //  When $std==true price is calculated as a sum of all included stock items,
 //	otherwise all prices set for kits and items are accepted.
 //
-function get_kit_price($item_code, $currency, $sales_type_id, $factor=null, 
-	$date=null, $std = false)
+function get_kit_price(mixed $item_code, mixed $currency, mixed $sales_type_id, mixed $factor=null, 
+	mixed $date=null, mixed $std = false)
 {
 	$kit_price = 0.00;
 	if (!$std) {
@@ -169,7 +169,7 @@ function get_kit_price($item_code, $currency, $sales_type_id, $factor=null,
 }
 
 //--------------------------------------------------------------------------------------------------
-function update_parent_line($doc_type, $line_id, $qty_dispatched, $auto=false)
+function update_parent_line(mixed $doc_type, mixed $line_id, mixed $qty_dispatched, mixed $auto=false)
 {
 	$doc_type = get_parent_type($doc_type);
 
@@ -220,7 +220,7 @@ function get_location(&$cart)
 //
 //	$trans_no - array of trans nums; special case trans_no==0 - new doc
 //
-function read_sales_trans($doc_type, $trans_no, &$cart)
+function read_sales_trans(mixed $doc_type, mixed $trans_no, &$cart)
 {
 	if (!is_array($trans_no) && $trans_no)
 		$trans_no = array($trans_no);
@@ -288,7 +288,7 @@ function read_sales_trans($doc_type, $trans_no, &$cart)
 }
 //----------------------------------------------------------------------------------------
 
-function get_sales_child_lines($trans_type, $trans_no, $lines=true)
+function get_sales_child_lines(mixed $trans_type, mixed $trans_no, mixed $lines=true)
 {
 	if (!($ctype = get_child_type($trans_type)))
 		return false;
@@ -317,7 +317,7 @@ function get_sales_child_lines($trans_type, $trans_no, $lines=true)
 	return db_query($sql, "can't retrieve child trans");
 }
 
-function get_sales_child_numbers($trans_type, $trans_no)
+function get_sales_child_numbers(mixed $trans_type, mixed $trans_no)
 {
 	$trans = array();
 	$res = get_sales_child_lines($trans_type, $trans_no, false);
@@ -327,7 +327,7 @@ function get_sales_child_numbers($trans_type, $trans_no)
 	return $trans;
 }
 
-function get_sales_parent_lines($trans_type, $trans_no, $lines=true)
+function get_sales_parent_lines(mixed $trans_type, mixed $trans_no, mixed $lines=true)
 {
 	$partype = get_parent_type($trans_type);
 
@@ -353,7 +353,7 @@ function get_sales_parent_lines($trans_type, $trans_no, $lines=true)
 
 }
 
-function get_sales_parent_numbers($trans_type, $trans_no)
+function get_sales_parent_numbers(mixed $trans_type, mixed $trans_no)
 {
 	$trans = array();
 	$res = get_sales_parent_lines($trans_type, $trans_no, false);
@@ -364,7 +364,7 @@ function get_sales_parent_numbers($trans_type, $trans_no)
 
 //----------------------------------------------------------------------------------------
 
-function get_sales_child_documents($trans_type, $trans_no)
+function get_sales_child_documents(mixed $trans_type, mixed $trans_no)
 {
 	// FIXME -  credit notes retrieved here should be those linked to invoices containing 
 	// at least one line from related invoice

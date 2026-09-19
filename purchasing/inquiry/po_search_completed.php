@@ -25,12 +25,12 @@ if (user_use_date_picker())
 page(_($help_context = "Search Purchase Orders"), false, false, "", $js);
 
 //---------------------------------------------------------------------------------------------
-function trans_view($trans)
+function trans_view(mixed $trans)
 {
 	return get_trans_view_str(ST_PURCHORDER, $trans["order_no"]);
 }
 
-function edit_link($row) 
+function edit_link(mixed $row) 
 {
 	global $page_nested;
 
@@ -38,7 +38,7 @@ function edit_link($row)
 		trans_editor_link(ST_PURCHORDER, $row["order_no"]);
 }
 
-function receive_link($row) 
+function receive_link(mixed $row) 
 {
 	global $page_nested;
 	
@@ -47,7 +47,7 @@ function receive_link($row)
 			"/purchasing/po_receive_items.php?PONumber=" . $row["order_no"], ICON_RECEIVE);
 }
 
-function prt_link($row)
+function prt_link(mixed $row)
 {
 	return print_document_link($row['order_no'], _("Print"), true, ST_PURCHORDER, ICON_PRINT);
 }

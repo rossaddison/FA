@@ -11,8 +11,8 @@
 ***********************************************************************/
 //----------------------------------------------------------------------------------------
 
-function add_supp_allocation($amount, $trans_type_from, $trans_no_from,
-	$trans_type_to, $trans_no_to, $person_id, $date_): void
+function add_supp_allocation(mixed $amount, mixed $trans_type_from, mixed $trans_no_from,
+	mixed $trans_type_to, mixed $trans_no_to, mixed $person_id, mixed $date_): void
 {
 	$date = date2sql($date_);
 	$sql = "INSERT INTO ".TB_PREF."supp_allocations (
@@ -28,7 +28,7 @@ function add_supp_allocation($amount, $trans_type_from, $trans_no_from,
 //----------------------------------------------------------------------------------------
 
 
-function delete_supp_allocation($trans_id): void
+function delete_supp_allocation(mixed $trans_id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."supp_allocations WHERE id = ".db_escape($trans_id);
 	db_query($sql, "The existing allocation $trans_id could not be deleted");
@@ -36,7 +36,7 @@ function delete_supp_allocation($trans_id): void
 
 //----------------------------------------------------------------------------------------
 
-function get_supp_trans_allocation_balance($trans_type, $trans_no)
+function get_supp_trans_allocation_balance(mixed $trans_type, mixed $trans_no)
 {
 	$sql = "SELECT (ov_amount+ov_gst-ov_discount-alloc) AS BalToAllocate
 		FROM ".TB_PREF."supp_trans WHERE trans_no="
@@ -50,7 +50,7 @@ function get_supp_trans_allocation_balance($trans_type, $trans_no)
 //----------------------------------------------------------------------------------------
 //	Update supplier trans alloc field according to current status of supp_allocations
 //
-function update_supp_trans_allocation($trans_type, $trans_no, $person_id): void
+function update_supp_trans_allocation(mixed $trans_type, mixed $trans_no, mixed $person_id): void
 {
 	$dec = user_price_dec();
 	$sql = "UPDATE `".TB_PREF.($trans_type==ST_PURCHORDER ? 'purch_orders' : 'supp_trans')."` trans,
@@ -68,14 +68,14 @@ function update_supp_trans_allocation($trans_type, $trans_no, $person_id): void
 
 //-------------------------------------------------------------------------------------------------------------
 
-function void_supp_allocations($type, $type_no, $date="")
+function void_supp_allocations(mixed $type, mixed $type_no, mixed $date="")
 {
 	return clear_supp_alloctions($type, $type_no, null, $date);
 }
 
 //-------------------------------------------------------------------------------------------------------------
 
-function clear_supp_alloctions($type, $type_no, $person_id=null, $date=""): void
+function clear_supp_alloctions(mixed $type, mixed $type_no, mixed $person_id=null, mixed $date=""): void
 {
 	$sql = "UPDATE  ".TB_PREF."supp_allocations ca
 				LEFT JOIN ".TB_PREF."supp_trans paym ON ca.trans_type_from=paym.type AND ca.trans_no_from=paym.trans_no AND ca.person_id=paym.supplier_id
@@ -101,7 +101,7 @@ function clear_supp_alloctions($type, $type_no, $person_id=null, $date=""): void
 }
 //-------------------------------------------------------------------------------------------------------------
 
-function get_allocatable_from_supp_sql($supplier_id, $settled)
+function get_allocatable_from_supp_sql(mixed $supplier_id, mixed $settled)
 {
 	$sql = "SELECT
 		trans.type,
@@ -131,7 +131,7 @@ function get_allocatable_from_supp_sql($supplier_id, $settled)
 	return $sql;
 }
 
-function get_allocatable_purch_orders($supplier_id = null, $trans_no=null, $type=null)
+function get_allocatable_purch_orders(mixed $supplier_id = null, mixed $trans_no=null, mixed $type=null)
 {
 	$due_dates = "SELECT order_no, MIN(delivery_date) as date
 		FROM ".TB_PREF."purch_order_details det
@@ -176,7 +176,7 @@ function get_allocatable_purch_orders($supplier_id = null, $trans_no=null, $type
 }
 //-------------------------------------------------------------------------------------------------------------
 
-function get_allocatable_to_supp_transactions($supplier_id=null, $trans_no=null, $type=null)
+function get_allocatable_to_supp_transactions(mixed $supplier_id=null, mixed $trans_no=null, mixed $type=null)
 {
 	$sql = "SELECT
 		trans.type,
@@ -221,7 +221,7 @@ function get_allocatable_to_supp_transactions($supplier_id=null, $trans_no=null,
 
 //-------------------------------------------------------------------------------------------------------------
 
-function get_allocatable_from_supp_transactions($supplier_id, $trans_no=null, $type=null)
+function get_allocatable_from_supp_transactions(mixed $supplier_id, mixed $trans_no=null, mixed $type=null)
 {
 	$sql = "SELECT
 		trans.type,

@@ -13,7 +13,7 @@
 	item_codes table is used to store both multiply foreign codes (aliases) and 
 	sales kits definition.
 */
-function update_item_code($id, $item_code, $stock_id, $description, $category, $qty, $foreign=0): void
+function update_item_code(mixed $id, mixed $item_code, mixed $stock_id, mixed $description, mixed $category, mixed $qty, mixed $foreign=0): void
 {
 	$sql = "UPDATE ".TB_PREF."item_codes SET
 	 	item_code = ".db_escape($item_code).",
@@ -33,7 +33,7 @@ function update_item_code($id, $item_code, $stock_id, $description, $category, $
 	db_query($sql,"an item code could not be updated");
 }
 
-function add_item_code($item_code, $stock_id, $description, $category, $qty, $foreign=0): void
+function add_item_code(mixed $item_code, mixed $stock_id, mixed $description, mixed $category, mixed $qty, mixed $foreign=0): void
 {
 	$sql = "INSERT INTO ".TB_PREF."item_codes
 			(item_code, stock_id, description, category_id, quantity, is_foreign) 
@@ -44,13 +44,13 @@ function add_item_code($item_code, $stock_id, $description, $category, $qty, $fo
 	db_query($sql,"an item code could not be added");
 }
 
-function delete_item_code($id): void
+function delete_item_code(mixed $id): void
 {
 	$sql="DELETE FROM ".TB_PREF."item_codes WHERE id=".db_escape($id);
 	db_query($sql,"an item code could not be deleted");
 }
 
-function get_item_code($id)
+function get_item_code(mixed $id)
 {
 	$sql="SELECT * FROM ".TB_PREF."item_codes WHERE id=".db_escape($id);
 
@@ -59,7 +59,7 @@ function get_item_code($id)
 	return db_fetch($result);
 }
 
-function get_all_item_codes($stock_id, $foreign=1)
+function get_all_item_codes(mixed $stock_id, mixed $foreign=1)
 {
 	$sql="SELECT i.*, c.description as cat_name FROM "
 		.TB_PREF."item_codes as i,"
@@ -73,13 +73,13 @@ function get_all_item_codes($stock_id, $foreign=1)
 	return $result;
 }
 
-function delete_item_kit($item_code): void
+function delete_item_kit(mixed $item_code): void
 {
 	$sql="DELETE FROM ".TB_PREF."item_codes WHERE item_code=".db_escape($item_code);
 	db_query($sql,"an item kit could not be deleted");
 }
 
-function get_item_kit($item_code)
+function get_item_kit(mixed $item_code)
 {
 	$sql="SELECT DISTINCT kit.*, item.units, comp.description as comp_name 
 		FROM "
@@ -98,7 +98,7 @@ function get_item_kit($item_code)
 	return $result;
 }
 
-function get_item_code_dflts($stock_id)
+function get_item_code_dflts(mixed $stock_id)
 {
 	$sql = "SELECT units, decimals, description, category_id
 		FROM ".TB_PREF."stock_master,".TB_PREF."item_units
@@ -110,7 +110,7 @@ function get_item_code_dflts($stock_id)
 //
 //	Check if kit contains given item, optionally recursive.
 //
-function check_item_in_kit($old_id, $kit_code, $item_code, $recurse=false)
+function check_item_in_kit(mixed $old_id, mixed $kit_code, mixed $item_code, mixed $recurse=false)
 {
 	$result = get_item_kit($kit_code);
 	if ($result)
@@ -135,7 +135,7 @@ function check_item_in_kit($old_id, $kit_code, $item_code, $recurse=false)
 	return 0;
 }
 
-function get_kit_props($kit_code)
+function get_kit_props(mixed $kit_code)
 {
 	$sql = "SELECT description, category_id FROM ".TB_PREF."item_codes "
 		. " WHERE item_code=".db_escape($kit_code);
@@ -143,7 +143,7 @@ function get_kit_props($kit_code)
 	return db_fetch($res);
 }
 
-function update_kit_props($kit_code, $name, $category): void
+function update_kit_props(mixed $kit_code, mixed $name, mixed $category): void
 {
 	$sql = "UPDATE ".TB_PREF."item_codes SET description="
 		. db_escape($name).",category_id=".db_escape($category)
@@ -151,7 +151,7 @@ function update_kit_props($kit_code, $name, $category): void
 	db_query($sql, "kit name update failed");
 }
 
-function get_where_used($item_code)
+function get_where_used(mixed $item_code)
 {
 	$sql = "SELECT item_code, description FROM "
 		.TB_PREF."item_codes "

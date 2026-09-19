@@ -30,7 +30,7 @@ $js_static = array('JsHttpRequest.js', 'behaviour.js', 'utils.js', 'inserts.js')
 // additional js source included in header
 $js_lib = $js_userlib = array();
 
-function page($title, $no_menu=false, $is_index=false, $onload="", $js="", $script_only=false, $css=''): void
+function page(mixed $title, mixed $no_menu=false, mixed $is_index=false, mixed $onload="", mixed $js="", mixed $script_only=false, mixed $css=''): void
 {
 
    	global $path_to_root, $page_security, $page_nested;
@@ -54,7 +54,7 @@ function page($title, $no_menu=false, $is_index=false, $onload="", $js="", $scri
 	}
 }
 
-function end_page($no_menu=false, $is_index=false, $final_screen=false, $type_no=0, $trans_no=0): void
+function end_page(mixed $no_menu=false, mixed $is_index=false, mixed $final_screen=false, mixed $type_no=0, mixed $trans_no=0): void
 {
 	global $path_to_root, $page_nested;
 
@@ -79,14 +79,14 @@ function css_files_ensure_init(): void {
 	}
 }
 
-function add_css_file($filename): void
+function add_css_file(mixed $filename): void
 {
 	global $css_files;
 	css_files_ensure_init();
 	$css_files[] = $filename;
 }
 
-function cache_js_file($fpath, $text) 
+function cache_js_file(mixed $fpath, mixed $text) 
 {
 	global $SysPrefs;
 
@@ -102,7 +102,7 @@ function cache_js_file($fpath, $text)
 /*
 	Open file for writing with creration of subfolders if needed.
 */
-function force_open($fname)
+function force_open(mixed $fname)
 {
 	$file = pathinfo($fname);
 
@@ -120,7 +120,7 @@ function force_open($fname)
 	return fopen($fname, 'w');
 }
 
-function add_js_file($filename): void 
+function add_js_file(mixed $filename): void 
 {
 	  global $js_static;
 
@@ -129,7 +129,7 @@ function add_js_file($filename): void
 		$js_static[] = $filename;	
 }
 
-function add_js_ufile($filename): void 
+function add_js_ufile(mixed $filename): void 
 {
 	  global $js_userlib;
 
@@ -138,7 +138,7 @@ function add_js_ufile($filename): void
 		$js_userlib[] = $filename;
 }
 
-function add_js_source($text): void 
+function add_js_source(mixed $text): void 
 {
 	  global $js_lib;
 
@@ -154,7 +154,7 @@ function add_js_source($text): void
  * Added removing comments from output.
  * Warning: Fails on RegExp with quotes - use new RegExp() in this case.
  */
-function js_compress($sJS)
+function js_compress(mixed $sJS)
 {
 	//remove windows cariage returns
 	$sJS = str_replace("\r","",$sJS);
@@ -303,7 +303,7 @@ function js_compress($sJS)
 	Check if file can be updated, restoring subdirectories 
 	if needed. Returns 1 when no confilcts, -1 when file exists and is writable
 */
-function check_write($path)
+function check_write(mixed $path)
 {
 	if ($path == ''//|| $path == '.' || $path == '..'
 	) return 0;
@@ -317,7 +317,7 @@ function check_write($path)
 	also removes files from the $to which 
 	does not exists in $from directory but arelisted in $flist.
 */
-function copy_files($flist, $from, $to, $strict=false)
+function copy_files(mixed $flist, mixed $from, mixed $to, mixed $strict=false)
 {
 	foreach ($flist as $file) {
 		if (file_exists($from.'/'.$file)) {
@@ -334,7 +334,7 @@ function copy_files($flist, $from, $to, $strict=false)
 	Copies file from base to target directory, restoring subdirectories 
 	if needed.
 */
-function copy_file($file, $from, $to)
+function copy_file(mixed $file, mixed $from, mixed $to)
 {
 
 	if (!is_dir(dirname($file=='.' ? $to : ($to.'/'.$file)))) {
@@ -358,7 +358,7 @@ function copy_file($file, $from, $to)
 	
 	Returns found file path or null.
 */
-function find_custom_file($rep)
+function find_custom_file(mixed $rep)
 {
 	global $installed_extensions, $path_to_root, $local_path_to_root;
 
@@ -398,7 +398,7 @@ function find_custom_file($rep)
 	Protect against directory traversal.
 	Changes all not POSIX compatible chars to underscore.
 */
-function clean_file_name($filename) {
+function clean_file_name(mixed $filename) {
     $filename = str_replace(chr(0), '', $filename);
     return preg_replace('/[^a-zA-Z0-9.\-_]/', '_', $filename);
 }
@@ -417,7 +417,7 @@ function generate_password()
 	This function aims to generate cryptographically strong random identifier.
 	Result identifier has length 4[strength/8/3] 
 */
-function random_id($strength = 128)
+function random_id(mixed $strength = 128)
 {
 	$n = ceil($strength/8);
 

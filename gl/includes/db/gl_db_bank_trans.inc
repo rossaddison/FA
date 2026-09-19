@@ -15,8 +15,8 @@
 // $amount is in $currency
 // $date_ is display date (non-sql)
 
-function add_bank_trans($type, $trans_no, $bank_act, $ref, $date_,
-	$amount, $person_type_id, $person_id, $currency="", $err_msg="", $rate=0): void
+function add_bank_trans(mixed $type, mixed $trans_no, mixed $bank_act, mixed $ref, mixed $date_,
+	mixed $amount, mixed $person_type_id, mixed $person_id, mixed $currency="", mixed $err_msg="", mixed $rate=0): void
 {
 	$sqlDate = date2sql($date_);
 
@@ -49,7 +49,7 @@ function add_bank_trans($type, $trans_no, $bank_act, $ref, $date_,
 
 //----------------------------------------------------------------------------------------
 
-function exists_bank_trans($type, $type_no)
+function exists_bank_trans(mixed $type, mixed $type_no)
 {
 	$sql = "SELECT trans_no
 		FROM ".TB_PREF."bank_trans
@@ -62,7 +62,7 @@ function exists_bank_trans($type, $type_no)
 
 //----------------------------------------------------------------------------------------
 
-function get_bank_trans($type, $trans_no=null, $person_type_id=null, $person_id=null)
+function get_bank_trans(mixed $type, mixed $trans_no=null, mixed $person_type_id=null, mixed $person_id=null)
 {
 	$sql = "SELECT bt.*, act.*,
 		IFNULL(abs(dt.ov_amount), IFNULL(ABS(st.ov_amount), bt.amount)) settled_amount,
@@ -91,7 +91,7 @@ function get_bank_trans($type, $trans_no=null, $person_type_id=null, $person_id=
 
 //----------------------------------------------------------------------------------------
 
-function get_bank_trans_for_bank_account($bank_account, $from, $to)
+function get_bank_trans_for_bank_account(mixed $bank_account, mixed $from, mixed $to)
 {
 	$from = date2sql($from);
 	$to = date2sql($to);
@@ -110,7 +110,7 @@ function get_bank_trans_for_bank_account($bank_account, $from, $to)
 
 //----------------------------------------------------------------------------------------
 
-function get_balance_before_for_bank_account($bank_account, $from)
+function get_balance_before_for_bank_account(mixed $bank_account, mixed $from)
 {
 	$from = date2sql($from);
 	$sql = "SELECT SUM(amount)
@@ -123,7 +123,7 @@ function get_balance_before_for_bank_account($bank_account, $from)
 }
 //----------------------------------------------------------------------------------------
 
-function get_gl_trans_value($account, $type, $trans_no)
+function get_gl_trans_value(mixed $account, mixed $type, mixed $trans_no)
 {
 	$sql = "SELECT SUM(amount)
 		FROM ".TB_PREF."gl_trans
@@ -139,7 +139,7 @@ function get_gl_trans_value($account, $type, $trans_no)
 
 //----------------------------------------------------------------------------------------
 
-function void_bank_trans($type, $type_no, $nested=false): void
+function void_bank_trans(mixed $type, mixed $type_no, mixed $nested=false): void
 {
 
 	if (!$nested)
@@ -172,7 +172,7 @@ function void_bank_trans($type, $type_no, $nested=false): void
 *	Returns null or transaction in conflict. Running balance is checked on daily basis only, to enable ID change after edition.
 *	$delta_amount - tested change in bank balance at $date.
 **/
-function check_bank_account_history($delta_amount, $bank_account, $date=null, $user=null, $balance_offset = 0)
+function check_bank_account_history(mixed $delta_amount, mixed $bank_account, mixed $date=null, mixed $user=null, mixed $balance_offset = 0)
 {
 	if ($delta_amount >= 0 && isset($date))
 		 return null;	// amount increase is always safe
@@ -215,7 +215,7 @@ function check_bank_account_history($delta_amount, $bank_account, $date=null, $u
 /**
 *	Check bank transfer, deposit or customer deposit before voiding.
 **/
-function check_void_bank_trans($type, $type_no)
+function check_void_bank_trans(mixed $type, mixed $type_no)
 {
 	$moves = get_bank_trans($type, $type_no);
 	while ($trans = db_fetch($moves)) {

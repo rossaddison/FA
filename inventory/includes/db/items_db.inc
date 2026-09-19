@@ -11,12 +11,12 @@
 ***********************************************************************/
 require_once($path_to_root. "/admin/db/attachments_db.inc");
 
-function update_item($stock_id, $description, $long_description, $category_id, 
-	$tax_type_id, $units, $mb_flag, $sales_account, $inventory_account, 
-	$cogs_account, 	$adjustment_account, $wip_account, $dimension_id, 
-	$dimension2_id, $no_sale, $editable, $no_purchase,
-	$depreciation_method = 'D', $depreciation_rate=100, $depreciation_factor=1,
-	$depreciation_start=null, $fa_class_id=null): void
+function update_item(mixed $stock_id, mixed $description, mixed $long_description, mixed $category_id, 
+	mixed $tax_type_id, mixed $units, mixed $mb_flag, mixed $sales_account, mixed $inventory_account, 
+	mixed $cogs_account, 	mixed $adjustment_account, mixed $wip_account, mixed $dimension_id, 
+	mixed $dimension2_id, mixed $no_sale, mixed $editable, mixed $no_purchase,
+	mixed $depreciation_method = 'D', mixed $depreciation_rate=100, mixed $depreciation_factor=1,
+	mixed $depreciation_start=null, mixed $fa_class_id=null): void
 {
 	$sql = "UPDATE ".TB_PREF."stock_master SET long_description=".db_escape($long_description).",
 		description=".db_escape($description).",
@@ -55,12 +55,12 @@ function update_item($stock_id, $description, $long_description, $category_id,
 	update_item_code(-1, $stock_id, $stock_id, $description, $category_id, 1, 0);
 }
 
-function add_item($stock_id, $description, $long_description, $category_id, 
-	$tax_type_id, $units, $mb_flag,	$sales_account, $inventory_account, 
-	$cogs_account, $adjustment_account,	$wip_account, $dimension_id, 
-	$dimension2_id, $no_sale, $editable, $no_purchase,
-	$depreciation_method='D', $depreciation_rate=100,  $depreciation_factor=1, $depreciation_start=null,
-	$fa_class_id=null): void
+function add_item(mixed $stock_id, mixed $description, mixed $long_description, mixed $category_id, 
+	mixed $tax_type_id, mixed $units, mixed $mb_flag,	mixed $sales_account, mixed $inventory_account, 
+	mixed $cogs_account, mixed $adjustment_account,	mixed $wip_account, mixed $dimension_id, 
+	mixed $dimension2_id, mixed $no_sale, mixed $editable, mixed $no_purchase,
+	mixed $depreciation_method='D', mixed $depreciation_rate=100,  mixed $depreciation_factor=1, mixed $depreciation_start=null,
+	mixed $fa_class_id=null): void
 {
 	$sql = "INSERT INTO ".TB_PREF."stock_master (stock_id, description, long_description, category_id,
 		tax_type_id, units, mb_flag, sales_account, inventory_account, cogs_account,
@@ -92,7 +92,7 @@ function add_item($stock_id, $description, $long_description, $category_id,
 	add_item_code($stock_id, $stock_id, $description, $category_id, 1, 0);
 }
 
-function delete_item($stock_id): void
+function delete_item(mixed $stock_id): void
 {
 
 	/*cascade deletes in loc_stock */
@@ -120,7 +120,7 @@ function delete_item($stock_id): void
 	delete_item_kit($stock_id);
 }
 
-function get_item($stock_id)
+function get_item(mixed $stock_id)
 {
 	$sql = "SELECT item.*, taxtype.name AS tax_type_name
 		FROM ".TB_PREF."stock_master item,"
@@ -132,13 +132,13 @@ function get_item($stock_id)
 	return db_fetch_assoc($result);
 }
 
-function get_items($fixed_asset = 0)
+function get_items(mixed $fixed_asset = 0)
 {
 	$sql = "SELECT * FROM ".TB_PREF."stock_master WHERE fixed_asset=".db_escape($fixed_asset);
 	return db_query($sql,"items could not be retreived");
 }
 
-function item_in_foreign_codes($stock_id)
+function item_in_foreign_codes(mixed $stock_id)
 {
 	$sqls=  array(
 	"SELECT COUNT(*) FROM "
@@ -186,7 +186,7 @@ function item_in_foreign_codes($stock_id)
 	return $msg;
 }
 
-function get_items_search($description, $type)
+function get_items_search(mixed $description, mixed $type)
 {
 	global $SysPrefs;
 
@@ -234,7 +234,7 @@ function get_items_search($description, $type)
 	return db_query($sql, "Failed in retreiving item list.");
 }
 
-function get_item_code_id($stock_id)
+function get_item_code_id(mixed $stock_id)
 {
 	$sql = "SELECT ic.id
 		FROM ".TB_PREF."item_codes ic, ".TB_PREF."stock_master sm

@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_gl_account($account_code, $account_name, $account_type, $account_code2)
+function add_gl_account(mixed $account_code, mixed $account_name, mixed $account_type, mixed $account_code2)
 {
 	$sql = "INSERT INTO ".TB_PREF."chart_master (account_code, account_code2, account_name, account_type)
 		VALUES (".db_escape($account_code).", ".db_escape($account_code2).", "
@@ -18,7 +18,7 @@ function add_gl_account($account_code, $account_name, $account_type, $account_co
 	return db_query($sql);
 }
 
-function update_gl_account($account_code, $account_name, $account_type, $account_code2)
+function update_gl_account(mixed $account_code, mixed $account_name, mixed $account_type, mixed $account_code2)
 {
     $sql = "UPDATE ".TB_PREF."chart_master SET account_name=".db_escape($account_name)
     .",account_type=".db_escape($account_type).", account_code2=".db_escape($account_code2)
@@ -27,14 +27,14 @@ function update_gl_account($account_code, $account_name, $account_type, $account
 	return db_query($sql);
 }
 
-function delete_gl_account($code): void
+function delete_gl_account(mixed $code): void
 {
 	$sql = "DELETE FROM ".TB_PREF."chart_master WHERE account_code=".db_escape($code);
 
 	db_query($sql, "could not delete gl account");
 }
 
-function get_gl_accounts($from=null, $to=null, $type=null)
+function get_gl_accounts(mixed $from=null, mixed $to=null, mixed $type=null)
 {
 	$sql = "SELECT coa.*, act_type.name AS AccountTypeName
 		FROM "
@@ -52,7 +52,7 @@ function get_gl_accounts($from=null, $to=null, $type=null)
 	return db_query($sql, "could not get gl accounts");
 }
 
-function get_gl_account($code)
+function get_gl_account(mixed $code)
 {
 	$sql = "SELECT * FROM ".TB_PREF."chart_master WHERE account_code=".db_escape($code);
 
@@ -60,7 +60,7 @@ function get_gl_account($code)
 	return db_fetch($result);
 }
 
-function is_account_balancesheet($code)
+function is_account_balancesheet(mixed $code)
 {
 	$sql = "SELECT act_class.ctype
 		FROM "
@@ -76,7 +76,7 @@ function is_account_balancesheet($code)
 	return $row[0] > 0 && $row[0] < CL_INCOME;
 }
 
-function get_gl_account_name($code)
+function get_gl_account_name(mixed $code)
 {
 	$sql = "SELECT account_name from ".TB_PREF."chart_master WHERE account_code=".db_escape($code);
 
@@ -91,7 +91,7 @@ function get_gl_account_name($code)
 	display_db_error("could not retreive the account name for $code", $sql, true);
 }
 
-function gl_account_in_company_defaults($acc)
+function gl_account_in_company_defaults(mixed $acc)
 {
 	$sql= "SELECT COUNT(*) 
 	FROM ".TB_PREF."sys_prefs
@@ -119,7 +119,7 @@ function gl_account_in_company_defaults($acc)
 	return ($myrow[0] > 0); 
 }
 
-function gl_account_in_stock_category($acc)
+function gl_account_in_stock_category(mixed $acc)
 {
 	$acc = db_escape($acc);
 
@@ -135,7 +135,7 @@ function gl_account_in_stock_category($acc)
 	return ($myrow[0] > 0); 
 }
 
-function gl_account_in_stock_master($acc)
+function gl_account_in_stock_master(mixed $acc)
 {
 	$acc = db_escape($acc);
 
@@ -151,7 +151,7 @@ function gl_account_in_stock_master($acc)
 	return ($myrow[0] > 0); 
 }
 
-function gl_account_in_tax_types($acc)
+function gl_account_in_tax_types(mixed $acc)
 {
 	$acc = db_escape($acc);
 
@@ -165,7 +165,7 @@ function gl_account_in_tax_types($acc)
 	return ($myrow[0] > 0); 
 }
 
-function gl_account_in_cust_branch($acc)
+function gl_account_in_cust_branch(mixed $acc)
 {
 	$acc = db_escape($acc);
 
@@ -181,7 +181,7 @@ function gl_account_in_cust_branch($acc)
 	return ($myrow[0] > 0); 
 }
 
-function gl_account_in_suppliers($acc)
+function gl_account_in_suppliers(mixed $acc)
 {
 	$acc = db_escape($acc);
 
@@ -196,7 +196,7 @@ function gl_account_in_suppliers($acc)
 	return ($myrow[0] > 0); 
 }
 
-function gl_account_in_quick_entry_lines($acc)
+function gl_account_in_quick_entry_lines(mixed $acc)
 {
 	$acc = db_escape($acc);
 
@@ -213,7 +213,7 @@ function gl_account_in_quick_entry_lines($acc)
 //	Returns n>0 when account is AR, n<0 when account is AP
 //  (priority for AR accounts)
 //
-function is_subledger_account($account)
+function is_subledger_account(mixed $account)
 {
 	$sql = "SELECT 1 
 		FROM ".TB_PREF."cust_branch
@@ -228,7 +228,7 @@ function is_subledger_account($account)
 	return $myrow == false ? 0 : $myrow[0];
 }
 
-function get_subaccount_data($code_id, $person_id)
+function get_subaccount_data(mixed $code_id, mixed $person_id)
 {
 	$sql = "SELECT debtor_ref as name, branch_code as id 
 		FROM ".TB_PREF."cust_branch branch 
@@ -244,7 +244,7 @@ function get_subaccount_data($code_id, $person_id)
 	return  db_fetch($result);
 }
 
-function get_subaccount_name($code_id, $person_id)
+function get_subaccount_name(mixed $code_id, mixed $person_id)
 {
 	$sql = "SELECT debtor_ref as ref
 		FROM ".TB_PREF."cust_branch branch
@@ -261,7 +261,7 @@ function get_subaccount_name($code_id, $person_id)
 	return  $row ? $row['ref'] : '';
 }
 
-function gl_account_in_bank_accounts($acc)
+function gl_account_in_bank_accounts(mixed $acc)
 {
 	$sql= "SELECT COUNT(*) FROM ".TB_PREF."bank_accounts WHERE 
 		account_code=".db_escape($acc);
@@ -279,7 +279,7 @@ function gl_account_in_bank_accounts($acc)
 //	because we have no way to select right bank account if 
 //	there is more than one using given gl account.
 //
-function is_bank_account($account_code)
+function is_bank_account(mixed $account_code)
 {
 	$sql= "SELECT id FROM ".TB_PREF."bank_accounts WHERE account_code=".db_escape($account_code);
 	$result = db_query($sql, "checking account is bank account");
@@ -290,7 +290,7 @@ function is_bank_account($account_code)
 		return false;
 }
 
-function get_chart_accounts_search($like, $skip=false)
+function get_chart_accounts_search(mixed $like, mixed $skip=false)
 {
 	global $SysPrefs;
 

@@ -88,36 +88,36 @@ end_row();
 end_table();
 
 //-----------------------------------------------------------------------------
-function check_overdue($row)
+function check_overdue(mixed $row)
 {
 	return (!$row["closed"] 
 		&& date_diff2(Today(), sql2date($row["required_by"]), "d") > 0);
 }
 
-function view_link($dummy, $order_no)
+function view_link(mixed $dummy, mixed $order_no)
 {
 	return get_trans_view_str(ST_WORKORDER, $order_no);
 }
 
-function view_stock($row)
+function view_stock(mixed $row)
 {
 	return view_stock_status($row["stock_id"], $row["description"], false);
 }
 
-function wo_type_name($dummy, $type)
+function wo_type_name(mixed $dummy, mixed $type)
 {
 	global $wo_types_array;
 	
 	return $wo_types_array[$type];
 }
 
-function edit_link($row)
+function edit_link(mixed $row)
 {
 	return  $row['closed'] ? '<i>'._('Closed').'</i>' :
 		trans_editor_link(ST_WORKORDER, $row["id"]);
 }
 
-function release_link($row)
+function release_link(mixed $row)
 {
 	return $row["closed"] ? '' : 
 		($row["released"]==0 ?
@@ -128,31 +128,31 @@ function release_link($row)
 			"/manufacturing/work_order_issue.php?trans_no=" .$row["id"]));
 }
 
-function produce_link($row)
+function produce_link(mixed $row)
 {
 	return $row["closed"] || !$row["released"] ? '' :
 		pager_link(_('Produce'),
 			"/manufacturing/work_order_add_finished.php?trans_no=" .$row["id"]);
 }
 
-function costs_link($row)
+function costs_link(mixed $row)
 {
 	return $row["closed"] || !$row["released"] ? '' :
 		pager_link(_('Costs'),
 			"/manufacturing/work_order_costs.php?trans_no=" .$row["id"]);
 }
 
-function view_gl_link($row)
+function view_gl_link(mixed $row)
 {
 	return get_gl_view_str(ST_WORKORDER, $row['id']);
 }
 
-function prt_link($row)
+function prt_link(mixed $row)
 {
 	return print_document_link($row['id'], _("Print"), true, ST_WORKORDER, ICON_PRINT);
 }
 
-function dec_amount($row, $amount)
+function dec_amount(mixed $row, mixed $amount)
 {
 	return number_format2($amount, $row['decimals']);
 }

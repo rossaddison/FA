@@ -32,8 +32,8 @@ include_once($path_to_root . "/purchasing/includes/db/suppliers_db.inc");
 // $date_ is display date (non-sql)
 // $amount is in SUPPLIERS'S currency
 
-function add_gl_trans_supplier($type, $type_no, $date_, $account, $dimension, $dimension2,  
-	$amount, $supplier_id, $err_msg="", $rate=0, $memo="")
+function add_gl_trans_supplier(mixed $type, mixed $type_no, mixed $date_, mixed $account, mixed $dimension, mixed $dimension2,  
+	mixed $amount, mixed $supplier_id, mixed $err_msg="", mixed $rate=0, mixed $memo="")
 {
 	if ($err_msg == "")
 		$err_msg = "The supplier GL transaction could not be inserted";	
@@ -45,7 +45,7 @@ function add_gl_trans_supplier($type, $type_no, $date_, $account, $dimension, $d
 
 //----------------------------------------------------------------------------------------
 
-function get_purchase_price($supplier_id, $stock_id)
+function get_purchase_price(mixed $supplier_id, mixed $stock_id)
 {
 	$sql = "SELECT price, conversion_factor FROM ".TB_PREF."purch_data 
 		WHERE supplier_id = ".db_escape($supplier_id) . " 
@@ -63,7 +63,7 @@ function get_purchase_price($supplier_id, $stock_id)
 	}	
 }
 
-function get_purchase_conversion_factor($supplier_id, $stock_id)
+function get_purchase_conversion_factor(mixed $supplier_id, mixed $stock_id)
 {
 	$sql = "SELECT conversion_factor FROM ".TB_PREF."purch_data 
 		WHERE supplier_id = ".db_escape($supplier_id)." 
@@ -82,7 +82,7 @@ function get_purchase_conversion_factor($supplier_id, $stock_id)
 }
 //----------------------------------------------------------------------------------------
 
-function get_purchase_data($supplier_id, $stock_id)
+function get_purchase_data(mixed $supplier_id, mixed $stock_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."purch_data 
 		WHERE supplier_id = ".db_escape($supplier_id) . "
@@ -92,7 +92,7 @@ function get_purchase_data($supplier_id, $stock_id)
 	return db_fetch($result);
 }
 
-function add_or_update_purchase_data($supplier_id, $stock_id, $price, $description="", $uom="")
+function add_or_update_purchase_data(mixed $supplier_id, mixed $stock_id, mixed $price, mixed $description="", mixed $uom="")
 {
 	$data = get_purchase_data($supplier_id, $stock_id);
 
@@ -117,7 +117,7 @@ function add_or_update_purchase_data($supplier_id, $stock_id, $price, $descripti
 	return true;
 }
 
-function get_po_prepayments($supp_trans)
+function get_po_prepayments(mixed $supp_trans)
 {
 	// collect purchase order line ids
 	$allocations = array();
@@ -148,7 +148,7 @@ function get_po_prepayments($supp_trans)
 //
 //	Add Purchase Order, GRN or Purchase Invoice with parent auto documents (if any)
 //
-function add_direct_supp_trans($cart)
+function add_direct_supp_trans(mixed $cart)
 {
 	global $Refs, $type_shortcuts;
 

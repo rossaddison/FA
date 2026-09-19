@@ -187,7 +187,7 @@ if (isset($_POST['go']) || isset($_POST['show']))
 	}
 }
 
-function frequency_list_row($label, $name, $selected=null): void
+function frequency_list_row(mixed $label, mixed $name, mixed $selected=null): void
 {
 	echo "<tr>\n";
 	label_cell($label, "class='label'");

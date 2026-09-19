@@ -12,7 +12,7 @@
 define('VARLIB_PATH', $path_to_root.'/tmp');
 define('VARLOG_PATH', $path_to_root.'/tmp');
 
-function output_html($text)
+function output_html(mixed $text)
 {
 	global $before_box, $Ajax, $messages;
 	// Fatal errors are not send to error_handler,
@@ -28,7 +28,7 @@ function output_html($text)
 
 //-----------------------------------------------------------------------------
 
-function html_specials_encode($str)
+function html_specials_encode(mixed $str)
 {
 	return htmlspecialchars($str, ENT_QUOTES, $_SESSION['language']->encoding=='iso-8859-2' ? 'ISO-8859-1' : $_SESSION['language']->encoding);
 }
@@ -44,14 +44,14 @@ function html_cleanup(&$parms): void
 	reset($parms); // needed for direct key() usage later throughout the sources
 }
 
-function check_page_security($page_security): void
+function check_page_security(mixed $page_security): void
 {
 }
 
 /*
  Ensure file is re-read on next request if php caching is active
 */
-function cache_invalidate($filename): void
+function cache_invalidate(mixed $filename): void
 {
     if (function_exists('opcache_invalidate')) // OpCode extension
         opcache_invalidate($filename);

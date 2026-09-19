@@ -27,7 +27,7 @@ include_once($path_to_root . "/includes/ui.inc");
 simple_page_mode(true);
 
 //---------------------------------------------------------------------------------------------
-function local_extension($id)
+function local_extension(mixed $id)
 {
 	global $next_extension_id, $Ajax, $path_to_root;
 
@@ -66,7 +66,7 @@ function local_extension($id)
 	return true;
 }
 
-function handle_delete($id)
+function handle_delete(mixed $id)
 {
 	global $path_to_root;
 	
@@ -93,7 +93,7 @@ function handle_delete($id)
 //
 // Display list of all extensions - installed and available from repository
 //
-function display_extensions($mods): void
+function display_extensions(mixed $mods): void
 {
 	global $installed_extensions;
 	
@@ -153,7 +153,7 @@ function display_extensions($mods): void
 // Get all installed extensions and display
 // with current status stored in company directory.
 //
-function company_extensions($id): void
+function company_extensions(mixed $id): void
 {
 	start_table(TABLESTYLE);
 	

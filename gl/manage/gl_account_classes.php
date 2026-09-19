@@ -68,7 +68,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 //-----------------------------------------------------------------------------------
 
-function can_delete($selected_id)
+function can_delete(mixed $selected_id)
 {
 	if ($selected_id == "")
 		return false;

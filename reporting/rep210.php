@@ -30,7 +30,7 @@ include_once($path_to_root . "/includes/db/crm_contacts_db.inc");
 print_remittances();
 
 //----------------------------------------------------------------------------------------------------
-function get_remittance($type, $trans_no)
+function get_remittance(mixed $type, mixed $trans_no)
 {
    	$sql = "SELECT trans.*, 
    		(trans.ov_amount+trans.ov_gst) AS Total,

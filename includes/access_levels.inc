@@ -319,7 +319,7 @@ function add_access_extensions(): void
 	}
 }
 
-function check_edit_access($name)
+function check_edit_access(mixed $name)
 {
 	global $input_security;
 
@@ -336,7 +336,7 @@ function check_edit_access($name)
 /*
 	Returns POST value or null if edit access to $name control is forbidden.
 */
-function access_post($name, $dflt=null)
+function access_post(mixed $name, mixed $dflt=null)
 {
 	if (!check_edit_access($name))
 		return $dflt;
@@ -347,7 +347,7 @@ function access_post($name, $dflt=null)
 /*
 	Returns numeric input value or null if edit access to $name control is forbidden.
 */
-function access_num($name, $dflt=null)
+function access_num(mixed $name, mixed $dflt=null)
 {
 	if (!check_edit_access($name))
 		return $dflt;

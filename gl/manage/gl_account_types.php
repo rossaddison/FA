@@ -25,7 +25,7 @@ if (isset($_GET["cid"]))
 simple_page_mode(false);
 //-----------------------------------------------------------------------------------
 
-function can_process($selected_id) 
+function can_process(mixed $selected_id) 
 {
 	if (strlen(trim($_POST['id'])) == 0) 
 	{
@@ -81,7 +81,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 //-----------------------------------------------------------------------------------
 
-function can_delete($type)
+function can_delete(mixed $type)
 {
 	if ($type == "")
 		return false;

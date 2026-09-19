@@ -29,7 +29,7 @@ include_once($path_to_root . "/sales/includes/db/customers_db.inc");
 
 print_customer_balances();
 
-function get_open_balance($debtorno, $to)
+function get_open_balance(mixed $debtorno, mixed $to)
 {
 	if($to)
 		$to = date2sql($to);
@@ -54,7 +54,7 @@ function get_open_balance($debtorno, $to)
     return db_fetch($result);
 }
 
-function get_transactions($debtorno, $from, $to)
+function get_transactions(mixed $debtorno, mixed $from, mixed $to)
 {
 	$from = date2sql($from);
 	$to = date2sql($to);

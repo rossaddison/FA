@@ -12,7 +12,7 @@
 /*
 	If no context is set current page/menu screen is selected.
 */
-function help_url($context=null)
+function help_url(mixed $context=null)
 {
 
 	global $SysPrefs, $help_context;
@@ -46,7 +46,7 @@ function help_url($context=null)
 		.'&ctxhelp=1&lang='.$country);
 }
 
-function send_css($css = ''): void
+function send_css(mixed $css = ''): void
 {
 	global $css_files;
 
@@ -87,7 +87,7 @@ function send_scripts(): void
     echo $js;
 }
 
-function page_header($title, $no_menu=false, $is_index=false, $onload="", $js="", $css=''): void
+function page_header(mixed $title, mixed $no_menu=false, mixed $is_index=false, mixed $onload="", mixed $js="", mixed $css=''): void
 {
 	// titles and screen header
 	global $path_to_root, $SysPrefs, $db_connections;

@@ -28,7 +28,7 @@ check_db_has_stock_items(_("There are no items defined in the system."));
 simple_page_mode(true);
 
 //--------------------------------------------------------------------------------------------------
-function display_kit_items($selected_kit): void
+function display_kit_items(mixed $selected_kit): void
 {
 	$result = get_item_kit($selected_kit);
 	div_start('bom');
@@ -59,7 +59,7 @@ function display_kit_items($selected_kit): void
 
 //--------------------------------------------------------------------------------------------------
 
-function update_kit($selected_kit, $component_id)
+function update_kit(mixed $selected_kit, mixed $component_id)
 {
 	global $Mode, $Ajax;
 

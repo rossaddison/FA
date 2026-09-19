@@ -10,7 +10,7 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-function add_tag($type, $name, $description)
+function add_tag(mixed $type, mixed $name, mixed $description)
 {
 	$sql = "INSERT INTO ".TB_PREF."tags (type, name, description)
 		VALUES (".db_escape($type).", ".db_escape($name).", ".db_escape($description).")";
@@ -20,7 +20,7 @@ function add_tag($type, $name, $description)
 
 //--------------------------------------------------------------------------------------
 
-function update_tag($id, $name, $description, $type=null)
+function update_tag(mixed $id, mixed $name, mixed $description, mixed $type=null)
 {
 	$sql = "UPDATE ".TB_PREF."tags SET name=".db_escape($name).", 
                                        description=".db_escape($description);
@@ -34,7 +34,7 @@ function update_tag($id, $name, $description, $type=null)
 
 //--------------------------------------------------------------------------------------
 
-function get_tags($type, $all=false)
+function get_tags(mixed $type, mixed $all=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."tags WHERE type=".db_escape($type);
 	
@@ -47,7 +47,7 @@ function get_tags($type, $all=false)
 
 //--------------------------------------------------------------------------------------
 
-function get_tag($id)
+function get_tag(mixed $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."tags WHERE id = ".db_escape($id);
 
@@ -58,7 +58,7 @@ function get_tag($id)
 
 //--------------------------------------------------------------------------------------
 
-function get_tag_type($id)
+function get_tag_type(mixed $id)
 {
 	$sql = "SELECT type FROM ".TB_PREF."tags WHERE id = ".db_escape($id);
 
@@ -70,7 +70,7 @@ function get_tag_type($id)
 
 //--------------------------------------------------------------------------------------
 
-function get_tag_name($id)
+function get_tag_name(mixed $id)
 {
 	$sql = "SELECT name FROM ".TB_PREF."tags WHERE id = ".db_escape($id);
 
@@ -81,7 +81,7 @@ function get_tag_name($id)
 }
 
 //----------------------------------------------------------------------------------------------------
-function get_tag_names($tags)
+function get_tag_names(mixed $tags)
 {
 	$str = "";
 	if ($tags == -1)
@@ -98,7 +98,7 @@ function get_tag_names($tags)
 }
 //--------------------------------------------------------------------------------------
 
-function get_tag_description($id)
+function get_tag_description(mixed $id)
 {
 	$sql = "SELECT description FROM ".TB_PREF."tags WHERE id = ".db_escape($id);
 
@@ -110,7 +110,7 @@ function get_tag_description($id)
 
 //--------------------------------------------------------------------------------------
 
-function delete_tag($id): void
+function delete_tag(mixed $id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."tags WHERE id = ".db_escape($id);
 
@@ -119,7 +119,7 @@ function delete_tag($id): void
 
 //--------------------------------------------------------------------------------------
 
-function add_tag_associations($recordid, $tagids): void
+function add_tag_associations(mixed $recordid, mixed $tagids): void
 {
 	foreach($tagids as $tagid) {
 		if (!$tagid) continue;
@@ -132,7 +132,7 @@ function add_tag_associations($recordid, $tagids): void
 
 //--------------------------------------------------------------------------------------
 
-function update_tag_associations($type, $recordid, $tagids): void
+function update_tag_associations(mixed $type, mixed $recordid, mixed $tagids): void
 {
 	// Delete the old associations
 	delete_tag_associations($type, $recordid, false);
@@ -144,7 +144,7 @@ function update_tag_associations($type, $recordid, $tagids): void
 // To delete tag associations, we need to specify the tag type.
 // Otherwise we may inadvertantly delete records for another type of tag
 //
-function delete_tag_associations($type, $recordid, $all=false): void
+function delete_tag_associations(mixed $type, mixed $recordid, mixed $all=false): void
 {
 /* multiply table DELETE syntax available since MySQL 4.0.0:
 	$sql = "DELETE ta FROM ".TB_PREF."tag_associations ta 
@@ -168,7 +168,7 @@ function delete_tag_associations($type, $recordid, $all=false): void
 
 //--------------------------------------------------------------------------------------
 
-function get_records_associated_with_tag($id)
+function get_records_associated_with_tag(mixed $id)
 {
 	// Which table we query is based on the tag type
 	$type = get_tag_type($id);
@@ -195,7 +195,7 @@ function get_records_associated_with_tag($id)
 
 //--------------------------------------------------------------------------------------
 
-function get_tags_associated_with_record($type, $recordid)
+function get_tags_associated_with_record(mixed $type, mixed $recordid)
 {
 	$sql = "SELECT tags.* FROM ".TB_PREF."tag_associations AS ta 
 				INNER JOIN ".TB_PREF."tags AS tags ON tags.id = ta.tag_id 
@@ -206,7 +206,7 @@ function get_tags_associated_with_record($type, $recordid)
 
 //--------------------------------------------------------------------------------------
 
-function is_record_in_tags($tags, $type, $recordid)
+function is_record_in_tags(mixed $tags, mixed $type, mixed $recordid)
 {
 	foreach($tags as $id)
 	{

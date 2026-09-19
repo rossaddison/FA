@@ -11,7 +11,7 @@
 ***********************************************************************/
 //--------------------------------------------------------------------------------------------------
 
-function get_comments($type, $type_no)
+function get_comments(mixed $type, mixed $type_no)
 {
 	$sql = "SELECT * FROM ".TB_PREF."comments WHERE type="
 		.db_escape($type)." AND id=".db_escape($type_no);
@@ -21,7 +21,7 @@ function get_comments($type, $type_no)
 
 //--------------------------------------------------------------------------------------------------
 
-function add_comments($type, $type_no, $date_, $memo_): void
+function add_comments(mixed $type, mixed $type_no, mixed $date_, mixed $memo_): void
 {
 	if ($memo_ != null && $memo_ != "")
 	{
@@ -36,7 +36,7 @@ function add_comments($type, $type_no, $date_, $memo_): void
 
 //--------------------------------------------------------------------------------------------------
 
-function update_comments($type, $id, $date_, $memo_): void
+function update_comments(mixed $type, mixed $id, mixed $date_, mixed $memo_): void
 {
 	if ($date_ == null)
 	{
@@ -55,7 +55,7 @@ function update_comments($type, $id, $date_, $memo_): void
 
 //--------------------------------------------------------------------------------------------------
 
-function delete_comments($type, $type_no): void
+function delete_comments(mixed $type, mixed $type_no): void
 {
 	$sql = "DELETE FROM ".TB_PREF."comments WHERE type=".db_escape($type)
 		." AND id=".db_escape($type_no);

@@ -45,7 +45,7 @@ function check_date() {
 //	This function can be used directly in table pager 
 //	if we would like to change page layout.
 //
-function rec_checkbox($row)
+function rec_checkbox(mixed $row)
 {
 	$name = "rec_" .$row['id'];
 	$hidden = 'last['.$row['id'].']';
@@ -56,41 +56,41 @@ function rec_checkbox($row)
  		. hidden($hidden, $value, false);
 }
 
-function systype_name($dummy, $type)
+function systype_name(mixed $dummy, mixed $type)
 {
 	global $systypes_array;
 	
 	return $systypes_array[$type];
 }
 
-function trans_view($trans)
+function trans_view(mixed $trans)
 {
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
 
-function gl_view($row)
+function gl_view(mixed $row)
 {
 	return get_gl_view_str($row["type"], $row["trans_no"]);
 }
 
-function fmt_debit($row)
+function fmt_debit(mixed $row)
 {
 	$value = $row["amount"];
 	return $value>=0 ? price_format($value) : '';
 }
 
-function fmt_credit($row)
+function fmt_credit(mixed $row)
 {
 	$value = -$row["amount"];
 	return $value>0 ? price_format($value) : '';
 }
 
-function fmt_person($trans)
+function fmt_person(mixed $trans)
 {
 	return get_counterparty_name($trans["type"], $trans["trans_no"]);
 }
 
-function fmt_memo($row)
+function fmt_memo(mixed $row)
 {
 	$value = $row["memo_"];
 	return $value;
@@ -107,7 +107,7 @@ function update_data(): void
 //---------------------------------------------------------------------------------------------
 // Update db record if respective checkbox value has changed.
 //
-function change_tpl_flag($reconcile_id)
+function change_tpl_flag(mixed $reconcile_id)
 {
 	global	$Ajax;
 
@@ -130,7 +130,7 @@ function change_tpl_flag($reconcile_id)
 	return true;
 }
 
-function set_tpl_flag($reconcile_id): void
+function set_tpl_flag(mixed $reconcile_id): void
 {
 	global	$Ajax;
 

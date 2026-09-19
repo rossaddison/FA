@@ -150,23 +150,23 @@ if ($Mode == 'RESET' || get_post('_customer_id_update'))
 	$Ajax->activate('_page_body');
 }
 
-function branch_email($row) {
+function branch_email(mixed $row) {
 	return	'<a href = "mailto:'.$row["email"].'">'.$row["email"].'</a>';
 }
 
-function edit_link($row) {
+function edit_link(mixed $row) {
 	return button("Edit".$row["branch_code"],_("Edit"), '', ICON_EDIT);
 }
 
-function del_link($row) {
+function del_link(mixed $row) {
 	return button("Delete".$row["branch_code"],_("Delete"), '', ICON_DELETE);
 }
 
-function select_link($row) {
+function select_link(mixed $row) {
 	return button("Select".$row["branch_code"], $row["branch_code"], '', ICON_ADD, 'selector');
 }
 
-function branch_settings($selected_id, $num_branches): void {
+function branch_settings(mixed $selected_id, mixed $num_branches): void {
 	global $Mode;
 
 	start_outer_table(TABLESTYLE2);

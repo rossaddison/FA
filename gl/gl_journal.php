@@ -95,7 +95,7 @@ elseif (isset($_GET['ModifyGL']))
 	create_cart($_GET['trans_type'], $_GET['trans_no']);
 }
 
-function create_cart($type=0, $trans_no=0): void
+function create_cart(mixed $type=0, mixed $trans_no=0): void
 {
 	global $Refs;
 
@@ -433,7 +433,7 @@ function handle_update_item(): void
 
 //-----------------------------------------------------------------------------------------------
 
-function handle_delete_item($id): void
+function handle_delete_item(mixed $id): void
 {
 	$_SESSION['journal_items']->remove_gl_item($id);
    	unset($_SESSION['journal_items']->tax_info);

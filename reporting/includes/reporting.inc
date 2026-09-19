@@ -14,8 +14,8 @@
 // or display_note(print_document_link($order_no, _("Print this order")));
 // You only need full parameter list for invoices/credit notes
 
-function print_document_link($doc_no, $link_text, $link, $type_no, 
-	$icon=false, $class='printlink', $id='', $email=0, $extra=0)
+function print_document_link(mixed $doc_no, mixed $link_text, mixed $link, mixed $type_no, 
+	mixed $icon=false, mixed $class='printlink', mixed $id='', mixed $email=0, mixed $extra=0)
 {
 	global $path_to_root;
 	include_once($path_to_root . "/includes/types.inc");
@@ -136,8 +136,8 @@ function print_document_link($doc_no, $link_text, $link, $type_no,
 //
 //	Universal link to any kind of report.
 //
-function print_link($link_text, $rep, $pars = array(), $dir = '', 
-	$icon=false, $class='printlink', $id='')
+function print_link(mixed $link_text, mixed $rep, mixed $pars = array(), mixed $dir = '', 
+	mixed $icon=false, mixed $class='printlink', mixed $id='')
 {
 	global $path_to_root, $SysPrefs;
 	$url = $dir == '' ?  $path_to_root.'/reporting/prn_redirect.php?' : $dir;
@@ -179,7 +179,7 @@ An example of usage will be in the reporting/rep110.php file at near the end jus
     }
 */
 
-function parse_notes_params($str, $sep=" ", $delim="#") {
+function parse_notes_params(mixed $str, mixed $sep=" ", mixed $delim="#") {
     $str_params = explode($sep, $str);
     $param_array=Array('notes' => '');
     foreach ($str_params AS $str_param) {

@@ -218,7 +218,7 @@ class hooks {
 /*
 	Installs hooks provided by extension modules
 */
-function install_hooks($lang_code=null): void
+function install_hooks(mixed $lang_code=null): void
 {
 	global $path_to_root, $Hooks, $installed_extensions;
 
@@ -252,7 +252,7 @@ function install_hooks($lang_code=null): void
 	Non active hooks are not included in $Hooks array, so we can use special function to 
 	activate.
 */
-function activate_hooks($ext, $comp, $on=true)
+function activate_hooks(mixed $ext, mixed $comp, mixed $on=true)
 {
 	global $Hooks;
 
@@ -274,7 +274,7 @@ function activate_hooks($ext, $comp, $on=true)
 /*
 	Calls hook $method defined in extension $ext (if any)
 */
-function hook_invoke($ext, $method, &$data, $opts=null)
+function hook_invoke(mixed $ext, mixed $method, &$data, mixed $opts=null)
 {
 
 	global $Hooks;
@@ -291,7 +291,7 @@ function hook_invoke($ext, $method, &$data, $opts=null)
 /*
 	Calls hook $methods defined in all extensions (if any)
 */
-function hook_invoke_all($method, &$data, $opts=null)
+function hook_invoke_all(mixed $method, &$data, mixed $opts=null)
 {
 
 	global $Hooks;
@@ -316,7 +316,7 @@ function hook_invoke_all($method, &$data, $opts=null)
 /*
 	Returns first non-null result returned from hook.
 */
-function hook_invoke_first($method, &$data, $opts=null)
+function hook_invoke_first(mixed $method, &$data, mixed $opts=null)
 {
 
 	global $Hooks;
@@ -337,7 +337,7 @@ function hook_invoke_first($method, &$data, $opts=null)
 	Returns last non-null result returned from modules method. Helps implement hooks overriding by 
 	extensions installed later.
 */
-function hook_invoke_last($method, &$data, $opts=null)
+function hook_invoke_last(mixed $method, &$data, mixed $opts=null)
 {
 
 	global $Hooks;
@@ -381,7 +381,7 @@ function hook_invoke_last($method, &$data, $opts=null)
 /*
 	Invoked before transaction is written to database.
 */
-function hook_db_prewrite(&$cart, $type)
+function hook_db_prewrite(&$cart, mixed $type)
 {
 	return hook_invoke_all('db_prewrite', $cart, $type);
 }
@@ -389,14 +389,14 @@ function hook_db_prewrite(&$cart, $type)
 /*
 	Invoked after transaction has been written to database.
 */
-function hook_db_postwrite(&$cart, $type)
+function hook_db_postwrite(&$cart, mixed $type)
 {
 	return hook_invoke_all('db_postwrite', $cart, $type);
 }
 /*
 	Invoked before transaction is voided
 */
-function hook_db_prevoid($type, $type_no)
+function hook_db_prevoid(mixed $type, mixed $type_no)
 {
 	return hook_invoke_all('db_prevoid', $type, $type_no);
 }
@@ -407,7 +407,7 @@ function hook_db_prevoid($type, $type_no)
 //
 //	Alternative exchange rates feeds.
 //
-function hook_retrieve_exrate($currency, $date)
+function hook_retrieve_exrate(mixed $currency, mixed $date)
 {
 	return hook_invoke_last('retrieve_exrate', $currency, $date);
 }
@@ -421,7 +421,7 @@ function hook_tax_report_done()
 //
 //	Amount in words displayed on various documents (especially sales invoice)
 //
-function hook_price_in_words($amount, $document)
+function hook_price_in_words(mixed $amount, mixed $document)
 {
 	return hook_invoke_last('price_in_words', $amount, $document);
 }
@@ -430,7 +430,7 @@ function hook_price_in_words($amount, $document)
 //	If fa_session_manager class is defined in any installed extension, this class provides session handling
 //	for application, otherwise standard php session handling is used.
 //
-function hook_session_start($company)
+function hook_session_start(mixed $company)
 {
 	if (class_exists('fa_session_manager')) {
 		global $SessionManager;
@@ -443,7 +443,7 @@ function hook_session_start($company)
 //	Third party authentication modules.
 //	Returns true after successfull authentication, false otherwise, null if no login hook is defined.
 //
-function hook_authenticate($login, $password)
+function hook_authenticate(mixed $login, mixed $password)
 {
 	return hook_invoke_last('authenticate', $login, $password);
 }
@@ -459,7 +459,7 @@ function hook_authenticate($login, $password)
 	 * more than one in  the cart.
 	 * If 'skip' is returned, the line will be skipped and not displayed
 	 */
-function hook_get_dispatchable_quantity($line_item, $location, $date, $qoh) {
+function hook_get_dispatchable_quantity(mixed $line_item, mixed $location, mixed $date, mixed $qoh) {
 		$result =  hook_invoke_first('get_dispatchable_quantity', $line_item, array($location, $date, $qoh));
 		return $result !== null ? $result : hooks::default_get_dispatchable_quantity($line_item, $location, $date, $qoh);
 }

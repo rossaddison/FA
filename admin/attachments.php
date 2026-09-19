@@ -201,7 +201,7 @@ function viewing_controls(): void
 
 }
 
-function trans_view($trans)
+function trans_view(mixed $trans)
 {
 	if ($trans['type_no']==ST_SUPPLIER || $trans['type_no']==ST_CUSTOMER || $trans['type_no']==ST_ITEM ||
 		$trans['type_no']==ST_FIXEDASSET || $trans['type_no']==ST_BANKACCOUNT)
@@ -209,27 +209,27 @@ function trans_view($trans)
 	return get_trans_view_str($trans["type_no"], $trans["trans_no"]);
 }
 
-function edit_link($row)
+function edit_link(mixed $row)
 {
   	return button('Edit'.$row["id"], _("Edit"), _("Edit"), ICON_EDIT);
 }
 
-function view_link($row)
+function view_link(mixed $row)
 {
   	return button('view'.$row["id"], _("View"), _("View"), ICON_VIEW);
 }
 
-function download_link($row)
+function download_link(mixed $row)
 {
   	return button('download'.$row["id"], _("Download"), _("Download"), ICON_DOWN);
 }
 
-function delete_link($row)
+function delete_link(mixed $row)
 {
   	return button('Delete'.$row["id"], _("Delete"), _("Delete"), ICON_DELETE);
 }
 
-function display_rows($type, $trans_no): void
+function display_rows(mixed $type, mixed $trans_no): void
 {
 	$sql = get_sql_for_attached_documents($type, $type==ST_SUPPLIER || $type==ST_CUSTOMER || $type==ST_BANKACCOUNT ? $trans_no : 
 		($type==ST_ITEM || $type==ST_FIXEDASSET ? get_item_code_id($trans_no) : 0));

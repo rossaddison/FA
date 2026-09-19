@@ -123,12 +123,12 @@ end_row();
 end_table(1);
 //---------------------------------------------------------------------------------------------
 
-function trans_view($trans, $trans_no)
+function trans_view(mixed $trans, mixed $trans_no)
 {
 	return get_customer_trans_view_str(ST_CUSTDELIVERY, $trans['trans_no']);
 }
 
-function batch_checkbox($row)
+function batch_checkbox(mixed $row)
 {
 	$name = "Sel_" .$row['trans_no'];
 	return $row['Done'] ? '' :
@@ -138,25 +138,25 @@ function batch_checkbox($row)
 	 .$row['branch_code']."'>\n";
 }
 
-function edit_link($row)
+function edit_link(mixed $row)
 {
 	return $row["Outstanding"]==0 ? '' :
 		trans_editor_link(ST_CUSTDELIVERY, $row['trans_no']);
 }
 
-function prt_link($row)
+function prt_link(mixed $row)
 {
 	return print_document_link($row['trans_no'], _("Print"), true, ST_CUSTDELIVERY, ICON_PRINT);
 }
 
-function invoice_link($row)
+function invoice_link(mixed $row)
 {
 	return $row["Outstanding"]==0 ? '' :
 		pager_link(_('Invoice'), "/sales/customer_invoice.php?DeliveryNumber=" 
 			.$row['trans_no'], ICON_DOC);
 }
 
-function check_overdue($row)
+function check_overdue(mixed $row)
 {
    	return date1_greater_date2(Today(), sql2date($row["due_date"])) && 
 			$row["Outstanding"]!=0;

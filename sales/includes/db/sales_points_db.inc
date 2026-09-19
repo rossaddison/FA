@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_sales_point($name, $location, $account, $cash, $credit): void
+function add_sales_point(mixed $name, mixed $location, mixed $account, mixed $cash, mixed $credit): void
 {
 	$sql = "INSERT INTO ".TB_PREF."sales_pos (pos_name, pos_location, pos_account, cash_sale, credit_sale) VALUES (".db_escape($name)
 			. ",".db_escape($location).",".db_escape($account)
@@ -17,7 +17,7 @@ function add_sales_point($name, $location, $account, $cash, $credit): void
 	db_query($sql, "could not add point of sale");
 }
 
-function update_sales_point($id, $name, $location, $account, $cash, $credit): void
+function update_sales_point(mixed $id, mixed $name, mixed $location, mixed $account, mixed $cash, mixed $credit): void
 {
 
 	$sql = "UPDATE ".TB_PREF."sales_pos SET pos_name=".db_escape($name)
@@ -30,7 +30,7 @@ function update_sales_point($id, $name, $location, $account, $cash, $credit): vo
 	db_query($sql, "could not update sales type");			
 }
 
-function get_all_sales_points($all=false)
+function get_all_sales_points(mixed $all=false)
 {
 	$sql = "SELECT pos.*, loc.location_name, acc.bank_account_name FROM "
 		.TB_PREF."sales_pos as pos
@@ -41,7 +41,7 @@ function get_all_sales_points($all=false)
 	return db_query($sql, "could not get all POS definitions");
 } 
 
-function get_sales_point($id)
+function get_sales_point(mixed $id)
 {
 	$sql = "SELECT pos.*, loc.location_name, acc.bank_account_name FROM "
 		.TB_PREF."sales_pos as pos
@@ -54,7 +54,7 @@ function get_sales_point($id)
 	return db_fetch($result);
 }
 
-function get_sales_point_name($id)
+function get_sales_point_name(mixed $id)
 {
 	$sql = "SELECT pos_name FROM ".TB_PREF."sales_pos WHERE id=".db_escape($id);
 	
@@ -64,7 +64,7 @@ function get_sales_point_name($id)
 	return is_array($row) ? $row[0] : false;
 }
 
-function delete_sales_point($id): void
+function delete_sales_point(mixed $id): void
 {
 	$sql="DELETE FROM ".TB_PREF."sales_pos WHERE id=".db_escape($id);
 	db_query($sql,"The point of sale record could not be deleted");

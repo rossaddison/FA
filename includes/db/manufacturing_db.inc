@@ -10,7 +10,7 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 //----------------------------------------------------------------------------------------
-function get_demand_qty($stock_id, $location)
+function get_demand_qty(mixed $stock_id, mixed $location)
 {
 	$sql = "SELECT SUM(line.quantity - line.qty_sent) AS QtyDemand
 			FROM ".TB_PREF."sales_order_details line,
@@ -31,7 +31,7 @@ function get_demand_qty($stock_id, $location)
 $bom_list = array(); 
 $qoh_stock = NULL;
 
-function load_stock_levels($location)
+function load_stock_levels(mixed $location)
 {
 	$date = date2sql(Today());
 
@@ -51,7 +51,7 @@ function load_stock_levels($location)
 }
 
 // recursion fixed. Max 10 recursion levels.
-function stock_demand_manufacture($stock_id, $qty, $demand_id, $location, $level=0) 
+function stock_demand_manufacture(mixed $stock_id, mixed $qty, mixed $demand_id, mixed $location, mixed $level=0) 
 {
 	global $bom_list, $qoh_stock;
 
@@ -101,7 +101,7 @@ function stock_demand_manufacture($stock_id, $qty, $demand_id, $location, $level
 }
 
 // recursion fixed by Tom Moulton
-function get_demand_asm_qty($stock_id, $location) 
+function get_demand_asm_qty(mixed $stock_id, mixed $location) 
 {
 	$demand_qty = 0.0;
 	$sql = "SELECT line.stk_code, SUM(line.quantity-line.qty_sent) AS Demmand
@@ -124,7 +124,7 @@ function get_demand_asm_qty($stock_id, $location)
 	return $demand_qty;
 }
 
-function get_on_porder_qty($stock_id, $location)
+function get_on_porder_qty(mixed $stock_id, mixed $location)
 {
 	$sql = "SELECT SUM(line.quantity_ordered - line.quantity_received) AS qoo
 		FROM ".TB_PREF."purch_order_details line 
@@ -147,7 +147,7 @@ function get_on_porder_qty($stock_id, $location)
 	return $qoo;
 }
 
-function get_on_worder_qty($stock_id, $location)
+function get_on_worder_qty(mixed $stock_id, mixed $location)
 {
  	$qoo = 0.0;
 	$flag = get_mb_flag($stock_id);
@@ -173,7 +173,7 @@ function get_on_worder_qty($stock_id, $location)
 
 //--------------------------------------------------------------------------------------
 
-function add_bom($selected_parent, $component, $workcentre_added, $loc_code, $quantity): void
+function add_bom(mixed $selected_parent, mixed $component, mixed $workcentre_added, mixed $loc_code, mixed $quantity): void
 {
 	$sql = "INSERT INTO ".TB_PREF."bom (parent, component, workcentre_added, loc_code, quantity)
 		VALUES (".db_escape($selected_parent).", ".db_escape($component) . ","
@@ -184,7 +184,7 @@ function add_bom($selected_parent, $component, $workcentre_added, $loc_code, $qu
 }
 //--------------------------------------------------------------------------------------
 
-function update_bom($selected_parent, $selected_component, $workcentre_added, $loc_code, $quantity): void
+function update_bom(mixed $selected_parent, mixed $selected_component, mixed $workcentre_added, mixed $loc_code, mixed $quantity): void
 {
 	$sql = "UPDATE ".TB_PREF."bom SET workcentre_added=".db_escape($workcentre_added)
 	 . ",loc_code=".db_escape($loc_code) . ",
@@ -196,13 +196,13 @@ function update_bom($selected_parent, $selected_component, $workcentre_added, $l
 	db_query($sql,"could not update bom");
 }
 	
-function delete_bom($selected_id): void
+function delete_bom(mixed $selected_id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."bom WHERE id=".db_escape($selected_id);
 	db_query($sql,"Could not delete this bom components");
 }
 
-function get_bom($item)
+function get_bom(mixed $item)
 {
 	$sql = "SELECT bom.*, loc.location_name,
 		centre.name AS WorkCentreDescription,
@@ -222,7 +222,7 @@ function get_bom($item)
 
 //--------------------------------------------------------------------------------------
 
-function get_component_from_bom($selected_id)
+function get_component_from_bom(mixed $selected_id)
 {
 	$sql = "SELECT bom.*, item.description
 		FROM ".TB_PREF."bom bom,"
@@ -235,7 +235,7 @@ function get_component_from_bom($selected_id)
 }
 //--------------------------------------------------------------------------------------
 
-function has_bom($item)
+function has_bom(mixed $item)
 {
     $result = get_bom($item);
     
@@ -244,7 +244,7 @@ function has_bom($item)
 
 //--------------------------------------------------------------------------------------
 
-function is_component_already_on_bom($component, $workcentre_added, $loc_code, $selected_parent)
+function is_component_already_on_bom(mixed $component, mixed $workcentre_added, mixed $loc_code, mixed $selected_parent)
 {
 	$sql = "SELECT component
 		FROM ".TB_PREF."bom
@@ -259,7 +259,7 @@ function is_component_already_on_bom($component, $workcentre_added, $loc_code, $
 
 //--------------------------------------------------------------------------------------
 
-function check_for_recursive_bom($ultimate_parent, $component_to_check)
+function check_for_recursive_bom(mixed $ultimate_parent, mixed $component_to_check)
 {
 
 	/* returns true ie 1 if the bom contains the parent part as a component

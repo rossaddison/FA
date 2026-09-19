@@ -131,7 +131,7 @@ function display_bank_header(&$order): void
 }
 //---------------------------------------------------------------------------------
 
-function display_gl_items($title, &$order): void
+function display_gl_items(mixed $title, &$order): void
 {
 	global $path_to_root;
 
@@ -200,7 +200,7 @@ function display_gl_items($title, &$order): void
 
 //---------------------------------------------------------------------------------
 
-function gl_edit_item_controls(&$order, $dim, $Index=null): void
+function gl_edit_item_controls(&$order, mixed $dim, mixed $Index=null): void
 {
 	global $Ajax;
 	$payment = $order->trans_type == ST_BANKPAYMENT;
@@ -280,7 +280,7 @@ function gl_edit_item_controls(&$order, $dim, $Index=null): void
 
 //---------------------------------------------------------------------------------
 
-function gl_options_controls($order): void
+function gl_options_controls(mixed $order): void
 {
 	div_start('footer');
 	echo "<br><table align='center'>";

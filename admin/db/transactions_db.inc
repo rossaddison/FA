@@ -12,7 +12,7 @@
 
 //--------------------------------------------------------------------------------------
 
-function get_sql_for_view_transactions($filtertype, $from, $to, &$trans_ref)
+function get_sql_for_view_transactions(mixed $filtertype, mixed $from, mixed $to, &$trans_ref)
 {
 	$db_info = get_systype_db_info($filtertype);
 
@@ -59,7 +59,7 @@ function get_sql_for_view_transactions($filtertype, $from, $to, &$trans_ref)
 	return $sql;
 }
 
-function transaction_exists($trans_type, $trans_no)
+function transaction_exists(mixed $trans_type, mixed $trans_no)
 {
 	return db_num_rows(db_query(get_sql_for_view_transactions($trans_type, $trans_no, $trans_no, $dummy)));
 }
@@ -67,7 +67,7 @@ function transaction_exists($trans_type, $trans_no)
 //
 //	Returns counterparty (supplier/customer) name for selected transaction.
 //
-function get_counterparty_name($trans_type, $trans_no, $full=true)
+function get_counterparty_name(mixed $trans_type, mixed $trans_no, mixed $full=true)
 {
 	switch($trans_type)
 	{
@@ -156,7 +156,7 @@ function get_counterparty_name($trans_type, $trans_no, $full=true)
 //	Used only for transactions stored in tables without autoincremented key.
 //
 
-function get_next_trans_no ($trans_type){
+function get_next_trans_no (mixed $trans_type){
 
 	$st = get_systype_db_info($trans_type);
 
@@ -181,7 +181,7 @@ function get_next_trans_no ($trans_type){
 
 //-----------------------------------------------------------------------------
 
-function get_systype_db_info($type)
+function get_systype_db_info(mixed $type)
 {
 	switch ($type)
 	{

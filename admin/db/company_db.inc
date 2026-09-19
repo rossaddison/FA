@@ -12,7 +12,7 @@
 /*
 	Update main or gl company setup.
 */
-function update_company_prefs($params)
+function update_company_prefs(mixed $params)
 {
 	$sql = "UPDATE ".TB_PREF."sys_prefs SET value = ";
 	foreach($params as $name => $value) {
@@ -30,7 +30,7 @@ function update_company_prefs($params)
 	$prefs can be preference name, array of names, or null for all preferences.
 	
 */
-function get_company_pref($prefs = null)
+function get_company_pref(mixed $prefs = null)
 {
 	global $SysPrefs, $db_version;
 
@@ -53,7 +53,7 @@ function get_company_prefs()
 	return get_company_pref(null);
 }
 
-function set_company_pref($pref, $category, $type, $length, $value)
+function set_company_pref(mixed $pref, mixed $category, mixed $type, mixed $length, mixed $value)
 {
 	$sql = "REPLACE `".TB_PREF."sys_prefs` SET `name`=".db_escape($pref).", `category`=".db_escape($category)
 		.", `type`=".db_escape($type).", `length`=".db_escape($length).", `value`=".db_escape($value);
@@ -65,7 +65,7 @@ function get_base_sales_type()
 	return get_company_pref('base_sales');
 }
 
-function get_company_extensions($id = -1) {
+function get_company_extensions(mixed $id = -1) {
 	global $path_to_root;
 
 	$file = $path_to_root.($id == -1 ? '' : '/company/'.(int)$id).'/installed_extensions.php';
@@ -76,7 +76,7 @@ function get_company_extensions($id = -1) {
 	return $installed_extensions;
 }
 
-function add_payment_terms($daysOrFoll, $terms, $dayNumber): void
+function add_payment_terms(mixed $daysOrFoll, mixed $terms, mixed $dayNumber): void
 {
 	if ($daysOrFoll) 
 	{
@@ -95,7 +95,7 @@ function add_payment_terms($daysOrFoll, $terms, $dayNumber): void
    	db_query($sql,"The payment term could not be added");
 }
 
-function update_payment_terms($selected_id, $daysOrFoll, $terms, $dayNumber): void
+function update_payment_terms(mixed $selected_id, mixed $daysOrFoll, mixed $terms, mixed $dayNumber): void
 {
 	if ($daysOrFoll) 
 	{
@@ -114,13 +114,13 @@ function update_payment_terms($selected_id, $daysOrFoll, $terms, $dayNumber): vo
    	db_query($sql,"The payment term could not be updated");
 }
 
-function delete_payment_terms($selected_id): void
+function delete_payment_terms(mixed $selected_id): void
 {
 	$sql="DELETE FROM ".TB_PREF."payment_terms WHERE terms_indicator=".db_escape($selected_id);
 	db_query($sql,"could not delete a payment terms");
 }
 
-function get_payment_terms($selected_id)
+function get_payment_terms(mixed $selected_id)
 {
 	$sql = "SELECT *, (t.days_before_due=0) AND (t.day_in_following_month=0) as cash_sale
 	 FROM ".TB_PREF."payment_terms t WHERE terms_indicator=".db_escape($selected_id);
@@ -130,7 +130,7 @@ function get_payment_terms($selected_id)
 	return db_fetch($result);
 }
 
-function get_payment_terms_all($show_inactive)
+function get_payment_terms_all(mixed $show_inactive)
 {
 	$sql = "SELECT * FROM ".TB_PREF."payment_terms";
 	if (!$show_inactive) $sql .= " WHERE !inactive";
@@ -143,7 +143,7 @@ function get_payment_terms_all($show_inactive)
 		value is name of foreign key field. For numeric keys $stdkey field name is used.
 	$stdkey - standard name of foreign key.
 */
-function key_in_foreign_table($id, $tables, $stdkey)
+function key_in_foreign_table(mixed $id, mixed $tables, mixed $stdkey)
 {
 
 	if (!is_array($tables))
@@ -170,7 +170,7 @@ function key_in_foreign_table($id, $tables, $stdkey)
 //
 // Resets $theme references in users records to 'default'.
 //
-function clean_user_themes($theme)
+function clean_user_themes(mixed $theme)
 {
 	global $db_connections, $db;
 

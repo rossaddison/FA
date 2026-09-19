@@ -23,7 +23,7 @@ include_once($path_to_root . "/admin/db/users_db.inc");
 simple_page_mode(true);
 //-------------------------------------------------------------------------------------------------
 
-function can_process($new) 
+function can_process(mixed $new) 
 {
 
 	if (strlen($_POST['user_id']) < 4)

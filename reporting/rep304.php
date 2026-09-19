@@ -29,7 +29,7 @@ include_once($path_to_root . "/inventory/includes/db/items_category_db.inc");
 
 print_inventory_sales();
 
-function getTransactions($category, $location, $fromcust, $from, $to, $show_service)
+function getTransactions(mixed $category, mixed $location, mixed $fromcust, mixed $from, mixed $to, mixed $show_service)
 {
 	$from = date2sql($from);
 	$to = date2sql($to);

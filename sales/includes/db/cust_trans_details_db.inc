@@ -11,7 +11,7 @@
 ***********************************************************************/
 //----------------------------------------------------------------------------------------
 
-function get_customer_trans_details($debtor_trans_type, $debtor_trans_no)
+function get_customer_trans_details(mixed $debtor_trans_type, mixed $debtor_trans_no)
 {
 if (!is_array($debtor_trans_no))
 	$debtor_trans_no = array( 0=>$debtor_trans_no );
@@ -42,7 +42,7 @@ if (!is_array($debtor_trans_no))
 
 //----------------------------------------------------------------------------------------
 
-function void_customer_trans_details($type, $type_no): void
+function void_customer_trans_details(mixed $type, mixed $type_no): void
 {
 	$sql = "UPDATE ".TB_PREF."debtor_trans_details SET quantity=0, unit_price=0,
 		unit_tax=0, discount_percent=0, standard_cost=0, src_id=0
@@ -56,8 +56,8 @@ function void_customer_trans_details($type, $type_no): void
 }
 //----------------------------------------------------------------------------------------
 
-function write_customer_trans_detail_item($debtor_trans_type, $debtor_trans_no, $stock_id, $description,
-	$quantity, $unit_price, $unit_tax, $discount_percent, $std_cost, $src_id, $line_id=0): void
+function write_customer_trans_detail_item(mixed $debtor_trans_type, mixed $debtor_trans_no, mixed $stock_id, mixed $description,
+	mixed $quantity, mixed $unit_price, mixed $unit_tax, mixed $discount_percent, mixed $std_cost, mixed $src_id, mixed $line_id=0): void
 {
 	if ($line_id!=0)
 		$sql = "UPDATE ".TB_PREF."debtor_trans_details SET

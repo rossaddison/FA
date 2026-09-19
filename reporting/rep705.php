@@ -30,7 +30,7 @@ print_annual_expense_breakdown();
 
 //----------------------------------------------------------------------------------------------------
 
-function getPeriods($yr, $mo, $account, $dimension, $dimension2, $thousands)
+function getPeriods(mixed $yr, mixed $mo, mixed $account, mixed $dimension, mixed $dimension2, mixed $thousands)
 {
 	$date13 = date('Y-m-d',mktime(0,0,0,$mo+1,1,$yr));
 	$date12 = date('Y-m-d',mktime(0,0,0,$mo,1,$yr));
@@ -73,8 +73,8 @@ function getPeriods($yr, $mo, $account, $dimension, $dimension2, $thousands)
 
 //----------------------------------------------------------------------------------------------------
 
-function display_type ($type, $typename, $yr, $mo, $convert, &$dec, &$rep, $dimension, $dimension2, 
-								$tags, $thousands)
+function display_type (mixed $type, mixed $typename, mixed $yr, mixed $mo, mixed $convert, &$dec, &$rep, mixed $dimension, mixed $dimension2, 
+								mixed $tags, mixed $thousands)
 {
 	$ctotal = array(1 => 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 	$total = array(1 => 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);

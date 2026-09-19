@@ -51,36 +51,36 @@ if (isset($_POST['customer_id']))
 	$customer_id = $_POST['customer_id'];
 
 //--------------------------------------------------------------------------------
-function systype_name($dummy, $type)
+function systype_name(mixed $dummy, mixed $type)
 {
 	global $systypes_array;
 
 	return $systypes_array[$type];
 }
 
-function trans_view($trans)
+function trans_view(mixed $trans)
 {
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
 
-function alloc_link($row)
+function alloc_link(mixed $row)
 {
 	return pager_link(_("Allocate"),
 		"/sales/allocations/customer_allocate.php?trans_no="
 			.$row["trans_no"] . "&trans_type=" . $row["type"]. "&debtor_no=" . $row["debtor_no"], ICON_ALLOC);
 }
 
-function amount_total($row)
+function amount_total(mixed $row)
 {
 	return price_format($row['type'] == ST_JOURNAL && $row["Total"] < 0 ? -$row["Total"] : $row["Total"]);
 }
 
-function amount_left($row)
+function amount_left(mixed $row)
 {
 	return price_format(($row['type'] == ST_JOURNAL && $row["Total"] < 0 ? -$row["Total"] : $row["Total"])-$row["alloc"]);
 }
 
-function check_settled($row)
+function check_settled(mixed $row)
 {
 	return $row['settled'] == 1;
 }

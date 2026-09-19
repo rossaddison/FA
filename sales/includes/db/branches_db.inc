@@ -9,10 +9,10 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_branch($customer_id, $br_name, $br_ref, $br_address, $salesman, $area, 
-	$tax_group_id, $sales_account, $sales_discount_account, $receivables_account, 
-	$payment_discount_account, $default_location, $br_post_address, $group_no,
-	$default_ship_via, $notes, $bank_account): void
+function add_branch(mixed $customer_id, mixed $br_name, mixed $br_ref, mixed $br_address, mixed $salesman, mixed $area, 
+	mixed $tax_group_id, mixed $sales_account, mixed $sales_discount_account, mixed $receivables_account, 
+	mixed $payment_discount_account, mixed $default_location, mixed $br_post_address, mixed $group_no,
+	mixed $default_ship_via, mixed $notes, mixed $bank_account): void
 {
 	$sql = "INSERT INTO ".TB_PREF."cust_branch (debtor_no, br_name, branch_ref, br_address,
 		salesman, area, tax_group_id, sales_account, receivables_account, payment_discount_account, 
@@ -36,10 +36,10 @@ function add_branch($customer_id, $br_name, $br_ref, $br_address, $salesman, $ar
 	db_query($sql,"The branch record could not be added");
 }
 
-function update_branch($customer_id, $branch_code, $br_name, $br_ref, $br_address,
-	$salesman, $area, $tax_group_id, $sales_account, $sales_discount_account, $receivables_account, 
-	$payment_discount_account, $default_location, $br_post_address, $group_no,
-	$default_ship_via, $notes, $bank_account): void
+function update_branch(mixed $customer_id, mixed $branch_code, mixed $br_name, mixed $br_ref, mixed $br_address,
+	mixed $salesman, mixed $area, mixed $tax_group_id, mixed $sales_account, mixed $sales_discount_account, mixed $receivables_account, 
+	mixed $payment_discount_account, mixed $default_location, mixed $br_post_address, mixed $group_no,
+	mixed $default_ship_via, mixed $notes, mixed $bank_account): void
 {
 	$sql = "UPDATE ".TB_PREF."cust_branch SET br_name = " . db_escape($br_name) . ",
 		branch_ref = " . db_escape($br_ref) . ",
@@ -62,7 +62,7 @@ function update_branch($customer_id, $branch_code, $br_name, $br_ref, $br_addres
 	db_query($sql,"The branch record could not be updated");
 }
 
-function delete_branch($customer_id, $branch_code): void
+function delete_branch(mixed $customer_id, mixed $branch_code): void
 {
 	delete_entity_contacts('cust_branch', $branch_code);
 
@@ -70,7 +70,7 @@ function delete_branch($customer_id, $branch_code): void
 	db_query($sql,"could not delete branch");
 }
 
-function branch_in_foreign_table($customer_id, $branch_code, $table)
+function branch_in_foreign_table(mixed $customer_id, mixed $branch_code, mixed $table)
 {
 	$sql= "SELECT COUNT(*) FROM ".TB_PREF."$table WHERE branch_code=".db_escape($branch_code)
 		." AND debtor_no = ".db_escape($customer_id);
@@ -79,7 +79,7 @@ function branch_in_foreign_table($customer_id, $branch_code, $table)
 	return ($myrow[0] > 0);
 }
 
-function get_branch($branch_id)
+function get_branch(mixed $branch_id)
 {
 	$sql = "SELECT branch.*, salesman.salesman_name 
 		FROM "
@@ -93,7 +93,7 @@ function get_branch($branch_id)
 	return db_fetch($result);
 }
 
-function get_cust_branch($customer_id, $branch_code)
+function get_cust_branch(mixed $customer_id, mixed $branch_code)
 {
 	$sql = "SELECT * FROM ".TB_PREF."cust_branch
 		WHERE branch_code=".db_escape($branch_code)."
@@ -102,7 +102,7 @@ function get_cust_branch($customer_id, $branch_code)
 	return db_fetch($result);
 }
 
-function get_branch_accounts($branch_id)
+function get_branch_accounts(mixed $branch_id)
 {
 	$sql = "SELECT receivables_account,sales_account, sales_discount_account, payment_discount_account 
 		FROM ".TB_PREF."cust_branch WHERE branch_code=".db_escape($branch_id);
@@ -112,7 +112,7 @@ function get_branch_accounts($branch_id)
 	return db_fetch($result);
 }
 
-function get_branch_name($branch_id)
+function get_branch_name(mixed $branch_id)
 {
 	$sql = "SELECT br_name FROM ".TB_PREF."cust_branch 
 		WHERE branch_code = ".db_escape($branch_id);
@@ -123,7 +123,7 @@ function get_branch_name($branch_id)
 	return $myrow[0];
 }
 
-function get_cust_branches_from_group($group_no)
+function get_cust_branches_from_group(mixed $group_no)
 {
 	$sql = "SELECT branch_code, debtor_no FROM ".TB_PREF."cust_branch 
 		WHERE group_no = ".db_escape($group_no);
@@ -131,7 +131,7 @@ function get_cust_branches_from_group($group_no)
 	return db_query($sql,"could not retreive branches for group " . $group_no);
 }
 
-function get_default_info_for_branch($customer_id)
+function get_default_info_for_branch(mixed $customer_id)
 {
 	$sql = "SELECT name, address, debtor_ref
 		FROM ".TB_PREF."debtors_master WHERE debtor_no = ".db_escape($customer_id);
@@ -139,7 +139,7 @@ function get_default_info_for_branch($customer_id)
 	return db_fetch($result);
 }
 
-function get_sql_for_customer_branches($customer_id)
+function get_sql_for_customer_branches(mixed $customer_id)
 {
 	$sql = "SELECT "
 		."b.branch_code, "
@@ -178,7 +178,7 @@ function get_sql_for_customer_branches($customer_id)
 	$default - return only single record selected with defaults order defined in $defs array,
 	 otherways get all $action contacts
 */
-function get_branch_contacts($branch_code, $action=null, $customer_id=null, $default = true)
+function get_branch_contacts(mixed $branch_code, mixed $action=null, mixed $customer_id=null, mixed $default = true)
 {
 	$defs = array('cust_branch.'.$action, 
 				'customer.'.$action,
@@ -216,7 +216,7 @@ function get_branch_contacts($branch_code, $action=null, $customer_id=null, $def
 	return $results;
 }
 
-function _get_branch_contacts($branch_code, $action=null, $customer_id=null, $default = false)
+function _get_branch_contacts(mixed $branch_code, mixed $action=null, mixed $customer_id=null, mixed $default = false)
 {
 	$sql = "SELECT p.*, r.action, r.type, CONCAT(r.type,'.',r.action) as ext_type 
 		FROM ".TB_PREF."crm_persons p,"
@@ -257,7 +257,7 @@ function _get_branch_contacts($branch_code, $action=null, $customer_id=null, $de
 	return $results;
 }
 
-function get_default_branch($customer_id, $ar_account=null)
+function get_default_branch(mixed $customer_id, mixed $ar_account=null)
 {
 	$sql = "SELECT * 
 		FROM ".TB_PREF."cust_branch WHERE debtor_no = ".db_escape($customer_id);
@@ -267,7 +267,7 @@ function get_default_branch($customer_id, $ar_account=null)
 	return db_fetch($result);
 }
 
-function  get_branches_search($customer, $branch)
+function  get_branches_search(mixed $customer, mixed $branch)
 {
 	global $SysPrefs;
 

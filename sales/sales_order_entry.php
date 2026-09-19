@@ -588,7 +588,7 @@ function handle_update_item(): void
 
 //--------------------------------------------------------------------------------
 
-function handle_delete_item($line_no): void
+function handle_delete_item(mixed $line_no): void
 {
     if ($_SESSION['Items']->some_already_delivered($line_no) == 0) {
 	    $_SESSION['Items']->remove_from_cart($line_no);
@@ -658,7 +658,7 @@ function  handle_cancel_order(): void
 
 //--------------------------------------------------------------------------------
 
-function create_cart($type, $trans_no): void
+function create_cart(mixed $type, mixed $trans_no): void
 { 
 	global $Refs, $SysPrefs;
 

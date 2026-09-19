@@ -10,7 +10,7 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-function process_fixed_asset_depreciation($stock_id, $gl_rows, $refline, $memo_)
+function process_fixed_asset_depreciation(mixed $stock_id, mixed $gl_rows, mixed $refline, mixed $memo_)
 {
   global $Refs;
 
@@ -64,7 +64,7 @@ function process_fixed_asset_depreciation($stock_id, $gl_rows, $refline, $memo_)
 
 //--------------------------------------------------------------------------------------------------
 
-function get_fixed_asset_move($stock_id, $tran_type) {
+function get_fixed_asset_move(mixed $stock_id, mixed $tran_type) {
 
   $sql = "SELECT * FROM ".TB_PREF."stock_moves 
 	    WHERE stock_id=".db_escape($stock_id)."
@@ -79,7 +79,7 @@ function get_fixed_asset_move($stock_id, $tran_type) {
   return $row;
 }
 
-function get_fixed_asset_disposal($stock_id) {
+function get_fixed_asset_disposal(mixed $stock_id) {
 
   $sql = "SELECT * FROM ".TB_PREF."stock_moves 
     	WHERE stock_id=".db_escape($stock_id)."
@@ -96,7 +96,7 @@ function get_fixed_asset_disposal($stock_id) {
   return $row;
 }
 
-function get_fixed_asset_purchase($stock_id) 
+function get_fixed_asset_purchase(mixed $stock_id) 
 {
   	$sql = "SELECT * 
   		FROM ".TB_PREF."stock_master m, "
@@ -119,7 +119,7 @@ function get_fixed_asset_purchase($stock_id)
 
 //--------------------------------------------------------------------------------------------------
 
-function get_fixed_asset_class($id)
+function get_fixed_asset_class(mixed $id)
 {
 	$sql="SELECT * FROM ".TB_PREF."stock_fa_class WHERE fa_class_id=".db_escape($id);
 
@@ -130,7 +130,7 @@ function get_fixed_asset_class($id)
 
 //--------------------------------------------------------------------------------------------------
 
-function get_sql_for_fixed_assets($show_inactive = false)
+function get_sql_for_fixed_assets(mixed $show_inactive = false)
 {
   	$sql = "SELECT s.stock_id, c.description, s.units, s.description as name,
         s.depreciation_rate, s.depreciation_method, s.inactive, 

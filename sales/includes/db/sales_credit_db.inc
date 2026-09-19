@@ -13,7 +13,7 @@
 // if ($writeoff_acc==0) return goods into $cart->Location
 // if src_docs!=0 => credit invoice else credit note
 //
-function write_credit_note(&$credit_note, $write_off_acc)
+function write_credit_note(&$credit_note, mixed $write_off_acc)
 {
 	global $Refs;
 
@@ -180,7 +180,7 @@ function write_credit_note(&$credit_note, $write_off_acc)
 // 	a reversing stock movement to show the write off
 //
 function add_credit_movements_item(&$credit_note, &$credit_line,
-	$credit_type, $price, $credited_invoice=0): void
+	mixed $credit_type, mixed $price, mixed $credited_invoice=0): void
 {
     //Chaitanya : Stamp current cost in stock moves $credit_line does not fetch cost
     $curr_std_cost = get_unit_cost($credit_line->stock_id);
@@ -197,8 +197,8 @@ function add_credit_movements_item(&$credit_note, &$credit_line,
 
 //----------------------------------------------------------------------------------------
 
-function add_gl_trans_credit_costs($order, $order_line, $credit_no, $date_,
-	$credit_type, $write_off_gl_code, &$branch_data)
+function add_gl_trans_credit_costs(mixed $order, mixed $order_line, mixed $credit_no, mixed $date_,
+	mixed $credit_type, mixed $write_off_gl_code, &$branch_data)
 {
 	$stock_gl_codes = get_stock_gl_code($order_line->stock_id);
 	$customer = get_customer($order->customer_id);

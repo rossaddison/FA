@@ -30,7 +30,7 @@ print_salesman_list();
 
 //----------------------------------------------------------------------------------------------------
 
-function GetSalesmanTrans($from, $to)
+function GetSalesmanTrans(mixed $from, mixed $to)
 {
 	$fromdate = date2sql($from);
 	$todate = date2sql($to);

@@ -46,7 +46,7 @@ include_once($path_to_root . "/fixed_assets/includes/fixed_assets_db.inc");
 $user_comp = user_company();
 $new_item = get_post('stock_id')=='' || get_post('cancel') || get_post('clone'); 
 //------------------------------------------------------------------------------------
-function set_edit($stock_id): void
+function set_edit(mixed $stock_id): void
 {
 	$_POST = array_merge($_POST, get_item($stock_id));
 
@@ -57,7 +57,7 @@ function set_edit($stock_id): void
 	$_POST['del_image'] = 0;
 }
 
-function del_image($stock_id)
+function del_image(mixed $stock_id)
 {
 	foreach (array('jpg', 'png', 'gif') as $ext) {
 		$filename = company_path().'/images/'.item_img_name($stock_id).".".$ext;
@@ -67,7 +67,7 @@ function del_image($stock_id)
 	return true;
 }
 
-function show_image($stock_id): void
+function show_image(mixed $stock_id): void
 {
 	global $SysPrefs;
 
@@ -316,7 +316,7 @@ if (get_post('clone')) {
 
 //------------------------------------------------------------------------------------
 
-function check_usage($stock_id, $dispmsg=true)
+function check_usage(mixed $stock_id, mixed $dispmsg=true)
 {
 	$msg = item_in_foreign_codes($stock_id);
 
@@ -346,7 +346,7 @@ if (isset($_POST['delete']) && strlen($_POST['delete']) > 1)
 	}
 }
 
-function item_settings(&$stock_id, $new_item): void 
+function item_settings(&$stock_id, mixed $new_item): void 
 {
 	global $SysPrefs, $path_to_root, $page_nested, $depreciation_methods;
 

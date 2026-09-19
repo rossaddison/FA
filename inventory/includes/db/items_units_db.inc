@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function write_item_unit($selected, $abbr, $description, $decimals): void
+function write_item_unit(mixed $selected, mixed $abbr, mixed $description, mixed $decimals): void
 {
     if($selected!='')
 		$sql = "UPDATE ".TB_PREF."item_units SET
@@ -25,14 +25,14 @@ function write_item_unit($selected, $abbr, $description, $decimals): void
 	db_query($sql,"an item unit could not be updated");
 }
 
-function delete_item_unit($unit): void
+function delete_item_unit(mixed $unit): void
 {
 	$sql="DELETE FROM ".TB_PREF."item_units WHERE abbr=".db_escape($unit);
 
 	db_query($sql,"an unit of measure could not be deleted");
 }
 
-function get_item_unit($unit)
+function get_item_unit(mixed $unit)
 {
 	$sql="SELECT * FROM ".TB_PREF."item_units WHERE abbr=".db_escape($unit);
 
@@ -41,7 +41,7 @@ function get_item_unit($unit)
 	return db_fetch($result);
 }
 
-function get_unit_descr($unit)
+function get_unit_descr(mixed $unit)
 {
 	$sql = "SELECT name FROM ".TB_PREF."item_units WHERE abbr=".db_escape($unit);
 
@@ -51,21 +51,21 @@ function get_unit_descr($unit)
 	return is_array($row) ? $row[0] : false;
 }
 
-function item_unit_used($unit) {
+function item_unit_used(mixed $unit) {
 	$sql= "SELECT COUNT(*) FROM ".TB_PREF."stock_master WHERE units=".db_escape($unit);
 	$result = db_query($sql, "could not query stock master");
 	$myrow = db_fetch_row($result);
 	return ($myrow[0] > 0);
 }
 
-function get_all_item_units($all=false) {
+function get_all_item_units(mixed $all=false) {
     $sql = "SELECT * FROM ".TB_PREF."item_units";
 	if (!$all) $sql .= " WHERE !inactive";
 	$sql .= " ORDER BY name";
     return  db_query($sql, "could not get stock categories");
 }
 // 2008-06-15. Added to get a measure of unit by given stock_id
-function get_unit_dec($stock_id)
+function get_unit_dec(mixed $stock_id)
 {
 	$sql = "SELECT decimals FROM ".TB_PREF."item_units,	".TB_PREF."stock_master
 		WHERE abbr=units AND stock_id=".db_escape($stock_id)." LIMIT 1";

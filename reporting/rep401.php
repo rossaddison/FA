@@ -28,7 +28,7 @@ include_once($path_to_root . "/inventory/includes/db/items_db.inc");
 
 print_bill_of_material();
 
-function getTransactions($from, $to)
+function getTransactions(mixed $from, mixed $to)
 {
 	$sql = "SELECT bom.parent,
 			bom.component,

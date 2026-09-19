@@ -28,7 +28,7 @@ include_once($path_to_root . "/gl/includes/gl_db.inc");
 
 print_tax_report();
 
-function getTaxTransactions($from, $to)
+function getTaxTransactions(mixed $from, mixed $to)
 {
 	$fromdate = date2sql($from);
 	$todate = date2sql($to);
@@ -68,7 +68,7 @@ function getTaxTypes()
     return db_query($sql,"No transactions were returned");
 }
 
-function getTaxInfo($id)
+function getTaxInfo(mixed $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."tax_types WHERE id=$id";
     $result = db_query($sql,"No transactions were returned");

@@ -11,8 +11,8 @@
 ***********************************************************************/
 //----------------------------------------------------------------------------------------
 
-function add_cust_allocation($amount, $trans_type_from, $trans_no_from,
-	$trans_type_to, $trans_no_to, $person_id, $date_): void
+function add_cust_allocation(mixed $amount, mixed $trans_type_from, mixed $trans_no_from,
+	mixed $trans_type_to, mixed $trans_no_to, mixed $person_id, mixed $date_): void
 {
 	$date = date2sql($date_);
 	$sql = "INSERT INTO ".TB_PREF."cust_allocations (
@@ -27,7 +27,7 @@ function add_cust_allocation($amount, $trans_type_from, $trans_no_from,
 //----------------------------------------------------------------------------------------
 
 
-function delete_cust_allocation($trans_id)
+function delete_cust_allocation(mixed $trans_id)
 {
 	$sql = "DELETE FROM ".TB_PREF."cust_allocations WHERE id = ".db_escape($trans_id);
 	return db_query($sql, "The existing allocation $trans_id could not be deleted");
@@ -35,7 +35,7 @@ function delete_cust_allocation($trans_id)
 
 //----------------------------------------------------------------------------------------
 
-function get_cust_allocation($trans_id)
+function get_cust_allocation(mixed $trans_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."cust_allocations WHERE id = ".db_escape($trans_id);
 	return db_fetch(db_query($sql), "Cannot retrieve customer allocation $trans_id");
@@ -44,7 +44,7 @@ function get_cust_allocation($trans_id)
 //----------------------------------------------------------------------------------------
 //	Update debtor trans alloc field according to current status of cust_allocations
 //
-function update_debtor_trans_allocation($trans_type, $trans_no, $person_id): void
+function update_debtor_trans_allocation(mixed $trans_type, mixed $trans_no, mixed $person_id): void
 {
 	$dec = user_price_dec();
 	$sql = 
@@ -62,14 +62,14 @@ function update_debtor_trans_allocation($trans_type, $trans_no, $person_id): voi
 
 //-------------------------------------------------------------------------------------------------------------
 //
-function void_cust_allocations($type, $type_no, $date="")
+function void_cust_allocations(mixed $type, mixed $type_no, mixed $date="")
 {
 	return clear_cust_alloctions($type, $type_no, null, $date);
 }
 
 //-------------------------------------------------------------------------------------------------------------
 //
-function clear_cust_alloctions($type, $type_no, $person_id=null, $date=""): void
+function clear_cust_alloctions(mixed $type, mixed $type_no, mixed $person_id=null, mixed $date=""): void
 {
 	$sql = "UPDATE  ".TB_PREF."cust_allocations ca
 				LEFT JOIN ".TB_PREF."debtor_trans paym ON ca.trans_type_from=paym.type AND ca.trans_no_from=paym.trans_no AND ca.person_id=paym.debtor_no
@@ -99,7 +99,7 @@ function clear_cust_alloctions($type, $type_no, $person_id=null, $date=""): void
 }
 //-------------------------------------------------------------------------------------------------------------
 
-function get_allocatable_from_cust_sql($customer_id, $settled)
+function get_allocatable_from_cust_sql(mixed $customer_id, mixed $settled)
 {
 	$sql = "SELECT
 		trans.type,
@@ -133,7 +133,7 @@ function get_allocatable_from_cust_sql($customer_id, $settled)
 	return $sql;
 }
 
-function get_allocatable_sales_orders($customer_id = null, $trans_no=null, $type=null)
+function get_allocatable_sales_orders(mixed $customer_id = null, mixed $trans_no=null, mixed $type=null)
 {
 	$sql = "SELECT
 		sorder.trans_type as type,
@@ -177,7 +177,7 @@ function get_allocatable_sales_orders($customer_id = null, $trans_no=null, $type
 }
 //-------------------------------------------------------------------------------------------------------------
 
-function get_allocatable_to_cust_transactions($customer_id = null, $trans_no=null, $type=null)
+function get_allocatable_to_cust_transactions(mixed $customer_id = null, mixed $trans_no=null, mixed $type=null)
 {
 	$sql = "SELECT
 		trans.type,
@@ -238,7 +238,7 @@ function get_allocatable_to_cust_transactions($customer_id = null, $trans_no=nul
 
 //-------------------------------------------------------------------------------------------------------------
 
-function get_allocatable_from_cust_transactions($customer_id, $trans_no=null, $type=null)
+function get_allocatable_from_cust_transactions(mixed $customer_id, mixed $trans_no=null, mixed $type=null)
 {
 
 	$sql = "SELECT
@@ -281,7 +281,7 @@ function get_allocatable_from_cust_transactions($customer_id, $trans_no=null, $t
 	return db_query($sql." ORDER BY trans_no", "Cannot retreive alloc to transactions");
 }
 
-function get_sql_for_customer_allocation_inquiry($from, $to, $customer, $filterType, $settled)
+function get_sql_for_customer_allocation_inquiry(mixed $from, mixed $to, mixed $customer, mixed $filterType, mixed $settled)
 {
   	$data_after = date2sql($from);
   	$date_to = date2sql($to);
@@ -356,7 +356,7 @@ function get_sql_for_customer_allocation_inquiry($from, $to, $customer, $filterT
    	return $sql;
 }
 
-function credit_sales_invoice_allocate($invoice_no, $credit_no, $amount, $date)
+function credit_sales_invoice_allocate(mixed $invoice_no, mixed $credit_no, mixed $amount, mixed $date)
 {
 
 	$sql = "SELECT ov_freight+ov_gst+ov_amount+ov_freight_tax as total, alloc, debtor_no FROM ".TB_PREF."debtor_trans

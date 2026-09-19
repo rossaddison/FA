@@ -26,7 +26,7 @@ include_once($path_to_root . "/admin/db/tags_db.inc");
 
 //----------------------------------------------------------------------------------------------------
 
-function display_type ($type, $typename, $from, $to, $begin, $end, $compare, $convert, &$dec, &$pdec, &$rep, $dimension, $dimension2, $tags, &$pg, $graphics, &$labels, &$serie1, &$serie2)
+function display_type (mixed $type, mixed $typename, mixed $from, mixed $to, mixed $begin, mixed $end, mixed $compare, mixed $convert, &$dec, &$pdec, &$rep, mixed $dimension, mixed $dimension2, mixed $tags, &$pg, mixed $graphics, &$labels, &$serie1, &$serie2)
 {
 	$code_per_balance = 0;
 	$code_acc_balance = 0;
@@ -133,7 +133,7 @@ print_profit_and_loss_statement();
 
 //----------------------------------------------------------------------------------------------------
 
-function Achieve($d1, $d2)
+function Achieve(mixed $d1, mixed $d2)
 {
 	if ($d1 == 0 && $d2 == 0)
 		return 0;

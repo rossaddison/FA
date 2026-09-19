@@ -27,14 +27,14 @@ if ($SysPrefs->use_popup_windows)
 page(_($help_context = "View or Print Transactions"), false, false, "", $js);
 
 //----------------------------------------------------------------------------------------
-function view_link($trans)
+function view_link(mixed $trans)
 {
 	if (!isset($trans['type']))
 		$trans['type'] = $_POST['filterType'];
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
 
-function prt_link($row)
+function prt_link(mixed $row)
 {
 	if (!isset($row['type']))
 		$row['type'] = $_POST['filterType'];
@@ -45,19 +45,19 @@ function prt_link($row)
 		return print_document_link($row['trans_no']."-".$row['type'], _("Print"), true, $row['type'], ICON_PRINT);
 }
 
-function gl_view($row)
+function gl_view(mixed $row)
 {
 	if (!isset($row['type']))
 		$row['type'] = $_POST['filterType'];
 	return get_gl_view_str($row["type"], $row["trans_no"]);
 }
 
-function date_view($row)
+function date_view(mixed $row)
 {
 	return $row['trans_date'];
 }
 
-function ref_view($row)
+function ref_view(mixed $row)
 {
 	return $row['ref'];
 }

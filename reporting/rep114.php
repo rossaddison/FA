@@ -28,7 +28,7 @@ include_once($path_to_root . "/gl/includes/gl_db.inc");
 
 print_sales_summary_report();
 
-function getTaxTransactions($from, $to, $tax_id)
+function getTaxTransactions(mixed $from, mixed $to, mixed $tax_id)
 {
 	$fromdate = date2sql($from);
 	$todate = date2sql($to);
@@ -46,7 +46,7 @@ function getTaxTransactions($from, $to, $tax_id)
     return db_query($sql,"No transactions were returned");
 }
 
-function getTaxes($type, $trans_no)
+function getTaxes(mixed $type, mixed $trans_no)
 {
 	$sql = "SELECT included_in_price, SUM(CASE WHEN trans_type=".ST_CUSTCREDIT." THEN -amount ELSE amount END * ex_rate) AS tax
 		FROM ".TB_PREF."trans_tax_details WHERE trans_type=".db_escape($type)." AND trans_no=".db_escape($trans_no)." GROUP BY included_in_price";

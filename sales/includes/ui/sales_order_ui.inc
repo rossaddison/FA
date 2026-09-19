@@ -12,7 +12,7 @@
 include_once($path_to_root . "/sales/includes/cart_class.inc");
 
 //--------------------------------------------------------------------------------
-function add_to_order(&$order, $new_item, $new_item_qty, $price, $discount, $description=''): void
+function add_to_order(&$order, mixed $new_item, mixed $new_item_qty, mixed $price, mixed $discount, mixed $description=''): void
 {
 	// calculate item price to sum of kit element prices factor for 
 	// value distribution over all exploded kit items
@@ -69,7 +69,7 @@ function add_to_order(&$order, $new_item, $new_item_qty, $price, $discount, $des
 }
 //---------------------------------------------------------------------------------
 
-function get_customer_details_to_order(&$order, $customer_id, $branch_id)
+function get_customer_details_to_order(&$order, mixed $customer_id, mixed $branch_id)
 {
 	global $SysPrefs;
 	
@@ -135,7 +135,7 @@ function get_customer_details_to_order(&$order, $customer_id, $branch_id)
 
 //---------------------------------------------------------------------------------
 
-function display_order_summary($title, &$order, $editable_items=false): void
+function display_order_summary(mixed $title, &$order, mixed $editable_items=false): void
 {
 
 	display_heading($title);
@@ -240,7 +240,7 @@ function display_order_summary($title, &$order, $editable_items=false): void
 
 // ------------------------------------------------------------------------------
 
-function display_order_header(&$order, $editable, $date_text)
+function display_order_header(&$order, mixed $editable, mixed $date_text)
 {
 	global $Ajax, $SysPrefs;
 
@@ -471,7 +471,7 @@ function display_order_header(&$order, $editable, $date_text)
 
 //--------------------------------------------------------------------------------
 
-function sales_order_item_controls(&$order, &$rowcounter, $line_no=-1): void
+function sales_order_item_controls(&$order, &$rowcounter, mixed $line_no=-1): void
 {
     global $Ajax;
 

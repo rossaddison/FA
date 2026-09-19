@@ -296,7 +296,7 @@ class current_user
 
 //--------------------------------------------------------------------------
 
-function round2($number, $decimals=0): float
+function round2(mixed $number, mixed $decimals=0): float
 {
 	$delta = ($number < 0 ? -.0000000001 : .0000000001);
 	return round($number+$delta, $decimals);
@@ -307,7 +307,7 @@ function round2($number, $decimals=0): float
 	(defualt is 0). When $decimals is set to 'max' maximum available precision is used 
 	(decimals depend on value) and trailing zeros are trimmed.
 */
-function number_format2($number, $decimals=0): string
+function number_format2(mixed $number, mixed $decimals=0): string
 {
 	global $SysPrefs;
 	$tsep = $SysPrefs->thoseps[user_tho_sep()];
@@ -336,7 +336,7 @@ if (!floatcmp($value1, $value2))
 
 define('FLOAT_COMP_DELTA', 0.004);
 
-function floatcmp($a, $b)
+function floatcmp(mixed $a, mixed $b)
 {
     return $a - $b > FLOAT_COMP_DELTA ? 1 : ($b - $a > FLOAT_COMP_DELTA ? -1 : 0);
 }
@@ -348,11 +348,11 @@ function fallback_mode() {
     return $_SESSION["wa_current_user"]->ui_mode==0;
 }
 
-function price_format($number): string {
+function price_format(mixed $number): string {
     return number_format2($number, user_price_dec());
 }
 
-function price_decimal_format($number, &$dec)
+function price_decimal_format(mixed $number, &$dec)
 {
 	$dec = user_price_dec();
 	$str = strval($number);
@@ -368,13 +368,13 @@ function price_decimal_format($number, &$dec)
 
 // 2008-06-15. Added extra parameter $stock_id and reference for $dec
 //--------------------------------------------------------------------
-function qty_format($number, $stock_id, &$dec) {
+function qty_format(mixed $number, mixed $stock_id, &$dec) {
 	$dec = get_qty_dec($stock_id);
     return number_format2($number, $dec);
 }
 
 // and get_qty_dec
-function get_qty_dec($stock_id=null)
+function get_qty_dec(mixed $stock_id=null)
 {
 	global $path_to_root;
 	include_once($path_to_root."/inventory/includes/db/items_units_db.inc");
@@ -388,21 +388,21 @@ function get_qty_dec($stock_id=null)
 //
 //	Maximum precision format. Strips trailing unsignificant digits.
 //
-function maxprec_format($number) {
+function maxprec_format(mixed $number) {
     return number_format2($number, 'max');
 }
 
-function exrate_format($number) {
+function exrate_format(mixed $number) {
     return number_format2($number,
 	$_SESSION["wa_current_user"]->prefs->exrate_dec());
 }
 
-function percent_format($number): string {
+function percent_format(mixed $number): string {
     return number_format2($number,
 	$_SESSION["wa_current_user"]->prefs->percent_dec());
 }
 
-function user_numeric($input) {
+function user_numeric(mixed $input) {
     global $SysPrefs;
 
     $num = trim($input);
@@ -595,12 +595,12 @@ function user_def_print_orientation()
     return $_SESSION["wa_current_user"]->prefs->def_print_orientation();
 }
 
-function user_check_access($sec_area)
+function user_check_access(mixed $sec_area)
 {
 	return $_SESSION["wa_current_user"]->can_access($sec_area);
 }
 
-function set_user_prefs($prefs): void
+function set_user_prefs(mixed $prefs): void
 {
 	$_SESSION["wa_current_user"]->update_prefs($prefs);
 }
@@ -626,7 +626,7 @@ function add_user_js_data(): void {
   add_js_source($js);
 }
 
-function user_js_cache($id=null)
+function user_js_cache(mixed $id=null)
 {
 	global $path_to_root;
 
@@ -650,7 +650,7 @@ function session_timeout()
 //	Inserts $elements into $array at position $index.
 //	$elements is list of any objects
 //
-function array_insert(&$array, $index, $elements): void
+function array_insert(&$array, mixed $index, mixed $elements): void
 {
 	if (!is_array($elements)) $elements = array($elements);
 
@@ -658,18 +658,18 @@ function array_insert(&$array, $index, $elements): void
 	$array = array_merge($head, $elements, $array);
 }
 
-function array_remove(&$array, $index, $len=1): void
+function array_remove(&$array, mixed $index, mixed $len=1): void
 {
 	array_splice($array, $index, $len);
 }
 
-function array_substitute(&$array, $index, $len, $elements): void
+function array_substitute(&$array, mixed $index, mixed $len, mixed $elements): void
 {
 	array_splice($array, $index, $len);
 	array_insert($array, $index, $elements);
 }
 
-function array_append(&$array, $elements): void
+function array_append(&$array, mixed $elements): void
 {
 	foreach($elements as $key => $el) {
 		if(is_int($key))
@@ -682,7 +682,7 @@ function array_append(&$array, $elements): void
 //	Search $needle in $haystack or in $haystack[][$valuekey]
 //	returns $needle found or null.
 //
-function array_search_value($needle, $haystack, $valuekey=null)
+function array_search_value(mixed $needle, mixed $haystack, mixed $valuekey=null)
 {
 	if (is_array($haystack)) {
 		foreach($haystack as $key => $value) {
@@ -698,7 +698,7 @@ function array_search_value($needle, $haystack, $valuekey=null)
 //	Search $needle in $haystack or in $haystack[][$valuekey]
 //	returns array of keys of $haystack elements found
 //
-function array_search_keys($needle, $haystack, $valuekey=null)
+function array_search_keys(mixed $needle, mixed $haystack, mixed $valuekey=null)
 {
 	$keys = array();
 	if (is_array($haystack)) {
@@ -715,7 +715,7 @@ function array_search_keys($needle, $haystack, $valuekey=null)
 //	Find first (single) $needle in $haystack or in $haystack[][$valuekey]
 //	returns $haystack element found or null
 //
-function array_search_key($needle, $haystack, $valuekey=null)
+function array_search_key(mixed $needle, mixed $haystack, mixed $valuekey=null)
 {
 	$keys = array_search_keys($needle, $haystack, $valuekey);
 	return @$keys[0];
@@ -729,7 +729,7 @@ function recalculate_cols(&$cols): void
 		$cols[$key] = intval($col * $factor); 
 }
 
-function flush_dir($path, $wipe = false): void 
+function flush_dir(mixed $path, mixed $wipe = false): void 
 {
 	if (!file_exists($path))
 		return;
@@ -750,7 +750,7 @@ function flush_dir($path, $wipe = false): void
 	Returns current path to company private folder.
 	(Current path can change after chdir).
 */
-function company_path($comp=null)
+function company_path(mixed $comp=null)
 {
 	global $path_to_root, $SysPrefs;
 

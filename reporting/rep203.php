@@ -27,7 +27,7 @@ include_once($path_to_root . "/gl/includes/gl_db.inc");
 
 print_payment_report();
 
-function getTransactions($supplier, $date)
+function getTransactions(mixed $supplier, mixed $date)
 {
 	$date = date2sql($date);
 	$dec = user_price_dec();

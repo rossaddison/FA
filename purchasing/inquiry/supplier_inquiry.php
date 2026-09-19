@@ -37,7 +37,7 @@ if (isset($_GET['ToDate'])){
 
 //------------------------------------------------------------------------------------------------
 
-function display_supplier_summary($supplier_record): void
+function display_supplier_summary(mixed $supplier_record): void
 {
 	$past1 = get_company_pref('past_due_days');
 	$past2 = 2 * $past1;
@@ -66,30 +66,30 @@ function display_supplier_summary($supplier_record): void
     end_table(1);
 }
 //------------------------------------------------------------------------------------------------
-function systype_name($dummy, $type)
+function systype_name(mixed $dummy, mixed $type)
 {
 	global $systypes_array;
 	return $systypes_array[$type];
 }
 
-function trans_view($trans)
+function trans_view(mixed $trans)
 {
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
 
-function due_date($row)
+function due_date(mixed $row)
 {
 	return ($row["type"]== ST_SUPPINVOICE) || ($row["type"]== ST_SUPPCREDIT) ? $row["due_date"] : '';
 }
 
-function gl_view($row)
+function gl_view(mixed $row)
 {
 	if ($row['type'] == ST_SUPPRECEIVE && get_voided_entry(ST_SUPPRECEIVE, $row['trans_no']))
 		return set_icon(ICON_REMOVE, _("Voided."));
 	return get_gl_view_str($row["type"], $row["trans_no"]);
 }
 
-function credit_link($row)
+function credit_link(mixed $row)
 {
 	global $page_nested;
 
@@ -102,25 +102,25 @@ function credit_link($row)
 			: '';
 }
 
-function fmt_amount($row)
+function fmt_amount(mixed $row)
 {
 	$value = $row["TotalAmount"];
 	return price_format($value);
 }
 
-function prt_link($row)
+function prt_link(mixed $row)
 {
   	if ($row['type'] == ST_SUPPAYMENT || $row['type'] == ST_BANKPAYMENT || $row['type'] == ST_SUPPCREDIT) 
  		return print_document_link($row['trans_no']."-".$row['type'], _("Print Remittance"), true, ST_SUPPAYMENT, ICON_PRINT);
 }
 
-function check_overdue($row)
+function check_overdue(mixed $row)
 {
 	return $row['OverDue'] == 1
 		&& (abs($row["TotalAmount"]) - $row["Allocated"] != 0);
 }
 
-function edit_link($row)
+function edit_link(mixed $row)
 {
 	global $page_nested;
 

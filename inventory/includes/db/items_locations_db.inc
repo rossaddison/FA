@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_item_location($loc_code, $location_name, $delivery_address, $phone, $phone2, $fax, $email, $contact, $fixed_asset = 0): void
+function add_item_location(mixed $loc_code, mixed $location_name, mixed $delivery_address, mixed $phone, mixed $phone2, mixed $fax, mixed $email, mixed $contact, mixed $fixed_asset = 0): void
 {
 	$sql = "INSERT INTO ".TB_PREF."locations (loc_code, location_name, delivery_address, phone, phone2, fax, email, contact, fixed_asset)
 		VALUES (".db_escape($loc_code).", ".db_escape($location_name).", ".db_escape($delivery_address).", "
@@ -27,7 +27,7 @@ function add_item_location($loc_code, $location_name, $delivery_address, $phone,
 
 //------------------------------------------------------------------------------------
 
-function update_item_location($loc_code, $location_name, $delivery_address, $phone, $phone2, $fax, $email, $contact, $fixed_asset = 0): void
+function update_item_location(mixed $loc_code, mixed $location_name, mixed $delivery_address, mixed $phone, mixed $phone2, mixed $fax, mixed $email, mixed $contact, mixed $fixed_asset = 0): void
 
 {
     $sql = "UPDATE ".TB_PREF."locations SET location_name=".db_escape($location_name).",
@@ -42,7 +42,7 @@ function update_item_location($loc_code, $location_name, $delivery_address, $pho
 
 //------------------------------------------------------------------------------------
 
-function delete_item_location($item_location): void
+function delete_item_location(mixed $item_location): void
 {
 	$sql="DELETE FROM ".TB_PREF."locations WHERE loc_code=".db_escape($item_location);
 	db_query($sql,"a location could not be deleted");
@@ -53,7 +53,7 @@ function delete_item_location($item_location): void
 
 //------------------------------------------------------------------------------------
 
-function get_item_location($item_location)
+function get_item_location(mixed $item_location)
 {
 	$sql="SELECT * FROM ".TB_PREF."locations WHERE loc_code=".db_escape($item_location);
 
@@ -64,7 +64,7 @@ function get_item_location($item_location)
 
 //------------------------------------------------------------------------------------
 
-function get_item_locations($show_inactive, $fixed_asset = 0)
+function get_item_locations(mixed $show_inactive, mixed $fixed_asset = 0)
 {
 	$sql = "SELECT * FROM ".TB_PREF."locations WHERE fixed_asset = ".db_escape($fixed_asset);
 	if (!$show_inactive) $sql .= " AND !inactive";
@@ -73,7 +73,7 @@ function get_item_locations($show_inactive, $fixed_asset = 0)
 
 //------------------------------------------------------------------------------------
 
-function set_reorder_level($stock_id, $loc_code, $reorder_level): void
+function set_reorder_level(mixed $stock_id, mixed $loc_code, mixed $reorder_level): void
 {
 	$sql = "UPDATE ".TB_PREF."loc_stock SET reorder_level = $reorder_level
 		WHERE stock_id = ".db_escape($stock_id)." AND loc_code = ".db_escape($loc_code);
@@ -83,7 +83,7 @@ function set_reorder_level($stock_id, $loc_code, $reorder_level): void
 
 //------------------------------------------------------------------------------------
 
-function get_loc_details($stock_id, $fixed_asset = 0)
+function get_loc_details(mixed $stock_id, mixed $fixed_asset = 0)
 {
 	$sql = "SELECT stock.loc_code, stock.location_name, "
 	.db_escape($stock_id)." as stock_id, reorders.reorder_level

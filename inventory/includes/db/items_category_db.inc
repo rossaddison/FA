@@ -9,9 +9,9 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_item_category($description, $tax_type_id, $sales_account, 
-	$cogs_account, $inventory_account, $adjustment_account, $wip_account, 
-	$units, $mb_flag, $dim1, $dim2, $no_sale, $no_purchase): void
+function add_item_category(mixed $description, mixed $tax_type_id, mixed $sales_account, 
+	mixed $cogs_account, mixed $inventory_account, mixed $adjustment_account, mixed $wip_account, 
+	mixed $units, mixed $mb_flag, mixed $dim1, mixed $dim2, mixed $no_sale, mixed $no_purchase): void
 {
 	$sql = "INSERT INTO ".TB_PREF."stock_category (description, dflt_tax_type,
 			dflt_units, dflt_mb_flag, dflt_sales_act, dflt_cogs_act, 
@@ -35,9 +35,9 @@ function add_item_category($description, $tax_type_id, $sales_account,
 	db_query($sql,"an item category could not be added");
 }
 
-function update_item_category($id, $description, $tax_type_id, 
-	$sales_account, $cogs_account, $inventory_account, $adjustment_account, 
-	$wip_account, $units, $mb_flag, $dim1, $dim2, $no_sale, $no_purchase): void
+function update_item_category(mixed $id, mixed $description, mixed $tax_type_id, 
+	mixed $sales_account, mixed $cogs_account, mixed $inventory_account, mixed $adjustment_account, 
+	mixed $wip_account, mixed $units, mixed $mb_flag, mixed $dim1, mixed $dim2, mixed $no_sale, mixed $no_purchase): void
 
 {
 	$sql = "UPDATE ".TB_PREF."stock_category SET "
@@ -59,14 +59,14 @@ function update_item_category($id, $description, $tax_type_id,
 	db_query($sql,"an item category could not be updated");
 }
 
-function delete_item_category($id): void
+function delete_item_category(mixed $id): void
 {
 	$sql="DELETE FROM ".TB_PREF."stock_category WHERE category_id=".db_escape($id);
 
 	db_query($sql,"an item category could not be deleted");
 }
 
-function get_item_categories($show_inactive, $fixed_asset=false)
+function get_item_categories(mixed $show_inactive, mixed $fixed_asset=false)
 {
 	$sql = "SELECT c.*, t.name as tax_name FROM ".TB_PREF."stock_category c, "
 		.TB_PREF."item_tax_types t WHERE c.dflt_tax_type=t.id";
@@ -82,7 +82,7 @@ function get_item_categories($show_inactive, $fixed_asset=false)
 	return db_query($sql, "could not get stock categories");
 }
 
-function get_item_category($id)
+function get_item_category(mixed $id)
 {
 	$sql="SELECT * FROM ".TB_PREF."stock_category WHERE category_id=".db_escape($id);
 
@@ -91,7 +91,7 @@ function get_item_category($id)
 	return db_fetch($result);
 }
 
-function get_category_name($id)
+function get_category_name(mixed $id)
 {
 	$sql = "SELECT description FROM ".TB_PREF."stock_category WHERE category_id=".db_escape($id);
 

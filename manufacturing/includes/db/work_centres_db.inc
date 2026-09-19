@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_work_centre($name, $description): void
+function add_work_centre(mixed $name, mixed $description): void
 {
 	$sql = "INSERT INTO ".TB_PREF."workcentres (name, description)
 		VALUES (".db_escape($name).",".db_escape($description).")";
@@ -17,7 +17,7 @@ function add_work_centre($name, $description): void
 	db_query($sql, "could not add work centre");
 }
 
-function update_work_centre($type_id, $name, $description): void
+function update_work_centre(mixed $type_id, mixed $name, mixed $description): void
 {
 	$sql = "UPDATE ".TB_PREF."workcentres SET name=".db_escape($name).", description=".db_escape($description)."
 		WHERE id=".db_escape($type_id);
@@ -25,7 +25,7 @@ function update_work_centre($type_id, $name, $description): void
 	db_query($sql, "could not update work centre");
 }
 
-function get_all_work_centres($all=false)
+function get_all_work_centres(mixed $all=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."workcentres";
 	if (!$all) $sql .= " WHERE !inactive";
@@ -33,7 +33,7 @@ function get_all_work_centres($all=false)
 	return db_query($sql, "could not get all work centres");
 }
 
-function get_work_centre($type_id)
+function get_work_centre(mixed $type_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."workcentres WHERE id=".db_escape($type_id);
 
@@ -42,7 +42,7 @@ function get_work_centre($type_id)
 	return db_fetch($result);
 }
 
-function delete_work_centre($type_id): void
+function delete_work_centre(mixed $type_id): void
 {
 	$sql="DELETE FROM ".TB_PREF."workcentres WHERE id=".db_escape($type_id);
 

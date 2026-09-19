@@ -10,7 +10,7 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-function add_wo_costing($workorder_id, $cost_type, $trans_type, $trans_no, $factor=1): void
+function add_wo_costing(mixed $workorder_id, mixed $cost_type, mixed $trans_type, mixed $trans_no, mixed $factor=1): void
 {
 	$sql = "INSERT INTO ".TB_PREF."wo_costing (workorder_id, cost_type, trans_type, trans_no, factor)
 		VALUES (".db_escape($workorder_id).","
@@ -21,7 +21,7 @@ function add_wo_costing($workorder_id, $cost_type, $trans_type, $trans_no, $fact
 
 }
 
-function get_wo_costing($workorder_id)
+function get_wo_costing(mixed $workorder_id)
 {
 	$sql="SELECT * 
 		FROM ".TB_PREF."wo_costing cost,
@@ -33,7 +33,7 @@ function get_wo_costing($workorder_id)
 	return db_query($sql, "could not get work order costing");
 }
 
-function delete_wo_costing($trans_type, $trans_no): void
+function delete_wo_costing(mixed $trans_type, mixed $trans_no): void
 {
 	$sql="DELETE FROM ".TB_PREF."wo_costing WHERE trans_type=".db_escape($trans_type)
 		." AND trans_no=".db_escape($trans_no);
@@ -44,7 +44,7 @@ function delete_wo_costing($trans_type, $trans_no): void
 /*
 	Updates average material cost for item.
 */
-function update_material_cost($stock_id, $qty, $unit_cost, $date): void
+function update_material_cost(mixed $stock_id, mixed $qty, mixed $unit_cost, mixed $date): void
 {
 	global $Refs;
 
@@ -113,7 +113,7 @@ function update_material_cost($stock_id, $qty, $unit_cost, $date): void
 /*
 	Create journal entry for WO related costs.
 */
-function add_wo_costs_journal($wo_id, $amount, $cost_type, $cr_acc, $date, $dim1=0, $dim2=0, $memo = null, $ref= null): void
+function add_wo_costs_journal(mixed $wo_id, mixed $amount, mixed $cost_type, mixed $cr_acc, mixed $date, mixed $dim1=0, mixed $dim2=0, mixed $memo = null, mixed $ref= null): void
 {
 //-------- this should be done by single call to write_journal_entries() using items_cart()
 //
@@ -158,7 +158,7 @@ function add_wo_costs_journal($wo_id, $amount, $cost_type, $cr_acc, $date, $dim1
 /*
 	Process component usage: generate and post stock move, update average component cost.
 */
-function work_order_production_gl($woid, $stock_id, $quantity, $date_, $rcv_no): void
+function work_order_production_gl(mixed $woid, mixed $stock_id, mixed $quantity, mixed $date_, mixed $rcv_no): void
 {
 	global $SysPrefs, $path_to_root;
 
@@ -208,7 +208,7 @@ function work_order_production_gl($woid, $stock_id, $quantity, $date_, $rcv_no):
 		send_reorder_email($loc, $st_ids, $st_names, $st_num, $st_reorder);
 }
 
-function check_wo_costing($type, $trans_no)
+function check_wo_costing(mixed $type, mixed $trans_no)
 {
 	$sql = "SELECT workorder_id FROM ".TB_PREF."wo_costing WHERE trans_type= ".db_escape($type)." AND trans_no=".db_escape($trans_no);
 	$costs = db_query($sql, 'cannot check WO costing');
@@ -220,7 +220,7 @@ function check_wo_costing($type, $trans_no)
 	return $wo['workorder_id'];
 }
 
-function void_wo_costing($wo_id): void
+function void_wo_costing(mixed $wo_id): void
 {
 	global $Refs;
 

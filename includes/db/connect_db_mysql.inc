@@ -12,7 +12,7 @@
 define('DB_DUPLICATE_ERROR', 1062);
 define('SQL_MODE', 'STRICT_ALL_TABLES'); // prevents SQL injection with silent field content truncation
 
-function set_global_connection($company=-1)
+function set_global_connection(mixed $company=-1)
 {
 	global $db, $path_to_root, $db_connections, $SysPrefs;
 
@@ -45,7 +45,7 @@ function set_global_connection($company=-1)
 
 //DB wrapper functions to change only once for whole application
 
-function db_query($sql, $err_msg=null)
+function db_query(mixed $sql, mixed $err_msg=null)
 {
 	global $db, $SysPrefs, $sql_queries, $Ajax, $db_connections, $db_last_inserted_id;
 
@@ -93,46 +93,46 @@ function db_query($sql, $err_msg=null)
 	return $result;
 }
 
-function db_fetch_row($result)
+function db_fetch_row(mixed $result)
 {
 
 	return mysql_fetch_row($result);
 }
 
-function db_fetch_assoc($result)
+function db_fetch_assoc(mixed $result)
 {
 
 	return mysql_fetch_assoc($result);
 }
 
-function db_fetch($result)
+function db_fetch(mixed $result)
 {
 
 	return mysql_fetch_array($result);
 }
 
-function db_seek(&$result,$record)
+function db_seek(&$result,mixed $record)
 {
 	return mysql_data_seek($result, $record);
 }
 
-function db_free_result($result): void
+function db_free_result(mixed $result): void
 {
 	if ($result)
 		mysql_free_result($result);
 }
 
-function db_num_rows($result)
+function db_num_rows(mixed $result)
 {
 	return mysql_num_rows($result);
 }
 
-function db_num_fields($result)
+function db_num_fields(mixed $result)
 {
 	return mysql_num_fields($result);
 }
 
-function db_escape($value = "", $nullify = false)
+function db_escape(mixed $value = "", mixed $nullify = false)
 {
 	$value = @html_entity_decode($value, ENT_QUOTES, $_SESSION['language']->encoding);
 	$value = html_specials_encode($value);
@@ -167,7 +167,7 @@ function db_error_no()
 	return mysql_errno($db);
 }
 
-function db_error_msg($conn)
+function db_error_msg(mixed $conn)
 {
 	return mysql_error($conn);
 }
@@ -185,12 +185,12 @@ function db_num_affected_rows()
 	return mysql_affected_rows($db);
 }
 
-function db_field_name($result, $n)
+function db_field_name(mixed $result, mixed $n)
 {
 	return mysql_field_name($result, $n);
 }
 
-function db_set_collation($db, $fa_collation)
+function db_set_collation(mixed $db, mixed $fa_collation)
 {
 	return mysql_query("ALTER DATABASE COLLATE ".get_mysql_collation($fa_collation), $db);
 }
@@ -199,7 +199,7 @@ function db_set_collation($db, $fa_collation)
 	Create database for FA company. If database already exists,
 	just set collation to be sure nothing weird will happen later.
 */
-function db_create_db($connection)
+function db_create_db(mixed $connection)
 {
 	$server = $connection["host"];
 	if (!empty($connection["port"]))
@@ -220,7 +220,7 @@ function db_create_db($connection)
 	return $db;
 }
 
-function db_drop_db($connection)
+function db_drop_db(mixed $connection)
 {
 
 	if ($connection["tbpref"] == "")
@@ -245,7 +245,7 @@ function db_drop_db($connection)
 	}
 }
 
-function db_close($dbase = null)
+function db_close(mixed $dbase = null)
 {
 	global $db;
 	
@@ -259,7 +259,7 @@ function db_extension_exists()
 	return function_exists('mysql_connect');
 }
 
-function db_escape_function($string)
+function db_escape_function(mixed $string)
 {
 	return (function_exists('mysql_real_escape_string') ? mysql_real_escape_string($string) : mysql_escape_string($string));
 }
@@ -268,7 +268,7 @@ function db_escape_function($string)
 	Set mysql client encoding.
 	Default is is encoding used by default language.
 */
-function db_set_encoding($ui_encoding=null): void
+function db_set_encoding(mixed $ui_encoding=null): void
 {
 	global $dflt_lang, $installed_languages;
 
@@ -282,12 +282,12 @@ function db_set_encoding($ui_encoding=null): void
 		mysql_set_charset($mysql_enc);
 }
 
-function db_get_charset($db)
+function db_get_charset(mixed $db)
 {
 	return mysql_client_encoding();
 }
 
-function db_set_charset($db, $charset)
+function db_set_charset(mixed $db, mixed $charset)
 {
 	return mysql_set_charset($charset, $db);
 }

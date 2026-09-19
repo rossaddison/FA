@@ -22,13 +22,13 @@ simple_page_mode(true);
 //------------------------------
 //	Helper to translate record content to more intuitive form
 //
-function term_days($myrow)
+function term_days(mixed $myrow)
 {
 	return $myrow["day_in_following_month"] != 0 ? $myrow["day_in_following_month"] :
 		$myrow["days_before_due"];
 }
 
-function term_type($myrow)
+function term_type(mixed $myrow)
 {
 	if ($myrow["day_in_following_month"] != 0)
 		return PTT_FOLLOWING;

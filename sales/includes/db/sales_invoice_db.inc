@@ -223,7 +223,7 @@ function write_sales_invoice(&$invoice)
 
 //--------------------------------------------------------------------------------------------------
 
-function void_sales_invoice($type, $type_no): void
+function void_sales_invoice(mixed $type, mixed $type_no): void
 {
 	begin_transaction();
 
@@ -279,12 +279,12 @@ function void_sales_invoice($type, $type_no): void
 	commit_transaction();
 }
 
-function is_cust_invoice_credited($trans_no)
+function is_cust_invoice_credited(mixed $trans_no)
 {
 	return db_num_rows(get_sales_child_lines(ST_SALESINVOICE, $trans_no));
 }
 
-function get_cust_prepayment_invoice_factor($trans_no)
+function get_cust_prepayment_invoice_factor(mixed $trans_no)
 {
 	$sql = "SELECT IF(dt.prep_amount>0, dt.prep_amount/so.total ,0) 
 		FROM ".TB_PREF."debtor_trans dt
@@ -297,7 +297,7 @@ function get_cust_prepayment_invoice_factor($trans_no)
 /*
 	Return yet not invoiced amount of prepayment invoice (or 0 if normal invoice)
 */
-function prepaid_invoice_remainder($order)
+function prepaid_invoice_remainder(mixed $order)
 {
 	$sql = "SELECT so.total - SUM(IFNULL(inv.prep_amount,0)) FROM "
 		.TB_PREF."sales_orders so
@@ -315,7 +315,7 @@ function prepaid_invoice_remainder($order)
 /*
 	Find oldest delivery date for sales invoice
 */
-function get_oldest_delivery_date($invoice_no)
+function get_oldest_delivery_date(mixed $invoice_no)
 {
 	$sql = "SELECT MIN(trans.tran_date)
 			FROM
@@ -335,7 +335,7 @@ function get_oldest_delivery_date($invoice_no)
 /*
 	Find oldest payment date for sales invoice
 */
-function get_oldest_payment_date($invoice_no)
+function get_oldest_payment_date(mixed $invoice_no)
 {
 	$sql = "SELECT MIN(payment.tran_date)
 			FROM

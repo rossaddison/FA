@@ -30,7 +30,7 @@ page(_($help_context = "Void a Transaction"), false, false, "", $js);
 
 simple_page_mode(true);
 //----------------------------------------------------------------------------------------
-function exist_transaction($type, $type_no)
+function exist_transaction(mixed $type, mixed $type_no)
 {
 	$void_entry = get_voided_entry($type, $type_no);
 
@@ -109,14 +109,14 @@ function exist_transaction($type, $type_no)
 	return true;
 }
 
-function view_link($trans)
+function view_link(mixed $trans)
 {
 	if (!isset($trans['type']))
 		$trans['type'] = $_POST['filterType'];
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
 
-function select_link($row)
+function select_link(mixed $row)
 {
 	if (!isset($row['type']))
 		$row['type'] = $_POST['filterType'];
@@ -125,24 +125,24 @@ function select_link($row)
   	return button('Edit'.$row["trans_no"], _("Select"), _("Select"), ICON_EDIT);
 }
 
-function gl_view($row)
+function gl_view(mixed $row)
 {
 	if (!isset($row['type']))
 		$row['type'] = $_POST['filterType'];
 	return get_gl_view_str($row["type"], $row["trans_no"]);
 }
 
-function date_view($row)
+function date_view(mixed $row)
 {
 	return $row['trans_date'];
 }
 
-function ref_view($row)
+function ref_view(mixed $row)
 {
 	return $row['ref'];
 }
 
-function is_selected($row) // Function added by faisal
+function is_selected(mixed $row) // Function added by faisal
 {
 	global $selected_id;
 	return $row['trans_no'] == $selected_id ? true : false;

@@ -29,7 +29,7 @@ print_bank_transactions();
 
 //----------------------------------------------------------------------------------------------------
 
-function get_bank_balance_to($to, $account)
+function get_bank_balance_to(mixed $to, mixed $account)
 {
 	$to = date2sql($to);
 	$sql = "SELECT SUM(amount) FROM ".TB_PREF."bank_trans WHERE bank_act=".db_escape($account)."
@@ -39,7 +39,7 @@ function get_bank_balance_to($to, $account)
 	return $row[0];
 }
 
-function get_bank_transactions($from, $to, $account)
+function get_bank_transactions(mixed $from, mixed $to, mixed $account)
 {
 	$from = date2sql($from);
 	$to = date2sql($to);

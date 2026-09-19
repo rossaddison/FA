@@ -85,7 +85,7 @@ function add_sales_order(&$order)
 
 //----------------------------------------------------------------------------------------
 
-function delete_sales_order($order_no, $trans_type): void
+function delete_sales_order(mixed $order_no, mixed $trans_type): void
 {
 	begin_transaction();
 	hook_db_prevoid($trans_type, $order_no);
@@ -108,7 +108,7 @@ function delete_sales_order($order_no, $trans_type): void
 //----------------------------------------------------------------------------------------
 // Mark changes in sales_order_details
 //
-function update_sales_order_version($order): void
+function update_sales_order_version(mixed $order): void
 {
   foreach ($order as $so_num => $so_ver) {
   $sql= 'UPDATE '.TB_PREF.'sales_orders SET version=version+1 WHERE order_no='. db_escape($so_num).
@@ -119,7 +119,7 @@ function update_sales_order_version($order): void
 
 //----------------------------------------------------------------------------------------
 
-function update_sales_order($order): void
+function update_sales_order(mixed $order): void
 {
 	global $SysPrefs, $path_to_root, $Refs;
 
@@ -222,7 +222,7 @@ function update_sales_order($order): void
 
 //----------------------------------------------------------------------------------------
 
-function get_sales_order_header($order_no, $trans_type)
+function get_sales_order_header(mixed $order_no, mixed $trans_type)
 {
 	$sql = "SELECT sorder.*,
 	  cust.name,
@@ -280,7 +280,7 @@ function get_sales_order_header($order_no, $trans_type)
 
 //----------------------------------------------------------------------------------------
 
-function get_sales_order_details($order_no, $trans_type) {
+function get_sales_order_details(mixed $order_no, mixed $trans_type) {
 	$sql = "SELECT id, stk_code, unit_price,
 				line.description,
 				line.quantity,
@@ -300,7 +300,7 @@ function get_sales_order_details($order_no, $trans_type) {
 }
 //----------------------------------------------------------------------------------------
 
-function read_sales_order($order_no, &$order, $trans_type)
+function read_sales_order(mixed $order_no, &$order, mixed $trans_type)
 {
 
 	$myrow = get_sales_order_header($order_no, $trans_type);
@@ -354,7 +354,7 @@ function read_sales_order($order_no, &$order, $trans_type)
 
 //----------------------------------------------------------------------------------------
 
-function sales_order_has_deliveries($order_no)
+function sales_order_has_deliveries(mixed $order_no)
 {
 	$sql = "SELECT SUM(qty_sent) FROM ".TB_PREF.
 	"sales_order_details WHERE order_no=".db_escape($order_no)
@@ -373,7 +373,7 @@ function sales_order_has_deliveries($order_no)
 
 //----------------------------------------------------------------------------------------
 
-function close_sales_order($order_no): void
+function close_sales_order(mixed $order_no): void
 {
 	// set the quantity of each item to the already sent quantity. this will mark item as closed.
 	$sql = "UPDATE ".TB_PREF."sales_order_details
@@ -385,7 +385,7 @@ function close_sales_order($order_no): void
 
 //---------------------------------------------------------------------------------------------------------------
 
-function get_invoice_duedate($terms, $invdate)
+function get_invoice_duedate(mixed $terms, mixed $invdate)
 {
 	if (!is_date($invdate))
 	{
@@ -406,7 +406,7 @@ function get_invoice_duedate($terms, $invdate)
 	return $duedate;
 }
 
-function get_customer_to_order($customer_id) {
+function get_customer_to_order(mixed $customer_id) {
 
 	// Now check to ensure this account is not on hold */
 	$sql = "SELECT cust.name, 
@@ -437,7 +437,7 @@ function get_customer_to_order($customer_id) {
 	return 	db_fetch($result);
 }
 
-function get_branch_to_order($customer_id, $branch_id) {
+function get_branch_to_order(mixed $customer_id, mixed $branch_id) {
 
     	// the branch was also selected from the customer selection so default the delivery details from the customer branches table cust_branch. The order process will ask for branch details later anyway
 	 	$sql = "SELECT branch.br_name,
@@ -465,8 +465,8 @@ function get_branch_to_order($customer_id, $branch_id) {
 	OutstandingOnly
 	PrepaidOrders
 */
-function get_sql_for_sales_orders_view($trans_type, $trans_no, $filter, 
-	$stock_item='', $from='', $to='', $ref='', $location=ALL_TEXT, $customer_id=ALL_TEXT, $show_voided = 0, $by_delivery=0, $no_auto=0)
+function get_sql_for_sales_orders_view(mixed $trans_type, mixed $trans_no, mixed $filter, 
+	mixed $stock_item='', mixed $from='', mixed $to='', mixed $ref='', mixed $location=ALL_TEXT, mixed $customer_id=ALL_TEXT, mixed $show_voided = 0, mixed $by_delivery=0, mixed $no_auto=0)
 {
     if ($filter=='OutstandingOnly')
         $order_value = 'Sum(line.unit_price*(line.quantity-line.qty_sent)*(1-line.discount_percent))+freight_cost';
@@ -576,7 +576,7 @@ function get_sql_for_sales_orders_view($trans_type, $trans_no, $filter,
 }
 
 //--------------------------------------------------------------------------------------------------
-function update_prepaid_so_line($line_id, $qty_invoiced)
+function update_prepaid_so_line(mixed $line_id, mixed $qty_invoiced)
 {
 	$sql = "UPDATE ".TB_PREF."sales_order_details
 		SET invoiced = invoiced + ".(float)$qty_invoiced."
@@ -588,7 +588,7 @@ function update_prepaid_so_line($line_id, $qty_invoiced)
 /*
 	Returns array of all issued invoices to sales order $order_no, optinally up to trans_no==$up_to
 */
-function get_sales_order_invoices($order_no)
+function get_sales_order_invoices(mixed $order_no)
 {
 	$sql = "SELECT trans_no, dt.type as type, tran_date, reference, prep_amount
 	    FROM ".TB_PREF."debtor_trans dt
@@ -599,7 +599,7 @@ function get_sales_order_invoices($order_no)
 	return db_query($sql, "cannot retrieve sales invoices for sales order");
 }
 
-function is_sales_order_started($order_no)
+function is_sales_order_started(mixed $order_no)
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."sales_order_details WHERE order_no=".db_escape($order_no)." AND trans_type=".ST_SALESORDER
 		." AND (invoiced!=0 OR qty_sent!=0)";
@@ -612,7 +612,7 @@ function is_sales_order_started($order_no)
 //
 // Mark/unmark sales order as template.
 //
-function sales_order_set_template($id, $status): void
+function sales_order_set_template(mixed $id, mixed $status): void
 {
   	$sql = "UPDATE ".TB_PREF."sales_orders SET type = ".db_escape($status)." WHERE order_no=".db_escape($id);
   	db_query($sql, "Can't change sales order type");
@@ -622,7 +622,7 @@ function sales_order_set_template($id, $status): void
 	Check whether sales order is issued in prepaid mode and already opened
 */
 
-function is_prepaid_order_open($order_no)
+function is_prepaid_order_open(mixed $order_no)
 {
 	$sql = "SELECT count(*)
 		FROM ".TB_PREF."sales_orders o,
@@ -641,7 +641,7 @@ function is_prepaid_order_open($order_no)
 	return $result[0];
 }
 
-function last_sales_order_detail($order, $field)
+function last_sales_order_detail(mixed $order, mixed $field)
 {
         $sql = "SELECT $field
             FROM ".TB_PREF."sales_order_details d

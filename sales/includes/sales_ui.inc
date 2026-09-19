@@ -42,7 +42,7 @@ function processing_active()
 	Check if the cart was not destroyed during opening the edition page in
 	another browser tab.
 */
-function check_edit_conflicts($cart_id, $cartname='Items'): void
+function check_edit_conflicts(mixed $cart_id, mixed $cartname='Items'): void
 {
 	global $Ajax, $SysPrefs;
 

@@ -59,34 +59,34 @@ submit_cells('Search', _("Search"), '', '', 'default');
 end_row();
 end_table();
 
-function journal_pos($row)
+function journal_pos(mixed $row)
 {
 	return $row['gl_seq'] ? $row['gl_seq'] : '-';
 }
 
-function systype_name($dummy, $type)
+function systype_name(mixed $dummy, mixed $type)
 {
 	global $systypes_array;
 	
 	return $systypes_array[$type];
 }
 
-function person_link($row) 
+function person_link(mixed $row) 
 {
     return payment_person_name($row["person_type_id"],$row["person_id"]);
 }
 
-function view_link($row) 
+function view_link(mixed $row) 
 {
 	return get_trans_view_str($row["trans_type"], $row["trans_no"]);
 }
 
-function gl_link($row) 
+function gl_link(mixed $row) 
 {
 	return get_gl_view_str($row["trans_type"], $row["trans_no"]);
 }
 
-function edit_link($row)
+function edit_link(mixed $row)
 {
 
 	$ok = true;
@@ -100,7 +100,7 @@ function edit_link($row)
 	return $ok ? trans_editor_link( $row["trans_type"], $row["trans_no"]) : '--';
 }
 
-function invoice_supp_reference($row)
+function invoice_supp_reference(mixed $row)
 {
 	return $row['supp_reference'];
 }

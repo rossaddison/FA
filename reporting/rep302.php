@@ -29,7 +29,7 @@ include_once($path_to_root . "/includes/db/manufacturing_db.inc");
 
 print_inventory_planning();
 
-function getTransactions($category, $location)
+function getTransactions(mixed $category, mixed $location)
 {
 	$sql = "SELECT item.category_id,
 			category.description AS cat_description,
@@ -57,7 +57,7 @@ function getTransactions($category, $location)
 
 }
 
-function getPeriods($stockid, $location)
+function getPeriods(mixed $stockid, mixed $location)
 {
 	$date5 = date('Y-m-d');
 	$date4 = date('Y-m-d',mktime(0,0,0,date('m'),1,date('Y')));

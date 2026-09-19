@@ -53,36 +53,36 @@ start_form();
 		$supplier_id = $_POST['supplier_id'];
 
 //--------------------------------------------------------------------------------
-function systype_name($dummy, $type)
+function systype_name(mixed $dummy, mixed $type)
 {
 	global $systypes_array;
 
 	return $systypes_array[$type];
 }
 
-function trans_view($trans)
+function trans_view(mixed $trans)
 {
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
 
-function alloc_link($row)
+function alloc_link(mixed $row)
 {
 	return pager_link(_("Allocate"),
 		"/purchasing/allocations/supplier_allocate.php?trans_no="
  			.$row["trans_no"] . "&trans_type=" . $row["type"]. "&supplier_id=" . $row["supplier_id"], ICON_ALLOC);
 }
 
-function amount_left($row)
+function amount_left(mixed $row)
 {
  	return price_format($row['type'] == ST_JOURNAL ?  abs($row["Total"])-$row["alloc"] : -$row["Total"]-$row["alloc"]);
 }
 
-function amount_total($row)
+function amount_total(mixed $row)
 {
 	return price_format(-$row["Total"]);
 }
 
-function check_settled($row)
+function check_settled(mixed $row)
 {
 	return $row['settled'] == 1;
 }

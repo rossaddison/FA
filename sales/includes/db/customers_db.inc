@@ -11,9 +11,9 @@
 ***********************************************************************/
 require_once($path_to_root. "/admin/db/attachments_db.inc");
 
-function add_customer($CustName, $cust_ref, $address, $tax_id, $curr_code,
-	$dimension_id, $dimension2_id, $credit_status, $payment_terms, $discount, $pymt_discount, 
-	$credit_limit, $sales_type, $notes): void
+function add_customer(mixed $CustName, mixed $cust_ref, mixed $address, mixed $tax_id, mixed $curr_code,
+	mixed $dimension_id, mixed $dimension2_id, mixed $credit_status, mixed $payment_terms, mixed $discount, mixed $pymt_discount, 
+	mixed $credit_limit, mixed $sales_type, mixed $notes): void
 {
 	$sql = "INSERT INTO ".TB_PREF."debtors_master (name, debtor_ref, address, tax_id,
 		dimension_id, dimension2_id, curr_code, credit_status, payment_terms, discount, 
@@ -28,9 +28,9 @@ function add_customer($CustName, $cust_ref, $address, $tax_id, $curr_code,
 	db_query($sql,"The customer could not be added");
 }
 
-function update_customer($customer_id, $CustName, $cust_ref, $address, $tax_id, $curr_code,
-	$dimension_id, $dimension2_id, $credit_status, $payment_terms, $discount, $pymt_discount,
-	$credit_limit, $sales_type, $notes): void
+function update_customer(mixed $customer_id, mixed $CustName, mixed $cust_ref, mixed $address, mixed $tax_id, mixed $curr_code,
+	mixed $dimension_id, mixed $dimension2_id, mixed $credit_status, mixed $payment_terms, mixed $discount, mixed $pymt_discount,
+	mixed $credit_limit, mixed $sales_type, mixed $notes): void
 {
 	$sql = "UPDATE ".TB_PREF."debtors_master SET name=" . db_escape($CustName) . ", 
 		debtor_ref=" . db_escape($cust_ref) . ",
@@ -51,7 +51,7 @@ function update_customer($customer_id, $CustName, $cust_ref, $address, $tax_id, 
 	db_query($sql,"The customer could not be updated");
 }
 
-function delete_customer($customer_id): void
+function delete_customer(mixed $customer_id): void
 {
 	begin_transaction();
 	delete_entity_contacts('customer', $customer_id);
@@ -65,7 +65,7 @@ function delete_customer($customer_id): void
 /*
 	This function probably should be renamed to get_customer_summary
 */
-function get_customer_details($customer_id, $to=null, $all=true)
+function get_customer_details(mixed $customer_id, mixed $to=null, mixed $all=true)
 {
 
 	if ($to == null)
@@ -121,7 +121,7 @@ function get_customer_details($customer_id, $to=null, $all=true)
 }
 
 
-function get_customer($customer_id)
+function get_customer(mixed $customer_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."debtors_master WHERE debtor_no=".db_escape($customer_id);
 
@@ -130,7 +130,7 @@ function get_customer($customer_id)
 	return db_fetch($result);
 }
 
-function get_customer_name($customer_id)
+function get_customer_name(mixed $customer_id)
 {
 	$sql = "SELECT name FROM ".TB_PREF."debtors_master WHERE debtor_no=".db_escape($customer_id);
 
@@ -141,7 +141,7 @@ function get_customer_name($customer_id)
 	return is_array($row) ? $row[0] : false;
 }
 
-function get_customer_habit($customer_id)
+function get_customer_habit(mixed $customer_id)
 {
 	$sql = "SELECT debtor.pymt_discount, credit_status.dissallow_invoices
 			FROM ".TB_PREF."debtors_master debtor,"
@@ -154,7 +154,7 @@ function get_customer_habit($customer_id)
 	return db_fetch($result);
 }
 
-function get_customer_contacts($customer_id, $action=null)
+function get_customer_contacts(mixed $customer_id, mixed $action=null)
 {
 	$results = array();
 	$res = get_crm_persons('customer', $action, $customer_id);
@@ -167,7 +167,7 @@ function get_customer_contacts($customer_id, $action=null)
 	return $results;
 }
 
-function get_current_cust_credit($customer_id)
+function get_current_cust_credit(mixed $customer_id)
 {
 	$custdet = get_customer_details($customer_id);
 
@@ -177,14 +177,14 @@ function get_current_cust_credit($customer_id)
 
 }
 
-function is_new_customer($id)
+function is_new_customer(mixed $id)
 {
 	$tables = array('cust_branch', 'debtor_trans', 'recurrent_invoices', 'sales_orders');
 
 	return !key_in_foreign_table($id, $tables, 'debtor_no');
 }
 
-function get_customer_by_ref($reference)
+function get_customer_by_ref(mixed $reference)
 {
 	$sql = "SELECT * FROM ".TB_PREF."debtors_master WHERE debtor_ref=".db_escape($reference);
 
@@ -195,7 +195,7 @@ function get_customer_by_ref($reference)
 
 //----------------------------------------------------------------------------------
 
-function get_customer_currency($customer_id=null, $branch_id=null)
+function get_customer_currency(mixed $customer_id=null, mixed $branch_id=null)
 {
     $sql = "SELECT curr_code
     	FROM ".TB_PREF."debtors_master cust
@@ -208,7 +208,7 @@ function get_customer_currency($customer_id=null, $branch_id=null)
 	return $myrow ? $myrow[0] : get_company_currency();
 }
 
-function get_customers_search($customer)
+function get_customers_search(mixed $customer)
 {
 	global $SysPrefs;
 

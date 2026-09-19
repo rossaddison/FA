@@ -27,7 +27,7 @@ simple_page_mode(true);
 	FIXME: tb_pref_counter should track prefix per database.
 */
 //---------------------------------------------------------------------------------------------
-function check_data($selected_id)
+function check_data(mixed $selected_id)
 {
 	global $db_connections, $tb_pref_counter;
 
@@ -72,7 +72,7 @@ function check_data($selected_id)
 
 //---------------------------------------------------------------------------------------------
 
-function remove_connection($id) {
+function remove_connection(mixed $id) {
 	global $db_connections;
 
 	$err = db_drop_db($db_connections[$id]);
@@ -84,7 +84,7 @@ function remove_connection($id) {
 }
 //---------------------------------------------------------------------------------------------
 
-function handle_submit($selected_id)
+function handle_submit(mixed $selected_id)
 {
 	global $db_connections, $def_coy, $tb_pref_counter, $db,
 	    $comp_subdirs, $path_to_root, $Mode;
@@ -169,7 +169,7 @@ function handle_submit($selected_id)
 
 //---------------------------------------------------------------------------------------------
 
-function handle_delete($id): void
+function handle_delete(mixed $id): void
 {
 	global $Ajax, $def_coy, $db_connections, $comp_subdirs, $path_to_root, $Mode;
 
@@ -286,7 +286,7 @@ function display_companies(): void
 
 //---------------------------------------------------------------------------------------------
 
-function display_company_edit($selected_id): void
+function display_company_edit(mixed $selected_id): void
 {
 	global $def_coy, $db_connections, $tb_pref_counter;
 

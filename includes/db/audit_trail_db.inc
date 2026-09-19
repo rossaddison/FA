@@ -10,7 +10,7 @@
 	See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-function add_audit_trail($trans_type, $trans_no, $trans_date, $descr=''): void
+function add_audit_trail(mixed $trans_type, mixed $trans_no, mixed $trans_date, mixed $descr=''): void
 {
 	$descr = substr($descr, 0, 60);
 	begin_transaction();
@@ -35,7 +35,7 @@ function add_audit_trail($trans_type, $trans_no, $trans_date, $descr=''): void
 	commit_transaction();
 }
 
-function get_audit_trail_all($trans_type, $trans_no)
+function get_audit_trail_all(mixed $trans_type, mixed $trans_no)
 {
 	$sql = "SELECT * FROM ".TB_PREF."audit_trail"
 		." WHERE type=".db_escape($trans_type)." AND trans_no="
@@ -44,7 +44,7 @@ function get_audit_trail_all($trans_type, $trans_no)
 	return db_query($sql, "Cannot get all audit info for transaction");
 }
 
-function get_audit_trail_last($trans_type, $trans_no)
+function get_audit_trail_last(mixed $trans_type, mixed $trans_no)
 {
 	$sql = "SELECT * FROM ".TB_PREF."audit_trail"
 		." WHERE type=".db_escape($trans_type).
@@ -61,7 +61,7 @@ function get_audit_trail_last($trans_type, $trans_no)
 	Confirm and close for edition all transactions up to date $todate, 
 	and reindex	journal.
 */
-function close_transactions($todate) {
+function close_transactions(mixed $todate) {
 
 	begin_transaction();
 
@@ -108,7 +108,7 @@ function close_transactions($todate) {
 	return $errors;
 }
 
-function get_journal_number($type, $trans_no) {
+function get_journal_number(mixed $type, mixed $trans_no) {
 
 	$cdate = get_company_pref('gl_closing_date');
 	if (!$cdate)
@@ -133,7 +133,7 @@ function get_journal_number($type, $trans_no) {
 /*
 	Closed transactions have gl_seq number assigned.
 */
-function is_closed_trans($type, $trans_no) {
+function is_closed_trans(mixed $type, mixed $trans_no) {
 
 	return get_journal_number($type, $trans_no) > 0;
 }

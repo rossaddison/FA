@@ -16,8 +16,8 @@
 // $amount is in $currency currency
 // if $currency is not set, then defaults to no conversion
 
-function add_gl_trans($type, $trans_id, $date_, $account, $dimension, $dimension2, $memo_,
-	$amount, $currency=null, $person_type_id=null, $person_id=null,	$err_msg="", $rate=0)
+function add_gl_trans(mixed $type, mixed $trans_id, mixed $date_, mixed $account, mixed $dimension, mixed $dimension2, mixed $memo_,
+	mixed $amount, mixed $currency=null, mixed $person_type_id=null, mixed $person_id=null,	mixed $err_msg="", mixed $rate=0)
 {
 	global $SysPrefs;
 
@@ -76,8 +76,8 @@ function add_gl_trans($type, $trans_id, $date_, $account, $dimension, $dimension
 // $date_ is display date (non-sql)
 // $amount is in HOME currency
 
-function add_gl_trans_std_cost($type, $trans_id, $date_, $account, $dimension, $dimension2,
-	$memo_,	$amount, $person_type_id=null, $person_id=null, $err_msg="")
+function add_gl_trans_std_cost(mixed $type, mixed $trans_id, mixed $date_, mixed $account, mixed $dimension, mixed $dimension2,
+	mixed $memo_,	mixed $amount, mixed $person_type_id=null, mixed $person_id=null, mixed $err_msg="")
 {
 
 	if ($amount != 0)
@@ -88,7 +88,7 @@ function add_gl_trans_std_cost($type, $trans_id, $date_, $account, $dimension, $
 }
 
 // Function for even out rounding problems
-function add_gl_balance($type, $trans_id, $date_, $amount, $person_type_id=null, $person_id=null)
+function add_gl_balance(mixed $type, mixed $trans_id, mixed $date_, mixed $amount, mixed $person_type_id=null, mixed $person_id=null)
 {
 	$amount = round2($amount, user_price_dec());
 
@@ -103,9 +103,9 @@ function add_gl_balance($type, $trans_id, $date_, $amount, $person_type_id=null,
 
 //--------------------------------------------------------------------------------
 
-function get_gl_transactions($from_date, $to_date, $trans_no=0,
-    $account=null, $dimension=0, $dimension2=0, $filter_type=null,
-        $amount_min=null, $amount_max=null, $person_type=null, $person_id=null, $memo='')
+function get_gl_transactions(mixed $from_date, mixed $to_date, mixed $trans_no=0,
+    mixed $account=null, mixed $dimension=0, mixed $dimension2=0, mixed $filter_type=null,
+        mixed $amount_min=null, mixed $amount_max=null, mixed $person_type=null, mixed $person_id=null, mixed $memo='')
 {
     global $SysPrefs;
 
@@ -186,7 +186,7 @@ function get_gl_transactions($from_date, $to_date, $trans_no=0,
 
 //--------------------------------------------------------------------------------
 
-function get_gl_trans($type, $trans_id)
+function get_gl_trans(mixed $type, mixed $trans_id)
 {
 	$sql = "SELECT gl.*, cm.account_name, IFNULL(refs.reference, '') AS reference, user.real_name, 
 			COALESCE(st.tran_date, dt.tran_date, bt.trans_date, grn.delivery_date, gl.tran_date) as doc_date,
@@ -214,7 +214,7 @@ function get_gl_trans($type, $trans_id)
 
 //--------------------------------------------------------------------------------
 
-function get_gl_wo_cost_trans($trans_id, $cost_type=-1, $all_gl=false)
+function get_gl_wo_cost_trans(mixed $trans_id, mixed $cost_type=-1, mixed $all_gl=false)
 {
 	$sql = "SELECT costing.*, gl.*, chart.account_name, com.memo_
 		FROM "
@@ -233,7 +233,7 @@ function get_gl_wo_cost_trans($trans_id, $cost_type=-1, $all_gl=false)
 	return db_query($sql, "The gl transactions could not be retrieved");
 }
 
-function get_gl_wo_issue_trans($trans_id, $person_id=-1, $all_gl=false)
+function get_gl_wo_issue_trans(mixed $trans_id, mixed $person_id=-1, mixed $all_gl=false)
 {
 	$sql = "SELECT issue.*, gl.*, chart.account_name, com.memo_
 		FROM "
@@ -251,7 +251,7 @@ function get_gl_wo_issue_trans($trans_id, $person_id=-1, $all_gl=false)
 	return db_query($sql, "The gl transactions could not be retrieved");
 }
 
-function get_gl_wo_productions($trans_id, $all_gl=false)
+function get_gl_wo_productions(mixed $trans_id, mixed $all_gl=false)
 {
 	$sql = "SELECT rcv.*, gl.*, chart.account_name, com.memo_
 		FROM "
@@ -270,7 +270,7 @@ function get_gl_wo_productions($trans_id, $all_gl=false)
 	return db_query($sql, "The gl transactions could not be retrieved");
 }
 
-function get_gl_balance_from_to($from_date, $to_date, $account, $dimension=0, $dimension2=0)
+function get_gl_balance_from_to(mixed $from_date, mixed $to_date, mixed $account, mixed $dimension=0, mixed $dimension2=0)
 {
 	$from = date2sql($from_date);
 	$to = date2sql($to_date);
@@ -294,7 +294,7 @@ function get_gl_balance_from_to($from_date, $to_date, $account, $dimension=0, $d
 
 //--------------------------------------------------------------------------------
 
-function get_gl_trans_from_to($from_date, $to_date, $account, $dimension=0, $dimension2=0)
+function get_gl_trans_from_to(mixed $from_date, mixed $to_date, mixed $account, mixed $dimension=0, mixed $dimension2=0)
 {
 	$from = date2sql($from_date);
 	$to = date2sql($to_date);
@@ -317,7 +317,7 @@ function get_gl_trans_from_to($from_date, $to_date, $account, $dimension=0, $dim
 }
 
 //----------------------------------------------------------------------------------------------------
-function get_balance($account, $dimension, $dimension2, $from, $to, $from_incl=true, $to_incl=true) 
+function get_balance(mixed $account, mixed $dimension, mixed $dimension2, mixed $from, mixed $to, mixed $from_incl=true, mixed $to_incl=true) 
 {
 	$from_date = date2sql($from);
 	$to_date = date2sql($to);
@@ -345,7 +345,7 @@ function get_balance($account, $dimension, $dimension2, $from, $to, $from_incl=t
 
 //--------------------------------------------------------------------------------
 
-function get_budget_trans_from_to($from_date, $to_date, $account, $dimension=0, $dimension2=0)
+function get_budget_trans_from_to(mixed $from_date, mixed $to_date, mixed $account, mixed $dimension=0, mixed $dimension2=0)
 {
 
 	$from = date2sql($from_date);
@@ -369,7 +369,7 @@ function get_budget_trans_from_to($from_date, $to_date, $account, $dimension=0, 
 }
 //-------------------------------------------------------------------------------------
 
-function exists_gl_budget($date_, $account, $dimension, $dimension2)
+function exists_gl_budget(mixed $date_, mixed $account, mixed $dimension, mixed $dimension2)
 {
 	$sql = "SELECT account FROM ".TB_PREF."budget_trans WHERE account=".db_escape($account)
 	." AND tran_date='$date_' AND
@@ -379,7 +379,7 @@ function exists_gl_budget($date_, $account, $dimension, $dimension2)
     return (db_num_rows($result) > 0);
 }
 
-function add_update_gl_budget_trans($date_, $account, $dimension, $dimension2, $amount): void
+function add_update_gl_budget_trans(mixed $date_, mixed $account, mixed $dimension, mixed $dimension2, mixed $amount): void
 {
 	$date = date2sql($date_);
 
@@ -398,7 +398,7 @@ function add_update_gl_budget_trans($date_, $account, $dimension, $dimension2, $
 	db_query($sql, "The GL budget transaction could not be saved");
 }
 
-function delete_gl_budget_trans($date_, $account, $dimension, $dimension2): void
+function delete_gl_budget_trans(mixed $date_, mixed $account, mixed $dimension, mixed $dimension2): void
 {
 	$date = date2sql($date_);
 
@@ -409,7 +409,7 @@ function delete_gl_budget_trans($date_, $account, $dimension, $dimension2): void
 	db_query($sql, "The GL budget transaction could not be deleted");
 }
 
-function get_only_budget_trans_from_to($from_date, $to_date, $account, $dimension=0, $dimension2=0)
+function get_only_budget_trans_from_to(mixed $from_date, mixed $to_date, mixed $account, mixed $dimension=0, mixed $dimension2=0)
 {
 
 	$from = date2sql($from_date);
@@ -429,7 +429,7 @@ function get_only_budget_trans_from_to($from_date, $to_date, $account, $dimensio
 //--------------------------------------------------------------------------------
 //	Stores journal/bank transaction tax details if applicable
 //
-function add_gl_tax_details($gl_code, $trans_type, $trans_no, $amount, $ex_rate, $date, $memo, $included=0, $net_amount = null): void
+function add_gl_tax_details(mixed $gl_code, mixed $trans_type, mixed $trans_no, mixed $amount, mixed $ex_rate, mixed $date, mixed $memo, mixed $included=0, mixed $net_amount = null): void
 {
 	$tax_type = is_tax_account($gl_code);
 	if(!$tax_type) return;	// $gl_code is not tax account
@@ -456,8 +456,8 @@ function add_gl_tax_details($gl_code, $trans_type, $trans_no, $amount, $ex_rate,
 //	Store transaction tax details for fiscal purposes with 'freezed' 
 //	actual tax type rate.
 //
-function add_trans_tax_details($trans_type, $trans_no, $tax_id, $rate, $included,
-	$amount, $net_amount, $ex_rate, $tran_date, $memo, $reg_type=null): void
+function add_trans_tax_details(mixed $trans_type, mixed $trans_no, mixed $tax_id, mixed $rate, mixed $included,
+	mixed $amount, mixed $net_amount, mixed $ex_rate, mixed $tran_date, mixed $memo, mixed $reg_type=null): void
 {	
 	// guess tax register if not set
 	if (!isset($reg_type))
@@ -480,7 +480,7 @@ function add_trans_tax_details($trans_type, $trans_no, $tax_id, $rate, $included
 }
 //----------------------------------------------------------------------------------------
 
-function get_trans_tax_details($trans_type, $trans_no)
+function get_trans_tax_details(mixed $trans_type, mixed $trans_no)
 {
     $sql = "SELECT tax_details.*, tax_type.name AS tax_type_name, tax_type.rate AS rate
         FROM ".TB_PREF."trans_tax_details tax_details INNER JOIN 
@@ -495,7 +495,7 @@ function get_trans_tax_details($trans_type, $trans_no)
 
 //----------------------------------------------------------------------------------------
 
-function void_trans_tax_details($type, $type_no): void
+function void_trans_tax_details(mixed $type, mixed $type_no): void
 {
 	$sql = "UPDATE ".TB_PREF."trans_tax_details SET amount=0, net_amount=0
 		WHERE trans_no=".db_escape($type_no)
@@ -506,7 +506,7 @@ function void_trans_tax_details($type, $type_no): void
 
 //----------------------------------------------------------------------------------------
 
-function clear_trans_tax_details($type, $type_no): void
+function clear_trans_tax_details(mixed $type, mixed $type_no): void
 {
 	$sql = "DELETE FROM ".TB_PREF."trans_tax_details 
 		WHERE trans_no=".db_escape($type_no)
@@ -515,7 +515,7 @@ function clear_trans_tax_details($type, $type_no): void
 	db_query($sql, "The transaction tax details could not be cleared");
 }
 
-function get_tax_summary($from, $to, $also_zero_purchases=false)
+function get_tax_summary(mixed $from, mixed $to, mixed $also_zero_purchases=false)
 {
 	$fromdate = date2sql($from);
 	$todate = date2sql($to);
@@ -557,7 +557,7 @@ function get_tax_summary($from, $to, $also_zero_purchases=false)
 
 //--------------------------------------------------------------------------------------------------
 
-function exists_gl_trans($type, $trans_id)
+function exists_gl_trans(mixed $type, mixed $trans_id)
 {
 	$sql = "SELECT type_no FROM ".TB_PREF."gl_trans WHERE type=".db_escape($type)
 		." AND type_no=".db_escape($trans_id);
@@ -568,7 +568,7 @@ function exists_gl_trans($type, $trans_id)
 
 //--------------------------------------------------------------------------------------------------
 
-function void_gl_trans($type, $trans_id, $nested=false): void
+function void_gl_trans(mixed $type, mixed $trans_id, mixed $nested=false): void
 {
 	if (!$nested)
 		begin_transaction();
@@ -584,7 +584,7 @@ function void_gl_trans($type, $trans_id, $nested=false): void
 
 //----------------------------------------------------------------------------------------
 
-function clear_gl_trans($type, $trans_id, $nested=false): void
+function clear_gl_trans(mixed $type, mixed $trans_id, mixed $nested=false): void
 {
 	if (!$nested)
 		begin_transaction();
@@ -598,8 +598,8 @@ function clear_gl_trans($type, $trans_id, $nested=false): void
 		commit_transaction();
 }
 
-function get_sql_for_journal_inquiry($filter, $from, $to, $ref='', $memo='', $alsoclosed=false,
-         $user_id=null)
+function get_sql_for_journal_inquiry(mixed $filter, mixed $from, mixed $to, mixed $ref='', mixed $memo='', mixed $alsoclosed=false,
+         mixed $user_id=null)
 {
     $sql = "SELECT  IFNULL(a.gl_seq,0) as gl_seq,
         gl.tran_date,

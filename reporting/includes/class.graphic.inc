@@ -1627,22 +1627,22 @@ class SVG
 // modified by Bagram Siadat.
 // The function has been further modified and several bugs are fixed.
 
-function is_arabic($text)
+function is_arabic(mixed $text)
 {
 	return preg_match('/\p{Arabic}/u', $text);
 } 
 
-function is_hebrew($text)
+function is_hebrew(mixed $text)
 {
 	return preg_match('/\p{Hebrew}/u', $text);
 } 
 
-function utf8_strlen($str) 
+function utf8_strlen(mixed $str) 
 {
 	return preg_match_all('/[\x00-\x7F\xC0-\xFD]/', $str, $dummy);
 }
 
-function utf8_chr($uni) 
+function utf8_chr(mixed $uni) 
 {
 	$r = "";
 	# ASCII range (including control chars)
@@ -1676,7 +1676,7 @@ function utf8_chr($uni)
 }
 
 ///
-function arabic($str,$z="",$method='normal')
+function arabic(mixed $str,mixed $z="",mixed $method='normal')
 {
 $p_chars = array (
 	utf8_chr(0x0622) => array (utf8_chr(0xfe82), utf8_chr(0xfe82), utf8_chr(0x0622)),
@@ -1903,7 +1903,7 @@ $ignorelist = array (utf8_chr(0x0000), utf8_chr(0x064c), utf8_chr(0x064d), utf8_
 // For debugging
 if (!function_exists('dump'))
 {
-	function dump($str): void
+	function dump(mixed $str): void
 	{
 		$req_dump = print_r($str, true);
 		$fp = fopen('dump.log', 'a');

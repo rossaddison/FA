@@ -30,7 +30,7 @@ include_once($path_to_root . "/inventory/includes/inventory_db.inc");
 
 inventory_movements();
 
-function get_domestic_price($myrow, $stock_id)
+function get_domestic_price(mixed $myrow, mixed $stock_id)
 {
     if ($myrow['type'] == ST_SUPPRECEIVE || $myrow['type'] == ST_SUPPCREDIT)
      {
@@ -50,7 +50,7 @@ function get_domestic_price($myrow, $stock_id)
     return $price;
 }
 
-function fetch_items($category=0)
+function fetch_items(mixed $category=0)
 {
 		$sql = "SELECT stock_id, stock.description AS name,
 				stock.category_id,units,
@@ -64,7 +64,7 @@ function fetch_items($category=0)
     return db_query($sql,"No transactions were returned");
 }
 
-function trans_qty($stock_id, $location, $from_date, $to_date, $inward = true)
+function trans_qty(mixed $stock_id, mixed $location, mixed $from_date, mixed $to_date, mixed $inward = true)
 {
 	if ($from_date == null)
 		$from_date = Today();
@@ -97,7 +97,7 @@ function trans_qty($stock_id, $location, $from_date, $to_date, $inward = true)
 
 }
 
-function avg_unit_cost($stock_id, $location, $to_date)
+function avg_unit_cost(mixed $stock_id, mixed $location, mixed $to_date)
 {
 	if ($to_date == null)
 		$to_date = Today();
@@ -139,7 +139,7 @@ function avg_unit_cost($stock_id, $location, $to_date)
 
 //----------------------------------------------------------------------------------------------------
 
-function trans_qty_unit_cost($stock_id, $location, $from_date, $to_date, $inward = true)
+function trans_qty_unit_cost(mixed $stock_id, mixed $location, mixed $from_date, mixed $to_date, mixed $inward = true)
 {
 	if ($from_date == null)
 		$from_date = Today();

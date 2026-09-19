@@ -29,7 +29,7 @@ include_once($path_to_root . "/inventory/includes/db/items_category_db.inc");
 
 print_grn_valuation();
 
-function getTransactions($from, $to)
+function getTransactions(mixed $from, mixed $to)
 {
 	$from = date2sql($from);
 	$to = date2sql($to);
@@ -60,7 +60,7 @@ function getTransactions($from, $to)
 
 }
 
-function getSuppInvDetails($grn_item_id)
+function getSuppInvDetails(mixed $grn_item_id)
 {
 	$sql = "SELECT
 			inv_line.supp_trans_no inv_no,

@@ -12,8 +12,8 @@
 
 //----------------------------------------------------------------------------------------
 
-function add_attachment($filterType, $trans_no, $description,
-	$filename, $unique_name, $filesize, $filetype): void
+function add_attachment(mixed $filterType, mixed $trans_no, mixed $description,
+	mixed $filename, mixed $unique_name, mixed $filesize, mixed $filetype): void
 {
 	$date = date2sql(Today());
 	$sql = "INSERT INTO ".TB_PREF."attachments (type_no, trans_no, description, filename, unique_name,
@@ -25,8 +25,8 @@ function add_attachment($filterType, $trans_no, $description,
 }
 //----------------------------------------------------------------------------------------
 
-function update_attachment($selected_id, $filterType, $trans_no, $description,
-	$filename, $unique_name, $filesize, $filetype): void
+function update_attachment(mixed $selected_id, mixed $filterType, mixed $trans_no, mixed $description,
+	mixed $filename, mixed $unique_name, mixed $filesize, mixed $filetype): void
 {
 	$date = date2sql(Today());
 	$sql = "UPDATE ".TB_PREF."attachments SET
@@ -46,14 +46,14 @@ function update_attachment($selected_id, $filterType, $trans_no, $description,
 
 //----------------------------------------------------------------------------------------
 
-function delete_attachment($id): void
+function delete_attachment(mixed $id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."attachments WHERE id = ".db_escape($id);
 	db_query($sql, "Could not delete attachment");
 }
 
 
-function delete_attachments($type_no, $trans_no): void
+function delete_attachments(mixed $type_no, mixed $trans_no): void
 {
 	$type_no = db_escape($type_no);
 	$trans_no = db_escape($trans_no);
@@ -72,7 +72,7 @@ function delete_attachments($type_no, $trans_no): void
 }
 //----------------------------------------------------------------------------------------
 
-function get_attachment_string($type, $id)
+function get_attachment_string(mixed $type, mixed $id)
 {
 	global $path_to_root;
     $str_return = "";    
@@ -90,7 +90,7 @@ function get_attachment_string($type, $id)
 
 //----------------------------------------------------------------------------------------
 
-function get_attached_documents($type, $trans_no=false)
+function get_attached_documents(mixed $type, mixed $trans_no=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."attachments WHERE type_no=".db_escape($type);
 	if ($trans_no)
@@ -99,14 +99,14 @@ function get_attached_documents($type, $trans_no=false)
 	return db_query($sql, "Could not retrieve attachments");
 }
 
-function get_attachment($id)
+function get_attachment(mixed $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."attachments WHERE id=".db_escape($id);
 	$result = db_query($sql, "Could not retrieve attachments");
 	return db_fetch($result);
 }
 
-function has_attachment($type, $id)
+function has_attachment(mixed $type, mixed $id)
 {
 	$sql = "SELECT DISTINCT * FROM ".TB_PREF."attachments WHERE type_no=".db_escape($type)." AND trans_no=".db_escape($id);
 	$result = db_query($sql, "Could not retrieve attachments");
@@ -117,7 +117,7 @@ function has_attachment($type, $id)
 		return $myrow['id'];
 }
 
-function get_sql_for_attached_documents($type, $id_no)
+function get_sql_for_attached_documents(mixed $type, mixed $id_no)
 {
     // $_POST['trans_no'] will be used to store the customer_id or supplier_id for them
 	$sql = "SELECT trans_no, description, filename, filesize, filetype, tran_date, id, type_no FROM ".TB_PREF."attachments WHERE type_no=".db_escape($type);
@@ -130,7 +130,7 @@ function get_sql_for_attached_documents($type, $id_no)
 	return $sql;
 }
 
-function move_trans_attachments($type, $trans_from, $trans_to): void
+function move_trans_attachments(mixed $type, mixed $trans_from, mixed $trans_to): void
 {
 	$sql = "UPDATE ".TB_PREF."attachments SET trans_no=".db_escape($trans_to)
 		." WHERE type_no=".db_escape($type)." AND trans_no=".db_escape($trans_from);

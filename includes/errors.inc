@@ -15,7 +15,7 @@ $before_box = ''; // temporary container for output html data before error box
 #
 #   Wrapper for trigger_error
 #
-function fa_trigger_error($msg, $error_level=E_USER_NOTICE): void
+function fa_trigger_error(mixed $msg, mixed $error_level=E_USER_NOTICE): void
 {
     if ($error_level==E_USER_ERROR) {
           error_handler(E_USER_ERROR, $msg, __FILE__, __LINE__); //  E_USER_ERROR is deprecated as trigger_error arg since php 8.4
@@ -23,7 +23,7 @@ function fa_trigger_error($msg, $error_level=E_USER_NOTICE): void
         trigger_error($msg, $error_level);
 }
 
-function get_backtrace($html = false, $skip=0)
+function get_backtrace(mixed $html = false, mixed $skip=0)
 {
 	$str = '';
 	if ($html) $str .= '<table border=0>';
@@ -67,7 +67,7 @@ function get_backtrace($html = false, $skip=0)
 //    Error handler - collects all php/user messages for
 //    display in message box.
 
-function error_handler($errno, $errstr, $file, $line) {
+function error_handler(mixed $errno, mixed $errstr, mixed $file, mixed $line) {
     global $messages, $SysPrefs, $cur_error_level;
 
 	// skip well known warnings we don't care about.
@@ -102,7 +102,7 @@ function error_handler($errno, $errstr, $file, $line) {
     return true;
 }
 
-function exception_handler($exception): void
+function exception_handler(mixed $exception): void
 {
 	error_handler(E_ERROR, sprintf(_("Unhandled exception [%s]: %s."), $exception->getCode(), $exception->getMessage()),
 		 $exception->getFile(), $exception->getLine());
@@ -111,7 +111,7 @@ function exception_handler($exception): void
 //------------------------------------------------------------------------------
 //	Formats system messages before insert them into message <div>
 // FIX center is unused now
-function fmt_errors($center=false) {
+function fmt_errors(mixed $center=false) {
     global $messages, $path_to_root, $SysPrefs;
 
   	$msg_class = array(
@@ -186,7 +186,7 @@ function end_flush(): void {
 	cancel_transaction();
 }
 
-function display_db_error($msg, $sql_statement=null, $exit=true): void
+function display_db_error(mixed $msg, mixed $sql_statement=null, mixed $exit=true): void
 {
 	global $db, $SysPrefs, $db_connections;
 
@@ -224,7 +224,7 @@ function display_db_error($msg, $sql_statement=null, $exit=true): void
 		exit;
 }
 
-function frindly_db_error($db_error)
+function frindly_db_error(mixed $db_error)
 {
 	if ($db_error == DB_DUPLICATE_ERROR) 
 	{
@@ -235,7 +235,7 @@ function frindly_db_error($db_error)
 	return false;
 }
 
-function check_db_error($msg, $sql_statement, $exit_if_error=true, $rollback_if_error=true)
+function check_db_error(mixed $msg, mixed $sql_statement, mixed $exit_if_error=true, mixed $rollback_if_error=true)
 {
 	global $db, $SysPrefs;
 	$db_error = db_error_no();

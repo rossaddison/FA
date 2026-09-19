@@ -20,7 +20,7 @@
  */
 define('EXPORT_MAX_INSERT', 50000);
 
-function array_natsort($aryData, $strIndex, $strSortBy, $strSortType=false)
+function array_natsort(mixed $aryData, mixed $strIndex, mixed $strSortBy, mixed $strSortType=false)
 {
    //    if the parameters are invalid
    if (!is_array($aryData) || !$strSortBy)
@@ -58,14 +58,14 @@ function array_natsort($aryData, $strIndex, $strSortBy, $strSortType=false)
    return $aryResult;
 }
 
-function update_admin_password($conn, $password): void
+function update_admin_password(mixed $conn, mixed $password): void
 {
 	$sql = "UPDATE ".$conn['tbpref']."users SET password=".db_escape($password) . "
 		WHERE user_id='admin'";
 	db_query($sql, "could not update user password for 'admin'");
 }
 
-function write_config_db($new = false)
+function write_config_db(mixed $new = false)
 {
 	global $path_to_root, $def_coy, $db_connections, $tb_pref_counter;
 
@@ -116,7 +116,7 @@ function write_config_db($new = false)
 	return 0;
 }
 
-function write_extensions($extensions=null, $company = -1)
+function write_extensions(mixed $extensions=null, mixed $company = -1)
 {
 	global $path_to_root, $installed_extensions, $next_extension_id;
 
@@ -174,7 +174,7 @@ function write_extensions($extensions=null, $company = -1)
 //
 // Update per-company list of installed extensions
 //
-function update_extensions($extensions) {
+function update_extensions(mixed $extensions) {
 	global $db_connections;
 	
 	if (!write_extensions($extensions)) {
@@ -264,7 +264,7 @@ function write_lang()
 		$protect - protect users/roles 
 		$return_errors - return errors instead of display them
 */
-function db_import($filename, $connection, $force=true, $init=true, $protect=false, $return_errors=false)
+function db_import(mixed $filename, mixed $connection, mixed $force=true, mixed $init=true, mixed $protect=false, mixed $return_errors=false)
 {
 	global $db, $SysPrefs;
 
@@ -494,7 +494,7 @@ function db_import($filename, $connection, $force=true, $init=true, $protect=fal
 }
 
 // returns the content of the gziped $path backup file. use of $mode see below
-function db_ungzip($mode, $path)
+function db_ungzip(mixed $mode, mixed $path)
 {
     $file_data = gzfile($path);
     // returns one string or an array of lines
@@ -505,7 +505,7 @@ function db_ungzip($mode, $path)
 }
 
 // returns the content of the ziped $path backup file. use of $mode see below
-function db_unzip($mode, $path)
+function db_unzip(mixed $mode, mixed $path)
 {
     $all = false;
     $all = implode("", file($path));
@@ -546,7 +546,7 @@ function db_unzip($mode, $path)
     	return explode("\n", $file_data);
 }
 
-function db_backup($conn, $ext='no', $comm='', $path='')
+function db_backup(mixed $conn, mixed $ext='no', mixed $comm='', mixed $path='')
 {
 	if ($conn['tbpref'] != "")
 		$filename = $conn['dbname'] . "_" . $conn['tbpref'] . date("Ymd_Hi") . ".sql";
@@ -557,7 +557,7 @@ function db_backup($conn, $ext='no', $comm='', $path='')
 }
 // Generates a dump of $db database
 //
-function db_export($conn, $filename, $zip='no', $comment='')
+function db_export(mixed $conn, mixed $filename, mixed $zip='no', mixed $comment='')
 {
 
 	global $SysPrefs, $version;
@@ -785,7 +785,7 @@ function db_export($conn, $filename, $zip='no', $comment='')
 
 // orders the tables in $tables according to the constraints in $fks
 // $fks musst be filled like this: $fks[tablename][0]=needed_table1; $fks[tablename][1]=needed_table2; ...
-function order_sql_tables($tables, $fks)
+function order_sql_tables(mixed $tables, mixed $fks)
 {
 	// do not order if no contraints exist
 	if (!count($fks))
@@ -834,7 +834,7 @@ function order_sql_tables($tables, $fks)
 
 // saves the string in $fileData to the file $backupfile as gz file or not ($zip)
 // returns backup file name if name has changed (zip), else TRUE. If saving failed, return value is FALSE
-function save_to_file($path, $zip, $fileData)
+function save_to_file(mixed $path, mixed $zip, mixed $fileData)
 {
 
 	$backupfile = basename($path);
@@ -946,7 +946,7 @@ function save_to_file($path, $zip, $fileData)
     }
 }
 
-function create_comp_dirs($comp_path, $comp_subdirs): void
+function create_comp_dirs(mixed $comp_path, mixed $comp_subdirs): void
 {
 		$index = "<?php\nheader(\"Location: ../index.php\");\n";
 	    $cdir = $comp_path;
@@ -971,7 +971,7 @@ function create_comp_dirs($comp_path, $comp_subdirs): void
 //  $properties - optional properties of field defined by MySQL:
 //		'Type', 'Null', 'Key', 'Default', 'Extra'
 //
-function check_table($pref, $table, $field=null, $properties=null)
+function check_table(mixed $pref, mixed $table, mixed $field=null, mixed $properties=null)
 {
 	$tables = @db_query("SHOW TABLES LIKE '".$pref.$table."'");
 	if (!db_num_rows($tables))
@@ -1001,7 +1001,7 @@ function check_table($pref, $table, $field=null, $properties=null)
 /*
 	Update or create setting in simple php config file.
 */
-function update_config_var($file, $variable, $value, $comment='')
+function update_config_var(mixed $file, mixed $variable, mixed $value, mixed $comment='')
 {
 	if (!is_file($file) || !is_writeable($file))
 		return false;

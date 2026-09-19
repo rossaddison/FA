@@ -19,7 +19,7 @@ include_once($path_to_root . "/taxes/db/item_tax_types_db.inc");
 // for item $stock_id with line price $price,
 // with applicable tax rates $tax_group_array or group id $tax_group
 
-function get_tax_free_price_for_item($stock_id, $price, $tax_group, $tax_included, $tax_group_array=null)
+function get_tax_free_price_for_item(mixed $stock_id, mixed $price, mixed $tax_group, mixed $tax_included, mixed $tax_group_array=null)
 {
 	// if price is zero, then can't be taxed !
 	if ($price == 0)
@@ -57,7 +57,7 @@ function get_tax_free_price_for_item($stock_id, $price, $tax_group, $tax_include
 //	Full price (incl. VAT) for item $stock_id with line price $price,
 //	with tax rates $tax_group_array or applicable group $tax_group
 //
-function get_full_price_for_item($stock_id, $price, $tax_group, $tax_included, $tax_group_array=null)
+function get_full_price_for_item(mixed $stock_id, mixed $price, mixed $tax_group, mixed $tax_included, mixed $tax_group_array=null)
 {
 	// if price is zero, then can't be taxed !
 	if ($price == 0)
@@ -93,7 +93,7 @@ function get_full_price_for_item($stock_id, $price, $tax_group, $tax_included, $
 //---------------------------------------------------------------------------------
 // return an array of (tax_type_id, tax_type_name, sales_gl_code, purchasing_gl_code, rate)
 
-function get_taxes_for_item($stock_id, $tax_group_items_array)
+function get_taxes_for_item(mixed $stock_id, mixed $tax_group_items_array)
 {
 	$item_tax_type = get_item_tax_type_for_item($stock_id);
 	
@@ -141,7 +141,7 @@ function get_taxes_for_item($stock_id, $tax_group_items_array)
 //-----------------------------------------------------------------------------------
 // return an array of (tax_type_id, tax_type_name, sales_gl_code, purchasing_gl_code, rate, included_in_price, Value) 
 
-function get_tax_for_items($items, $prices, $shipping_cost, $tax_group, $tax_included=null, $tax_items_array=null, $tax_algorithm = null)
+function get_tax_for_items(mixed $items, mixed $prices, mixed $shipping_cost, mixed $tax_group, mixed $tax_included=null, mixed $tax_items_array=null, mixed $tax_algorithm = null)
 {
 	if (!$tax_algorithm)
 		$tax_algorithm = get_company_pref('tax_algorithm');

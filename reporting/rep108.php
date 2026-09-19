@@ -30,7 +30,7 @@ print_statements();
 
 //----------------------------------------------------------------------------------------------------
 
-function getTransactions($debtorno, $show_also_allocated)
+function getTransactions(mixed $debtorno, mixed $show_also_allocated)
 {
 	$date = date('Y-m-d');
 

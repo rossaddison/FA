@@ -169,7 +169,7 @@ function unset_form_variables(): void {
 
 //---------------------------------------------------------------------------------------------------
 
-function handle_delete_item($line_no): void
+function handle_delete_item(mixed $line_no): void
 {
 	if($_SESSION['PO']->some_already_received($line_no) == 0)
 	{

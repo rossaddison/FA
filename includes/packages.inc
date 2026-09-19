@@ -122,7 +122,7 @@ class package extends gzip_file {
 // Changes field value read from control file (single, or multiline) into 
 // arrays of subfields if needed.
 //
-function ufmt_property($key, $value)
+function ufmt_property(mixed $key, mixed $value)
 {
 	// indexes used in output arrays
 	$sub_fields = array(
@@ -161,7 +161,7 @@ function ufmt_property($key, $value)
 // Retrieve control file and return as associative array
 //	$index is name of field used as key in result array, or null for numeric keys
 //
-function get_control_file($file, $index = false) {
+function get_control_file(mixed $file, mixed $index = false) {
 
 	$list = gzopen($file, 'rb');
 	if (!$list) return null;
@@ -216,7 +216,7 @@ function get_control_file($file, $index = false) {
 //
 //	Save configuration data to control file.
 //
-function save_control_file($fname, $list, $zip=false): void 
+function save_control_file(mixed $fname, mixed $list, mixed $zip=false): void 
 {
 	$file = $zip ?  gzopen($fname, 'wb') : fopen($fname, 'wb');
 	foreach($list as $section) {
@@ -248,7 +248,7 @@ function save_control_file($fname, $list, $zip=false): void
 //	Retrieve text field in localized version or default one 
 //	when the localized is not avaialable.
 //
-function pkg_prop($pkg, $property, $lang=false) 
+function pkg_prop(mixed $pkg, mixed $property, mixed $lang=false) 
 {
 	
 	if ($lang && isset($pkg[$property.'-'.user_language()]))
@@ -267,7 +267,7 @@ function pkg_prop($pkg, $property, $lang=false)
 //	 	or (0=>field1, 1=>field2...)
 //  $outkey - field used as a key in package list. If null 'Package' field is used.
 //
-function get_pkg_or_list($type = null, $pkgname = null, $filter=array(), $outkey=null, $download=true) {
+function get_pkg_or_list(mixed $type = null, mixed $pkgname = null, mixed $filter=array(), mixed $outkey=null, mixed $download=true) {
 
 	global $path_to_root, $repo_auth;
 
@@ -399,14 +399,14 @@ function get_pkg_or_list($type = null, $pkgname = null, $filter=array(), $outkey
 	return $Packages;
 }
 
-function get_package($pkgname, $type = null)
+function get_package(mixed $pkgname, mixed $type = null)
 {
 	return get_pkg_or_list($type, $pkgname);
 }
 /*
 	Returns full name of installed package, or null if package is not installed.
 */
-function installed_package($package)
+function installed_package(mixed $package)
 {
 	$cache = opendir(PKG_CACHE_PATH);
 
@@ -423,7 +423,7 @@ function installed_package($package)
 /*
 	Remove package from system
 */
-function uninstall_package($name)
+function uninstall_package(mixed $name)
 {
 	$name = installed_package($name);
 	if (!$name) return true; // not installed
@@ -482,7 +482,7 @@ function get_languages_list()
 //	Return merged list of available and installed extensions as a local 
 // configuration array supplemented with installed versions information.
 //
-function get_extensions_list($type = null)
+function get_extensions_list(mixed $type = null)
 {
 	global $path_to_root;
 
@@ -606,7 +606,7 @@ function get_charts_list()
 //---------------------------------------------------------------------------------------------
 //	Install/update package from repository
 //
-function install_language($pkg_name)
+function install_language(mixed $pkg_name)
 {
 	global $path_to_root, $installed_languages, $Ajax;
 	
@@ -651,7 +651,7 @@ function install_language($pkg_name)
 //---------------------------------------------------------------------------------------------
 //	Install/update extension or theme package from repository
 //
-function install_extension($pkg_name)
+function install_extension(mixed $pkg_name)
 {
 	global $path_to_root, $installed_extensions, $next_extension_id, $Ajax, $db_connections;
 	
@@ -706,7 +706,7 @@ function install_extension($pkg_name)
 /*
 	Returns true if newer package version is available
 */
-function check_pkg_upgrade($current, $available)
+function check_pkg_upgrade(mixed $current, mixed $available)
 {
 	if ($available == NULL)
 		return false;
@@ -727,14 +727,14 @@ function check_pkg_upgrade($current, $available)
 //
 //	Returns package info from index file
 //
-function get_package_info($pkg, $type=null, $filter=array(), $outkey=null, $download=true) {
+function get_package_info(mixed $pkg, mixed $type=null, mixed $filter=array(), mixed $outkey=null, mixed $download=true) {
 	return get_pkg_or_list($type, $pkg, $filter, null, false);
 }
 
 /*
 	Check basic extension source compatibility.
 */
-function check_src_ext_version($ext_v)
+function check_src_ext_version(mixed $ext_v)
 {
     global $src_version;
     if ($ext_v != '-') {

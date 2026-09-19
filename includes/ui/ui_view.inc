@@ -14,8 +14,8 @@ include_once($path_to_root . "/includes/types.inc");
 
 //--------------------------------------------------------------------------------------
 
-function get_supplier_trans_view_str($type, $trans_no, $label="", $icon=false, 
-	$class='', $id='')
+function get_supplier_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", mixed $icon=false, 
+	mixed $class='', mixed $id='')
 {
 	$viewer = "purchasing/view/";
 	if ($type == ST_PURCHORDER)
@@ -40,7 +40,7 @@ function get_supplier_trans_view_str($type, $trans_no, $label="", $icon=false,
 
 //--------------------------------------------------------------------------------------
 
-function get_gl_view_str($type, $trans_no, $label="", $force=false, $class='', $id='')
+function get_gl_view_str(mixed $type, mixed $trans_no, mixed $label="", mixed $force=false, mixed $class='', mixed $id='')
 {
 	if (!$force && !user_show_gl_info())
 		return "";
@@ -59,7 +59,7 @@ function get_gl_view_str($type, $trans_no, $label="", $force=false, $class='', $
 
 //--------------------------------------------------------------------------------------
 
-function get_gl_view_str_cell($type, $trans_no, $label="")
+function get_gl_view_str_cell(mixed $type, mixed $trans_no, mixed $label="")
 {
 	$str = get_gl_view_str($type, $trans_no, $label);
 	if ($str != "")
@@ -68,8 +68,8 @@ function get_gl_view_str_cell($type, $trans_no, $label="")
 
 //--------------------------------------------------------------------------------------
 
-function get_customer_trans_view_str($type, $trans_no, $label="", $icon=false, 
-	$class='', $id='')
+function get_customer_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", mixed $icon=false, 
+	mixed $class='', mixed $id='')
 {
 	$viewer = "sales/view/";
 
@@ -105,8 +105,8 @@ function get_customer_trans_view_str($type, $trans_no, $label="", $icon=false,
 
 //--------------------------------------------------------------------------------------
 
-function get_banking_trans_view_str($type, $trans_no, $label="", 
-	$icon=false, $class='', $id='')
+function get_banking_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", 
+	mixed $icon=false, mixed $class='', mixed $id='')
 {
 	if ($label == "")
 		$label = $trans_no;
@@ -126,8 +126,8 @@ function get_banking_trans_view_str($type, $trans_no, $label="",
 
 //--------------------------------------------------------------------------------------
 
-function get_inventory_trans_view_str($type, $trans_no, $label="", 
-	$icon=false, $class='', $id='')
+function get_inventory_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", 
+	mixed $icon=false, mixed $class='', mixed $id='')
 {
 	$viewer = "inventory/view/";
 
@@ -147,8 +147,8 @@ function get_inventory_trans_view_str($type, $trans_no, $label="",
 
 //--------------------------------------------------------------------------------------
 
-function get_manufacturing_trans_view_str($type, $trans_no, $label="", 
-	$icon=false, $class='', $id='')
+function get_manufacturing_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", 
+	mixed $icon=false, mixed $class='', mixed $id='')
 {
 	$viewer = "manufacturing/view/";
 
@@ -171,8 +171,8 @@ function get_manufacturing_trans_view_str($type, $trans_no, $label="",
 
 //--------------------------------------------------------------------------------------
 
-function get_dimensions_trans_view_str($type, $trans_no, $label="", $icon=false, 
-	$class='', $id='')
+function get_dimensions_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", mixed $icon=false, 
+	mixed $class='', mixed $id='')
 {
 	if ($type == ST_DIMENSION)
 		$viewer = "dimensions/view/view_dimension.php?trans_no=$trans_no";
@@ -187,8 +187,8 @@ function get_dimensions_trans_view_str($type, $trans_no, $label="", $icon=false,
 /*
 	Journal entry or cost update postings link
 */
-function get_journal_trans_view_str($type, $trans_no, $label="", $icon=false, 
-	$class='', $id='')
+function get_journal_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", mixed $icon=false, 
+	mixed $class='', mixed $id='')
 {
 	if ($type == ST_JOURNAL || $type == ST_COSTUPDATE)
 		$viewer = "gl/view/gl_trans_view.php?type_id=$type&trans_no=$trans_no";
@@ -203,7 +203,7 @@ function get_journal_trans_view_str($type, $trans_no, $label="", $icon=false,
 
 //--------------------------------------------------------------------------------------
 
-function get_package_view_str($pkg, $label="", $icon=false, $class='', $id='')
+function get_package_view_str(mixed $pkg, mixed $label="", mixed $icon=false, mixed $class='', mixed $id='')
 {
 	if ($label == "")
 	{
@@ -216,8 +216,8 @@ function get_package_view_str($pkg, $label="", $icon=false, $class='', $id='')
 
 //--------------------------------------------------------------------------------------
 
-function get_trans_view_str($type, $trans_no, $label="", $icon=false, 
-	$class='', $id='')
+function get_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", mixed $icon=false, 
+	mixed $class='', mixed $id='')
 {
 	$view_str = get_customer_trans_view_str($type, $trans_no, $label, $icon, $class, $id);
 	if ($view_str != null)
@@ -255,7 +255,7 @@ function get_trans_view_str($type, $trans_no, $label="", $icon=false,
 	Checks whether any of input function parameters has changed or page is called with GET method (first page display).
 	$name - context
 */
-function check_ui_refresh($name=null)
+function check_ui_refresh(mixed $name=null)
 {
 	$bt = debug_backtrace();
 	if (!$name)
@@ -270,7 +270,7 @@ function check_ui_refresh($name=null)
 // When there is no exrate for today, 
 // gets it form ECB and stores in local database.
 //
-function exchange_rate_display($from_currency, $to_currency, $date_, $force_edit=false): void
+function exchange_rate_display(mixed $from_currency, mixed $to_currency, mixed $date_, mixed $force_edit=false): void
 {
     global $Ajax, $SysPrefs;
 
@@ -336,7 +336,7 @@ function exchange_rate_display($from_currency, $to_currency, $date_, $force_edit
 
 //--------------------------------------------------------------------------------------
 
-function is_voided_display($type, $id, $label)
+function is_voided_display(mixed $type, mixed $id, mixed $label)
 {
 	$void_entry = get_voided_entry($type, $id);
 
@@ -356,7 +356,7 @@ function is_voided_display($type, $id, $label)
 
 //--------------------------------------------------------------------------------------
 
-function comments_display_row($type, $id): void
+function comments_display_row(mixed $type, mixed $id): void
 {
 	$comments = get_comments($type, $id);
 	if ($comments and db_num_rows($comments))
@@ -372,7 +372,7 @@ function comments_display_row($type, $id): void
 
 //--------------------------------------------------------------------------------------
 
-function get_comments_string($type, $type_no)
+function get_comments_string(mixed $type, mixed $type_no)
 {
 	$str_return = "";
 	$result = get_comments($type, $type_no);
@@ -387,7 +387,7 @@ function get_comments_string($type, $type_no)
 
 //--------------------------------------------------------------------------------------
 
-function view_stock_status($stock_id, $description=null, $echo=true)
+function view_stock_status(mixed $stock_id, mixed $description=null, mixed $echo=true)
 {
 	global $path_to_root;
 	if ($description)
@@ -399,7 +399,7 @@ function view_stock_status($stock_id, $description=null, $echo=true)
 	return $preview_str;
 }
 
-function view_stock_status_cell($stock_id, $description=null): void
+function view_stock_status_cell(mixed $stock_id, mixed $description=null): void
 {
 	echo "<td>";
 	view_stock_status($stock_id, $description);
@@ -408,7 +408,7 @@ function view_stock_status_cell($stock_id, $description=null): void
 
 //--------------------------------------------------------------------------------------
 
-function display_debit_or_credit_cells($value, $bold=false): void
+function display_debit_or_credit_cells(mixed $value, mixed $bold=false): void
 {
 	$value = round2($value, user_price_dec());
 	if ($value >= 0)
@@ -425,7 +425,7 @@ function display_debit_or_credit_cells($value, $bold=false): void
 
 //--------------------------------------------------------------------------------------
 
-function display_customer_trans_tax_details($tax_items, $columns): void
+function display_customer_trans_tax_details(mixed $tax_items, mixed $columns): void
 {
 	global $SysPrefs;
 
@@ -461,7 +461,7 @@ function display_customer_trans_tax_details($tax_items, $columns): void
 
 //--------------------------------------------------------------------------------------
 
-function display_supp_trans_tax_details($tax_items, $columns): void
+function display_supp_trans_tax_details(mixed $tax_items, mixed $columns): void
 {
     while ($tax_item = db_fetch($tax_items))
     {
@@ -480,7 +480,7 @@ function display_supp_trans_tax_details($tax_items, $columns): void
 
 //--------------------------------------------------------------------------------------
 
-function display_edit_tax_items($taxes, $columns, $tax_included, $rightspan=0, $editable=false)
+function display_edit_tax_items(mixed $taxes, mixed $columns, mixed $tax_included, mixed $rightspan=0, mixed $editable=false)
 {
 	$total = 0;
 
@@ -528,7 +528,7 @@ function display_edit_tax_items($taxes, $columns, $tax_included, $rightspan=0, $
 
 //--------------------------------------------------------------------------------------
 
-function display_footer_exit($space=2): void
+function display_footer_exit(mixed $space=2): void
 {
 	if ($space)
 		br($space);
@@ -538,7 +538,7 @@ function display_footer_exit($space=2): void
 
 //--------------------------------------------------------------------------------------
 
-function display_allocations($alloc_result, $total, $title, $show_summary=true): void
+function display_allocations(mixed $alloc_result, mixed $total, mixed $title, mixed $show_summary=true): void
 {
 	global $systypes_array;
 
@@ -589,7 +589,7 @@ function display_allocations($alloc_result, $total, $title, $show_summary=true):
 
 //--------------------------------------------------------------------------------------
 
-function display_allocations_from($person_type, $person_id, $type, $type_no, $total): void
+function display_allocations_from(mixed $person_type, mixed $person_id, mixed $type, mixed $type_no, mixed $total): void
 {
 	switch ($person_type)
 	{
@@ -606,7 +606,7 @@ function display_allocations_from($person_type, $person_id, $type, $type_no, $to
 
 //--------------------------------------------------------------------------------------
 
-function display_allocations_to($person_type, $person_id, $type, $type_no, $total): void
+function display_allocations_to(mixed $person_type, mixed $person_id, mixed $type, mixed $type_no, mixed $total): void
 {
 	switch ($person_type)
 	{
@@ -626,7 +626,7 @@ function display_allocations_to($person_type, $person_id, $type, $type_no, $tota
 //	Expands selected quick entry $id into GL posings and adds to cart.
 //		returns calculated amount posted to bank GL account.
 //
-function display_quick_entries(&$cart, $id, $base, $type, $descr='')
+function display_quick_entries(&$cart, mixed $id, mixed $base, mixed $type, mixed $descr='')
 {
 	$bank_amount = 0;
 
@@ -675,7 +675,7 @@ function display_quick_entries(&$cart, $id, $base, $type, $descr='')
 
 //--------------------------------------------------------------------------------------
 
-function quickentry_calculate($base, $id, $taxgroup=null, $date=null)
+function quickentry_calculate(mixed $base, mixed $id, mixed $taxgroup=null, mixed $date=null)
 {
 		$gl_entries = array();
 		$qe = get_quick_entry($id);
@@ -810,7 +810,7 @@ function quickentry_calculate($base, $id, $taxgroup=null, $date=null)
 //
 //	Simple English version of number to words conversion.
 //
-function _number_to_words($number) 
+function _number_to_words(mixed $number) 
 { 
     $Bn = floor($number / 1000000000); /* Billions (giga) */ 
     $number -= $Bn * 1000000000; 
@@ -860,7 +860,7 @@ function _number_to_words($number)
     return $res; 
 } 
 
-function price_in_words($amount, $document=0)
+function price_in_words(mixed $amount, mixed $document=0)
 {
 	// use local price_in_words() if the hook is defined
 	$price = hook_price_in_words($amount, $document);
@@ -886,7 +886,7 @@ function price_in_words($amount, $document=0)
     return _number_to_words(intval($amount)) . $frac;
 }
 
-function get_js_open_window($width, $height)
+function get_js_open_window(mixed $width, mixed $height)
 {
 	$js ="function openWindow(url, title)\n"
 		. "{\n"
@@ -968,7 +968,7 @@ function get_js_set_combo_item() {
   Setting focus on element $name in $form.
   If $form<0 $name is element id.
 */
-function set_focus($name, $form_no=0): void {
+function set_focus(mixed $name, mixed $form_no=0): void {
   global $Ajax;
 	$Ajax->addFocus(true, $name);
     $_POST['_focus'] = $name;
@@ -977,7 +977,7 @@ function set_focus($name, $form_no=0): void {
 //	Set default focus on first field $name if not set yet
 //	Returns unique name if $name=null
 //	
-function default_focus($name=null, $form_no=0) {
+function default_focus(mixed $name=null, mixed $form_no=0) {
 	static $next; 
 	if ($name==null) 
 		$name = uniqid('_el',true);
@@ -1481,7 +1481,7 @@ document.write(\"<div id='CC'></div>\");";
  return '';
 }
 
-function alert($msg): void
+function alert(mixed $msg): void
 {
 	echo "\n<script type=\"text/javascript\">\n"
 		. "<!--\n"
@@ -1492,7 +1492,7 @@ function alert($msg): void
 
 if (!function_exists('_vd'))
 {
-  	function _vd($mixed, $title = '', $exit = false): void
+  	function _vd(mixed $mixed, mixed $title = '', mixed $exit = false): void
   	{
     	$str = (!empty($title) ? ($title .':') : '') .'<pre>';
     	$str .= print_r($mixed, true); //var_dump($mixed);
@@ -1503,14 +1503,14 @@ if (!function_exists('_vd'))
   	}
 }
 
-function _vl($mixed, $title = '', $exit = false): void
+function _vl(mixed $mixed, mixed $title = '', mixed $exit = false): void
 {
 	error_log((!empty($title) ? ($title .':') : '') . print_r($mixed, true));
 	if ($exit)
 		exit;
 }
 
-function display_backtrace($cond=true, $msg=''): void {
+function display_backtrace(mixed $cond=true, mixed $msg=''): void {
 	if ($cond) {
 		if ($msg) 
 			$str = "<center><span class='headingtext'>$msg</span></center>\n";
@@ -1539,7 +1539,7 @@ if (!isset($payment_services))
 *	Payment link generation. Options provided during invoice generation:
 *	company_email, comment, amount, currency
 */
-function payment_link($name, $options)
+function payment_link(mixed $name, mixed $options)
 {
 	global $payment_services;
 
@@ -1627,7 +1627,7 @@ function payment_link($name, $options)
 	return strtr($link, $patterns);
 }
 
-function trans_editor_link($type, $trans_no)
+function trans_editor_link(mixed $type, mixed $trans_no)
 {
 	global $path_to_root;
 

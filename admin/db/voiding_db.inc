@@ -14,7 +14,7 @@ include_once($path_to_root . "/purchasing/includes/purchasing_db.inc");
 include_once($path_to_root . "/inventory/includes/inventory_db.inc");
 include_once($path_to_root . "/manufacturing/includes/manufacturing_db.inc");
 
-function void_transaction($type, $type_no, $date_, $memo_)
+function void_transaction(mixed $type, mixed $type_no, mixed $date_, mixed $memo_)
 {
 	global $Refs;
 	$void_entry = get_voided_entry($type, $type_no);
@@ -135,7 +135,7 @@ function void_transaction($type, $type_no, $date_, $memo_)
 
 //--------------------------------------------------------------------------------------------------
 
-function get_voided_entry($type, $type_no)
+function get_voided_entry(mixed $type, mixed $type_no)
 {
 	$sql = "SELECT * FROM ".TB_PREF."voided WHERE type=".db_escape($type)
 		." AND id=".db_escape($type_no);
@@ -147,7 +147,7 @@ function get_voided_entry($type, $type_no)
 
 //--------------------------------------------------------------------------------------------------
 
-function add_voided_entry($type, $type_no, $date_, $memo_): void
+function add_voided_entry(mixed $type, mixed $type_no, mixed $date_, mixed $memo_): void
 {
 	$date = date2sql($date_);
 	$sql = "INSERT INTO ".TB_PREF."voided (type, id, date_, memo_)

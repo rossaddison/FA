@@ -55,7 +55,7 @@ function cancel_transaction(): void
 //-----------------------------------------------------------------------------
 //	Update record activity status.
 //
-function update_record_status($id, $status, $table, $key): void {
+function update_record_status(mixed $id, mixed $status, mixed $table, mixed $key): void {
 	$sql = "UPDATE ".TB_PREF.$table." SET inactive = "
 		. ((int)$status)." WHERE $key=".db_escape($id);
 		
@@ -70,7 +70,7 @@ function update_record_status($id, $status, $table, $key): void {
 //	$index  - comma delimited list of columns for total grouping and order
 //  Returns running totals with respective index column
 //
-function running_total_sql($table, $column, $index)
+function running_total_sql(mixed $table, mixed $column, mixed $index)
 {
 
 	return "SELECT daily.$index, daily.$column, (@total:=@total+daily.$column) total 

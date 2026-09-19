@@ -29,7 +29,7 @@ include_once($path_to_root . "/inventory/includes/db/items_category_db.inc");
 
 print_inventory_purchase();
 
-function getTransactions($category, $location, $fromsupp, $item, $from, $to)
+function getTransactions(mixed $category, mixed $location, mixed $fromsupp, mixed $item, mixed $from, mixed $to)
 {
 	$from = date2sql($from);
 	$to = date2sql($to);
@@ -70,7 +70,7 @@ function getTransactions($category, $location, $fromsupp, $item, $from, $to)
 
 }
 
-function get_supp_inv_reference($supplier_id, $stock_id, $date)
+function get_supp_inv_reference(mixed $supplier_id, mixed $stock_id, mixed $date)
 {
 	$sql = "SELECT trans.supp_reference
 		FROM ".TB_PREF."supp_trans trans,

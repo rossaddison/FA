@@ -92,33 +92,33 @@ end_table();
 
 $dim = get_company_pref('use_dimension');
 
-function view_link($row) 
+function view_link(mixed $row) 
 {
 	return get_dimensions_trans_view_str(ST_DIMENSION, $row["id"]);
 }
 
-function sum_dimension($row) 
+function sum_dimension(mixed $row) 
 {
 	return get_dimension_balance($row['id'], $_POST['FromDate'], $_POST['ToDate']); 
 }
 
-function is_closed($row)
+function is_closed(mixed $row)
 {
 	return $row['closed'] ? _('Yes') : _('No');
 }
 
-function is_overdue($row)
+function is_overdue(mixed $row)
 {
 	return date_diff2(Today(), sql2date($row["due_date"]), "d") > 0;
 }
 
-function edit_link($row)
+function edit_link(mixed $row)
 {
 	return pager_link(_("Edit"),
 			"/dimensions/dimension_entry.php?trans_no=" . $row["id"], ICON_EDIT);
 }
 
-function prt_link($row)
+function prt_link(mixed $row)
 {
 	return print_document_link($row['id'], _("Print"), true, ST_DIMENSION, ICON_PRINT);
 }

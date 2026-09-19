@@ -79,7 +79,7 @@ page($_SESSION['page_title'], false, false, "", $js);
 //---------------------------------------------------------------------------------------------
 //	Query format functions
 //
-function check_overdue($row)
+function check_overdue(mixed $row)
 {
 	global $trans_type;
 	if ($trans_type == ST_SALESQUOTE)
@@ -90,19 +90,19 @@ function check_overdue($row)
 			&& ($row['TotDelivered'] < $row['TotQuantity']));
 }
 
-function view_link($dummy, $order_no)
+function view_link(mixed $dummy, mixed $order_no)
 {
 	global $trans_type;
 	return  get_customer_trans_view_str($trans_type, $order_no);
 }
 
-function prt_link($row)
+function prt_link(mixed $row)
 {
 	global $trans_type;
 	return print_document_link($row['order_no'], _("Print"), true, $trans_type, ICON_PRINT);
 }
 
-function edit_link($row) 
+function edit_link(mixed $row) 
 {
 	global $page_nested;
 
@@ -112,7 +112,7 @@ function edit_link($row)
 	return $page_nested ? '' : trans_editor_link($row['trans_type'], $row['order_no']);
 }
 
-function dispatch_link($row)
+function dispatch_link(mixed $row)
 {
 	global $trans_type, $page_nested;
 
@@ -132,7 +132,7 @@ function dispatch_link($row)
 			"/sales/sales_order_entry.php?OrderNumber=" .$row['order_no'], ICON_DOC);
 }
 
-function invoice_link($row)
+function invoice_link(mixed $row)
 {
 	global $trans_type;
 	if ($trans_type == ST_SALESORDER)
@@ -142,19 +142,19 @@ function invoice_link($row)
 		return '';
 }
 
-function delivery_link($row)
+function delivery_link(mixed $row)
 {
   return pager_link( _("Delivery"),
 	"/sales/sales_order_entry.php?NewDelivery=" .$row['order_no'], ICON_DOC);
 }
 
-function order_link($row)
+function order_link(mixed $row)
 {
   return pager_link( _("Sales Order"),
 	"/sales/sales_order_entry.php?NewQuoteToSalesOrder=" .$row['order_no'], ICON_DOC);
 }
 
-function tmpl_checkbox($row)
+function tmpl_checkbox(mixed $row)
 {
 	global $trans_type, $page_nested;
 
@@ -173,7 +173,7 @@ function tmpl_checkbox($row)
 	. hidden('last['.$row['order_no'].']', $value, false);
 }
 
-function unallocated_prepayments($row)
+function unallocated_prepayments(mixed $row)
 {
 
     if ($row['ord_payments'] > 0) {
@@ -188,7 +188,7 @@ function unallocated_prepayments($row)
         return '';
 }
 
-function invoice_prep_link($row)
+function invoice_prep_link(mixed $row)
 {
 	// invoicing should be available only for partially allocated orders
 	return 

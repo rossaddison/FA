@@ -11,7 +11,7 @@
 ***********************************************************************/
 //-------------------------------------------------------------------------------------------------------------
 
-function add_stock_transfer($Items, $location_from, $location_to, $date_, $reference, $memo_)
+function add_stock_transfer(mixed $Items, mixed $location_from, mixed $location_to, mixed $date_, mixed $reference, mixed $memo_)
 {
 	global $SysPrefs, $path_to_root, $Refs;
 
@@ -63,8 +63,8 @@ function add_stock_transfer($Items, $location_from, $location_to, $date_, $refer
 // std_cost is in HOME currency
 // it seems the standard_cost field is not used at all
 
-function add_stock_transfer_item($transfer_id, $stock_id, $location_from, $location_to,
-	$date_, $reference, $quantity): void
+function add_stock_transfer_item(mixed $transfer_id, mixed $stock_id, mixed $location_from, mixed $location_to,
+	mixed $date_, mixed $reference, mixed $quantity): void
 {
 	add_stock_move(ST_LOCTRANSFER, $stock_id, $transfer_id, $location_from,
        	$date_, $reference, -$quantity, 0);
@@ -78,7 +78,7 @@ function add_stock_transfer_item($transfer_id, $stock_id, $location_from, $locat
 //
 //	Get inventory transfer common data (currently this is still stored in stock_moves table).
 //
-function get_stock_transfer($trans_no)
+function get_stock_transfer(mixed $trans_no)
 {
 	// retrieve common data from any two from/to move records
 	$sql = "SELECT loc_from.*, loc_to.*
@@ -102,7 +102,7 @@ function get_stock_transfer($trans_no)
 
 //-------------------------------------------------------------------------------------------------------------
 
-function get_stock_transfer_items($trans_no)
+function get_stock_transfer_items(mixed $trans_no)
 {
 	$result = get_stock_moves(ST_LOCTRANSFER, $trans_no);
 
@@ -116,7 +116,7 @@ function get_stock_transfer_items($trans_no)
 
 //-------------------------------------------------------------------------------------------------------------
 
-function void_stock_transfer($type_no): void
+function void_stock_transfer(mixed $type_no): void
 {
 	hook_db_prevoid(ST_LOCTRANSFER, $type_no);
 	void_stock_move(ST_LOCTRANSFER, $type_no);

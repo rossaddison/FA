@@ -10,8 +10,8 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-function add_user($user_id, $real_name, $password, $phone, $email, $role_id, 
-	$language, $profile, $rep_popup, $pos)
+function add_user(mixed $user_id, mixed $real_name, mixed $password, mixed $phone, mixed $email, mixed $role_id, 
+	mixed $language, mixed $profile, mixed $rep_popup, mixed $pos)
 {
 	$sql = "INSERT INTO ".TB_PREF."users (user_id, real_name, password"
 		.", phone, email, role_id, language, pos, print_profile, rep_popup)
@@ -26,7 +26,7 @@ function add_user($user_id, $real_name, $password, $phone, $email, $role_id,
 
 //-----------------------------------------------------------------------------------------------
 
-function update_user_password($id, $user_id, $password)
+function update_user_password(mixed $id, mixed $user_id, mixed $password)
 {
 	$sql = "UPDATE ".TB_PREF."users SET password=".db_escape($password) . ",
 		user_id = ".db_escape($user_id). " WHERE id=".db_escape($id);
@@ -36,8 +36,8 @@ function update_user_password($id, $user_id, $password)
 
 //-----------------------------------------------------------------------------------------------
 
-function update_user($id, $user_id, $real_name, $phone, $email, $role_id, 
-	$language, $profile, $rep_popup, $pos)
+function update_user(mixed $id, mixed $user_id, mixed $real_name, mixed $phone, mixed $email, mixed $role_id, 
+	mixed $language, mixed $profile, mixed $rep_popup, mixed $pos)
 {
 	$sql = "UPDATE ".TB_PREF."users SET real_name=".db_escape($real_name).
 	", phone=".db_escape($phone).",
@@ -54,7 +54,7 @@ function update_user($id, $user_id, $real_name, $phone, $email, $role_id,
 
 //-----------------------------------------------------------------------------------------------
 
-function update_user_prefs($id, $prefs)
+function update_user_prefs(mixed $id, mixed $prefs)
 {
 	$sql = "UPDATE ".TB_PREF."users SET ";
 	foreach($prefs as $name => $value) {
@@ -68,7 +68,7 @@ function update_user_prefs($id, $prefs)
 //-----------------------------------------------------------------------------------------------
 
 
-function get_users($all=false)
+function get_users(mixed $all=false)
 {
 	$sql = "SELECT u.*, r.role FROM ".TB_PREF."users u, ".TB_PREF."security_roles r
 		WHERE u.role_id=r.id";
@@ -79,7 +79,7 @@ function get_users($all=false)
 
 //-----------------------------------------------------------------------------------------------
 
-function get_user($id)
+function get_user(mixed $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."users WHERE id=".db_escape($id);
 
@@ -90,7 +90,7 @@ function get_user($id)
 
 //-----------------------------------------------------------------------------------------------
 
-function get_user_by_login($user_id)
+function get_user_by_login(mixed $user_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."users WHERE user_id=".db_escape($user_id);
 
@@ -101,7 +101,7 @@ function get_user_by_login($user_id)
 
 //-----------------------------------------------------------------------------------------------
 
-function get_user_by_email($email)
+function get_user_by_email(mixed $email)
 {
 	$sql = "SELECT * FROM ".TB_PREF."users WHERE email=".db_escape($email);
 
@@ -115,7 +115,7 @@ function get_user_by_email($email)
 
 //-----------------------------------------------------------------------------------------------
 
-function delete_user($id): void
+function delete_user(mixed $id): void
 {
 	$sql="DELETE FROM ".TB_PREF."users WHERE id=".db_escape($id);
 
@@ -124,7 +124,7 @@ function delete_user($id): void
 
 //-----------------------------------------------------------------------------------------------
 
-function get_user_auth($user_id, $password)
+function get_user_auth(mixed $user_id, mixed $password)
 {
 
 	$sql = "SELECT * FROM ".TB_PREF."users WHERE user_id = ".db_escape($user_id)." AND"
@@ -135,7 +135,7 @@ function get_user_auth($user_id, $password)
 
 //-----------------------------------------------------------------------------------------------
 
-function update_user_visitdate($user_id): void
+function update_user_visitdate(mixed $user_id): void
 {
 	$sql = "UPDATE ".TB_PREF."users SET last_visit_date='". date("Y-m-d H:i:s") ."'
 		WHERE user_id=".db_escape($user_id);
@@ -144,7 +144,7 @@ function update_user_visitdate($user_id): void
 }
 
 //-----------------------------------------------------------------------------------------------
-function check_user_activity($id) 
+function check_user_activity(mixed $id) 
 {
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."audit_trail WHERE audit_trail.user="
 		. db_escape($id);

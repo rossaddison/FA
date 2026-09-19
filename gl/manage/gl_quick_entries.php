@@ -22,7 +22,7 @@ include($path_to_root . "/includes/ui.inc");
 simple_page_mode(true);
 simple_page_mode2(true);
 
-function simple_page_mode2($numeric_id = true): void
+function simple_page_mode2(mixed $numeric_id = true): void
 {
 	global $Ajax, $Mode2, $selected_id2;
 
@@ -51,7 +51,7 @@ function simple_page_mode2($numeric_id = true): void
 	$Mode2 = '';
 }
 
-function submit_add_or_update_center2($add=true, $title=false, $async=false): void
+function submit_add_or_update_center2(mixed $add=true, mixed $title=false, mixed $async=false): void
 {
 	echo "<center>";
 	if ($add)

@@ -11,8 +11,8 @@
 ***********************************************************************/
 //--------------------------------------------------------------------------------------
 
-function add_work_order_issue($woid, $ref, $to_work_order, $items, $location, $workcentre,
-	$date_, $memo_): void
+function add_work_order_issue(mixed $woid, mixed $ref, mixed $to_work_order, mixed $items, mixed $location, mixed $workcentre,
+	mixed $date_, mixed $memo_): void
 {
 	global $Refs;
 
@@ -87,14 +87,14 @@ function add_work_order_issue($woid, $ref, $to_work_order, $items, $location, $w
 
 //--------------------------------------------------------------------------------------
 
-function get_work_order_issues($woid)
+function get_work_order_issues(mixed $woid)
 {
 	$sql = "SELECT * FROM ".TB_PREF."wo_issues WHERE workorder_id=".db_escape($woid)
 	." ORDER BY issue_no";
     return db_query($sql, "The work order issues could not be retrieved");
 }
 
-function get_additional_issues($woid)
+function get_additional_issues(mixed $woid)
 {
 	$sql = "SELECT issue.*, item.*, stock.mb_flag
 		FROM ".TB_PREF."wo_issues issue, "
@@ -107,7 +107,7 @@ function get_additional_issues($woid)
 }
 //--------------------------------------------------------------------------------------
 
-function get_work_order_issue($issue_no)
+function get_work_order_issue(mixed $issue_no)
 {
 	$sql = "SELECT DISTINCT issue.*, wo.stock_id, wo.closed,
 		item.description, loc.location_name, center.name AS WorkCentreName
@@ -128,7 +128,7 @@ function get_work_order_issue($issue_no)
 
 //--------------------------------------------------------------------------------------
 
-function get_work_order_issue_details($issue_no)
+function get_work_order_issue_details(mixed $issue_no)
 {
 	$sql = "SELECT issue.*, item.description, item.units
 		FROM ".TB_PREF."wo_issue_items issue,"
@@ -141,7 +141,7 @@ function get_work_order_issue_details($issue_no)
 
 //--------------------------------------------------------------------------------------
 
-function exists_work_order_issue($issue_no)
+function exists_work_order_issue(mixed $issue_no)
 {
 	$sql = "SELECT issue_no FROM ".TB_PREF."wo_issues WHERE issue_no=".db_escape($issue_no);
 	$result = db_query($sql, "Cannot retreive a wo issue");
@@ -151,7 +151,7 @@ function exists_work_order_issue($issue_no)
 
 //--------------------------------------------------------------------------------------
 
-function check_void_wo_issue($issue_no)
+function check_void_wo_issue(mixed $issue_no)
 {
 	$issue = get_work_order_issue($issue_no);
 
@@ -160,7 +160,7 @@ function check_void_wo_issue($issue_no)
 
 //--------------------------------------------------------------------------------------
 
-function void_work_order_issue($type_no): void
+function void_work_order_issue(mixed $type_no): void
 {
 	begin_transaction();
 	hook_db_prevoid(ST_MANUISSUE, $type_no);

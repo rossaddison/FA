@@ -56,7 +56,7 @@ if ($Mode=='UPDATE_ITEM' && can_process())
 
 //-----------------------------------------------------------------------------------
 
-function can_delete($selected_id)
+function can_delete(mixed $selected_id)
 {
 	if (key_in_foreign_table($selected_id, 'debtors_master', 'credit_status'))
 	{

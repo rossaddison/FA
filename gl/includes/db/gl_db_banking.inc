@@ -9,8 +9,8 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_exchange_variation($trans_no, $date_, $acc_id, $account,
-    $currency, $person_type_id=null, $person_id = "", $memo='')
+function add_exchange_variation(mixed $trans_no, mixed $date_, mixed $acc_id, mixed $account,
+    mixed $currency, mixed $person_type_id=null, mixed $person_id = "", mixed $memo='')
 {
 	if (is_company_currency($currency))
 		return false;
@@ -67,7 +67,7 @@ function add_exchange_variation($trans_no, $date_, $acc_id, $account,
 	return false;
 }
 
-function add_cust_supp_revaluation($ledger_act, $ex_act, $date, $amount, $person_type_id, $person_id, $memo): void
+function add_cust_supp_revaluation(mixed $ledger_act, mixed $ex_act, mixed $date, mixed $amount, mixed $person_type_id, mixed $person_id, mixed $memo): void
 {
 	global $Refs;
 	if ($amount == 0)
@@ -89,7 +89,7 @@ function add_cust_supp_revaluation($ledger_act, $ex_act, $date, $amount, $person
 	commit_transaction();
 }
 
-function get_cust_account_curr_balances($date)
+function get_cust_account_curr_balances(mixed $date)
 {
 	$to = date2sql($date);
 
@@ -109,7 +109,7 @@ function get_cust_account_curr_balances($date)
 	return  $result;
 }
 
-function get_supp_account_curr_balances($date)
+function get_supp_account_curr_balances(mixed $date)
 {
 	$to = date2sql($date);
 
@@ -126,7 +126,7 @@ function get_supp_account_curr_balances($date)
 	return  $result;
 }
 
-function get_account_home_balance($person_id, $person_type, $rec_account, $to_date)
+function get_account_home_balance(mixed $person_id, mixed $person_type, mixed $rec_account, mixed $to_date)
 {
 	$to = date2sql($to_date);
 
@@ -143,7 +143,7 @@ function get_account_home_balance($person_id, $person_type, $rec_account, $to_da
 // Note: in 2.4.9 sparse 'ref' argument was removed (generated transactions use
 // next references from default refline).
 //
-function add_exchange_variation_all($date, $memo)
+function add_exchange_variation_all(mixed $date, mixed $memo)
 {
 	begin_transaction();
 	$exchanged = false;
@@ -207,8 +207,8 @@ function add_exchange_variation_all($date, $memo)
 //	$to_account   -	target bank account id
 //	
 
-function add_bank_transfer($from_account, $to_account, $date_,
-	$amount, $ref, $memo_, $dim1, $dim2, $charge=0, $target_amount=0)
+function add_bank_transfer(mixed $from_account, mixed $to_account, mixed $date_,
+	mixed $amount, mixed $ref, mixed $memo_, mixed $dim1, mixed $dim2, mixed $charge=0, mixed $target_amount=0)
 {
 	global $Refs, $SysPrefs;
 
@@ -292,8 +292,8 @@ function add_bank_transfer($from_account, $to_account, $date_,
 	return $trans_no;
 }
 
-function check_bank_transfer($trans_no, $from_account, $to_account, $date_,
-    $amount, $target_amount=0)
+function check_bank_transfer(mixed $trans_no, mixed $from_account, mixed $to_account, mixed $date_,
+    mixed $amount, mixed $target_amount=0)
 {
 	$dbResult = get_bank_trans(ST_BANKTRANSFER, $trans_no);
 
@@ -346,8 +346,8 @@ function check_bank_transfer($trans_no, $from_account, $to_account, $date_,
 }
 
 function update_bank_transfer(
-	$trans_no, $from_account, $to_account, $date_,
-	$amount, $ref, $memo_, $dim1, $dim2, $charge=0, $target_amount=0)
+	mixed $trans_no, mixed $from_account, mixed $to_account, mixed $date_,
+	mixed $amount, mixed $ref, mixed $memo_, mixed $dim1, mixed $dim2, mixed $charge=0, mixed $target_amount=0)
 {
 	begin_transaction();
 	delete_comments(ST_BANKTRANSFER, $trans_no);
@@ -375,8 +375,8 @@ function update_bank_transfer(
 //
 // FIXME -revise code for update case
 //
-function write_bank_transaction($trans_type, $trans_no, $from_account, $items, $date_,
-	$person_type_id, $person_id, $person_detail_id,	$ref, $memo_, $use_transaction=true, $settled_amount=null)
+function write_bank_transaction(mixed $trans_type, mixed $trans_no, mixed $from_account, mixed $items, mixed $date_,
+	mixed $person_type_id, mixed $person_id, mixed $person_detail_id,	mixed $ref, mixed $memo_, mixed $use_transaction=true, mixed $settled_amount=null)
 {
 	global $Refs, $SysPrefs;
 

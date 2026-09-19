@@ -11,8 +11,8 @@
 ***********************************************************************/
 //---------------------------------------------------------------------------------------------
 
-function update_currency($curr_abrev, $symbol, $currency, $country, 
-	$hundreds_name, $auto_update): void
+function update_currency(mixed $curr_abrev, mixed $symbol, mixed $currency, mixed $country, 
+	mixed $hundreds_name, mixed $auto_update): void
 {
 	$sql = "UPDATE ".TB_PREF."currencies SET currency=".db_escape($currency)
 		.", curr_symbol=".db_escape($symbol).",	country=".db_escape($country)
@@ -25,8 +25,8 @@ function update_currency($curr_abrev, $symbol, $currency, $country,
 
 //---------------------------------------------------------------------------------------------
 
-function add_currency($curr_abrev, $symbol, $currency, $country, 
-	$hundreds_name, $auto_update): void
+function add_currency(mixed $curr_abrev, mixed $symbol, mixed $currency, mixed $country, 
+	mixed $hundreds_name, mixed $auto_update): void
 {
 	$sql = "INSERT INTO ".TB_PREF."currencies (curr_abrev, curr_symbol, currency, 
 			country, hundreds_name, auto_update)
@@ -39,7 +39,7 @@ function add_currency($curr_abrev, $symbol, $currency, $country,
 
 //---------------------------------------------------------------------------------------------
 
-function delete_currency($curr_code): void
+function delete_currency(mixed $curr_code): void
 {
 	$sql="DELETE FROM ".TB_PREF."currencies WHERE curr_abrev=".db_escape($curr_code);
 	db_query($sql, "could not delete currency	$curr_code");
@@ -50,7 +50,7 @@ function delete_currency($curr_code): void
 
 //---------------------------------------------------------------------------------------------
 
-function get_currency($curr_code)
+function get_currency(mixed $curr_code)
 {
 	$sql = "SELECT * FROM ".TB_PREF."currencies WHERE curr_abrev=".db_escape($curr_code);
 	$result = db_query($sql, "could not get currency $curr_code");
@@ -61,7 +61,7 @@ function get_currency($curr_code)
 
 //---------------------------------------------------------------------------------------------
 
-function get_currencies($all=false)
+function get_currencies(mixed $all=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."currencies";
 	if (!$all) $sql .= " WHERE !inactive";

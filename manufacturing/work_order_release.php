@@ -41,7 +41,7 @@ else
 
 //------------------------------------------------------------------------------------
 
-function can_process($myrow)
+function can_process(mixed $myrow)
 {
 	if ($myrow['released'])
 	{

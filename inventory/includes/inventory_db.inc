@@ -24,13 +24,13 @@ include_once($path_to_root . "/inventory/includes/db/items_adjust_db.inc");
 include_once($path_to_root . "/inventory/includes/db/items_transfer_db.inc");
 include_once($path_to_root . "/inventory/includes/db/items_units_db.inc");
 
-function item_img_name($stock_id)
+function item_img_name(mixed $stock_id)
 {
 	$stock_id = strtr($stock_id, "><\\/:|*?", '________');
 	return clean_file_name($stock_id);
 }
 
-function get_stock_movements($stock_id, $StockLocation,	$BeforeDate, $AfterDate)
+function get_stock_movements(mixed $stock_id, mixed $StockLocation,	mixed $BeforeDate, mixed $AfterDate)
 {
 	$before_date = date2sql($BeforeDate);
 	$after_date = date2sql($AfterDate);
@@ -60,7 +60,7 @@ function get_stock_movements($stock_id, $StockLocation,	$BeforeDate, $AfterDate)
   	return db_query($sql, "could not query stock moves");
 }
 
-function calculate_reorder_level($location, $line, &$st_ids, &$st_names, &$st_num, &$st_reorder)
+function calculate_reorder_level(mixed $location, mixed $line, &$st_ids, &$st_names, &$st_num, &$st_reorder)
 {
 	$sql = "SELECT stock.*, loc.location_name, loc.email
 		FROM ".TB_PREF."loc_stock stock,"
@@ -87,7 +87,7 @@ function calculate_reorder_level($location, $line, &$st_ids, &$st_names, &$st_nu
 	return $loc;
 }
 
-function send_reorder_email($loc, $st_ids, $st_names, $st_num, $st_reorder)
+function send_reorder_email(mixed $loc, mixed $st_ids, mixed $st_names, mixed $st_num, mixed $st_reorder)
 {
 	global $path_to_root;
 

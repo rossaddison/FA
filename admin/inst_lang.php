@@ -143,7 +143,7 @@ function check_data()
 	return true;
 }
 
-function handle_submit($id)
+function handle_submit(mixed $id)
 {
 	global $path_to_root, $installed_languages, $dflt_lang, $Mode;
 
@@ -189,7 +189,7 @@ function handle_submit($id)
 
 //---------------------------------------------------------------------------------------------
 
-function display_language_edit($selected_id): void
+function display_language_edit(mixed $selected_id): void
 {
 	global $installed_languages, $dflt_lang;
 
@@ -233,7 +233,7 @@ function display_language_edit($selected_id): void
 	end_form();
 }
 
-function handle_delete($id): void
+function handle_delete(mixed $id): void
 {
 	global  $path_to_root, $installed_languages, $dflt_lang;
 

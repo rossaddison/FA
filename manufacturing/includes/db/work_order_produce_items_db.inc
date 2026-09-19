@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function work_order_produce($woid, $ref, $quantity, $date_, $memo, $close_wo): void
+function work_order_produce(mixed $woid, mixed $ref, mixed $quantity, mixed $date_, mixed $memo, mixed $close_wo): void
 {
 	global $Refs;
 
@@ -102,7 +102,7 @@ function work_order_produce($woid, $ref, $quantity, $date_, $memo, $close_wo): v
 
 //--------------------------------------------------------------------------------------------
 
-function get_work_order_produce($id)
+function get_work_order_produce(mixed $id)
 {
 	$sql = "SELECT prod.*, wo.stock_id, item.description AS StockDescription, wo.closed
 			FROM ".TB_PREF."wo_manufacture prod,"
@@ -118,7 +118,7 @@ function get_work_order_produce($id)
 
 //--------------------------------------------------------------------------------------
 
-function get_work_order_productions($woid)
+function get_work_order_productions(mixed $woid)
 {
 	$sql = "SELECT * FROM ".TB_PREF."wo_manufacture WHERE workorder_id="
 		.db_escape($woid)." ORDER BY id";
@@ -127,7 +127,7 @@ function get_work_order_productions($woid)
 
 //--------------------------------------------------------------------------------------
 
-function exists_work_order_produce($id)
+function exists_work_order_produce(mixed $id)
 {
 	$sql = "SELECT id FROM ".TB_PREF."wo_manufacture WHERE id=".db_escape($id);
 	$result = db_query($sql, "Cannot retreive a wo production");
@@ -137,7 +137,7 @@ function exists_work_order_produce($id)
 
 //--------------------------------------------------------------------------------------
 
-function check_void_wo_production($prod_no)
+function check_void_wo_production(mixed $prod_no)
 {
 	$prod = get_work_order_produce($prod_no);
 	return $prod['closed'] ? $prod['workorder_id'] : 0;
@@ -145,7 +145,7 @@ function check_void_wo_production($prod_no)
 
 //--------------------------------------------------------------------------------------------
 
-function void_work_order_produce($type_no): void
+function void_work_order_produce(mixed $type_no): void
 {
 	begin_transaction();
 	hook_db_prevoid(ST_MANURECEIVE, $type_no);

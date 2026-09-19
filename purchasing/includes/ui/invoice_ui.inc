@@ -195,7 +195,7 @@ function invoice_totals(&$supp_trans): void
 }
 
 //--------------------------------------------------------------------------------------------------
-function display_gl_controls(&$supp_trans, $k): void
+function display_gl_controls(&$supp_trans, mixed $k): void
 {
 	$accs = get_supplier_accounts($supp_trans->supplier_id);
     if (!isset($_POST['gl_code']))
@@ -228,7 +228,7 @@ function display_gl_controls(&$supp_trans, $k): void
 //		 = 2 display on view invoice
 //		 = 3 display on view credit
 
-function display_gl_items(&$supp_trans, $mode=0)
+function display_gl_items(&$supp_trans, mixed $mode=0)
 {
 	global $path_to_root, $Ajax;
 
@@ -350,7 +350,7 @@ function display_gl_items(&$supp_trans, $mode=0)
 
 //--------------//-----------------------------------------------------------------------------------------
 
-function display_grn_items_for_selection(&$supp_trans, $k)
+function display_grn_items_for_selection(&$supp_trans, mixed $k)
 {
 	if ($supp_trans->trans_type == ST_SUPPINVOICE)	// outstanding grns and eventually for selected invoice
 		$result = get_grn_items(0, $supp_trans->supplier_id, true, false, $supp_trans->trans_no);
@@ -439,7 +439,7 @@ function display_grn_items_for_selection(&$supp_trans, $k)
 //		 = 2 display on view invoice
 //		 = 3 display on view credit
 
-function display_grn_items(&$supp_trans, $mode=0)
+function display_grn_items(&$supp_trans, mixed $mode=0)
 {
 	global $path_to_root;
 

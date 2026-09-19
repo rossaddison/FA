@@ -14,7 +14,7 @@ include_once($path_to_root . "/admin/db/attachments_db.inc");
 
 //--------------------------------------------------------------------------------------------------
 
-function read_supplier_details_to_trans(&$supp_trans, $supplier_id): void
+function read_supplier_details_to_trans(&$supp_trans, mixed $supplier_id): void
 {
 	$sql = "SELECT supp.supp_name, terms.terms, terms.days_before_due, supp.dimension_id, supp.dimension2_id,
 		terms.day_in_following_month, supp.tax_included,
@@ -67,7 +67,7 @@ function read_supplier_details_to_trans(&$supp_trans, $supplier_id): void
 //  Returns:
 // if chg_price is set:	 previous act_price, delivery date and unit_price from PO
 //
-function update_supp_received_items_for_invoice($id, $po_detail_item, $qty_invoiced, $chg_price=null)
+function update_supp_received_items_for_invoice(mixed $id, mixed $po_detail_item, mixed $qty_invoiced, mixed $chg_price=null)
 {
 	if ($chg_price != null)
 	{
@@ -110,7 +110,7 @@ function update_supp_received_items_for_invoice($id, $po_detail_item, $qty_invoi
 	return array($ret, $date, $unit_price);
 }
 
-function get_diff_in_home_currency($supplier, $old_date, $date, $amount1, $amount2)
+function get_diff_in_home_currency(mixed $supplier, mixed $old_date, mixed $date, mixed $amount1, mixed $amount2)
 {
 	$dec = user_price_dec();
 	price_decimal_format($amount2, $dec);
@@ -410,7 +410,7 @@ function add_supp_invoice(&$supp_trans)
 
 // get all the invoices/credits for a given PO - quite long route to get there !
 
-function get_po_invoices_credits($po_number)
+function get_po_invoices_credits(mixed $po_number)
 {
 	$sql = "SELECT DISTINCT trans.trans_no, trans.type,	ov_amount+ov_discount+ov_gst AS Total,
 				trans.tran_date
@@ -432,7 +432,7 @@ function get_po_invoices_credits($po_number)
 //
 // Retrieve tax ovverides from tax register.
 //
-function get_tax_overrides($trans_type, $trans_no)
+function get_tax_overrides(mixed $trans_type, mixed $trans_no)
 {
 	$tax_overrides = array();
 	$sql = "SELECT amount, tax_type_id as id, rate
@@ -450,7 +450,7 @@ function get_tax_overrides($trans_type, $trans_no)
 }
 //----------------------------------------------------------------------------------------
 
-function read_supp_invoice($trans_no, $trans_type, &$supp_trans)
+function read_supp_invoice(mixed $trans_no, mixed $trans_type, &$supp_trans)
 {
 	$sql = "SELECT trans.*, supp_name, dimension_id, dimension2_id, curr_code
 		FROM ".TB_PREF."supp_trans trans,"
@@ -521,7 +521,7 @@ function read_supp_invoice($trans_no, $trans_type, &$supp_trans)
 
 //----------------------------------------------------------------------------------------
 
-function get_matching_invoice_item($stock_id, $po_item_id)
+function get_matching_invoice_item(mixed $stock_id, mixed $po_item_id)
 {
 	$sql = "SELECT *, tran_date
 		FROM ".TB_PREF."supp_invoice_items,"
@@ -533,7 +533,7 @@ function get_matching_invoice_item($stock_id, $po_item_id)
 	return db_fetch($result);  
 }
 
-function void_supp_invoice($type, $type_no): void
+function void_supp_invoice(mixed $type, mixed $type_no): void
 {
 	begin_transaction();
 
@@ -641,13 +641,13 @@ function void_supp_invoice($type, $type_no): void
 }
 
 //----------------------------------------------------------------------------------------
-function get_gl_account_info($acc)
+function get_gl_account_info(mixed $acc)
 {
 	$sql = "SELECT account_code, account_name FROM ".TB_PREF."chart_master WHERE account_code=".db_escape($acc);
 	return db_query($sql,"get account information");
 }
 
-function is_reference_already_there($supplier_id, $supp_reference, $trans_no=0)
+function is_reference_already_there(mixed $supplier_id, mixed $supp_reference, mixed $trans_no=0)
 {
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."supp_trans WHERE supplier_id="
 		.db_escape($supplier_id) . " AND supp_reference=" 
@@ -661,7 +661,7 @@ function is_reference_already_there($supplier_id, $supp_reference, $trans_no=0)
 	return $myrow[0] > 0;
 }
 
-function remove_not_invoice_item($id): void
+function remove_not_invoice_item(mixed $id): void
 {
 	begin_transaction();
 
@@ -707,7 +707,7 @@ function remove_not_invoice_item($id): void
     commit_transaction();
 }
 
-function find_src_invoices($cart)
+function find_src_invoices(mixed $cart)
 {
 	$invoices = $po_ids = array();
 	foreach($cart->grn_items as $item)

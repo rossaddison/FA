@@ -12,15 +12,15 @@
 require_once($path_to_root. "/admin/db/attachments_db.inc");
 
 //---------------------------------------------------------------------------------------------
-function clear_dflt_curr_account($curr_code): void {
+function clear_dflt_curr_account(mixed $curr_code): void {
 	  $sql = "UPDATE ".TB_PREF."bank_accounts SET dflt_curr_act=0 WHERE bank_curr_code="
 	  .db_escape($curr_code);
 	  db_query($sql, "could not update default currency account");
 }
 
-function add_bank_account($account_code, $account_type, $bank_account_name,
-	$bank_name, $bank_account_number, $bank_address, $bank_curr_code, 
-	$dflt_curr_act, $bank_charge_act): void
+function add_bank_account(mixed $account_code, mixed $account_type, mixed $bank_account_name,
+	mixed $bank_name, mixed $bank_account_number, mixed $bank_address, mixed $bank_curr_code, 
+	mixed $dflt_curr_act, mixed $bank_charge_act): void
 {
 	if($dflt_curr_act) 	// only one default account for any currency
 	  clear_dflt_curr_account($bank_curr_code);
@@ -38,8 +38,8 @@ function add_bank_account($account_code, $account_type, $bank_account_name,
 
 //---------------------------------------------------------------------------------------------
 
-function update_bank_account($id, $account_code, $account_type, $bank_account_name, 
-	$bank_name, $bank_account_number, $bank_address, $bank_curr_code, $dflt_curr_act, $bank_charge_act): void
+function update_bank_account(mixed $id, mixed $account_code, mixed $account_type, mixed $bank_account_name, 
+	mixed $bank_name, mixed $bank_account_number, mixed $bank_address, mixed $bank_curr_code, mixed $dflt_curr_act, mixed $bank_charge_act): void
 {
 	if($dflt_curr_act) 	// only one default account for any currency
 	  clear_dflt_curr_account($bank_curr_code);
@@ -57,7 +57,7 @@ function update_bank_account($id, $account_code, $account_type, $bank_account_na
 
 //---------------------------------------------------------------------------------------------
 
-function delete_bank_account($id): void
+function delete_bank_account(mixed $id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."bank_accounts WHERE id=".db_escape($id);
 
@@ -69,7 +69,7 @@ function delete_bank_account($id): void
 
 //---------------------------------------------------------------------------------------------
 
-function get_bank_account($id)
+function get_bank_account(mixed $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."bank_accounts WHERE id=".db_escape($id);
 
@@ -80,7 +80,7 @@ function get_bank_account($id)
 
 //---------------------------------------------------------------------------------------------
 
-function get_bank_accounts($show_inactive=false)
+function get_bank_accounts(mixed $show_inactive=false)
 {
 	$sql = "SELECT account.*, gl_account.account_name
 		FROM ".TB_PREF."bank_accounts account, ".TB_PREF."chart_master gl_account
@@ -93,7 +93,7 @@ function get_bank_accounts($show_inactive=false)
 
 //---------------------------------------------------------------------------------------------
 
-function get_bank_gl_account($id)
+function get_bank_gl_account(mixed $id)
 {
 	$sql = "SELECT account_code FROM ".TB_PREF."bank_accounts WHERE id=".db_escape($id);
 
@@ -106,7 +106,7 @@ function get_bank_gl_account($id)
 
 //---------------------------------------------------------------------------------------------
 
-function get_bank_charge_account($id)
+function get_bank_charge_account(mixed $id)
 {
 	$sql = "SELECT bank_charge_act FROM ".TB_PREF."bank_accounts WHERE id=".db_escape($id);
 
@@ -119,7 +119,7 @@ function get_bank_charge_account($id)
 
 //---------------------------------------------------------------------------------------------
 
-function add_quick_entry($description, $type, $base_amount, $base_desc, $bal_type, $usage): void
+function add_quick_entry(mixed $description, mixed $type, mixed $base_amount, mixed $base_desc, mixed $bal_type, mixed $usage): void
 {
 	$sql = "INSERT INTO ".TB_PREF."quick_entries (description, type, base_amount, base_desc, bal_type, `usage`) 
 	VALUES (".db_escape($description).", ".db_escape($type).", "
@@ -130,7 +130,7 @@ function add_quick_entry($description, $type, $base_amount, $base_desc, $bal_typ
 
 //---------------------------------------------------------------------------------------------
 
-function update_quick_entry($selected_id, $description, $type, $base_amount, $base_desc, $bal_type, $usage): void
+function update_quick_entry(mixed $selected_id, mixed $description, mixed $type, mixed $base_amount, mixed $base_desc, mixed $bal_type, mixed $usage): void
 {
 	$sql = "UPDATE ".TB_PREF."quick_entries	SET description = ".db_escape($description).",
 		type=".db_escape($type).", base_amount=".db_escape($base_amount)
@@ -142,7 +142,7 @@ function update_quick_entry($selected_id, $description, $type, $base_amount, $ba
 
 //---------------------------------------------------------------------------------------------
 
-function delete_quick_entry($selected_id): void
+function delete_quick_entry(mixed $selected_id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."quick_entries WHERE id=".db_escape($selected_id);
 
@@ -151,7 +151,7 @@ function delete_quick_entry($selected_id): void
 
 //---------------------------------------------------------------------------------------------
 
-function add_quick_entry_line($qid, $action, $dest_id, $amount, $dim, $dim2, $memo): void
+function add_quick_entry_line(mixed $qid, mixed $action, mixed $dest_id, mixed $amount, mixed $dim, mixed $dim2, mixed $memo): void
 {
 	$sql = "INSERT INTO ".TB_PREF."quick_entry_lines 
 		(qid, action, dest_id, amount, dimension_id, dimension2_id, memo) 
@@ -164,7 +164,7 @@ function add_quick_entry_line($qid, $action, $dest_id, $amount, $dim, $dim2, $me
 
 //---------------------------------------------------------------------------------------------
 
-function update_quick_entry_line($selected_id, $qid, $action, $dest_id, $amount, $dim, $dim2, $memo): void
+function update_quick_entry_line(mixed $selected_id, mixed $qid, mixed $action, mixed $dest_id, mixed $amount, mixed $dim, mixed $dim2, mixed $memo): void
 {
 	$sql = "UPDATE ".TB_PREF."quick_entry_lines SET qid = ".db_escape($qid)
 		.", action=".db_escape($action).",
@@ -177,7 +177,7 @@ function update_quick_entry_line($selected_id, $qid, $action, $dest_id, $amount,
 
 //---------------------------------------------------------------------------------------------
 
-function delete_quick_entry_line($selected_id): void
+function delete_quick_entry_line(mixed $selected_id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."quick_entry_lines WHERE id=".db_escape($selected_id);
 
@@ -186,7 +186,7 @@ function delete_quick_entry_line($selected_id): void
 //---------------------------------------------------------------------------------------------
 
 
-function has_quick_entries($type=null)
+function has_quick_entries(mixed $type=null)
 {
 	$sql = "SELECT id FROM ".TB_PREF."quick_entries";
 	if ($type != null)
@@ -196,7 +196,7 @@ function has_quick_entries($type=null)
 	return db_num_rows($result) > 0;
 }
 
-function get_quick_entries($type = null)
+function get_quick_entries(mixed $type = null)
 {
 	$sql = "SELECT * FROM ".TB_PREF."quick_entries";
 	if ($type != null)
@@ -206,7 +206,7 @@ function get_quick_entries($type = null)
 	return db_query($sql, "could not retreive quick entries");
 }
 
-function get_quick_entry($selected_id)
+function get_quick_entry(mixed $selected_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."quick_entries WHERE id=".db_escape($selected_id);
 
@@ -215,7 +215,7 @@ function get_quick_entry($selected_id)
 	return db_fetch($result);
 }
 
-function get_quick_entry_lines($qid)
+function get_quick_entry_lines(mixed $qid)
 {
 	$sql = "SELECT line.*, coa.account_name, taxtype.name as tax_name
 		FROM ".TB_PREF."quick_entry_lines line
@@ -227,7 +227,7 @@ function get_quick_entry_lines($qid)
 	return db_query($sql, "could not retreive quick entries");
 }
 
-function has_quick_entry_lines($qid)
+function has_quick_entry_lines(mixed $qid)
 {
 	$sql = "SELECT id FROM ".TB_PREF."quick_entry_lines WHERE qid=".db_escape($qid);
 
@@ -237,7 +237,7 @@ function has_quick_entry_lines($qid)
 
 //---------------------------------------------------------------------------------------------
 
-function get_quick_entry_line($selected_id)
+function get_quick_entry_line(mixed $selected_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."quick_entry_lines WHERE id=".db_escape($selected_id);
 
@@ -248,7 +248,7 @@ function get_quick_entry_line($selected_id)
 
 //---------------------------------------------------------------------------------------------
 
-function get_max_reconciled($date, $bank_account)
+function get_max_reconciled(mixed $date, mixed $bank_account)
 {
 	$date = date2sql($date);
 	 // temporary fix to enable fix of invalid entries made in 2.2RC
@@ -268,7 +268,7 @@ function get_max_reconciled($date, $bank_account)
 
 //---------------------------------------------------------------------------------------------
 
-function get_ending_reconciled($bank_account, $bank_date)
+function get_ending_reconciled(mixed $bank_account, mixed $bank_date)
 {
 	$sql = "SELECT ending_reconcile_balance
 		FROM ".TB_PREF."bank_accounts WHERE id=".db_escape($bank_account)
@@ -279,7 +279,7 @@ function get_ending_reconciled($bank_account, $bank_date)
 
 //---------------------------------------------------------------------------------------------
 
-function get_sql_for_bank_account_reconcile($bank_account, $date)
+function get_sql_for_bank_account_reconcile(mixed $bank_account, mixed $date)
 {
 	$sql = "SELECT	bt.type, trans_no, ref, trans_date,
 				amount,	person_id, person_type_id, reconciled, bt.id, c.memo_
@@ -295,7 +295,7 @@ function get_sql_for_bank_account_reconcile($bank_account, $date)
 
 //---------------------------------------------------------------------------------------------
 
-function update_reconciled_values($reconcile_id, $reconcile_value, $reconcile_date, $end_balance, $bank_account): void
+function update_reconciled_values(mixed $reconcile_id, mixed $reconcile_value, mixed $reconcile_date, mixed $end_balance, mixed $bank_account): void
 {
 	$sql = "UPDATE ".TB_PREF."bank_trans SET reconciled=$reconcile_value"
 		." WHERE id=".db_escape($reconcile_id);
@@ -311,7 +311,7 @@ function update_reconciled_values($reconcile_id, $reconcile_value, $reconcile_da
 }
 //---------------------------------------------------------------------------------------------
 
-function get_default_bank_account($curr=null)
+function get_default_bank_account(mixed $curr=null)
 {
 	/* default bank account is selected as first found account from:
 		. default account in $curr if any
@@ -334,7 +334,7 @@ function get_default_bank_account($curr=null)
 	return db_fetch($result);
 }
 
-function get_default_customer_bank_account($cust_id)
+function get_default_customer_bank_account(mixed $cust_id)
 {
 	$sql = "SELECT curr_code FROM ".TB_PREF."debtors_master WHERE debtor_no=".db_escape($cust_id);
 	$result = db_query($sql, "could not retreive default customer currency code");
@@ -343,7 +343,7 @@ function get_default_customer_bank_account($cust_id)
 	return $ba['id'];
 }
 
-function get_default_supplier_bank_account($supplier_id)
+function get_default_supplier_bank_account(mixed $supplier_id)
 {
 	$sql = "SELECT curr_code FROM ".TB_PREF."suppliers WHERE supplier_id=".db_escape($supplier_id);
 	$result = db_query($sql, "could not retreive default supplier currency code");
@@ -356,7 +356,7 @@ function get_default_supplier_bank_account($supplier_id)
 //	This function returns current allowed bank payment limit, or null if limit is not set.
 //	As of FA 2.3 check is done only on cash account, for which limit is bank amount as of the date selected.
 //
-function get_bank_account_limit($account, $date, $user=null)
+function get_bank_account_limit(mixed $account, mixed $date, mixed $user=null)
 {
 //	$user = current_user();
 
@@ -366,7 +366,7 @@ function get_bank_account_limit($account, $date, $user=null)
 	return max(0, get_balance_before_for_bank_account($account, add_days($date,1))); // in case of manco made before the check was implemented
 }
  
-function identify_bank_account($account_number)
+function identify_bank_account(mixed $account_number)
 {
 	$number = db_escape($account_number);
 	$sql = "(SELECT id AS id, ".BO_COMPANY." AS type FROM ".TB_PREF."bank_accounts WHERE REPLACE(bank_account_number,' ', '')=$number)";
@@ -383,7 +383,7 @@ function identify_bank_account($account_number)
 
 //----------------------------------------------------------------------------------
 
-function get_bank_account_currency($id)
+function get_bank_account_currency(mixed $id)
 {
 	$sql= "SELECT bank_curr_code FROM ".TB_PREF."bank_accounts WHERE id=".db_escape($id);
 	$result = db_query($sql, "retreive bank account currency");

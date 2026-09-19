@@ -64,7 +64,7 @@ function check_paths(): void
 	}
 }
 
-function generate_backup($conn, $ext='no', $comm='')
+function generate_backup(mixed $conn, mixed $ext='no', mixed $comm='')
 {
 	global $SysPrefs;
 
@@ -104,7 +104,7 @@ function get_backup_file_combo()
 	return $selector;
 }
 
-function compress_list_row($label, $name, $value=null): void
+function compress_list_row(mixed $label, mixed $name, mixed $value=null): void
 {
 	$ar_comps = array('no'=>_("No"));
 
@@ -118,7 +118,7 @@ function compress_list_row($label, $name, $value=null): void
 	echo "</td></tr>";
 }
 
-function download_file($filename)
+function download_file(mixed $filename)
 {
     if (empty($filename) || !file_exists($filename))
     {

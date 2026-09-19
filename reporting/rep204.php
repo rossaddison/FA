@@ -27,7 +27,7 @@ include_once($path_to_root . "/gl/includes/gl_db.inc");
 
 print_outstanding_GRN();
 
-function getTransactions($fromsupp)
+function getTransactions(mixed $fromsupp)
 {
 	$sql = "SELECT grn.id,
 			order_no,

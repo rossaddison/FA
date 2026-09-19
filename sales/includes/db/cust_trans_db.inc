@@ -12,7 +12,7 @@
 //----------------------------------------------------------------------------------------
 // Mark changes in debtor_trans_details
 //
-function update_customer_trans_version($type, $versions) {
+function update_customer_trans_version(mixed $type, mixed $versions) {
 
 	$sql= 'UPDATE '.TB_PREF. 'debtor_trans SET version=version+1
 			WHERE type='.db_escape($type).' AND (';
@@ -30,7 +30,7 @@ function update_customer_trans_version($type, $versions) {
 // $trans_no = array(num1, num2,...);
 // returns array(num1=>ver1, num2=>ver2...)
 //
-function get_customer_trans_version($type, $trans_no) {
+function get_customer_trans_version(mixed $type, mixed $trans_no) {
 	if (!is_array($trans_no))
 		$trans_no = array( $trans_no );
 
@@ -53,10 +53,10 @@ function get_customer_trans_version($type, $trans_no) {
 //----------------------------------------------------------------------------------------
 // $Total, $Tax, $Freight, $discount all in customer's currency
 // date_ is display date (non-sql)
-function write_customer_trans($trans_type, $trans_no, $debtor_no, $BranchNo,
-	$date_, $reference, $Total, $discount=0, $Tax=0, $Freight=0, $FreightTax=0,
-	$sales_type=0, $order_no=0, $ship_via=0, $due_date="",
-	$AllocAmt=0, $rate=0, $dimension_id=0, $dimension2_id=0, $payment_terms=null, $tax_included=0, $prep_amount=0)
+function write_customer_trans(mixed $trans_type, mixed $trans_no, mixed $debtor_no, mixed $BranchNo,
+	mixed $date_, mixed $reference, mixed $Total, mixed $discount=0, mixed $Tax=0, mixed $Freight=0, mixed $FreightTax=0,
+	mixed $sales_type=0, mixed $order_no=0, mixed $ship_via=0, mixed $due_date="",
+	mixed $AllocAmt=0, mixed $rate=0, mixed $dimension_id=0, mixed $dimension2_id=0, mixed $payment_terms=null, mixed $tax_included=0, mixed $prep_amount=0)
 {
 	$new = $trans_no==0;
 	$curr = get_customer_currency($debtor_no);
@@ -118,7 +118,7 @@ function write_customer_trans($trans_type, $trans_no, $debtor_no, $BranchNo,
 }
 //----------------------------------------------------------------------------------------
 
-function get_customer_trans($trans_id, $trans_type, $customer_id=null)
+function get_customer_trans(mixed $trans_id, mixed $trans_type, mixed $customer_id=null)
 {
 	global $SysPrefs;
 
@@ -218,7 +218,7 @@ function get_customer_trans($trans_id, $trans_type, $customer_id=null)
 
 //----------------------------------------------------------------------------------------
 
-function exists_customer_trans($type, $type_no)
+function exists_customer_trans(mixed $type, mixed $type_no)
 {
 	$sql = "SELECT trans_no FROM ".TB_PREF."debtor_trans WHERE type=".db_escape($type)."
 		AND trans_no=".db_escape($type_no);
@@ -232,7 +232,7 @@ function exists_customer_trans($type, $type_no)
 
 // retreives the related sales order for a given trans
 
-function get_customer_trans_order($type, $type_no)
+function get_customer_trans_order(mixed $type, mixed $type_no)
 {
 	$sql = "SELECT order_ FROM ".TB_PREF."debtor_trans WHERE type=".db_escape($type)." AND trans_no=".db_escape($type_no);
 
@@ -245,7 +245,7 @@ function get_customer_trans_order($type, $type_no)
 
 //----------------------------------------------------------------------------------------
 
-function get_customer_details_from_trans($type, $type_no)
+function get_customer_details_from_trans(mixed $type, mixed $type_no)
 {
 	$sql = "SELECT debtor.name, debtor.curr_code, branch.br_name
 		FROM "
@@ -262,7 +262,7 @@ function get_customer_details_from_trans($type, $type_no)
 
 //----------------------------------------------------------------------------------------
 
-function void_customer_trans($type, $type_no): void
+function void_customer_trans(mixed $type, mixed $type_no): void
 {
 	// clear all values and mark as void
 	$sql = "UPDATE ".TB_PREF."debtor_trans SET ov_amount=0, ov_discount=0, ov_gst=0, ov_freight=0,
@@ -273,7 +273,7 @@ function void_customer_trans($type, $type_no): void
 
 //----------------------------------------------------------------------------------------
 
-function clear_customer_trans($type, $type_no): void
+function clear_customer_trans(mixed $type, mixed $type_no): void
 {
 	// Delete
 	$sql = "DELETE FROM ".TB_PREF."debtor_trans WHERE type=".db_escape($type)." AND trans_no=".db_escape($type_no);
@@ -282,7 +282,7 @@ function clear_customer_trans($type, $type_no): void
 }
 //----------------------------------------------------------------------------------------
 
-function post_void_customer_trans($type, $type_no): void
+function post_void_customer_trans(mixed $type, mixed $type_no): void
 {
 	switch ($type) {
 		case ST_SALESINVOICE :
@@ -299,7 +299,7 @@ function post_void_customer_trans($type, $type_no): void
 }
 
 //----------------------------------------------------------------------------------------
-function get_sql_for_customer_inquiry($from, $to, $cust_id = ALL_TEXT, $filter = ALL_TEXT, $show_voided = 0, $ref='')
+function get_sql_for_customer_inquiry(mixed $from, mixed $to, mixed $cust_id = ALL_TEXT, mixed $filter = ALL_TEXT, mixed $show_voided = 0, mixed $ref='')
 {
     $date_after = date2sql($from);
     $date_to = date2sql($to);
@@ -403,7 +403,7 @@ function get_sql_for_customer_inquiry($from, $to, $cust_id = ALL_TEXT, $filter =
    	return $sql;
 }
 
-function get_sql_for_sales_deliveries_view($from, $to, $customer_id, $stock_item, $location, $delivery, $outstanding=false)
+function get_sql_for_sales_deliveries_view(mixed $from, mixed $to, mixed $customer_id, mixed $stock_item, mixed $location, mixed $delivery, mixed $outstanding=false)
 {
 	$sql = "SELECT trans.trans_no,
 			debtor.name,

@@ -173,7 +173,7 @@ function tst_dbversion()
 }
 
 
-function tst_subdirs($install=false)
+function tst_subdirs(mixed $install=false)
 {
 	global $db_connections;
 
@@ -230,7 +230,7 @@ function tst_tmpdir()
 	return $test;
 }
 
-function tst_langs($install)
+function tst_langs(mixed $install)
 {
 	global $installed_languages, $path_to_root, $GetText;
 
@@ -285,7 +285,7 @@ function tst_langs($install)
 	return $test;
 }
 
-function tst_config($install)
+function tst_config(mixed $install)
 {
 	global $path_to_root;
 
@@ -306,7 +306,7 @@ function tst_config($install)
 	return $test;
 }
 
-function tst_dbconfig($install)
+function tst_dbconfig(mixed $install)
 {
 	global $path_to_root;
 
@@ -328,7 +328,7 @@ function tst_dbconfig($install)
 	return $test;
 }
 
-function tst_extconfig($install)
+function tst_extconfig(mixed $install)
 {
 	global $path_to_root, $db_connections;
 
@@ -403,7 +403,7 @@ function tst_extconfig($install)
 	return $test;
 }
 
-function display_system_tests($install = false)
+function display_system_tests(mixed $install = false)
 {
 	global $test_level;
 

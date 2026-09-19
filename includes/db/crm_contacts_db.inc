@@ -10,8 +10,8 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-function add_crm_person($ref, $name, $name2, $address, $phone, $phone2, $fax, $email, $lang, $notes,
-	$cat_ids=null, $entity=null)
+function add_crm_person(mixed $ref, mixed $name, mixed $name2, mixed $address, mixed $phone, mixed $phone2, mixed $fax, mixed $email, mixed $lang, mixed $notes,
+	mixed $cat_ids=null, mixed $entity=null)
 {
 	$sql = "INSERT INTO ".TB_PREF."crm_persons (ref, name, name2, address,
 		phone, phone2, fax, email, lang, notes)
@@ -40,8 +40,8 @@ function add_crm_person($ref, $name, $name2, $address, $phone, $phone2, $fax, $e
 	return $id;
 }
 
-function update_crm_person($id, $ref, $name, $name2, $address, $phone, $phone2, $fax, $email, 
-	$lang, $notes, $cat_ids, $entity=null, $type=null)
+function update_crm_person(mixed $id, mixed $ref, mixed $name, mixed $name2, mixed $address, mixed $phone, mixed $phone2, mixed $fax, mixed $email, 
+	mixed $lang, mixed $notes, mixed $cat_ids, mixed $entity=null, mixed $type=null)
 {
 	$sql = "UPDATE ".TB_PREF."crm_persons SET "
 		  ."ref=".db_escape($ref) . ", "
@@ -67,7 +67,7 @@ function update_crm_person($id, $ref, $name, $name2, $address, $phone, $phone2, 
 	return $id;
 }
 
-function delete_crm_person($person, $with_contacts=false)
+function delete_crm_person(mixed $person, mixed $with_contacts=false)
 {
 	begin_transaction();
 
@@ -84,7 +84,7 @@ function delete_crm_person($person, $with_contacts=false)
 /*
 	Retrieve full contact data from database for selected type/action/entity or person
 */
-function get_crm_persons($type=null, $action=null, $entity=null, $person=null, $unique=false)
+function get_crm_persons(mixed $type=null, mixed $action=null, mixed $entity=null, mixed $person=null, mixed $unique=false)
 {
 	$sql = "SELECT t.*, p.*, r.id as contact_id FROM ".TB_PREF."crm_persons p,"
 		.TB_PREF."crm_categories t, "
@@ -118,7 +118,7 @@ function get_crm_persons($type=null, $action=null, $entity=null, $person=null, $
 		return $result;
 }
 
-function get_crm_person($id)
+function get_crm_person(mixed $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."crm_persons WHERE id=".db_escape($id);
 
@@ -133,7 +133,7 @@ function get_crm_person($id)
 /*
 	Returns all contacts for given person id
 */
-function get_person_contacts($id)
+function get_person_contacts(mixed $id)
 {
 	$sql = "SELECT t.id FROM "
 		.TB_PREF."crm_categories t, "
@@ -147,7 +147,7 @@ function get_person_contacts($id)
 	return $contacts;
 }
 
-function update_person_contacts($id, $cat_ids, $entity_id=null, $type=null)
+function update_person_contacts(mixed $id, mixed $cat_ids, mixed $entity_id=null, mixed $type=null)
 {
 	$sql = "DELETE FROM ".TB_PREF."crm_contacts WHERE person_id=".db_escape($id);
 	if ($type)
@@ -173,7 +173,7 @@ function update_person_contacts($id, $cat_ids, $entity_id=null, $type=null)
 	return $ret;
 }
 
-function delete_entity_contacts($class, $entity): void
+function delete_entity_contacts(mixed $class, mixed $entity): void
 {
 	// cleanup
 	$res = get_crm_persons($class, null, $entity, null, true);
@@ -188,7 +188,7 @@ function delete_entity_contacts($class, $entity): void
 
 //-----------------------------------------------------------------------------------------------
 
-function add_crm_category($type, $action, $name, $description): void
+function add_crm_category(mixed $type, mixed $action, mixed $name, mixed $description): void
 {
 	$sql = "INSERT INTO ".TB_PREF."crm_categories (type, action, name, description)
 		VALUES (".db_escape($type) . ", "
@@ -199,7 +199,7 @@ function add_crm_category($type, $action, $name, $description): void
    	db_query($sql,"The insert of the crm category failed");
 }
 
-function update_crm_category($selected_id, $type, $action, $name, $description): void
+function update_crm_category(mixed $selected_id, mixed $type, mixed $action, mixed $name, mixed $description): void
 {
 	$sql = "UPDATE ".TB_PREF."crm_categories SET ";
 	if ($type)
@@ -212,14 +212,14 @@ function update_crm_category($selected_id, $type, $action, $name, $description):
    	db_query($sql,"The update of the crm category failed");
 }
 
-function delete_crm_category($selected_id): void
+function delete_crm_category(mixed $selected_id): void
 {
 	// preserve system categories
 	$sql="DELETE FROM ".TB_PREF."crm_categories WHERE system=0 AND id=".db_escape($selected_id);
 	db_query($sql,"could not delete crm category");
 }
 
-function get_crm_categories($show_inactive)
+function get_crm_categories(mixed $show_inactive)
 {
 	$sql = "SELECT * FROM ".TB_PREF."crm_categories";
 	if (!$show_inactive) $sql .= " WHERE !inactive";
@@ -227,7 +227,7 @@ function get_crm_categories($show_inactive)
 	return db_query($sql,"could not get areas");
 }
 
-function get_crm_category($selected_id)
+function get_crm_category(mixed $selected_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."crm_categories WHERE id=".db_escape($selected_id);
 
@@ -235,7 +235,7 @@ function get_crm_category($selected_id)
 	return db_fetch($result);
 }
 
-function get_crm_category_name($id)
+function get_crm_category_name(mixed $id)
 {
 	$sql = "SELECT name FROM ".TB_PREF."crm_categories WHERE id=".db_escape($id);
 
@@ -248,7 +248,7 @@ function get_crm_category_name($id)
 //----------------------------------------------------------------------------------------
 //	Contact is relation between person and entity in some category
 //
-function add_crm_contact($type, $action, $entity_id, $person_id)
+function add_crm_contact(mixed $type, mixed $action, mixed $entity_id, mixed $person_id)
 {
 	$sql = "INSERT INTO ".TB_PREF."crm_contacts (person_id, type, action, entity_id) VALUES ("
 		.db_escape($person_id) . ","
@@ -260,7 +260,7 @@ function add_crm_contact($type, $action, $entity_id, $person_id)
 /*
 	Delete contact selected by unique id.
 */
-function delete_crm_contact($id)
+function delete_crm_contact(mixed $id)
 {
 	$sql = "DELETE FROM ".TB_PREF."crm_contacts WHERE id=".db_escape($id);
 
@@ -269,7 +269,7 @@ function delete_crm_contact($id)
 /*
 	Delete selected contacts for given person
 */
-function delete_crm_contacts($person_id = null, $type = null, $entity_id=null, $action = null)
+function delete_crm_contacts(mixed $person_id = null, mixed $type = null, mixed $entity_id=null, mixed $action = null)
 {
 	$sql = "DELETE FROM ".TB_PREF."crm_contacts WHERE ";
 
@@ -288,7 +288,7 @@ function delete_crm_contacts($person_id = null, $type = null, $entity_id=null, $
 /*
 	Returns person data for given contact id
 */
-function get_crm_contact($id)
+function get_crm_contact(mixed $id)
 {
 	$sql = "SELECT t.type, t.action, p.*, r.person_id, r.id  FROM ".TB_PREF."crm_persons p,"
 		.TB_PREF."crm_categories t, "
@@ -303,7 +303,7 @@ function get_crm_contact($id)
 /*
 	 Check for whether category is used in contacts.
 */
-function is_crm_category_used($id)
+function is_crm_category_used(mixed $id)
 {
 	$row = get_crm_category($id);
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."crm_contacts WHERE type='".$row['type']."' AND action='".$row['action']."'";

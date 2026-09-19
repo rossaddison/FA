@@ -80,7 +80,7 @@ function handle_submit()
 
 //---------------------------------------------------------------------------------------------
 
-function check_can_delete($curr)
+function check_can_delete(mixed $curr)
 {
 
 	if ($curr == "")
@@ -177,7 +177,7 @@ function display_currencies(): void
 
 //---------------------------------------------------------------------------------------------
 
-function display_currency_edit($selected_id): void
+function display_currency_edit(mixed $selected_id): void
 {
 	global $Mode;
 	

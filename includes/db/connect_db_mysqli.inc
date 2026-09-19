@@ -14,7 +14,7 @@ define('SQL_MODE', 'STRICT_ALL_TABLES'); // prevents SQL injection with silent f
 
 $db_last_inserted_id = 0;
 
-function set_global_connection($company=-1)
+function set_global_connection(mixed $company=-1)
 {
 	global $db, $path_to_root, $db_connections, $SysPrefs;
 
@@ -46,7 +46,7 @@ function set_global_connection($company=-1)
 
 //DB wrapper functions to change only once for whole application
 
-function db_query($sql, $err_msg=null): mysqli_result|bool
+function db_query(mixed $sql, mixed $err_msg=null): mysqli_result|bool
 {
 	global $db, $SysPrefs, $sql_queries, $Ajax,	$db_connections, $db_last_inserted_id;
 
@@ -93,46 +93,46 @@ function db_query($sql, $err_msg=null): mysqli_result|bool
 	return $result;
 }
 
-function db_fetch_row($result): array|false
+function db_fetch_row(mixed $result): array|false
 {
 	$ret = mysqli_fetch_row($result);
 	return ($ret === null ? false : $ret);
 }
 
-function db_fetch_assoc($result): array|false
+function db_fetch_assoc(mixed $result): array|false
 {
 	$ret = mysqli_fetch_assoc($result);
 	return ($ret === null ? false : $ret);
 }
 
-function db_fetch($result): array|false
+function db_fetch(mixed $result): array|false
 {
 	$ret = mysqli_fetch_array($result);
 	return ($ret === null ? false : $ret);
 }
 
-function db_seek(&$result,$record)
+function db_seek(&$result,mixed $record)
 {
 	return mysqli_data_seek($result, $record);
 }
 
-function db_free_result($result): void
+function db_free_result(mixed $result): void
 {
 	if ($result)
 		mysqli_free_result($result);
 }
 
-function db_num_rows($result): int|string
+function db_num_rows(mixed $result): int|string
 {
 	return mysqli_num_rows($result);
 }
 
-function db_num_fields($result)
+function db_num_fields(mixed $result)
 {
 	return mysqli_num_fields($result);
 }
 
-function db_escape($value = "", $nullify = false): string
+function db_escape(mixed $value = "", mixed $nullify = false): string
 {
 	global $db;
 
@@ -165,7 +165,7 @@ function db_error_no()
     return mysqli_errno($db);
 }
 
-function db_error_msg($conn)
+function db_error_msg(mixed $conn)
 {
 	return mysqli_error($conn);
 }
@@ -183,13 +183,13 @@ function db_num_affected_rows()
 	return mysqli_affected_rows($db);
 }
 
-function db_field_name($result, $n)
+function db_field_name(mixed $result, mixed $n)
 {
     $fieldinfo = mysqli_fetch_field_direct($result, $n);
     return $fieldinfo->name;
 }
 
-function db_set_collation($db, $fa_collation)
+function db_set_collation(mixed $db, mixed $fa_collation)
 {
 	return mysqli_query($db, "ALTER DATABASE COLLATE ".get_mysql_collation($fa_collation));
 }
@@ -198,7 +198,7 @@ function db_set_collation($db, $fa_collation)
 	Create database for FA company. If database already exists,
 	just set collation to be sure nothing weird will happen later.
 */
-function db_create_db($connection)
+function db_create_db(mixed $connection)
 {
 	global $db;
 
@@ -221,7 +221,7 @@ function db_create_db($connection)
 	return $db;
 }
 
-function db_drop_db($connection)
+function db_drop_db(mixed $connection)
 {
 
 	if ($connection["tbpref"] == "")
@@ -247,7 +247,7 @@ function db_drop_db($connection)
 	}
 }
 
-function db_close($dbase = null)
+function db_close(mixed $dbase = null)
 {
 	global $db;
 	
@@ -261,7 +261,7 @@ function db_extension_exists()
 	return function_exists('mysqli_connect');
 }
 
-function db_escape_function($string)
+function db_escape_function(mixed $string)
 {
 	global $db;
 	
@@ -272,7 +272,7 @@ function db_escape_function($string)
 	Set mysql client encoding.
 	Default is is encoding used by default language.
 */
-function db_set_encoding($ui_encoding=null): void
+function db_set_encoding(mixed $ui_encoding=null): void
 {
 	global $db, $dflt_lang, $installed_languages;
 
@@ -286,12 +286,12 @@ function db_set_encoding($ui_encoding=null): void
 		mysqli_set_charset($db, $mysql_enc);
 }
 
-function db_get_charset($db)
+function db_get_charset(mixed $db)
 {
 	return mysqli_character_set_name($db);
 }
 
-function db_set_charset($db, $charset)
+function db_set_charset(mixed $db, mixed $charset)
 {
 	global $db;
 

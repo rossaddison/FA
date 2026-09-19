@@ -262,7 +262,7 @@ if (isset($_POST['PostCreditNote']))
 	handle_commit_credit_note();
 }
 
-function check_item_data($n)
+function check_item_data(mixed $n)
 {
 
 	if (!check_num('This_QuantityCredited'.$n, 0))
@@ -282,7 +282,7 @@ function check_item_data($n)
 	return true;
 }
 
-function commit_item_data($n): void
+function commit_item_data(mixed $n): void
 {
 	if (check_item_data($n))
 	{

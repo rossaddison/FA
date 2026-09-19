@@ -55,42 +55,42 @@ set_global_customer($_POST['customer_id']);
 end_row();
 end_table();
 //------------------------------------------------------------------------------------------------
-function check_overdue($row)
+function check_overdue(mixed $row)
 {
 	return ($row['OverDue'] == 1 
 		&& (abs($row["TotalAmount"]) - $row["Allocated"] != 0));
 }
 
-function order_link($row)
+function order_link(mixed $row)
 {
 	return $row['order_']>0 ?
 		get_customer_trans_view_str(ST_SALESORDER, $row['order_'])
 		: "";
 }
 
-function systype_name($dummy, $type)
+function systype_name(mixed $dummy, mixed $type)
 {
 	global $systypes_array;
 
 	return $systypes_array[$type];
 }
 
-function view_link($trans)
+function view_link(mixed $trans)
 {
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
 
-function due_date($row)
+function due_date(mixed $row)
 {
 	return $row["type"] == ST_SALESINVOICE ? $row["due_date"] : '';
 }
 
-function fmt_balance($row)
+function fmt_balance(mixed $row)
 {
 	return ($row["type"] == ST_JOURNAL && $row["TotalAmount"] < 0 ? -$row["TotalAmount"] : $row["TotalAmount"]) - $row["Allocated"];
 }
 
-function alloc_link($row)
+function alloc_link(mixed $row)
 {
 	$link = 
 	pager_link(_("Allocation"),
@@ -121,7 +121,7 @@ function alloc_link($row)
 
 }
 
-function fmt_debit($row)
+function fmt_debit(mixed $row)
 {
 	$value =
 	    $row['type']==ST_CUSTCREDIT || $row['type']==ST_CUSTPAYMENT || $row['type']==ST_BANKDEPOSIT ?
@@ -130,7 +130,7 @@ function fmt_debit($row)
 
 }
 
-function fmt_credit($row)
+function fmt_credit(mixed $row)
 {
 	$value =
 	    !($row['type']==ST_CUSTCREDIT || $row['type']==ST_CUSTPAYMENT || $row['type']==ST_BANKDEPOSIT) ?

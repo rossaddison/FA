@@ -29,7 +29,7 @@ include_once($path_to_root . "/sales/includes/db/customers_db.inc");
 
 print_customer_balances();
 
-function get_open_balance($debtorno, $to)
+function get_open_balance(mixed $debtorno, mixed $to)
 {
 	$to = date2sql($to);
 
@@ -54,7 +54,7 @@ function get_open_balance($debtorno, $to)
     return db_fetch($result);
 }
 
-function get_transactions($debtorno, $from, $to)
+function get_transactions(mixed $debtorno, mixed $from, mixed $to)
 {
     $from = date2sql($from);
     $to = date2sql($to);
@@ -94,7 +94,7 @@ function get_transactions($debtorno, $from, $to)
     return db_query($sql,"No transactions were returned");
 }
 
-function get_customer_reference ($order_number)
+function get_customer_reference (mixed $order_number)
 {
 
     $sql = "SELECT customer_ref FROM ".TB_PREF."sales_orders WHERE order_no =".db_escape($order_number)." AND trans_type=".ST_SALESORDER."";

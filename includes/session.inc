@@ -106,7 +106,7 @@ class SessionManager
 	}
 }
 
-function output_html($text)
+function output_html(mixed $text)
 {
 	global $before_box, $Ajax, $messages;
 	// Fatal errors are not send to error_handler,
@@ -121,14 +121,14 @@ function output_html($text)
 }
 //----------------------------------------------------------------------------------------
 
-function kill_login()
+function kill_login(): void
 {
 	session_unset();
 	session_destroy();
 }
 //----------------------------------------------------------------------------------------
 
-function login_fail()
+function login_fail(): void
 {
 	global $path_to_root;
 
@@ -142,7 +142,7 @@ function login_fail()
 	die();
 }
 
-function password_reset_fail()
+function password_reset_fail(): void
 {
 	global $path_to_root;
 	
@@ -157,7 +157,7 @@ function password_reset_fail()
 	die();
 }
 
-function password_reset_success()
+function password_reset_success(): void
 {
 	global $path_to_root;
 
@@ -187,7 +187,7 @@ function check_faillog()
 /*
 	Ensure file is re-read on next request if php caching is active
 */
-function cache_invalidate($filename)
+function cache_invalidate(mixed $filename): void
 {
 	if (function_exists('opcache_invalidate'))	// OpCode extension
 		opcache_invalidate($filename);
@@ -197,7 +197,7 @@ function cache_invalidate($filename)
 	Simple brute force attack detection is performed before connection to company database is open. Therefore access counters have to be stored in file.
 	Login attempts counter is created for every new user IP, which partialy prevent DOS attacks.
 */
-function write_login_filelog($login, $result)
+function write_login_filelog(mixed $login, mixed $result): void
 {
 	global $login_faillog, $SysPrefs, $path_to_root;
 
@@ -237,7 +237,7 @@ function write_login_filelog($login, $result)
 
 //----------------------------------------------------------------------------------------
 
-function check_page_security($page_security)
+function check_page_security(mixed $page_security): void
 {
 	global $SysPrefs;
 	
@@ -286,7 +286,7 @@ function check_page_security($page_security)
 	GET start variable and/or some value stored in session variable.
 	Before the call $page_security should be set to default page_security value.
 */
-function set_page_security($value=null, $trans = array(), $gtrans = array())
+function set_page_security(mixed $value=null, mixed $trans = array(), mixed $gtrans = array()): void
 {
 	global $page_security;
 
@@ -310,13 +310,13 @@ function set_page_security($value=null, $trans = array(), $gtrans = array())
 	ISO-8859-1, so fix is easy. If any other unsupported encoding is used,
 	add workaround here.
 */
-function html_specials_encode($str)
+function html_specials_encode(mixed $str)
 {
 	return htmlspecialchars($str, ENT_QUOTES, $_SESSION['language']->encoding=='iso-8859-2' ?
 		 'ISO-8859-1' : $_SESSION['language']->encoding);
 }
 
-function html_cleanup(&$parms)
+function html_cleanup(&$parms): void
 {
 	foreach($parms as $name => $value) {
 		if (is_array($value))
@@ -330,7 +330,7 @@ function html_cleanup(&$parms)
 //============================================================================
 //
 //
-function login_timeout()
+function login_timeout(): void
 {
 	// skip timeout on logout page
 	if ($_SESSION["wa_current_user"]->logged) {

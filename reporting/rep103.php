@@ -27,7 +27,7 @@ include_once($path_to_root . "/gl/includes/gl_db.inc");
 
 print_customer_details_listing();
 
-function get_customer_details_for_report($area=0, $salesid=0)
+function get_customer_details_for_report(mixed $area=0, mixed $salesid=0)
 {
 	$sql = "SELECT debtor.debtor_no,
 			debtor.name,
@@ -69,7 +69,7 @@ function get_customer_details_for_report($area=0, $salesid=0)
     return db_query($sql,"No transactions were returned");
 }
 
-function get_contacts_for_branch($branch)
+function get_contacts_for_branch(mixed $branch)
 {
 	$sql = "SELECT p.*, r.action, r.type, CONCAT(r.type,'.',r.action) as ext_type 
 		FROM ".TB_PREF."crm_persons p,"
@@ -83,7 +83,7 @@ function get_contacts_for_branch($branch)
 	return $results;
 }
 
-function getTransactions($debtorno, $branchcode, $date)
+function getTransactions(mixed $debtorno, mixed $branchcode, mixed $date)
 {
 	$date = date2sql($date);
 

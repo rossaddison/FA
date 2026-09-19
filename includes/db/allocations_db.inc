@@ -16,7 +16,7 @@
 //
 //	Returns table of payments currently allocated to selected transaction.
 //
-function get_payments_for($trans_no, $trans_type, $person_id)
+function get_payments_for(mixed $trans_no, mixed $trans_type, mixed $person_id)
 {
 	$allocations = array();
 
@@ -40,7 +40,7 @@ function get_payments_for($trans_no, $trans_type, $person_id)
 //
 //	Unified inteface to (re)allocate payments to supp/cust/transaction
 //
-function allocate_payment($type_from, $no_from, $type_to, $no_to, $person_id, $amount, $date): void
+function allocate_payment(mixed $type_from, mixed $no_from, mixed $type_to, mixed $no_to, mixed $person_id, mixed $amount, mixed $date): void
 {
 	$date = date2sql($date); // FIXME types
 	if (in_array($type_to, array(ST_SALESORDER, ST_CUSTCREDIT, ST_CUSTDELIVERY, ST_SALESINVOICE)))
@@ -74,7 +74,7 @@ function allocate_payment($type_from, $no_from, $type_to, $no_to, $person_id, $a
 //  $allocs is table of payments which should be reallocated
 //  $free_remainder should be true if old allacations should be freed when not allocated to new transaction.
 //
-function reallocate_payments($trans_no, $trans_type, $alloc_date, $max_alloc, $allocs, $person_id, $free_remainder=true): void
+function reallocate_payments(mixed $trans_no, mixed $trans_type, mixed $alloc_date, mixed $max_alloc, mixed $allocs, mixed $person_id, mixed $free_remainder=true): void
 {
 
 	foreach($allocs as $alloc)

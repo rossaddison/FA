@@ -12,7 +12,7 @@
 require_once($path_to_root. "/admin/db/attachments_db.inc");
 // ------------------------------------------------------------------------------
 
-function get_supplier_details_to_order(&$order, $supplier_id): void
+function get_supplier_details_to_order(&$order, mixed $supplier_id): void
 {
 	$sql = "SELECT curr_code, supp_name, tax_group_id, supp.tax_included, dimension_id, dimension2_id,
 			supp.credit_limit - Sum((ov_amount + ov_gst + ov_discount)) as cur_credit,
@@ -45,7 +45,7 @@ function get_supplier_details_to_order(&$order, $supplier_id): void
 
 //----------------------------------------------------------------------------------------
 
-function delete_po($po): void
+function delete_po(mixed $po): void
 {
 	global $Refs;
 
@@ -174,7 +174,7 @@ function update_po(&$po_obj)
 
 //----------------------------------------------------------------------------------------
 
-function get_po($order_no) {
+function get_po(mixed $order_no) {
     $sql = "SELECT * FROM ".TB_PREF."purch_orders WHERE order_no = ".db_escape($order_no);
     $result = db_query($sql);
 
@@ -183,7 +183,7 @@ function get_po($order_no) {
 
 //----------------------------------------------------------------------------------------
 
-function read_po_header($order_no, &$order)
+function read_po_header(mixed $order_no, &$order)
 {
     	$sql = "SELECT po.*, supplier.*, loc.location_name 
 		FROM ".TB_PREF."purch_orders po,"
@@ -227,7 +227,7 @@ function read_po_header($order_no, &$order)
 
 //----------------------------------------------------------------------------------------
 
-function read_po_items($order_no, &$order, $open_items_only=false): void
+function read_po_items(mixed $order_no, &$order, mixed $open_items_only=false): void
 {
 	/*now populate the line po array with the purchase order details records */
 
@@ -272,7 +272,7 @@ function read_po_items($order_no, &$order, $open_items_only=false): void
 
 //----------------------------------------------------------------------------------------
 
-function read_po($order_no, &$order, $open_items_only=false): void
+function read_po(mixed $order_no, &$order, mixed $open_items_only=false): void
 {
 	$result = read_po_header($order_no, $order);
 
@@ -282,7 +282,7 @@ function read_po($order_no, &$order, $open_items_only=false): void
 
 //----------------------------------------------------------------------------------------
 
-function get_po_items($order_no)
+function get_po_items(mixed $order_no)
 {
 	$sql = "SELECT item_code, quantity_ordered, quantity_received, qty_invoiced
 		FROM ".TB_PREF."purch_order_details
@@ -295,7 +295,7 @@ function get_po_items($order_no)
 }
 //----------------------------------------------------------------------------------------
 
-function get_short_info($stock_id)
+function get_short_info(mixed $stock_id)
 {
 	$sql = "SELECT description, units, mb_flag
 		FROM ".TB_PREF."stock_master WHERE stock_id = ".db_escape($stock_id);
@@ -303,8 +303,8 @@ function get_short_info($stock_id)
 	return db_query($sql,"The stock details for " . $stock_id . " could not be retrieved");
 }
 
-function get_sql_for_po_search_completed($from, $to, $supplier_id=ALL_TEXT, $location=ALL_TEXT,
-	$order_number = '', $stock_id = '', $also_closed=false)
+function get_sql_for_po_search_completed(mixed $from, mixed $to, mixed $supplier_id=ALL_TEXT, mixed $location=ALL_TEXT,
+	mixed $order_number = '', mixed $stock_id = '', mixed $also_closed=false)
 {
 	$sql = "SELECT 
 		porder.order_no, 
@@ -366,7 +366,7 @@ function get_sql_for_po_search_completed($from, $to, $supplier_id=ALL_TEXT, $loc
 	return $sql;
 }
 
-function get_sql_for_po_search($from, $to, $supplier_id=ALL_TEXT, $location=ALL_TEXT, $order_number='', $stock_id='')
+function get_sql_for_po_search(mixed $from, mixed $to, mixed $supplier_id=ALL_TEXT, mixed $location=ALL_TEXT, mixed $order_number='', mixed $stock_id='')
 {
 	$sql = "SELECT 
 		porder.order_no, 

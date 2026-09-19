@@ -28,7 +28,7 @@ include_once($path_to_root . "/inventory/includes/db/items_category_db.inc");
 
 print_inventory_valuation_report();
 
-function get_domestic_price($myrow, $stock_id)
+function get_domestic_price(mixed $myrow, mixed $stock_id)
 {
     if ($myrow['type'] == ST_SUPPRECEIVE || $myrow['type'] == ST_SUPPCREDIT)
      {
@@ -48,7 +48,7 @@ function get_domestic_price($myrow, $stock_id)
     return $price;
 }
 
-function getAverageCost($stock_id, $location, $to_date)
+function getAverageCost(mixed $stock_id, mixed $location, mixed $to_date)
 {
 	if ($to_date == null)
 		$to_date = Today();
@@ -87,7 +87,7 @@ function getAverageCost($stock_id, $location, $to_date)
 	return $tot_cost / $qty;
 }
 
-function getTransactions($category, $location, $date)
+function getTransactions(mixed $category, mixed $location, mixed $date)
 {
 	$date = date2sql($date);
 

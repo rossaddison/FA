@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_credit_status($description, $disallow_invoicing): void
+function add_credit_status(mixed $description, mixed $disallow_invoicing): void
 {
 	$sql = "INSERT INTO ".TB_PREF."credit_status (reason_description, dissallow_invoices) 
 		VALUES (".db_escape($description).",".db_escape($disallow_invoicing).")";
@@ -17,7 +17,7 @@ function add_credit_status($description, $disallow_invoicing): void
 	db_query($sql, "could not add credit status");
 }
 
-function update_credit_status($status_id, $description, $disallow_invoicing): void
+function update_credit_status(mixed $status_id, mixed $description, mixed $disallow_invoicing): void
 {
 	$sql = "UPDATE ".TB_PREF."credit_status SET reason_description=".db_escape($description).",
 		dissallow_invoices=".db_escape($disallow_invoicing)." WHERE id=".db_escape($status_id);
@@ -25,7 +25,7 @@ function update_credit_status($status_id, $description, $disallow_invoicing): vo
 	db_query($sql, "could not update credit status");
 }
 
-function get_all_credit_status($all=false)
+function get_all_credit_status(mixed $all=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."credit_status";
 	if (!$all) $sql .= " WHERE !inactive";
@@ -33,7 +33,7 @@ function get_all_credit_status($all=false)
 	return db_query($sql, "could not get all credit status");
 }
 
-function get_credit_status($status_id)
+function get_credit_status(mixed $status_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."credit_status WHERE id=".db_escape($status_id);
 
@@ -42,7 +42,7 @@ function get_credit_status($status_id)
 	return db_fetch($result);
 }
 
-function delete_credit_status($status_id): void
+function delete_credit_status(mixed $status_id): void
 {
 	$sql="DELETE FROM ".TB_PREF."credit_status WHERE id=".db_escape($status_id);
 

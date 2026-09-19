@@ -40,7 +40,7 @@ function get_supplier_details_for_report()
 }
 
 
-function getTransactions($supplier_id, $date)
+function getTransactions(mixed $supplier_id, mixed $date)
 {
 	$date = date2sql($date);
 

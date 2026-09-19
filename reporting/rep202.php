@@ -29,7 +29,7 @@ print_aged_supplier_analysis();
 
 //----------------------------------------------------------------------------------------------------
 
-function get_invoices($supplier_id, $to, $all=true)
+function get_invoices(mixed $supplier_id, mixed $to, mixed $all=true)
 {
 	$todate = date2sql($to);
 	$PastDueDays1 = get_company_pref('past_due_days');

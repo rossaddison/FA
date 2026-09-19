@@ -28,13 +28,13 @@ $new_role = get_post('role')=='' || get_post('cancel') || get_post('clone');
 // is properly placed under related section regardless of 
 // unique extension number, with order inside sections preserved.
 //
-function comp_areas($area1, $area2) 
+function comp_areas(mixed $area1, mixed $area2) 
 {
 	$sec_comp = ($area1[0]&0xff00)-($area2[0]&0xff00);
 	return $sec_comp == 0 ? ($area1[2]-$area2[2]) : $sec_comp;
 }
 
-function sort_areas($areas)
+function sort_areas(mixed $areas)
 {
 	$old_order = 0;
 	foreach($areas as $key => $area) {

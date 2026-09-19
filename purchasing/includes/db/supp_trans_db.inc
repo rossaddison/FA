@@ -13,8 +13,8 @@
 //
 //	FIXME - this should be revised for transaction update case.
 //
-function write_supp_trans($type, $trans_no, $supplier_id, $date_, $due_date, $reference, $supp_reference,
-	$amount, $amount_tax, $discount, $err_msg="", $rate=0, $included=0)
+function write_supp_trans(mixed $type, mixed $trans_no, mixed $supplier_id, mixed $date_, mixed $due_date, mixed $reference, mixed $supp_reference,
+	mixed $amount, mixed $amount_tax, mixed $discount, mixed $err_msg="", mixed $rate=0, mixed $included=0)
 {
 	$new = $trans_no==0;
 	$date = date2sql($date_);
@@ -51,7 +51,7 @@ function write_supp_trans($type, $trans_no, $supplier_id, $date_, $due_date, $re
 
 //-------------------------------------------------------------------------------------------------------------
 
-function get_supp_trans($trans_no, $trans_type=-1, $supplier_id=null)
+function get_supp_trans(mixed $trans_no, mixed $trans_type=-1, mixed $supplier_id=null)
 {
 	$sql = "SELECT trans.*, (trans.ov_amount+trans.ov_gst+trans.ov_discount) AS Total,
 		supplier.supp_name AS supplier_name, supplier.curr_code AS curr_code ";
@@ -113,7 +113,7 @@ function get_supp_trans($trans_no, $trans_type=-1, $supplier_id=null)
 
 //----------------------------------------------------------------------------------------
 
-function get_supp_payment_before($supplier_id, $date)
+function get_supp_payment_before(mixed $supplier_id, mixed $date)
 {
 	$sql = "SELECT "
 	. TB_PREF . "supp_trans.trans_no,"
@@ -155,7 +155,7 @@ function get_supp_payment_before($supplier_id, $date)
 
 //----------------------------------------------------------------------------------------
 
-function exists_supp_trans($type, $type_no)
+function exists_supp_trans(mixed $type, mixed $type_no)
 {
 	if ($type == ST_SUPPRECEIVE)
 		return exists_grn($type_no);
@@ -169,7 +169,7 @@ function exists_supp_trans($type, $type_no)
 
 //----------------------------------------------------------------------------------------
 
-function void_supp_trans($type, $type_no): void
+function void_supp_trans(mixed $type, mixed $type_no): void
 {
 	$sql = "UPDATE ".TB_PREF."supp_trans SET ov_amount=0, ov_discount=0, ov_gst=0,
 		alloc=0 WHERE type=".db_escape($type)." AND trans_no=".db_escape($type_no);
@@ -179,7 +179,7 @@ function void_supp_trans($type, $type_no): void
 
 //----------------------------------------------------------------------------------------
 
-function clear_supp_trans($type, $type_no): void
+function clear_supp_trans(mixed $type, mixed $type_no): void
 {
 	$sql = "DELETE FROM ".TB_PREF."supp_trans 
 			WHERE type=".db_escape($type)." AND trans_no=".db_escape($type_no);
@@ -188,7 +188,7 @@ function clear_supp_trans($type, $type_no): void
 }
 //----------------------------------------------------------------------------------------
 
-function post_void_supp_trans($type, $type_no)
+function post_void_supp_trans(mixed $type, mixed $type_no)
 {
 	if ($type == ST_SUPPAYMENT)
 	{
@@ -212,7 +212,7 @@ function post_void_supp_trans($type, $type_no)
 
 //----------------------------------------------------------------------------------------
 
-function get_sql_for_supplier_inquiry($filter, $after_date, $to_date, $supplier_id=ALL_TEXT)
+function get_sql_for_supplier_inquiry(mixed $filter, mixed $after_date, mixed $to_date, mixed $supplier_id=ALL_TEXT)
 {
     $date_after = date2sql($after_date);
     $date_to = date2sql($to_date);

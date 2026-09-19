@@ -14,7 +14,7 @@ include_once($path_to_root . "/includes/ui/items_cart.inc");
 
 //--------------------------------------------------------------------------------
 
-function add_to_order(&$order, $new_item, $new_item_qty, $standard_cost): void
+function add_to_order(&$order, mixed $new_item, mixed $new_item_qty, mixed $standard_cost): void
 {
 	$kit = get_item_kit($new_item);
 	foreach($kit as $item) {
@@ -49,7 +49,7 @@ function display_order_header(&$order): void
 
 //---------------------------------------------------------------------------------
 
-function display_transfer_items($title, &$order): void
+function display_transfer_items(mixed $title, &$order): void
 {
 	global $path_to_root;
 
@@ -101,7 +101,7 @@ function display_transfer_items($title, &$order): void
 
 //---------------------------------------------------------------------------------
 
-function transfer_edit_item_controls(&$order, $line_no=-1): void
+function transfer_edit_item_controls(&$order, mixed $line_no=-1): void
 {
 	global $Ajax;
 	start_row();

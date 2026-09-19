@@ -61,31 +61,31 @@ set_global_supplier($_POST['supplier_id']);
 end_row();
 end_table();
 //------------------------------------------------------------------------------------------------
-function check_overdue($row)
+function check_overdue(mixed $row)
 {
 	return ($row['TotalAmount']>$row['Allocated']) && 
 		$row['OverDue'] == 1;
 }
 
-function systype_name($dummy, $type)
+function systype_name(mixed $dummy, mixed $type)
 {
 	global $systypes_array;
 	
 	return $systypes_array[$type];
 }
 
-function view_link($trans)
+function view_link(mixed $trans)
 {
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
 
-function due_date($row)
+function due_date(mixed $row)
 {
 	return (($row["type"] == ST_SUPPINVOICE) || ($row["type"]== ST_SUPPCREDIT))
 		? $row["due_date"] : "";
 }
 
-function fmt_balance($row)
+function fmt_balance(mixed $row)
 {
 	$value = ($row["type"] == ST_BANKPAYMENT || $row["type"] == ST_SUPPCREDIT || $row["type"] == ST_SUPPAYMENT)	? -$row["TotalAmount"] - $row["Allocated"]
 		: ($row["type"] == ST_JOURNAL ? abs($row["TotalAmount"]) - $row["Allocated"] :
@@ -93,7 +93,7 @@ function fmt_balance($row)
 	return $value;
 }
 
-function alloc_link($row)
+function alloc_link(mixed $row)
 {
 	$link = 
 	pager_link(_("Allocations"),
@@ -115,14 +115,14 @@ function alloc_link($row)
 
 }
 
-function fmt_debit($row)
+function fmt_debit(mixed $row)
 {
 	$value = -$row["TotalAmount"];
 	return $value>=0 ? price_format($value) : '';
 
 }
 
-function fmt_credit($row)
+function fmt_credit(mixed $row)
 {
 	$value = $row["TotalAmount"];
 	return $value>0 ? price_format($value) : '';

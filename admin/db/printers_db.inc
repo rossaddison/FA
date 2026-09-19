@@ -10,7 +10,7 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-function write_printer_def($id, $name, $descr, $queue, $host, $port, $timeout)
+function write_printer_def(mixed $id, mixed $name, mixed $descr, mixed $queue, mixed $host, mixed $port, mixed $timeout)
 {
 	if ($id>0)
 		$sql = "UPDATE ".TB_PREF."printers SET description=".db_escape($descr)
@@ -32,7 +32,7 @@ function get_all_printers()
 	return db_query($sql,"could not get printer definitions");
 }
 
-function get_printer($id)
+function get_printer(mixed $id)
 {
 		$sql = "SELECT * FROM ".TB_PREF."printers
 			WHERE id=".db_escape($id);
@@ -41,7 +41,7 @@ function get_printer($id)
 		return  db_fetch($result);
 }
 
-function delete_printer($id): void
+function delete_printer(mixed $id): void
 {
 	$sql="DELETE FROM ".TB_PREF."printers WHERE id=".db_escape($id);
 	db_query($sql,"could not delete printer definition");
@@ -49,7 +49,7 @@ function delete_printer($id): void
 //============================================================================
 // printer profiles functions
 //
-function update_printer_profile($name, $dest)
+function update_printer_profile(mixed $name, mixed $dest)
 {
 	foreach( $dest as $rep => $printer) {
 		if ($printer != '' || $rep == '') {
@@ -73,7 +73,7 @@ function update_printer_profile($name, $dest)
 //
 //	Get destination for report defined in given printing profile.
 //
-function get_report_printer($profile, $report)
+function get_report_printer(mixed $profile, mixed $report)
 {
 	$sql = "SELECT printer FROM ".TB_PREF."print_profiles WHERE "
 		."profile=".db_escape($profile)." AND report=";
@@ -92,7 +92,7 @@ function get_report_printer($profile, $report)
 	return get_printer($ret['printer']);
 }
 
-function delete_printer_profile($name)
+function delete_printer_profile(mixed $name)
 {
 	$sql="DELETE FROM ".TB_PREF."print_profiles WHERE profile=".db_escape($name);
 	return db_query($sql,"could not delete printing profile");
@@ -100,7 +100,7 @@ function delete_printer_profile($name)
 //
 // Get all report destinations for given profile.
 //
-function get_print_profile($name)
+function get_print_profile(mixed $name)
 {
 	$sql = "SELECT	* FROM ".TB_PREF."print_profiles WHERE profile=".db_escape($name);
 	return db_query($sql,"could not get printing profile");

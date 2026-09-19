@@ -11,7 +11,7 @@
 ***********************************************************************/
 //--------------------------------------------------------------------------------------------------
 
-function get_security_role($id)
+function get_security_role(mixed $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."security_roles WHERE id=".(int)$id;
 	$ret = db_query($sql, "could not retrieve security roles");
@@ -25,7 +25,7 @@ function get_security_role($id)
 
 //--------------------------------------------------------------------------------------------------
 
-function add_security_role($name, $description, $sections, $areas): void
+function add_security_role(mixed $name, mixed $description, mixed $sections, mixed $areas): void
 {
 	$sql = "INSERT INTO ".TB_PREF."security_roles (role, description, sections, areas)
 	VALUES ("
@@ -39,7 +39,7 @@ function add_security_role($name, $description, $sections, $areas): void
 
 //--------------------------------------------------------------------------------------------------
 
-function update_security_role($id, $name, $description, $sections, $areas): void
+function update_security_role(mixed $id, mixed $name, mixed $description, mixed $sections, mixed $areas): void
 {
     	$sql = "UPDATE ".TB_PREF."security_roles SET role=".db_escape($name)
     	.",description=".db_escape($description)
@@ -50,7 +50,7 @@ function update_security_role($id, $name, $description, $sections, $areas): void
 }
 //--------------------------------------------------------------------------------------------------
 
-function delete_security_role($id): void
+function delete_security_role(mixed $id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."security_roles WHERE id=".(int)$id;
 
@@ -58,7 +58,7 @@ function delete_security_role($id): void
 }
 //--------------------------------------------------------------------------------------------------
 
-function check_role_used($id) {
+function check_role_used(mixed $id) {
 	$sql = "SELECT count(*) FROM ".TB_PREF."users WHERE role_id=".(int)$id;
 	$ret = db_query($sql, 'cannot check role usage');
 	$row = db_fetch($ret);

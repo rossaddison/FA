@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_item_price($stock_id, $sales_type_id, $curr_abrev, $price): void
+function add_item_price(mixed $stock_id, mixed $sales_type_id, mixed $curr_abrev, mixed $price): void
 {
 	$sql = "INSERT INTO ".TB_PREF."prices (stock_id, sales_type_id, curr_abrev, price) 
 		VALUES (".db_escape($stock_id).", ".db_escape($sales_type_id)
@@ -18,7 +18,7 @@ function add_item_price($stock_id, $sales_type_id, $curr_abrev, $price): void
 	db_query($sql,"an item price could not be added");
 }
 
-function update_item_price($price_id, $sales_type_id, $curr_abrev, $price): void
+function update_item_price(mixed $price_id, mixed $sales_type_id, mixed $curr_abrev, mixed $price): void
 {
 	$sql = "UPDATE ".TB_PREF."prices SET sales_type_id=".db_escape($sales_type_id).", 
 		curr_abrev=".db_escape($curr_abrev).", 
@@ -27,13 +27,13 @@ function update_item_price($price_id, $sales_type_id, $curr_abrev, $price): void
 	db_query($sql,"an item price could not be updated");
 }
 
-function delete_item_price($price_id): void
+function delete_item_price(mixed $price_id): void
 {
 	$sql="DELETE FROM ".TB_PREF."prices WHERE id= ".db_escape($price_id);
 	db_query($sql,"an item price could not be deleted");
 }
 
-function get_prices($stock_id)
+function get_prices(mixed $stock_id)
 {
 	$sql = "SELECT pricelist.sales_type, price.* 
 		FROM ".TB_PREF."prices price, "
@@ -45,7 +45,7 @@ function get_prices($stock_id)
 	return db_query($sql,"item prices could not be retreived");
 }
 
-function get_stock_price($price_id)
+function get_stock_price(mixed $price_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."prices WHERE id=".db_escape($price_id);
 
@@ -54,7 +54,7 @@ function get_stock_price($price_id)
 	return db_fetch($result);
 }
 
-function get_stock_price_type_currency($stock_id, $type, $currency)
+function get_stock_price_type_currency(mixed $stock_id, mixed $type, mixed $currency)
 {
 	$sql = "SELECT * FROM ".TB_PREF."prices WHERE stock_id=".db_escape($stock_id)."
 		AND sales_type_id=".db_escape($type)."

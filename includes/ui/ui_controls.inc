@@ -16,7 +16,7 @@
 	If some field have user formatted numeric value, pass float default value to
 	convert automatically to POSIX.
 */
-function get_post($name, $dflt='')
+function get_post(mixed $name, mixed $dflt='')
 {
 	if (is_array($name)) {
 		$ret = array();
@@ -34,7 +34,7 @@ function get_post($name, $dflt='')
 //---------------------------------------------------------------------------------
 $form_nested = -1;
 
-function start_form($multi=false, $dummy=false, $action="", $name=""): void
+function start_form(mixed $multi=false, mixed $dummy=false, mixed $action="", mixed $name=""): void
 {
 	// $dummy - leaved for compatibility with 2.0 API
 	global $form_nested;
@@ -66,7 +66,7 @@ function output_hidden(): void
 }
 //---------------------------------------------------------------------------------
 
-function end_form($breaks=0): void
+function end_form(mixed $breaks=0): void
 {
 	global $Ajax, $form_nested, $hidden_fields;
 
@@ -97,7 +97,7 @@ function check_csrf_token()
 	return true;
 }
 
-function start_table($class=false, $extra="", $padding='2', $spacing='0'): void
+function start_table(mixed $class=false, mixed $extra="", mixed $padding='2', mixed $spacing='0'): void
 {
 	echo "<center><table";
 	if ($class == TABLESTYLE_NOBORDER)
@@ -111,7 +111,7 @@ function start_table($class=false, $extra="", $padding='2', $spacing='0'): void
 	echo " cellpadding='$padding' cellspacing='$spacing'>\n";
 }
 
-function end_table($breaks=0): void
+function end_table(mixed $breaks=0): void
 {
 	echo "</table></center>\n";
 	output_hidden();
@@ -119,7 +119,7 @@ function end_table($breaks=0): void
 		br($breaks);
 }
 
-function start_outer_table($class=false, $extra="", $padding='2', $spacing='0', $br=false): void
+function start_outer_table(mixed $class=false, mixed $extra="", mixed $padding='2', mixed $spacing='0', mixed $br=false): void
 {
 	if ($br)
 		br();
@@ -127,7 +127,7 @@ function start_outer_table($class=false, $extra="", $padding='2', $spacing='0', 
 	echo "<tr valign=top><td>\n"; // outer table
 }
 
-function table_section($number=1, $width=false): void
+function table_section(mixed $number=1, mixed $width=false): void
 {
 	if ($number > 1)
 	{
@@ -139,7 +139,7 @@ function table_section($number=1, $width=false): void
 	echo "<table class='tablestyle_inner'>\n";
 }	
 
-function end_outer_table($breaks=0, $close_table=true): void
+function end_outer_table(mixed $breaks=0, mixed $close_table=true): void
 {
 	if ($close_table)
 	{
@@ -152,12 +152,12 @@ function end_outer_table($breaks=0, $close_table=true): void
 //
 //  outer table spacer
 //
-function vertical_space($params=''): void
+function vertical_space(mixed $params=''): void
 {
 	echo "</td></tr><tr><td valign=center $params>";
 }
 
-function meta_forward($forward_to, $params="", $timeout=0, $return=false): void
+function meta_forward(mixed $forward_to, mixed $params="", mixed $timeout=0, mixed $return=false): void
 {
     global $Ajax;
 	echo "<meta http-equiv='Refresh' content='".$timeout."; url=$forward_to?$params'>\n";
@@ -174,7 +174,7 @@ function meta_forward($forward_to, $params="", $timeout=0, $return=false): void
 // (for use in wiki help system), otherwise result is array of label 
 // with underlined hotkey letter and access property string.
 //
-function access_string($label, $clean=false)
+function access_string(mixed $label, mixed $clean=false)
 {
 	$access = '';
 	$slices = array();
@@ -191,7 +191,7 @@ function access_string($label, $clean=false)
 	return $clean ? $label : array($label, $access);
 }
 
-function hyperlink_back($center=true, $no_menu=true, $type_no=0, $trans_no=0, $final=false): void
+function hyperlink_back(mixed $center=true, mixed $no_menu=true, mixed $type_no=0, mixed $trans_no=0, mixed $final=false): void
 {
 	global $path_to_root;
 
@@ -220,7 +220,7 @@ function hyperlink_back($center=true, $no_menu=true, $type_no=0, $trans_no=0, $f
 	echo "<br>";
 }
 
-function hyperlink_no_params($target, $label, $center=true): void
+function hyperlink_no_params(mixed $target, mixed $label, mixed $center=true): void
 {
 	$id = default_focus();
 	$pars = access_string($label);
@@ -233,14 +233,14 @@ function hyperlink_no_params($target, $label, $center=true): void
 		echo "</center>";
 }
 
-function hyperlink_no_params_td($target, $label): void
+function hyperlink_no_params_td(mixed $target, mixed $label): void
 {
 	echo "<td>";
 	hyperlink_no_params($target, $label);
 	echo "</td>\n";
 }
 
-function viewer_link($label, $url='', $class='', $id='',  $icon=null)
+function viewer_link(mixed $label, mixed $url='', mixed $class='', mixed $id='',  mixed $icon=null)
 {
 	global $path_to_root;
 	
@@ -262,7 +262,7 @@ function viewer_link($label, $url='', $class='', $id='',  $icon=null)
  return $preview_str;
 }
 
-function menu_link($url, $label, $id=null)
+function menu_link(mixed $url, mixed $label, mixed $id=null)
 {
 	global $path_to_root;
 
@@ -276,23 +276,23 @@ function menu_link($url, $label, $id=null)
 	return "<a href='$url' class='menu_option' id='$id' $pars[1]>$pars[0]</a>";
 }
 
-function submenu_option($title, $url, $id=null): void
+function submenu_option(mixed $title, mixed $url, mixed $id=null): void
 {
 	display_note( menu_link($url, $title, $id), 0, 1);
 }
 
-function submenu_view($title, $type, $number, $id=null): void
+function submenu_view(mixed $title, mixed $type, mixed $number, mixed $id=null): void
 {
 	display_note(get_trans_view_str($type, $number, $title, false, 'viewlink', $id), 0, 1);
 }
 
-function submenu_print($title, $type, $number, $id=null, $email=0, $extra=0): void
+function submenu_print(mixed $title, mixed $type, mixed $number, mixed $id=null, mixed $email=0, mixed $extra=0): void
 {
 	display_note(print_document_link($number, $title, true, $type, false, 'printlink', $id, $email, $extra), 0, 1);
 }
 //-----------------------------------------------------------------------------------
 
-function hyperlink_params($target, $label, $params, $center=true): void
+function hyperlink_params(mixed $target, mixed $label, mixed $params, mixed $center=true): void
 {
 	$id = default_focus();
 	
@@ -306,7 +306,7 @@ function hyperlink_params($target, $label, $params, $center=true): void
 		echo "</center>";
 }
 
-function hyperlink_params_td($target, $label, $params): void
+function hyperlink_params_td(mixed $target, mixed $label, mixed $params): void
 {
 	echo "<td>";
 	hyperlink_params($target, $label, $params, false);
@@ -315,7 +315,7 @@ function hyperlink_params_td($target, $label, $params): void
 
 //-----------------------------------------------------------------------------------
 
-function hyperlink_params_separate($target, $label, $params, $center=false): void
+function hyperlink_params_separate(mixed $target, mixed $label, mixed $params, mixed $center=false): void
 {
 	$id = default_focus();
 
@@ -327,7 +327,7 @@ function hyperlink_params_separate($target, $label, $params, $center=false): voi
 		echo "</center>";
 }
 
-function hyperlink_params_separate_td($target, $label, $params): void
+function hyperlink_params_separate_td(mixed $target, mixed $label, mixed $params): void
 {
 	echo "<td>";
 	hyperlink_params_separate($target, $label, $params);
@@ -336,7 +336,7 @@ function hyperlink_params_separate_td($target, $label, $params): void
 
 //--------------------------------------------------------------------------------------------------
 
-function alt_table_row_color(&$k, $extra_class=null): void
+function alt_table_row_color(&$k, mixed $extra_class=null): void
 {
 	$classes = $extra_class ? array($extra_class) : array();
 	if ($k == 1)
@@ -352,12 +352,12 @@ function alt_table_row_color(&$k, $extra_class=null): void
 	echo "<tr class='".implode(' ', $classes)."'>\n";
 }
 
-function table_section_title($msg, $colspan=2): void
+function table_section_title(mixed $msg, mixed $colspan=2): void
 {
 	echo "<tr><td colspan=$colspan class='tableheader'>$msg</td></tr>\n";
 }
 
-function table_header($labels, $params=''): void
+function table_header(mixed $labels, mixed $params=''): void
 {
 	start_row();
 	foreach ($labels as $label)
@@ -366,7 +366,7 @@ function table_header($labels, $params=''): void
 }
 //-----------------------------------------------------------------------------------
 
-function start_row($param=""): void
+function start_row(mixed $param=""): void
 {
 	if ($param != "")
 		echo "<tr $param>\n";
@@ -379,7 +379,7 @@ function end_row(): void
 	echo "</tr>\n";
 }
 
-function br($num=1): void
+function br(mixed $num=1): void
 {
 	for ($i = 0; $i < $num; $i++)
 		echo "<br>";
@@ -387,7 +387,7 @@ function br($num=1): void
 
 $ajax_divs = array();
 
-function div_start($id='', $trigger=null, $non_ajax=false): void
+function div_start(mixed $id='', mixed $trigger=null, mixed $non_ajax=false): void
 {
     global $ajax_divs;
 
@@ -423,7 +423,7 @@ function div_end(): void
 //		sel (hidden) name: _{$name}_sel
 // $tabs - array of tabs; string: tab title or array(tab_title, enabled_status)
 
-function tabbed_content_start($name, $tabs, $dft=''): void {
+function tabbed_content_start(mixed $name, mixed $tabs, mixed $dft=''): void {
     global $Ajax;
 
     $selname = '_'.$name.'_sel';
@@ -465,7 +465,7 @@ function tabbed_content_end(): void {
 	div_end(); // tabs widget
 }
 
-function tab_changed($name)
+function tab_changed(mixed $name)
 {
 	$to = find_submit("{$name}_", false);
 	if (!$to) return null;
@@ -476,21 +476,21 @@ function tab_changed($name)
 /*
 	Check whether tab has been just switched on
 */
-function tab_opened($name, $tab)
+function tab_opened(mixed $name, mixed $tab)
 {
 	return (get_post('_'.$name.'_sel') != $tab) && (find_submit($name.'_', false) == $tab);
 }
 /*
 	Check whether tab has been just switched off
 */
-function tab_closed($name, $tab)
+function tab_closed(mixed $name, mixed $tab)
 {
 	return (get_post('_'.$name.'_sel') == $tab) && (find_submit($name.'_', false) != $tab);
 }
 /*
 	Check whether tab is visible on current page
 */
-function tab_visible($name, $tab)
+function tab_visible(mixed $name, mixed $tab)
 {
 	$new = find_submit($name.'_', false);
 	return (get_post('_'.$name.'_sel') == $tab && !$new) || $new==$tab;
@@ -520,7 +520,7 @@ $popup_editors = array(
 	$caller - optional function key code (available values F1-F12: 112-123,
 		true: default)
 */
-function set_editor($type, $input, $caller=true): void
+function set_editor(mixed $type, mixed $input, mixed $caller=true): void
 {
 	global $path_to_root, $Editors, $popup_editors, $Pagehelp;
 
@@ -542,7 +542,7 @@ function set_editor($type, $input, $caller=true): void
 	$ctx - optional. name of SESSION context object or array of names of POST 
 		variables saved on call
 */
-function context_call($call, $ctx=''): void
+function context_call(mixed $call, mixed $ctx=''): void
 {
 	if (is_array($ctx)) 
 	{
@@ -587,7 +587,7 @@ function context_restore()
 /*
 	Return to caller page if the page was called from external context.
 */
-function context_return($ret): void
+function context_return(mixed $ret): void
 {
 	if ( count($_SESSION['Context'])) {
 		$ctx = &$_SESSION['Context'][0];
@@ -612,7 +612,7 @@ if (!isset($_SESSION['Context'])) {
 	Redirector for selector F4 calls.
 	$sel_editors is array of selname=>editor_page
 */
-function editor_redirect($sel_editors, $save_fun=''): void {
+function editor_redirect(mixed $sel_editors, mixed $save_fun=''): void {
 	foreach ($sel_editors as $selname=>$editor)
 		if (isset($_POST['_'.$selname.'_editor'])) {
 			if (function_exists($save_fun))
@@ -624,7 +624,7 @@ function editor_redirect($sel_editors, $save_fun=''): void {
 /*
 	Return procedure for selector F4 calls
 */
-function editor_return($vars, $restore_fun=''): void {
+function editor_return(mixed $vars, mixed $restore_fun=''): void {
 	if (function_exists($restore_fun))
 		$restore_fun();
 
@@ -637,7 +637,7 @@ function editor_return($vars, $restore_fun=''): void {
 	}
 }
 
-function confirm_dialog($submit, $msg) {
+function confirm_dialog(mixed $submit, mixed $msg) {
 	if (find_post($submit)) {
 		display_warning($msg);
 		br();
@@ -651,7 +651,7 @@ function confirm_dialog($submit, $msg) {
 	Confirm dialog to be used optionally in final form checking routine.
 	Displays warning conditionally unless it was displayed
 */
-function display_confirmation($msg)
+function display_confirmation(mixed $msg)
 {
 	global $Ajax;
 
@@ -666,7 +666,7 @@ function display_confirmation($msg)
 /*
 	Block menu/shortcut links during transaction procesing.
 */
-function page_processing($msg = false): void
+function page_processing(mixed $msg = false): void
 {
 	global $Ajax;
 
@@ -681,7 +681,7 @@ function page_processing($msg = false): void
 		add_js_source($js);
 }
 
-function page_modified($status = true): void
+function page_modified(mixed $status = true): void
 {
 	global $Ajax;
 

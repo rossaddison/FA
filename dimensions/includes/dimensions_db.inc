@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_dimension($reference, $name, $type_, $date_, $due_date, $memo_)
+function add_dimension(mixed $reference, mixed $name, mixed $type_, mixed $date_, mixed $due_date, mixed $memo_)
 {
 	global $Refs;
 
@@ -33,7 +33,7 @@ function add_dimension($reference, $name, $type_, $date_, $due_date, $memo_)
 	return $id;
 }
 
-function update_dimension($id, $name, $type_, $date_, $due_date, $memo_)
+function update_dimension(mixed $id, mixed $name, mixed $type_, mixed $date_, mixed $due_date, mixed $memo_)
 {
 	begin_transaction();
 
@@ -55,7 +55,7 @@ function update_dimension($id, $name, $type_, $date_, $due_date, $memo_)
 	return $id;
 }
 
-function delete_dimension($id): void
+function delete_dimension(mixed $id): void
 {
 	begin_transaction();
 
@@ -70,7 +70,7 @@ function delete_dimension($id): void
 
 //--------------------------------------------------------------------------------------
 
-function get_dimension($id, $allow_null=false)
+function get_dimension(mixed $id, mixed $allow_null=false)
 {
     $sql = "SELECT * FROM ".TB_PREF."dimensions	WHERE id=".db_escape($id);
 
@@ -84,7 +84,7 @@ function get_dimension($id, $allow_null=false)
 
 //--------------------------------------------------------------------------------------
 
-function get_dimension_string($id, $html=false, $space=' ')
+function get_dimension_string(mixed $id, mixed $html=false, mixed $space=' ')
 {
 	if ($id <= 0)
 	{
@@ -113,14 +113,14 @@ function get_dimensions()
 
 //--------------------------------------------------------------------------------------
 
-function dimension_has_deposits($id)
+function dimension_has_deposits(mixed $id)
 {
 	return dimension_has_payments($id);
 }
 
 //--------------------------------------------------------------------------------------
 
-function dimension_has_payments($id)
+function dimension_has_payments(mixed $id)
 {
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."gl_trans WHERE dimension_id = ".db_escape($id)
 	 . " OR dimension2_id = ".db_escape($id);
@@ -129,7 +129,7 @@ function dimension_has_payments($id)
 	return ($row[0] > 0);
 }
 
-function dimension_is_closed($id)
+function dimension_is_closed(mixed $id)
 {
 	$result = get_dimension($id);
 	return ($result['closed'] == '1');
@@ -137,7 +137,7 @@ function dimension_is_closed($id)
 
 //--------------------------------------------------------------------------------------
 
-function close_dimension($id): void
+function close_dimension(mixed $id): void
 {
 	$sql = "UPDATE ".TB_PREF."dimensions SET closed='1' WHERE id = ".db_escape($id);
 	db_query($sql, "could not close dimension");
@@ -145,7 +145,7 @@ function close_dimension($id): void
 
 //--------------------------------------------------------------------------------------
 
-function reopen_dimension($id): void
+function reopen_dimension(mixed $id): void
 {
 	$sql = "UPDATE ".TB_PREF."dimensions SET closed='0' WHERE id = ".db_escape($id);
 	db_query($sql, "could not reopen dimension");
@@ -153,7 +153,7 @@ function reopen_dimension($id): void
 
 //--------------------------------------------------------------------------------------
 
-function get_dimension_balance_all($id, $from, $to) 
+function get_dimension_balance_all(mixed $id, mixed $from, mixed $to) 
 {
 	$from = date2sql($from);
 	$to = date2sql($to);
@@ -170,7 +170,7 @@ function get_dimension_balance_all($id, $from, $to)
 
 //--------------------------------------------------------------------------------------
 
-function get_dimension_balance($id, $from, $to) 
+function get_dimension_balance(mixed $id, mixed $from, mixed $to) 
 {
 	$id = db_escape($id);
 	$sql = "SELECT SUM(amount)
@@ -187,7 +187,7 @@ function get_dimension_balance($id, $from, $to)
 
 //--------------------------------------------------------------------------------------
 
-function get_sql_for_search_dimensions($dim, $from, $to, $order='', $type = -1, $open=false, $overdue = false)
+function get_sql_for_search_dimensions(mixed $dim, mixed $from, mixed $to, mixed $order='', mixed $type = -1, mixed $open=false, mixed $overdue = false)
 {
 	$sql = "SELECT dim.id,
 		dim.reference,

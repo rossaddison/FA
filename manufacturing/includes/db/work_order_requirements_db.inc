@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function get_wo_requirements($woid)
+function get_wo_requirements(mixed $woid)
 {
 	$sql = "SELECT req.*, item.description, item.mb_flag, loc.location_name, 
 			center.name AS WorkCentreDescription,
@@ -27,7 +27,7 @@ function get_wo_requirements($woid)
 	return db_query($sql, "The work order requirements could not be retrieved");    
 }
 
-function get_requirements_costs($woid)
+function get_requirements_costs(mixed $woid)
 {
 	$sql = "SELECT SUM(units_req*unit_cost) cost
 		FROM ".TB_PREF."wo_requirements
@@ -41,7 +41,7 @@ function get_requirements_costs($woid)
 
 //--------------------------------------------------------------------------------------
 
-function create_wo_requirements($woid, $stock_id): void
+function create_wo_requirements(mixed $woid, mixed $stock_id): void
 {
 	$sql = "INSERT INTO ".TB_PREF."wo_requirements (workorder_id, stock_id, workcentre, units_req, loc_code)
 		SELECT ".db_escape($woid).", component, workcentre_added, quantity, loc_code
@@ -52,7 +52,7 @@ function create_wo_requirements($woid, $stock_id): void
 
 //--------------------------------------------------------------------------------------
 
-function delete_wo_requirements($woid): void
+function delete_wo_requirements(mixed $woid): void
 {
 	$sql="DELETE FROM ".TB_PREF."wo_requirements WHERE workorder_id=".db_escape($woid);
 	db_query($sql,"The work order requirements could not be deleted");	
@@ -63,7 +63,7 @@ function delete_wo_requirements($woid): void
 /*
 	Update total component units issued and average component cost
 */
-function update_wo_requirement_issued($id, $quantity, $cost): void
+function update_wo_requirement_issued(mixed $id, mixed $quantity, mixed $cost): void
 {
 	$sql = "UPDATE ".TB_PREF."wo_requirements SET 
 				unit_cost = (units_issued*unit_cost+".$quantity*$cost.")/(units_issued+".$quantity."),
@@ -75,7 +75,7 @@ function update_wo_requirement_issued($id, $quantity, $cost): void
 
 //--------------------------------------------------------------------------------------
 
-function void_wo_requirements($woid): void
+function void_wo_requirements(mixed $woid): void
 {
 	$sql = "UPDATE ".TB_PREF."wo_requirements SET units_issued = 0
 		WHERE workorder_id = ".db_escape($woid);

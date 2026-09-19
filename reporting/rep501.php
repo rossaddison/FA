@@ -27,7 +27,7 @@ include_once($path_to_root . "/gl/includes/gl_db.inc");
 
 print_dimension_summary();
 
-function getTransactions($from, $to)
+function getTransactions(mixed $from, mixed $to)
 {
 	$sql = "SELECT *
 		FROM
@@ -40,7 +40,7 @@ function getTransactions($from, $to)
     return db_query($sql,"No transactions were returned");
 }
 
-function getYTD($dim)
+function getYTD(mixed $dim)
 {
 	$date = Today();
 	$date = begin_fiscalyear($date);

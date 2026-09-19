@@ -94,7 +94,7 @@ function display_order_header(&$Order): void
 
 //---------------------------------------------------------------------------------
 
-function display_gl_items($title, &$order): void
+function display_gl_items(mixed $title, &$order): void
 {
 	global $path_to_root;
 
@@ -189,7 +189,7 @@ function display_gl_items($title, &$order): void
 
 //---------------------------------------------------------------------------------
 
-function gl_edit_item_controls(&$order, $dim, $sub_accounts, $Index=null): void
+function gl_edit_item_controls(&$order, mixed $dim, mixed $sub_accounts, mixed $Index=null): void
 {
 	global $Ajax;
 	start_row();

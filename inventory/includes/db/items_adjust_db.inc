@@ -10,7 +10,7 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-function add_stock_adjustment($items, $location, $date_, $reference, $memo_)
+function add_stock_adjustment(mixed $items, mixed $location, mixed $date_, mixed $reference, mixed $memo_)
 {
 	global $SysPrefs, $path_to_root, $Refs;
 
@@ -61,7 +61,7 @@ function add_stock_adjustment($items, $location, $date_, $reference, $memo_)
 
 //-------------------------------------------------------------------------------------------------------------
 
-function void_stock_adjustment($type_no): void
+function void_stock_adjustment(mixed $type_no): void
 {
 	hook_db_prevoid(ST_INVADJUST, $type_no);
 	void_gl_trans(ST_INVADJUST, $type_no);
@@ -70,7 +70,7 @@ function void_stock_adjustment($type_no): void
 
 //-------------------------------------------------------------------------------------------------------------
 
-function get_stock_adjustment_items($trans_no)
+function get_stock_adjustment_items(mixed $trans_no)
 {
 	$result = get_stock_moves(ST_INVADJUST, $trans_no);
 
@@ -84,8 +84,8 @@ function get_stock_adjustment_items($trans_no)
 
 //--------------------------------------------------------------------------------------------------
 
-function add_stock_adjustment_item($adj_id, $stock_id, $location, $date_, $reference,
-	$quantity, $standard_cost, $memo_): void
+function add_stock_adjustment_item(mixed $adj_id, mixed $stock_id, mixed $location, mixed $date_, mixed $reference,
+	mixed $quantity, mixed $standard_cost, mixed $memo_): void
 {
 	$mb_flag = get_mb_flag($stock_id);
 

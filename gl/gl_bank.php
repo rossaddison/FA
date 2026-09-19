@@ -140,7 +140,7 @@ if (isset($_GET['UpdatedDep']))
 
 //--------------------------------------------------------------------------------------------------
 
-function create_cart($type, $trans_no): void
+function create_cart(mixed $type, mixed $trans_no): void
 {
 	global $Refs;
 
@@ -357,7 +357,7 @@ function handle_update_item(): void
 
 //-----------------------------------------------------------------------------------------------
 
-function handle_delete_item($id): void
+function handle_delete_item(mixed $id): void
 {
 	$_SESSION['pay_items']->remove_gl_item($id);
 	line_start_focus();

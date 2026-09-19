@@ -11,8 +11,8 @@
 ***********************************************************************/
 require_once($path_to_root. "/admin/db/attachments_db.inc");
 
-function add_journal($type, $trans_no, $amount, $tran_date, $currency, $reference, $source_ref='', $rate=1,
-	 $event_date='', $doc_date='')
+function add_journal(mixed $type, mixed $trans_no, mixed $amount, mixed $tran_date, mixed $currency, mixed $reference, mixed $source_ref='', mixed $rate=1,
+	 mixed $event_date='', mixed $doc_date='')
 {
 	$sql = "INSERT INTO ".TB_PREF."journal(
 	   `type`,`trans_no`, `amount`, `currency`, `rate`, `reference`, `source_ref`, `tran_date`,`event_date`,`doc_date`)
@@ -31,8 +31,8 @@ function add_journal($type, $trans_no, $amount, $tran_date, $currency, $referenc
 	return db_query($sql, 'cannot add journal entry');
 }
 
-function update_journal($type, $trans_no, $amount, $tran_date, $currency, $reference, $source_ref='', $rate=1,
-	 $event_date='', $doc_date='')
+function update_journal(mixed $type, mixed $trans_no, mixed $amount, mixed $tran_date, mixed $currency, mixed $reference, mixed $source_ref='', mixed $rate=1,
+	 mixed $event_date='', mixed $doc_date='')
 {
 	$sql = "UPDATE ".TB_PREF."journal SET "
 	  ."`amount`=".db_escape($amount).","
@@ -48,7 +48,7 @@ function update_journal($type, $trans_no, $amount, $tran_date, $currency, $refer
 	return db_query($sql, 'cannot update journal entry');
 }
 
-function delete_journal($type, $trans_no)
+function delete_journal(mixed $type, mixed $trans_no)
 {
     delete_attachments($type, $trans_no);
 
@@ -58,7 +58,7 @@ function delete_journal($type, $trans_no)
 	return db_query($sql, 'cannot delete journal entry');
 }
 
-function get_journal($type, $trans_no)
+function get_journal(mixed $type, mixed $trans_no)
 {
 	$sql = "SELECT * FROM ".TB_PREF."journal 
 	   WHERE `type`=".db_escape($type)." AND " ."`trans_no`=".db_escape($trans_no);
@@ -71,7 +71,7 @@ function get_journal($type, $trans_no)
 // Write headers in debtor_trans for allocation purposes.
 // Amount in customer currency
 //
-function write_cust_journal($trans_type, $trans_no, $branch_id, $date, $ref, $amount, $rate)
+function write_cust_journal(mixed $trans_type, mixed $trans_no, mixed $branch_id, mixed $date, mixed $ref, mixed $amount, mixed $rate)
 {
 	// we have to select any branch_id for given AR_act - in fact w
 	$sql = "INSERT INTO ".TB_PREF."debtor_trans (trans_no, type, debtor_no, branch_code, tran_date, reference, ov_amount, rate)
@@ -86,7 +86,7 @@ function write_cust_journal($trans_type, $trans_no, $branch_id, $date, $ref, $am
 // Write headers in supp_trans for allocation purposes.
 // Amount in supplier currency
 //
-function write_supp_journal($trans_type, $trans_no, $supp_id, $date, $ref, $amount, $rate, $src_ref)
+function write_supp_journal(mixed $trans_type, mixed $trans_no, mixed $supp_id, mixed $date, mixed $ref, mixed $amount, mixed $rate, mixed $src_ref)
 {
 	$sql = "INSERT INTO ".TB_PREF."supp_trans (trans_no, type, supplier_id, tran_date, reference, ov_amount, rate, supp_reference)
 		VALUES (".db_escape($trans_no).", ".db_escape($trans_type).", ".db_escape($supp_id).", '".date2sql($date)."',"
@@ -158,7 +158,7 @@ function write_journal_entries(&$cart)
 
 //----------------------------------------------------------------------------------------
 
-function void_journal_trans($type, $type_no, $use_transaction=true): void
+function void_journal_trans(mixed $type, mixed $type_no, mixed $use_transaction=true): void
 {
 	if ($use_transaction)
 		begin_transaction();

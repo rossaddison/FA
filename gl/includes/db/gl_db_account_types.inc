@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_account_type($id, $name, $class_id, $parent)
+function add_account_type(mixed $id, mixed $name, mixed $class_id, mixed $parent)
 {
 	$sql = "INSERT INTO ".TB_PREF."chart_types (id, name, class_id, parent)
 		VALUES (".db_escape($id).", ".db_escape($name).", ".db_escape($class_id).", ".db_escape($parent).")";
@@ -17,7 +17,7 @@ function add_account_type($id, $name, $class_id, $parent)
 	return db_query($sql);
 }
 
-function update_account_type($id, $name, $class_id, $parent, $old_id)
+function update_account_type(mixed $id, mixed $name, mixed $class_id, mixed $parent, mixed $old_id)
 {
 	begin_transaction();
 	if ($old_id !== $id)
@@ -58,7 +58,7 @@ function update_account_type($id, $name, $class_id, $parent, $old_id)
 	return $ret;
 }
 
-function get_account_types($all=false, $class_id=false, $parent=false)
+function get_account_types(mixed $all=false, mixed $class_id=false, mixed $parent=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."chart_types";
 
@@ -82,7 +82,7 @@ function get_account_types($all=false, $class_id=false, $parent=false)
 	return db_query($sql, "could not get account types");
 }
 
-function get_account_type($id)
+function get_account_type(mixed $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."chart_types WHERE id = ".db_escape($id);
 
@@ -91,7 +91,7 @@ function get_account_type($id)
 	return db_fetch($result);
 }
 
-function get_account_type_name($id)
+function get_account_type_name(mixed $id)
 {
 	$sql = "SELECT name FROM ".TB_PREF."chart_types WHERE id = ".db_escape($id);
 
@@ -101,14 +101,14 @@ function get_account_type_name($id)
 	return is_array($row) ? $row[0] : false;
 }
 
-function delete_account_type($id): void
+function delete_account_type(mixed $id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."chart_types WHERE id = ".db_escape($id);
 
 	db_query($sql, "could not delete account type");
 }
 
-function add_account_class($id, $name, $ctype)
+function add_account_class(mixed $id, mixed $name, mixed $ctype)
 {
 	$sql = "INSERT INTO ".TB_PREF."chart_class (cid, class_name, ctype)
 		VALUES (".db_escape($id).", ".db_escape($name).", ".db_escape($ctype).")";
@@ -116,7 +116,7 @@ function add_account_class($id, $name, $ctype)
 	return db_query($sql);
 }
 
-function update_account_class($id, $name, $ctype)
+function update_account_class(mixed $id, mixed $name, mixed $ctype)
 {
     $sql = "UPDATE ".TB_PREF."chart_class SET class_name=".db_escape($name).",
 		ctype=".db_escape($ctype)." WHERE cid = ".db_escape($id);
@@ -124,7 +124,7 @@ function update_account_class($id, $name, $ctype)
 	return db_query($sql);
 }
 
-function get_account_classes($all=false, $balance=-1)
+function get_account_classes(mixed $all=false, mixed $balance=-1)
 {
 	$sql = "SELECT * FROM ".TB_PREF."chart_class";
 
@@ -139,7 +139,7 @@ function get_account_classes($all=false, $balance=-1)
 	return db_query($sql, "could not get account classes");
 }
 
-function get_account_class($id)
+function get_account_class(mixed $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."chart_class WHERE cid = ".db_escape($id);
 
@@ -148,7 +148,7 @@ function get_account_class($id)
 	return db_fetch($result);
 }
 
-function get_account_class_name($id)
+function get_account_class_name(mixed $id)
 {
 	$sql = "SELECT class_name FROM ".TB_PREF."chart_class WHERE cid =".db_escape($id);
 
@@ -158,7 +158,7 @@ function get_account_class_name($id)
 	return $row[0];
 }
 
-function delete_account_class($id): void
+function delete_account_class(mixed $id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."chart_class WHERE cid = ".db_escape($id);
 
