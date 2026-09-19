@@ -84,6 +84,11 @@ function simple_page_mode(bool $numeric_id = true): void
 //
 //	Read numeric value from user formatted input
 //
+/**
+ * @template T
+ * @param T $dflt
+ * @return T|int|float|false
+ */
 function input_num(mixed $postname=null, mixed $dflt=0)
 {
 	if (!isset($_POST[$postname]) || $_POST[$postname] == "")

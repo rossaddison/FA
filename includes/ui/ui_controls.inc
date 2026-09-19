@@ -16,6 +16,12 @@
 	If some field have user formatted numeric value, pass float default value to
 	convert automatically to POSIX.
 */
+/**
+ * @template T
+ * @param string|array<array-key, mixed> $name
+ * @param T $dflt
+ * @return ($name is string ? (T is float ? int|float|false : string|array<array-key, mixed>|T) : array<array-key, mixed>)
+ */
 function get_post(mixed $name, mixed $dflt='')
 {
 	if (is_array($name)) {

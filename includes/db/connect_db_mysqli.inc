@@ -93,18 +93,27 @@ function db_query(mixed $sql, mixed $err_msg=null): mysqli_result|bool
 	return $result;
 }
 
+/**
+ * @return list<string|null>|false a row with numeric keys; mysqli returns every column as a string or null
+ */
 function db_fetch_row(mixed $result): array|false
 {
 	$ret = mysqli_fetch_row($result);
 	return ($ret === null ? false : $ret);
 }
 
+/**
+ * @return array<string, string|null>|false a row keyed by column name
+ */
 function db_fetch_assoc(mixed $result): array|false
 {
 	$ret = mysqli_fetch_assoc($result);
 	return ($ret === null ? false : $ret);
 }
 
+/**
+ * @return array<array-key, string|null>|false a row keyed by column name and by position
+ */
 function db_fetch(mixed $result): array|false
 {
 	$ret = mysqli_fetch_array($result);
