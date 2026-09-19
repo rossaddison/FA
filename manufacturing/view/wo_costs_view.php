@@ -33,7 +33,7 @@ if ($_GET['trans_no'] != "")
 }
 
 //-------------------------------------------------------------------------------------------------
-function print_gl_rows(mixed $result, mixed $title): void
+function print_gl_rows(mixed $result, string|bool|mysqli_result|null $title): void
 {
 	global $systypes_array;
 

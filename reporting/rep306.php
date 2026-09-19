@@ -32,7 +32,7 @@ print_inventory_purchase();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(mixed $category, mixed $location, string|array|null $fromsupp, string|array|null $item, string|array|null $from, string|array|null $to)
+function getTransactions(string|int|array|null $category, string|array|null $location, string|array|null $fromsupp, string|array|null $item, string|array|null $from, string|array|null $to)
 {
 	$from = date2sql($from);
 	$to = date2sql($to);
@@ -75,7 +75,7 @@ function getTransactions(mixed $category, mixed $location, string|array|null $fr
 /**
  * @return null|string
  */
-function get_supp_inv_reference(mixed $supplier_id, mixed $stock_id, mixed $date)
+function get_supp_inv_reference(?string $supplier_id, ?string $stock_id, ?string $date)
 {
 	$sql = "SELECT trans.supp_reference
 		FROM ".TB_PREF."supp_trans trans,

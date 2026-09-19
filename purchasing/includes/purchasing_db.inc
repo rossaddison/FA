@@ -32,7 +32,7 @@ include_once($path_to_root . "/purchasing/includes/db/suppliers_db.inc");
 // $date_ is display date (non-sql)
 // $amount is in SUPPLIERS'S currency
 
-function add_gl_trans_supplier(mixed $type, mixed $type_no, mixed $date_, mixed $account, mixed $dimension, mixed $dimension2,  
+function add_gl_trans_supplier(mixed $type, string|int|float|null $type_no, mixed $date_, mixed $account, mixed $dimension, mixed $dimension2,  
 	mixed $amount, mixed $supplier_id, ?string $err_msg="", mixed $rate=0, mixed $memo="")
 {
 	if ($err_msg == "")

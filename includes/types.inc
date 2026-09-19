@@ -192,7 +192,7 @@ define('CL_INCOME', 4);
 define('CL_COGS', 5);
 define('CL_EXPENSE', 6);
 
-function get_class_type_convert(mixed $ctype): int
+function get_class_type_convert(?string $ctype): int
 {
 	global $SysPrefs;
 

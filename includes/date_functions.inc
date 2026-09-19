@@ -432,7 +432,7 @@ and converts to a yyyy/mm/dd format */
  *	Return +1 if sql date1>date2, -1 if date1<date2,
  *  or 0 if dates are equal.
  */
-function sql_date_comp(mixed $date1, mixed $date2): int
+function sql_date_comp(mixed $date1, string|int|null $date2): int
 {
 	@list($year1, $month1, $day1) = explode("-", $date1);
 	@list($year2, $month2, $day2) = explode("-", $date2);
@@ -451,7 +451,7 @@ function sql_date_comp(mixed $date1, mixed $date2): int
 /*
 	Compare dates in user format.
 */
-function date_comp(string|array|null $date1, mixed $date2): int
+function date_comp(string|array|null $date1, ?string $date2): int
 {
 	$date1 = date2sql($date1);
 	$date2 = date2sql($date2);

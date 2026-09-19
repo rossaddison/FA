@@ -87,7 +87,7 @@ function get_exchange_rate_from_to(mixed $from_curr_code, mixed $to_curr_code, m
 
 //--------------------------------------------------------------------------------
 
-function exchange_from_to(int|float|null $amount, mixed $from_curr_code, mixed $to_curr_code, mixed $date_)
+function exchange_from_to(int|float|null $amount, ?string $from_curr_code, mixed $to_curr_code, mixed $date_)
 {
 	$ex_rate = get_exchange_rate_from_to($from_curr_code, $to_curr_code, $date_);
 	return $amount / $ex_rate;

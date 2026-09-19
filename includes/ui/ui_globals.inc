@@ -50,7 +50,7 @@ function get_global_customer(bool $return_all=true)
 	return $_SESSION['wa_global_customer_id'];
 }
 
-function set_global_curr_code(mixed $curr_code): void 
+function set_global_curr_code(string|array|null $curr_code): void 
 {
 	$_SESSION['wa_global_curr_code'] = $curr_code;
 }

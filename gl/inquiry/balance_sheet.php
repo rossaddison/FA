@@ -47,7 +47,7 @@ if (isset($_GET["AccGrp"]))
 
 //----------------------------------------------------------------------------------------------------
 
-function display_type (mixed $type, mixed $typename, mixed $from, mixed $to, mixed $convert, mixed $dimension, mixed $dimension2, mixed $drilldown)
+function display_type (?string $type, ?string $typename, mixed $from, mixed $to, mixed $convert, mixed $dimension, mixed $dimension2, mixed $drilldown)
 {
 	global $path_to_root, $levelptr, $k;
 	

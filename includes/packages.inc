@@ -270,7 +270,7 @@ function pkg_prop(mixed $pkg, mixed $property, mixed $lang=false)
 //	 	or (0=>field1, 1=>field2...)
 //  $outkey - field used as a key in package list. If null 'Package' field is used.
 //
-function get_pkg_or_list(mixed $type = null, mixed $pkgname = null, mixed $filter=array(), mixed $outkey=null, bool $download=true) {
+function get_pkg_or_list(mixed $type = null, mixed $pkgname = null, ?array $filter=array(), mixed $outkey=null, bool $download=true) {
 
 	global $path_to_root, $repo_auth;
 

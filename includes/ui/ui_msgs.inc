@@ -39,7 +39,7 @@ function display_heading(mixed $msg): void
 	echo "<center><span class='headingtext'>$msg</span></center>\n";	
 }
 
-function display_heading2(mixed $msg): void
+function display_heading2(?string $msg): void
 {
 	echo "<center><span class='headingtext2'>$msg</span></center>\n";	
 }

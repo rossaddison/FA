@@ -67,7 +67,7 @@ function del_image(mixed $stock_id): bool
 	return true;
 }
 
-function show_image(mixed $stock_id): void
+function show_image(string|int|float|array|null $stock_id): void
 {
 	global $SysPrefs;
 

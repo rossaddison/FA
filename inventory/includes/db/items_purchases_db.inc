@@ -10,8 +10,8 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-function add_item_purchasing_data(string|array|null $supplier_id, string|array|null $stock_id, mixed $price,
-	string|array|null $suppliers_uom, mixed $conversion_factor, string|array|null $supplier_description): void
+function add_item_purchasing_data(string|array|null $supplier_id, string|array|null $stock_id, int|float|bool|null $price,
+	string|array|null $suppliers_uom, int|float|bool|null $conversion_factor, string|array|null $supplier_description): void
 {
 	$supp_desc = db_escape($supplier_description);
 	if (strlen($supp_desc) > 50) // to be fixed and removed in 2.5
@@ -26,8 +26,8 @@ function add_item_purchasing_data(string|array|null $supplier_id, string|array|n
 	db_query($sql,"The supplier purchasing details could not be added");
 }
 
-function update_item_purchasing_data(mixed $selected_id, string|array|null $stock_id, mixed $price,
-	string|array|null $suppliers_uom, mixed $conversion_factor, string|array|null $supplier_description): void
+function update_item_purchasing_data(mixed $selected_id, string|array|null $stock_id, int|float|bool|null $price,
+	string|array|null $suppliers_uom, int|float|bool|null $conversion_factor, string|array|null $supplier_description): void
 {
 	$supp_desc = db_escape($supplier_description);
 	if (strlen($supp_desc) > 50) // to be fixed and removed in 2.5

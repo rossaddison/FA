@@ -32,7 +32,7 @@ print_grn_valuation();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(mixed $from, mixed $to)
+function getTransactions(string|int|array|null $from, string|array|null $to)
 {
 	$from = date2sql($from);
 	$to = date2sql($to);
@@ -66,7 +66,7 @@ function getTransactions(mixed $from, mixed $to)
 /**
  * @return bool|mysqli_result
  */
-function getSuppInvDetails(mixed $grn_item_id)
+function getSuppInvDetails(?string $grn_item_id)
 {
 	$sql = "SELECT
 			inv_line.supp_trans_no inv_no,

@@ -79,7 +79,7 @@ function get_company_extensions(mixed $id = -1): array {
 	return $installed_extensions;
 }
 
-function add_payment_terms(bool $daysOrFoll, mixed $terms, mixed $dayNumber): void
+function add_payment_terms(bool $daysOrFoll, mixed $terms, int|float|bool|null $dayNumber): void
 {
 	if ($daysOrFoll) 
 	{
@@ -98,7 +98,7 @@ function add_payment_terms(bool $daysOrFoll, mixed $terms, mixed $dayNumber): vo
    	db_query($sql,"The payment term could not be added");
 }
 
-function update_payment_terms(mixed $selected_id, bool $daysOrFoll, mixed $terms, mixed $dayNumber): void
+function update_payment_terms(mixed $selected_id, bool $daysOrFoll, mixed $terms, int|float|bool|null $dayNumber): void
 {
 	if ($daysOrFoll) 
 	{

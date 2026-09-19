@@ -14,8 +14,8 @@ include_once($path_to_root . "/includes/types.inc");
 
 //--------------------------------------------------------------------------------------
 
-function get_supplier_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", mixed $icon=false, 
-	mixed $class='', mixed $id='')
+function get_supplier_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", bool $icon=false, 
+	?string $class='', mixed $id='')
 {
 	$viewer = "purchasing/view/";
 	if ($type == ST_PURCHORDER)
@@ -74,8 +74,8 @@ function get_gl_view_str_cell(mixed $type, mixed $trans_no, mixed $label="")
 /**
  * @return null|string
  */
-function get_customer_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", mixed $icon=false, 
-	mixed $class='', mixed $id='')
+function get_customer_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", bool $icon=false, 
+	?string $class='', mixed $id='')
 {
 	$viewer = "sales/view/";
 
@@ -112,7 +112,7 @@ function get_customer_trans_view_str(mixed $type, mixed $trans_no, mixed $label=
 //--------------------------------------------------------------------------------------
 
 function get_banking_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", 
-	mixed $icon=false, mixed $class='', mixed $id='')
+	bool $icon=false, ?string $class='', mixed $id='')
 {
 	if ($label == "")
 		$label = $trans_no;
@@ -133,7 +133,7 @@ function get_banking_trans_view_str(mixed $type, mixed $trans_no, mixed $label="
 //--------------------------------------------------------------------------------------
 
 function get_inventory_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", 
-	mixed $icon=false, mixed $class='', mixed $id='')
+	bool $icon=false, ?string $class='', mixed $id='')
 {
 	$viewer = "inventory/view/";
 
@@ -154,7 +154,7 @@ function get_inventory_trans_view_str(mixed $type, mixed $trans_no, mixed $label
 //--------------------------------------------------------------------------------------
 
 function get_manufacturing_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", 
-	mixed $icon=false, mixed $class='', mixed $id='')
+	bool $icon=false, ?string $class='', mixed $id='')
 {
 	$viewer = "manufacturing/view/";
 
@@ -177,8 +177,8 @@ function get_manufacturing_trans_view_str(mixed $type, mixed $trans_no, mixed $l
 
 //--------------------------------------------------------------------------------------
 
-function get_dimensions_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", mixed $icon=false, 
-	mixed $class='', mixed $id='')
+function get_dimensions_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", bool $icon=false, 
+	?string $class='', mixed $id='')
 {
 	if ($type == ST_DIMENSION)
 		$viewer = "dimensions/view/view_dimension.php?trans_no=$trans_no";
@@ -193,8 +193,8 @@ function get_dimensions_trans_view_str(mixed $type, mixed $trans_no, mixed $labe
 /*
 	Journal entry or cost update postings link
 */
-function get_journal_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", mixed $icon=false, 
-	mixed $class='', mixed $id='')
+function get_journal_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", bool $icon=false, 
+	?string $class='', mixed $id='')
 {
 	if ($type == ST_JOURNAL || $type == ST_COSTUPDATE)
 		$viewer = "gl/view/gl_trans_view.php?type_id=$type&trans_no=$trans_no";
@@ -405,7 +405,7 @@ function view_stock_status(mixed $stock_id, mixed $description=null, bool $echo=
 	return $preview_str;
 }
 
-function view_stock_status_cell(mixed $stock_id, mixed $description=null): void
+function view_stock_status_cell(mixed $stock_id, ?string $description=null): void
 {
 	echo "<td>";
 	view_stock_status($stock_id, $description);
@@ -431,7 +431,7 @@ function display_debit_or_credit_cells(mixed $value, bool $bold=false): void
 
 //--------------------------------------------------------------------------------------
 
-function display_customer_trans_tax_details(mixed $tax_items, ?int $columns): void
+function display_customer_trans_tax_details(bool|mysqli_result $tax_items, ?int $columns): void
 {
 	global $SysPrefs;
 
@@ -467,7 +467,7 @@ function display_customer_trans_tax_details(mixed $tax_items, ?int $columns): vo
 
 //--------------------------------------------------------------------------------------
 
-function display_supp_trans_tax_details(mixed $tax_items, ?int $columns): void
+function display_supp_trans_tax_details(bool|mysqli_result $tax_items, ?int $columns): void
 {
     while ($tax_item = db_fetch($tax_items))
     {
@@ -544,7 +544,7 @@ function display_footer_exit(mixed $space=2): void
 
 //--------------------------------------------------------------------------------------
 
-function display_allocations(mixed $alloc_result, mixed $total, ?string $title, bool $show_summary=true): void
+function display_allocations(bool|mysqli_result $alloc_result, mixed $total, ?string $title, bool $show_summary=true): void
 {
 	global $systypes_array;
 
@@ -595,7 +595,7 @@ function display_allocations(mixed $alloc_result, mixed $total, ?string $title, 
 
 //--------------------------------------------------------------------------------------
 
-function display_allocations_from(mixed $person_type, mixed $person_id, ?int $type, mixed $type_no, mixed $total): void
+function display_allocations_from(string|int|null $person_type, mixed $person_id, ?int $type, mixed $type_no, mixed $total): void
 {
 	switch ($person_type)
 	{
@@ -632,7 +632,7 @@ function display_allocations_to(?int $person_type, mixed $person_id, mixed $type
 //	Expands selected quick entry $id into GL posings and adds to cart.
 //		returns calculated amount posted to bank GL account.
 //
-function display_quick_entries(&$cart, mixed $id, mixed $base, ?string $type, mixed $descr=''): int
+function display_quick_entries(&$cart, mixed $id, int|float|bool|null $base, ?string $type, string|array|null $descr=''): int
 {
 	$bank_amount = 0;
 

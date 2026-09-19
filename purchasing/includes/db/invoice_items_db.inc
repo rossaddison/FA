@@ -30,7 +30,7 @@ function add_supp_invoice_item(mixed $supp_trans_type, mixed $supp_trans_no, mix
 
 //-------------------------------------------------------------------------------------------------------------
 
-function add_supp_invoice_gl_item(mixed $supp_trans_type, mixed $supp_trans_no, mixed $gl_code, mixed $amount, mixed $memo_, mixed $dim_id=0, mixed $dim2_id=0)
+function add_supp_invoice_gl_item(mixed $supp_trans_type, int|float|null $supp_trans_no, mixed $gl_code, mixed $amount, mixed $memo_, mixed $dim_id=0, mixed $dim2_id=0)
 {
 	return add_supp_invoice_item($supp_trans_type, $supp_trans_no,  "", "", $gl_code, $amount,
 		0, 0, /*$grn_item_id*/-1, /*$po_detail_item_id*/0, $memo_, $dim_id, $dim2_id);

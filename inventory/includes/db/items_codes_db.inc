@@ -122,7 +122,7 @@ function get_item_code_dflts(mixed $stock_id)
 //
 //	Check if kit contains given item, optionally recursive.
 //
-function check_item_in_kit(mixed $old_id, mixed $kit_code, mixed $item_code, bool $recurse=false): int
+function check_item_in_kit(mixed $old_id, mixed $kit_code, string|array|null $item_code, bool $recurse=false): int
 {
 	$result = get_item_kit($kit_code);
 	if ($result)
@@ -158,7 +158,7 @@ function get_kit_props(mixed $kit_code)
 	return db_fetch($res);
 }
 
-function update_kit_props(mixed $kit_code, mixed $name, mixed $category): void
+function update_kit_props(string|array|null $kit_code, string|array|null $name, string|array|null $category): void
 {
 	$sql = "UPDATE ".TB_PREF."item_codes SET description="
 		. db_escape($name).",category_id=".db_escape($category)

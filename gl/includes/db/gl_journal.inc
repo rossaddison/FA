@@ -14,7 +14,7 @@ require_once($path_to_root. "/admin/db/attachments_db.inc");
 /**
  * @return bool|mysqli_result
  */
-function add_journal(mixed $type, mixed $trans_no, mixed $amount, mixed $tran_date, mixed $currency, mixed $reference, mixed $source_ref='', mixed $rate=1,
+function add_journal(mixed $type, int|float|null $trans_no, mixed $amount, mixed $tran_date, mixed $currency, mixed $reference, mixed $source_ref='', mixed $rate=1,
 	 mixed $event_date='', mixed $doc_date='')
 {
 	$sql = "INSERT INTO ".TB_PREF."journal(

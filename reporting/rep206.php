@@ -31,7 +31,7 @@ print_supplier_balances();
 /**
  * @return array<array-key, null|string>|false
  */
-function get_open_balance(mixed $supplier_id, string|array|null $to)
+function get_open_balance(?string $supplier_id, string|array|null $to)
 {
     $to = date2sql($to);
 
@@ -59,7 +59,7 @@ function get_open_balance(mixed $supplier_id, string|array|null $to)
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(mixed $supplier_id, mixed $from, string|array|null $to)
+function getTransactions(string|int|array|null $supplier_id, string|array|null $from, string|array|null $to)
 {
     $from = date2sql($from);
     $to = date2sql($to);

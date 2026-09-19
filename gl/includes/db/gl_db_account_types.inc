@@ -106,7 +106,7 @@ function get_account_type(mixed $id)
 /**
  * @return false|null|string
  */
-function get_account_type_name(mixed $id)
+function get_account_type_name(string|array|null $id)
 {
 	$sql = "SELECT name FROM ".TB_PREF."chart_types WHERE id = ".db_escape($id);
 
@@ -178,7 +178,7 @@ function get_account_class(mixed $id)
 /**
  * @return null|string
  */
-function get_account_class_name(mixed $id)
+function get_account_class_name(?string $id)
 {
 	$sql = "SELECT class_name FROM ".TB_PREF."chart_class WHERE cid =".db_escape($id);
 

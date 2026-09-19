@@ -30,7 +30,7 @@ function add_cust_allocation(mixed $amount, mixed $trans_type_from, mixed $trans
 /**
  * @return bool|mysqli_result
  */
-function delete_cust_allocation(mixed $trans_id)
+function delete_cust_allocation(?string $trans_id)
 {
 	$sql = "DELETE FROM ".TB_PREF."cust_allocations WHERE id = ".db_escape($trans_id);
 	return db_query($sql, "The existing allocation $trans_id could not be deleted");
@@ -296,7 +296,7 @@ function get_allocatable_from_cust_transactions(mixed $customer_id, mixed $trans
 	return db_query($sql." ORDER BY trans_no", "Cannot retreive alloc to transactions");
 }
 
-function get_sql_for_customer_allocation_inquiry(mixed $from, mixed $to, mixed $customer, mixed $filterType, int|array|null $settled): string
+function get_sql_for_customer_allocation_inquiry(string|array|null $from, string|array|null $to, string|array|null $customer, string|array|null $filterType, int|array|null $settled): string
 {
   	$data_after = date2sql($from);
   	$date_to = date2sql($to);

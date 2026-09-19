@@ -128,7 +128,7 @@ function check_overdue(mixed $row): bool
 }
 //------------------------------------------------------------------------------------------------
 
-function display_customer_summary(mixed $customer_record): void
+function display_customer_summary(bool|array|null $customer_record): void
 {
 	$past1 = get_company_pref('past_due_days');
 	$past2 = 2 * $past1;

@@ -90,7 +90,7 @@ function check_negative_stock(mixed $stock_id, mixed $delta_qty, mixed $location
 /**
  * @return array<array-key, mixed|null|string>|false
  */
-function get_item_edit_info(mixed $stock_id)
+function get_item_edit_info(string|array|null $stock_id)
 {
 	$sql = "SELECT item.material_cost, item.units, unit.decimals
 		FROM ".TB_PREF."stock_master item,"
@@ -247,7 +247,7 @@ function get_deliveries_between(mixed $stock_id, mixed $from, mixed $to): false|
 /*
 	Returns quantity and total cost of $stock_id sales, entered after record with $move_id
 */
-function get_deliveries_from_trans(mixed $stock_id, mixed $move_id): array
+function get_deliveries_from_trans(mixed $stock_id, ?string $move_id): array
 {
 	// -ve qty is delivery either by ST_CUSTDELIVERY or inventory adjustment
     //Price for GRN and SUPPCREDIT and std_cost for other trans_types
@@ -285,7 +285,7 @@ function get_deliveries_from_trans(mixed $stock_id, mixed $move_id): array
 /**
  * @return false|list<null|string>
  */
-function get_purchases_from_trans(mixed $stock_id, mixed $move_id): false|array
+function get_purchases_from_trans(mixed $stock_id, ?string $move_id): false|array
 {
 	// Calculate All inward stock moves i.e. qty > 0
 	$sql = "SELECT SUM(qty), SUM(qty*standard_cost)

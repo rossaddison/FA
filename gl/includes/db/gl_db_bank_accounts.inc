@@ -131,7 +131,7 @@ function get_bank_charge_account(mixed $id)
 
 //---------------------------------------------------------------------------------------------
 
-function add_quick_entry(mixed $description, mixed $type, mixed $base_amount, mixed $base_desc, mixed $bal_type, mixed $usage): void
+function add_quick_entry(mixed $description, mixed $type, int|float|bool|null $base_amount, mixed $base_desc, string|int|array|null $bal_type, mixed $usage): void
 {
 	$sql = "INSERT INTO ".TB_PREF."quick_entries (description, type, base_amount, base_desc, bal_type, `usage`) 
 	VALUES (".db_escape($description).", ".db_escape($type).", "
@@ -142,7 +142,7 @@ function add_quick_entry(mixed $description, mixed $type, mixed $base_amount, mi
 
 //---------------------------------------------------------------------------------------------
 
-function update_quick_entry(mixed $selected_id, mixed $description, mixed $type, mixed $base_amount, mixed $base_desc, mixed $bal_type, mixed $usage): void
+function update_quick_entry(mixed $selected_id, mixed $description, mixed $type, int|float|bool|null $base_amount, mixed $base_desc, string|int|array|null $bal_type, mixed $usage): void
 {
 	$sql = "UPDATE ".TB_PREF."quick_entries	SET description = ".db_escape($description).",
 		type=".db_escape($type).", base_amount=".db_escape($base_amount)
@@ -163,7 +163,7 @@ function delete_quick_entry(mixed $selected_id): void
 
 //---------------------------------------------------------------------------------------------
 
-function add_quick_entry_line(mixed $qid, mixed $action, mixed $dest_id, mixed $amount, mixed $dim, mixed $dim2, mixed $memo): void
+function add_quick_entry_line(mixed $qid, mixed $action, mixed $dest_id, int|float|bool|null $amount, mixed $dim, mixed $dim2, string|array|null $memo): void
 {
 	$sql = "INSERT INTO ".TB_PREF."quick_entry_lines 
 		(qid, action, dest_id, amount, dimension_id, dimension2_id, memo) 
@@ -176,7 +176,7 @@ function add_quick_entry_line(mixed $qid, mixed $action, mixed $dest_id, mixed $
 
 //---------------------------------------------------------------------------------------------
 
-function update_quick_entry_line(mixed $selected_id, mixed $qid, mixed $action, mixed $dest_id, mixed $amount, mixed $dim, mixed $dim2, mixed $memo): void
+function update_quick_entry_line(mixed $selected_id, mixed $qid, mixed $action, mixed $dest_id, int|float|bool|null $amount, mixed $dim, mixed $dim2, string|array|null $memo): void
 {
 	$sql = "UPDATE ".TB_PREF."quick_entry_lines SET qid = ".db_escape($qid)
 		.", action=".db_escape($action).",
@@ -275,7 +275,7 @@ function get_quick_entry_line(mixed $selected_id)
 /**
  * @return bool|mysqli_result
  */
-function get_max_reconciled(mixed $date, mixed $bank_account)
+function get_max_reconciled(string|array|null $date, mixed $bank_account)
 {
 	$date = date2sql($date);
 	 // temporary fix to enable fix of invalid entries made in 2.2RC
@@ -309,7 +309,7 @@ function get_ending_reconciled(mixed $bank_account, mixed $bank_date)
 
 //---------------------------------------------------------------------------------------------
 
-function get_sql_for_bank_account_reconcile(mixed $bank_account, mixed $date): string
+function get_sql_for_bank_account_reconcile(string|array|null $bank_account, string|array|null $date): string
 {
 	$sql = "SELECT	bt.type, trans_no, ref, trans_date,
 				amount,	person_id, person_type_id, reconciled, bt.id, c.memo_
@@ -325,7 +325,7 @@ function get_sql_for_bank_account_reconcile(mixed $bank_account, mixed $date): s
 
 //---------------------------------------------------------------------------------------------
 
-function update_reconciled_values(mixed $reconcile_id, ?string $reconcile_value, string|array|null $reconcile_date, mixed $end_balance, string|array|null $bank_account): void
+function update_reconciled_values(mixed $reconcile_id, ?string $reconcile_value, string|array|null $reconcile_date, int|float|bool|null $end_balance, string|array|null $bank_account): void
 {
 	$sql = "UPDATE ".TB_PREF."bank_trans SET reconciled=$reconcile_value"
 		." WHERE id=".db_escape($reconcile_id);

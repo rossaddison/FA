@@ -48,7 +48,7 @@ function get_domestic_price(?array $myrow, mixed $stock_id)
     return $price;
 }
 
-function getAverageCost(mixed $stock_id, string|array|null $location, string|array|null $to_date)
+function getAverageCost(?string $stock_id, string|array|null $location, string|array|null $to_date)
 {
 	if ($to_date == null)
 		$to_date = Today();
@@ -90,7 +90,7 @@ function getAverageCost(mixed $stock_id, string|array|null $location, string|arr
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(mixed $category, mixed $location, string|array|null $date)
+function getTransactions(string|int|array|null $category, string|array|null $location, string|array|null $date)
 {
 	$date = date2sql($date);
 

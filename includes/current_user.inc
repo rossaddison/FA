@@ -600,7 +600,7 @@ function user_check_access(mixed $sec_area)
 	return $_SESSION["wa_current_user"]->can_access($sec_area);
 }
 
-function set_user_prefs(mixed $prefs): void
+function set_user_prefs(int|array|null $prefs): void
 {
 	$_SESSION["wa_current_user"]->update_prefs($prefs);
 }
@@ -650,7 +650,7 @@ function session_timeout()
 //	Inserts $elements into $array at position $index.
 //	$elements is list of any objects
 //
-function array_insert(&$array, mixed $index, mixed $elements): void
+function array_insert(&$array, ?int $index, string|array|null $elements): void
 {
 	if (!is_array($elements)) $elements = array($elements);
 
@@ -698,7 +698,7 @@ function array_search_value(mixed $needle, mixed $haystack, mixed $valuekey=null
 //	Search $needle in $haystack or in $haystack[][$valuekey]
 //	returns array of keys of $haystack elements found
 //
-function array_search_keys(mixed $needle, mixed $haystack, mixed $valuekey=null): array
+function array_search_keys(mixed $needle, mixed $haystack, ?string $valuekey=null): array
 {
 	$keys = array();
 	if (is_array($haystack)) {

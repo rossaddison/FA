@@ -31,7 +31,7 @@ print_audit_trail();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(mixed $from, mixed $to, string|array|null $type, string|array|null $user)
+function getTransactions(string|int|array|null $from, string|array|null $to, string|array|null $type, string|array|null $user)
 {
 	$fromdate = date2sql($from) . " 00:00:00";
 	$todate = date2sql($to). " 23:59.59";

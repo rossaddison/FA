@@ -10,7 +10,7 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-function add_recurrent_invoice(mixed $description, mixed $order_no, mixed $debtor_no, mixed $group_no, mixed $days, mixed $monthly,
+function add_recurrent_invoice(mixed $description, mixed $order_no, int|float|bool|null $debtor_no, int|float|bool|null $group_no, int|float|bool|null $days, int|float|bool|null $monthly,
 	mixed $begin, mixed $end): void
 {
 	$sql = "INSERT INTO ".TB_PREF."recurrent_invoices (description, order_no, debtor_no,
@@ -21,7 +21,7 @@ function add_recurrent_invoice(mixed $description, mixed $order_no, mixed $debto
    	db_query($sql,"The recurrent invoice could not be added");
 }
 
-function update_recurrent_invoice(mixed $selected_id, mixed $description, mixed $order_no, mixed $debtor_no, mixed $group_no, mixed $days, mixed $monthly,
+function update_recurrent_invoice(mixed $selected_id, mixed $description, mixed $order_no, int|float|bool|null $debtor_no, int|float|bool|null $group_no, int|float|bool|null $days, int|float|bool|null $monthly,
 	mixed $begin, mixed $end): void
 {
 	$sql = "UPDATE ".TB_PREF."recurrent_invoices SET 
@@ -117,7 +117,7 @@ function recurrent_invoice_ready(string|int|null $selected_id, mixed $date)
 /**
  * @return null|string
  */
-function recurrent_invoice_count(mixed $id)
+function recurrent_invoice_count(string|int|null $id)
 {
 
 	$sql1 = "SELECT branch.*

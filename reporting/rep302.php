@@ -32,7 +32,7 @@ print_inventory_planning();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(mixed $category, mixed $location)
+function getTransactions(string|int|array|null $category, string|array|null $location)
 {
 	$sql = "SELECT item.category_id,
 			category.description AS cat_description,

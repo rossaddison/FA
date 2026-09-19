@@ -268,7 +268,7 @@ function get_subaccount_data(mixed $code_id, mixed $person_id)
 /**
  * @return null|string
  */
-function get_subaccount_name(mixed $code_id, mixed $person_id)
+function get_subaccount_name(?string $code_id, ?string $person_id)
 {
 	$sql = "SELECT debtor_ref as ref
 		FROM ".TB_PREF."cust_branch branch
@@ -285,7 +285,7 @@ function get_subaccount_name(mixed $code_id, mixed $person_id)
 	return  $row ? $row['ref'] : '';
 }
 
-function gl_account_in_bank_accounts(mixed $acc): bool
+function gl_account_in_bank_accounts(string|array|null $acc): bool
 {
 	$sql= "SELECT COUNT(*) FROM ".TB_PREF."bank_accounts WHERE 
 		account_code=".db_escape($acc);
@@ -320,7 +320,7 @@ function is_bank_account(mixed $account_code)
 /**
  * @return bool|mysqli_result
  */
-function get_chart_accounts_search(mixed $like, mixed $skip=false)
+function get_chart_accounts_search(string|array|null $like, mixed $skip=false)
 {
 	global $SysPrefs;
 

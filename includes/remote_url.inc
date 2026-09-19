@@ -14,7 +14,7 @@
 	Read content of remote url via http.
 	Does not require curl php extension nor allow_url_fopen=1.
 */
-function url_get_contents(mixed $url, mixed $timeout=10): string|false|null
+function url_get_contents(?string $url, ?int $timeout=10): string|false|null
 {
 	// get the host name and url path
 	$parsedUrl = parse_url($url);

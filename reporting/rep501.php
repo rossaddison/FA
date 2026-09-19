@@ -30,7 +30,7 @@ print_dimension_summary();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(mixed $from, mixed $to)
+function getTransactions(string|int|array|null $from, string|array|null $to)
 {
 	$sql = "SELECT *
 		FROM
@@ -46,7 +46,7 @@ function getTransactions(mixed $from, mixed $to)
 /**
  * @return float(0)|null|string
  */
-function getYTD(mixed $dim)
+function getYTD(?string $dim)
 {
 	$date = Today();
 	$date = begin_fiscalyear($date);

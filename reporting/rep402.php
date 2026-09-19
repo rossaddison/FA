@@ -32,7 +32,7 @@ print_work_order_listing();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(mixed $items, mixed $open_only, string|array|null $location)
+function getTransactions(string|int|array|null $items, string|array|null $open_only, string|array|null $location)
 {
 	$sql = "SELECT
 		workorder.id,
@@ -69,7 +69,7 @@ function getTransactions(mixed $items, mixed $open_only, string|array|null $loca
 
 }
 
-function print_gl_rows(&$rep, mixed $result, ?string $title): void
+function print_gl_rows(&$rep, string|bool|mysqli_result|null $result, ?string $title): void
 {
 	global $systypes_array;
 

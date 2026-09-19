@@ -30,7 +30,7 @@ print_outstanding_GRN();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(mixed $fromsupp)
+function getTransactions(string|int|array|null $fromsupp)
 {
 	$sql = "SELECT grn.id,
 			order_no,

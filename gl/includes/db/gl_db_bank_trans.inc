@@ -184,7 +184,7 @@ function void_bank_trans(mixed $type, mixed $type_no, bool $nested=false): void
 *	Returns null or transaction in conflict. Running balance is checked on daily basis only, to enable ID change after edition.
 *	$delta_amount - tested change in bank balance at $date.
 **/
-function check_bank_account_history(mixed $delta_amount, mixed $bank_account, mixed $date=null, mixed $user=null, mixed $balance_offset = 0)
+function check_bank_account_history(mixed $delta_amount, string|array|null $bank_account, string|array|null $date=null, mixed $user=null, int|float|null $balance_offset = 0)
 {
 	if ($delta_amount >= 0 && isset($date))
 		 return null;	// amount increase is always safe

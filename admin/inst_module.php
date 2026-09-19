@@ -153,7 +153,7 @@ function display_extensions(mixed $mods): void
 // Get all installed extensions and display
 // with current status stored in company directory.
 //
-function company_extensions(mixed $id): void
+function company_extensions(string|array|null $id): void
 {
 	start_table(TABLESTYLE);
 	

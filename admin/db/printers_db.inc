@@ -13,7 +13,7 @@
 /**
  * @return bool|mysqli_result
  */
-function write_printer_def(mixed $id, mixed $name, mixed $descr, mixed $queue, mixed $host, mixed $port, mixed $timeout)
+function write_printer_def(mixed $id, string|array|null $name, string|array|null $descr, string|array|null $queue, string|array|null $host, int|float|bool|null $port, int|float|bool|null $timeout)
 {
 	if ($id>0)
 		$sql = "UPDATE ".TB_PREF."printers SET description=".db_escape($descr)
@@ -115,7 +115,7 @@ function delete_printer_profile(mixed $name)
 /**
  * @return bool|mysqli_result
  */
-function get_print_profile(mixed $name)
+function get_print_profile(string|array|null $name)
 {
 	$sql = "SELECT	* FROM ".TB_PREF."print_profiles WHERE profile=".db_escape($name);
 	return db_query($sql,"could not get printing profile");

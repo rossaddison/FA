@@ -26,7 +26,7 @@ include_once($path_to_root . "/admin/db/tags_db.inc");
 
 //----------------------------------------------------------------------------------------------------
 
-function display_type (mixed $type, mixed $typename, mixed $from, mixed $to, mixed $convert, &$dec, &$rep, mixed $dimension, mixed $dimension2, mixed $tags, &$pg, mixed $graphics, &$labels, &$serie1, &$serie2)
+function display_type (?string $type, ?string $typename, mixed $from, mixed $to, mixed $convert, &$dec, &$rep, mixed $dimension, mixed $dimension2, mixed $tags, &$pg, mixed $graphics, &$labels, &$serie1, &$serie2)
 {
 	$code_open_balance = 0;
 	$code_period_balance = 0;

@@ -52,7 +52,7 @@ function getTaxTransactions(string|array|null $from, string|array|null $to, stri
 /**
  * @return array<array-key, null|string>|false|null
  */
-function getTaxes(mixed $type, mixed $trans_no)
+function getTaxes(?string $type, ?string $trans_no)
 {
 	$sql = "SELECT included_in_price, SUM(CASE WHEN trans_type=".ST_CUSTCREDIT." THEN -amount ELSE amount END * ex_rate) AS tax
 		FROM ".TB_PREF."trans_tax_details WHERE trans_type=".db_escape($type)." AND trans_no=".db_escape($trans_no)." GROUP BY included_in_price";

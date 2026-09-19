@@ -53,7 +53,7 @@ function update_security_role(mixed $id, mixed $name, mixed $description, mixed 
 }
 //--------------------------------------------------------------------------------------------------
 
-function delete_security_role(mixed $id): void
+function delete_security_role(string|array|null $id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."security_roles WHERE id=".(int)$id;
 
@@ -64,7 +64,7 @@ function delete_security_role(mixed $id): void
 /**
  * @return null|string
  */
-function check_role_used(mixed $id) {
+function check_role_used(string|array|null $id) {
 	$sql = "SELECT count(*) FROM ".TB_PREF."users WHERE role_id=".(int)$id;
 	$ret = db_query($sql, 'cannot check role usage');
 	$row = db_fetch($ret);

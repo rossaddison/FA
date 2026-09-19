@@ -70,7 +70,7 @@ function get_item_location(mixed $item_location)
 /**
  * @return bool|mysqli_result
  */
-function get_item_locations(int|array|null $show_inactive, mixed $fixed_asset = 0)
+function get_item_locations(int|array|null $show_inactive, string|int|array|null $fixed_asset = 0)
 {
 	$sql = "SELECT * FROM ".TB_PREF."locations WHERE fixed_asset = ".db_escape($fixed_asset);
 	if (!$show_inactive) $sql .= " AND !inactive";
@@ -79,7 +79,7 @@ function get_item_locations(int|array|null $show_inactive, mixed $fixed_asset = 
 
 //------------------------------------------------------------------------------------
 
-function set_reorder_level(mixed $stock_id, mixed $loc_code, mixed $reorder_level): void
+function set_reorder_level(mixed $stock_id, ?string $loc_code, int|float|bool|null $reorder_level): void
 {
 	$sql = "UPDATE ".TB_PREF."loc_stock SET reorder_level = $reorder_level
 		WHERE stock_id = ".db_escape($stock_id)." AND loc_code = ".db_escape($loc_code);

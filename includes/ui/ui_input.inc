@@ -257,7 +257,7 @@ function submit_add_or_update_row(mixed $add=true, mixed $right=true, mixed $ext
 	echo "</td></tr>\n";
 }
 
-function submit_cells(mixed $name, mixed $value, mixed $extra="", mixed $title=false, mixed $async=false): void
+function submit_cells(?string $name, ?string $value, ?string $extra="", string|bool|null $title=false, string|bool|null $async=false): void
 {
 	echo "<td $extra>";
 	submit($name, $value, true, $title, $async);
@@ -398,7 +398,7 @@ function check(mixed $label, mixed $name, mixed $value=null, mixed $submit_on_ch
 	echo checkbox($label, $name, $value, $submit_on_change, $title);
 }
 
-function check_cells(mixed $label, mixed $name, mixed $value=null, mixed $submit_on_change=false, mixed $title=false,
+function check_cells(mixed $label, mixed $name, mixed $value=null, bool $submit_on_change=false, string|bool|null $title=false,
 	?string $params=''): void
 {
 	if ($label != null)
@@ -431,7 +431,7 @@ function radio(?string $label, ?string $name, mixed $value, ?bool $selected=null
 }
 
 //-----------------------------------------------------------------------------------
-function labelheader_cell(mixed $label, mixed $params=""): void
+function labelheader_cell(mixed $label, ?string $params=""): void
 {
 	echo "<td class='tableheader' $params>$label</td>\n";
 }
@@ -487,7 +487,7 @@ function percent_cell(mixed $label, bool $bold=false, mixed $id=null): void
 		label_cell(percent_format($label), "nowrap align=right", $id);
 }
 // 2008-06-15. Changed
-function qty_cell(mixed $label, mixed $bold=false, mixed $dec=null, mixed $id=null): void
+function qty_cell(mixed $label, string|bool|null $bold=false, mixed $dec=null, mixed $id=null): void
 {
 	if (!isset($dec))
 		$dec = get_qty_dec();
@@ -497,14 +497,14 @@ function qty_cell(mixed $label, mixed $bold=false, mixed $dec=null, mixed $id=nu
 		label_cell(number_format2($label, $dec), "nowrap align=right", $id);
 }
 
-function label_cells(mixed $label, mixed $value, mixed $params="", mixed $params2="", mixed $id=null): void
+function label_cells(mixed $label, mixed $value, mixed $params="", ?string $params2="", ?string $id=null): void
 {
 	if ($label != null)
 		echo "<td $params>$label</td>\n";
 	label_cell($value, $params2, $id);
 }
 
-function label_row(mixed $label, mixed $value, mixed $params="", ?string $params2="", mixed $leftfill=0, ?string $id=null): void
+function label_row(mixed $label, mixed $value, ?string $params="", ?string $params2="", string|int|null $leftfill=0, ?string $id=null): void
 {
 	echo "<tr>";
 	if ($params == "")
@@ -549,7 +549,7 @@ function text_cells(mixed $label, mixed $name, mixed $value=null, mixed $size=""
 	$Ajax->addUpdate($name, $name, $value);
 }
 
-function text_cells_ex(mixed $label, mixed $name, mixed $size, mixed $max=null, mixed $init=null, mixed $title=null,
+function text_cells_ex(?string $label, mixed $name, mixed $size, mixed $max=null, mixed $init=null, mixed $title=null,
 	mixed $labparams=null, mixed $post_label=null, mixed $submit_on_change=false): void
 {
   	global $Ajax;
@@ -580,7 +580,7 @@ function text_cells_ex(mixed $label, mixed $name, mixed $size, mixed $max=null, 
 	$Ajax->addUpdate($name, $name, $_POST[$name]);
 }
 
-function text_row(mixed $label, mixed $name, mixed $value, mixed $size, mixed $max, mixed $title=null, mixed $params="", mixed $post_label=""): void
+function text_row(mixed $label, mixed $name, mixed $value, mixed $size, mixed $max, mixed $title=null, ?string $params="", ?string $post_label=""): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	text_cells(null, $name, $value, $size, $max, $title, $params, $post_label);
@@ -641,8 +641,8 @@ function link_row_ex(mixed $label, mixed $name, mixed $size, mixed $max=null, mi
 //  When $check!=null current date is displayed in red when set to other 
 //	than current date.
 //	
-function date_cells(?string $label, mixed $name, mixed $title = null, mixed $check=null, mixed $inc_days=0, 
-	mixed $inc_months=0, mixed $inc_years=0, mixed $params=null, mixed $submit_on_change=false): void
+function date_cells(?string $label, mixed $name, ?string $title = null, string|bool|null $check=null, mixed $inc_days=0, 
+	?int $inc_months=0, ?int $inc_years=0, ?string $params=null, bool $submit_on_change=false): void
 {
 	global $path_to_root, $Ajax;
 
@@ -734,7 +734,7 @@ function file_row(mixed $label, mixed $name, mixed $id = ""): void
  	'supplier' - supplier id
  	'branch' - branch_code
 */
-function ref_cells(?string $label, mixed $name, mixed $title=null, mixed $init=null, ?string $params=null, mixed $submit_on_change=false, mixed $type=null, mixed $context=null): void
+function ref_cells(?string $label, ?string $name, ?string $title=null, mixed $init=null, ?string $params=null, string|bool|null $submit_on_change=false, mixed $type=null, mixed $context=null): void
 {
 	global $Ajax, $Refs;
 
@@ -783,7 +783,7 @@ function ref_cells(?string $label, mixed $name, mixed $title=null, mixed $init=n
 
 //-----------------------------------------------------------------------------------
 
-function ref_row(?string $label, ?string $name, ?string $title=null, mixed $init=null, string|bool|null $submit_on_change=false, mixed $type=null, mixed $context = null): void
+function ref_row(?string $label, ?string $name, ?string $title=null, mixed $init=null, string|bool|null $submit_on_change=false, mixed $type=null, string|array|null $context = null): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	ref_cells(null, $name, $title, $init, null, $submit_on_change, $type, $context);
@@ -844,7 +844,7 @@ function amount_cells_ex(mixed $label, mixed $name, ?int $size, ?int $max=null, 
 
 //-----------------------------------------------------------------------------------
 
-function amount_cells(mixed $label, mixed $name, mixed $init=null, mixed $params=null, mixed $post_label=null, mixed $dec=null): void
+function amount_cells(mixed $label, ?string $name, mixed $init=null, string|int|null $params=null, mixed $post_label=null, mixed $dec=null): void
 {
 	amount_cells_ex($label, $name, 15, 15, $init, $params, $post_label, $dec);
 }
@@ -865,7 +865,7 @@ function amount_row(mixed $label, ?string $name, mixed $init=null, ?string $para
 	echo "</tr>\n";
 }
 
-function small_amount_row(mixed $label, mixed $name, mixed $init=null, ?string $params=null, ?string $post_label=null, mixed $dec=null): void
+function small_amount_row(?string $label, ?string $name, string|int|array|null $init=null, ?string $params=null, ?string $post_label=null, mixed $dec=null): void
 {
 	echo "<tr>";
 	small_amount_cells($label, $name, $init, $params, $post_label, $dec);
@@ -920,7 +920,7 @@ function small_qty_cells(mixed $label, ?string $name, ?string $init=null, mixed 
 
 //-----------------------------------------------------------------------------------
 
-function textarea_cells(mixed $label, mixed $name, mixed $value, mixed $cols, mixed $rows, mixed $max=255, mixed $title = null, mixed $params=""): void
+function textarea_cells(mixed $label, mixed $name, mixed $value, mixed $cols, mixed $rows, ?int $max=255, ?string $title = null, ?string $params=""): void
 {
   	global $Ajax;
 
@@ -1027,7 +1027,7 @@ function bank_balance_row(mixed $bank_acc, ?string $parms=''): void
 		."</a>", $parms);
 }
 
-function ahref(mixed $label, mixed $href, mixed $target="", mixed $onclick=""): void {
+function ahref(?string $label, ?string $href, ?string $target="", ?string $onclick=""): void {
   echo "<a href='$href' target='$target' onclick='$onclick'>$label</a>";
 }
 

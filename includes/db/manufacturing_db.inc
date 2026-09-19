@@ -130,7 +130,7 @@ function get_demand_asm_qty(mixed $stock_id, mixed $location)
 /**
  * @return 0|null|string
  */
-function get_on_porder_qty(mixed $stock_id, mixed $location)
+function get_on_porder_qty(mixed $stock_id, string|array|null $location)
 {
 	$sql = "SELECT SUM(line.quantity_ordered - line.quantity_received) AS qoo
 		FROM ".TB_PREF."purch_order_details line 
@@ -156,7 +156,7 @@ function get_on_porder_qty(mixed $stock_id, mixed $location)
 /**
  * @return float(0)|null|string
  */
-function get_on_worder_qty(mixed $stock_id, mixed $location)
+function get_on_worder_qty(mixed $stock_id, string|array|null $location)
 {
  	$qoo = 0.0;
 	$flag = get_mb_flag($stock_id);
@@ -182,7 +182,7 @@ function get_on_worder_qty(mixed $stock_id, mixed $location)
 
 //--------------------------------------------------------------------------------------
 
-function add_bom(mixed $selected_parent, string|array|null $component, string|array|null $workcentre_added, string|array|null $loc_code, mixed $quantity): void
+function add_bom(mixed $selected_parent, string|array|null $component, string|array|null $workcentre_added, string|array|null $loc_code, int|float|bool|null $quantity): void
 {
 	$sql = "INSERT INTO ".TB_PREF."bom (parent, component, workcentre_added, loc_code, quantity)
 		VALUES (".db_escape($selected_parent).", ".db_escape($component) . ","
@@ -193,7 +193,7 @@ function add_bom(mixed $selected_parent, string|array|null $component, string|ar
 }
 //--------------------------------------------------------------------------------------
 
-function update_bom(mixed $selected_parent, mixed $selected_component, string|array|null $workcentre_added, string|array|null $loc_code, mixed $quantity): void
+function update_bom(mixed $selected_parent, mixed $selected_component, string|array|null $workcentre_added, string|array|null $loc_code, int|float|bool|null $quantity): void
 {
 	$sql = "UPDATE ".TB_PREF."bom SET workcentre_added=".db_escape($workcentre_added)
 	 . ",loc_code=".db_escape($loc_code) . ",
@@ -274,7 +274,7 @@ function is_component_already_on_bom(string|array|null $component, string|array|
 
 //--------------------------------------------------------------------------------------
 
-function check_for_recursive_bom(mixed $ultimate_parent, mixed $component_to_check): int
+function check_for_recursive_bom(mixed $ultimate_parent, string|array|null $component_to_check): int
 {
 
 	/* returns true ie 1 if the bom contains the parent part as a component

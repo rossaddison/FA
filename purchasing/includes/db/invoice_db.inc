@@ -530,7 +530,7 @@ function read_supp_invoice(mixed $trans_no, mixed $trans_type, &$supp_trans)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_matching_invoice_item(mixed $stock_id, mixed $po_item_id)
+function get_matching_invoice_item(?string $stock_id, ?string $po_item_id)
 {
 	$sql = "SELECT *, tran_date
 		FROM ".TB_PREF."supp_invoice_items,"
@@ -659,7 +659,7 @@ function get_gl_account_info(mixed $acc)
 	return db_query($sql,"get account information");
 }
 
-function is_reference_already_there(mixed $supplier_id, mixed $supp_reference, mixed $trans_no=0): bool
+function is_reference_already_there(mixed $supplier_id, string|array|null $supp_reference, mixed $trans_no=0): bool
 {
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."supp_trans WHERE supplier_id="
 		.db_escape($supplier_id) . " AND supp_reference=" 

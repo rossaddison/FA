@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_item_price(mixed $stock_id, string|array|null $sales_type_id, mixed $curr_abrev, mixed $price): void
+function add_item_price(mixed $stock_id, string|array|null $sales_type_id, mixed $curr_abrev, int|float|bool|null $price): void
 {
 	$sql = "INSERT INTO ".TB_PREF."prices (stock_id, sales_type_id, curr_abrev, price) 
 		VALUES (".db_escape($stock_id).", ".db_escape($sales_type_id)
@@ -18,7 +18,7 @@ function add_item_price(mixed $stock_id, string|array|null $sales_type_id, mixed
 	db_query($sql,"an item price could not be added");
 }
 
-function update_item_price(mixed $price_id, string|array|null $sales_type_id, mixed $curr_abrev, mixed $price): void
+function update_item_price(mixed $price_id, string|array|null $sales_type_id, mixed $curr_abrev, int|float|bool|null $price): void
 {
 	$sql = "UPDATE ".TB_PREF."prices SET sales_type_id=".db_escape($sales_type_id).", 
 		curr_abrev=".db_escape($curr_abrev).", 

@@ -9,14 +9,14 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_sales_type(mixed $name, int|array|null $tax_included, mixed $factor): void
+function add_sales_type(mixed $name, int|array|null $tax_included, int|float|bool|null $factor): void
 {
 	$sql = "INSERT INTO ".TB_PREF."sales_types (sales_type,tax_included,factor) VALUES (".db_escape($name).","
 		.db_escape($tax_included).",".db_escape($factor).")";
 	db_query($sql, "could not add sales type");		
 }
 
-function update_sales_type(mixed $id, mixed $name, int|array|null $tax_included, mixed $factor): void
+function update_sales_type(mixed $id, mixed $name, int|array|null $tax_included, int|float|bool|null $factor): void
 {
 
 	$sql = "UPDATE ".TB_PREF."sales_types SET sales_type = ".db_escape($name).",

@@ -178,7 +178,7 @@ function add_grn_batch(mixed $po_number, mixed $supplier_id, mixed $reference, m
 
 //-------------------------------------------------------------------------------------------------------------
 
-function add_grn_detail_item(mixed $grn_batch_id, mixed $po_detail_item, mixed $item_code, mixed $description, mixed $standard_unit_cost,
+function add_grn_detail_item(string|int|null $grn_batch_id, mixed $po_detail_item, mixed $item_code, mixed $description, mixed $standard_unit_cost,
 	mixed $quantity_received, mixed $price, mixed $quantity): int|string
 {
 	$sql = "UPDATE ".TB_PREF."purch_order_details
@@ -214,14 +214,14 @@ function get_grn_batch_from_item(mixed $item)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_grn_batch(mixed $grn)
+function get_grn_batch(?string $grn)
 {
 	$sql = "SELECT * FROM ".TB_PREF."grn_batch WHERE id=".db_escape($grn);
 	$result = db_query($sql, "Could not retreive GRN batch id");
 	return db_fetch($result);
 }
 
-function set_grn_item_credited(&$entered_grn, mixed $supplier, mixed $transno, mixed $date, mixed $taxfree_line): void
+function set_grn_item_credited(&$entered_grn, mixed $supplier, int|float|null $transno, mixed $date, mixed $taxfree_line): void
 {
 	$mcost = update_average_material_cost($supplier, $entered_grn->item_code,
 		$taxfree_line, $entered_grn->this_quantity_inv, $date);
@@ -318,7 +318,7 @@ function get_grn_items(mixed $grn_batch_id=0, mixed $supplier_id="", bool $outst
 /**
  * @return array<array-key, null|string>|false
  */
-function get_grn_item_detail(mixed $grn_item_no)
+function get_grn_item_detail(string|int|null $grn_item_no)
 {
 	$sql = "SELECT grn.*, po.unit_price, grn.qty_recd - grn.quantity_inv AS QtyOstdg,
     		po.std_cost_unit

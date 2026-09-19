@@ -108,7 +108,7 @@ function add_gl_balance(mixed $type, mixed $trans_id, mixed $date_, mixed $amoun
  */
 function get_gl_transactions(string|array|null $from_date, mixed $to_date, ?int $trans_no=0,
     mixed $account=null, string|int|array|null $dimension=0, string|int|array|null $dimension2=0, string|array|null $filter_type=null,
-        mixed $amount_min=null, mixed $amount_max=null, mixed $person_type=null, mixed $person_id=null, string|array|null $memo='')
+        int|float|bool|null $amount_min=null, int|float|bool|null $amount_max=null, mixed $person_type=null, mixed $person_id=null, string|array|null $memo='')
 {
     global $SysPrefs;
 
@@ -223,7 +223,7 @@ function get_gl_trans(mixed $type, mixed $trans_id)
 /**
  * @return bool|mysqli_result
  */
-function get_gl_wo_cost_trans(mixed $trans_id, mixed $cost_type=-1, bool $all_gl=false)
+function get_gl_wo_cost_trans(mixed $trans_id, ?int $cost_type=-1, bool $all_gl=false)
 {
 	$sql = "SELECT costing.*, gl.*, chart.account_name, com.memo_
 		FROM "
@@ -285,7 +285,7 @@ function get_gl_wo_productions(mixed $trans_id, bool $all_gl=false)
 	return db_query($sql, "The gl transactions could not be retrieved");
 }
 
-function get_gl_balance_from_to(?string $from_date, mixed $to_date, mixed $account, mixed $dimension=0, mixed $dimension2=0): float
+function get_gl_balance_from_to(?string $from_date, mixed $to_date, string|array|null $account, mixed $dimension=0, mixed $dimension2=0): float
 {
 	$from = date2sql($from_date);
 	$to = date2sql($to_date);
@@ -335,7 +335,7 @@ function get_gl_trans_from_to(mixed $from_date, mixed $to_date, mixed $account, 
 /**
  * @return array<array-key, null|string>|false
  */
-function get_balance(mixed $account, mixed $dimension, mixed $dimension2, mixed $from, mixed $to, bool $from_incl=true, bool $to_incl=true) 
+function get_balance(?string $account, mixed $dimension, mixed $dimension2, mixed $from, mixed $to, bool $from_incl=true, bool $to_incl=true) 
 {
 	$from_date = date2sql($from);
 	$to_date = date2sql($to);
@@ -400,7 +400,7 @@ function exists_gl_budget(string|int|null $date_, mixed $account, mixed $dimensi
     return (db_num_rows($result) > 0);
 }
 
-function add_update_gl_budget_trans(mixed $date_, mixed $account, mixed $dimension, mixed $dimension2, mixed $amount): void
+function add_update_gl_budget_trans(mixed $date_, mixed $account, mixed $dimension, mixed $dimension2, int|float|bool|null $amount): void
 {
 	$date = date2sql($date_);
 
@@ -631,8 +631,8 @@ function clear_gl_trans(mixed $type, mixed $trans_id, mixed $nested=false): void
 /**
  * @return non-falsy-string
  */
-function get_sql_for_journal_inquiry(mixed $filter, mixed $from, mixed $to, mixed $ref='', mixed $memo='', int|bool|array|null $alsoclosed=false,
-         mixed $user_id=null): string
+function get_sql_for_journal_inquiry(string|int|array|null $filter, string|array|null $from, string|array|null $to, string|array|null $ref='', string|array|null $memo='', int|bool|array|null $alsoclosed=false,
+         string|array|null $user_id=null): string
 {
     $sql = "SELECT  IFNULL(a.gl_seq,0) as gl_seq,
         gl.tran_date,

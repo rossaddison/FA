@@ -103,7 +103,7 @@ function check_csrf_token(): bool
 	return true;
 }
 
-function start_table(mixed $class=false, mixed $extra="", mixed $padding='2', mixed $spacing='0'): void
+function start_table(mixed $class=false, mixed $extra="", string|int|null $padding='2', ?string $spacing='0'): void
 {
 	echo "<center><table";
 	if ($class == TABLESTYLE_NOBORDER)
@@ -268,7 +268,7 @@ function viewer_link(mixed $label, ?string $url='', mixed $class='', mixed $id='
  return $preview_str;
 }
 
-function menu_link(mixed $url, mixed $label, mixed $id=null): string
+function menu_link(?string $url, mixed $label, mixed $id=null): string
 {
 	global $path_to_root;
 
@@ -292,13 +292,13 @@ function submenu_view(?string $title, ?int $type, mixed $number, mixed $id=null)
 	display_note(get_trans_view_str($type, $number, $title, false, 'viewlink', $id), 0, 1);
 }
 
-function submenu_print(?string $title, mixed $type, mixed $number, ?string $id=null, ?int $email=0, ?int $extra=0): void
+function submenu_print(?string $title, string|int|null $type, mixed $number, ?string $id=null, ?int $email=0, ?int $extra=0): void
 {
 	display_note(print_document_link($number, $title, true, $type, false, 'printlink', $id, $email, $extra), 0, 1);
 }
 //-----------------------------------------------------------------------------------
 
-function hyperlink_params(mixed $target, mixed $label, mixed $params, bool $center=true): void
+function hyperlink_params(mixed $target, ?string $label, ?string $params, bool $center=true): void
 {
 	$id = default_focus();
 	

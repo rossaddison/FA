@@ -14,7 +14,7 @@ include_once($path_to_root . "/includes/ui/items_cart.inc");
 
 //--------------------------------------------------------------------------------
 
-function add_to_order(&$order, mixed $new_item, mixed $new_item_qty, mixed $standard_cost): void
+function add_to_order(&$order, string|array|null $new_item, mixed $new_item_qty, string|int|float|bool|array|null $standard_cost): void
 {
 	$kit = get_item_kit($new_item);
 	foreach($kit as $item) {

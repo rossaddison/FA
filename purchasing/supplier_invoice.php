@@ -249,7 +249,7 @@ if (isset($_POST['PostInvoice']))
 	handle_commit_invoice();
 }
 
-function check_item_data(mixed $n): bool
+function check_item_data(string|int|null $n): bool
 {
 	global $SysPrefs;
 

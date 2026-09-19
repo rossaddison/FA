@@ -30,7 +30,7 @@ print_payment_report();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(mixed $supplier, mixed $date)
+function getTransactions(string|int|array|null $supplier, string|array|null $date)
 {
 	$date = date2sql($date);
 	$dec = user_price_dec();

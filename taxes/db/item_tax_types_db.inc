@@ -95,7 +95,7 @@ function delete_item_tax_type(mixed $id): void
 	commit_transaction();	
 }
 
-function add_item_tax_type_exemptions(mixed $id, mixed $exemptions): void
+function add_item_tax_type_exemptions(mixed $id, ?array $exemptions): void
 {
 	for ($i = 0; $i < count($exemptions); $i++) 
 	{
@@ -122,7 +122,7 @@ function get_item_tax_type_exemptions(mixed $id)
 	return db_query($sql, "could not get item tax type exemptions");
 }
 
-function item_type_inactive(mixed $id)
+function item_type_inactive(string|array|null $id)
 {
 	$type = get_item_tax_type($id);
 	return @$type['inactive'];

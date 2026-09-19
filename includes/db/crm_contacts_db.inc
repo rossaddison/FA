@@ -200,7 +200,7 @@ function delete_entity_contacts(?string $class, mixed $entity): void
 
 //-----------------------------------------------------------------------------------------------
 
-function add_crm_category(mixed $type, mixed $action, mixed $name, mixed $description): void
+function add_crm_category(string|array|null $type, string|array|null $action, string|array|null $name, string|array|null $description): void
 {
 	$sql = "INSERT INTO ".TB_PREF."crm_categories (type, action, name, description)
 		VALUES (".db_escape($type) . ", "
@@ -211,7 +211,7 @@ function add_crm_category(mixed $type, mixed $action, mixed $name, mixed $descri
    	db_query($sql,"The insert of the crm category failed");
 }
 
-function update_crm_category(mixed $selected_id, mixed $type, mixed $action, mixed $name, mixed $description): void
+function update_crm_category(mixed $selected_id, string|array|null $type, string|array|null $action, string|array|null $name, string|array|null $description): void
 {
 	$sql = "UPDATE ".TB_PREF."crm_categories SET ";
 	if ($type)

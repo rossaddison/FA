@@ -230,7 +230,7 @@ function read_po_header(mixed $order_no, &$order): bool
 
 //----------------------------------------------------------------------------------------
 
-function read_po_items(mixed $order_no, &$order, mixed $open_items_only=false): void
+function read_po_items(mixed $order_no, &$order, bool $open_items_only=false): void
 {
 	/*now populate the line po array with the purchase order details records */
 
@@ -315,8 +315,8 @@ function get_short_info(string|array|null $stock_id)
 /**
  * @return non-falsy-string
  */
-function get_sql_for_po_search_completed(mixed $from, mixed $to, mixed $supplier_id=ALL_TEXT, mixed $location=ALL_TEXT,
-	mixed $order_number = '', mixed $stock_id = '', mixed $also_closed=false): string
+function get_sql_for_po_search_completed(string|array|null $from, string|array|null $to, mixed $supplier_id=ALL_TEXT, mixed $location=ALL_TEXT,
+	string|array|null $order_number = '', string|array|null $stock_id = '', string|bool|array|null $also_closed=false): string
 {
 	$sql = "SELECT 
 		porder.order_no, 
@@ -378,7 +378,7 @@ function get_sql_for_po_search_completed(mixed $from, mixed $to, mixed $supplier
 	return $sql;
 }
 
-function get_sql_for_po_search(mixed $from, mixed $to, mixed $supplier_id=ALL_TEXT, mixed $location=ALL_TEXT, mixed $order_number='', mixed $stock_id=''): string
+function get_sql_for_po_search(string|array|null $from, string|array|null $to, mixed $supplier_id=ALL_TEXT, mixed $location=ALL_TEXT, mixed $order_number='', string|array|null $stock_id=''): string
 {
 	$sql = "SELECT 
 		porder.order_no, 

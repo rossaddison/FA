@@ -229,7 +229,7 @@ function delete_link(mixed $row): string
   	return button('Delete'.(string)$row["id"], _("Delete"), _("Delete"), ICON_DELETE);
 }
 
-function display_rows(mixed $type, mixed $trans_no): void
+function display_rows(string|array|null $type, string|array|null $trans_no): void
 {
 	$sql = get_sql_for_attached_documents($type, $type==ST_SUPPLIER || $type==ST_CUSTOMER || $type==ST_BANKACCOUNT ? $trans_no : 
 		($type==ST_ITEM || $type==ST_FIXEDASSET ? get_item_code_id($trans_no) : 0));

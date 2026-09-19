@@ -53,7 +53,7 @@ function get_sales_group(mixed $selected_id)
 /**
  * @return false|null|string
  */
-function get_sales_group_name(mixed $group_no)
+function get_sales_group_name(?string $group_no)
 {
 	$sql = "SELECT description FROM `".TB_PREF."groups` WHERE id = ".db_escape($group_no);
 	$result = db_query($sql, "could not get group");
@@ -114,7 +114,7 @@ function get_area_name(string|array|null $id)
 }
 
 function add_salesman(mixed $salesman_name, mixed $salesman_phone, mixed $salesman_fax,
-	mixed $salesman_email, mixed $provision, mixed $break_pt, mixed $provision2): void
+	mixed $salesman_email, int|float|bool|null $provision, int|float|bool|null $break_pt, int|float|bool|null $provision2): void
 {
 	$sql = "INSERT INTO ".TB_PREF."salesman (salesman_name, salesman_phone, salesman_fax, salesman_email,
 		provision, break_pt, provision2)
@@ -128,7 +128,7 @@ function add_salesman(mixed $salesman_name, mixed $salesman_phone, mixed $salesm
 }
 
 function update_salesman(mixed $selected_id, mixed $salesman_name, mixed $salesman_phone, mixed $salesman_fax,
-	mixed $salesman_email, mixed $provision, mixed $break_pt, mixed $provision2): void
+	mixed $salesman_email, int|float|bool|null $provision, int|float|bool|null $break_pt, int|float|bool|null $provision2): void
 {
 	$sql = "UPDATE ".TB_PREF."salesman SET salesman_name=".db_escape($salesman_name) . ",
 		salesman_phone=".db_escape($salesman_phone) . ",

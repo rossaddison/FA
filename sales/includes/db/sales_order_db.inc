@@ -480,8 +480,8 @@ function get_branch_to_order(mixed $customer_id, mixed $branch_id) {
 /**
  * @return non-falsy-string
  */
-function get_sql_for_sales_orders_view(mixed $trans_type, mixed $trans_no, mixed $filter, 
-	mixed $stock_item='', mixed $from='', mixed $to='', mixed $ref='', mixed $location=ALL_TEXT, mixed $customer_id=ALL_TEXT, int|array|null $show_voided = 0, mixed $by_delivery=0, mixed $no_auto=0): string
+function get_sql_for_sales_orders_view(mixed $trans_type, string|array|null $trans_no, string|array|null $filter, 
+	string|array|null $stock_item='', string|array|null $from='', string|array|null $to='', string|array|null $ref='', mixed $location=ALL_TEXT, mixed $customer_id=ALL_TEXT, int|array|null $show_voided = 0, string|int|array|null $by_delivery=0, string|int|array|null $no_auto=0): string
 {
     if ($filter=='OutstandingOnly')
         $order_value = 'Sum(line.unit_price*(line.quantity-line.qty_sent)*(1-line.discount_percent))+freight_cost';

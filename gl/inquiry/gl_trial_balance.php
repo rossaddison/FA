@@ -69,7 +69,7 @@ function gl_inquiry_controls(): void
 
 //----------------------------------------------------------------------------------------------------
 
-function display_trial_balance(mixed $type, mixed $typename): void
+function display_trial_balance(?string $type, ?string $typename): void
 {
 	global $path_to_root, $SysPrefs,
 		 $k, $pdeb, $pcre, $cdeb, $ccre, $tdeb, $tcre, $pbal, $cbal, $tbal;

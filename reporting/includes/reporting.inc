@@ -14,8 +14,8 @@
 // or display_note(print_document_link($order_no, _("Print this order")));
 // You only need full parameter list for invoices/credit notes
 
-function print_document_link(mixed $doc_no, mixed $link_text, bool $link, mixed $type_no, 
-	string|bool|null $icon=false, ?string $class='printlink', mixed $id='', mixed $email=0, mixed $extra=0)
+function print_document_link(mixed $doc_no, ?string $link_text, bool $link, mixed $type_no, 
+	string|bool|null $icon=false, ?string $class='printlink', ?string $id='', ?int $email=0, ?int $extra=0)
 {
 	global $path_to_root;
 	include_once($path_to_root . "/includes/types.inc");
@@ -140,7 +140,7 @@ function print_document_link(mixed $doc_no, mixed $link_text, bool $link, mixed 
  * @return non-empty-string
  */
 function print_link(mixed $link_text, ?int $rep, ?array $pars = array(), ?string $dir = '', 
-	mixed $icon=false, mixed $class='printlink', mixed $id=''): string
+	string|bool|null $icon=false, ?string $class='printlink', mixed $id=''): string
 {
 	global $path_to_root, $SysPrefs;
 	$url = $dir == '' ?  $path_to_root.'/reporting/prn_redirect.php?' : $dir;

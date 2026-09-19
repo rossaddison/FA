@@ -37,7 +37,7 @@ if (isset($_GET['ToDate'])){
 
 //------------------------------------------------------------------------------------------------
 
-function display_supplier_summary(mixed $supplier_record): void
+function display_supplier_summary(bool|array|null $supplier_record): void
 {
 	$past1 = get_company_pref('past_due_days');
 	$past2 = 2 * $past1;

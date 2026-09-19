@@ -12,7 +12,7 @@
 require_once($path_to_root. "/admin/db/attachments_db.inc");
 
 function add_supplier(string|array|null $supp_name, string|array|null $supp_ref, string|array|null $address, string|array|null $supp_address, string|array|null $gst_no,
-	string|array|null $website, string|array|null $supp_account_no, string|array|null $bank_account, mixed $credit_limit, string|array|null $dimension_id, string|array|null $dimension2_id, 
+	string|array|null $website, string|array|null $supp_account_no, string|array|null $bank_account, int|float|bool|null $credit_limit, string|array|null $dimension_id, string|array|null $dimension2_id, 
 	string|array|null $curr_code, string|array|null $payment_terms, string|array|null $payable_account, string|array|null $purchase_account, string|array|null $payment_discount_account, 
 	string|array|null $notes, string|array|null $tax_group_id, int|array|null $tax_included): void
 {
@@ -44,7 +44,7 @@ function add_supplier(string|array|null $supp_name, string|array|null $supp_ref,
 }
 
 function update_supplier(string|array|null $supplier_id, string|array|null $supp_name, string|array|null $supp_ref, string|array|null $address, string|array|null $supp_address, string|array|null $gst_no, 
-	string|array|null $website, string|array|null $supp_account_no, string|array|null $bank_account, mixed $credit_limit, string|array|null $dimension_id, string|array|null $dimension2_id, 
+	string|array|null $website, string|array|null $supp_account_no, string|array|null $bank_account, int|float|bool|null $credit_limit, string|array|null $dimension_id, string|array|null $dimension2_id, 
 	string|array|null $curr_code, string|array|null $payment_terms, string|array|null $payable_account, string|array|null $purchase_account, string|array|null $payment_discount_account, 
 	string|array|null $notes, string|array|null $tax_group_id, int|array|null $tax_included): void
 {
@@ -86,7 +86,7 @@ function delete_supplier(mixed $supplier_id): void
 /**
  * @return array<array-key, null|string>|false
  */
-function get_supplier_details(mixed $supplier_id, mixed $to=null, string|bool|array|null $all=true)
+function get_supplier_details(mixed $supplier_id, string|array|null $to=null, string|bool|array|null $all=true)
 {
 
 	if ($to == null)
@@ -174,7 +174,7 @@ function get_supplier_accounts(mixed $supplier_id)
 	return db_fetch($result);
 }
 
-function get_supplier_contacts(mixed $supplier_id, ?string $action=null): array
+function get_supplier_contacts(?string $supplier_id, ?string $action=null): array
 {
 	$results = array();
 	$res = get_crm_persons('supplier', $action, $supplier_id);
@@ -211,7 +211,7 @@ function get_supplier_currency(mixed $supplier_id)
 /**
  * @return bool|mysqli_result
  */
-function get_suppliers_search(mixed $supplier)
+function get_suppliers_search(string|array|null $supplier)
 {
 	global $SysPrefs;
 

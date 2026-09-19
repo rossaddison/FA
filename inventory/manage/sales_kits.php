@@ -59,7 +59,7 @@ function display_kit_items(mixed $selected_kit): void
 
 //--------------------------------------------------------------------------------------------------
 
-function update_kit(mixed $selected_kit, mixed $component_id)
+function update_kit(string|array|null $selected_kit, mixed $component_id)
 {
 	global $Mode, $Ajax;
 

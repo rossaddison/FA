@@ -32,7 +32,7 @@ print_inventory_sales();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(mixed $category, mixed $location, string|array|null $fromcust, string|array|null $from, string|array|null $to, string|array|null $show_service)
+function getTransactions(string|int|array|null $category, string|array|null $location, string|array|null $fromcust, string|array|null $from, string|array|null $to, string|array|null $show_service)
 {
 	$from = date2sql($from);
 	$to = date2sql($to);

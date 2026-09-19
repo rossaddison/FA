@@ -165,7 +165,7 @@ function update_tag_associations(?int $type, mixed $recordid, mixed $tagids): vo
 // To delete tag associations, we need to specify the tag type.
 // Otherwise we may inadvertantly delete records for another type of tag
 //
-function delete_tag_associations(mixed $type, mixed $recordid, bool $all=false): void
+function delete_tag_associations(?int $type, mixed $recordid, bool $all=false): void
 {
 /* multiply table DELETE syntax available since MySQL 4.0.0:
 	$sql = "DELETE ta FROM ".TB_PREF."tag_associations ta 
@@ -233,7 +233,7 @@ function get_tags_associated_with_record(?int $type, mixed $recordid)
 
 //--------------------------------------------------------------------------------------
 
-function is_record_in_tags(?array $tags, ?int $type, mixed $recordid): bool
+function is_record_in_tags(?array $tags, ?int $type, ?string $recordid): bool
 {
 	foreach($tags as $id)
 	{

@@ -70,7 +70,7 @@ function fetch_items(string|int|array|null $category=0)
 /**
  * @return null|string
  */
-function trans_qty(mixed $stock_id, string|array|null $location, string|array|null $from_date, string|array|null $to_date, bool $inward = true)
+function trans_qty(?string $stock_id, string|array|null $location, string|array|null $from_date, string|array|null $to_date, bool $inward = true)
 {
 	if ($from_date == null)
 		$from_date = Today();
@@ -103,7 +103,7 @@ function trans_qty(mixed $stock_id, string|array|null $location, string|array|nu
 
 }
 
-function avg_unit_cost(mixed $stock_id, string|array|null $location, string|array|null $to_date)
+function avg_unit_cost(?string $stock_id, string|array|null $location, string|array|null $to_date)
 {
 	if ($to_date == null)
 		$to_date = Today();
@@ -145,7 +145,7 @@ function avg_unit_cost(mixed $stock_id, string|array|null $location, string|arra
 
 //----------------------------------------------------------------------------------------------------
 
-function trans_qty_unit_cost(mixed $stock_id, string|array|null $location, string|array|null $from_date, string|array|null $to_date, bool $inward = true)
+function trans_qty_unit_cost(?string $stock_id, string|array|null $location, string|array|null $from_date, string|array|null $to_date, bool $inward = true)
 {
 	if ($from_date == null)
 		$from_date = Today();

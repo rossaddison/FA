@@ -31,7 +31,7 @@ print_bill_of_material();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(mixed $from, mixed $to)
+function getTransactions(string|int|array|null $from, string|array|null $to)
 {
 	$sql = "SELECT bom.parent,
 			bom.component,

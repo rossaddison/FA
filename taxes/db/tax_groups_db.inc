@@ -72,7 +72,7 @@ function delete_tax_group(mixed $id): void
 	commit_transaction();
 }
 
-function add_tax_group_items(mixed $id, mixed $items, mixed $tax_shippings): void
+function add_tax_group_items(mixed $id, ?array $items, ?array $tax_shippings): void
 {
 	for ($i=0; $i < count($items); $i++) 
 	{

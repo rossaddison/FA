@@ -323,7 +323,7 @@ function get_sales_child_lines(mixed $trans_type, mixed $trans_no, bool $lines=t
 	return db_query($sql, "can't retrieve child trans");
 }
 
-function get_sales_child_numbers(mixed $trans_type, mixed $trans_no): array
+function get_sales_child_numbers(?int $trans_type, mixed $trans_no): array
 {
 	$trans = array();
 	$res = get_sales_child_lines($trans_type, $trans_no, false);

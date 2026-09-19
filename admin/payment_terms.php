@@ -22,7 +22,7 @@ simple_page_mode(true);
 //------------------------------
 //	Helper to translate record content to more intuitive form
 //
-function term_days(mixed $myrow)
+function term_days(bool|array|null $myrow)
 {
 	return $myrow["day_in_following_month"] != 0 ? $myrow["day_in_following_month"] :
 		$myrow["days_before_due"];
@@ -31,7 +31,7 @@ function term_days(mixed $myrow)
 /**
  * @return 1|2|3|4
  */
-function term_type(mixed $myrow): int
+function term_type(bool|array|null $myrow): int
 {
 	if ($myrow["day_in_following_month"] != 0)
 		return PTT_FOLLOWING;

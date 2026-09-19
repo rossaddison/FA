@@ -840,7 +840,7 @@ function order_sql_tables(?array $tables, ?array $fks)
 
 // saves the string in $fileData to the file $backupfile as gz file or not ($zip)
 // returns backup file name if name has changed (zip), else TRUE. If saving failed, return value is FALSE
-function save_to_file(mixed $path, mixed $zip, ?string $fileData): bool
+function save_to_file(?string $path, mixed $zip, ?string $fileData): bool
 {
 
 	$backupfile = basename($path);

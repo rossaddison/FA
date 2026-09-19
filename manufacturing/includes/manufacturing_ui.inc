@@ -83,7 +83,7 @@ function display_bom(mixed $item_check): void
 
 //--------------------------------------------------------------------------------------
 
-function display_wo_requirements(mixed $woid, mixed $quantity, bool $show_qoh=false, mixed $date=null): void
+function display_wo_requirements(mixed $woid, ?string $quantity, bool $show_qoh=false, mixed $date=null): void
 {
 	global $SysPrefs;
 

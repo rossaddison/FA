@@ -21,7 +21,7 @@ function pager_link(?string $link_text, ?string $url, string|bool|null $icon=fal
 	return "<a href='$href'>" . $link_text . "</a>";
 }
 
-function navi_button(mixed $name, mixed $value, mixed $enabled=true, string|bool|null $icon = false): string {
+function navi_button(?string $name, mixed $value, mixed $enabled=true, string|bool|null $icon = false): string {
 	global $path_to_root;
   	return "<button ". ($enabled ? '':'disabled')
   		." class=\"navibutton\" type=\"submit\""

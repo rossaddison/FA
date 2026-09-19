@@ -14,8 +14,8 @@ require_once($path_to_root. "/admin/db/attachments_db.inc");
 /*
 	Common entry procedure for all work order types
 */
-function add_work_order(mixed $wo_ref, mixed $loc_code, mixed $units_reqd, mixed $stock_id,
-	mixed $type, mixed $date_, mixed $required_by, mixed $memo_, mixed $costs, mixed $cr_acc, mixed $labour, mixed $cr_lab_acc): int|string
+function add_work_order(mixed $wo_ref, mixed $loc_code, int|float|bool|null $units_reqd, mixed $stock_id,
+	mixed $type, mixed $date_, mixed $required_by, mixed $memo_, int|float|bool|null $costs, mixed $cr_acc, int|float|bool|null $labour, mixed $cr_lab_acc): int|string
 {
 	global $Refs;
 
@@ -73,7 +73,7 @@ function add_work_order(mixed $wo_ref, mixed $loc_code, mixed $units_reqd, mixed
 
 //--------------------------------------------------------------------------------------
 
-function update_work_order(mixed $woid, mixed $loc_code, mixed $units_reqd, mixed $stock_id,
+function update_work_order(mixed $woid, mixed $loc_code, int|float|bool|null $units_reqd, mixed $stock_id,
 					mixed $date_, mixed $required_by, mixed $memo_): void
 {
 	begin_transaction();
@@ -215,7 +215,7 @@ function close_work_order(mixed $woid): void
 
 //--------------------------------------------------------------------------------------
 
-function work_order_is_closed(mixed $woid): bool
+function work_order_is_closed(?string $woid): bool
 {
 	$sql = "SELECT closed FROM ".TB_PREF."workorders WHERE id = ".db_escape($woid);
 	$result = db_query($sql, "could not query work order");
@@ -228,7 +228,7 @@ function work_order_is_closed(mixed $woid): bool
 	Update finished items quantity in work order, and close order either if all the order is produced,
 	or on user demand. Returns calculated unit cost on close, or null otherwise.
 */
-function work_order_update_finished_quantity(mixed $woid, mixed $quantity, mixed $force_close=0): int|string
+function work_order_update_finished_quantity(mixed $woid, mixed $quantity, int|bool|null $force_close=0): int|string
 {
 
 	$sql = "UPDATE ".TB_PREF."workorders SET units_issued = units_issued + ".db_escape($quantity)."
@@ -303,7 +303,7 @@ function void_work_order(mixed $woid): void
 	commit_transaction();
 }
 
-function get_sql_for_work_orders(?int $outstanding_only, mixed $stock_id, mixed $location = ALL_TEXT, mixed $order_no='', mixed $order_ref = '', int|bool|array|null $overdue = false): string
+function get_sql_for_work_orders(?int $outstanding_only, string|array|null $stock_id, mixed $location = ALL_TEXT, string|array|null $order_no='', string|array|null $order_ref = '', int|bool|array|null $overdue = false): string
 {
 	$sql = "SELECT
 		workorder.id,
@@ -365,7 +365,7 @@ function get_sql_for_work_orders(?int $outstanding_only, mixed $stock_id, mixed 
 	return $sql;
 }
 
-function get_sql_for_where_used(mixed $stock_id): string
+function get_sql_for_where_used(string|array|null $stock_id): string
 {
 	$sql = "SELECT 
 			bom.parent,

@@ -51,7 +51,7 @@ function fetch_items(string|int|array|null $category=0)
 /**
  * @return null|string
  */
-function trans_qty(mixed $stock_id, string|array|null $location, string|array|null $from_date, string|array|null $to_date, bool $inward = true)
+function trans_qty(?string $stock_id, string|array|null $location, string|array|null $from_date, string|array|null $to_date, bool $inward = true)
 {
 	if ($from_date == null)
 		$from_date = Today();

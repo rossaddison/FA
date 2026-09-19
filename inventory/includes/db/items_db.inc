@@ -195,7 +195,7 @@ function item_in_foreign_codes(mixed $stock_id): string
 /**
  * @return bool|mysqli_result
  */
-function get_items_search(mixed $description, mixed $type)
+function get_items_search(string|array|null $description, mixed $type)
 {
 	global $SysPrefs;
 

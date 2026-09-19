@@ -54,7 +54,7 @@ if (isset($_GET["AccGrp"]))
 
 //----------------------------------------------------------------------------------------------------
 
-function display_type (mixed $type, mixed $typename, mixed $from, mixed $to, mixed $begin, mixed $end, mixed $compare, mixed $convert,
+function display_type (?string $type, ?string $typename, mixed $from, mixed $to, mixed $begin, mixed $end, mixed $compare, mixed $convert,
 	mixed $dimension, mixed $dimension2, mixed $drilldown)
 {
 	global $path_to_root, $levelptr, $k;
@@ -193,7 +193,7 @@ function inquiry_controls(): void
 
 //----------------------------------------------------------------------------------------------------
 
-function display_profit_and_loss(mixed $compare): void
+function display_profit_and_loss(string|array|null $compare): void
 {
 	global $path_to_root, $compare_types;
 

@@ -47,7 +47,7 @@ function get_requirements_costs(mixed $woid): int|string
 
 //--------------------------------------------------------------------------------------
 
-function create_wo_requirements(mixed $woid, mixed $stock_id): void
+function create_wo_requirements(mixed $woid, ?string $stock_id): void
 {
 	$sql = "INSERT INTO ".TB_PREF."wo_requirements (workorder_id, stock_id, workcentre, units_req, loc_code)
 		SELECT ".db_escape($woid).", component, workcentre_added, quantity, loc_code
@@ -69,7 +69,7 @@ function delete_wo_requirements(mixed $woid): void
 /*
 	Update total component units issued and average component cost
 */
-function update_wo_requirement_issued(mixed $id, mixed $quantity, mixed $cost): void
+function update_wo_requirement_issued(?string $id, mixed $quantity, ?string $cost): void
 {
 	$sql = "UPDATE ".TB_PREF."wo_requirements SET 
 				unit_cost = (units_issued*unit_cost+".$quantity*$cost.")/(units_issued+".$quantity."),

@@ -311,7 +311,7 @@ function post_void_customer_trans(mixed $type, mixed $type_no): void
 }
 
 //----------------------------------------------------------------------------------------
-function get_sql_for_customer_inquiry(mixed $from, mixed $to, mixed $cust_id = ALL_TEXT, mixed $filter = ALL_TEXT, int|array|null $show_voided = 0, mixed $ref=''): string
+function get_sql_for_customer_inquiry(string|array|null $from, string|array|null $to, mixed $cust_id = ALL_TEXT, mixed $filter = ALL_TEXT, int|array|null $show_voided = 0, string|array|null $ref=''): string
 {
     $date_after = date2sql($from);
     $date_to = date2sql($to);
@@ -415,7 +415,7 @@ function get_sql_for_customer_inquiry(mixed $from, mixed $to, mixed $cust_id = A
    	return $sql;
 }
 
-function get_sql_for_sales_deliveries_view(mixed $from, mixed $to, mixed $customer_id, mixed $stock_item, mixed $location, mixed $delivery, mixed $outstanding=false): string
+function get_sql_for_sales_deliveries_view(string|array|null $from, string|array|null $to, string|array|null $customer_id, string|array|null $stock_item, string|array|null $location, string|array|null $delivery, string|bool|array|null $outstanding=false): string
 {
 	$sql = "SELECT trans.trans_no,
 			debtor.name,

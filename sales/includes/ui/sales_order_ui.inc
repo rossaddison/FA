@@ -12,7 +12,7 @@
 include_once($path_to_root . "/sales/includes/cart_class.inc");
 
 //--------------------------------------------------------------------------------
-function add_to_order(&$order, mixed $new_item, mixed $new_item_qty, mixed $price, mixed $discount, mixed $description=''): void
+function add_to_order(&$order, string|array|null $new_item, mixed $new_item_qty, string|int|float|bool|array|null $price, mixed $discount, string|array|null $description=''): void
 {
 	// calculate item price to sum of kit element prices factor for 
 	// value distribution over all exploded kit items

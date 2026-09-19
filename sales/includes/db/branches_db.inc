@@ -138,7 +138,7 @@ function get_branch_name(mixed $branch_id)
 /**
  * @return bool|mysqli_result
  */
-function get_cust_branches_from_group(mixed $group_no)
+function get_cust_branches_from_group(?string $group_no)
 {
 	$sql = "SELECT branch_code, debtor_no FROM ".TB_PREF."cust_branch 
 		WHERE group_no = ".db_escape($group_no);
@@ -157,7 +157,7 @@ function get_default_info_for_branch(string|array|null $customer_id)
 	return db_fetch($result);
 }
 
-function get_sql_for_customer_branches(mixed $customer_id): string
+function get_sql_for_customer_branches(string|array|null $customer_id): string
 {
 	$sql = "SELECT "
 		."b.branch_code, "
@@ -291,7 +291,7 @@ function get_default_branch(mixed $customer_id, mixed $ar_account=null)
 /**
  * @return bool|mysqli_result
  */
-function  get_branches_search(mixed $customer, mixed $branch)
+function  get_branches_search(mixed $customer, string|array|null $branch)
 {
 	global $SysPrefs;
 

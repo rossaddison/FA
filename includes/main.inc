@@ -105,7 +105,7 @@ function cache_js_file(?string $fpath, string|bool|null $text): bool
 /**
  * @return false|null|resource
  */
-function force_open(mixed $fname)
+function force_open(?string $fname)
 {
 	$file = pathinfo($fname);
 
@@ -157,7 +157,7 @@ function add_js_source(mixed $text): void
  * Added removing comments from output.
  * Warning: Fails on RegExp with quotes - use new RegExp() in this case.
  */
-function js_compress(mixed $sJS): string|null
+function js_compress(string|bool|null $sJS): string|null
 {
 	//remove windows cariage returns
 	$sJS = str_replace("\r","",$sJS);

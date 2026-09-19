@@ -10,7 +10,7 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-function add_wo_costing(mixed $workorder_id, mixed $cost_type, ?int $trans_type, mixed $trans_no, ?int $factor=1): void
+function add_wo_costing(mixed $workorder_id, mixed $cost_type, ?int $trans_type, int|float|null $trans_no, ?int $factor=1): void
 {
 	$sql = "INSERT INTO ".TB_PREF."wo_costing (workorder_id, cost_type, trans_type, trans_no, factor)
 		VALUES (".db_escape($workorder_id).","
@@ -47,7 +47,7 @@ function delete_wo_costing(mixed $trans_type, mixed $trans_no): void
 /*
 	Updates average material cost for item.
 */
-function update_material_cost(mixed $stock_id, mixed $qty, mixed $unit_cost, mixed $date): void
+function update_material_cost(?string $stock_id, mixed $qty, mixed $unit_cost, mixed $date): void
 {
 	global $Refs;
 
@@ -161,7 +161,7 @@ function add_wo_costs_journal(mixed $wo_id, mixed $amount, mixed $cost_type, mix
 /*
 	Process component usage: generate and post stock move, update average component cost.
 */
-function work_order_production_gl(mixed $woid, mixed $stock_id, mixed $quantity, mixed $date_, string|int|null $rcv_no): void
+function work_order_production_gl(mixed $woid, ?string $stock_id, mixed $quantity, mixed $date_, string|int|null $rcv_no): void
 {
 	global $SysPrefs, $path_to_root;
 

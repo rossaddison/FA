@@ -72,7 +72,7 @@ function clear_form(): void
 	$Ajax->activate('_page_body');
 }
 
-function check_delete(mixed $name)
+function check_delete(string|array|null $name)
 {
 	// check if selected profile is used by any user
 	if ($name=='') return 0; // cannot delete system default profile
