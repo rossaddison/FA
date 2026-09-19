@@ -11,6 +11,7 @@
         <var name="Refs" type="references"/>
         <var name="systypes_array" type="array&lt;int, string&gt;"/>
         <var name="db" type="mysqli"/>
+        <var name="_SESSION" type="array{wa_current_user?: current_user, Items?: Cart, supp_trans?: supp_trans, alloc?: allocation, language?: language, SysPrefs?: sys_prefs, transfer_items?: items_cart, issue_items?: items_cart, adj_items?: items_cart, pay_items?: items_cart, journal_items?: items_cart, View?: Cart, PO?: purch_order, ...&lt;string, mixed&gt;}"/>
         <var name="db_connections" type="array&lt;int, array&lt;string, string&gt;&gt;"/>
     </globals>
     <projectFiles>
