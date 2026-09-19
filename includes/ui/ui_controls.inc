@@ -246,7 +246,7 @@ function hyperlink_no_params_td(mixed $target, mixed $label): void
 	echo "</td>\n";
 }
 
-function viewer_link(mixed $label, ?string $url='', mixed $class='', string|int|float|bool|null $id='',  mixed $icon=null)
+function viewer_link(mixed $label, ?string $url='', ?string $class='', string|int|float|bool|null $id='',  string|bool|null $icon=null)
 {
 	global $path_to_root;
 	
@@ -287,7 +287,7 @@ function submenu_option(?string $title, ?string $url, mixed $id=null): void
 	display_note( menu_link($url, $title, $id), 0, 1);
 }
 
-function submenu_view(?string $title, ?int $type, mixed $number, string|int|float|bool|null $id=null): void
+function submenu_view(?string $title, ?int $type, string|array|null $number, string|int|float|bool|null $id=null): void
 {
 	display_note(get_trans_view_str($type, $number, $title, false, 'viewlink', $id), 0, 1);
 }
@@ -298,7 +298,7 @@ function submenu_print(?string $title, string|int|null $type, mixed $number, ?st
 }
 //-----------------------------------------------------------------------------------
 
-function hyperlink_params(mixed $target, ?string $label, ?string $params, bool $center=true): void
+function hyperlink_params(?string $target, ?string $label, ?string $params, bool $center=true): void
 {
 	$id = default_focus();
 	

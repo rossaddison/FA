@@ -30,7 +30,7 @@ include_once($path_to_root . "/inventory/includes/inventory_db.inc");
 
 inventory_movements();
 
-function get_domestic_price(?array $myrow, mixed $stock_id)
+function get_domestic_price(?array $myrow, ?string $stock_id)
 {
     if ($myrow['type'] == ST_SUPPRECEIVE || $myrow['type'] == ST_SUPPCREDIT)
      {

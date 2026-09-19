@@ -54,7 +54,7 @@ function delete_recurrent_invoice(mixed $selected_id): void
 /**
  * @return bool|mysqli_result
  */
-function get_recurrent_invoices(mixed $date=null)
+function get_recurrent_invoices(?string $date=null)
 {
 	// last_sent stores end date of last generated invoice _plus_ 1 (or is empty)
 	if ($date)
@@ -97,7 +97,7 @@ function check_recurrent_invoice_description(mixed $description, mixed $id=null)
 /**
  * @return null|string
  */
-function recurrent_invoice_ready(string|int|null $selected_id, mixed $date)
+function recurrent_invoice_ready(string|int|null $selected_id, string|array|null $date)
 {
 	$date = date2sql($date);
 

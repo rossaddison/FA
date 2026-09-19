@@ -658,7 +658,7 @@ function  handle_cancel_order(): void
 
 //--------------------------------------------------------------------------------
 
-function create_cart(mixed $type, mixed $trans_no): void
+function create_cart(string|int|array|null $type, string|int|array|null $trans_no): void
 { 
 	global $Refs, $SysPrefs;
 

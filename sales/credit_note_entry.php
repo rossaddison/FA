@@ -125,7 +125,7 @@ function copy_from_cn(): void
 
 //-----------------------------------------------------------------------------
 
-function handle_new_credit(mixed $trans_no): void
+function handle_new_credit(string|int|array|null $trans_no): void
 {
 	processing_start();
 	$_SESSION['Items'] = new Cart(ST_CUSTCREDIT,$trans_no);

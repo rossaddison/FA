@@ -18,9 +18,9 @@ function clear_dflt_curr_account(mixed $curr_code): void {
 	  db_query($sql, "could not update default currency account");
 }
 
-function add_bank_account(string|int|float|bool|null $account_code, mixed $account_type, mixed $bank_account_name,
-	mixed $bank_name, mixed $bank_account_number, mixed $bank_address, mixed $bank_curr_code, 
-	mixed $dflt_curr_act, mixed $bank_charge_act): void
+function add_bank_account(string|int|float|bool|null $account_code, string|array|null $account_type, string|array|null $bank_account_name,
+	string|array|null $bank_name, string|array|null $bank_account_number, string|array|null $bank_address, string|array|null $bank_curr_code, 
+	string|array|null $dflt_curr_act, string|array|null $bank_charge_act): void
 {
 	if($dflt_curr_act) 	// only one default account for any currency
 	  clear_dflt_curr_account($bank_curr_code);
@@ -38,8 +38,8 @@ function add_bank_account(string|int|float|bool|null $account_code, mixed $accou
 
 //---------------------------------------------------------------------------------------------
 
-function update_bank_account(mixed $id, string|int|float|bool|null $account_code, mixed $account_type, mixed $bank_account_name, 
-	mixed $bank_name, mixed $bank_account_number, mixed $bank_address, mixed $bank_curr_code, mixed $dflt_curr_act, mixed $bank_charge_act): void
+function update_bank_account(mixed $id, string|int|float|bool|null $account_code, string|array|null $account_type, string|array|null $bank_account_name, 
+	string|array|null $bank_name, string|array|null $bank_account_number, string|array|null $bank_address, string|array|null $bank_curr_code, string|array|null $dflt_curr_act, string|array|null $bank_charge_act): void
 {
 	if($dflt_curr_act) 	// only one default account for any currency
 	  clear_dflt_curr_account($bank_curr_code);
@@ -275,7 +275,7 @@ function get_quick_entry_line(string|int|float|bool|null $selected_id)
 /**
  * @return bool|mysqli_result
  */
-function get_max_reconciled(string|array|null $date, mixed $bank_account)
+function get_max_reconciled(string|array|null $date, string|array|null $bank_account)
 {
 	$date = date2sql($date);
 	 // temporary fix to enable fix of invalid entries made in 2.2RC
@@ -298,7 +298,7 @@ function get_max_reconciled(string|array|null $date, mixed $bank_account)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_ending_reconciled(mixed $bank_account, mixed $bank_date)
+function get_ending_reconciled(string|array|null $bank_account, string|int|array|null $bank_date)
 {
 	$sql = "SELECT ending_reconcile_balance
 		FROM ".TB_PREF."bank_accounts WHERE id=".db_escape($bank_account)
@@ -389,7 +389,7 @@ function get_default_supplier_bank_account(mixed $supplier_id)
 //	This function returns current allowed bank payment limit, or null if limit is not set.
 //	As of FA 2.3 check is done only on cash account, for which limit is bank amount as of the date selected.
 //
-function get_bank_account_limit(mixed $account, mixed $date, mixed $user=null)
+function get_bank_account_limit(string|int|array|null $account, string|int|array|null $date, mixed $user=null)
 {
 //	$user = current_user();
 

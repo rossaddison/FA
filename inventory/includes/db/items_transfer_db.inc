@@ -11,7 +11,7 @@
 ***********************************************************************/
 //-------------------------------------------------------------------------------------------------------------
 
-function add_stock_transfer(mixed $Items, mixed $location_from, mixed $location_to, mixed $date_, mixed $reference, mixed $memo_)
+function add_stock_transfer(mixed $Items, string|array|null $location_from, string|array|null $location_to, string|array|null $date_, string|array|null $reference, string|array|null $memo_)
 {
 	global $SysPrefs, $path_to_root, $Refs;
 

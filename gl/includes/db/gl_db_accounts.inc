@@ -43,7 +43,7 @@ function delete_gl_account(mixed $code): void
 /**
  * @return bool|mysqli_result
  */
-function get_gl_accounts(string|array|null $from=null, string|array|null $to=null, mixed $type=null)
+function get_gl_accounts(string|array|null $from=null, string|array|null $to=null, ?string $type=null)
 {
 	$sql = "SELECT coa.*, act_type.name AS AccountTypeName
 		FROM "

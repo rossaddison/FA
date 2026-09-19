@@ -21,7 +21,7 @@
 	$charge - in bank currency
 */
 function write_customer_payment(mixed $trans_no, mixed $customer_id, mixed $branch_id, mixed $bank_account,
-	mixed $date_, mixed $ref, string|int|float|bool|null $amount, int|float|bool|null $discount, mixed $memo_, ?int $rate=0, int|float|bool|null $charge=0, int|float|bool|null $bank_amount=0, mixed $dim1=0, mixed $dim2=0)
+	mixed $date_, mixed $ref, string|int|float|bool|null $amount, int|float|bool|null $discount, string|array|null $memo_, ?int $rate=0, int|float|bool|null $charge=0, int|float|bool|null $bank_amount=0, mixed $dim1=0, mixed $dim2=0)
 {
 	global $Refs;
 
@@ -142,7 +142,7 @@ function void_customer_payment(mixed $type, mixed $type_no): void
 /**
  * @return 0|null|string
  */
-function get_cust_bank_charge(?int $type, mixed $trans_no)
+function get_cust_bank_charge(?int $type, string|array|null $trans_no)
 {
 
 	// restore charge amount from amounts in bank currency if possible, otherwise calculate from GL posting with exchange rate used for amount posting

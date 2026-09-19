@@ -295,7 +295,7 @@ function db_set_encoding(mixed $ui_encoding=null): void
 		mysqli_set_charset($db, $mysql_enc);
 }
 
-function db_get_charset(mixed $db): string
+function db_get_charset(mysqli $db): string
 {
 	return mysqli_character_set_name($db);
 }

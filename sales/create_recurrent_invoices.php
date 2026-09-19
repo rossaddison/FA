@@ -25,7 +25,7 @@ if (user_use_date_picker())
 
 page(_($help_context = "Create and Print Recurrent Invoices"), false, false, "", $js);
 
-function create_recurrent_invoices(?string $customer_id, ?string $branch_id, ?string $order_no, ?string $tmpl_no, mixed $date, string|array|null $from, string|array|null $to, string|array|null $memo)
+function create_recurrent_invoices(?string $customer_id, ?string $branch_id, ?string $order_no, ?string $tmpl_no, string|array|null $date, string|array|null $from, string|array|null $to, string|array|null $memo)
 {
 	global $Refs, $SysPrefs;
 

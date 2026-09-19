@@ -72,7 +72,7 @@ function update_supplier(string|array|null $supplier_id, string|array|null $supp
 	db_query($sql,"The supplier could not be updated");
 }
 
-function delete_supplier(mixed $supplier_id): void
+function delete_supplier(string|array|null $supplier_id): void
 {
 	begin_transaction();
 	delete_entity_contacts('supplier', $supplier_id);

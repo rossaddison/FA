@@ -67,7 +67,7 @@ function update_account_type(mixed $id, mixed $name, mixed $class_id, mixed $par
 /**
  * @return bool|mysqli_result
  */
-function get_account_types(int|bool|array|null $all=false, mixed $class_id=false, mixed $parent=false)
+function get_account_types(int|bool|array|null $all=false, mixed $class_id=false, string|int|bool|null $parent=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."chart_types";
 

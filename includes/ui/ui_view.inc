@@ -261,7 +261,7 @@ function get_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", bool 
 	Checks whether any of input function parameters has changed or page is called with GET method (first page display).
 	$name - context
 */
-function check_ui_refresh(mixed $name=null): bool
+function check_ui_refresh(?string $name=null): bool
 {
 	$bt = debug_backtrace();
 	if (!$name)
@@ -612,7 +612,7 @@ function display_allocations_from(string|int|null $person_type, mixed $person_id
 
 //--------------------------------------------------------------------------------------
 
-function display_allocations_to(?int $person_type, mixed $person_id, mixed $type, mixed $type_no, mixed $total): void
+function display_allocations_to(?int $person_type, mixed $person_id, string|int|array|null $type, mixed $type_no, mixed $total): void
 {
 	switch ($person_type)
 	{
@@ -681,7 +681,7 @@ function display_quick_entries(&$cart, mixed $id, int|float|bool|null $base, ?st
 
 //--------------------------------------------------------------------------------------
 
-function quickentry_calculate(mixed $base, mixed $id, mixed $taxgroup=null, mixed $date=null): array|int
+function quickentry_calculate(int|float|bool|null $base, mixed $id, mixed $taxgroup=null, mixed $date=null): array|int
 {
 		$gl_entries = array();
 		$qe = get_quick_entry($id);

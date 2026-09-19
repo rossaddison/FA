@@ -116,7 +116,7 @@ function update_material_cost(?string $stock_id, string|int|float|bool|null $qty
 /*
 	Create journal entry for WO related costs.
 */
-function add_wo_costs_journal(mixed $wo_id, mixed $amount, mixed $cost_type, mixed $cr_acc, mixed $date, mixed $dim1=0, mixed $dim2=0, mixed $memo = null, mixed $ref= null): void
+function add_wo_costs_journal(mixed $wo_id, int|float|bool|null $amount, mixed $cost_type, mixed $cr_acc, mixed $date, mixed $dim1=0, mixed $dim2=0, mixed $memo = null, mixed $ref= null): void
 {
 //-------- this should be done by single call to write_journal_entries() using items_cart()
 //

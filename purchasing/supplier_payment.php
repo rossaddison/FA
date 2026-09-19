@@ -111,7 +111,7 @@ if (isset($_GET['AddedID'])) {
 
 //----------------------------------------------------------------------------------------
 
-function get_default_supplier_payment_bank_account(mixed $supplier_id, mixed $date)
+function get_default_supplier_payment_bank_account(mixed $supplier_id, string|array|null $date)
 {
 	$previous_payment = get_supp_payment_before($supplier_id, date2sql($date));
 	if ($previous_payment)

@@ -64,7 +64,7 @@ function copy_to_cart(): void
 
 //---------------------------------------------------------------------------------------------------
 
-function create_new_po(?int $trans_type, mixed $trans_no): void
+function create_new_po(?int $trans_type, string|int|array|null $trans_no): void
 {
 	global $Refs;
 

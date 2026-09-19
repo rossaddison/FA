@@ -11,8 +11,8 @@
 ***********************************************************************/
 //--------------------------------------------------------------------------------------
 
-function add_work_order_issue(mixed $woid, mixed $ref, mixed $to_work_order, mixed $items, mixed $location, mixed $workcentre,
-	string|int|float|bool|null $date_, mixed $memo_): void
+function add_work_order_issue(mixed $woid, string|array|null $ref, string|array|null $to_work_order, mixed $items, string|array|null $location, string|array|null $workcentre,
+	string|int|float|bool|null $date_, string|array|null $memo_): void
 {
 	global $Refs;
 

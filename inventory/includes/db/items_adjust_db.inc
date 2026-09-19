@@ -10,7 +10,7 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-function add_stock_adjustment(mixed $items, mixed $location, mixed $date_, mixed $reference, mixed $memo_)
+function add_stock_adjustment(mixed $items, string|array|null $location, string|array|null $date_, string|array|null $reference, string|array|null $memo_)
 {
 	global $SysPrefs, $path_to_root, $Refs;
 

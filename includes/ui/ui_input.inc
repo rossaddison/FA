@@ -550,7 +550,7 @@ function text_cells(mixed $label, mixed $name, mixed $value=null, mixed $size=""
 }
 
 function text_cells_ex(?string $label, string|int|float|bool|null $name, string|int|float|bool|null $size, mixed $max=null, mixed $init=null, string|int|float|bool|null $title=null,
-	mixed $labparams=null, string|int|float|bool|null $post_label=null, mixed $submit_on_change=false): void
+	mixed $labparams=null, string|int|float|bool|null $post_label=null, string|bool|null $submit_on_change=false): void
 {
   	global $Ajax;
 
@@ -734,7 +734,7 @@ function file_row(string|int|float|bool|null $label, string|int|float|bool|null 
  	'supplier' - supplier id
  	'branch' - branch_code
 */
-function ref_cells(?string $label, ?string $name, ?string $title=null, mixed $init=null, ?string $params=null, string|bool|null $submit_on_change=false, mixed $type=null, mixed $context=null): void
+function ref_cells(?string $label, ?string $name, ?string $title=null, mixed $init=null, ?string $params=null, string|bool|null $submit_on_change=false, mixed $type=null, string|array|null $context=null): void
 {
 	global $Ajax, $Refs;
 
@@ -904,7 +904,7 @@ function small_qty_row(?string $label, ?string $name, mixed $init=null, mixed $p
 
 //-----------------------------------------------------------------------------------
 
-function small_amount_cells(mixed $label, string|int|float|bool|null $name, mixed $init=null, mixed $params=null, string|int|float|bool|null $post_label=null, mixed $dec=null): void
+function small_amount_cells(?string $label, string|int|float|bool|null $name, mixed $init=null, mixed $params=null, string|int|float|bool|null $post_label=null, mixed $dec=null): void
 {
 	amount_cells_ex($label, $name, 7, 12, $init, $params, $post_label, $dec);
 }

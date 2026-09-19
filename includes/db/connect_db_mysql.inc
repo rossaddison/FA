@@ -282,7 +282,7 @@ function db_set_encoding(mixed $ui_encoding=null): void
 		mysql_set_charset($mysql_enc);
 }
 
-function db_get_charset(mixed $db)
+function db_get_charset(mysqli $db)
 {
 	return mysql_client_encoding();
 }

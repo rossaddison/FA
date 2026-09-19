@@ -369,7 +369,7 @@ function read_grn_items_to_order(mixed $grn_batch, &$order): void
 
 // read a grn into an order class
 
-function read_grn(mixed $grn_batch, &$order): void
+function read_grn(string|array|null $grn_batch, &$order): void
 {
 	$sql= "SELECT *	FROM ".TB_PREF."grn_batch WHERE id=".db_escape($grn_batch);
 

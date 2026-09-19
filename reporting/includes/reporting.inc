@@ -139,8 +139,8 @@ function print_document_link(mixed $doc_no, ?string $link_text, bool $link, mixe
 /**
  * @return non-empty-string
  */
-function print_link(mixed $link_text, ?int $rep, ?array $pars = array(), ?string $dir = '', 
-	string|bool|null $icon=false, ?string $class='printlink', mixed $id=''): string
+function print_link(?string $link_text, ?int $rep, ?array $pars = array(), ?string $dir = '', 
+	string|bool|null $icon=false, ?string $class='printlink', ?string $id=''): string
 {
 	global $path_to_root, $SysPrefs;
 	$url = $dir == '' ?  $path_to_root.'/reporting/prn_redirect.php?' : $dir;

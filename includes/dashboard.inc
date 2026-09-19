@@ -86,7 +86,7 @@ function dashboard(mixed $sel_app): void
 		display_all();
 }
 
-function display_title(?string $title, string|int|float|bool|null $id=false, mixed $type = false, ?string $per = '', mixed $num = false): void
+function display_title(?string $title, string|int|float|bool|null $id=false, mixed $type = false, ?string $per = '', string|int|bool|array|null $num = false): void
 {
 	br();
 	start_form();

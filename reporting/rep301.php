@@ -28,7 +28,7 @@ include_once($path_to_root . "/inventory/includes/db/items_category_db.inc");
 
 print_inventory_valuation_report();
 
-function get_domestic_price(?array $myrow, mixed $stock_id)
+function get_domestic_price(?array $myrow, ?string $stock_id)
 {
     if ($myrow['type'] == ST_SUPPRECEIVE || $myrow['type'] == ST_SUPPCREDIT)
      {

@@ -480,7 +480,7 @@ function get_branch_to_order(mixed $customer_id, mixed $branch_id) {
 /**
  * @return non-falsy-string
  */
-function get_sql_for_sales_orders_view(mixed $trans_type, string|array|null $trans_no, string|array|null $filter, 
+function get_sql_for_sales_orders_view(string|int|array|null $trans_type, string|array|null $trans_no, string|array|null $filter, 
 	string|array|null $stock_item='', string|array|null $from='', string|array|null $to='', string|array|null $ref='', mixed $location=ALL_TEXT, mixed $customer_id=ALL_TEXT, int|array|null $show_voided = 0, string|int|array|null $by_delivery=0, string|int|array|null $no_auto=0): string
 {
     if ($filter=='OutstandingOnly')
@@ -606,7 +606,7 @@ function update_prepaid_so_line(mixed $line_id, mixed $qty_invoiced): bool
 /**
  * @return bool|mysqli_result
  */
-function get_sales_order_invoices(mixed $order_no)
+function get_sales_order_invoices(string|array|null $order_no)
 {
 	$sql = "SELECT trans_no, dt.type as type, tran_date, reference, prep_amount
 	    FROM ".TB_PREF."debtor_trans dt

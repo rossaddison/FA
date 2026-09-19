@@ -653,7 +653,7 @@ function void_supp_invoice(mixed $type, mixed $type_no): void
 /**
  * @return bool|mysqli_result
  */
-function get_gl_account_info(mixed $acc)
+function get_gl_account_info(string|array|null $acc)
 {
 	$sql = "SELECT account_code, account_name FROM ".TB_PREF."chart_master WHERE account_code=".db_escape($acc);
 	return db_query($sql,"get account information");

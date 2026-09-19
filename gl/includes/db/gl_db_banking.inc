@@ -217,7 +217,7 @@ function add_exchange_variation_all(string|array|null $date, string|array|null $
 //	
 
 function add_bank_transfer(string|array|null $from_account, string|array|null $to_account, string|array|null $date_,
-	string|int|float|bool|null $amount, string|array|null $ref, string|array|null $memo_, string|array|null $dim1, string|array|null $dim2, string|int|float|bool|null $charge=0, mixed $target_amount=0)
+	string|int|float|bool|null $amount, string|array|null $ref, string|array|null $memo_, string|array|null $dim1, string|array|null $dim2, string|int|float|bool|null $charge=0, int|float|bool|null $target_amount=0)
 {
 	global $Refs, $SysPrefs;
 
@@ -387,8 +387,8 @@ function update_bank_transfer(
 /**
  * @return false|list{mixed, mixed}
  */
-function write_bank_transaction(string|int|float|bool|null $trans_type, mixed $trans_no, mixed $from_account, ?object $items, mixed $date_,
-	mixed $person_type_id, mixed $person_id, string|array|null $person_detail_id,	mixed $ref, mixed $memo_, bool $use_transaction=true, int|float|bool|null $settled_amount=null): false|array
+function write_bank_transaction(string|int|float|bool|null $trans_type, mixed $trans_no, string|array|null $from_account, ?object $items, string|array|null $date_,
+	string|array|null $person_type_id, string|array|null $person_id, string|array|null $person_detail_id,	string|array|null $ref, string|array|null $memo_, bool $use_transaction=true, int|float|bool|null $settled_amount=null): false|array
 {
 	global $Refs, $SysPrefs;
 

@@ -59,7 +59,7 @@ function get_sql_for_view_transactions(mixed $filtertype, mixed $from, mixed $to
 	return $sql;
 }
 
-function transaction_exists(mixed $trans_type, mixed $trans_no): int|string
+function transaction_exists(string|bool|array|null $trans_type, string|bool|array|null $trans_no): int|string
 {
 	return db_num_rows(db_query(get_sql_for_view_transactions($trans_type, $trans_no, $trans_no, $dummy)));
 }

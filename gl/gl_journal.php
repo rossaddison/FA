@@ -95,7 +95,7 @@ elseif (isset($_GET['ModifyGL']))
 	create_cart($_GET['trans_type'], $_GET['trans_no']);
 }
 
-function create_cart(mixed $type=0, mixed $trans_no=0): void
+function create_cart(string|int|array|null $type=0, string|int|array|null $trans_no=0): void
 {
 	global $Refs;
 

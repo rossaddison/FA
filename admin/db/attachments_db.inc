@@ -12,7 +12,7 @@
 
 //----------------------------------------------------------------------------------------
 
-function add_attachment(mixed $filterType, mixed $trans_no, mixed $description,
+function add_attachment(string|bool|array|null $filterType, string|bool|array|null $trans_no, string|bool|array|null $description,
 	?string $filename, ?string $unique_name, ?int $filesize, ?string $filetype): void
 {
 	$date = date2sql(Today());
@@ -25,7 +25,7 @@ function add_attachment(mixed $filterType, mixed $trans_no, mixed $description,
 }
 //----------------------------------------------------------------------------------------
 
-function update_attachment(mixed $selected_id, mixed $filterType, mixed $trans_no, mixed $description,
+function update_attachment(mixed $selected_id, string|bool|array|null $filterType, string|bool|array|null $trans_no, string|bool|array|null $description,
 	?string $filename, ?string $unique_name, ?int $filesize, ?string $filetype): void
 {
 	$date = date2sql(Today());
@@ -126,7 +126,7 @@ function has_attachment(mixed $type, mixed $id)
 		return $myrow['id'];
 }
 
-function get_sql_for_attached_documents(mixed $type, mixed $id_no): string
+function get_sql_for_attached_documents(string|array|null $type, string|int|bool|array|null $id_no): string
 {
     // $_POST['trans_no'] will be used to store the customer_id or supplier_id for them
 	$sql = "SELECT trans_no, description, filename, filesize, filetype, tran_date, id, type_no FROM ".TB_PREF."attachments WHERE type_no=".db_escape($type);

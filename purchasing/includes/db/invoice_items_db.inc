@@ -11,7 +11,7 @@
 ***********************************************************************/
 //-------------------------------------------------------------------------------------------------------------
 
-function add_supp_invoice_item(mixed $supp_trans_type, mixed $supp_trans_no, mixed $stock_id, mixed $description,
+function add_supp_invoice_item(mixed $supp_trans_type, string|int|float|null $supp_trans_no, mixed $stock_id, mixed $description,
 	mixed $gl_code, mixed $unit_price, mixed $unit_tax, mixed $quantity, mixed $grn_item_id, mixed $po_detail_item_id, mixed $memo_, mixed $dim_id=0, mixed $dim2_id=0): int|string
 {
 	$sql = "INSERT INTO ".TB_PREF."supp_invoice_items (supp_trans_type, supp_trans_no, stock_id, description, gl_code, unit_price, unit_tax, quantity,
