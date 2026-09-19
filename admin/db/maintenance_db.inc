@@ -264,7 +264,7 @@ function write_lang(): bool
 		$protect - protect users/roles 
 		$return_errors - return errors instead of display them
 */
-function db_import(mixed $filename, mixed $connection, mixed $force=true, mixed $init=true, mixed $protect=false, mixed $return_errors=false): array|string|bool
+function db_import(string|int|float|bool|null $filename, mixed $connection, mixed $force=true, mixed $init=true, mixed $protect=false, mixed $return_errors=false): array|string|bool
 {
 	global $db, $SysPrefs;
 
@@ -546,7 +546,7 @@ function db_unzip(?string $mode, ?string $path): array|string|false
     	return explode("\n", $file_data);
 }
 
-function db_backup(mixed $conn, mixed $ext='no', mixed $comm='', mixed $path='')
+function db_backup(mixed $conn, mixed $ext='no', mixed $comm='', string|int|float|bool|null $path='')
 {
 	if ($conn['tbpref'] != "")
 		$filename = $conn['dbname'] . "_" . (string)$conn['tbpref'] . date("Ymd_Hi") . ".sql";
@@ -977,7 +977,7 @@ function create_comp_dirs(?string $comp_path, ?array $comp_subdirs): void
 //  $properties - optional properties of field defined by MySQL:
 //		'Type', 'Null', 'Key', 'Default', 'Extra'
 //
-function check_table(mixed $pref, mixed $table, mixed $field=null, mixed $properties=null): int
+function check_table(string|int|float|bool|null $pref, string|int|float|bool|null $table, mixed $field=null, mixed $properties=null): int
 {
 	$tables = @db_query("SHOW TABLES LIKE '".$pref.$table."'");
 	if (!db_num_rows($tables))

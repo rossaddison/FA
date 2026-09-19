@@ -13,7 +13,7 @@
 /**
  * @return bool|mysqli_result
  */
-function add_user(mixed $user_id, mixed $real_name, ?string $password, mixed $phone, mixed $email, mixed $role_id, 
+function add_user(string|int|float|bool|null $user_id, mixed $real_name, ?string $password, mixed $phone, mixed $email, mixed $role_id, 
 	mixed $language, mixed $profile, int|array|null $rep_popup, mixed $pos)
 {
 	$sql = "INSERT INTO ".TB_PREF."users (user_id, real_name, password"
@@ -32,7 +32,7 @@ function add_user(mixed $user_id, mixed $real_name, ?string $password, mixed $ph
 /**
  * @return bool|mysqli_result
  */
-function update_user_password(mixed $id, mixed $user_id, mixed $password)
+function update_user_password(mixed $id, string|int|float|bool|null $user_id, mixed $password)
 {
 	$sql = "UPDATE ".TB_PREF."users SET password=".db_escape($password) . ",
 		user_id = ".db_escape($user_id). " WHERE id=".db_escape($id);
@@ -66,7 +66,7 @@ function update_user(mixed $id, mixed $user_id, mixed $real_name, mixed $phone, 
 /**
  * @return bool|mysqli_result
  */
-function update_user_prefs(mixed $id, mixed $prefs)
+function update_user_prefs(string|int|float|bool|null $id, mixed $prefs)
 {
 	$sql = "UPDATE ".TB_PREF."users SET ";
 	foreach($prefs as $name => $value) {
@@ -111,7 +111,7 @@ function get_user(mixed $id)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_user_by_login(mixed $user_id)
+function get_user_by_login(string|int|float|bool|null $user_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."users WHERE user_id=".db_escape($user_id);
 
@@ -125,7 +125,7 @@ function get_user_by_login(mixed $user_id)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_user_by_email(mixed $email)
+function get_user_by_email(string|int|float|bool|null $email)
 {
 	$sql = "SELECT * FROM ".TB_PREF."users WHERE email=".db_escape($email);
 
@@ -139,7 +139,7 @@ function get_user_by_email(mixed $email)
 
 //-----------------------------------------------------------------------------------------------
 
-function delete_user(mixed $id): void
+function delete_user(string|int|float|bool|null $id): void
 {
 	$sql="DELETE FROM ".TB_PREF."users WHERE id=".db_escape($id);
 
@@ -148,7 +148,7 @@ function delete_user(mixed $id): void
 
 //-----------------------------------------------------------------------------------------------
 
-function get_user_auth(mixed $user_id, mixed $password): bool
+function get_user_auth(string|int|float|bool|null $user_id, mixed $password): bool
 {
 
 	$sql = "SELECT * FROM ".TB_PREF."users WHERE user_id = ".db_escape($user_id)." AND"
@@ -159,7 +159,7 @@ function get_user_auth(mixed $user_id, mixed $password): bool
 
 //-----------------------------------------------------------------------------------------------
 
-function update_user_visitdate(mixed $user_id): void
+function update_user_visitdate(string|int|float|bool|null $user_id): void
 {
 	$sql = "UPDATE ".TB_PREF."users SET last_visit_date='". date("Y-m-d H:i:s") ."'
 		WHERE user_id=".db_escape($user_id);

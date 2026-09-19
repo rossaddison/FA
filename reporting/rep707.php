@@ -133,7 +133,7 @@ print_profit_and_loss_statement();
 
 //----------------------------------------------------------------------------------------------------
 
-function Achieve(mixed $d1, mixed $d2)
+function Achieve(string|int|float|bool|null $d1, string|int|float|bool|null $d2)
 {
 	if ($d1 == 0 && $d2 == 0)
 		return 0;

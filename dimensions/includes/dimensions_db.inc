@@ -199,7 +199,7 @@ function get_dimension_balance(mixed $id, string|array|null $from, string|array|
 
 //--------------------------------------------------------------------------------------
 
-function get_sql_for_search_dimensions(mixed $dim, mixed $from, mixed $to, mixed $order='', mixed $type = -1, int|bool|array|null $open=false, int|bool|array|null $overdue = false): string
+function get_sql_for_search_dimensions(mixed $dim, mixed $from, mixed $to, string|int|float|bool|null $order='', mixed $type = -1, int|bool|array|null $open=false, int|bool|array|null $overdue = false): string
 {
 	$sql = "SELECT dim.id,
 		dim.reference,

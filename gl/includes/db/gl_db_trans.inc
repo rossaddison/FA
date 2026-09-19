@@ -17,7 +17,7 @@
 // if $currency is not set, then defaults to no conversion
 
 function add_gl_trans(mixed $type, mixed $trans_id, mixed $date_, mixed $account, mixed $dimension, mixed $dimension2, mixed $memo_,
-	mixed $amount, mixed $currency=null, mixed $person_type_id=null, mixed $person_id=null,	mixed $err_msg="", mixed $rate=0): float
+	string|int|float|bool|null $amount, mixed $currency=null, mixed $person_type_id=null, mixed $person_id=null,	mixed $err_msg="", string|int|float|bool|null $rate=0): float
 {
 	global $SysPrefs;
 
@@ -309,7 +309,7 @@ function get_gl_balance_from_to(?string $from_date, mixed $to_date, string|array
 
 //--------------------------------------------------------------------------------
 
-function get_gl_trans_from_to(mixed $from_date, mixed $to_date, mixed $account, mixed $dimension=0, mixed $dimension2=0): float
+function get_gl_trans_from_to(mixed $from_date, mixed $to_date, string|int|float|bool|null $account, mixed $dimension=0, mixed $dimension2=0): float
 {
 	$from = date2sql($from_date);
 	$to = date2sql($to_date);
@@ -598,7 +598,7 @@ function exists_gl_trans(mixed $type, mixed $trans_id): bool
 
 //--------------------------------------------------------------------------------------------------
 
-function void_gl_trans(mixed $type, mixed $trans_id, bool $nested=false): void
+function void_gl_trans(string|int|float|bool|null $type, mixed $trans_id, bool $nested=false): void
 {
 	if (!$nested)
 		begin_transaction();

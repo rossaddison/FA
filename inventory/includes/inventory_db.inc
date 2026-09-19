@@ -69,7 +69,7 @@ function get_stock_movements(mixed $stock_id, mixed $StockLocation,	mixed $Befor
 /**
  * @return array{email: null|string, ...<array-key, null|string>}|false
  */
-function calculate_reorder_level(mixed $location, mixed $line, &$st_ids, &$st_names, &$st_num, &$st_reorder)
+function calculate_reorder_level(string|int|float|bool|null $location, ?object $line, &$st_ids, &$st_names, &$st_num, &$st_reorder)
 {
 	$sql = "SELECT stock.*, loc.location_name, loc.email
 		FROM ".TB_PREF."loc_stock stock,"

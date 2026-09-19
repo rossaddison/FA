@@ -119,7 +119,7 @@ function update_sales_order_version(mixed $order): void
 
 //----------------------------------------------------------------------------------------
 
-function update_sales_order(mixed $order): void
+function update_sales_order(?object $order): void
 {
 	global $SysPrefs, $path_to_root, $Refs;
 
@@ -225,7 +225,7 @@ function update_sales_order(mixed $order): void
 /**
  * @return array<array-key, null|string>|false|null
  */
-function get_sales_order_header(mixed $order_no, mixed $trans_type)
+function get_sales_order_header(mixed $order_no, string|int|float|bool|null $trans_type)
 {
 	$sql = "SELECT sorder.*,
 	  cust.name,
@@ -668,7 +668,7 @@ function is_prepaid_order_open(mixed $order_no)
 /**
  * @return false|null|string
  */
-function last_sales_order_detail(mixed $order, ?string $field)
+function last_sales_order_detail(?object $order, ?string $field)
 {
         $sql = "SELECT $field
             FROM ".TB_PREF."sales_order_details d

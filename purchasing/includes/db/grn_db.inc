@@ -10,7 +10,7 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 //------------------- update average material cost ---------------------------------------------- 
-function update_average_material_cost(mixed $supplier, mixed $stock_id, mixed $price, mixed $qty, mixed $date, bool $adj_only=false)
+function update_average_material_cost(mixed $supplier, mixed $stock_id, mixed $price, string|int|float|bool|null $qty, mixed $date, bool $adj_only=false)
 {
 	// probably this function should be optimized
 	// passing transaction cart as argument. This would
@@ -400,7 +400,7 @@ function read_grn(mixed $grn_batch, &$order): void
 /**
  * @return bool|mysqli_result
  */
-function get_po_grns(mixed $po_number)
+function get_po_grns(string|int|float|bool|null $po_number)
 {
     $sql = "SELECT * FROM ".TB_PREF."grn_batch WHERE purch_order_no=".db_escape($po_number);
 

@@ -15,8 +15,8 @@
 // $amount is in $currency
 // $date_ is display date (non-sql)
 
-function add_bank_trans(mixed $type, mixed $trans_no, mixed $bank_act, mixed $ref, mixed $date_,
-	mixed $amount, mixed $person_type_id, mixed $person_id, mixed $currency="", mixed $err_msg="", ?int $rate=0): void
+function add_bank_trans(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $bank_act, mixed $ref, mixed $date_,
+	string|int|float|bool|null $amount, mixed $person_type_id, mixed $person_id, mixed $currency="", mixed $err_msg="", ?int $rate=0): void
 {
 	$sqlDate = date2sql($date_);
 
@@ -97,7 +97,7 @@ function get_bank_trans(mixed $type, mixed $trans_no=null, mixed $person_type_id
 /**
  * @return bool|mysqli_result
  */
-function get_bank_trans_for_bank_account(mixed $bank_account, mixed $from, mixed $to)
+function get_bank_trans_for_bank_account(string|int|float|bool|null $bank_account, mixed $from, mixed $to)
 {
 	$from = date2sql($from);
 	$to = date2sql($to);
@@ -151,7 +151,7 @@ function get_gl_trans_value(mixed $account, mixed $type, mixed $trans_no)
 
 //----------------------------------------------------------------------------------------
 
-function void_bank_trans(mixed $type, mixed $type_no, bool $nested=false): void
+function void_bank_trans(string|int|float|bool|null $type, string|int|float|bool|null $type_no, bool $nested=false): void
 {
 
 	if (!$nested)
@@ -184,7 +184,7 @@ function void_bank_trans(mixed $type, mixed $type_no, bool $nested=false): void
 *	Returns null or transaction in conflict. Running balance is checked on daily basis only, to enable ID change after edition.
 *	$delta_amount - tested change in bank balance at $date.
 **/
-function check_bank_account_history(mixed $delta_amount, string|array|null $bank_account, string|array|null $date=null, mixed $user=null, int|float|null $balance_offset = 0)
+function check_bank_account_history(string|int|float|bool|null $delta_amount, string|array|null $bank_account, string|array|null $date=null, mixed $user=null, int|float|null $balance_offset = 0)
 {
 	if ($delta_amount >= 0 && isset($date))
 		 return null;	// amount increase is always safe

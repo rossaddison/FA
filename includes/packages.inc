@@ -409,7 +409,7 @@ function get_package(mixed $pkgname, mixed $type = null)
 /*
 	Returns full name of installed package, or null if package is not installed.
 */
-function installed_package(mixed $package): string|null
+function installed_package(string|int|float|bool|null $package): string|null
 {
 	$cache = opendir(PKG_CACHE_PATH);
 

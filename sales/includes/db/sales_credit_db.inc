@@ -180,7 +180,7 @@ function write_credit_note(&$credit_note, mixed $write_off_acc)
 // 	a reversing stock movement to show the write off
 //
 function add_credit_movements_item(&$credit_note, &$credit_line,
-	?string $credit_type, mixed $price, mixed $credited_invoice=0): void
+	?string $credit_type, mixed $price, string|int|float|bool|null $credited_invoice=0): void
 {
     //Chaitanya : Stamp current cost in stock moves $credit_line does not fetch cost
     $curr_std_cost = get_unit_cost($credit_line->stock_id);
@@ -197,7 +197,7 @@ function add_credit_movements_item(&$credit_note, &$credit_line,
 
 //----------------------------------------------------------------------------------------
 
-function add_gl_trans_credit_costs(mixed $order, mixed $order_line, mixed $credit_no, mixed $date_,
+function add_gl_trans_credit_costs(?object $order, ?object $order_line, mixed $credit_no, mixed $date_,
 	?string $credit_type, mixed $write_off_gl_code, &$branch_data)
 {
 	$stock_gl_codes = get_stock_gl_code($order_line->stock_id);

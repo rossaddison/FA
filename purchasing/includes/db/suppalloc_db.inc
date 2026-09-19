@@ -81,7 +81,7 @@ function void_supp_allocations(mixed $type, mixed $type_no, mixed $date="")
 
 //-------------------------------------------------------------------------------------------------------------
 
-function clear_supp_alloctions(mixed $type, mixed $type_no, mixed $person_id=null, mixed $date=""): void
+function clear_supp_alloctions(string|int|float|bool|null $type, string|int|float|bool|null $type_no, mixed $person_id=null, mixed $date=""): void
 {
 	$sql = "UPDATE  ".TB_PREF."supp_allocations ca
 				LEFT JOIN ".TB_PREF."supp_trans paym ON ca.trans_type_from=paym.type AND ca.trans_no_from=paym.trans_no AND ca.person_id=paym.supplier_id

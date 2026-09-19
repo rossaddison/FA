@@ -18,7 +18,7 @@ function clear_dflt_curr_account(mixed $curr_code): void {
 	  db_query($sql, "could not update default currency account");
 }
 
-function add_bank_account(mixed $account_code, mixed $account_type, mixed $bank_account_name,
+function add_bank_account(string|int|float|bool|null $account_code, mixed $account_type, mixed $bank_account_name,
 	mixed $bank_name, mixed $bank_account_number, mixed $bank_address, mixed $bank_curr_code, 
 	mixed $dflt_curr_act, mixed $bank_charge_act): void
 {
@@ -38,7 +38,7 @@ function add_bank_account(mixed $account_code, mixed $account_type, mixed $bank_
 
 //---------------------------------------------------------------------------------------------
 
-function update_bank_account(mixed $id, mixed $account_code, mixed $account_type, mixed $bank_account_name, 
+function update_bank_account(mixed $id, string|int|float|bool|null $account_code, mixed $account_type, mixed $bank_account_name, 
 	mixed $bank_name, mixed $bank_account_number, mixed $bank_address, mixed $bank_curr_code, mixed $dflt_curr_act, mixed $bank_charge_act): void
 {
 	if($dflt_curr_act) 	// only one default account for any currency
@@ -102,7 +102,7 @@ function get_bank_accounts(int|bool|array|null $show_inactive=false)
 /**
  * @return null|string
  */
-function get_bank_gl_account(mixed $id)
+function get_bank_gl_account(string|int|float|bool|null $id)
 {
 	$sql = "SELECT account_code FROM ".TB_PREF."bank_accounts WHERE id=".db_escape($id);
 
@@ -131,7 +131,7 @@ function get_bank_charge_account(mixed $id)
 
 //---------------------------------------------------------------------------------------------
 
-function add_quick_entry(mixed $description, mixed $type, int|float|bool|null $base_amount, mixed $base_desc, string|int|array|null $bal_type, mixed $usage): void
+function add_quick_entry(string|int|float|bool|null $description, mixed $type, int|float|bool|null $base_amount, mixed $base_desc, string|int|array|null $bal_type, mixed $usage): void
 {
 	$sql = "INSERT INTO ".TB_PREF."quick_entries (description, type, base_amount, base_desc, bal_type, `usage`) 
 	VALUES (".db_escape($description).", ".db_escape($type).", "
@@ -142,7 +142,7 @@ function add_quick_entry(mixed $description, mixed $type, int|float|bool|null $b
 
 //---------------------------------------------------------------------------------------------
 
-function update_quick_entry(mixed $selected_id, mixed $description, mixed $type, int|float|bool|null $base_amount, mixed $base_desc, string|int|array|null $bal_type, mixed $usage): void
+function update_quick_entry(string|int|float|bool|null $selected_id, mixed $description, mixed $type, int|float|bool|null $base_amount, mixed $base_desc, string|int|array|null $bal_type, mixed $usage): void
 {
 	$sql = "UPDATE ".TB_PREF."quick_entries	SET description = ".db_escape($description).",
 		type=".db_escape($type).", base_amount=".db_escape($base_amount)
@@ -154,7 +154,7 @@ function update_quick_entry(mixed $selected_id, mixed $description, mixed $type,
 
 //---------------------------------------------------------------------------------------------
 
-function delete_quick_entry(mixed $selected_id): void
+function delete_quick_entry(string|int|float|bool|null $selected_id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."quick_entries WHERE id=".db_escape($selected_id);
 
@@ -163,7 +163,7 @@ function delete_quick_entry(mixed $selected_id): void
 
 //---------------------------------------------------------------------------------------------
 
-function add_quick_entry_line(mixed $qid, mixed $action, mixed $dest_id, int|float|bool|null $amount, mixed $dim, mixed $dim2, string|array|null $memo): void
+function add_quick_entry_line(string|int|float|bool|null $qid, mixed $action, mixed $dest_id, int|float|bool|null $amount, mixed $dim, mixed $dim2, string|array|null $memo): void
 {
 	$sql = "INSERT INTO ".TB_PREF."quick_entry_lines 
 		(qid, action, dest_id, amount, dimension_id, dimension2_id, memo) 
@@ -176,7 +176,7 @@ function add_quick_entry_line(mixed $qid, mixed $action, mixed $dest_id, int|flo
 
 //---------------------------------------------------------------------------------------------
 
-function update_quick_entry_line(mixed $selected_id, mixed $qid, mixed $action, mixed $dest_id, int|float|bool|null $amount, mixed $dim, mixed $dim2, string|array|null $memo): void
+function update_quick_entry_line(string|int|float|bool|null $selected_id, mixed $qid, mixed $action, mixed $dest_id, int|float|bool|null $amount, mixed $dim, mixed $dim2, string|array|null $memo): void
 {
 	$sql = "UPDATE ".TB_PREF."quick_entry_lines SET qid = ".db_escape($qid)
 		.", action=".db_escape($action).",
@@ -189,7 +189,7 @@ function update_quick_entry_line(mixed $selected_id, mixed $qid, mixed $action, 
 
 //---------------------------------------------------------------------------------------------
 
-function delete_quick_entry_line(mixed $selected_id): void
+function delete_quick_entry_line(string|int|float|bool|null $selected_id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."quick_entry_lines WHERE id=".db_escape($selected_id);
 
@@ -261,7 +261,7 @@ function has_quick_entry_lines(mixed $qid): bool
 /**
  * @return array<array-key, null|string>|false
  */
-function get_quick_entry_line(mixed $selected_id)
+function get_quick_entry_line(string|int|float|bool|null $selected_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."quick_entry_lines WHERE id=".db_escape($selected_id);
 

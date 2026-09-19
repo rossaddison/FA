@@ -46,7 +46,7 @@ function help_url(mixed $context=null): string
 		.'&ctxhelp=1&lang='.$country);
 }
 
-function send_css(mixed $css = ''): void
+function send_css(string|int|float|bool|null $css = ''): void
 {
 	global $css_files;
 
@@ -87,7 +87,7 @@ function send_scripts(): void
     echo $js;
 }
 
-function page_header(mixed $title, mixed $no_menu=false, mixed $is_index=false, mixed $onload="", mixed $js="", mixed $css=''): void
+function page_header(string|int|float|bool|null $title, mixed $no_menu=false, mixed $is_index=false, string|int|float|bool|null $onload="", mixed $js="", mixed $css=''): void
 {
 	// titles and screen header
 	global $path_to_root, $SysPrefs, $db_connections;

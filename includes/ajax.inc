@@ -140,7 +140,7 @@ function in_ajax() {
 // Returns absolute path of relative $url. To be used in ajax calls
 // for proper redirection from any referer page.
 //
-function absolute_url(mixed $url) 
+function absolute_url(string|int|float|bool|null $url) 
 {
    return strpos($url, '..')===0 ? dirname($_SERVER['PHP_SELF']).'/'.$url : $url;
 }

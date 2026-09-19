@@ -14,7 +14,7 @@ include_once($path_to_root . "/includes/remote_url.inc");
 /**
  * @return array<array-key, null|string>|false
  */
-function get_exchange_rate(mixed $rate_id)
+function get_exchange_rate(string|int|float|bool|null $rate_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."exchange_rates WHERE id=".db_escape($rate_id);
 	$result = db_query($sql, "could not get exchange rate for $rate_id");
@@ -108,7 +108,7 @@ function add_new_exchange_rate(mixed $curr_code, mixed $date_, mixed $ex_rate): 
 
 //---------------------------------------------------------------------------------------------
 
-function delete_exchange_rate(mixed $rate_id): void
+function delete_exchange_rate(string|int|float|bool|null $rate_id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."exchange_rates WHERE id=".db_escape($rate_id);
 	db_query($sql, "could not delete exchange rate $rate_id");
@@ -135,7 +135,7 @@ function retrieve_exrate(mixed $curr_b, mixed $date)
 }
 //-----------------------------------------------------------------------------
 
-function get_extern_rate(mixed $curr_b, mixed $provider, mixed $date): float|int|string 
+function get_extern_rate(string|int|float|bool|null $curr_b, mixed $provider, mixed $date): float|int|string 
 {
 	global	$path_to_root;
 

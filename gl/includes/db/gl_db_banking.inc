@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_exchange_variation(mixed $trans_no, mixed $date_, mixed $acc_id, mixed $account,
+function add_exchange_variation(mixed $trans_no, mixed $date_, string|int|float|bool|null $acc_id, mixed $account,
     ?string $currency, mixed $person_type_id=null, mixed $person_id = "", string|array|null $memo=''): bool
 {
 	if (is_company_currency($currency))
@@ -217,7 +217,7 @@ function add_exchange_variation_all(string|array|null $date, string|array|null $
 //	
 
 function add_bank_transfer(string|array|null $from_account, string|array|null $to_account, string|array|null $date_,
-	mixed $amount, string|array|null $ref, string|array|null $memo_, string|array|null $dim1, string|array|null $dim2, mixed $charge=0, mixed $target_amount=0)
+	string|int|float|bool|null $amount, string|array|null $ref, string|array|null $memo_, string|array|null $dim1, string|array|null $dim2, string|int|float|bool|null $charge=0, mixed $target_amount=0)
 {
 	global $Refs, $SysPrefs;
 
@@ -387,7 +387,7 @@ function update_bank_transfer(
 /**
  * @return false|list{mixed, mixed}
  */
-function write_bank_transaction(mixed $trans_type, mixed $trans_no, mixed $from_account, mixed $items, mixed $date_,
+function write_bank_transaction(string|int|float|bool|null $trans_type, mixed $trans_no, mixed $from_account, ?object $items, mixed $date_,
 	mixed $person_type_id, mixed $person_id, string|array|null $person_detail_id,	mixed $ref, mixed $memo_, bool $use_transaction=true, int|float|bool|null $settled_amount=null): false|array
 {
 	global $Refs, $SysPrefs;

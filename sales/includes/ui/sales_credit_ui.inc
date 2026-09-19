@@ -304,7 +304,7 @@ function credit_edit_item_controls(&$order, mixed $rowcounter, mixed $line_no=-1
 
 //---------------------------------------------------------------------------------
 
-function credit_options_controls(mixed $credit): void
+function credit_options_controls(?object $credit): void
 {
 	global $Ajax;
 	br();

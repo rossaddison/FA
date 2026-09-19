@@ -413,7 +413,7 @@ function add_supp_invoice(&$supp_trans)
 /**
  * @return bool|mysqli_result
  */
-function get_po_invoices_credits(mixed $po_number)
+function get_po_invoices_credits(string|int|float|bool|null $po_number)
 {
 	$sql = "SELECT DISTINCT trans.trans_no, trans.type,	ov_amount+ov_discount+ov_gst AS Total,
 				trans.tran_date
@@ -456,7 +456,7 @@ function get_tax_overrides(mixed $trans_type, mixed $trans_no): array
 /**
  * @return null
  */
-function read_supp_invoice(mixed $trans_no, mixed $trans_type, &$supp_trans)
+function read_supp_invoice(string|int|float|bool|null $trans_no, string|int|float|bool|null $trans_type, &$supp_trans)
 {
 	$sql = "SELECT trans.*, supp_name, dimension_id, dimension2_id, curr_code
 		FROM ".TB_PREF."supp_trans trans,"
@@ -659,7 +659,7 @@ function get_gl_account_info(mixed $acc)
 	return db_query($sql,"get account information");
 }
 
-function is_reference_already_there(mixed $supplier_id, string|array|null $supp_reference, mixed $trans_no=0): bool
+function is_reference_already_there(mixed $supplier_id, string|array|null $supp_reference, string|int|float|bool|null $trans_no=0): bool
 {
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."supp_trans WHERE supplier_id="
 		.db_escape($supplier_id) . " AND supp_reference=" 
@@ -719,7 +719,7 @@ function remove_not_invoice_item(string|int|null $id): void
     commit_transaction();
 }
 
-function find_src_invoices(mixed $cart): array
+function find_src_invoices(?object $cart): array
 {
 	$invoices = $po_ids = array();
 	foreach($cart->grn_items as $item)

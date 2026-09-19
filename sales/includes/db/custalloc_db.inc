@@ -11,7 +11,7 @@
 ***********************************************************************/
 //----------------------------------------------------------------------------------------
 
-function add_cust_allocation(mixed $amount, mixed $trans_type_from, mixed $trans_no_from,
+function add_cust_allocation(string|int|float|bool|null $amount, mixed $trans_type_from, mixed $trans_no_from,
 	mixed $trans_type_to, mixed $trans_no_to, mixed $person_id, mixed $date_): void
 {
 	$date = date2sql($date_);
@@ -41,7 +41,7 @@ function delete_cust_allocation(?string $trans_id)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_cust_allocation(mixed $trans_id)
+function get_cust_allocation(string|int|float|bool|null $trans_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."cust_allocations WHERE id = ".db_escape($trans_id);
 	return db_fetch(db_query($sql), "Cannot retrieve customer allocation $trans_id");
@@ -78,7 +78,7 @@ function void_cust_allocations(mixed $type, mixed $type_no, mixed $date="")
 
 //-------------------------------------------------------------------------------------------------------------
 //
-function clear_cust_alloctions(mixed $type, mixed $type_no, mixed $person_id=null, mixed $date=""): void
+function clear_cust_alloctions(string|int|float|bool|null $type, string|int|float|bool|null $type_no, mixed $person_id=null, mixed $date=""): void
 {
 	$sql = "UPDATE  ".TB_PREF."cust_allocations ca
 				LEFT JOIN ".TB_PREF."debtor_trans paym ON ca.trans_type_from=paym.type AND ca.trans_no_from=paym.trans_no AND ca.person_id=paym.debtor_no
@@ -371,7 +371,7 @@ function get_sql_for_customer_allocation_inquiry(string|array|null $from, string
    	return $sql;
 }
 
-function credit_sales_invoice_allocate(mixed $invoice_no, mixed $credit_no, mixed $amount, mixed $date): bool
+function credit_sales_invoice_allocate(mixed $invoice_no, mixed $credit_no, string|int|float|bool|null $amount, mixed $date): bool
 {
 
 	$sql = "SELECT ov_freight+ov_gst+ov_amount+ov_freight_tax as total, alloc, debtor_no FROM ".TB_PREF."debtor_trans

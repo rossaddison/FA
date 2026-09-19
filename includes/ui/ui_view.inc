@@ -14,7 +14,7 @@ include_once($path_to_root . "/includes/types.inc");
 
 //--------------------------------------------------------------------------------------
 
-function get_supplier_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", bool $icon=false, 
+function get_supplier_trans_view_str(mixed $type, string|int|float|bool|null $trans_no, mixed $label="", bool $icon=false, 
 	?string $class='', mixed $id='')
 {
 	$viewer = "purchasing/view/";
@@ -40,7 +40,7 @@ function get_supplier_trans_view_str(mixed $type, mixed $trans_no, mixed $label=
 
 //--------------------------------------------------------------------------------------
 
-function get_gl_view_str(mixed $type, mixed $trans_no, mixed $label="", bool $force=false, ?string $class='', ?string $id='')
+function get_gl_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, mixed $label="", bool $force=false, ?string $class='', ?string $id='')
 {
 	if (!$force && !user_show_gl_info())
 		return "";
@@ -74,7 +74,7 @@ function get_gl_view_str_cell(mixed $type, mixed $trans_no, mixed $label="")
 /**
  * @return null|string
  */
-function get_customer_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", bool $icon=false, 
+function get_customer_trans_view_str(string|int|float|bool|null $type, mixed $trans_no, mixed $label="", bool $icon=false, 
 	?string $class='', mixed $id='')
 {
 	$viewer = "sales/view/";
@@ -111,7 +111,7 @@ function get_customer_trans_view_str(mixed $type, mixed $trans_no, mixed $label=
 
 //--------------------------------------------------------------------------------------
 
-function get_banking_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", 
+function get_banking_trans_view_str(mixed $type, string|int|float|bool|null $trans_no, mixed $label="", 
 	bool $icon=false, ?string $class='', mixed $id='')
 {
 	if ($label == "")
@@ -132,7 +132,7 @@ function get_banking_trans_view_str(mixed $type, mixed $trans_no, mixed $label="
 
 //--------------------------------------------------------------------------------------
 
-function get_inventory_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", 
+function get_inventory_trans_view_str(mixed $type, string|int|float|bool|null $trans_no, mixed $label="", 
 	bool $icon=false, ?string $class='', mixed $id='')
 {
 	$viewer = "inventory/view/";
@@ -153,7 +153,7 @@ function get_inventory_trans_view_str(mixed $type, mixed $trans_no, mixed $label
 
 //--------------------------------------------------------------------------------------
 
-function get_manufacturing_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", 
+function get_manufacturing_trans_view_str(mixed $type, string|int|float|bool|null $trans_no, mixed $label="", 
 	bool $icon=false, ?string $class='', mixed $id='')
 {
 	$viewer = "manufacturing/view/";
@@ -177,7 +177,7 @@ function get_manufacturing_trans_view_str(mixed $type, mixed $trans_no, mixed $l
 
 //--------------------------------------------------------------------------------------
 
-function get_dimensions_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", bool $icon=false, 
+function get_dimensions_trans_view_str(mixed $type, string|int|float|bool|null $trans_no, mixed $label="", bool $icon=false, 
 	?string $class='', mixed $id='')
 {
 	if ($type == ST_DIMENSION)
@@ -193,7 +193,7 @@ function get_dimensions_trans_view_str(mixed $type, mixed $trans_no, mixed $labe
 /*
 	Journal entry or cost update postings link
 */
-function get_journal_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", bool $icon=false, 
+function get_journal_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, mixed $label="", bool $icon=false, 
 	?string $class='', mixed $id='')
 {
 	if ($type == ST_JOURNAL || $type == ST_COSTUPDATE)
@@ -209,7 +209,7 @@ function get_journal_trans_view_str(mixed $type, mixed $trans_no, mixed $label="
 
 //--------------------------------------------------------------------------------------
 
-function get_package_view_str(mixed $pkg, mixed $label="", bool $icon=false, ?string $class='', ?string $id='')
+function get_package_view_str(string|int|float|bool|null $pkg, mixed $label="", bool $icon=false, ?string $class='', ?string $id='')
 {
 	if ($label == "")
 	{
@@ -393,7 +393,7 @@ function get_comments_string(mixed $type, mixed $type_no): string
 
 //--------------------------------------------------------------------------------------
 
-function view_stock_status(mixed $stock_id, mixed $description=null, bool $echo=true): string
+function view_stock_status(string|int|float|bool|null $stock_id, string|int|float|bool|null $description=null, bool $echo=true): string
 {
 	global $path_to_root;
 	if ($description)

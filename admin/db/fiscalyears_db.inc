@@ -196,7 +196,7 @@ function open_year(mixed $year): void
 }
 
 //---------------------------------------------------------------------------------------------
-function delete_attachments_and_comments(string|int|null $type_no, mixed $trans_no): void
+function delete_attachments_and_comments(string|int|null $type_no, string|int|float|bool|null $trans_no): void
 {
 	delete_attachments($type_no, $trans_no);
 	$sql = "DELETE FROM ".TB_PREF."comments WHERE  type = $type_no AND id = $trans_no";

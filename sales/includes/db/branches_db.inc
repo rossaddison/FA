@@ -124,7 +124,7 @@ function get_branch_accounts(mixed $branch_id)
 /**
  * @return null|string
  */
-function get_branch_name(mixed $branch_id)
+function get_branch_name(string|int|float|bool|null $branch_id)
 {
 	$sql = "SELECT br_name FROM ".TB_PREF."cust_branch 
 		WHERE branch_code = ".db_escape($branch_id);

@@ -45,7 +45,7 @@ function add_gl_trans_customer(?int $type, mixed $type_no, mixed $date_, mixed $
 
 //----------------------------------------------------------------------------------------
 
-function get_calculated_price(mixed $stock_id, mixed $add_pct): int|float
+function get_calculated_price(mixed $stock_id, string|int|float|bool|null $add_pct): int|float
 {
 	$avg = get_unit_cost($stock_id);
 	if ($avg == 0)
@@ -53,7 +53,7 @@ function get_calculated_price(mixed $stock_id, mixed $add_pct): int|float
 	return round2($avg * (1 + $add_pct / 100), user_price_dec());
 }
 
-function round_to_nearest(mixed $price, mixed $round_to)
+function round_to_nearest(mixed $price, string|int|float|bool|null $round_to)
 {
 	if ($price == 0)
 		return 0;

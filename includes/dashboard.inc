@@ -86,7 +86,7 @@ function dashboard(mixed $sel_app): void
 		display_all();
 }
 
-function display_title(?string $title, mixed $id=false, mixed $type = false, ?string $per = '', mixed $num = false): void
+function display_title(?string $title, string|int|float|bool|null $id=false, mixed $type = false, ?string $per = '', mixed $num = false): void
 {
 	br();
 	start_form();
@@ -967,7 +967,7 @@ function cash_flow(?string $today): void
 	source_graphic($today, $title, _("Month"), $pg, _("Months"), $months);
 }
 
-function source_graphic(mixed $today, mixed $title, ?string $x_axis, mixed $pg, ?string $per = '', string|int|bool|array|null $num = false): void
+function source_graphic(string|int|float|bool|null $today, string|int|float|bool|null $title, ?string $x_axis, ?object $pg, ?string $per = '', string|int|bool|array|null $num = false): void
 {
 	if (!empty($per))
 		div_start($pg->id);

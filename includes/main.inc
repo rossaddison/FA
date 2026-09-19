@@ -320,7 +320,7 @@ function check_write(mixed $path)
 	also removes files from the $to which 
 	does not exists in $from directory but arelisted in $flist.
 */
-function copy_files(mixed $flist, mixed $from, mixed $to, mixed $strict=false): bool
+function copy_files(mixed $flist, string|int|float|bool|null $from, string|int|float|bool|null $to, mixed $strict=false): bool
 {
 	foreach ($flist as $file) {
 		if (file_exists($from.'/'.$file)) {
@@ -337,7 +337,7 @@ function copy_files(mixed $flist, mixed $from, mixed $to, mixed $strict=false): 
 	Copies file from base to target directory, restoring subdirectories 
 	if needed.
 */
-function copy_file(mixed $file, mixed $from, mixed $to): bool
+function copy_file(string|int|float|bool|null $file, string|int|float|bool|null $from, string|int|float|bool|null $to): bool
 {
 
 	if (!is_dir(dirname($file=='.' ? $to : ($to.'/'.$file)))) {

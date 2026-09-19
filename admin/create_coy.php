@@ -172,7 +172,7 @@ function handle_submit(mixed $selected_id): bool
 
 //---------------------------------------------------------------------------------------------
 
-function handle_delete(mixed $id): void
+function handle_delete(string|int|float|bool|null $id): void
 {
 	global $Ajax, $def_coy, $db_connections, $comp_subdirs, $path_to_root, $Mode;
 

@@ -34,7 +34,7 @@ function display_caption(mixed $msg): void
 	echo "<caption>$msg</caption>\n";
 }
 
-function display_heading(mixed $msg): void
+function display_heading(string|int|float|bool|null $msg): void
 {
 	echo "<center><span class='headingtext'>$msg</span></center>\n";	
 }
@@ -44,7 +44,7 @@ function display_heading2(?string $msg): void
 	echo "<center><span class='headingtext2'>$msg</span></center>\n";	
 }
 
-function display_note(mixed $msg, ?int $br=0, ?int $br2=0, ?string $extra=""): void
+function display_note(string|int|float|bool|null $msg, ?int $br=0, ?int $br2=0, ?string $extra=""): void
 {
 	for ($i = 0; $i < $br; $i++)
 		echo "<br>";

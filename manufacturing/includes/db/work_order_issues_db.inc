@@ -12,7 +12,7 @@
 //--------------------------------------------------------------------------------------
 
 function add_work_order_issue(mixed $woid, mixed $ref, mixed $to_work_order, mixed $items, mixed $location, mixed $workcentre,
-	mixed $date_, mixed $memo_): void
+	string|int|float|bool|null $date_, mixed $memo_): void
 {
 	global $Refs;
 

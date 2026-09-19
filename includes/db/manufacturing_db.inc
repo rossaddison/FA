@@ -54,7 +54,7 @@ function load_stock_levels(mixed $location): array
 }
 
 // recursion fixed. Max 10 recursion levels.
-function stock_demand_manufacture(mixed $stock_id, mixed $qty, mixed $demand_id, mixed $location, mixed $level=0) 
+function stock_demand_manufacture(mixed $stock_id, string|int|float|bool|null $qty, mixed $demand_id, mixed $location, string|int|float|bool|null $level=0) 
 {
 	global $bom_list, $qoh_stock;
 

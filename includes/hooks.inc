@@ -252,7 +252,7 @@ function install_hooks(mixed $lang_code=null): void
 	Non active hooks are not included in $Hooks array, so we can use special function to 
 	activate.
 */
-function activate_hooks(mixed $ext, mixed $comp, bool $on=true)
+function activate_hooks(string|int|float|bool|null $ext, mixed $comp, bool $on=true)
 {
 	global $Hooks;
 

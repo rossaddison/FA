@@ -186,7 +186,7 @@ function end_flush(): void {
 	cancel_transaction();
 }
 
-function display_db_error(mixed $msg, string|array|null $sql_statement=null, bool $exit=true): void
+function display_db_error(string|int|float|bool|null $msg, string|array|null $sql_statement=null, bool $exit=true): void
 {
 	global $db, $SysPrefs, $db_connections;
 

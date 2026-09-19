@@ -63,7 +63,7 @@ function getTransactions(string|int|array|null $category, string|array|null $loc
 /**
  * @return array<array-key, null|string>|false
  */
-function getPeriods(mixed $stockid, mixed $location)
+function getPeriods(string|int|float|bool|null $stockid, string|int|float|bool|null $location)
 {
 	$date5 = date('Y-m-d');
 	$date4 = date('Y-m-d',mktime(0,0,0,date('m'),1,date('Y')));

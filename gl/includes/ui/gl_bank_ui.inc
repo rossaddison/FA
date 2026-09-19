@@ -280,7 +280,7 @@ function gl_edit_item_controls(&$order, mixed $dim, mixed $Index=null): void
 
 //---------------------------------------------------------------------------------
 
-function gl_options_controls(mixed $order): void
+function gl_options_controls(?object $order): void
 {
 	div_start('footer');
 	echo "<br><table align='center'>";

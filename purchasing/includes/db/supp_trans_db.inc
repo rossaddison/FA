@@ -119,7 +119,7 @@ function get_supp_trans(mixed $trans_no, mixed $trans_type=-1, mixed $supplier_i
 /**
  * @return array<array-key, null|string>|false
  */
-function get_supp_payment_before(mixed $supplier_id, string|int|null $date)
+function get_supp_payment_before(string|int|float|bool|null $supplier_id, string|int|null $date)
 {
 	$sql = "SELECT "
 	. TB_PREF . "supp_trans.trans_no,"
@@ -175,7 +175,7 @@ function exists_supp_trans(mixed $type, mixed $type_no): bool
 
 //----------------------------------------------------------------------------------------
 
-function void_supp_trans(mixed $type, mixed $type_no): void
+function void_supp_trans(string|int|float|bool|null $type, string|int|float|bool|null $type_no): void
 {
 	$sql = "UPDATE ".TB_PREF."supp_trans SET ov_amount=0, ov_discount=0, ov_gst=0,
 		alloc=0 WHERE type=".db_escape($type)." AND trans_no=".db_escape($type_no);

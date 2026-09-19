@@ -182,7 +182,7 @@ function key_in_foreign_table(mixed $id, string|array|null $tables, ?string $std
 //
 // Resets $theme references in users records to 'default'.
 //
-function clean_user_themes(mixed $theme): bool
+function clean_user_themes(string|int|float|bool|null $theme): bool
 {
 	global $db_connections, $db;
 

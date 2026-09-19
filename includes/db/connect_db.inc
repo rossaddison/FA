@@ -125,7 +125,7 @@ function db_get_default_charset()
 /**
  * @return null|string
  */
-function db_get_view_schema(mixed $view)
+function db_get_view_schema(string|int|float|bool|null $view)
 {
     global $db;
     $schema = NULL;

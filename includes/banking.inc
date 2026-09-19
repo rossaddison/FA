@@ -56,7 +56,7 @@ function get_exchange_rate_to_home_currency(mixed $currency_code, mixed $date_)
 
 //----------------------------------------------------------------------------------
 
-function to_home_currency(mixed $amount, mixed $currency_code, mixed $date_): float
+function to_home_currency(string|int|float|bool|null $amount, mixed $currency_code, mixed $date_): float
 {
 	$ex_rate = get_exchange_rate_to_home_currency($currency_code, $date_);
 	return round2($amount / $ex_rate,  user_price_dec());
@@ -96,7 +96,7 @@ function exchange_from_to(int|float|null $amount, ?string $from_curr_code, mixed
 //--------------------------------------------------------------------------------
 // Exchange Variations Joe Hunt 2008-09-20 ////////////////////////////////////////
 
-function exchange_variation(mixed $pyt_type, mixed $pyt_no, mixed $type, mixed $trans_no, mixed $pyt_date, mixed $amount, mixed $person_type, bool $neg=false): void
+function exchange_variation(mixed $pyt_type, string|int|float|bool|null $pyt_no, mixed $type, string|int|float|bool|null $trans_no, mixed $pyt_date, string|int|float|bool|null $amount, mixed $person_type, bool $neg=false): void
 {
 	global $systypes_array;
 	

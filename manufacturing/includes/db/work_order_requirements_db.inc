@@ -69,7 +69,7 @@ function delete_wo_requirements(mixed $woid): void
 /*
 	Update total component units issued and average component cost
 */
-function update_wo_requirement_issued(?string $id, mixed $quantity, ?string $cost): void
+function update_wo_requirement_issued(?string $id, string|int|float|bool|null $quantity, ?string $cost): void
 {
 	$sql = "UPDATE ".TB_PREF."wo_requirements SET 
 				unit_cost = (units_issued*unit_cost+".$quantity*$cost.")/(units_issued+".$quantity."),

@@ -88,7 +88,7 @@ function get_purchase_conversion_factor(mixed $supplier_id, mixed $stock_id)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_purchase_data(mixed $supplier_id, mixed $stock_id)
+function get_purchase_data(mixed $supplier_id, string|int|float|bool|null $stock_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."purch_data 
 		WHERE supplier_id = ".db_escape($supplier_id) . "
@@ -126,7 +126,7 @@ function add_or_update_purchase_data(mixed $supplier_id, mixed $stock_id, mixed 
 	return true;
 }
 
-function get_po_prepayments(mixed $supp_trans): array
+function get_po_prepayments(?object $supp_trans): array
 {
 	// collect purchase order line ids
 	$allocations = array();
@@ -157,7 +157,7 @@ function get_po_prepayments(mixed $supp_trans): array
 //
 //	Add Purchase Order, GRN or Purchase Invoice with parent auto documents (if any)
 //
-function add_direct_supp_trans(mixed $cart)
+function add_direct_supp_trans(?object $cart)
 {
 	global $Refs, $type_shortcuts;
 

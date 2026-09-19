@@ -19,7 +19,7 @@ this can be a string either "d/m/Y" for UK/Australia/New Zealand dates or
 
 */
 
-function __date(mixed $year, mixed $month, mixed $day): string
+function __date(string|int|float|bool|null $year, mixed $month, mixed $day): string
 {
 	global $SysPrefs, $tmonths;
 	
@@ -249,7 +249,7 @@ function begin_month(mixed $date): string
    	return __date($year, $month, 1);
 }
 
-function days_in_month(mixed $month, mixed $year): int
+function days_in_month(string|int|float|bool|null $month, string|int|float|bool|null $year): int
 {
 	global $SysPrefs;
 
@@ -284,7 +284,7 @@ function end_month(mixed $date): string
    	return __date($year, $month, days_in_month($month, $year));
 }
 
-function add_days(mixed $date, mixed $days): string // accepts negative values as well
+function add_days(mixed $date, string|int|float|bool|null $days): string // accepts negative values as well
 {
 	global $SysPrefs;
     list($day, $month, $year) = explode_date_to_dmy($date);
@@ -325,7 +325,7 @@ function add_months(mixed $date, mixed $months) // accepts negative values as we
    	return __date($year, $month, $day);
 }
 
-function add_years(mixed $date, mixed $years) // accepts negative values as well
+function add_years(mixed $date, string|int|float|bool|null $years) // accepts negative values as well
 {
 	global $SysPrefs;
 
@@ -537,7 +537,7 @@ function explode_date_to_dmy(mixed $date_): array
 	return array($day, $month, $year);
 }
 
-function div(mixed $a, ?int $b): int 
+function div(string|int|float|bool|null $a, ?int $b): int 
 {
     return (int) ($a / $b);
 }
@@ -545,7 +545,7 @@ function div(mixed $a, ?int $b): int
    Copyright (C) 2000  Roozbeh Pournader and Mohammad Toossi 
    Released under GNU General Public License */
 
-function gregorian_to_jalali (mixed $g_y, mixed $g_m, mixed $g_d): array
+function gregorian_to_jalali (string|int|float|bool|null $g_y, string|int|float|bool|null $g_m, string|int|float|bool|null $g_d): array
 {
     $g_days_in_month = array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
     $j_days_in_month = array(31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29);
@@ -585,7 +585,7 @@ function gregorian_to_jalali (mixed $g_y, mixed $g_m, mixed $g_d): array
    	return array($jy, $jm, $jd);
 }
 
-function jalali_to_gregorian(mixed $j_y, mixed $j_m, mixed $j_d): array
+function jalali_to_gregorian(string|int|float|bool|null $j_y, string|int|float|bool|null $j_m, string|int|float|bool|null $j_d): array
 {
     $g_days_in_month = array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
     $j_days_in_month = array(31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29);

@@ -57,9 +57,9 @@ function get_customer_trans_version(mixed $type, mixed $trans_no): array {
 // $Total, $Tax, $Freight, $discount all in customer's currency
 // date_ is display date (non-sql)
 function write_customer_trans(mixed $trans_type, mixed $trans_no, mixed $debtor_no, mixed $BranchNo,
-	mixed $date_, mixed $reference, mixed $Total, mixed $discount=0, mixed $Tax=0, mixed $Freight=0, mixed $FreightTax=0,
+	mixed $date_, mixed $reference, mixed $Total, mixed $discount=0, string|int|float|bool|null $Tax=0, mixed $Freight=0, string|int|float|bool|null $FreightTax=0,
 	mixed $sales_type=0, mixed $order_no=0, mixed $ship_via=0, mixed $due_date="",
-	mixed $AllocAmt=0, ?int $rate=0, mixed $dimension_id=0, mixed $dimension2_id=0, mixed $payment_terms=null, mixed $tax_included=0, mixed $prep_amount=0)
+	string|int|float|bool|null $AllocAmt=0, ?int $rate=0, mixed $dimension_id=0, mixed $dimension2_id=0, mixed $payment_terms=null, mixed $tax_included=0, mixed $prep_amount=0)
 {
 	$new = $trans_no==0;
 	$curr = get_customer_currency($debtor_no);
@@ -124,7 +124,7 @@ function write_customer_trans(mixed $trans_type, mixed $trans_no, mixed $debtor_
 /**
  * @return array<array-key, null|string>|false
  */
-function get_customer_trans(mixed $trans_id, mixed $trans_type, mixed $customer_id=null)
+function get_customer_trans(mixed $trans_id, string|int|float|bool|null $trans_type, mixed $customer_id=null)
 {
 	global $SysPrefs;
 
@@ -274,7 +274,7 @@ function get_customer_details_from_trans(mixed $type, mixed $type_no)
 
 //----------------------------------------------------------------------------------------
 
-function void_customer_trans(mixed $type, mixed $type_no): void
+function void_customer_trans(string|int|float|bool|null $type, string|int|float|bool|null $type_no): void
 {
 	// clear all values and mark as void
 	$sql = "UPDATE ".TB_PREF."debtor_trans SET ov_amount=0, ov_discount=0, ov_gst=0, ov_freight=0,

@@ -303,7 +303,7 @@ function get_purchases_from_trans(mixed $stock_id, ?string $move_id): false|arra
 	This routine fixes stock and COGS balances for all $stock_id sales made during negative inventory status.
 	This is called when delivery is received causing inventory status to be positive again.
 */
-function adjust_deliveries(mixed $stock_id, mixed $material_cost, mixed $to): void
+function adjust_deliveries(string|int|float|bool|null $stock_id, string|int|float|bool|null $material_cost, mixed $to): void
 {
 	global $Refs;
 
@@ -393,7 +393,7 @@ function update_purchase_value(mixed $stock_id, mixed $price): void
 }	
 //-----------------------------------------------------------------------------------------
 
-function handle_negative_inventory(mixed $stock_id, mixed $quantity, mixed $standard_cost, mixed $date_): void
+function handle_negative_inventory(mixed $stock_id, string|int|float|bool|null $quantity, string|int|float|bool|null $standard_cost, mixed $date_): void
 {
 	//If negative adjustment result in negative or zero inventory
 	//then difference should be adjusted

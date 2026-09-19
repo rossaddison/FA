@@ -84,8 +84,8 @@ function get_stock_adjustment_items(mixed $trans_no)
 
 //--------------------------------------------------------------------------------------------------
 
-function add_stock_adjustment_item(int|float|null $adj_id, mixed $stock_id, mixed $location, mixed $date_, mixed $reference,
-	mixed $quantity, mixed $standard_cost, mixed $memo_): void
+function add_stock_adjustment_item(int|float|null $adj_id, string|int|float|bool|null $stock_id, mixed $location, mixed $date_, mixed $reference,
+	string|int|float|bool|null $quantity, string|int|float|bool|null $standard_cost, mixed $memo_): void
 {
 	$mb_flag = get_mb_flag($stock_id);
 

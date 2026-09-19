@@ -39,7 +39,7 @@ function add_currency(string|array|null $curr_abrev, string|array|null $symbol, 
 
 //---------------------------------------------------------------------------------------------
 
-function delete_currency(mixed $curr_code): void
+function delete_currency(string|int|float|bool|null $curr_code): void
 {
 	$sql="DELETE FROM ".TB_PREF."currencies WHERE curr_abrev=".db_escape($curr_code);
 	db_query($sql, "could not delete currency	$curr_code");

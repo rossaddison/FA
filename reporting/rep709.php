@@ -77,7 +77,7 @@ function getTaxTypes()
 /**
  * @return array<array-key, null|string>|false
  */
-function getTaxInfo(mixed $id)
+function getTaxInfo(string|int|float|bool|null $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."tax_types WHERE id=$id";
     $result = db_query($sql,"No transactions were returned");

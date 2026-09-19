@@ -110,7 +110,7 @@ function update_data(): void
 //---------------------------------------------------------------------------------------------
 // Update db record if respective checkbox value has changed.
 //
-function change_tpl_flag(mixed $reconcile_id): bool
+function change_tpl_flag(string|int|float|bool|null $reconcile_id): bool
 {
 	global	$Ajax;
 
@@ -133,7 +133,7 @@ function change_tpl_flag(mixed $reconcile_id): bool
 	return true;
 }
 
-function set_tpl_flag(mixed $reconcile_id): void
+function set_tpl_flag(string|int|float|bool|null $reconcile_id): void
 {
 	global	$Ajax;
 

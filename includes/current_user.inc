@@ -296,7 +296,7 @@ class current_user
 
 //--------------------------------------------------------------------------
 
-function round2(mixed $number, mixed $decimals=0): float
+function round2(string|int|float|bool|null $number, mixed $decimals=0): float
 {
 	$delta = ($number < 0 ? -.0000000001 : .0000000001);
 	return round($number+$delta, $decimals);
@@ -336,7 +336,7 @@ if (!floatcmp($value1, $value2))
 
 define('FLOAT_COMP_DELTA', 0.004);
 
-function floatcmp(mixed $a, mixed $b): int
+function floatcmp(string|int|float|bool|null $a, string|int|float|bool|null $b): int
 {
     return $a - $b > FLOAT_COMP_DELTA ? 1 : ($b - $a > FLOAT_COMP_DELTA ? -1 : 0);
 }
@@ -729,7 +729,7 @@ function recalculate_cols(&$cols): void
 		$cols[$key] = intval($col * $factor); 
 }
 
-function flush_dir(mixed $path, mixed $wipe = false): void 
+function flush_dir(string|int|float|bool|null $path, mixed $wipe = false): void 
 {
 	if (!file_exists($path))
 		return;

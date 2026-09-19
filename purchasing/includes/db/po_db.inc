@@ -378,7 +378,7 @@ function get_sql_for_po_search_completed(string|array|null $from, string|array|n
 	return $sql;
 }
 
-function get_sql_for_po_search(string|array|null $from, string|array|null $to, mixed $supplier_id=ALL_TEXT, mixed $location=ALL_TEXT, mixed $order_number='', string|array|null $stock_id=''): string
+function get_sql_for_po_search(string|array|null $from, string|array|null $to, mixed $supplier_id=ALL_TEXT, mixed $location=ALL_TEXT, string|int|float|bool|null $order_number='', string|array|null $stock_id=''): string
 {
 	$sql = "SELECT 
 		porder.order_no, 

@@ -60,7 +60,7 @@ function void_customer_trans_details(mixed $type, mixed $type_no): void
 //----------------------------------------------------------------------------------------
 
 function write_customer_trans_detail_item(?int $debtor_trans_type, mixed $debtor_trans_no, mixed $stock_id, mixed $description,
-	mixed $quantity, mixed $unit_price, mixed $unit_tax, mixed $discount_percent, mixed $std_cost, mixed $src_id, mixed $line_id=0): void
+	string|int|float|bool|null $quantity, string|int|float|bool|null $unit_price, string|int|float|bool|null $unit_tax, string|int|float|bool|null $discount_percent, string|int|float|bool|null $std_cost, mixed $src_id, mixed $line_id=0): void
 {
 	if ($line_id!=0)
 		$sql = "UPDATE ".TB_PREF."debtor_trans_details SET

@@ -103,7 +103,7 @@ function check_csrf_token(): bool
 	return true;
 }
 
-function start_table(mixed $class=false, mixed $extra="", string|int|null $padding='2', ?string $spacing='0'): void
+function start_table(mixed $class=false, string|int|float|bool|null $extra="", string|int|null $padding='2', ?string $spacing='0'): void
 {
 	echo "<center><table";
 	if ($class == TABLESTYLE_NOBORDER)
@@ -163,7 +163,7 @@ function vertical_space(?string $params=''): void
 	echo "</td></tr><tr><td valign=center $params>";
 }
 
-function meta_forward(mixed $forward_to, ?string $params="", ?int $timeout=0, bool $return=false): void
+function meta_forward(string|int|float|bool|null $forward_to, ?string $params="", ?int $timeout=0, bool $return=false): void
 {
     global $Ajax;
 	echo "<meta http-equiv='Refresh' content='".$timeout."; url=$forward_to?$params'>\n";
@@ -246,7 +246,7 @@ function hyperlink_no_params_td(mixed $target, mixed $label): void
 	echo "</td>\n";
 }
 
-function viewer_link(mixed $label, ?string $url='', mixed $class='', mixed $id='',  mixed $icon=null)
+function viewer_link(mixed $label, ?string $url='', mixed $class='', string|int|float|bool|null $id='',  mixed $icon=null)
 {
 	global $path_to_root;
 	
@@ -321,7 +321,7 @@ function hyperlink_params_td(?string $target, ?string $label, ?string $params): 
 
 //-----------------------------------------------------------------------------------
 
-function hyperlink_params_separate(mixed $target, mixed $label, mixed $params, bool $center=false): void
+function hyperlink_params_separate(string|int|float|bool|null $target, mixed $label, string|int|float|bool|null $params, bool $center=false): void
 {
 	$id = default_focus();
 
@@ -358,7 +358,7 @@ function alt_table_row_color(&$k, mixed $extra_class=null): void
 	echo "<tr class='".implode(' ', $classes)."'>\n";
 }
 
-function table_section_title(mixed $msg, ?int $colspan=2): void
+function table_section_title(string|int|float|bool|null $msg, ?int $colspan=2): void
 {
 	echo "<tr><td colspan=$colspan class='tableheader'>$msg</td></tr>\n";
 }
@@ -393,7 +393,7 @@ function br(mixed $num=1): void
 
 $ajax_divs = array();
 
-function div_start(mixed $id='', ?string $trigger=null, bool $non_ajax=false): void
+function div_start(string|int|float|bool|null $id='', ?string $trigger=null, bool $non_ajax=false): void
 {
     global $ajax_divs;
 
