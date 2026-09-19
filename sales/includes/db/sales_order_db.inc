@@ -391,7 +391,7 @@ function close_sales_order(string|int|float|bool|null $order_no): void
 
 //---------------------------------------------------------------------------------------------------------------
 
-function get_invoice_duedate(mixed $terms, mixed $invdate)
+function get_invoice_duedate(string|int|float|bool|array|null $terms, string|int|float|bool|array|null $invdate)
 {
 	if (!is_date($invdate))
 	{
@@ -591,7 +591,7 @@ function get_sql_for_sales_orders_view(string|int|array|null $trans_type, string
 }
 
 //--------------------------------------------------------------------------------------------------
-function update_prepaid_so_line(mixed $line_id, mixed $qty_invoiced): bool
+function update_prepaid_so_line(string|int|float|bool|null $line_id, string|int|float|bool|null $qty_invoiced): bool
 {
 	$sql = "UPDATE ".TB_PREF."sales_order_details
 		SET invoiced = invoiced + ".(float)$qty_invoiced."

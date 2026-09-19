@@ -10,7 +10,7 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-function add_wo_costing(mixed $workorder_id, mixed $cost_type, ?int $trans_type, int|float|null $trans_no, ?int $factor=1): void
+function add_wo_costing(string|int|float|bool|null $workorder_id, string|int|float|bool|null $cost_type, ?int $trans_type, int|float|null $trans_no, ?int $factor=1): void
 {
 	$sql = "INSERT INTO ".TB_PREF."wo_costing (workorder_id, cost_type, trans_type, trans_no, factor)
 		VALUES (".db_escape($workorder_id).","
@@ -24,7 +24,7 @@ function add_wo_costing(mixed $workorder_id, mixed $cost_type, ?int $trans_type,
 /**
  * @return bool|mysqli_result
  */
-function get_wo_costing(mixed $workorder_id)
+function get_wo_costing(string|int|float|bool|null $workorder_id)
 {
 	$sql="SELECT * 
 		FROM ".TB_PREF."wo_costing cost,
@@ -116,7 +116,7 @@ function update_material_cost(?string $stock_id, string|int|float|bool|null $qty
 /*
 	Create journal entry for WO related costs.
 */
-function add_wo_costs_journal(mixed $wo_id, int|float|bool|null $amount, mixed $cost_type, mixed $cr_acc, string|int|float|bool|null $date, mixed $dim1=0, string|int|float|bool|null $dim2=0, string|int|float|bool|null $memo = null, string|int|float|bool|null $ref= null): void
+function add_wo_costs_journal(string|int|float|bool|null $wo_id, int|float|bool|null $amount, string|int|float|bool|null $cost_type, string|int|float|bool|null $cr_acc, string|int|float|bool|null $date, string|int|float|bool|null $dim1=0, string|int|float|bool|null $dim2=0, string|int|float|bool|null $memo = null, string|int|float|bool|null $ref= null): void
 {
 //-------- this should be done by single call to write_journal_entries() using items_cart()
 //
@@ -226,7 +226,7 @@ function check_wo_costing(string|int|float|bool|null $type, string|int|float|boo
 	return $wo['workorder_id'];
 }
 
-function void_wo_costing(mixed $wo_id): void
+function void_wo_costing(string|int|float|bool|null $wo_id): void
 {
 	global $Refs;
 

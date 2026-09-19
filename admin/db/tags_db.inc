@@ -43,7 +43,7 @@ function update_tag(string|int|float|bool|null $id, string|int|float|bool|null $
 /**
  * @return bool|mysqli_result
  */
-function get_tags(string|int|float|bool|null $type, mixed $all=false)
+function get_tags(string|int|float|bool|null $type, string|int|float|bool|array|null $all=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."tags WHERE type=".db_escape($type);
 	
@@ -140,7 +140,7 @@ function delete_tag(string|int|float|bool|null $id): void
 
 //--------------------------------------------------------------------------------------
 
-function add_tag_associations(mixed $recordid, mixed $tagids): void
+function add_tag_associations(string|int|float|bool|null $recordid, array $tagids): void
 {
 	foreach($tagids as $tagid) {
 		if (!$tagid) continue;
@@ -153,7 +153,7 @@ function add_tag_associations(mixed $recordid, mixed $tagids): void
 
 //--------------------------------------------------------------------------------------
 
-function update_tag_associations(?int $type, mixed $recordid, mixed $tagids): void
+function update_tag_associations(?int $type, string|int|float|bool|null $recordid, array $tagids): void
 {
 	// Delete the old associations
 	delete_tag_associations($type, $recordid, false);
@@ -165,7 +165,7 @@ function update_tag_associations(?int $type, mixed $recordid, mixed $tagids): vo
 // To delete tag associations, we need to specify the tag type.
 // Otherwise we may inadvertantly delete records for another type of tag
 //
-function delete_tag_associations(?int $type, mixed $recordid, bool $all=false): void
+function delete_tag_associations(?int $type, string|int|float|bool|null $recordid, bool $all=false): void
 {
 /* multiply table DELETE syntax available since MySQL 4.0.0:
 	$sql = "DELETE ta FROM ".TB_PREF."tag_associations ta 
@@ -222,7 +222,7 @@ function get_records_associated_with_tag(string|int|float|bool|null $id)
 /**
  * @return bool|mysqli_result
  */
-function get_tags_associated_with_record(?int $type, mixed $recordid)
+function get_tags_associated_with_record(?int $type, string|int|float|bool|null $recordid)
 {
 	$sql = "SELECT tags.* FROM ".TB_PREF."tag_associations AS ta 
 				INNER JOIN ".TB_PREF."tags AS tags ON tags.id = ta.tag_id 

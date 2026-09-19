@@ -63,7 +63,7 @@ function add_stock_transfer(mixed $Items, string|array|null $location_from, stri
 // std_cost is in HOME currency
 // it seems the standard_cost field is not used at all
 
-function add_stock_transfer_item(int|float|null $transfer_id, string|int|float|bool|null $stock_id, mixed $location_from, mixed $location_to,
+function add_stock_transfer_item(int|float|null $transfer_id, string|int|float|bool|null $stock_id, string|int|float|bool|null $location_from, string|int|float|bool|null $location_to,
 	string|int|float|bool|null $date_, string|int|float|bool|null $reference, string|int|float|bool|null $quantity): void
 {
 	add_stock_move(ST_LOCTRANSFER, $stock_id, $transfer_id, $location_from,

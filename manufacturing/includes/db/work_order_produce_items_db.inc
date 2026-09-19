@@ -143,7 +143,7 @@ function exists_work_order_produce(string|int|float|bool|array|null $id): bool
 
 //--------------------------------------------------------------------------------------
 
-function check_void_wo_production(mixed $prod_no)
+function check_void_wo_production(string|int|float|bool|null $prod_no)
 {
 	$prod = get_work_order_produce($prod_no);
 	return $prod['closed'] ? $prod['workorder_id'] : 0;

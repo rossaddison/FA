@@ -15,7 +15,7 @@
 /**
  * @return bool|mysqli_result
  */
-function update_customer_trans_version(?int $type, mixed $versions) {
+function update_customer_trans_version(?int $type, array $versions) {
 
 	$sql= 'UPDATE '.TB_PREF. 'debtor_trans SET version=version+1
 			WHERE type='.db_escape($type).' AND (';
@@ -56,10 +56,10 @@ function get_customer_trans_version(string|int|float|bool|null $type, string|int
 //----------------------------------------------------------------------------------------
 // $Total, $Tax, $Freight, $discount all in customer's currency
 // date_ is display date (non-sql)
-function write_customer_trans(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no, mixed $debtor_no, mixed $BranchNo,
-	string|int|float|bool|null $date_, string|int|float|bool|null $reference, mixed $Total, int|float|bool|null $discount=0, string|int|float|bool|null $Tax=0, mixed $Freight=0, string|int|float|bool|null $FreightTax=0,
-	mixed $sales_type=0, string|int|float|bool|null $order_no=0, mixed $ship_via=0, mixed $due_date="",
-	string|int|float|bool|null $AllocAmt=0, ?int $rate=0, mixed $dimension_id=0, mixed $dimension2_id=0, mixed $payment_terms=null, string|int|float|bool|null $tax_included=0, mixed $prep_amount=0)
+function write_customer_trans(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $debtor_no, string|int|float|bool|array|null $BranchNo,
+	string|int|float|bool|null $date_, string|int|float|bool|null $reference, string|int|float|bool|null $Total, int|float|bool|null $discount=0, string|int|float|bool|null $Tax=0, string|int|float|bool|null $Freight=0, string|int|float|bool|null $FreightTax=0,
+	string|int|float|bool|null $sales_type=0, string|int|float|bool|null $order_no=0, string|int|float|bool|null $ship_via=0, string|int|float|bool|null $due_date="",
+	string|int|float|bool|null $AllocAmt=0, ?int $rate=0, string|int|float|bool|null $dimension_id=0, string|int|float|bool|null $dimension2_id=0, string|int|float|bool|null $payment_terms=null, string|int|float|bool|null $tax_included=0, string|int|float|bool|null $prep_amount=0)
 {
 	$new = $trans_no==0;
 	$curr = get_customer_currency($debtor_no);
@@ -311,7 +311,7 @@ function post_void_customer_trans(string|int|float|bool|null $type, string|int|f
 }
 
 //----------------------------------------------------------------------------------------
-function get_sql_for_customer_inquiry(string|array|null $from, string|array|null $to, mixed $cust_id = ALL_TEXT, mixed $filter = ALL_TEXT, int|array|null $show_voided = 0, string|array|null $ref=''): string
+function get_sql_for_customer_inquiry(string|array|null $from, string|array|null $to, string|int|float|bool|array|null $cust_id = ALL_TEXT, string|int|float|bool|array|null $filter = ALL_TEXT, int|array|null $show_voided = 0, string|array|null $ref=''): string
 {
     $date_after = date2sql($from);
     $date_to = date2sql($to);

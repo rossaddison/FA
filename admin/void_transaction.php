@@ -109,7 +109,7 @@ function exist_transaction(string|array|null $type, string|array|null $type_no):
 	return true;
 }
 
-function view_link(mixed $trans)
+function view_link(array $trans)
 {
 	if (!isset($trans['type']))
 		$trans['type'] = $_POST['filterType'];

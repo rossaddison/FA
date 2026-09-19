@@ -12,7 +12,7 @@
 define('VARLIB_PATH', $path_to_root.'/tmp');
 define('VARLOG_PATH', $path_to_root.'/tmp');
 
-function output_html(mixed $text): string
+function output_html(string|int|float|bool|null $text): string
 {
 	global $before_box, $Ajax, $messages;
 	// Fatal errors are not send to error_handler,
@@ -44,7 +44,7 @@ function html_cleanup(&$parms): void
 	reset($parms); // needed for direct key() usage later throughout the sources
 }
 
-function check_page_security(mixed $page_security): void
+function check_page_security(string|int|float|bool|null $page_security): void
 {
 }
 

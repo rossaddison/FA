@@ -13,7 +13,7 @@ include_once($path_to_root . "/includes/ui.inc");
 
 //--------------------------------------------------------------------------------------
 
-function display_bom(mixed $item_check): void
+function display_bom(string|int|float|bool|null $item_check): void
 {
     $result = get_bom($item_check);
 

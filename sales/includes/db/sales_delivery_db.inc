@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------------
 // insert/update sales delivery
 //
-function write_sales_delivery(&$delivery,mixed $bo_policy)
+function write_sales_delivery(&$delivery,string|int|float|bool|null $bo_policy)
 {
 	global $Refs;
 

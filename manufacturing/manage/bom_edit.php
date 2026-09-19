@@ -73,7 +73,7 @@ function display_bom_items(string|int|float|bool|null $selected_parent): void
 	div_end();
 }
 
-function copy_bom_items(string|int|float|bool|null $stock_id, mixed $new_stock_id): void
+function copy_bom_items(string|int|float|bool|null $stock_id, string|int|float|bool|null $new_stock_id): void
 {
 	$result = get_bom($stock_id);
 	while ($myrow = db_fetch($result))

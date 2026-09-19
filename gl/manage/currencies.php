@@ -80,7 +80,7 @@ function handle_submit()
 
 //---------------------------------------------------------------------------------------------
 
-function check_can_delete(mixed $curr): bool
+function check_can_delete(string|int|float|bool|null $curr): bool
 {
 
 	if ($curr == "")

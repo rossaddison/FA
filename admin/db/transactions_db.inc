@@ -12,7 +12,7 @@
 
 //--------------------------------------------------------------------------------------
 
-function get_sql_for_view_transactions(mixed $filtertype, string|int|float|bool|array|null $from, string|int|float|bool|array|null $to, &$trans_ref): string
+function get_sql_for_view_transactions(string|int|float|bool|array|null $filtertype, string|int|float|bool|array|null $from, string|int|float|bool|array|null $to, &$trans_ref): string
 {
 	$db_info = get_systype_db_info($filtertype);
 

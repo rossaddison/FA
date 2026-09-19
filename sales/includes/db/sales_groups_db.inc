@@ -113,8 +113,8 @@ function get_area_name(string|array|null $id)
 	return is_array($row) ? $row[0] : false;
 }
 
-function add_salesman(mixed $salesman_name, mixed $salesman_phone, mixed $salesman_fax,
-	mixed $salesman_email, int|float|bool|null $provision, int|float|bool|null $break_pt, int|float|bool|null $provision2): void
+function add_salesman(string|int|float|bool|null $salesman_name, string|int|float|bool|null $salesman_phone, string|int|float|bool|null $salesman_fax,
+	string|int|float|bool|null $salesman_email, int|float|bool|null $provision, int|float|bool|null $break_pt, int|float|bool|null $provision2): void
 {
 	$sql = "INSERT INTO ".TB_PREF."salesman (salesman_name, salesman_phone, salesman_fax, salesman_email,
 		provision, break_pt, provision2)
@@ -127,8 +127,8 @@ function add_salesman(mixed $salesman_name, mixed $salesman_phone, mixed $salesm
    	db_query($sql,"The insert of the sales person failed");
 }
 
-function update_salesman(string|int|float|bool|array|null $selected_id, mixed $salesman_name, mixed $salesman_phone, mixed $salesman_fax,
-	mixed $salesman_email, int|float|bool|null $provision, int|float|bool|null $break_pt, int|float|bool|null $provision2): void
+function update_salesman(string|int|float|bool|array|null $selected_id, string|int|float|bool|null $salesman_name, string|int|float|bool|null $salesman_phone, string|int|float|bool|null $salesman_fax,
+	string|int|float|bool|null $salesman_email, int|float|bool|null $provision, int|float|bool|null $break_pt, int|float|bool|null $provision2): void
 {
 	$sql = "UPDATE ".TB_PREF."salesman SET salesman_name=".db_escape($salesman_name) . ",
 		salesman_phone=".db_escape($salesman_phone) . ",

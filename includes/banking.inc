@@ -27,7 +27,7 @@ function get_company_currency()
 
 //----------------------------------------------------------------------------------
 
-function get_exchange_rate_from_home_currency(mixed $currency_code, string|int|float|bool|array|null $date_)
+function get_exchange_rate_from_home_currency(string|int|float|bool|null $currency_code, string|int|float|bool|array|null $date_)
 {
 	if ($currency_code == get_company_currency() || $currency_code == null)
 		return 1.0000;
@@ -49,14 +49,14 @@ function get_exchange_rate_from_home_currency(mixed $currency_code, string|int|f
 
 //----------------------------------------------------------------------------------
 
-function get_exchange_rate_to_home_currency(mixed $currency_code, string|int|float|bool|null $date_)
+function get_exchange_rate_to_home_currency(string|int|float|bool|null $currency_code, string|int|float|bool|null $date_)
 {
 	return 1 / get_exchange_rate_from_home_currency($currency_code, $date_);
 }
 
 //----------------------------------------------------------------------------------
 
-function to_home_currency(string|int|float|bool|null $amount, mixed $currency_code, string|int|float|bool|null $date_): float
+function to_home_currency(string|int|float|bool|null $amount, string|int|float|bool|null $currency_code, string|int|float|bool|null $date_): float
 {
 	$ex_rate = get_exchange_rate_to_home_currency($currency_code, $date_);
 	return round2($amount / $ex_rate,  user_price_dec());
@@ -64,7 +64,7 @@ function to_home_currency(string|int|float|bool|null $amount, mixed $currency_co
 
 //----------------------------------------------------------------------------------
 
-function get_exchange_rate_from_to(mixed $from_curr_code, mixed $to_curr_code, string|int|float|bool|array|null $date_)
+function get_exchange_rate_from_to(string|int|float|bool|null $from_curr_code, string|int|float|bool|null $to_curr_code, string|int|float|bool|array|null $date_)
 {
 //	echo "converting from $from_curr_code to $to_curr_code <BR>";
 	if ($from_curr_code == $to_curr_code)
@@ -87,7 +87,7 @@ function get_exchange_rate_from_to(mixed $from_curr_code, mixed $to_curr_code, s
 
 //--------------------------------------------------------------------------------
 
-function exchange_from_to(int|float|null $amount, ?string $from_curr_code, mixed $to_curr_code, string|int|float|bool|null $date_)
+function exchange_from_to(int|float|null $amount, ?string $from_curr_code, string|int|float|bool|null $to_curr_code, string|int|float|bool|null $date_)
 {
 	$ex_rate = get_exchange_rate_from_to($from_curr_code, $to_curr_code, $date_);
 	return $amount / $ex_rate;
@@ -96,7 +96,7 @@ function exchange_from_to(int|float|null $amount, ?string $from_curr_code, mixed
 //--------------------------------------------------------------------------------
 // Exchange Variations Joe Hunt 2008-09-20 ////////////////////////////////////////
 
-function exchange_variation(mixed $pyt_type, string|int|float|bool|null $pyt_no, string|int|float|bool|null $type, string|int|float|bool|null $trans_no, mixed $pyt_date, string|int|float|bool|null $amount, mixed $person_type, bool $neg=false): void
+function exchange_variation(string|int|float|bool|null $pyt_type, string|int|float|bool|null $pyt_no, string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $pyt_date, string|int|float|bool|null $amount, string|int|float|bool|null $person_type, bool $neg=false): void
 {
 	global $systypes_array;
 	

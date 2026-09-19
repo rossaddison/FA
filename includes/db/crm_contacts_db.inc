@@ -13,8 +13,8 @@
 /**
  * @return int|null|string
  */
-function add_crm_person(string|int|float|bool|array|null $ref, string|int|float|bool|array|null $name, mixed $name2, mixed $address, string|int|float|bool|array|null $phone, string|int|float|bool|array|null $phone2, mixed $fax, string|int|float|bool|array|null $email, mixed $lang, mixed $notes,
-	mixed $cat_ids=null, mixed $entity=null)
+function add_crm_person(string|int|float|bool|array|null $ref, string|int|float|bool|array|null $name, string|int|float|bool|null $name2, string|int|float|bool|array|null $address, string|int|float|bool|array|null $phone, string|int|float|bool|array|null $phone2, string|int|float|bool|array|null $fax, string|int|float|bool|array|null $email, string|int|float|bool|array|null $lang, string|int|float|bool|null $notes,
+	?array $cat_ids=null, mixed $entity=null)
 {
 	$sql = "INSERT INTO ".TB_PREF."crm_persons (ref, name, name2, address,
 		phone, phone2, fax, email, lang, notes)
@@ -43,8 +43,8 @@ function add_crm_person(string|int|float|bool|array|null $ref, string|int|float|
 	return $id;
 }
 
-function update_crm_person(string|int|float|bool|null $id, string|int|float|bool|null $ref, string|int|float|bool|null $name, mixed $name2, mixed $address, string|int|float|bool|null $phone, string|int|float|bool|null $phone2, mixed $fax, string|int|float|bool|null $email, 
-	mixed $lang, mixed $notes, mixed $cat_ids, mixed $entity=null, string|int|float|bool|null $type=null)
+function update_crm_person(string|int|float|bool|null $id, string|int|float|bool|null $ref, string|int|float|bool|null $name, string|int|float|bool|null $name2, string|int|float|bool|null $address, string|int|float|bool|null $phone, string|int|float|bool|null $phone2, string|int|float|bool|null $fax, string|int|float|bool|null $email, 
+	string|int|float|bool|null $lang, string|int|float|bool|null $notes, array $cat_ids, mixed $entity=null, string|int|float|bool|null $type=null)
 {
 	$sql = "UPDATE ".TB_PREF."crm_persons SET "
 		  ."ref=".db_escape($ref) . ", "
@@ -73,7 +73,7 @@ function update_crm_person(string|int|float|bool|null $id, string|int|float|bool
 /**
  * @return bool|mysqli_result
  */
-function delete_crm_person(mixed $person, bool $with_contacts=false)
+function delete_crm_person(string|int|float|bool|null $person, bool $with_contacts=false)
 {
 	begin_transaction();
 
@@ -90,7 +90,7 @@ function delete_crm_person(mixed $person, bool $with_contacts=false)
 /*
 	Retrieve full contact data from database for selected type/action/entity or person
 */
-function get_crm_persons(string|int|float|bool|null $type=null, string|int|float|bool|null $action=null, mixed $entity=null, mixed $person=null, mixed $unique=false)
+function get_crm_persons(string|int|float|bool|null $type=null, string|int|float|bool|null $action=null, mixed $entity=null, string|int|float|bool|null $person=null, string|int|float|bool|null $unique=false)
 {
 	$sql = "SELECT t.*, p.*, r.id as contact_id FROM ".TB_PREF."crm_persons p,"
 		.TB_PREF."crm_categories t, "
@@ -159,7 +159,7 @@ function get_person_contacts(string|int|float|bool|null $id): array
 /**
  * @return bool|mysqli_result
  */
-function update_person_contacts(string|int|float|bool|null $id, mixed $cat_ids, mixed $entity_id=null, string|int|float|bool|null $type=null)
+function update_person_contacts(string|int|float|bool|null $id, array $cat_ids, string|int|float|bool|null $entity_id=null, string|int|float|bool|null $type=null)
 {
 	$sql = "DELETE FROM ".TB_PREF."crm_contacts WHERE person_id=".db_escape($id);
 	if ($type)
@@ -299,7 +299,7 @@ function delete_crm_contact(string|int|float|bool|null $id)
 /**
  * @return bool|mysqli_result
  */
-function delete_crm_contacts(string|int|float|bool|null $person_id = null, string|int|float|bool|null $type = null, mixed $entity_id=null, string|int|float|bool|null $action = null)
+function delete_crm_contacts(string|int|float|bool|null $person_id = null, string|int|float|bool|null $type = null, string|int|float|bool|null $entity_id=null, string|int|float|bool|null $action = null)
 {
 	$sql = "DELETE FROM ".TB_PREF."crm_contacts WHERE ";
 

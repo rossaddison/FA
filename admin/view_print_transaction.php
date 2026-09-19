@@ -27,7 +27,7 @@ if ($SysPrefs->use_popup_windows)
 page(_($help_context = "View or Print Transactions"), false, false, "", $js);
 
 //----------------------------------------------------------------------------------------
-function view_link(mixed $trans)
+function view_link(array $trans)
 {
 	if (!isset($trans['type']))
 		$trans['type'] = $_POST['filterType'];

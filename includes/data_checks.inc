@@ -576,7 +576,7 @@ function check_empty_result(?string $sql): bool
 //	Integer input check 
 //	Return 1 if number has proper form and is within <min, max> range
 //
-function check_int(mixed $postname, mixed $min=null, string|int|float|bool|null $max=null): int {
+function check_int(string|int|float|bool|null $postname, string|int|float|bool|null $min=null, string|int|float|bool|null $max=null): int {
 	if(!isset($_POST[$postname]))
 	  return 0;
     $num = input_num($postname);
@@ -664,7 +664,7 @@ function check_is_editable(string|int|float|bool|array|null $trans_type, string|
 		check_is_closed($trans_type, $trans_no, $msg);
 }
 
-function check_reference(string|int|float|bool|array|null $reference, string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no=0, mixed $context=null, mixed $line=null): bool
+function check_reference(string|int|float|bool|array|null $reference, string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no=0, mixed $context=null, string|int|float|bool|null $line=null): bool
 {
 	global $Refs;
 
@@ -679,7 +679,7 @@ function check_reference(string|int|float|bool|array|null $reference, string|int
 	return true;
 }
 
-function check_sys_pref(string|int|float|bool|null $name, string|int|float|bool|null $msg, mixed $empty = ''): void
+function check_sys_pref(string|int|float|bool|null $name, string|int|float|bool|null $msg, string|int|float|bool|null $empty = ''): void
 {
 	global $path_to_root;
 

@@ -123,7 +123,7 @@ end_row();
 end_table(1);
 //---------------------------------------------------------------------------------------------
 
-function trans_view(mixed $trans, string|int|float|bool|array|null $trans_no)
+function trans_view(array $trans, string|int|float|bool|array|null $trans_no)
 {
 	return get_customer_trans_view_str(ST_CUSTDELIVERY, $trans['trans_no']);
 }

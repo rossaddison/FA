@@ -189,7 +189,7 @@ function display_gl_items(string|int|float|bool|supp_trans|null $title, &$order)
 
 //---------------------------------------------------------------------------------
 
-function gl_edit_item_controls(&$order, mixed $dim, mixed $sub_accounts, mixed $Index=null): void
+function gl_edit_item_controls(&$order, string|int|float|bool|null $dim, array|string|null $sub_accounts, string|int|float|bool|null $Index=null): void
 {
 	global $Ajax;
 	start_row();

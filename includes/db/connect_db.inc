@@ -27,7 +27,7 @@ function db_get_version()
 /*
 	Converts encoding name to mysql standard.
 */
-function get_mysql_encoding_name(mixed $encoding): string|null
+function get_mysql_encoding_name(string|int|float|bool|null $encoding): string|null
 {
 	$db_encoding = array(
 		'UTF-8' => 'utf8',
@@ -64,7 +64,7 @@ function get_mysql_encoding_name(mixed $encoding): string|null
 /*
 	Returns 'best' mysql collation for various FA backend language codes.
 */
-function get_mysql_collation(mixed $lang=null): string
+function get_mysql_collation(string|int|float|bool|null $lang=null): string
 {
 	if (!$lang)
 		$lang = 'utf8_'.substr($_SESSION['language']->code, 0, 2);
@@ -140,7 +140,7 @@ function db_get_view_schema(string|int|float|bool|null $view)
 */
 if (!function_exists('db_profile'))
 {
-	function db_profile(mixed $sql=false): void
+	function db_profile(string|int|float|bool|array|null $sql=false): void
 	{
 	}
 }

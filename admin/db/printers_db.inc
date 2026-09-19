@@ -82,7 +82,7 @@ function update_printer_profile(string|int|float|bool|array|null $name, ?array $
 //
 //	Get destination for report defined in given printing profile.
 //
-function get_report_printer(mixed $profile, mixed $report)
+function get_report_printer(string|int|float|bool|null $profile, string|int|float|bool|null $report)
 {
 	$sql = "SELECT printer FROM ".TB_PREF."print_profiles WHERE "
 		."profile=".db_escape($profile)." AND report=";

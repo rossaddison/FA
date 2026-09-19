@@ -96,7 +96,7 @@ function delete_tax_group_items(string|int|float|bool|null $id): void
 /**
  * @return bool|mysqli_result
  */
-function get_tax_group_rates(mixed $group_id=null, bool $tax_shipping=false)
+function get_tax_group_rates(string|int|float|bool|null $group_id=null, bool $tax_shipping=false)
 {
 	global $SysPrefs;
 

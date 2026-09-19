@@ -16,7 +16,7 @@
 // $date_ is display date (non-sql)
 
 function add_bank_trans(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $bank_act, string|int|float|bool|array|null $ref, string|int|float|bool|array|null $date_,
-	string|int|float|bool|null $amount, mixed $person_type_id, string|int|float|bool|null $person_id, string|int|float|bool|null $currency="", mixed $err_msg="", ?int $rate=0): void
+	string|int|float|bool|null $amount, string|int|float|bool|null $person_type_id, string|int|float|bool|null $person_id, string|int|float|bool|null $currency="", string|int|float|bool|null $err_msg="", ?int $rate=0): void
 {
 	$sqlDate = date2sql($date_);
 
@@ -65,7 +65,7 @@ function exists_bank_trans(string|int|float|bool|array|null $type, string|int|fl
 /**
  * @return bool|mysqli_result
  */
-function get_bank_trans(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no=null, mixed $person_type_id=null, string|int|float|bool|null $person_id=null)
+function get_bank_trans(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no=null, string|int|float|bool|null $person_type_id=null, string|int|float|bool|null $person_id=null)
 {
 	$sql = "SELECT bt.*, act.*,
 		IFNULL(abs(dt.ov_amount), IFNULL(ABS(st.ov_amount), bt.amount)) settled_amount,
@@ -119,7 +119,7 @@ function get_bank_trans_for_bank_account(string|int|float|bool|null $bank_accoun
 /**
  * @return null|string
  */
-function get_balance_before_for_bank_account(mixed $bank_account, string|int|float|bool|null $from)
+function get_balance_before_for_bank_account(string|int|float|bool|null $bank_account, string|int|float|bool|null $from)
 {
 	$from = date2sql($from);
 	$sql = "SELECT SUM(amount)

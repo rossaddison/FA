@@ -82,7 +82,7 @@ function update_exchange_rate(string|array|null $curr_code, string|array|null $d
 
 //---------------------------------------------------------------------------------------------
 
-function add_exchange_rate(string|int|float|bool|array|null $curr_code, string|int|float|bool|array|null $date_, mixed $buy_rate, mixed $sell_rate): void
+function add_exchange_rate(string|int|float|bool|array|null $curr_code, string|int|float|bool|array|null $date_, string|int|float|bool|null $buy_rate, string|int|float|bool|null $sell_rate): void
 {
 	if (is_company_currency($curr_code))
 		display_db_error("Exchange rates cannot be set for company currency", "", true);
@@ -97,7 +97,7 @@ function add_exchange_rate(string|int|float|bool|array|null $curr_code, string|i
 
 //---------------------------------------------------------------------------------------------
 
-function add_new_exchange_rate(string|int|float|bool|null $curr_code, string|int|float|bool|array|null $date_, mixed $ex_rate): void
+function add_new_exchange_rate(string|int|float|bool|null $curr_code, string|int|float|bool|array|null $date_, string|int|float|bool|null $ex_rate): void
 {
 	if (is_company_currency($curr_code) || !$ex_rate)
 		return;
@@ -121,7 +121,7 @@ function delete_exchange_rate(string|int|float|bool|null $rate_id): void
 //
 //	amount [home] = amount [curr] * ex_rate
 //
-function retrieve_exrate(mixed $curr_b, string|int|float|bool|null $date)
+function retrieve_exrate(string|int|float|bool|array|null $curr_b, string|int|float|bool|null $date)
 {
 	global $SysPrefs;
 

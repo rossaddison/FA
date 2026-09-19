@@ -67,7 +67,7 @@ function get_backtrace(bool $html = false, ?int $skip=0): string
 //    Error handler - collects all php/user messages for
 //    display in message box.
 
-function error_handler(mixed $errno, mixed $errstr, mixed $file, mixed $line): bool {
+function error_handler(string|int|float|bool|null $errno, string|int|float|bool|null $errstr, string|int|float|bool|null $file, string|int|float|bool|null $line): bool {
     global $messages, $SysPrefs, $cur_error_level;
 
 	// skip well known warnings we don't care about.
@@ -111,7 +111,7 @@ function exception_handler(mixed $exception): void
 //------------------------------------------------------------------------------
 //	Formats system messages before insert them into message <div>
 // FIX center is unused now
-function fmt_errors(mixed $center=false): string {
+function fmt_errors(string|int|float|bool|null $center=false): string {
     global $messages, $path_to_root, $SysPrefs;
 
   	$msg_class = array(

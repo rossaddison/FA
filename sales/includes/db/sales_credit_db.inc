@@ -13,7 +13,7 @@
 // if ($writeoff_acc==0) return goods into $cart->Location
 // if src_docs!=0 => credit invoice else credit note
 //
-function write_credit_note(&$credit_note, mixed $write_off_acc)
+function write_credit_note(&$credit_note, string|int|float|bool|null $write_off_acc)
 {
 	global $Refs;
 
@@ -197,8 +197,8 @@ function add_credit_movements_item(&$credit_note, &$credit_line,
 
 //----------------------------------------------------------------------------------------
 
-function add_gl_trans_credit_costs(?object $order, ?object $order_line, mixed $credit_no, string|int|float|bool|null $date_,
-	?string $credit_type, mixed $write_off_gl_code, &$branch_data)
+function add_gl_trans_credit_costs(?object $order, ?object $order_line, string|int|float|bool|null $credit_no, string|int|float|bool|null $date_,
+	?string $credit_type, string|int|float|bool|null $write_off_gl_code, &$branch_data)
 {
 	$stock_gl_codes = get_stock_gl_code($order_line->stock_id);
 	$customer = get_customer($order->customer_id);

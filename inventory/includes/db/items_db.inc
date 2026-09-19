@@ -11,12 +11,12 @@
 ***********************************************************************/
 require_once($path_to_root. "/admin/db/attachments_db.inc");
 
-function update_item(string|int|float|bool|null $stock_id, string|int|float|bool|null $description, mixed $long_description, mixed $category_id, 
-	mixed $tax_type_id, mixed $units, string|int|float|bool|array|null $mb_flag, mixed $sales_account, mixed $inventory_account, 
-	mixed $cogs_account, 	mixed $adjustment_account, mixed $wip_account, mixed $dimension_id, 
-	mixed $dimension2_id, mixed $no_sale, mixed $editable, mixed $no_purchase,
-	mixed $depreciation_method = 'D', mixed $depreciation_rate=100, mixed $depreciation_factor=1,
-	mixed $depreciation_start=null, mixed $fa_class_id=null): void
+function update_item(string|int|float|bool|null $stock_id, string|int|float|bool|null $description, string|int|float|bool|null $long_description, string|int|float|bool|null $category_id, 
+	string|int|float|bool|null $tax_type_id, string|int|float|bool|array|null $units, string|int|float|bool|array|null $mb_flag, string|int|float|bool|null $sales_account, string|int|float|bool|null $inventory_account, 
+	string|int|float|bool|null $cogs_account, 	string|int|float|bool|null $adjustment_account, string|int|float|bool|null $wip_account, string|int|float|bool|null $dimension_id, 
+	string|int|float|bool|null $dimension2_id, string|int|float|bool|array|null $no_sale, string|int|float|bool|array|null $editable, string|int|float|bool|array|null $no_purchase,
+	string|int|float|bool|array|null $depreciation_method = 'D', string|int|float|bool|null $depreciation_rate=100, string|int|float|bool|null $depreciation_factor=1,
+	string|int|float|bool|array|null $depreciation_start=null, string|int|float|bool|array|null $fa_class_id=null): void
 {
 	$sql = "UPDATE ".TB_PREF."stock_master SET long_description=".db_escape($long_description).",
 		description=".db_escape($description).",
@@ -55,12 +55,12 @@ function update_item(string|int|float|bool|null $stock_id, string|int|float|bool
 	update_item_code(-1, $stock_id, $stock_id, $description, $category_id, 1, 0);
 }
 
-function add_item(string|int|float|bool|null $stock_id, string|int|float|bool|null $description, mixed $long_description, mixed $category_id, 
-	mixed $tax_type_id, mixed $units, string|int|float|bool|array|null $mb_flag,	mixed $sales_account, mixed $inventory_account, 
-	mixed $cogs_account, mixed $adjustment_account,	mixed $wip_account, mixed $dimension_id, 
-	mixed $dimension2_id, mixed $no_sale, mixed $editable, mixed $no_purchase,
-	mixed $depreciation_method='D', mixed $depreciation_rate=100,  mixed $depreciation_factor=1, mixed $depreciation_start=null,
-	mixed $fa_class_id=null): void
+function add_item(string|int|float|bool|null $stock_id, string|int|float|bool|null $description, string|int|float|bool|null $long_description, string|int|float|bool|null $category_id, 
+	string|int|float|bool|null $tax_type_id, string|int|float|bool|null $units, string|int|float|bool|array|null $mb_flag,	string|int|float|bool|null $sales_account, string|int|float|bool|null $inventory_account, 
+	string|int|float|bool|null $cogs_account, string|int|float|bool|null $adjustment_account,	string|int|float|bool|null $wip_account, string|int|float|bool|null $dimension_id, 
+	string|int|float|bool|null $dimension2_id, string|int|float|bool|array|null $no_sale, string|int|float|bool|array|null $editable, string|int|float|bool|array|null $no_purchase,
+	string|int|float|bool|array|null $depreciation_method='D', string|int|float|bool|null $depreciation_rate=100,  string|int|float|bool|null $depreciation_factor=1, string|int|float|bool|array|null $depreciation_start=null,
+	string|int|float|bool|array|null $fa_class_id=null): void
 {
 	$sql = "INSERT INTO ".TB_PREF."stock_master (stock_id, description, long_description, category_id,
 		tax_type_id, units, mb_flag, sales_account, inventory_account, cogs_account,
@@ -138,7 +138,7 @@ function get_item(string|int|float|bool|array|null $stock_id)
 /**
  * @return bool|mysqli_result
  */
-function get_items(mixed $fixed_asset = 0)
+function get_items(string|int|float|bool|null $fixed_asset = 0)
 {
 	$sql = "SELECT * FROM ".TB_PREF."stock_master WHERE fixed_asset=".db_escape($fixed_asset);
 	return db_query($sql,"items could not be retreived");

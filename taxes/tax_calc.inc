@@ -19,7 +19,7 @@ include_once($path_to_root . "/taxes/db/item_tax_types_db.inc");
 // for item $stock_id with line price $price,
 // with applicable tax rates $tax_group_array or group id $tax_group
 
-function get_tax_free_price_for_item(string|int|float|bool|null $stock_id, string|int|float|bool|null $price, mixed $tax_group, string|int|float|bool|null $tax_included, mixed $tax_group_array=null)
+function get_tax_free_price_for_item(string|int|float|bool|null $stock_id, string|int|float|bool|null $price, string|int|float|bool|null $tax_group, string|int|float|bool|null $tax_included, ?array $tax_group_array=null)
 {
 	// if price is zero, then can't be taxed !
 	if ($price == 0)
@@ -57,7 +57,7 @@ function get_tax_free_price_for_item(string|int|float|bool|null $stock_id, strin
 //	Full price (incl. VAT) for item $stock_id with line price $price,
 //	with tax rates $tax_group_array or applicable group $tax_group
 //
-function get_full_price_for_item(string|int|float|bool|null $stock_id, string|int|float|bool|null $price, mixed $tax_group, string|int|float|bool|null $tax_included, mixed $tax_group_array=null)
+function get_full_price_for_item(string|int|float|bool|null $stock_id, string|int|float|bool|null $price, string|int|float|bool|null $tax_group, string|int|float|bool|null $tax_included, ?array $tax_group_array=null)
 {
 	// if price is zero, then can't be taxed !
 	if ($price == 0)
@@ -93,7 +93,7 @@ function get_full_price_for_item(string|int|float|bool|null $stock_id, string|in
 //---------------------------------------------------------------------------------
 // return an array of (tax_type_id, tax_type_name, sales_gl_code, purchasing_gl_code, rate)
 
-function get_taxes_for_item(string|int|float|bool|null $stock_id, mixed $tax_group_items_array): array|null
+function get_taxes_for_item(string|int|float|bool|null $stock_id, array $tax_group_items_array): array|null
 {
 	$item_tax_type = get_item_tax_type_for_item($stock_id);
 	
@@ -141,7 +141,7 @@ function get_taxes_for_item(string|int|float|bool|null $stock_id, mixed $tax_gro
 //-----------------------------------------------------------------------------------
 // return an array of (tax_type_id, tax_type_name, sales_gl_code, purchasing_gl_code, rate, included_in_price, Value) 
 
-function get_tax_for_items(array $items, mixed $prices, string|int|float|bool|null $shipping_cost, mixed $tax_group, string|int|float|bool|null $tax_included=null, mixed $tax_items_array=null, ?int $tax_algorithm = null)
+function get_tax_for_items(array $items, array $prices, string|int|float|bool|null $shipping_cost, string|int|float|bool|null $tax_group, string|int|float|bool|null $tax_included=null, ?array $tax_items_array=null, ?int $tax_algorithm = null)
 {
 	if (!$tax_algorithm)
 		$tax_algorithm = get_company_pref('tax_algorithm');

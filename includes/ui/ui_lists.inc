@@ -27,8 +27,8 @@ define('SELECT_BUTTON', "<input %s type='submit' class='combo_select' style='bor
 /**
  * @return non-empty-string
  */
-function combo_input(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id, mixed $sql, string|int|float|bool|null $valfield, mixed $namefield,
-	mixed $options=null, ?string $type=null): string
+function combo_input(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id, string|int|float|bool|null $sql, string|int|float|bool|null $valfield, string|int|float|bool|null $namefield,
+	?array $options=null, ?string $type=null): string
 {
 global $Ajax, $path_to_root, $SysPrefs ;
 
@@ -488,7 +488,7 @@ function array_selector_row(?string $label, ?string $name, string|int|float|bool
 }
 
 //----------------------------------------------------------------------------------------------
-function _format_add_curr(array|false|null $row, mixed $pname=false): string
+function _format_add_curr(array|false|null $row, string|int|float|bool|null $pname=false): string
 {
 	static $company_currency;
 
@@ -521,7 +521,7 @@ function add_edit_combo(?string $type): string
 	return "<a target = '_blank' href='#' $onclick tabindex='-1'>$img</a>"; 
 }
 
-function supplier_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, mixed $spec_option=false, bool $submit_on_change=false,
+function supplier_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $spec_option=false, bool $submit_on_change=false,
 	int|bool|array|null $all=false, bool $editkey = false)
 {
 	global $SysPrefs;
@@ -575,7 +575,7 @@ function supplier_list_row(?string $label, ?string $name, string|int|float|bool|
 }
 //----------------------------------------------------------------------------------------------
 
-function customer_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, mixed $spec_option=false, bool $submit_on_change=false, 
+function customer_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $spec_option=false, bool $submit_on_change=false, 
 	int|bool|array|null $show_inactive=false, bool $editkey = false)
 {
 	global $SysPrefs;
@@ -679,7 +679,7 @@ function customer_branches_list_row(?string $label, string|int|float|bool|array|
 
 //------------------------------------------------------------------------------------------------
 
-function locations_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $all_option=false, string|int|float|bool|null $submit_on_change=false, mixed $fixed_asset=false)
+function locations_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $all_option=false, string|int|float|bool|null $submit_on_change=false, string|int|float|bool|null $fixed_asset=false)
 {
 
 	$sql = "SELECT loc_code, location_name, inactive FROM ".TB_PREF."locations WHERE fixed_asset=".(int)$fixed_asset;
@@ -692,7 +692,7 @@ function locations_list(string|int|float|bool|null $name, string|int|float|bool|
 		) );
 }
 
-function locations_list_cells(?string $label, ?string $name, string|int|float|bool|array|null $selected_id=null, bool $all_option=false, bool $submit_on_change=false, mixed $fixed_asset=false): void
+function locations_list_cells(?string $label, ?string $name, string|int|float|bool|array|null $selected_id=null, bool $all_option=false, bool $submit_on_change=false, string|int|float|bool|null $fixed_asset=false): void
 {
 	if ($label != null)
 		echo "<td>$label</td>\n";
@@ -701,7 +701,7 @@ function locations_list_cells(?string $label, ?string $name, string|int|float|bo
 	echo "</td>\n";
 }
 
-function locations_list_row(?string $label, ?string $name, string|int|float|bool|array|null $selected_id=null, bool $all_option=false, bool $submit_on_change=false, mixed $fixed_asset=false): void
+function locations_list_row(?string $label, ?string $name, string|int|float|bool|array|null $selected_id=null, bool $all_option=false, bool $submit_on_change=false, string|int|float|bool|null $fixed_asset=false): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	locations_list_cells(null, $name, $selected_id, $all_option, $submit_on_change, $fixed_asset);
@@ -783,8 +783,8 @@ function fiscalyears_list_row(?string $label, ?string $name, string|int|float|bo
 }
 //------------------------------------------------------------------------------------
 
-function dimensions_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, mixed $no_option=false, mixed $showname=' ',
-	string|int|float|bool|null $submit_on_change=false, mixed $showclosed=false, mixed $showtype=1)
+function dimensions_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $no_option=false, string|int|float|bool|null $showname=' ',
+	string|int|float|bool|null $submit_on_change=false, string|int|float|bool|null $showclosed=false, string|int|float|bool|null $showtype=1)
 {
 	$sql = "SELECT id, CONCAT(reference,'  ',name) as ref FROM ".TB_PREF."dimensions";
 
@@ -826,7 +826,7 @@ function dimensions_list_row(?string $label, ?string $name, string|int|float|boo
 //---------------------------------------------------------------------------------------------------
 
 function stock_items_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $all_option=false, 
-	string|int|float|bool|null $submit_on_change=false, ?array $opts=array(), mixed $editkey = false, ?string $type = "stock")
+	string|int|float|bool|null $submit_on_change=false, ?array $opts=array(), string|int|float|bool|null $editkey = false, ?string $type = "stock")
 {
 	$sql = "SELECT stock_id, s.description, c.description, s.inactive, s.editable
 			FROM ".TB_PREF."stock_master s,".TB_PREF."stock_category c WHERE s.category_id=c.category_id";
@@ -996,7 +996,7 @@ function stock_manufactured_items_list_row(?string $label, ?string $name, string
 }
 //------------------------------------------------------------------------------------
 
-function stock_component_items_list(?string $name, mixed $parent_stock_id, string|int|float|bool|array|null $selected_id=null,
+function stock_component_items_list(?string $name, string|int|float|bool|null $parent_stock_id, string|int|float|bool|array|null $selected_id=null,
 	bool $all_option=false, bool $submit_on_change=false, bool $editkey = false)
 {
 	$parent = db_escape($parent_stock_id);
@@ -1044,7 +1044,7 @@ function stock_purchasable_items_list(string|int|float|bool|null $name, string|i
 //	This helper is used in PO/GRN/PI entry and supports editable descriptions.
 //
 function stock_purchasable_items_list_cells(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null,
-			string|int|float|bool|null $all_option=false, string|int|float|bool|null $submit_on_change=false, mixed $editkey=false): void
+			string|int|float|bool|null $all_option=false, string|int|float|bool|null $submit_on_change=false, string|int|float|bool|null $editkey=false): void
 {
 	if ($label != null)
 		echo "<td>$label</td>\n";
@@ -1091,7 +1091,7 @@ function stock_units_list_row(?string $label, ?string $name, string|int|float|bo
 //------------------------------------------------------------------------------------
 
 function stock_purchasable_fa_list_cells(string|int|float|bool|null $label, ?string $name, string|int|float|bool|array|null $selected_id=null, bool $all_option=false,
-	bool $submit_on_change=false, bool $all=false, bool $editkey = false, mixed $exclude_items = array()): void
+	bool $submit_on_change=false, bool $all=false, bool $editkey = false, array $exclude_items = array()): void
 {
 	// Check if a fixed asset has been bought.
 	$where_opts[] = "stock_id NOT IN
@@ -1124,7 +1124,7 @@ function stock_disposable_fa_list(?string $name, string|int|float|bool|array|nul
 }
 
 function stock_disposable_fa_list_cells(string|int|float|bool|null $label, ?string $name, string|int|float|bool|array|null $selected_id=null,
-	string|bool|null $all_option=false, bool $submit_on_change=false, mixed $exclude_items = array()): void
+	string|bool|null $all_option=false, bool $submit_on_change=false, array $exclude_items = array()): void
 {
 	// Check if a fixed asset has been bought....
 	$where_opts[] = "stock_id IN
@@ -1320,7 +1320,7 @@ function sales_persons_list_row(?string $label, ?string $name, string|int|float|
 
 //------------------------------------------------------------------------------------
 
-function sales_areas_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, mixed $special_option=false)
+function sales_areas_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $special_option=false)
 {
 	$sql = "SELECT area_code, description, inactive FROM ".TB_PREF."areas";
 	return combo_input($name, $selected_id, $sql, 'area_code', 'description', 
@@ -1579,7 +1579,7 @@ function workcenter_list_row(?string $label, ?string $name, string|int|float|boo
 
 //-----------------------------------------------------------------------------------------------
 
-function bank_accounts_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $submit_on_change=false, mixed $spec_option=false)
+function bank_accounts_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $submit_on_change=false, string|int|float|bool|null $spec_option=false)
 {
 	$sql = "SELECT id, bank_account_name, bank_curr_code, inactive
 		FROM ".TB_PREF."bank_accounts";
@@ -1717,7 +1717,7 @@ function class_list_row(?string $label, ?string $name, string|int|float|bool|arr
 }
 
 //-----------------------------------------------------------------------------------------------
-function stock_categories_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $spec_opt=false, string|int|float|bool|null $submit_on_change=false, mixed $fixed_asset=false)
+function stock_categories_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $spec_opt=false, string|int|float|bool|null $submit_on_change=false, string|int|float|bool|null $fixed_asset=false)
 {
 	$where_opts = array();
 	if ($fixed_asset)
@@ -1784,7 +1784,7 @@ function fixed_asset_classes_list_row(?string $label, ?string $name, string|int|
 
 //-----------------------------------------------------------------------------------------------
 
-function gl_account_types_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $all_option=false, mixed $all=true)
+function gl_account_types_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $all_option=false, string|int|float|bool|null $all=true)
 {
 
 	$sql = "SELECT id, name FROM ".TB_PREF."chart_types";
@@ -2430,7 +2430,7 @@ function tab_list_row(?string $label, ?string $name, string|int|float|bool|array
 
 //-----------------------------------------------------------------------------------------------
 
-function tag_list(string|int|float|bool|null $name, mixed $height, string|int|float|bool|null $type, mixed $multi=false, bool $all=false, bool $spec_opt = false): string
+function tag_list(string|int|float|bool|null $name, string|int|float|bool|null $height, string|int|float|bool|null $type, string|int|float|bool|null $multi=false, bool $all=false, bool $spec_opt = false): string
 {
 	// Get tags
 	global $path_to_root;
@@ -2489,7 +2489,7 @@ function extset_list(?string $name, string|int|float|bool|null $value=null, bool
 		));
 }
 
-function crm_category_types_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, mixed $filter=array(), bool $submit_on_change=true)
+function crm_category_types_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|array|null $filter=array(), bool $submit_on_change=true)
 {
 
 	$sql = "SELECT id, name, type, inactive FROM ".TB_PREF."crm_categories";
@@ -2518,7 +2518,7 @@ function crm_category_types_list(string|int|float|bool|null $name, string|int|fl
 	 	));
 }
 
-function crm_category_types_list_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, mixed $filter=array(), bool $submit_on_change=true): void
+function crm_category_types_list_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null|array $filter=array(), bool $submit_on_change=true): void
 {
 	echo "<tr><td class='label'>$label</td><td>";
 	echo crm_category_types_list($name, $selected_id, $filter, $submit_on_change);
@@ -2682,7 +2682,7 @@ function subledger_list_cells(string|int|float|bool|null $label, ?string $name, 
 }
 
 function subledger_list_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $all_option = false, 
-	string|int|float|bool|null $submit_on_change=false, mixed $show_inactive=false, mixed $editkey = false): void
+	string|int|float|bool|null $submit_on_change=false, string|int|float|bool|null $show_inactive=false, string|int|float|bool|null $editkey = false): void
 {
 	echo "<tr><td class='label'>$label</td><td nowrap>";
 	echo subledger_list($name, $account, $selected_id);

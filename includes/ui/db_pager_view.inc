@@ -21,7 +21,7 @@ function pager_link(?string $link_text, ?string $url, string|bool|null $icon=fal
 	return "<a href='$href'>" . $link_text . "</a>";
 }
 
-function navi_button(?string $name, string|int|float|bool|null $value, mixed $enabled=true, string|bool|null $icon = false): string {
+function navi_button(?string $name, string|int|float|bool|null $value, string|int|float|bool|null $enabled=true, string|bool|null $icon = false): string {
 	global $path_to_root;
   	return "<button ". ($enabled ? '':'disabled')
   		." class=\"navibutton\" type=\"submit\""
@@ -30,7 +30,7 @@ function navi_button(?string $name, string|int|float|bool|null $value, mixed $en
 		."<span>$value</span></button>\n";
 }
 
-function navi_button_cell(?string $name, ?string $value, mixed $enabled=true, ?string $align='left'): void {
+function navi_button_cell(?string $name, ?string $value, string|int|float|bool|null $enabled=true, ?string $align='left'): void {
 	label_cell(navi_button($name, $value, $enabled), "align='$align'");
 }
 

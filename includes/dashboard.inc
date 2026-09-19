@@ -43,7 +43,7 @@ div.square2 {
 }
 </style>";
 
-function dashboard(mixed $sel_app): void
+function dashboard(string|int|float|bool|null $sel_app): void
 {
 	global  $style;
 	if (is_object($sel_app) && !$_SESSION["wa_current_user"]->check_application_access($selected_app))
@@ -149,7 +149,7 @@ function display_title(?string $title, string|int|float|bool|null $id=false, str
 	br();
 }	
 
-function table(mixed $width='100%', mixed $twidth=false): void
+function table(string|int|float|bool|null $width='100%', string|int|float|bool|null $twidth=false): void
 {
 	$tstyle = ($twidth != false) ? "style='width:$twidth;'" : "";
 	echo "<table width='$width'><tr valign=top><td align='center' $tstyle>";
@@ -166,7 +166,7 @@ function table_end(): void
 	echo "</td></tr></table>\n";
 }
 
-function headers(mixed $labels): void
+function headers(array $labels): void
 {
 	echo "<tr>\n";
 	foreach ($labels as $label)

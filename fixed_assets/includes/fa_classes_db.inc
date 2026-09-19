@@ -36,7 +36,7 @@ function get_fixed_asset_classname(string|array|null $class)
 	return is_array($row) ? $row[0] : false;
 }
 
-function update_fixed_asset_class(mixed $fa_class_id, mixed $parent_id, string|int|float|bool|null $description, mixed $long_description, int|float|bool|null $depreciation_rate): void
+function update_fixed_asset_class(string|int|float|bool|null $fa_class_id, string|int|float|bool|null $parent_id, string|int|float|bool|null $description, string|int|float|bool|null $long_description, int|float|bool|null $depreciation_rate): void
 {
 	$sql = "UPDATE ".TB_PREF."stock_fa_class SET
 		parent_id=".db_escape($parent_id).",
@@ -48,7 +48,7 @@ function update_fixed_asset_class(mixed $fa_class_id, mixed $parent_id, string|i
 	db_query($sql, "The fixed asset class could not be updated");
 }
 
-function add_fixed_asset_class(mixed $fa_class_id, mixed $parent_id, string|int|float|bool|null $description, mixed $long_description, int|float|bool|null $depreciation_rate): void
+function add_fixed_asset_class(string|int|float|bool|null $fa_class_id, string|int|float|bool|null $parent_id, string|int|float|bool|null $description, string|int|float|bool|null $long_description, int|float|bool|null $depreciation_rate): void
 {
   $sql = "INSERT INTO ".TB_PREF."stock_fa_class (fa_class_id, parent_id, description, long_description,
      depreciation_rate) VALUES ("
@@ -59,7 +59,7 @@ function add_fixed_asset_class(mixed $fa_class_id, mixed $parent_id, string|int|
 	db_query($sql, "The fixed asset class could not be added");
 }
 
-function delete_fixed_asset_class(mixed $fa_class_id): void
+function delete_fixed_asset_class(string|int|float|bool|null $fa_class_id): void
 {
   $sql = "DELETE FROM ".TB_PREF."stock_fa_class WHERE fa_class_id=".db_escape($fa_class_id);
 

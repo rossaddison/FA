@@ -11,8 +11,8 @@
 ***********************************************************************/
 //----------------------------------------------------------------------------------------
 
-function add_cust_allocation(string|int|float|bool|null $amount, mixed $trans_type_from, mixed $trans_no_from,
-	mixed $trans_type_to, mixed $trans_no_to, string|int|float|bool|null $person_id, string|int|float|bool|null $date_): void
+function add_cust_allocation(string|int|float|bool|null $amount, string|int|float|bool|null $trans_type_from, string|int|float|bool|null $trans_no_from,
+	string|int|float|bool|null $trans_type_to, string|int|float|bool|null $trans_no_to, string|int|float|bool|null $person_id, string|int|float|bool|null $date_): void
 {
 	$date = date2sql($date_);
 	$sql = "INSERT INTO ".TB_PREF."cust_allocations (
@@ -371,7 +371,7 @@ function get_sql_for_customer_allocation_inquiry(string|array|null $from, string
    	return $sql;
 }
 
-function credit_sales_invoice_allocate(mixed $invoice_no, mixed $credit_no, string|int|float|bool|null $amount, string|int|float|bool|null $date): bool
+function credit_sales_invoice_allocate(string|int|float|bool|null $invoice_no, string|int|float|bool|null $credit_no, string|int|float|bool|null $amount, string|int|float|bool|null $date): bool
 {
 
 	$sql = "SELECT ov_freight+ov_gst+ov_amount+ov_freight_tax as total, alloc, debtor_no FROM ".TB_PREF."debtor_trans

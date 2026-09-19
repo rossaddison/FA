@@ -24,7 +24,7 @@
 //    If var is found returns variable name with prefix stripped,
 //    and null or -1 otherwise.
 //
-function find_submit(string|int|float|bool|null $prefix, mixed $numeric=true): int|string|null
+function find_submit(string|int|float|bool|null $prefix, string|int|float|bool|null $numeric=true): int|string|null
 {
 
     foreach($_POST as $postkey=>$postval )
@@ -141,7 +141,7 @@ function hidden(string|int|float|bool|null $name, string|int|float|bool|null $va
 /**
  * @return non-falsy-string|null
  */
-function submit(string|int|float|bool|null $name, string|int|float|bool|null $value, mixed $echo=true, string|int|float|bool|null $title=false, mixed $atype=false, mixed $icon=false)
+function submit(string|int|float|bool|null $name, string|int|float|bool|null $value, string|int|float|bool|null $echo=true, string|int|float|bool|null $title=false, string|int|float|bool|null $atype=false, string|int|float|bool|null $icon=false)
 {
 	global $path_to_root;
 
@@ -215,7 +215,7 @@ function submit_center_last(?string $name, ?string $value, string|bool|null $tit
 	'upgrade' - use Ctrl-Enter with progress ajax indicator and Escape hotkeys. Nonajax request for OK option is performed.
 	'cancel' - apply to 'RESET' button
 */
-function submit_add_or_update(mixed $add=true, string|int|float|bool|null $title=false, mixed $async=false, mixed $clone=false): void
+function submit_add_or_update(string|int|float|bool|null $add=true, string|int|float|bool|null $title=false, string|int|float|bool|null $async=false, string|int|float|bool|null $clone=false): void
 {
 	$cancel = $async;
 
@@ -247,7 +247,7 @@ function submit_add_or_update_center(bool $add=true, string|bool|null $title=fal
 	echo "</center>";
 }
 
-function submit_add_or_update_row(mixed $add=true, mixed $right=true, mixed $extra="", string|int|float|bool|null $title=false, mixed $async=false, mixed $clone = false): void
+function submit_add_or_update_row(string|int|float|bool|null $add=true, string|int|float|bool|null $right=true, string|int|float|bool|null $extra="", string|int|float|bool|null $title=false, string|int|float|bool|null $async=false, string|int|float|bool|null $clone = false): void
 {
 	echo "<tr>";
 	if ($right)
@@ -292,7 +292,7 @@ function submit_js_confirm(?string $name, ?string $msg, bool $set = true): void 
 }
 //-----------------------------------------------------------------------------------
 
-function set_icon(mixed $icon, string|int|float|bool|null $title=false): string
+function set_icon(string|int|float|bool|null $icon, string|int|float|bool|null $title=false): string
 {
 	global $path_to_root;
 	if (basename($icon) === $icon) // standard icons does not contain path separator
@@ -300,7 +300,7 @@ function set_icon(mixed $icon, string|int|float|bool|null $title=false): string
 	return "<img src='$icon' style='vertical-align:middle;width:12px;height:12px;border:0;'".($title ? " title='$title'" : "")." >\n";	
 }
 
-function button(string|int|float|bool|null $name, string|int|float|bool|null $value, string|int|float|bool|null $title=false, mixed $icon=false,  string|int|float|bool|null $aspect=''): string
+function button(string|int|float|bool|null $name, string|int|float|bool|null $value, string|int|float|bool|null $title=false, string|int|float|bool|null $icon=false,  string|int|float|bool|null $aspect=''): string
 {
 	// php silently changes dots,spaces,'[' and characters 128-159
 	// to underscore in POST names, to maintain compatibility with register_globals
@@ -332,7 +332,7 @@ function button(string|int|float|bool|null $name, string|int|float|bool|null $va
 			." >\n";
 }
 
-function button_cell(string|int|float|bool|null $name, string|int|float|bool|null $value, string|int|float|bool|null $title=false, mixed $icon=false, ?string $aspect=''): void
+function button_cell(string|int|float|bool|null $name, string|int|float|bool|null $value, string|int|float|bool|null $title=false, string|int|float|bool|null $icon=false, ?string $aspect=''): void
 {
 	echo "<td align='center'>";
 	echo button($name, $value, $title, $icon, $aspect);
@@ -470,7 +470,7 @@ function amount_cell(string|int|float|bool|null $label, ?bool $bold=false, strin
 }
 
 //JAM  Allow entered unit prices to be fractional
-function unit_amount_cell(string|int|float|bool|null $label, mixed $bold=false, string|int|float|bool|null $params="", string|int|float|bool|null $id=null): void
+function unit_amount_cell(string|int|float|bool|null $label, string|int|float|bool|null $bold=false, string|int|float|bool|null $params="", string|int|float|bool|null $id=null): void
 {
 	if ($bold)
 		label_cell("<b>".unit_price_format($label)."</b>", "nowrap align=right ".$params, $id);
@@ -530,8 +530,8 @@ function text_input(string|int|float|bool|null $name, string|int|float|bool|arra
 
 //-----------------------------------------------------------------------------------
 
-function text_cells(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $value=null, mixed $size="", string|int|float|bool|null $max="", string|int|float|bool|null $title=false, 
-	mixed $labparams="", mixed $post_label="", mixed $inparams=""): void
+function text_cells(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $value=null, string|int|float|bool|null $size="", string|int|float|bool|null $max="", string|int|float|bool|null $title=false, 
+	string|int|float|bool|null $labparams="", string|int|float|bool|null $post_label="", array|string $inparams=""): void
 {
   	global $Ajax;
 
@@ -550,7 +550,7 @@ function text_cells(string|int|float|bool|null $label, string|int|float|bool|nul
 }
 
 function text_cells_ex(?string $label, string|int|float|bool|null $name, string|int|float|bool|null $size, string|int|float|bool|null $max=null, string|int|float|bool|null $init=null, string|int|float|bool|null $title=null,
-	mixed $labparams=null, string|int|float|bool|null $post_label=null, string|bool|null $submit_on_change=false): void
+	string|int|float|bool|null $labparams=null, string|int|float|bool|null $post_label=null, string|bool|null $submit_on_change=false): void
 {
   	global $Ajax;
 
@@ -580,7 +580,7 @@ function text_cells_ex(?string $label, string|int|float|bool|null $name, string|
 	$Ajax->addUpdate($name, $name, $_POST[$name]);
 }
 
-function text_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|array|null $value, mixed $size, string|int|float|bool|null $max, string|int|float|bool|null $title=null, ?string $params="", ?string $post_label=""): void
+function text_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|array|null $value, string|int|float|bool|null $size, string|int|float|bool|null $max, string|int|float|bool|null $title=null, ?string $params="", ?string $post_label=""): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	text_cells(null, $name, $value, $size, $max, $title, $params, $post_label);
@@ -599,7 +599,7 @@ function text_row_ex(string|int|float|bool|null $label, string|int|float|bool|nu
 }
 
 //-----------------------------------------------------------------------------------
-function email_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $value, mixed $size, string|int|float|bool|null $max, string|int|float|bool|null $title=null, ?string $params="", ?string $post_label=""): void
+function email_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $value, string|int|float|bool|null $size, string|int|float|bool|null $max, string|int|float|bool|null $title=null, ?string $params="", ?string $post_label=""): void
 {
 	if (get_post($name)) 
 		$label = "<a href='Mailto:".$_POST[$name]."'>$label</a>";
@@ -624,7 +624,7 @@ function link_row(?string $label, ?string $name, string|int|float|bool|null $val
 	text_row($label, $name, $value, $size, $max, $title, $params, $post_label);
 }
 
-function link_row_ex(string|int|float|bool|null $label, string|int|float|bool|null $name, mixed $size, string|int|float|bool|null $max=null, string|int|float|bool|null $title=null, string|int|float|bool|null $value=null, string|int|float|bool|null $params=null, mixed $post_label=null): void
+function link_row_ex(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $size, string|int|float|bool|null $max=null, string|int|float|bool|null $title=null, string|int|float|bool|null $value=null, string|int|float|bool|null $params=null, string|int|float|bool|null $post_label=null): void
 {
 	$val = get_post($name);
 	if ($val) {
@@ -968,7 +968,7 @@ function inactive_control_cell(string|int|float|bool|null $id, string|int|float|
 //
 //	Displays controls for optional display of inactive records
 //
-function inactive_control_row(mixed $th): void {
+function inactive_control_row(array $th): void {
 	echo  "<tr><td colspan=".(count($th)).">"
 		."<div style='float:left;'>"
 		. checkbox(null, 'show_inactive', null, true). _("Show also Inactive")
@@ -989,7 +989,7 @@ function inactive_control_column(&$th): void {
 	}
 }
 
-function customer_credit_row(mixed $customer, mixed $credit, ?string $parms=''): void
+function customer_credit_row(string|int|float|bool|array|null $customer, string|int|float|bool|null $credit, ?string $parms=''): void
 {
 	global $path_to_root;
 	
@@ -1001,7 +1001,7 @@ function customer_credit_row(mixed $customer, mixed $credit, ?string $parms=''):
 		."</a>", $parms);
 }
 
-function supplier_credit_row(string|int|float|bool|null $supplier, mixed $credit, ?string $parms=''): void
+function supplier_credit_row(string|int|float|bool|null $supplier, string|int|float|bool|null $credit, ?string $parms=''): void
 {
 	global $path_to_root;
 	
@@ -1013,7 +1013,7 @@ function supplier_credit_row(string|int|float|bool|null $supplier, mixed $credit
 		."</a>", $parms);
 }
 
-function bank_balance_row(mixed $bank_acc, ?string $parms=''): void
+function bank_balance_row(string|int|float|bool|array|null $bank_acc, ?string $parms=''): void
 {
 	global $path_to_root;
 

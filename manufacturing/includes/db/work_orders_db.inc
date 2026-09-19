@@ -14,8 +14,8 @@ require_once($path_to_root. "/admin/db/attachments_db.inc");
 /*
 	Common entry procedure for all work order types
 */
-function add_work_order(mixed $wo_ref, string|int|float|bool|null $loc_code, int|float|bool|null $units_reqd, string|int|float|bool|null $stock_id,
-	string|int|float|bool|null $type, string|int|float|bool|null $date_, mixed $required_by, string|int|float|bool|null $memo_, int|float|bool|null $costs, mixed $cr_acc, int|float|bool|null $labour, mixed $cr_lab_acc): int|string
+function add_work_order(string|int|float|bool|null $wo_ref, string|int|float|bool|null $loc_code, int|float|bool|null $units_reqd, string|int|float|bool|null $stock_id,
+	string|int|float|bool|null $type, string|int|float|bool|null $date_, string|int|float|bool|null $required_by, string|int|float|bool|null $memo_, int|float|bool|null $costs, string|int|float|bool|null $cr_acc, int|float|bool|null $labour, string|int|float|bool|null $cr_lab_acc): int|string
 {
 	global $Refs;
 
@@ -74,7 +74,7 @@ function add_work_order(mixed $wo_ref, string|int|float|bool|null $loc_code, int
 //--------------------------------------------------------------------------------------
 
 function update_work_order(string|int|float|bool|null $woid, string|int|float|bool|null $loc_code, int|float|bool|null $units_reqd, string|int|float|bool|null $stock_id,
-					string|int|float|bool|null $date_, mixed $required_by, string|int|float|bool|null $memo_): void
+					string|int|float|bool|null $date_, string|int|float|bool|null $required_by, string|int|float|bool|null $memo_): void
 {
 	begin_transaction();
 	$args = func_get_args();
@@ -100,7 +100,7 @@ function update_work_order(string|int|float|bool|null $woid, string|int|float|bo
 	commit_transaction();
 }
 
-function delete_work_order(string|int|float|bool|null $woid, string|int|float|bool|null $stock_id, mixed $qty, string|int|float|bool|null $date): void
+function delete_work_order(string|int|float|bool|null $woid, string|int|float|bool|null $stock_id, string|int|float|bool|null $qty, string|int|float|bool|null $date): void
 {
 	begin_transaction();
 	hook_db_prevoid(ST_WORKORDER, $woid);
@@ -183,7 +183,7 @@ function work_order_has_payments(string|int|float|bool|null $woid): bool
 
 //--------------------------------------------------------------------------------------
 
-function release_work_order(string|int|float|bool|null $woid, mixed $releaseDate, string|int|float|bool|null $memo_): void
+function release_work_order(string|int|float|bool|null $woid, string|int|float|bool|null $releaseDate, string|int|float|bool|null $memo_): void
 {
 	begin_transaction();
 

@@ -264,7 +264,7 @@ class fa_patch {
 /*
 	Return databases status info.
 */
-function get_site_status(mixed $connections): array
+function get_site_status(array $connections): array
 {
 		global $SysPrefs;
 

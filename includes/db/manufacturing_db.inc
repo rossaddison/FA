@@ -54,7 +54,7 @@ function load_stock_levels(string|int|float|bool|null $location): array
 }
 
 // recursion fixed. Max 10 recursion levels.
-function stock_demand_manufacture(string|int|float|bool|null $stock_id, string|int|float|bool|null $qty, mixed $demand_id, string|int|float|bool|null $location, string|int|float|bool|null $level=0) 
+function stock_demand_manufacture(string|int|float|bool|null $stock_id, string|int|float|bool|null $qty, string|int|float|bool|null $demand_id, string|int|float|bool|null $location, string|int|float|bool|null $level=0) 
 {
 	global $bom_list, $qoh_stock;
 
@@ -274,7 +274,7 @@ function is_component_already_on_bom(string|array|null $component, string|array|
 
 //--------------------------------------------------------------------------------------
 
-function check_for_recursive_bom(mixed $ultimate_parent, string|array|null $component_to_check): int
+function check_for_recursive_bom(string|int|float|bool|null $ultimate_parent, string|array|null $component_to_check): int
 {
 
 	/* returns true ie 1 if the bom contains the parent part as a component

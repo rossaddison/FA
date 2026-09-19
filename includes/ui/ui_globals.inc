@@ -29,7 +29,7 @@ function set_global_stock_item(string|int|float|bool|array|null $stock_id): void
 	$_SESSION['wa_global_stock_id'] = $stock_id; 
 }
 
-function get_global_stock_item(mixed $return_all=true) 
+function get_global_stock_item(string|int|float|bool|null $return_all=true) 
 {
 	if (!isset($_SESSION['wa_global_stock_id']) || 
 		($return_all == false && $_SESSION['wa_global_stock_id'] == ALL_TEXT))
@@ -62,7 +62,7 @@ function get_global_curr_code()
 	return $_SESSION['wa_global_curr_code'];
 }
 
-function count_array(mixed $array): int
+function count_array(array $array): int
 {
 	return (is_array($array)) ? count($array) : (($array === NULL) ? 0 : 1);
 }

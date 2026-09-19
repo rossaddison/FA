@@ -10,7 +10,7 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 function add_exchange_variation(string|int|float|bool|array|null $trans_no, string|int|float|bool|array|null $date_, string|int|float|bool|null $acc_id, string|int|float|bool|null $account,
-    ?string $currency, mixed $person_type_id=null, string|int|float|bool|null $person_id = "", string|array|null $memo=''): bool
+    ?string $currency, string|int|float|bool|null $person_type_id=null, string|int|float|bool|null $person_id = "", string|array|null $memo=''): bool
 {
 	if (is_company_currency($currency))
 		return false;
@@ -67,7 +67,7 @@ function add_exchange_variation(string|int|float|bool|array|null $trans_no, stri
 	return false;
 }
 
-function add_cust_supp_revaluation(?string $ledger_act, mixed $ex_act, string|array|null $date, ?float $amount, ?int $person_type_id, ?string $person_id, string|array|null $memo): void
+function add_cust_supp_revaluation(?string $ledger_act, string|int|float|bool|null $ex_act, string|array|null $date, ?float $amount, ?int $person_type_id, ?string $person_id, string|array|null $memo): void
 {
 	global $Refs;
 	if ($amount == 0)

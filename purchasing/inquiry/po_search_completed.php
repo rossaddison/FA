@@ -25,7 +25,7 @@ if (user_use_date_picker())
 page(_($help_context = "Search Purchase Orders"), false, false, "", $js);
 
 //---------------------------------------------------------------------------------------------
-function trans_view(mixed $trans)
+function trans_view(array $trans)
 {
 	return get_trans_view_str(ST_PURCHORDER, $trans["order_no"]);
 }

@@ -139,7 +139,7 @@ function get_sql_for_attached_documents(string|array|null $type, string|int|bool
 	return $sql;
 }
 
-function move_trans_attachments(string|int|float|bool|null $type, mixed $trans_from, mixed $trans_to): void
+function move_trans_attachments(string|int|float|bool|null $type, string|int|float|bool|null $trans_from, string|int|float|bool|null $trans_to): void
 {
 	$sql = "UPDATE ".TB_PREF."attachments SET trans_no=".db_escape($trans_to)
 		." WHERE type_no=".db_escape($type)." AND trans_no=".db_escape($trans_from);

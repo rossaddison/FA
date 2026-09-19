@@ -14,7 +14,7 @@
 // or display_note(print_document_link($order_no, _("Print this order")));
 // You only need full parameter list for invoices/credit notes
 
-function print_document_link(mixed $doc_no, ?string $link_text, bool $link, string|int|float|bool|array|null $type_no, 
+function print_document_link(string|int|float|bool|array|null $doc_no, ?string $link_text, bool $link, string|int|float|bool|array|null $type_no, 
 	string|bool|null $icon=false, ?string $class='printlink', ?string $id='', ?int $email=0, ?int $extra=0)
 {
 	global $path_to_root;
@@ -182,7 +182,7 @@ An example of usage will be in the reporting/rep110.php file at near the end jus
     }
 */
 
-function parse_notes_params(mixed $str, mixed $sep=" ", mixed $delim="#"): array {
+function parse_notes_params(string|int|float|bool|null $str, string|int|float|bool|null $sep=" ", string|int|float|bool|null $delim="#"): array {
     $str_params = explode($sep, $str);
     $param_array=Array('notes' => '');
     foreach ($str_params AS $str_param) {

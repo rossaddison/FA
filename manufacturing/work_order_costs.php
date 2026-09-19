@@ -66,7 +66,7 @@ if ($wo_details === false)
 
 //--------------------------------------------------------------------------------------------------
 
-function can_process(mixed $wo_details): bool
+function can_process(array $wo_details): bool
 {
 	if (input_num('costs')<=0)
 	{

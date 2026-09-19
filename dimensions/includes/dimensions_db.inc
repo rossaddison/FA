@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_dimension(string|int|float|bool|null $reference, string|int|float|bool|null $name, mixed $type_, string|int|float|bool|null $date_, mixed $due_date, string|int|float|bool|null $memo_): int|string
+function add_dimension(string|int|float|bool|null $reference, string|int|float|bool|null $name, string|int|float|bool|null $type_, string|int|float|bool|null $date_, string|int|float|bool|null $due_date, string|int|float|bool|null $memo_): int|string
 {
 	global $Refs;
 
@@ -33,7 +33,7 @@ function add_dimension(string|int|float|bool|null $reference, string|int|float|b
 	return $id;
 }
 
-function update_dimension(string|int|float|bool|null $id, string|int|float|bool|null $name, mixed $type_, string|int|float|bool|null $date_, mixed $due_date, string|int|float|bool|null $memo_)
+function update_dimension(string|int|float|bool|null $id, string|int|float|bool|null $name, string|int|float|bool|null $type_, string|int|float|bool|null $date_, string|int|float|bool|null $due_date, string|int|float|bool|null $memo_)
 {
 	begin_transaction();
 
@@ -199,7 +199,7 @@ function get_dimension_balance(string|int|float|bool|null $id, string|array|null
 
 //--------------------------------------------------------------------------------------
 
-function get_sql_for_search_dimensions(mixed $dim, string|array|null $from, string|array|null $to, string|int|float|bool|null $order='', string|int|array|null $type = -1, int|bool|array|null $open=false, int|bool|array|null $overdue = false): string
+function get_sql_for_search_dimensions(string|int|float|bool|null $dim, string|array|null $from, string|array|null $to, string|int|float|bool|null $order='', string|int|array|null $type = -1, int|bool|array|null $open=false, int|bool|array|null $overdue = false): string
 {
 	$sql = "SELECT dim.id,
 		dim.reference,

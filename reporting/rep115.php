@@ -103,7 +103,7 @@ function get_transactions(?string $debtorno, string|array|null $from, string|arr
 /**
  * @return null|string
  */
-function get_customer_reference (mixed $order_number)
+function get_customer_reference (string|int|float|bool|null $order_number)
 {
 
     $sql = "SELECT customer_ref FROM ".TB_PREF."sales_orders WHERE order_no =".db_escape($order_number)." AND trans_type=".ST_SALESORDER."";

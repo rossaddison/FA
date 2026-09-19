@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_item_price(string|int|float|bool|array|null $stock_id, string|array|null $sales_type_id, mixed $curr_abrev, int|float|bool|null $price): void
+function add_item_price(string|int|float|bool|array|null $stock_id, string|array|null $sales_type_id, string|int|float|bool|array|null $curr_abrev, int|float|bool|null $price): void
 {
 	$sql = "INSERT INTO ".TB_PREF."prices (stock_id, sales_type_id, curr_abrev, price) 
 		VALUES (".db_escape($stock_id).", ".db_escape($sales_type_id)
@@ -18,7 +18,7 @@ function add_item_price(string|int|float|bool|array|null $stock_id, string|array
 	db_query($sql,"an item price could not be added");
 }
 
-function update_item_price(mixed $price_id, string|array|null $sales_type_id, mixed $curr_abrev, int|float|bool|null $price): void
+function update_item_price(string|int|float|bool|null $price_id, string|array|null $sales_type_id, string|int|float|bool|array|null $curr_abrev, int|float|bool|null $price): void
 {
 	$sql = "UPDATE ".TB_PREF."prices SET sales_type_id=".db_escape($sales_type_id).", 
 		curr_abrev=".db_escape($curr_abrev).", 
@@ -27,7 +27,7 @@ function update_item_price(mixed $price_id, string|array|null $sales_type_id, mi
 	db_query($sql,"an item price could not be updated");
 }
 
-function delete_item_price(mixed $price_id): void
+function delete_item_price(string|int|float|bool|null $price_id): void
 {
 	$sql="DELETE FROM ".TB_PREF."prices WHERE id= ".db_escape($price_id);
 	db_query($sql,"an item price could not be deleted");
@@ -51,7 +51,7 @@ function get_prices(string|int|float|bool|array|null $stock_id)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_stock_price(mixed $price_id)
+function get_stock_price(string|int|float|bool|null $price_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."prices WHERE id=".db_escape($price_id);
 

@@ -93,7 +93,7 @@ function handle_delete(string|int|float|bool|null $id): bool
 //
 // Display list of all extensions - installed and available from repository
 //
-function display_extensions(mixed $mods): void
+function display_extensions(array $mods): void
 {
 	global $installed_extensions;
 	

@@ -70,7 +70,7 @@ function round_to_nearest(string|int|float|bool|null $price, string|int|float|bo
 
 }
 
-function get_price (string|int|float|bool|array|null $stock_id, string|int|float|bool|array|null $currency, mixed $sales_type_id, mixed $factor=null, string|int|float|bool|array|null $date=null)
+function get_price (string|int|float|bool|array|null $stock_id, string|int|float|bool|array|null $currency, string|int|float|bool|array|null $sales_type_id, string|int|float|bool|null $factor=null, string|int|float|bool|array|null $date=null)
 {
 	if ($date == null)
 	    $date = new_doc_date();
@@ -138,8 +138,8 @@ function get_price (string|int|float|bool|array|null $stock_id, string|int|float
 //  When $std==true price is calculated as a sum of all included stock items,
 //	otherwise all prices set for kits and items are accepted.
 //
-function get_kit_price(string|int|float|bool|array|null $item_code, string|int|float|bool|array|null $currency, mixed $sales_type_id, mixed $factor=null, 
-	string|int|float|bool|array|null $date=null, mixed $std = false)
+function get_kit_price(string|int|float|bool|array|null $item_code, string|int|float|bool|array|null $currency, string|int|float|bool|array|null $sales_type_id, string|int|float|bool|null $factor=null, 
+	string|int|float|bool|array|null $date=null, string|int|float|bool|null $std = false)
 {
 	$kit_price = 0.00;
 	if (!$std) {
@@ -169,7 +169,7 @@ function get_kit_price(string|int|float|bool|array|null $item_code, string|int|f
 }
 
 //--------------------------------------------------------------------------------------------------
-function update_parent_line(mixed $doc_type, mixed $line_id, mixed $qty_dispatched, bool $auto=false): bool
+function update_parent_line(string|int|float|bool|null $doc_type, string|int|float|bool|null $line_id, string|int|float|bool|null $qty_dispatched, bool $auto=false): bool
 {
 	$doc_type = get_parent_type($doc_type);
 
@@ -223,7 +223,7 @@ function get_location(&$cart)
 //
 //	$trans_no - array of trans nums; special case trans_no==0 - new doc
 //
-function read_sales_trans(mixed $doc_type, string|int|float|bool|array|null $trans_no, &$cart): bool
+function read_sales_trans(string|int|float|bool|null $doc_type, string|int|float|bool|array|null $trans_no, &$cart): bool
 {
 	if (!is_array($trans_no) && $trans_no)
 		$trans_no = array($trans_no);

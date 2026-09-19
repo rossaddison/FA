@@ -12,7 +12,7 @@
 /**
  * @return bool|mysqli_result
  */
-function add_gl_account(mixed $account_code, mixed $account_name, mixed $account_type, mixed $account_code2)
+function add_gl_account(string|int|float|bool|null $account_code, string|int|float|bool|null $account_name, string|int|float|bool|null $account_type, string|int|float|bool|null $account_code2)
 {
 	$sql = "INSERT INTO ".TB_PREF."chart_master (account_code, account_code2, account_name, account_type)
 		VALUES (".db_escape($account_code).", ".db_escape($account_code2).", "
@@ -24,7 +24,7 @@ function add_gl_account(mixed $account_code, mixed $account_name, mixed $account
 /**
  * @return bool|mysqli_result
  */
-function update_gl_account(mixed $account_code, mixed $account_name, mixed $account_type, mixed $account_code2)
+function update_gl_account(string|int|float|bool|null $account_code, string|int|float|bool|null $account_name, string|int|float|bool|null $account_type, string|int|float|bool|null $account_code2)
 {
     $sql = "UPDATE ".TB_PREF."chart_master SET account_name=".db_escape($account_name)
     .",account_type=".db_escape($account_type).", account_code2=".db_escape($account_code2)
@@ -33,7 +33,7 @@ function update_gl_account(mixed $account_code, mixed $account_name, mixed $acco
 	return db_query($sql);
 }
 
-function delete_gl_account(mixed $code): void
+function delete_gl_account(string|int|float|bool|null $code): void
 {
 	$sql = "DELETE FROM ".TB_PREF."chart_master WHERE account_code=".db_escape($code);
 
@@ -64,7 +64,7 @@ function get_gl_accounts(string|array|null $from=null, string|array|null $to=nul
 /**
  * @return array<array-key, null|string>|false
  */
-function get_gl_account(mixed $code)
+function get_gl_account(string|int|float|bool|null $code)
 {
 	$sql = "SELECT * FROM ".TB_PREF."chart_master WHERE account_code=".db_escape($code);
 
@@ -72,7 +72,7 @@ function get_gl_account(mixed $code)
 	return db_fetch($result);
 }
 
-function is_account_balancesheet(mixed $code): bool
+function is_account_balancesheet(string|int|float|bool|array|null $code): bool
 {
 	$sql = "SELECT act_class.ctype
 		FROM "
@@ -91,7 +91,7 @@ function is_account_balancesheet(mixed $code): bool
 /**
  * @return null|string
  */
-function get_gl_account_name(mixed $code)
+function get_gl_account_name(string|int|float|bool|array|null $code)
 {
 	$sql = "SELECT account_name from ".TB_PREF."chart_master WHERE account_code=".db_escape($code);
 
@@ -249,7 +249,7 @@ function is_subledger_account(string|int|float|bool|array|null $account)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_subaccount_data(mixed $code_id, string|int|float|bool|null $person_id)
+function get_subaccount_data(string|int|float|bool|null $code_id, string|int|float|bool|null $person_id)
 {
 	$sql = "SELECT debtor_ref as name, branch_code as id 
 		FROM ".TB_PREF."cust_branch branch 
@@ -306,7 +306,7 @@ function gl_account_in_bank_accounts(string|array|null $acc): bool
 /**
  * @return false|null|string
  */
-function is_bank_account(mixed $account_code)
+function is_bank_account(string|int|float|bool|array|null $account_code)
 {
 	$sql= "SELECT id FROM ".TB_PREF."bank_accounts WHERE account_code=".db_escape($account_code);
 	$result = db_query($sql, "checking account is bank account");
@@ -320,7 +320,7 @@ function is_bank_account(mixed $account_code)
 /**
  * @return bool|mysqli_result
  */
-function get_chart_accounts_search(string|array|null $like, mixed $skip=false)
+function get_chart_accounts_search(string|array|null $like, string|int|float|bool|null $skip=false)
 {
 	global $SysPrefs;
 

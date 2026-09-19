@@ -137,7 +137,7 @@ function check_years_before(string|array|null $date, bool $closed=false): bool
 }
 
 //---------------------------------------------------------------------------------------------
-function close_year(mixed $year): bool
+function close_year(string|int|float|bool|null $year): bool
 {
 	global $Refs;
 
@@ -185,7 +185,7 @@ function close_year(mixed $year): bool
 	return true;
 }
 
-function open_year(mixed $year): void
+function open_year(string|int|float|bool|null $year): void
 {
 	$myrow = get_fiscalyear($year);
 	$from = sql2date($myrow['begin']);

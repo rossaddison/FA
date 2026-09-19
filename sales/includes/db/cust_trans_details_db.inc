@@ -14,7 +14,7 @@
 /**
  * @return bool|mysqli_result
  */
-function get_customer_trans_details(mixed $debtor_trans_type, mixed $debtor_trans_no)
+function get_customer_trans_details(string|int|float|bool|null $debtor_trans_type, string|int|float|bool|array|null $debtor_trans_no)
 {
 if (!is_array($debtor_trans_no))
 	$debtor_trans_no = array( 0=>$debtor_trans_no );
@@ -59,8 +59,8 @@ function void_customer_trans_details(string|int|float|bool|null $type, string|in
 }
 //----------------------------------------------------------------------------------------
 
-function write_customer_trans_detail_item(?int $debtor_trans_type, mixed $debtor_trans_no, string|int|float|bool|null $stock_id, string|int|float|bool|null $description,
-	string|int|float|bool|null $quantity, string|int|float|bool|null $unit_price, string|int|float|bool|null $unit_tax, string|int|float|bool|null $discount_percent, string|int|float|bool|null $std_cost, mixed $src_id, mixed $line_id=0): void
+function write_customer_trans_detail_item(?int $debtor_trans_type, string|int|float|bool|null $debtor_trans_no, string|int|float|bool|null $stock_id, string|int|float|bool|null $description,
+	string|int|float|bool|null $quantity, string|int|float|bool|null $unit_price, string|int|float|bool|null $unit_tax, string|int|float|bool|null $discount_percent, string|int|float|bool|null $std_cost, string|int|float|bool|null $src_id, string|int|float|bool|null $line_id=0): void
 {
 	if ($line_id!=0)
 		$sql = "UPDATE ".TB_PREF."debtor_trans_details SET

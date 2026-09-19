@@ -42,7 +42,7 @@ function depreciation_months(?string $depreciation_start): float|int {
     //$months++;
 }
 
-function months_between_dates(mixed $start, mixed $end): int|float {
+function months_between_dates(string|int|float|bool|null $start, string|int|float|bool|null $end): int|float {
   $start = strtotime($start);
   $end = strtotime($end);
 
@@ -55,7 +55,7 @@ function months_between_dates(mixed $start, mixed $end): int|float {
   return 12 * ($y2 - $y1) + $m2 - $m1;
 }
 
-function compute_gl_rows_for_depreciation(bool|array|null $item, string|array|null $no_months, mixed $period): array {
+function compute_gl_rows_for_depreciation(bool|array|null $item, string|array|null $no_months, string|int|float|bool|null $period): array {
   $rows = array();
 
   $year = get_current_fiscalyear();

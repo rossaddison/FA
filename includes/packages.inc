@@ -164,7 +164,7 @@ function ufmt_property(mixed $key, string|array|null $value)
 // Retrieve control file and return as associative array
 //	$index is name of field used as key in result array, or null for numeric keys
 //
-function get_control_file(mixed $file, string|bool|null $index = false): array|null {
+function get_control_file(string|int|float|bool|null $file, string|bool|null $index = false): array|null {
 
 	$list = gzopen($file, 'rb');
 	if (!$list) return null;
@@ -219,7 +219,7 @@ function get_control_file(mixed $file, string|bool|null $index = false): array|n
 //
 //	Save configuration data to control file.
 //
-function save_control_file(mixed $fname, mixed $list, mixed $zip=false): void 
+function save_control_file(string|int|float|bool|null $fname, array $list, string|int|float|bool|null $zip=false): void 
 {
 	$file = $zip ?  gzopen($fname, 'wb') : fopen($fname, 'wb');
 	foreach($list as $section) {
@@ -251,7 +251,7 @@ function save_control_file(mixed $fname, mixed $list, mixed $zip=false): void
 //	Retrieve text field in localized version or default one 
 //	when the localized is not avaialable.
 //
-function pkg_prop(mixed $pkg, mixed $property, mixed $lang=false) 
+function pkg_prop(string|int|float|bool|null $pkg, string|int|float|bool|null $property, string|int|float|bool|null $lang=false) 
 {
 	
 	if ($lang && isset($pkg[$property.'-'.user_language()]))
@@ -270,7 +270,7 @@ function pkg_prop(mixed $pkg, mixed $property, mixed $lang=false)
 //	 	or (0=>field1, 1=>field2...)
 //  $outkey - field used as a key in package list. If null 'Package' field is used.
 //
-function get_pkg_or_list(string|int|float|bool|array|null $type = null, mixed $pkgname = null, ?array $filter=array(), mixed $outkey=null, bool $download=true) {
+function get_pkg_or_list(string|int|float|bool|array|null $type = null, string|int|float|bool|null $pkgname = null, ?array $filter=array(), string|int|float|bool|null $outkey=null, bool $download=true) {
 
 	global $path_to_root, $repo_auth;
 
@@ -402,7 +402,7 @@ function get_pkg_or_list(string|int|float|bool|array|null $type = null, mixed $p
 	return $Packages;
 }
 
-function get_package(mixed $pkgname, string|int|float|bool|null $type = null)
+function get_package(string|int|float|bool|null $pkgname, string|int|float|bool|null $type = null)
 {
 	return get_pkg_or_list($type, $pkgname);
 }
@@ -609,7 +609,7 @@ function get_charts_list()
 //---------------------------------------------------------------------------------------------
 //	Install/update package from repository
 //
-function install_language(mixed $pkg_name): bool
+function install_language(string|int|float|bool|null $pkg_name): bool
 {
 	global $path_to_root, $installed_languages, $Ajax;
 	
@@ -654,7 +654,7 @@ function install_language(mixed $pkg_name): bool
 //---------------------------------------------------------------------------------------------
 //	Install/update extension or theme package from repository
 //
-function install_extension(mixed $pkg_name): bool
+function install_extension(string|int|float|bool|null $pkg_name): bool
 {
 	global $path_to_root, $installed_extensions, $next_extension_id, $Ajax, $db_connections;
 	
@@ -730,7 +730,7 @@ function check_pkg_upgrade(string|int|float|bool|null $current, string|int|float
 //
 //	Returns package info from index file
 //
-function get_package_info(mixed $pkg, string|int|float|bool|null $type=null, ?array $filter=array(), mixed $outkey=null, bool $download=true) {
+function get_package_info(string|int|float|bool|null $pkg, string|int|float|bool|null $type=null, ?array $filter=array(), string|int|float|bool|null $outkey=null, bool $download=true) {
 	return get_pkg_or_list($type, $pkg, $filter, null, false);
 }
 

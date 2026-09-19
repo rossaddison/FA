@@ -55,7 +55,7 @@ function cancel_transaction(): void
 //-----------------------------------------------------------------------------
 //	Update record activity status.
 //
-function update_record_status(string|int|float|bool|array|null $id, mixed $status, string|int|float|bool|null $table, string|int|float|bool|null $key): void {
+function update_record_status(string|int|float|bool|array|null $id, string|int|float|bool|array|null $status, string|int|float|bool|null $table, string|int|float|bool|null $key): void {
 	$sql = "UPDATE ".TB_PREF.$table." SET inactive = "
 		. ((int)$status)." WHERE $key=".db_escape($id);
 		

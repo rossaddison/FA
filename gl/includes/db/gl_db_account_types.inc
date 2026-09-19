@@ -12,7 +12,7 @@
 /**
  * @return bool|mysqli_result
  */
-function add_account_type(string|int|float|bool|null $id, string|int|float|bool|null $name, mixed $class_id, mixed $parent)
+function add_account_type(string|int|float|bool|null $id, string|int|float|bool|null $name, string|int|float|bool|null $class_id, string|int|float|bool|null $parent)
 {
 	$sql = "INSERT INTO ".TB_PREF."chart_types (id, name, class_id, parent)
 		VALUES (".db_escape($id).", ".db_escape($name).", ".db_escape($class_id).", ".db_escape($parent).")";
@@ -23,7 +23,7 @@ function add_account_type(string|int|float|bool|null $id, string|int|float|bool|
 /**
  * @return bool|mysqli_result
  */
-function update_account_type(string|int|float|bool|null $id, string|int|float|bool|null $name, mixed $class_id, mixed $parent, mixed $old_id)
+function update_account_type(string|int|float|bool|null $id, string|int|float|bool|null $name, string|int|float|bool|null $class_id, string|int|float|bool|null $parent, string|int|float|bool|null $old_id)
 {
 	begin_transaction();
 	if ($old_id !== $id)
@@ -67,7 +67,7 @@ function update_account_type(string|int|float|bool|null $id, string|int|float|bo
 /**
  * @return bool|mysqli_result
  */
-function get_account_types(int|bool|array|null $all=false, mixed $class_id=false, string|int|bool|null $parent=false)
+function get_account_types(int|bool|array|null $all=false, string|int|float|bool|null $class_id=false, string|int|bool|null $parent=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."chart_types";
 
@@ -126,7 +126,7 @@ function delete_account_type(string|int|float|bool|null $id): void
 /**
  * @return bool|mysqli_result
  */
-function add_account_class(string|int|float|bool|null $id, string|int|float|bool|null $name, mixed $ctype)
+function add_account_class(string|int|float|bool|null $id, string|int|float|bool|null $name, string|int|float|bool|null $ctype)
 {
 	$sql = "INSERT INTO ".TB_PREF."chart_class (cid, class_name, ctype)
 		VALUES (".db_escape($id).", ".db_escape($name).", ".db_escape($ctype).")";
@@ -137,7 +137,7 @@ function add_account_class(string|int|float|bool|null $id, string|int|float|bool
 /**
  * @return bool|mysqli_result
  */
-function update_account_class(string|int|float|bool|null $id, string|int|float|bool|null $name, mixed $ctype)
+function update_account_class(string|int|float|bool|null $id, string|int|float|bool|null $name, string|int|float|bool|null $ctype)
 {
     $sql = "UPDATE ".TB_PREF."chart_class SET class_name=".db_escape($name).",
 		ctype=".db_escape($ctype)." WHERE cid = ".db_escape($id);

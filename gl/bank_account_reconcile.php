@@ -63,7 +63,7 @@ function systype_name(string|int|float|bool|array|null $dummy, string|int|float|
 	return $systypes_array[$type];
 }
 
-function trans_view(mixed $trans)
+function trans_view(array $trans)
 {
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
@@ -88,7 +88,7 @@ function fmt_credit(array|false|null $row): string
 /**
  * @return null|string
  */
-function fmt_person(mixed $trans)
+function fmt_person(array $trans)
 {
 	return get_counterparty_name($trans["type"], $trans["trans_no"]);
 }

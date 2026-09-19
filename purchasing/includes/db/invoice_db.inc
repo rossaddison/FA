@@ -67,7 +67,7 @@ function read_supplier_details_to_trans(&$supp_trans, string|int|float|bool|arra
 //  Returns:
 // if chg_price is set:	 previous act_price, delivery date and unit_price from PO
 //
-function update_supp_received_items_for_invoice(string|int|float|bool|null $id, mixed $po_detail_item, mixed $qty_invoiced, mixed $chg_price=null): array
+function update_supp_received_items_for_invoice(string|int|float|bool|null $id, string|int|float|bool|null $po_detail_item, string|int|float|bool|null $qty_invoiced, string|int|float|bool|null $chg_price=null): array
 {
 	if ($chg_price != null)
 	{
@@ -110,7 +110,7 @@ function update_supp_received_items_for_invoice(string|int|float|bool|null $id, 
 	return array($ret, $date, $unit_price);
 }
 
-function get_diff_in_home_currency(mixed $supplier, ?string $old_date, string|int|float|bool|null $date, mixed $amount1, mixed $amount2)
+function get_diff_in_home_currency(string|int|float|bool|null $supplier, ?string $old_date, string|int|float|bool|null $date, string|int|float|bool|null $amount1, string|int|float|bool|null $amount2)
 {
 	$dec = user_price_dec();
 	price_decimal_format($amount2, $dec);

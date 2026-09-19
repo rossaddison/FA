@@ -14,7 +14,7 @@ define('SQL_MODE', 'STRICT_ALL_TABLES'); // prevents SQL injection with silent f
 
 $db_last_inserted_id = 0;
 
-function set_global_connection(mixed $company=-1): mysqli|false
+function set_global_connection(string|int|float|bool|null $company=-1): mysqli|false
 {
 	global $db, $path_to_root, $db_connections, $SysPrefs;
 
@@ -174,7 +174,7 @@ function db_error_no(): int
     return mysqli_errno($db);
 }
 
-function db_error_msg(mixed $conn): string
+function db_error_msg(array $conn): string
 {
 	return mysqli_error($conn);
 }
@@ -198,7 +198,7 @@ function db_field_name(mysqli_result $result, string|int|float|bool|null $n): st
     return $fieldinfo->name;
 }
 
-function db_set_collation(mixed $db, mixed $fa_collation): bool|mysqli_result
+function db_set_collation(mixed $db, string|int|float|bool|null $fa_collation): bool|mysqli_result
 {
 	return mysqli_query($db, "ALTER DATABASE COLLATE ".get_mysql_collation($fa_collation));
 }
@@ -256,7 +256,7 @@ function db_drop_db(mixed $connection): bool|mysqli_result
 	}
 }
 
-function db_close(mixed $dbase = null): bool
+function db_close(string|int|float|bool|null $dbase = null): bool
 {
 	global $db;
 	
@@ -270,7 +270,7 @@ function db_extension_exists(): bool
 	return function_exists('mysqli_connect');
 }
 
-function db_escape_function(mixed $string)
+function db_escape_function(string|int|float|bool|null $string)
 {
 	global $db;
 	

@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_item_tax_type(string|int|float|bool|null $name, mixed $exempt, ?array $exempt_from): void
+function add_item_tax_type(string|int|float|bool|null $name, string|int|float|bool|null $exempt, ?array $exempt_from): void
 {
 	begin_transaction();
 	
@@ -26,7 +26,7 @@ function add_item_tax_type(string|int|float|bool|null $name, mixed $exempt, ?arr
 	commit_transaction();
 }
 
-function update_item_tax_type(string|int|float|bool|null $id, string|int|float|bool|null $name, mixed $exempt, ?array $exempt_from): void
+function update_item_tax_type(string|int|float|bool|null $id, string|int|float|bool|null $name, string|int|float|bool|null $exempt, ?array $exempt_from): void
 {
 	begin_transaction();
 	

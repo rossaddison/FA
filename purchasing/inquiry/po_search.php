@@ -79,7 +79,7 @@ submit_cells('SearchOrders', _("Search"),'',_('Select documents'), 'default');
 end_row();
 end_table(1);
 //---------------------------------------------------------------------------------------------
-function trans_view(mixed $trans)
+function trans_view(array $trans)
 {
 	return get_trans_view_str(ST_PURCHORDER, $trans["order_no"]);
 }

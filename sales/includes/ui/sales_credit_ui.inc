@@ -233,7 +233,7 @@ function display_credit_items(?string $title, &$order): void
 
 //---------------------------------------------------------------------------------
 
-function credit_edit_item_controls(&$order, mixed $rowcounter, string|int|float|bool|null $line_no=-1): void
+function credit_edit_item_controls(&$order, string|int|float|bool|null $rowcounter, string|int|float|bool|null $line_no=-1): void
 {
 	global $Ajax;
 	alt_table_row_color($rowcounter);

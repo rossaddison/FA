@@ -34,7 +34,7 @@ if ($_GET['trans_no'] != "")
 
 //-------------------------------------------------------------------------------------------------
 
-function display_wo_production(mixed $prod_id): void
+function display_wo_production(string|int|float|bool|null $prod_id): void
 {
     $myrow = get_work_order_produce($prod_id);
 

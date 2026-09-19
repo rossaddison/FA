@@ -1676,7 +1676,7 @@ function utf8_chr(?int $uni): string
 }
 
 ///
-function arabic(mixed $str,mixed $z="",mixed $method='normal'): string
+function arabic(string|int|float|bool|null $str,string|int|float|bool|null $z="",string|int|float|bool|null $method='normal'): string
 {
 $p_chars = array (
 	utf8_chr(0x0622) => array (utf8_chr(0xfe82), utf8_chr(0xfe82), utf8_chr(0x0622)),
@@ -1903,7 +1903,7 @@ $ignorelist = array (utf8_chr(0x0000), utf8_chr(0x064c), utf8_chr(0x064d), utf8_
 // For debugging
 if (!function_exists('dump'))
 {
-	function dump(mixed $str): void
+	function dump(string|int|float|bool|null $str): void
 	{
 		$req_dump = print_r($str, true);
 		$fp = fopen('dump.log', 'a');

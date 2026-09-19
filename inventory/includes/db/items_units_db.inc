@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function write_item_unit(string|int|float|bool|array|null $selected, mixed $abbr, string|int|float|bool|null $description, mixed $decimals): void
+function write_item_unit(string|int|float|bool|array|null $selected, string|int|float|bool|null $abbr, string|int|float|bool|null $description, string|int|float|bool|null $decimals): void
 {
     if($selected!='')
 		$sql = "UPDATE ".TB_PREF."item_units SET
@@ -25,7 +25,7 @@ function write_item_unit(string|int|float|bool|array|null $selected, mixed $abbr
 	db_query($sql,"an item unit could not be updated");
 }
 
-function delete_item_unit(mixed $unit): void
+function delete_item_unit(string|int|float|bool|null $unit): void
 {
 	$sql="DELETE FROM ".TB_PREF."item_units WHERE abbr=".db_escape($unit);
 
@@ -35,7 +35,7 @@ function delete_item_unit(mixed $unit): void
 /**
  * @return array<array-key, null|string>|false
  */
-function get_item_unit(mixed $unit)
+function get_item_unit(string|int|float|bool|null $unit)
 {
 	$sql="SELECT * FROM ".TB_PREF."item_units WHERE abbr=".db_escape($unit);
 
@@ -47,7 +47,7 @@ function get_item_unit(mixed $unit)
 /**
  * @return false|null|string
  */
-function get_unit_descr(mixed $unit)
+function get_unit_descr(string|int|float|bool|null $unit)
 {
 	$sql = "SELECT name FROM ".TB_PREF."item_units WHERE abbr=".db_escape($unit);
 
@@ -57,7 +57,7 @@ function get_unit_descr(mixed $unit)
 	return is_array($row) ? $row[0] : false;
 }
 
-function item_unit_used(mixed $unit): bool {
+function item_unit_used(string|int|float|bool|null $unit): bool {
 	$sql= "SELECT COUNT(*) FROM ".TB_PREF."stock_master WHERE units=".db_escape($unit);
 	$result = db_query($sql, "could not query stock master");
 	$myrow = db_fetch_row($result);

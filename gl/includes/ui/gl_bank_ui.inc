@@ -200,7 +200,7 @@ function display_gl_items(string|int|float|bool|supp_trans|null $title, &$order)
 
 //---------------------------------------------------------------------------------
 
-function gl_edit_item_controls(&$order, mixed $dim, mixed $Index=null): void
+function gl_edit_item_controls(&$order, string|int|float|bool|null $dim, string|int|float|bool|null $Index=null): void
 {
 	global $Ajax;
 	$payment = $order->trans_type == ST_BANKPAYMENT;

@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_item_location(string|int|float|bool|null $loc_code, mixed $location_name, mixed $delivery_address, string|int|float|bool|null $phone, string|int|float|bool|null $phone2, mixed $fax, string|int|float|bool|null $email, mixed $contact, int|array|null $fixed_asset = 0): void
+function add_item_location(string|int|float|bool|null $loc_code, string|int|float|bool|null $location_name, string|int|float|bool|null $delivery_address, string|int|float|bool|null $phone, string|int|float|bool|null $phone2, string|int|float|bool|null $fax, string|int|float|bool|null $email, array $contact, int|array|null $fixed_asset = 0): void
 {
 	$sql = "INSERT INTO ".TB_PREF."locations (loc_code, location_name, delivery_address, phone, phone2, fax, email, contact, fixed_asset)
 		VALUES (".db_escape($loc_code).", ".db_escape($location_name).", ".db_escape($delivery_address).", "
@@ -27,7 +27,7 @@ function add_item_location(string|int|float|bool|null $loc_code, mixed $location
 
 //------------------------------------------------------------------------------------
 
-function update_item_location(string|int|float|bool|null $loc_code, mixed $location_name, mixed $delivery_address, string|int|float|bool|null $phone, string|int|float|bool|null $phone2, mixed $fax, string|int|float|bool|null $email, mixed $contact, int|array|null $fixed_asset = 0): void
+function update_item_location(string|int|float|bool|null $loc_code, string|int|float|bool|null $location_name, string|int|float|bool|null $delivery_address, string|int|float|bool|null $phone, string|int|float|bool|null $phone2, string|int|float|bool|null $fax, string|int|float|bool|null $email, array $contact, int|array|null $fixed_asset = 0): void
 
 {
     $sql = "UPDATE ".TB_PREF."locations SET location_name=".db_escape($location_name).",
@@ -42,7 +42,7 @@ function update_item_location(string|int|float|bool|null $loc_code, mixed $locat
 
 //------------------------------------------------------------------------------------
 
-function delete_item_location(mixed $item_location): void
+function delete_item_location(string|int|float|bool|null $item_location): void
 {
 	$sql="DELETE FROM ".TB_PREF."locations WHERE loc_code=".db_escape($item_location);
 	db_query($sql,"a location could not be deleted");
@@ -56,7 +56,7 @@ function delete_item_location(mixed $item_location): void
 /**
  * @return array<array-key, null|string>|false
  */
-function get_item_location(mixed $item_location)
+function get_item_location(string|int|float|bool|array|null $item_location)
 {
 	$sql="SELECT * FROM ".TB_PREF."locations WHERE loc_code=".db_escape($item_location);
 

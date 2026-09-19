@@ -52,7 +52,7 @@ function print_gl_rows(mysqli_result|FrontReport $result, string|bool|mysqli_res
 		}
 	}
 }
-function display_wo_costs(mixed $prod_id): void
+function display_wo_costs(string|int|float|bool|null $prod_id): void
 {
 	br(1);
     start_table(TABLESTYLE);

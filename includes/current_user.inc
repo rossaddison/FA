@@ -402,7 +402,7 @@ function percent_format(string|int|float|bool|null $number): string {
 	$_SESSION["wa_current_user"]->prefs->percent_dec());
 }
 
-function user_numeric(mixed $input): int|float|false {
+function user_numeric(string|int|float|bool|array|null $input): int|float|false {
     global $SysPrefs;
 
     $num = trim($input);
@@ -595,7 +595,7 @@ function user_def_print_orientation()
     return $_SESSION["wa_current_user"]->prefs->def_print_orientation();
 }
 
-function user_check_access(mixed $sec_area)
+function user_check_access(string|int|float|bool|null $sec_area)
 {
 	return $_SESSION["wa_current_user"]->can_access($sec_area);
 }
@@ -698,7 +698,7 @@ function array_search_value(string|int|float|bool|null $needle, ?array $haystack
 //	Search $needle in $haystack or in $haystack[][$valuekey]
 //	returns array of keys of $haystack elements found
 //
-function array_search_keys(mixed $needle, mixed $haystack, ?string $valuekey=null): array
+function array_search_keys(string|int|float|bool|null $needle, ?array $haystack, ?string $valuekey=null): array
 {
 	$keys = array();
 	if (is_array($haystack)) {
@@ -715,7 +715,7 @@ function array_search_keys(mixed $needle, mixed $haystack, ?string $valuekey=nul
 //	Find first (single) $needle in $haystack or in $haystack[][$valuekey]
 //	returns $haystack element found or null
 //
-function array_search_key(mixed $needle, mixed $haystack, ?string $valuekey=null)
+function array_search_key(string|int|float|bool|null $needle, ?array $haystack, ?string $valuekey=null)
 {
 	$keys = array_search_keys($needle, $haystack, $valuekey);
 	return @$keys[0];
@@ -729,7 +729,7 @@ function recalculate_cols(&$cols): void
 		$cols[$key] = intval($col * $factor); 
 }
 
-function flush_dir(string|int|float|bool|null $path, mixed $wipe = false): void 
+function flush_dir(string|int|float|bool|null $path, string|int|float|bool|null $wipe = false): void 
 {
 	if (!file_exists($path))
 		return;
@@ -750,7 +750,7 @@ function flush_dir(string|int|float|bool|null $path, mixed $wipe = false): void
 	Returns current path to company private folder.
 	(Current path can change after chdir).
 */
-function company_path(mixed $comp=null): string
+function company_path(string|int|float|bool|null $comp=null): string
 {
 	global $path_to_root, $SysPrefs;
 

@@ -79,7 +79,7 @@ function css_files_ensure_init(): void {
 	}
 }
 
-function add_css_file(mixed $filename): void
+function add_css_file(string|int|float|bool|null $filename): void
 {
 	global $css_files;
 	css_files_ensure_init();
@@ -141,7 +141,7 @@ function add_js_ufile(?string $filename): void
 		$js_userlib[] = $filename;
 }
 
-function add_js_source(mixed $text): void 
+function add_js_source(string|int|float|bool|null $text): void 
 {
 	  global $js_lib;
 
@@ -320,7 +320,7 @@ function check_write(string|int|float|bool|null $path)
 	also removes files from the $to which 
 	does not exists in $from directory but arelisted in $flist.
 */
-function copy_files(mixed $flist, string|int|float|bool|null $from, string|int|float|bool|null $to, mixed $strict=false): bool
+function copy_files(array $flist, string|int|float|bool|null $from, string|int|float|bool|null $to, string|int|float|bool|null $strict=false): bool
 {
 	foreach ($flist as $file) {
 		if (file_exists($from.'/'.$file)) {
@@ -401,7 +401,7 @@ function find_custom_file(?string $rep): string|null
 	Protect against directory traversal.
 	Changes all not POSIX compatible chars to underscore.
 */
-function clean_file_name(mixed $filename): array|string|null {
+function clean_file_name(string|int|float|bool|array|null $filename): array|string|null {
     $filename = str_replace(chr(0), '', $filename);
     return preg_replace('/[^a-zA-Z0-9.\-_]/', '_', $filename);
 }
@@ -420,7 +420,7 @@ function generate_password(): string
 	This function aims to generate cryptographically strong random identifier.
 	Result identifier has length 4[strength/8/3] 
 */
-function random_id(mixed $strength = 128): string
+function random_id(string|int|float|bool|null $strength = 128): string
 {
 	$n = ceil($strength/8);
 

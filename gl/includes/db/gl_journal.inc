@@ -14,8 +14,8 @@ require_once($path_to_root. "/admin/db/attachments_db.inc");
 /**
  * @return bool|mysqli_result
  */
-function add_journal(string|int|float|bool|null $type, int|float|null $trans_no, string|int|float|bool|null $amount, mixed $tran_date, string|int|float|bool|null $currency, string|int|float|bool|null $reference, mixed $source_ref='', string|int|float|bool|null $rate=1,
-	 mixed $event_date='', mixed $doc_date='')
+function add_journal(string|int|float|bool|null $type, int|float|null $trans_no, string|int|float|bool|null $amount, string|int|float|bool|array|null $tran_date, string|int|float|bool|null $currency, string|int|float|bool|null $reference, string|int|float|bool|null $source_ref='', string|int|float|bool|null $rate=1,
+	 string|int|float|bool|array|null $event_date='', string|int|float|bool|array|null $doc_date='')
 {
 	$sql = "INSERT INTO ".TB_PREF."journal(
 	   `type`,`trans_no`, `amount`, `currency`, `rate`, `reference`, `source_ref`, `tran_date`,`event_date`,`doc_date`)
@@ -37,8 +37,8 @@ function add_journal(string|int|float|bool|null $type, int|float|null $trans_no,
 /**
  * @return bool|mysqli_result
  */
-function update_journal(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $amount, mixed $tran_date, string|int|float|bool|null $currency, string|int|float|bool|null $reference, mixed $source_ref='', string|int|float|bool|null $rate=1,
-	 mixed $event_date='', mixed $doc_date='')
+function update_journal(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $amount, string|int|float|bool|null $tran_date, string|int|float|bool|null $currency, string|int|float|bool|null $reference, string|int|float|bool|null $source_ref='', string|int|float|bool|null $rate=1,
+	 string|int|float|bool|null $event_date='', string|int|float|bool|null $doc_date='')
 {
 	$sql = "UPDATE ".TB_PREF."journal SET "
 	  ."`amount`=".db_escape($amount).","
@@ -104,7 +104,7 @@ function write_cust_journal(string|int|float|bool|null $trans_type, string|int|f
 /**
  * @return bool|mysqli_result
  */
-function write_supp_journal(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no, mixed $supp_id, string|int|float|bool|null $date, string|int|float|bool|null $ref, string|int|float|bool|null $amount, string|int|float|bool|null $rate, mixed $src_ref)
+function write_supp_journal(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $supp_id, string|int|float|bool|null $date, string|int|float|bool|null $ref, string|int|float|bool|null $amount, string|int|float|bool|null $rate, string|int|float|bool|null $src_ref)
 {
 	$sql = "INSERT INTO ".TB_PREF."supp_trans (trans_no, type, supplier_id, tran_date, reference, ov_amount, rate, supp_reference)
 		VALUES (".db_escape($trans_no).", ".db_escape($trans_type).", ".db_escape($supp_id).", '".date2sql($date)."',"

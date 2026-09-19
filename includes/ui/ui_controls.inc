@@ -125,7 +125,7 @@ function end_table(int|bool $breaks=0): void
 		br($breaks);
 }
 
-function start_outer_table(mixed $class=false, ?string $extra="", string|int|null $padding='2', ?string $spacing='0', bool $br=false): void
+function start_outer_table(string|int|float|bool|null $class=false, ?string $extra="", string|int|null $padding='2', ?string $spacing='0', bool $br=false): void
 {
 	if ($br)
 		br();
@@ -145,7 +145,7 @@ function table_section(string|int|float|bool|null $number=1, string|bool|null $w
 	echo "<table class='tablestyle_inner'>\n";
 }	
 
-function end_outer_table(mixed $breaks=0, bool $close_table=true): void
+function end_outer_table(string|int|float|bool|null $breaks=0, bool $close_table=true): void
 {
 	if ($close_table)
 	{
@@ -180,7 +180,7 @@ function meta_forward(string|int|float|bool|null $forward_to, ?string $params=""
 // (for use in wiki help system), otherwise result is array of label 
 // with underlined hotkey letter and access property string.
 //
-function access_string(string|int|float|bool|null $label, mixed $clean=false): array|string
+function access_string(string|int|float|bool|null $label, string|int|float|bool|null $clean=false): array|string
 {
 	$access = '';
 	$slices = array();
@@ -197,7 +197,7 @@ function access_string(string|int|float|bool|null $label, mixed $clean=false): a
 	return $clean ? $label : array($label, $access);
 }
 
-function hyperlink_back(mixed $center=true, mixed $no_menu=true, string|int|float|bool|null $type_no=0, string|int|float|bool|array|null $trans_no=0, mixed $final=false): void
+function hyperlink_back(string|int|float|bool|null $center=true, string|int|float|bool|null $no_menu=true, string|int|float|bool|null $type_no=0, string|int|float|bool|array|null $trans_no=0, string|int|float|bool|null $final=false): void
 {
 	global $path_to_root;
 
@@ -226,7 +226,7 @@ function hyperlink_back(mixed $center=true, mixed $no_menu=true, string|int|floa
 	echo "<br>";
 }
 
-function hyperlink_no_params(mixed $target, string|int|float|bool|null $label, bool $center=true): void
+function hyperlink_no_params(string|int|float|bool|null $target, string|int|float|bool|null $label, bool $center=true): void
 {
 	$id = default_focus();
 	$pars = access_string($label);
@@ -239,7 +239,7 @@ function hyperlink_no_params(mixed $target, string|int|float|bool|null $label, b
 		echo "</center>";
 }
 
-function hyperlink_no_params_td(mixed $target, string|int|float|bool|null $label): void
+function hyperlink_no_params_td(string|int|float|bool|null $target, string|int|float|bool|null $label): void
 {
 	echo "<td>";
 	hyperlink_no_params($target, $label);
@@ -333,7 +333,7 @@ function hyperlink_params_separate(string|int|float|bool|null $target, string|in
 		echo "</center>";
 }
 
-function hyperlink_params_separate_td(mixed $target, string|int|float|bool|null $label, string|int|float|bool|null $params): void
+function hyperlink_params_separate_td(string|int|float|bool|null $target, string|int|float|bool|null $label, string|int|float|bool|null $params): void
 {
 	echo "<td>";
 	hyperlink_params_separate($target, $label, $params);
@@ -385,7 +385,7 @@ function end_row(): void
 	echo "</tr>\n";
 }
 
-function br(mixed $num=1): void
+function br(string|int|float|bool|null $num=1): void
 {
 	for ($i = 0; $i < $num; $i++)
 		echo "<br>";
@@ -526,7 +526,7 @@ $popup_editors = array(
 	$caller - optional function key code (available values F1-F12: 112-123,
 		true: default)
 */
-function set_editor(?string $type, mixed $input, mixed $caller=true): void
+function set_editor(?string $type, string|int|float|bool|null $input, mixed $caller=true): void
 {
 	global $path_to_root, $Editors, $popup_editors, $Pagehelp;
 
@@ -593,7 +593,7 @@ function context_restore()
 /*
 	Return to caller page if the page was called from external context.
 */
-function context_return(mixed $ret): void
+function context_return(string|int|float|bool|null $ret): void
 {
 	if ( count($_SESSION['Context'])) {
 		$ctx = &$_SESSION['Context'][0];
@@ -618,7 +618,7 @@ if (!isset($_SESSION['Context'])) {
 	Redirector for selector F4 calls.
 	$sel_editors is array of selname=>editor_page
 */
-function editor_redirect(mixed $sel_editors, mixed $save_fun=''): void {
+function editor_redirect(string|int|float|bool|null $sel_editors, mixed $save_fun=''): void {
 	foreach ($sel_editors as $selname=>$editor)
 		if (isset($_POST['_'.$selname.'_editor'])) {
 			if (function_exists($save_fun))
@@ -630,7 +630,7 @@ function editor_redirect(mixed $sel_editors, mixed $save_fun=''): void {
 /*
 	Return procedure for selector F4 calls
 */
-function editor_return(mixed $vars, mixed $restore_fun=''): void {
+function editor_return(array $vars, mixed $restore_fun=''): void {
 	if (function_exists($restore_fun))
 		$restore_fun();
 
@@ -646,7 +646,7 @@ function editor_return(mixed $vars, mixed $restore_fun=''): void {
 /**
  * @return 0|array<array-key, mixed>|string
  */
-function confirm_dialog(mixed $submit, string|int|float|bool|null $msg): int|array|string {
+function confirm_dialog(string|int|float|bool|null $submit, string|int|float|bool|null $msg): int|array|string {
 	if (find_post($submit)) {
 		display_warning($msg);
 		br();
@@ -690,7 +690,7 @@ function page_processing(bool $msg = false): void
 		add_js_source($js);
 }
 
-function page_modified(mixed $status = true): void
+function page_modified(string|int|float|bool|null $status = true): void
 {
 	global $Ajax;
 

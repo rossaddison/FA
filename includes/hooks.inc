@@ -218,7 +218,7 @@ class hooks {
 /*
 	Installs hooks provided by extension modules
 */
-function install_hooks(mixed $lang_code=null): void
+function install_hooks(string|int|float|bool|null $lang_code=null): void
 {
 	global $path_to_root, $Hooks, $installed_extensions;
 
@@ -252,7 +252,7 @@ function install_hooks(mixed $lang_code=null): void
 	Non active hooks are not included in $Hooks array, so we can use special function to 
 	activate.
 */
-function activate_hooks(string|int|float|bool|null $ext, mixed $comp, bool $on=true)
+function activate_hooks(string|int|float|bool|null $ext, string|int|float|bool|array|null $comp, bool $on=true)
 {
 	global $Hooks;
 
@@ -274,7 +274,7 @@ function activate_hooks(string|int|float|bool|null $ext, mixed $comp, bool $on=t
 /*
 	Calls hook $method defined in extension $ext (if any)
 */
-function hook_invoke(mixed $ext, string|int|float|bool|null $method, &$data, mixed $opts=null)
+function hook_invoke(string|int|float|bool|null $ext, string|int|float|bool|null $method, &$data, ?array $opts=null)
 {
 
 	global $Hooks;
@@ -291,7 +291,7 @@ function hook_invoke(mixed $ext, string|int|float|bool|null $method, &$data, mix
 /*
 	Calls hook $methods defined in all extensions (if any)
 */
-function hook_invoke_all(string|int|float|bool|null $method, &$data, mixed $opts=null): array
+function hook_invoke_all(string|int|float|bool|null $method, &$data, array|int|null $opts=null): array
 {
 
 	global $Hooks;
@@ -337,7 +337,7 @@ function hook_invoke_first(?string $method, &$data, ?array $opts=null)
 	Returns last non-null result returned from modules method. Helps implement hooks overriding by 
 	extensions installed later.
 */
-function hook_invoke_last(?string $method, &$data, mixed $opts=null)
+function hook_invoke_last(?string $method, &$data, array|string|null $opts=null)
 {
 
 	global $Hooks;
@@ -455,7 +455,7 @@ function hook_session_start(string|array|null $company)
 //	Third party authentication modules.
 //	Returns true after successfull authentication, false otherwise, null if no login hook is defined.
 //
-function hook_authenticate(mixed $login, mixed $password)
+function hook_authenticate(string|int|float|bool|null $login, string|int|float|bool|array|null $password)
 {
 	return hook_invoke_last('authenticate', $login, $password);
 }
@@ -471,7 +471,7 @@ function hook_authenticate(mixed $login, mixed $password)
 	 * more than one in  the cart.
 	 * If 'skip' is returned, the line will be skipped and not displayed
 	 */
-function hook_get_dispatchable_quantity(mixed $line_item, string|int|float|bool|array|null $location, string|int|float|bool|array|null $date, mixed $qoh) {
+function hook_get_dispatchable_quantity(mixed $line_item, string|int|float|bool|array|null $location, string|int|float|bool|array|null $date, string|int|float|bool|null $qoh) {
 		$result =  hook_invoke_first('get_dispatchable_quantity', $line_item, array($location, $date, $qoh));
 		return $result !== null ? $result : hooks::default_get_dispatchable_quantity($line_item, $location, $date, $qoh);
 }

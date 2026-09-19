@@ -131,7 +131,7 @@ function get_bank_charge_account(string|int|float|bool|array|null $id)
 
 //---------------------------------------------------------------------------------------------
 
-function add_quick_entry(string|int|float|bool|null $description, string|int|float|bool|null $type, int|float|bool|null $base_amount, mixed $base_desc, string|int|array|null $bal_type, mixed $usage): void
+function add_quick_entry(string|int|float|bool|null $description, string|int|float|bool|null $type, int|float|bool|null $base_amount, string|int|float|bool|null $base_desc, string|int|array|null $bal_type, string|int|float|bool|null $usage): void
 {
 	$sql = "INSERT INTO ".TB_PREF."quick_entries (description, type, base_amount, base_desc, bal_type, `usage`) 
 	VALUES (".db_escape($description).", ".db_escape($type).", "
@@ -142,7 +142,7 @@ function add_quick_entry(string|int|float|bool|null $description, string|int|flo
 
 //---------------------------------------------------------------------------------------------
 
-function update_quick_entry(string|int|float|bool|null $selected_id, string|int|float|bool|null $description, string|int|float|bool|null $type, int|float|bool|null $base_amount, mixed $base_desc, string|int|array|null $bal_type, mixed $usage): void
+function update_quick_entry(string|int|float|bool|null $selected_id, string|int|float|bool|null $description, string|int|float|bool|null $type, int|float|bool|null $base_amount, string|int|float|bool|null $base_desc, string|int|array|null $bal_type, string|int|float|bool|null $usage): void
 {
 	$sql = "UPDATE ".TB_PREF."quick_entries	SET description = ".db_escape($description).",
 		type=".db_escape($type).", base_amount=".db_escape($base_amount)
@@ -163,7 +163,7 @@ function delete_quick_entry(string|int|float|bool|null $selected_id): void
 
 //---------------------------------------------------------------------------------------------
 
-function add_quick_entry_line(string|int|float|bool|null $qid, string|int|float|bool|null $action, mixed $dest_id, int|float|bool|null $amount, mixed $dim, string|int|float|bool|null $dim2, string|array|null $memo): void
+function add_quick_entry_line(string|int|float|bool|null $qid, string|int|float|bool|null $action, string|int|float|bool|null $dest_id, int|float|bool|null $amount, string|int|float|bool|null $dim, string|int|float|bool|null $dim2, string|array|null $memo): void
 {
 	$sql = "INSERT INTO ".TB_PREF."quick_entry_lines 
 		(qid, action, dest_id, amount, dimension_id, dimension2_id, memo) 
@@ -176,7 +176,7 @@ function add_quick_entry_line(string|int|float|bool|null $qid, string|int|float|
 
 //---------------------------------------------------------------------------------------------
 
-function update_quick_entry_line(string|int|float|bool|null $selected_id, mixed $qid, string|int|float|bool|null $action, mixed $dest_id, int|float|bool|null $amount, mixed $dim, string|int|float|bool|null $dim2, string|array|null $memo): void
+function update_quick_entry_line(string|int|float|bool|null $selected_id, string|int|float|bool|null $qid, string|int|float|bool|null $action, string|int|float|bool|null $dest_id, int|float|bool|null $amount, string|int|float|bool|null $dim, string|int|float|bool|null $dim2, string|array|null $memo): void
 {
 	$sql = "UPDATE ".TB_PREF."quick_entry_lines SET qid = ".db_escape($qid)
 		.", action=".db_escape($action).",
@@ -236,7 +236,7 @@ function get_quick_entry(string|int|float|bool|array|null $selected_id)
 /**
  * @return bool|mysqli_result
  */
-function get_quick_entry_lines(mixed $qid)
+function get_quick_entry_lines(string|int|float|bool|null $qid)
 {
 	$sql = "SELECT line.*, coa.account_name, taxtype.name as tax_name
 		FROM ".TB_PREF."quick_entry_lines line
@@ -248,7 +248,7 @@ function get_quick_entry_lines(mixed $qid)
 	return db_query($sql, "could not retreive quick entries");
 }
 
-function has_quick_entry_lines(mixed $qid): bool
+function has_quick_entry_lines(string|int|float|bool|null $qid): bool
 {
 	$sql = "SELECT id FROM ".TB_PREF."quick_entry_lines WHERE qid=".db_escape($qid);
 
@@ -325,7 +325,7 @@ function get_sql_for_bank_account_reconcile(string|array|null $bank_account, str
 
 //---------------------------------------------------------------------------------------------
 
-function update_reconciled_values(mixed $reconcile_id, ?string $reconcile_value, string|array|null $reconcile_date, int|float|bool|null $end_balance, string|array|null $bank_account): void
+function update_reconciled_values(string|int|float|bool|null $reconcile_id, ?string $reconcile_value, string|array|null $reconcile_date, int|float|bool|null $end_balance, string|array|null $bank_account): void
 {
 	$sql = "UPDATE ".TB_PREF."bank_trans SET reconciled=$reconcile_value"
 		." WHERE id=".db_escape($reconcile_id);
@@ -344,7 +344,7 @@ function update_reconciled_values(mixed $reconcile_id, ?string $reconcile_value,
 /**
  * @return array<array-key, null|string>|false
  */
-function get_default_bank_account(mixed $curr=null)
+function get_default_bank_account(string|int|float|bool|null $curr=null)
 {
 	/* default bank account is selected as first found account from:
 		. default account in $curr if any
@@ -402,7 +402,7 @@ function get_bank_account_limit(string|int|array|null $account, string|int|array
 /**
  * @return array<array-key, null|string>|false|null
  */
-function identify_bank_account(mixed $account_number)
+function identify_bank_account(string|int|float|bool|null $account_number)
 {
 	$number = db_escape($account_number);
 	$sql = "(SELECT id AS id, ".BO_COMPANY." AS type FROM ".TB_PREF."bank_accounts WHERE REPLACE(bank_account_number,' ', '')=$number)";

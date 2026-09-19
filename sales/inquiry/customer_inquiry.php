@@ -41,7 +41,7 @@ function order_view(array|false|null $row)
 		: "";
 }
 
-function trans_view(mixed $trans)
+function trans_view(array $trans)
 {
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }

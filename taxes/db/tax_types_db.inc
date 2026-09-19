@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_tax_type(string|int|float|bool|null $name, mixed $sales_gl_code, mixed $purchasing_gl_code, int|float|bool|null $rate): void
+function add_tax_type(string|int|float|bool|null $name, string|int|float|bool|null $sales_gl_code, string|int|float|bool|null $purchasing_gl_code, int|float|bool|null $rate): void
 {
 	$sql = "INSERT INTO ".TB_PREF."tax_types (name, sales_gl_code, purchasing_gl_code, rate)
 		VALUES (".db_escape($name).", ".db_escape($sales_gl_code)
@@ -18,7 +18,7 @@ function add_tax_type(string|int|float|bool|null $name, mixed $sales_gl_code, mi
 	db_query($sql, "could not add tax type");
 }
 
-function update_tax_type(string|int|float|bool|null $type_id, string|int|float|bool|null $name, mixed $sales_gl_code, mixed $purchasing_gl_code, int|float|bool|null $rate): void
+function update_tax_type(string|int|float|bool|null $type_id, string|int|float|bool|null $name, string|int|float|bool|null $sales_gl_code, string|int|float|bool|null $purchasing_gl_code, int|float|bool|null $rate): void
 {
 	$sql = "UPDATE ".TB_PREF."tax_types SET name=".db_escape($name).",
 		sales_gl_code=".db_escape($sales_gl_code).",
@@ -128,7 +128,7 @@ function is_tax_gl_unique(string|array|null $gl_code, string|int|array|null $gl_
 /**
  * @return false|null|string
  */
-function is_tax_account(mixed $account_code)
+function is_tax_account(string|int|float|bool|null $account_code)
 {
 	$sql= "SELECT id FROM ".TB_PREF."tax_types WHERE 
 		sales_gl_code=".db_escape($account_code)." OR purchasing_gl_code=".db_escape($account_code);

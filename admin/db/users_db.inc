@@ -13,8 +13,8 @@
 /**
  * @return bool|mysqli_result
  */
-function add_user(string|int|float|bool|null $user_id, mixed $real_name, ?string $password, string|int|float|bool|null $phone, string|int|float|bool|null $email, mixed $role_id, 
-	mixed $language, mixed $profile, int|array|null $rep_popup, mixed $pos)
+function add_user(string|int|float|bool|null $user_id, string|int|float|bool|null $real_name, ?string $password, string|int|float|bool|null $phone, string|int|float|bool|null $email, string|int|float|bool|null $role_id, 
+	string|int|float|bool|null $language, string|int|float|bool|null $profile, int|array|null $rep_popup, mixed $pos)
 {
 	$sql = "INSERT INTO ".TB_PREF."users (user_id, real_name, password"
 		.", phone, email, role_id, language, pos, print_profile, rep_popup)
@@ -32,7 +32,7 @@ function add_user(string|int|float|bool|null $user_id, mixed $real_name, ?string
 /**
  * @return bool|mysqli_result
  */
-function update_user_password(string|int|float|bool|null $id, string|int|float|bool|null $user_id, mixed $password)
+function update_user_password(string|int|float|bool|null $id, string|int|float|bool|null $user_id, string|int|float|bool|null $password)
 {
 	$sql = "UPDATE ".TB_PREF."users SET password=".db_escape($password) . ",
 		user_id = ".db_escape($user_id). " WHERE id=".db_escape($id);
@@ -45,8 +45,8 @@ function update_user_password(string|int|float|bool|null $id, string|int|float|b
 /**
  * @return bool|mysqli_result
  */
-function update_user(string|int|float|bool|null $id, mixed $user_id, mixed $real_name, string|int|float|bool|null $phone, string|int|float|bool|null $email, mixed $role_id, 
-	mixed $language, mixed $profile, mixed $rep_popup, mixed $pos)
+function update_user(string|int|float|bool|null $id, string|int|float|bool|null $user_id, string|int|float|bool|null $real_name, string|int|float|bool|null $phone, string|int|float|bool|null $email, string|int|float|bool|null $role_id, 
+	string|int|float|bool|null $language, string|int|float|bool|null $profile, string|int|float|bool|null $rep_popup, mixed $pos)
 {
 	$sql = "UPDATE ".TB_PREF."users SET real_name=".db_escape($real_name).
 	", phone=".db_escape($phone).",
@@ -148,7 +148,7 @@ function delete_user(string|int|float|bool|null $id): void
 
 //-----------------------------------------------------------------------------------------------
 
-function get_user_auth(string|int|float|bool|null $user_id, mixed $password): bool
+function get_user_auth(string|int|float|bool|null $user_id, string|int|float|bool|null $password): bool
 {
 
 	$sql = "SELECT * FROM ".TB_PREF."users WHERE user_id = ".db_escape($user_id)." AND"

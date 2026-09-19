@@ -58,7 +58,7 @@ function systype_name(string|int|float|bool|array|null $dummy, string|int|float|
 	return $systypes_array[$type];
 }
 
-function trans_view(mixed $trans)
+function trans_view(array $trans)
 {
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }

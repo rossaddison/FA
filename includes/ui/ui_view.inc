@@ -276,7 +276,7 @@ function check_ui_refresh(?string $name=null): bool
 // When there is no exrate for today, 
 // gets it form ECB and stores in local database.
 //
-function exchange_rate_display(mixed $from_currency, mixed $to_currency, string|int|float|bool|array|null $date_, bool $force_edit=false): void
+function exchange_rate_display(string|int|float|bool|null $from_currency, string|int|float|bool|array|null $to_currency, string|int|float|bool|array|null $date_, bool $force_edit=false): void
 {
     global $Ajax, $SysPrefs;
 
@@ -486,7 +486,7 @@ function display_supp_trans_tax_details(bool|mysqli_result $tax_items, ?int $col
 
 //--------------------------------------------------------------------------------------
 
-function display_edit_tax_items(mixed $taxes, ?int $columns, string|int|float|bool|null $tax_included, ?int $rightspan=0, bool $editable=false): int|float
+function display_edit_tax_items(array $taxes, ?int $columns, string|int|float|bool|null $tax_included, ?int $rightspan=0, bool $editable=false): int|float
 {
 	$total = 0;
 
@@ -534,7 +534,7 @@ function display_edit_tax_items(mixed $taxes, ?int $columns, string|int|float|bo
 
 //--------------------------------------------------------------------------------------
 
-function display_footer_exit(mixed $space=2): void
+function display_footer_exit(string|int|float|bool|null $space=2): void
 {
 	if ($space)
 		br($space);
@@ -544,7 +544,7 @@ function display_footer_exit(mixed $space=2): void
 
 //--------------------------------------------------------------------------------------
 
-function display_allocations(bool|mysqli_result $alloc_result, mixed $total, ?string $title, bool $show_summary=true): void
+function display_allocations(bool|mysqli_result $alloc_result, string|int|float|bool|null $total, ?string $title, bool $show_summary=true): void
 {
 	global $systypes_array;
 
@@ -595,7 +595,7 @@ function display_allocations(bool|mysqli_result $alloc_result, mixed $total, ?st
 
 //--------------------------------------------------------------------------------------
 
-function display_allocations_from(string|int|null $person_type, string|int|float|bool|null $person_id, ?int $type, string|int|float|bool|null $type_no, mixed $total): void
+function display_allocations_from(string|int|null $person_type, string|int|float|bool|null $person_id, ?int $type, string|int|float|bool|null $type_no, string|int|float|bool|null $total): void
 {
 	switch ($person_type)
 	{
@@ -612,7 +612,7 @@ function display_allocations_from(string|int|null $person_type, string|int|float
 
 //--------------------------------------------------------------------------------------
 
-function display_allocations_to(?int $person_type, string|int|float|bool|null $person_id, string|int|array|null $type, string|int|float|bool|array|null $type_no, mixed $total): void
+function display_allocations_to(?int $person_type, string|int|float|bool|null $person_id, string|int|array|null $type, string|int|float|bool|array|null $type_no, string|int|float|bool|null $total): void
 {
 	switch ($person_type)
 	{
@@ -681,7 +681,7 @@ function display_quick_entries(&$cart, string|int|float|bool|array|null $id, int
 
 //--------------------------------------------------------------------------------------
 
-function quickentry_calculate(int|float|bool|null $base, string|int|float|bool|null $id, mixed $taxgroup=null, string|int|float|bool|null $date=null): array|int
+function quickentry_calculate(int|float|bool|null $base, string|int|float|bool|null $id, string|int|float|bool|null $taxgroup=null, string|int|float|bool|null $date=null): array|int
 {
 		$gl_entries = array();
 		$qe = get_quick_entry($id);
@@ -892,7 +892,7 @@ function price_in_words(string|int|float|bool|null $amount, mixed $document=0)
     return _number_to_words(intval($amount)) . $frac;
 }
 
-function get_js_open_window(mixed $width, mixed $height): string
+function get_js_open_window(string|int|float|bool|null $width, string|int|float|bool|null $height): string
 {
 	$js ="function openWindow(url, title)\n"
 		. "{\n"
@@ -1498,7 +1498,7 @@ function alert(string|int|float|bool|null $msg): void
 
 if (!function_exists('_vd'))
 {
-  	function _vd(mixed $mixed, string|int|float|bool|null $title = '', mixed $exit = false): void
+  	function _vd(mixed $mixed, string|int|float|bool|null $title = '', string|int|float|bool|null $exit = false): void
   	{
     	$str = (!empty($title) ? ($title .':') : '') .'<pre>';
     	$str .= print_r($mixed, true); //var_dump($mixed);
@@ -1509,14 +1509,14 @@ if (!function_exists('_vd'))
   	}
 }
 
-function _vl(mixed $mixed, string|int|float|bool|null $title = '', mixed $exit = false): void
+function _vl(mixed $mixed, string|int|float|bool|null $title = '', string|int|float|bool|null $exit = false): void
 {
 	error_log((!empty($title) ? ($title .':') : '') . print_r($mixed, true));
 	if ($exit)
 		exit;
 }
 
-function display_backtrace(mixed $cond=true, string|int|float|bool|null $msg=''): void {
+function display_backtrace(string|int|float|bool|null $cond=true, string|int|float|bool|null $msg=''): void {
 	if ($cond) {
 		if ($msg) 
 			$str = "<center><span class='headingtext'>$msg</span></center>\n";
@@ -1545,7 +1545,7 @@ if (!isset($payment_services))
 *	Payment link generation. Options provided during invoice generation:
 *	company_email, comment, amount, currency
 */
-function payment_link(string|int|float|bool|null $name, mixed $options): string|false|null
+function payment_link(string|int|float|bool|null $name, array $options): string|false|null
 {
 	global $payment_services;
 

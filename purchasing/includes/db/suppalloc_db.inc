@@ -11,8 +11,8 @@
 ***********************************************************************/
 //----------------------------------------------------------------------------------------
 
-function add_supp_allocation(string|int|float|bool|null $amount, mixed $trans_type_from, mixed $trans_no_from,
-	mixed $trans_type_to, mixed $trans_no_to, string|int|float|bool|null $person_id, string|int|float|bool|null $date_): void
+function add_supp_allocation(string|int|float|bool|null $amount, string|int|float|bool|null $trans_type_from, string|int|float|bool|null $trans_no_from,
+	string|int|float|bool|null $trans_type_to, string|int|float|bool|null $trans_no_to, string|int|float|bool|null $person_id, string|int|float|bool|null $date_): void
 {
 	$date = date2sql($date_);
 	$sql = "INSERT INTO ".TB_PREF."supp_allocations (

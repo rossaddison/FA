@@ -25,7 +25,7 @@ include_once($path_to_root . "/gl/includes/gl_db.inc");
 
 //----------------------------------------------------------------------------------------------------
 
-function display_type (?string $type, ?string $typename, &$dec, &$rep, mixed $showbalance, mixed $level): void
+function display_type (?string $type, ?string $typename, &$dec, &$rep, string|int|float|bool|array|null $showbalance, string|int|float|bool|array|null $level): void
 {
 	$printtitle = 0; //Flag for printing type name	
 

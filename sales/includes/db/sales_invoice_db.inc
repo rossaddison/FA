@@ -324,7 +324,7 @@ function prepaid_invoice_remainder(mixed $order): int|string
 /**
  * @return null|string
  */
-function get_oldest_delivery_date(mixed $invoice_no)
+function get_oldest_delivery_date(string|int|float|bool|null $invoice_no)
 {
 	$sql = "SELECT MIN(trans.tran_date)
 			FROM
@@ -347,7 +347,7 @@ function get_oldest_delivery_date(mixed $invoice_no)
 /**
  * @return null|string
  */
-function get_oldest_payment_date(mixed $invoice_no)
+function get_oldest_payment_date(string|int|float|bool|null $invoice_no)
 {
 	$sql = "SELECT MIN(payment.tran_date)
 			FROM

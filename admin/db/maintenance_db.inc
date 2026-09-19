@@ -20,7 +20,7 @@
  */
 define('EXPORT_MAX_INSERT', 50000);
 
-function array_natsort(mixed $aryData, ?string $strIndex, ?string $strSortBy, bool $strSortType=false)
+function array_natsort(array $aryData, ?string $strIndex, ?string $strSortBy, bool $strSortType=false)
 {
    //    if the parameters are invalid
    if (!is_array($aryData) || !$strSortBy)
@@ -58,7 +58,7 @@ function array_natsort(mixed $aryData, ?string $strIndex, ?string $strSortBy, bo
    return $aryResult;
 }
 
-function update_admin_password(mixed $conn, ?string $password): void
+function update_admin_password(array $conn, ?string $password): void
 {
 	$sql = "UPDATE ".(string)$conn['tbpref']."users SET password=".db_escape($password) . "
 		WHERE user_id='admin'";
@@ -116,7 +116,7 @@ function write_config_db(bool $new = false): int
 	return 0;
 }
 
-function write_extensions(mixed $extensions=null, mixed $company = -1): bool
+function write_extensions(?array $extensions=null, string|int|float|bool|array|null $company = -1): bool
 {
 	global $path_to_root, $installed_extensions, $next_extension_id;
 
@@ -264,7 +264,7 @@ function write_lang(): bool
 		$protect - protect users/roles 
 		$return_errors - return errors instead of display them
 */
-function db_import(string|int|float|bool|null $filename, mixed $connection, mixed $force=true, string|int|float|bool|null $init=true, mixed $protect=false, mixed $return_errors=false): array|string|bool
+function db_import(string|int|float|bool|null $filename, mixed $connection, string|int|float|bool|null $force=true, string|int|float|bool|null $init=true, string|int|float|bool|array|null $protect=false, string|int|float|bool|null $return_errors=false): array|string|bool
 {
 	global $db, $SysPrefs;
 
@@ -546,7 +546,7 @@ function db_unzip(?string $mode, ?string $path): array|string|false
     	return explode("\n", $file_data);
 }
 
-function db_backup(mixed $conn, mixed $ext='no', mixed $comm='', string|int|float|bool|null $path='')
+function db_backup(array $conn, string|int|float|bool|array|null $ext='no', string|int|float|bool|array|null $comm='', string|int|float|bool|null $path='')
 {
 	if ($conn['tbpref'] != "")
 		$filename = $conn['dbname'] . "_" . (string)$conn['tbpref'] . date("Ymd_Hi") . ".sql";
@@ -560,7 +560,7 @@ function db_backup(mixed $conn, mixed $ext='no', mixed $comm='', string|int|floa
 /**
  * @return false|null|string
  */
-function db_export(mixed $conn, ?string $filename, mixed $zip='no', mixed $comment='')
+function db_export(array $conn, ?string $filename, string|int|float|bool|null $zip='no', string|int|float|bool|null $comment='')
 {
 
 	global $SysPrefs, $version;
@@ -840,7 +840,7 @@ function order_sql_tables(?array $tables, ?array $fks)
 
 // saves the string in $fileData to the file $backupfile as gz file or not ($zip)
 // returns backup file name if name has changed (zip), else TRUE. If saving failed, return value is FALSE
-function save_to_file(?string $path, mixed $zip, ?string $fileData): bool
+function save_to_file(?string $path, string|int|float|bool|null $zip, ?string $fileData): bool
 {
 
 	$backupfile = basename($path);
@@ -977,7 +977,7 @@ function create_comp_dirs(?string $comp_path, ?array $comp_subdirs): void
 //  $properties - optional properties of field defined by MySQL:
 //		'Type', 'Null', 'Key', 'Default', 'Extra'
 //
-function check_table(string|int|float|bool|null $pref, string|int|float|bool|null $table, mixed $field=null, mixed $properties=null): int
+function check_table(string|int|float|bool|null $pref, string|int|float|bool|null $table, string|int|float|bool|null $field=null, ?array $properties=null): int
 {
 	$tables = @db_query("SHOW TABLES LIKE '".$pref.$table."'");
 	if (!db_num_rows($tables))
@@ -1007,7 +1007,7 @@ function check_table(string|int|float|bool|null $pref, string|int|float|bool|nul
 /*
 	Update or create setting in simple php config file.
 */
-function update_config_var(mixed $file, mixed $variable, string|int|float|bool|null $value, mixed $comment=''): bool
+function update_config_var(string|int|float|bool|null $file, string|int|float|bool|null $variable, string|int|float|bool|null $value, string|int|float|bool|null $comment=''): bool
 {
 	if (!is_file($file) || !is_writeable($file))
 		return false;

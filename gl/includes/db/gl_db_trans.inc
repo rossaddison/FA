@@ -17,7 +17,7 @@
 // if $currency is not set, then defaults to no conversion
 
 function add_gl_trans(string|int|float|bool|null $type, string|int|float|bool|null $trans_id, string|int|float|bool|array|null $date_, string|int|float|bool|null $account, string|int|float|bool|array|null $dimension, string|int|float|bool|array|null $dimension2, string|int|float|bool|null $memo_,
-	string|int|float|bool|null $amount, string|int|float|bool|null $currency=null, mixed $person_type_id=null, string|int|float|bool|null $person_id=null,	mixed $err_msg="", string|int|float|bool|null $rate=0): float
+	string|int|float|bool|null $amount, string|int|float|bool|null $currency=null, string|int|float|bool|null $person_type_id=null, string|int|float|bool|null $person_id=null,	string|int|float|bool|null $err_msg="", string|int|float|bool|null $rate=0): float
 {
 	global $SysPrefs;
 
@@ -108,7 +108,7 @@ function add_gl_balance(string|int|float|bool|null $type, string|int|float|bool|
  */
 function get_gl_transactions(string|array|null $from_date, string|int|float|bool|array|null $to_date, ?int $trans_no=0,
     string|int|float|bool|array|null $account=null, string|int|array|null $dimension=0, string|int|array|null $dimension2=0, string|array|null $filter_type=null,
-        int|float|bool|null $amount_min=null, int|float|bool|null $amount_max=null, mixed $person_type=null, string|int|float|bool|null $person_id=null, string|array|null $memo='')
+        int|float|bool|null $amount_min=null, int|float|bool|null $amount_max=null, string|int|float|bool|null $person_type=null, string|int|float|bool|null $person_id=null, string|array|null $memo='')
 {
     global $SysPrefs;
 
@@ -309,7 +309,7 @@ function get_gl_balance_from_to(?string $from_date, string|int|float|bool|array|
 
 //--------------------------------------------------------------------------------
 
-function get_gl_trans_from_to(mixed $from_date, string|int|float|bool|null $to_date, string|int|float|bool|null $account, string|int|float|bool|null $dimension=0, string|int|float|bool|null $dimension2=0): float
+function get_gl_trans_from_to(string|int|float|bool|null $from_date, string|int|float|bool|null $to_date, string|int|float|bool|null $account, string|int|float|bool|null $dimension=0, string|int|float|bool|null $dimension2=0): float
 {
 	$from = date2sql($from_date);
 	$to = date2sql($to_date);
@@ -366,7 +366,7 @@ function get_balance(?string $account, string|int|float|bool|array|null $dimensi
 /**
  * @return null|string
  */
-function get_budget_trans_from_to(mixed $from_date, string|int|float|bool|null $to_date, string|int|float|bool|null $account, string|int|float|bool|null $dimension=0, string|int|float|bool|null $dimension2=0)
+function get_budget_trans_from_to(string|int|float|bool|null $from_date, string|int|float|bool|null $to_date, string|int|float|bool|null $account, string|int|float|bool|null $dimension=0, string|int|float|bool|null $dimension2=0)
 {
 
 	$from = date2sql($from_date);
@@ -433,7 +433,7 @@ function delete_gl_budget_trans(string|int|float|bool|null $date_, string|int|fl
 /**
  * @return null|string
  */
-function get_only_budget_trans_from_to(mixed $from_date, string|int|float|bool|null $to_date, string|int|float|bool|null $account, string|int|float|bool|null $dimension=0, string|int|float|bool|null $dimension2=0)
+function get_only_budget_trans_from_to(string|int|float|bool|null $from_date, string|int|float|bool|null $to_date, string|int|float|bool|null $account, string|int|float|bool|null $dimension=0, string|int|float|bool|null $dimension2=0)
 {
 
 	$from = date2sql($from_date);
@@ -453,7 +453,7 @@ function get_only_budget_trans_from_to(mixed $from_date, string|int|float|bool|n
 //--------------------------------------------------------------------------------
 //	Stores journal/bank transaction tax details if applicable
 //
-function add_gl_tax_details(mixed $gl_code, string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $amount, mixed $ex_rate, string|int|float|bool|null $date, string|int|float|bool|null $memo, mixed $included=0, mixed $net_amount = null): void
+function add_gl_tax_details(string|int|float|bool|null $gl_code, string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $amount, string|int|float|bool|null $ex_rate, string|int|float|bool|null $date, string|int|float|bool|null $memo, string|int|float|bool|null $included=0, string|int|float|bool|null $net_amount = null): void
 {
 	$tax_type = is_tax_account($gl_code);
 	if(!$tax_type) return;	// $gl_code is not tax account
@@ -480,8 +480,8 @@ function add_gl_tax_details(mixed $gl_code, string|int|float|bool|null $trans_ty
 //	Store transaction tax details for fiscal purposes with 'freezed' 
 //	actual tax type rate.
 //
-function add_trans_tax_details(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no, mixed $tax_id, string|int|float|bool|null $rate, mixed $included,
-	string|int|float|bool|null $amount, mixed $net_amount, mixed $ex_rate, mixed $tran_date, string|int|float|bool|null $memo, mixed $reg_type=null): void
+function add_trans_tax_details(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $tax_id, string|int|float|bool|null $rate, string|int|float|bool|null $included,
+	string|int|float|bool|null $amount, string|int|float|bool|null $net_amount, string|int|float|bool|null $ex_rate, string|int|float|bool|null $tran_date, string|int|float|bool|null $memo, string|int|float|bool|null $reg_type=null): void
 {	
 	// guess tax register if not set
 	if (!isset($reg_type))
@@ -614,7 +614,7 @@ function void_gl_trans(string|int|float|bool|null $type, string|int|float|bool|a
 
 //----------------------------------------------------------------------------------------
 
-function clear_gl_trans(string|int|float|bool|null $type, string|int|float|bool|null $trans_id, mixed $nested=false): void
+function clear_gl_trans(string|int|float|bool|null $type, string|int|float|bool|null $trans_id, string|int|float|bool|null $nested=false): void
 {
 	if (!$nested)
 		begin_transaction();

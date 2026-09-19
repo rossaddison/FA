@@ -43,7 +43,7 @@ if ($id = find_submit('Update', false))
 
 //---------------------------------------------------------------------------------------------
 
-function sortByOption(mixed $a, mixed $b): int {
+function sortByOption(string|int|float|bool|null $a, string|int|float|bool|null $b): int {
     return strcmp($a['name'], $b['name']);
 }
 

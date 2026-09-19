@@ -11,8 +11,8 @@
 ***********************************************************************/
 //-------------------------------------------------------------------------------------------------------------
 
-function add_supp_invoice_item(mixed $supp_trans_type, string|int|float|null $supp_trans_no, string|int|float|bool|null $stock_id, string|int|float|bool|null $description,
-	mixed $gl_code, mixed $unit_price, mixed $unit_tax, string|int|float|bool|null $quantity, mixed $grn_item_id, mixed $po_detail_item_id, string|int|float|bool|null $memo_, mixed $dim_id=0, mixed $dim2_id=0): int|string
+function add_supp_invoice_item(string|int|float|bool|null $supp_trans_type, string|int|float|null $supp_trans_no, string|int|float|bool|null $stock_id, string|int|float|bool|null $description,
+	string|int|float|bool|null $gl_code, string|int|float|bool|null $unit_price, string|int|float|bool|null $unit_tax, string|int|float|bool|null $quantity, string|int|float|bool|null $grn_item_id, string|int|float|bool|null $po_detail_item_id, string|int|float|bool|null $memo_, string|int|float|bool|null $dim_id=0, string|int|float|bool|null $dim2_id=0): int|string
 {
 	$sql = "INSERT INTO ".TB_PREF."supp_invoice_items (supp_trans_type, supp_trans_no, stock_id, description, gl_code, unit_price, unit_tax, quantity,
 	  	grn_item_id, po_detail_item_id, memo_, dimension_id, dimension2_id) ";
@@ -30,7 +30,7 @@ function add_supp_invoice_item(mixed $supp_trans_type, string|int|float|null $su
 
 //-------------------------------------------------------------------------------------------------------------
 
-function add_supp_invoice_gl_item(mixed $supp_trans_type, int|float|null $supp_trans_no, mixed $gl_code, string|int|float|bool|null $amount, string|int|float|bool|null $memo_, mixed $dim_id=0, mixed $dim2_id=0)
+function add_supp_invoice_gl_item(string|int|float|bool|null $supp_trans_type, int|float|null $supp_trans_no, string|int|float|bool|null $gl_code, string|int|float|bool|null $amount, string|int|float|bool|null $memo_, string|int|float|bool|null $dim_id=0, string|int|float|bool|null $dim2_id=0)
 {
 	return add_supp_invoice_item($supp_trans_type, $supp_trans_no,  "", "", $gl_code, $amount,
 		0, 0, /*$grn_item_id*/-1, /*$po_detail_item_id*/0, $memo_, $dim_id, $dim2_id);
@@ -40,7 +40,7 @@ function add_supp_invoice_gl_item(mixed $supp_trans_type, int|float|null $supp_t
 /**
  * @return bool|mysqli_result
  */
-function get_supp_invoice_items(mixed $supp_trans_type, mixed $supp_trans_no)
+function get_supp_invoice_items(string|int|float|bool|null $supp_trans_type, string|int|float|bool|null $supp_trans_no)
 {
 	$sql = "SELECT inv.*, grn.*, unit_price AS FullUnitPrice, 
 		stock.units,

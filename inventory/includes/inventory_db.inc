@@ -36,7 +36,7 @@ function item_img_name(string|int|float|bool|array|null $stock_id)
 /**
  * @return bool|mysqli_result
  */
-function get_stock_movements(string|int|float|bool|null $stock_id, mixed $StockLocation,	mixed $BeforeDate, mixed $AfterDate)
+function get_stock_movements(string|int|float|bool|null $stock_id, string|int|float|bool|null $StockLocation,	string|int|float|bool|null $BeforeDate, string|int|float|bool|null $AfterDate)
 {
 	$before_date = date2sql($BeforeDate);
 	$after_date = date2sql($AfterDate);
@@ -96,7 +96,7 @@ function calculate_reorder_level(string|int|float|bool|null $location, ?object $
 	return $loc;
 }
 
-function send_reorder_email(mixed $loc, mixed $st_ids, mixed $st_names, mixed $st_num, mixed $st_reorder)
+function send_reorder_email(string|int|float|bool|null $loc, array $st_ids, array $st_names, string|int|float|bool|null $st_num, string|int|float|bool|null $st_reorder)
 {
 	global $path_to_root;
 

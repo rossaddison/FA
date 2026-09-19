@@ -11,7 +11,7 @@
 ***********************************************************************/
 
 function add_recurrent_invoice(string|int|float|bool|null $description, string|int|float|bool|null $order_no, int|float|bool|null $debtor_no, int|float|bool|null $group_no, int|float|bool|null $days, int|float|bool|null $monthly,
-	mixed $begin, mixed $end): void
+	string|int|float|bool|null $begin, string|int|float|bool|null $end): void
 {
 	$sql = "INSERT INTO ".TB_PREF."recurrent_invoices (description, order_no, debtor_no,
 		group_no, days, monthly, begin, end, last_sent) VALUES (".db_escape($description) . ", "
@@ -22,7 +22,7 @@ function add_recurrent_invoice(string|int|float|bool|null $description, string|i
 }
 
 function update_recurrent_invoice(string|int|float|bool|array|null $selected_id, string|int|float|bool|null $description, string|int|float|bool|null $order_no, int|float|bool|null $debtor_no, int|float|bool|null $group_no, int|float|bool|null $days, int|float|bool|null $monthly,
-	mixed $begin, mixed $end): void
+	string|int|float|bool|null $begin, string|int|float|bool|null $end): void
 {
 	$sql = "UPDATE ".TB_PREF."recurrent_invoices SET 
 		description=".db_escape($description).", 

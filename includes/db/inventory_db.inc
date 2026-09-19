@@ -45,7 +45,7 @@ function get_qoh_on_date(string|int|float|bool|array|null $stock_id, string|int|
 *	$date - check date; when set to null checks all the stock history.
 **/
 
-function check_negative_stock(string|int|float|bool|array|null $stock_id, mixed $delta_qty, string|int|float|bool|array|null $location=null, string|int|float|bool|array|null $date=null)
+function check_negative_stock(string|int|float|bool|array|null $stock_id, string|int|float|bool|null $delta_qty, string|int|float|bool|array|null $location=null, string|int|float|bool|array|null $date=null)
 {
 
 	if ($delta_qty >= 0)
@@ -441,7 +441,7 @@ function handle_negative_inventory(string|int|float|bool|null $stock_id, string|
 // $price - in transaction currency
 
 function add_stock_move(?int $type, string|int|float|bool|null $stock_id, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $location,
-    string|int|float|bool|null $date_, string|int|float|bool|null $reference, string|int|float|bool|null $quantity, mixed $std_cost, string|int|float|bool|null $price=0): int|string
+    string|int|float|bool|null $date_, string|int|float|bool|null $reference, string|int|float|bool|null $quantity, string|int|float|bool|null $std_cost, string|int|float|bool|null $price=0): int|string
 {
 	$date = date2sql($date_);
 
@@ -457,7 +457,7 @@ function add_stock_move(?int $type, string|int|float|bool|null $stock_id, string
 	return db_insert_id();
 }
 
-function update_stock_move(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $stock_id, mixed $cost): void
+function update_stock_move(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $stock_id, string|int|float|bool|null $cost): void
 {
 	$sql = "UPDATE ".TB_PREF."stock_moves SET standard_cost=".db_escape($cost)
 			." WHERE type=".db_escape($type)

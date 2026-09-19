@@ -201,7 +201,7 @@ function viewing_controls(): void
 
 }
 
-function trans_view(mixed $trans)
+function trans_view(array $trans)
 {
 	if ($trans['type_no']==ST_SUPPLIER || $trans['type_no']==ST_CUSTOMER || $trans['type_no']==ST_ITEM ||
 		$trans['type_no']==ST_FIXEDASSET || $trans['type_no']==ST_BANKACCOUNT)

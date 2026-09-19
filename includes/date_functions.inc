@@ -19,7 +19,7 @@ this can be a string either "d/m/Y" for UK/Australia/New Zealand dates or
 
 */
 
-function __date(string|int|float|bool|null $year, mixed $month, mixed $day): string
+function __date(string|int|float|bool|null $year, string|int|float|bool|null $month, string|int|float|bool|null $day): string
 {
 	global $SysPrefs, $tmonths;
 	
@@ -301,7 +301,7 @@ function add_days(string|int|float|bool|array|null $date, string|int|float|bool|
    	return __date($year, $month, $day);
 }
 
-function add_months(string|int|float|bool|array|null $date, mixed $months) // accepts negative values as well
+function add_months(string|int|float|bool|array|null $date, string|int|float|bool|null $months) // accepts negative values as well
 {
 	global $SysPrefs;
 
@@ -459,7 +459,7 @@ function date_comp(string|array|null $date1, ?string $date2): int
 	return sql_date_comp($date1, $date2);
 }
 
-function date1_greater_date2 (mixed $date1, mixed $date2): int 
+function date1_greater_date2 (string|int|float|bool|array|null $date1, string|int|float|bool|array|null $date2): int 
 {
 
 /* returns 1 true if date1 is greater than date_ 2 */
@@ -639,7 +639,7 @@ function jalali_to_gregorian(string|int|float|bool|null $j_y, string|int|float|b
 }
 /* Based on Hidri Date Script 
    Released under GNU General Public License */
-function gregorian_to_islamic(mixed $g_y, mixed $g_m, mixed $g_d): array
+function gregorian_to_islamic(string|int|float|bool|null $g_y, string|int|float|bool|null $g_m, string|int|float|bool|null $g_d): array
 {
 	$y = $g_y;   
 	$m = $g_m;
@@ -669,7 +669,7 @@ function gregorian_to_islamic(mixed $g_y, mixed $g_m, mixed $g_d): array
 	return array($y, $m, $d);
 }
 
-function islamic_to_gregorian(mixed $i_y, mixed $i_m, mixed $i_d): array
+function islamic_to_gregorian(string|int|float|bool|null $i_y, string|int|float|bool|null $i_m, string|int|float|bool|null $i_d): array
 {
 	$y = $i_y;   
 	$m = $i_m;
