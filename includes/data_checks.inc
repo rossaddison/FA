@@ -14,7 +14,7 @@ function db_has_customers()
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."debtors_master");
 }
 
-function check_db_has_customers($msg)
+function check_db_has_customers($msg): void
 {
 	global $path_to_root;
     if (!db_has_customers()) 
@@ -30,7 +30,7 @@ function db_has_currencies()
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."currencies");
 }
 
-function check_db_has_currencies($msg)
+function check_db_has_currencies($msg): void
 {
 	global $path_to_root;
     if (!db_has_currencies()) 
@@ -59,7 +59,7 @@ function db_has_sales_types()
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."sales_types");
 }
 
-function check_db_has_sales_types($msg)
+function check_db_has_sales_types($msg): void
 {
 	global $path_to_root;
     if (!db_has_sales_types()) 
@@ -75,7 +75,7 @@ function db_has_item_tax_types()
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."item_tax_types");
 }
 
-function check_db_has_item_tax_types($msg)
+function check_db_has_item_tax_types($msg): void
 {
 	global $path_to_root;
     if (!db_has_item_tax_types()) 
@@ -91,7 +91,7 @@ function db_has_tax_types()
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."tax_types");
 }
 
-function check_db_has_tax_types($msg)
+function check_db_has_tax_types($msg): void
 {
 	global $path_to_root;
     if (!db_has_tax_types()) 
@@ -107,7 +107,7 @@ function db_has_tax_groups()
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."tax_groups");
 }
 
-function check_db_has_tax_groups($msg)
+function check_db_has_tax_groups($msg): void
 {
 	global $path_to_root;
     if (!db_has_tax_groups()) 
@@ -130,7 +130,7 @@ function db_has_customer_branches()
 		.TB_PREF."cust_branch WHERE !inactive");
 }
 
-function check_db_has_customer_branches($msg)
+function check_db_has_customer_branches($msg): void
 {
 	global $path_to_root;
     if (!db_has_customer_branches()) 
@@ -146,7 +146,7 @@ function db_has_sales_people()
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."salesman");
 }
 
-function check_db_has_sales_people($msg)
+function check_db_has_sales_people($msg): void
 {
 	global $path_to_root;
     if (!db_has_sales_people()) 
@@ -162,7 +162,7 @@ function db_has_sales_areas()
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."areas");
 }
 
-function check_db_has_sales_areas($msg)
+function check_db_has_sales_areas($msg): void
 {
 	global $path_to_root;
     if (!db_has_sales_areas()) 
@@ -178,7 +178,7 @@ function db_has_shippers()
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."shippers");
 }
 
-function check_db_has_shippers($msg)
+function check_db_has_shippers($msg): void
 {
 	global $path_to_root;
     if (!db_has_shippers()) 
@@ -199,7 +199,7 @@ function db_has_workorders()
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."workorders");
 }
 
-function check_db_has_workorders($msg)
+function check_db_has_workorders($msg): void
 {
 	global $path_to_root;
     if (!db_has_workorders()) 
@@ -220,7 +220,7 @@ function db_has_dimensions()
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."dimensions");
 }
 
-function check_db_has_dimensions($msg)
+function check_db_has_dimensions($msg): void
 {
 	global $path_to_root;
     if (!db_has_dimensions()) 
@@ -237,7 +237,7 @@ function db_has_suppliers()
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."suppliers");
 }
 
-function check_db_has_suppliers($msg)
+function check_db_has_suppliers($msg): void
 {
 	global $path_to_root;
     if (!db_has_suppliers()) 
@@ -254,7 +254,7 @@ function db_has_stock_items()
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."stock_master WHERE mb_flag!='F'");
 }
 
-function check_db_has_stock_items($msg)
+function check_db_has_stock_items($msg): void
 {
 	global $path_to_root;
     if (!db_has_stock_items()) 
@@ -270,7 +270,7 @@ function db_has_bom_stock_items()
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."stock_master WHERE mb_flag='M'");
 }
 
-function check_db_has_bom_stock_items($msg)
+function check_db_has_bom_stock_items($msg): void
 {
 	global $path_to_root;
     if (!db_has_bom_stock_items()) 
@@ -286,7 +286,7 @@ function db_has_manufacturable_items()
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."stock_master WHERE (mb_flag='M')");
 }
 
-function check_db_has_manufacturable_items($msg)
+function check_db_has_manufacturable_items($msg): void
 {
 	global $path_to_root;
     if (!db_has_manufacturable_items()) 
@@ -302,7 +302,7 @@ function db_has_purchasable_items()
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."stock_master WHERE mb_flag!='M'");
 }
 
-function check_db_has_purchasable_items($msg)
+function check_db_has_purchasable_items($msg): void
 {
 	global $path_to_root;
     if (!db_has_purchasable_items()) 
@@ -318,7 +318,7 @@ function db_has_costable_items()
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."stock_master WHERE mb_flag!='D'");
 }
 
-function check_db_has_costable_items($msg)
+function check_db_has_costable_items($msg): void
 {
 	global $path_to_root;
     if (!db_has_costable_items()) 
@@ -329,7 +329,7 @@ function check_db_has_costable_items($msg)
     }	
 }
 
-function check_db_has_fixed_asset_classes($msg)
+function check_db_has_fixed_asset_classes($msg): void
 {
 	global $path_to_root;
     if (!db_has_fixed_asset_classes()) 
@@ -360,7 +360,7 @@ function db_has_depreciable_fixed_assets()
     		AND depreciation_date >='".$begin."'");
 }
 
-function check_db_has_depreciable_fixed_assets($msg)
+function check_db_has_depreciable_fixed_assets($msg): void
 {
 	global $path_to_root;
 
@@ -377,7 +377,7 @@ function db_has_fixed_assets()
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."stock_master WHERE mb_flag='F'");
 }
 
-function check_db_has_fixed_assets($msg)
+function check_db_has_fixed_assets($msg): void
 {
 	global $path_to_root;
 
@@ -398,7 +398,7 @@ function db_has_purchasable_fixed_assets()
 				( SELECT stock_id FROM ".TB_PREF."stock_moves WHERE type=".ST_SUPPRECEIVE." AND qty!=0 )");
 }
 
-function check_db_has_purchasable_fixed_assets($msg)
+function check_db_has_purchasable_fixed_assets($msg): void
 {
 	global $path_to_root;
 
@@ -421,7 +421,7 @@ function db_has_disposable_fixed_assets()
 				( SELECT stock_id FROM ".TB_PREF."stock_moves WHERE (type=".ST_CUSTDELIVERY." OR type=".ST_INVADJUST.") AND qty!=0 )");
 }
 
-function check_db_has_disposable_fixed_assets($msg)
+function check_db_has_disposable_fixed_assets($msg): void
 {
 	global $path_to_root;
 
@@ -438,7 +438,7 @@ function db_has_stock_categories()
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."stock_category WHERE dflt_mb_flag!='F'");
 }
 
-function check_db_has_fixed_asset_categories($msg)
+function check_db_has_fixed_asset_categories($msg): void
 {
 	global $path_to_root;
     if (!db_has_fixed_asset_categories()) 
@@ -454,7 +454,7 @@ function db_has_fixed_asset_categories()
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."stock_category WHERE dflt_mb_flag='F'");
 }
 
-function check_db_has_stock_categories($msg)
+function check_db_has_stock_categories($msg): void
 {
 	global $path_to_root;
     if (!db_has_stock_categories()) 
@@ -470,7 +470,7 @@ function db_has_workcentres()
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."workcentres");
 }
 
-function check_db_has_workcentres($msg)
+function check_db_has_workcentres($msg): void
 {
 	global $path_to_root;
     if (!db_has_workcentres()) 
@@ -486,7 +486,7 @@ function db_has_locations()
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."locations WHERE fixed_asset=0");
 }
 
-function check_db_has_locations($msg)
+function check_db_has_locations($msg): void
 {
 	global $path_to_root;
     if (!db_has_locations()) 
@@ -502,7 +502,7 @@ function db_has_bank_accounts()
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."bank_accounts");
 }
 
-function check_db_has_bank_accounts($msg)
+function check_db_has_bank_accounts($msg): void
 {
 	global $path_to_root;
 
@@ -530,7 +530,7 @@ function db_has_gl_account_groups()
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."chart_types");
 }
 
-function check_db_has_gl_account_groups($msg)
+function check_db_has_gl_account_groups($msg): void
 {
 	global $path_to_root;
     if (!db_has_gl_account_groups()) 
@@ -551,7 +551,7 @@ function db_has_tags($type)
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."tags WHERE type=".db_escape($type));
 }
 
-function check_db_has_tags($type, $msg)
+function check_db_has_tags($type, $msg): void
 {
 	global $path_to_root;
     if (!db_has_tags($type)) 
@@ -590,7 +590,7 @@ function check_int($postname, $min=null, $max=null) {
 //	Return 1 if number has proper form and is within <min, max> range
 //	Empty/not defined fields are defaulted to $dflt value.
 //
-function check_num($postname, $min=null, $max=null, $dflt=0) {
+function check_num($postname, $min=null, $max=null, $dflt=0): int {
 	if(!isset($_POST[$postname]))
 	  return 0;
     $num = input_num($postname, $dflt);
@@ -603,7 +603,7 @@ function check_num($postname, $min=null, $max=null, $dflt=0) {
     return 1;
 }
 
-function check_is_closed($type, $type_no, $msg=null)
+function check_is_closed($type, $type_no, $msg=null): void
 {
 	global $systypes_array;
 
@@ -616,7 +616,7 @@ function check_is_closed($type, $type_no, $msg=null)
 	}
 }
 
-function check_db_has_template_orders($msg)
+function check_db_has_template_orders($msg): void
 {
  	$sql  = "SELECT sorder.order_no 
  		FROM ".TB_PREF."sales_orders as sorder,"
@@ -632,7 +632,7 @@ function check_db_has_template_orders($msg)
     }
 }
 
-function check_deferred_income_act($msg)
+function check_deferred_income_act($msg): void
 {
 	global $path_to_root;
 
@@ -643,7 +643,7 @@ function check_deferred_income_act($msg)
     }
 }
 
-function check_is_editable($trans_type, $trans_no, $msg=null)
+function check_is_editable($trans_type, $trans_no, $msg=null): void
 {
 	if (!$_SESSION['wa_current_user']->can_access('SA_EDITOTHERSTRANS'))
 	{
@@ -676,7 +676,7 @@ function check_reference($reference, $trans_type, $trans_no=0, $context=null, $l
 	return true;
 }
 
-function check_sys_pref($name, $msg, $empty = '')
+function check_sys_pref($name, $msg, $empty = ''): void
 {
 	global $path_to_root;
 

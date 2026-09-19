@@ -33,7 +33,7 @@ if ($_GET['trans_no'] != "")
 }
 
 //-------------------------------------------------------------------------------------------------
-function print_gl_rows($result, $title)
+function print_gl_rows($result, $title): void
 {
 	global $systypes_array;
 
@@ -52,7 +52,7 @@ function print_gl_rows($result, $title)
 		}
 	}
 }
-function display_wo_costs($prod_id)
+function display_wo_costs($prod_id): void
 {
 	br(1);
     start_table(TABLESTYLE);

@@ -9,14 +9,14 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_sales_type($name, $tax_included, $factor)
+function add_sales_type($name, $tax_included, $factor): void
 {
 	$sql = "INSERT INTO ".TB_PREF."sales_types (sales_type,tax_included,factor) VALUES (".db_escape($name).","
 		.db_escape($tax_included).",".db_escape($factor).")";
 	db_query($sql, "could not add sales type");		
 }
 
-function update_sales_type($id, $name, $tax_included, $factor)
+function update_sales_type($id, $name, $tax_included, $factor): void
 {
 
 	$sql = "UPDATE ".TB_PREF."sales_types SET sales_type = ".db_escape($name).",
@@ -53,7 +53,7 @@ function get_sales_type_name($id)
 	return is_array($row) ? $row[0] : false;
 }
 
-function delete_sales_type($id)
+function delete_sales_type($id): void
 {
 	$sql="DELETE FROM ".TB_PREF."sales_types WHERE id=".db_escape($id);
 	db_query($sql,"The Sales type record could not be deleted");

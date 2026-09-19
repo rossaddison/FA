@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_item_price($stock_id, $sales_type_id, $curr_abrev, $price)
+function add_item_price($stock_id, $sales_type_id, $curr_abrev, $price): void
 {
 	$sql = "INSERT INTO ".TB_PREF."prices (stock_id, sales_type_id, curr_abrev, price) 
 		VALUES (".db_escape($stock_id).", ".db_escape($sales_type_id)
@@ -18,7 +18,7 @@ function add_item_price($stock_id, $sales_type_id, $curr_abrev, $price)
 	db_query($sql,"an item price could not be added");
 }
 
-function update_item_price($price_id, $sales_type_id, $curr_abrev, $price)
+function update_item_price($price_id, $sales_type_id, $curr_abrev, $price): void
 {
 	$sql = "UPDATE ".TB_PREF."prices SET sales_type_id=".db_escape($sales_type_id).", 
 		curr_abrev=".db_escape($curr_abrev).", 
@@ -27,7 +27,7 @@ function update_item_price($price_id, $sales_type_id, $curr_abrev, $price)
 	db_query($sql,"an item price could not be updated");
 }
 
-function delete_item_price($price_id)
+function delete_item_price($price_id): void
 {
 	$sql="DELETE FROM ".TB_PREF."prices WHERE id= ".db_escape($price_id);
 	db_query($sql,"an item price could not be deleted");

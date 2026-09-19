@@ -14,7 +14,7 @@ require_once($path_to_root. "/admin/db/attachments_db.inc");
 function add_supplier($supp_name, $supp_ref, $address, $supp_address, $gst_no,
 	$website, $supp_account_no, $bank_account, $credit_limit, $dimension_id, $dimension2_id, 
 	$curr_code, $payment_terms, $payable_account, $purchase_account, $payment_discount_account, 
-	$notes, $tax_group_id, $tax_included)
+	$notes, $tax_group_id, $tax_included): void
 {
 	$sql = "INSERT INTO ".TB_PREF."suppliers (supp_name, supp_ref, address, supp_address, gst_no, website,
 		supp_account_no, bank_account, credit_limit, dimension_id, dimension2_id, curr_code,
@@ -46,7 +46,7 @@ function add_supplier($supp_name, $supp_ref, $address, $supp_address, $gst_no,
 function update_supplier($supplier_id, $supp_name, $supp_ref, $address, $supp_address, $gst_no, 
 	$website, $supp_account_no, $bank_account, $credit_limit, $dimension_id, $dimension2_id, 
 	$curr_code, $payment_terms, $payable_account, $purchase_account, $payment_discount_account, 
-	$notes, $tax_group_id, $tax_included)
+	$notes, $tax_group_id, $tax_included): void
 {
 	$sql = "UPDATE ".TB_PREF."suppliers SET supp_name=".db_escape($supp_name) . ",
 		supp_ref=".db_escape($supp_ref) . ",
@@ -72,7 +72,7 @@ function update_supplier($supplier_id, $supp_name, $supp_ref, $address, $supp_ad
 	db_query($sql,"The supplier could not be updated");
 }
 
-function delete_supplier($supplier_id)
+function delete_supplier($supplier_id): void
 {
 	begin_transaction();
 	delete_entity_contacts('supplier', $supplier_id);

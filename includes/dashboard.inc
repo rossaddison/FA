@@ -43,7 +43,7 @@ div.square2 {
 }
 </style>";
 
-function dashboard($sel_app)
+function dashboard($sel_app): void
 {
 	global  $style;
 	if (is_object($sel_app) && !$_SESSION["wa_current_user"]->check_application_access($selected_app))
@@ -86,7 +86,7 @@ function dashboard($sel_app)
 		display_all();
 }
 
-function display_title($title, $id=false, $type = false, $per = '', $num = false)
+function display_title($title, $id=false, $type = false, $per = '', $num = false): void
 {
 	br();
 	start_form();
@@ -149,24 +149,24 @@ function display_title($title, $id=false, $type = false, $per = '', $num = false
 	br();
 }	
 
-function table($width='100%', $twidth=false)
+function table($width='100%', $twidth=false): void
 {
 	$tstyle = ($twidth != false) ? "style='width:$twidth;'" : "";
 	echo "<table width='$width'><tr valign=top><td align='center' $tstyle>";
 }
 
-function td($width=false)
+function td($width=false): void
 {
 	$style = ($width != false) ? "style='width:$width;'" : "";
 	echo "</td><td align='center' $style>\n";
 }	
 
-function table_end()
+function table_end(): void
 {
 	echo "</td></tr></table>\n";
 }
 
-function headers($labels)
+function headers($labels): void
 {
 	echo "<tr>\n";
 	foreach ($labels as $label)
@@ -174,7 +174,7 @@ function headers($labels)
 	echo "</tr>\n";
 }
 
-function display_customer_topten()
+function display_customer_topten(): void
 {
 	table('100%', '25%');
 	echo "<div class='square square1'>"._('Customers')."<p class='span1'>";
@@ -211,7 +211,7 @@ function display_customer_topten()
 	table_end();
 }
 
-function display_supplier_topten()
+function display_supplier_topten(): void
 {
 	table('100%', '25%');
 	echo "<div class='square square2'>"._('Suppliers')."<p class='span1'>";
@@ -247,7 +247,7 @@ function display_supplier_topten()
 	table_end();
 }
 
-function display_stock_topten($type=0)
+function display_stock_topten($type=0): void
 {
 	if ($type == 0)
 	{
@@ -326,7 +326,7 @@ function display_stock_topten($type=0)
 	table_end();
 }
 
-function display_dimension_topten()
+function display_dimension_topten(): void
 {
 	table('100%', '25%');
 	echo "<div class='square square1'>"._('Dimensions')."<p class='span1'>";
@@ -355,7 +355,7 @@ function display_dimension_topten()
 	table_end();
 }	
 
-function display_gl_info()
+function display_gl_info(): void
 {
 	$today = calc_today();
 	table('100%', '25%');
@@ -385,7 +385,7 @@ function display_gl_info()
 	table_end();
 }	
 
-function display_all()
+function display_all(): void
 {
 	$today = calc_today();
 
@@ -701,7 +701,7 @@ function gl_top($today, $width='33', &$pg=null)
 	return $title;
 }
 
-function gl_week_performance($today, $width="33", $weeks=4)
+function gl_week_performance($today, $width="33", $weeks=4): void
 {
 	global $SysPrefs;
 	
@@ -741,7 +741,7 @@ function gl_week_performance($today, $width="33", $weeks=4)
 	source_graphic($today, $title, _("Week"), $pg, _("Weeks"), $weeks);
 }
 
-function gl_month_performance($today, $width="33", $months=5)
+function gl_month_performance($today, $width="33", $months=5): void
 {
 	global $SysPrefs;
 	$pg = new chart('bar', 'g4');
@@ -899,7 +899,7 @@ function supplier_balance($today)
 	return $row[0];
 }
 
-function cash_flow($today)
+function cash_flow($today): void
 {
 	global $date_system, $SysPrefs;
 	$months = 6;
@@ -961,7 +961,7 @@ function cash_flow($today)
 	source_graphic($today, $title, _("Month"), $pg, _("Months"), $months);
 }
 
-function source_graphic($today, $title, $x_axis, $pg, $per = '', $num = false)
+function source_graphic($today, $title, $x_axis, $pg, $per = '', $num = false): void
 {
 	if (!empty($per))
 		div_start($pg->id);
@@ -988,7 +988,7 @@ function source_graphic($today, $title, $x_axis, $pg, $per = '', $num = false)
 	div_end();
 }
 
-function customer_trans($today)
+function customer_trans($today): void
 {
 	$today = date2sql($today);
 
@@ -1043,7 +1043,7 @@ function calculate_next_invoice($myrow)
 	return add_days($next,-1);
 }
 
-function customer_recurrent_invoices($today)
+function customer_recurrent_invoices($today): void
 {
 	$result = get_recurrent_invoices($today);
 	$title = _("Overdue Recurrent Invoices");
@@ -1077,7 +1077,7 @@ function customer_recurrent_invoices($today)
 	end_table(2);
 }
 
-function supplier_trans($today)
+function supplier_trans($today): void
 {
 	$today = date2sql($today);
 	$sql = "SELECT trans.trans_no, trans.reference, trans.tran_date, trans.due_date, s.supplier_id, 
@@ -1125,7 +1125,7 @@ function supplier_trans($today)
 	br();
 }
 
-function stock_below_reorder($today, $type)
+function stock_below_reorder($today, $type): void
 {
 	$MB = ($type == 0 ? 'B' : ($type == 1 ? 'M' : 'F'));
 	$today = date2sql($today);
@@ -1161,7 +1161,7 @@ function stock_below_reorder($today, $type)
 	end_table(2);
 }
 
-function bank_balance($today, $width)
+function bank_balance($today, $width): void
 {
 	$today = date2sql($today);
 	$sql = "SELECT bank_act, bank_account_name, bank_curr_code, SUM(amount) balance FROM ".TB_PREF."bank_trans bt 

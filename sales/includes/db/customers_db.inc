@@ -13,7 +13,7 @@ require_once($path_to_root. "/admin/db/attachments_db.inc");
 
 function add_customer($CustName, $cust_ref, $address, $tax_id, $curr_code,
 	$dimension_id, $dimension2_id, $credit_status, $payment_terms, $discount, $pymt_discount, 
-	$credit_limit, $sales_type, $notes)
+	$credit_limit, $sales_type, $notes): void
 {
 	$sql = "INSERT INTO ".TB_PREF."debtors_master (name, debtor_ref, address, tax_id,
 		dimension_id, dimension2_id, curr_code, credit_status, payment_terms, discount, 
@@ -30,7 +30,7 @@ function add_customer($CustName, $cust_ref, $address, $tax_id, $curr_code,
 
 function update_customer($customer_id, $CustName, $cust_ref, $address, $tax_id, $curr_code,
 	$dimension_id, $dimension2_id, $credit_status, $payment_terms, $discount, $pymt_discount,
-	$credit_limit, $sales_type, $notes)
+	$credit_limit, $sales_type, $notes): void
 {
 	$sql = "UPDATE ".TB_PREF."debtors_master SET name=" . db_escape($CustName) . ", 
 		debtor_ref=" . db_escape($cust_ref) . ",
@@ -51,7 +51,7 @@ function update_customer($customer_id, $CustName, $cust_ref, $address, $tax_id, 
 	db_query($sql,"The customer could not be updated");
 }
 
-function delete_customer($customer_id)
+function delete_customer($customer_id): void
 {
 	begin_transaction();
 	delete_entity_contacts('customer', $customer_id);

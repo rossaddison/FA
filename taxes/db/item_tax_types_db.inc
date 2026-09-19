@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_item_tax_type($name, $exempt, $exempt_from)
+function add_item_tax_type($name, $exempt, $exempt_from): void
 {
 	begin_transaction();
 	
@@ -26,7 +26,7 @@ function add_item_tax_type($name, $exempt, $exempt_from)
 	commit_transaction();
 }
 
-function update_item_tax_type($id, $name, $exempt, $exempt_from)
+function update_item_tax_type($id, $name, $exempt, $exempt_from): void
 {
 	begin_transaction();
 	
@@ -73,7 +73,7 @@ function get_item_tax_type_for_item($stock_id)
 	return db_fetch($result);	
 }
 
-function delete_item_tax_type($id)
+function delete_item_tax_type($id): void
 {
 	begin_transaction();
 		
@@ -86,7 +86,7 @@ function delete_item_tax_type($id)
 	commit_transaction();	
 }
 
-function add_item_tax_type_exemptions($id, $exemptions)
+function add_item_tax_type_exemptions($id, $exemptions): void
 {
 	for ($i = 0; $i < count($exemptions); $i++) 
 	{
@@ -96,7 +96,7 @@ function add_item_tax_type_exemptions($id, $exemptions)
 	}		
 }
 
-function delete_item_tax_type_exemptions($id)
+function delete_item_tax_type_exemptions($id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."item_tax_type_exemptions WHERE item_tax_type_id=".db_escape($id);
 	

@@ -218,7 +218,7 @@ class hooks {
 /*
 	Installs hooks provided by extension modules
 */
-function install_hooks($lang_code=null)
+function install_hooks($lang_code=null): void
 {
 	global $path_to_root, $Hooks, $installed_extensions;
 

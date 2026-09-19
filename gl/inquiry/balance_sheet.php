@@ -118,7 +118,7 @@ function display_type ($type, $typename, $from, $to, $convert, $dimension, $dime
 	return ($acctstotal + $typestotal);
 }	
 	
-function inquiry_controls()
+function inquiry_controls(): void
 {
 	$dim = get_company_pref('use_dimension');
     start_table(TABLESTYLE_NOBORDER);
@@ -134,7 +134,7 @@ function inquiry_controls()
 	hidden('AccGrp');
 }
 
-function display_balance_sheet()
+function display_balance_sheet(): void
 {
 	global $path_to_root;
 	

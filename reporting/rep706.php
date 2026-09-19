@@ -125,7 +125,7 @@ print_balance_sheet();
 
 //----------------------------------------------------------------------------------------------------
 
-function print_balance_sheet()
+function print_balance_sheet(): void
 {
 	global $path_to_root, $SysPrefs;
 

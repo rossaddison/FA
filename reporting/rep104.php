@@ -62,7 +62,7 @@ function get_kits($category=0)
 
 //----------------------------------------------------------------------------------------------------
 
-function print_price_listing()
+function print_price_listing(): void
 {
     global $path_to_root, $SysPrefs;
 

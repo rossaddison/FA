@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function write_item_unit($selected, $abbr, $description, $decimals)
+function write_item_unit($selected, $abbr, $description, $decimals): void
 {
     if($selected!='')
 		$sql = "UPDATE ".TB_PREF."item_units SET
@@ -25,7 +25,7 @@ function write_item_unit($selected, $abbr, $description, $decimals)
 	db_query($sql,"an item unit could not be updated");
 }
 
-function delete_item_unit($unit)
+function delete_item_unit($unit): void
 {
 	$sql="DELETE FROM ".TB_PREF."item_units WHERE abbr=".db_escape($unit);
 

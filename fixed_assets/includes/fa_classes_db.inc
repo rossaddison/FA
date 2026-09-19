@@ -30,7 +30,7 @@ function get_fixed_asset_classname($class)
 	return is_array($row) ? $row[0] : false;
 }
 
-function update_fixed_asset_class($fa_class_id, $parent_id, $description, $long_description, $depreciation_rate)
+function update_fixed_asset_class($fa_class_id, $parent_id, $description, $long_description, $depreciation_rate): void
 {
 	$sql = "UPDATE ".TB_PREF."stock_fa_class SET
 		parent_id=".db_escape($parent_id).",
@@ -42,7 +42,7 @@ function update_fixed_asset_class($fa_class_id, $parent_id, $description, $long_
 	db_query($sql, "The fixed asset class could not be updated");
 }
 
-function add_fixed_asset_class($fa_class_id, $parent_id, $description, $long_description, $depreciation_rate)
+function add_fixed_asset_class($fa_class_id, $parent_id, $description, $long_description, $depreciation_rate): void
 {
   $sql = "INSERT INTO ".TB_PREF."stock_fa_class (fa_class_id, parent_id, description, long_description,
      depreciation_rate) VALUES ("
@@ -53,7 +53,7 @@ function add_fixed_asset_class($fa_class_id, $parent_id, $description, $long_des
 	db_query($sql, "The fixed asset class could not be added");
 }
 
-function delete_fixed_asset_class($fa_class_id)
+function delete_fixed_asset_class($fa_class_id): void
 {
   $sql = "DELETE FROM ".TB_PREF."stock_fa_class WHERE fa_class_id=".db_escape($fa_class_id);
 

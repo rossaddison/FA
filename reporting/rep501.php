@@ -66,7 +66,7 @@ function getYTD($dim)
 
 //----------------------------------------------------------------------------------------------------
 
-function print_dimension_summary()
+function print_dimension_summary(): void
 {
     global $path_to_root;
 

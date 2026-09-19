@@ -160,7 +160,7 @@ function Achieve($d1, $d2)
 	return $ret;
 }
 
-function inquiry_controls()
+function inquiry_controls(): void
 {  
 	global $compare_types;
 
@@ -193,7 +193,7 @@ function inquiry_controls()
 
 //----------------------------------------------------------------------------------------------------
 
-function display_profit_and_loss($compare)
+function display_profit_and_loss($compare): void
 {
 	global $path_to_root, $compare_types;
 

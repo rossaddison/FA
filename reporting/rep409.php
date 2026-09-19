@@ -26,7 +26,7 @@ print_workorders();
 
 //----------------------------------------------------------------------------------------------------
 
-function print_workorders()
+function print_workorders(): void
 {
 	global $path_to_root, $dflt_lang;
 

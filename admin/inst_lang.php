@@ -28,7 +28,7 @@ simple_page_mode(true);
 //
 // Display all packages - both already installed and available from repository
 //
-function display_languages()
+function display_languages(): void
 {
 	global $installed_languages, $dflt_lang, $GetText;
 	
@@ -189,7 +189,7 @@ function handle_submit($id)
 
 //---------------------------------------------------------------------------------------------
 
-function display_language_edit($selected_id)
+function display_language_edit($selected_id): void
 {
 	global $installed_languages, $dflt_lang;
 
@@ -233,7 +233,7 @@ function display_language_edit($selected_id)
 	end_form();
 }
 
-function handle_delete($id)
+function handle_delete($id): void
 {
 	global  $path_to_root, $installed_languages, $dflt_lang;
 

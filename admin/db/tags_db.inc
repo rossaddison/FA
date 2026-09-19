@@ -110,7 +110,7 @@ function get_tag_description($id)
 
 //--------------------------------------------------------------------------------------
 
-function delete_tag($id)
+function delete_tag($id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."tags WHERE id = ".db_escape($id);
 
@@ -119,7 +119,7 @@ function delete_tag($id)
 
 //--------------------------------------------------------------------------------------
 
-function add_tag_associations($recordid, $tagids)
+function add_tag_associations($recordid, $tagids): void
 {
 	foreach($tagids as $tagid) {
 		if (!$tagid) continue;
@@ -132,7 +132,7 @@ function add_tag_associations($recordid, $tagids)
 
 //--------------------------------------------------------------------------------------
 
-function update_tag_associations($type, $recordid, $tagids)
+function update_tag_associations($type, $recordid, $tagids): void
 {
 	// Delete the old associations
 	delete_tag_associations($type, $recordid, false);
@@ -144,7 +144,7 @@ function update_tag_associations($type, $recordid, $tagids)
 // To delete tag associations, we need to specify the tag type.
 // Otherwise we may inadvertantly delete records for another type of tag
 //
-function delete_tag_associations($type, $recordid, $all=false)
+function delete_tag_associations($type, $recordid, $all=false): void
 {
 /* multiply table DELETE syntax available since MySQL 4.0.0:
 	$sql = "DELETE ta FROM ".TB_PREF."tag_associations ta 

@@ -25,7 +25,7 @@ include_once($path_to_root . "/gl/includes/gl_db.inc");
 
 //----------------------------------------------------------------------------------------------------
 
-function display_type ($type, $typename, &$dec, &$rep, $showbalance, $level)
+function display_type ($type, $typename, &$dec, &$rep, $showbalance, $level): void
 {
 	$printtitle = 0; //Flag for printing type name	
 
@@ -90,7 +90,7 @@ print_Chart_of_Accounts();
 
 //----------------------------------------------------------------------------------------------------
 
-function print_Chart_of_Accounts()
+function print_Chart_of_Accounts(): void
 {
 	global $path_to_root;
 

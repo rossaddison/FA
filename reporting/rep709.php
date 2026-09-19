@@ -77,7 +77,7 @@ function getTaxInfo($id)
 
 //----------------------------------------------------------------------------------------------------
 
-function print_tax_report()
+function print_tax_report(): void
 {
 	global $path_to_root, $systypes_array;
 

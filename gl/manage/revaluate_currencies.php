@@ -58,7 +58,7 @@ function check_data()
 
 //---------------------------------------------------------------------------------------------
 
-function handle_submit()
+function handle_submit(): void
 {
 	if (!check_data())
 		return;
@@ -72,7 +72,7 @@ function handle_submit()
 
 //---------------------------------------------------------------------------------------------
 
-function display_reval()
+function display_reval(): void
 {
 	start_form();
 	start_table(TABLESTYLE2);
@@ -89,7 +89,7 @@ function display_reval()
 
 //---------------------------------------------------------------------------------------------
 
-function clear_data()
+function clear_data(): void
 {
 	unset($_POST['date_']);
 	unset($_POST['memo_']);

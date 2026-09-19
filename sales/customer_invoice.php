@@ -227,7 +227,7 @@ function check_quantities()
  return $ok;
 }
 
-function set_delivery_shipping_sum($delivery_notes) 
+function set_delivery_shipping_sum($delivery_notes): void 
 {
     
     $shipping = 0;
@@ -242,7 +242,7 @@ function set_delivery_shipping_sum($delivery_notes)
 }
 
 
-function copy_to_cart()
+function copy_to_cart(): void
 {
 	$cart = &$_SESSION['Items'];
 	$cart->due_date = $cart->document_date =  $_POST['InvoiceDate'];
@@ -267,7 +267,7 @@ function copy_to_cart()
 }
 //-----------------------------------------------------------------------------
 
-function copy_from_cart()
+function copy_from_cart(): void
 {
 	$cart = &$_SESSION['Items'];
  	$_POST['Comments']= $cart->Comments;

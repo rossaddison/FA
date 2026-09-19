@@ -50,7 +50,7 @@ function input_changed($name)
 //
 // Helper function for simple db table editor pages
 //
-function simple_page_mode($numeric_id = true)
+function simple_page_mode($numeric_id = true): void
 {
 	global $Ajax, $Mode, $selected_id;
 
@@ -180,21 +180,21 @@ function submit($name, $value, $echo=true, $title=false, $atype=false, $icon=fal
 		return $submit_str;
 }
 
-function submit_center($name, $value, $echo=true, $title=false, $async=false, $icon=false)
+function submit_center($name, $value, $echo=true, $title=false, $async=false, $icon=false): void
 {
 	if ($echo) echo "<center>";
 	submit($name, $value, $echo, $title, $async, $icon);
 	if ($echo) echo "</center>";
 }
 
-function submit_center_first($name, $value, $title=false, $async=false, $icon=false)
+function submit_center_first($name, $value, $title=false, $async=false, $icon=false): void
 {
 	echo "<center>";
 	submit($name, $value, true, $title, $async, $icon);
 	echo "&nbsp;";
 }
 
-function submit_center_last($name, $value, $title=false, $async=false, $icon=false)
+function submit_center_last($name, $value, $title=false, $async=false, $icon=false): void
 {
 	echo "&nbsp;";
 	submit($name, $value, true, $title, $async, $icon);
@@ -206,7 +206,7 @@ function submit_center_last($name, $value, $title=false, $async=false, $icon=fal
 	'upgrade' - use Ctrl-Enter with progress ajax indicator and Escape hotkeys. Nonajax request for OK option is performed.
 	'cancel' - apply to 'RESET' button
 */
-function submit_add_or_update($add=true, $title=false, $async=false, $clone=false)
+function submit_add_or_update($add=true, $title=false, $async=false, $clone=false): void
 {
 	$cancel = $async;
 
@@ -231,14 +231,14 @@ function submit_add_or_update($add=true, $title=false, $async=false, $clone=fals
 	}
 }
 
-function submit_add_or_update_center($add=true, $title=false, $async=false, $clone=false)
+function submit_add_or_update_center($add=true, $title=false, $async=false, $clone=false): void
 {
 	echo "<center>";
 	submit_add_or_update($add, $title, $async, $clone);
 	echo "</center>";
 }
 
-function submit_add_or_update_row($add=true, $right=true, $extra="", $title=false, $async=false, $clone = false)
+function submit_add_or_update_row($add=true, $right=true, $extra="", $title=false, $async=false, $clone = false): void
 {
 	echo "<tr>";
 	if ($right)
@@ -248,14 +248,14 @@ function submit_add_or_update_row($add=true, $right=true, $extra="", $title=fals
 	echo "</td></tr>\n";
 }
 
-function submit_cells($name, $value, $extra="", $title=false, $async=false)
+function submit_cells($name, $value, $extra="", $title=false, $async=false): void
 {
 	echo "<td $extra>";
 	submit($name, $value, true, $title, $async);
 	echo "</td>\n";
 }
 
-function submit_row($name, $value, $right=true, $extra="", $title=false, $async=false)
+function submit_row($name, $value, $right=true, $extra="", $title=false, $async=false): void
 {
 	echo "<tr>";
 	if ($right)
@@ -264,14 +264,14 @@ function submit_row($name, $value, $right=true, $extra="", $title=false, $async=
 	echo "</tr>\n";
 }
 
-function submit_return($name, $value, $title=false)
+function submit_return($name, $value, $title=false): void
 {
 	if (@$_REQUEST['popup']) {
 		submit($name, $value, true, $title, 'selector');
 	}
 }
 
-function submit_js_confirm($name, $msg, $set = true) {
+function submit_js_confirm($name, $msg, $set = true): void {
 	global $Ajax;
 	$js = "_validate.$name=".($set ? "function(){ return confirm('"
 				. strtr($msg, array("\n"=>'\\n')) . "');};"
@@ -323,30 +323,30 @@ function button($name, $value, $title=false, $icon=false,  $aspect='')
 			." >\n";
 }
 
-function button_cell($name, $value, $title=false, $icon=false, $aspect='')
+function button_cell($name, $value, $title=false, $icon=false, $aspect=''): void
 {
 	echo "<td align='center'>";
 	echo button($name, $value, $title, $icon, $aspect);
 	echo "</td>";
 }
 
-function delete_button_cell($name, $value, $title=false)
+function delete_button_cell($name, $value, $title=false): void
 {
 	button_cell($name, $value, $title, ICON_DELETE);
 }
 
-function edit_button_cell($name, $value, $title=false)
+function edit_button_cell($name, $value, $title=false): void
 {
 	button_cell($name, $value, $title, ICON_EDIT);
 }
 
-function select_button_cell($name, $value, $title=false)
+function select_button_cell($name, $value, $title=false): void
 {
 	button_cell($name, $value, $title, ICON_ADD, 'selector');
 }
 //-----------------------------------------------------------------------------------
 
-function check_value($name)
+function check_value($name): int|array
 {
 	if (is_array($name)) {
 		$ret = array();
@@ -384,13 +384,13 @@ function checkbox($label, $name, $value=null, $submit_on_change=false, $title=fa
 	return $str;
 }
 
-function check($label, $name, $value=null, $submit_on_change=false, $title=false)
+function check($label, $name, $value=null, $submit_on_change=false, $title=false): void
 {
 	echo checkbox($label, $name, $value, $submit_on_change, $title);
 }
 
 function check_cells($label, $name, $value=null, $submit_on_change=false, $title=false,
-	$params='')
+	$params=''): void
 {
 	if ($label != null)
 		echo "<td>$label</td>\n";
@@ -399,7 +399,7 @@ function check_cells($label, $name, $value=null, $submit_on_change=false, $title
 	echo "</td>";
 }
 
-function check_row($label, $name, $value=null, $submit_on_change=false, $title=false)
+function check_row($label, $name, $value=null, $submit_on_change=false, $title=false): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	echo check_cells(NULL, $name, $value, $submit_on_change, $title);
@@ -422,7 +422,7 @@ function radio($label, $name, $value, $selected=null, $submit_on_change=false)
 }
 
 //-----------------------------------------------------------------------------------
-function labelheader_cell($label, $params="")
+function labelheader_cell($label, $params=""): void
 {
 	echo "<td class='tableheader' $params>$label</td>\n";
 }
@@ -441,18 +441,18 @@ function label_cell($label, $params="", $id=null)
 	return $label;
 }
 
-function email_cell($label, $params="", $id=null)
+function email_cell($label, $params="", $id=null): void
 {
 	label_cell("<a href='mailto:$label'>$label</a>", $params, $id);
 }
 
-function amount_decimal_cell($label, $params="", $id=null)
+function amount_decimal_cell($label, $params="", $id=null): void
 {
 	$dec = 0;
 	label_cell(price_decimal_format($label, $dec), "nowrap align=right ".$params, $id);
 }
 
-function amount_cell($label, $bold=false, $params="", $id=null)
+function amount_cell($label, $bold=false, $params="", $id=null): void
 {
 	if ($bold)
 		label_cell("<b>".price_format($label)."</b>", "nowrap align=right ".$params, $id);
@@ -461,7 +461,7 @@ function amount_cell($label, $bold=false, $params="", $id=null)
 }
 
 //JAM  Allow entered unit prices to be fractional
-function unit_amount_cell($label, $bold=false, $params="", $id=null)
+function unit_amount_cell($label, $bold=false, $params="", $id=null): void
 {
 	if ($bold)
 		label_cell("<b>".unit_price_format($label)."</b>", "nowrap align=right ".$params, $id);
@@ -470,7 +470,7 @@ function unit_amount_cell($label, $bold=false, $params="", $id=null)
 }
 
 
-function percent_cell($label, $bold=false, $id=null)
+function percent_cell($label, $bold=false, $id=null): void
 {
 	if ($bold)
 		label_cell("<b>".percent_format($label)."</b>", "nowrap align=right", $id);
@@ -478,7 +478,7 @@ function percent_cell($label, $bold=false, $id=null)
 		label_cell(percent_format($label), "nowrap align=right", $id);
 }
 // 2008-06-15. Changed
-function qty_cell($label, $bold=false, $dec=null, $id=null)
+function qty_cell($label, $bold=false, $dec=null, $id=null): void
 {
 	if (!isset($dec))
 		$dec = get_qty_dec();
@@ -488,14 +488,14 @@ function qty_cell($label, $bold=false, $dec=null, $id=null)
 		label_cell(number_format2($label, $dec), "nowrap align=right", $id);
 }
 
-function label_cells($label, $value, $params="", $params2="", $id=null)
+function label_cells($label, $value, $params="", $params2="", $id=null): void
 {
 	if ($label != null)
 		echo "<td $params>$label</td>\n";
 	label_cell($value, $params2, $id);
 }
 
-function label_row($label, $value, $params="", $params2="", $leftfill=0, $id=null)
+function label_row($label, $value, $params="", $params2="", $leftfill=0, $id=null): void
 {
 	echo "<tr>";
 	if ($params == "")
@@ -522,7 +522,7 @@ function text_input($name, $value=null, $size='', $max='', $title='', $params=''
 //-----------------------------------------------------------------------------------
 
 function text_cells($label, $name, $value=null, $size="", $max="", $title=false, 
-	$labparams="", $post_label="", $inparams="")
+	$labparams="", $post_label="", $inparams=""): void
 {
   	global $Ajax;
 
@@ -541,7 +541,7 @@ function text_cells($label, $name, $value=null, $size="", $max="", $title=false,
 }
 
 function text_cells_ex($label, $name, $size, $max=null, $init=null, $title=null,
-	$labparams=null, $post_label=null, $submit_on_change=false)
+	$labparams=null, $post_label=null, $submit_on_change=false): void
 {
   	global $Ajax;
 
@@ -571,7 +571,7 @@ function text_cells_ex($label, $name, $size, $max=null, $init=null, $title=null,
 	$Ajax->addUpdate($name, $name, $_POST[$name]);
 }
 
-function text_row($label, $name, $value, $size, $max, $title=null, $params="", $post_label="")
+function text_row($label, $name, $value, $size, $max, $title=null, $params="", $post_label=""): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	text_cells(null, $name, $value, $size, $max, $title, $params, $post_label);
@@ -581,7 +581,7 @@ function text_row($label, $name, $value, $size, $max, $title=null, $params="", $
 
 //-----------------------------------------------------------------------------------
 
-function text_row_ex($label, $name, $size, $max=null, $title=null, $value=null, $params=null, $post_label=null)
+function text_row_ex($label, $name, $size, $max=null, $title=null, $value=null, $params=null, $post_label=null): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	text_cells_ex(null, $name, $size, $max, $value, $title, $params, $post_label);
@@ -590,21 +590,21 @@ function text_row_ex($label, $name, $size, $max=null, $title=null, $value=null, 
 }
 
 //-----------------------------------------------------------------------------------
-function email_row($label, $name, $value, $size, $max, $title=null, $params="", $post_label="")
+function email_row($label, $name, $value, $size, $max, $title=null, $params="", $post_label=""): void
 {
 	if (get_post($name)) 
 		$label = "<a href='Mailto:".$_POST[$name]."'>$label</a>";
 	text_row($label, $name, $value, $size, $max, $title, $params, $post_label);
 }
 
-function email_row_ex($label, $name, $size, $max=null, $title=null, $value=null, $params=null, $post_label=null)
+function email_row_ex($label, $name, $size, $max=null, $title=null, $value=null, $params=null, $post_label=null): void
 {
 	if (get_post($name)) 
 		$label = "<a href='Mailto:".$_POST[$name]."'>$label</a>";
 	text_row_ex($label, $name, $size, $max, $title, $value, $params, $post_label);
 }
 
-function link_row($label, $name, $value, $size, $max, $title=null, $params="", $post_label="")
+function link_row($label, $name, $value, $size, $max, $title=null, $params="", $post_label=""): void
 {
 	$val = get_post($name);
 	if ($val) {
@@ -615,7 +615,7 @@ function link_row($label, $name, $value, $size, $max, $title=null, $params="", $
 	text_row($label, $name, $value, $size, $max, $title, $params, $post_label);
 }
 
-function link_row_ex($label, $name, $size, $max=null, $title=null, $value=null, $params=null, $post_label=null)
+function link_row_ex($label, $name, $size, $max=null, $title=null, $value=null, $params=null, $post_label=null): void
 {
 	$val = get_post($name);
 	if ($val) {
@@ -633,7 +633,7 @@ function link_row_ex($label, $name, $size, $max=null, $title=null, $value=null, 
 //	than current date.
 //	
 function date_cells($label, $name, $title = null, $check=null, $inc_days=0, 
-	$inc_months=0, $inc_years=0, $params=null, $submit_on_change=false)
+	$inc_months=0, $inc_years=0, $params=null, $submit_on_change=false): void
 {
 	global $path_to_root, $Ajax;
 
@@ -684,7 +684,7 @@ function date_cells($label, $name, $title = null, $check=null, $inc_days=0,
 }
 
 function date_row($label, $name, $title=null, $check=null, $inc_days=0, $inc_months=0, 
-	$inc_years=0, $params=null, $submit_on_change=false)
+	$inc_years=0, $params=null, $submit_on_change=false): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	date_cells(null, $name, $title, $check, $inc_days, $inc_months, 
@@ -693,7 +693,7 @@ function date_row($label, $name, $title=null, $check=null, $inc_days=0, $inc_mon
 }
 
 //-----------------------------------------------------------------------------------
-function password_row($label, $name, $value)
+function password_row($label, $name, $value): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	label_cell("<input type='password' name='$name' size=32 maxlength=32 value='$value' >");
@@ -701,13 +701,13 @@ function password_row($label, $name, $value)
 }	
 
 //-----------------------------------------------------------------------------------
-function file_cells($label, $name, $id="")
+function file_cells($label, $name, $id=""): void
 {
 	if ($id != "")
 		$id = "id='$id'";
 	label_cells($label, "<input type='file' name='$name' $id >");
 }		
-function file_row($label, $name, $id = "")
+function file_row($label, $name, $id = ""): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	file_cells(null, $name, $id);
@@ -725,7 +725,7 @@ function file_row($label, $name, $id = "")
  	'supplier' - supplier id
  	'branch' - branch_code
 */
-function ref_cells($label, $name, $title=null, $init=null, $params=null, $submit_on_change=false, $type=null, $context=null)
+function ref_cells($label, $name, $title=null, $init=null, $params=null, $submit_on_change=false, $type=null, $context=null): void
 {
 	global $Ajax, $Refs;
 
@@ -774,7 +774,7 @@ function ref_cells($label, $name, $title=null, $init=null, $params=null, $submit
 
 //-----------------------------------------------------------------------------------
 
-function ref_row($label, $name, $title=null, $init=null, $submit_on_change=false, $type=null, $context = null)
+function ref_row($label, $name, $title=null, $init=null, $submit_on_change=false, $type=null, $context = null): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	ref_cells(null, $name, $title, $init, null, $submit_on_change, $type, $context);
@@ -783,7 +783,7 @@ function ref_row($label, $name, $title=null, $init=null, $submit_on_change=false
 
 //-----------------------------------------------------------------------------------
 
-function percent_row($label, $name, $init=null)
+function percent_row($label, $name, $init=null): void
 {
 
 	if (!isset($_POST[$name]) || $_POST[$name]=="")
@@ -794,7 +794,7 @@ function percent_row($label, $name, $init=null)
 	small_amount_row($label, $name, $_POST[$name], null, "%", user_percent_dec());
 }
 
-function amount_cells_ex($label, $name, $size, $max=null, $init=null, $params=null, $post_label=null, $dec=null)
+function amount_cells_ex($label, $name, $size, $max=null, $init=null, $params=null, $post_label=null, $dec=null): void
 {
 	global $Ajax;
 
@@ -835,13 +835,13 @@ function amount_cells_ex($label, $name, $size, $max=null, $init=null, $params=nu
 
 //-----------------------------------------------------------------------------------
 
-function amount_cells($label, $name, $init=null, $params=null, $post_label=null, $dec=null)
+function amount_cells($label, $name, $init=null, $params=null, $post_label=null, $dec=null): void
 {
 	amount_cells_ex($label, $name, 15, 15, $init, $params, $post_label, $dec);
 }
 
 //JAM  Allow entered unit prices to be fractional
-function unit_amount_cells($label, $name, $init=null, $params=null, $post_label=null, $dec=null)
+function unit_amount_cells($label, $name, $init=null, $params=null, $post_label=null, $dec=null): void
 {
 	if (!isset($dec))
 	  	$dec = user_price_dec()+2;
@@ -849,14 +849,14 @@ function unit_amount_cells($label, $name, $init=null, $params=null, $post_label=
 	amount_cells_ex($label, $name, 15, 15, $init, $params, $post_label, $dec+2);
 }
 
-function amount_row($label, $name, $init=null, $params=null, $post_label=null, $dec=null)
+function amount_row($label, $name, $init=null, $params=null, $post_label=null, $dec=null): void
 {
 	echo "<tr>";
 	amount_cells($label, $name, $init, $params, $post_label, $dec);
 	echo "</tr>\n";
 }
 
-function small_amount_row($label, $name, $init=null, $params=null, $post_label=null, $dec=null)
+function small_amount_row($label, $name, $init=null, $params=null, $post_label=null, $dec=null): void
 {
 	echo "<tr>";
 	small_amount_cells($label, $name, $init, $params, $post_label, $dec);
@@ -865,7 +865,7 @@ function small_amount_row($label, $name, $init=null, $params=null, $post_label=n
 
 //-----------------------------------------------------------------------------------
 
-function qty_cells($label, $name, $init=null, $params=null, $post_label=null, $dec=null)
+function qty_cells($label, $name, $init=null, $params=null, $post_label=null, $dec=null): void
 {
 	if (!isset($dec))
 	  	$dec = user_qty_dec();
@@ -873,7 +873,7 @@ function qty_cells($label, $name, $init=null, $params=null, $post_label=null, $d
 	amount_cells_ex($label, $name, 15, 15, $init, $params, $post_label, $dec);
 }
 
-function qty_row($label, $name, $init=null, $params=null, $post_label=null, $dec=null)
+function qty_row($label, $name, $init=null, $params=null, $post_label=null, $dec=null): void
 {
 	if (!isset($dec))
 	  	$dec = user_qty_dec();
@@ -883,7 +883,7 @@ function qty_row($label, $name, $init=null, $params=null, $post_label=null, $dec
 	echo "</tr>\n";
 }
 
-function small_qty_row($label, $name, $init=null, $params=null, $post_label=null, $dec=null)
+function small_qty_row($label, $name, $init=null, $params=null, $post_label=null, $dec=null): void
 {
 	if (!isset($dec))
 	  	$dec = user_qty_dec();
@@ -895,14 +895,14 @@ function small_qty_row($label, $name, $init=null, $params=null, $post_label=null
 
 //-----------------------------------------------------------------------------------
 
-function small_amount_cells($label, $name, $init=null, $params=null, $post_label=null, $dec=null)
+function small_amount_cells($label, $name, $init=null, $params=null, $post_label=null, $dec=null): void
 {
 	amount_cells_ex($label, $name, 7, 12, $init, $params, $post_label, $dec);
 }
 
 //-----------------------------------------------------------------------------------
 
-function small_qty_cells($label, $name, $init=null, $params=null, $post_label=null, $dec=null)
+function small_qty_cells($label, $name, $init=null, $params=null, $post_label=null, $dec=null): void
 {
   	if (!isset($dec))
 	  	$dec = user_qty_dec();
@@ -911,7 +911,7 @@ function small_qty_cells($label, $name, $init=null, $params=null, $post_label=nu
 
 //-----------------------------------------------------------------------------------
 
-function textarea_cells($label, $name, $value, $cols, $rows, $max=255, $title = null, $params="")
+function textarea_cells($label, $name, $value, $cols, $rows, $max=255, $title = null, $params=""): void
 {
   	global $Ajax;
 
@@ -927,7 +927,7 @@ function textarea_cells($label, $name, $value, $cols, $rows, $max=255, $title = 
 	$Ajax->addUpdate($name, $name, $value);
 }
 
-function textarea_row($label, $name, $value, $cols, $rows, $max=255, $title=null, $params="")
+function textarea_row($label, $name, $value, $cols, $rows, $max=255, $title=null, $params=""): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	textarea_cells(null, $name, $value, $cols, $rows, $max, $title, $params);
@@ -940,7 +940,7 @@ function textarea_row($label, $name, $value, $cols, $rows, $max=255, $title=null
 //  displays value of inactive field as checkbox cell.
 //  Also updates database record after status change.
 //
-function inactive_control_cell($id, $value, $table, $key)
+function inactive_control_cell($id, $value, $table, $key): void
 {
 	global	$Ajax;
 
@@ -959,7 +959,7 @@ function inactive_control_cell($id, $value, $table, $key)
 //
 //	Displays controls for optional display of inactive records
 //
-function inactive_control_row($th) {
+function inactive_control_row($th): void {
 	echo  "<tr><td colspan=".(count($th)).">"
 		."<div style='float:left;'>"
 		. checkbox(null, 'show_inactive', null, true). _("Show also Inactive")
@@ -970,7 +970,7 @@ function inactive_control_row($th) {
 //
 //	Inserts additional column header when display of inactive records is on.
 //
-function inactive_control_column(&$th) {
+function inactive_control_column(&$th): void {
 	global $Ajax;
 	
 	if (check_value('show_inactive')) 
@@ -980,7 +980,7 @@ function inactive_control_column(&$th) {
 	}
 }
 
-function customer_credit_row($customer, $credit, $parms='')
+function customer_credit_row($customer, $credit, $parms=''): void
 {
 	global $path_to_root;
 	
@@ -992,7 +992,7 @@ function customer_credit_row($customer, $credit, $parms='')
 		."</a>", $parms);
 }
 
-function supplier_credit_row($supplier, $credit, $parms='')
+function supplier_credit_row($supplier, $credit, $parms=''): void
 {
 	global $path_to_root;
 	
@@ -1004,7 +1004,7 @@ function supplier_credit_row($supplier, $credit, $parms='')
 		."</a>", $parms);
 }
 
-function bank_balance_row($bank_acc, $parms='')
+function bank_balance_row($bank_acc, $parms=''): void
 {
 	global $path_to_root;
 
@@ -1018,11 +1018,11 @@ function bank_balance_row($bank_acc, $parms='')
 		."</a>", $parms);
 }
 
-function ahref($label, $href, $target="", $onclick="") {
+function ahref($label, $href, $target="", $onclick=""): void {
   echo "<a href='$href' target='$target' onclick='$onclick'>$label</a>";
 }
 
-function ahref_cell($label, $href, $target="", $onclick="") {
+function ahref_cell($label, $href, $target="", $onclick=""): void {
   echo "<td align='center'>&nbsp;&nbsp;";
   ahref($label, $href, $target, $onclick);
   echo "&nbsp;&nbsp;</td>";

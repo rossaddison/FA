@@ -93,7 +93,7 @@ function handle_delete($id)
 //
 // Display list of all extensions - installed and available from repository
 //
-function display_extensions($mods)
+function display_extensions($mods): void
 {
 	global $installed_extensions;
 	
@@ -153,7 +153,7 @@ function display_extensions($mods)
 // Get all installed extensions and display
 // with current status stored in company directory.
 //
-function company_extensions($id)
+function company_extensions($id): void
 {
 	start_table(TABLESTYLE);
 	

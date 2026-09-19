@@ -82,7 +82,7 @@ if (isset($_GET['AddedID'])) {
 
 //--------------------------------------------------------------------------------
 
-function line_start_focus() {
+function line_start_focus(): void {
   	global $Ajax;
   	$Ajax->activate('items_table');
   	set_focus('_stock_id_edit');
@@ -90,7 +90,7 @@ function line_start_focus() {
 
 //-----------------------------------------------------------------------------
 
-function copy_to_cn()
+function copy_to_cn(): void
 {
 	$cart = &$_SESSION['Items'];
 	$cart->Comments = $_POST['CreditText'];
@@ -107,7 +107,7 @@ function copy_to_cn()
 
 //-----------------------------------------------------------------------------
 
-function copy_from_cn()
+function copy_from_cn(): void
 {
 	$cart = &$_SESSION['Items'];
 	$_POST['CreditText'] = $cart->Comments;
@@ -125,7 +125,7 @@ function copy_from_cn()
 
 //-----------------------------------------------------------------------------
 
-function handle_new_credit($trans_no)
+function handle_new_credit($trans_no): void
 {
 	processing_start();
 	$_SESSION['Items'] = new Cart(ST_CUSTCREDIT,$trans_no);
@@ -231,7 +231,7 @@ function check_item_data()
 
 //-----------------------------------------------------------------------------
 
-function handle_update_item()
+function handle_update_item(): void
 {
 	if ($_POST['UpdateItem'] != "" && check_item_data()) {
 		$_SESSION['Items']->update_cart_item($_POST['line_no'], input_num('qty'),
@@ -242,7 +242,7 @@ function handle_update_item()
 
 //-----------------------------------------------------------------------------
 
-function handle_delete_item($line_no)
+function handle_delete_item($line_no): void
 {
 	$_SESSION['Items']->remove_from_cart($line_no);
     line_start_focus();
@@ -250,7 +250,7 @@ function handle_delete_item($line_no)
 
 //-----------------------------------------------------------------------------
 
-function handle_new_item()
+function handle_new_item(): void
 {
 
 	if (!check_item_data())

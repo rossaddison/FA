@@ -14,7 +14,7 @@ include_once($path_to_root . "/includes/ui/items_cart.inc");
 
 //--------------------------------------------------------------------------------
 
-function add_to_order(&$order, $new_item, $new_item_qty, $standard_cost)
+function add_to_order(&$order, $new_item, $new_item_qty, $standard_cost): void
 {
     if ($order->find_cart_item($new_item))
          display_error(_("For Part :") . $new_item . " " . "This item is already on this document. You can change the quantity on the existing line if necessary.");
@@ -24,7 +24,7 @@ function add_to_order(&$order, $new_item, $new_item_qty, $standard_cost)
 
 //--------------------------------------------------------------------------------
 
-function display_order_header(&$order)
+function display_order_header(&$order): void
 {
 	global $Refs;
 
@@ -44,7 +44,7 @@ function display_order_header(&$order)
 
 //---------------------------------------------------------------------------------
 
-function display_adjustment_items($title, &$order)
+function display_adjustment_items($title, &$order): void
 {
 	global $path_to_root;
 
@@ -136,7 +136,7 @@ function display_adjustment_items($title, &$order)
 
 //---------------------------------------------------------------------------------
 
-function adjustment_edit_item_controls(&$order, $line_no=-1)
+function adjustment_edit_item_controls(&$order, $line_no=-1): void
 {
 	global $Ajax;
 	start_row();
@@ -228,7 +228,7 @@ function adjustment_edit_item_controls(&$order, $line_no=-1)
 
 //---------------------------------------------------------------------------------
 
-function adjustment_options_controls()
+function adjustment_options_controls(): void
 {
 	  echo "<br>";
 	  start_table();

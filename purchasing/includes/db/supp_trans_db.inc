@@ -169,7 +169,7 @@ function exists_supp_trans($type, $type_no)
 
 //----------------------------------------------------------------------------------------
 
-function void_supp_trans($type, $type_no)
+function void_supp_trans($type, $type_no): void
 {
 	$sql = "UPDATE ".TB_PREF."supp_trans SET ov_amount=0, ov_discount=0, ov_gst=0,
 		alloc=0 WHERE type=".db_escape($type)." AND trans_no=".db_escape($type_no);
@@ -179,7 +179,7 @@ function void_supp_trans($type, $type_no)
 
 //----------------------------------------------------------------------------------------
 
-function clear_supp_trans($type, $type_no)
+function clear_supp_trans($type, $type_no): void
 {
 	$sql = "DELETE FROM ".TB_PREF."supp_trans 
 			WHERE type=".db_escape($type)." AND trans_no=".db_escape($type_no);

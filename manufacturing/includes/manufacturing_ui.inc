@@ -13,7 +13,7 @@ include_once($path_to_root . "/includes/ui.inc");
 
 //--------------------------------------------------------------------------------------
 
-function display_bom($item_check)
+function display_bom($item_check): void
 {
     $result = get_bom($item_check);
 
@@ -83,7 +83,7 @@ function display_bom($item_check)
 
 //--------------------------------------------------------------------------------------
 
-function display_wo_requirements($woid, $quantity, $show_qoh=false, $date=null)
+function display_wo_requirements($woid, $quantity, $show_qoh=false, $date=null): void
 {
 	global $SysPrefs;
 
@@ -158,7 +158,7 @@ function display_wo_requirements($woid, $quantity, $show_qoh=false, $date=null)
 
 //--------------------------------------------------------------------------------------
 
-function display_wo_productions($woid)
+function display_wo_productions($woid): void
 {
 	global $path_to_root;
 
@@ -201,7 +201,7 @@ function display_wo_productions($woid)
 
 //--------------------------------------------------------------------------------------
 
-function display_wo_issues($woid)
+function display_wo_issues($woid): void
 {
 	global $path_to_root;
 
@@ -237,7 +237,7 @@ function display_wo_issues($woid)
 
 //--------------------------------------------------------------------------------------
 
-function display_wo_payments($woid)
+function display_wo_payments($woid): void
 {
 	global $path_to_root, $wo_cost_types;
 
@@ -273,7 +273,7 @@ function display_wo_payments($woid)
 
 //--------------------------------------------------------------------------------------
 
-function display_wo_details($woid, $suppress_view_link=false)
+function display_wo_details($woid, $suppress_view_link=false): void
 {
 	global $wo_types_array;
 
@@ -329,7 +329,7 @@ function display_wo_details($woid, $suppress_view_link=false)
 
 //--------------------------------------------------------------------------------------
 
-function display_wo_details_quick($woid, $suppress_view_link=false)
+function display_wo_details_quick($woid, $suppress_view_link=false): void
 {
 	global $wo_types_array;
 

@@ -10,19 +10,19 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-function add_sales_group($description)
+function add_sales_group($description): void
 {
 	$sql = "INSERT INTO `".TB_PREF."groups` (description) VALUES (".db_escape($description) . ")";
    	db_query($sql,"The sales group could not be added");
 }
 
-function update_sales_group($selected_id, $description)
+function update_sales_group($selected_id, $description): void
 {
 	$sql = "UPDATE `".TB_PREF."groups` SET description=".db_escape($description)." WHERE id = ".db_escape($selected_id);
    	db_query($sql,"The sales group could not be updated");
 }
 
-function delete_sales_group($selected_id)
+function delete_sales_group($selected_id): void
 {
 	$sql="DELETE FROM `".TB_PREF."groups` WHERE id=".db_escape($selected_id);
 	db_query($sql,"could not delete sales group");
@@ -52,19 +52,19 @@ function get_sales_group_name($group_no)
 	return is_array($row) ? $row[0] : false;
 }
 
-function add_sales_area($description)
+function add_sales_area($description): void
 {
 	$sql = "INSERT INTO ".TB_PREF."areas (description) VALUES (".db_escape($description) . ")";
    	db_query($sql,"The sales area could not be added");
 }
 
-function update_sales_area($selected_id, $description)
+function update_sales_area($selected_id, $description): void
 {
 	$sql = "UPDATE ".TB_PREF."areas SET description=".db_escape($description)." WHERE area_code = ".db_escape($selected_id);
    	db_query($sql,"The sales area could not be updated");
 }
 
-function delete_sales_area($selected_id)
+function delete_sales_area($selected_id): void
 {
 	$sql="DELETE FROM ".TB_PREF."areas WHERE area_code=".db_escape($selected_id);
 	db_query($sql,"could not delete sales area");
@@ -96,7 +96,7 @@ function get_area_name($id)
 }
 
 function add_salesman($salesman_name, $salesman_phone, $salesman_fax,
-	$salesman_email, $provision, $break_pt, $provision2)
+	$salesman_email, $provision, $break_pt, $provision2): void
 {
 	$sql = "INSERT INTO ".TB_PREF."salesman (salesman_name, salesman_phone, salesman_fax, salesman_email,
 		provision, break_pt, provision2)
@@ -110,7 +110,7 @@ function add_salesman($salesman_name, $salesman_phone, $salesman_fax,
 }
 
 function update_salesman($selected_id, $salesman_name, $salesman_phone, $salesman_fax,
-	$salesman_email, $provision, $break_pt, $provision2)
+	$salesman_email, $provision, $break_pt, $provision2): void
 {
 	$sql = "UPDATE ".TB_PREF."salesman SET salesman_name=".db_escape($salesman_name) . ",
 		salesman_phone=".db_escape($salesman_phone) . ",
@@ -123,7 +123,7 @@ function update_salesman($selected_id, $salesman_name, $salesman_phone, $salesma
    	db_query($sql,"The update of the sales person failed");
 }
 
-function delete_salesman($selected_id)
+function delete_salesman($selected_id): void
 {
 	$sql="DELETE FROM ".TB_PREF."salesman WHERE salesman_code=".db_escape($selected_id);
 	db_query($sql,"The sales-person could not be deleted");

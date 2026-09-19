@@ -152,7 +152,7 @@ function display_credit_header(&$order)
 
 //---------------------------------------------------------------------------------
 
-function display_credit_items($title, &$order)
+function display_credit_items($title, &$order): void
 {
     global $path_to_root;
 
@@ -233,7 +233,7 @@ function display_credit_items($title, &$order)
 
 //---------------------------------------------------------------------------------
 
-function credit_edit_item_controls(&$order, $rowcounter, $line_no=-1)
+function credit_edit_item_controls(&$order, $rowcounter, $line_no=-1): void
 {
 	global $Ajax;
 	alt_table_row_color($rowcounter);
@@ -304,7 +304,7 @@ function credit_edit_item_controls(&$order, $rowcounter, $line_no=-1)
 
 //---------------------------------------------------------------------------------
 
-function credit_options_controls($credit)
+function credit_options_controls($credit): void
 {
 	global $Ajax;
 	br();

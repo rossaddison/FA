@@ -41,7 +41,7 @@ function get_requirements_costs($woid)
 
 //--------------------------------------------------------------------------------------
 
-function create_wo_requirements($woid, $stock_id)
+function create_wo_requirements($woid, $stock_id): void
 {
 	$sql = "INSERT INTO ".TB_PREF."wo_requirements (workorder_id, stock_id, workcentre, units_req, loc_code)
 		SELECT ".db_escape($woid).", component, workcentre_added, quantity, loc_code
@@ -52,7 +52,7 @@ function create_wo_requirements($woid, $stock_id)
 
 //--------------------------------------------------------------------------------------
 
-function delete_wo_requirements($woid)
+function delete_wo_requirements($woid): void
 {
 	$sql="DELETE FROM ".TB_PREF."wo_requirements WHERE workorder_id=".db_escape($woid);
 	db_query($sql,"The work order requirements could not be deleted");	
@@ -63,7 +63,7 @@ function delete_wo_requirements($woid)
 /*
 	Update total component units issued and average component cost
 */
-function update_wo_requirement_issued($id, $quantity, $cost)
+function update_wo_requirement_issued($id, $quantity, $cost): void
 {
 	$sql = "UPDATE ".TB_PREF."wo_requirements SET 
 				unit_cost = (units_issued*unit_cost+".$quantity*$cost.")/(units_issued+".$quantity."),
@@ -75,7 +75,7 @@ function update_wo_requirement_issued($id, $quantity, $cost)
 
 //--------------------------------------------------------------------------------------
 
-function void_wo_requirements($woid)
+function void_wo_requirements($woid): void
 {
 	$sql = "UPDATE ".TB_PREF."wo_requirements SET units_issued = 0
 		WHERE workorder_id = ".db_escape($woid);

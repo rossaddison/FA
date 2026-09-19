@@ -80,7 +80,7 @@ function trans_qty($stock_id, $location, $from_date, $to_date, $inward = true)
 
 //----------------------------------------------------------------------------------------------------
 
-function inventory_movements()
+function inventory_movements(): void
 {
     global $path_to_root;
 

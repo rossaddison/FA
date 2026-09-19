@@ -58,7 +58,7 @@ if (isset($_POST['_DatePaid_changed'])) {
 
 //----------------------------------------------------------------------------------------
 
-function gl_payment_controls($trans_no)
+function gl_payment_controls($trans_no): void
 {
 	global $Refs;
 	
@@ -284,7 +284,7 @@ function check_valid_entries($trans_no)
 
 //----------------------------------------------------------------------------------------
 
-function bank_transfer_handle_submit()
+function bank_transfer_handle_submit(): void
 {
 	$trans_no = array_key_exists('_trans_no', $_POST) ?  $_POST['_trans_no'] : null;
 	if ($trans_no) {

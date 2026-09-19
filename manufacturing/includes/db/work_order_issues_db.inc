@@ -12,7 +12,7 @@
 //--------------------------------------------------------------------------------------
 
 function add_work_order_issue($woid, $ref, $to_work_order, $items, $location, $workcentre,
-	$date_, $memo_)
+	$date_, $memo_): void
 {
 	global $Refs;
 
@@ -160,7 +160,7 @@ function check_void_wo_issue($issue_no)
 
 //--------------------------------------------------------------------------------------
 
-function void_work_order_issue($type_no)
+function void_work_order_issue($type_no): void
 {
 	begin_transaction();
 	hook_db_prevoid(ST_MANUISSUE, $type_no);

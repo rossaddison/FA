@@ -12,7 +12,7 @@
 
 //--------------------------------------------------------------------------------------
 
-function add_shipper($shipper_name, $contact, $phone, $phone2, $address)
+function add_shipper($shipper_name, $contact, $phone, $phone2, $address): void
 {
 	$sql = "INSERT INTO ".TB_PREF."shippers (shipper_name, contact, phone, phone2, address)
 		VALUES (" . db_escape($shipper_name) . ", " .
@@ -26,7 +26,7 @@ function add_shipper($shipper_name, $contact, $phone, $phone2, $address)
 
 //--------------------------------------------------------------------------------------
 
-function update_shipper($selected_id, $shipper_name, $contact, $phone, $phone2, $address)
+function update_shipper($selected_id, $shipper_name, $contact, $phone, $phone2, $address): void
 {
 	$sql = "UPDATE ".TB_PREF."shippers SET shipper_name=" . db_escape($shipper_name). " ,
 		contact =" . db_escape($contact). " ,
@@ -40,7 +40,7 @@ function update_shipper($selected_id, $shipper_name, $contact, $phone, $phone2, 
 
 //--------------------------------------------------------------------------------------
 
-function delete_shipper($selected_id)
+function delete_shipper($selected_id): void
 {
 	$sql="DELETE FROM ".TB_PREF."shippers WHERE shipper_id=".db_escape($selected_id);
 	

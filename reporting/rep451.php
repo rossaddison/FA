@@ -42,7 +42,7 @@ print_fixed_assets_valuation_report();
 
 //----------------------------------------------------------------------------------------------------
 
-function print_fixed_assets_valuation_report()
+function print_fixed_assets_valuation_report(): void
 {
     global $path_to_root, $SysPrefs;
 

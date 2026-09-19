@@ -30,7 +30,7 @@ print_GL_transactions();
 
 //----------------------------------------------------------------------------------------------------
 
-function print_GL_transactions()
+function print_GL_transactions(): void
 {
 	global $path_to_root, $systypes_array;
 

@@ -67,7 +67,7 @@ function add_exchange_variation($trans_no, $date_, $acc_id, $account,
 	return false;
 }
 
-function add_cust_supp_revaluation($ledger_act, $ex_act, $date, $amount, $person_type_id, $person_id, $memo)
+function add_cust_supp_revaluation($ledger_act, $ex_act, $date, $amount, $person_type_id, $person_id, $memo): void
 {
 	global $Refs;
 	if ($amount == 0)

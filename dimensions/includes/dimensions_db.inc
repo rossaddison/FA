@@ -55,7 +55,7 @@ function update_dimension($id, $name, $type_, $date_, $due_date, $memo_)
 	return $id;
 }
 
-function delete_dimension($id)
+function delete_dimension($id): void
 {
 	begin_transaction();
 
@@ -137,7 +137,7 @@ function dimension_is_closed($id)
 
 //--------------------------------------------------------------------------------------
 
-function close_dimension($id)
+function close_dimension($id): void
 {
 	$sql = "UPDATE ".TB_PREF."dimensions SET closed='1' WHERE id = ".db_escape($id);
 	db_query($sql, "could not close dimension");
@@ -145,7 +145,7 @@ function close_dimension($id)
 
 //--------------------------------------------------------------------------------------
 
-function reopen_dimension($id)
+function reopen_dimension($id): void
 {
 	$sql = "UPDATE ".TB_PREF."dimensions SET closed='0' WHERE id = ".db_escape($id);
 	db_query($sql, "could not reopen dimension");

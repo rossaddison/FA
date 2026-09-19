@@ -13,7 +13,7 @@
 	item_codes table is used to store both multiply foreign codes (aliases) and 
 	sales kits definition.
 */
-function update_item_code($id, $item_code, $stock_id, $description, $category, $qty, $foreign=0)
+function update_item_code($id, $item_code, $stock_id, $description, $category, $qty, $foreign=0): void
 {
 	$sql = "UPDATE ".TB_PREF."item_codes SET
 	 	item_code = ".db_escape($item_code).",
@@ -33,7 +33,7 @@ function update_item_code($id, $item_code, $stock_id, $description, $category, $
 	db_query($sql,"an item code could not be updated");
 }
 
-function add_item_code($item_code, $stock_id, $description, $category, $qty, $foreign=0)
+function add_item_code($item_code, $stock_id, $description, $category, $qty, $foreign=0): void
 {
 	$sql = "INSERT INTO ".TB_PREF."item_codes
 			(item_code, stock_id, description, category_id, quantity, is_foreign) 
@@ -44,7 +44,7 @@ function add_item_code($item_code, $stock_id, $description, $category, $qty, $fo
 	db_query($sql,"an item code could not be added");
 }
 
-function delete_item_code($id)
+function delete_item_code($id): void
 {
 	$sql="DELETE FROM ".TB_PREF."item_codes WHERE id=".db_escape($id);
 	db_query($sql,"an item code could not be deleted");
@@ -73,7 +73,7 @@ function get_all_item_codes($stock_id, $foreign=1)
 	return $result;
 }
 
-function delete_item_kit($item_code)
+function delete_item_kit($item_code): void
 {
 	$sql="DELETE FROM ".TB_PREF."item_codes WHERE item_code=".db_escape($item_code);
 	db_query($sql,"an item kit could not be deleted");
@@ -143,7 +143,7 @@ function get_kit_props($kit_code)
 	return db_fetch($res);
 }
 
-function update_kit_props($kit_code, $name, $category)
+function update_kit_props($kit_code, $name, $category): void
 {
 	$sql = "UPDATE ".TB_PREF."item_codes SET description="
 		. db_escape($name).",category_id=".db_escape($category)

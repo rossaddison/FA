@@ -62,7 +62,7 @@ if (isset($_GET['AddedID']))
 }
 //--------------------------------------------------------------------------------------------------
 
-function line_start_focus() {
+function line_start_focus(): void {
   global 	$Ajax;
 
   $Ajax->activate('items_table');
@@ -70,7 +70,7 @@ function line_start_focus() {
 }
 //-----------------------------------------------------------------------------------------------
 
-function handle_new_order()
+function handle_new_order(): void
 {
 	if (isset($_SESSION['transfer_items']))
 	{
@@ -167,7 +167,7 @@ function check_item_data()
 
 //-----------------------------------------------------------------------------------------------
 
-function handle_update_item()
+function handle_update_item(): void
 {
 	$id = $_POST['LineNo'];
    	if (!isset($_POST['std_cost']))
@@ -178,7 +178,7 @@ function handle_update_item()
 
 //-----------------------------------------------------------------------------------------------
 
-function handle_delete_item($id)
+function handle_delete_item($id): void
 {
 	$_SESSION['transfer_items']->remove_from_cart($id);
 	line_start_focus();
@@ -186,7 +186,7 @@ function handle_delete_item($id)
 
 //-----------------------------------------------------------------------------------------------
 
-function handle_new_item()
+function handle_new_item(): void
 {
 	if (!isset($_POST['std_cost']))
    		$_POST['std_cost'] = 0;

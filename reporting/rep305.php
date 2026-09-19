@@ -85,7 +85,7 @@ function getSuppInvDetails($grn_item_id)
 
 //----------------------------------------------------------------------------------------------------
 
-function print_grn_valuation()
+function print_grn_valuation(): void
 {
     global $path_to_root;
 

@@ -74,7 +74,7 @@ function getTransactions($supplier_id, $from, $to)
 
 //----------------------------------------------------------------------------------------------------
 
-function print_supplier_balances()
+function print_supplier_balances(): void
 {
     global $path_to_root, $systypes_array;
 

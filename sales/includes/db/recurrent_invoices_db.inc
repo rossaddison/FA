@@ -11,7 +11,7 @@
 ***********************************************************************/
 
 function add_recurrent_invoice($description, $order_no, $debtor_no, $group_no, $days, $monthly,
-	$begin, $end)
+	$begin, $end): void
 {
 	$sql = "INSERT INTO ".TB_PREF."recurrent_invoices (description, order_no, debtor_no,
 		group_no, days, monthly, begin, end, last_sent) VALUES (".db_escape($description) . ", "
@@ -22,7 +22,7 @@ function add_recurrent_invoice($description, $order_no, $debtor_no, $group_no, $
 }
 
 function update_recurrent_invoice($selected_id, $description, $order_no, $debtor_no, $group_no, $days, $monthly,
-	$begin, $end)
+	$begin, $end): void
 {
 	$sql = "UPDATE ".TB_PREF."recurrent_invoices SET 
 		description=".db_escape($description).", 
@@ -37,7 +37,7 @@ function update_recurrent_invoice($selected_id, $description, $order_no, $debtor
    	db_query($sql,"The recurrent invoice could not be updated");
 }
 
-function update_last_sent_recurrent_invoice($id, $date)
+function update_last_sent_recurrent_invoice($id, $date): void
 {
 	$date = date2sql($date);
 	$sql = "UPDATE ".TB_PREF."recurrent_invoices SET last_sent='$date' WHERE id=".db_escape($id);
@@ -45,7 +45,7 @@ function update_last_sent_recurrent_invoice($id, $date)
    	db_query($sql,"The recurrent invoice could not be updated");
 }
 
-function delete_recurrent_invoice($selected_id)
+function delete_recurrent_invoice($selected_id): void
 {
 	$sql="DELETE FROM ".TB_PREF."recurrent_invoices WHERE id=".db_escape($selected_id);
 	db_query($sql,"could not delete recurrent invoice");

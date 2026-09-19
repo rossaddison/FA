@@ -158,7 +158,7 @@ function write_journal_entries(&$cart)
 
 //----------------------------------------------------------------------------------------
 
-function void_journal_trans($type, $type_no, $use_transaction=true)
+function void_journal_trans($type, $type_no, $use_transaction=true): void
 {
 	if ($use_transaction)
 		begin_transaction();

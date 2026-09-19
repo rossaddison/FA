@@ -102,7 +102,7 @@ if (isset($_GET['ClosedID']))
 
 //---------------------------------------------------------------------------------------
 
-function safe_exit()
+function safe_exit(): void
 {
 	global $path_to_root;
 

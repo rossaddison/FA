@@ -62,7 +62,7 @@ function GetSalesmanTrans($from, $to)
 
 //----------------------------------------------------------------------------------------------------
 
-function print_salesman_list()
+function print_salesman_list(): void
 {
 	global $path_to_root;
 

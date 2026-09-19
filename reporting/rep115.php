@@ -107,7 +107,7 @@ function get_customer_reference ($order_number)
 }
 //----------------------------------------------------------------------------------------------------
 
-function print_customer_balances()
+function print_customer_balances(): void
 {
     global $path_to_root, $systypes_array;
 

@@ -58,7 +58,7 @@ function array_natsort($aryData, $strIndex, $strSortBy, $strSortType=false)
    return $aryResult;
 }
 
-function update_admin_password($conn, $password)
+function update_admin_password($conn, $password): void
 {
 	$sql = "UPDATE ".$conn['tbpref']."users SET password=".db_escape($password) . "
 		WHERE user_id='admin'";
@@ -946,7 +946,7 @@ function save_to_file($path, $zip, $fileData)
     }
 }
 
-function create_comp_dirs($comp_path, $comp_subdirs)
+function create_comp_dirs($comp_path, $comp_subdirs): void
 {
 		$index = "<?php\nheader(\"Location: ../index.php\");\n";
 	    $cdir = $comp_path;

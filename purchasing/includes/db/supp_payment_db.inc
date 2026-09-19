@@ -96,7 +96,7 @@ function write_supp_payment($trans_no, $supplier_id, $bank_account,
 
 //------------------------------------------------------------------------------------------------
 
-function void_supp_payment($type, $type_no)
+function void_supp_payment($type, $type_no): void
 {
 	begin_transaction();
 	hook_db_prevoid($type, $type_no);

@@ -38,7 +38,7 @@ if (isset($_GET['ModifyGL'])) {
 page($_SESSION['page_title'], false, false,'', $js);
 //--------------------------------------------------------------------------------------------------
 
-function line_start_focus() {
+function line_start_focus(): void {
   global 	$Ajax;
 
   unset($_POST['Index']);
@@ -95,7 +95,7 @@ elseif (isset($_GET['ModifyGL']))
 	create_cart($_GET['trans_type'], $_GET['trans_no']);
 }
 
-function create_cart($type=0, $trans_no=0)
+function create_cart($type=0, $trans_no=0): void
 {
 	global $Refs;
 
@@ -176,7 +176,7 @@ function create_cart($type=0, $trans_no=0)
 	$_SESSION['journal_items'] = &$cart;
 }
 
-function update_tax_info()
+function update_tax_info(): void
 {
 
 	if (!isset($_SESSION['journal_items']->tax_info) || list_updated('tax_category'))
@@ -415,7 +415,7 @@ function check_item_data()
 
 //-----------------------------------------------------------------------------------------------
 
-function handle_update_item()
+function handle_update_item(): void
 {
     if($_POST['UpdateItem'] != "" && check_item_data())
     {
@@ -433,7 +433,7 @@ function handle_update_item()
 
 //-----------------------------------------------------------------------------------------------
 
-function handle_delete_item($id)
+function handle_delete_item($id): void
 {
 	$_SESSION['journal_items']->remove_gl_item($id);
    	unset($_SESSION['journal_items']->tax_info);
@@ -442,7 +442,7 @@ function handle_delete_item($id)
 
 //-----------------------------------------------------------------------------------------------
 
-function handle_new_item()
+function handle_new_item(): void
 {
 	if (!check_item_data())
 		return;

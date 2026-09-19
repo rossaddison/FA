@@ -57,7 +57,7 @@ function get_bank_transactions($from, $to, $account)
 	return db_query($sql,"The transactions for '$account' could not be retrieved");
 }
 
-function print_bank_transactions_reconcile()
+function print_bank_transactions_reconcile(): void
 {
 	global $path_to_root, $systypes_array;
 

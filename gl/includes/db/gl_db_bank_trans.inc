@@ -16,7 +16,7 @@
 // $date_ is display date (non-sql)
 
 function add_bank_trans($type, $trans_no, $bank_act, $ref, $date_,
-	$amount, $person_type_id, $person_id, $currency="", $err_msg="", $rate=0)
+	$amount, $person_type_id, $person_id, $currency="", $err_msg="", $rate=0): void
 {
 	$sqlDate = date2sql($date_);
 
@@ -139,7 +139,7 @@ function get_gl_trans_value($account, $type, $trans_no)
 
 //----------------------------------------------------------------------------------------
 
-function void_bank_trans($type, $type_no, $nested=false)
+function void_bank_trans($type, $type_no, $nested=false): void
 {
 
 	if (!$nested)

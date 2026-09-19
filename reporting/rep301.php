@@ -131,7 +131,7 @@ function getTransactions($category, $location, $date)
 
 //----------------------------------------------------------------------------------------------------
 
-function print_inventory_valuation_report()
+function print_inventory_valuation_report(): void
 {
     global $path_to_root, $SysPrefs;
 

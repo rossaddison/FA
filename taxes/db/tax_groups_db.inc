@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_tax_group($name, $taxes, $tax_shippings)
+function add_tax_group($name, $taxes, $tax_shippings): void
 {
 	begin_transaction();
 
@@ -23,7 +23,7 @@ function add_tax_group($name, $taxes, $tax_shippings)
 	commit_transaction();	
 }
 
-function update_tax_group($id, $name, $taxes, $tax_shippings)
+function update_tax_group($id, $name, $taxes, $tax_shippings): void
 {
 	begin_transaction();	
 
@@ -53,7 +53,7 @@ function get_tax_group($type_id)
 	return db_fetch($result);
 }
 
-function delete_tax_group($id)
+function delete_tax_group($id): void
 {
 	begin_transaction();
 		
@@ -66,7 +66,7 @@ function delete_tax_group($id)
 	commit_transaction();
 }
 
-function add_tax_group_items($id, $items, $tax_shippings)
+function add_tax_group_items($id, $items, $tax_shippings): void
 {
 	for ($i=0; $i < count($items); $i++) 
 	{
@@ -76,7 +76,7 @@ function add_tax_group_items($id, $items, $tax_shippings)
 	}		
 }
 
-function delete_tax_group_items($id)
+function delete_tax_group_items($id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."tax_group_items WHERE tax_group_id=".db_escape($id);
 	

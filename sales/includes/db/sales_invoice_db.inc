@@ -223,7 +223,7 @@ function write_sales_invoice(&$invoice)
 
 //--------------------------------------------------------------------------------------------------
 
-function void_sales_invoice($type, $type_no)
+function void_sales_invoice($type, $type_no): void
 {
 	begin_transaction();
 

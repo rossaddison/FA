@@ -51,7 +51,7 @@ if (get_post('TransFromDate') == "" && get_post('TransToDate') == "")
 
 //----------------------------------------------------------------------------------------------------
 
-function tax_inquiry_controls()
+function tax_inquiry_controls(): void
 {
     start_form();
 
@@ -71,7 +71,7 @@ function tax_inquiry_controls()
 
 //----------------------------------------------------------------------------------------------------
 
-function show_results()
+function show_results(): void
 {
     /*Now get the transactions  */
 	div_start('trans_tbl');

@@ -169,7 +169,7 @@ function handle_submit($selected_id)
 
 //---------------------------------------------------------------------------------------------
 
-function handle_delete($id)
+function handle_delete($id): void
 {
 	global $Ajax, $def_coy, $db_connections, $comp_subdirs, $path_to_root, $Mode;
 
@@ -236,7 +236,7 @@ function handle_delete($id)
 
 //---------------------------------------------------------------------------------------------
 
-function display_companies()
+function display_companies(): void
 {
 	global $def_coy, $db_connections, $supported_collations;
 
@@ -286,7 +286,7 @@ function display_companies()
 
 //---------------------------------------------------------------------------------------------
 
-function display_company_edit($selected_id)
+function display_company_edit($selected_id): void
 {
 	global $def_coy, $db_connections, $tb_pref_counter;
 

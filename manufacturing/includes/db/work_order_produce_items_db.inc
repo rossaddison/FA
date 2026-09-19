@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function work_order_produce($woid, $ref, $quantity, $date_, $memo, $close_wo)
+function work_order_produce($woid, $ref, $quantity, $date_, $memo, $close_wo): void
 {
 	global $Refs;
 
@@ -145,7 +145,7 @@ function check_void_wo_production($prod_no)
 
 //--------------------------------------------------------------------------------------------
 
-function void_work_order_produce($type_no)
+function void_work_order_produce($type_no): void
 {
 	begin_transaction();
 	hook_db_prevoid(ST_MANURECEIVE, $type_no);

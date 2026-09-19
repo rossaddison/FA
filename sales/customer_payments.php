@@ -255,7 +255,7 @@ if (get_post('AddPaymentItem') && can_process()) {
 
 //----------------------------------------------------------------------------------------------
 
-function read_customer_data()
+function read_customer_data(): void
 {
 	global $Refs;
 

@@ -29,7 +29,7 @@ include_once($path_to_root . "/taxes/tax_calc.inc");
 
 print_sales_orders();
 
-function print_sales_orders()
+function print_sales_orders(): void
 {
 	global $path_to_root, $SysPrefs;
 

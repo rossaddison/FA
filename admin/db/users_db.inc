@@ -115,7 +115,7 @@ function get_user_by_email($email)
 
 //-----------------------------------------------------------------------------------------------
 
-function delete_user($id)
+function delete_user($id): void
 {
 	$sql="DELETE FROM ".TB_PREF."users WHERE id=".db_escape($id);
 
@@ -135,7 +135,7 @@ function get_user_auth($user_id, $password)
 
 //-----------------------------------------------------------------------------------------------
 
-function update_user_visitdate($user_id)
+function update_user_visitdate($user_id): void
 {
 	$sql = "UPDATE ".TB_PREF."users SET last_visit_date='". date("Y-m-d H:i:s") ."'
 		WHERE user_id=".db_escape($user_id);

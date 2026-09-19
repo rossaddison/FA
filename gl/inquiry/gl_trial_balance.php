@@ -39,7 +39,7 @@ if (get_post('Show'))
 }
 
 
-function gl_inquiry_controls()
+function gl_inquiry_controls(): void
 {
 	$dim = get_company_pref('use_dimension');
     start_form();
@@ -69,7 +69,7 @@ function gl_inquiry_controls()
 
 //----------------------------------------------------------------------------------------------------
 
-function display_trial_balance($type, $typename)
+function display_trial_balance($type, $typename): void
 {
 	global $path_to_root, $SysPrefs,
 		 $k, $pdeb, $pcre, $cdeb, $ccre, $tdeb, $tcre, $pbal, $cbal, $tbal;

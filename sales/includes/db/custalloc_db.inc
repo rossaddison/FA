@@ -12,7 +12,7 @@
 //----------------------------------------------------------------------------------------
 
 function add_cust_allocation($amount, $trans_type_from, $trans_no_from,
-	$trans_type_to, $trans_no_to, $person_id, $date_)
+	$trans_type_to, $trans_no_to, $person_id, $date_): void
 {
 	$date = date2sql($date_);
 	$sql = "INSERT INTO ".TB_PREF."cust_allocations (
@@ -44,7 +44,7 @@ function get_cust_allocation($trans_id)
 //----------------------------------------------------------------------------------------
 //	Update debtor trans alloc field according to current status of cust_allocations
 //
-function update_debtor_trans_allocation($trans_type, $trans_no, $person_id)
+function update_debtor_trans_allocation($trans_type, $trans_no, $person_id): void
 {
 	$dec = user_price_dec();
 	$sql = 
@@ -69,7 +69,7 @@ function void_cust_allocations($type, $type_no, $date="")
 
 //-------------------------------------------------------------------------------------------------------------
 //
-function clear_cust_alloctions($type, $type_no, $person_id=null, $date="")
+function clear_cust_alloctions($type, $type_no, $person_id=null, $date=""): void
 {
 	$sql = "UPDATE  ".TB_PREF."cust_allocations ca
 				LEFT JOIN ".TB_PREF."debtor_trans paym ON ca.trans_type_from=paym.type AND ca.trans_no_from=paym.trans_no AND ca.person_id=paym.debtor_no

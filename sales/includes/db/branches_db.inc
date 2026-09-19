@@ -12,7 +12,7 @@
 function add_branch($customer_id, $br_name, $br_ref, $br_address, $salesman, $area, 
 	$tax_group_id, $sales_account, $sales_discount_account, $receivables_account, 
 	$payment_discount_account, $default_location, $br_post_address, $group_no,
-	$default_ship_via, $notes, $bank_account)
+	$default_ship_via, $notes, $bank_account): void
 {
 	$sql = "INSERT INTO ".TB_PREF."cust_branch (debtor_no, br_name, branch_ref, br_address,
 		salesman, area, tax_group_id, sales_account, receivables_account, payment_discount_account, 
@@ -39,7 +39,7 @@ function add_branch($customer_id, $br_name, $br_ref, $br_address, $salesman, $ar
 function update_branch($customer_id, $branch_code, $br_name, $br_ref, $br_address,
 	$salesman, $area, $tax_group_id, $sales_account, $sales_discount_account, $receivables_account, 
 	$payment_discount_account, $default_location, $br_post_address, $group_no,
-	$default_ship_via, $notes, $bank_account)
+	$default_ship_via, $notes, $bank_account): void
 {
 	$sql = "UPDATE ".TB_PREF."cust_branch SET br_name = " . db_escape($br_name) . ",
 		branch_ref = " . db_escape($br_ref) . ",
@@ -62,7 +62,7 @@ function update_branch($customer_id, $branch_code, $br_name, $br_ref, $br_addres
 	db_query($sql,"The branch record could not be updated");
 }
 
-function delete_branch($customer_id, $branch_code)
+function delete_branch($customer_id, $branch_code): void
 {
 	delete_entity_contacts('cust_branch', $branch_code);
 

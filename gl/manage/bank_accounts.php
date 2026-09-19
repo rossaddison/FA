@@ -159,7 +159,7 @@ inactive_control_row($th);
 end_table(1);
 
 
-function bank_account_settings($bank_id)
+function bank_account_settings($bank_id): void
 {
 	global $Mode, $bank_account_types, $page_nested;
 

@@ -13,7 +13,7 @@
 //----------------------------------------------------------------------------------------
 
 function add_attachment($filterType, $trans_no, $description,
-	$filename, $unique_name, $filesize, $filetype)
+	$filename, $unique_name, $filesize, $filetype): void
 {
 	$date = date2sql(Today());
 	$sql = "INSERT INTO ".TB_PREF."attachments (type_no, trans_no, description, filename, unique_name,
@@ -26,7 +26,7 @@ function add_attachment($filterType, $trans_no, $description,
 //----------------------------------------------------------------------------------------
 
 function update_attachment($selected_id, $filterType, $trans_no, $description,
-	$filename, $unique_name, $filesize, $filetype)
+	$filename, $unique_name, $filesize, $filetype): void
 {
 	$date = date2sql(Today());
 	$sql = "UPDATE ".TB_PREF."attachments SET
@@ -46,14 +46,14 @@ function update_attachment($selected_id, $filterType, $trans_no, $description,
 
 //----------------------------------------------------------------------------------------
 
-function delete_attachment($id)
+function delete_attachment($id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."attachments WHERE id = ".db_escape($id);
 	db_query($sql, "Could not delete attachment");
 }
 
 
-function delete_attachments($type_no, $trans_no)
+function delete_attachments($type_no, $trans_no): void
 {
 	$type_no = db_escape($type_no);
 	$trans_no = db_escape($trans_no);
@@ -130,7 +130,7 @@ function get_sql_for_attached_documents($type, $id_no)
 	return $sql;
 }
 
-function move_trans_attachments($type, $trans_from, $trans_to)
+function move_trans_attachments($type, $trans_from, $trans_to): void
 {
 	$sql = "UPDATE ".TB_PREF."attachments SET trans_no=".db_escape($trans_to)
 		." WHERE type_no=".db_escape($type)." AND trans_no=".db_escape($trans_from);

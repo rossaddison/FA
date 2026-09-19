@@ -45,7 +45,7 @@ function check_data()
 
 //---------------------------------------------------------------------------------------------
 
-function handle_submit()
+function handle_submit(): void
 {
   if (!check_data())
     return;
@@ -87,7 +87,7 @@ check_db_has_depreciable_fixed_assets(_("There are no fixed assets that could be
 
 //---------------------------------------------------------------------------------------------
 
-function show_gl_rows() {
+function show_gl_rows(): void {
 
   $item = get_item($_POST['stock_id']);
 
@@ -129,7 +129,7 @@ function show_gl_rows() {
   submit_center('process', _("Process Depreciation"), true, false);
 }
 
-function show_gl_controls() {
+function show_gl_controls(): void {
   global $Ajax;
 
   check_db_has_depreciable_fixed_assets('There are no active fixed asset defined in the system.');

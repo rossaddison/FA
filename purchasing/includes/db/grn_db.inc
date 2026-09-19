@@ -215,7 +215,7 @@ function get_grn_batch($grn)
 	return db_fetch($result);
 }
 
-function set_grn_item_credited(&$entered_grn, $supplier, $transno, $date, $taxfree_line)
+function set_grn_item_credited(&$entered_grn, $supplier, $transno, $date, $taxfree_line): void
 {
 	$mcost = update_average_material_cost($supplier, $entered_grn->item_code,
 		$taxfree_line, $entered_grn->this_quantity_inv, $date);
@@ -323,7 +323,7 @@ function get_grn_item_detail($grn_item_no)
 
 //----------------------------------------------------------------------------------------
 
-function read_grn_items_to_order($grn_batch, &$order)
+function read_grn_items_to_order($grn_batch, &$order): void
 {
 	$result = get_grn_items($grn_batch);
 
@@ -357,7 +357,7 @@ function read_grn_items_to_order($grn_batch, &$order)
 
 // read a grn into an order class
 
-function read_grn($grn_batch, &$order)
+function read_grn($grn_batch, &$order): void
 {
 	$sql= "SELECT *	FROM ".TB_PREF."grn_batch WHERE id=".db_escape($grn_batch);
 

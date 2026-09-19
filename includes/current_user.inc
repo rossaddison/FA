@@ -296,7 +296,7 @@ class current_user
 
 //--------------------------------------------------------------------------
 
-function round2($number, $decimals=0)
+function round2($number, $decimals=0): float
 {
 	$delta = ($number < 0 ? -.0000000001 : .0000000001);
 	return round($number+$delta, $decimals);
@@ -307,7 +307,7 @@ function round2($number, $decimals=0)
 	(defualt is 0). When $decimals is set to 'max' maximum available precision is used 
 	(decimals depend on value) and trailing zeros are trimmed.
 */
-function number_format2($number, $decimals=0)
+function number_format2($number, $decimals=0): string
 {
 	global $SysPrefs;
 	$tsep = $SysPrefs->thoseps[user_tho_sep()];
@@ -348,7 +348,7 @@ function fallback_mode() {
     return $_SESSION["wa_current_user"]->ui_mode==0;
 }
 
-function price_format($number) {
+function price_format($number): string {
     return number_format2($number, user_price_dec());
 }
 
@@ -397,7 +397,7 @@ function exrate_format($number) {
 	$_SESSION["wa_current_user"]->prefs->exrate_dec());
 }
 
-function percent_format($number) {
+function percent_format($number): string {
     return number_format2($number,
 	$_SESSION["wa_current_user"]->prefs->percent_dec());
 }
@@ -483,7 +483,7 @@ function user_date_format()
 	return isset($_SESSION["wa_current_user"]) ? $_SESSION["wa_current_user"]->prefs->date_format() : $SysPrefs->dflt_date_fmt;
 }
 
-function user_date_display()
+function user_date_display(): void
 {
  	$fmt ='m/d/Y';
  	if (isset($_SESSION["wa_current_user"])) {
@@ -600,12 +600,12 @@ function user_check_access($sec_area)
 	return $_SESSION["wa_current_user"]->can_access($sec_area);
 }
 
-function set_user_prefs($prefs)
+function set_user_prefs($prefs): void
 {
 	$_SESSION["wa_current_user"]->update_prefs($prefs);
 }
 
-function add_user_js_data() {
+function add_user_js_data(): void {
 	global $path_to_root, $SysPrefs;
 
 	$ts = $SysPrefs->thoseps[user_tho_sep()];
@@ -650,7 +650,7 @@ function session_timeout()
 //	Inserts $elements into $array at position $index.
 //	$elements is list of any objects
 //
-function array_insert(&$array, $index, $elements)
+function array_insert(&$array, $index, $elements): void
 {
 	if (!is_array($elements)) $elements = array($elements);
 
@@ -658,18 +658,18 @@ function array_insert(&$array, $index, $elements)
 	$array = array_merge($head, $elements, $array);
 }
 
-function array_remove(&$array, $index, $len=1)
+function array_remove(&$array, $index, $len=1): void
 {
 	array_splice($array, $index, $len);
 }
 
-function array_substitute(&$array, $index, $len, $elements)
+function array_substitute(&$array, $index, $len, $elements): void
 {
 	array_splice($array, $index, $len);
 	array_insert($array, $index, $elements);
 }
 
-function array_append(&$array, $elements)
+function array_append(&$array, $elements): void
 {
 	foreach($elements as $key => $el) {
 		if(is_int($key))
@@ -722,14 +722,14 @@ function array_search_key($needle, $haystack, $valuekey=null)
 }
 
 // Recalculate report columns if orientation is landscape.
-function recalculate_cols(&$cols)
+function recalculate_cols(&$cols): void
 {
 	$factor = (user_pagesize() == "A4" ? 1.4 : 1.3);
 	foreach($cols as $key => $col)
 		$cols[$key] = intval($col * $factor); 
 }
 
-function flush_dir($path, $wipe = false) 
+function flush_dir($path, $wipe = false): void 
 {
 	if (!file_exists($path))
 		return;

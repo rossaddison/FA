@@ -27,7 +27,7 @@ if (file_exists($path_to_root . "/installed_extensions.php"))
 	include($path_to_root . "/installed_extensions.php");
 //-------------------------------------------------------------------------------------------------
 
-function subpage_title($txt) 
+function subpage_title($txt): void 
 {
 	global $path_to_root;
 	
@@ -43,7 +43,7 @@ function subpage_title($txt)
 	br();
 }
 
-function display_coas()
+function display_coas(): void
 {
 	start_table(TABLESTYLE);
 	$th = array(_("Chart of accounts"), _("Encoding"), _("Description"), _("Install"));
@@ -70,7 +70,7 @@ function display_coas()
 	end_table(1);
 }
 
-function display_langs()
+function display_langs(): void
 {
 	start_table(TABLESTYLE);
 	$th = array(_("Language"), _("Encoding"), _("Description"), _("Install"));
@@ -97,7 +97,7 @@ function display_langs()
 	end_table(1);
 }
 
-function instlang_list_row($label, $name, $value=null) {
+function instlang_list_row($label, $name, $value=null): void {
 
 	global $inst_langs;
 

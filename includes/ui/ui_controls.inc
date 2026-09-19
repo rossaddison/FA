@@ -34,7 +34,7 @@ function get_post($name, $dflt='')
 //---------------------------------------------------------------------------------
 $form_nested = -1;
 
-function start_form($multi=false, $dummy=false, $action="", $name="")
+function start_form($multi=false, $dummy=false, $action="", $name=""): void
 {
 	// $dummy - leaved for compatibility with 2.0 API
 	global $form_nested;
@@ -56,7 +56,7 @@ function start_form($multi=false, $dummy=false, $action="", $name="")
 /*
 	Flush hidden fields buffer.
 */
-function output_hidden()
+function output_hidden(): void
 {
 	global $hidden_fields;
 
@@ -66,7 +66,7 @@ function output_hidden()
 }
 //---------------------------------------------------------------------------------
 
-function end_form($breaks=0)
+function end_form($breaks=0): void
 {
 	global $Ajax, $form_nested, $hidden_fields;
 
@@ -97,7 +97,7 @@ function check_csrf_token()
 	return true;
 }
 
-function start_table($class=false, $extra="", $padding='2', $spacing='0')
+function start_table($class=false, $extra="", $padding='2', $spacing='0'): void
 {
 	echo "<center><table";
 	if ($class == TABLESTYLE_NOBORDER)
@@ -111,7 +111,7 @@ function start_table($class=false, $extra="", $padding='2', $spacing='0')
 	echo " cellpadding='$padding' cellspacing='$spacing'>\n";
 }
 
-function end_table($breaks=0)
+function end_table($breaks=0): void
 {
 	echo "</table></center>\n";
 	output_hidden();
@@ -119,7 +119,7 @@ function end_table($breaks=0)
 		br($breaks);
 }
 
-function start_outer_table($class=false, $extra="", $padding='2', $spacing='0', $br=false)
+function start_outer_table($class=false, $extra="", $padding='2', $spacing='0', $br=false): void
 {
 	if ($br)
 		br();
@@ -127,7 +127,7 @@ function start_outer_table($class=false, $extra="", $padding='2', $spacing='0', 
 	echo "<tr valign=top><td>\n"; // outer table
 }
 
-function table_section($number=1, $width=false)
+function table_section($number=1, $width=false): void
 {
 	if ($number > 1)
 	{
@@ -139,7 +139,7 @@ function table_section($number=1, $width=false)
 	echo "<table class='tablestyle_inner'>\n";
 }	
 
-function end_outer_table($breaks=0, $close_table=true)
+function end_outer_table($breaks=0, $close_table=true): void
 {
 	if ($close_table)
 	{
@@ -152,12 +152,12 @@ function end_outer_table($breaks=0, $close_table=true)
 //
 //  outer table spacer
 //
-function vertical_space($params='')
+function vertical_space($params=''): void
 {
 	echo "</td></tr><tr><td valign=center $params>";
 }
 
-function meta_forward($forward_to, $params="", $timeout=0, $return=false)
+function meta_forward($forward_to, $params="", $timeout=0, $return=false): void
 {
     global $Ajax;
 	echo "<meta http-equiv='Refresh' content='".$timeout."; url=$forward_to?$params'>\n";
@@ -191,7 +191,7 @@ function access_string($label, $clean=false)
 	return $clean ? $label : array($label, $access);
 }
 
-function hyperlink_back($center=true, $no_menu=true, $type_no=0, $trans_no=0, $final=false)
+function hyperlink_back($center=true, $no_menu=true, $type_no=0, $trans_no=0, $final=false): void
 {
 	global $path_to_root;
 
@@ -220,7 +220,7 @@ function hyperlink_back($center=true, $no_menu=true, $type_no=0, $trans_no=0, $f
 	echo "<br>";
 }
 
-function hyperlink_no_params($target, $label, $center=true)
+function hyperlink_no_params($target, $label, $center=true): void
 {
 	$id = default_focus();
 	$pars = access_string($label);
@@ -233,7 +233,7 @@ function hyperlink_no_params($target, $label, $center=true)
 		echo "</center>";
 }
 
-function hyperlink_no_params_td($target, $label)
+function hyperlink_no_params_td($target, $label): void
 {
 	echo "<td>";
 	hyperlink_no_params($target, $label);
@@ -276,23 +276,23 @@ function menu_link($url, $label, $id=null)
 	return "<a href='$url' class='menu_option' id='$id' $pars[1]>$pars[0]</a>";
 }
 
-function submenu_option($title, $url, $id=null)
+function submenu_option($title, $url, $id=null): void
 {
 	display_note( menu_link($url, $title, $id), 0, 1);
 }
 
-function submenu_view($title, $type, $number, $id=null)
+function submenu_view($title, $type, $number, $id=null): void
 {
 	display_note(get_trans_view_str($type, $number, $title, false, 'viewlink', $id), 0, 1);
 }
 
-function submenu_print($title, $type, $number, $id=null, $email=0, $extra=0)
+function submenu_print($title, $type, $number, $id=null, $email=0, $extra=0): void
 {
 	display_note(print_document_link($number, $title, true, $type, false, 'printlink', $id, $email, $extra), 0, 1);
 }
 //-----------------------------------------------------------------------------------
 
-function hyperlink_params($target, $label, $params, $center=true)
+function hyperlink_params($target, $label, $params, $center=true): void
 {
 	$id = default_focus();
 	
@@ -306,7 +306,7 @@ function hyperlink_params($target, $label, $params, $center=true)
 		echo "</center>";
 }
 
-function hyperlink_params_td($target, $label, $params)
+function hyperlink_params_td($target, $label, $params): void
 {
 	echo "<td>";
 	hyperlink_params($target, $label, $params, false);
@@ -315,7 +315,7 @@ function hyperlink_params_td($target, $label, $params)
 
 //-----------------------------------------------------------------------------------
 
-function hyperlink_params_separate($target, $label, $params, $center=false)
+function hyperlink_params_separate($target, $label, $params, $center=false): void
 {
 	$id = default_focus();
 
@@ -327,7 +327,7 @@ function hyperlink_params_separate($target, $label, $params, $center=false)
 		echo "</center>";
 }
 
-function hyperlink_params_separate_td($target, $label, $params)
+function hyperlink_params_separate_td($target, $label, $params): void
 {
 	echo "<td>";
 	hyperlink_params_separate($target, $label, $params);
@@ -336,7 +336,7 @@ function hyperlink_params_separate_td($target, $label, $params)
 
 //--------------------------------------------------------------------------------------------------
 
-function alt_table_row_color(&$k, $extra_class=null)
+function alt_table_row_color(&$k, $extra_class=null): void
 {
 	$classes = $extra_class ? array($extra_class) : array();
 	if ($k == 1)
@@ -352,12 +352,12 @@ function alt_table_row_color(&$k, $extra_class=null)
 	echo "<tr class='".implode(' ', $classes)."'>\n";
 }
 
-function table_section_title($msg, $colspan=2)
+function table_section_title($msg, $colspan=2): void
 {
 	echo "<tr><td colspan=$colspan class='tableheader'>$msg</td></tr>\n";
 }
 
-function table_header($labels, $params='')
+function table_header($labels, $params=''): void
 {
 	start_row();
 	foreach ($labels as $label)
@@ -366,7 +366,7 @@ function table_header($labels, $params='')
 }
 //-----------------------------------------------------------------------------------
 
-function start_row($param="")
+function start_row($param=""): void
 {
 	if ($param != "")
 		echo "<tr $param>\n";
@@ -374,12 +374,12 @@ function start_row($param="")
 		echo "<tr>\n";
 }
 
-function end_row()
+function end_row(): void
 {
 	echo "</tr>\n";
 }
 
-function br($num=1)
+function br($num=1): void
 {
 	for ($i = 0; $i < $num; $i++)
 		echo "<br>";
@@ -387,7 +387,7 @@ function br($num=1)
 
 $ajax_divs = array();
 
-function div_start($id='', $trigger=null, $non_ajax=false)
+function div_start($id='', $trigger=null, $non_ajax=false): void
 {
     global $ajax_divs;
 
@@ -401,7 +401,7 @@ function div_start($id='', $trigger=null, $non_ajax=false)
 	}
 }
 
-function div_end()
+function div_end(): void
 {
     global $ajax_divs, $Ajax;
 
@@ -423,7 +423,7 @@ function div_end()
 //		sel (hidden) name: _{$name}_sel
 // $tabs - array of tabs; string: tab title or array(tab_title, enabled_status)
 
-function tabbed_content_start($name, $tabs, $dft='') {
+function tabbed_content_start($name, $tabs, $dft=''): void {
     global $Ajax;
 
     $selname = '_'.$name.'_sel';
@@ -459,7 +459,7 @@ function tabbed_content_start($name, $tabs, $dft='') {
 	echo $str;
 }
 
-function tabbed_content_end() {
+function tabbed_content_end(): void {
 	output_hidden();
 	echo "</div>"; // content box (don't change to div_end() unless div_start() is used above)
 	div_end(); // tabs widget
@@ -520,7 +520,7 @@ $popup_editors = array(
 	$caller - optional function key code (available values F1-F12: 112-123,
 		true: default)
 */
-function set_editor($type, $input, $caller=true)
+function set_editor($type, $input, $caller=true): void
 {
 	global $path_to_root, $Editors, $popup_editors, $Pagehelp;
 
@@ -542,7 +542,7 @@ function set_editor($type, $input, $caller=true)
 	$ctx - optional. name of SESSION context object or array of names of POST 
 		variables saved on call
 */
-function context_call($call, $ctx='')
+function context_call($call, $ctx=''): void
 {
 	if (is_array($ctx)) 
 	{
@@ -587,7 +587,7 @@ function context_restore()
 /*
 	Return to caller page if the page was called from external context.
 */
-function context_return($ret)
+function context_return($ret): void
 {
 	if ( count($_SESSION['Context'])) {
 		$ctx = &$_SESSION['Context'][0];
@@ -598,7 +598,7 @@ function context_return($ret)
 /*
 	Clearing context stack after page cancel.
 */
-function context_reset()
+function context_reset(): void
 {
 	$_SESSION['Context'] = array();
 }
@@ -612,7 +612,7 @@ if (!isset($_SESSION['Context'])) {
 	Redirector for selector F4 calls.
 	$sel_editors is array of selname=>editor_page
 */
-function editor_redirect($sel_editors, $save_fun='') {
+function editor_redirect($sel_editors, $save_fun=''): void {
 	foreach ($sel_editors as $selname=>$editor)
 		if (isset($_POST['_'.$selname.'_editor'])) {
 			if (function_exists($save_fun))
@@ -624,7 +624,7 @@ function editor_redirect($sel_editors, $save_fun='') {
 /*
 	Return procedure for selector F4 calls
 */
-function editor_return($vars, $restore_fun='') {
+function editor_return($vars, $restore_fun=''): void {
 	if (function_exists($restore_fun))
 		$restore_fun();
 
@@ -666,7 +666,7 @@ function display_confirmation($msg)
 /*
 	Block menu/shortcut links during transaction procesing.
 */
-function page_processing($msg = false)
+function page_processing($msg = false): void
 {
 	global $Ajax;
 
@@ -681,7 +681,7 @@ function page_processing($msg = false)
 		add_js_source($js);
 }
 
-function page_modified($status = true)
+function page_modified($status = true): void
 {
 	global $Ajax;
 

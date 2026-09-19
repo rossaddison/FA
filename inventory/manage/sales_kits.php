@@ -28,7 +28,7 @@ check_db_has_stock_items(_("There are no items defined in the system."));
 simple_page_mode(true);
 
 //--------------------------------------------------------------------------------------------------
-function display_kit_items($selected_kit)
+function display_kit_items($selected_kit): void
 {
 	$result = get_item_kit($selected_kit);
 	div_start('bom');

@@ -53,7 +53,7 @@ function getTransactions($from, $to, $type, $user)
 }
 //----------------------------------------------------------------------------------------------------
 
-function print_audit_trail()
+function print_audit_trail(): void
 {
     global $path_to_root, $systypes_array;
 

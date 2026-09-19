@@ -58,7 +58,7 @@ function getTransactions($supplier_id, $date)
 
 //----------------------------------------------------------------------------------------------------
 
-function print_supplier_details_listing()
+function print_supplier_details_listing(): void
 {
     global $path_to_root;
 
@@ -85,8 +85,8 @@ function print_supplier_details_listing()
 	else
 		$lessstr = '';
 
-	$more = (double)$more;
-	$less = (double)$less;
+	$more = (float)$more;
+	$less = (float)$less;
 
 	$cols = array(0, 150, 300, 425, 550);
 
@@ -115,9 +115,9 @@ function print_supplier_details_listing()
 		if ($more != '' || $less != '')
 		{
 			$turnover = getTransactions($myrow['supplier_id'], $from);
-			if ($more != 0.0 && $turnover <= (double)$more)
+			if ($more != 0.0 && $turnover <= (float)$more)
 				$printsupplier = false;
-			if ($less != 0.0 && $turnover >= (double)$less)
+			if ($less != 0.0 && $turnover >= (float)$less)
 				$printsupplier = false;
 		}
 		if ($printsupplier)

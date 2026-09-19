@@ -276,7 +276,7 @@ function get_purchases_from_trans($stock_id, $move_id)
 	This routine fixes stock and COGS balances for all $stock_id sales made during negative inventory status.
 	This is called when delivery is received causing inventory status to be positive again.
 */
-function adjust_deliveries($stock_id, $material_cost, $to)
+function adjust_deliveries($stock_id, $material_cost, $to): void
 {
 	global $Refs;
 
@@ -351,7 +351,7 @@ function get_purchase_value($stock_id)
 	return is_array($row) ? $row[0] : false;
 }
 
-function update_purchase_value($stock_id, $price)
+function update_purchase_value($stock_id, $price): void
 {
 	$price = round2($price, user_price_dec());
 	$sql = "UPDATE ".TB_PREF."stock_master SET purchase_cost=".db_escape($price)
@@ -360,7 +360,7 @@ function update_purchase_value($stock_id, $price)
 }	
 //-----------------------------------------------------------------------------------------
 
-function handle_negative_inventory($stock_id, $quantity, $standard_cost, $date_)
+function handle_negative_inventory($stock_id, $quantity, $standard_cost, $date_): void
 {
 	//If negative adjustment result in negative or zero inventory
 	//then difference should be adjusted
@@ -424,7 +424,7 @@ function add_stock_move($type, $stock_id, $trans_no, $location,
 	return db_insert_id();
 }
 
-function update_stock_move($type, $trans_no, $stock_id, $cost)
+function update_stock_move($type, $trans_no, $stock_id, $cost): void
 {
 	$sql = "UPDATE ".TB_PREF."stock_moves SET standard_cost=".db_escape($cost)
 			." WHERE type=".db_escape($type)
@@ -452,7 +452,7 @@ function get_stock_moves($type, $type_no)
 
 //--------------------------------------------------------------------------------------------------
 
-function void_stock_move($type, $type_no)
+function void_stock_move($type, $type_no): void
 {
     $sql = "SELECT move.*, supplier.supplier_id
     		FROM ".TB_PREF."stock_moves move

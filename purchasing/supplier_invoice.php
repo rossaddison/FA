@@ -93,7 +93,7 @@ if (isset($_GET['New']))
 }
 
 //--------------------------------------------------------------------------------------------------
-function clear_fields()
+function clear_fields(): void
 {
 	global $Ajax;
 	
@@ -107,7 +107,7 @@ function clear_fields()
 	set_focus('gl_code');
 }
 
-function reset_tax_input()
+function reset_tax_input(): void
 {
 	global $Ajax;
 
@@ -227,7 +227,7 @@ function check_data()
 
 //--------------------------------------------------------------------------------------------------
 
-function handle_commit_invoice()
+function handle_commit_invoice(): void
 {
 	copy_to_trans($_SESSION['supp_trans']);
 
@@ -299,7 +299,7 @@ function check_item_data($n)
 	return true;
 }
 
-function commit_item_data($n)
+function commit_item_data($n): void
 {
 	if (check_item_data($n))
 	{

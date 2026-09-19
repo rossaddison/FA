@@ -164,7 +164,7 @@ if ($Mode == 'Delete')
 if ($Mode == 'RESET')
 	reset_form();
 
-function reset_form()
+function reset_form(): void
 {
 	global $selected_id;
 	unset($_POST['trans_no']);
@@ -172,7 +172,7 @@ function reset_form()
 	$selected_id = -1;
 }
 
-function viewing_controls()
+function viewing_controls(): void
 {
 	global $selected_id;
 	
@@ -229,7 +229,7 @@ function delete_link($row)
   	return button('Delete'.$row["id"], _("Delete"), _("Delete"), ICON_DELETE);
 }
 
-function display_rows($type, $trans_no)
+function display_rows($type, $trans_no): void
 {
 	$sql = get_sql_for_attached_documents($type, $type==ST_SUPPLIER || $type==ST_CUSTOMER || $type==ST_BANKACCOUNT ? $trans_no : 
 		($type==ST_ITEM || $type==ST_FIXEDASSET ? get_item_code_id($trans_no) : 0));

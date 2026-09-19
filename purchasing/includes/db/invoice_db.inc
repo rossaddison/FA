@@ -14,7 +14,7 @@ include_once($path_to_root . "/admin/db/attachments_db.inc");
 
 //--------------------------------------------------------------------------------------------------
 
-function read_supplier_details_to_trans(&$supp_trans, $supplier_id)
+function read_supplier_details_to_trans(&$supp_trans, $supplier_id): void
 {
 	$sql = "SELECT supp.supp_name, terms.terms, terms.days_before_due, supp.dimension_id, supp.dimension2_id,
 		terms.day_in_following_month, supp.tax_included,
@@ -533,7 +533,7 @@ function get_matching_invoice_item($stock_id, $po_item_id)
 	return db_fetch($result);  
 }
 
-function void_supp_invoice($type, $type_no)
+function void_supp_invoice($type, $type_no): void
 {
 	begin_transaction();
 
@@ -661,7 +661,7 @@ function is_reference_already_there($supplier_id, $supp_reference, $trans_no=0)
 	return $myrow[0] > 0;
 }
 
-function remove_not_invoice_item($id)
+function remove_not_invoice_item($id): void
 {
 	begin_transaction();
 

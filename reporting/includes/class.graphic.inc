@@ -1903,7 +1903,7 @@ $ignorelist = array (utf8_chr(0x0000), utf8_chr(0x064c), utf8_chr(0x064d), utf8_
 // For debugging
 if (!function_exists('dump'))
 {
-	function dump($str)
+	function dump($str): void
 	{
 		$req_dump = print_r($str, true);
 		$fp = fopen('dump.log', 'a');

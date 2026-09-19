@@ -10,7 +10,7 @@
 	See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-function add_audit_trail($trans_type, $trans_no, $trans_date, $descr='')
+function add_audit_trail($trans_type, $trans_no, $trans_date, $descr=''): void
 {
 	$descr = substr($descr, 0, 60);
 	begin_transaction();

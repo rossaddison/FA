@@ -29,7 +29,7 @@ page(_($help_context = "Allocate Customer Payment or Credit Note"), false, false
 
 //--------------------------------------------------------------------------------
 
-function clear_allocations()
+function clear_allocations(): void
 {
 	if (isset($_SESSION['alloc']))
 	{
@@ -41,7 +41,7 @@ function clear_allocations()
 
 //--------------------------------------------------------------------------------
 
-function edit_allocations_for_transaction($type, $trans_no)
+function edit_allocations_for_transaction($type, $trans_no): void
 {
 	global $systypes_array;
 

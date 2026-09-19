@@ -29,7 +29,7 @@ $pdeb = $pcre = $cdeb = $ccre = $tdeb = $tcre = $pbal = $cbal = $tbal = 0;
 
 //----------------------------------------------------------------------------------------------------
 
-function display_type ($type, $typename, &$dec, &$rep, $from, $to, $zero, $balances, $dimension, $dimension2)
+function display_type ($type, $typename, &$dec, &$rep, $from, $to, $zero, $balances, $dimension, $dimension2): void
 {
 	global $pdeb, $pcre, $cdeb, $ccre, $tdeb, $tcre, $pbal, $cbal, $tbal, $SysPrefs;
 	
@@ -139,7 +139,7 @@ print_trial_balance();
 
 //----------------------------------------------------------------------------------------------------
 
-function print_trial_balance()
+function print_trial_balance(): void
 {
 	global $path_to_root;
 	global $pdeb, $pcre, $cdeb, $ccre, $tdeb, $tcre, $pbal, $cbal, $tbal;

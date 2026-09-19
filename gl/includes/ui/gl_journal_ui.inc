@@ -14,7 +14,7 @@ include_once($path_to_root . "/includes/ui/items_cart.inc");
 
 //--------------------------------------------------------------------------------
 
-function display_order_header(&$Order)
+function display_order_header(&$Order): void
 {
 	global $Ajax;
 
@@ -94,7 +94,7 @@ function display_order_header(&$Order)
 
 //---------------------------------------------------------------------------------
 
-function display_gl_items($title, &$order)
+function display_gl_items($title, &$order): void
 {
 	global $path_to_root;
 
@@ -189,7 +189,7 @@ function display_gl_items($title, &$order)
 
 //---------------------------------------------------------------------------------
 
-function gl_edit_item_controls(&$order, $dim, $sub_accounts, $Index=null)
+function gl_edit_item_controls(&$order, $dim, $sub_accounts, $Index=null): void
 {
 	global $Ajax;
 	start_row();
@@ -288,7 +288,7 @@ function gl_edit_item_controls(&$order, $dim, $sub_accounts, $Index=null)
 
 //---------------------------------------------------------------------------------
 
-function gl_options_controls()
+function gl_options_controls(): void
 {
 	  echo "<br><table align='center'>";
 

@@ -29,7 +29,7 @@ include_once($path_to_root . "/taxes/tax_calc.inc");
 
 print_sales_quotations();
 
-function print_sales_quotations()
+function print_sales_quotations(): void
 {
 	global $path_to_root, $SysPrefs;
 

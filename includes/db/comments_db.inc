@@ -21,7 +21,7 @@ function get_comments($type, $type_no)
 
 //--------------------------------------------------------------------------------------------------
 
-function add_comments($type, $type_no, $date_, $memo_)
+function add_comments($type, $type_no, $date_, $memo_): void
 {
 	if ($memo_ != null && $memo_ != "")
 	{
@@ -36,7 +36,7 @@ function add_comments($type, $type_no, $date_, $memo_)
 
 //--------------------------------------------------------------------------------------------------
 
-function update_comments($type, $id, $date_, $memo_)
+function update_comments($type, $id, $date_, $memo_): void
 {
 	if ($date_ == null)
 	{
@@ -55,7 +55,7 @@ function update_comments($type, $id, $date_, $memo_)
 
 //--------------------------------------------------------------------------------------------------
 
-function delete_comments($type, $type_no)
+function delete_comments($type, $type_no): void
 {
 	$sql = "DELETE FROM ".TB_PREF."comments WHERE type=".db_escape($type)
 		." AND id=".db_escape($type_no);

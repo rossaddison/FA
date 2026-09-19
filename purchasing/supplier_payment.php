@@ -229,7 +229,7 @@ function check_inputs()
 
 //----------------------------------------------------------------------------------------
 
-function handle_add_payment()
+function handle_add_payment(): void
 {
 	$payment_id = write_supp_payment(0, $_POST['supplier_id'], $_POST['bank_account'],
 		$_POST['DatePaid'], $_POST['ref'], input_num('amount'),	input_num('discount'), $_POST['memo_'], 

@@ -58,7 +58,7 @@ function check_data()
 
 //---------------------------------------------------------------------------------------------
 
-function handle_submit()
+function handle_submit(): void
 {
 	if (!check_data())
 		return;
@@ -75,7 +75,7 @@ function handle_submit()
 
 //---------------------------------------------------------------------------------------------
 
-function clear_data()
+function clear_data(): void
 {
 	unset($_POST['date_']);
 }

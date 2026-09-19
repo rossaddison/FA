@@ -10,7 +10,7 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-function add_wo_costing($workorder_id, $cost_type, $trans_type, $trans_no, $factor=1)
+function add_wo_costing($workorder_id, $cost_type, $trans_type, $trans_no, $factor=1): void
 {
 	$sql = "INSERT INTO ".TB_PREF."wo_costing (workorder_id, cost_type, trans_type, trans_no, factor)
 		VALUES (".db_escape($workorder_id).","
@@ -33,7 +33,7 @@ function get_wo_costing($workorder_id)
 	return db_query($sql, "could not get work order costing");
 }
 
-function delete_wo_costing($trans_type, $trans_no)
+function delete_wo_costing($trans_type, $trans_no): void
 {
 	$sql="DELETE FROM ".TB_PREF."wo_costing WHERE trans_type=".db_escape($trans_type)
 		." AND trans_no=".db_escape($trans_no);
@@ -44,7 +44,7 @@ function delete_wo_costing($trans_type, $trans_no)
 /*
 	Updates average material cost for item.
 */
-function update_material_cost($stock_id, $qty, $unit_cost, $date)
+function update_material_cost($stock_id, $qty, $unit_cost, $date): void
 {
 	global $Refs;
 
@@ -113,7 +113,7 @@ function update_material_cost($stock_id, $qty, $unit_cost, $date)
 /*
 	Create journal entry for WO related costs.
 */
-function add_wo_costs_journal($wo_id, $amount, $cost_type, $cr_acc, $date, $dim1=0, $dim2=0, $memo = null, $ref= null)
+function add_wo_costs_journal($wo_id, $amount, $cost_type, $cr_acc, $date, $dim1=0, $dim2=0, $memo = null, $ref= null): void
 {
 //-------- this should be done by single call to write_journal_entries() using items_cart()
 //
@@ -158,7 +158,7 @@ function add_wo_costs_journal($wo_id, $amount, $cost_type, $cr_acc, $date, $dim1
 /*
 	Process component usage: generate and post stock move, update average component cost.
 */
-function work_order_production_gl($woid, $stock_id, $quantity, $date_, $rcv_no)
+function work_order_production_gl($woid, $stock_id, $quantity, $date_, $rcv_no): void
 {
 	global $SysPrefs, $path_to_root;
 
@@ -220,7 +220,7 @@ function check_wo_costing($type, $trans_no)
 	return $wo['workorder_id'];
 }
 
-function void_wo_costing($wo_id)
+function void_wo_costing($wo_id): void
 {
 	global $Refs;
 

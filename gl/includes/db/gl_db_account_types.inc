@@ -101,7 +101,7 @@ function get_account_type_name($id)
 	return is_array($row) ? $row[0] : false;
 }
 
-function delete_account_type($id)
+function delete_account_type($id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."chart_types WHERE id = ".db_escape($id);
 
@@ -158,7 +158,7 @@ function get_account_class_name($id)
 	return $row[0];
 }
 
-function delete_account_class($id)
+function delete_account_class($id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."chart_class WHERE cid = ".db_escape($id);
 

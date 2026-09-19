@@ -48,7 +48,7 @@ function getTransactions($supplier, $date)
 
 //----------------------------------------------------------------------------------------------------
 
-function print_payment_report()
+function print_payment_report(): void
 {
 	global $path_to_root, $systypes_array;
 

@@ -82,7 +82,7 @@ function getTransactions($category, $location, $fromcust, $from, $to, $show_serv
 
 //----------------------------------------------------------------------------------------------------
 
-function print_inventory_sales()
+function print_inventory_sales(): void
 {
     global $path_to_root;
 

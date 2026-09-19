@@ -13,7 +13,7 @@ include_once($path_to_root . "/includes/ui.inc");
 
 //--------------------------------------------------------------------------------------
 
-function display_dimension_balance($id, $from, $to)
+function display_dimension_balance($id, $from, $to): void
 {
 	global $path_to_root;
 

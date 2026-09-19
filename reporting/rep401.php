@@ -51,7 +51,7 @@ function getTransactions($from, $to)
 
 //----------------------------------------------------------------------------------------------------
 
-function print_bill_of_material()
+function print_bill_of_material(): void
 {
     global $path_to_root;
 

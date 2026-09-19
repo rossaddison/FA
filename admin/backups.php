@@ -51,7 +51,7 @@ page(_($help_context = "Backup and Restore Database"), false, false, '', '');
 
 check_paths();
 
-function check_paths()
+function check_paths(): void
 {
   global $SysPrefs;
 
@@ -104,7 +104,7 @@ function get_backup_file_combo()
 	return $selector;
 }
 
-function compress_list_row($label, $name, $value=null)
+function compress_list_row($label, $name, $value=null): void
 {
 	$ar_comps = array('no'=>_("No"));
 

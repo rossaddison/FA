@@ -122,7 +122,7 @@ function check_overdue($row)
 }
 //------------------------------------------------------------------------------------------------
 
-function display_customer_summary($customer_record)
+function display_customer_summary($customer_record): void
 {
 	$past1 = get_company_pref('past_due_days');
 	$past2 = 2 * $past1;

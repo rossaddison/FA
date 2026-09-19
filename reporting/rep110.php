@@ -30,7 +30,7 @@ print_deliveries();
 
 //----------------------------------------------------------------------------------------------------
 
-function print_deliveries()
+function print_deliveries(): void
 {
 	global $path_to_root, $SysPrefs;
 

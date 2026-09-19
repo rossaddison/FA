@@ -59,7 +59,7 @@ function getTransactions($fromsupp)
 
 //----------------------------------------------------------------------------------------------------
 
-function print_outstanding_GRN()
+function print_outstanding_GRN(): void
 {
     global $path_to_root;
 

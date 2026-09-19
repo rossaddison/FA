@@ -60,7 +60,7 @@ function getTaxes($type, $trans_no)
 
 //----------------------------------------------------------------------------------------------------
 
-function print_sales_summary_report()
+function print_sales_summary_report(): void
 {
 	global $path_to_root;
 	

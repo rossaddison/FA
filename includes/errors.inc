@@ -15,7 +15,7 @@ $before_box = ''; // temporary container for output html data before error box
 #
 #   Wrapper for trigger_error
 #
-function fa_trigger_error($msg, $error_level=E_USER_NOTICE)
+function fa_trigger_error($msg, $error_level=E_USER_NOTICE): void
 {
     if ($error_level==E_USER_ERROR) {
           error_handler(E_USER_ERROR, $msg, __FILE__, __LINE__); //  E_USER_ERROR is deprecated as trigger_error arg since php 8.4
@@ -102,7 +102,7 @@ function error_handler($errno, $errstr, $file, $line) {
     return true;
 }
 
-function exception_handler($exception)
+function exception_handler($exception): void
 {
 	error_handler(E_ERROR, sprintf(_("Unhandled exception [%s]: %s."), $exception->getCode(), $exception->getMessage()),
 		 $exception->getFile(), $exception->getLine());
@@ -157,7 +157,7 @@ function fmt_errors($center=false) {
 //-----------------------------------------------------------------------------
 // Error box <div> element.
 //
-function error_box() {
+function error_box(): void {
     global $before_box;
     
     echo "<div id='msgbox'>";
@@ -170,7 +170,7 @@ function error_box() {
 /*
 	Helper to avoid sparse log notices.
 */
-function end_flush() {
+function end_flush(): void {
 	global $Ajax;
 
 	if (isset($Ajax))
@@ -186,7 +186,7 @@ function end_flush() {
 	cancel_transaction();
 }
 
-function display_db_error($msg, $sql_statement=null, $exit=true)
+function display_db_error($msg, $sql_statement=null, $exit=true): void
 {
 	global $db, $SysPrefs, $db_connections;
 

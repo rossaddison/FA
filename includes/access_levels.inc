@@ -281,7 +281,7 @@ if (!@$SysPrefs->allow_gl_reopen)
 	The call should be placed between session.inc inclusion and page() call.
 	Up to 155 security sections and 155 security areas for any extension can be installed.
 */
-function add_access_extensions()
+function add_access_extensions(): void
 {
 	global $security_areas, $security_sections, $installed_extensions;
 

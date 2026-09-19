@@ -66,7 +66,7 @@ function get_bank_account_by_name($name) {
 }
 
 //---------------------------------------------------------------------------------------------------
-function print_invoices()
+function print_invoices(): void
 {
 	global $path_to_root, $SysPrefs;
 

@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_work_centre($name, $description)
+function add_work_centre($name, $description): void
 {
 	$sql = "INSERT INTO ".TB_PREF."workcentres (name, description)
 		VALUES (".db_escape($name).",".db_escape($description).")";
@@ -17,7 +17,7 @@ function add_work_centre($name, $description)
 	db_query($sql, "could not add work centre");
 }
 
-function update_work_centre($type_id, $name, $description)
+function update_work_centre($type_id, $name, $description): void
 {
 	$sql = "UPDATE ".TB_PREF."workcentres SET name=".db_escape($name).", description=".db_escape($description)."
 		WHERE id=".db_escape($type_id);
@@ -42,7 +42,7 @@ function get_work_centre($type_id)
 	return db_fetch($result);
 }
 
-function delete_work_centre($type_id)
+function delete_work_centre($type_id): void
 {
 	$sql="DELETE FROM ".TB_PREF."workcentres WHERE id=".db_escape($type_id);
 

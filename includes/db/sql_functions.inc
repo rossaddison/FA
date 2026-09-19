@@ -17,7 +17,7 @@
 //
 $transaction_level = 0;
 
-function begin_transaction()
+function begin_transaction(): void
 {
 	global $transaction_level;
 
@@ -27,7 +27,7 @@ function begin_transaction()
 	$transaction_level++;
 }
 
-function commit_transaction()
+function commit_transaction(): void
 {
 	global $transaction_level;
 
@@ -42,7 +42,7 @@ function commit_transaction()
 	This function is called on end of script execution to cancel
 	all aborted transactions (if any)
 */
-function cancel_transaction()
+function cancel_transaction(): void
 {
 	global $transaction_level;
 
@@ -55,7 +55,7 @@ function cancel_transaction()
 //-----------------------------------------------------------------------------
 //	Update record activity status.
 //
-function update_record_status($id, $status, $table, $key) {
+function update_record_status($id, $status, $table, $key): void {
 	$sql = "UPDATE ".TB_PREF.$table." SET inactive = "
 		. ((int)$status)." WHERE $key=".db_escape($id);
 		

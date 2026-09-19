@@ -292,7 +292,7 @@ function check_valid_entries()
 
 //----------------------------------------------------------------------------------------
 
-function handle_void_transaction()
+function handle_void_transaction(): void
 {
 	if (check_valid_entries()==true) 
 	{

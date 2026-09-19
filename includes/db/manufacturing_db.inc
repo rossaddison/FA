@@ -173,7 +173,7 @@ function get_on_worder_qty($stock_id, $location)
 
 //--------------------------------------------------------------------------------------
 
-function add_bom($selected_parent, $component, $workcentre_added, $loc_code, $quantity)
+function add_bom($selected_parent, $component, $workcentre_added, $loc_code, $quantity): void
 {
 	$sql = "INSERT INTO ".TB_PREF."bom (parent, component, workcentre_added, loc_code, quantity)
 		VALUES (".db_escape($selected_parent).", ".db_escape($component) . ","
@@ -184,7 +184,7 @@ function add_bom($selected_parent, $component, $workcentre_added, $loc_code, $qu
 }
 //--------------------------------------------------------------------------------------
 
-function update_bom($selected_parent, $selected_component, $workcentre_added, $loc_code, $quantity)
+function update_bom($selected_parent, $selected_component, $workcentre_added, $loc_code, $quantity): void
 {
 	$sql = "UPDATE ".TB_PREF."bom SET workcentre_added=".db_escape($workcentre_added)
 	 . ",loc_code=".db_escape($loc_code) . ",
@@ -196,7 +196,7 @@ function update_bom($selected_parent, $selected_component, $workcentre_added, $l
 	db_query($sql,"could not update bom");
 }
 	
-function delete_bom($selected_id)
+function delete_bom($selected_id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."bom WHERE id=".db_escape($selected_id);
 	db_query($sql,"Could not delete this bom components");

@@ -46,7 +46,7 @@ include_once($path_to_root . "/fixed_assets/includes/fixed_assets_db.inc");
 $user_comp = user_company();
 $new_item = get_post('stock_id')=='' || get_post('cancel') || get_post('clone'); 
 //------------------------------------------------------------------------------------
-function set_edit($stock_id)
+function set_edit($stock_id): void
 {
 	$_POST = array_merge($_POST, get_item($stock_id));
 
@@ -67,7 +67,7 @@ function del_image($stock_id)
 	return true;
 }
 
-function show_image($stock_id)
+function show_image($stock_id): void
 {
 	global $SysPrefs;
 
@@ -188,7 +188,7 @@ if (get_post('fixed_asset')) {
 
 check_db_has_item_tax_types(_("There are no item tax types defined in the system. At least one item tax type is required to add a item."));
 
-function clear_data()
+function clear_data(): void
 {
 	unset($_POST['long_description']);
 	unset($_POST['description']);
@@ -346,7 +346,7 @@ if (isset($_POST['delete']) && strlen($_POST['delete']) > 1)
 	}
 }
 
-function item_settings(&$stock_id, $new_item) 
+function item_settings(&$stock_id, $new_item): void 
 {
 	global $SysPrefs, $path_to_root, $page_nested, $depreciation_methods;
 

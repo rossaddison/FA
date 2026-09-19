@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_item_location($loc_code, $location_name, $delivery_address, $phone, $phone2, $fax, $email, $contact, $fixed_asset = 0)
+function add_item_location($loc_code, $location_name, $delivery_address, $phone, $phone2, $fax, $email, $contact, $fixed_asset = 0): void
 {
 	$sql = "INSERT INTO ".TB_PREF."locations (loc_code, location_name, delivery_address, phone, phone2, fax, email, contact, fixed_asset)
 		VALUES (".db_escape($loc_code).", ".db_escape($location_name).", ".db_escape($delivery_address).", "
@@ -27,7 +27,7 @@ function add_item_location($loc_code, $location_name, $delivery_address, $phone,
 
 //------------------------------------------------------------------------------------
 
-function update_item_location($loc_code, $location_name, $delivery_address, $phone, $phone2, $fax, $email, $contact, $fixed_asset = 0)
+function update_item_location($loc_code, $location_name, $delivery_address, $phone, $phone2, $fax, $email, $contact, $fixed_asset = 0): void
 
 {
     $sql = "UPDATE ".TB_PREF."locations SET location_name=".db_escape($location_name).",
@@ -42,7 +42,7 @@ function update_item_location($loc_code, $location_name, $delivery_address, $pho
 
 //------------------------------------------------------------------------------------
 
-function delete_item_location($item_location)
+function delete_item_location($item_location): void
 {
 	$sql="DELETE FROM ".TB_PREF."locations WHERE loc_code=".db_escape($item_location);
 	db_query($sql,"a location could not be deleted");
@@ -73,7 +73,7 @@ function get_item_locations($show_inactive, $fixed_asset = 0)
 
 //------------------------------------------------------------------------------------
 
-function set_reorder_level($stock_id, $loc_code, $reorder_level)
+function set_reorder_level($stock_id, $loc_code, $reorder_level): void
 {
 	$sql = "UPDATE ".TB_PREF."loc_stock SET reorder_level = $reorder_level
 		WHERE stock_id = ".db_escape($stock_id)." AND loc_code = ".db_escape($loc_code);

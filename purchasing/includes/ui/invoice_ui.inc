@@ -11,7 +11,7 @@
 ***********************************************************************/
 //--------------------------------------------------------------------------------------------------
 
-function copy_from_trans(&$supp_trans)
+function copy_from_trans(&$supp_trans): void
 {
 	$_POST['Comments'] = $supp_trans->Comments;
 	$_POST['tran_date'] = $supp_trans->tran_date;
@@ -30,7 +30,7 @@ function copy_from_trans(&$supp_trans)
 
 //--------------------------------------------------------------------------------------------------
 
-function copy_to_trans(&$supp_trans)
+function copy_to_trans(&$supp_trans): void
 {
 	$supp_trans->Comments = $_POST['Comments'];
 	$supp_trans->tran_date = $_POST['tran_date'];
@@ -71,7 +71,7 @@ function copy_to_trans(&$supp_trans)
 
 //--------------------------------------------------------------------------------------------------
 
-function invoice_header(&$supp_trans)
+function invoice_header(&$supp_trans): void
 {
 	global $Ajax, $Refs;
 	
@@ -163,7 +163,7 @@ function invoice_header(&$supp_trans)
 
 //--------------------------------------------------------------------------------------------------
 
-function invoice_totals(&$supp_trans)
+function invoice_totals(&$supp_trans): void
 {
 	global $Ajax;
 
@@ -195,7 +195,7 @@ function invoice_totals(&$supp_trans)
 }
 
 //--------------------------------------------------------------------------------------------------
-function display_gl_controls(&$supp_trans, $k)
+function display_gl_controls(&$supp_trans, $k): void
 {
 	$accs = get_supplier_accounts($supp_trans->supplier_id);
     if (!isset($_POST['gl_code']))
@@ -595,7 +595,7 @@ function display_grn_items(&$supp_trans, $mode=0)
 }
 
 //--------------------------------------------------------------------------------------------------
-function get_duedate_from_terms(&$trans)
+function get_duedate_from_terms(&$trans): void
 {
 	$date = get_class($trans) == 'purch_order' ? $trans->orig_order_date : $trans->tran_date;
 

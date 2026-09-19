@@ -63,7 +63,7 @@ function get_reports() {
 	return $_SESSION['reports'];
 }
 
-function clear_form() 
+function clear_form(): void 
 {
 	global $selected_id, $Ajax;
 

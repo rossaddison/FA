@@ -116,7 +116,7 @@ function db_seek(&$result,$record)
 	return mysql_data_seek($result, $record);
 }
 
-function db_free_result($result)
+function db_free_result($result): void
 {
 	if ($result)
 		mysql_free_result($result);
@@ -268,7 +268,7 @@ function db_escape_function($string)
 	Set mysql client encoding.
 	Default is is encoding used by default language.
 */
-function db_set_encoding($ui_encoding=null)
+function db_set_encoding($ui_encoding=null): void
 {
 	global $dflt_lang, $installed_languages;
 

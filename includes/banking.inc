@@ -96,7 +96,7 @@ function exchange_from_to($amount, $from_curr_code, $to_curr_code, $date_)
 //--------------------------------------------------------------------------------
 // Exchange Variations Joe Hunt 2008-09-20 ////////////////////////////////////////
 
-function exchange_variation($pyt_type, $pyt_no, $type, $trans_no, $pyt_date, $amount, $person_type, $neg=false)
+function exchange_variation($pyt_type, $pyt_no, $type, $trans_no, $pyt_date, $amount, $person_type, $neg=false): void
 {
 	global $systypes_array;
 	

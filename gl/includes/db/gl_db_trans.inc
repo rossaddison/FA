@@ -379,7 +379,7 @@ function exists_gl_budget($date_, $account, $dimension, $dimension2)
     return (db_num_rows($result) > 0);
 }
 
-function add_update_gl_budget_trans($date_, $account, $dimension, $dimension2, $amount)
+function add_update_gl_budget_trans($date_, $account, $dimension, $dimension2, $amount): void
 {
 	$date = date2sql($date_);
 
@@ -398,7 +398,7 @@ function add_update_gl_budget_trans($date_, $account, $dimension, $dimension2, $
 	db_query($sql, "The GL budget transaction could not be saved");
 }
 
-function delete_gl_budget_trans($date_, $account, $dimension, $dimension2)
+function delete_gl_budget_trans($date_, $account, $dimension, $dimension2): void
 {
 	$date = date2sql($date_);
 
@@ -429,7 +429,7 @@ function get_only_budget_trans_from_to($from_date, $to_date, $account, $dimensio
 //--------------------------------------------------------------------------------
 //	Stores journal/bank transaction tax details if applicable
 //
-function add_gl_tax_details($gl_code, $trans_type, $trans_no, $amount, $ex_rate, $date, $memo, $included=0, $net_amount = null)
+function add_gl_tax_details($gl_code, $trans_type, $trans_no, $amount, $ex_rate, $date, $memo, $included=0, $net_amount = null): void
 {
 	$tax_type = is_tax_account($gl_code);
 	if(!$tax_type) return;	// $gl_code is not tax account
@@ -457,7 +457,7 @@ function add_gl_tax_details($gl_code, $trans_type, $trans_no, $amount, $ex_rate,
 //	actual tax type rate.
 //
 function add_trans_tax_details($trans_type, $trans_no, $tax_id, $rate, $included,
-	$amount, $net_amount, $ex_rate, $tran_date, $memo, $reg_type=null)
+	$amount, $net_amount, $ex_rate, $tran_date, $memo, $reg_type=null): void
 {	
 	// guess tax register if not set
 	if (!isset($reg_type))
@@ -495,7 +495,7 @@ function get_trans_tax_details($trans_type, $trans_no)
 
 //----------------------------------------------------------------------------------------
 
-function void_trans_tax_details($type, $type_no)
+function void_trans_tax_details($type, $type_no): void
 {
 	$sql = "UPDATE ".TB_PREF."trans_tax_details SET amount=0, net_amount=0
 		WHERE trans_no=".db_escape($type_no)
@@ -506,7 +506,7 @@ function void_trans_tax_details($type, $type_no)
 
 //----------------------------------------------------------------------------------------
 
-function clear_trans_tax_details($type, $type_no)
+function clear_trans_tax_details($type, $type_no): void
 {
 	$sql = "DELETE FROM ".TB_PREF."trans_tax_details 
 		WHERE trans_no=".db_escape($type_no)
@@ -568,7 +568,7 @@ function exists_gl_trans($type, $trans_id)
 
 //--------------------------------------------------------------------------------------------------
 
-function void_gl_trans($type, $trans_id, $nested=false)
+function void_gl_trans($type, $trans_id, $nested=false): void
 {
 	if (!$nested)
 		begin_transaction();
@@ -584,7 +584,7 @@ function void_gl_trans($type, $trans_id, $nested=false)
 
 //----------------------------------------------------------------------------------------
 
-function clear_gl_trans($type, $trans_id, $nested=false)
+function clear_gl_trans($type, $trans_id, $nested=false): void
 {
 	if (!$nested)
 		begin_transaction();

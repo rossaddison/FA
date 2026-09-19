@@ -170,7 +170,7 @@ function getTransactions($category, $location, $item_like)
 
 //----------------------------------------------------------------------------------------------------
 
-function print_stock_check()
+function print_stock_check(): void
 {
     global $path_to_root, $SysPrefs;
 

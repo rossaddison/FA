@@ -77,7 +77,7 @@ function handle_submit()
 
 //---------------------------------------------------------------------------------------------
 
-function handle_delete()
+function handle_delete(): void
 {
 	global $selected_id;
 
@@ -99,14 +99,14 @@ function del_link($row)
   return button('Delete'.$row["id"], _("Delete"), true, ICON_DELETE);
 }
 
-function display_rates($curr_code)
+function display_rates($curr_code): void
 {
 
 }
 
 //---------------------------------------------------------------------------------------------
 
-function display_rate_edit()
+function display_rate_edit(): void
 {
 	global $selected_id, $Ajax, $SysPrefs;
 	$xchg_rate_provider = ((isset($SysPrefs->xr_providers) && isset($SysPrefs->dflt_xr_provider))
@@ -151,7 +151,7 @@ function display_rate_edit()
 
 //---------------------------------------------------------------------------------------------
 
-function clear_data()
+function clear_data(): void
 {
 	unset($_POST['selected_id']);
 	unset($_POST['date_']);

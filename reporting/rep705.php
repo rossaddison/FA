@@ -164,7 +164,7 @@ function display_type ($type, $typename, $yr, $mo, $convert, &$dec, &$rep, $dime
 
 //----------------------------------------------------------------------------------------------------
 
-function print_annual_expense_breakdown()
+function print_annual_expense_breakdown(): void
 {
 	global $path_to_root, $SysPrefs, $tmonths;
 

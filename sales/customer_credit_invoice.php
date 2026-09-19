@@ -163,7 +163,7 @@ function check_quantities()
 }
 //-----------------------------------------------------------------------------
 
-function copy_to_cart()
+function copy_to_cart(): void
 {
 	$cart = &$_SESSION['Items'];
 	$cart->ship_via = $_POST['ShipperID'];
@@ -176,7 +176,7 @@ function copy_to_cart()
 }
 //-----------------------------------------------------------------------------
 
-function copy_from_cart()
+function copy_from_cart(): void
 {
 	$cart = &$_SESSION['Items'];
 	$_POST['ShipperID'] = $cart->ship_via;
@@ -221,7 +221,7 @@ if (isset($_POST['Location'])) {
 
 //-----------------------------------------------------------------------------
 
-function display_credit_items()
+function display_credit_items(): void
 {
     start_form();
 	hidden('cart_id');
@@ -329,7 +329,7 @@ function display_credit_items()
 }
 
 //-----------------------------------------------------------------------------
-function display_credit_options()
+function display_credit_options(): void
 {
 	global $Ajax;
 	br();

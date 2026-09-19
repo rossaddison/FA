@@ -121,7 +121,7 @@ function write_customer_payment($trans_no, $customer_id, $branch_id, $bank_accou
 
 //-------------------------------------------------------------------------------------------------
 
-function void_customer_payment($type, $type_no)
+function void_customer_payment($type, $type_no): void
 {
 	begin_transaction();
 

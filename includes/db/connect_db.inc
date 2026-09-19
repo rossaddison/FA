@@ -134,7 +134,7 @@ function db_get_view_schema($view)
 */
 if (!function_exists('db_profile'))
 {
-	function db_profile($sql=false)
+	function db_profile($sql=false): void
 	{
 	}
 }

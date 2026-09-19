@@ -270,7 +270,7 @@ function check_ui_refresh($name=null)
 // When there is no exrate for today, 
 // gets it form ECB and stores in local database.
 //
-function exchange_rate_display($from_currency, $to_currency, $date_, $force_edit=false)
+function exchange_rate_display($from_currency, $to_currency, $date_, $force_edit=false): void
 {
     global $Ajax, $SysPrefs;
 
@@ -356,7 +356,7 @@ function is_voided_display($type, $id, $label)
 
 //--------------------------------------------------------------------------------------
 
-function comments_display_row($type, $id)
+function comments_display_row($type, $id): void
 {
 	$comments = get_comments($type, $id);
 	if ($comments and db_num_rows($comments))
@@ -399,7 +399,7 @@ function view_stock_status($stock_id, $description=null, $echo=true)
 	return $preview_str;
 }
 
-function view_stock_status_cell($stock_id, $description=null)
+function view_stock_status_cell($stock_id, $description=null): void
 {
 	echo "<td>";
 	view_stock_status($stock_id, $description);
@@ -408,7 +408,7 @@ function view_stock_status_cell($stock_id, $description=null)
 
 //--------------------------------------------------------------------------------------
 
-function display_debit_or_credit_cells($value, $bold=false)
+function display_debit_or_credit_cells($value, $bold=false): void
 {
 	$value = round2($value, user_price_dec());
 	if ($value >= 0)
@@ -425,7 +425,7 @@ function display_debit_or_credit_cells($value, $bold=false)
 
 //--------------------------------------------------------------------------------------
 
-function display_customer_trans_tax_details($tax_items, $columns)
+function display_customer_trans_tax_details($tax_items, $columns): void
 {
 	global $SysPrefs;
 
@@ -461,7 +461,7 @@ function display_customer_trans_tax_details($tax_items, $columns)
 
 //--------------------------------------------------------------------------------------
 
-function display_supp_trans_tax_details($tax_items, $columns)
+function display_supp_trans_tax_details($tax_items, $columns): void
 {
     while ($tax_item = db_fetch($tax_items))
     {
@@ -528,7 +528,7 @@ function display_edit_tax_items($taxes, $columns, $tax_included, $rightspan=0, $
 
 //--------------------------------------------------------------------------------------
 
-function display_footer_exit($space=2)
+function display_footer_exit($space=2): void
 {
 	if ($space)
 		br($space);
@@ -538,7 +538,7 @@ function display_footer_exit($space=2)
 
 //--------------------------------------------------------------------------------------
 
-function display_allocations($alloc_result, $total, $title, $show_summary=true)
+function display_allocations($alloc_result, $total, $title, $show_summary=true): void
 {
 	global $systypes_array;
 
@@ -589,7 +589,7 @@ function display_allocations($alloc_result, $total, $title, $show_summary=true)
 
 //--------------------------------------------------------------------------------------
 
-function display_allocations_from($person_type, $person_id, $type, $type_no, $total)
+function display_allocations_from($person_type, $person_id, $type, $type_no, $total): void
 {
 	switch ($person_type)
 	{
@@ -606,7 +606,7 @@ function display_allocations_from($person_type, $person_id, $type, $type_no, $to
 
 //--------------------------------------------------------------------------------------
 
-function display_allocations_to($person_type, $person_id, $type, $type_no, $total)
+function display_allocations_to($person_type, $person_id, $type, $type_no, $total): void
 {
 	switch ($person_type)
 	{
@@ -968,7 +968,7 @@ function get_js_set_combo_item() {
   Setting focus on element $name in $form.
   If $form<0 $name is element id.
 */
-function set_focus($name, $form_no=0) {
+function set_focus($name, $form_no=0): void {
   global $Ajax;
 	$Ajax->addFocus(true, $name);
     $_POST['_focus'] = $name;
@@ -989,7 +989,7 @@ function default_focus($name=null, $form_no=0) {
 /*
 	Reset focus to next control element (e.g. link).
 */
-function reset_focus()
+function reset_focus(): void
 {
 	unset($_POST['_focus']);
 }
@@ -1481,7 +1481,7 @@ document.write(\"<div id='CC'></div>\");";
  return '';
 }
 
-function alert($msg)
+function alert($msg): void
 {
 	echo "\n<script type=\"text/javascript\">\n"
 		. "<!--\n"
@@ -1492,7 +1492,7 @@ function alert($msg)
 
 if (!function_exists('_vd'))
 {
-  	function _vd($mixed, $title = '', $exit = false)
+  	function _vd($mixed, $title = '', $exit = false): void
   	{
     	$str = (!empty($title) ? ($title .':') : '') .'<pre>';
     	$str .= print_r($mixed, true); //var_dump($mixed);
@@ -1503,14 +1503,14 @@ if (!function_exists('_vd'))
   	}
 }
 
-function _vl($mixed, $title = '', $exit = false)
+function _vl($mixed, $title = '', $exit = false): void
 {
 	error_log((!empty($title) ? ($title .':') : '') . print_r($mixed, true));
 	if ($exit)
 		exit;
 }
 
-function display_backtrace($cond=true, $msg='') {
+function display_backtrace($cond=true, $msg=''): void {
 	if ($cond) {
 		if ($msg) 
 			$str = "<center><span class='headingtext'>$msg</span></center>\n";
@@ -1661,7 +1661,7 @@ function trans_editor_link($type, $trans_no)
 			pager_link(_("Edit"), sprintf($editor_url[$type], $trans_no, $type), ICON_EDIT));
 }
 
-function company_logo_on_view()
+function company_logo_on_view(): void
 {
 	// Display View Header
 	global $SysPrefs;

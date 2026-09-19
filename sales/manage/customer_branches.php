@@ -166,7 +166,7 @@ function select_link($row) {
 	return button("Select".$row["branch_code"], $row["branch_code"], '', ICON_ADD, 'selector');
 }
 
-function branch_settings($selected_id, $num_branches) {
+function branch_settings($selected_id, $num_branches): void {
 	global $Mode;
 
 	start_outer_table(TABLESTYLE2);

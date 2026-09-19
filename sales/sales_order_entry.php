@@ -269,7 +269,7 @@ if (isset($_GET['AddedID'])) {
 	check_edit_conflicts(get_post('cart_id'));
 //-----------------------------------------------------------------------------
 
-function copy_to_cart()
+function copy_to_cart(): void
 {
 	$cart = &$_SESSION['Items'];
 
@@ -323,7 +323,7 @@ function copy_to_cart()
 
 //-----------------------------------------------------------------------------
 
-function copy_from_cart()
+function copy_from_cart(): void
 {
 	$cart = &$_SESSION['Items'];
 	$_POST['ref'] = $cart->reference;
@@ -356,7 +356,7 @@ function copy_from_cart()
 }
 //--------------------------------------------------------------------------------
 
-function line_start_focus() {
+function line_start_focus(): void {
   	global 	$Ajax;
 
   	$Ajax->activate('items_table');
@@ -575,7 +575,7 @@ function check_item_data()
 
 //--------------------------------------------------------------------------------
 
-function handle_update_item()
+function handle_update_item(): void
 {
 	if ($_POST['UpdateItem'] != '' && check_item_data()) {
 		$_SESSION['Items']->update_cart_item($_POST['LineNo'],
@@ -588,7 +588,7 @@ function handle_update_item()
 
 //--------------------------------------------------------------------------------
 
-function handle_delete_item($line_no)
+function handle_delete_item($line_no): void
 {
     if ($_SESSION['Items']->some_already_delivered($line_no) == 0) {
 	    $_SESSION['Items']->remove_from_cart($line_no);
@@ -600,7 +600,7 @@ function handle_delete_item($line_no)
 
 //--------------------------------------------------------------------------------
 
-function handle_new_item()
+function handle_new_item(): void
 {
 
 	if (!check_item_data()) {
@@ -616,7 +616,7 @@ function handle_new_item()
 
 //--------------------------------------------------------------------------------
 
-function  handle_cancel_order()
+function  handle_cancel_order(): void
 {
 	global $path_to_root, $Ajax;
 
@@ -658,7 +658,7 @@ function  handle_cancel_order()
 
 //--------------------------------------------------------------------------------
 
-function create_cart($type, $trans_no)
+function create_cart($type, $trans_no): void
 { 
 	global $Refs, $SysPrefs;
 

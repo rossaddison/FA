@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_tax_type($name, $sales_gl_code, $purchasing_gl_code, $rate)
+function add_tax_type($name, $sales_gl_code, $purchasing_gl_code, $rate): void
 {
 	$sql = "INSERT INTO ".TB_PREF."tax_types (name, sales_gl_code, purchasing_gl_code, rate)
 		VALUES (".db_escape($name).", ".db_escape($sales_gl_code)
@@ -18,7 +18,7 @@ function add_tax_type($name, $sales_gl_code, $purchasing_gl_code, $rate)
 	db_query($sql, "could not add tax type");
 }
 
-function update_tax_type($type_id, $name, $sales_gl_code, $purchasing_gl_code, $rate)
+function update_tax_type($type_id, $name, $sales_gl_code, $purchasing_gl_code, $rate): void
 {
 	$sql = "UPDATE ".TB_PREF."tax_types SET name=".db_escape($name).",
 		sales_gl_code=".db_escape($sales_gl_code).",
@@ -73,7 +73,7 @@ function get_tax_type_rate($type_id)
 	return is_array($row) ? $row[0] : false;
 }
 
-function delete_tax_type($type_id)
+function delete_tax_type($type_id): void
 {
 	begin_transaction();
 

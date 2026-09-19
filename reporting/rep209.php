@@ -57,7 +57,7 @@ function get_po_details($order_no)
 	return db_query($sql, "Retreive order Line Items");
 }
 
-function print_po()
+function print_po(): void
 {
 	global $path_to_root, $SysPrefs;
 

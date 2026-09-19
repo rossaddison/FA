@@ -27,7 +27,7 @@ function update_gl_account($account_code, $account_name, $account_type, $account
 	return db_query($sql);
 }
 
-function delete_gl_account($code)
+function delete_gl_account($code): void
 {
 	$sql = "DELETE FROM ".TB_PREF."chart_master WHERE account_code=".db_escape($code);
 

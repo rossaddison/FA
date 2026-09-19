@@ -9,42 +9,42 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function display_error($msg, $center=true)
+function display_error($msg, $center=true): void
 {
 	 fa_trigger_error($msg, E_USER_ERROR);
 }
 
-function display_notification($msg, $center=true)
+function display_notification($msg, $center=true): void
 {
 	fa_trigger_error($msg, E_USER_NOTICE);
 }
 
-function display_warning($msg, $center=true)
+function display_warning($msg, $center=true): void
 {
 	fa_trigger_error($msg, E_USER_WARNING);
 }
 
-function display_notification_centered($msg)
+function display_notification_centered($msg): void
 {
 	display_notification($msg, true);
 }
 
-function display_caption($msg)
+function display_caption($msg): void
 {
 	echo "<caption>$msg</caption>\n";
 }
 
-function display_heading($msg)
+function display_heading($msg): void
 {
 	echo "<center><span class='headingtext'>$msg</span></center>\n";	
 }
 
-function display_heading2($msg)
+function display_heading2($msg): void
 {
 	echo "<center><span class='headingtext2'>$msg</span></center>\n";	
 }
 
-function display_note($msg, $br=0, $br2=0, $extra="")
+function display_note($msg, $br=0, $br2=0, $extra=""): void
 {
 	for ($i = 0; $i < $br; $i++)
 		echo "<br>";
@@ -56,7 +56,7 @@ function display_note($msg, $br=0, $br2=0, $extra="")
 		echo "<br>";
 }
 
-function stock_item_heading($stock_id)
+function stock_item_heading($stock_id): void
 {
 	if ($stock_id != "") 
 	{

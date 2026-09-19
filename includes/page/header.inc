@@ -46,7 +46,7 @@ function help_url($context=null)
 		.'&ctxhelp=1&lang='.$country);
 }
 
-function send_css($css = '')
+function send_css($css = ''): void
 {
 	global $css_files;
 
@@ -62,7 +62,7 @@ function send_css($css = '')
 	}
 }
 
-function send_scripts()
+function send_scripts(): void
 {
     global $SysPrefs, $path_to_root, $js_static, $js_path, $js_userlib;
 
@@ -87,7 +87,7 @@ function send_scripts()
     echo $js;
 }
 
-function page_header($title, $no_menu=false, $is_index=false, $onload="", $js="", $css='')
+function page_header($title, $no_menu=false, $is_index=false, $onload="", $js="", $css=''): void
 {
 	// titles and screen header
 	global $path_to_root, $SysPrefs, $db_connections;

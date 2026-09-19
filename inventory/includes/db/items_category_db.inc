@@ -11,7 +11,7 @@
 ***********************************************************************/
 function add_item_category($description, $tax_type_id, $sales_account, 
 	$cogs_account, $inventory_account, $adjustment_account, $wip_account, 
-	$units, $mb_flag, $dim1, $dim2, $no_sale, $no_purchase)
+	$units, $mb_flag, $dim1, $dim2, $no_sale, $no_purchase): void
 {
 	$sql = "INSERT INTO ".TB_PREF."stock_category (description, dflt_tax_type,
 			dflt_units, dflt_mb_flag, dflt_sales_act, dflt_cogs_act, 
@@ -37,7 +37,7 @@ function add_item_category($description, $tax_type_id, $sales_account,
 
 function update_item_category($id, $description, $tax_type_id, 
 	$sales_account, $cogs_account, $inventory_account, $adjustment_account, 
-	$wip_account, $units, $mb_flag, $dim1, $dim2, $no_sale, $no_purchase)
+	$wip_account, $units, $mb_flag, $dim1, $dim2, $no_sale, $no_purchase): void
 
 {
 	$sql = "UPDATE ".TB_PREF."stock_category SET "
@@ -59,7 +59,7 @@ function update_item_category($id, $description, $tax_type_id,
 	db_query($sql,"an item category could not be updated");
 }
 
-function delete_item_category($id)
+function delete_item_category($id): void
 {
 	$sql="DELETE FROM ".TB_PREF."stock_category WHERE category_id=".db_escape($id);
 

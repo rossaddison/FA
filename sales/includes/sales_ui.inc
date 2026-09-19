@@ -17,14 +17,14 @@ include_once($path_to_root . "/includes/banking.inc");
 //----------------------------------------------------------------------------
 // helper functions for script execution control
 //
-function processing_start()
+function processing_start(): void
 {
 	page_processing(false);
     processing_end();
     $_SESSION['Processing'] = $_SERVER['PHP_SELF'];
 }
 
-function processing_end()
+function processing_end(): void
 {
 	page_processing(true);
     unset($_SESSION['Processing']);
@@ -42,7 +42,7 @@ function processing_active()
 	Check if the cart was not destroyed during opening the edition page in
 	another browser tab.
 */
-function check_edit_conflicts($cart_id, $cartname='Items')
+function check_edit_conflicts($cart_id, $cartname='Items'): void
 {
 	global $Ajax, $SysPrefs;
 

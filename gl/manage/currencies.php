@@ -117,7 +117,7 @@ function check_can_delete($curr)
 
 //---------------------------------------------------------------------------------------------
 
-function handle_delete()
+function handle_delete(): void
 {
 	global $selected_id, $Mode;
 	if (check_can_delete($selected_id)) {
@@ -130,7 +130,7 @@ function handle_delete()
 
 //---------------------------------------------------------------------------------------------
 
-function display_currencies()
+function display_currencies(): void
 {
 	$company_currency = get_company_currency();
 	
@@ -177,7 +177,7 @@ function display_currencies()
 
 //---------------------------------------------------------------------------------------------
 
-function display_currency_edit($selected_id)
+function display_currency_edit($selected_id): void
 {
 	global $Mode;
 	

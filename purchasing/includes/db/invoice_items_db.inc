@@ -53,7 +53,7 @@ function get_supp_invoice_items($supp_trans_type, $supp_trans_no)
 	return db_query($sql, "Cannot retreive supplier transaction detail records");
 }
 
-function void_supp_invoice_items($type, $type_no)
+function void_supp_invoice_items($type, $type_no): void
 {
 	$sql = "UPDATE ".TB_PREF."supp_invoice_items SET quantity=0, unit_price=0
 		WHERE supp_trans_type = ".db_escape($type)." AND supp_trans_no=".db_escape($type_no);

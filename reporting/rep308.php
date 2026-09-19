@@ -190,7 +190,7 @@ function trans_qty_unit_cost($stock_id, $location, $from_date, $to_date, $inward
 
 //----------------------------------------------------------------------------------------------------
 
-function inventory_movements()
+function inventory_movements(): void
 {
     global $path_to_root;
 

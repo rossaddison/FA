@@ -70,7 +70,7 @@ function GetSalesOrders($from, $to, $category=0, $location=null, $backorder=0)
 
 //----------------------------------------------------------------------------------------------------
 
-function print_order_status_list()
+function print_order_status_list(): void
 {
 	global $path_to_root;
 

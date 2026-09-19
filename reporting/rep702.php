@@ -30,7 +30,7 @@ print_list_of_journal_entries();
 
 //----------------------------------------------------------------------------------------------------
 
-function print_list_of_journal_entries()
+function print_list_of_journal_entries(): void
 {
     global $path_to_root, $systypes_array;
 

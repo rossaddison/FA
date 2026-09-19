@@ -93,7 +93,7 @@ function get_transactions($debtorno, $from, $to)
 
 //----------------------------------------------------------------------------------------------------
 
-function print_customer_balances()
+function print_customer_balances(): void
 {
     	global $path_to_root, $systypes_array;
 

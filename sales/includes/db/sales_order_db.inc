@@ -85,7 +85,7 @@ function add_sales_order(&$order)
 
 //----------------------------------------------------------------------------------------
 
-function delete_sales_order($order_no, $trans_type)
+function delete_sales_order($order_no, $trans_type): void
 {
 	begin_transaction();
 	hook_db_prevoid($trans_type, $order_no);
@@ -108,7 +108,7 @@ function delete_sales_order($order_no, $trans_type)
 //----------------------------------------------------------------------------------------
 // Mark changes in sales_order_details
 //
-function update_sales_order_version($order)
+function update_sales_order_version($order): void
 {
   foreach ($order as $so_num => $so_ver) {
   $sql= 'UPDATE '.TB_PREF.'sales_orders SET version=version+1 WHERE order_no='. db_escape($so_num).
@@ -119,7 +119,7 @@ function update_sales_order_version($order)
 
 //----------------------------------------------------------------------------------------
 
-function update_sales_order($order)
+function update_sales_order($order): void
 {
 	global $SysPrefs, $path_to_root, $Refs;
 
@@ -373,7 +373,7 @@ function sales_order_has_deliveries($order_no)
 
 //----------------------------------------------------------------------------------------
 
-function close_sales_order($order_no)
+function close_sales_order($order_no): void
 {
 	// set the quantity of each item to the already sent quantity. this will mark item as closed.
 	$sql = "UPDATE ".TB_PREF."sales_order_details
@@ -612,7 +612,7 @@ function is_sales_order_started($order_no)
 //
 // Mark/unmark sales order as template.
 //
-function sales_order_set_template($id, $status)
+function sales_order_set_template($id, $status): void
 {
   	$sql = "UPDATE ".TB_PREF."sales_orders SET type = ".db_escape($status)." WHERE order_no=".db_escape($id);
   	db_query($sql, "Can't change sales order type");

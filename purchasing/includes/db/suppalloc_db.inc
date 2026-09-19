@@ -12,7 +12,7 @@
 //----------------------------------------------------------------------------------------
 
 function add_supp_allocation($amount, $trans_type_from, $trans_no_from,
-	$trans_type_to, $trans_no_to, $person_id, $date_)
+	$trans_type_to, $trans_no_to, $person_id, $date_): void
 {
 	$date = date2sql($date_);
 	$sql = "INSERT INTO ".TB_PREF."supp_allocations (
@@ -28,7 +28,7 @@ function add_supp_allocation($amount, $trans_type_from, $trans_no_from,
 //----------------------------------------------------------------------------------------
 
 
-function delete_supp_allocation($trans_id)
+function delete_supp_allocation($trans_id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."supp_allocations WHERE id = ".db_escape($trans_id);
 	db_query($sql, "The existing allocation $trans_id could not be deleted");
@@ -50,7 +50,7 @@ function get_supp_trans_allocation_balance($trans_type, $trans_no)
 //----------------------------------------------------------------------------------------
 //	Update supplier trans alloc field according to current status of supp_allocations
 //
-function update_supp_trans_allocation($trans_type, $trans_no, $person_id)
+function update_supp_trans_allocation($trans_type, $trans_no, $person_id): void
 {
 	$dec = user_price_dec();
 	$sql = "UPDATE `".TB_PREF.($trans_type==ST_PURCHORDER ? 'purch_orders' : 'supp_trans')."` trans,
@@ -75,7 +75,7 @@ function void_supp_allocations($type, $type_no, $date="")
 
 //-------------------------------------------------------------------------------------------------------------
 
-function clear_supp_alloctions($type, $type_no, $person_id=null, $date="")
+function clear_supp_alloctions($type, $type_no, $person_id=null, $date=""): void
 {
 	$sql = "UPDATE  ".TB_PREF."supp_allocations ca
 				LEFT JOIN ".TB_PREF."supp_trans paym ON ca.trans_type_from=paym.type AND ca.trans_no_from=paym.trans_no AND ca.person_id=paym.supplier_id

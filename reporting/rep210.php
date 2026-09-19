@@ -50,7 +50,7 @@ function get_remittance($type, $trans_no)
     return db_fetch($result);
 }
 
-function print_remittances()
+function print_remittances(): void
 {
 	global $path_to_root, $systypes_array;
 

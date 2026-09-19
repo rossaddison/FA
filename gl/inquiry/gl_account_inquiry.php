@@ -61,7 +61,7 @@ if (!isset($_POST["amount_max"]))
 
 //----------------------------------------------------------------------------------------------------
 
-function gl_inquiry_controls()
+function gl_inquiry_controls(): void
 {
 	$dim = get_company_pref('use_dimension');
     start_form();
@@ -94,7 +94,7 @@ function gl_inquiry_controls()
 
 //----------------------------------------------------------------------------------------------------
 
-function show_results()
+function show_results(): void
 {
 	global $path_to_root, $systypes_array;
 

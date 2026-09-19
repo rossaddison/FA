@@ -262,7 +262,7 @@ function get_customer_details_from_trans($type, $type_no)
 
 //----------------------------------------------------------------------------------------
 
-function void_customer_trans($type, $type_no)
+function void_customer_trans($type, $type_no): void
 {
 	// clear all values and mark as void
 	$sql = "UPDATE ".TB_PREF."debtor_trans SET ov_amount=0, ov_discount=0, ov_gst=0, ov_freight=0,
@@ -273,7 +273,7 @@ function void_customer_trans($type, $type_no)
 
 //----------------------------------------------------------------------------------------
 
-function clear_customer_trans($type, $type_no)
+function clear_customer_trans($type, $type_no): void
 {
 	// Delete
 	$sql = "DELETE FROM ".TB_PREF."debtor_trans WHERE type=".db_escape($type)." AND trans_no=".db_escape($type_no);
@@ -282,7 +282,7 @@ function clear_customer_trans($type, $type_no)
 }
 //----------------------------------------------------------------------------------------
 
-function post_void_customer_trans($type, $type_no)
+function post_void_customer_trans($type, $type_no): void
 {
 	switch ($type) {
 		case ST_SALESINVOICE :

@@ -74,7 +74,7 @@ function add_work_order($wo_ref, $loc_code, $units_reqd, $stock_id,
 //--------------------------------------------------------------------------------------
 
 function update_work_order($woid, $loc_code, $units_reqd, $stock_id,
-					$date_, $required_by, $memo_)
+					$date_, $required_by, $memo_): void
 {
 	begin_transaction();
 	$args = func_get_args();
@@ -100,7 +100,7 @@ function update_work_order($woid, $loc_code, $units_reqd, $stock_id,
 	commit_transaction();
 }
 
-function delete_work_order($woid, $stock_id, $qty, $date)
+function delete_work_order($woid, $stock_id, $qty, $date): void
 {
 	begin_transaction();
 	hook_db_prevoid(ST_WORKORDER, $woid);
@@ -180,7 +180,7 @@ function work_order_has_payments($woid)
 
 //--------------------------------------------------------------------------------------
 
-function release_work_order($woid, $releaseDate, $memo_)
+function release_work_order($woid, $releaseDate, $memo_): void
 {
 	begin_transaction();
 
@@ -204,7 +204,7 @@ function release_work_order($woid, $releaseDate, $memo_)
 
 //--------------------------------------------------------------------------------------
 
-function close_work_order($woid)
+function close_work_order($woid): void
 {
 	$sql = "UPDATE ".TB_PREF."workorders SET closed=1 WHERE id = ".db_escape($woid);
 	db_query($sql, "could not close work order");
@@ -241,7 +241,7 @@ function work_order_update_finished_quantity($woid, $quantity, $force_close=0)
 	return db_num_affected_rows();	// returns 1 if WO has been closed
 }
 
-function reopen_work_order($woid)
+function reopen_work_order($woid): void
 {
 		// FIXME: update_material_cost
 //		update_material_cost($work_order['stock_id'], -$work_order['units_issued'], ... );
@@ -260,7 +260,7 @@ function reopen_work_order($woid)
 /*
 	Void all work order related operations
 */
-function void_work_order($woid)
+function void_work_order($woid): void
 {
 	begin_transaction();
 	hook_db_prevoid(ST_WORKORDER, $woid);

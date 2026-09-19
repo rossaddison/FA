@@ -173,7 +173,7 @@ function update_person_contacts($id, $cat_ids, $entity_id=null, $type=null)
 	return $ret;
 }
 
-function delete_entity_contacts($class, $entity)
+function delete_entity_contacts($class, $entity): void
 {
 	// cleanup
 	$res = get_crm_persons($class, null, $entity, null, true);
@@ -188,7 +188,7 @@ function delete_entity_contacts($class, $entity)
 
 //-----------------------------------------------------------------------------------------------
 
-function add_crm_category($type, $action, $name, $description)
+function add_crm_category($type, $action, $name, $description): void
 {
 	$sql = "INSERT INTO ".TB_PREF."crm_categories (type, action, name, description)
 		VALUES (".db_escape($type) . ", "
@@ -199,7 +199,7 @@ function add_crm_category($type, $action, $name, $description)
    	db_query($sql,"The insert of the crm category failed");
 }
 
-function update_crm_category($selected_id, $type, $action, $name, $description)
+function update_crm_category($selected_id, $type, $action, $name, $description): void
 {
 	$sql = "UPDATE ".TB_PREF."crm_categories SET ";
 	if ($type)
@@ -212,7 +212,7 @@ function update_crm_category($selected_id, $type, $action, $name, $description)
    	db_query($sql,"The update of the crm category failed");
 }
 
-function delete_crm_category($selected_id)
+function delete_crm_category($selected_id): void
 {
 	// preserve system categories
 	$sql="DELETE FROM ".TB_PREF."crm_categories WHERE system=0 AND id=".db_escape($selected_id);

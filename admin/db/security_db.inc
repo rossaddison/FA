@@ -25,7 +25,7 @@ function get_security_role($id)
 
 //--------------------------------------------------------------------------------------------------
 
-function add_security_role($name, $description, $sections, $areas)
+function add_security_role($name, $description, $sections, $areas): void
 {
 	$sql = "INSERT INTO ".TB_PREF."security_roles (role, description, sections, areas)
 	VALUES ("
@@ -39,7 +39,7 @@ function add_security_role($name, $description, $sections, $areas)
 
 //--------------------------------------------------------------------------------------------------
 
-function update_security_role($id, $name, $description, $sections, $areas)
+function update_security_role($id, $name, $description, $sections, $areas): void
 {
     	$sql = "UPDATE ".TB_PREF."security_roles SET role=".db_escape($name)
     	.",description=".db_escape($description)
@@ -50,7 +50,7 @@ function update_security_role($id, $name, $description, $sections, $areas)
 }
 //--------------------------------------------------------------------------------------------------
 
-function delete_security_role($id)
+function delete_security_role($id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."security_roles WHERE id=".(int)$id;
 

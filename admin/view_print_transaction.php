@@ -62,7 +62,7 @@ function ref_view($row)
 	return $row['ref'];
 }
 
-function viewing_controls()
+function viewing_controls(): void
 {
 	display_note(_("Only documents can be printed."));
 
@@ -108,7 +108,7 @@ function check_valid_entries()
 
 //----------------------------------------------------------------------------------------
 
-function handle_search()
+function handle_search(): void
 {
 	if (check_valid_entries()==true)
 	{

@@ -58,7 +58,7 @@ if ((!isset($_GET['PONumber']) || $_GET['PONumber'] == 0) && !isset($_SESSION['P
 
 //--------------------------------------------------------------------------------------------------
 
-function display_po_receive_items()
+function display_po_receive_items(): void
 {
 	div_start('grn_items');
     start_table(TABLESTYLE, "colspan=7 width='90%'");
@@ -230,7 +230,7 @@ function can_process()
 
 //--------------------------------------------------------------------------------------------------
 
-function process_receive_po()
+function process_receive_po(): void
 {
 	global $path_to_root, $Ajax;
 

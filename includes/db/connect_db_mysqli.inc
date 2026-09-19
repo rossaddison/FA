@@ -46,7 +46,7 @@ function set_global_connection($company=-1)
 
 //DB wrapper functions to change only once for whole application
 
-function db_query($sql, $err_msg=null)
+function db_query($sql, $err_msg=null): mysqli_result|bool
 {
 	global $db, $SysPrefs, $sql_queries, $Ajax,	$db_connections, $db_last_inserted_id;
 
@@ -93,19 +93,19 @@ function db_query($sql, $err_msg=null)
 	return $result;
 }
 
-function db_fetch_row($result)
+function db_fetch_row($result): array|false
 {
 	$ret = mysqli_fetch_row($result);
 	return ($ret === null ? false : $ret);
 }
 
-function db_fetch_assoc($result)
+function db_fetch_assoc($result): array|false
 {
 	$ret = mysqli_fetch_assoc($result);
 	return ($ret === null ? false : $ret);
 }
 
-function db_fetch($result)
+function db_fetch($result): array|false
 {
 	$ret = mysqli_fetch_array($result);
 	return ($ret === null ? false : $ret);
@@ -116,13 +116,13 @@ function db_seek(&$result,$record)
 	return mysqli_data_seek($result, $record);
 }
 
-function db_free_result($result)
+function db_free_result($result): void
 {
 	if ($result)
 		mysqli_free_result($result);
 }
 
-function db_num_rows($result)
+function db_num_rows($result): int|string
 {
 	return mysqli_num_rows($result);
 }
@@ -132,7 +132,7 @@ function db_num_fields($result)
 	return mysqli_num_fields($result);
 }
 
-function db_escape($value = "", $nullify = false)
+function db_escape($value = "", $nullify = false): string
 {
 	global $db;
 
@@ -272,7 +272,7 @@ function db_escape_function($string)
 	Set mysql client encoding.
 	Default is is encoding used by default language.
 */
-function db_set_encoding($ui_encoding=null)
+function db_set_encoding($ui_encoding=null): void
 {
 	global $db, $dflt_lang, $installed_languages;
 

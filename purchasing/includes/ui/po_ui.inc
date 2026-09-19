@@ -13,7 +13,7 @@ include_once($path_to_root . "/purchasing/includes/purchasing_db.inc");
 
 //--------------------------------------------------------------------------------------------------
 
-function copy_from_cart()
+function copy_from_cart(): void
 {
 	$cart = &$_SESSION['PO'];
 
@@ -35,7 +35,7 @@ function copy_from_cart()
 	    $_POST['mantax'][$id] = price_format($value);
 }
 
-function copy_to_cart()
+function copy_to_cart(): void
 {
 	$cart = &$_SESSION['PO'];
 
@@ -64,7 +64,7 @@ function copy_to_cart()
 
 //---------------------------------------------------------------------------------------------------
 
-function create_new_po($trans_type, $trans_no)
+function create_new_po($trans_type, $trans_no): void
 {
 	global $Refs;
 
@@ -91,7 +91,7 @@ function create_new_po($trans_type, $trans_no)
 
 //---------------------------------------------------------------------------------------------------
 
-function display_po_header(&$order)
+function display_po_header(&$order): void
 {
 	global $Ajax, $Refs;
 
@@ -204,7 +204,7 @@ function display_po_header(&$order)
 
 //---------------------------------------------------------------------------------------------------
 
-function display_po_items(&$order, $editable=true)
+function display_po_items(&$order, $editable=true): void
 {
     display_heading(_("Order Items"));
 
@@ -294,7 +294,7 @@ function display_po_items(&$order, $editable=true)
 
 //---------------------------------------------------------------------------------------------------
 
-function display_po_summary(&$po, $is_self=false, $editable=false)
+function display_po_summary(&$po, $is_self=false, $editable=false): void
 {
     start_table(TABLESTYLE, "width='90%'");
 
@@ -352,7 +352,7 @@ function display_po_summary(&$po, $is_self=false, $editable=false)
 
 //--------------------------------------------------------------------------------
 
-function po_item_controls(&$order, &$rowcounter, $line_no=-1)
+function po_item_controls(&$order, &$rowcounter, $line_no=-1): void
 {
    global $Ajax, $SysPrefs;
 
@@ -460,7 +460,7 @@ function po_item_controls(&$order, &$rowcounter, $line_no=-1)
 
 //---------------------------------------------------------------------------------------------------
 
-function display_po_footer(&$trans)
+function display_po_footer(&$trans): void
 {
 	global $Ajax;
 

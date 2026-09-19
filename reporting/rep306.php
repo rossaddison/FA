@@ -90,7 +90,7 @@ function get_supp_inv_reference($supplier_id, $stock_id, $date)
 
 //----------------------------------------------------------------------------------------------------
 
-function print_inventory_purchase()
+function print_inventory_purchase(): void
 {
     global $path_to_root;
 

@@ -216,7 +216,7 @@ function get_control_file($file, $index = false) {
 //
 //	Save configuration data to control file.
 //
-function save_control_file($fname, $list, $zip=false) 
+function save_control_file($fname, $list, $zip=false): void 
 {
 	$file = $zip ?  gzopen($fname, 'wb') : fopen($fname, 'wb');
 	foreach($list as $section) {

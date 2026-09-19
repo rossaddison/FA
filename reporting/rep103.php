@@ -102,7 +102,7 @@ function getTransactions($debtorno, $branchcode, $date)
 
 //----------------------------------------------------------------------------------------------------
 
-function print_customer_details_listing()
+function print_customer_details_listing(): void
 {
     global $path_to_root;
 
@@ -144,8 +144,8 @@ function print_customer_details_listing()
 	else
 		$lessstr = '';
 
-	$more = (double)$more;
-	$less = (double)$less;
+	$more = (float)$more;
+	$less = (float)$less;
 
 	$cols = array(0, 150, 300, 425, 550);
 
@@ -178,9 +178,9 @@ function print_customer_details_listing()
 		if ($more != '' || $less != '')
 		{
 			$turnover = getTransactions($myrow['debtor_no'], $myrow['branch_code'], $from);
-			if ($more != 0.0 && $turnover <= (double)$more)
+			if ($more != 0.0 && $turnover <= (float)$more)
 				$printcustomer = false;
-			if ($less != 0.0 && $turnover >= (double)$less)
+			if ($less != 0.0 && $turnover >= (float)$less)
 				$printcustomer = false;
 		}
 		if ($printcustomer)

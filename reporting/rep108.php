@@ -62,7 +62,7 @@ function getTransactions($debtorno, $show_also_allocated)
 
 //----------------------------------------------------------------------------------------------------
 
-function print_statements()
+function print_statements(): void
 {
 	global $path_to_root, $systypes_array;
 

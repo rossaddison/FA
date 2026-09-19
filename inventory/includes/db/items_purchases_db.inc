@@ -11,7 +11,7 @@
 ***********************************************************************/
 
 function add_item_purchasing_data($supplier_id, $stock_id, $price,
-	$suppliers_uom, $conversion_factor, $supplier_description)
+	$suppliers_uom, $conversion_factor, $supplier_description): void
 {
 	$supp_desc = db_escape($supplier_description);
 	if (strlen($supp_desc) > 50) // to be fixed and removed in 2.5
@@ -27,7 +27,7 @@ function add_item_purchasing_data($supplier_id, $stock_id, $price,
 }
 
 function update_item_purchasing_data($selected_id, $stock_id, $price,
-	$suppliers_uom, $conversion_factor, $supplier_description)
+	$suppliers_uom, $conversion_factor, $supplier_description): void
 {
 	$supp_desc = db_escape($supplier_description);
 	if (strlen($supp_desc) > 50) // to be fixed and removed in 2.5
@@ -41,7 +41,7 @@ function update_item_purchasing_data($selected_id, $stock_id, $price,
 	db_query($sql,"The supplier purchasing details could not be updated");
 }
 
-function delete_item_purchasing_data($selected_id, $stock_id)
+function delete_item_purchasing_data($selected_id, $stock_id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."purch_data WHERE supplier_id=".db_escape($selected_id)."
 		AND stock_id=".db_escape($stock_id);

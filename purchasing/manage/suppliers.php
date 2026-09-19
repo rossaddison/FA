@@ -58,7 +58,7 @@ function can_process()
 	return true;
 }
 
-function handle_submit(&$supplier_id)
+function handle_submit(&$supplier_id): void
 {
 	global $path_to_root, $Ajax, $SysPrefs;
 	
@@ -141,7 +141,7 @@ if (isset($_POST['delete']) && $_POST['delete'] != "")
 }
 
 //--------------------------------------------------------------------------------------------
-function supplier_settings(&$supplier_id)
+function supplier_settings(&$supplier_id): void
 {
 	global $page_nested;
 	

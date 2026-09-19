@@ -82,7 +82,7 @@ function getPeriods($stockid, $location)
 
 //----------------------------------------------------------------------------------------------------
 
-function print_inventory_planning()
+function print_inventory_planning(): void
 {
     global $path_to_root, $tmonths;
 

@@ -64,7 +64,7 @@ function add_stock_transfer($Items, $location_from, $location_to, $date_, $refer
 // it seems the standard_cost field is not used at all
 
 function add_stock_transfer_item($transfer_id, $stock_id, $location_from, $location_to,
-	$date_, $reference, $quantity)
+	$date_, $reference, $quantity): void
 {
 	add_stock_move(ST_LOCTRANSFER, $stock_id, $transfer_id, $location_from,
        	$date_, $reference, -$quantity, 0);
@@ -116,7 +116,7 @@ function get_stock_transfer_items($trans_no)
 
 //-------------------------------------------------------------------------------------------------------------
 
-function void_stock_transfer($type_no)
+function void_stock_transfer($type_no): void
 {
 	hook_db_prevoid(ST_LOCTRANSFER, $type_no);
 	void_stock_move(ST_LOCTRANSFER, $type_no);

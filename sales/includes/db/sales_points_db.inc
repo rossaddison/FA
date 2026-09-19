@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_sales_point($name, $location, $account, $cash, $credit)
+function add_sales_point($name, $location, $account, $cash, $credit): void
 {
 	$sql = "INSERT INTO ".TB_PREF."sales_pos (pos_name, pos_location, pos_account, cash_sale, credit_sale) VALUES (".db_escape($name)
 			. ",".db_escape($location).",".db_escape($account)
@@ -17,7 +17,7 @@ function add_sales_point($name, $location, $account, $cash, $credit)
 	db_query($sql, "could not add point of sale");
 }
 
-function update_sales_point($id, $name, $location, $account, $cash, $credit)
+function update_sales_point($id, $name, $location, $account, $cash, $credit): void
 {
 
 	$sql = "UPDATE ".TB_PREF."sales_pos SET pos_name=".db_escape($name)
@@ -64,7 +64,7 @@ function get_sales_point_name($id)
 	return is_array($row) ? $row[0] : false;
 }
 
-function delete_sales_point($id)
+function delete_sales_point($id): void
 {
 	$sql="DELETE FROM ".TB_PREF."sales_pos WHERE id=".db_escape($id);
 	db_query($sql,"The point of sale record could not be deleted");

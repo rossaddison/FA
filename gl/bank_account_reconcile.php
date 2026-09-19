@@ -96,7 +96,7 @@ function fmt_memo($row)
 	return $value;
 }
 
-function update_data()
+function update_data(): void
 {
 	global $Ajax;
 	
@@ -130,7 +130,7 @@ function change_tpl_flag($reconcile_id)
 	return true;
 }
 
-function set_tpl_flag($reconcile_id)
+function set_tpl_flag($reconcile_id): void
 {
 	global	$Ajax;
 

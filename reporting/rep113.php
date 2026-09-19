@@ -30,7 +30,7 @@ print_credits();
 
 //----------------------------------------------------------------------------------------------------
 
-function print_credits()
+function print_credits(): void
 {
 	global $path_to_root, $SysPrefs;
 	

@@ -12,7 +12,7 @@
 //---------------------------------------------------------------------------------------------
 
 function update_currency($curr_abrev, $symbol, $currency, $country, 
-	$hundreds_name, $auto_update)
+	$hundreds_name, $auto_update): void
 {
 	$sql = "UPDATE ".TB_PREF."currencies SET currency=".db_escape($currency)
 		.", curr_symbol=".db_escape($symbol).",	country=".db_escape($country)
@@ -26,7 +26,7 @@ function update_currency($curr_abrev, $symbol, $currency, $country,
 //---------------------------------------------------------------------------------------------
 
 function add_currency($curr_abrev, $symbol, $currency, $country, 
-	$hundreds_name, $auto_update)
+	$hundreds_name, $auto_update): void
 {
 	$sql = "INSERT INTO ".TB_PREF."currencies (curr_abrev, curr_symbol, currency, 
 			country, hundreds_name, auto_update)
@@ -39,7 +39,7 @@ function add_currency($curr_abrev, $symbol, $currency, $country,
 
 //---------------------------------------------------------------------------------------------
 
-function delete_currency($curr_code)
+function delete_currency($curr_code): void
 {
 	$sql="DELETE FROM ".TB_PREF."currencies WHERE curr_abrev=".db_escape($curr_code);
 	db_query($sql, "could not delete currency	$curr_code");

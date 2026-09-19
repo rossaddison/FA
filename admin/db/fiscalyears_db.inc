@@ -13,7 +13,7 @@ require_once($path_to_root. "/includes/ui/items_cart.inc");
 require_once($path_to_root. "/admin/db/attachments_db.inc");
 
 // fiscal year routines
-function add_fiscalyear($from_date, $to_date, $closed)
+function add_fiscalyear($from_date, $to_date, $closed): void
 {
 	$from = date2sql($from_date);
 	$to = date2sql($to_date);
@@ -24,7 +24,7 @@ function add_fiscalyear($from_date, $to_date, $closed)
 	db_query($sql, "could not add fiscal year");
 }
 
-function update_fiscalyear($id, $closed)
+function update_fiscalyear($id, $closed): void
 {
 	$sql = "UPDATE ".TB_PREF."fiscal_year SET closed=".db_escape($closed)."
 		WHERE id=".db_escape($id);
@@ -60,7 +60,7 @@ function get_current_fiscalyear()
 }
 
 
-function delete_fiscalyear($id)
+function delete_fiscalyear($id): void
 {
 	begin_transaction();
 
@@ -176,7 +176,7 @@ function close_year($year)
 	return true;
 }
 
-function open_year($year)
+function open_year($year): void
 {
 	$myrow = get_fiscalyear($year);
 	$from = sql2date($myrow['begin']);
@@ -187,7 +187,7 @@ function open_year($year)
 }
 
 //---------------------------------------------------------------------------------------------
-function delete_attachments_and_comments($type_no, $trans_no)
+function delete_attachments_and_comments($type_no, $trans_no): void
 {
 	delete_attachments($type_no, $trans_no);
 	$sql = "DELETE FROM ".TB_PREF."comments WHERE  type = $type_no AND id = $trans_no";
@@ -197,7 +197,7 @@ function delete_attachments_and_comments($type_no, $trans_no)
 }	
 
 //---------------------------------------------------------------------------------------------
-function delete_this_fiscalyear($selected_id)
+function delete_this_fiscalyear($selected_id): void
 {
 	global $db_connections;
 	

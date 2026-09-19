@@ -110,7 +110,7 @@ function check_can_delete($selected_id)
 	return true;
 }
 
-function handle_delete()
+function handle_delete(): void
 {
 	global $selected_id, $Mode;
 
@@ -124,7 +124,7 @@ function handle_delete()
 
 //---------------------------------------------------------------------------------------------
 
-function display_fiscalyears()
+function display_fiscalyears(): void
 {
 	$company_year = get_company_pref('f_year');
 
@@ -178,7 +178,7 @@ function display_fiscalyears()
 
 //---------------------------------------------------------------------------------------------
 
-function display_fiscalyear_edit($selected_id)
+function display_fiscalyear_edit($selected_id): void
 {
 	global $Mode;
 

@@ -60,7 +60,7 @@ function get_invoices($customer_id, $to, $all=true)
 
 //----------------------------------------------------------------------------------------------------
 
-function print_aged_customer_analysis()
+function print_aged_customer_analysis(): void
 {
     global $path_to_root, $systypes_array, $SysPrefs;
 

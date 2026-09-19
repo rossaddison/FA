@@ -30,7 +30,7 @@ $js_static = array('JsHttpRequest.js', 'behaviour.js', 'utils.js', 'inserts.js')
 // additional js source included in header
 $js_lib = $js_userlib = array();
 
-function page($title, $no_menu=false, $is_index=false, $onload="", $js="", $script_only=false, $css='')
+function page($title, $no_menu=false, $is_index=false, $onload="", $js="", $script_only=false, $css=''): void
 {
 
    	global $path_to_root, $page_security, $page_nested;
@@ -54,7 +54,7 @@ function page($title, $no_menu=false, $is_index=false, $onload="", $js="", $scri
 	}
 }
 
-function end_page($no_menu=false, $is_index=false, $final_screen=false, $type_no=0, $trans_no=0)
+function end_page($no_menu=false, $is_index=false, $final_screen=false, $type_no=0, $trans_no=0): void
 {
 	global $path_to_root, $page_nested;
 
@@ -68,7 +68,7 @@ function end_page($no_menu=false, $is_index=false, $final_screen=false, $type_no
 	page_footer($no_menu, $is_index);
 }
 
-function css_files_ensure_init() {
+function css_files_ensure_init(): void {
 	global $css_files, $path_to_root;
 
 	if (!isset($css_files))
@@ -79,7 +79,7 @@ function css_files_ensure_init() {
 	}
 }
 
-function add_css_file($filename)
+function add_css_file($filename): void
 {
 	global $css_files;
 	css_files_ensure_init();
@@ -120,7 +120,7 @@ function force_open($fname)
 	return fopen($fname, 'w');
 }
 
-function add_js_file($filename) 
+function add_js_file($filename): void 
 {
 	  global $js_static;
 
@@ -129,7 +129,7 @@ function add_js_file($filename)
 		$js_static[] = $filename;	
 }
 
-function add_js_ufile($filename) 
+function add_js_ufile($filename): void 
 {
 	  global $js_userlib;
 
@@ -138,7 +138,7 @@ function add_js_ufile($filename)
 		$js_userlib[] = $filename;
 }
 
-function add_js_source($text) 
+function add_js_source($text): void 
 {
 	  global $js_lib;
 

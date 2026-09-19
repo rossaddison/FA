@@ -51,7 +51,7 @@ function get_receipt($type, $trans_no)
     return db_fetch($result);
 }
 
-function print_receipts()
+function print_receipts(): void
 {
 	global $path_to_root, $systypes_array;
 

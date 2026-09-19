@@ -35,7 +35,7 @@ if (isset($_GET['stock_id']))
 
 //--------------------------------------------------------------------------------------------------
 
-function display_bom_items($selected_parent)
+function display_bom_items($selected_parent): void
 {
 	$result = get_bom($selected_parent);
 	div_start('bom');
@@ -73,7 +73,7 @@ function display_bom_items($selected_parent)
 	div_end();
 }
 
-function copy_bom_items($stock_id, $new_stock_id)
+function copy_bom_items($stock_id, $new_stock_id): void
 {
 	$result = get_bom($stock_id);
 	while ($myrow = db_fetch($result))
@@ -88,7 +88,7 @@ function copy_bom_items($stock_id, $new_stock_id)
  
 //--------------------------------------------------------------------------------------------------
 
-function on_submit($selected_parent, $selected_component=-1)
+function on_submit($selected_parent, $selected_component=-1): void
 {
 	if (!check_num('quantity', 0))
 	{

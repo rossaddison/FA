@@ -49,7 +49,7 @@ if (list_updated('role')) {
 	$Ajax->activate('controls');
 }
 
-function clear_data()
+function clear_data(): void
 {
 	unset($_POST);
 }

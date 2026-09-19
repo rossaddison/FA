@@ -33,7 +33,7 @@ function html_specials_encode($str)
 	return htmlspecialchars($str, ENT_QUOTES, $_SESSION['language']->encoding=='iso-8859-2' ? 'ISO-8859-1' : $_SESSION['language']->encoding);
 }
 
-function html_cleanup(&$parms)
+function html_cleanup(&$parms): void
 {
 	foreach($parms as $name => $value) {
 		if (is_array($value))
@@ -44,14 +44,14 @@ function html_cleanup(&$parms)
 	reset($parms); // needed for direct key() usage later throughout the sources
 }
 
-function check_page_security($page_security)
+function check_page_security($page_security): void
 {
 }
 
 /*
  Ensure file is re-read on next request if php caching is active
 */
-function cache_invalidate($filename)
+function cache_invalidate($filename): void
 {
     if (function_exists('opcache_invalidate')) // OpCode extension
         opcache_invalidate($filename);

@@ -12,7 +12,7 @@
 require_once($path_to_root. "/admin/db/attachments_db.inc");
 
 //---------------------------------------------------------------------------------------------
-function clear_dflt_curr_account($curr_code) {
+function clear_dflt_curr_account($curr_code): void {
 	  $sql = "UPDATE ".TB_PREF."bank_accounts SET dflt_curr_act=0 WHERE bank_curr_code="
 	  .db_escape($curr_code);
 	  db_query($sql, "could not update default currency account");
@@ -20,7 +20,7 @@ function clear_dflt_curr_account($curr_code) {
 
 function add_bank_account($account_code, $account_type, $bank_account_name,
 	$bank_name, $bank_account_number, $bank_address, $bank_curr_code, 
-	$dflt_curr_act, $bank_charge_act)
+	$dflt_curr_act, $bank_charge_act): void
 {
 	if($dflt_curr_act) 	// only one default account for any currency
 	  clear_dflt_curr_account($bank_curr_code);
@@ -39,7 +39,7 @@ function add_bank_account($account_code, $account_type, $bank_account_name,
 //---------------------------------------------------------------------------------------------
 
 function update_bank_account($id, $account_code, $account_type, $bank_account_name, 
-	$bank_name, $bank_account_number, $bank_address, $bank_curr_code, $dflt_curr_act, $bank_charge_act)
+	$bank_name, $bank_account_number, $bank_address, $bank_curr_code, $dflt_curr_act, $bank_charge_act): void
 {
 	if($dflt_curr_act) 	// only one default account for any currency
 	  clear_dflt_curr_account($bank_curr_code);
@@ -57,7 +57,7 @@ function update_bank_account($id, $account_code, $account_type, $bank_account_na
 
 //---------------------------------------------------------------------------------------------
 
-function delete_bank_account($id)
+function delete_bank_account($id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."bank_accounts WHERE id=".db_escape($id);
 
@@ -119,7 +119,7 @@ function get_bank_charge_account($id)
 
 //---------------------------------------------------------------------------------------------
 
-function add_quick_entry($description, $type, $base_amount, $base_desc, $bal_type, $usage)
+function add_quick_entry($description, $type, $base_amount, $base_desc, $bal_type, $usage): void
 {
 	$sql = "INSERT INTO ".TB_PREF."quick_entries (description, type, base_amount, base_desc, bal_type, `usage`) 
 	VALUES (".db_escape($description).", ".db_escape($type).", "
@@ -130,7 +130,7 @@ function add_quick_entry($description, $type, $base_amount, $base_desc, $bal_typ
 
 //---------------------------------------------------------------------------------------------
 
-function update_quick_entry($selected_id, $description, $type, $base_amount, $base_desc, $bal_type, $usage)
+function update_quick_entry($selected_id, $description, $type, $base_amount, $base_desc, $bal_type, $usage): void
 {
 	$sql = "UPDATE ".TB_PREF."quick_entries	SET description = ".db_escape($description).",
 		type=".db_escape($type).", base_amount=".db_escape($base_amount)
@@ -142,7 +142,7 @@ function update_quick_entry($selected_id, $description, $type, $base_amount, $ba
 
 //---------------------------------------------------------------------------------------------
 
-function delete_quick_entry($selected_id)
+function delete_quick_entry($selected_id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."quick_entries WHERE id=".db_escape($selected_id);
 
@@ -151,7 +151,7 @@ function delete_quick_entry($selected_id)
 
 //---------------------------------------------------------------------------------------------
 
-function add_quick_entry_line($qid, $action, $dest_id, $amount, $dim, $dim2, $memo)
+function add_quick_entry_line($qid, $action, $dest_id, $amount, $dim, $dim2, $memo): void
 {
 	$sql = "INSERT INTO ".TB_PREF."quick_entry_lines 
 		(qid, action, dest_id, amount, dimension_id, dimension2_id, memo) 
@@ -164,7 +164,7 @@ function add_quick_entry_line($qid, $action, $dest_id, $amount, $dim, $dim2, $me
 
 //---------------------------------------------------------------------------------------------
 
-function update_quick_entry_line($selected_id, $qid, $action, $dest_id, $amount, $dim, $dim2, $memo)
+function update_quick_entry_line($selected_id, $qid, $action, $dest_id, $amount, $dim, $dim2, $memo): void
 {
 	$sql = "UPDATE ".TB_PREF."quick_entry_lines SET qid = ".db_escape($qid)
 		.", action=".db_escape($action).",
@@ -177,7 +177,7 @@ function update_quick_entry_line($selected_id, $qid, $action, $dest_id, $amount,
 
 //---------------------------------------------------------------------------------------------
 
-function delete_quick_entry_line($selected_id)
+function delete_quick_entry_line($selected_id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."quick_entry_lines WHERE id=".db_escape($selected_id);
 
@@ -295,7 +295,7 @@ function get_sql_for_bank_account_reconcile($bank_account, $date)
 
 //---------------------------------------------------------------------------------------------
 
-function update_reconciled_values($reconcile_id, $reconcile_value, $reconcile_date, $end_balance, $bank_account)
+function update_reconciled_values($reconcile_id, $reconcile_value, $reconcile_date, $end_balance, $bank_account): void
 {
 	$sql = "UPDATE ".TB_PREF."bank_trans SET reconciled=$reconcile_value"
 		." WHERE id=".db_escape($reconcile_id);

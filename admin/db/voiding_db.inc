@@ -147,7 +147,7 @@ function get_voided_entry($type, $type_no)
 
 //--------------------------------------------------------------------------------------------------
 
-function add_voided_entry($type, $type_no, $date_, $memo_)
+function add_voided_entry($type, $type_no, $date_, $memo_): void
 {
 	$date = date2sql($date_);
 	$sql = "INSERT INTO ".TB_PREF."voided (type, id, date_, memo_)

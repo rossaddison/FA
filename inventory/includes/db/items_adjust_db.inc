@@ -61,7 +61,7 @@ function add_stock_adjustment($items, $location, $date_, $reference, $memo_)
 
 //-------------------------------------------------------------------------------------------------------------
 
-function void_stock_adjustment($type_no)
+function void_stock_adjustment($type_no): void
 {
 	hook_db_prevoid(ST_INVADJUST, $type_no);
 	void_gl_trans(ST_INVADJUST, $type_no);
@@ -85,7 +85,7 @@ function get_stock_adjustment_items($trans_no)
 //--------------------------------------------------------------------------------------------------
 
 function add_stock_adjustment_item($adj_id, $stock_id, $location, $date_, $reference,
-	$quantity, $standard_cost, $memo_)
+	$quantity, $standard_cost, $memo_): void
 {
 	$mb_flag = get_mb_flag($stock_id);
 

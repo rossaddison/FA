@@ -12,7 +12,7 @@
 require_once($path_to_root. "/admin/db/attachments_db.inc");
 // ------------------------------------------------------------------------------
 
-function get_supplier_details_to_order(&$order, $supplier_id)
+function get_supplier_details_to_order(&$order, $supplier_id): void
 {
 	$sql = "SELECT curr_code, supp_name, tax_group_id, supp.tax_included, dimension_id, dimension2_id,
 			supp.credit_limit - Sum((ov_amount + ov_gst + ov_discount)) as cur_credit,
@@ -45,7 +45,7 @@ function get_supplier_details_to_order(&$order, $supplier_id)
 
 //----------------------------------------------------------------------------------------
 
-function delete_po($po)
+function delete_po($po): void
 {
 	global $Refs;
 
@@ -227,7 +227,7 @@ function read_po_header($order_no, &$order)
 
 //----------------------------------------------------------------------------------------
 
-function read_po_items($order_no, &$order, $open_items_only=false)
+function read_po_items($order_no, &$order, $open_items_only=false): void
 {
 	/*now populate the line po array with the purchase order details records */
 
@@ -272,7 +272,7 @@ function read_po_items($order_no, &$order, $open_items_only=false)
 
 //----------------------------------------------------------------------------------------
 
-function read_po($order_no, &$order, $open_items_only=false)
+function read_po($order_no, &$order, $open_items_only=false): void
 {
 	$result = read_po_header($order_no, $order);
 

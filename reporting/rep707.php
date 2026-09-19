@@ -147,7 +147,7 @@ function Achieve($d1, $d2)
 
 //----------------------------------------------------------------------------------------------------
 
-function print_profit_and_loss_statement()
+function print_profit_and_loss_statement(): void
 {
 	global $path_to_root, $SysPrefs;
 

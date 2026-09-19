@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function display_bank_header(&$order)
+function display_bank_header(&$order): void
 {
 	global $Ajax;
 	$payment = $order->trans_type == ST_BANKPAYMENT;
@@ -131,7 +131,7 @@ function display_bank_header(&$order)
 }
 //---------------------------------------------------------------------------------
 
-function display_gl_items($title, &$order)
+function display_gl_items($title, &$order): void
 {
 	global $path_to_root;
 
@@ -200,7 +200,7 @@ function display_gl_items($title, &$order)
 
 //---------------------------------------------------------------------------------
 
-function gl_edit_item_controls(&$order, $dim, $Index=null)
+function gl_edit_item_controls(&$order, $dim, $Index=null): void
 {
 	global $Ajax;
 	$payment = $order->trans_type == ST_BANKPAYMENT;
@@ -280,7 +280,7 @@ function gl_edit_item_controls(&$order, $dim, $Index=null)
 
 //---------------------------------------------------------------------------------
 
-function gl_options_controls($order)
+function gl_options_controls($order): void
 {
 	div_start('footer');
 	echo "<br><table align='center'>";

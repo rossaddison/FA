@@ -16,7 +16,7 @@ function update_item($stock_id, $description, $long_description, $category_id,
 	$cogs_account, 	$adjustment_account, $wip_account, $dimension_id, 
 	$dimension2_id, $no_sale, $editable, $no_purchase,
 	$depreciation_method = 'D', $depreciation_rate=100, $depreciation_factor=1,
-	$depreciation_start=null, $fa_class_id=null)
+	$depreciation_start=null, $fa_class_id=null): void
 {
 	$sql = "UPDATE ".TB_PREF."stock_master SET long_description=".db_escape($long_description).",
 		description=".db_escape($description).",
@@ -60,7 +60,7 @@ function add_item($stock_id, $description, $long_description, $category_id,
 	$cogs_account, $adjustment_account,	$wip_account, $dimension_id, 
 	$dimension2_id, $no_sale, $editable, $no_purchase,
 	$depreciation_method='D', $depreciation_rate=100,  $depreciation_factor=1, $depreciation_start=null,
-	$fa_class_id=null)
+	$fa_class_id=null): void
 {
 	$sql = "INSERT INTO ".TB_PREF."stock_master (stock_id, description, long_description, category_id,
 		tax_type_id, units, mb_flag, sales_account, inventory_account, cogs_account,
@@ -92,7 +92,7 @@ function add_item($stock_id, $description, $long_description, $category_id,
 	add_item_code($stock_id, $stock_id, $description, $category_id, 1, 0);
 }
 
-function delete_item($stock_id)
+function delete_item($stock_id): void
 {
 
 	/*cascade deletes in loc_stock */

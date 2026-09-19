@@ -76,7 +76,7 @@ function get_company_extensions($id = -1) {
 	return $installed_extensions;
 }
 
-function add_payment_terms($daysOrFoll, $terms, $dayNumber)
+function add_payment_terms($daysOrFoll, $terms, $dayNumber): void
 {
 	if ($daysOrFoll) 
 	{
@@ -95,7 +95,7 @@ function add_payment_terms($daysOrFoll, $terms, $dayNumber)
    	db_query($sql,"The payment term could not be added");
 }
 
-function update_payment_terms($selected_id, $daysOrFoll, $terms, $dayNumber)
+function update_payment_terms($selected_id, $daysOrFoll, $terms, $dayNumber): void
 {
 	if ($daysOrFoll) 
 	{
@@ -114,7 +114,7 @@ function update_payment_terms($selected_id, $daysOrFoll, $terms, $dayNumber)
    	db_query($sql,"The payment term could not be updated");
 }
 
-function delete_payment_terms($selected_id)
+function delete_payment_terms($selected_id): void
 {
 	$sql="DELETE FROM ".TB_PREF."payment_terms WHERE terms_indicator=".db_escape($selected_id);
 	db_query($sql,"could not delete a payment terms");

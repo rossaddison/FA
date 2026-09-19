@@ -299,7 +299,7 @@ class allocation_item
 
 //--------------------------------------------------------------------------------
 
-function show_allocatable($show_totals) {
+function show_allocatable($show_totals): void {
 
 	global $systypes_array;
 	

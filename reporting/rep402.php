@@ -66,7 +66,7 @@ function getTransactions($items, $open_only, $location)
 
 }
 
-function print_gl_rows(&$rep, $result, $title)
+function print_gl_rows(&$rep, $result, $title): void
 {
 	global $systypes_array;
 
@@ -97,7 +97,7 @@ function print_gl_rows(&$rep, $result, $title)
 
 //----------------------------------------------------------------------------------------------------
 
-function print_work_order_listing()
+function print_work_order_listing(): void
 {
     global $path_to_root, $wo_types_array;
 

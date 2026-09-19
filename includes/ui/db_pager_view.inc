@@ -30,7 +30,7 @@ function navi_button($name, $value, $enabled=true, $icon = false) {
 		."<span>$value</span></button>\n";
 }
 
-function navi_button_cell($name, $value, $enabled=true, $align='left') {
+function navi_button_cell($name, $value, $enabled=true, $align='left'): void {
 	label_cell(navi_button($name, $value, $enabled), "align='$align'");
 }
 

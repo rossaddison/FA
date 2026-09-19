@@ -59,7 +59,7 @@ if (list_updated('PersonDetailID')) {
 }
 
 //--------------------------------------------------------------------------------------------------
-function line_start_focus() {
+function line_start_focus(): void {
   	global 	$Ajax;
 
     unset($_POST['amount']);
@@ -140,7 +140,7 @@ if (isset($_GET['UpdatedDep']))
 
 //--------------------------------------------------------------------------------------------------
 
-function create_cart($type, $trans_no)
+function create_cart($type, $trans_no): void
 {
 	global $Refs;
 
@@ -344,7 +344,7 @@ function check_item_data()
 
 //-----------------------------------------------------------------------------------------------
 
-function handle_update_item()
+function handle_update_item(): void
 {
 	$amount = ($_SESSION['pay_items']->trans_type==ST_BANKPAYMENT ? 1:-1) * input_num('amount');
     if($_POST['UpdateItem'] != "" && check_item_data())
@@ -357,7 +357,7 @@ function handle_update_item()
 
 //-----------------------------------------------------------------------------------------------
 
-function handle_delete_item($id)
+function handle_delete_item($id): void
 {
 	$_SESSION['pay_items']->remove_gl_item($id);
 	line_start_focus();
@@ -365,7 +365,7 @@ function handle_delete_item($id)
 
 //-----------------------------------------------------------------------------------------------
 
-function handle_new_item()
+function handle_new_item(): void
 {
 	if (!check_item_data())
 		return;

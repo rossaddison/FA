@@ -180,7 +180,7 @@ function write_credit_note(&$credit_note, $write_off_acc)
 // 	a reversing stock movement to show the write off
 //
 function add_credit_movements_item(&$credit_note, &$credit_line,
-	$credit_type, $price, $credited_invoice=0)
+	$credit_type, $price, $credited_invoice=0): void
 {
     //Chaitanya : Stamp current cost in stock moves $credit_line does not fetch cost
     $curr_std_cost = get_unit_cost($credit_line->stock_id);

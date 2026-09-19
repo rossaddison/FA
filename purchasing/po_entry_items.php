@@ -152,7 +152,7 @@ else
   check_db_has_purchasable_items(_("There are no purchasable inventory items defined in the system."));
 //--------------------------------------------------------------------------------------------------
 
-function line_start_focus() {
+function line_start_focus(): void {
   global 	$Ajax;
 
   $Ajax->activate('items_table');
@@ -160,7 +160,7 @@ function line_start_focus() {
 }
 //--------------------------------------------------------------------------------------------------
 
-function unset_form_variables() {
+function unset_form_variables(): void {
 	unset($_POST['stock_id']);
     unset($_POST['qty']);
     unset($_POST['price']);
@@ -169,7 +169,7 @@ function unset_form_variables() {
 
 //---------------------------------------------------------------------------------------------------
 
-function handle_delete_item($line_no)
+function handle_delete_item($line_no): void
 {
 	if($_SESSION['PO']->some_already_received($line_no) == 0)
 	{
@@ -185,7 +185,7 @@ function handle_delete_item($line_no)
 
 //---------------------------------------------------------------------------------------------------
 
-function handle_cancel_po()
+function handle_cancel_po(): void
 {
 	global $path_to_root;
 	
@@ -260,7 +260,7 @@ function check_data()
 
 //---------------------------------------------------------------------------------------------------
 
-function handle_update_item()
+function handle_update_item(): void
 {
 	$allow_update = check_data(); 
 
@@ -284,7 +284,7 @@ function handle_update_item()
 
 //---------------------------------------------------------------------------------------------------
 
-function handle_add_new_item()
+function handle_add_new_item(): void
 {
 	$allow_update = check_data();
 	
@@ -414,7 +414,7 @@ function can_commit()
 	return true;
 }
 
-function handle_commit_order()
+function handle_commit_order(): void
 {
 	$cart = &$_SESSION['PO'];
 

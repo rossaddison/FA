@@ -58,7 +58,7 @@ function get_last_exchange_rate($curr_code, $date_)
 
 //---------------------------------------------------------------------------------------------
 
-function update_exchange_rate($curr_code, $date_, $buy_rate, $sell_rate)
+function update_exchange_rate($curr_code, $date_, $buy_rate, $sell_rate): void
 {
 	if (is_company_currency($curr_code))
 		display_db_error("Exchange rates cannot be set for company currency", "", true);
@@ -73,7 +73,7 @@ function update_exchange_rate($curr_code, $date_, $buy_rate, $sell_rate)
 
 //---------------------------------------------------------------------------------------------
 
-function add_exchange_rate($curr_code, $date_, $buy_rate, $sell_rate)
+function add_exchange_rate($curr_code, $date_, $buy_rate, $sell_rate): void
 {
 	if (is_company_currency($curr_code))
 		display_db_error("Exchange rates cannot be set for company currency", "", true);
@@ -88,7 +88,7 @@ function add_exchange_rate($curr_code, $date_, $buy_rate, $sell_rate)
 
 //---------------------------------------------------------------------------------------------
 
-function add_new_exchange_rate($curr_code, $date_, $ex_rate)
+function add_new_exchange_rate($curr_code, $date_, $ex_rate): void
 {
 	if (is_company_currency($curr_code) || !$ex_rate)
 		return;
@@ -99,7 +99,7 @@ function add_new_exchange_rate($curr_code, $date_, $ex_rate)
 
 //---------------------------------------------------------------------------------------------
 
-function delete_exchange_rate($rate_id)
+function delete_exchange_rate($rate_id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."exchange_rates WHERE id=".db_escape($rate_id);
 	db_query($sql, "could not delete exchange rate $rate_id");
