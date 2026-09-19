@@ -154,7 +154,7 @@ function order_link(mixed $row)
 	"/sales/sales_order_entry.php?NewQuoteToSalesOrder=" .$row['order_no'], ICON_DOC);
 }
 
-function tmpl_checkbox(mixed $row)
+function tmpl_checkbox(mixed $row): string
 {
 	global $trans_type, $page_nested;
 
@@ -173,7 +173,7 @@ function tmpl_checkbox(mixed $row)
 	. hidden('last['.$row['order_no'].']', $value, false);
 }
 
-function unallocated_prepayments(mixed $row)
+function unallocated_prepayments(mixed $row): string
 {
 
     if ($row['ord_payments'] > 0) {

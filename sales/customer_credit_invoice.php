@@ -82,7 +82,7 @@ if (isset($_GET['AddedID'])) {
 
 //-----------------------------------------------------------------------------
 
-function can_process()
+function can_process(): bool
 {
 	global $Refs;
 
@@ -135,7 +135,7 @@ if (isset($_GET['InvoiceNumber']) && $_GET['InvoiceNumber'] > 0) {
 	display_error(_("Selected quantity cannot be less than zero nor more than quantity not credited yet."));
 }
 
-function check_quantities()
+function check_quantities(): int
 {
 	$ok =1;
 	foreach ($_SESSION['Items']->line_items as $line_no=>$itm) {

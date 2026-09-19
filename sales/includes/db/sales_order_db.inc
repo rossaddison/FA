@@ -300,7 +300,7 @@ function get_sales_order_details(mixed $order_no, mixed $trans_type) {
 }
 //----------------------------------------------------------------------------------------
 
-function read_sales_order(mixed $order_no, &$order, mixed $trans_type)
+function read_sales_order(mixed $order_no, &$order, mixed $trans_type): bool
 {
 
 	$myrow = get_sales_order_header($order_no, $trans_type);
@@ -354,7 +354,7 @@ function read_sales_order(mixed $order_no, &$order, mixed $trans_type)
 
 //----------------------------------------------------------------------------------------
 
-function sales_order_has_deliveries(mixed $order_no)
+function sales_order_has_deliveries(mixed $order_no): bool
 {
 	$sql = "SELECT SUM(qty_sent) FROM ".TB_PREF.
 	"sales_order_details WHERE order_no=".db_escape($order_no)
@@ -576,7 +576,7 @@ function get_sql_for_sales_orders_view(mixed $trans_type, mixed $trans_no, mixed
 }
 
 //--------------------------------------------------------------------------------------------------
-function update_prepaid_so_line(mixed $line_id, mixed $qty_invoiced)
+function update_prepaid_so_line(mixed $line_id, mixed $qty_invoiced): bool
 {
 	$sql = "UPDATE ".TB_PREF."sales_order_details
 		SET invoiced = invoiced + ".(float)$qty_invoiced."

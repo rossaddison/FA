@@ -114,7 +114,7 @@ function prt_link(mixed $row)
  		return print_document_link($row['trans_no']."-".$row['type'], _("Print Remittance"), true, ST_SUPPAYMENT, ICON_PRINT);
 }
 
-function check_overdue(mixed $row)
+function check_overdue(mixed $row): bool
 {
 	return $row['OverDue'] == 1
 		&& (abs($row["TotalAmount"]) - $row["Allocated"] != 0);

@@ -150,7 +150,7 @@ if ($Mode == 'RESET' || get_post('_customer_id_update'))
 	$Ajax->activate('_page_body');
 }
 
-function branch_email(mixed $row) {
+function branch_email(mixed $row): string {
 	return	'<a href = "mailto:'.$row["email"].'">'.$row["email"].'</a>';
 }
 

@@ -162,7 +162,7 @@ if (isset($_POST['AddGLCodeToTrans'])) {
 
 //---------------------------------------------------------------------------------------------------
 
-function check_data()
+function check_data(): bool
 {
 	global $SysPrefs;
 
@@ -262,7 +262,7 @@ if (isset($_POST['PostCreditNote']))
 	handle_commit_credit_note();
 }
 
-function check_item_data(mixed $n)
+function check_item_data(mixed $n): bool
 {
 
 	if (!check_num('This_QuantityCredited'.$n, 0))

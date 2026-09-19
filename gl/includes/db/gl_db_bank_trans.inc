@@ -49,7 +49,7 @@ function add_bank_trans(mixed $type, mixed $trans_no, mixed $bank_act, mixed $re
 
 //----------------------------------------------------------------------------------------
 
-function exists_bank_trans(mixed $type, mixed $type_no)
+function exists_bank_trans(mixed $type, mixed $type_no): bool
 {
 	$sql = "SELECT trans_no
 		FROM ".TB_PREF."bank_trans
@@ -215,7 +215,7 @@ function check_bank_account_history(mixed $delta_amount, mixed $bank_account, mi
 /**
 *	Check bank transfer, deposit or customer deposit before voiding.
 **/
-function check_void_bank_trans(mixed $type, mixed $type_no)
+function check_void_bank_trans(mixed $type, mixed $type_no): bool
 {
 	$moves = get_bank_trans($type, $type_no);
 	while ($trans = db_fetch($moves)) {

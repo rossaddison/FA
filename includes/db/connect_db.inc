@@ -27,7 +27,7 @@ function db_get_version()
 /*
 	Converts encoding name to mysql standard.
 */
-function get_mysql_encoding_name(mixed $encoding)
+function get_mysql_encoding_name(mixed $encoding): string|null
 {
 	$db_encoding = array(
 		'UTF-8' => 'utf8',
@@ -64,7 +64,7 @@ function get_mysql_encoding_name(mixed $encoding)
 /*
 	Returns 'best' mysql collation for various FA backend language codes.
 */
-function get_mysql_collation(mixed $lang=null)
+function get_mysql_collation(mixed $lang=null): string
 {
 	if (!$lang)
 		$lang = 'utf8_'.substr($_SESSION['language']->code, 0, 2);
@@ -98,7 +98,7 @@ function get_mysql_collation(mixed $lang=null)
 	which is subject to invalid encodings on text columns,
 	so no SET NAMES or equivalent should be used.
 */
-function db_fixed()
+function db_fixed(): bool
 {
 	$result = db_query("SELECT value FROM ".TB_PREF."sys_prefs WHERE name='version_id'");
 	$data = db_fetch($result);

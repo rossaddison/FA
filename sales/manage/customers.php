@@ -36,7 +36,7 @@ if (isset($_GET['debtor_no']))
 $selected_id = get_post('customer_id','');
 //--------------------------------------------------------------------------------------------
 
-function can_process()
+function can_process(): bool
 {
 	if (strlen($_POST['CustName']) == 0) 
 	{

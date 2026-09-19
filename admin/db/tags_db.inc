@@ -81,7 +81,7 @@ function get_tag_name(mixed $id)
 }
 
 //----------------------------------------------------------------------------------------------------
-function get_tag_names(mixed $tags)
+function get_tag_names(mixed $tags): string
 {
 	$str = "";
 	if ($tags == -1)
@@ -206,7 +206,7 @@ function get_tags_associated_with_record(mixed $type, mixed $recordid)
 
 //--------------------------------------------------------------------------------------
 
-function is_record_in_tags(mixed $tags, mixed $type, mixed $recordid)
+function is_record_in_tags(mixed $tags, mixed $type, mixed $recordid): bool
 {
 	foreach($tags as $id)
 	{

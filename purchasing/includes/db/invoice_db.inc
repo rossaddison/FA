@@ -67,7 +67,7 @@ function read_supplier_details_to_trans(&$supp_trans, mixed $supplier_id): void
 //  Returns:
 // if chg_price is set:	 previous act_price, delivery date and unit_price from PO
 //
-function update_supp_received_items_for_invoice(mixed $id, mixed $po_detail_item, mixed $qty_invoiced, mixed $chg_price=null)
+function update_supp_received_items_for_invoice(mixed $id, mixed $po_detail_item, mixed $qty_invoiced, mixed $chg_price=null): array
 {
 	if ($chg_price != null)
 	{
@@ -432,7 +432,7 @@ function get_po_invoices_credits(mixed $po_number)
 //
 // Retrieve tax ovverides from tax register.
 //
-function get_tax_overrides(mixed $trans_type, mixed $trans_no)
+function get_tax_overrides(mixed $trans_type, mixed $trans_no): array
 {
 	$tax_overrides = array();
 	$sql = "SELECT amount, tax_type_id as id, rate
@@ -647,7 +647,7 @@ function get_gl_account_info(mixed $acc)
 	return db_query($sql,"get account information");
 }
 
-function is_reference_already_there(mixed $supplier_id, mixed $supp_reference, mixed $trans_no=0)
+function is_reference_already_there(mixed $supplier_id, mixed $supp_reference, mixed $trans_no=0): bool
 {
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."supp_trans WHERE supplier_id="
 		.db_escape($supplier_id) . " AND supp_reference=" 
@@ -707,7 +707,7 @@ function remove_not_invoice_item(mixed $id): void
     commit_transaction();
 }
 
-function find_src_invoices(mixed $cart)
+function find_src_invoices(mixed $cart): array
 {
 	$invoices = $po_ids = array();
 	foreach($cart->grn_items as $item)

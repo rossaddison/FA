@@ -82,7 +82,7 @@ function amount_total(mixed $row)
 	return price_format(-$row["Total"]);
 }
 
-function check_settled(mixed $row)
+function check_settled(mixed $row): bool
 {
 	return $row['settled'] == 1;
 }

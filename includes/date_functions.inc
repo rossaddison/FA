@@ -19,7 +19,7 @@ this can be a string either "d/m/Y" for UK/Australia/New Zealand dates or
 
 */
 
-function __date(mixed $year, mixed $month, mixed $day)
+function __date(mixed $year, mixed $month, mixed $day): string
 {
 	global $SysPrefs, $tmonths;
 	
@@ -168,7 +168,7 @@ function Today(): string
 	return __date($year, $month, $day);	
 }
 
-function Now() 
+function Now(): string 
 {
 	if (user_date_format() == 0)
 		return date("h:i a");
@@ -215,12 +215,12 @@ function is_date_in_fiscalyear(mixed $date, mixed $convert=false): int|bool
 	return 1;
 }
 
-function is_date_closed(mixed $date)
+function is_date_closed(mixed $date): bool
 {
 	return !date1_greater_date2($date, sql2date(get_company_pref('gl_closing_date')));
 }
 
-function begin_fiscalyear()
+function begin_fiscalyear(): string
 {
 	global $path_to_root;
 	include_once($path_to_root . "/admin/db/fiscalyears_db.inc");
@@ -229,7 +229,7 @@ function begin_fiscalyear()
 	return sql2date($myrow['begin']);
 }
 
-function end_fiscalyear()
+function end_fiscalyear(): string
 {
 	global $path_to_root;
 	include_once($path_to_root . "/admin/db/fiscalyears_db.inc");
@@ -249,7 +249,7 @@ function begin_month(mixed $date)
    	return __date($year, $month, 1);
 }
 
-function days_in_month(mixed $month, mixed $year)
+function days_in_month(mixed $month, mixed $year): int
 {
 	global $SysPrefs;
 
@@ -432,7 +432,7 @@ and converts to a yyyy/mm/dd format */
  *	Return +1 if sql date1>date2, -1 if date1<date2,
  *  or 0 if dates are equal.
  */
-function sql_date_comp(mixed $date1, mixed $date2)
+function sql_date_comp(mixed $date1, mixed $date2): int
 {
 	@list($year1, $month1, $day1) = explode("-", $date1);
 	@list($year2, $month2, $day2) = explode("-", $date2);
@@ -459,7 +459,7 @@ function date_comp(mixed $date1, mixed $date2)
 	return sql_date_comp($date1, $date2);
 }
 
-function date1_greater_date2 (mixed $date1, mixed $date2) 
+function date1_greater_date2 (mixed $date1, mixed $date2): int 
 {
 
 /* returns 1 true if date1 is greater than date_ 2 */
@@ -491,7 +491,7 @@ function date1_greater_date2 (mixed $date1, mixed $date2)
 	return 0;
 }
 
-function date_diff2 (mixed $date1, mixed $date2, mixed $period) 
+function date_diff2 (mixed $date1, mixed $date2, mixed $period): int 
 {
 
 /* expects dates in the format specified in $DefaultDateFormat - period can be one of 'd','w','y','m'
@@ -526,7 +526,7 @@ provided that both dates are after 1970. Also only works for dates up to the yea
 	}
 }
 
-function explode_date_to_dmy(mixed $date_)
+function explode_date_to_dmy(mixed $date_): array
 {
 	$date = date2sql($date_);
 	if ($date == "") 
@@ -537,7 +537,7 @@ function explode_date_to_dmy(mixed $date_)
 	return array($day, $month, $year);
 }
 
-function div(mixed $a, mixed $b) 
+function div(mixed $a, mixed $b): int 
 {
     return (int) ($a / $b);
 }
@@ -545,7 +545,7 @@ function div(mixed $a, mixed $b)
    Copyright (C) 2000  Roozbeh Pournader and Mohammad Toossi 
    Released under GNU General Public License */
 
-function gregorian_to_jalali (mixed $g_y, mixed $g_m, mixed $g_d)
+function gregorian_to_jalali (mixed $g_y, mixed $g_m, mixed $g_d): array
 {
     $g_days_in_month = array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
     $j_days_in_month = array(31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29);
@@ -585,7 +585,7 @@ function gregorian_to_jalali (mixed $g_y, mixed $g_m, mixed $g_d)
    	return array($jy, $jm, $jd);
 }
 
-function jalali_to_gregorian(mixed $j_y, mixed $j_m, mixed $j_d)
+function jalali_to_gregorian(mixed $j_y, mixed $j_m, mixed $j_d): array
 {
     $g_days_in_month = array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
     $j_days_in_month = array(31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29);
@@ -639,7 +639,7 @@ function jalali_to_gregorian(mixed $j_y, mixed $j_m, mixed $j_d)
 }
 /* Based on Hidri Date Script 
    Released under GNU General Public License */
-function gregorian_to_islamic(mixed $g_y, mixed $g_m, mixed $g_d)
+function gregorian_to_islamic(mixed $g_y, mixed $g_m, mixed $g_d): array
 {
 	$y = $g_y;   
 	$m = $g_m;
@@ -669,7 +669,7 @@ function gregorian_to_islamic(mixed $g_y, mixed $g_m, mixed $g_d)
 	return array($y, $m, $d);
 }
 
-function islamic_to_gregorian(mixed $i_y, mixed $i_m, mixed $i_d)
+function islamic_to_gregorian(mixed $i_y, mixed $i_m, mixed $i_d): array
 {
 	$y = $i_y;   
 	$m = $i_m;

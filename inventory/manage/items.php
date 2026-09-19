@@ -57,7 +57,7 @@ function set_edit(mixed $stock_id): void
 	$_POST['del_image'] = 0;
 }
 
-function del_image(mixed $stock_id)
+function del_image(mixed $stock_id): bool
 {
 	foreach (array('jpg', 'png', 'gif') as $ext) {
 		$filename = company_path().'/images/'.item_img_name($stock_id).".".$ext;
@@ -316,7 +316,7 @@ if (get_post('clone')) {
 
 //------------------------------------------------------------------------------------
 
-function check_usage(mixed $stock_id, mixed $dispmsg=true)
+function check_usage(mixed $stock_id, mixed $dispmsg=true): bool
 {
 	$msg = item_in_foreign_codes($stock_id);
 
@@ -664,7 +664,7 @@ end_form();
 
 end_page(@$_REQUEST['popup']);
 
-function generateBarcode() {
+function generateBarcode(): string {
 	$tmpBarcodeID = "";
 	$tmpCountTrys = 0;
 	while ($tmpBarcodeID == "" && $tmpCountTrys<2)	{

@@ -344,7 +344,7 @@ function floatcmp(mixed $a, mixed $b): int
 //
 //	Current ui mode.
 //
-function fallback_mode() {
+function fallback_mode(): bool {
     return $_SESSION["wa_current_user"]->ui_mode==0;
 }
 
@@ -352,7 +352,7 @@ function price_format(mixed $number): string {
     return number_format2($number, user_price_dec());
 }
 
-function price_decimal_format(mixed $number, &$dec)
+function price_decimal_format(mixed $number, &$dec): string
 {
 	$dec = user_price_dec();
 	$str = strval($number);
@@ -368,7 +368,7 @@ function price_decimal_format(mixed $number, &$dec)
 
 // 2008-06-15. Added extra parameter $stock_id and reference for $dec
 //--------------------------------------------------------------------
-function qty_format(mixed $number, mixed $stock_id, &$dec) {
+function qty_format(mixed $number, mixed $stock_id, &$dec): string {
 	$dec = get_qty_dec($stock_id);
     return number_format2($number, $dec);
 }
@@ -388,11 +388,11 @@ function get_qty_dec(mixed $stock_id=null)
 //
 //	Maximum precision format. Strips trailing unsignificant digits.
 //
-function maxprec_format(mixed $number) {
+function maxprec_format(mixed $number): string {
     return number_format2($number, 'max');
 }
 
-function exrate_format(mixed $number) {
+function exrate_format(mixed $number): string {
     return number_format2($number,
 	$_SESSION["wa_current_user"]->prefs->exrate_dec());
 }
@@ -402,7 +402,7 @@ function percent_format(mixed $number): string {
 	$_SESSION["wa_current_user"]->prefs->percent_dec());
 }
 
-function user_numeric(mixed $input) {
+function user_numeric(mixed $input): int|float|false {
     global $SysPrefs;
 
     $num = trim($input);
@@ -626,7 +626,7 @@ function add_user_js_data(): void {
   add_js_source($js);
 }
 
-function user_js_cache(mixed $id=null)
+function user_js_cache(mixed $id=null): string
 {
 	global $path_to_root;
 
@@ -698,7 +698,7 @@ function array_search_value(mixed $needle, mixed $haystack, mixed $valuekey=null
 //	Search $needle in $haystack or in $haystack[][$valuekey]
 //	returns array of keys of $haystack elements found
 //
-function array_search_keys(mixed $needle, mixed $haystack, mixed $valuekey=null)
+function array_search_keys(mixed $needle, mixed $haystack, mixed $valuekey=null): array
 {
 	$keys = array();
 	if (is_array($haystack)) {
@@ -765,7 +765,7 @@ function company_path(mixed $comp=null): string
 			. '/'.$comp;
 }
 
-function is_admin_company()
+function is_admin_company(): bool
 {
 	return $this->company == 0;
 }

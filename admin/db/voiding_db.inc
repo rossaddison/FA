@@ -14,7 +14,7 @@ include_once($path_to_root . "/purchasing/includes/purchasing_db.inc");
 include_once($path_to_root . "/inventory/includes/inventory_db.inc");
 include_once($path_to_root . "/manufacturing/includes/manufacturing_db.inc");
 
-function void_transaction(mixed $type, mixed $type_no, mixed $date_, mixed $memo_)
+function void_transaction(mixed $type, mixed $type_no, mixed $date_, mixed $memo_): string|false
 {
 	global $Refs;
 	$void_entry = get_voided_entry($type, $type_no);

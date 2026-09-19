@@ -30,7 +30,7 @@ if (user_use_date_picker())
 page(_($help_context = "Process Depreciation"), false, false, "", $js);
 
 //---------------------------------------------------------------------------------------------
-function check_data()
+function check_data(): bool
 {
   $myrow = get_item($_POST['stock_id']);
 

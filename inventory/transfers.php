@@ -154,7 +154,7 @@ if (isset($_POST['Process']))
 
 //-----------------------------------------------------------------------------------------------
 
-function check_item_data()
+function check_item_data(): bool
 {
 	if (!check_num('qty', 0) || input_num('qty') == 0)
 	{

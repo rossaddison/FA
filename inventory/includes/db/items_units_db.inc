@@ -51,7 +51,7 @@ function get_unit_descr(mixed $unit)
 	return is_array($row) ? $row[0] : false;
 }
 
-function item_unit_used(mixed $unit) {
+function item_unit_used(mixed $unit): bool {
 	$sql= "SELECT COUNT(*) FROM ".TB_PREF."stock_master WHERE units=".db_escape($unit);
 	$result = db_query($sql, "could not query stock master");
 	$myrow = db_fetch_row($result);

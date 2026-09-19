@@ -158,7 +158,7 @@ function display_gl_items(mixed $title, &$order): void
 	$k = 0;  //row colour counter
 
 	$id = find_submit('Edit');
-	foreach ($order->gl_items as $line => $item)
+	foreach (($order->gl_items ?? array()) as $line => $item)
 	{
 		if ($id != $line)
 		{

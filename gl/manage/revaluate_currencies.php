@@ -38,7 +38,7 @@ if (isset($_GET['BA']))
 
 
 //---------------------------------------------------------------------------------------------
-function check_data()
+function check_data(): bool
 {
 	if (!is_date($_POST['date']))
 	{

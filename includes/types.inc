@@ -69,13 +69,13 @@ $document_child_types = array(
 		ST_SUPPINVOICE => ST_SUPPCREDIT,
 );
 
-function get_child_type(mixed $type)
+function get_child_type(mixed $type): int
 {
 	global $document_child_types;
 	return isset($document_child_types[$type]) ? $document_child_types[$type] : 0;
 }
 
-function get_parent_type(mixed $type)
+function get_parent_type(mixed $type): int
 {
 	global $document_child_types;
 	$child = array_search($type, $document_child_types);
@@ -192,7 +192,7 @@ define('CL_INCOME', 4);
 define('CL_COGS', 5);
 define('CL_EXPENSE', 6);
 
-function get_class_type_convert(mixed $ctype)
+function get_class_type_convert(mixed $ctype): int
 {
 	global $SysPrefs;
 

@@ -95,7 +95,7 @@ function delete_tax_type(mixed $type_id): void
 	than selected tax type.
 	Necessary for pre-2.2 installations.
 */
-function is_tax_gl_unique(mixed $gl_code, mixed $gl_code2=-1, mixed $selected_id=-1) {
+function is_tax_gl_unique(mixed $gl_code, mixed $gl_code2=-1, mixed $selected_id=-1): bool {
 
 	$purch_code = $gl_code2== -1 ? $gl_code : $gl_code2;
 

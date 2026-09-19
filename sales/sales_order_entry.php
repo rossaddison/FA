@@ -364,7 +364,7 @@ function line_start_focus(): void {
 }
 
 //--------------------------------------------------------------------------------
-function can_process() {
+function can_process(): bool {
 
 	global $Refs, $SysPrefs;
 
@@ -528,7 +528,7 @@ if (isset($_POST['ProcessOrder']) && can_process()) {
 
 //--------------------------------------------------------------------------------
 
-function check_item_data()
+function check_item_data(): bool
 {
 	global $SysPrefs;
 	

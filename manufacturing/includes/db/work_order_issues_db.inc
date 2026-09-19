@@ -141,7 +141,7 @@ function get_work_order_issue_details(mixed $issue_no)
 
 //--------------------------------------------------------------------------------------
 
-function exists_work_order_issue(mixed $issue_no)
+function exists_work_order_issue(mixed $issue_no): bool
 {
 	$sql = "SELECT issue_no FROM ".TB_PREF."wo_issues WHERE issue_no=".db_escape($issue_no);
 	$result = db_query($sql, "Cannot retreive a wo issue");

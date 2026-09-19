@@ -103,7 +103,7 @@ function safe_exit(): void
 
 //-------------------------------------------------------------------------------------
 
-function can_process()
+function can_process(): bool
 {
 	global $selected_id, $Refs;
 

@@ -127,7 +127,7 @@ function get_work_order_productions(mixed $woid)
 
 //--------------------------------------------------------------------------------------
 
-function exists_work_order_produce(mixed $id)
+function exists_work_order_produce(mixed $id): bool
 {
 	$sql = "SELECT id FROM ".TB_PREF."wo_manufacture WHERE id=".db_escape($id);
 	$result = db_query($sql, "Cannot retreive a wo production");

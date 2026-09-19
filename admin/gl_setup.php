@@ -27,7 +27,7 @@ include_once($path_to_root . "/admin/db/company_db.inc");
 
 //-------------------------------------------------------------------------------------------------
 
-function can_process()
+function can_process(): bool
 {
     if (!check_num('past_due_days', 0, 100))
     {

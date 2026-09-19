@@ -60,7 +60,7 @@ function get_gl_account(mixed $code)
 	return db_fetch($result);
 }
 
-function is_account_balancesheet(mixed $code)
+function is_account_balancesheet(mixed $code): bool
 {
 	$sql = "SELECT act_class.ctype
 		FROM "
@@ -91,7 +91,7 @@ function get_gl_account_name(mixed $code)
 	display_db_error("could not retreive the account name for $code", $sql, true);
 }
 
-function gl_account_in_company_defaults(mixed $acc)
+function gl_account_in_company_defaults(mixed $acc): bool
 {
 	$sql= "SELECT COUNT(*) 
 	FROM ".TB_PREF."sys_prefs
@@ -119,7 +119,7 @@ function gl_account_in_company_defaults(mixed $acc)
 	return ($myrow[0] > 0); 
 }
 
-function gl_account_in_stock_category(mixed $acc)
+function gl_account_in_stock_category(mixed $acc): bool
 {
 	$acc = db_escape($acc);
 
@@ -135,7 +135,7 @@ function gl_account_in_stock_category(mixed $acc)
 	return ($myrow[0] > 0); 
 }
 
-function gl_account_in_stock_master(mixed $acc)
+function gl_account_in_stock_master(mixed $acc): bool
 {
 	$acc = db_escape($acc);
 
@@ -151,7 +151,7 @@ function gl_account_in_stock_master(mixed $acc)
 	return ($myrow[0] > 0); 
 }
 
-function gl_account_in_tax_types(mixed $acc)
+function gl_account_in_tax_types(mixed $acc): bool
 {
 	$acc = db_escape($acc);
 
@@ -165,7 +165,7 @@ function gl_account_in_tax_types(mixed $acc)
 	return ($myrow[0] > 0); 
 }
 
-function gl_account_in_cust_branch(mixed $acc)
+function gl_account_in_cust_branch(mixed $acc): bool
 {
 	$acc = db_escape($acc);
 
@@ -181,7 +181,7 @@ function gl_account_in_cust_branch(mixed $acc)
 	return ($myrow[0] > 0); 
 }
 
-function gl_account_in_suppliers(mixed $acc)
+function gl_account_in_suppliers(mixed $acc): bool
 {
 	$acc = db_escape($acc);
 
@@ -196,7 +196,7 @@ function gl_account_in_suppliers(mixed $acc)
 	return ($myrow[0] > 0); 
 }
 
-function gl_account_in_quick_entry_lines(mixed $acc)
+function gl_account_in_quick_entry_lines(mixed $acc): bool
 {
 	$acc = db_escape($acc);
 
@@ -261,7 +261,7 @@ function get_subaccount_name(mixed $code_id, mixed $person_id)
 	return  $row ? $row['ref'] : '';
 }
 
-function gl_account_in_bank_accounts(mixed $acc)
+function gl_account_in_bank_accounts(mixed $acc): bool
 {
 	$sql= "SELECT COUNT(*) FROM ".TB_PREF."bank_accounts WHERE 
 		account_code=".db_escape($acc);

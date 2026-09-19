@@ -143,7 +143,7 @@ function get_account_home_balance(mixed $person_id, mixed $person_type, mixed $r
 // Note: in 2.4.9 sparse 'ref' argument was removed (generated transactions use
 // next references from default refline).
 //
-function add_exchange_variation_all(mixed $date, mixed $memo)
+function add_exchange_variation_all(mixed $date, mixed $memo): array
 {
 	begin_transaction();
 	$exchanged = false;

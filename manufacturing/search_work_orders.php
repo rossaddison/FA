@@ -88,7 +88,7 @@ end_row();
 end_table();
 
 //-----------------------------------------------------------------------------
-function check_overdue(mixed $row)
+function check_overdue(mixed $row): bool
 {
 	return (!$row["closed"] 
 		&& date_diff2(Today(), sql2date($row["required_by"]), "d") > 0);

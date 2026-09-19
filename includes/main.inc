@@ -86,7 +86,7 @@ function add_css_file(mixed $filename): void
 	$css_files[] = $filename;
 }
 
-function cache_js_file(mixed $fpath, mixed $text) 
+function cache_js_file(mixed $fpath, mixed $text): bool 
 {
 	global $SysPrefs;
 
@@ -154,7 +154,7 @@ function add_js_source(mixed $text): void
  * Added removing comments from output.
  * Warning: Fails on RegExp with quotes - use new RegExp() in this case.
  */
-function js_compress(mixed $sJS)
+function js_compress(mixed $sJS): string|null
 {
 	//remove windows cariage returns
 	$sJS = str_replace("\r","",$sJS);
@@ -317,7 +317,7 @@ function check_write(mixed $path)
 	also removes files from the $to which 
 	does not exists in $from directory but arelisted in $flist.
 */
-function copy_files(mixed $flist, mixed $from, mixed $to, mixed $strict=false)
+function copy_files(mixed $flist, mixed $from, mixed $to, mixed $strict=false): bool
 {
 	foreach ($flist as $file) {
 		if (file_exists($from.'/'.$file)) {
@@ -334,7 +334,7 @@ function copy_files(mixed $flist, mixed $from, mixed $to, mixed $strict=false)
 	Copies file from base to target directory, restoring subdirectories 
 	if needed.
 */
-function copy_file(mixed $file, mixed $from, mixed $to)
+function copy_file(mixed $file, mixed $from, mixed $to): bool
 {
 
 	if (!is_dir(dirname($file=='.' ? $to : ($to.'/'.$file)))) {
@@ -358,7 +358,7 @@ function copy_file(mixed $file, mixed $from, mixed $to)
 	
 	Returns found file path or null.
 */
-function find_custom_file(mixed $rep)
+function find_custom_file(mixed $rep): string|null
 {
 	global $installed_extensions, $path_to_root, $local_path_to_root;
 
@@ -398,7 +398,7 @@ function find_custom_file(mixed $rep)
 	Protect against directory traversal.
 	Changes all not POSIX compatible chars to underscore.
 */
-function clean_file_name(mixed $filename) {
+function clean_file_name(mixed $filename): array|string|null {
     $filename = str_replace(chr(0), '', $filename);
     return preg_replace('/[^a-zA-Z0-9.\-_]/', '_', $filename);
 }
@@ -406,7 +406,7 @@ function clean_file_name(mixed $filename) {
 /*
 	Simple random password generator.
 */
-function generate_password()
+function generate_password(): string
 {
 	$bytes = random_bytes(8);
 
@@ -417,7 +417,7 @@ function generate_password()
 	This function aims to generate cryptographically strong random identifier.
 	Result identifier has length 4[strength/8/3] 
 */
-function random_id(mixed $strength = 128)
+function random_id(mixed $strength = 128): string
 {
 	$n = ceil($strength/8);
 

@@ -166,7 +166,7 @@ if (isset($_POST['AddGLCodeToTrans'])){
 
 //------------------------------------------------------------------------------------------------
 
-function check_data()
+function check_data(): bool
 {
 	global $Refs;
 
@@ -249,7 +249,7 @@ if (isset($_POST['PostInvoice']))
 	handle_commit_invoice();
 }
 
-function check_item_data(mixed $n)
+function check_item_data(mixed $n): bool
 {
 	global $SysPrefs;
 

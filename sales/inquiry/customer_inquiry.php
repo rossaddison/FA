@@ -115,7 +115,7 @@ function prt_link(mixed $row)
  		return print_document_link($row['trans_no']."-".$row['type'], _("Print"), true, $row['type'], ICON_PRINT);
 }
 
-function check_overdue(mixed $row)
+function check_overdue(mixed $row): bool
 {
 	return $row['OverDue'] == 1
 		&& floatcmp(ABS($row["TotalAmount"]), $row["Allocated"]) != 0;

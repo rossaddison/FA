@@ -350,7 +350,7 @@ function display_gl_items(&$supp_trans, mixed $mode=0)
 
 //--------------//-----------------------------------------------------------------------------------------
 
-function display_grn_items_for_selection(&$supp_trans, mixed $k)
+function display_grn_items_for_selection(&$supp_trans, mixed $k): bool
 {
 	if ($supp_trans->trans_type == ST_SUPPINVOICE)	// outstanding grns and eventually for selected invoice
 		$result = get_grn_items(0, $supp_trans->supplier_id, true, false, $supp_trans->trans_no);

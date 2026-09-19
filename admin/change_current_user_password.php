@@ -20,7 +20,7 @@ include_once($path_to_root . "/includes/ui.inc");
 
 include_once($path_to_root . "/admin/db/users_db.inc");
 
-function can_process()
+function can_process(): bool
 {
 
 	$Auth_Result = hook_authenticate($_SESSION["wa_current_user"]->username, $_POST['cur_password']);

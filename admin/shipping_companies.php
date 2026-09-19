@@ -19,7 +19,7 @@ include($path_to_root . "/admin/db/shipping_db.inc");
 simple_page_mode(true);
 //----------------------------------------------------------------------------------------------
 
-function can_process() 
+function can_process(): bool 
 {
 	if (strlen($_POST['shipper_name']) == 0) 
 	{

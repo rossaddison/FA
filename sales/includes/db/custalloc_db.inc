@@ -99,7 +99,7 @@ function clear_cust_alloctions(mixed $type, mixed $type_no, mixed $person_id=nul
 }
 //-------------------------------------------------------------------------------------------------------------
 
-function get_allocatable_from_cust_sql(mixed $customer_id, mixed $settled)
+function get_allocatable_from_cust_sql(mixed $customer_id, mixed $settled): string
 {
 	$sql = "SELECT
 		trans.type,
@@ -133,7 +133,7 @@ function get_allocatable_from_cust_sql(mixed $customer_id, mixed $settled)
 	return $sql;
 }
 
-function get_allocatable_sales_orders(mixed $customer_id = null, mixed $trans_no=null, mixed $type=null)
+function get_allocatable_sales_orders(mixed $customer_id = null, mixed $trans_no=null, mixed $type=null): string
 {
 	$sql = "SELECT
 		sorder.trans_type as type,
@@ -281,7 +281,7 @@ function get_allocatable_from_cust_transactions(mixed $customer_id, mixed $trans
 	return db_query($sql." ORDER BY trans_no", "Cannot retreive alloc to transactions");
 }
 
-function get_sql_for_customer_allocation_inquiry(mixed $from, mixed $to, mixed $customer, mixed $filterType, mixed $settled)
+function get_sql_for_customer_allocation_inquiry(mixed $from, mixed $to, mixed $customer, mixed $filterType, mixed $settled): string
 {
   	$data_after = date2sql($from);
   	$date_to = date2sql($to);
@@ -356,7 +356,7 @@ function get_sql_for_customer_allocation_inquiry(mixed $from, mixed $to, mixed $
    	return $sql;
 }
 
-function credit_sales_invoice_allocate(mixed $invoice_no, mixed $credit_no, mixed $amount, mixed $date)
+function credit_sales_invoice_allocate(mixed $invoice_no, mixed $credit_no, mixed $amount, mixed $date): bool
 {
 
 	$sql = "SELECT ov_freight+ov_gst+ov_amount+ov_freight_tax as total, alloc, debtor_no FROM ".TB_PREF."debtor_trans

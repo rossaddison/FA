@@ -179,7 +179,7 @@ An example of usage will be in the reporting/rep110.php file at near the end jus
     }
 */
 
-function parse_notes_params(mixed $str, mixed $sep=" ", mixed $delim="#") {
+function parse_notes_params(mixed $str, mixed $sep=" ", mixed $delim="#"): array {
     $str_params = explode($sep, $str);
     $param_array=Array('notes' => '');
     foreach ($str_params AS $str_param) {

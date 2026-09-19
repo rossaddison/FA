@@ -128,7 +128,7 @@ function trans_view(mixed $trans, mixed $trans_no)
 	return get_customer_trans_view_str(ST_CUSTDELIVERY, $trans['trans_no']);
 }
 
-function batch_checkbox(mixed $row)
+function batch_checkbox(mixed $row): string
 {
 	$name = "Sel_" .$row['trans_no'];
 	return $row['Done'] ? '' :
@@ -156,7 +156,7 @@ function invoice_link(mixed $row)
 			.$row['trans_no'], ICON_DOC);
 }
 
-function check_overdue(mixed $row)
+function check_overdue(mixed $row): bool
 {
    	return date1_greater_date2(Today(), sql2date($row["due_date"])) && 
 			$row["Outstanding"]!=0;

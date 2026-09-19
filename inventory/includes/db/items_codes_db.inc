@@ -110,7 +110,7 @@ function get_item_code_dflts(mixed $stock_id)
 //
 //	Check if kit contains given item, optionally recursive.
 //
-function check_item_in_kit(mixed $old_id, mixed $kit_code, mixed $item_code, mixed $recurse=false)
+function check_item_in_kit(mixed $old_id, mixed $kit_code, mixed $item_code, mixed $recurse=false): int
 {
 	$result = get_item_kit($kit_code);
 	if ($result)

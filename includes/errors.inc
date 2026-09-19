@@ -23,7 +23,7 @@ function fa_trigger_error(mixed $msg, mixed $error_level=E_USER_NOTICE): void
         trigger_error($msg, $error_level);
 }
 
-function get_backtrace(mixed $html = false, mixed $skip=0)
+function get_backtrace(mixed $html = false, mixed $skip=0): string
 {
 	$str = '';
 	if ($html) $str .= '<table border=0>';
@@ -67,7 +67,7 @@ function get_backtrace(mixed $html = false, mixed $skip=0)
 //    Error handler - collects all php/user messages for
 //    display in message box.
 
-function error_handler(mixed $errno, mixed $errstr, mixed $file, mixed $line) {
+function error_handler(mixed $errno, mixed $errstr, mixed $file, mixed $line): bool {
     global $messages, $SysPrefs, $cur_error_level;
 
 	// skip well known warnings we don't care about.
@@ -111,7 +111,7 @@ function exception_handler(mixed $exception): void
 //------------------------------------------------------------------------------
 //	Formats system messages before insert them into message <div>
 // FIX center is unused now
-function fmt_errors(mixed $center=false) {
+function fmt_errors(mixed $center=false): string {
     global $messages, $path_to_root, $SysPrefs;
 
   	$msg_class = array(
@@ -224,7 +224,7 @@ function display_db_error(mixed $msg, mixed $sql_statement=null, mixed $exit=tru
 		exit;
 }
 
-function frindly_db_error(mixed $db_error)
+function frindly_db_error(mixed $db_error): bool
 {
 	if ($db_error == DB_DUPLICATE_ERROR) 
 	{

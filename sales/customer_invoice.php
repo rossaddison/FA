@@ -194,7 +194,7 @@ if (isset($_POST['_InvoiceDate_changed'])) {
 }
 
 //-----------------------------------------------------------------------------
-function check_quantities()
+function check_quantities(): int
 {
 	$ok =1;
 	foreach ($_SESSION['Items']->line_items as $line_no=>$itm) {
@@ -287,7 +287,7 @@ function copy_from_cart(): void
 
 //-----------------------------------------------------------------------------
 
-function check_data()
+function check_data(): bool
 {
 	global $Refs;
 

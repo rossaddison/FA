@@ -39,7 +39,7 @@ print_stock_check();
  * @LastChange	2014-04-13
  */
 
-function barcode_check(mixed $code, mixed $return_value = false, mixed $get_type = false)
+function barcode_check(mixed $code, mixed $return_value = false, mixed $get_type = false): string|false
 {
 	//Setting return value
 	/*

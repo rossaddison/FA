@@ -72,7 +72,7 @@ function delete_attachments(mixed $type_no, mixed $trans_no): void
 }
 //----------------------------------------------------------------------------------------
 
-function get_attachment_string(mixed $type, mixed $id)
+function get_attachment_string(mixed $type, mixed $id): string
 {
 	global $path_to_root;
     $str_return = "";    
@@ -117,7 +117,7 @@ function has_attachment(mixed $type, mixed $id)
 		return $myrow['id'];
 }
 
-function get_sql_for_attached_documents(mixed $type, mixed $id_no)
+function get_sql_for_attached_documents(mixed $type, mixed $id_no): string
 {
     // $_POST['trans_no'] will be used to store the customer_id or supplier_id for them
 	$sql = "SELECT trans_no, description, filename, filesize, filetype, tran_date, id, type_no FROM ".TB_PREF."attachments WHERE type_no=".db_escape($type);

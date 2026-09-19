@@ -101,7 +101,7 @@ function clear_supp_alloctions(mixed $type, mixed $type_no, mixed $person_id=nul
 }
 //-------------------------------------------------------------------------------------------------------------
 
-function get_allocatable_from_supp_sql(mixed $supplier_id, mixed $settled)
+function get_allocatable_from_supp_sql(mixed $supplier_id, mixed $settled): string
 {
 	$sql = "SELECT
 		trans.type,
@@ -131,7 +131,7 @@ function get_allocatable_from_supp_sql(mixed $supplier_id, mixed $settled)
 	return $sql;
 }
 
-function get_allocatable_purch_orders(mixed $supplier_id = null, mixed $trans_no=null, mixed $type=null)
+function get_allocatable_purch_orders(mixed $supplier_id = null, mixed $trans_no=null, mixed $type=null): string
 {
 	$due_dates = "SELECT order_no, MIN(delivery_date) as date
 		FROM ".TB_PREF."purch_order_details det
@@ -259,7 +259,7 @@ function get_allocatable_from_supp_transactions(mixed $supplier_id, mixed $trans
 	return db_query($sql." ORDER BY due_date", "Cannot retreive alloc to transactions");
 }
 
-function get_sql_for_supplier_allocation_inquiry()
+function get_sql_for_supplier_allocation_inquiry(): string
 {
  	$date_after = date2sql($_POST['TransAfterDate']);
  	$date_to = date2sql($_POST['TransToDate']);

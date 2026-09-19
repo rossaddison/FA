@@ -41,7 +41,7 @@ function find_submit(mixed $prefix, mixed $numeric=true): int|string|null
 	Helper function.
 	Returns true if input $name with $submit_on_change option set is subject to update.
 */
-function input_changed(mixed $name)
+function input_changed(mixed $name): bool
 {
 	return isset($_POST['_'.$name.'_changed']);
 }
@@ -284,7 +284,7 @@ function submit_js_confirm(mixed $name, mixed $msg, mixed $set = true): void {
 }
 //-----------------------------------------------------------------------------------
 
-function set_icon(mixed $icon, mixed $title=false)
+function set_icon(mixed $icon, mixed $title=false): string
 {
 	global $path_to_root;
 	if (basename($icon) === $icon) // standard icons does not contain path separator
@@ -292,7 +292,7 @@ function set_icon(mixed $icon, mixed $title=false)
 	return "<img src='$icon' style='vertical-align:middle;width:12px;height:12px;border:0;'".($title ? " title='$title'" : "")." >\n";	
 }
 
-function button(mixed $name, mixed $value, mixed $title=false, mixed $icon=false,  mixed $aspect='')
+function button(mixed $name, mixed $value, mixed $title=false, mixed $icon=false,  mixed $aspect=''): string
 {
 	// php silently changes dots,spaces,'[' and characters 128-159
 	// to underscore in POST names, to maintain compatibility with register_globals
@@ -358,7 +358,7 @@ function check_value(mixed $name): int|array
 		return (empty($_POST[$name]) ? 0 : 1);
 }
 
-function checkbox(mixed $label, mixed $name, mixed $value=null, mixed $submit_on_change=false, mixed $title=false)
+function checkbox(mixed $label, mixed $name, mixed $value=null, mixed $submit_on_change=false, mixed $title=false): string
 {
   	global $Ajax;
 
@@ -408,7 +408,7 @@ function check_row(mixed $label, mixed $name, mixed $value=null, mixed $submit_o
 }
 
 //-----------------------------------------------------------------------------------
-function radio(mixed $label, mixed $name, mixed $value, mixed $selected=null, mixed $submit_on_change=false)
+function radio(mixed $label, mixed $name, mixed $value, mixed $selected=null, mixed $submit_on_change=false): string
 {
 	if (!isset($selected))
 		$selected = get_post($name) === (string)$value;
@@ -510,7 +510,7 @@ function label_row(mixed $label, mixed $value, mixed $params="", mixed $params2=
 	echo "</tr>\n";
 }
 
-function text_input(mixed $name, mixed $value=null, mixed $size='', mixed $max='', mixed $title='', mixed $params='')
+function text_input(mixed $name, mixed $value=null, mixed $size='', mixed $max='', mixed $title='', mixed $params=''): string
 {
 	if ($value === null)
 		$value = get_post($name);

@@ -120,7 +120,7 @@ if (!isset($_POST['date_']))
 		$_POST['date_'] = end_fiscalyear();
 }
 
-function can_process()
+function can_process(): bool
 {
 	global $selected_id, $SysPrefs;
 

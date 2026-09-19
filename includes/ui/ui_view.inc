@@ -255,7 +255,7 @@ function get_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", mixed
 	Checks whether any of input function parameters has changed or page is called with GET method (first page display).
 	$name - context
 */
-function check_ui_refresh(mixed $name=null)
+function check_ui_refresh(mixed $name=null): bool
 {
 	$bt = debug_backtrace();
 	if (!$name)
@@ -336,7 +336,7 @@ function exchange_rate_display(mixed $from_currency, mixed $to_currency, mixed $
 
 //--------------------------------------------------------------------------------------
 
-function is_voided_display(mixed $type, mixed $id, mixed $label)
+function is_voided_display(mixed $type, mixed $id, mixed $label): bool
 {
 	$void_entry = get_voided_entry($type, $id);
 
@@ -372,7 +372,7 @@ function comments_display_row(mixed $type, mixed $id): void
 
 //--------------------------------------------------------------------------------------
 
-function get_comments_string(mixed $type, mixed $type_no)
+function get_comments_string(mixed $type, mixed $type_no): string
 {
 	$str_return = "";
 	$result = get_comments($type, $type_no);
@@ -387,7 +387,7 @@ function get_comments_string(mixed $type, mixed $type_no)
 
 //--------------------------------------------------------------------------------------
 
-function view_stock_status(mixed $stock_id, mixed $description=null, mixed $echo=true)
+function view_stock_status(mixed $stock_id, mixed $description=null, mixed $echo=true): string
 {
 	global $path_to_root;
 	if ($description)
@@ -480,7 +480,7 @@ function display_supp_trans_tax_details(mixed $tax_items, mixed $columns): void
 
 //--------------------------------------------------------------------------------------
 
-function display_edit_tax_items(mixed $taxes, mixed $columns, mixed $tax_included, mixed $rightspan=0, mixed $editable=false)
+function display_edit_tax_items(mixed $taxes, mixed $columns, mixed $tax_included, mixed $rightspan=0, mixed $editable=false): int|float
 {
 	$total = 0;
 
@@ -626,7 +626,7 @@ function display_allocations_to(mixed $person_type, mixed $person_id, mixed $typ
 //	Expands selected quick entry $id into GL posings and adds to cart.
 //		returns calculated amount posted to bank GL account.
 //
-function display_quick_entries(&$cart, mixed $id, mixed $base, mixed $type, mixed $descr='')
+function display_quick_entries(&$cart, mixed $id, mixed $base, mixed $type, mixed $descr=''): int
 {
 	$bank_amount = 0;
 
@@ -675,7 +675,7 @@ function display_quick_entries(&$cart, mixed $id, mixed $base, mixed $type, mixe
 
 //--------------------------------------------------------------------------------------
 
-function quickentry_calculate(mixed $base, mixed $id, mixed $taxgroup=null, mixed $date=null)
+function quickentry_calculate(mixed $base, mixed $id, mixed $taxgroup=null, mixed $date=null): array|int
 {
 		$gl_entries = array();
 		$qe = get_quick_entry($id);
@@ -810,7 +810,7 @@ function quickentry_calculate(mixed $base, mixed $id, mixed $taxgroup=null, mixe
 //
 //	Simple English version of number to words conversion.
 //
-function _number_to_words(mixed $number) 
+function _number_to_words(mixed $number): string 
 { 
     $Bn = floor($number / 1000000000); /* Billions (giga) */ 
     $number -= $Bn * 1000000000; 
@@ -898,7 +898,7 @@ function get_js_open_window(mixed $width, mixed $height): string
 	return $js;
 }
 
-function get_js_lookup_window() {
+function get_js_lookup_window(): string {
   	$js = "function lookupWindow(url, title) {
     	var u = url.split('#');
     	if (u.length == 2) {
@@ -911,7 +911,7 @@ function get_js_lookup_window() {
 	return $js;
 }
 
-function get_js_select_combo_item() {
+function get_js_select_combo_item(): string {
 	$js = "function selectComboItem(doc, client_id, value){
     	var element = doc.getElementById(client_id);
 		if (typeof(element) != 'undefined' && element != null && element.tagName === 'SELECT' ){
@@ -936,7 +936,7 @@ function get_js_select_combo_item() {
 	return $js;
 }
 /* for space search option */
-function get_js_set_combo_item() {
+function get_js_set_combo_item(): string {
 	$js = "function setComboItem(doc, client_id, value, text){
     	var element = doc.getElementById(client_id);
     	var search = doc.getElementById('_'+client_id+'_edit');
@@ -994,7 +994,7 @@ function reset_focus(): void
 	unset($_POST['_focus']);
 }
 
-function get_js_date_picker()
+function get_js_date_picker(): string
 {
     global $SysPrefs, $tmonths;
 
@@ -1539,7 +1539,7 @@ if (!isset($payment_services))
 *	Payment link generation. Options provided during invoice generation:
 *	company_email, comment, amount, currency
 */
-function payment_link(mixed $name, mixed $options)
+function payment_link(mixed $name, mixed $options): string|false|null
 {
 	global $payment_services;
 

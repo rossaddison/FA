@@ -162,7 +162,7 @@ function get_supplier_accounts(mixed $supplier_id)
 	return db_fetch($result);
 }
 
-function get_supplier_contacts(mixed $supplier_id, mixed $action=null)
+function get_supplier_contacts(mixed $supplier_id, mixed $action=null): array
 {
 	$results = array();
 	$res = get_crm_persons('supplier', $action, $supplier_id);
@@ -179,7 +179,7 @@ function get_current_supp_credit(mixed $supplier_id)
 
 }
 
-function is_new_supplier(mixed $id)
+function is_new_supplier(mixed $id): bool
 {
 	$tables = array('supp_trans', 'grn_batch', 'purch_orders', 'purch_data');
 

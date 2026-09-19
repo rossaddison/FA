@@ -102,12 +102,12 @@ function sum_dimension(mixed $row)
 	return get_dimension_balance($row['id'], $_POST['FromDate'], $_POST['ToDate']); 
 }
 
-function is_closed(mixed $row)
+function is_closed(mixed $row): string
 {
 	return $row['closed'] ? _('Yes') : _('No');
 }
 
-function is_overdue(mixed $row)
+function is_overdue(mixed $row): bool
 {
 	return date_diff2(Today(), sql2date($row["due_date"]), "d") > 0;
 }

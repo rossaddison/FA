@@ -27,7 +27,7 @@ simple_page_mode(true);
 	FIXME: tb_pref_counter should track prefix per database.
 */
 //---------------------------------------------------------------------------------------------
-function check_data(mixed $selected_id)
+function check_data(mixed $selected_id): bool
 {
 	global $db_connections, $tb_pref_counter;
 
@@ -84,7 +84,7 @@ function remove_connection(mixed $id) {
 }
 //---------------------------------------------------------------------------------------------
 
-function handle_submit(mixed $selected_id)
+function handle_submit(mixed $selected_id): bool
 {
 	global $db_connections, $def_coy, $tb_pref_counter, $db,
 	    $comp_subdirs, $path_to_root, $Mode;

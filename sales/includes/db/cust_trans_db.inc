@@ -30,7 +30,7 @@ function update_customer_trans_version(mixed $type, mixed $versions) {
 // $trans_no = array(num1, num2,...);
 // returns array(num1=>ver1, num2=>ver2...)
 //
-function get_customer_trans_version(mixed $type, mixed $trans_no) {
+function get_customer_trans_version(mixed $type, mixed $trans_no): array {
 	if (!is_array($trans_no))
 		$trans_no = array( $trans_no );
 
@@ -218,7 +218,7 @@ function get_customer_trans(mixed $trans_id, mixed $trans_type, mixed $customer_
 
 //----------------------------------------------------------------------------------------
 
-function exists_customer_trans(mixed $type, mixed $type_no)
+function exists_customer_trans(mixed $type, mixed $type_no): bool
 {
 	$sql = "SELECT trans_no FROM ".TB_PREF."debtor_trans WHERE type=".db_escape($type)."
 		AND trans_no=".db_escape($type_no);
@@ -299,7 +299,7 @@ function post_void_customer_trans(mixed $type, mixed $type_no): void
 }
 
 //----------------------------------------------------------------------------------------
-function get_sql_for_customer_inquiry(mixed $from, mixed $to, mixed $cust_id = ALL_TEXT, mixed $filter = ALL_TEXT, mixed $show_voided = 0, mixed $ref='')
+function get_sql_for_customer_inquiry(mixed $from, mixed $to, mixed $cust_id = ALL_TEXT, mixed $filter = ALL_TEXT, mixed $show_voided = 0, mixed $ref=''): string
 {
     $date_after = date2sql($from);
     $date_to = date2sql($to);
@@ -403,7 +403,7 @@ function get_sql_for_customer_inquiry(mixed $from, mixed $to, mixed $cust_id = A
    	return $sql;
 }
 
-function get_sql_for_sales_deliveries_view(mixed $from, mixed $to, mixed $customer_id, mixed $stock_item, mixed $location, mixed $delivery, mixed $outstanding=false)
+function get_sql_for_sales_deliveries_view(mixed $from, mixed $to, mixed $customer_id, mixed $stock_item, mixed $location, mixed $delivery, mixed $outstanding=false): string
 {
 	$sql = "SELECT trans.trans_no,
 			debtor.name,

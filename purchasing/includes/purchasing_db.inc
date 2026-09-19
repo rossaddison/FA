@@ -117,7 +117,7 @@ function add_or_update_purchase_data(mixed $supplier_id, mixed $stock_id, mixed 
 	return true;
 }
 
-function get_po_prepayments(mixed $supp_trans)
+function get_po_prepayments(mixed $supp_trans): array
 {
 	// collect purchase order line ids
 	$allocations = array();

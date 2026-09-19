@@ -45,7 +45,7 @@ function add_gl_trans_customer(mixed $type, mixed $type_no, mixed $date_, mixed 
 
 //----------------------------------------------------------------------------------------
 
-function get_calculated_price(mixed $stock_id, mixed $add_pct)
+function get_calculated_price(mixed $stock_id, mixed $add_pct): int|float
 {
 	$avg = get_unit_cost($stock_id);
 	if ($avg == 0)
@@ -169,7 +169,7 @@ function get_kit_price(mixed $item_code, mixed $currency, mixed $sales_type_id, 
 }
 
 //--------------------------------------------------------------------------------------------------
-function update_parent_line(mixed $doc_type, mixed $line_id, mixed $qty_dispatched, mixed $auto=false)
+function update_parent_line(mixed $doc_type, mixed $line_id, mixed $qty_dispatched, mixed $auto=false): bool
 {
 	$doc_type = get_parent_type($doc_type);
 
@@ -220,7 +220,7 @@ function get_location(&$cart)
 //
 //	$trans_no - array of trans nums; special case trans_no==0 - new doc
 //
-function read_sales_trans(mixed $doc_type, mixed $trans_no, &$cart)
+function read_sales_trans(mixed $doc_type, mixed $trans_no, &$cart): bool
 {
 	if (!is_array($trans_no) && $trans_no)
 		$trans_no = array($trans_no);
@@ -317,7 +317,7 @@ function get_sales_child_lines(mixed $trans_type, mixed $trans_no, mixed $lines=
 	return db_query($sql, "can't retrieve child trans");
 }
 
-function get_sales_child_numbers(mixed $trans_type, mixed $trans_no)
+function get_sales_child_numbers(mixed $trans_type, mixed $trans_no): array
 {
 	$trans = array();
 	$res = get_sales_child_lines($trans_type, $trans_no, false);
@@ -353,7 +353,7 @@ function get_sales_parent_lines(mixed $trans_type, mixed $trans_no, mixed $lines
 
 }
 
-function get_sales_parent_numbers(mixed $trans_type, mixed $trans_no)
+function get_sales_parent_numbers(mixed $trans_type, mixed $trans_no): array
 {
 	$trans = array();
 	$res = get_sales_parent_lines($trans_type, $trans_no, false);

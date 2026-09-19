@@ -25,7 +25,7 @@ if (user_use_date_picker())
 page(_($help_context = "Closing GL Transactions"), false, false, "", $js);
 
 //---------------------------------------------------------------------------------------------
-function check_data()
+function check_data(): bool
 {
 	global $SysPrefs;
 	

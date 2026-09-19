@@ -21,7 +21,7 @@ include_once($path_to_root . "/taxes/db/tax_types_db.inc");
 simple_page_mode(true);
 //-----------------------------------------------------------------------------------
 
-function can_process()
+function can_process(): bool
 {
 	global $selected_id;
 	
@@ -70,7 +70,7 @@ if ($Mode=='UPDATE_ITEM' && can_process())
 
 //-----------------------------------------------------------------------------------
 
-function can_delete(mixed $selected_id)
+function can_delete(mixed $selected_id): bool
 {
 	if (key_in_foreign_table($selected_id, 'tax_group_items', 'tax_type_id'))
 	{

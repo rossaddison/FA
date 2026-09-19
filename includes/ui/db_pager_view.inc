@@ -10,7 +10,7 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 //--------------------------------------------------------------------------------------------------
-function pager_link(mixed $link_text, mixed $url, mixed $icon=false)
+function pager_link(mixed $link_text, mixed $url, mixed $icon=false): string
 {
 	global $path_to_root;
 	
@@ -21,7 +21,7 @@ function pager_link(mixed $link_text, mixed $url, mixed $icon=false)
 	return "<a href='$href'>" . $link_text . "</a>";
 }
 
-function navi_button(mixed $name, mixed $value, mixed $enabled=true, mixed $icon = false) {
+function navi_button(mixed $name, mixed $value, mixed $enabled=true, mixed $icon = false): string {
 	global $path_to_root;
   	return "<button ". ($enabled ? '':'disabled')
   		." class=\"navibutton\" type=\"submit\""
@@ -39,7 +39,7 @@ function navi_button_cell(mixed $name, mixed $value, mixed $enabled=true, mixed 
 //
 //    Sql paged table view. Call this function inside form.
 //
-function display_db_pager(&$pager) {
+function display_db_pager(&$pager): bool {
     global	$path_to_root;
 
 	$pager->select_records();

@@ -12,7 +12,7 @@
 
 //--------------------------------------------------------------------------------------
 
-function get_sql_for_view_transactions(mixed $filtertype, mixed $from, mixed $to, &$trans_ref)
+function get_sql_for_view_transactions(mixed $filtertype, mixed $from, mixed $to, &$trans_ref): string
 {
 	$db_info = get_systype_db_info($filtertype);
 
@@ -67,7 +67,7 @@ function transaction_exists(mixed $trans_type, mixed $trans_no)
 //
 //	Returns counterparty (supplier/customer) name for selected transaction.
 //
-function get_counterparty_name(mixed $trans_type, mixed $trans_no, mixed $full=true)
+function get_counterparty_name(mixed $trans_type, mixed $trans_no, mixed $full=true): string|null
 {
 	switch($trans_type)
 	{

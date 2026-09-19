@@ -70,7 +70,7 @@ function delete_branch(mixed $customer_id, mixed $branch_code): void
 	db_query($sql,"could not delete branch");
 }
 
-function branch_in_foreign_table(mixed $customer_id, mixed $branch_code, mixed $table)
+function branch_in_foreign_table(mixed $customer_id, mixed $branch_code, mixed $table): bool
 {
 	$sql= "SELECT COUNT(*) FROM ".TB_PREF."$table WHERE branch_code=".db_escape($branch_code)
 		." AND debtor_no = ".db_escape($customer_id);
@@ -139,7 +139,7 @@ function get_default_info_for_branch(mixed $customer_id)
 	return db_fetch($result);
 }
 
-function get_sql_for_customer_branches(mixed $customer_id)
+function get_sql_for_customer_branches(mixed $customer_id): string
 {
 	$sql = "SELECT "
 		."b.branch_code, "

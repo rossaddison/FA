@@ -13,7 +13,7 @@ include_once($path_to_root . "/gl/includes/gl_db.inc");
 
 //----------------------------------------------------------------------------------
 
-function is_company_currency(mixed $currency)
+function is_company_currency(mixed $currency): bool
 {
 	return (get_company_currency() == $currency);
 }
@@ -56,7 +56,7 @@ function get_exchange_rate_to_home_currency(mixed $currency_code, mixed $date_)
 
 //----------------------------------------------------------------------------------
 
-function to_home_currency(mixed $amount, mixed $currency_code, mixed $date_)
+function to_home_currency(mixed $amount, mixed $currency_code, mixed $date_): float
 {
 	$ex_rate = get_exchange_rate_to_home_currency($currency_code, $date_);
 	return round2($amount / $ex_rate,  user_price_dec());

@@ -347,7 +347,7 @@ if (isset($_POST['Process']))
 
 //-----------------------------------------------------------------------------------------------
 
-function check_item_data()
+function check_item_data(): bool
 {
 	global $Ajax;
 

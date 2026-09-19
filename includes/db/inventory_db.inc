@@ -129,7 +129,7 @@ function get_purchase_cost(mixed $stock_id)
 
 //--------------------------------------------------------------------------------------
 
-function is_inventory_item(mixed $stock_id)
+function is_inventory_item(mixed $stock_id): bool
 {
 	$sql = "SELECT stock_id FROM "
 		.TB_PREF."stock_master
@@ -223,7 +223,7 @@ function get_deliveries_between(mixed $stock_id, mixed $from, mixed $to)
 /*
 	Returns quantity and total cost of $stock_id sales, entered after record with $move_id
 */
-function get_deliveries_from_trans(mixed $stock_id, mixed $move_id)
+function get_deliveries_from_trans(mixed $stock_id, mixed $move_id): array
 {
 	// -ve qty is delivery either by ST_CUSTDELIVERY or inventory adjustment
     //Price for GRN and SUPPCREDIT and std_cost for other trans_types

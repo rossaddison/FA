@@ -148,7 +148,7 @@ function get_work_order(mixed $woid, mixed $allow_null=false)
 
 //--------------------------------------------------------------------------------------
 
-function work_order_has_productions(mixed $woid)
+function work_order_has_productions(mixed $woid): bool
 {
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."wo_manufacture WHERE workorder_id=".db_escape($woid);
 	$result = db_query($sql, "query work order for productions");
@@ -160,7 +160,7 @@ function work_order_has_productions(mixed $woid)
 
 //--------------------------------------------------------------------------------------
 
-function work_order_has_issues(mixed $woid)
+function work_order_has_issues(mixed $woid): bool
 {
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."wo_issues WHERE workorder_id=".db_escape($woid);
 	$result = db_query($sql, "query work order for issues");
@@ -171,7 +171,7 @@ function work_order_has_issues(mixed $woid)
 
 //--------------------------------------------------------------------------------------
 
-function work_order_has_payments(mixed $woid)
+function work_order_has_payments(mixed $woid): bool
 {
 	$result = get_gl_wo_cost_trans($woid);
 
@@ -212,7 +212,7 @@ function close_work_order(mixed $woid): void
 
 //--------------------------------------------------------------------------------------
 
-function work_order_is_closed(mixed $woid)
+function work_order_is_closed(mixed $woid): bool
 {
 	$sql = "SELECT closed FROM ".TB_PREF."workorders WHERE id = ".db_escape($woid);
 	$result = db_query($sql, "could not query work order");
@@ -300,7 +300,7 @@ function void_work_order(mixed $woid): void
 	commit_transaction();
 }
 
-function get_sql_for_work_orders(mixed $outstanding_only, mixed $stock_id, mixed $location = ALL_TEXT, mixed $order_no='', mixed $order_ref = '', mixed $overdue = false)
+function get_sql_for_work_orders(mixed $outstanding_only, mixed $stock_id, mixed $location = ALL_TEXT, mixed $order_no='', mixed $order_ref = '', mixed $overdue = false): string
 {
 	$sql = "SELECT
 		workorder.id,
@@ -362,7 +362,7 @@ function get_sql_for_work_orders(mixed $outstanding_only, mixed $stock_id, mixed
 	return $sql;
 }
 
-function get_sql_for_where_used(mixed $stock_id)
+function get_sql_for_where_used(mixed $stock_id): string
 {
 	$sql = "SELECT 
 			bom.parent,

@@ -65,7 +65,7 @@ function submit_add_or_update_center2(mixed $add=true, mixed $title=false, mixed
 
 //-----------------------------------------------------------------------------------
 
-function can_process() 
+function can_process(): bool 
 {
 
 	if (strlen($_POST['description']) == 0) 

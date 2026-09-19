@@ -129,7 +129,7 @@ function install_connect_db() {
 	return $db;
 }
 
-function do_install() {
+function do_install(): bool {
 
 	global $path_to_root, $db_connections, $def_coy, $installed_extensions, $tb_pref_counter,
 		$dflt_lang, $installed_languages;

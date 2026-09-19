@@ -67,7 +67,7 @@ if ($wo_details === false)
 
 //--------------------------------------------------------------------------------------------------
 
-function can_process(mixed $wo_details)
+function can_process(mixed $wo_details): bool
 {
 	global $SysPrefs;
 

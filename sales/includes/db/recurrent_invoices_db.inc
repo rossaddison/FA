@@ -76,7 +76,7 @@ function get_recurrent_invoice(mixed $selected_id)
 	return db_fetch($result);
 }
 
-function check_recurrent_invoice_description(mixed $description, mixed $id=null)
+function check_recurrent_invoice_description(mixed $description, mixed $id=null): bool
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."recurrent_invoices WHERE description=".db_escape($description);
 
@@ -126,7 +126,7 @@ function recurrent_invoice_count(mixed $id)
 	return $result[0];
 }
 
-function check_recurrent_invoice_prices(mixed $id)
+function check_recurrent_invoice_prices(mixed $id): int
 {
 	$errors = 0;
 	$inv = get_recurrent_invoice($id);
@@ -165,7 +165,7 @@ function check_recurrent_invoice_prices(mixed $id)
 /*
 	Returns true when sales order is suitable to be pattern for recurrent invoice.
 */
-function check_sales_order_type(mixed $order_no)
+function check_sales_order_type(mixed $order_no): bool
 {
 	$myrow = get_sales_order_header($order_no, ST_SALESORDER);
 

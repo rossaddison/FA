@@ -130,7 +130,7 @@ function display_po_receive_items(): void
 
 //--------------------------------------------------------------------------------------------------
 
-function check_po_changed()
+function check_po_changed(): bool
 {
 	/*Now need to check that the order details are the same as they were when they were read
 	into the Items array. If they've changed then someone else must have altered them */
@@ -162,7 +162,7 @@ function check_po_changed()
 
 //--------------------------------------------------------------------------------------------------
 
-function can_process()
+function can_process(): bool
 {
 	global $SysPrefs;
 	

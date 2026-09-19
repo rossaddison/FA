@@ -386,7 +386,7 @@ function list_updated(mixed $name): bool
 //	$items is array of options 'value' => 'description'
 //	Options is reduced set of combo_selector options and is merged with defaults.
 
-function array_selector(mixed $name, mixed $selected_id, mixed $items, mixed $options=null)
+function array_selector(mixed $name, mixed $selected_id, mixed $items, mixed $options=null): string
 {
 	global $Ajax;
 
@@ -485,7 +485,7 @@ function array_selector_row(mixed $label, mixed $name, mixed $selected_id, mixed
 }
 
 //----------------------------------------------------------------------------------------------
-function _format_add_curr(mixed $row, mixed $pname=false)
+function _format_add_curr(mixed $row, mixed $pname=false): string
 {
 	static $company_currency;
 
@@ -503,7 +503,7 @@ function _format_add_curr(mixed $row, mixed $pname=false)
 	}		
 }
 
-function add_edit_combo(mixed $type)
+function add_edit_combo(mixed $type): string
 {
 	global $path_to_root, $popup_editors, $SysPrefs;
 
@@ -757,7 +757,7 @@ function fiscalyears_list(mixed $name, mixed $selected_id=null, mixed $submit_on
 		) );
 }
 
-function _format_fiscalyears(mixed $row)
+function _format_fiscalyears(mixed $row): string
 {
 	return sql2date($row[1]) . "&nbsp;-&nbsp;" . sql2date($row[2])
 	. "&nbsp;&nbsp;" . ($row[3] ? _('Closed') : _('Active'));
@@ -856,7 +856,7 @@ function stock_items_list(mixed $name, mixed $selected_id=null, mixed $all_optio
 	return $ret;
 }
 
-function _format_stock_items(mixed $row)
+function _format_stock_items(mixed $row): string
 {
 	return (user_show_codes() ?  ($row[0] . "&nbsp;-&nbsp;") : "") . $row[1];
 }
@@ -1370,7 +1370,7 @@ function sales_groups_list_row(mixed $label, mixed $name, mixed $selected_id=nul
 
 //------------------------------------------------------------------------------------
 
-function _format_template_items(mixed $row)
+function _format_template_items(mixed $row): string
 {
 	return ($row[0] . "&nbsp;- &nbsp;" . _("Amount") . "&nbsp;".$row[1]);
 }
@@ -1848,7 +1848,7 @@ function gl_all_accounts_list(mixed $name, mixed $selected_id=null, mixed $skip_
 		), $account );
 }
 
-function _format_account(mixed $row)
+function _format_account(mixed $row): string
 {
 	return $row[0] .  "&nbsp;&nbsp;&nbsp;&nbsp;" . $row[1];
 }

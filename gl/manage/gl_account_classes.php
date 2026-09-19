@@ -22,7 +22,7 @@ include($path_to_root . "/includes/ui.inc");
 simple_page_mode(false);
 //-----------------------------------------------------------------------------------
 
-function can_process() 
+function can_process(): bool 
 {
 	global $SysPrefs;
 
@@ -68,7 +68,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 //-----------------------------------------------------------------------------------
 
-function can_delete(mixed $selected_id)
+function can_delete(mixed $selected_id): bool
 {
 	if ($selected_id == "")
 		return false;

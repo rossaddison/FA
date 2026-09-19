@@ -165,7 +165,7 @@ function gl_payment_controls(mixed $trans_no): void
 
 //----------------------------------------------------------------------------------------
 
-function check_valid_entries(mixed $trans_no)
+function check_valid_entries(mixed $trans_no): bool
 {
 	global $Refs, $systypes_array;
 	

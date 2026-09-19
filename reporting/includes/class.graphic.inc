@@ -1627,22 +1627,22 @@ class SVG
 // modified by Bagram Siadat.
 // The function has been further modified and several bugs are fixed.
 
-function is_arabic(mixed $text)
+function is_arabic(mixed $text): int|false
 {
 	return preg_match('/\p{Arabic}/u', $text);
 } 
 
-function is_hebrew(mixed $text)
+function is_hebrew(mixed $text): int|false
 {
 	return preg_match('/\p{Hebrew}/u', $text);
 } 
 
-function utf8_strlen(mixed $str) 
+function utf8_strlen(mixed $str): int|false 
 {
 	return preg_match_all('/[\x00-\x7F\xC0-\xFD]/', $str, $dummy);
 }
 
-function utf8_chr(mixed $uni) 
+function utf8_chr(mixed $uni): string 
 {
 	$r = "";
 	# ASCII range (including control chars)
@@ -1676,7 +1676,7 @@ function utf8_chr(mixed $uni)
 }
 
 ///
-function arabic(mixed $str,mixed $z="",mixed $method='normal')
+function arabic(mixed $str,mixed $z="",mixed $method='normal'): string
 {
 $p_chars = array (
 	utf8_chr(0x0622) => array (utf8_chr(0xfe82), utf8_chr(0xfe82), utf8_chr(0x0622)),

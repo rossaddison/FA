@@ -291,7 +291,7 @@ function hook_invoke(mixed $ext, mixed $method, &$data, mixed $opts=null)
 /*
 	Calls hook $methods defined in all extensions (if any)
 */
-function hook_invoke_all(mixed $method, &$data, mixed $opts=null)
+function hook_invoke_all(mixed $method, &$data, mixed $opts=null): array
 {
 
 	global $Hooks;

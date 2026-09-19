@@ -248,7 +248,7 @@ function get_extern_rate(mixed $curr_b, mixed $provider, mixed $date)
 
 //-----------------------------------------------------------------------------
 
-function get_sql_for_exchange_rates(mixed $curr)
+function get_sql_for_exchange_rates(mixed $curr): string
 {
 	$sql = "SELECT date_, rate_buy, id
 		FROM ".TB_PREF."exchange_rates "
@@ -257,7 +257,7 @@ function get_sql_for_exchange_rates(mixed $curr)
 	return $sql;	 
 }
 
-function getInnerStr(mixed $str, mixed $start, mixed $end) 
+function getInnerStr(mixed $str, mixed $start, mixed $end): string 
 {
 	// $start must be the first occurrence
 	// $start must not be part of $end

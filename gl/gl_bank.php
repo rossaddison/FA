@@ -214,7 +214,7 @@ function create_cart(mixed $type, mixed $trans_no): void
 }
 //-----------------------------------------------------------------------------------------------
 
-function check_trans()
+function check_trans(): int
 {
 	global $Refs, $systypes_array;
 
@@ -324,7 +324,7 @@ if (isset($_POST['Process']) && !check_trans())
 
 //-----------------------------------------------------------------------------------------------
 
-function check_item_data()
+function check_item_data(): bool
 {
 	if (!check_num('amount', 0))
 	{

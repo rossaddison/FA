@@ -127,7 +127,7 @@ function display_languages(): void
 //---------------------------------------------------------------------------------------------
 // Non standard (manually entered) languages support.
 //
-function check_data()
+function check_data(): bool
 {
 	global $installed_languages;
 
@@ -143,7 +143,7 @@ function check_data()
 	return true;
 }
 
-function handle_submit(mixed $id)
+function handle_submit(mixed $id): bool
 {
 	global $path_to_root, $installed_languages, $dflt_lang, $Mode;
 

@@ -114,7 +114,7 @@ if (isset($_POST['add']) || isset($_POST['update']))
 
 //-------------------------------------------------------------------------------------
 
-function can_delete(mixed $selected_account)
+function can_delete(mixed $selected_account): bool
 {
 	if ($selected_account == "")
 		return false;

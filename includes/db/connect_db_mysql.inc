@@ -254,7 +254,7 @@ function db_close(mixed $dbase = null)
 	return mysql_close($dbase);
 }
 
-function db_extension_exists()
+function db_extension_exists(): bool
 {
 	return function_exists('mysql_connect');
 }

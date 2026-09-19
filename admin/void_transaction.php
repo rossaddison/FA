@@ -30,7 +30,7 @@ page(_($help_context = "Void a Transaction"), false, false, "", $js);
 
 simple_page_mode(true);
 //----------------------------------------------------------------------------------------
-function exist_transaction(mixed $type, mixed $type_no)
+function exist_transaction(mixed $type, mixed $type_no): bool
 {
 	$void_entry = get_voided_entry($type, $type_no);
 
@@ -259,7 +259,7 @@ function voiding_controls()
 
 //----------------------------------------------------------------------------------------
 
-function check_valid_entries()
+function check_valid_entries(): bool
 {
 	if (is_closed_trans($_POST['filterType'],$_POST['trans_no']))
 	{

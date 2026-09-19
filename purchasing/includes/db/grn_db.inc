@@ -394,7 +394,7 @@ function get_po_grns(mixed $po_number)
 
 //----------------------------------------------------------------------------------------------------------
 
-function exists_grn(mixed $grn_batch)
+function exists_grn(mixed $grn_batch): bool
 {
 	$sql = "SELECT id FROM ".TB_PREF."grn_batch WHERE id=".db_escape($grn_batch);
 	$result = db_query($sql, "Cannot retreive a grn");
@@ -404,7 +404,7 @@ function exists_grn(mixed $grn_batch)
 
 //----------------------------------------------------------------------------------------------------------
 
-function exists_grn_on_invoices(mixed $grn_batch)
+function exists_grn_on_invoices(mixed $grn_batch): bool
 {
 	$sql = "SELECT inv.id
 		FROM ".TB_PREF."supp_invoice_items inv,"
@@ -419,7 +419,7 @@ function exists_grn_on_invoices(mixed $grn_batch)
 
 //----------------------------------------------------------------------------------------------------------
 
-function void_grn(mixed $grn_batch)
+function void_grn(mixed $grn_batch): bool
 {
 	// if this grn is references on any invoices/credit notes, then it
 	// can't be voided

@@ -61,7 +61,7 @@ set_global_supplier($_POST['supplier_id']);
 end_row();
 end_table();
 //------------------------------------------------------------------------------------------------
-function check_overdue(mixed $row)
+function check_overdue(mixed $row): bool
 {
 	return ($row['TotalAmount']>$row['Allocated']) && 
 		$row['OverDue'] == 1;

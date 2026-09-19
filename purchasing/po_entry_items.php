@@ -225,7 +225,7 @@ function handle_cancel_po(): void
 
 //---------------------------------------------------------------------------------------------------
 
-function check_data()
+function check_data(): bool
 {
 	if(!get_post('stock_id_text', true)) {
 		display_error( _("Item description cannot be empty."));
@@ -334,7 +334,7 @@ function handle_add_new_item(): void
 
 //---------------------------------------------------------------------------------------------------
 
-function can_commit()
+function can_commit(): bool
 {
 	if (!get_post('supplier_id')) 
 	{

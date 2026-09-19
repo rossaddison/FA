@@ -61,7 +61,7 @@ function get_audit_trail_last(mixed $trans_type, mixed $trans_no)
 	Confirm and close for edition all transactions up to date $todate, 
 	and reindex	journal.
 */
-function close_transactions(mixed $todate) {
+function close_transactions(mixed $todate): int {
 
 	begin_transaction();
 
@@ -133,7 +133,7 @@ function get_journal_number(mixed $type, mixed $trans_no) {
 /*
 	Closed transactions have gl_seq number assigned.
 */
-function is_closed_trans(mixed $type, mixed $trans_no) {
+function is_closed_trans(mixed $type, mixed $trans_no): bool {
 
 	return get_journal_number($type, $trans_no) > 0;
 }

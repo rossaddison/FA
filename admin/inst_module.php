@@ -27,7 +27,7 @@ include_once($path_to_root . "/includes/ui.inc");
 simple_page_mode(true);
 
 //---------------------------------------------------------------------------------------------
-function local_extension(mixed $id)
+function local_extension(mixed $id): bool
 {
 	global $next_extension_id, $Ajax, $path_to_root;
 
@@ -66,7 +66,7 @@ function local_extension(mixed $id)
 	return true;
 }
 
-function handle_delete(mixed $id)
+function handle_delete(mixed $id): bool
 {
 	global $path_to_root;
 	

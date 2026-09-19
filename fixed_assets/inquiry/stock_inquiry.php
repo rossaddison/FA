@@ -94,7 +94,7 @@ function depr_method_title(mixed $row) {
   	return $depreciation_methods[$row['depreciation_method']];
 }
 
-function depr_par(mixed $row) {
+function depr_par(mixed $row): string {
 	if ($row['depreciation_method'] == 'D')
 		return $row['depreciation_rate']*$row['depreciation_factor'].'%';
 	elseif ($row['depreciation_method'] == 'N')
@@ -104,7 +104,7 @@ function depr_par(mixed $row) {
 		return $row['depreciation_rate'].'%';
 }
 
-function status_title(mixed $row) {
+function status_title(mixed $row): string {
 
    	if ($row['inactive'] || ($row['disposal_date'] !== NULL))
 		return _("Disposed"); // disposed or saled

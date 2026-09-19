@@ -12,7 +12,7 @@
 /*
 	Update main or gl company setup.
 */
-function update_company_prefs(mixed $params)
+function update_company_prefs(mixed $params): bool
 {
 	$sql = "UPDATE ".TB_PREF."sys_prefs SET value = ";
 	foreach($params as $name => $value) {
@@ -65,7 +65,7 @@ function get_base_sales_type()
 	return get_company_pref('base_sales');
 }
 
-function get_company_extensions(mixed $id = -1) {
+function get_company_extensions(mixed $id = -1): array {
 	global $path_to_root;
 
 	$file = $path_to_root.($id == -1 ? '' : '/company/'.(int)$id).'/installed_extensions.php';
@@ -170,7 +170,7 @@ function key_in_foreign_table(mixed $id, mixed $tables, mixed $stdkey)
 //
 // Resets $theme references in users records to 'default'.
 //
-function clean_user_themes(mixed $theme)
+function clean_user_themes(mixed $theme): bool
 {
 	global $db_connections, $db;
 

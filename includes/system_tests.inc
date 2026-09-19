@@ -19,7 +19,7 @@ $test_level = array(
 );
 
 // test mysql server version
-function tst_mysql() 
+function tst_mysql(): array 
 {
 	$test['descr'] = _('MySQL version'). ' >=4.1';
 	$test['type'] = 3;
@@ -33,7 +33,7 @@ function tst_mysql()
 	return $test;
 }
 // test php mysql extension
-function tst_phpmysql() 
+function tst_phpmysql(): array 
 {
 	$test['descr'] = _('PHP MySQL extension');
 	$test['type'] = 3;
@@ -44,7 +44,7 @@ function tst_phpmysql()
 	return $test;
 }
 
-function tst_php() 
+function tst_php(): array 
 {
 	$test['descr'] = _('PHP version').' >=8.5.0';
 	$test['type'] = 3;
@@ -55,7 +55,7 @@ function tst_php()
 	return $test;
 }
 
-function tst_system() 
+function tst_system(): array 
 {
 	$test['descr'] = _('Server system');
 	$test['type'] = 0;
@@ -65,7 +65,7 @@ function tst_system()
 	return $test;
 }
 
-function tst_sessionpath() 
+function tst_sessionpath(): array 
 {
 	$test['descr'] = _('Session save path');
 	$test['type'] = 0;
@@ -75,7 +75,7 @@ function tst_sessionpath()
 	return $test;
 }
 
-function tst_install() 
+function tst_install(): array 
 {
 	global $path_to_root;
 
@@ -88,7 +88,7 @@ function tst_install()
 	return $test;
 }
 
-function tst_browser() 
+function tst_browser(): array 
 {
 	$test['descr'] = _('Browser type');
 	$test['type'] = 0;
@@ -99,7 +99,7 @@ function tst_browser()
 	return $test;
 }
 
-function tst_server() 
+function tst_server(): array 
 {
 	$test['descr'] = _('Http server type');
 	$test['test'] = $_SERVER['SERVER_SOFTWARE'];
@@ -110,7 +110,7 @@ function tst_server()
 	return $test;
 }
 
-function tst_gettext() 
+function tst_gettext(): array 
 {
 	$test['descr'] = _('Native gettext');
 	$test['test'] = function_exists('gettext') ? _('Yes'): _('No');
@@ -121,7 +121,7 @@ function tst_gettext()
 	return $test;
 }
 
-function tst_debug() 
+function tst_debug(): array 
 {
 	global $SysPrefs;
 	$test['descr'] = _('Debugging mode');
@@ -133,7 +133,7 @@ function tst_debug()
 	return $test;
 }
 
-function tst_logging() 
+function tst_logging(): array 
 {
 	global $SysPrefs;
 	
@@ -159,7 +159,7 @@ function tst_logging()
 //
 //	Installed FA database structure version
 //
-function tst_dbversion()
+function tst_dbversion(): array
 {
 	global $db_version;
 	$test['descr'] = _('Current database version');
@@ -173,7 +173,7 @@ function tst_dbversion()
 }
 
 
-function tst_subdirs(mixed $install=false)
+function tst_subdirs(mixed $install=false): array
 {
 	global $db_connections;
 
@@ -218,7 +218,7 @@ function tst_subdirs(mixed $install=false)
 	return $test;
 }
 
-function tst_tmpdir()
+function tst_tmpdir(): array
 {
 	global $path_to_root;
 	
@@ -230,7 +230,7 @@ function tst_tmpdir()
 	return $test;
 }
 
-function tst_langs(mixed $install)
+function tst_langs(mixed $install): array
 {
 	global $installed_languages, $path_to_root, $GetText;
 
@@ -285,7 +285,7 @@ function tst_langs(mixed $install)
 	return $test;
 }
 
-function tst_config(mixed $install)
+function tst_config(mixed $install): array
 {
 	global $path_to_root;
 
@@ -306,7 +306,7 @@ function tst_config(mixed $install)
 	return $test;
 }
 
-function tst_dbconfig(mixed $install)
+function tst_dbconfig(mixed $install): array
 {
 	global $path_to_root;
 
@@ -328,7 +328,7 @@ function tst_dbconfig(mixed $install)
 	return $test;
 }
 
-function tst_extconfig(mixed $install)
+function tst_extconfig(mixed $install): array
 {
 	global $path_to_root, $db_connections;
 
@@ -403,7 +403,7 @@ function tst_extconfig(mixed $install)
 	return $test;
 }
 
-function display_system_tests(mixed $install = false)
+function display_system_tests(mixed $install = false): bool
 {
 	global $test_level;
 

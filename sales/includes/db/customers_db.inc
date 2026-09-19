@@ -154,7 +154,7 @@ function get_customer_habit(mixed $customer_id)
 	return db_fetch($result);
 }
 
-function get_customer_contacts(mixed $customer_id, mixed $action=null)
+function get_customer_contacts(mixed $customer_id, mixed $action=null): array
 {
 	$results = array();
 	$res = get_crm_persons('customer', $action, $customer_id);
@@ -177,7 +177,7 @@ function get_current_cust_credit(mixed $customer_id)
 
 }
 
-function is_new_customer(mixed $id)
+function is_new_customer(mixed $id): bool
 {
 	$tables = array('cust_branch', 'debtor_trans', 'recurrent_invoices', 'sales_orders');
 

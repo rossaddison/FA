@@ -10,7 +10,7 @@
   See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
  ***********************************************************************/
 
-function next_depreciation_date(mixed $depreciation_date) {
+function next_depreciation_date(mixed $depreciation_date): int|false {
 
   $start = strtotime($depreciation_date);
 
@@ -25,7 +25,7 @@ function next_depreciation_date(mixed $depreciation_date) {
   return strtotime("$y-$m-1");
 }
 
-function depreciation_months(mixed $depreciation_start) {
+function depreciation_months(mixed $depreciation_start): float|int {
 
   // assume that depreciation start is the same fiscal year
   //$start = strtotime($depreciation_start);
@@ -42,7 +42,7 @@ function depreciation_months(mixed $depreciation_start) {
     //$months++;
 }
 
-function months_between_dates(mixed $start, mixed $end) {
+function months_between_dates(mixed $start, mixed $end): int|float {
   $start = strtotime($start);
   $end = strtotime($end);
 
@@ -55,7 +55,7 @@ function months_between_dates(mixed $start, mixed $end) {
   return 12 * ($y2 - $y1) + $m2 - $m1;
 }
 
-function compute_gl_rows_for_depreciation(mixed $item, mixed $no_months, mixed $period) {
+function compute_gl_rows_for_depreciation(mixed $item, mixed $no_months, mixed $period): array {
   $rows = array();
 
   $year = get_current_fiscalyear();

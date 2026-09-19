@@ -27,7 +27,7 @@ page(_($help_context = "Fiscal Years"), false, false, "", $js);
 simple_page_mode(true);
 //---------------------------------------------------------------------------------------------
 
-function check_data()
+function check_data(): bool
 {
 	if (!is_date($_POST['from_date']) || is_date_in_fiscalyears($_POST['from_date']))
 	{
@@ -93,7 +93,7 @@ function handle_submit()
 
 //---------------------------------------------------------------------------------------------
 
-function check_can_delete(mixed $selected_id)
+function check_can_delete(mixed $selected_id): bool
 {
 	$myrow = get_fiscalyear($selected_id);
 	// PREVENT DELETES IF DEPENDENT RECORDS IN gl_trans

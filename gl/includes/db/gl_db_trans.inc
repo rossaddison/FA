@@ -270,7 +270,7 @@ function get_gl_wo_productions(mixed $trans_id, mixed $all_gl=false)
 	return db_query($sql, "The gl transactions could not be retrieved");
 }
 
-function get_gl_balance_from_to(mixed $from_date, mixed $to_date, mixed $account, mixed $dimension=0, mixed $dimension2=0)
+function get_gl_balance_from_to(mixed $from_date, mixed $to_date, mixed $account, mixed $dimension=0, mixed $dimension2=0): float
 {
 	$from = date2sql($from_date);
 	$to = date2sql($to_date);
@@ -294,7 +294,7 @@ function get_gl_balance_from_to(mixed $from_date, mixed $to_date, mixed $account
 
 //--------------------------------------------------------------------------------
 
-function get_gl_trans_from_to(mixed $from_date, mixed $to_date, mixed $account, mixed $dimension=0, mixed $dimension2=0)
+function get_gl_trans_from_to(mixed $from_date, mixed $to_date, mixed $account, mixed $dimension=0, mixed $dimension2=0): float
 {
 	$from = date2sql($from_date);
 	$to = date2sql($to_date);
@@ -369,7 +369,7 @@ function get_budget_trans_from_to(mixed $from_date, mixed $to_date, mixed $accou
 }
 //-------------------------------------------------------------------------------------
 
-function exists_gl_budget(mixed $date_, mixed $account, mixed $dimension, mixed $dimension2)
+function exists_gl_budget(mixed $date_, mixed $account, mixed $dimension, mixed $dimension2): bool
 {
 	$sql = "SELECT account FROM ".TB_PREF."budget_trans WHERE account=".db_escape($account)
 	." AND tran_date='$date_' AND
@@ -557,7 +557,7 @@ function get_tax_summary(mixed $from, mixed $to, mixed $also_zero_purchases=fals
 
 //--------------------------------------------------------------------------------------------------
 
-function exists_gl_trans(mixed $type, mixed $trans_id)
+function exists_gl_trans(mixed $type, mixed $trans_id): bool
 {
 	$sql = "SELECT type_no FROM ".TB_PREF."gl_trans WHERE type=".db_escape($type)
 		." AND type_no=".db_escape($trans_id);

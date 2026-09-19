@@ -134,7 +134,7 @@ function handle_new_credit(mixed $trans_no): void
 
 //-----------------------------------------------------------------------------
 
-function can_process()
+function can_process(): bool
 {
 	global $Refs;
 
@@ -209,7 +209,7 @@ if (isset($_POST['ProcessCredit']) && can_process()) {
 
   //-----------------------------------------------------------------------------
 
-function check_item_data()
+function check_item_data(): bool
 {
 	if (!check_num('qty',0)) {
 		display_error(_("The quantity must be greater than zero."));

@@ -34,7 +34,7 @@ function comp_areas(mixed $area1, mixed $area2)
 	return $sec_comp == 0 ? ($area1[2]-$area2[2]) : $sec_comp;
 }
 
-function sort_areas(mixed $areas)
+function sort_areas(mixed $areas): array
 {
 	$old_order = 0;
 	foreach($areas as $key => $area) {

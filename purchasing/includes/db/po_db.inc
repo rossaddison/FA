@@ -183,7 +183,7 @@ function get_po(mixed $order_no) {
 
 //----------------------------------------------------------------------------------------
 
-function read_po_header(mixed $order_no, &$order)
+function read_po_header(mixed $order_no, &$order): bool
 {
     	$sql = "SELECT po.*, supplier.*, loc.location_name 
 		FROM ".TB_PREF."purch_orders po,"
@@ -366,7 +366,7 @@ function get_sql_for_po_search_completed(mixed $from, mixed $to, mixed $supplier
 	return $sql;
 }
 
-function get_sql_for_po_search(mixed $from, mixed $to, mixed $supplier_id=ALL_TEXT, mixed $location=ALL_TEXT, mixed $order_number='', mixed $stock_id='')
+function get_sql_for_po_search(mixed $from, mixed $to, mixed $supplier_id=ALL_TEXT, mixed $location=ALL_TEXT, mixed $order_number='', mixed $stock_id=''): string
 {
 	$sql = "SELECT 
 		porder.order_no, 

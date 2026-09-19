@@ -84,7 +84,7 @@ function get_dimension(mixed $id, mixed $allow_null=false)
 
 //--------------------------------------------------------------------------------------
 
-function get_dimension_string(mixed $id, mixed $html=false, mixed $space=' ')
+function get_dimension_string(mixed $id, mixed $html=false, mixed $space=' '): string
 {
 	if ($id <= 0)
 	{
@@ -120,7 +120,7 @@ function dimension_has_deposits(mixed $id)
 
 //--------------------------------------------------------------------------------------
 
-function dimension_has_payments(mixed $id)
+function dimension_has_payments(mixed $id): bool
 {
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."gl_trans WHERE dimension_id = ".db_escape($id)
 	 . " OR dimension2_id = ".db_escape($id);
@@ -129,7 +129,7 @@ function dimension_has_payments(mixed $id)
 	return ($row[0] > 0);
 }
 
-function dimension_is_closed(mixed $id)
+function dimension_is_closed(mixed $id): bool
 {
 	$result = get_dimension($id);
 	return ($result['closed'] == '1');
@@ -187,7 +187,7 @@ function get_dimension_balance(mixed $id, mixed $from, mixed $to)
 
 //--------------------------------------------------------------------------------------
 
-function get_sql_for_search_dimensions(mixed $dim, mixed $from, mixed $to, mixed $order='', mixed $type = -1, mixed $open=false, mixed $overdue = false)
+function get_sql_for_search_dimensions(mixed $dim, mixed $from, mixed $to, mixed $order='', mixed $type = -1, mixed $open=false, mixed $overdue = false): string
 {
 	$sql = "SELECT dim.id,
 		dim.reference,

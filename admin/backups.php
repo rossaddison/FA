@@ -79,7 +79,7 @@ function generate_backup(mixed $conn, mixed $ext='no', mixed $comm='')
 }
 
 
-function get_backup_file_combo()
+function get_backup_file_combo(): string
 {
 	global $path_to_root, $Ajax, $SysPrefs;
 	
@@ -118,7 +118,7 @@ function compress_list_row(mixed $label, mixed $name, mixed $value=null): void
 	echo "</td></tr>";
 }
 
-function download_file(mixed $filename)
+function download_file(mixed $filename): bool
 {
     if (empty($filename) || !file_exists($filename))
     {

@@ -86,7 +86,7 @@ function end_form(mixed $breaks=0): void
 	$Ajax->activate('_confirmed');
 }
 
-function check_csrf_token()
+function check_csrf_token(): bool
 {
 	if ($_SESSION['csrf_token'] != @$_POST['_token'])
 	{
@@ -174,7 +174,7 @@ function meta_forward(mixed $forward_to, mixed $params="", mixed $timeout=0, mix
 // (for use in wiki help system), otherwise result is array of label 
 // with underlined hotkey letter and access property string.
 //
-function access_string(mixed $label, mixed $clean=false)
+function access_string(mixed $label, mixed $clean=false): array|string
 {
 	$access = '';
 	$slices = array();
@@ -262,7 +262,7 @@ function viewer_link(mixed $label, mixed $url='', mixed $class='', mixed $id='',
  return $preview_str;
 }
 
-function menu_link(mixed $url, mixed $label, mixed $id=null)
+function menu_link(mixed $url, mixed $label, mixed $id=null): string
 {
 	global $path_to_root;
 
@@ -465,7 +465,7 @@ function tabbed_content_end(): void {
 	div_end(); // tabs widget
 }
 
-function tab_changed(mixed $name)
+function tab_changed(mixed $name): array|null
 {
 	$to = find_submit("{$name}_", false);
 	if (!$to) return null;
@@ -476,21 +476,21 @@ function tab_changed(mixed $name)
 /*
 	Check whether tab has been just switched on
 */
-function tab_opened(mixed $name, mixed $tab)
+function tab_opened(mixed $name, mixed $tab): bool
 {
 	return (get_post('_'.$name.'_sel') != $tab) && (find_submit($name.'_', false) == $tab);
 }
 /*
 	Check whether tab has been just switched off
 */
-function tab_closed(mixed $name, mixed $tab)
+function tab_closed(mixed $name, mixed $tab): bool
 {
 	return (get_post('_'.$name.'_sel') == $tab) && (find_submit($name.'_', false) != $tab);
 }
 /*
 	Check whether tab is visible on current page
 */
-function tab_visible(mixed $name, mixed $tab)
+function tab_visible(mixed $name, mixed $tab): bool
 {
 	$new = find_submit($name.'_', false);
 	return (get_post('_'.$name.'_sel') == $tab && !$new) || $new==$tab;
@@ -651,7 +651,7 @@ function confirm_dialog(mixed $submit, mixed $msg) {
 	Confirm dialog to be used optionally in final form checking routine.
 	Displays warning conditionally unless it was displayed
 */
-function display_confirmation(mixed $msg)
+function display_confirmation(mixed $msg): bool
 {
 	global $Ajax;
 

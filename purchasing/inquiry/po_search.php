@@ -100,7 +100,7 @@ function receive_link(mixed $row)
 	"/purchasing/po_receive_items.php?PONumber=" . $row["order_no"], ICON_RECEIVE);
 }
 
-function check_overdue(mixed $row)
+function check_overdue(mixed $row): bool
 {
 	return $row['OverDue']==1;
 }

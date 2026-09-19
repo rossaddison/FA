@@ -152,7 +152,7 @@ if (isset($_GET['OrderNumber']) && $_GET['OrderNumber'] > 0) {
 
 //-----------------------------------------------------------------------------
 
-function check_data()
+function check_data(): bool
 {
 	global $Refs, $SysPrefs;
 
@@ -244,7 +244,7 @@ function copy_from_cart(): void
 }
 //------------------------------------------------------------------------------
 
-function check_quantities()
+function check_quantities(): int
 {
 	$ok =1;
 	// Update cart delivery quantities/descriptions

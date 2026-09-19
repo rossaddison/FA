@@ -69,7 +69,7 @@ function add_to_order(&$order, mixed $new_item, mixed $new_item_qty, mixed $pric
 }
 //---------------------------------------------------------------------------------
 
-function get_customer_details_to_order(&$order, mixed $customer_id, mixed $branch_id)
+function get_customer_details_to_order(&$order, mixed $customer_id, mixed $branch_id): string
 {
 	global $SysPrefs;
 	

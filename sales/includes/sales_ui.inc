@@ -34,7 +34,7 @@ function processing_end(): void
     }
 }
 
-function processing_active()
+function processing_active(): bool
 {
     return (isset($_SESSION['Processing']) && $_SESSION['Processing']==$_SERVER['PHP_SELF']);
 }

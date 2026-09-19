@@ -31,7 +31,7 @@ function get_demand_qty(mixed $stock_id, mixed $location)
 $bom_list = array(); 
 $qoh_stock = NULL;
 
-function load_stock_levels(mixed $location)
+function load_stock_levels(mixed $location): array
 {
 	$date = date2sql(Today());
 
@@ -235,7 +235,7 @@ function get_component_from_bom(mixed $selected_id)
 }
 //--------------------------------------------------------------------------------------
 
-function has_bom(mixed $item)
+function has_bom(mixed $item): bool
 {
     $result = get_bom($item);
     
@@ -244,7 +244,7 @@ function has_bom(mixed $item)
 
 //--------------------------------------------------------------------------------------
 
-function is_component_already_on_bom(mixed $component, mixed $workcentre_added, mixed $loc_code, mixed $selected_parent)
+function is_component_already_on_bom(mixed $component, mixed $workcentre_added, mixed $loc_code, mixed $selected_parent): bool
 {
 	$sql = "SELECT component
 		FROM ".TB_PREF."bom
@@ -259,7 +259,7 @@ function is_component_already_on_bom(mixed $component, mixed $workcentre_added, 
 
 //--------------------------------------------------------------------------------------
 
-function check_for_recursive_bom(mixed $ultimate_parent, mixed $component_to_check)
+function check_for_recursive_bom(mixed $ultimate_parent, mixed $component_to_check): int
 {
 
 	/* returns true ie 1 if the bom contains the parent part as a component

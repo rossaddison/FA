@@ -94,7 +94,7 @@ function handle_new_order(): void
 
 //-----------------------------------------------------------------------------------------------
 
-function can_process()
+function can_process(): bool
 {
 	global $SysPrefs;
 
@@ -159,7 +159,7 @@ if (isset($_POST['Process']) && can_process()){
 
 //-----------------------------------------------------------------------------------------------
 
-function check_item_data()
+function check_item_data(): bool
 {
 	if (input_num('qty') == 0)
 	{

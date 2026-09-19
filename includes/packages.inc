@@ -161,7 +161,7 @@ function ufmt_property(mixed $key, mixed $value)
 // Retrieve control file and return as associative array
 //	$index is name of field used as key in result array, or null for numeric keys
 //
-function get_control_file(mixed $file, mixed $index = false) {
+function get_control_file(mixed $file, mixed $index = false): array|null {
 
 	$list = gzopen($file, 'rb');
 	if (!$list) return null;
@@ -406,7 +406,7 @@ function get_package(mixed $pkgname, mixed $type = null)
 /*
 	Returns full name of installed package, or null if package is not installed.
 */
-function installed_package(mixed $package)
+function installed_package(mixed $package): string|null
 {
 	$cache = opendir(PKG_CACHE_PATH);
 
@@ -423,7 +423,7 @@ function installed_package(mixed $package)
 /*
 	Remove package from system
 */
-function uninstall_package(mixed $name)
+function uninstall_package(mixed $name): bool
 {
 	$name = installed_package($name);
 	if (!$name) return true; // not installed
@@ -606,7 +606,7 @@ function get_charts_list()
 //---------------------------------------------------------------------------------------------
 //	Install/update package from repository
 //
-function install_language(mixed $pkg_name)
+function install_language(mixed $pkg_name): bool
 {
 	global $path_to_root, $installed_languages, $Ajax;
 	
@@ -706,7 +706,7 @@ function install_extension(mixed $pkg_name)
 /*
 	Returns true if newer package version is available
 */
-function check_pkg_upgrade(mixed $current, mixed $available)
+function check_pkg_upgrade(mixed $current, mixed $available): bool
 {
 	if ($available == NULL)
 		return false;
@@ -734,7 +734,7 @@ function get_package_info(mixed $pkg, mixed $type=null, mixed $filter=array(), m
 /*
 	Check basic extension source compatibility.
 */
-function check_src_ext_version(mixed $ext_v)
+function check_src_ext_version(mixed $ext_v): bool
 {
     global $src_version;
     if ($ext_v != '-') {

@@ -26,7 +26,7 @@ page(_($help_context = "Exchange Rates"), false, false, "", $js);
 simple_page_mode(false);
 
 //---------------------------------------------------------------------------------------------
-function check_data(mixed $selected_id)
+function check_data(mixed $selected_id): bool
 {
 	if (!is_date($_POST['date_']))
 	{

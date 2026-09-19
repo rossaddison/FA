@@ -21,7 +21,7 @@ include_once($path_to_root . "/sales/includes/db/sales_points_db.inc");
 simple_page_mode(true);
 //----------------------------------------------------------------------------------------------------
 
-function can_process()
+function can_process(): bool
 {
 	if (strlen($_POST['name']) == 0)
 	{

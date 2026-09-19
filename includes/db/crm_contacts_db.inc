@@ -133,7 +133,7 @@ function get_crm_person(mixed $id)
 /*
 	Returns all contacts for given person id
 */
-function get_person_contacts(mixed $id)
+function get_person_contacts(mixed $id): array
 {
 	$sql = "SELECT t.id FROM "
 		.TB_PREF."crm_categories t, "

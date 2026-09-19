@@ -212,7 +212,7 @@ function post_void_supp_trans(mixed $type, mixed $type_no)
 
 //----------------------------------------------------------------------------------------
 
-function get_sql_for_supplier_inquiry(mixed $filter, mixed $after_date, mixed $to_date, mixed $supplier_id=ALL_TEXT)
+function get_sql_for_supplier_inquiry(mixed $filter, mixed $after_date, mixed $to_date, mixed $supplier_id=ALL_TEXT): string
 {
     $date_after = date2sql($after_date);
     $date_to = date2sql($to_date);

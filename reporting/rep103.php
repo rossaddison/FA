@@ -69,7 +69,7 @@ function get_customer_details_for_report(mixed $area=0, mixed $salesid=0)
     return db_query($sql,"No transactions were returned");
 }
 
-function get_contacts_for_branch(mixed $branch)
+function get_contacts_for_branch(mixed $branch): array
 {
 	$sql = "SELECT p.*, r.action, r.type, CONCAT(r.type,'.',r.action) as ext_type 
 		FROM ".TB_PREF."crm_persons p,"

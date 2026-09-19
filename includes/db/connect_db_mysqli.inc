@@ -14,7 +14,7 @@ define('SQL_MODE', 'STRICT_ALL_TABLES'); // prevents SQL injection with silent f
 
 $db_last_inserted_id = 0;
 
-function set_global_connection(mixed $company=-1)
+function set_global_connection(mixed $company=-1): mysqli|false
 {
 	global $db, $path_to_root, $db_connections, $SysPrefs;
 
@@ -111,7 +111,7 @@ function db_fetch(mixed $result): array|false
 	return ($ret === null ? false : $ret);
 }
 
-function db_seek(&$result,mixed $record)
+function db_seek(&$result,mixed $record): bool
 {
 	return mysqli_data_seek($result, $record);
 }
@@ -127,7 +127,7 @@ function db_num_rows(mixed $result): int|string
 	return mysqli_num_rows($result);
 }
 
-function db_num_fields(mixed $result)
+function db_num_fields(mixed $result): int
 {
 	return mysqli_num_fields($result);
 }
@@ -159,13 +159,13 @@ function db_escape(mixed $value = "", mixed $nullify = false): string
 	return $value;
 }
 
-function db_error_no()
+function db_error_no(): int
 {
 	global $db;
     return mysqli_errno($db);
 }
 
-function db_error_msg(mixed $conn)
+function db_error_msg(mixed $conn): string
 {
 	return mysqli_error($conn);
 }
@@ -177,19 +177,19 @@ function db_insert_id(): int|string
 	return $SysPrefs->sql_trail ? $db_last_inserted_id : mysqli_insert_id($db);
 }
 
-function db_num_affected_rows()
+function db_num_affected_rows(): int|string
 {
 	global $db;
 	return mysqli_affected_rows($db);
 }
 
-function db_field_name(mixed $result, mixed $n)
+function db_field_name(mixed $result, mixed $n): string
 {
     $fieldinfo = mysqli_fetch_field_direct($result, $n);
     return $fieldinfo->name;
 }
 
-function db_set_collation(mixed $db, mixed $fa_collation)
+function db_set_collation(mixed $db, mixed $fa_collation): bool|mysqli_result
 {
 	return mysqli_query($db, "ALTER DATABASE COLLATE ".get_mysql_collation($fa_collation));
 }
@@ -198,7 +198,7 @@ function db_set_collation(mixed $db, mixed $fa_collation)
 	Create database for FA company. If database already exists,
 	just set collation to be sure nothing weird will happen later.
 */
-function db_create_db(mixed $connection)
+function db_create_db(mixed $connection): int|mysqli|false
 {
 	global $db;
 
@@ -221,7 +221,7 @@ function db_create_db(mixed $connection)
 	return $db;
 }
 
-function db_drop_db(mixed $connection)
+function db_drop_db(mixed $connection): bool|mysqli_result
 {
 
 	if ($connection["tbpref"] == "")
@@ -247,7 +247,7 @@ function db_drop_db(mixed $connection)
 	}
 }
 
-function db_close(mixed $dbase = null)
+function db_close(mixed $dbase = null): bool
 {
 	global $db;
 	
@@ -256,7 +256,7 @@ function db_close(mixed $dbase = null)
 	return mysqli_close($dbase);
 }
 
-function db_extension_exists()
+function db_extension_exists(): bool
 {
 	return function_exists('mysqli_connect');
 }
@@ -286,12 +286,12 @@ function db_set_encoding(mixed $ui_encoding=null): void
 		mysqli_set_charset($db, $mysql_enc);
 }
 
-function db_get_charset(mixed $db)
+function db_get_charset(mixed $db): string
 {
 	return mysqli_character_set_name($db);
 }
 
-function db_set_charset(mixed $db, mixed $charset)
+function db_set_charset(mixed $db, mixed $charset): bool
 {
 	global $db;
 

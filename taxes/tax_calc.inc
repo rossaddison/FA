@@ -93,7 +93,7 @@ function get_full_price_for_item(mixed $stock_id, mixed $price, mixed $tax_group
 //---------------------------------------------------------------------------------
 // return an array of (tax_type_id, tax_type_name, sales_gl_code, purchasing_gl_code, rate)
 
-function get_taxes_for_item(mixed $stock_id, mixed $tax_group_items_array)
+function get_taxes_for_item(mixed $stock_id, mixed $tax_group_items_array): array|null
 {
 	$item_tax_type = get_item_tax_type_for_item($stock_id);
 	

@@ -130,7 +130,7 @@ function get_fixed_asset_class(mixed $id)
 
 //--------------------------------------------------------------------------------------------------
 
-function get_sql_for_fixed_assets(mixed $show_inactive = false)
+function get_sql_for_fixed_assets(mixed $show_inactive = false): string
 {
   	$sql = "SELECT s.stock_id, c.description, s.units, s.description as name,
         s.depreciation_rate, s.depreciation_method, s.inactive, 

@@ -138,7 +138,7 @@ function get_items(mixed $fixed_asset = 0)
 	return db_query($sql,"items could not be retreived");
 }
 
-function item_in_foreign_codes(mixed $stock_id)
+function item_in_foreign_codes(mixed $stock_id): string
 {
 	$sqls=  array(
 	"SELECT COUNT(*) FROM "

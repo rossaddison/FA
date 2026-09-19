@@ -50,7 +50,7 @@ simple_page_mode(true);
 
 //-----------------------------------------------------------------------------------
 
-function can_process() 
+function can_process(): bool 
 {
 	if (strlen($_POST['name']) == 0) 
 	{
@@ -83,7 +83,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 //-----------------------------------------------------------------------------------
 
-function can_delete(mixed $selected_id)
+function can_delete(mixed $selected_id): bool
 {
 	if ($selected_id == -1)
 		return false;

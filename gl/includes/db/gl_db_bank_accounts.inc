@@ -186,7 +186,7 @@ function delete_quick_entry_line(mixed $selected_id): void
 //---------------------------------------------------------------------------------------------
 
 
-function has_quick_entries(mixed $type=null)
+function has_quick_entries(mixed $type=null): bool
 {
 	$sql = "SELECT id FROM ".TB_PREF."quick_entries";
 	if ($type != null)
@@ -227,7 +227,7 @@ function get_quick_entry_lines(mixed $qid)
 	return db_query($sql, "could not retreive quick entries");
 }
 
-function has_quick_entry_lines(mixed $qid)
+function has_quick_entry_lines(mixed $qid): bool
 {
 	$sql = "SELECT id FROM ".TB_PREF."quick_entry_lines WHERE qid=".db_escape($qid);
 
@@ -279,7 +279,7 @@ function get_ending_reconciled(mixed $bank_account, mixed $bank_date)
 
 //---------------------------------------------------------------------------------------------
 
-function get_sql_for_bank_account_reconcile(mixed $bank_account, mixed $date)
+function get_sql_for_bank_account_reconcile(mixed $bank_account, mixed $date): string
 {
 	$sql = "SELECT	bt.type, trans_no, ref, trans_date,
 				amount,	person_id, person_type_id, reconciled, bt.id, c.memo_

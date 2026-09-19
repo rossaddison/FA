@@ -65,7 +65,7 @@ function update_admin_password(mixed $conn, mixed $password): void
 	db_query($sql, "could not update user password for 'admin'");
 }
 
-function write_config_db(mixed $new = false)
+function write_config_db(mixed $new = false): int
 {
 	global $path_to_root, $def_coy, $db_connections, $tb_pref_counter;
 
@@ -116,7 +116,7 @@ function write_config_db(mixed $new = false)
 	return 0;
 }
 
-function write_extensions(mixed $extensions=null, mixed $company = -1)
+function write_extensions(mixed $extensions=null, mixed $company = -1): bool
 {
 	global $path_to_root, $installed_extensions, $next_extension_id;
 
@@ -174,7 +174,7 @@ function write_extensions(mixed $extensions=null, mixed $company = -1)
 //
 // Update per-company list of installed extensions
 //
-function update_extensions(mixed $extensions) {
+function update_extensions(mixed $extensions): bool {
 	global $db_connections;
 	
 	if (!write_extensions($extensions)) {
@@ -205,7 +205,7 @@ function update_extensions(mixed $extensions) {
 }
 
 
-function write_lang()
+function write_lang(): bool
 {
 	global $path_to_root, $installed_languages, $dflt_lang;
 
@@ -264,7 +264,7 @@ function write_lang()
 		$protect - protect users/roles 
 		$return_errors - return errors instead of display them
 */
-function db_import(mixed $filename, mixed $connection, mixed $force=true, mixed $init=true, mixed $protect=false, mixed $return_errors=false)
+function db_import(mixed $filename, mixed $connection, mixed $force=true, mixed $init=true, mixed $protect=false, mixed $return_errors=false): array|string|bool
 {
 	global $db, $SysPrefs;
 
@@ -494,7 +494,7 @@ function db_import(mixed $filename, mixed $connection, mixed $force=true, mixed 
 }
 
 // returns the content of the gziped $path backup file. use of $mode see below
-function db_ungzip(mixed $mode, mixed $path)
+function db_ungzip(mixed $mode, mixed $path): array|string|false
 {
     $file_data = gzfile($path);
     // returns one string or an array of lines
@@ -505,7 +505,7 @@ function db_ungzip(mixed $mode, mixed $path)
 }
 
 // returns the content of the ziped $path backup file. use of $mode see below
-function db_unzip(mixed $mode, mixed $path)
+function db_unzip(mixed $mode, mixed $path): array|string|false
 {
     $all = false;
     $all = implode("", file($path));
@@ -834,7 +834,7 @@ function order_sql_tables(mixed $tables, mixed $fks)
 
 // saves the string in $fileData to the file $backupfile as gz file or not ($zip)
 // returns backup file name if name has changed (zip), else TRUE. If saving failed, return value is FALSE
-function save_to_file(mixed $path, mixed $zip, mixed $fileData)
+function save_to_file(mixed $path, mixed $zip, mixed $fileData): bool
 {
 
 	$backupfile = basename($path);
@@ -971,7 +971,7 @@ function create_comp_dirs(mixed $comp_path, mixed $comp_subdirs): void
 //  $properties - optional properties of field defined by MySQL:
 //		'Type', 'Null', 'Key', 'Default', 'Extra'
 //
-function check_table(mixed $pref, mixed $table, mixed $field=null, mixed $properties=null)
+function check_table(mixed $pref, mixed $table, mixed $field=null, mixed $properties=null): int
 {
 	$tables = @db_query("SHOW TABLES LIKE '".$pref.$table."'");
 	if (!db_num_rows($tables))
@@ -1001,7 +1001,7 @@ function check_table(mixed $pref, mixed $table, mixed $field=null, mixed $proper
 /*
 	Update or create setting in simple php config file.
 */
-function update_config_var(mixed $file, mixed $variable, mixed $value, mixed $comment='')
+function update_config_var(mixed $file, mixed $variable, mixed $value, mixed $comment=''): bool
 {
 	if (!is_file($file) || !is_writeable($file))
 		return false;

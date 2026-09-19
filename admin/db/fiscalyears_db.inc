@@ -71,7 +71,7 @@ function delete_fiscalyear(mixed $id): void
 	commit_transaction();
 }
 
-function is_date_in_fiscalyears(mixed $date, mixed $closed=true)
+function is_date_in_fiscalyears(mixed $date, mixed $closed=true): bool
 {
 	$date = date2sql($date);
 	$sql = "SELECT * FROM ".TB_PREF."fiscal_year WHERE '$date' >= begin AND '$date' <= end";
@@ -93,7 +93,7 @@ function get_fiscalyear_begin_for_date(mixed $date)
 		return begin_fiscalyear();
 }
 
-function check_begin_end_date(mixed $date1, mixed $date2)
+function check_begin_end_date(mixed $date1, mixed $date2): bool
 {
 	$sql = "SELECT MAX(end), MIN(begin) FROM ".TB_PREF."fiscal_year";
 	$result = db_query($sql, "could not retrieve last fiscal years");
@@ -115,7 +115,7 @@ function next_begin_date()
 	return add_days(sql2date($row[0]), 1);
 }
 
-function check_years_before(mixed $date, mixed $closed=false)
+function check_years_before(mixed $date, mixed $closed=false): bool
 {
 	$date = date2sql($date);
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."fiscal_year WHERE begin < '$date'";
@@ -128,7 +128,7 @@ function check_years_before(mixed $date, mixed $closed=false)
 }
 
 //---------------------------------------------------------------------------------------------
-function close_year(mixed $year)
+function close_year(mixed $year): bool
 {
 	global $Refs;
 

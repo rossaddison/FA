@@ -54,7 +54,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 //-----------------------------------------------------------------------------------
 
-function can_delete(mixed $selected_id)
+function can_delete(mixed $selected_id): bool
 {
 	if (key_in_foreign_table($selected_id, 'bom', 'workcentre_added'))
 	{

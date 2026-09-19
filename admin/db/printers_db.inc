@@ -49,7 +49,7 @@ function delete_printer(mixed $id): void
 //============================================================================
 // printer profiles functions
 //
-function update_printer_profile(mixed $name, mixed $dest)
+function update_printer_profile(mixed $name, mixed $dest): bool
 {
 	foreach( $dest as $rep => $printer) {
 		if ($printer != '' || $rep == '') {

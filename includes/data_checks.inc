@@ -562,7 +562,7 @@ function check_db_has_tags(mixed $type, mixed $msg): void
     }	
 }
 
-function check_empty_result(mixed $sql)
+function check_empty_result(mixed $sql): bool
 {
 	$result = db_query($sql, "could not do check empty query");	
 	
@@ -573,7 +573,7 @@ function check_empty_result(mixed $sql)
 //	Integer input check 
 //	Return 1 if number has proper form and is within <min, max> range
 //
-function check_int(mixed $postname, mixed $min=null, mixed $max=null) {
+function check_int(mixed $postname, mixed $min=null, mixed $max=null): int {
 	if(!isset($_POST[$postname]))
 	  return 0;
     $num = input_num($postname);
@@ -661,7 +661,7 @@ function check_is_editable(mixed $trans_type, mixed $trans_no, mixed $msg=null):
 		check_is_closed($trans_type, $trans_no, $msg);
 }
 
-function check_reference(mixed $reference, mixed $trans_type, mixed $trans_no=0, mixed $context=null, mixed $line=null)
+function check_reference(mixed $reference, mixed $trans_type, mixed $trans_no=0, mixed $context=null, mixed $line=null): bool
 {
 	global $Refs;
 

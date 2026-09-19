@@ -80,7 +80,7 @@ function amount_left(mixed $row)
 	return price_format(($row['type'] == ST_JOURNAL && $row["Total"] < 0 ? -$row["Total"] : $row["Total"])-$row["alloc"]);
 }
 
-function check_settled(mixed $row)
+function check_settled(mixed $row): bool
 {
 	return $row['settled'] == 1;
 }

@@ -22,7 +22,7 @@ simple_page_mode(false);
 
 //---------------------------------------------------------------------------------------------
 
-function check_data()
+function check_data(): bool
 {
 	if (strlen($_POST['Abbreviation']) == 0) 
 	{
@@ -80,7 +80,7 @@ function handle_submit()
 
 //---------------------------------------------------------------------------------------------
 
-function check_can_delete(mixed $curr)
+function check_can_delete(mixed $curr): bool
 {
 
 	if ($curr == "")

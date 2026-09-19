@@ -89,7 +89,7 @@ function viewing_controls(): void
 
 //----------------------------------------------------------------------------------------
 
-function check_valid_entries()
+function check_valid_entries(): bool
 {
 	if (!is_numeric($_POST['FromTransNo']) OR $_POST['FromTransNo'] <= 0)
 	{

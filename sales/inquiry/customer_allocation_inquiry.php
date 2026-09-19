@@ -55,7 +55,7 @@ set_global_customer($_POST['customer_id']);
 end_row();
 end_table();
 //------------------------------------------------------------------------------------------------
-function check_overdue(mixed $row)
+function check_overdue(mixed $row): bool
 {
 	return ($row['OverDue'] == 1 
 		&& (abs($row["TotalAmount"]) - $row["Allocated"] != 0));

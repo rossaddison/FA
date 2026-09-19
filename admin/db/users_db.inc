@@ -124,7 +124,7 @@ function delete_user(mixed $id): void
 
 //-----------------------------------------------------------------------------------------------
 
-function get_user_auth(mixed $user_id, mixed $password)
+function get_user_auth(mixed $user_id, mixed $password): bool
 {
 
 	$sql = "SELECT * FROM ".TB_PREF."users WHERE user_id = ".db_escape($user_id)." AND"
@@ -155,7 +155,7 @@ function check_user_activity(mixed $id)
 }
 
 //-----------------------------------------------------------------------------------------------
-function show_users_online()
+function show_users_online(): string
 {
 	global $db, $GetText, $SysPrefs;
 

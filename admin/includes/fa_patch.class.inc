@@ -264,7 +264,7 @@ class fa_patch {
 /*
 	Return databases status info.
 */
-function get_site_status(mixed $connections)
+function get_site_status(mixed $connections): array
 {
 		global $SysPrefs;
 
@@ -290,7 +290,7 @@ function get_site_status(mixed $connections)
 /*
 	Creates table of installer objects sorted by applicable db scheme version.
 */
-function get_installers()
+function get_installers(): array
 {
 	global $path_to_root;
 

@@ -33,7 +33,7 @@ page(_($help_context = "Reconcile Bank Account"), false, false, "", $js);
 
 check_db_has_bank_accounts(_("There are no bank accounts defined in the system."));
 
-function check_date() {
+function check_date(): bool {
 	if (!is_date(get_post('reconcile_date'))) {
 		display_error(_("Invalid reconcile date format"));
 		set_focus('reconcile_date');
@@ -45,7 +45,7 @@ function check_date() {
 //	This function can be used directly in table pager 
 //	if we would like to change page layout.
 //
-function rec_checkbox(mixed $row)
+function rec_checkbox(mixed $row): string
 {
 	$name = "rec_" .$row['id'];
 	$hidden = 'last['.$row['id'].']';
@@ -107,7 +107,7 @@ function update_data(): void
 //---------------------------------------------------------------------------------------------
 // Update db record if respective checkbox value has changed.
 //
-function change_tpl_flag(mixed $reconcile_id)
+function change_tpl_flag(mixed $reconcile_id): bool
 {
 	global	$Ajax;
 
