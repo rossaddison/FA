@@ -18,11 +18,13 @@ page(_($help_context = "Log View"), true);
 
 include_once($path_to_root . "/includes/ui.inc");
 
-if (!isset($_GET['id'])) 
+// the id becomes part of a file path, so only a company number is accepted
+if (!isset($_GET['id']) || !is_string($_GET['id']) || !ctype_digit($_GET['id']))
 {
 	/*Script was not passed the correct parameters */
 	display_note(_("The script must be called with a valid company number."));
 	end_page();
+	exit; // end_page() does not stop the script
 }
 
 display_heading(sprintf(_("Upgrade log for company '%s'"), $_GET['id']));

@@ -18,7 +18,8 @@ global $page_security;
 $page_security = 'SA_OPEN';	// this level is later overriden in rep file
 include_once($path_to_root . "/includes/session.inc");
 
-if (user_save_report_selections() > 0 && isset($_POST['REP_ID'])) {	// save parameters from Report Center
+// the report id becomes part of a cookie name, so only a number is accepted
+if (user_save_report_selections() > 0 && isset($_POST['REP_ID']) && is_string($_POST['REP_ID']) && ctype_digit($_POST['REP_ID'])) {	// save parameters from Report Center
 	for($i=0; $i<12; $i++) { // 2013-01-16 Joe Hunt
 		if (isset($_POST['PARAM_'.$i]) && !is_array($_POST['PARAM_'.$i])) {
 			$rep = $_POST['REP_ID'];
@@ -29,11 +30,14 @@ if (user_save_report_selections() > 0 && isset($_POST['REP_ID'])) {	// save para
 
 if (isset($_GET['xls']) || isset($_GET['xml']))
 {
-	$filename = $_GET['filename'];
-	$unique_name = preg_replace('/[^0-9_a-z.\-]/i', '', $_GET['unique']);
+	// both values come from the query string: keep the download name free of quotes, slashes and line breaks
+	$filename = isset($_GET['filename']) && is_string($_GET['filename'])
+		? str_replace(array('"', '\\', '/', "\r", "\n", ';'), '', $_GET['filename']) : 'report';
+	$unique_name = isset($_GET['unique']) && is_string($_GET['unique'])
+		? preg_replace('/[^0-9_a-z.\-]/i', '', $_GET['unique']) : '';
 	$path =  company_path(). '/pdf_files/';
 	header("Content-type: ". (isset($_GET['xls']) ? "application/vnd.ms-excel" : "text/xml"));
-	header("Content-Disposition: attachment; filename=$filename" );
+	header("Content-Disposition: attachment; filename=\"$filename\"" );
 	header("Expires: 0");
 	header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
 	header("Pragma: public");
