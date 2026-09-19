@@ -643,7 +643,10 @@ function editor_return(mixed $vars, mixed $restore_fun=''): void {
 	}
 }
 
-function confirm_dialog(mixed $submit, mixed $msg) {
+/**
+ * @return 0|array<array-key, mixed>|string
+ */
+function confirm_dialog(mixed $submit, mixed $msg): int|array|string {
 	if (find_post($submit)) {
 		display_warning($msg);
 		br();

@@ -65,6 +65,9 @@ function delete_customer(mixed $customer_id): void
 /*
 	This function probably should be renamed to get_customer_summary
 */
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_customer_details(mixed $customer_id, mixed $to=null, string|bool|array|null $all=true)
 {
 
@@ -121,6 +124,9 @@ function get_customer_details(mixed $customer_id, mixed $to=null, string|bool|ar
 }
 
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_customer(mixed $customer_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."debtors_master WHERE debtor_no=".db_escape($customer_id);
@@ -130,6 +136,9 @@ function get_customer(mixed $customer_id)
 	return db_fetch($result);
 }
 
+/**
+ * @return false|null|string
+ */
 function get_customer_name(mixed $customer_id)
 {
 	$sql = "SELECT name FROM ".TB_PREF."debtors_master WHERE debtor_no=".db_escape($customer_id);
@@ -141,6 +150,9 @@ function get_customer_name(mixed $customer_id)
 	return is_array($row) ? $row[0] : false;
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_customer_habit(string|array|null $customer_id)
 {
 	$sql = "SELECT debtor.pymt_discount, credit_status.dissallow_invoices
@@ -184,6 +196,9 @@ function is_new_customer(mixed $id): bool
 	return !key_in_foreign_table($id, $tables, 'debtor_no');
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_customer_by_ref(mixed $reference)
 {
 	$sql = "SELECT * FROM ".TB_PREF."debtors_master WHERE debtor_ref=".db_escape($reference);
@@ -208,6 +223,9 @@ function get_customer_currency(mixed $customer_id=null, mixed $branch_id=null)
 	return $myrow ? $myrow[0] : get_company_currency();
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_customers_search(mixed $customer)
 {
 	global $SysPrefs;

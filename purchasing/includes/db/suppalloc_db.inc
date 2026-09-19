@@ -36,6 +36,9 @@ function delete_supp_allocation(mixed $trans_id): void
 
 //----------------------------------------------------------------------------------------
 
+/**
+ * @return 0|null|string
+ */
 function get_supp_trans_allocation_balance(?int $trans_type, mixed $trans_no)
 {
 	$sql = "SELECT (ov_amount+ov_gst-ov_discount-alloc) AS BalToAllocate
@@ -68,6 +71,9 @@ function update_supp_trans_allocation(mixed $trans_type, mixed $trans_no, mixed 
 
 //-------------------------------------------------------------------------------------------------------------
 
+/**
+ * @return null
+ */
 function void_supp_allocations(mixed $type, mixed $type_no, mixed $date="")
 {
 	return clear_supp_alloctions($type, $type_no, null, $date);
@@ -176,6 +182,9 @@ function get_allocatable_purch_orders(mixed $supplier_id = null, mixed $trans_no
 }
 //-------------------------------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_allocatable_to_supp_transactions(mixed $supplier_id=null, mixed $trans_no=null, mixed $type=null)
 {
 	$sql = "SELECT
@@ -221,6 +230,9 @@ function get_allocatable_to_supp_transactions(mixed $supplier_id=null, mixed $tr
 
 //-------------------------------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_allocatable_from_supp_transactions(mixed $supplier_id, mixed $trans_no=null, mixed $type=null)
 {
 	$sql = "SELECT

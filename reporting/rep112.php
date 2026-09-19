@@ -29,6 +29,9 @@ include_once($path_to_root . "/includes/data_checks.inc");
 print_receipts();
 
 //----------------------------------------------------------------------------------------------------
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_receipt(string|int|null $type, ?string $trans_no)
 {
     $sql = "SELECT trans.*,

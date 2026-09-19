@@ -94,7 +94,7 @@ function prt_link(mixed $row)
 	return print_document_link($row['order_no'], _("Print"), true, ST_PURCHORDER, ICON_PRINT);
 }
 
-function receive_link(mixed $row) 
+function receive_link(mixed $row): string 
 {
   return pager_link( _("Receive"),
 	"/purchasing/po_receive_items.php?PONumber=" . $row["order_no"], ICON_RECEIVE);

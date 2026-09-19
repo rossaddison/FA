@@ -122,6 +122,9 @@ class package extends gzip_file {
 // Changes field value read from control file (single, or multiline) into 
 // arrays of subfields if needed.
 //
+/**
+ * @return array<array-key, mixed>|non-empty-string|null
+ */
 function ufmt_property(mixed $key, string|array|null $value)
 {
 	// indexes used in output arrays
@@ -651,7 +654,7 @@ function install_language(mixed $pkg_name): bool
 //---------------------------------------------------------------------------------------------
 //	Install/update extension or theme package from repository
 //
-function install_extension(mixed $pkg_name)
+function install_extension(mixed $pkg_name): bool
 {
 	global $path_to_root, $installed_extensions, $next_extension_id, $Ajax, $db_connections;
 	

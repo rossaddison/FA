@@ -10,6 +10,9 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
+/**
+ * @return int|null|string
+ */
 function add_crm_person(mixed $ref, mixed $name, mixed $name2, mixed $address, mixed $phone, mixed $phone2, mixed $fax, mixed $email, mixed $lang, mixed $notes,
 	mixed $cat_ids=null, mixed $entity=null)
 {
@@ -67,6 +70,9 @@ function update_crm_person(mixed $id, mixed $ref, mixed $name, mixed $name2, mix
 	return $id;
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function delete_crm_person(mixed $person, bool $with_contacts=false)
 {
 	begin_transaction();
@@ -118,6 +124,9 @@ function get_crm_persons(mixed $type=null, mixed $action=null, mixed $entity=nul
 		return $result;
 }
 
+/**
+ * @return array{contacts: array<array-key, mixed>, ...<array-key, null|string>}|false
+ */
 function get_crm_person(mixed $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."crm_persons WHERE id=".db_escape($id);
@@ -147,6 +156,9 @@ function get_person_contacts(mixed $id): array
 	return $contacts;
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function update_person_contacts(mixed $id, mixed $cat_ids, mixed $entity_id=null, mixed $type=null)
 {
 	$sql = "DELETE FROM ".TB_PREF."crm_contacts WHERE person_id=".db_escape($id);
@@ -219,6 +231,9 @@ function delete_crm_category(mixed $selected_id): void
 	db_query($sql,"could not delete crm category");
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_crm_categories(int|array|null $show_inactive)
 {
 	$sql = "SELECT * FROM ".TB_PREF."crm_categories";
@@ -227,6 +242,9 @@ function get_crm_categories(int|array|null $show_inactive)
 	return db_query($sql,"could not get areas");
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_crm_category(mixed $selected_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."crm_categories WHERE id=".db_escape($selected_id);
@@ -235,6 +253,9 @@ function get_crm_category(mixed $selected_id)
 	return db_fetch($result);
 }
 
+/**
+ * @return false|null|string
+ */
 function get_crm_category_name(mixed $id)
 {
 	$sql = "SELECT name FROM ".TB_PREF."crm_categories WHERE id=".db_escape($id);
@@ -248,6 +269,9 @@ function get_crm_category_name(mixed $id)
 //----------------------------------------------------------------------------------------
 //	Contact is relation between person and entity in some category
 //
+/**
+ * @return bool|mysqli_result
+ */
 function add_crm_contact(?string $type, ?string $action, string|int|null $entity_id, string|int|null $person_id)
 {
 	$sql = "INSERT INTO ".TB_PREF."crm_contacts (person_id, type, action, entity_id) VALUES ("
@@ -260,6 +284,9 @@ function add_crm_contact(?string $type, ?string $action, string|int|null $entity
 /*
 	Delete contact selected by unique id.
 */
+/**
+ * @return bool|mysqli_result
+ */
 function delete_crm_contact(mixed $id)
 {
 	$sql = "DELETE FROM ".TB_PREF."crm_contacts WHERE id=".db_escape($id);
@@ -269,6 +296,9 @@ function delete_crm_contact(mixed $id)
 /*
 	Delete selected contacts for given person
 */
+/**
+ * @return bool|mysqli_result
+ */
 function delete_crm_contacts(mixed $person_id = null, mixed $type = null, mixed $entity_id=null, mixed $action = null)
 {
 	$sql = "DELETE FROM ".TB_PREF."crm_contacts WHERE ";
@@ -288,6 +318,9 @@ function delete_crm_contacts(mixed $person_id = null, mixed $type = null, mixed 
 /*
 	Returns person data for given contact id
 */
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_crm_contact(mixed $id)
 {
 	$sql = "SELECT t.type, t.action, p.*, r.person_id, r.id  FROM ".TB_PREF."crm_persons p,"
@@ -303,6 +336,9 @@ function get_crm_contact(mixed $id)
 /*
 	 Check for whether category is used in contacts.
 */
+/**
+ * @return null|string
+ */
 function is_crm_category_used(mixed $id)
 {
 	$row = get_crm_category($id);

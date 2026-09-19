@@ -65,19 +65,19 @@ function trans_view(mixed $trans)
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
 
-function alloc_link(mixed $row)
+function alloc_link(mixed $row): string
 {
 	return pager_link(_("Allocate"),
 		"/purchasing/allocations/supplier_allocate.php?trans_no="
  			.$row["trans_no"] . "&trans_type=" . $row["type"]. "&supplier_id=" . $row["supplier_id"], ICON_ALLOC);
 }
 
-function amount_left(mixed $row)
+function amount_left(mixed $row): string
 {
  	return price_format($row['type'] == ST_JOURNAL ?  abs($row["Total"])-$row["alloc"] : -$row["Total"]-$row["alloc"]);
 }
 
-function amount_total(mixed $row)
+function amount_total(mixed $row): string
 {
 	return price_format(-$row["Total"]);
 }

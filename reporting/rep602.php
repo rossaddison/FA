@@ -30,6 +30,9 @@ print_bank_transactions_reconcile();
 
 //----------------------------------------------------------------------------------------------------
 
+/**
+ * @return null|string
+ */
 function get_bank_balance_to(string|array|null $to, mixed $account)
 {
 	$to = date2sql($to);
@@ -40,6 +43,9 @@ function get_bank_balance_to(string|array|null $to, mixed $account)
 	return $row[0];
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_bank_transactions(string|array|null $from, string|array|null $to, mixed $account)
 {
 	$from = date2sql($from);

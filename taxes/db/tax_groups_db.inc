@@ -36,6 +36,9 @@ function update_tax_group(mixed $id, mixed $name, ?array $taxes, ?array $tax_shi
 	commit_transaction();			
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_all_tax_groups(int|bool|array|null $all=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."tax_groups";
@@ -44,6 +47,9 @@ function get_all_tax_groups(int|bool|array|null $all=false)
 	return db_query($sql, "could not get all tax group");
 } 
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_tax_group(mixed $type_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."tax_groups WHERE id=".db_escape($type_id);
@@ -87,6 +93,9 @@ function delete_tax_group_items(mixed $id): void
 //	Return all tax types with rate value updated according to tax group selected
 //	Call the function without arg to find shipment group taxes.
 //
+/**
+ * @return bool|mysqli_result
+ */
 function get_tax_group_rates(mixed $group_id=null, bool $tax_shipping=false)
 {
 	global $SysPrefs;

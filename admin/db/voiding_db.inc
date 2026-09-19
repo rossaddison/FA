@@ -135,6 +135,9 @@ function void_transaction(mixed $type, mixed $type_no, mixed $date_, string|arra
 
 //--------------------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_voided_entry(mixed $type, mixed $type_no)
 {
 	$sql = "SELECT * FROM ".TB_PREF."voided WHERE type=".db_escape($type)

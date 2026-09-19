@@ -28,6 +28,9 @@ include_once($path_to_root . "/gl/includes/gl_db.inc");
 
 print_supplier_details_listing();
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_supplier_details_for_report()
 {
 	$sql = "SELECT supplier_id,	supp_name, address, supp_address, supp_ref,
@@ -40,6 +43,9 @@ function get_supplier_details_for_report()
 }
 
 
+/**
+ * @return null|string
+ */
 function getTransactions(mixed $supplier_id, mixed $date)
 {
 	$date = date2sql($date);

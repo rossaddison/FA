@@ -50,6 +50,9 @@ function get_domestic_price(?array $myrow, mixed $stock_id)
     return $price;
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function fetch_items(string|int|array|null $category=0)
 {
 		$sql = "SELECT stock_id, stock.description AS name,
@@ -64,6 +67,9 @@ function fetch_items(string|int|array|null $category=0)
     return db_query($sql,"No transactions were returned");
 }
 
+/**
+ * @return null|string
+ */
 function trans_qty(mixed $stock_id, string|array|null $location, string|array|null $from_date, string|array|null $to_date, bool $inward = true)
 {
 	if ($from_date == null)

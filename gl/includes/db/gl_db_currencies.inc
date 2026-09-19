@@ -50,6 +50,9 @@ function delete_currency(mixed $curr_code): void
 
 //---------------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_currency(mixed $curr_code)
 {
 	$sql = "SELECT * FROM ".TB_PREF."currencies WHERE curr_abrev=".db_escape($curr_code);
@@ -61,6 +64,9 @@ function get_currency(mixed $curr_code)
 
 //---------------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_currencies(int|bool|array|null $all=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."currencies";

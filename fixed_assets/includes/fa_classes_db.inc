@@ -10,6 +10,9 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_fixed_asset_classes()
 {
 	$sql="SELECT * FROM ".TB_PREF."stock_fa_class";
@@ -19,6 +22,9 @@ function get_fixed_asset_classes()
 	return $result;
 }
 
+/**
+ * @return false|null|string
+ */
 function get_fixed_asset_classname(string|array|null $class)
 {
 	$sql="SELECT description FROM ".TB_PREF."stock_fa_class WHERE fa_class_id = ".db_escape($class);

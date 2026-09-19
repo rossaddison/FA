@@ -10,6 +10,9 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 //----------------------------------------------------------------------------------------
+/**
+ * @return 0|null|string
+ */
 function get_demand_qty(mixed $stock_id, mixed $location)
 {
 	$sql = "SELECT SUM(line.quantity - line.qty_sent) AS QtyDemand
@@ -124,6 +127,9 @@ function get_demand_asm_qty(mixed $stock_id, mixed $location)
 	return $demand_qty;
 }
 
+/**
+ * @return 0|null|string
+ */
 function get_on_porder_qty(mixed $stock_id, mixed $location)
 {
 	$sql = "SELECT SUM(line.quantity_ordered - line.quantity_received) AS qoo
@@ -147,6 +153,9 @@ function get_on_porder_qty(mixed $stock_id, mixed $location)
 	return $qoo;
 }
 
+/**
+ * @return float(0)|null|string
+ */
 function get_on_worder_qty(mixed $stock_id, mixed $location)
 {
  	$qoo = 0.0;
@@ -202,6 +211,9 @@ function delete_bom(mixed $selected_id): void
 	db_query($sql,"Could not delete this bom components");
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_bom(mixed $item)
 {
 	$sql = "SELECT bom.*, loc.location_name,
@@ -222,6 +234,9 @@ function get_bom(mixed $item)
 
 //--------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_component_from_bom(mixed $selected_id)
 {
 	$sql = "SELECT bom.*, item.description

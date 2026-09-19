@@ -79,7 +79,7 @@ page($_SESSION['page_title'], false, false, "", $js);
 //---------------------------------------------------------------------------------------------
 //	Query format functions
 //
-function check_overdue(mixed $row)
+function check_overdue(mixed $row): bool|int
 {
 	global $trans_type;
 	if ($trans_type == ST_SALESQUOTE)
@@ -112,7 +112,7 @@ function edit_link(mixed $row)
 	return $page_nested ? '' : trans_editor_link($row['trans_type'], $row['order_no']);
 }
 
-function dispatch_link(mixed $row)
+function dispatch_link(mixed $row): string
 {
 	global $trans_type, $page_nested;
 
@@ -132,7 +132,7 @@ function dispatch_link(mixed $row)
 			"/sales/sales_order_entry.php?OrderNumber=" .$row['order_no'], ICON_DOC);
 }
 
-function invoice_link(mixed $row)
+function invoice_link(mixed $row): string
 {
 	global $trans_type;
 	if ($trans_type == ST_SALESORDER)
@@ -142,13 +142,13 @@ function invoice_link(mixed $row)
 		return '';
 }
 
-function delivery_link(mixed $row)
+function delivery_link(mixed $row): string
 {
   return pager_link( _("Delivery"),
 	"/sales/sales_order_entry.php?NewDelivery=" .$row['order_no'], ICON_DOC);
 }
 
-function order_link(mixed $row)
+function order_link(mixed $row): string
 {
   return pager_link( _("Sales Order"),
 	"/sales/sales_order_entry.php?NewQuoteToSalesOrder=" .$row['order_no'], ICON_DOC);
@@ -188,7 +188,7 @@ function unallocated_prepayments(mixed $row): string
         return '';
 }
 
-function invoice_prep_link(mixed $row)
+function invoice_prep_link(mixed $row): string
 {
 	// invoicing should be available only for partially allocated orders
 	return 

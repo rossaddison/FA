@@ -59,6 +59,9 @@ function get_gl_view_str(mixed $type, mixed $trans_no, mixed $label="", bool $fo
 
 //--------------------------------------------------------------------------------------
 
+/**
+ * @return non-empty-string|null
+ */
 function get_gl_view_str_cell(mixed $type, mixed $trans_no, mixed $label="")
 {
 	$str = get_gl_view_str($type, $trans_no, $label);
@@ -68,6 +71,9 @@ function get_gl_view_str_cell(mixed $type, mixed $trans_no, mixed $label="")
 
 //--------------------------------------------------------------------------------------
 
+/**
+ * @return null|string
+ */
 function get_customer_trans_view_str(mixed $type, mixed $trans_no, mixed $label="", mixed $icon=false, 
 	mixed $class='', mixed $id='')
 {
@@ -1627,7 +1633,7 @@ function payment_link(mixed $name, mixed $options): string|false|null
 	return strtr($link, $patterns);
 }
 
-function trans_editor_link(mixed $type, mixed $trans_no)
+function trans_editor_link(mixed $type, mixed $trans_no): string
 {
 	global $path_to_root;
 

@@ -28,7 +28,10 @@ function term_days(mixed $myrow)
 		$myrow["days_before_due"];
 }
 
-function term_type(mixed $myrow)
+/**
+ * @return 1|2|3|4
+ */
+function term_type(mixed $myrow): int
 {
 	if ($myrow["day_in_following_month"] != 0)
 		return PTT_FOLLOWING;

@@ -30,6 +30,9 @@ print_annual_expense_breakdown();
 
 //----------------------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function getPeriods(mixed $yr, mixed $mo, mixed $account, mixed $dimension, mixed $dimension2, mixed $thousands)
 {
 	$date13 = date('Y-m-d',mktime(0,0,0,$mo+1,1,$yr));

@@ -27,6 +27,9 @@ include_once($path_to_root . "/gl/includes/gl_db.inc");
 
 print_dimension_summary();
 
+/**
+ * @return bool|mysqli_result
+ */
 function getTransactions(mixed $from, mixed $to)
 {
 	$sql = "SELECT *
@@ -40,6 +43,9 @@ function getTransactions(mixed $from, mixed $to)
     return db_query($sql,"No transactions were returned");
 }
 
+/**
+ * @return float(0)|null|string
+ */
 function getYTD(mixed $dim)
 {
 	$date = Today();

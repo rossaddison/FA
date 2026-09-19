@@ -29,6 +29,9 @@ function update_tax_type(mixed $type_id, mixed $name, mixed $sales_gl_code, mixe
 	db_query($sql, "could not update tax type");
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_all_tax_types(int|bool|array|null $all=false)
 {
 	$sql = "SELECT tax_type.*,
@@ -42,6 +45,9 @@ function get_all_tax_types(int|bool|array|null $all=false)
 	return db_query($sql, "could not get all tax types");
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_all_tax_types_simple()
 {
 	$sql = "SELECT * FROM ".TB_PREF."tax_types WHERE !inactive";
@@ -49,6 +55,9 @@ function get_all_tax_types_simple()
 	return db_query($sql, "could not get all tax types");
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_tax_type(mixed $type_id)
 {
 	$sql = "SELECT tax_type.*,
@@ -63,6 +72,9 @@ function get_tax_type(mixed $type_id)
 	return db_fetch($result);
 }
 
+/**
+ * @return false|null|string
+ */
 function get_tax_type_rate(mixed $type_id)
 {
 	$sql = "SELECT rate FROM ".TB_PREF."tax_types WHERE id=".db_escape($type_id);
@@ -113,6 +125,9 @@ function is_tax_gl_unique(mixed $gl_code, mixed $gl_code2=-1, mixed $selected_id
 	return $gl_code2 == -1 ? ($row[0] <= 1) : ($row[0] == 0);
 }
 
+/**
+ * @return false|null|string
+ */
 function is_tax_account(mixed $account_code)
 {
 	$sql= "SELECT id FROM ".TB_PREF."tax_types WHERE 

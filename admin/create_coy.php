@@ -72,6 +72,9 @@ function check_data(mixed $selected_id): bool
 
 //---------------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function remove_connection(mixed $id) {
 	global $db_connections;
 

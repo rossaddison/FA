@@ -116,7 +116,7 @@ function view_link(mixed $trans)
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
 
-function select_link(mixed $row)
+function select_link(mixed $row): string
 {
 	if (!isset($row['type']))
 		$row['type'] = $_POST['filterType'];
@@ -148,6 +148,9 @@ function is_selected(mixed $row) // Function added by faisal
 	return $row['trans_no'] == $selected_id ? true : false;
 }
 
+/**
+ * @return false|null
+ */
 function voiding_controls()
 {
 	global $selected_id;

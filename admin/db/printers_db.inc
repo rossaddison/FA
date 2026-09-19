@@ -10,6 +10,9 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
+/**
+ * @return bool|mysqli_result
+ */
 function write_printer_def(mixed $id, mixed $name, mixed $descr, mixed $queue, mixed $host, mixed $port, mixed $timeout)
 {
 	if ($id>0)
@@ -26,12 +29,18 @@ function write_printer_def(mixed $id, mixed $name, mixed $descr, mixed $queue, m
 	return db_query($sql,"could not write printer definition");
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_all_printers() 
 {
 	$sql = "SELECT * FROM ".TB_PREF."printers";
 	return db_query($sql,"could not get printer definitions");
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_printer(mixed $id)
 {
 		$sql = "SELECT * FROM ".TB_PREF."printers
@@ -92,6 +101,9 @@ function get_report_printer(mixed $profile, mixed $report)
 	return get_printer($ret['printer']);
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function delete_printer_profile(mixed $name)
 {
 	$sql="DELETE FROM ".TB_PREF."print_profiles WHERE profile=".db_escape($name);
@@ -100,6 +112,9 @@ function delete_printer_profile(mixed $name)
 //
 // Get all report destinations for given profile.
 //
+/**
+ * @return bool|mysqli_result
+ */
 function get_print_profile(mixed $name)
 {
 	$sql = "SELECT	* FROM ".TB_PREF."print_profiles WHERE profile=".db_escape($name);

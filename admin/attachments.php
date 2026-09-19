@@ -209,22 +209,22 @@ function trans_view(mixed $trans)
 	return get_trans_view_str($trans["type_no"], $trans["trans_no"]);
 }
 
-function edit_link(mixed $row)
+function edit_link(mixed $row): string
 {
   	return button('Edit'.$row["id"], _("Edit"), _("Edit"), ICON_EDIT);
 }
 
-function view_link(mixed $row)
+function view_link(mixed $row): string
 {
   	return button('view'.$row["id"], _("View"), _("View"), ICON_VIEW);
 }
 
-function download_link(mixed $row)
+function download_link(mixed $row): string
 {
   	return button('download'.$row["id"], _("Download"), _("Download"), ICON_DOWN);
 }
 
-function delete_link(mixed $row)
+function delete_link(mixed $row): string
 {
   	return button('Delete'.$row["id"], _("Delete"), _("Delete"), ICON_DELETE);
 }

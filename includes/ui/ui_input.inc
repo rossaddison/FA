@@ -138,6 +138,9 @@ function hidden(mixed $name, mixed $value=null, mixed $echo=true): ?string
 	$atype can contain also multiply type selectors separated by space, 
 	however make sense only combination of 'process' and one of defualt/selector/cancel
 */
+/**
+ * @return non-falsy-string|null
+ */
 function submit(mixed $name, mixed $value, mixed $echo=true, mixed $title=false, mixed $atype=false, mixed $icon=false)
 {
 	global $path_to_root;

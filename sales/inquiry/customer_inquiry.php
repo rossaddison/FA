@@ -56,13 +56,16 @@ function gl_view(mixed $row)
 	return get_gl_view_str($row["type"], $row["trans_no"]);
 }
 
-function fmt_amount(mixed $row)
+function fmt_amount(mixed $row): string
 {
 	$value =
 	    $row['type']==ST_CUSTCREDIT || $row['type']==ST_CUSTPAYMENT || $row['type']==ST_BANKDEPOSIT ? -$row["TotalAmount"] : $row["TotalAmount"];
     return price_format($value);
 }
 
+/**
+ * @return null|string
+ */
 function credit_link(mixed $row)
 {
 	global $page_nested;
@@ -91,6 +94,9 @@ function edit_link(mixed $row)
 			trans_editor_link($row['type'], $row['trans_no']);
 }
 
+/**
+ * @return null|string
+ */
 function copy_link(mixed $row)
 {
     global $page_nested;

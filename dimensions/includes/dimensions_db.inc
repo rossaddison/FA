@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_dimension(mixed $reference, mixed $name, mixed $type_, mixed $date_, mixed $due_date, mixed $memo_)
+function add_dimension(mixed $reference, mixed $name, mixed $type_, mixed $date_, mixed $due_date, mixed $memo_): int|string
 {
 	global $Refs;
 
@@ -70,6 +70,9 @@ function delete_dimension(mixed $id): void
 
 //--------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_dimension(mixed $id, bool $allow_null=false)
 {
     $sql = "SELECT * FROM ".TB_PREF."dimensions	WHERE id=".db_escape($id);
@@ -104,6 +107,9 @@ function get_dimension_string(mixed $id, bool $html=false, ?string $space=' '): 
 
 //--------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_dimensions()
 {
 	$sql = "SELECT * FROM ".TB_PREF."dimensions ORDER BY date_";
@@ -113,7 +119,7 @@ function get_dimensions()
 
 //--------------------------------------------------------------------------------------
 
-function dimension_has_deposits(mixed $id)
+function dimension_has_deposits(mixed $id): bool
 {
 	return dimension_has_payments($id);
 }
@@ -153,6 +159,9 @@ function reopen_dimension(mixed $id): void
 
 //--------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_dimension_balance_all(mixed $id, mixed $from, mixed $to) 
 {
 	$from = date2sql($from);
@@ -170,6 +179,9 @@ function get_dimension_balance_all(mixed $id, mixed $from, mixed $to)
 
 //--------------------------------------------------------------------------------------
 
+/**
+ * @return null|string
+ */
 function get_dimension_balance(mixed $id, string|array|null $from, string|array|null $to) 
 {
 	$id = db_escape($id);

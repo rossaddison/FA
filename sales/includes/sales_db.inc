@@ -198,6 +198,9 @@ function update_parent_line(mixed $doc_type, mixed $line_id, mixed $qty_dispatch
 //--------------------------------------------------------------------------------------------------
 // find inventory location for given transaction
 //
+/**
+ * @return array<array-key, null|string>|false|null
+ */
 function get_location(&$cart)
 {
 	$sql = "SELECT location.*
@@ -288,6 +291,9 @@ function read_sales_trans(mixed $doc_type, mixed $trans_no, &$cart): bool
 }
 //----------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_sales_child_lines(mixed $trans_type, mixed $trans_no, bool $lines=true)
 {
 	if (!($ctype = get_child_type($trans_type)))
@@ -327,6 +333,9 @@ function get_sales_child_numbers(mixed $trans_type, mixed $trans_no): array
 	return $trans;
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_sales_parent_lines(mixed $trans_type, mixed $trans_no, bool $lines=true)
 {
 	$partype = get_parent_type($trans_type);
@@ -364,6 +373,9 @@ function get_sales_parent_numbers(mixed $trans_type, mixed $trans_no): array
 
 //----------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_sales_child_documents(?int $trans_type, mixed $trans_no)
 {
 	// FIXME -  credit notes retrieved here should be those linked to invoices containing 

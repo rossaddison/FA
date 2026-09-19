@@ -32,6 +32,9 @@ function update_fiscalyear(mixed $id, string|array|null $closed): void
 	db_query($sql, "could not update fiscal year");
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_all_fiscalyears()
 {
 	$sql = "SELECT * FROM ".TB_PREF."fiscal_year ORDER BY begin";
@@ -39,6 +42,9 @@ function get_all_fiscalyears()
 	return db_query($sql, "could not get all fiscal years");
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_fiscalyear(mixed $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."fiscal_year WHERE id=".db_escape($id);
@@ -48,6 +54,9 @@ function get_fiscalyear(mixed $id)
 	return db_fetch($result);
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_current_fiscalyear()
 {
 	$year = get_company_pref('f_year');
@@ -81,7 +90,7 @@ function is_date_in_fiscalyears(mixed $date, bool $closed=true): bool
 	return db_fetch($result) !== false;
 }
 
-function get_fiscalyear_begin_for_date(mixed $date)
+function get_fiscalyear_begin_for_date(mixed $date): string
 {
  	$date = date2sql($date);
 	$sql = "SELECT begin FROM ".TB_PREF."fiscal_year WHERE '$date' >= begin AND '$date' <= end";
@@ -105,7 +114,7 @@ function check_begin_end_date(string|array|null $date1, string|array|null $date2
 	return ($max === $date1 || $min === $date2);
 }
 
-function next_begin_date()
+function next_begin_date(): false|string
 {
 	$sql = "SELECT MAX(end) FROM ".TB_PREF."fiscal_year";
 	$result = db_query($sql, "could not retrieve last fiscal years");

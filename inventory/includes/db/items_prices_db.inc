@@ -33,6 +33,9 @@ function delete_item_price(mixed $price_id): void
 	db_query($sql,"an item price could not be deleted");
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_prices(mixed $stock_id)
 {
 	$sql = "SELECT pricelist.sales_type, price.* 
@@ -45,6 +48,9 @@ function get_prices(mixed $stock_id)
 	return db_query($sql,"item prices could not be retreived");
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_stock_price(mixed $price_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."prices WHERE id=".db_escape($price_id);
@@ -54,6 +60,9 @@ function get_stock_price(mixed $price_id)
 	return db_fetch($result);
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_stock_price_type_currency(mixed $stock_id, string|array|null $type, mixed $currency)
 {
 	$sql = "SELECT * FROM ".TB_PREF."prices WHERE stock_id=".db_escape($stock_id)."

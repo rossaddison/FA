@@ -102,6 +102,9 @@ function cache_js_file(?string $fpath, string|bool|null $text): bool
 /*
 	Open file for writing with creration of subfolders if needed.
 */
+/**
+ * @return false|null|resource
+ */
 function force_open(mixed $fname)
 {
 	$file = pathinfo($fname);

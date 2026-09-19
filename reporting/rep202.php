@@ -29,6 +29,9 @@ print_aged_supplier_analysis();
 
 //----------------------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_invoices(mixed $supplier_id, string|array|null $to, string|bool|array|null $all=true)
 {
 	$todate = date2sql($to);

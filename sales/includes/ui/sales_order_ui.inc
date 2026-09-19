@@ -240,7 +240,7 @@ function display_order_summary(?string $title, &$order, bool $editable_items=fal
 
 // ------------------------------------------------------------------------------
 
-function display_order_header(&$order, bool $editable, ?string $date_text)
+function display_order_header(&$order, bool $editable, ?string $date_text): string
 {
 	global $Ajax, $SysPrefs;
 

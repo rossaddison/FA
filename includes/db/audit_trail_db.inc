@@ -35,6 +35,9 @@ function add_audit_trail(mixed $trans_type, mixed $trans_no, mixed $trans_date, 
 	commit_transaction();
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_audit_trail_all(mixed $trans_type, mixed $trans_no)
 {
 	$sql = "SELECT * FROM ".TB_PREF."audit_trail"
@@ -108,7 +111,10 @@ function close_transactions(string|array|null $todate): int {
 	return $errors;
 }
 
-function get_journal_number(mixed $type, mixed $trans_no) {
+/**
+ * @return 0|false|non-falsy-string
+ */
+function get_journal_number(mixed $type, mixed $trans_no): int|false|string {
 
 	$cdate = get_company_pref('gl_closing_date');
 	if (!$cdate)

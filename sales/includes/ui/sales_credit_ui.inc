@@ -13,7 +13,7 @@ include_once($path_to_root . "/includes/ui.inc");
 
 // ------------------------------------------------------------------------------
 
-function display_credit_header(&$order)
+function display_credit_header(&$order): string
 {
 	global $Ajax, $Refs;
 

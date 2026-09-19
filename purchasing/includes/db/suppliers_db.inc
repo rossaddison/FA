@@ -83,6 +83,9 @@ function delete_supplier(mixed $supplier_id): void
 	commit_transaction();
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_supplier_details(mixed $supplier_id, mixed $to=null, string|bool|array|null $all=true)
 {
 
@@ -133,6 +136,9 @@ function get_supplier_details(mixed $supplier_id, mixed $to=null, string|bool|ar
     return $supp;
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_supplier(mixed $supplier_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."suppliers WHERE supplier_id=".db_escape($supplier_id);
@@ -142,6 +148,9 @@ function get_supplier(mixed $supplier_id)
 	return db_fetch($result);
 }
 
+/**
+ * @return false|null|string
+ */
 function get_supplier_name(mixed $supplier_id)
 {
 	$sql = "SELECT supp_name AS name FROM ".TB_PREF."suppliers WHERE supplier_id=".db_escape($supplier_id);
@@ -153,6 +162,9 @@ function get_supplier_name(mixed $supplier_id)
 	return is_array($row) ? $row[0] : false;
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_supplier_accounts(mixed $supplier_id)
 {
 	$sql = "SELECT payable_account,purchase_account,payment_discount_account, dimension_id, dimension2_id FROM ".TB_PREF."suppliers WHERE supplier_id=".db_escape($supplier_id);
@@ -196,6 +208,9 @@ function get_supplier_currency(mixed $supplier_id)
 	return $myrow ? $myrow[0] : get_company_currency();
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_suppliers_search(mixed $supplier)
 {
 	global $SysPrefs;

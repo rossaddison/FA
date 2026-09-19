@@ -93,6 +93,9 @@ function fmt_balance(mixed $row)
 	return $value;
 }
 
+/**
+ * @return null|string
+ */
 function alloc_link(mixed $row)
 {
 	$link = 
@@ -115,14 +118,14 @@ function alloc_link(mixed $row)
 
 }
 
-function fmt_debit(mixed $row)
+function fmt_debit(mixed $row): string
 {
 	$value = -$row["TotalAmount"];
 	return $value>=0 ? price_format($value) : '';
 
 }
 
-function fmt_credit(mixed $row)
+function fmt_credit(mixed $row): string
 {
 	$value = $row["TotalAmount"];
 	return $value>0 ? price_format($value) : '';

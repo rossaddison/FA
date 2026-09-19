@@ -11,6 +11,9 @@
 ***********************************************************************/
 //--------------------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_comments(mixed $type, mixed $type_no)
 {
 	$sql = "SELECT * FROM ".TB_PREF."comments WHERE type="

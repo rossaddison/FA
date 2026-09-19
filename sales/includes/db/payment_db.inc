@@ -139,6 +139,9 @@ function void_customer_payment(mixed $type, mixed $type_no): void
 	. Bank charge is not stored explicitly in database as of 2.3.xx
 	. Due to roundings the retrieved charge can differ from the original amount when bank_curr!=home_curr && bank_curr!=cust_curr
 */
+/**
+ * @return 0|null|string
+ */
 function get_cust_bank_charge(?int $type, mixed $trans_no)
 {
 

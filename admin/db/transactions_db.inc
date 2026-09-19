@@ -59,7 +59,7 @@ function get_sql_for_view_transactions(mixed $filtertype, mixed $from, mixed $to
 	return $sql;
 }
 
-function transaction_exists(mixed $trans_type, mixed $trans_no)
+function transaction_exists(mixed $trans_type, mixed $trans_no): int|string
 {
 	return db_num_rows(db_query(get_sql_for_view_transactions($trans_type, $trans_no, $trans_no, $dummy)));
 }
@@ -156,7 +156,7 @@ function get_counterparty_name(mixed $trans_type, mixed $trans_no, bool $full=tr
 //	Used only for transactions stored in tables without autoincremented key.
 //
 
-function get_next_trans_no (mixed $trans_type){
+function get_next_trans_no (mixed $trans_type): float|int{
 
 	$st = get_systype_db_info($trans_type);
 
@@ -181,6 +181,9 @@ function get_next_trans_no (mixed $trans_type){
 
 //-----------------------------------------------------------------------------
 
+/**
+ * @return list{'&TB_PREF&bank_accounts'|'&TB_PREF&bank_trans'|'&TB_PREF&debtor_trans'|'&TB_PREF&debtors_master'|'&TB_PREF&dimensions'|'&TB_PREF&grn_batch'|'&TB_PREF&item_codes'|'&TB_PREF&journal'|'&TB_PREF&purch_orders'|'&TB_PREF&sales_orders'|'&TB_PREF&service_orders'|'&TB_PREF&stock_moves'|'&TB_PREF&supp_trans'|'&TB_PREF&suppliers'|'&TB_PREF&wo_issues'|'&TB_PREF&wo_manufacture'|'&TB_PREF&workorders', 'trans_type'|'type'|null, 'debtor_no'|'id'|'issue_no'|'order_no'|'supplier_id'|'trans_no', 'bank_account_number'|'cust_ref'|'debtor_ref'|'ref'|'reference'|'stock_id'|'supp_ref'|'wo_ref', 'date'|'date_'|'delivery_date'|'issue_date'|'ord_date'|'released_date'|'tran_date'|'trans_date'|null}|null
+ */
 function get_systype_db_info(mixed $type)
 {
 	switch ($type)

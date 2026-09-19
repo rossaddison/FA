@@ -10,7 +10,7 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 function add_exchange_variation(mixed $trans_no, mixed $date_, mixed $acc_id, mixed $account,
-    mixed $currency, mixed $person_type_id=null, mixed $person_id = "", mixed $memo='')
+    mixed $currency, mixed $person_type_id=null, mixed $person_id = "", mixed $memo=''): bool
 {
 	if (is_company_currency($currency))
 		return false;
@@ -89,6 +89,9 @@ function add_cust_supp_revaluation(mixed $ledger_act, mixed $ex_act, mixed $date
 	commit_transaction();
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_cust_account_curr_balances(mixed $date)
 {
 	$to = date2sql($date);
@@ -109,6 +112,9 @@ function get_cust_account_curr_balances(mixed $date)
 	return  $result;
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_supp_account_curr_balances(mixed $date)
 {
 	$to = date2sql($date);
@@ -126,6 +132,9 @@ function get_supp_account_curr_balances(mixed $date)
 	return  $result;
 }
 
+/**
+ * @return null|string
+ */
 function get_account_home_balance(mixed $person_id, ?int $person_type, mixed $rec_account, mixed $to_date)
 {
 	$to = date2sql($to_date);
@@ -375,8 +384,11 @@ function update_bank_transfer(
 //
 // FIXME -revise code for update case
 //
+/**
+ * @return false|list{mixed, mixed}
+ */
 function write_bank_transaction(mixed $trans_type, mixed $trans_no, mixed $from_account, mixed $items, mixed $date_,
-	mixed $person_type_id, mixed $person_id, mixed $person_detail_id,	mixed $ref, mixed $memo_, bool $use_transaction=true, mixed $settled_amount=null)
+	mixed $person_type_id, mixed $person_id, mixed $person_detail_id,	mixed $ref, mixed $memo_, bool $use_transaction=true, mixed $settled_amount=null): false|array
 {
 	global $Refs, $SysPrefs;
 

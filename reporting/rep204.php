@@ -27,6 +27,9 @@ include_once($path_to_root . "/gl/includes/gl_db.inc");
 
 print_outstanding_GRN();
 
+/**
+ * @return bool|mysqli_result
+ */
 function getTransactions(mixed $fromsupp)
 {
 	$sql = "SELECT grn.id,

@@ -87,6 +87,9 @@ function getAverageCost(mixed $stock_id, string|array|null $location, string|arr
 	return $tot_cost / $qty;
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function getTransactions(mixed $category, mixed $location, string|array|null $date)
 {
 	$date = date2sql($date);

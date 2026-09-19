@@ -11,6 +11,9 @@
 ***********************************************************************/
 require_once($path_to_root. "/admin/db/attachments_db.inc");
 
+/**
+ * @return bool|mysqli_result
+ */
 function add_journal(mixed $type, mixed $trans_no, mixed $amount, mixed $tran_date, mixed $currency, mixed $reference, mixed $source_ref='', mixed $rate=1,
 	 mixed $event_date='', mixed $doc_date='')
 {
@@ -31,6 +34,9 @@ function add_journal(mixed $type, mixed $trans_no, mixed $amount, mixed $tran_da
 	return db_query($sql, 'cannot add journal entry');
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function update_journal(mixed $type, mixed $trans_no, mixed $amount, mixed $tran_date, mixed $currency, mixed $reference, mixed $source_ref='', mixed $rate=1,
 	 mixed $event_date='', mixed $doc_date='')
 {
@@ -48,6 +54,9 @@ function update_journal(mixed $type, mixed $trans_no, mixed $amount, mixed $tran
 	return db_query($sql, 'cannot update journal entry');
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function delete_journal(mixed $type, mixed $trans_no)
 {
     delete_attachments($type, $trans_no);
@@ -58,6 +67,9 @@ function delete_journal(mixed $type, mixed $trans_no)
 	return db_query($sql, 'cannot delete journal entry');
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_journal(mixed $type, mixed $trans_no)
 {
 	$sql = "SELECT * FROM ".TB_PREF."journal 
@@ -71,6 +83,9 @@ function get_journal(mixed $type, mixed $trans_no)
 // Write headers in debtor_trans for allocation purposes.
 // Amount in customer currency
 //
+/**
+ * @return bool|mysqli_result
+ */
 function write_cust_journal(mixed $trans_type, mixed $trans_no, mixed $branch_id, mixed $date, mixed $ref, mixed $amount, mixed $rate)
 {
 	// we have to select any branch_id for given AR_act - in fact w
@@ -86,6 +101,9 @@ function write_cust_journal(mixed $trans_type, mixed $trans_no, mixed $branch_id
 // Write headers in supp_trans for allocation purposes.
 // Amount in supplier currency
 //
+/**
+ * @return bool|mysqli_result
+ */
 function write_supp_journal(mixed $trans_type, mixed $trans_no, mixed $supp_id, mixed $date, mixed $ref, mixed $amount, mixed $rate, mixed $src_ref)
 {
 	$sql = "INSERT INTO ".TB_PREF."supp_trans (trans_no, type, supplier_id, tran_date, reference, ov_amount, rate, supp_reference)

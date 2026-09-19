@@ -25,6 +25,9 @@ function update_credit_status(mixed $status_id, mixed $description, mixed $disal
 	db_query($sql, "could not update credit status");
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_all_credit_status(int|bool|array|null $all=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."credit_status";
@@ -33,6 +36,9 @@ function get_all_credit_status(int|bool|array|null $all=false)
 	return db_query($sql, "could not get all credit status");
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_credit_status(mixed $status_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."credit_status WHERE id=".db_escape($status_id);

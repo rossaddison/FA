@@ -28,6 +28,9 @@ include_once($path_to_root . "/inventory/includes/db/items_db.inc");
 
 print_bill_of_material();
 
+/**
+ * @return bool|mysqli_result
+ */
 function getTransactions(mixed $from, mixed $to)
 {
 	$sql = "SELECT bom.parent,

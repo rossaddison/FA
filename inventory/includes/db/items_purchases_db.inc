@@ -48,6 +48,9 @@ function delete_item_purchasing_data(mixed $selected_id, string|array|null $stoc
 	db_query($sql,"could not delete purchasing data");
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_items_purchasing_data(mixed $stock_id)
 {
     $sql = "SELECT pdata.*, supplier.supp_name,	supplier.curr_code
@@ -58,6 +61,9 @@ function get_items_purchasing_data(mixed $stock_id)
     return db_query($sql, "The supplier purchasing details for the selected part could not be retrieved");
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_item_purchasing_data(mixed $selected_id, mixed $stock_id)
 {
 	$sql = "SELECT pdata.*, supplier.supp_name

@@ -62,6 +62,9 @@ function exists_bank_trans(mixed $type, mixed $type_no): bool
 
 //----------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_bank_trans(mixed $type, mixed $trans_no=null, mixed $person_type_id=null, mixed $person_id=null)
 {
 	$sql = "SELECT bt.*, act.*,
@@ -91,6 +94,9 @@ function get_bank_trans(mixed $type, mixed $trans_no=null, mixed $person_type_id
 
 //----------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_bank_trans_for_bank_account(mixed $bank_account, mixed $from, mixed $to)
 {
 	$from = date2sql($from);
@@ -110,6 +116,9 @@ function get_bank_trans_for_bank_account(mixed $bank_account, mixed $from, mixed
 
 //----------------------------------------------------------------------------------------
 
+/**
+ * @return null|string
+ */
 function get_balance_before_for_bank_account(mixed $bank_account, mixed $from)
 {
 	$from = date2sql($from);
@@ -123,6 +132,9 @@ function get_balance_before_for_bank_account(mixed $bank_account, mixed $from)
 }
 //----------------------------------------------------------------------------------------
 
+/**
+ * @return null|string
+ */
 function get_gl_trans_value(mixed $account, mixed $type, mixed $trans_no)
 {
 	$sql = "SELECT SUM(amount)

@@ -31,6 +31,9 @@ include_once($path_to_root . "/taxes/tax_calc.inc");
 print_po();
 
 //----------------------------------------------------------------------------------------------------
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_supp_po(string|array|null $order_no)
 {
    	$sql = "SELECT po.*, supplier.supp_name, supplier.supp_account_no,supplier.tax_included,
@@ -47,6 +50,9 @@ function get_supp_po(string|array|null $order_no)
     return db_fetch($result);
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_po_details(string|array|null $order_no)
 {
 	$sql = "SELECT poline.*, units, editable

@@ -26,6 +26,9 @@ include_once($path_to_root . "/inventory/includes/db/items_category_db.inc");
 include_once($path_to_root . "/fixed_assets/includes/fixed_assets_db.inc");
 include_once($path_to_root . "/fixed_assets/includes/fa_classes_db.inc");
 
+/**
+ * @return false|null|string
+ */
 function find_last_location(mixed $stock_id, string|array|null $end_date)
 {
 	$end_date = date2sql($end_date);

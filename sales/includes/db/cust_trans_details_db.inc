@@ -11,6 +11,9 @@
 ***********************************************************************/
 //----------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_customer_trans_details(mixed $debtor_trans_type, mixed $debtor_trans_no)
 {
 if (!is_array($debtor_trans_no))

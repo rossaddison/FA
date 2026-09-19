@@ -29,6 +29,9 @@ include_once($path_to_root . "/includes/db/manufacturing_db.inc");
 
 print_inventory_planning();
 
+/**
+ * @return bool|mysqli_result
+ */
 function getTransactions(mixed $category, mixed $location)
 {
 	$sql = "SELECT item.category_id,
@@ -57,6 +60,9 @@ function getTransactions(mixed $category, mixed $location)
 
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function getPeriods(mixed $stockid, mixed $location)
 {
 	$date5 = date('Y-m-d');

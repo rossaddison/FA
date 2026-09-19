@@ -122,7 +122,7 @@ function get_default_supplier_payment_bank_account(mixed $supplier_id, mixed $da
 }
 //----------------------------------------------------------------------------------------
 
-function check_inputs()
+function check_inputs(): bool
 {
 	global $Refs;
 

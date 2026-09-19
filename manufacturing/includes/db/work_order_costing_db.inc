@@ -21,6 +21,9 @@ function add_wo_costing(mixed $workorder_id, mixed $cost_type, ?int $trans_type,
 
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_wo_costing(mixed $workorder_id)
 {
 	$sql="SELECT * 
@@ -208,6 +211,9 @@ function work_order_production_gl(mixed $woid, mixed $stock_id, mixed $quantity,
 		send_reorder_email($loc, $st_ids, $st_names, $st_num, $st_reorder);
 }
 
+/**
+ * @return 0|null|string
+ */
 function check_wo_costing(mixed $type, mixed $trans_no)
 {
 	$sql = "SELECT workorder_id FROM ".TB_PREF."wo_costing WHERE trans_type= ".db_escape($type)." AND trans_no=".db_escape($trans_no);

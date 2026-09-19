@@ -53,6 +53,9 @@ function get_company_prefs()
 	return get_company_pref(null);
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function set_company_pref(?string $pref, ?string $category, ?string $type, ?int $length, ?string $value)
 {
 	$sql = "REPLACE `".TB_PREF."sys_prefs` SET `name`=".db_escape($pref).", `category`=".db_escape($category)
@@ -120,6 +123,9 @@ function delete_payment_terms(mixed $selected_id): void
 	db_query($sql,"could not delete a payment terms");
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_payment_terms(mixed $selected_id)
 {
 	$sql = "SELECT *, (t.days_before_due=0) AND (t.day_in_following_month=0) as cash_sale
@@ -130,6 +136,9 @@ function get_payment_terms(mixed $selected_id)
 	return db_fetch($result);
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_payment_terms_all(int|array|null $show_inactive)
 {
 	$sql = "SELECT * FROM ".TB_PREF."payment_terms";
@@ -143,6 +152,9 @@ function get_payment_terms_all(int|array|null $show_inactive)
 		value is name of foreign key field. For numeric keys $stdkey field name is used.
 	$stdkey - standard name of foreign key.
 */
+/**
+ * @return null|string
+ */
 function key_in_foreign_table(mixed $id, string|array|null $tables, ?string $stdkey)
 {
 

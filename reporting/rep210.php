@@ -30,6 +30,9 @@ include_once($path_to_root . "/includes/db/crm_contacts_db.inc");
 print_remittances();
 
 //----------------------------------------------------------------------------------------------------
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_remittance(string|int|null $type, ?string $trans_no)
 {
    	$sql = "SELECT trans.*, 

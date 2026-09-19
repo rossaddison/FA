@@ -89,12 +89,12 @@ function handle_delete(): void
 }
 
 //---------------------------------------------------------------------------------------------
-function edit_link(mixed $row) 
+function edit_link(mixed $row): string 
 {
   return button('Edit'.$row["id"], _("Edit"), true, ICON_EDIT);
 }
 
-function del_link(mixed $row) 
+function del_link(mixed $row): string 
 {
   return button('Delete'.$row["id"], _("Delete"), true, ICON_DELETE);
 }

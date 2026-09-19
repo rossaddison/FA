@@ -99,7 +99,7 @@ function view_link(mixed $dummy, mixed $order_no)
 	return get_trans_view_str(ST_WORKORDER, $order_no);
 }
 
-function view_stock(mixed $row)
+function view_stock(mixed $row): string
 {
 	return view_stock_status($row["stock_id"], $row["description"], false);
 }
@@ -117,7 +117,7 @@ function edit_link(mixed $row)
 		trans_editor_link(ST_WORKORDER, $row["id"]);
 }
 
-function release_link(mixed $row)
+function release_link(mixed $row): string
 {
 	return $row["closed"] ? '' : 
 		($row["released"]==0 ?
@@ -128,14 +128,14 @@ function release_link(mixed $row)
 			"/manufacturing/work_order_issue.php?trans_no=" .$row["id"]));
 }
 
-function produce_link(mixed $row)
+function produce_link(mixed $row): string
 {
 	return $row["closed"] || !$row["released"] ? '' :
 		pager_link(_('Produce'),
 			"/manufacturing/work_order_add_finished.php?trans_no=" .$row["id"]);
 }
 
-function costs_link(mixed $row)
+function costs_link(mixed $row): string
 {
 	return $row["closed"] || !$row["released"] ? '' :
 		pager_link(_('Costs'),
@@ -152,7 +152,7 @@ function prt_link(mixed $row)
 	return print_document_link($row['id'], _("Print"), true, ST_WORKORDER, ICON_PRINT);
 }
 
-function dec_amount(mixed $row, mixed $amount)
+function dec_amount(mixed $row, mixed $amount): string
 {
 	return number_format2($amount, $row['decimals']);
 }

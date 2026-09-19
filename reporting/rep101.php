@@ -29,6 +29,9 @@ include_once($path_to_root . "/sales/includes/db/customers_db.inc");
 
 print_customer_balances();
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_open_balance(mixed $debtorno, string|array|null $to)
 {
 	if($to)
@@ -54,6 +57,9 @@ function get_open_balance(mixed $debtorno, string|array|null $to)
     return db_fetch($result);
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_transactions(mixed $debtorno, string|array|null $from, string|array|null $to)
 {
 	$from = date2sql($from);

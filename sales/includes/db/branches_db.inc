@@ -79,6 +79,9 @@ function branch_in_foreign_table(mixed $customer_id, mixed $branch_code, ?string
 	return ($myrow[0] > 0);
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_branch(mixed $branch_id)
 {
 	$sql = "SELECT branch.*, salesman.salesman_name 
@@ -93,6 +96,9 @@ function get_branch(mixed $branch_id)
 	return db_fetch($result);
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_cust_branch(string|array|null $customer_id, string|array|null $branch_code)
 {
 	$sql = "SELECT * FROM ".TB_PREF."cust_branch
@@ -102,6 +108,9 @@ function get_cust_branch(string|array|null $customer_id, string|array|null $bran
 	return db_fetch($result);
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_branch_accounts(mixed $branch_id)
 {
 	$sql = "SELECT receivables_account,sales_account, sales_discount_account, payment_discount_account 
@@ -112,6 +121,9 @@ function get_branch_accounts(mixed $branch_id)
 	return db_fetch($result);
 }
 
+/**
+ * @return null|string
+ */
 function get_branch_name(mixed $branch_id)
 {
 	$sql = "SELECT br_name FROM ".TB_PREF."cust_branch 
@@ -123,6 +135,9 @@ function get_branch_name(mixed $branch_id)
 	return $myrow[0];
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_cust_branches_from_group(mixed $group_no)
 {
 	$sql = "SELECT branch_code, debtor_no FROM ".TB_PREF."cust_branch 
@@ -131,6 +146,9 @@ function get_cust_branches_from_group(mixed $group_no)
 	return db_query($sql,"could not retreive branches for group " . $group_no);
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_default_info_for_branch(string|array|null $customer_id)
 {
 	$sql = "SELECT name, address, debtor_ref
@@ -257,6 +275,9 @@ function _get_branch_contacts(mixed $branch_code, mixed $action=null, mixed $cus
 	return $results;
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_default_branch(mixed $customer_id, mixed $ar_account=null)
 {
 	$sql = "SELECT * 
@@ -267,6 +288,9 @@ function get_default_branch(mixed $customer_id, mixed $ar_account=null)
 	return db_fetch($result);
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function  get_branches_search(mixed $customer, mixed $branch)
 {
 	global $SysPrefs;

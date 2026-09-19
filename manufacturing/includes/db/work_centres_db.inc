@@ -25,6 +25,9 @@ function update_work_centre(mixed $type_id, mixed $name, mixed $description): vo
 	db_query($sql, "could not update work centre");
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_all_work_centres(int|bool|array|null $all=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."workcentres";
@@ -33,6 +36,9 @@ function get_all_work_centres(int|bool|array|null $all=false)
 	return db_query($sql, "could not get all work centres");
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_work_centre(mixed $type_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."workcentres WHERE id=".db_escape($type_id);

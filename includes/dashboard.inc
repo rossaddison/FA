@@ -826,6 +826,9 @@ function customer_aging(mixed $today, string|int|null $width="33"): float
 	return $total;
 }
 
+/**
+ * @return null|string
+ */
 function customer_balance(mixed $today)
 {
 	$today = date2sql($today);
@@ -882,6 +885,9 @@ function supplier_aging(mixed $today, string|int|null $width="33"): float
 	return $total;
 }
 
+/**
+ * @return null|string
+ */
 function supplier_balance(mixed $today)
 {
 	$today = date2sql($today); 
@@ -1032,7 +1038,7 @@ function customer_trans(mixed $today): void
 	end_table(2);
 }
 
-function calculate_next_invoice(?array $myrow)
+function calculate_next_invoice(?array $myrow): string
 {
 	if ($myrow["last_sent"] == '0000-00-00')
 		$next = sql2date($myrow["begin"]);
@@ -1188,6 +1194,9 @@ function bank_balance(mixed $today, ?int $width): void
 	end_table(1);
 }
 
+/**
+ * @return null|string
+ */
 function get_num_customers()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."debtors_master";
@@ -1196,6 +1205,9 @@ function get_num_customers()
 	return $row[0];
 }
 
+/**
+ * @return null|string
+ */
 function get_num_branches()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."cust_branch";
@@ -1204,6 +1216,9 @@ function get_num_branches()
 	return $row[0];
 }
 
+/**
+ * @return null|string
+ */
 function get_num_salesmen()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."salesman";
@@ -1212,6 +1227,9 @@ function get_num_salesmen()
 	return $row[0];
 }
 
+/**
+ * @return null|string
+ */
 function get_num_overdue_sales()
 {
 	$today = date2sql(calc_today());
@@ -1226,6 +1244,9 @@ function get_num_overdue_sales()
 	return $row[0];
 }
 
+/**
+ * @return null|string
+ */
 function get_num_suppliers()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."suppliers";
@@ -1234,6 +1255,9 @@ function get_num_suppliers()
 	return $row[0];
 }
 
+/**
+ * @return null|string
+ */
 function get_new_purch_orders()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."purch_orders po, ".TB_PREF."purch_order_details pd WHERE po.order_no = pd.order_no AND 
@@ -1243,6 +1267,9 @@ function get_new_purch_orders()
 	return $row[0];
 }
 
+/**
+ * @return null|string
+ */
 function get_num_supp_invoices()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."supp_trans WHERE (ov_amount+ov_discount+ov_gst - alloc) <> 0";
@@ -1251,6 +1278,9 @@ function get_num_supp_invoices()
 	return $row[0];
 }
 
+/**
+ * @return null|string
+ */
 function get_num_overdue_purch()
 {
 	$today = date2sql(calc_today());
@@ -1261,6 +1291,9 @@ function get_num_overdue_purch()
 	return $row[0];
 }
 
+/**
+ * @return null|string
+ */
 function get_num_items()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."stock_master";
@@ -1269,6 +1302,9 @@ function get_num_items()
 	return $row[0];
 }
 
+/**
+ * @return null|string
+ */
 function get_num_locations()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."locations";
@@ -1277,6 +1313,9 @@ function get_num_locations()
 	return $row[0];
 }
 
+/**
+ * @return null|string
+ */
 function get_num_kits()
 {
 	$sql="SELECT count(*) FROM ".TB_PREF."item_codes";
@@ -1286,7 +1325,7 @@ function get_num_kits()
 	return $row[0];
 }
 
-function get_num_reorder()
+function get_num_reorder(): int|string
 {
 	$MB = 'B';
 	$today = date2sql(calc_today());
@@ -1303,6 +1342,9 @@ function get_num_reorder()
 	return db_num_rows($result);
 }
 
+/**
+ * @return null|string
+ */
 function get_num_assembled()
 {
 	$begin = date2sql(begin_fiscalyear());
@@ -1314,6 +1356,9 @@ function get_num_assembled()
 	return $row[0];
 }
 
+/**
+ * @return null|string
+ */
 function get_num_manufactured()
 {
 	$begin = date2sql(begin_fiscalyear());
@@ -1325,6 +1370,9 @@ function get_num_manufactured()
 	return $row[0];
 }
 	
+/**
+ * @return null|string
+ */
 function get_num_workcentres()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."workcentres";
@@ -1333,6 +1381,9 @@ function get_num_workcentres()
 	return $row[0];
 }
 	
+/**
+ * @return null|string
+ */
 function get_open_workorders()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."workorders WHERE closed = 0";
@@ -1341,6 +1392,9 @@ function get_open_workorders()
 	return $row[0];
 }
 
+/**
+ * @return null|string
+ */
 function get_num_fixed_assets()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."stock_master WHERE mb_flag = 'F'";
@@ -1349,6 +1403,9 @@ function get_num_fixed_assets()
 	return $row[0];
 }
 
+/**
+ * @return null|string
+ */
 function get_num_fixed_locations()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."stock_master s LEFT JOIN ".TB_PREF."loc_stock l ON s.stock_id = l.stock_id 
@@ -1358,6 +1415,9 @@ function get_num_fixed_locations()
 	return $row[0];
 }
 
+/**
+ * @return null|string
+ */
 function get_num_fixed_categories()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."stock_category c LEFT JOIN ".TB_PREF."stock_master s ON c.category_id = s.category_id 
@@ -1367,6 +1427,9 @@ function get_num_fixed_categories()
 	return $row[0];
 }
 
+/**
+ * @return null|string
+ */
 function get_num_fixed_classes()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."stock_fa_class";
@@ -1375,6 +1438,9 @@ function get_num_fixed_classes()
 	return $row[0];
 }
 
+/**
+ * @return null|string
+ */
 function get_num_dimensions()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."dimensions";
@@ -1383,6 +1449,9 @@ function get_num_dimensions()
 	return $row[0];
 }
 
+/**
+ * @return null|string
+ */
 function get_dim_type2()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."dimensions WHERE type_ = 2";
@@ -1391,6 +1460,9 @@ function get_dim_type2()
 	return $row[0];
 }
 
+/**
+ * @return null|string
+ */
 function get_dim_closed()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."dimensions WHERE closed = 1";
@@ -1421,6 +1493,9 @@ function get_dim_total(): array
 	return array(round($bal), round($res));	
 }
 	
+/**
+ * @return 0|null|string
+ */
 function get_today_deposits(mixed $today)
 {
 	$today= date2sql($today);
@@ -1436,6 +1511,9 @@ function get_today_deposits(mixed $today)
 	}
 }
 
+/**
+ * @return 0|null|string
+ */
 function get_today_payments(mixed $today)
 {
 	$today= date2sql($today);
@@ -1451,6 +1529,9 @@ function get_today_payments(mixed $today)
 	}
 }
 
+/**
+ * @return null|string
+ */
 function get_num_users()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."users";
@@ -1489,7 +1570,7 @@ function get_database_size(): string
 	return number_format2(($size / 1024 / 1024), 2).' MB';
 }
 
-function calc_today()
+function calc_today(): string
 {
 	$today = Today();
 	if (!is_date_in_fiscalyear($today))

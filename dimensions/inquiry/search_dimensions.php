@@ -112,7 +112,7 @@ function is_overdue(mixed $row): bool
 	return date_diff2(Today(), sql2date($row["due_date"]), "d") > 0;
 }
 
-function edit_link(mixed $row)
+function edit_link(mixed $row): string
 {
 	return pager_link(_("Edit"),
 			"/dimensions/dimension_entry.php?trans_no=" . $row["id"], ICON_EDIT);

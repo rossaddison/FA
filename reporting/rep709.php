@@ -28,6 +28,9 @@ include_once($path_to_root . "/gl/includes/gl_db.inc");
 
 print_tax_report();
 
+/**
+ * @return bool|mysqli_result
+ */
 function getTaxTransactions(string|array|null $from, string|array|null $to)
 {
 	$fromdate = date2sql($from);
@@ -62,12 +65,18 @@ function getTaxTransactions(string|array|null $from, string|array|null $to)
     return db_query($sql,"No transactions were returned");
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function getTaxTypes()
 {
 	$sql = "SELECT * FROM ".TB_PREF."tax_types ORDER BY id";
     return db_query($sql,"No transactions were returned");
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function getTaxInfo(mixed $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."tax_types WHERE id=$id";

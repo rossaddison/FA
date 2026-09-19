@@ -78,6 +78,9 @@ function add_stock_transfer_item(mixed $transfer_id, mixed $stock_id, mixed $loc
 //
 //	Get inventory transfer common data (currently this is still stored in stock_moves table).
 //
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_stock_transfer(mixed $trans_no)
 {
 	// retrieve common data from any two from/to move records

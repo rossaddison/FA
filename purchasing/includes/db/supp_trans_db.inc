@@ -51,6 +51,9 @@ function write_supp_trans(mixed $type, ?int $trans_no, mixed $supplier_id, mixed
 
 //-------------------------------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_supp_trans(mixed $trans_no, mixed $trans_type=-1, mixed $supplier_id=null)
 {
 	$sql = "SELECT trans.*, (trans.ov_amount+trans.ov_gst+trans.ov_discount) AS Total,
@@ -113,6 +116,9 @@ function get_supp_trans(mixed $trans_no, mixed $trans_type=-1, mixed $supplier_i
 
 //----------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_supp_payment_before(mixed $supplier_id, string|int|null $date)
 {
 	$sql = "SELECT "
@@ -155,7 +161,7 @@ function get_supp_payment_before(mixed $supplier_id, string|int|null $date)
 
 //----------------------------------------------------------------------------------------
 
-function exists_supp_trans(mixed $type, mixed $type_no)
+function exists_supp_trans(mixed $type, mixed $type_no): bool
 {
 	if ($type == ST_SUPPRECEIVE)
 		return exists_grn($type_no);
@@ -188,7 +194,7 @@ function clear_supp_trans(mixed $type, mixed $type_no): void
 }
 //----------------------------------------------------------------------------------------
 
-function post_void_supp_trans(mixed $type, mixed $type_no)
+function post_void_supp_trans(mixed $type, mixed $type_no): bool
 {
 	if ($type == ST_SUPPAYMENT)
 	{

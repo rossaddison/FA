@@ -69,6 +69,9 @@ function delete_bank_account(mixed $id): void
 
 //---------------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_bank_account(mixed $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."bank_accounts WHERE id=".db_escape($id);
@@ -80,6 +83,9 @@ function get_bank_account(mixed $id)
 
 //---------------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_bank_accounts(int|bool|array|null $show_inactive=false)
 {
 	$sql = "SELECT account.*, gl_account.account_name
@@ -93,6 +99,9 @@ function get_bank_accounts(int|bool|array|null $show_inactive=false)
 
 //---------------------------------------------------------------------------------------------
 
+/**
+ * @return null|string
+ */
 function get_bank_gl_account(mixed $id)
 {
 	$sql = "SELECT account_code FROM ".TB_PREF."bank_accounts WHERE id=".db_escape($id);
@@ -106,6 +115,9 @@ function get_bank_gl_account(mixed $id)
 
 //---------------------------------------------------------------------------------------------
 
+/**
+ * @return null|string
+ */
 function get_bank_charge_account(mixed $id)
 {
 	$sql = "SELECT bank_charge_act FROM ".TB_PREF."bank_accounts WHERE id=".db_escape($id);
@@ -196,6 +208,9 @@ function has_quick_entries(?string $type=null): bool
 	return db_num_rows($result) > 0;
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_quick_entries(mixed $type = null)
 {
 	$sql = "SELECT * FROM ".TB_PREF."quick_entries";
@@ -206,6 +221,9 @@ function get_quick_entries(mixed $type = null)
 	return db_query($sql, "could not retreive quick entries");
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_quick_entry(mixed $selected_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."quick_entries WHERE id=".db_escape($selected_id);
@@ -215,6 +233,9 @@ function get_quick_entry(mixed $selected_id)
 	return db_fetch($result);
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_quick_entry_lines(mixed $qid)
 {
 	$sql = "SELECT line.*, coa.account_name, taxtype.name as tax_name
@@ -237,6 +258,9 @@ function has_quick_entry_lines(mixed $qid): bool
 
 //---------------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_quick_entry_line(mixed $selected_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."quick_entry_lines WHERE id=".db_escape($selected_id);
@@ -248,6 +272,9 @@ function get_quick_entry_line(mixed $selected_id)
 
 //---------------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_max_reconciled(mixed $date, mixed $bank_account)
 {
 	$date = date2sql($date);
@@ -268,6 +295,9 @@ function get_max_reconciled(mixed $date, mixed $bank_account)
 
 //---------------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_ending_reconciled(mixed $bank_account, mixed $bank_date)
 {
 	$sql = "SELECT ending_reconcile_balance
@@ -311,6 +341,9 @@ function update_reconciled_values(mixed $reconcile_id, ?string $reconcile_value,
 }
 //---------------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_default_bank_account(mixed $curr=null)
 {
 	/* default bank account is selected as first found account from:
@@ -366,6 +399,9 @@ function get_bank_account_limit(mixed $account, mixed $date, mixed $user=null)
 	return max(0, get_balance_before_for_bank_account($account, add_days($date,1))); // in case of manco made before the check was implemented
 }
  
+/**
+ * @return array<array-key, null|string>|false|null
+ */
 function identify_bank_account(mixed $account_number)
 {
 	$number = db_escape($account_number);
@@ -383,6 +419,9 @@ function identify_bank_account(mixed $account_number)
 
 //----------------------------------------------------------------------------------
 
+/**
+ * @return null|string
+ */
 function get_bank_account_currency(mixed $id)
 {
 	$sql= "SELECT bank_curr_code FROM ".TB_PREF."bank_accounts WHERE id=".db_escape($id);

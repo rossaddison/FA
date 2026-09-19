@@ -66,6 +66,9 @@ function delete_item_category(mixed $id): void
 	db_query($sql,"an item category could not be deleted");
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_item_categories(int|array|null $show_inactive, bool $fixed_asset=false)
 {
 	$sql = "SELECT c.*, t.name as tax_name FROM ".TB_PREF."stock_category c, "
@@ -82,6 +85,9 @@ function get_item_categories(int|array|null $show_inactive, bool $fixed_asset=fa
 	return db_query($sql, "could not get stock categories");
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_item_category(mixed $id)
 {
 	$sql="SELECT * FROM ".TB_PREF."stock_category WHERE category_id=".db_escape($id);
@@ -91,6 +97,9 @@ function get_item_category(mixed $id)
 	return db_fetch($result);
 }
 
+/**
+ * @return false|null|string
+ */
 function get_category_name(string|array|null $id)
 {
 	$sql = "SELECT description FROM ".TB_PREF."stock_category WHERE category_id=".db_escape($id);

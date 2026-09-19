@@ -42,6 +42,9 @@ function update_item_tax_type(mixed $id, mixed $name, mixed $exempt, ?array $exe
 	commit_transaction();	
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_all_item_tax_types(int|bool|array|null $also_inactive=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."item_tax_types";
@@ -51,6 +54,9 @@ function get_all_item_tax_types(int|bool|array|null $also_inactive=false)
 	return db_query($sql, "could not get all item tax type");
 } 
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_item_tax_type(mixed $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."item_tax_types WHERE id=".db_escape($id);
@@ -60,6 +66,9 @@ function get_item_tax_type(mixed $id)
 	return db_fetch($result);
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_item_tax_type_for_item(mixed $stock_id)
 {
 	$sql = "SELECT item_tax_type.*
@@ -103,6 +112,9 @@ function delete_item_tax_type_exemptions(mixed $id): void
 	db_query($sql, "could not delete item tax type exemptions");					
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_item_tax_type_exemptions(mixed $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."item_tax_type_exemptions WHERE item_tax_type_id=".db_escape($id);

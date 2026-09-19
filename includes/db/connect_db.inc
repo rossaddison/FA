@@ -17,6 +17,9 @@ if (function_exists('mysqli_connect'))
 else
 	include_once("connect_db_mysql.inc"); // use deprecated mysql_* API as fallback on old servers
 
+/**
+ * @return null|string
+ */
 function db_get_version()
 {
 	$result = db_query("SELECT VERSION()");
@@ -109,6 +112,9 @@ function db_fixed(): bool
 /*
 	Check database default charset.
 */
+/**
+ * @return null|string
+ */
 function db_get_default_charset()
 {
 	$result = db_query("SELECT @@character_set_database");
@@ -116,6 +122,9 @@ function db_get_default_charset()
 	return $var[0];
 }
 
+/**
+ * @return null|string
+ */
 function db_get_view_schema(mixed $view)
 {
     global $db;

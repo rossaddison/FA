@@ -87,6 +87,9 @@ function add_work_order_issue(mixed $woid, mixed $ref, mixed $to_work_order, mix
 
 //--------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_work_order_issues(mixed $woid)
 {
 	$sql = "SELECT * FROM ".TB_PREF."wo_issues WHERE workorder_id=".db_escape($woid)
@@ -94,6 +97,9 @@ function get_work_order_issues(mixed $woid)
     return db_query($sql, "The work order issues could not be retrieved");
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_additional_issues(mixed $woid)
 {
 	$sql = "SELECT issue.*, item.*, stock.mb_flag
@@ -107,6 +113,9 @@ function get_additional_issues(mixed $woid)
 }
 //--------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_work_order_issue(mixed $issue_no)
 {
 	$sql = "SELECT DISTINCT issue.*, wo.stock_id, wo.closed,
@@ -128,6 +137,9 @@ function get_work_order_issue(mixed $issue_no)
 
 //--------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_work_order_issue_details(mixed $issue_no)
 {
 	$sql = "SELECT issue.*, item.description, item.units

@@ -9,6 +9,9 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
+/**
+ * @return bool|mysqli_result
+ */
 function add_gl_account(mixed $account_code, mixed $account_name, mixed $account_type, mixed $account_code2)
 {
 	$sql = "INSERT INTO ".TB_PREF."chart_master (account_code, account_code2, account_name, account_type)
@@ -18,6 +21,9 @@ function add_gl_account(mixed $account_code, mixed $account_name, mixed $account
 	return db_query($sql);
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function update_gl_account(mixed $account_code, mixed $account_name, mixed $account_type, mixed $account_code2)
 {
     $sql = "UPDATE ".TB_PREF."chart_master SET account_name=".db_escape($account_name)
@@ -34,6 +40,9 @@ function delete_gl_account(mixed $code): void
 	db_query($sql, "could not delete gl account");
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_gl_accounts(string|array|null $from=null, string|array|null $to=null, mixed $type=null)
 {
 	$sql = "SELECT coa.*, act_type.name AS AccountTypeName
@@ -52,6 +61,9 @@ function get_gl_accounts(string|array|null $from=null, string|array|null $to=nul
 	return db_query($sql, "could not get gl accounts");
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_gl_account(mixed $code)
 {
 	$sql = "SELECT * FROM ".TB_PREF."chart_master WHERE account_code=".db_escape($code);
@@ -76,6 +88,9 @@ function is_account_balancesheet(mixed $code): bool
 	return $row[0] > 0 && $row[0] < CL_INCOME;
 }
 
+/**
+ * @return null|string
+ */
 function get_gl_account_name(mixed $code)
 {
 	$sql = "SELECT account_name from ".TB_PREF."chart_master WHERE account_code=".db_escape($code);
@@ -213,6 +228,9 @@ function gl_account_in_quick_entry_lines(mixed $acc): bool
 //	Returns n>0 when account is AR, n<0 when account is AP
 //  (priority for AR accounts)
 //
+/**
+ * @return 0|null|string
+ */
 function is_subledger_account(mixed $account)
 {
 	$sql = "SELECT 1 
@@ -228,6 +246,9 @@ function is_subledger_account(mixed $account)
 	return $myrow == false ? 0 : $myrow[0];
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_subaccount_data(mixed $code_id, mixed $person_id)
 {
 	$sql = "SELECT debtor_ref as name, branch_code as id 
@@ -244,6 +265,9 @@ function get_subaccount_data(mixed $code_id, mixed $person_id)
 	return  db_fetch($result);
 }
 
+/**
+ * @return null|string
+ */
 function get_subaccount_name(mixed $code_id, mixed $person_id)
 {
 	$sql = "SELECT debtor_ref as ref
@@ -279,6 +303,9 @@ function gl_account_in_bank_accounts(mixed $acc): bool
 //	because we have no way to select right bank account if 
 //	there is more than one using given gl account.
 //
+/**
+ * @return false|null|string
+ */
 function is_bank_account(mixed $account_code)
 {
 	$sql= "SELECT id FROM ".TB_PREF."bank_accounts WHERE account_code=".db_escape($account_code);
@@ -290,6 +317,9 @@ function is_bank_account(mixed $account_code)
 		return false;
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_chart_accounts_search(mixed $like, mixed $skip=false)
 {
 	global $SysPrefs;

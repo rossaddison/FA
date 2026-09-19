@@ -25,6 +25,9 @@ function update_sales_type(mixed $id, mixed $name, int|array|null $tax_included,
 	db_query($sql, "could not update sales type");			
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_all_sales_types(int|bool|array|null $all=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."sales_types";
@@ -34,6 +37,9 @@ function get_all_sales_types(int|bool|array|null $all=false)
 	return db_query($sql, "could not get all sales types");
 } 
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_sales_type(mixed $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."sales_types WHERE id=".db_escape($id);
@@ -43,6 +49,9 @@ function get_sales_type(mixed $id)
 	return db_fetch($result);
 }
 
+/**
+ * @return false|null|string
+ */
 function get_sales_type_name(string|array|null $id)
 {
 	$sql = "SELECT sales_type FROM ".TB_PREF."sales_types WHERE id=".db_escape($id);

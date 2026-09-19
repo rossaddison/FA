@@ -24,12 +24,18 @@ include_once($path_to_root . "/inventory/includes/db/items_adjust_db.inc");
 include_once($path_to_root . "/inventory/includes/db/items_transfer_db.inc");
 include_once($path_to_root . "/inventory/includes/db/items_units_db.inc");
 
+/**
+ * @return array<array-key, mixed>|null|string
+ */
 function item_img_name(mixed $stock_id)
 {
 	$stock_id = strtr($stock_id, "><\\/:|*?", '________');
 	return clean_file_name($stock_id);
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_stock_movements(mixed $stock_id, mixed $StockLocation,	mixed $BeforeDate, mixed $AfterDate)
 {
 	$before_date = date2sql($BeforeDate);
@@ -60,6 +66,9 @@ function get_stock_movements(mixed $stock_id, mixed $StockLocation,	mixed $Befor
   	return db_query($sql, "could not query stock moves");
 }
 
+/**
+ * @return array{email: null|string, ...<array-key, null|string>}|false
+ */
 function calculate_reorder_level(mixed $location, mixed $line, &$st_ids, &$st_names, &$st_num, &$st_reorder)
 {
 	$sql = "SELECT stock.*, loc.location_name, loc.email

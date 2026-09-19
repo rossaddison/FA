@@ -102,6 +102,9 @@ function work_order_produce(mixed $woid, mixed $ref, mixed $quantity, mixed $dat
 
 //--------------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_work_order_produce(mixed $id)
 {
 	$sql = "SELECT prod.*, wo.stock_id, item.description AS StockDescription, wo.closed
@@ -118,6 +121,9 @@ function get_work_order_produce(mixed $id)
 
 //--------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_work_order_productions(mixed $woid)
 {
 	$sql = "SELECT * FROM ".TB_PREF."wo_manufacture WHERE workorder_id="

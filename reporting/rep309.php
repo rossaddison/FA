@@ -29,6 +29,9 @@ include_once($path_to_root . "/inventory/includes/db/items_category_db.inc");
 
 print_inventory_sales();
 
+/**
+ * @return bool|mysqli_result
+ */
 function getTransactions(mixed $category, mixed $from, string|array|null $to)
 {
 	$from = date2sql($from);

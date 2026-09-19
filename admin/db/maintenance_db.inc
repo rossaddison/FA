@@ -557,6 +557,9 @@ function db_backup(mixed $conn, mixed $ext='no', mixed $comm='', mixed $path='')
 }
 // Generates a dump of $db database
 //
+/**
+ * @return false|null|string
+ */
 function db_export(mixed $conn, ?string $filename, mixed $zip='no', mixed $comment='')
 {
 
@@ -785,6 +788,9 @@ function db_export(mixed $conn, ?string $filename, mixed $zip='no', mixed $comme
 
 // orders the tables in $tables according to the constraints in $fks
 // $fks musst be filled like this: $fks[tablename][0]=needed_table1; $fks[tablename][1]=needed_table2; ...
+/**
+ * @return array<array-key, mixed>|null
+ */
 function order_sql_tables(?array $tables, ?array $fks)
 {
 	// do not order if no contraints exist

@@ -30,6 +30,9 @@ function update_sales_point(mixed $id, mixed $name, mixed $location, mixed $acco
 	db_query($sql, "could not update sales type");			
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_all_sales_points(int|bool|array|null $all=false)
 {
 	$sql = "SELECT pos.*, loc.location_name, acc.bank_account_name FROM "
@@ -41,6 +44,9 @@ function get_all_sales_points(int|bool|array|null $all=false)
 	return db_query($sql, "could not get all POS definitions");
 } 
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_sales_point(mixed $id)
 {
 	$sql = "SELECT pos.*, loc.location_name, acc.bank_account_name FROM "
@@ -54,6 +60,9 @@ function get_sales_point(mixed $id)
 	return db_fetch($result);
 }
 
+/**
+ * @return false|null|string
+ */
 function get_sales_point_name(mixed $id)
 {
 	$sql = "SELECT pos_name FROM ".TB_PREF."sales_pos WHERE id=".db_escape($id);

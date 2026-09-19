@@ -17,7 +17,7 @@
 // if $currency is not set, then defaults to no conversion
 
 function add_gl_trans(mixed $type, mixed $trans_id, mixed $date_, mixed $account, mixed $dimension, mixed $dimension2, mixed $memo_,
-	mixed $amount, mixed $currency=null, mixed $person_type_id=null, mixed $person_id=null,	mixed $err_msg="", mixed $rate=0)
+	mixed $amount, mixed $currency=null, mixed $person_type_id=null, mixed $person_id=null,	mixed $err_msg="", mixed $rate=0): float
 {
 	global $SysPrefs;
 
@@ -103,6 +103,9 @@ function add_gl_balance(mixed $type, mixed $trans_id, mixed $date_, mixed $amoun
 
 //--------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_gl_transactions(string|array|null $from_date, mixed $to_date, ?int $trans_no=0,
     mixed $account=null, string|int|array|null $dimension=0, string|int|array|null $dimension2=0, string|array|null $filter_type=null,
         mixed $amount_min=null, mixed $amount_max=null, mixed $person_type=null, mixed $person_id=null, string|array|null $memo='')
@@ -186,6 +189,9 @@ function get_gl_transactions(string|array|null $from_date, mixed $to_date, ?int 
 
 //--------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_gl_trans(mixed $type, mixed $trans_id)
 {
 	$sql = "SELECT gl.*, cm.account_name, IFNULL(refs.reference, '') AS reference, user.real_name, 
@@ -214,6 +220,9 @@ function get_gl_trans(mixed $type, mixed $trans_id)
 
 //--------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_gl_wo_cost_trans(mixed $trans_id, mixed $cost_type=-1, bool $all_gl=false)
 {
 	$sql = "SELECT costing.*, gl.*, chart.account_name, com.memo_
@@ -233,6 +242,9 @@ function get_gl_wo_cost_trans(mixed $trans_id, mixed $cost_type=-1, bool $all_gl
 	return db_query($sql, "The gl transactions could not be retrieved");
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_gl_wo_issue_trans(mixed $trans_id, ?int $person_id=-1, bool $all_gl=false)
 {
 	$sql = "SELECT issue.*, gl.*, chart.account_name, com.memo_
@@ -251,6 +263,9 @@ function get_gl_wo_issue_trans(mixed $trans_id, ?int $person_id=-1, bool $all_gl
 	return db_query($sql, "The gl transactions could not be retrieved");
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_gl_wo_productions(mixed $trans_id, bool $all_gl=false)
 {
 	$sql = "SELECT rcv.*, gl.*, chart.account_name, com.memo_
@@ -317,6 +332,9 @@ function get_gl_trans_from_to(mixed $from_date, mixed $to_date, mixed $account, 
 }
 
 //----------------------------------------------------------------------------------------------------
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_balance(mixed $account, mixed $dimension, mixed $dimension2, mixed $from, mixed $to, bool $from_incl=true, bool $to_incl=true) 
 {
 	$from_date = date2sql($from);
@@ -345,6 +363,9 @@ function get_balance(mixed $account, mixed $dimension, mixed $dimension2, mixed 
 
 //--------------------------------------------------------------------------------
 
+/**
+ * @return null|string
+ */
 function get_budget_trans_from_to(mixed $from_date, mixed $to_date, mixed $account, mixed $dimension=0, mixed $dimension2=0)
 {
 
@@ -409,6 +430,9 @@ function delete_gl_budget_trans(mixed $date_, mixed $account, mixed $dimension, 
 	db_query($sql, "The GL budget transaction could not be deleted");
 }
 
+/**
+ * @return null|string
+ */
 function get_only_budget_trans_from_to(mixed $from_date, mixed $to_date, mixed $account, mixed $dimension=0, mixed $dimension2=0)
 {
 
@@ -480,6 +504,9 @@ function add_trans_tax_details(mixed $trans_type, mixed $trans_no, mixed $tax_id
 }
 //----------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_trans_tax_details(mixed $trans_type, mixed $trans_no)
 {
     $sql = "SELECT tax_details.*, tax_type.name AS tax_type_name, tax_type.rate AS rate
@@ -515,6 +542,9 @@ function clear_trans_tax_details(mixed $type, mixed $type_no): void
 	db_query($sql, "The transaction tax details could not be cleared");
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_tax_summary(string|array|null $from, string|array|null $to, bool $also_zero_purchases=false)
 {
 	$fromdate = date2sql($from);
@@ -598,8 +628,11 @@ function clear_gl_trans(mixed $type, mixed $trans_id, mixed $nested=false): void
 		commit_transaction();
 }
 
+/**
+ * @return non-falsy-string
+ */
 function get_sql_for_journal_inquiry(mixed $filter, mixed $from, mixed $to, mixed $ref='', mixed $memo='', int|bool|array|null $alsoclosed=false,
-         mixed $user_id=null)
+         mixed $user_id=null): string
 {
     $sql = "SELECT  IFNULL(a.gl_seq,0) as gl_seq,
         gl.tran_date,

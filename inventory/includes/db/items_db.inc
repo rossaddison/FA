@@ -120,6 +120,9 @@ function delete_item(mixed $stock_id): void
 	delete_item_kit($stock_id);
 }
 
+/**
+ * @return array<string, null|string>|false
+ */
 function get_item(mixed $stock_id)
 {
 	$sql = "SELECT item.*, taxtype.name AS tax_type_name
@@ -132,6 +135,9 @@ function get_item(mixed $stock_id)
 	return db_fetch_assoc($result);
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_items(mixed $fixed_asset = 0)
 {
 	$sql = "SELECT * FROM ".TB_PREF."stock_master WHERE fixed_asset=".db_escape($fixed_asset);
@@ -186,6 +192,9 @@ function item_in_foreign_codes(mixed $stock_id): string
 	return $msg;
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_items_search(mixed $description, mixed $type)
 {
 	global $SysPrefs;
@@ -234,6 +243,9 @@ function get_items_search(mixed $description, mixed $type)
 	return db_query($sql, "Failed in retreiving item list.");
 }
 
+/**
+ * @return false|null|string
+ */
 function get_item_code_id(mixed $stock_id)
 {
 	$sql = "SELECT ic.id

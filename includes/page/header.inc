@@ -12,7 +12,7 @@
 /*
 	If no context is set current page/menu screen is selected.
 */
-function help_url(mixed $context=null)
+function help_url(mixed $context=null): string
 {
 
 	global $SysPrefs, $help_context;

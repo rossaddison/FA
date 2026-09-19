@@ -11,6 +11,9 @@
 ***********************************************************************/
 include_once($path_to_root . "/includes/remote_url.inc");
 //---------------------------------------------------------------------------------------------
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_exchange_rate(mixed $rate_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."exchange_rates WHERE id=".db_escape($rate_id);
@@ -20,6 +23,9 @@ function get_exchange_rate(mixed $rate_id)
 }
 
 // Retrieves buy exchange rate for given currency/date, zero if no result
+/**
+ * @return 0|null|string
+ */
 function get_date_exchange_rate(mixed $curr_code, mixed $date_)
 {
 	$date = date2sql($date_);
@@ -38,6 +44,9 @@ function get_date_exchange_rate(mixed $curr_code, mixed $date_)
 /*
 	Return last exchange rate of $currency not later than $date.
 */
+/**
+ * @return array<string, null|string>|false
+ */
 function get_last_exchange_rate(mixed $curr_code, mixed $date_)
 {
 	$date = date2sql($date_);
@@ -126,7 +135,7 @@ function retrieve_exrate(mixed $curr_b, mixed $date)
 }
 //-----------------------------------------------------------------------------
 
-function get_extern_rate(mixed $curr_b, mixed $provider, mixed $date) 
+function get_extern_rate(mixed $curr_b, mixed $provider, mixed $date): float|int|string 
 {
 	global	$path_to_root;
 

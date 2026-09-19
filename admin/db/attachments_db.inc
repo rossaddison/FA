@@ -90,6 +90,9 @@ function get_attachment_string(mixed $type, mixed $id): string
 
 //----------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_attached_documents(mixed $type, mixed $trans_no=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."attachments WHERE type_no=".db_escape($type);
@@ -99,6 +102,9 @@ function get_attached_documents(mixed $type, mixed $trans_no=false)
 	return db_query($sql, "Could not retrieve attachments");
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_attachment(mixed $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."attachments WHERE id=".db_escape($id);
@@ -106,6 +112,9 @@ function get_attachment(mixed $id)
 	return db_fetch($result);
 }
 
+/**
+ * @return 0|null|string
+ */
 function has_attachment(mixed $type, mixed $id)
 {
 	$sql = "SELECT DISTINCT * FROM ".TB_PREF."attachments WHERE type_no=".db_escape($type)." AND trans_no=".db_escape($id);

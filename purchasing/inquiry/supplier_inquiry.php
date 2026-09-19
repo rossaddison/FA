@@ -89,7 +89,7 @@ function gl_view(mixed $row)
 	return get_gl_view_str($row["type"], $row["trans_no"]);
 }
 
-function credit_link(mixed $row)
+function credit_link(mixed $row): string
 {
 	global $page_nested;
 
@@ -102,7 +102,7 @@ function credit_link(mixed $row)
 			: '';
 }
 
-function fmt_amount(mixed $row)
+function fmt_amount(mixed $row): string
 {
 	$value = $row["TotalAmount"];
 	return price_format($value);

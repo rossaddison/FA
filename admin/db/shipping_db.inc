@@ -49,6 +49,9 @@ function delete_shipper(mixed $selected_id): void
 
 //--------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_shippers(int|array|null $show_inactive)
 {
 	$sql = "SELECT * FROM ".TB_PREF."shippers";
@@ -60,6 +63,9 @@ function get_shippers(int|array|null $show_inactive)
 
 //--------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_shipper(mixed $selected_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."shippers WHERE shipper_id=".db_escape($selected_id);

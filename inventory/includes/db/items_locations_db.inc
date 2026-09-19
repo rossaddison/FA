@@ -53,6 +53,9 @@ function delete_item_location(mixed $item_location): void
 
 //------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_item_location(mixed $item_location)
 {
 	$sql="SELECT * FROM ".TB_PREF."locations WHERE loc_code=".db_escape($item_location);
@@ -64,6 +67,9 @@ function get_item_location(mixed $item_location)
 
 //------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_item_locations(int|array|null $show_inactive, mixed $fixed_asset = 0)
 {
 	$sql = "SELECT * FROM ".TB_PREF."locations WHERE fixed_asset = ".db_escape($fixed_asset);
@@ -83,6 +89,9 @@ function set_reorder_level(mixed $stock_id, mixed $loc_code, mixed $reorder_leve
 
 //------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_loc_details(mixed $stock_id, ?int $fixed_asset = 0)
 {
 	$sql = "SELECT stock.loc_code, stock.location_name, "

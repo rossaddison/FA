@@ -32,6 +32,9 @@ function delete_item_unit(mixed $unit): void
 	db_query($sql,"an unit of measure could not be deleted");
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_item_unit(mixed $unit)
 {
 	$sql="SELECT * FROM ".TB_PREF."item_units WHERE abbr=".db_escape($unit);
@@ -41,6 +44,9 @@ function get_item_unit(mixed $unit)
 	return db_fetch($result);
 }
 
+/**
+ * @return false|null|string
+ */
 function get_unit_descr(mixed $unit)
 {
 	$sql = "SELECT name FROM ".TB_PREF."item_units WHERE abbr=".db_escape($unit);
@@ -58,6 +64,9 @@ function item_unit_used(mixed $unit): bool {
 	return ($myrow[0] > 0);
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_all_item_units(int|bool|array|null $all=false) {
     $sql = "SELECT * FROM ".TB_PREF."item_units";
 	if (!$all) $sql .= " WHERE !inactive";
@@ -65,6 +74,9 @@ function get_all_item_units(int|bool|array|null $all=false) {
     return  db_query($sql, "could not get stock categories");
 }
 // 2008-06-15. Added to get a measure of unit by given stock_id
+/**
+ * @return false|null|string
+ */
 function get_unit_dec(mixed $stock_id)
 {
 	$sql = "SELECT decimals FROM ".TB_PREF."item_units,	".TB_PREF."stock_master

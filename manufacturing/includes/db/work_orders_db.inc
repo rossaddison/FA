@@ -15,7 +15,7 @@ require_once($path_to_root. "/admin/db/attachments_db.inc");
 	Common entry procedure for all work order types
 */
 function add_work_order(mixed $wo_ref, mixed $loc_code, mixed $units_reqd, mixed $stock_id,
-	mixed $type, mixed $date_, mixed $required_by, mixed $memo_, mixed $costs, mixed $cr_acc, mixed $labour, mixed $cr_lab_acc)
+	mixed $type, mixed $date_, mixed $required_by, mixed $memo_, mixed $costs, mixed $cr_acc, mixed $labour, mixed $cr_lab_acc): int|string
 {
 	global $Refs;
 
@@ -121,6 +121,9 @@ function delete_work_order(mixed $woid, mixed $stock_id, mixed $qty, mixed $date
 
 //--------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_work_order(mixed $woid, bool $allow_null=false)
 {
     $sql = "SELECT wo.*,st.description As StockItemName,l.location_name,
@@ -225,7 +228,7 @@ function work_order_is_closed(mixed $woid): bool
 	Update finished items quantity in work order, and close order either if all the order is produced,
 	or on user demand. Returns calculated unit cost on close, or null otherwise.
 */
-function work_order_update_finished_quantity(mixed $woid, mixed $quantity, mixed $force_close=0)
+function work_order_update_finished_quantity(mixed $woid, mixed $quantity, mixed $force_close=0): int|string
 {
 
 	$sql = "UPDATE ".TB_PREF."workorders SET units_issued = units_issued + ".db_escape($quantity)."
@@ -381,7 +384,10 @@ function get_sql_for_where_used(mixed $stock_id): string
 	return $sql;
 }
 //--------------------------------------------------------------------------------------
-function get_gl_wo_cost(mixed $woid, ?int $cost_type)
+/**
+ * @return float|int<min, max>
+ */
+function get_gl_wo_cost(mixed $woid, ?int $cost_type): float|int
 {
 	$cost = 0;
 	$result = get_gl_wo_cost_trans($woid, $cost_type);

@@ -28,6 +28,9 @@ function delete_sales_group(mixed $selected_id): void
 	db_query($sql,"could not delete sales group");
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_sales_groups(int|array|null $show_inactive)
 {
 	$sql = "SELECT * FROM `".TB_PREF."groups`";
@@ -36,6 +39,9 @@ function get_sales_groups(int|array|null $show_inactive)
 	return db_query($sql,"could not get groups");
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_sales_group(mixed $selected_id)
 {
 	$sql = "SELECT * FROM `".TB_PREF."groups` WHERE id=".db_escape($selected_id);
@@ -44,6 +50,9 @@ function get_sales_group(mixed $selected_id)
 	return db_fetch($result);
 }
 
+/**
+ * @return false|null|string
+ */
 function get_sales_group_name(mixed $group_no)
 {
 	$sql = "SELECT description FROM `".TB_PREF."groups` WHERE id = ".db_escape($group_no);
@@ -70,6 +79,9 @@ function delete_sales_area(mixed $selected_id): void
 	db_query($sql,"could not delete sales area");
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_sales_areas(int|array|null $show_inactive)
 {
 	$sql = "SELECT * FROM ".TB_PREF."areas";
@@ -77,6 +89,9 @@ function get_sales_areas(int|array|null $show_inactive)
 	return db_query($sql,"could not get areas");
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_sales_area(mixed $selected_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."areas WHERE area_code=".db_escape($selected_id);
@@ -85,6 +100,9 @@ function get_sales_area(mixed $selected_id)
 	return db_fetch($result);
 }
 
+/**
+ * @return false|null|string
+ */
 function get_area_name(string|array|null $id)
 {
 	$sql = "SELECT description FROM ".TB_PREF."areas WHERE area_code=".db_escape($id);
@@ -129,6 +147,9 @@ function delete_salesman(mixed $selected_id): void
 	db_query($sql,"The sales-person could not be deleted");
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_salesmen(int|array|null $show_inactive)
 {
 	$sql = "SELECT * FROM ".TB_PREF."salesman";
@@ -136,6 +157,9 @@ function get_salesmen(int|array|null $show_inactive)
 	return db_query($sql,"could not get sales persons");
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_salesman(mixed $selected_id)
 {
 	$sql = "SELECT *  FROM ".TB_PREF."salesman WHERE salesman_code=".db_escape($selected_id);
@@ -144,6 +168,9 @@ function get_salesman(mixed $selected_id)
 	return db_fetch($result);
 }
 
+/**
+ * @return false|null|string
+ */
 function get_salesman_name(string|array|null $id)
 {
 	$sql = "SELECT salesman_name FROM ".TB_PREF."salesman WHERE salesman_code=".db_escape($id);

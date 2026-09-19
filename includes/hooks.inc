@@ -381,7 +381,10 @@ function hook_invoke_last(?string $method, &$data, mixed $opts=null)
 /*
 	Invoked before transaction is written to database.
 */
-function hook_db_prewrite(&$cart, mixed $type)
+/**
+ * @return array<array-key, mixed>
+ */
+function hook_db_prewrite(&$cart, mixed $type): array
 {
 	return hook_invoke_all('db_prewrite', $cart, $type);
 }
@@ -389,14 +392,20 @@ function hook_db_prewrite(&$cart, mixed $type)
 /*
 	Invoked after transaction has been written to database.
 */
-function hook_db_postwrite(&$cart, mixed $type)
+/**
+ * @return array<array-key, mixed>
+ */
+function hook_db_postwrite(&$cart, mixed $type): array
 {
 	return hook_invoke_all('db_postwrite', $cart, $type);
 }
 /*
 	Invoked before transaction is voided
 */
-function hook_db_prevoid(mixed $type, mixed $type_no)
+/**
+ * @return array<array-key, mixed>
+ */
+function hook_db_prevoid(mixed $type, mixed $type_no): array
 {
 	return hook_invoke_all('db_prevoid', $type, $type_no);
 }
@@ -414,7 +423,10 @@ function hook_retrieve_exrate(mixed $currency, mixed $date)
 //
 // Generic function called at the end of Tax Report (report 709)
 //
-function hook_tax_report_done()
+/**
+ * @return array<array-key, mixed>
+ */
+function hook_tax_report_done(): array
 {
 	return hook_invoke_all('tax_report_done', $dummy);
 }

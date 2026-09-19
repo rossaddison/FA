@@ -9,6 +9,9 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
+/**
+ * @return bool|mysqli_result
+ */
 function get_wo_requirements(mixed $woid)
 {
 	$sql = "SELECT req.*, item.description, item.mb_flag, loc.location_name, 
@@ -27,7 +30,10 @@ function get_wo_requirements(mixed $woid)
 	return db_query($sql, "The work order requirements could not be retrieved");    
 }
 
-function get_requirements_costs(mixed $woid)
+/**
+ * @return 0|non-falsy-string
+ */
+function get_requirements_costs(mixed $woid): int|string
 {
 	$sql = "SELECT SUM(units_req*unit_cost) cost
 		FROM ".TB_PREF."wo_requirements

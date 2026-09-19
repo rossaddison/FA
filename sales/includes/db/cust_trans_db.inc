@@ -12,6 +12,9 @@
 //----------------------------------------------------------------------------------------
 // Mark changes in debtor_trans_details
 //
+/**
+ * @return bool|mysqli_result
+ */
 function update_customer_trans_version(?int $type, mixed $versions) {
 
 	$sql= 'UPDATE '.TB_PREF. 'debtor_trans SET version=version+1
@@ -118,6 +121,9 @@ function write_customer_trans(mixed $trans_type, mixed $trans_no, mixed $debtor_
 }
 //----------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_customer_trans(mixed $trans_id, mixed $trans_type, mixed $customer_id=null)
 {
 	global $SysPrefs;
@@ -232,6 +238,9 @@ function exists_customer_trans(mixed $type, mixed $type_no): bool
 
 // retreives the related sales order for a given trans
 
+/**
+ * @return false|null|string
+ */
 function get_customer_trans_order(mixed $type, mixed $type_no)
 {
 	$sql = "SELECT order_ FROM ".TB_PREF."debtor_trans WHERE type=".db_escape($type)." AND trans_no=".db_escape($type_no);
@@ -245,6 +254,9 @@ function get_customer_trans_order(mixed $type, mixed $type_no)
 
 //----------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_customer_details_from_trans(mixed $type, mixed $type_no)
 {
 	$sql = "SELECT debtor.name, debtor.curr_code, branch.br_name

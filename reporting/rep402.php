@@ -29,6 +29,9 @@ include_once($path_to_root . "/inventory/includes/db/items_category_db.inc");
 
 print_work_order_listing();
 
+/**
+ * @return bool|mysqli_result
+ */
 function getTransactions(mixed $items, mixed $open_only, string|array|null $location)
 {
 	$sql = "SELECT

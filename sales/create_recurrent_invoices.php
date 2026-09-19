@@ -66,7 +66,7 @@ function create_recurrent_invoices(mixed $customer_id, mixed $branch_id, mixed $
 	return $invno;
 }
 
-function calculate_from(mixed $myrow)
+function calculate_from(mixed $myrow): string
 {
 	if ($myrow["last_sent"] == '0000-00-00')
 		$from = sql2date($myrow["begin"]);
@@ -75,7 +75,7 @@ function calculate_from(mixed $myrow)
 	return $from;
 }
 
-function calculate_next(?array $myrow)
+function calculate_next(?array $myrow): string
 {
 	if ($myrow["last_sent"] == '0000-00-00')
 		$next = sql2date($myrow["begin"]);

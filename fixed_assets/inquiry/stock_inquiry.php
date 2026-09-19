@@ -139,17 +139,17 @@ function disposal_link(mixed $row)
   	}
 }
 
-function amount_link(mixed $row)
+function amount_link(mixed $row): string
 {
     return price_format($row['purchase_cost']);
 }
 
-function depr_link(mixed $row)
+function depr_link(mixed $row): string
 {
     return price_format($row['purchase_cost'] - $row['material_cost']);
 }
 
-function balance_link(mixed $row)
+function balance_link(mixed $row): string
 {
     return price_format($row['material_cost']);
 }

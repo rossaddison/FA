@@ -50,6 +50,9 @@ function delete_item_code(mixed $id): void
 	db_query($sql,"an item code could not be deleted");
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_item_code(mixed $id)
 {
 	$sql="SELECT * FROM ".TB_PREF."item_codes WHERE id=".db_escape($id);
@@ -59,6 +62,9 @@ function get_item_code(mixed $id)
 	return db_fetch($result);
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_all_item_codes(mixed $stock_id, ?int $foreign=1)
 {
 	$sql="SELECT i.*, c.description as cat_name FROM "
@@ -79,6 +85,9 @@ function delete_item_kit(mixed $item_code): void
 	db_query($sql,"an item kit could not be deleted");
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_item_kit(mixed $item_code)
 {
 	$sql="SELECT DISTINCT kit.*, item.units, comp.description as comp_name 
@@ -98,6 +107,9 @@ function get_item_kit(mixed $item_code)
 	return $result;
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_item_code_dflts(mixed $stock_id)
 {
 	$sql = "SELECT units, decimals, description, category_id
@@ -135,6 +147,9 @@ function check_item_in_kit(mixed $old_id, mixed $kit_code, mixed $item_code, boo
 	return 0;
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_kit_props(mixed $kit_code)
 {
 	$sql = "SELECT description, category_id FROM ".TB_PREF."item_codes "
@@ -151,6 +166,9 @@ function update_kit_props(mixed $kit_code, mixed $name, mixed $category): void
 	db_query($sql, "kit name update failed");
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_where_used(mixed $item_code)
 {
 	$sql = "SELECT item_code, description FROM "

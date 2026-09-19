@@ -29,6 +29,9 @@ include_once($path_to_root . "/inventory/includes/db/items_category_db.inc");
 
 print_inventory_purchase();
 
+/**
+ * @return bool|mysqli_result
+ */
 function getTransactions(mixed $category, mixed $location, string|array|null $fromsupp, string|array|null $item, string|array|null $from, string|array|null $to)
 {
 	$from = date2sql($from);
@@ -70,6 +73,9 @@ function getTransactions(mixed $category, mixed $location, string|array|null $fr
 
 }
 
+/**
+ * @return null|string
+ */
 function get_supp_inv_reference(mixed $supplier_id, mixed $stock_id, mixed $date)
 {
 	$sql = "SELECT trans.supp_reference

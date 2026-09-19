@@ -45,7 +45,7 @@ function add_gl_trans_supplier(mixed $type, mixed $type_no, mixed $date_, mixed 
 
 //----------------------------------------------------------------------------------------
 
-function get_purchase_price(mixed $supplier_id, mixed $stock_id)
+function get_purchase_price(mixed $supplier_id, mixed $stock_id): float|int
 {
 	$sql = "SELECT price, conversion_factor FROM ".TB_PREF."purch_data 
 		WHERE supplier_id = ".db_escape($supplier_id) . " 
@@ -63,6 +63,9 @@ function get_purchase_price(mixed $supplier_id, mixed $stock_id)
 	}	
 }
 
+/**
+ * @return 1|null|string
+ */
 function get_purchase_conversion_factor(mixed $supplier_id, mixed $stock_id)
 {
 	$sql = "SELECT conversion_factor FROM ".TB_PREF."purch_data 
@@ -82,6 +85,9 @@ function get_purchase_conversion_factor(mixed $supplier_id, mixed $stock_id)
 }
 //----------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_purchase_data(mixed $supplier_id, mixed $stock_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."purch_data 
@@ -92,6 +98,9 @@ function get_purchase_data(mixed $supplier_id, mixed $stock_id)
 	return db_fetch($result);
 }
 
+/**
+ * @return null|true
+ */
 function add_or_update_purchase_data(mixed $supplier_id, mixed $stock_id, mixed $price, mixed $description="", ?string $uom="")
 {
 	$data = get_purchase_data($supplier_id, $stock_id);

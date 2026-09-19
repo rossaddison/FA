@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function db_has_customers()
+function db_has_customers(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."debtors_master");
 }
@@ -25,7 +25,7 @@ function check_db_has_customers(?string $msg): void
     }	
 }
 
-function db_has_currencies()
+function db_has_currencies(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."currencies");
 }
@@ -41,7 +41,10 @@ function check_db_has_currencies(mixed $msg): void
     }
 }
 
-function db_has_currency_rates(mixed $currency, string|int|array|null $date_, bool $msg=false)
+/**
+ * @return 1|bool
+ */
+function db_has_currency_rates(mixed $currency, string|int|array|null $date_, bool $msg=false): int|bool
 {
 	$date = date2sql($date_);
 
@@ -54,7 +57,7 @@ function db_has_currency_rates(mixed $currency, string|int|array|null $date_, bo
 	return $ret;
 }
 
-function db_has_sales_types()
+function db_has_sales_types(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."sales_types");
 }
@@ -70,7 +73,7 @@ function check_db_has_sales_types(?string $msg): void
     }	
 }
 
-function db_has_item_tax_types()
+function db_has_item_tax_types(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."item_tax_types");
 }
@@ -86,7 +89,7 @@ function check_db_has_item_tax_types(?string $msg): void
     }	
 }
 
-function db_has_tax_types()
+function db_has_tax_types(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."tax_types");
 }
@@ -102,7 +105,7 @@ function check_db_has_tax_types(?string $msg): void
     }	
 }
 
-function db_has_tax_groups()
+function db_has_tax_groups(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."tax_groups");
 }
@@ -118,13 +121,13 @@ function check_db_has_tax_groups(?string $msg): void
     }	
 }
 
-function db_customer_has_branches(mixed $customer_id)
+function db_customer_has_branches(mixed $customer_id): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."cust_branch "
 		."WHERE debtor_no=".db_escape($customer_id));
 }
 
-function db_has_customer_branches()
+function db_has_customer_branches(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM "
 		.TB_PREF."cust_branch WHERE !inactive");
@@ -141,7 +144,7 @@ function check_db_has_customer_branches(?string $msg): void
     }	
 }
 
-function db_has_sales_people()
+function db_has_sales_people(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."salesman");
 }
@@ -157,7 +160,7 @@ function check_db_has_sales_people(?string $msg): void
     }
 }
 
-function db_has_sales_areas()
+function db_has_sales_areas(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."areas");
 }
@@ -173,7 +176,7 @@ function check_db_has_sales_areas(?string $msg): void
     }	
 }
 
-function db_has_shippers()
+function db_has_shippers(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."shippers");
 }
@@ -189,12 +192,12 @@ function check_db_has_shippers(?string $msg): void
     }	
 }
 
-function db_has_open_workorders()
+function db_has_open_workorders(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."workorders WHERE closed=0");
 }
 
-function db_has_workorders()
+function db_has_workorders(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."workorders");
 }
@@ -210,12 +213,12 @@ function check_db_has_workorders(mixed $msg): void
     }	
 }
 
-function db_has_open_dimensions()
+function db_has_open_dimensions(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."dimensions WHERE closed=0");
 }
 
-function db_has_dimensions()
+function db_has_dimensions(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."dimensions");
 }
@@ -232,7 +235,7 @@ function check_db_has_dimensions(mixed $msg): void
 }
 
 
-function db_has_suppliers()
+function db_has_suppliers(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."suppliers");
 }
@@ -248,7 +251,7 @@ function check_db_has_suppliers(?string $msg): void
     }	
 }
 
-function db_has_stock_items()
+function db_has_stock_items(): bool
 {
 
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."stock_master WHERE mb_flag!='F'");
@@ -265,7 +268,7 @@ function check_db_has_stock_items(?string $msg): void
     }	
 }
 
-function db_has_bom_stock_items()
+function db_has_bom_stock_items(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."stock_master WHERE mb_flag='M'");
 }
@@ -281,7 +284,7 @@ function check_db_has_bom_stock_items(?string $msg): void
     }	
 }
 
-function db_has_manufacturable_items()
+function db_has_manufacturable_items(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."stock_master WHERE (mb_flag='M')");
 }
@@ -297,7 +300,7 @@ function check_db_has_manufacturable_items(?string $msg): void
     }	
 }
 
-function db_has_purchasable_items()
+function db_has_purchasable_items(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."stock_master WHERE mb_flag!='M'");
 }
@@ -313,7 +316,7 @@ function check_db_has_purchasable_items(?string $msg): void
     }	
 }
 
-function db_has_costable_items()
+function db_has_costable_items(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."stock_master WHERE mb_flag!='D'");
 }
@@ -340,12 +343,12 @@ function check_db_has_fixed_asset_classes(?string $msg): void
     }
 }
 
-function db_has_fixed_asset_classes()
+function db_has_fixed_asset_classes(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."stock_fa_class");
 }
 
-function db_has_depreciable_fixed_assets()
+function db_has_depreciable_fixed_assets(): bool
 {
 	$year = get_current_fiscalyear();
 	$begin = date2sql(add_months(sql2date($year['begin']), -1));
@@ -372,7 +375,7 @@ function check_db_has_depreciable_fixed_assets(?string $msg): void
 	}
 }
 
-function db_has_fixed_assets()
+function db_has_fixed_assets(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."stock_master WHERE mb_flag='F'");
 }
@@ -389,7 +392,7 @@ function check_db_has_fixed_assets(?string $msg): void
 	}
 }
 
-function db_has_purchasable_fixed_assets()
+function db_has_purchasable_fixed_assets(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."stock_master 
     	WHERE mb_flag='F'
@@ -410,7 +413,7 @@ function check_db_has_purchasable_fixed_assets(?string $msg): void
     }
 }
 
-function db_has_disposable_fixed_assets()
+function db_has_disposable_fixed_assets(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."stock_master 
     	WHERE mb_flag='F'
@@ -433,7 +436,7 @@ function check_db_has_disposable_fixed_assets(?string $msg): void
 	}
 }
 
-function db_has_stock_categories()
+function db_has_stock_categories(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."stock_category WHERE dflt_mb_flag!='F'");
 }
@@ -449,7 +452,7 @@ function check_db_has_fixed_asset_categories(?string $msg): void
     }
 }
 
-function db_has_fixed_asset_categories()
+function db_has_fixed_asset_categories(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."stock_category WHERE dflt_mb_flag='F'");
 }
@@ -465,7 +468,7 @@ function check_db_has_stock_categories(?string $msg): void
     }
 }
 
-function db_has_workcentres()
+function db_has_workcentres(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."workcentres");
 }
@@ -481,7 +484,7 @@ function check_db_has_workcentres(?string $msg): void
     }	
 }
 
-function db_has_locations()
+function db_has_locations(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."locations WHERE fixed_asset=0");
 }
@@ -497,7 +500,7 @@ function check_db_has_locations(?string $msg): void
     }	
 }
 
-function db_has_bank_accounts()
+function db_has_bank_accounts(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."bank_accounts");
 }
@@ -514,18 +517,18 @@ function check_db_has_bank_accounts(?string $msg): void
     }	
 }
 
-function db_has_cash_accounts()
+function db_has_cash_accounts(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."bank_accounts
 		WHERE account_type=3");
 }
 
-function db_has_gl_accounts()
+function db_has_gl_accounts(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."chart_master");
 }
 
-function db_has_gl_account_groups()
+function db_has_gl_account_groups(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."chart_types");
 }
@@ -541,12 +544,12 @@ function check_db_has_gl_account_groups(?string $msg): void
     }	
 }
 
-function db_has_quick_entries()
+function db_has_quick_entries(): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."quick_entries");
 }
 
-function db_has_tags(mixed $type)
+function db_has_tags(mixed $type): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."tags WHERE type=".db_escape($type));
 }

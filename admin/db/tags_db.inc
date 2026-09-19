@@ -10,6 +10,9 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
+/**
+ * @return bool|mysqli_result
+ */
 function add_tag(mixed $type, mixed $name, mixed $description)
 {
 	$sql = "INSERT INTO ".TB_PREF."tags (type, name, description)
@@ -20,6 +23,9 @@ function add_tag(mixed $type, mixed $name, mixed $description)
 
 //--------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function update_tag(mixed $id, mixed $name, mixed $description, mixed $type=null)
 {
 	$sql = "UPDATE ".TB_PREF."tags SET name=".db_escape($name).", 
@@ -34,6 +40,9 @@ function update_tag(mixed $id, mixed $name, mixed $description, mixed $type=null
 
 //--------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_tags(mixed $type, mixed $all=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."tags WHERE type=".db_escape($type);
@@ -47,6 +56,9 @@ function get_tags(mixed $type, mixed $all=false)
 
 //--------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_tag(mixed $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."tags WHERE id = ".db_escape($id);
@@ -58,6 +70,9 @@ function get_tag(mixed $id)
 
 //--------------------------------------------------------------------------------------
 
+/**
+ * @return false|null|string
+ */
 function get_tag_type(mixed $id)
 {
 	$sql = "SELECT type FROM ".TB_PREF."tags WHERE id = ".db_escape($id);
@@ -70,6 +85,9 @@ function get_tag_type(mixed $id)
 
 //--------------------------------------------------------------------------------------
 
+/**
+ * @return null|string
+ */
 function get_tag_name(mixed $id)
 {
 	$sql = "SELECT name FROM ".TB_PREF."tags WHERE id = ".db_escape($id);
@@ -98,6 +116,9 @@ function get_tag_names(string|int|array|null $tags): string
 }
 //--------------------------------------------------------------------------------------
 
+/**
+ * @return false|null|string
+ */
 function get_tag_description(mixed $id)
 {
 	$sql = "SELECT description FROM ".TB_PREF."tags WHERE id = ".db_escape($id);
@@ -168,6 +189,9 @@ function delete_tag_associations(mixed $type, mixed $recordid, bool $all=false):
 
 //--------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_records_associated_with_tag(mixed $id)
 {
 	// Which table we query is based on the tag type
@@ -195,6 +219,9 @@ function get_records_associated_with_tag(mixed $id)
 
 //--------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_tags_associated_with_record(?int $type, mixed $recordid)
 {
 	$sql = "SELECT tags.* FROM ".TB_PREF."tag_associations AS ta 

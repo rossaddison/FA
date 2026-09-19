@@ -38,7 +38,7 @@ function edit_link(mixed $row)
 		trans_editor_link(ST_PURCHORDER, $row["order_no"]);
 }
 
-function receive_link(mixed $row) 
+function receive_link(mixed $row): string 
 {
 	global $page_nested;
 	

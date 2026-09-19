@@ -174,6 +174,9 @@ function update_po(&$po_obj)
 
 //----------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_po(mixed $order_no) {
     $sql = "SELECT * FROM ".TB_PREF."purch_orders WHERE order_no = ".db_escape($order_no);
     $result = db_query($sql);
@@ -282,6 +285,9 @@ function read_po(mixed $order_no, &$order, bool $open_items_only=false): void
 
 //----------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_po_items(mixed $order_no)
 {
 	$sql = "SELECT item_code, quantity_ordered, quantity_received, qty_invoiced
@@ -295,6 +301,9 @@ function get_po_items(mixed $order_no)
 }
 //----------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_short_info(string|array|null $stock_id)
 {
 	$sql = "SELECT description, units, mb_flag
@@ -303,8 +312,11 @@ function get_short_info(string|array|null $stock_id)
 	return db_query($sql,"The stock details for " . $stock_id . " could not be retrieved");
 }
 
+/**
+ * @return non-falsy-string
+ */
 function get_sql_for_po_search_completed(mixed $from, mixed $to, mixed $supplier_id=ALL_TEXT, mixed $location=ALL_TEXT,
-	mixed $order_number = '', mixed $stock_id = '', mixed $also_closed=false)
+	mixed $order_number = '', mixed $stock_id = '', mixed $also_closed=false): string
 {
 	$sql = "SELECT 
 		porder.order_no, 

@@ -11,8 +11,11 @@
 ***********************************************************************/
 //-------------------------------------------------------------------------------------------------------------
 
+/**
+ * @return -1
+ */
 function stock_cost_update(string|array|null $stock_id, mixed $material_cost, mixed $labour_cost, mixed $overhead_cost,
-	mixed $last_cost, string|array|null $refline, string|array|null $memo_)
+	mixed $last_cost, string|array|null $refline, string|array|null $memo_): int
 {
 	$mb_flag = get_mb_flag($stock_id);
 

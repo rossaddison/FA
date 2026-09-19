@@ -24,8 +24,11 @@ define('SELECT_BUTTON', "<input %s type='submit' class='combo_select' style='bor
 //	$sql must return selector values and selector texts in columns 0 & 1
 //	Options are merged with defaults.
 
+/**
+ * @return non-empty-string
+ */
 function combo_input(mixed $name, mixed $selected_id, mixed $sql, mixed $valfield, mixed $namefield,
-	mixed $options=null, mixed $type=null)
+	mixed $options=null, mixed $type=null): string
 {
 global $Ajax, $path_to_root, $SysPrefs ;
 
@@ -1507,7 +1510,7 @@ function sales_types_list_row(?string $label, ?string $name, mixed $selected_id=
 
 //-----------------------------------------------------------------------------------------------
 
-function _format_date(mixed $row)
+function _format_date(mixed $row): string
 {
 	return sql2date($row['reconciled']);
 }
@@ -1874,7 +1877,7 @@ function gl_all_accounts_list_row(?string $label, ?string $name, mixed $selected
 	echo "</tr>\n";
 }
 
-function yesno_list(mixed $name, mixed $selected_id=null, mixed $name_yes="", mixed $name_no="", mixed $submit_on_change=false)
+function yesno_list(mixed $name, mixed $selected_id=null, mixed $name_yes="", mixed $name_no="", mixed $submit_on_change=false): string
 {
 	$items = array();
 	$items['0'] = strlen($name_no) ? $name_no : _("No");
@@ -1904,7 +1907,7 @@ function yesno_list_row(mixed $label, mixed $name, mixed $selected_id=null, mixe
 
 //------------------------------------------------------------------------------------------------
 
-function languages_list(mixed $name, mixed $selected_id=null, mixed $all_option=false)
+function languages_list(mixed $name, mixed $selected_id=null, mixed $all_option=false): string
 {
 	global $installed_languages;
 
@@ -1934,7 +1937,7 @@ function languages_list_row(mixed $label, mixed $name, mixed $selected_id=null, 
 
 //------------------------------------------------------------------------------------------------
 
-function bank_account_types_list(mixed $name, mixed $selected_id=null)
+function bank_account_types_list(mixed $name, mixed $selected_id=null): string
 {
 	global $bank_account_types;
 
@@ -1958,7 +1961,7 @@ function bank_account_types_list_row(?string $label, ?string $name, mixed $selec
 }
 
 //------------------------------------------------------------------------------------------------
-function payment_person_types_list(mixed $name, mixed $selected_id=null, mixed $submit_on_change=false)
+function payment_person_types_list(mixed $name, mixed $selected_id=null, mixed $submit_on_change=false): string
 {
 	global $payment_person_types;
 
@@ -1990,7 +1993,7 @@ function payment_person_types_list_row(?string $label, ?string $name, string|arr
 
 //------------------------------------------------------------------------------------------------
 
-function wo_types_list(mixed $name, mixed $selected_id=null)
+function wo_types_list(mixed $name, mixed $selected_id=null): string
 {
 	global $wo_types_array;
 	
@@ -2077,7 +2080,7 @@ function pagesizes_list_row(?string $label, ?string $name, string|int|null $valu
 	echo "</td></tr>\n";
 }
 
-function systypes_list(mixed $name, mixed $value=null, mixed $spec_opt=false, mixed $submit_on_change=false, mixed $exclude=array())
+function systypes_list(mixed $name, mixed $value=null, mixed $spec_opt=false, mixed $submit_on_change=false, mixed $exclude=array()): string
 {
 	global $systypes_array;
 
@@ -2226,7 +2229,7 @@ function credit_type_list_row(?string $label, ?string $name, mixed $selected=nul
 	echo "</tr>\n";
 }
 
-function number_list(mixed $name, mixed $selected, mixed $from, mixed $to, mixed $no_option=false)
+function number_list(mixed $name, mixed $selected, mixed $from, mixed $to, mixed $no_option=false): string
 {
 	$items = array();
 	for ($i = $from; $i <= $to; $i++)
@@ -2278,7 +2281,7 @@ function print_profiles_list_row(?string $label, ?string $name, mixed $selected_
 	echo "</td></tr>\n";
 }
 
-function printers_list(?string $name, mixed $selected_id=null, string|bool|null $spec_opt=false, bool $submit_on_change=false)
+function printers_list(?string $name, mixed $selected_id=null, string|bool|null $spec_opt=false, bool $submit_on_change=false): string
 {
 	static $printers; // query only once for page display
 
@@ -2357,6 +2360,9 @@ function quick_entry_types_list_row(?string $label, ?string $name, mixed $select
 	echo "</td></tr>\n";
 }
 
+/**
+ * @return null
+ */
 function record_status_list_row(?string $label, ?string $name) {
 	return yesno_list_row($label, $name, null, 	_('Inactive'), _('Active'));
 }
@@ -2424,7 +2430,7 @@ function tab_list_row(?string $label, ?string $name, mixed $selected_id=null): v
 
 //-----------------------------------------------------------------------------------------------
 
-function tag_list(mixed $name, mixed $height, mixed $type, mixed $multi=false, mixed $all=false, mixed $spec_opt = false)
+function tag_list(mixed $name, mixed $height, mixed $type, mixed $multi=false, mixed $all=false, mixed $spec_opt = false): string
 {
 	// Get tags
 	global $path_to_root;
@@ -2467,7 +2473,7 @@ function tag_list_row(?string $label, ?string $name, ?int $height, ?int $type, b
 //---------------------------------------------------------------------------------------------
 //	List of sets of active extensions 
 //
-function extset_list(?string $name, mixed $value=null, bool $submit_on_change=false)
+function extset_list(?string $name, mixed $value=null, bool $submit_on_change=false): string
 {
 	global $db_connections;
 
@@ -2562,7 +2568,7 @@ function coa_list_row(?string $label, ?string $name, mixed $value=null): void
 	echo "</td></tr>\n";
 }
 
-function payment_services(mixed $name)
+function payment_services(mixed $name): string
 {
 	global $payment_services;
 
@@ -2574,7 +2580,7 @@ function payment_services(mixed $name)
 		));
 }
 
-function tax_algorithm_list(mixed $name, mixed $value=null, mixed $submit_on_change = false)
+function tax_algorithm_list(mixed $name, mixed $value=null, mixed $submit_on_change = false): string
 {
 	global $tax_algorithms;
 	

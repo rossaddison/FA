@@ -11,6 +11,9 @@
 ***********************************************************************/
 //--------------------------------------------------------------------------------------------------
 
+/**
+ * @return array{areas?: non-empty-list<string>, sections?: non-empty-list<string>, ...<array-key, null|string>}|false
+ */
 function get_security_role(mixed $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."security_roles WHERE id=".(int)$id;
@@ -58,6 +61,9 @@ function delete_security_role(mixed $id): void
 }
 //--------------------------------------------------------------------------------------------------
 
+/**
+ * @return null|string
+ */
 function check_role_used(mixed $id) {
 	$sql = "SELECT count(*) FROM ".TB_PREF."users WHERE role_id=".(int)$id;
 	$ret = db_query($sql, 'cannot check role usage');

@@ -9,6 +9,9 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
+/**
+ * @return bool|mysqli_result
+ */
 function add_account_type(mixed $id, mixed $name, mixed $class_id, mixed $parent)
 {
 	$sql = "INSERT INTO ".TB_PREF."chart_types (id, name, class_id, parent)
@@ -17,6 +20,9 @@ function add_account_type(mixed $id, mixed $name, mixed $class_id, mixed $parent
 	return db_query($sql);
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function update_account_type(mixed $id, mixed $name, mixed $class_id, mixed $parent, mixed $old_id)
 {
 	begin_transaction();
@@ -58,6 +64,9 @@ function update_account_type(mixed $id, mixed $name, mixed $class_id, mixed $par
 	return $ret;
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_account_types(int|bool|array|null $all=false, mixed $class_id=false, mixed $parent=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."chart_types";
@@ -82,6 +91,9 @@ function get_account_types(int|bool|array|null $all=false, mixed $class_id=false
 	return db_query($sql, "could not get account types");
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_account_type(mixed $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."chart_types WHERE id = ".db_escape($id);
@@ -91,6 +103,9 @@ function get_account_type(mixed $id)
 	return db_fetch($result);
 }
 
+/**
+ * @return false|null|string
+ */
 function get_account_type_name(mixed $id)
 {
 	$sql = "SELECT name FROM ".TB_PREF."chart_types WHERE id = ".db_escape($id);
@@ -108,6 +123,9 @@ function delete_account_type(mixed $id): void
 	db_query($sql, "could not delete account type");
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function add_account_class(mixed $id, mixed $name, mixed $ctype)
 {
 	$sql = "INSERT INTO ".TB_PREF."chart_class (cid, class_name, ctype)
@@ -116,6 +134,9 @@ function add_account_class(mixed $id, mixed $name, mixed $ctype)
 	return db_query($sql);
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function update_account_class(mixed $id, mixed $name, mixed $ctype)
 {
     $sql = "UPDATE ".TB_PREF."chart_class SET class_name=".db_escape($name).",
@@ -124,6 +145,9 @@ function update_account_class(mixed $id, mixed $name, mixed $ctype)
 	return db_query($sql);
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_account_classes(int|bool|array|null $all=false, ?int $balance=-1)
 {
 	$sql = "SELECT * FROM ".TB_PREF."chart_class";
@@ -139,6 +163,9 @@ function get_account_classes(int|bool|array|null $all=false, ?int $balance=-1)
 	return db_query($sql, "could not get account classes");
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_account_class(mixed $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."chart_class WHERE cid = ".db_escape($id);
@@ -148,6 +175,9 @@ function get_account_class(mixed $id)
 	return db_fetch($result);
 }
 
+/**
+ * @return null|string
+ */
 function get_account_class_name(mixed $id)
 {
 	$sql = "SELECT class_name FROM ".TB_PREF."chart_class WHERE cid =".db_escape($id);

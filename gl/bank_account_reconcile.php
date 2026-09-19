@@ -73,18 +73,21 @@ function gl_view(mixed $row)
 	return get_gl_view_str($row["type"], $row["trans_no"]);
 }
 
-function fmt_debit(mixed $row)
+function fmt_debit(mixed $row): string
 {
 	$value = $row["amount"];
 	return $value>=0 ? price_format($value) : '';
 }
 
-function fmt_credit(mixed $row)
+function fmt_credit(mixed $row): string
 {
 	$value = -$row["amount"];
 	return $value>0 ? price_format($value) : '';
 }
 
+/**
+ * @return null|string
+ */
 function fmt_person(mixed $trans)
 {
 	return get_counterparty_name($trans["type"], $trans["trans_no"]);

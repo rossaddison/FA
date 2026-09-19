@@ -28,6 +28,9 @@ include_once($path_to_root . "/gl/includes/gl_db.inc");
 
 print_sales_summary_report();
 
+/**
+ * @return bool|mysqli_result
+ */
 function getTaxTransactions(string|array|null $from, string|array|null $to, string|array|null $tax_id)
 {
 	$fromdate = date2sql($from);
@@ -46,6 +49,9 @@ function getTaxTransactions(string|array|null $from, string|array|null $to, stri
     return db_query($sql,"No transactions were returned");
 }
 
+/**
+ * @return array<array-key, null|string>|false|null
+ */
 function getTaxes(mixed $type, mixed $trans_no)
 {
 	$sql = "SELECT included_in_price, SUM(CASE WHEN trans_type=".ST_CUSTCREDIT." THEN -amount ELSE amount END * ex_rate) AS tax

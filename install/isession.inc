@@ -12,7 +12,7 @@
 define('VARLIB_PATH', $path_to_root.'/tmp');
 define('VARLOG_PATH', $path_to_root.'/tmp');
 
-function output_html(mixed $text)
+function output_html(mixed $text): string
 {
 	global $before_box, $Ajax, $messages;
 	// Fatal errors are not send to error_handler,

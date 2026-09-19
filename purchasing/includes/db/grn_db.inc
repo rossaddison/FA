@@ -163,7 +163,7 @@ function add_grn(&$po)
 
 //----------------------------------------------------------------------------------------
 
-function add_grn_batch(mixed $po_number, mixed $supplier_id, mixed $reference, mixed $location, mixed $date_, mixed $rate)
+function add_grn_batch(mixed $po_number, mixed $supplier_id, mixed $reference, mixed $location, mixed $date_, mixed $rate): int|string
 {
 	$date = date2sql($date_);
 
@@ -179,7 +179,7 @@ function add_grn_batch(mixed $po_number, mixed $supplier_id, mixed $reference, m
 //-------------------------------------------------------------------------------------------------------------
 
 function add_grn_detail_item(mixed $grn_batch_id, mixed $po_detail_item, mixed $item_code, mixed $description, mixed $standard_unit_cost,
-	mixed $quantity_received, mixed $price, mixed $quantity)
+	mixed $quantity_received, mixed $price, mixed $quantity): int|string
 {
 	$sql = "UPDATE ".TB_PREF."purch_order_details
         SET quantity_received = quantity_received + ".db_escape($quantity_received).",
@@ -200,6 +200,9 @@ function add_grn_detail_item(mixed $grn_batch_id, mixed $po_detail_item, mixed $
 }
 
 //----------------------------------------------------------------------------------------
+/**
+ * @return null|string
+ */
 function get_grn_batch_from_item(mixed $item)
 {
 	$sql = "SELECT grn_batch_id FROM ".TB_PREF."grn_items WHERE id=".db_escape($item);
@@ -208,6 +211,9 @@ function get_grn_batch_from_item(mixed $item)
 	return $row[0];
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_grn_batch(mixed $grn)
 {
 	$sql = "SELECT * FROM ".TB_PREF."grn_batch WHERE id=".db_escape($grn);
@@ -251,6 +257,9 @@ function set_grn_item_credited(&$entered_grn, mixed $supplier, mixed $transno, m
        	$entered_grn->this_quantity_inv, $mcost, $taxfree_line);
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_grn_items(mixed $grn_batch_id=0, mixed $supplier_id="", bool $outstanding_only=false,
 	bool $is_invoiced_only=false, mixed $invoice_no=0, string|array|null $begin="", string|array|null $end="")
 {
@@ -306,6 +315,9 @@ function get_grn_items(mixed $grn_batch_id=0, mixed $supplier_id="", bool $outst
 
 // get the details for a given grn item
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_grn_item_detail(mixed $grn_item_no)
 {
 	$sql = "SELECT grn.*, po.unit_price, grn.qty_recd - grn.quantity_inv AS QtyOstdg,
@@ -385,6 +397,9 @@ function read_grn(mixed $grn_batch, &$order): void
 
 // get the GRNs (batch info not details) for a given po number
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_po_grns(mixed $po_number)
 {
     $sql = "SELECT * FROM ".TB_PREF."grn_batch WHERE purch_order_no=".db_escape($po_number);

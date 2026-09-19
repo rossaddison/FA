@@ -238,7 +238,7 @@ function end_fiscalyear(): string
 	return sql2date($myrow['end']);
 }
 
-function begin_month(mixed $date)
+function begin_month(mixed $date): string
 {
 	global $SysPrefs;
     list($day, $month, $year) = explode_date_to_dmy($date);
@@ -267,7 +267,7 @@ function days_in_month(mixed $month, mixed $year): int
 	return $days_in_month[$month - 1];
 }
 
-function end_month(mixed $date)
+function end_month(mixed $date): string
 {
 	global $SysPrefs;
 
@@ -451,7 +451,7 @@ function sql_date_comp(mixed $date1, mixed $date2): int
 /*
 	Compare dates in user format.
 */
-function date_comp(string|array|null $date1, mixed $date2)
+function date_comp(string|array|null $date1, mixed $date2): int
 {
 	$date1 = date2sql($date1);
 	$date2 = date2sql($date2);

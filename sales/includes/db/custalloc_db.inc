@@ -27,6 +27,9 @@ function add_cust_allocation(mixed $amount, mixed $trans_type_from, mixed $trans
 //----------------------------------------------------------------------------------------
 
 
+/**
+ * @return bool|mysqli_result
+ */
 function delete_cust_allocation(mixed $trans_id)
 {
 	$sql = "DELETE FROM ".TB_PREF."cust_allocations WHERE id = ".db_escape($trans_id);
@@ -35,6 +38,9 @@ function delete_cust_allocation(mixed $trans_id)
 
 //----------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_cust_allocation(mixed $trans_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."cust_allocations WHERE id = ".db_escape($trans_id);
@@ -62,6 +68,9 @@ function update_debtor_trans_allocation(mixed $trans_type, mixed $trans_no, mixe
 
 //-------------------------------------------------------------------------------------------------------------
 //
+/**
+ * @return null
+ */
 function void_cust_allocations(mixed $type, mixed $type_no, mixed $date="")
 {
 	return clear_cust_alloctions($type, $type_no, null, $date);
@@ -177,6 +186,9 @@ function get_allocatable_sales_orders(mixed $customer_id = null, mixed $trans_no
 }
 //-------------------------------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_allocatable_to_cust_transactions(mixed $customer_id = null, mixed $trans_no=null, mixed $type=null)
 {
 	$sql = "SELECT
@@ -238,6 +250,9 @@ function get_allocatable_to_cust_transactions(mixed $customer_id = null, mixed $
 
 //-------------------------------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_allocatable_from_cust_transactions(mixed $customer_id, mixed $trans_no=null, mixed $type=null)
 {
 

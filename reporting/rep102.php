@@ -27,6 +27,9 @@ include_once($path_to_root . "/gl/includes/gl_db.inc");
 
 print_aged_customer_analysis();
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_invoices(mixed $customer_id, string|array|null $to, string|bool|array|null $all=true)
 {
 	$todate = date2sql($to);

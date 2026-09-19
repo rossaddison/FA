@@ -30,6 +30,9 @@ include_once($path_to_root . "/inventory/includes/inventory_db.inc");
 
 print_price_listing();
 
+/**
+ * @return bool|mysqli_result
+ */
 function fetch_items(string|int|array|null $category=0)
 {
 		$sql = "SELECT item.stock_id, item.description AS name,
@@ -47,6 +50,9 @@ function fetch_items(string|int|array|null $category=0)
     return db_query($sql,"No transactions were returned");
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_kits(string|int|array|null $category=0)
 {
 	$sql = "SELECT i.item_code AS kit_code, i.description AS kit_name, c.category_id AS cat_id, c.description AS cat_name, count(*)>1 AS kit

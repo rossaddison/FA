@@ -10,6 +10,9 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
+/**
+ * @return bool|mysqli_result
+ */
 function add_user(mixed $user_id, mixed $real_name, ?string $password, mixed $phone, mixed $email, mixed $role_id, 
 	mixed $language, mixed $profile, int|array|null $rep_popup, mixed $pos)
 {
@@ -26,6 +29,9 @@ function add_user(mixed $user_id, mixed $real_name, ?string $password, mixed $ph
 
 //-----------------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function update_user_password(mixed $id, mixed $user_id, mixed $password)
 {
 	$sql = "UPDATE ".TB_PREF."users SET password=".db_escape($password) . ",
@@ -36,6 +42,9 @@ function update_user_password(mixed $id, mixed $user_id, mixed $password)
 
 //-----------------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function update_user(mixed $id, mixed $user_id, mixed $real_name, mixed $phone, mixed $email, mixed $role_id, 
 	mixed $language, mixed $profile, mixed $rep_popup, mixed $pos)
 {
@@ -54,6 +63,9 @@ function update_user(mixed $id, mixed $user_id, mixed $real_name, mixed $phone, 
 
 //-----------------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function update_user_prefs(mixed $id, mixed $prefs)
 {
 	$sql = "UPDATE ".TB_PREF."users SET ";
@@ -68,6 +80,9 @@ function update_user_prefs(mixed $id, mixed $prefs)
 //-----------------------------------------------------------------------------------------------
 
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_users(int|bool|array|null $all=false)
 {
 	$sql = "SELECT u.*, r.role FROM ".TB_PREF."users u, ".TB_PREF."security_roles r
@@ -79,6 +94,9 @@ function get_users(int|bool|array|null $all=false)
 
 //-----------------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_user(mixed $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."users WHERE id=".db_escape($id);
@@ -90,6 +108,9 @@ function get_user(mixed $id)
 
 //-----------------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_user_by_login(mixed $user_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."users WHERE user_id=".db_escape($user_id);
@@ -101,6 +122,9 @@ function get_user_by_login(mixed $user_id)
 
 //-----------------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_user_by_email(mixed $email)
 {
 	$sql = "SELECT * FROM ".TB_PREF."users WHERE email=".db_escape($email);
@@ -144,6 +168,9 @@ function update_user_visitdate(mixed $user_id): void
 }
 
 //-----------------------------------------------------------------------------------------------
+/**
+ * @return null|string
+ */
 function check_user_activity(mixed $id) 
 {
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."audit_trail WHERE audit_trail.user="

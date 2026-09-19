@@ -136,8 +136,11 @@ function print_document_link(mixed $doc_no, mixed $link_text, bool $link, mixed 
 //
 //	Universal link to any kind of report.
 //
+/**
+ * @return non-empty-string
+ */
 function print_link(mixed $link_text, ?int $rep, ?array $pars = array(), ?string $dir = '', 
-	mixed $icon=false, mixed $class='printlink', mixed $id='')
+	mixed $icon=false, mixed $class='printlink', mixed $id=''): string
 {
 	global $path_to_root, $SysPrefs;
 	$url = $dir == '' ?  $path_to_root.'/reporting/prn_redirect.php?' : $dir;

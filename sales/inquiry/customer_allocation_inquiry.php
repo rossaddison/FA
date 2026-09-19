@@ -90,6 +90,9 @@ function fmt_balance(mixed $row)
 	return ($row["type"] == ST_JOURNAL && $row["TotalAmount"] < 0 ? -$row["TotalAmount"] : $row["TotalAmount"]) - $row["Allocated"];
 }
 
+/**
+ * @return null|string
+ */
 function alloc_link(mixed $row)
 {
 	$link = 
@@ -121,7 +124,7 @@ function alloc_link(mixed $row)
 
 }
 
-function fmt_debit(mixed $row)
+function fmt_debit(mixed $row): string
 {
 	$value =
 	    $row['type']==ST_CUSTCREDIT || $row['type']==ST_CUSTPAYMENT || $row['type']==ST_BANKDEPOSIT ?
@@ -130,7 +133,7 @@ function fmt_debit(mixed $row)
 
 }
 
-function fmt_credit(mixed $row)
+function fmt_credit(mixed $row): string
 {
 	$value =
 	    !($row['type']==ST_CUSTCREDIT || $row['type']==ST_CUSTPAYMENT || $row['type']==ST_BANKDEPOSIT) ?

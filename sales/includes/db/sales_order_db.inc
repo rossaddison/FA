@@ -222,6 +222,9 @@ function update_sales_order(mixed $order): void
 
 //----------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, null|string>|false|null
+ */
 function get_sales_order_header(mixed $order_no, mixed $trans_type)
 {
 	$sql = "SELECT sorder.*,
@@ -280,6 +283,9 @@ function get_sales_order_header(mixed $order_no, mixed $trans_type)
 
 //----------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_sales_order_details(mixed $order_no, mixed $trans_type) {
 	$sql = "SELECT id, stk_code, unit_price,
 				line.description,
@@ -406,6 +412,9 @@ function get_invoice_duedate(mixed $terms, mixed $invdate)
 	return $duedate;
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_customer_to_order(mixed $customer_id) {
 
 	// Now check to ensure this account is not on hold */
@@ -437,6 +446,9 @@ function get_customer_to_order(mixed $customer_id) {
 	return 	db_fetch($result);
 }
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_branch_to_order(mixed $customer_id, mixed $branch_id) {
 
     	// the branch was also selected from the customer selection so default the delivery details from the customer branches table cust_branch. The order process will ask for branch details later anyway
@@ -465,8 +477,11 @@ function get_branch_to_order(mixed $customer_id, mixed $branch_id) {
 	OutstandingOnly
 	PrepaidOrders
 */
+/**
+ * @return non-falsy-string
+ */
 function get_sql_for_sales_orders_view(mixed $trans_type, mixed $trans_no, mixed $filter, 
-	mixed $stock_item='', mixed $from='', mixed $to='', mixed $ref='', mixed $location=ALL_TEXT, mixed $customer_id=ALL_TEXT, int|array|null $show_voided = 0, mixed $by_delivery=0, mixed $no_auto=0)
+	mixed $stock_item='', mixed $from='', mixed $to='', mixed $ref='', mixed $location=ALL_TEXT, mixed $customer_id=ALL_TEXT, int|array|null $show_voided = 0, mixed $by_delivery=0, mixed $no_auto=0): string
 {
     if ($filter=='OutstandingOnly')
         $order_value = 'Sum(line.unit_price*(line.quantity-line.qty_sent)*(1-line.discount_percent))+freight_cost';
@@ -588,6 +603,9 @@ function update_prepaid_so_line(mixed $line_id, mixed $qty_invoiced): bool
 /*
 	Returns array of all issued invoices to sales order $order_no, optinally up to trans_no==$up_to
 */
+/**
+ * @return bool|mysqli_result
+ */
 function get_sales_order_invoices(mixed $order_no)
 {
 	$sql = "SELECT trans_no, dt.type as type, tran_date, reference, prep_amount
@@ -599,6 +617,9 @@ function get_sales_order_invoices(mixed $order_no)
 	return db_query($sql, "cannot retrieve sales invoices for sales order");
 }
 
+/**
+ * @return null|string
+ */
 function is_sales_order_started(mixed $order_no)
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."sales_order_details WHERE order_no=".db_escape($order_no)." AND trans_type=".ST_SALESORDER
@@ -622,6 +643,9 @@ function sales_order_set_template(mixed $id, int|bool|array|null $status): void
 	Check whether sales order is issued in prepaid mode and already opened
 */
 
+/**
+ * @return null|string
+ */
 function is_prepaid_order_open(mixed $order_no)
 {
 	$sql = "SELECT count(*)
@@ -641,6 +665,9 @@ function is_prepaid_order_open(mixed $order_no)
 	return $result[0];
 }
 
+/**
+ * @return false|null|string
+ */
 function last_sales_order_detail(mixed $order, ?string $field)
 {
         $sql = "SELECT $field

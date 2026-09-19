@@ -410,6 +410,9 @@ function add_supp_invoice(&$supp_trans)
 
 // get all the invoices/credits for a given PO - quite long route to get there !
 
+/**
+ * @return bool|mysqli_result
+ */
 function get_po_invoices_credits(mixed $po_number)
 {
 	$sql = "SELECT DISTINCT trans.trans_no, trans.type,	ov_amount+ov_discount+ov_gst AS Total,
@@ -450,6 +453,9 @@ function get_tax_overrides(mixed $trans_type, mixed $trans_no): array
 }
 //----------------------------------------------------------------------------------------
 
+/**
+ * @return null
+ */
 function read_supp_invoice(mixed $trans_no, mixed $trans_type, &$supp_trans)
 {
 	$sql = "SELECT trans.*, supp_name, dimension_id, dimension2_id, curr_code
@@ -521,6 +527,9 @@ function read_supp_invoice(mixed $trans_no, mixed $trans_type, &$supp_trans)
 
 //----------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_matching_invoice_item(mixed $stock_id, mixed $po_item_id)
 {
 	$sql = "SELECT *, tran_date
@@ -641,6 +650,9 @@ function void_supp_invoice(mixed $type, mixed $type_no): void
 }
 
 //----------------------------------------------------------------------------------------
+/**
+ * @return bool|mysqli_result
+ */
 function get_gl_account_info(mixed $acc)
 {
 	$sql = "SELECT account_code, account_name FROM ".TB_PREF."chart_master WHERE account_code=".db_escape($acc);

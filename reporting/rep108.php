@@ -30,6 +30,9 @@ print_statements();
 
 //----------------------------------------------------------------------------------------------------
 
+/**
+ * @return bool|mysqli_result
+ */
 function getTransactions(mixed $debtorno, mixed $show_also_allocated)
 {
 	$date = date('Y-m-d');

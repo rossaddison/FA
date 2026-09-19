@@ -149,7 +149,7 @@ function prt_link(mixed $row)
 	return print_document_link($row['trans_no'], _("Print"), true, ST_CUSTDELIVERY, ICON_PRINT);
 }
 
-function invoice_link(mixed $row)
+function invoice_link(mixed $row): string
 {
 	return $row["Outstanding"]==0 ? '' :
 		pager_link(_('Invoice'), "/sales/customer_invoice.php?DeliveryNumber=" 

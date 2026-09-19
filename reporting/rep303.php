@@ -131,6 +131,9 @@ function barcode_check(mixed $code, bool $return_value = false, bool $get_type =
 		return false;
 }
 	
+/**
+ * @return bool|mysqli_result
+ */
 function getTransactions(mixed $category, mixed $location, string|array|null $item_like)
 {
 	$sql = "SELECT item.category_id,

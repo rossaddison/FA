@@ -235,7 +235,7 @@ function frindly_db_error(?int $db_error): bool
 	return false;
 }
 
-function check_db_error(mixed $msg, string|array|null $sql_statement, bool $exit_if_error=true, bool $rollback_if_error=true)
+function check_db_error(mixed $msg, string|array|null $sql_statement, bool $exit_if_error=true, bool $rollback_if_error=true): int
 {
 	global $db, $SysPrefs;
 	$db_error = db_error_no();
