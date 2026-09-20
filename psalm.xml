@@ -12,6 +12,15 @@
         <var name="systypes_array" type="array&lt;int, string&gt;"/>
         <var name="db" type="mysqli"/>
         <var name="_POST" type="array&lt;string, string|int|float|bool|null|array&lt;array-key, string|int|float|bool|null|array&lt;array-key, string|int|float|bool|null&gt;&gt;&gt;"/>
+        <var name="selected_id" type="string|int|float|bool|array&lt;array-key, mixed&gt;|null"/>
+        <var name="Mode" type="string"/>
+        <var name="page_nested" type="int"/>
+        <var name="dflt_lang" type="string"/>
+        <var name="def_coy" type="int|string"/>
+        <var name="installed_languages" type="array&lt;int, array&lt;string, string&gt;&gt;"/>
+        <var name="installed_extensions" type="array&lt;int, array&lt;string, mixed&gt;&gt;"/>
+        <var name="tmonths" type="array&lt;int, string&gt;"/>
+        <var name="wo_types_array" type="array&lt;int, string&gt;"/>
         <var name="_SESSION" type="array{wa_current_user?: current_user, Items?: Cart, supp_trans?: supp_trans, alloc?: allocation, language?: language, SysPrefs?: sys_prefs, transfer_items?: items_cart, issue_items?: items_cart, adj_items?: items_cart, pay_items?: items_cart, journal_items?: items_cart, View?: Cart, PO?: purch_order, ...&lt;string, mixed&gt;}"/>
         <var name="db_connections" type="array&lt;int, array&lt;string, string&gt;&gt;"/>
     </globals>

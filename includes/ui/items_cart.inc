@@ -557,16 +557,27 @@ class line_item
 class gl_item
 {
 
+	/** @var string */
 	var $code_id;
+	/** @var int|string */
 	var $dimension_id;
+	/** @var int|string */
 	var $dimension2_id;
+	/** @var float|int|string */
 	var $amount;
+	/** @var string */
 	var $reference;
+	/** @var string */
 	var $description;
+	/** @var string|int|float|bool|null */
 	var $person_id;
+	/** @var string|int|float|bool|null */
 	var $person_type_id;
+	/** @var string */
 	var $person_name;
+	/** @var string|int|float|bool|null */
 	var $branch_id;
+	/** @var string */
 	var $date;
 
 	function __construct($code_id=null, $dimension_id=0, $dimension2_id=0, $amount=0, $memo='',

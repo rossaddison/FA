@@ -264,30 +264,44 @@ class purch_order
 class po_line_details 
 {
 
+	/** @var int */
 	var $line_no;
+	/** @var string|int|float|bool|null */
 	var $po_detail_rec;
+	/** @var string|int|float|bool|null */
 	var $grn_item_id;
+	/** @var string */
 	var $stock_id;
+	/** @var string */
 	var $item_description;
+	/** @var float|int|string */
 	var $price;
+	/** @var string */
 	var $units;
+	/** @var string */
 	var $req_del_date;
+	/** @var string|int|float|bool|null */
 	var $tax_type;
+	/** @var string */
 	var $tax_type_name;
 
+	/** @var float|int|string */
 	var $quantity;		// current/entry quantity of PO line
+	/** @var float|int|string */
 	var $qty_inv;	// quantity already invoiced against this line
 
 	/**
 	 * @var int
 	 */
 	var $receive_qty;	// current/entry GRN quantity
+	/** @var float|int|string */
 	var $qty_received;	// quantity already received against this line
 
 	/**
 	 * @var int
 	 */
 	var $standard_cost;
+	/** @var string|int|float|bool|null */
 	var $descr_editable;
 
 	function __construct($line_no, $stock_item, $item_descr, $qty, $prc, $uom, $req_del_date, 

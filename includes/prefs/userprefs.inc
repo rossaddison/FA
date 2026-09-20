@@ -13,33 +13,58 @@
 class user_prefs
 {
 
+	/** @var string */
 	var $language;
 
+	/** @var string|int|float|bool|null */
 	var $qty_dec;
+	/** @var string|int|float|bool|null */
 	var $price_dec;
+	/** @var string|int|float|bool|null */
 	var	$exrate_dec;
+	/** @var string|int|float|bool|null */
 	var	$percent_dec;
 
+	/** @var string|int|float|bool|null */
 	var	$show_gl_info;
+	/** @var string|int|float|bool|null */
 	var	$show_codes;
 
+	/** @var string|int|float|bool|null */
 	var $date_format;
+	/** @var string|int|float|bool|null */
 	var $date_sep;
+	/** @var string|int|float|bool|null */
 	var $tho_sep;
+	/** @var string|int|float|bool|null */
 	var $dec_sep;
+	/** @var string */
 	var $theme;
+	/** @var string|int|float|bool|null */
 	var $print_profile;
+	/** @var string|int|float|bool|null */
 	var $rep_popup;
+	/** @var string|int|float|bool|null */
 	var $pagesize; // for printing
+	/** @var string|int|float|bool|null */
 	var $show_hints;
+	/** @var string|int|float|bool|null */
 	var $query_size; // table pager page length
+	/** @var string|int|float|bool|null */
 	var $graphic_links; // use graphic links
+	/** @var string|int|float|bool|null */
 	var $sticky_date;	// save date on subsequent document entry
+	/** @var string */
 	var $startup_tab;  // default start-up menu tab
+	/** @var string|int|float|bool|null */
 	var $transaction_days; // transaction days in inquiries
+	/** @var string|int|float|bool|null */
 	var $save_report_selections; // save report selections days 0...
+	/** @var string|int|float|bool|null */
 	var $use_date_picker; // use date picker for all date fields
+	/** @var string|int|float|bool|null */
 	var $def_print_destination; // default print destination. 0 = PDF/Printer, 1 = Excel
+	/** @var string|int|float|bool|null */
 	var $def_print_orientation; // default print orientation. 0 = Portrait. 1 = Landscape
 
 	function __construct($user=null)

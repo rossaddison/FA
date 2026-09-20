@@ -786,19 +786,32 @@ class Cart
 
 class line_details
 {
+	/** @var string|int|float|bool|null */
 	var $id;
+	/** @var string */
 	var $stock_id;
+	/** @var string */
 	var $item_description;
+	/** @var string */
 	var $units;
+	/** @var string */
 	var $mb_flag;
+	/** @var string|int|float|bool|null */
 	var $tax_type;
+	/** @var string */
 	var $tax_type_name;
+	/** @var string|int|float|bool|null */
 	var $src_no;	// number of src doc for this line
+	/** @var string|int|float|bool|null */
 	var $src_id;
+	/** @var float|int|string */
 	var $price;
+	/** @var float|int|string */
 	var $discount_percent;
 	
+	/** @var float|int|string */
 	var $standard_cost;
+	/** @var string|int|float|bool|null */
 	var $descr_editable;
 
 	/**
@@ -826,8 +839,11 @@ class line_details
 		$qty_dispatched - quantity currently selected to process
 		$qty_old - 0; not used
 	*/
+	/** @var float|int|string */
 	var $quantity;
+	/** @var float|int|string */
 	var $qty_done;
+	/** @var float|int|string */
 	var $qty_dispatched;
 
 	/**

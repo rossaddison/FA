@@ -280,17 +280,29 @@ class grn_item
 /* Contains relavent information from the purch_order_details as well to provide in cached form,
 all the info to do the necessary entries without looking up ie additional queries of the database again */
 
+	/** @var string|int|float|bool|null */
 	var $id;
+	/** @var string|int|float|bool|null */
 	var $po_detail_item;
+	/** @var string */
 	var $item_code;
+	/** @var string */
 	var $item_description;
+	/** @var float|int|string */
 	var $qty_recd;
+	/** @var float|int|string */
 	var $prev_quantity_inv;
+	/** @var float|int|string */
 	var $this_quantity_inv;
+	/** @var float|int|string */
 	var $order_price;
+	/** @var float|int|string */
 	var $chg_price;
+	/** @var float|int|string */
 	var $std_cost_unit;
+	/** @var string|int|float|bool|null */
 	var $gl_code;
+	/** @var string|int|float|bool|null */
 	var $tax_included;
 
 	/** @psalm-mutation-free */
@@ -330,12 +342,19 @@ all the info to do the necessary entries without looking up ie additional querie
 class gl_codes 
 {
 
+	/** @var int */
 	var $Counter;
+	/** @var string */
 	var $gl_code;
+	/** @var string */
 	var $gl_act_name;
+	/** @var int|string */
 	var $gl_dim;
+	/** @var int|string */
 	var $gl_dim2;
+	/** @var float|int|string */
 	var $amount;
+	/** @var string */
 	var $memo_;
 
 	/** @psalm-mutation-free */

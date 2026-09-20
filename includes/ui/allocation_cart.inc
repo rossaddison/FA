@@ -287,17 +287,26 @@ class allocation
 class allocation_item 
 {
 
+	/** @var string|int|float|bool|null */
 	var $type;
+	/** @var string|int|float|bool|null */
 	var $type_no;
 	
+	/** @var string */
 	var $date_;
+	/** @var string */
 	var $due_date;
 	
+	/** @var float|int|string */
 	var $amount_allocated;
+	/** @var float|int|string */
 	var $amount;
+	/** @var string */
 	var $ref;
 	
+	/** @var float|int|string */
 	var $current_allocated;
+	/** @var string */
 	var $foreign_ref;
 
 	/** @psalm-mutation-free */

@@ -18,6 +18,7 @@ include_once($path_to_root . "/admin/db/company_db.inc");
 */
 class sys_prefs extends stdClass
 {
+	/** @var array<string, string|int|float|bool|null>|null */
 	var $prefs;
 
 	/**
