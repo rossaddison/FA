@@ -29,46 +29,83 @@ include_once($path_to_root . "/config.php");
 
 class FrontReport extends Cpdf
 {
+	/** @var string|int */
 	var $size;
+	/** @var string */
 	var $company;
+	/** @var string */
 	var $user;
+	/** @var string */
 	var $host;
+	/** @var string */
 	var $fiscal_year;
+	/** @var string|null */
 	var $title;
+	/** @var string|null */
 	var $filename;
+	/** @var float */
 	var $pageWidth;
+	/** @var float */
 	var $pageHeight;
+	/** @var float */
 	var $topMargin;
+	/** @var float */
 	var $bottomMargin;
+	/** @var float */
 	var $leftMargin;
+	/** @var float */
 	var $rightMargin;
+	/** @var float */
 	var $endLine;
+	/** @var float */
 	var $lineHeight;
 	//var $rtl;
 
+	/** @var float */
 	var $row;
+	/** @var array<int, float> */
 	var $cols;
+	/** @var array<int, array<string, string|int|float|bool|null>|string|null> */
 	var $params;
+	/** @var array<int, string> */
 	var $headers;
+	/** @var array<int, string> */
 	var $aligns;
+	/** @var array<int, string> */
 	var $headers2;
+	/** @var array<int, string> */
 	var $aligns2;
+	/** @var array<int, float> */
 	var $cols2;
+	/** @var int */
 	var $pageNumber;
+	/** @var int */
 	var $fontSize;
+	/** @var int */
 	var $oldFontSize;
+	/** @var string|null */
 	var $currency;
+	/** @var bool|int */
 	var $companyLogoEnable;  // select whether to use a company logo graphic in some header templates
+	/** @var bool */
 	var $scaleLogoWidth;
+	/** @var bool|int */
 	var $footerEnable;  // select whether to print a page footer or not
+	/** @var string */
 	var $footerText;  // store user-generated footer text
+	/** @var string */
 	var $headerTmpl;  // store the name of the currently selected header template
+	/** @var int */
 	var $tmplSize; // pdf header template size in pages
 
+	/** @var string|int|null */
 	var $rep_id;
+	/** @var array<string, mixed> */
 	var $formData; // common data used for printing headers footers etc.
+	/** @var array<array-key, mixed>|null */
 	var $contactData; // contact data for sending emials/reportlanguage selection
 	
+	/** @var string|null */
 	var $dest;	// destination: email or printer
 	
 	/**

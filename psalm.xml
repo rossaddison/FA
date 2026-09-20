@@ -59,6 +59,7 @@
             <file name="reporting/includes/html_entity_decode_php4.php"/>
             <file name="includes/JsHttpRequest.php"/>
             <directory name="reporting/includes/fpdi"/>
+            <file name="reporting/includes/excel_report.inc"/><!-- second FrontReport (spreadsheet output); the PDF class is the API the reports are written against -->
             <directory name="includes/lang"/>
         </ignoreFiles>
     </projectFiles>
