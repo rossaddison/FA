@@ -387,7 +387,7 @@ function check_value(string|array $name): int|array
 			$ret[$key] = check_value($key);
 		return $ret;
 	} else
-		return (empty($_POST[$name]) ? 0 : 1);
+		return (!(bool)($_POST[$name] ?? null) ? 0 : 1);
 }
 
 function checkbox(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $value=null, string|int|float|bool|null $submit_on_change=false, string|int|float|bool|null $title=false): string
@@ -763,10 +763,10 @@ function ref_cells(?string $label, ?string $name, ?string $title=null, string|in
 	global $Ajax, $Refs;
 
 	if (isset($type)) {
-		if (empty($_POST[$name.'_list'])) // restore refline id
-			$_POST[$name.'_list'] = $Refs->reflines->find_refline_id(empty($_POST[$name]) ? $init : $_POST[$name], $type);
+		if (!(bool)($_POST[$name.'_list'] ?? null)) // restore refline id
+			$_POST[$name.'_list'] = $Refs->reflines->find_refline_id(!(bool)($_POST[$name] ?? null) ? $init : $_POST[$name], $type);
 
-		if (empty($_POST[$name])) // initialization
+		if (!(bool)($_POST[$name] ?? null)) // initialization
 		{
 			if (isset($init))
 			{

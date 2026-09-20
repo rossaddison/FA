@@ -62,7 +62,7 @@ function stock_cost_update(string|array|null $stock_id, int|float|bool|null $mat
 				$cart->tran_date = end_fiscalyear();
 			$cart->reference = $Refs->get_next(ST_COSTUPDATE, $refline, $cart->tran_date, $date_);
  
-			if (empty($memo_))
+			if (!(bool)($memo_ ?? null))
 				$cart->memo_ = sprintf(_("Cost was %s changed to %s x quantity on hand of %s"),
 					number_format2($last_cost, user_price_dec()), number_format2($new_cost, user_price_dec()), $qoh);
 			else

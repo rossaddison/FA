@@ -239,7 +239,7 @@ if (get_post('AddPaymentItem') && can_process()) {
 
 	new_doc_date($_POST['DateBanked']);
 
-	$new_pmt = !$_SESSION['alloc']->trans_no;
+	$new_pmt = !(bool)$_SESSION['alloc']->trans_no;
 	//Chaitanya : 13-OCT-2011 - To support Edit feature
 	$payment_no = write_customer_payment($_SESSION['alloc']->trans_no, $_POST['customer_id'], $_POST['BranchID'],
 		$_POST['bank_account'], $_POST['DateBanked'], $_POST['ref'],
@@ -304,7 +304,7 @@ if (isset($_GET['trans_no']) && $_GET['trans_no'] > 0 )
 }
 
 //----------------------------------------------------------------------------------------------
-$new = !$_SESSION['alloc']->trans_no;
+$new = !(bool)$_SESSION['alloc']->trans_no;
 start_form();
 
 hidden('trans_no');

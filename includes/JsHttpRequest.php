@@ -164,8 +164,8 @@ class JsHttpRequest
     {
         // Parse an encoding.
         preg_match('/^(\S*)(?:\s+(\S*))$/', $enc, $p);
-        $this->SCRIPT_ENCODING    = strtolower(!empty($p[1])? $p[1] : $enc);
-        $this->SCRIPT_DECODE_MODE = !empty($p[2])? $p[2] : '';
+        $this->SCRIPT_ENCODING    = strtolower((bool)($p[1] ?? null)? $p[1] : $enc);
+        $this->SCRIPT_DECODE_MODE = (bool)($p[2] ?? null)? $p[2] : '';
         // Manually parse QUERY_STRING because of damned Unicode's %uXXXX.
         $this->_correctSuperglobals();
     }
@@ -262,7 +262,7 @@ class JsHttpRequest
         // in such cases - read the POST data manually from the STDIN stream.
         $rawPost = strcasecmp($_SERVER['REQUEST_METHOD'], 'POST') == 0? (isset($GLOBALS['HTTP_RAW_POST_DATA'])? $GLOBALS['HTTP_RAW_POST_DATA'] : @file_get_contents("php://input")) : null;
         $source = array(
-            '_GET' => !empty($_SERVER['QUERY_STRING'])? $_SERVER['QUERY_STRING'] : null, 
+            '_GET' => (bool)($_SERVER['QUERY_STRING'] ?? null)? $_SERVER['QUERY_STRING'] : null, 
             '_POST'=> $rawPost,
         );
         foreach ($source as $dst=>$src) {

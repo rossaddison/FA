@@ -21,7 +21,7 @@ class SessionManager
 		session_name($name);
 
 		// Set SSL level
-		$https = isset($secure) ? $secure : (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+		$https = isset($secure) ? $secure : ((bool)($_SERVER['HTTPS'] ?? null) && $_SERVER['HTTPS'] !== 'off');
 
 		// Set session cookie options
 		session_set_cookie_params($limit, $path, $domain, $https, true);
@@ -335,7 +335,7 @@ function login_timeout(): void
 	// skip timeout on logout page
 	if ($_SESSION["wa_current_user"]->logged) {
 		$tout = $_SESSION["wa_current_user"]->timeout;
-		if ($tout && (time() > $_SESSION["wa_current_user"]->last_act + $tout))
+		if ((bool)$tout && (time() > $_SESSION["wa_current_user"]->last_act + $tout))
 		{
 			$_SESSION["wa_current_user"]->logged = false;
 		}
@@ -476,7 +476,7 @@ if (!defined('FA_LOGOUT_PHP_FILE')){
 
 	login_timeout();
 
-	if (!$_SESSION["wa_current_user"]->old_db && file_exists($path_to_root . '/company/'.user_company().'/installed_extensions.php'))
+	if (!(bool)$_SESSION["wa_current_user"]->old_db && file_exists($path_to_root . '/company/'.user_company().'/installed_extensions.php'))
 		include($path_to_root . '/company/'.user_company().'/installed_extensions.php');
 
 	install_hooks();

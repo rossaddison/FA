@@ -3860,7 +3860,7 @@ if (!class_exists('TCPDF')) {
 				}
 			}
 			while ($n);
-			if (($colspace == 'Indexed') AND (empty($pal))) {
+			if (($colspace == 'Indexed') AND (!(bool)($pal ?? null))) {
 				//$this->Error('Missing palette in '.$file);
 				return false;
 			}
@@ -5694,7 +5694,7 @@ if (!class_exists('TCPDF')) {
 			$color = preg_replace('/[\s]*/', '', $color); // remove extra spaces
 			// set default color to be returned in case of error
 			$returncolor = array ('R' => 0, 'G' => 0, 'B' => 0);
-			if (empty($color)) {
+			if (!(bool)($color ?? null)) {
 				return $returncolor;
 			}
 			if (substr(strtolower($color), 0, 3) == 'rgb') {

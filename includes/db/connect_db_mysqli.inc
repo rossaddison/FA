@@ -30,7 +30,7 @@ function set_global_connection(string|int|float|bool|null $company=-1): mysqli|f
 	$connection = $db_connections[$company];
 
 	$db = mysqli_connect($connection["host"], $connection["dbuser"], $connection["dbpassword"], "", 
-		!empty($connection["port"]) ? $connection["port"] : 3306); // default port in mysql is 3306
+		(bool)($connection["port"] ?? null) ? $connection["port"] : 3306); // default port in mysql is 3306
 		
 	mysqli_select_db($db, $connection["dbname"]);
 	///// From mysqli release 5.6.6 the sql_mode is no longer empty as it was prior to

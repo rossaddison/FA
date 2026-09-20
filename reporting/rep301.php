@@ -149,7 +149,7 @@ function print_inventory_valuation_report(): void
 		include_once($path_to_root . "/reporting/includes/excel_report.inc");
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
-	$detail = !$detail;
+	$detail = !(bool)$detail;
     $dec = user_price_dec();
 
 	$orientation = ((bool)$orientation ? 'L' : 'P');

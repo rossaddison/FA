@@ -193,7 +193,7 @@ function is_new_customer(string|int|float|bool|null $id): bool
 {
 	$tables = array('cust_branch', 'debtor_trans', 'recurrent_invoices', 'sales_orders');
 
-	return !key_in_foreign_table($id, $tables, 'debtor_no');
+	return !(bool)key_in_foreign_table($id, $tables, 'debtor_no');
 }
 
 /**

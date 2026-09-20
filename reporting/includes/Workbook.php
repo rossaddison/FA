@@ -3228,9 +3228,9 @@ class Spreadsheet_Excel_Writer_Parser
     {
         preg_match('/(\$)?(\d+)\:(\$)?(\d+)/', $range, $match);
         // return absolute rows if there is a $ in the ref
-        $row1_rel = empty($match[1]) ? 1 : 0;
+        $row1_rel = !(bool)($match[1] ?? null) ? 1 : 0;
         $row1     = $match[2];
-        $row2_rel = empty($match[3]) ? 1 : 0;
+        $row2_rel = !(bool)($match[3] ?? null) ? 1 : 0;
         $row2     = $match[4];
         // Convert 1-index to zero-index
         $row1--;
@@ -3275,9 +3275,9 @@ class Spreadsheet_Excel_Writer_Parser
     {
         preg_match('/(\$)?([A-I]?[A-Z])(\$)?(\d+)/',$cell,$match);
         // return absolute column if there is a $ in the ref
-        $col_rel = empty($match[1]) ? 1 : 0;
+        $col_rel = !(bool)($match[1] ?? null) ? 1 : 0;
         $col_ref = $match[2];
-        $row_rel = empty($match[3]) ? 1 : 0;
+        $row_rel = !(bool)($match[3] ?? null) ? 1 : 0;
         $row     = $match[4];
 
         // Convert base26 column string to a number.

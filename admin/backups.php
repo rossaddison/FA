@@ -120,7 +120,7 @@ function compress_list_row(?string $label, ?string $name, string|int|float|bool|
 
 function download_file(?string $filename): bool
 {
-    if (empty($filename) || !file_exists($filename))
+    if (!(bool)($filename ?? null) || !file_exists($filename))
     {
 		display_error(_('Select backup file first.'));
         return false;

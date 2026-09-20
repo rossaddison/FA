@@ -39,7 +39,7 @@ function display_issue_items(?string $title, items_cart &$order): void
 	$k = 0;  //row colour counter
 
 	if (count($order->line_items))
-		$low_stock = $order->check_qoh($_POST['Location'], $_POST['date_'], !$_POST['IssueType']);
+		$low_stock = $order->check_qoh($_POST['Location'], $_POST['date_'], !(bool)$_POST['IssueType']);
 	$id = find_submit('Edit');
 	foreach ($order->line_items as $line_no=>$stock_item)
 	{

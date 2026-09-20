@@ -223,7 +223,7 @@ function bank_account_settings(string|int|float|bool|array|null $bank_id): void
 
 	end_table(1);
 
-	submit_add_or_update_center(!$bank_id, '', 'both');
+	submit_add_or_update_center(!(bool)$bank_id, '', 'both');
 }
 
 if (!(bool)$bank_id)

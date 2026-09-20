@@ -284,7 +284,7 @@ function check_item_data(string|int|null $n): bool
 	}
 
 	if ($SysPrefs->check_qty_charged_vs_del_qty == true && ($_POST['qty_recd'.$n] != $_POST['prev_quantity_inv'.$n])
-		&& !empty($_POST['prev_quantity_inv'.$n]))
+		&& (bool)($_POST['prev_quantity_inv'.$n] ?? null))
 	{
 		if (input_num('this_quantity_inv'.$n) / ($_POST['qty_recd'.$n] - $_POST['prev_quantity_inv'.$n]) >
 			(1+ ($margin / 100)))

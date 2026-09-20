@@ -1500,7 +1500,7 @@ if (!function_exists('_vd'))
 {
   	function _vd(mixed $mixed, string|int|float|bool|null $title = '', string|int|float|bool|null $exit = false): void
   	{
-    	$str = (!empty($title) ? ($title .':') : '') .'<pre>';
+    	$str = ((bool)($title ?? null) ? ($title .':') : '') .'<pre>';
     	$str .= print_r($mixed, true); //var_dump($mixed);
     	$str .= "</pre>\n";
 		display_notification('<table><tr><td>'.$str.'</td></tr></table>');
@@ -1511,7 +1511,7 @@ if (!function_exists('_vd'))
 
 function _vl(mixed $mixed, string|int|float|bool|null $title = '', string|int|float|bool|null $exit = false): void
 {
-	error_log((!empty($title) ? ($title .':') : '') . print_r($mixed, true));
+	error_log(((bool)($title ?? null) ? ($title .':') : '') . print_r($mixed, true));
 	if ((bool)$exit)
 		exit;
 }

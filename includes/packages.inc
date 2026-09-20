@@ -365,7 +365,7 @@ function get_pkg_or_list(string|int|float|bool|array|null $type = null, string|i
 		foreach($pkglist as $name => $pkg) {
 			$pkgfullname = $repo.'/'.(string)$parms['Path']."/".(string)$pkg['Filename'].'.pkg';
 			if (!isset($type) || in_array($pkg['Type'], $type)) {
-				if (empty($filter))
+				if (!(bool)($filter ?? null))
 					$p = $pkg;
 				else {
 					foreach($filter as $field => $key) {

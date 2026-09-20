@@ -96,7 +96,7 @@ function defaultCompany()
 
 	$value = (bool)$login_timeout ? $_SESSION['wa_current_user']->loginname : ($SysPrefs->allow_demo_mode ? "demouser":"");
 
-	$allow = SECURE_ONLY !== true ? true : (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_NAME'] === "localhost";
+	$allow = SECURE_ONLY !== true ? true : ((bool)($_SERVER['HTTPS'] ?? null) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_NAME'] === "localhost";
 
 	if ($allow) {
 

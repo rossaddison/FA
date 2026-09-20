@@ -116,7 +116,7 @@ function display_title(?string $title, string|int|float|bool|null $id=false, str
 		echo "</span>";
 		*/
 		echo "<span style='margin-left:10px;text-align:right;'>";
-		if (!empty($per))
+		if ((bool)($per ?? null))
 		{
 			$sel1 = array(3 => "3", 4 => "4", 5 => "5", 6 => "6", 7 => "7", 8=> "8");
 			echo "<select id='per_$id' name='per_$id' style='border:1px solid #bbb;color:#555;' onchange='chart_update(this, \"$id\");'>";
@@ -969,7 +969,7 @@ function cash_flow(?string $today): void
 
 function source_graphic(string|int|float|bool|null $today, string|int|float|bool|null $title, ?string $x_axis, ?object $pg, ?string $per = '', string|int|bool|array|null $num = false): void
 {
-	if (!empty($per))
+	if ((bool)($per ?? null))
 		div_start($pg->id);
 	//$today = sql2date($today);
 	display_title("$title ($today)", $pg->id, $pg->type, $per, $num);	
@@ -988,7 +988,7 @@ function source_graphic(string|int|float|bool|null $today, string|int|float|bool
 		$pg->setXTitle($x_axis);
 		$pg->setYTitle(_("Amount"));
 	}
-	if (empty($per))
+	if (!(bool)($per ?? null))
 		div_start($pg->id);
 	$pg->display();
 	div_end();

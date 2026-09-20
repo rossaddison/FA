@@ -183,7 +183,7 @@ function get_extern_rate(string|int|float|bool|null $curr_b, mixed $provider, st
 		$proto = 'https://';
 		$contents=file_get_contents($proto.$site.$filename);
 	}
-	if (empty($contents)) {
+	if (!(bool)($contents ?? null)) {
 		if (function_exists('curl_init'))
 		{	// first check with curl as we can set short timeout;
 			$retry = 1;

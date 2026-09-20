@@ -152,7 +152,7 @@ function display_gl_items(string|int|float|bool|supp_trans|null $title, ?items_c
 		$th = array(_("Account Code"), _("Account Description"),
 			_("Amount"), _("Memo"), "");
 
-	if (!empty($order->gl_items)) $th[] = ''; // gl_items is null until the first line is added
+	if ((bool)($order->gl_items ?? null)) $th[] = ''; // gl_items is null until the first line is added
 
 	table_header($th);
 	$k = 0;  //row colour counter

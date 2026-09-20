@@ -195,7 +195,7 @@ function is_new_supplier(string|int|float|bool|null $id): bool
 {
 	$tables = array('supp_trans', 'grn_batch', 'purch_orders', 'purch_data');
 
-	return !key_in_foreign_table($id, $tables, 'supplier_id');
+	return !(bool)key_in_foreign_table($id, $tables, 'supplier_id');
 }
 
 function get_supplier_currency(string|int|float|bool|array|null $supplier_id)

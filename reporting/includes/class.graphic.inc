@@ -1839,7 +1839,7 @@ $ignorelist = array (utf8_chr(0x0000), utf8_chr(0x064c), utf8_chr(0x064d), utf8_
 		}
 		else
 		{
-			if (isset($ar[0][$i+1]) && !empty($ar[0][$i+1]))
+			if (isset($ar[0][$i+1]) && (bool)($ar[0][$i+1] ?? null))
 				$str_next = $ar[0][$i+1];
 			elseif ($i > 0 && isset($ar[0][$i-1])) 
 				$str_next = $ar[0][$i-1];
