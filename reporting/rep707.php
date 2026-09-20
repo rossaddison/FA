@@ -199,6 +199,7 @@ function print_profit_and_loss_statement(): void
 	$labels = array();
 	$serie1 = array();
 	$serie2 = array();
+	/** @var Chart $pg */
 	if ((bool)$graphics)
 	{
 		include_once($path_to_root . "/reporting/includes/class.graphic.inc");

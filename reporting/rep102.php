@@ -82,6 +82,7 @@ function print_aged_customer_analysis(): void
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
 	$orientation = ((bool)$orientation ? 'L' : 'P');
+	/** @var Chart $pg */
 	if ((bool)$graphics)
 	{
 		include_once($path_to_root . "/reporting/includes/class.graphic.inc");

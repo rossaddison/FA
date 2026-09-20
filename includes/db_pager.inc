@@ -548,6 +548,7 @@ class db_pager {
 //  during display, but can be used in format handlers for 'spec' and 'insert' 
 //	type columns.
 
+/** @return db_pager */
 function &new_db_pager($name, $sql, $coldef, $table = null, $key = null, $page_len = 0)  {
 
     if (isset($_SESSION[$name]) &&
