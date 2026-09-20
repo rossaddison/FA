@@ -63,6 +63,7 @@ class allocation
 		return $this->person_curr;
 	}
 
+	/** @psalm-external-mutation-free */
 	function add_item($type, $type_no, $date_, $due_date, $amount, $amount_allocated, 
 		$current_allocated, $ref, $foreign_ref)
 	{
@@ -78,6 +79,7 @@ class allocation
 		}
 	}
 	
+	/** @psalm-external-mutation-free */
 	function update_item($index, $type, $type_no, $date_, $due_date, 
 		$amount, $amount_allocated, $current_allocated, $ref, $foreign_ref)
 	{
@@ -93,6 +95,7 @@ class allocation
 		}
 	}
 	
+	/** @psalm-mutation-free */
 	function add_or_update_item($type, $type_no, $date_, $due_date, 
 		$amount, $amount_allocated, $current_allocated, $ref, $foreign_ref)
 	{
@@ -289,6 +292,7 @@ class allocation_item
 	var $current_allocated;
 	var $foreign_ref;
 
+	/** @psalm-mutation-free */
 	function __construct($type, $type_no, $date_, $due_date, $amount, 
 		$amount_allocated, $current_allocated, $ref, $foreign_ref)
 	{

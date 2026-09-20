@@ -28,6 +28,7 @@ $new_role = get_post('role')=='' || get_post('cancel') || get_post('clone');
 // is properly placed under related section regardless of 
 // unique extension number, with order inside sections preserved.
 //
+/** @psalm-pure */
 function comp_areas(string|int|float|bool|array|null $area1, string|int|float|bool|array|null $area2) 
 {
 	$sec_comp = ($area1[0]&0xff00)-($area2[0]&0xff00);

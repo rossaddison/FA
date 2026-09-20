@@ -26,6 +26,7 @@ include_once($path_to_root . "/inventory/includes/db/items_units_db.inc");
 
 /**
  * @return array<array-key, mixed>|null|string
+ * @psalm-pure
  */
 function item_img_name(string|int|float|bool|array|null $stock_id)
 {

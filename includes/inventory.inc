@@ -12,26 +12,31 @@
 include_once($path_to_root . "/includes/db/inventory_db.inc");
 
 
+/** @psalm-pure */
 function is_manufactured(string|int|float|bool|array|null $mb_flag): bool
 {
 	return ($mb_flag == 'M');
 }
 
+/** @psalm-pure */
 function is_purchased(string|int|float|bool|null $mb_flag): bool
 {
 	return ($mb_flag == 'B');
 }
 
+/** @psalm-pure */
 function is_service(?string $mb_flag): bool
 {
 	return ($mb_flag == 'D');
 }
 
+/** @psalm-pure */
 function is_fixed_asset(string|int|float|bool|array|null $mb_flag): bool
 {
 	return ($mb_flag == 'F');
 }
 
+/** @psalm-pure */
 function has_stock_holding(string|int|float|bool|null $mb_flag): bool
 {
 	return is_purchased($mb_flag) || is_manufactured($mb_flag);

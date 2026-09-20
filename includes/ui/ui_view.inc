@@ -816,6 +816,7 @@ function quickentry_calculate(int|float|bool|null $base, string|int|float|bool|n
 //
 //	Simple English version of number to words conversion.
 //
+/** @psalm-pure */
 function _number_to_words(int|float|null $number): string 
 { 
     $Bn = floor($number / 1000000000); /* Billions (giga) */ 
@@ -892,6 +893,7 @@ function price_in_words(string|int|float|bool|null $amount, mixed $document=0)
     return _number_to_words(intval($amount)) . $frac;
 }
 
+/** @psalm-pure */
 function get_js_open_window(string|int|float|bool|null $width, string|int|float|bool|null $height): string
 {
 	$js ="function openWindow(url, title)\n"
@@ -904,6 +906,7 @@ function get_js_open_window(string|int|float|bool|null $width, string|int|float|
 	return $js;
 }
 
+/** @psalm-pure */
 function get_js_lookup_window(): string {
   	$js = "function lookupWindow(url, title) {
     	var u = url.split('#');
@@ -917,6 +920,7 @@ function get_js_lookup_window(): string {
 	return $js;
 }
 
+/** @psalm-pure */
 function get_js_select_combo_item(): string {
 	$js = "function selectComboItem(doc, client_id, value){
     	var element = doc.getElementById(client_id);
@@ -942,6 +946,7 @@ function get_js_select_combo_item(): string {
 	return $js;
 }
 /* for space search option */
+/** @psalm-pure */
 function get_js_set_combo_item(): string {
 	$js = "function setComboItem(doc, client_id, value, text){
     	var element = doc.getElementById(client_id);

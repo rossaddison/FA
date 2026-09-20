@@ -37,6 +37,7 @@ print_stock_check();
  * @author		Ferry Bouwhuis
  * @version		1.0.1
  * @LastChange	2014-04-13
+ * @psalm-pure
  */
 
 function barcode_check(?string $code, bool $return_value = false, bool $get_type = false): string|false

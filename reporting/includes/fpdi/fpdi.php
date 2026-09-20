@@ -337,6 +337,7 @@ class FPDI extends FPDF_TPL {
 
     /**
      * Rewritten to handle existing own defined objects
+     * @psalm-external-mutation-free
      */
     function _newobj($obj_id=false,$onlynewobj=false) {
         if (!$obj_id) {
@@ -453,6 +454,7 @@ class FPDI extends FPDF_TPL {
     
     /**
      * Modified so not each call will add a newline to the output.
+     * @psalm-external-mutation-free
      */
     function _out($s, $ln=true) {
         //Add a line to the document
@@ -484,6 +486,7 @@ class FPDI extends FPDF_TPL {
     
     /**
      * close all files opened by parsers
+     * @psalm-external-mutation-free
      */
     function _closeParsers() {
         if ($this->state > 2 && is_array($this->parsers) && count($this->parsers) > 0) {

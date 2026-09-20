@@ -1373,6 +1373,7 @@ function sales_groups_list_row(?string $label, ?string $name, string|int|float|b
 
 //------------------------------------------------------------------------------------
 
+/** @psalm-pure */
 function _format_template_items(array|false|null $row): string
 {
 	return ($row[0] . "&nbsp;- &nbsp;" . _("Amount") . "&nbsp;".$row[1]);
@@ -1851,6 +1852,7 @@ function gl_all_accounts_list(string|int|float|bool|null $name, string|int|float
 		), $account );
 }
 
+/** @psalm-pure */
 function _format_account(array|false|null $row): string
 {
 	return $row[0] .  "&nbsp;&nbsp;&nbsp;&nbsp;" . $row[1];

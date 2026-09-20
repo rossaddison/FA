@@ -431,6 +431,7 @@ and converts to a yyyy/mm/dd format */
  *	Compare dates in sql format.
  *	Return +1 if sql date1>date2, -1 if date1<date2,
  *  or 0 if dates are equal.
+ * @psalm-pure
  */
 function sql_date_comp(string|int|float|bool|null $date1, string|int|null $date2): int
 {
@@ -537,6 +538,7 @@ function explode_date_to_dmy(string|int|float|bool|null $date_): array
 	return array($day, $month, $year);
 }
 
+/** @psalm-pure */
 function div(string|int|float|bool|null $a, ?int $b): int 
 {
     return (int) ($a / $b);
@@ -545,6 +547,7 @@ function div(string|int|float|bool|null $a, ?int $b): int
    Copyright (C) 2000  Roozbeh Pournader and Mohammad Toossi 
    Released under GNU General Public License */
 
+/** @psalm-pure */
 function gregorian_to_jalali (string|int|float|bool|null $g_y, string|int|float|bool|null $g_m, string|int|float|bool|null $g_d): array
 {
     $g_days_in_month = array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
@@ -585,6 +588,7 @@ function gregorian_to_jalali (string|int|float|bool|null $g_y, string|int|float|
    	return array($jy, $jm, $jd);
 }
 
+/** @psalm-pure */
 function jalali_to_gregorian(string|int|float|bool|null $j_y, string|int|float|bool|null $j_m, string|int|float|bool|null $j_d): array
 {
     $g_days_in_month = array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
@@ -639,6 +643,7 @@ function jalali_to_gregorian(string|int|float|bool|null $j_y, string|int|float|b
 }
 /* Based on Hidri Date Script 
    Released under GNU General Public License */
+/** @psalm-pure */
 function gregorian_to_islamic(string|int|float|bool|null $g_y, string|int|float|bool|null $g_m, string|int|float|bool|null $g_d): array
 {
 	$y = $g_y;   
@@ -669,6 +674,7 @@ function gregorian_to_islamic(string|int|float|bool|null $g_y, string|int|float|
 	return array($y, $m, $d);
 }
 
+/** @psalm-pure */
 function islamic_to_gregorian(string|int|float|bool|null $i_y, string|int|float|bool|null $i_m, string|int|float|bool|null $i_d): array
 {
 	$y = $i_y;   

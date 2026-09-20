@@ -94,6 +94,7 @@ function depr_method_title(array|false|null $row) {
   	return $depreciation_methods[$row['depreciation_method']];
 }
 
+/** @psalm-pure */
 function depr_par(array|false|null $row): string {
 	if ($row['depreciation_method'] == 'D')
 		return (float)$row['depreciation_rate']*(float)$row['depreciation_factor'].'%';
@@ -104,6 +105,7 @@ function depr_par(array|false|null $row): string {
 		return (string)$row['depreciation_rate'].'%';
 }
 
+/** @psalm-pure */
 function status_title(array|false|null $row): string {
 
    	if ((bool)$row['inactive'] || ($row['disposal_date'] !== NULL))

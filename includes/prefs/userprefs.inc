@@ -105,6 +105,7 @@ class user_prefs
 		}
 	}
 	
+	/** @psalm-mutation-free */
 	function get_all()
 	{
 			return array(
@@ -134,46 +135,55 @@ class user_prefs
 			'def_print_orientation' => $this->def_print_orientation);
 	}
 	
+	/** @psalm-mutation-free */
 	function language() 
 	{
 		return $this->language;
 	}
 
+	/** @psalm-mutation-free */
 	function qty_dec() 
 	{
 		return $this->qty_dec;
 	}
 
+	/** @psalm-mutation-free */
 	function price_dec() 
 	{
 		return $this->price_dec;
 	}
 
+	/** @psalm-mutation-free */
 	function exrate_dec() 
 	{
 		return $this->exrate_dec;
 	}
 
+	/** @psalm-mutation-free */
 	function percent_dec() 
 	{
 		return $this->percent_dec;
 	}
 
+	/** @psalm-mutation-free */
 	function show_gl_info() 
 	{
 		return $this->show_gl_info;
 	}
 
+	/** @psalm-mutation-free */
 	function show_codes() 
 	{
 		return $this->show_codes;
 	}
 
+	/** @psalm-mutation-free */
 	function date_format() 
 	{
 		return $this->date_format;
 	}
 
+	/** @psalm-mutation-free */
 	function date_sep() 
 	{
 		return $this->date_sep;
@@ -197,86 +207,103 @@ class user_prefs
 			return "Y".$sep."M".$sep."j";
 	}
 
+	/** @psalm-mutation-free */
 	function tho_sep() 
 	{
 		return $this->tho_sep;
 	}
 
+	/** @psalm-mutation-free */
 	function dec_sep() 
 	{
 		return $this->dec_sep;
 	}
 
+	/** @psalm-mutation-free */
 	function get_theme() 
 	{
 		return $this->theme;
 	}
 
+	/** @psalm-mutation-free */
 	function get_pagesize() 
 	{
 		return $this->pagesize;
 	}
 
+	/** @psalm-mutation-free */
 	function show_hints() 
 	{
 		return $this->show_hints;
 	}
 
+	/** @psalm-mutation-free */
 	function print_profile() 
 	{
 		return $this->print_profile;
 	}
 
+	/** @psalm-mutation-free */
 	function rep_popup() 
 	{
 		return $this->rep_popup;
 	}
 
+	/** @psalm-mutation-free */
 	function query_size() 
 	{
 		return $this->query_size;
 	}
 
+	/** @psalm-mutation-free */
 	function graphic_links() 
 	{
 		return $this->graphic_links;
 	}
 	
+	/** @psalm-mutation-free */
 	function sticky_date()
 	{
 		return $this->sticky_date;
 	}
 	
+	/** @psalm-mutation-free */
 	function start_up_tab()
 	{
 		return $this->startup_tab;
 	}
 
+    /** @psalm-mutation-free */
     function transaction_days() 
     {
         return $this->transaction_days;
     }
 
+    /** @psalm-mutation-free */
     function save_report_selections() 
     {
         return $this->save_report_selections;
     }
 
+    /** @psalm-mutation-free */
     function use_date_picker() 
     {
         return $this->use_date_picker;
     }
 
+    /** @psalm-mutation-free */
     function def_print_destination() 
     {
         return $this->def_print_destination;
     }
 
+    /** @psalm-mutation-free */
     function def_print_orientation() 
     {
         return $this->def_print_orientation;
     }
 
+	/** @psalm-external-mutation-free */
 	function set_dec($price_dec, $qty_dec, $exrate_dec, $percent_dec, $showgl, $showcodes) 
 	{
 		$this->price_dec = $price_dec;
@@ -287,6 +314,7 @@ class user_prefs
 		$this->show_codes = $showcodes;
 	}
 
+	/** @psalm-external-mutation-free */
 	function set_format($date_format, $date_sep, $tho_sep, $dec_sep, $theme, $pagesize) 
 	{
 		$this->date_format = $date_format;

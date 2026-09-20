@@ -234,6 +234,7 @@ class fa_patch {
 		Additional version specific php/sql upgrade procedures.
 		This procedure is performed after basic sql upgrade script is run.
 	*/
+	/** @psalm-pure */
 	function install($company, $force=false) 
 	{
 		return true;
@@ -242,6 +243,7 @@ class fa_patch {
 		Optional cleanup procedure.
 		This procedure is run in case of upgrade failure, before the backup is restored.
 	*/
+	/** @psalm-mutation-free */
 	function post_fail($company)
 	{
 	}
@@ -250,6 +252,7 @@ class fa_patch {
 		Present upgrade parameters to administrator
 		This function presents upgrade choices, after selection company to be upgraded.
     */
+	/** @psalm-mutation-free */
 	function show_params($comp)
     {
 	}
@@ -258,6 +261,7 @@ class fa_patch {
 	    Fetch & check upgrade parameters, check additional upgrade pre-conditions.
 		This function is run after successfull switching to target database connection.
     */
+	/** @psalm-pure */
 	function prepare()
     {
 		return true;

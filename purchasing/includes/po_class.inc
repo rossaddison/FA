@@ -89,6 +89,7 @@ class purch_order
 	 */
 	var $fixed_asset = false;
 
+	/** @psalm-mutation-free */
 	function __construct()
 	{
 		/*Constructor function initialises a new purchase order object */
@@ -128,16 +129,19 @@ class purch_order
 		$this->line_items[$line_no]->item_description = $description;
 	}
 
+	/** @psalm-external-mutation-free */
 	function remove_from_order($line_no)
 	{
 		array_splice($this->line_items, $line_no, 1);
 	}
 	
+	/** @psalm-mutation-free */
 	function order_has_items() 
 	{
 		return count($this->line_items) != 0;
 	}
 	
+	/** @psalm-external-mutation-free */
 	function clear_items() 
 	{
     	unset($this->line_items);
@@ -148,6 +152,7 @@ class purch_order
 	}
 
 	
+	/** @psalm-mutation-free */
 	function any_already_received()
 	{
 		/* Checks if there have been deliveries or invoiced entered against any of the line items */
@@ -164,6 +169,7 @@ class purch_order
 		return 0;
 	}
 
+	/** @psalm-mutation-free */
 	function some_already_received($line_no)
 	{
 		/* Checks if there have been deliveries or amounts invoiced against a specific line item */

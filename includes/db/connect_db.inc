@@ -27,6 +27,7 @@ function db_get_version()
 /*
 	Converts encoding name to mysql standard.
 */
+/** @psalm-pure */
 function get_mysql_encoding_name(string|int|float|bool|null $encoding): string|null
 {
 	$db_encoding = array(
@@ -140,6 +141,7 @@ function db_get_view_schema(string|int|float|bool|null $view)
 */
 if (!function_exists('db_profile'))
 {
+	/** @psalm-mutation-free */
 	function db_profile(string|int|float|bool|array|null $sql=false): void
 	{
 	}

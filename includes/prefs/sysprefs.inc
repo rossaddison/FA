@@ -70,6 +70,7 @@ class sys_prefs extends stdClass
 		$this->db_ok = $this->prefs['version_id'] == $db_version;
 	}
 
+	/** @psalm-mutation-free */
 	function allow_negative_stock() 
 	{
 		return $this->prefs['allow_negative_stock'];
@@ -79,6 +80,7 @@ class sys_prefs extends stdClass
     invoice
     The figure entered is interpreted as a percentage ie 10 means 0.1 or 10% not 10 times
     */
+	/** @psalm-mutation-free */
 	function over_receive_allowance() 
 	{
 		return $this->prefs['po_over_receive'];
@@ -89,91 +91,109 @@ class sys_prefs extends stdClass
     purchase invoice line cannot be entered
     The figure entered is interpreted as a percentage ie 20 means 0.2 or 20% not 20 times
     */	
+	/** @psalm-mutation-free */
 	function over_charge_allowance() 
 	{
 		return $this->prefs['po_over_charge'];
 	}
 	
+	/** @psalm-mutation-free */
 	function default_credit_limit() 
 	{
 		return $this->prefs['default_credit_limit'];
 	}				
 	
+	/** @psalm-mutation-free */
 	function default_wo_required_by() 
 	{
 		return $this->prefs['default_workorder_required'];
 	}
 
+	/** @psalm-mutation-free */
 	function default_quote_valid_days() 
 	{
 		return $this->prefs['default_quote_valid_days'];
 	}
 
+	/** @psalm-mutation-free */
 	function default_delivery_required_by() 
 	{
 		return $this->prefs['default_delivery_required'];
 	}
 
+	/** @psalm-mutation-free */
 	function default_receival_required_by() 
 	{
 		return $this->prefs['default_receival_required'];
 	}
 
+	/** @psalm-mutation-free */
 	function default_dimension_required_by() 
 	{
 		return $this->prefs['default_dim_required'];
 	}	
 	
+	/** @psalm-mutation-free */
 	function auto_currency_revaluation() 
 	{
 		return $this->prefs['auto_curr_reval'];
 	}	
 	
+	/** @psalm-mutation-free */
 	function allocation_settled_allowance()
 	{
 		return $this->config_allocation_settled_allowance;
 	}
 
+	/** @psalm-mutation-free */
 	function no_zero_lines_amount() 
 	{
 		return $this->prefs['no_zero_lines_amount'];
 	}
 
+	/** @psalm-mutation-free */
 	function show_po_item_codes() 
 	{
 		return $this->prefs['show_po_item_codes'];
 	}
 
+	/** @psalm-mutation-free */
 	function accounts_alpha() 
 	{
 		return $this->prefs['accounts_alpha'];
 	}
 
+	/** @psalm-mutation-free */
 	function loc_notification() 
 	{
 		return $this->prefs['loc_notification'];
 	}
 
+	/** @psalm-mutation-free */
 	function print_invoice_no() 
 	{
 		return $this->prefs['print_invoice_no'];
 	}
 
+	/** @psalm-mutation-free */
 	function allow_negative_prices() 
 	{
 		return $this->prefs['allow_negative_prices'];
 	}
 
+	/** @psalm-mutation-free */
 	function print_item_images_on_quote() 
 	{
 		return $this->prefs['print_item_images_on_quote'];
 	}
 
+	/** @psalm-mutation-free */
 	function alternative_tax_include_on_docs() 
 	{
 		return $this->prefs['alternative_tax_include_on_docs'];
 	}
 
+	/** @psalm-mutation-free */
 	function suppress_tax_rates() 
 	{
 		return $this->prefs['suppress_tax_rates'];

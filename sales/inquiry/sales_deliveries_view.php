@@ -128,6 +128,7 @@ function trans_view(array $trans, string|int|float|bool|array|null $trans_no)
 	return get_customer_trans_view_str(ST_CUSTDELIVERY, $trans['trans_no']);
 }
 
+/** @psalm-pure */
 function batch_checkbox(array|false|null $row): string
 {
 	$name = "Sel_" .(string)$row['trans_no'];

@@ -93,6 +93,7 @@ function fmt_person(array $trans)
 	return get_counterparty_name($trans["type"], $trans["trans_no"]);
 }
 
+/** @psalm-pure */
 function fmt_memo(array|false|null $row)
 {
 	$value = $row["memo_"];

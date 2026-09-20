@@ -100,6 +100,7 @@ function db_query(string $sql, ?string $err_msg=null): mysqli_result|bool
  * @template T
  * @param array<array-key, T>|false|null $row
  * @return array<array-key, T>
+ * @psalm-pure
  */
 function row_or_empty(array|false|null $row): array
 {
@@ -108,6 +109,7 @@ function row_or_empty(array|false|null $row): array
 
 /**
  * @return list<string|null>|false a row with numeric keys; mysqli returns every column as a string or null
+ * @psalm-pure
  */
 function db_fetch_row(mysqli_result $result): array|false
 {
@@ -117,6 +119,7 @@ function db_fetch_row(mysqli_result $result): array|false
 
 /**
  * @return array<string, string|null>|false a row keyed by column name
+ * @psalm-pure
  */
 function db_fetch_assoc(mysqli_result $result): array|false
 {
@@ -126,6 +129,7 @@ function db_fetch_assoc(mysqli_result $result): array|false
 
 /**
  * @return array<array-key, string|null>|false a row keyed by column name and by position
+ * @psalm-pure
  */
 function db_fetch(mysqli_result $result): array|false
 {
@@ -133,6 +137,7 @@ function db_fetch(mysqli_result $result): array|false
 	return ($ret === null ? false : $ret);
 }
 
+/** @psalm-pure */
 function db_seek(&$result,mixed $record): bool
 {
 	return mysqli_data_seek($result, $record);
@@ -144,11 +149,13 @@ function db_free_result(bool|mysqli_result $result): void
 		mysqli_free_result($result);
 }
 
+/** @psalm-pure */
 function db_num_rows(mysqli_result $result): int|string
 {
 	return mysqli_num_rows($result);
 }
 
+/** @psalm-pure */
 function db_num_fields(mysqli_result $result): int
 {
 	return mysqli_num_fields($result);
@@ -187,6 +194,7 @@ function db_error_no(): int
     return mysqli_errno($db);
 }
 
+/** @psalm-pure */
 function db_error_msg(array $conn): string
 {
 	return mysqli_error($conn);
@@ -205,6 +213,7 @@ function db_num_affected_rows(): int|string
 	return mysqli_affected_rows($db);
 }
 
+/** @psalm-pure */
 function db_field_name(mysqli_result $result, string|int|float|bool|null $n): string
 {
     $fieldinfo = mysqli_fetch_field_direct($result, $n);
@@ -278,6 +287,7 @@ function db_close(string|int|float|bool|null $dbase = null): bool
 	return mysqli_close($dbase);
 }
 
+/** @psalm-pure */
 function db_extension_exists(): bool
 {
 	return function_exists('mysqli_connect');
@@ -308,6 +318,7 @@ function db_set_encoding(?string $ui_encoding=null): void
 		mysqli_set_charset($db, $mysql_enc);
 }
 
+/** @psalm-pure */
 function db_get_charset(mysqli $db): string
 {
 	return mysqli_character_set_name($db);

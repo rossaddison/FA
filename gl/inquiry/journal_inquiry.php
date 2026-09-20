@@ -59,6 +59,7 @@ submit_cells('Search', _("Search"), '', '', 'default');
 end_row();
 end_table();
 
+/** @psalm-pure */
 function journal_pos(array|false|null $row)
 {
 	return (bool)$row['gl_seq'] ? $row['gl_seq'] : '-';
@@ -100,6 +101,7 @@ function edit_link(array|false|null $row)
 	return $ok ? trans_editor_link( $row["trans_type"], $row["trans_no"]) : '--';
 }
 
+/** @psalm-pure */
 function invoice_supp_reference(array|false|null $row)
 {
 	return $row['supp_reference'];

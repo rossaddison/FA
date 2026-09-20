@@ -86,6 +86,7 @@ class fpdi_pdf_parser extends pdf_parser {
      * Overwrite parent::error()
      *
      * @param string $msg  Error-Message
+     * @psalm-mutation-free
      */
     function error($msg) {
     	$this->fpdi->error($msg);	
@@ -105,6 +106,7 @@ class fpdi_pdf_parser extends pdf_parser {
      * Set pageno
      *
      * @param int $pageno Pagenumber to use
+     * @psalm-external-mutation-free
      */
     function setPageno($pageno) {
         $pageno = ((int) $pageno) - 1;

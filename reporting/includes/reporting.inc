@@ -182,6 +182,7 @@ An example of usage will be in the reporting/rep110.php file at near the end jus
     }
 */
 
+/** @psalm-pure */
 function parse_notes_params(string|int|float|bool|null $str, string|int|float|bool|null $sep=" ", string|int|float|bool|null $delim="#"): array {
     $str_params = explode($sep, $str);
     $param_array=Array('notes' => '');

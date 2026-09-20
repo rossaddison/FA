@@ -105,11 +105,13 @@ class items_cart
 		$this->line_items[$line_no]->standard_cost = $standard_cost;
 	}
 
+	/** @psalm-external-mutation-free */
 	function remove_from_cart($line_no)
 	{
 		array_splice($this->line_items, $line_no, 1);
 	}
 
+	/** @psalm-mutation-free */
 	function count_items()
 	{
 		return count($this->line_items);
@@ -186,16 +188,19 @@ class items_cart
 
 	}
 
+	/** @psalm-external-mutation-free */
 	function remove_gl_item($index)
 	{
 		array_splice($this->gl_items, $index, 1);
 	}
 
+	/** @psalm-mutation-free */
 	function count_gl_items()
 	{
 		return count($this->gl_items);
 	}
 
+	/** @psalm-mutation-free */
 	function gl_items_total()
 	{
 		$total = 0;
@@ -204,6 +209,7 @@ class items_cart
 		return $total;
 	}
 
+	/** @psalm-mutation-free */
 	function gl_items_total_debit()
 	{
 		$total = 0;
@@ -215,6 +221,7 @@ class items_cart
 		return $total;
 	}
 
+	/** @psalm-mutation-free */
 	function gl_items_total_credit()
 	{
 		$total = 0;
@@ -228,6 +235,7 @@ class items_cart
 
 	// ------------ common functions
 
+	/** @psalm-external-mutation-free */
 	function clear_items()
 	{
     	unset($this->line_items);
@@ -339,6 +347,7 @@ class items_cart
 		return $tax_info;
 	}
 
+	/** @psalm-external-mutation-free */
 	function set_currency($curr, $rate=0)
 	{
 		$this->currency = $curr;

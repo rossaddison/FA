@@ -132,11 +132,13 @@ function gl_view(array|false|null $row)
 	return get_gl_view_str($row["type"], $row["trans_no"]);
 }
 
+/** @psalm-pure */
 function date_view(array|false|null $row)
 {
 	return $row['trans_date'];
 }
 
+/** @psalm-pure */
 function ref_view(array|false|null $row)
 {
 	return $row['ref'];

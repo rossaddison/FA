@@ -10,6 +10,7 @@
   See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
  ***********************************************************************/
 
+/** @psalm-pure */
 function next_depreciation_date(string|int|float|bool|null $depreciation_date): int|false {
 
   $start = strtotime($depreciation_date);
@@ -25,6 +26,7 @@ function next_depreciation_date(string|int|float|bool|null $depreciation_date): 
   return strtotime("$y-$m-1");
 }
 
+/** @psalm-pure */
 function depreciation_months(?string $depreciation_start): float|int {
 
   // assume that depreciation start is the same fiscal year
@@ -42,6 +44,7 @@ function depreciation_months(?string $depreciation_start): float|int {
     //$months++;
 }
 
+/** @psalm-pure */
 function months_between_dates(string|int|float|bool|null $start, string|int|float|bool|null $end): int|float {
   $start = strtotime($start);
   $end = strtotime($end);

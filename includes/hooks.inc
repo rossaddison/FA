@@ -66,6 +66,7 @@ class hooks {
 	//
 	//	Install additional tabs provided by extension
 	//
+	/** @psalm-mutation-free */
 	function install_tabs($app)
 	{
 //		$app->add_application(new example_class); // add menu tab defined by example_class
@@ -73,6 +74,7 @@ class hooks {
 	//
 	//	Install additonal menu options provided by extension
 	//
+	/** @psalm-mutation-free */
 	function install_options($app)
 	{
 //		global $path_to_root;
@@ -84,6 +86,7 @@ class hooks {
 //		}
 	}
 	
+	/** @psalm-mutation-free */
 	function install_access()
 	{
 //		$security_areas['SA_EXAMPLE'] = array(SS_EXAMPLE|100, _("Example security area."));
@@ -96,12 +99,14 @@ class hooks {
 	//
 	//	Invoked for all modules before page header is displayed
 	//
+	/** @psalm-mutation-free */
 	function pre_header($fun_args)
 	{
 	}
 	//
 	//	Invoked for all modules before page footer is displayed
 	//
+	/** @psalm-mutation-free */
 	function pre_footer($fun_args)
 	{
 	}
@@ -113,6 +118,7 @@ class hooks {
 	//
 	//	Returns: amount in words as string.
 
+	/** @psalm-mutation-free */
 	function price_in_words($amount, $doc_type)
 	{
 	}
@@ -124,6 +130,7 @@ class hooks {
 	// with apprioprate provider set, otherwise implement your own.
 	// Returns: $curr value in home currency units as a real number.
 
+	/** @psalm-pure */
 	function retrieve_exrate($curr, $date)
 	{
 //	 	$provider = 'ECB'; // 'ECB', 'YAHOO' or 'GOOGLE'
@@ -133,6 +140,7 @@ class hooks {
 
 	// External authentication
 	// If used should return true after successfull athentication, false otherwise.
+	/** @psalm-pure */
 	function authenticate($login, $password)
 	{
 		return null;
@@ -142,6 +150,7 @@ class hooks {
 	// or to print special tax report footer 
 	//
 	// Returns: nothing
+	/** @psalm-mutation-free */
 	function tax_report_done()
 	{
 	}
@@ -149,16 +158,19 @@ class hooks {
 	// 'cart' => transaction data
 	// 'trans_type' => transaction type
 
+	/** @psalm-pure */
 	function db_prewrite(&$cart, $trans_type)
 	{
 		return true;
 	}
 
+	/** @psalm-pure */
 	function db_postwrite(&$cart, $trans_type)
 	{
 		return true;
 	}
 
+	/** @psalm-pure */
 	function db_prevoid($trans_type, $trans_no)
 	{
 		return true;
@@ -166,6 +178,7 @@ class hooks {
 	/*
 		This method is called after module install.
 	*/
+	/** @psalm-pure */
 	function install_extension($check_only=true)
 	{
 		return true;
@@ -173,6 +186,7 @@ class hooks {
 	/*
 		This method is called after module uninstall.
 	*/
+	/** @psalm-pure */
 	function uninstall_extension($check_only=true)
 	{
 		return true;
@@ -180,6 +194,7 @@ class hooks {
 	/*
 		This method is called on extension activation for company.
 	*/
+	/** @psalm-pure */
 	function activate_extension($company, $check_only=true)
 	{
 		return true;
@@ -187,6 +202,7 @@ class hooks {
 	/*
 		This method is called when extension is deactivated for company.
 	*/
+	/** @psalm-pure */
 	function deactivate_extension($company, $check_only=true)
 	{
 		return true;

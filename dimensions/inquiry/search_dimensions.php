@@ -102,6 +102,7 @@ function sum_dimension(array|false|null $row)
 	return get_dimension_balance($row['id'], $_POST['FromDate'], $_POST['ToDate']); 
 }
 
+/** @psalm-pure */
 function is_closed(array|false|null $row): string
 {
 	return (bool)$row['closed'] ? _('Yes') : _('No');

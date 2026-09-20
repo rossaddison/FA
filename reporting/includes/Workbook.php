@@ -109,11 +109,13 @@ define('DataSizeSmall', 0x1000);
 define('LongIntSize', 4);
 define('PpsSize', 0x80);
 
+/** @psalm-pure */
 function Asc2Ucs($sAsc) 
 {
     return implode("\x00", (preg_split('//', $sAsc, -1, PREG_SPLIT_NO_EMPTY)))."\x00";
 }
 
+/** @psalm-pure */
 function Ucs2Asc($sUcs) 
 {
     $chars=explode("\x00", $sUcs);
@@ -121,6 +123,7 @@ function Ucs2Asc($sUcs)
     return implode("", $chars);
 }
 
+/** @psalm-mutation-free */
 function OLEDate2Local($sDateTime) 
 {
 }
@@ -128,20 +131,24 @@ function OLEDate2Local($sDateTime)
 #------------------------------------------------------------------------------
 # Localtime->OLE Date
 #------------------------------------------------------------------------------
+/** @psalm-mutation-free */
 function LocalDate2OLE($raDate) 
 {
 }
 
+/** @psalm-pure */
 function _leapYear($iYear) 
 {
     return ((($iYear % 4)==0) && (($iYear % 100) || ($iYear % 400)==0)) ? 1 : 0;
 }
 
+/** @psalm-pure */
 function _yearDays($iYear) 
 {
     return _leapYear($iYear) ? 366 : 365;
 }
 
+/** @psalm-pure */
 function _monthDays($iMon, $iYear) 
 {
     if ($iMon == 1 || $iMon ==  3 || $iMon ==  5 || $iMon == 7 ||
@@ -178,6 +185,7 @@ class ole_pps
     # _new (OLE::Storage_Lite::PPS)
     #   for OLE::Storage_Lite
     #------------------------------------------------------------------------------
+    /** @psalm-mutation-free */
     function __construct($iNo, $sNm, $iType, $iPrev, $iNext, $iDir,
                      $raTime1st, $raTime2nd, $iStart, $iSize,
                      $sData=false, $raChild=false) 
@@ -203,6 +211,7 @@ class ole_pps
     # _DataLen (OLE::Storage_Lite::PPS)
     # Check for update
     #------------------------------------------------------------------------------
+    /** @psalm-mutation-free */
     function _DataLen() 
     {
         if ($this->Data===false) 
@@ -366,6 +375,7 @@ class ole_pps_file extends ole_pps
 
 class ole_pps_root extends ole_pps 
 {
+    /** @psalm-mutation-free */
     function __construct($raTime1st=false, $raTime2nd=false, $raChild=false) 
     {
         $this->No         = false;
@@ -488,6 +498,7 @@ class ole_pps_root extends ole_pps
 	#------------------------------------------------------------------------------
 	# _adjust2 (OLE::Storage_Lite::PPS::Root)
 	#------------------------------------------------------------------------------
+	/** @psalm-pure */
 	function _adjust2($i2) 
 	{
   		$iWk = log($i2)/log(2);
@@ -987,6 +998,7 @@ class Spreadsheet_Excel_Writer_BIFFwriter
     *
     * @param string $data binary data to prepend
     * @access private
+    * @psalm-external-mutation-free
     */
     function _prepend($data)
     {
@@ -1002,6 +1014,7 @@ class Spreadsheet_Excel_Writer_BIFFwriter
     *
     * @param string $data binary data to append
     * @access private
+    * @psalm-external-mutation-free
     */
     function _append($data)
     {
@@ -1019,6 +1032,7 @@ class Spreadsheet_Excel_Writer_BIFFwriter
     * @param  integer $type Type of BIFF file to write: 0x0005 Workbook,
     *                       0x0010 Worksheet.
     * @access private
+    * @psalm-mutation-free
     */
     function _storeBof($type)
     {
@@ -1048,6 +1062,7 @@ class Spreadsheet_Excel_Writer_BIFFwriter
     * Writes Excel EOF record to indicate the end of a BIFF stream.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeEof()
     {
@@ -1068,6 +1083,7 @@ class Spreadsheet_Excel_Writer_BIFFwriter
     * @param  string  $data The original binary data to be written
     * @return string        A very convenient string of continue blocks
     * @access private
+    * @psalm-mutation-free
     */
     function _addContinue($data)
     {
@@ -1137,6 +1153,7 @@ class Spreadsheet_Excel_Writer_Validator
     */
     var $_parser;
 
+    /** @psalm-mutation-free */
     function __construct(&$parser)
     {
         $this->_parser       = $parser;
@@ -1156,6 +1173,7 @@ class Spreadsheet_Excel_Writer_Validator
         $this->_formula2    = '';
     }
 
+   /** @psalm-external-mutation-free */
    function setPrompt($promptTitle = "\x00", $promptDescription = "\x00", $showPrompt = true)
    {
       $this->_showprompt = $showPrompt;
@@ -1163,6 +1181,7 @@ class Spreadsheet_Excel_Writer_Validator
       $this->_descr_prompt = $promptDescription;
    }
 
+   /** @psalm-external-mutation-free */
    function setError($errorTitle = "\x00", $errorDescription = "\x00", $showError = true)
    {
       $this->_showerror = $showError;
@@ -1170,21 +1189,25 @@ class Spreadsheet_Excel_Writer_Validator
       $this->_descr_error = $errorDescription;
    }
 
+   /** @psalm-external-mutation-free */
    function allowBlank()
    {
       $this->_blank = true;
    }
 
+   /** @psalm-external-mutation-free */
    function onInvalidStop()
    {
       $this->_style = 0x00;
    }
 
+    /** @psalm-external-mutation-free */
     function onInvalidWarn()
     {
         $this->_style = 0x01;
     }
 
+    /** @psalm-external-mutation-free */
     function onInvalidInfo()
     {
         $this->_style = 0x02;
@@ -1208,6 +1231,7 @@ class Spreadsheet_Excel_Writer_Validator
         return true;
     }
 
+    /** @psalm-mutation-free */
     function _getOptions()
     {
         $options = $this->_type;
@@ -1232,6 +1256,7 @@ class Spreadsheet_Excel_Writer_Validator
       return $options;
    }
 
+   /** @psalm-mutation-free */
    function _getData()
    {
       $title_prompt_len = strlen($this->_title_prompt);
@@ -1473,6 +1498,7 @@ class Spreadsheet_Excel_Writer_Format
     * @access private
     * @param integer $index the XF index for the format.
     * @param array   $properties array with properties to be set on initialization.
+    * @psalm-mutation-free
     */
     function __construct($BIFF_version, $index = 0, $properties =  array())
     {
@@ -1536,6 +1562,7 @@ class Spreadsheet_Excel_Writer_Format
     *
     * @param string $style The type of the XF record ('style' or 'cell').
     * @return string The XF record
+    * @psalm-external-mutation-free
     */
     function getXf($style)
     {
@@ -1668,6 +1695,7 @@ class Spreadsheet_Excel_Writer_Format
     * Generate an Excel BIFF FONT record.
     *
     * @return string The FONT record
+    * @psalm-mutation-free
     */
     function getFont()
     {
@@ -1724,6 +1752,7 @@ class Spreadsheet_Excel_Writer_Format
     * (eg. _color) are placed between two binary elements such as _italic
     *
     * @return string A key for this font
+    * @psalm-mutation-free
     */
     function getFontKey()
     {
@@ -1754,6 +1783,7 @@ class Spreadsheet_Excel_Writer_Format
     * @access private
     * @param string $name_color name of the color (i.e.: 'blue', 'red', etc..). Optional.
     * @return integer The color index
+    * @psalm-pure
     */
     function _getColor($name_color = '')
     {
@@ -1812,6 +1842,7 @@ class Spreadsheet_Excel_Writer_Format
     *
     * @access public
     * @param string $location alignment for the cell ('left', 'right', etc...).
+    * @psalm-external-mutation-free
     */
     function setAlign($location)
     {
@@ -1870,6 +1901,7 @@ class Spreadsheet_Excel_Writer_Format
     *
     * @access public
     * @param string $location alignment for the cell ('left', 'right', etc...).
+    * @psalm-external-mutation-free
     */
     function setHAlign($location)
     {
@@ -1910,6 +1942,7 @@ class Spreadsheet_Excel_Writer_Format
     *
     * @access public
     * @param string $location alignment for the cell ('top', 'vleft', 'vright', etc...).
+    * @psalm-external-mutation-free
     */
     function setVAlign($location)
     {
@@ -1943,6 +1976,7 @@ class Spreadsheet_Excel_Writer_Format
     * This is an alias for the unintuitive setAlign('merge')
     *
     * @access public
+    * @psalm-mutation-free
     */
     function setMerge()
     {
@@ -1958,6 +1992,7 @@ class Spreadsheet_Excel_Writer_Format
     * @param integer $weight Weight for the text, 0 maps to 400 (normal text),
                              1 maps to 700 (bold text). Valid range is: 100-1000.
                              It's Optional, default is 1 (bold).
+    * @psalm-external-mutation-free
     */
     function setBold($weight = 1)
     {
@@ -1986,6 +2021,7 @@ class Spreadsheet_Excel_Writer_Format
     *
     * @access public
     * @param integer $style style of the cell border. 1 => thin, 2 => thick.
+    * @psalm-external-mutation-free
     */
     function setBottom($style)
     {
@@ -1997,6 +2033,7 @@ class Spreadsheet_Excel_Writer_Format
     *
     * @access public
     * @param integer $style style of the cell top border. 1 => thin, 2 => thick.
+    * @psalm-external-mutation-free
     */
     function setTop($style)
     {
@@ -2008,6 +2045,7 @@ class Spreadsheet_Excel_Writer_Format
     *
     * @access public
     * @param integer $style style of the cell left border. 1 => thin, 2 => thick.
+    * @psalm-external-mutation-free
     */
     function setLeft($style)
     {
@@ -2019,6 +2057,7 @@ class Spreadsheet_Excel_Writer_Format
     *
     * @access public
     * @param integer $style style of the cell right border. 1 => thin, 2 => thick.
+    * @psalm-external-mutation-free
     */
     function setRight($style)
     {
@@ -2031,6 +2070,7 @@ class Spreadsheet_Excel_Writer_Format
     *
     * @access public
     * @param integer $style style to apply for all cell borders. 1 => thin, 2 => thick.
+    * @psalm-mutation-free
     */
     function setBorder($style)
     {
@@ -2051,6 +2091,7 @@ class Spreadsheet_Excel_Writer_Format
     * @access public
     * @param mixed $color The color we are setting. Either a string (like 'blue'),
     *                     or an integer (range is [8...63]).
+    * @psalm-mutation-free
     */
     function setBorderColor($color)
     {
@@ -2065,6 +2106,7 @@ class Spreadsheet_Excel_Writer_Format
     *
     * @access public
     * @param mixed $color either a string (like 'blue'), or an integer (range is [8...63]).
+    * @psalm-external-mutation-free
     */
     function setBottomColor($color)
     {
@@ -2077,6 +2119,7 @@ class Spreadsheet_Excel_Writer_Format
     *
     * @access public
     * @param mixed $color either a string (like 'blue'), or an integer (range is [8...63]).
+    * @psalm-external-mutation-free
     */
     function setTopColor($color)
     {
@@ -2089,6 +2132,7 @@ class Spreadsheet_Excel_Writer_Format
     *
     * @access public
     * @param mixed $color either a string (like 'blue'), or an integer (range is [8...63]).
+    * @psalm-external-mutation-free
     */
     function setLeftColor($color)
     {
@@ -2101,6 +2145,7 @@ class Spreadsheet_Excel_Writer_Format
     *
     * @access public
     * @param mixed $color either a string (like 'blue'), or an integer (range is [8...63]).
+    * @psalm-external-mutation-free
     */
     function setRightColor($color)
     {
@@ -2114,6 +2159,7 @@ class Spreadsheet_Excel_Writer_Format
     *
     * @access public
     * @param mixed $color either a string (like 'blue'), or an integer (range is [8...63]).
+    * @psalm-external-mutation-free
     */
     function setFgColor($color)
     {
@@ -2129,6 +2175,7 @@ class Spreadsheet_Excel_Writer_Format
     *
     * @access public
     * @param mixed $color either a string (like 'blue'), or an integer (range is [8...63]).
+    * @psalm-external-mutation-free
     */
     function setBgColor($color)
     {
@@ -2144,6 +2191,7 @@ class Spreadsheet_Excel_Writer_Format
     *
     * @access public
     * @param mixed $color either a string (like 'blue'), or an integer (range is [8...63]).
+    * @psalm-external-mutation-free
     */
     function setColor($color)
     {
@@ -2157,6 +2205,7 @@ class Spreadsheet_Excel_Writer_Format
     * @access public
     * @param integer $arg Optional. Defaults to 1. Meaningful values are: 0-18,
     *                     0 meaning no background.
+    * @psalm-external-mutation-free
     */
     function setPattern($arg = 1)
     {
@@ -2169,6 +2218,7 @@ class Spreadsheet_Excel_Writer_Format
     * @access public
     * @param integer $underline The value for underline. Possible values are:
     *                          1 => underline, 2 => double underline.
+    * @psalm-external-mutation-free
     */
     function setUnderline($underline)
     {
@@ -2179,6 +2229,7 @@ class Spreadsheet_Excel_Writer_Format
     * Sets the font style as italic
     *
     * @access public
+    * @psalm-external-mutation-free
     */
     function setItalic()
     {
@@ -2190,6 +2241,7 @@ class Spreadsheet_Excel_Writer_Format
     *
     * @access public
     * @param integer $size The font size (in pixels I think).
+    * @psalm-external-mutation-free
     */
     function setSize($size)
     {
@@ -2200,6 +2252,7 @@ class Spreadsheet_Excel_Writer_Format
     * Sets text wrapping
     *
     * @access public
+    * @psalm-external-mutation-free
     */
     function setTextWrap()
     {
@@ -2212,6 +2265,7 @@ class Spreadsheet_Excel_Writer_Format
     * @access public
     * @param integer $angle The rotation angle for the text (clockwise). Possible
                             values are: 0, 90, 270 and -1 for stacking top-to-bottom.
+    * @psalm-external-mutation-free
     */
     function setTextRotation($angle)
     {
@@ -2241,6 +2295,7 @@ class Spreadsheet_Excel_Writer_Format
     *
     * @access public
     * @param integer $num_format The numeric format.
+    * @psalm-external-mutation-free
     */
     function setNumFormat($num_format)
     {
@@ -2251,6 +2306,7 @@ class Spreadsheet_Excel_Writer_Format
     * Sets font as strikeout.
     *
     * @access public
+    * @psalm-external-mutation-free
     */
     function setStrikeOut()
     {
@@ -2261,6 +2317,7 @@ class Spreadsheet_Excel_Writer_Format
     * Sets outlining for a font.
     *
     * @access public
+    * @psalm-external-mutation-free
     */
     function setOutLine()
     {
@@ -2271,6 +2328,7 @@ class Spreadsheet_Excel_Writer_Format
     * Sets font as shadow.
     *
     * @access public
+    * @psalm-external-mutation-free
     */
     function setShadow()
     {
@@ -2283,6 +2341,7 @@ class Spreadsheet_Excel_Writer_Format
     * @access public
     * @param integer $script The value for script type. Possible values are:
     *                        1 => superscript, 2 => subscript.
+    * @psalm-external-mutation-free
     */
     function setScript($script)
     {
@@ -2293,6 +2352,7 @@ class Spreadsheet_Excel_Writer_Format
      * Locks a cell.
      *
      * @access public
+     * @psalm-external-mutation-free
      */
      function setLocked()
      {
@@ -2303,6 +2363,7 @@ class Spreadsheet_Excel_Writer_Format
     * Unlocks a cell. Useful for unprotecting particular cells of a protected sheet.
     *
     * @access public
+    * @psalm-external-mutation-free
     */
     function setUnLocked()
     {
@@ -2315,6 +2376,7 @@ class Spreadsheet_Excel_Writer_Format
     * @access public
     * @param string $fontfamily The font family name. Possible values are:
     *                           'Times New Roman', 'Arial', 'Courier'.
+    * @psalm-external-mutation-free
     */
     function setFontFamily($font_family)
     {
@@ -2394,6 +2456,7 @@ class Spreadsheet_Excel_Writer_Parser
     *
     * @param integer $byte_order The byte order (Little endian or Big endian) of the architecture
                                  (optional). 1 => big endian, 0 (default) little endian.
+    * @psalm-mutation-free
     */
     function __construct($byte_order, $biff_version)
     {
@@ -2413,6 +2476,7 @@ class Spreadsheet_Excel_Writer_Parser
     * Initialize the ptg and function hashes.
     *
     * @access private
+    * @psalm-external-mutation-free
     */
     function _initializeHashes()
     {
@@ -2825,6 +2889,7 @@ class Spreadsheet_Excel_Writer_Parser
     *
     * @access private
     * @param mixed $num an integer or double for conversion to its ptg value
+    * @psalm-mutation-free
     */
     function _convertNumber($num)
     {
@@ -2871,6 +2936,7 @@ class Spreadsheet_Excel_Writer_Parser
     * @param string  $token    The name of the function for convertion to ptg value.
     * @param integer $num_args The number of arguments the function receives.
     * @return string The packed ptg for the function
+    * @psalm-mutation-free
     */
     function _convertFunction($token, $num_args)
     {
@@ -3157,6 +3223,7 @@ class Spreadsheet_Excel_Writer_Parser
     *
     * @access private
     * @return integer The sheet index, -1 if the sheet was not found
+    * @psalm-mutation-free
     */
     function _getSheetIndex($sheet_name)
     {
@@ -3176,6 +3243,7 @@ class Spreadsheet_Excel_Writer_Parser
     * @see Spreadsheet_Excel_Writer_Workbook::addWorksheet()
     * @param string  $name  The name of the worksheet being added
     * @param integer $index The index of the worksheet being added
+    * @psalm-external-mutation-free
     */
     function setExtSheet($name, $index)
     {
@@ -3270,6 +3338,7 @@ class Spreadsheet_Excel_Writer_Parser
     * @access private
     * @param string $cell The Excel cell reference in A1 format.
     * @return array
+    * @psalm-pure
     */
     function _cellToRowcol($cell)
     {
@@ -3300,6 +3369,7 @@ class Spreadsheet_Excel_Writer_Parser
     * Advance to the next valid token.
     *
     * @access private
+    * @psalm-external-mutation-free
     */
     function _advance()
     {
@@ -3350,6 +3420,7 @@ class Spreadsheet_Excel_Writer_Parser
     * @access private
     * @param mixed $token The token to check.
     * @return mixed       The checked token or false on failure
+    * @psalm-mutation-free
     */
     function _match($token)
     {
@@ -3744,6 +3815,7 @@ class Spreadsheet_Excel_Writer_Parser
     * @param mixed $left  The left array (sub-tree) or a final node.
     * @param mixed $right The right array (sub-tree) or a final node.
     * @return array A tree
+    * @psalm-pure
     */
     function _createTree($value, $left, $right)
     {
@@ -4460,6 +4532,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param integer $first_col First column of the area to merge
     * @param integer $last_row  Last row of the area to merge
     * @param integer $last_col  Last column of the area to merge
+    * @psalm-external-mutation-free
     */
     function setMerge($first_row, $first_col, $last_row, $last_col)
     {
@@ -4476,6 +4549,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * i.e. the worksheet has its tab highlighted.
     *
     * @access public
+    * @psalm-external-mutation-free
     */
     function select()
     {
@@ -4488,6 +4562,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * Also set it as selected.
     *
     * @access public
+    * @psalm-external-mutation-free
     */
     function activate()
     {
@@ -4501,6 +4576,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * activated worksheet is not visible on the screen.
     *
     * @access public
+    * @psalm-external-mutation-free
     */
     function setFirstSheet()
     {
@@ -4514,6 +4590,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *
     * @access public
     * @param string $password The password to use for protecting the sheet.
+    * @psalm-external-mutation-free
     */
     function protect($password)
     {
@@ -4531,6 +4608,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param mixed   $format   The optional XF format to apply to the columns
     * @param integer $hidden   The optional hidden atribute
     * @param integer $level    The optional outline level
+    * @psalm-external-mutation-free
     */
     function setColumn($firstcol, $lastcol, $width, $format = null, $hidden = 0, $level = 0)
     {
@@ -4552,6 +4630,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param integer $first_column first column in the selected quadrant
     * @param integer $last_row     last row in the selected quadrant
     * @param integer $last_column  last column in the selected quadrant
+    * @psalm-external-mutation-free
     */
     function setSelection($first_row,$first_column,$last_row,$last_column)
     {
@@ -4568,6 +4647,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *                     2 => Top row visible
     *                     3 => Leftmost column visible
     *                     4 => Active pane
+    * @psalm-external-mutation-free
     */
     function freezePanes($panes)
     {
@@ -4585,6 +4665,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *                     2 => Top row visible
     *                     3 => Leftmost column visible
     *                     4 => Active pane
+    * @psalm-external-mutation-free
     */
     function thawPanes($panes)
     {
@@ -4596,6 +4677,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * Set the page orientation as portrait.
     *
     * @access public
+    * @psalm-external-mutation-free
     */
     function setPortrait()
     {
@@ -4606,6 +4688,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * Set the page orientation as landscape.
     *
     * @access public
+    * @psalm-external-mutation-free
     */
     function setLandscape()
     {
@@ -4617,6 +4700,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *
     * @access public
     * @param integer $size The type of paper size to use
+    * @psalm-external-mutation-free
     */
     function setPaper($size = 0)
     {
@@ -4630,6 +4714,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @access public
     * @param string $string The header text
     * @param float  $margin optional head margin in inches.
+    * @psalm-external-mutation-free
     */
     function setHeader($string,$margin = 0.50)
     {
@@ -4647,6 +4732,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @access public
     * @param string $string The footer text
     * @param float  $margin optional foot margin in inches.
+    * @psalm-external-mutation-free
     */
     function setFooter($string,$margin = 0.50)
     {
@@ -4663,6 +4749,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *
     * @access public
     * @param integer $center the optional value for centering. Defaults to 1 (center).
+    * @psalm-external-mutation-free
     */
     function centerHorizontally($center = 1)
     {
@@ -4674,6 +4761,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *
     * @access public
     * @param integer $center the optional value for centering. Defaults to 1 (center).
+    * @psalm-external-mutation-free
     */
     function centerVertically($center = 1)
     {
@@ -4685,6 +4773,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *
     * @access public
     * @param float $margin The margin to set in inches
+    * @psalm-mutation-free
     */
     function setMargins($margin)
     {
@@ -4699,6 +4788,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *
     * @access public
     * @param float $margin The margin to set in inches
+    * @psalm-mutation-free
     */
     function setMargins_LR($margin)
     {
@@ -4711,6 +4801,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *
     * @access public
     * @param float $margin The margin to set in inches
+    * @psalm-mutation-free
     */
     function setMargins_TB($margin)
     {
@@ -4723,6 +4814,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *
     * @access public
     * @param float $margin The margin to set in inches
+    * @psalm-external-mutation-free
     */
     function setMarginLeft($margin = 0.75)
     {
@@ -4734,6 +4826,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *
     * @access public
     * @param float $margin The margin to set in inches
+    * @psalm-external-mutation-free
     */
     function setMarginRight($margin = 0.75)
     {
@@ -4745,6 +4838,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *
     * @access public
     * @param float $margin The margin to set in inches
+    * @psalm-external-mutation-free
     */
     function setMarginTop($margin = 1.00)
     {
@@ -4756,6 +4850,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *
     * @access public
     * @param float $margin The margin to set in inches
+    * @psalm-external-mutation-free
     */
     function setMarginBottom($margin = 1.00)
     {
@@ -4768,6 +4863,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @access public
     * @param integer $first_row First row to repeat
     * @param integer $last_row  Last row to repeat. Optional.
+    * @psalm-external-mutation-free
     */
     function repeatRows($first_row, $last_row = null)
     {
@@ -4785,6 +4881,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @access public
     * @param integer $first_col First column to repeat
     * @param integer $last_col  Last column to repeat. Optional.
+    * @psalm-external-mutation-free
     */
     function repeatColumns($first_col, $last_col = null)
     {
@@ -4804,6 +4901,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param integer $first_col First column of the area to print
     * @param integer $last_row  Last row of the area to print
     * @param integer $last_col  Last column of the area to print
+    * @psalm-external-mutation-free
     */
     function printArea($first_row, $first_col, $last_row, $last_col)
     {
@@ -4818,6 +4916,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * Set the option to hide gridlines on the printed page.
     *
     * @access public
+    * @psalm-external-mutation-free
     */
     function hideGridlines()
     {
@@ -4828,6 +4927,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * Set the option to hide gridlines on the worksheet (as seen on the screen).
     *
     * @access public
+    * @psalm-external-mutation-free
     */
     function hideScreenGridlines()
     {
@@ -4839,6 +4939,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *
     * @access public
     * @param integer $print Whether to print the headers or not. Defaults to 1 (print).
+    * @psalm-external-mutation-free
     */
     function printRowColHeaders($print = 1)
     {
@@ -4853,6 +4954,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param  integer $width  Maximun width of printed area in pages
     * @param  integer $height Maximun heigth of printed area in pages
     * @see setPrintScale()
+    * @psalm-external-mutation-free
     */
     function fitToPages($width, $height)
     {
@@ -4867,6 +4969,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *
     * @access public
     * @param array $breaks Array containing the horizontal page breaks
+    * @psalm-external-mutation-free
     */
     function setHPagebreaks($breaks)
     {
@@ -4881,6 +4984,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *
     * @access public
     * @param array $breaks Array containing the vertical page breaks
+    * @psalm-external-mutation-free
     */
     function setVPagebreaks($breaks)
     {
@@ -4895,6 +4999,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *
     * @access public
     * @param integer $scale The zoom factor
+    * @psalm-external-mutation-free
     */
     function setZoom($scale = 100)
     {
@@ -4912,6 +5017,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *
     * @access public
     * @param integer $scale The optional scale factor. Defaults to 100
+    * @psalm-external-mutation-free
     */
     function setPrintScale($scale = 100)
     {
@@ -5029,6 +5135,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @access private
     * @param mixed &$format The optional XF format
     * @return integer The XF record index
+    * @psalm-pure
     */
     function _XF(&$format)
     {
@@ -5113,6 +5220,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @access private
     * @param string $cell The cell reference.
     * @return array containing (row, column)
+    * @psalm-pure
     */
     function _cellToRowcol($cell)
     {
@@ -5144,6 +5252,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @access private
     * @param string $plaintext The password to be encoded in plaintext.
     * @return string The encoded password
+    * @psalm-pure
     */
     function _encodePassword($plaintext)
     {
@@ -5174,6 +5283,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param bool $symbols_below
     * @param bool $symbols_right
     * @param bool $auto_style
+    * @psalm-external-mutation-free
     */
     function setOutline($visible = true, $symbols_below = true, $symbols_right = true, $auto_style = false)
     {
@@ -5322,7 +5432,10 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
          $this->_input_encoding = $encoding;
     }
 
-    /** added 2009-03-05 by Joe Hunt, FA for arabic languages */
+    /**
+     * added 2009-03-05 by Joe Hunt, FA for arabic languages
+     * @psalm-external-mutation-free
+     */
     function setRTL()
     {
     	$this->_rtl = 1;
@@ -5395,6 +5508,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param integer $col    Zero indexed column
     * @return boolean true for success, false if row and/or col are grester
     *                 then maximums allowed.
+    * @psalm-external-mutation-free
     */
     function _checkRowCol($row, $col)
     {
@@ -5973,6 +6087,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * Writes Excel DIMENSIONS to define the area in which there is data.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeDimensions()
     {
@@ -6059,6 +6174,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * Write BIFF record DEFCOLWIDTH if COLINFO records are in use.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeDefcol()
     {
@@ -6085,6 +6201,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *                3 => The optional XF format of the column,
     *                4 => Option flags.
     *                5 => Optional outline level
+    * @psalm-mutation-free
     */
     function _storeColinfo($col_array)
     {
@@ -6209,6 +6326,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *
     * @access private
     * @param integer $count The number of external sheet references in this worksheet
+    * @psalm-mutation-free
     */
     function _storeExterncount($count)
     {
@@ -6228,6 +6346,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *
     * @access private
     * @param string $sheetname The name of a external worksheet
+    * @psalm-mutation-free
     */
     function _storeExternsheet($sheetname)
     {
@@ -6337,6 +6456,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * Store the page setup SETUP BIFF record.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeSetup()
     {
@@ -6398,6 +6518,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * Store the header caption BIFF record.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeHeader()
     {
@@ -6426,6 +6547,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * Store the footer caption BIFF record.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeFooter()
     {
@@ -6454,6 +6576,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * Store the horizontal centering HCENTER BIFF record.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeHcenter()
     {
@@ -6472,6 +6595,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * Store the vertical centering VCENTER BIFF record.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeVcenter()
     {
@@ -6489,6 +6613,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * Store the LEFTMARGIN BIFF record.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeMarginLeft()
     {
@@ -6510,6 +6635,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * Store the RIGHTMARGIN BIFF record.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeMarginRight()
     {
@@ -6531,6 +6657,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * Store the TOPMARGIN BIFF record.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeMarginTop()
     {
@@ -6552,6 +6679,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * Store the BOTTOMMARGIN BIFF record.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeMarginBottom()
     {
@@ -6606,6 +6734,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * Write the PRINTHEADERS BIFF record.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storePrintHeaders()
     {
@@ -6624,6 +6753,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * GRIDSET record.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storePrintGridlines()
     {
@@ -6642,6 +6772,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * PRINTGRIDLINES record.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeGridset()
     {
@@ -6662,6 +6793,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *
     * @see _storeWsbool()
     * @access private
+    * @psalm-mutation-free
     */
     function _storeGuts()
     {
@@ -6707,6 +6839,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * with the SETUP record.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeWsbool()
     {
@@ -6749,6 +6882,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * Write the HORIZONTALPAGEBREAKS BIFF record.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeHbreak()
     {
@@ -6792,6 +6926,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * Write the VERTICALPAGEBREAKS BIFF record.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeVbreak()
     {
@@ -6837,6 +6972,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * Set the Biff PROTECT record to indicate that the worksheet is protected.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeProtect()
     {
@@ -6860,6 +6996,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * Write the worksheet PASSWORD record.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storePassword()
     {
@@ -7035,6 +7172,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @access private
     * @param integer $col The column
     * @return integer The width in pixels
+    * @psalm-mutation-free
     */
     function _sizeCol($col)
     {
@@ -7059,6 +7197,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @access private
     * @param integer $row The row
     * @return integer The width in pixels
+    * @psalm-mutation-free
     */
     function _sizeRow($row)
     {
@@ -7264,6 +7403,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
 
     /**
     * FIXME: add comments
+    * @psalm-external-mutation-free
     */
     function setValidation($row1, $col1, $row2, $col2, &$validator)
     {
@@ -7502,6 +7642,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     * @access public
     * @see worksheets()
     * @return array
+    * @psalm-mutation-free
     */
     function sheets()
     {
@@ -7561,6 +7702,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     * @access public
     * @param integer $code Is the international calling country code for the
     *                      chosen country.
+    * @psalm-external-mutation-free
     */
     function setCountry($code)
     {
@@ -7622,6 +7764,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     * @access public
     * @param array $properties array with properties for initializing the format.
     * @return &Spreadsheet_Excel_Writer_Format reference to an Excel Format
+    * @psalm-external-mutation-free
     */
     function &addFormat($properties = array())
     {
@@ -7636,6 +7779,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
      *
      * @access public
      * @return &Spreadsheet_Excel_Writer_Validator reference to a Validator
+     * @psalm-external-mutation-free
      */
     function &addValidator()
     {
@@ -7687,6 +7831,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     * Sets the colour palette to the Excel 97+ default.
     *
     * @access private
+    * @psalm-external-mutation-free
     */
     function _setPaletteXl97()
     {
@@ -7999,6 +8144,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     * Write all XF records.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeAllXfs()
     {
@@ -8026,6 +8172,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     * Write all STYLE records.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeAllStyles()
     {
@@ -8037,6 +8184,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     * the NAME records.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeExterns()
     {
@@ -8053,6 +8201,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     * Write the NAME record to define the print area and the repeat rows and cols.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeNames()
     {
@@ -8133,6 +8282,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     * Stores the CODEPAGE biff record.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeCodepage()
     {
@@ -8150,6 +8300,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     * Write Excel BIFF WINDOW1 record.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeWindow1()
     {
@@ -8183,6 +8334,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     * @param string  $sheetname Worksheet name
     * @param integer $offset    Location of worksheet BOF
     * @access private
+    * @psalm-mutation-free
     */
     function _storeBoundsheet($sheetname,$offset)
     {
@@ -8248,6 +8400,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     * Write Internal SUPBOOK record
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeSupbookInternal()
     {
@@ -8265,6 +8418,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     *
     * @param string $sheetname Worksheet name
     * @access private
+    * @psalm-mutation-free
     */
     function _storeExternsheetBiff8()
     {
@@ -8285,6 +8439,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     * Write Excel BIFF STYLE records.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeStyle()
     {
@@ -8307,6 +8462,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     * @param string  $format Custom format string
     * @param integer $ifmt   Format index code
     * @access private
+    * @psalm-mutation-free
     */
     function _storeNumFormat($format, $ifmt)
     {
@@ -8334,6 +8490,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     * Write DATEMODE record to indicate the date system in use (1904 or 1900).
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeDatemode()
     {
@@ -8360,6 +8517,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     *
     * @param integer $cxals Number of external references
     * @access private
+    * @psalm-mutation-free
     */
     function _storeExterncount($cxals)
     {
@@ -8381,6 +8539,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     *
     * @param string $sheetname Worksheet name
     * @access private
+    * @psalm-mutation-free
     */
     function _storeExternsheet($sheetname)
     {
@@ -8407,6 +8566,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     * @param integer $colmin Start colum
     * @param integer $colmax End column
     * @access private
+    * @psalm-mutation-free
     */
     function _storeNameShort($index, $type, $rowmin, $rowmax, $colmin, $colmax)
     {
@@ -8473,6 +8633,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     * @param integer $colmin Start colum
     * @param integer $colmax End column
     * @access private
+    * @psalm-mutation-free
     */
     function _storeNameLong($index, $type, $rowmin, $rowmax, $colmin, $colmax)
     {
@@ -8548,6 +8709,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     * Stores the COUNTRY record for localization
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeCountry()
     {
@@ -8594,6 +8756,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     * supported).
     *
     * @access private
+    * @psalm-external-mutation-free
     */
     function _calculateSharedStringsSizes()
     {
@@ -8740,6 +8903,7 @@ class Spreadsheet_Excel_Writer_Workbook extends Spreadsheet_Excel_Writer_BIFFwri
     * required so we will ignore it.
     *
     * @access private
+    * @psalm-mutation-free
     */
     function _storeSharedStringsTable()
     {

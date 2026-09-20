@@ -188,10 +188,12 @@ class Cpdf extends FPDI {
 		$this->SetFont($fontname, $style);
 	}
 
+	/** @psalm-mutation-free */
 	function Header1()
 	{
 	}
 
+	/** @psalm-mutation-free */
 	function Footer()
 	{
 	}
@@ -201,6 +203,7 @@ class Cpdf extends FPDI {
 		parent::AddPage();
 	}
 
+	/** @psalm-mutation-free */
 	function line($x1,$y1,$x2,$y2, $style = array())
 	{
 		parent::Line($x1, $this->h-$y1, $x2, $this->h-$y2, $style);
@@ -220,6 +223,7 @@ class Cpdf extends FPDI {
 		$this->Text($xb, $this->h-$yb, $txt);
 	}
 
+	/** @psalm-mutation-free */
 	function addInfo($label,$value)
 	{
 		if (in_array($label, array( 'Title', 'Subject', 'Author', 'Creator'))) {
@@ -243,6 +247,7 @@ class Cpdf extends FPDI {
 
 	/**
 	* draw a part of an ellipse
+	* @psalm-mutation-free
 	*/
 	function partEllipse($x0,$y0,$astart,$afinish,$r1,$r2=0,$angle=0,$nSeg=8)
 	{
@@ -258,6 +263,7 @@ class Cpdf extends FPDI {
 	* if $r2 is not set, then a circle is drawn
 	* nSeg is not allowed to be less than 2, as this will simply draw a line (and will even draw a
 	* pretty crappy shape at 2, as we are approximating with bezier curves.
+	* @psalm-mutation-free
 	*/
 	function ellipse($x0,$y0,$r1,$r2=0,$angle=0,$nSeg=8,$astart=0,$afinish=360,$close=1,$fill=0, $dummy=null)
 	{

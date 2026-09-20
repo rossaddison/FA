@@ -43,6 +43,7 @@ if ((bool)($id = find_submit('Update', false)))
 
 //---------------------------------------------------------------------------------------------
 
+/** @psalm-pure */
 function sortByOption(string|int|float|bool|null $a, string|int|float|bool|null $b): int {
     return strcmp($a['name'], $b['name']);
 }

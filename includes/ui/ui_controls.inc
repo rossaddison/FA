@@ -180,6 +180,7 @@ function meta_forward(string|int|float|bool|null $forward_to, ?string $params=""
 // (for use in wiki help system), otherwise result is array of label 
 // with underlined hotkey letter and access property string.
 //
+/** @psalm-pure */
 function access_string(string|int|float|bool|null $label, string|int|float|bool|null $clean=false): array|string
 {
 	$access = '';

@@ -20,6 +20,7 @@
  */
 define('EXPORT_MAX_INSERT', 50000);
 
+/** @psalm-pure */
 function array_natsort(array $aryData, ?string $strIndex, ?string $strSortBy, bool $strSortType=false)
 {
    //    if the parameters are invalid
@@ -494,6 +495,7 @@ function db_import(string|int|float|bool|null $filename, mixed $connection, stri
 }
 
 // returns the content of the gziped $path backup file. use of $mode see below
+/** @psalm-pure */
 function db_ungzip(?string $mode, ?string $path): array|string|false
 {
     $file_data = gzfile($path);
@@ -505,6 +507,7 @@ function db_ungzip(?string $mode, ?string $path): array|string|false
 }
 
 // returns the content of the ziped $path backup file. use of $mode see below
+/** @psalm-pure */
 function db_unzip(?string $mode, ?string $path): array|string|false
 {
     $all = false;

@@ -1404,6 +1404,7 @@ if (!class_exists('TCPDF')) {
 		 * Enable or disable Right-To-Left language mode
 		 * @param Boolean $enable if true enable Right-To-Left language mode.
 		 * @since 2.0.000 (2008-01-03)
+		 * @psalm-external-mutation-free
 		 */
 		function setRTL($enable) {
 			$this->rtl = $enable ? true : false;
@@ -1423,6 +1424,7 @@ if (!class_exists('TCPDF')) {
 		* Force temporary RTL language direction
 		* @param mixed $mode can be false, 'L' for LTR or 'R' for RTL
 		* @since 2.1.000 (2008-01-09)
+		* @psalm-external-mutation-free
 		*/
 		function setTempRTL($mode) {
 			switch ($mode) {
@@ -1439,6 +1441,7 @@ if (!class_exists('TCPDF')) {
 		* @param float $h cell height.
 		* @author Nicola Asuni
 		* @since 1.53.0.TC034
+		* @psalm-external-mutation-free
 		*/
 		function setLastH($h) {
 			$this->lasth = $h;
@@ -1458,6 +1461,7 @@ if (!class_exists('TCPDF')) {
 		* @param float $scale image scale.
 		* @author Nicola Asuni
 		* @since 1.5.2
+		* @psalm-external-mutation-free
 		*/
 		function setImageScale($scale) {
 			$this->imgscale = $scale;
@@ -1520,6 +1524,7 @@ if (!class_exists('TCPDF')) {
 		* @param float $right Right margin. Default value is the left one.
 		* @since 1.0
 		* @see SetLeftMargin(), SetTopMargin(), SetRightMargin(), SetAutoPageBreak()
+		* @psalm-external-mutation-free
 		*/
 		function SetMargins($left, $top, $right=-1) {
 			//Set left, top and right margins
@@ -1536,6 +1541,7 @@ if (!class_exists('TCPDF')) {
 		* @param float $margin The margin.
 		* @since 1.4
 		* @see SetTopMargin(), SetRightMargin(), SetAutoPageBreak(), SetMargins()
+		* @psalm-external-mutation-free
 		*/
 		function SetLeftMargin($margin) {
 			//Set left margin
@@ -1550,6 +1556,7 @@ if (!class_exists('TCPDF')) {
 		* @param float $margin The margin.
 		* @since 1.5
 		* @see SetLeftMargin(), SetRightMargin(), SetAutoPageBreak(), SetMargins()
+		* @psalm-external-mutation-free
 		*/
 		function SetTopMargin($margin) {
 			//Set top margin
@@ -1564,6 +1571,7 @@ if (!class_exists('TCPDF')) {
 		* @param float $margin The margin.
 		* @since 1.5
 		* @see SetLeftMargin(), SetTopMargin(), SetAutoPageBreak(), SetMargins()
+		* @psalm-external-mutation-free
 		*/
 		function SetRightMargin($margin) {
 			$this->rMargin=$margin;
@@ -1577,6 +1585,7 @@ if (!class_exists('TCPDF')) {
 		* @param float $pad internal padding.
 		* @since 2.1.000 (2008-01-09)
 		* @see Cell(), SetLeftMargin(), SetTopMargin(), SetAutoPageBreak(), SetMargins()
+		* @psalm-external-mutation-free
 		*/
 		function SetCellPadding($pad) {
 			$this->cMargin = $pad;
@@ -1588,6 +1597,7 @@ if (!class_exists('TCPDF')) {
 		* @param float $margin Distance from the bottom of the page.
 		* @since 1.0
 		* @see Cell(), MultiCell(), AcceptPageBreak()
+		* @psalm-external-mutation-free
 		*/
 		function SetAutoPageBreak($auto, $margin=0) {
 			//Set auto page break mode and triggering margin
@@ -1679,6 +1689,7 @@ if (!class_exists('TCPDF')) {
 		* Note: the Zlib extension is required for this feature. If not present, compression will be turned off.
 		* @param boolean $compress Boolean indicating if compression must be enabled.
 		* @since 1.4
+		* @psalm-external-mutation-free
 		*/
 		function SetCompression($compress) {
 			//Set page compression
@@ -1694,6 +1705,7 @@ if (!class_exists('TCPDF')) {
 		* @param string $title The title.
 		* @since 1.2
 		* @see SetAuthor(), SetCreator(), SetKeywords(), SetSubject()
+		* @psalm-external-mutation-free
 		*/
 		function SetTitle($title) {
 			//Title of document
@@ -1705,6 +1717,7 @@ if (!class_exists('TCPDF')) {
 		* @param string $subject The subject.
 		* @since 1.2
 		* @see SetAuthor(), SetCreator(), SetKeywords(), SetTitle()
+		* @psalm-external-mutation-free
 		*/
 		function SetSubject($subject) {
 			//Subject of document
@@ -1716,6 +1729,7 @@ if (!class_exists('TCPDF')) {
 		* @param string $author The name of the author.
 		* @since 1.2
 		* @see SetCreator(), SetKeywords(), SetSubject(), SetTitle()
+		* @psalm-external-mutation-free
 		*/
 		function SetAuthor($author) {
 			//Author of document
@@ -1727,6 +1741,7 @@ if (!class_exists('TCPDF')) {
 		* @param string $keywords The list of keywords.
 		* @since 1.2
 		* @see SetAuthor(), SetCreator(), SetSubject(), SetTitle()
+		* @psalm-external-mutation-free
 		*/
 		function SetKeywords($keywords) {
 			//Keywords of document
@@ -1738,6 +1753,7 @@ if (!class_exists('TCPDF')) {
 		* @param string $creator The name of the creator.
 		* @since 1.2
 		* @see SetAuthor(), SetKeywords(), SetSubject(), SetTitle()
+		* @psalm-external-mutation-free
 		*/
 		function SetCreator($creator) {
 			//Creator of document
@@ -1749,6 +1765,7 @@ if (!class_exists('TCPDF')) {
 		* @param string $alias The alias. Default value: {nb}.
 		* @since 1.4
 		* @see getAliasNbPages(), PageNo(), Footer()
+		* @psalm-external-mutation-free
 		*/
 		function AliasNbPages($alias='{nb}') {
 			//Define an alias for total number of pages
@@ -1761,6 +1778,7 @@ if (!class_exists('TCPDF')) {
 		 * @return string
 		 * @since 4.0.018 (2008-08-08)
 		 * @see AliasNbPages(), PageNo(), Footer()
+		* @psalm-mutation-free
 		*/
 		function getAliasNbPages() {
 			if ((bool)strpos(strtolower($this->CurrentFont['type']), 'unicode')) {
@@ -1786,6 +1804,7 @@ if (!class_exists('TCPDF')) {
 		* Note: no page is created by this method
 		* @since 1.0
 		* @see AddPage(), Close()
+		* @psalm-external-mutation-free
 		*/
 		function Open() {
 			//Begin document
@@ -1867,6 +1886,7 @@ if (!class_exists('TCPDF')) {
 		* @return int number of pages
 		* @since 2.1.000 (2008-01-07)
 		* @see setPage(), getPage(), lastpage()
+		* @psalm-mutation-free
 		*/
 		function getNumPages() {
 			return count($this->pages);
@@ -1958,6 +1978,7 @@ if (!class_exists('TCPDF')) {
 	 	 * Background images must be always inserted before calling Multicell() or WriteHTMLCell() or WriteHTML() functions.
 	 	 * @access public
 	 	 * @since 4.0.016 (2008-07-30)
+		 * @psalm-external-mutation-free
 		 */
 		function setPageMark() {
 			$this->intmrk[$this->page] = strlen($this->pages[$this->page]);
@@ -1969,6 +1990,7 @@ if (!class_exists('TCPDF')) {
 		 * @param string $lw header image logo width in mm
 		 * @param string $ht string to print as title on document header
 		 * @param string $hs string to print on document header
+		* @psalm-external-mutation-free
 		*/
 		function setHeaderData($ln="", $lw=0, $ht="", $hs="") {
 			$this->header_logo = $ln;
@@ -1982,6 +2004,7 @@ if (!class_exists('TCPDF')) {
 	 	 * <ul><li>$ret['logo'] = logo image</li><li>$ret['logo_width'] = width of the image logo in user units</li><li>$ret['title'] = header title</li><li>$ret['string'] = header description string</li></ul>
 		 * @return array()
 		 * @since 4.0.012 (2008-07-24)
+		 * @psalm-mutation-free
 		 */
 		function getHeaderData() {
 			$ret = array();
@@ -1996,6 +2019,7 @@ if (!class_exists('TCPDF')) {
 	 	 * Set header margin.
 		 * (minimum distance between header and top page margin)
 		 * @param int $hm distance in user units
+		* @psalm-external-mutation-free
 		*/
 		function setHeaderMargin($hm=10) {
 			$this->header_margin = $hm;
@@ -2014,6 +2038,7 @@ if (!class_exists('TCPDF')) {
 	 	 * Set footer margin.
 		 * (minimum distance between footer and bottom page margin)
 		 * @param int $fm distance in user units
+		* @psalm-external-mutation-free
 		*/
 		function setFooterMargin($fm=10) {
 			$this->footer_margin = $fm;
@@ -2030,6 +2055,7 @@ if (!class_exists('TCPDF')) {
 		/**
 	 	 * Set a flag to print page header.
 		 * @param boolean $val set to true to print the page header (default), false otherwise.
+		 * @psalm-external-mutation-free
 		 */
 		function setPrintHeader($val=true) {
 			$this->print_header = $val;
@@ -2038,6 +2064,7 @@ if (!class_exists('TCPDF')) {
 		/**
 	 	 * Set a flag to print page footer.
 		 * @param boolean $value set to true to print the page footer (default), false otherwise.
+		 * @psalm-external-mutation-free
 		 */
 		function setPrintFooter($val=true) {
 			$this->print_footer = $val;
@@ -2046,6 +2073,7 @@ if (!class_exists('TCPDF')) {
 		/**
 	 	 * Return the right-bottom (or left-bottom for RTL) corner X coordinate of last inserted image
 		 * @return float
+		 * @psalm-mutation-free
 		 */
 		function getImageRBX() {
 			return $this->img_rb_x;
@@ -2054,6 +2082,7 @@ if (!class_exists('TCPDF')) {
 		/**
 	 	 * Return the right-bottom (or left-bottom for RTL) corner Y coordinate of last inserted image
 		 * @return float
+		 * @psalm-mutation-free
 		 */
 		function getImageRBY() {
 			return $this->img_rb_y;
@@ -2217,6 +2246,7 @@ if (!class_exists('TCPDF')) {
 		* @param int $k Key (Black) color for CMYK. Value between 0 and 255
 		* @since 4.0.024 (2008-09-12)
 		* @see SetDrawSpotColor(), SetFillSpotColor(), SetTextSpotColor()
+		* @psalm-external-mutation-free
 		*/
 		function AddSpotColor($name, $c, $m, $y, $k) {
 			if (!isset($this->spot_colors[$name])) {
@@ -2232,6 +2262,7 @@ if (!class_exists('TCPDF')) {
 		* @param array $color array of colors
 		* @since 3.1.000 (2008-06-11)
 		* @see SetDrawColor()
+		* @psalm-mutation-free
 		*/
 		function SetDrawColorArray($color) {
 			if (isset($color)) {
@@ -2254,6 +2285,7 @@ if (!class_exists('TCPDF')) {
 		* @param int $col4 Key (Black) color for CMYK. Value between 0 and 255
 		* @since 1.3
 		* @see SetDrawColorArray(), SetFillColor(), SetTextColor(), Line(), Rect(), Cell(), MultiCell()
+		* @psalm-external-mutation-free
 		*/
 		function SetDrawColor($col1=0, $col2=-1, $col3=-1, $col4=-1) {
 			// set default values
@@ -2309,6 +2341,7 @@ if (!class_exists('TCPDF')) {
 		* @param array $color array of colors
 		* @since 3.1.000 (2008-6-11)
 		* @see SetFillColor()
+		* @psalm-mutation-free
 		*/
 		function SetFillColorArray($color) {
 			if (isset($color)) {
@@ -2331,6 +2364,7 @@ if (!class_exists('TCPDF')) {
 		* @param int $col4 Key (Black) color for CMYK. Value between 0 and 255
 		* @since 1.3
 		* @see SetFillColorArray(), SetDrawColor(), SetTextColor(), Rect(), Cell(), MultiCell()
+		* @psalm-external-mutation-free
 		*/
 		function SetFillColor($col1=0, $col2=-1, $col3=-1, $col4=-1) {
 			// set default values
@@ -2390,6 +2424,7 @@ if (!class_exists('TCPDF')) {
 		* @param array $color array of colors
 		* @since 3.1.000 (2008-6-11)
 		* @see SetFillColor()
+		* @psalm-mutation-free
 		*/
 		function SetTextColorArray($color) {
 			if (isset($color)) {
@@ -2412,6 +2447,7 @@ if (!class_exists('TCPDF')) {
 		* @param int $col4 Key (Black) color for CMYK. Value between 0 and 255
 		* @since 1.3
 		* @see SetTextColorArray(), SetDrawColor(), SetFillColor(), Text(), Cell(), MultiCell()
+		* @psalm-external-mutation-free
 		*/
 		function SetTextColor($col1=0, $col2=-1, $col3=-1, $col4=-1) {
 			// set default values
@@ -2537,6 +2573,7 @@ if (!class_exists('TCPDF')) {
 		* @param string $s The input string.
 		* @return int number of characters
 		* @since 2.0.0001 (2008-01-07)
+		* @psalm-mutation-free
 		*/
 		function GetNumChars($s) {
 			if ($this->isunicode) {
@@ -2736,6 +2773,7 @@ if (!class_exists('TCPDF')) {
 		* The identifier can then be passed to Cell(), Write(), Image() or Link(). The destination is defined with SetLink().
 		* @since 1.5
 		* @see Cell(), Write(), Image(), Link(), SetLink()
+		* @psalm-external-mutation-free
 		*/
 		function AddLink() {
 			//Create a new internal link
@@ -2751,6 +2789,7 @@ if (!class_exists('TCPDF')) {
 		* @param int $page Number of target page; -1 indicates the current page. This is the default value
 		* @since 1.5
 		* @see AddLink()
+		* @psalm-external-mutation-free
 		*/
 		function SetLink($link, $y=0, $page=-1) {
 			if ($y == -1) {
@@ -2772,6 +2811,7 @@ if (!class_exists('TCPDF')) {
 		* @param mixed $link URL or identifier returned by AddLink()
 		* @since 1.5
 		* @see AddLink(), Annotation(), Cell(), Write(), Image()
+		* @psalm-mutation-free
 		*/
 		function Link($x, $y, $w, $h, $link) {
 			$this->Annotation($x, $y, $w, $h, $link, array('Subtype'=>'Link'));
@@ -2787,6 +2827,7 @@ if (!class_exists('TCPDF')) {
 		* @param string $text annotation text
 		* @param array $opt array of options (see section 8.4 of PDF reference 1.7).
 		* @since 4.0.018 (2008-08-06)
+		* @psalm-external-mutation-free
 		*/
 		function Annotation($x, $y, $w, $h, $text, $opt=array('Subtype'=>'Text')) {
 			$this->PageAnnots[$this->page][] = array('x' => $x, 'y' => $y, 'w' => $w, 'h' => $h, 'txt' => $text, 'opt' => $opt);
@@ -3498,6 +3539,7 @@ if (!class_exists('TCPDF')) {
 		* Returns the remaining width between the current position and margins.
 		* @return int Return the remaining width
 		* @access protected
+		* @psalm-mutation-free
 		*/
 		function getRemainingWidth() {
 			if ($this->rtl) {
@@ -3513,6 +3555,7 @@ if (!class_exists('TCPDF')) {
 		* @param int $start the starting element of $strarr.
 		* @param int $end first element that will not be returned.
 		* @return Return part of a string
+		* @psalm-mutation-free
 		*/
 		function UTF8ArrSubString($strarr, $start='', $end='') {
 			if (strlen($start) == 0) {
@@ -3534,6 +3577,7 @@ if (!class_exists('TCPDF')) {
 		* @return Returns the specified character.
 		* @author Miguel Perez, Nicola Asuni
 		* @since 2.3.000 (2008-03-05)
+		* @psalm-mutation-free
 		*/
 		function unichr($c) {
 			if (!$this->isunicode) {
@@ -3875,6 +3919,7 @@ if (!class_exists('TCPDF')) {
 		* @param boolean $cell if true add a cMargin to the x coordinate
 		* @since 1.0
 		* @see Cell()
+		* @psalm-external-mutation-free
 		*/
 		function Ln($h='', $cell=false) {
 			//Line feed; default value is last cell height
@@ -3902,6 +3947,7 @@ if (!class_exists('TCPDF')) {
 		* @return float
 		* @since 1.2
 		* @see SetX(), GetY(), SetY()
+		* @psalm-mutation-free
 		*/
 		function GetX() {
 			//Get x position
@@ -3939,6 +3985,7 @@ if (!class_exists('TCPDF')) {
 		* @param float $x The value of the abscissa.
 		* @since 1.2
 		* @see GetX(), GetY(), SetY(), SetXY()
+		* @psalm-external-mutation-free
 		*/
 		function SetX($x) {
 			//Set x position
@@ -3963,6 +4010,7 @@ if (!class_exists('TCPDF')) {
 		* @param float $y The value of the ordinate.
 		* @since 1.0
 		* @see GetX(), GetY(), SetY(), SetXY()
+		* @psalm-external-mutation-free
 		*/
 		function SetY($y) {
 			//Set y position and reset x
@@ -3985,6 +4033,7 @@ if (!class_exists('TCPDF')) {
 		* @param float $y The value of the ordinate
 		* @since 1.2
 		* @see SetX(), SetY()
+		* @psalm-mutation-free
 		*/
 		function SetXY($x, $y) {
 			//Set x and y positions
@@ -4779,6 +4828,7 @@ if (!class_exists('TCPDF')) {
 		/**
 		* Output object dictionary for images.
 		* @access protected
+		* @psalm-mutation-free
 		*/
 		function _putxobjectdict() {
 			foreach($this->images as $image) {
@@ -4861,6 +4911,7 @@ if (!class_exists('TCPDF')) {
 		* Adds some Metadata information
 		* (see Chapter 10.2 of PDF Reference)
 		* @access protected
+		* @psalm-mutation-free
 		*/
 		function _putinfo() {
 			if (!empty($this->title)) {
@@ -4890,6 +4941,7 @@ if (!class_exists('TCPDF')) {
 		* @param string $s date string to escape.
 		* @return string escaped string.
 		* @access protected
+		* @psalm-mutation-free
 		*/
 		function _datestring($s) {
 			if ($this->encrypted) {
@@ -5014,6 +5066,7 @@ if (!class_exists('TCPDF')) {
 		/**
 		* Output trailer.
 		* @access protected
+		* @psalm-mutation-free
 		*/
 		function _puttrailer() {
 			$this->_out('/Size '.($this->n + 1));
@@ -5028,6 +5081,7 @@ if (!class_exists('TCPDF')) {
 		/**
 		* Output PDF header.
 		* @access protected
+		* @psalm-external-mutation-free
 		*/
 		function _putheader() {
 			$this->buffer = '%PDF-'.$this->PDFVersion."\n".$this->buffer;
@@ -5125,6 +5179,7 @@ if (!class_exists('TCPDF')) {
 		/**
 		* Begin a new object.
 		* @access protected
+		* @psalm-external-mutation-free
 		*/
 		function _newobj() {
 			$this->n++;
@@ -5176,6 +5231,7 @@ if (!class_exists('TCPDF')) {
 		* @param string $s string to escape.
 		* @return string escaped string.
 		* @access protected
+		* @psalm-mutation-free
 		*/
 		function _textstring($s) {
 			if ($this->isunicode) {
@@ -5197,6 +5253,7 @@ if (!class_exists('TCPDF')) {
 		* @param string $s string to escape.
 		* @return string escaped string.
 		* @access protected
+		* @psalm-mutation-free
 		*/
 		function _uristring($s) {
 			if ($this->encrypted) {
@@ -5228,6 +5285,7 @@ if (!class_exists('TCPDF')) {
 		* @param string $s string to escape.
 		* @return string escaped string.
 		* @access protected
+		* @psalm-pure
 		*/
 		function _escape($s) {
 			// the chr(13) substitution fixes the Bugs item #1421290.
@@ -5238,6 +5296,7 @@ if (!class_exists('TCPDF')) {
 		* Output a stream.
 		* @param string $s string to output.
 		* @access protected
+		* @psalm-mutation-free
 		*/
 		function _putstream($s) {
 			if ($this->encrypted) {
@@ -5252,6 +5311,7 @@ if (!class_exists('TCPDF')) {
 		* Output a string to the document.
 		* @param string $s string to output.
 		* @access protected
+		* @psalm-external-mutation-free
 		*/
 		function _out($s) {
 			if ($this->state == 2) {
@@ -5409,6 +5469,7 @@ if (!class_exists('TCPDF')) {
 		 * @access protected
 		 * @author Nicola Asuni
 		 * @since 1.53.0.TC005 (2005-01-05)
+		 * @psalm-mutation-free
 		 */
 		function UTF8StringToArray($str) {
 			if (!$this->isunicode) {
@@ -5486,6 +5547,7 @@ if (!class_exists('TCPDF')) {
 		 * @author Nicola Asuni
 		 * @since 1.53.0.TC005 (2005-01-05)
 		 * @uses UTF8StringToArray(), arrUTF8ToUTF16BE()
+		 * @psalm-mutation-free
 		 */
 		function UTF8ToUTF16BE($str, $setbom=true) {
 			if (!$this->isunicode) {
@@ -5502,6 +5564,7 @@ if (!class_exists('TCPDF')) {
 		 * @author Andrew Whitehead, Nicola Asuni
 		 * @access protected
 		 * @since 3.2.000 (2008-06-23)
+		 * @psalm-mutation-free
 		 */
 		function UTF8ToLatin1($str) {
 			if (!$this->isunicode) {
@@ -5561,6 +5624,7 @@ if (!class_exists('TCPDF')) {
 		 * @author Nicola Asuni
 		 * @since 2.1.000 (2008-01-08)
 		 * @see UTF8ToUTF16BE()
+		 * @psalm-pure
 		 */
 		function arrUTF8ToUTF16BE($unicode, $setbom=true) {
 			$outstr = ""; // string to be returned
@@ -5591,6 +5655,7 @@ if (!class_exists('TCPDF')) {
 	 	 * Set header font.
 		 * @param array $font font
 		 * @since 1.1
+		 * @psalm-external-mutation-free
 		 */
 		function setHeaderFont($font) {
 			$this->header_font = $font;
@@ -5609,6 +5674,7 @@ if (!class_exists('TCPDF')) {
 	 	 * Set footer font.
 		 * @param array $font font
 		 * @since 1.1
+		 * @psalm-external-mutation-free
 		 */
 		function setFooterFont($font) {
 			$this->footer_font = $font;
@@ -5627,6 +5693,7 @@ if (!class_exists('TCPDF')) {
 	 	 * Set language array.
 		 * @param array $language
 		 * @since 1.1
+		 * @psalm-external-mutation-free
 		 */
 		function setLanguageArray($language) {
 			$this->l = $language;
@@ -5740,6 +5807,7 @@ if (!class_exists('TCPDF')) {
 		 * @param int $px pixels
 		 * @return float millimeters
 		 * @access public
+		 * @psalm-mutation-free
 		 */
 		function pixelsToUnits($px){
 			return $px / $this->k;
@@ -5750,6 +5818,7 @@ if (!class_exists('TCPDF')) {
 		 * Convert entities in UTF-8.
 		 * @param $text_to_convert Text to convert.
 		 * @return string converted
+		 * @psalm-mutation-free
 		 */
 		function unhtmlentities($text_to_convert) {
 			return html_entity_decode($text_to_convert, ENT_QUOTES, $this->encoding);
@@ -5761,6 +5830,7 @@ if (!class_exists('TCPDF')) {
 		* Compute encryption key depending on object number where the encrypted data is stored
 		* @param int $n object number
 		* @since 2.0.000 (2008-01-02)
+		* @psalm-mutation-free
 		*/
 		function _objectkey($n) {
 			return substr($this->_md5_16($this->encryption_key.pack('VXxx',$n)),0,10);
@@ -5769,6 +5839,7 @@ if (!class_exists('TCPDF')) {
 		/**
 		 * Put encryption on PDF document.
 		 * @since 2.0.000 (2008-01-02)
+		 * @psalm-mutation-free
 		 */
 		function _putencryption() {
 			$this->_out('/Filter /Standard');
@@ -5787,6 +5858,7 @@ if (!class_exists('TCPDF')) {
 		* @return String encrypted text
 		* @since 2.0.000 (2008-01-02)
 		* @author Klemen Vodopivec
+		* @psalm-external-mutation-free
 		*/
 		function _RC4($key, $text) {
 			if ($this->last_rc4_key != $key) {
@@ -5826,6 +5898,7 @@ if (!class_exists('TCPDF')) {
 		* @return String MD5 encrypted binary string
 		* @since 2.0.000 (2008-01-02)
 		* @author Klemen Vodopivec
+		* @psalm-pure
 		*/
 		function _md5_16($str) {
 			return pack('H*',md5($str));
@@ -5838,6 +5911,7 @@ if (!class_exists('TCPDF')) {
 		* @return String O value
 		* @since 2.0.000 (2008-01-02)
 		* @author Klemen Vodopivec
+		* @psalm-mutation-free
 		*/
 		function _Ovalue($user_pass, $owner_pass) {
 			$tmp = $this->_md5_16($owner_pass);
@@ -5850,6 +5924,7 @@ if (!class_exists('TCPDF')) {
 		* @return String U value
 		* @since 2.0.000 (2008-01-02)
 		* @author Klemen Vodopivec
+		* @psalm-mutation-free
 		*/
 		function _Uvalue() {
 			return $this->_RC4($this->encryption_key, $this->padding);
@@ -5862,6 +5937,7 @@ if (!class_exists('TCPDF')) {
 		* @param String $protection protection type
 		* @since 2.0.000 (2008-01-02)
 		* @author Klemen Vodopivec
+		* @psalm-external-mutation-free
 		*/
 		function _generateencryptionkey($user_pass, $owner_pass, $protection) {
 			// Pad passwords
@@ -5921,6 +5997,7 @@ if (!class_exists('TCPDF')) {
 		* Use StartTransform() before, and StopTransform() after the transformations to restore the normal behavior.
 		* @since 2.1.000 (2008-01-07)
 		* @see StartTransform(), StopTransform()
+		* @psalm-mutation-free
 		*/
 		function StartTransform() {
 			$this->_out('q');
@@ -5932,6 +6009,7 @@ if (!class_exists('TCPDF')) {
 		* Use StartTransform() before, and StopTransform() after the transformations to restore the normal behavior.
 		* @since 2.1.000 (2008-01-07)
 		* @see StartTransform(), StopTransform()
+		* @psalm-mutation-free
 		*/
 		function StopTransform() {
 			$this->_out('Q');
@@ -6058,6 +6136,7 @@ if (!class_exists('TCPDF')) {
 		* @param int $t_x movement to the right (or left for RTL)
 		* @since 2.1.000 (2008-01-07)
 		* @see StartTransform(), StopTransform()
+		* @psalm-mutation-free
 		*/
 		function TranslateX($t_x){
 			$this->Translate($t_x, 0);
@@ -6068,6 +6147,7 @@ if (!class_exists('TCPDF')) {
 		* @param int $t_y movement to the bottom
 		* @since 2.1.000 (2008-01-07)
 		* @see StartTransform(), StopTransform()
+		* @psalm-mutation-free
 		*/
 		function TranslateY($t_y){
 			$this->Translate(0, $t_y);
@@ -6079,6 +6159,7 @@ if (!class_exists('TCPDF')) {
 		* @param int $t_y movement to the bottom
 		* @since 2.1.000 (2008-01-07)
 		* @see StartTransform(), StopTransform()
+		* @psalm-mutation-free
 		*/
 		function Translate($t_x, $t_y){
 			if ($this->rtl) {
@@ -6102,6 +6183,7 @@ if (!class_exists('TCPDF')) {
 		* @param int $y ordinate of the rotation center. Default is current y position
 		* @since 2.1.000 (2008-01-07)
 		* @see StartTransform(), StopTransform()
+		* @psalm-mutation-free
 		*/
 		function Rotate($angle, $x='', $y=''){
 			if ($x === '') {
@@ -6191,6 +6273,7 @@ if (!class_exists('TCPDF')) {
 		* Apply graphic transformations.
 		* @since 2.1.000 (2008-01-07)
 		* @see StartTransform(), StopTransform()
+		* @psalm-mutation-free
 		*/
 		function Transform($tm){
 			$this->_out(sprintf('%.3f %.3f %.3f %.3f %.3f %.3f cm', $tm[0], $tm[1], $tm[2], $tm[3], $tm[4], $tm[5]));
@@ -6207,6 +6290,7 @@ if (!class_exists('TCPDF')) {
 		* @param float $width The width.
 		* @since 1.0
 		* @see Line(), Rect(), Cell(), MultiCell()
+		* @psalm-external-mutation-free
 		*/
 		function SetLineWidth($width) {
 			//Set line width
@@ -6253,6 +6337,7 @@ if (!class_exists('TCPDF')) {
 		* </ul>
 		* @access public
 		* @since 2.1.000 (2008-01-08)
+		* @psalm-external-mutation-free
 		*/
 		function SetLineStyle($style) {
 			extract($style);
@@ -6309,6 +6394,7 @@ if (!class_exists('TCPDF')) {
 		* @access protected
 		* @since 2.1.000 (2008-01-08)
 		*/
+		/** @psalm-mutation-free */
 		function _outPoint($x, $y) {
 			if ($this->rtl) {
 				$x = $this->w - $x;
@@ -6323,6 +6409,7 @@ if (!class_exists('TCPDF')) {
 		* @access protected
 		* @since 2.1.000 (2008-01-08)
 		*/
+		/** @psalm-mutation-free */
 		function _outLine($x, $y) {
 			if ($this->rtl) {
 				$x = $this->w - $x;
@@ -6339,6 +6426,7 @@ if (!class_exists('TCPDF')) {
 		* @param string $op options
 		* @access protected
 		* @since 2.1.000 (2008-01-08)
+		* @psalm-mutation-free
 		*/
 		function _outRect($x, $y, $w, $h, $op) {
 			if ($this->rtl) {
@@ -6359,6 +6447,7 @@ if (!class_exists('TCPDF')) {
 		* @access protected
 		* @since 2.1.000 (2008-01-08)
 		*/
+		/** @psalm-mutation-free */
 		function _outCurve($x1, $y1, $x2, $y2, $x3, $y3) {
 			if ($this->rtl) {
 				$x1 = $this->w - $x1;
@@ -6378,6 +6467,7 @@ if (!class_exists('TCPDF')) {
 		* @access public
 		* @since 1.0
 		* @see SetLineWidth(), SetDrawColor(), SetLineStyle()
+		* @psalm-mutation-free
 		*/
 		function Line($x1, $y1, $x2, $y2, $style=array()) {
 			if ($style) {
@@ -6509,6 +6599,7 @@ if (!class_exists('TCPDF')) {
 		* @access public
 		* @see SetLineStyle()
 		* @since 2.1.000 (2008-01-08)
+		* @psalm-mutation-free
 		*/
 		function Curve($x0, $y0, $x1, $y1, $x2, $y2, $x3, $y3, $style="", $line_style=array(), $fill_color=array()) {
 			if (!(false === strpos($style, "F")) AND isset($fill_color)) {
@@ -6566,6 +6657,7 @@ if (!class_exists('TCPDF')) {
 		* @access public
 		* @see SetLineStyle()
 		* @since 3.0008 (2008-05-12)
+		* @psalm-mutation-free
 		*/
 		function Polycurve($x0, $y0, $segments, $style="", $line_style=array(), $fill_color=array()) {
 			if (!(false === strpos($style, "F")) AND isset($fill_color)) {
@@ -6630,6 +6722,7 @@ if (!class_exists('TCPDF')) {
 		* @param integer $nc Number of curves used in ellipse. Default value: 8.
 		* @access public
 		* @since 2.1.000 (2008-01-08)
+		* @psalm-mutation-free
 		*/
 		function Ellipse($x0, $y0, $rx, $ry=0, $angle=0, $astart=0, $afinish=360, $style="", $line_style=array(), $fill_color=array(), $nc=8) {
 			if ($angle) {
@@ -6734,6 +6827,7 @@ if (!class_exists('TCPDF')) {
 		* @param integer $nc Number of curves used in circle. Default value: 8.
 		* @access public
 		* @since 2.1.000 (2008-01-08)
+		* @psalm-mutation-free
 		*/
 		function Circle($x0, $y0, $r, $astart=0, $afinish=360, $style="", $line_style=array(), $fill_color=array(), $nc=8) {
 			$this->Ellipse($x0, $y0, $r, 0, 0, $astart, $afinish, $style, $line_style, $fill_color, $nc);
@@ -6759,6 +6853,7 @@ if (!class_exists('TCPDF')) {
 		* @param array $fill_color Fill color. Format: array(GREY) or array(R,G,B) or array(C,M,Y,K). Default value: default color (empty array).
 		* @access public
 		* @since 2.1.000 (2008-01-08)
+		* @psalm-mutation-free
 		*/
 		function Polygon($p, $style="", $line_style=array(), $fill_color=array()) {
 			$np = count($p) / 2;
@@ -6858,6 +6953,7 @@ if (!class_exists('TCPDF')) {
 		* @param array $circle_fill_color Fill color of inscribed circle (if draws). Format: array(red, green, blue). Default value: default color (empty array).
 		* @access public
 		* @since 2.1.000 (2008-01-08)
+		* @psalm-mutation-free
 		*/
 		function RegularPolygon($x0, $y0, $r, $ns, $angle=0, $draw_circle=false, $style="", $line_style=array(), $fill_color=array(), $circle_style="", $circle_outLine_style=array(), $circle_fill_color=array()) {
 			if (3 > $ns) {
@@ -6913,6 +7009,7 @@ if (!class_exists('TCPDF')) {
 		* @param array $circle_fill_color Fill color of inscribed circle (if draws). Format: array(red, green, blue). Default value: default color (empty array).
 		* @access public
 		* @since 2.1.000 (2008-01-08)
+		* @psalm-mutation-free
 		*/
 		function StarPolygon($x0, $y0, $r, $nv, $ng, $angle=0, $draw_circle=false, $style="", $line_style=array(), $fill_color=array(), $circle_style="", $circle_outLine_style=array(), $circle_fill_color=array()) {
 			if (2 > $nv) {
@@ -7626,6 +7723,7 @@ if (!class_exists('TCPDF')) {
 		* @author Olivier Plathey, Nicola Asuni
 		* @since 2.1.002 (2008-02-12)
 		*/
+		/** @psalm-external-mutation-free */
 		function Bookmark($txt, $level=0, $y=-1) {
 			if ($level < 0) {
 				$level = 0;
@@ -7715,6 +7813,7 @@ if (!class_exists('TCPDF')) {
 		* @author Johannes Güntert, Nicola Asuni
 		* @since 2.1.002 (2008-02-12)
 		*/
+		/** @psalm-external-mutation-free */
 		function IncludeJS($script) {
 			$this->javascript .= $script;
 		}
@@ -7725,6 +7824,7 @@ if (!class_exists('TCPDF')) {
 		* @author Johannes Güntert, Nicola Asuni
 		* @since 2.1.002 (2008-02-12)
 		*/
+		/** @psalm-external-mutation-free */
 		function _putjavascript() {
 			if (empty($this->javascript)) {
 				return;
@@ -7920,6 +8020,7 @@ if (!class_exists('TCPDF')) {
 		* @author Nicola Asuni
 		* @since 2.9.000 (2008-03-26)
 		*/
+		/** @psalm-mutation-free */
 		function _putuserrights() {
 			if (!$this->ur) {
 				return;
@@ -7974,6 +8075,7 @@ if (!class_exists('TCPDF')) {
 		* @author Nicola Asuni
 		* @since 2.9.000 (2008-03-26)
 		*/
+		/** @psalm-external-mutation-free */
 		function setUserRights(
 				$enable=true,
 				$document="/FullSave",
@@ -7993,6 +8095,7 @@ if (!class_exists('TCPDF')) {
 		* @access public
 		* @since 3.0.000 (2008-03-27)
 		*/
+		/** @psalm-external-mutation-free */
 		function startPageGroup() {
 			$this->newpagegroup = true;
 		}
@@ -8003,6 +8106,7 @@ if (!class_exists('TCPDF')) {
 		* @access public
 		* @since 3.0.000 (2008-03-27)
 		*/
+		/** @psalm-mutation-free */
 		function getGroupPageNo() {
 			return $this->pagegroups[$this->currpagegroup];
 		}
@@ -8015,6 +8119,7 @@ if (!class_exists('TCPDF')) {
 		* @access public
 		* @since 3.0.000 (2008-03-27)
 		*/
+		/** @psalm-mutation-free */
 		function getPageGroupAlias() {
 			if ((bool)strpos(strtolower($this->CurrentFont['type']), 'unicode')) {
 				return "{".$this->currpagegroup."}";
@@ -8027,6 +8132,7 @@ if (!class_exists('TCPDF')) {
 		* @access protected
 		* @since 3.0.000 (2008-03-27)
 		*/
+		/** @psalm-external-mutation-free */
 		function _putocg() {
 			$this->_newobj();
 			$this->n_ocg_print = $this->n;
@@ -8084,6 +8190,7 @@ if (!class_exists('TCPDF')) {
 		* @access protected
 		* @since 3.0.000 (2008-03-27)
 		*/
+		/** @psalm-external-mutation-free */
 		function addExtGState($parms) {
 			$n = count($this->extgstates) + 1;
 			$this->extgstates[$n]['parms'] = $parms;
@@ -8096,6 +8203,7 @@ if (!class_exists('TCPDF')) {
 		* @access protected
 		* @since 3.0.000 (2008-03-27)
 		*/
+		/** @psalm-mutation-free */
 		function setExtGState($gs) {
 			$this->_out(sprintf('/GS%d gs', $gs));
 		}
@@ -8127,6 +8235,7 @@ if (!class_exists('TCPDF')) {
 		* @access public
 		* @since 3.0.000 (2008-03-27)
 		*/
+		/** @psalm-mutation-free */
 		function setAlpha($alpha, $bm='Normal') {
 			$gs = $this->addExtGState(array('ca' => $alpha, 'CA' => $alpha, 'BM' => '/'.$bm));
 			$this->setExtGState($gs);
@@ -8138,6 +8247,7 @@ if (!class_exists('TCPDF')) {
 		* @access public
 		* @since 3.0.000 (2008-03-27)
 		*/
+		/** @psalm-external-mutation-free */
 		function setJPEGQuality($quality) {
 			if (($quality < 1) OR ($quality > 100)) {
 				$quality = 75;
@@ -8151,6 +8261,7 @@ if (!class_exists('TCPDF')) {
 		* @access public
 		* @since 3.0.014 (2008-06-04)
 		*/
+		/** @psalm-external-mutation-free */
 		function setDefaultTableColumns($cols=4) {
 			$this->default_table_columns = intval($cols);
 		}
@@ -8161,6 +8272,7 @@ if (!class_exists('TCPDF')) {
 		* @access public
 		* @since 3.0.014 (2008-06-04)
 		*/
+		/** @psalm-external-mutation-free */
 		function setCellHeightRatio($h) {
 			$this->cell_height_ratio = $h;
 		}
@@ -8170,6 +8282,7 @@ if (!class_exists('TCPDF')) {
 		* @access public
 		* @since 4.0.012 (2008-07-24)
 		*/
+		/** @psalm-mutation-free */
 		function getCellHeightRatio() {
 			return $this->cell_height_ratio;
 		}
@@ -8180,6 +8293,7 @@ if (!class_exists('TCPDF')) {
 		* @access public
 		* @since 3.1.000 (2008-06-09)
 		*/
+		/** @psalm-external-mutation-free */
 		function setPDFVersion($version="1.7") {
 			$this->PDFVersion = $version;
 		}
@@ -8210,6 +8324,7 @@ if (!class_exists('TCPDF')) {
 		* @access public
 		* @since 3.1.000 (2008-06-09)
 		*/
+		/** @psalm-external-mutation-free */
 		function setViewerPreferences($preferences) {
 			$this->viewer_preferences = $preferences;
 		}
@@ -8226,6 +8341,7 @@ if (!class_exists('TCPDF')) {
 		* @author Andreas Würmser, Nicola Asuni
 		* @since 3.1.000 (2008-06-09)
 		* @access public
+		* @psalm-mutation-free
 		*/
 		function LinearGradient($x, $y, $w, $h, $col1=array(), $col2=array(), $coords=array(0,0,1,0)) {
 			$this->Clip($x, $y, $w, $h);
@@ -8244,6 +8360,7 @@ if (!class_exists('TCPDF')) {
 		* @author Andreas Würmser, Nicola Asuni
 		* @since 3.1.000 (2008-06-09)
 		* @access public
+		* @psalm-mutation-free
 		*/
 		function RadialGradient($x, $y, $w, $h, $col1=array(), $col2=array(), $coords=array(0.5,0.5,0.5,0.5,1)) {
 			$this->Clip($x, $y, $w, $h);
@@ -8343,6 +8460,7 @@ if (!class_exists('TCPDF')) {
 		* @author Andreas Würmser, Nicola Asuni
 		* @since 3.1.000 (2008-06-09)
 		* @access protected
+		* @psalm-mutation-free
 		*/
 		function Clip($x, $y, $w, $h){
 			if ($this->rtl) {
@@ -8366,6 +8484,7 @@ if (!class_exists('TCPDF')) {
 		* @author Andreas Würmser, Nicola Asuni
 		* @since 3.1.000 (2008-06-09)
 		* @access protected
+		* @psalm-external-mutation-free
 		*/
 		function Gradient($type, $col1, $col2, $coords){
 			$n = count($this->gradients) + 1;
@@ -8440,6 +8559,7 @@ if (!class_exists('TCPDF')) {
 		* @author Maxime Delorme, Nicola Asuni
 		* @since 3.1.000 (2008-06-09)
 		* @access protected
+		* @psalm-mutation-free
 		*/
 		function _outarc($x1, $y1, $x2, $y2, $x3, $y3 ) {
 			$h = $this->h;
@@ -8460,6 +8580,7 @@ if (!class_exists('TCPDF')) {
 		* @author Maxime Delorme, Nicola Asuni
 		* @since 3.1.000 (2008-06-09)
 		* @access public
+		* @psalm-mutation-free
 		*/
 		function PieSector($xc, $yc, $r, $a, $b, $style='FD', $cw=true, $o=90) {
 			if ($this->rtl) {
@@ -8784,6 +8905,7 @@ if (!class_exists('TCPDF')) {
 		/**
 	 	 * Set document barcode.
 		 * @param string $bc barcode
+		 * @psalm-external-mutation-free
 		 */
 		function setBarcode($bc="") {
 			$this->barcode = $bc;
@@ -9083,6 +9205,7 @@ if (!class_exists('TCPDF')) {
 		 * </ul>
 		 * @return array containing all margins measures
 		 * @since 3.2.000 (2008-06-23)
+		 * @psalm-mutation-free
 		 */
 		function getMargins() {
 			$ret = array(
@@ -9105,6 +9228,7 @@ if (!class_exists('TCPDF')) {
 		 * </ul>
 		 * @return array containing all margins measures
 		 * @since 4.0.012 (2008-07-24)
+		 * @psalm-mutation-free
 		 */
 		function getOriginalMargins() {
 			$ret = array(
@@ -10430,6 +10554,7 @@ if (!class_exists('TCPDF')) {
 		 * @param boolean $cell if true add the default cMargin space to each new line (default false).
 		 * @param string $h The height of the break. By default, the value equals the height of the last printed cell.
 		 * @access protected
+		 * @psalm-external-mutation-free
 		 */
 		function addHTMLVertSpace($n, $cell=false, $h='') {
 			if (is_string($h)) {

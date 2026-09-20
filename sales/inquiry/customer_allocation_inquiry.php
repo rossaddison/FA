@@ -85,6 +85,7 @@ function due_date(array|false|null $row)
 	return $row["type"] == ST_SALESINVOICE ? $row["due_date"] : '';
 }
 
+/** @psalm-pure */
 function fmt_balance(array|false|null $row)
 {
 	return ($row["type"] == ST_JOURNAL && $row["TotalAmount"] < 0 ? -$row["TotalAmount"] : $row["TotalAmount"]) - (float)$row["Allocated"];

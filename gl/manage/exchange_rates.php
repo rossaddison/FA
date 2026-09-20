@@ -99,6 +99,7 @@ function del_link(array|false|null $row): string
   return button('Delete'.(string)$row["id"], _("Delete"), true, ICON_DELETE);
 }
 
+/** @psalm-mutation-free */
 function display_rates(string|int|float|bool|null $curr_code): void
 {
 

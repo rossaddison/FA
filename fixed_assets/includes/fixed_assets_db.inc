@@ -142,6 +142,7 @@ function get_fixed_asset_class(string|int|float|bool|array|null $id)
 
 //--------------------------------------------------------------------------------------------------
 
+/** @psalm-pure */
 function get_sql_for_fixed_assets(string|bool|array|null $show_inactive = false): string
 {
   	$sql = "SELECT s.stock_id, c.description, s.units, s.description as name,

@@ -57,6 +57,7 @@
  * Returns the UTF-8 string corresponding to unicode value.
  * @param $num unicode value to convert.
  * @return string converted
+ * @psalm-pure
  */
 function code_to_utf8(string|int|float|bool|null $num) {
 	if ($num <= 0x7F) {
@@ -76,6 +77,7 @@ function code_to_utf8(string|int|float|bool|null $num) {
  * Convert entities in UTF-8.
  * @param $text_to_convert Text to convert.
  * @return string converted
+ * @psalm-pure
  */
 function html_entity_decode_php4(string|int|float|bool|null $text_to_convert) {
 	$htmlentities_table = array (

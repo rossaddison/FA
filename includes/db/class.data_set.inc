@@ -32,11 +32,13 @@ abstract class record_set {
 	var $debug = array();
 	var $subset;		// optional where clause for record subset
 
+	/** @psalm-external-mutation-free */
 	function __wakeup()
 	{
 		$this->errors = array();
 	}
 
+	/** @psalm-mutation-free */
 	function __construct($name, $fields, $key, $subset=null)
 	{
 		$this->name = $name;
@@ -253,6 +255,7 @@ abstract class record_set {
 
 class data_set extends record_set {
 
+	/** @psalm-mutation-free */
 	function __construct($name, $fields, $key, $subset=null)
 	{
 		parent::__construct($name, $fields, $key, $subset);
@@ -417,6 +420,7 @@ class array_set extends record_set {
 
 	var $object_class;	// name of record object class or null for arrays
 
+	/** @psalm-mutation-free */
 	function __construct($name, $fields, $key=null, &$arr=array(), $class = null)
 	{
 		$this->array = &$arr;
@@ -440,6 +444,7 @@ class array_set extends record_set {
 	//
 	//	Generic list record routine
 	//
+	/** @psalm-mutation-free */
 	function get_all()
 	{
 		return $this->array;

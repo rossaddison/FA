@@ -46,6 +46,7 @@ function trans_view(array $trans)
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
 
+/** @psalm-pure */
 function due_date(array|false|null $row)
 {
 	return	$row["type"] == ST_SALESINVOICE	? $row["due_date"] : '';

@@ -100,6 +100,7 @@ class FPDF extends TCPDF {
      *
      * @param string $s
      * @return string
+     * @psalm-pure
      */
     function _unescape($s) {
         return strtr($s, array(
@@ -119,6 +120,7 @@ class FPDF extends TCPDF {
      *
      * @param string $hex
      * @return string
+     * @psalm-pure
      */
     function hex2str($hex) {
     	return pack("H*", str_replace(array("\r", "\n", " "), "", $hex));
@@ -129,6 +131,7 @@ class FPDF extends TCPDF {
      *
      * @param string $str
      * @return string
+     * @psalm-pure
      */
     function str2hex($str) {
         return current(unpack("H*", $str));

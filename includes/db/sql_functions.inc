@@ -70,6 +70,7 @@ function update_record_status(string|int|float|bool|array|null $id, string|int|f
 //	$index  - comma delimited list of columns for total grouping and order
 //  Returns running totals with respective index column
 //
+/** @psalm-pure */
 function running_total_sql(?string $table, ?string $column, ?string $index): string
 {
 

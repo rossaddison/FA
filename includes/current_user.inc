@@ -87,6 +87,7 @@ class current_user
 		return $this->logged;
 	}
 
+	/** @psalm-external-mutation-free */
 	function set_company($company)
 	{
 		$this->company = (int)$company;
@@ -330,6 +331,7 @@ class current_user
 
 //--------------------------------------------------------------------------
 
+/** @psalm-pure */
 function round2(string|int|float|bool|null $number, string|int|float|bool|null $decimals=0): float
 {
 	$delta = ($number < 0 ? -.0000000001 : .0000000001);
@@ -370,6 +372,7 @@ if (!floatcmp($value1, $value2))
 
 define('FLOAT_COMP_DELTA', 0.004);
 
+/** @psalm-pure */
 function floatcmp(string|int|float|bool|null $a, string|int|float|bool|null $b): int
 {
     return $a - $b > FLOAT_COMP_DELTA ? 1 : ($b - $a > FLOAT_COMP_DELTA ? -1 : 0);
@@ -692,6 +695,7 @@ function array_insert(array &$array, ?int $index, string|array|null $elements): 
 	$array = array_merge($head, $elements, $array);
 }
 
+/** @psalm-mutation-free */
 function array_remove(array &$array, ?int $index, ?int $len=1): void
 {
 	array_splice($array, $index, $len);
@@ -716,6 +720,7 @@ function array_append(array &$array, ?array $elements): void
 //	Search $needle in $haystack or in $haystack[][$valuekey]
 //	returns $needle found or null.
 //
+/** @psalm-pure */
 function array_search_value(string|int|float|bool|null $needle, ?array $haystack, string|int|null $valuekey=null)
 {
 	if (is_array($haystack)) {
@@ -732,6 +737,7 @@ function array_search_value(string|int|float|bool|null $needle, ?array $haystack
 //	Search $needle in $haystack or in $haystack[][$valuekey]
 //	returns array of keys of $haystack elements found
 //
+/** @psalm-pure */
 function array_search_keys(string|int|float|bool|null $needle, ?array $haystack, ?string $valuekey=null): array
 {
 	$keys = array();
@@ -749,6 +755,7 @@ function array_search_keys(string|int|float|bool|null $needle, ?array $haystack,
 //	Find first (single) $needle in $haystack or in $haystack[][$valuekey]
 //	returns $haystack element found or null
 //
+/** @psalm-pure */
 function array_search_key(string|int|float|bool|null $needle, ?array $haystack, ?string $valuekey=null)
 {
 	$keys = array_search_keys($needle, $haystack, $valuekey);
@@ -799,6 +806,7 @@ function company_path(string|int|float|bool|null $comp=null): string
 			. '/'.$comp;
 }
 
+/** @psalm-pure */
 function is_admin_company(): bool
 {
 	return $this->company == 0;

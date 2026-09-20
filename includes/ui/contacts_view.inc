@@ -21,6 +21,7 @@ class contacts extends simple_crud {
 	var $sub_class;
 	var $class;
 	
+	/** @psalm-mutation-free */
 	function __construct($name, $id, $class, $subclass=null) {
 		$fields = array('ref','name','name2','address', 'phone', 'phone2','fax',
 			'email','lang','notes', 'assgn' =>array('fld'=>'contacts'));
@@ -146,6 +147,7 @@ class contacts extends simple_crud {
 		return get_crm_person($this->selected_id);
 	}
 
+	/** @psalm-pure */
 	function delete_check() {
 		return true;
 	}

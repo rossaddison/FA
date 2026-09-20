@@ -432,6 +432,7 @@ class JsHttpRequest
 
     /**
      * Decode one %uXXXX entity (RE callback).
+     * @psalm-mutation-free
      */
     function _ucs2EntitiesDecodeCallback($p)
     {
@@ -463,6 +464,7 @@ class JsHttpRequest
      * This function will generate fatal error if none of these functons available!
      * 
      * @see iconv()
+     * @psalm-mutation-free
      */
     function _unicodeConv($fromEnc, $toEnc, $v)
     {
@@ -480,6 +482,7 @@ class JsHttpRequest
      
     /**
      * Convert from UCS-2BE decimal to $toEnc.
+     * @psalm-external-mutation-free
      */
     function _decUcs2Decode($code, $toEnc)
     {

@@ -24,6 +24,7 @@ if (!defined("PHP_VER_LOWER43"))
 
 /**
  * ensure that strspn works correct if php-version < 4.3
+ * @psalm-pure
  */
 function _strspn(mixed $str1, mixed $str2, mixed $start=null, mixed $length=null) {
     $numargs = func_num_args();
@@ -48,6 +49,7 @@ function _strspn(mixed $str1, mixed $str2, mixed $start=null, mixed $length=null
 
 /**
  * ensure that strcspn works correct if php-version < 4.3
+ * @psalm-pure
  */
 function _strcspn(mixed $str1, mixed $str2, mixed $start=null, mixed $length=null) {
     $numargs = func_num_args();

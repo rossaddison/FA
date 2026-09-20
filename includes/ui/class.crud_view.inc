@@ -16,6 +16,7 @@ class UI {
 	var $ui_mode;
 
 	// formatters
+	/** @psalm-pure */
 	function text($value, $name='', $opts=array())
 	{
 		$text = array('label', 'size'=>"", 'max'=>"", 'title'=>false,	'labparams'=>"", 'post_label'=>"", 'inparams'=>"");
@@ -43,11 +44,13 @@ class user_view {
 	var $dec;
 	var $name;
 
+	/** @psalm-mutation-free */
 	function __construct($name)
 	{
 		$this->name = $name;
 	}
 
+	/** @psalm-external-mutation-free */
 	function error($msg, $context=null)
 	{
 		// save error message
@@ -289,6 +292,7 @@ class simple_crud_view extends user_view {
 	var $display_both = false; //when set to true both list and editor are displayed all the time (eventually set in sub classes)
 	//
 	//
+	/** @psalm-mutation-free */
 	function __construct($name, $data_set = null, $options=array())
 	{
 		parent::__construct($name);
@@ -330,6 +334,7 @@ class simple_crud_view extends user_view {
 //		$this->_prev_status();
 	}
 
+	/** @psalm-external-mutation-free */
 	function _add_action($name, $handler, $but_value=null, $but_title=false, $but_icon=false, $aspect='', $view=null)
 	{
 		$this->pre_handlers[$name] = $handler;
@@ -341,6 +346,7 @@ class simple_crud_view extends user_view {
 			$this->_add_mode($name, $view);
 	}
 
+	/** @psalm-external-mutation-free */
 	function _add_mode($name, $view)
 	{
 		$this->views[$name] = $view;
@@ -593,6 +599,7 @@ class simple_crud_view extends user_view {
 	//
 	//	Optional things like focus set performed on edition cancel.
 	//
+	/** @psalm-mutation-free */
 	function cancel()
 	{
 	}
@@ -616,6 +623,7 @@ class simple_crud_view extends user_view {
 
 class selector_crud_view extends simple_crud_view {
 
+	/** @psalm-mutation-free */
 	function __construct($name, $data_set = null, $options=array())
 	{
 		$this->display_both = true;
@@ -670,6 +678,7 @@ class table_crud_view extends simple_crud_view {
 
 	var $title;
 
+	/** @psalm-mutation-free */
 	function __construct($name, &$data_set = null, $options=array())
 	{
 		$this->display_both = true;
@@ -679,6 +688,7 @@ class table_crud_view extends simple_crud_view {
 	*
 	*	Returns selector string from data or current selected_id
 	*
+	* @psalm-mutation-free
 	**/
 	function curr_id($data=null)
 	{
@@ -691,6 +701,7 @@ class table_crud_view extends simple_crud_view {
 	*
 	*	Show single line from record table
 	*
+	* @psalm-mutation-free
 	**/
 	function show_record_row($line_no, $record=array())
 	{
@@ -734,6 +745,7 @@ class table_crud_view extends simple_crud_view {
 		}
 */
 	}
+	/** @psalm-mutation-free */
 	function show_list_headers()
 	{
 	}

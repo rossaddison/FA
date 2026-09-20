@@ -125,6 +125,7 @@ class FPDF_TPL extends FPDF {
      * This method ends a template and reset initiated variables on beginTemplate.
      *
      * @return mixed If a template is opened, the ID is returned. If not a false is returned.
+     * @psalm-external-mutation-free
      */
     function endTemplate() {
         if ($this->_intpl) {
@@ -217,6 +218,7 @@ class FPDF_TPL extends FPDF {
      * @param int $_w The width of the template
      * @param int $_h The height of the template
      * @return array The height and width of the template
+     * @psalm-mutation-free
      */
     function getTemplateSize($tplidx, $_w=0, $_h=0) {
         if (!$this->tpls[$tplidx])
@@ -386,6 +388,7 @@ class FPDF_TPL extends FPDF {
         $this->_putformxobjects();
     }
     
+    /** @psalm-mutation-free */
     function _putxobjectdict() {
         parent::_putxobjectdict();
         
@@ -398,6 +401,7 @@ class FPDF_TPL extends FPDF {
 
     /**
      * Private Method
+     * @psalm-external-mutation-free
      */
     function _out($s) {
         if ($this->state==2 && $this->_intpl) {

@@ -165,6 +165,7 @@ class db_pager {
 	//
 	//	Set additional constraint on record set
 	//
+	/** @psalm-external-mutation-free */
 	function set_where($where = null)
 	{
 	 	if ($where) {
@@ -436,6 +437,7 @@ class db_pager {
 	//
 	//	Set check function to mark some rows.
 	//	
+	/** @psalm-external-mutation-free */
 	function set_marker($func, $notice='', $markercl='overduebg', $msgclass='overduefg' )
 	{
 		$this->marker = $func;
@@ -447,6 +449,7 @@ class db_pager {
 	//	Set handler to display additional row between titles and pager body.
 	//	Return array of column contents.
 	//
+	/** @psalm-external-mutation-free */
 	function set_header($func, $headercl='inquirybg')
 	{
 		$this->header_fun = $func;
@@ -456,6 +459,7 @@ class db_pager {
 	//	Set handler to display additional row between pager body and navibar.
 	//	Return array of column contents.
 	//
+	/** @psalm-external-mutation-free */
 	function set_footer($func, $footercl='inquirybg')
 	{
 		$this->footer_fun = $func;
@@ -464,6 +468,7 @@ class db_pager {
 	//
 	//	Setter for table editors with inactive cell control.
 	//
+	/** @psalm-external-mutation-free */
 	function set_inactive_ctrl($table, $key) {
 		$this->inactive_ctrl = array('table'=>$table, 'key'=>$key);
 	}

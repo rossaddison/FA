@@ -38,6 +38,7 @@ class simple_crud {
 	var $dec;
 	//
 	//
+	/** @psalm-mutation-free */
 	function __construct($name, $fields = null)
 	{
 		$this->name = $name;
@@ -190,6 +191,7 @@ class simple_crud {
 	//
 	//	Return to listing view
 	//
+	/** @psalm-external-mutation-free */
 	function _cancel()
 	{
 		$this->selected_id = $this->_none;
@@ -358,6 +360,7 @@ class simple_crud {
 	//	Cancel edition
 	//	Optional things like focus set.
 	//
+	/** @psalm-mutation-free */
 	function db_cancel()
 	{
 	}
@@ -368,10 +371,12 @@ class simple_crud {
 		return true; 
 	}
 
+	/** @psalm-pure */
 	function insert_check() {
 		return true;
 	}
 
+	/** @psalm-mutation-free */
 	function update_check() 
 	{
 		return $this->insert_check(); 

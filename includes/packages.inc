@@ -112,6 +112,7 @@ class package extends gzip_file {
 	//
 	//	Purge all package related configuration and data.
 	//
+	/** @psalm-pure */
 	function purge()
 	{
 		return true;
@@ -124,6 +125,7 @@ class package extends gzip_file {
 //
 /**
  * @return array<array-key, mixed>|non-empty-string|null
+ * @psalm-pure
  */
 function ufmt_property(mixed $key, string|array|null $value)
 {
@@ -709,6 +711,7 @@ function install_extension(string|int|float|bool|null $pkg_name): bool
 /*
 	Returns true if newer package version is available
 */
+/** @psalm-pure */
 function check_pkg_upgrade(string|int|float|bool|null $current, string|int|float|bool|null $available): bool
 {
 	if ($available == NULL)

@@ -22,6 +22,7 @@ simple_page_mode(true);
 //------------------------------
 //	Helper to translate record content to more intuitive form
 //
+/** @psalm-pure */
 function term_days(bool|array|null $myrow)
 {
 	return $myrow["day_in_following_month"] != 0 ? $myrow["day_in_following_month"] :
@@ -30,6 +31,7 @@ function term_days(bool|array|null $myrow)
 
 /**
  * @return 1|2|3|4
+ * @psalm-pure
  */
 function term_type(bool|array|null $myrow): int
 {

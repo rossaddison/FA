@@ -244,16 +244,19 @@ class Chart
 		}
 	}
 
+	/** @psalm-external-mutation-free */
 	function setDirection($dir='ltr')
 	{
 		$this->dir = $dir;
 	}
 	
+	/** @psalm-external-mutation-free */
 	function setLanguage($lang='en')
 	{
 		$this->lang = $lang;
 	}
 	
+	/** @psalm-external-mutation-free */
 	function setStream($stream = 'svg')
 	{
 		$this->stream = $stream;
@@ -264,11 +267,13 @@ class Chart
 		}
 	}
 
+	/** @psalm-external-mutation-free */
 	function setLabels($labels)
 	{
 		$this->labels = $labels;
 	}
 
+	/** @psalm-external-mutation-free */
 	function addSerie($label, $data, $type = false, $fill = false)
 	{
 		if ($label == false)
@@ -281,31 +286,37 @@ class Chart
 		$this->num_series++;
 	}
 
+	/** @psalm-external-mutation-free */
 	function setXTitle($xtitle)
 	{
 		$this->axis_x = $xtitle;
 	}
 
+	/** @psalm-external-mutation-free */
 	function setYTitle($ytitle)
 	{
 		$this->axis_y = $ytitle;
 	}
 
+	/** @psalm-external-mutation-free */
 	function setTitle($title)
 	{
 		$this->title = $title;
 	}
 
+	/** @psalm-external-mutation-free */
 	function setDTitle($dtitle)
 	{
 		$this->donut_title = $dtitle; 
 	}
 
+	/** @psalm-external-mutation-free */
 	function setValues($values = false)
 	{
 		$this->set_values = $values;
 	}
 
+	/** @psalm-external-mutation-free */
 	function setOutDir($dir)
 	{
 		$this->out_dir = $dir;
@@ -1140,6 +1151,7 @@ class Chart
 		$this->legend_box_x2   = $this->legend_box_x1 + $this->legend_box_width;
 	}
 
+	/** @psalm-external-mutation-free */
 	function calculate_height()
 	{
 		switch ($this->type)
@@ -1312,6 +1324,7 @@ class Chart
 		return $p[4] - $p[0];
 	}
 
+	/** @psalm-external-mutation-free */
 	function calculate_higher_value() 
 	{
 		$digits	  = strlen(round($this->max_value));
@@ -1320,6 +1333,7 @@ class Chart
 		$this->higher_value_str = $this->number_formated($this->higher_value, $this->dec1);
 	}
 
+	/** @psalm-mutation-free */
 	function number_formated($number, $dec_size = 1)
 	{
 		if ($this->latin_notation == true) 
@@ -1485,6 +1499,7 @@ class Chart
 		imagettftext($img, $size, $angle, round($x), $y  + $alt, $col, $this->fontfile, $string);
 	}
 
+	/** @psalm-pure */
 	function hex2rgb($hex)
 	{
 		list($r, $g, $b) = sscanf($hex, "#%02x%02x%02x");
@@ -1542,11 +1557,13 @@ class SVG
 	 */
 	var $svg;
 
+	/** @psalm-mutation-free */
 	function __construct($width=0, $height=0, $dir='ltr', $lang='en')
 	{
 		$this->svg = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" direction=\"$dir\" xml:lang=\"$lang\" width=\"$width\" height=\"$height\" viewPort=\"0 0 $width $height\"";
 		$this->svg .= ">\n";
 	}
+	/** @psalm-external-mutation-free */
 	function circle($x, $y, $r, $bcolor=false, $line_width=1, $color=false, $style=false, $tooltip=false)
 	{
 		$this->svg .= "<circle cx=\"$x\" cy=\"$y\" r=\"$r\"";
@@ -1564,6 +1581,7 @@ class SVG
 		else
 			$this->svg .= " />\n";
 	}
+	/** @psalm-external-mutation-free */
 	function rect($x1, $y1, $x2, $y2, $bcolor=false, $line_width=1, $color=false, $style=false, $tooltip=false)
 	{
 		$this->svg .= "<rect x=\"$x1\" y=\"$y1\" width=\"$x2\" height=\"$y2\"";
@@ -1581,6 +1599,7 @@ class SVG
 		else
 			$this->svg .= " />\n";
 	}
+	/** @psalm-external-mutation-free */
 	function line($x1, $y1, $x2, $y2, $bcolor=false, $line_width=1, $color=false, $style=false, $tooltip=false)
 	{
 		$this->svg .= "<line x1=\"$x1\" y1=\"$y1\" x2=\"$x2\" y2=\"$y2\"";
@@ -1598,6 +1617,7 @@ class SVG
 		else
 			$this->svg .= " />\n";
 	}
+	/** @psalm-external-mutation-free */
 	function polygon($p, $bcolor=false, $line_width=1, $color=false, $style=false, $tooltip=false)
 	{
 		$this->svg .= "<polygon points=\"$p\"";
@@ -1615,6 +1635,7 @@ class SVG
 		else
 			$this->svg .= " />\n";
 	}
+	/** @psalm-external-mutation-free */
 	function polyline($p, $bcolor=false, $line_width=1, $color=false, $style=false, $tooltip=false)
 	{
 		$this->svg .= "<polyline points=\"$p\"";
@@ -1632,6 +1653,7 @@ class SVG
 		else
 			$this->svg .= " />\n";
 	}
+	/** @psalm-external-mutation-free */
 	function path($d, $bcolor=false, $line_width=1, $color=false, $style=false, $tooltip=false)
 	{
 		$this->svg .= "<path d=\"$d\"";
@@ -1649,6 +1671,7 @@ class SVG
 		else
 			$this->svg .= " />\n";
 	}
+	/** @psalm-external-mutation-free */
 	function text($x, $y, $text, $size=false, $color=false, $style=false, $align=false, $angle=false) // align start, middle, end. 
 	{
 		$this->svg .= "<text x=\"$x\" y=\"$y\"";
@@ -1664,22 +1687,27 @@ class SVG
 			$this->svg .= " transform=\"rotate($angle $x $y)\"";
 		$this->svg .= ">$text</text>\n";
 	}
+	/** @psalm-external-mutation-free */
 	function other($s)
 	{
 		$this->svg .= $s;
 	}
+	/** @psalm-external-mutation-free */
 	function style($s='')
 	{
 		$this->svg .= "<defs><style type=\"text/css\"><![CDATA[ $s ]]></style></defs>\n";
 	}
+	/** @psalm-external-mutation-free */
 	function open_group($p = '')
 	{
 		$this->svg .= "<g $p>\n";
 	}
+	/** @psalm-external-mutation-free */
 	function close_group()
 	{
 		$this->svg .= "</g>\n";
 	}
+	/** @psalm-external-mutation-free */
 	function close()
 	{
 		$this->svg .= "</svg>\n";
@@ -1701,21 +1729,25 @@ class SVG
 // modified by Bagram Siadat.
 // The function has been further modified and several bugs are fixed.
 
+/** @psalm-pure */
 function is_arabic(string|int|float|bool|null $text): int|false
 {
 	return preg_match('/\p{Arabic}/u', $text);
 } 
 
+/** @psalm-pure */
 function is_hebrew(string|int|float|bool|null $text): int|false
 {
 	return preg_match('/\p{Hebrew}/u', $text);
 } 
 
+/** @psalm-pure */
 function utf8_strlen(string|int|float|bool|null $str): int|false 
 {
 	return preg_match_all('/[\x00-\x7F\xC0-\xFD]/', $str, $dummy);
 }
 
+/** @psalm-pure */
 function utf8_chr(?int $uni): string 
 {
 	$r = "";
@@ -1750,6 +1782,7 @@ function utf8_chr(?int $uni): string
 }
 
 ///
+/** @psalm-pure */
 function arabic(string|int|float|bool|null $str,string|int|float|bool|null $z="",string|int|float|bool|null $method='normal'): string
 {
 $p_chars = array (

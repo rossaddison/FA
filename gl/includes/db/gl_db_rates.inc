@@ -266,6 +266,7 @@ function get_sql_for_exchange_rates(string|array|null $curr): string
 	return $sql;	 
 }
 
+/** @psalm-pure */
 function getInnerStr(string|bool|null $str, ?string $start, string|int|float|bool|null $end): string 
 {
 	// $start must be the first occurrence

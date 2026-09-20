@@ -62,6 +62,7 @@ function get_global_curr_code()
 	return $_SESSION['wa_global_curr_code'];
 }
 
+/** @psalm-pure */
 function count_array(array $array): int
 {
 	return (is_array($array)) ? count($array) : (($array === NULL) ? 0 : 1);

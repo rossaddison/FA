@@ -22,6 +22,7 @@ class archive
 	var $storeonly = array();
 	var $error = array();
 
+	/** @psalm-mutation-free */
 	function __construct($name)
 	{
 		$this->options = array (
@@ -240,6 +241,7 @@ class archive
 
 class tar_file extends archive
 {
+	/** @psalm-mutation-free */
 	function __construct($name)
 	{
 		parent::__construct($name);
@@ -430,6 +432,7 @@ class tar_file extends archive
 
 class gzip_file extends tar_file
 {
+	/** @psalm-mutation-free */
 	function __construct($name)
 	{
 		parent::__construct($name);
@@ -459,6 +462,7 @@ class gzip_file extends tar_file
 		return 1;
 	}
 
+	/** @psalm-mutation-free */
 	function open_archive()
 	{
 		return @gzopen($this->options['name'], "rb");

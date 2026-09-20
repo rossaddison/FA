@@ -82,6 +82,7 @@ class references
 		$this->reflines = new reflines_db();
 	}
 
+	/** @psalm-pure */
 	function _legacy_line($refline)
 	{
 		return strpbrk($refline['pattern'], '{}') == false;
@@ -407,6 +408,7 @@ class references
 	//
 	//	Increments (or decrements if $back==true) reference template
 	//
+	/** @psalm-pure */
 	function _increment($reference, $back=false) 
 	{
 		// Legacy code used when no palceholder is in use:

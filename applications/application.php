@@ -24,6 +24,7 @@ define('MENU_SYSTEM', 'menu_system');
 		var $label;
 		var $link;
 		
+		/** @psalm-mutation-free */
 		function __construct($label, $link) 
 		{
 			$this->label = $label;
@@ -36,12 +37,14 @@ define('MENU_SYSTEM', 'menu_system');
 		var $title;
 		var $items;
 		
+		/** @psalm-mutation-free */
 		function __construct($title) 
 		{
 			$this->title = $title;
 			$this->items = array();
 		}
 		
+		/** @psalm-external-mutation-free */
 		function add_item($label, $link) 
 		{
 			$item = new menu_item($label,$link);
@@ -58,6 +61,7 @@ define('MENU_SYSTEM', 'menu_system');
 		var $access;
         var $category;
 		
+		/** @psalm-mutation-free */
 		function __construct($label,$link,$access='SA_OPEN',$category='')
 		{
 			$this->label = $label;
@@ -74,6 +78,7 @@ define('MENU_SYSTEM', 'menu_system');
 		var $lappfunctions;
 		var $rappfunctions;
 		
+		/** @psalm-mutation-free */
 		function __construct($name,$icon = null) 
 		{
 			$this->name = $name;
@@ -82,6 +87,7 @@ define('MENU_SYSTEM', 'menu_system');
 			$this->rappfunctions = array();
 		}
 		
+		/** @psalm-external-mutation-free */
 		function add_lapp_function($label,$link="",$access='SA_OPEN',$category='')
 		{
 			$appfunction = new app_function($label,$link,$access,$category);
@@ -89,6 +95,7 @@ define('MENU_SYSTEM', 'menu_system');
 			return $appfunction;
 		}
 
+		/** @psalm-external-mutation-free */
 		function add_rapp_function($label,$link="",$access='SA_OPEN',$category='')
 		{
 			$appfunction = new app_function($label,$link,$access,$category);
@@ -107,6 +114,7 @@ define('MENU_SYSTEM', 'menu_system');
 		var $modules;
 		var $enabled;
 		
+		/** @psalm-mutation-free */
 		function __construct($id, $name, $enabled=true) 
 		{
 			$this->id = $id;
@@ -115,6 +123,7 @@ define('MENU_SYSTEM', 'menu_system');
 			$this->modules = array();
 		}
 		
+		/** @psalm-external-mutation-free */
 		function add_module($name, $icon = null) 
 		{
 			$module = new module($name,$icon);
@@ -122,11 +131,13 @@ define('MENU_SYSTEM', 'menu_system');
 			return $module;
 		}
 		
+		/** @psalm-mutation-free */
 		function add_lapp_function($level, $label,$link="",$access='SA_OPEN',$category='')
 		{
 			$this->modules[$level]->lappfunctions[] = new app_function($label, $link, $access, $category);
 		}
 		
+		/** @psalm-mutation-free */
 		function add_rapp_function($level, $label,$link="",$access='SA_OPEN',$category='')
 		{
 			$this->modules[$level]->rappfunctions[] = new app_function($label, $link, $access, $category);
@@ -139,6 +150,7 @@ define('MENU_SYSTEM', 'menu_system');
 		//
 		// Helper returning link to report class added by extension module.
 		//
+		/** @psalm-pure */
 		function report_class_url($class)
 		{
 			return "reporting/reports_main.php?Class=".$class;

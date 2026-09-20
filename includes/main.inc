@@ -156,6 +156,7 @@ function add_js_source(string|int|float|bool|null $text): void
  * http://www.xajaxproject.org
  * Added removing comments from output.
  * Warning: Fails on RegExp with quotes - use new RegExp() in this case.
+ * @psalm-pure
  */
 function js_compress(string|bool|null $sJS): string|null
 {
@@ -401,6 +402,7 @@ function find_custom_file(?string $rep): string|null
 	Protect against directory traversal.
 	Changes all not POSIX compatible chars to underscore.
 */
+/** @psalm-pure */
 function clean_file_name(string|int|float|bool|array|null $filename): array|string|null {
     $filename = str_replace(chr(0), '', $filename);
     return preg_replace('/[^a-zA-Z0-9.\-_]/', '_', $filename);

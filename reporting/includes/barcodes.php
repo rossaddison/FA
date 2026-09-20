@@ -80,6 +80,7 @@ class TCPDFBarcode {
 	 * <li>$arrcode["bcode"][$k]["p"] bar top position (0 = top, 1 = middle)</li></ul>
 	 * @param string $code code to print
  	 * @param string $type type of barcode: <ul><li>C39 : CODE 39</li><li>C39+ : CODE 39 with checksum</li><li>C39E : CODE 39 EXTENDED</li><li>C39E+ : CODE 39 EXTENDED with checksum</li><li>I25 : Interleaved 2 of 5</li><li>C128A : CODE 128 A</li><li>C128B : CODE 128 B</li><li>C128C : CODE 128 C</li><li>EAN2 : 2-Digits UPC-Based Extension</li><li>EAN5 : 5-Digits UPC-Based Extension</li><li>EAN8 : EAN 8</li><li>EAN13 : EAN 13</li><li>UPCA : UPC-A</li><li>UPCE : UPC-E</li><li>POSTNET : POSTNET</li><li>CODABAR : CODABAR</li></ul>
+	 * @psalm-mutation-free
 	 */
 	function __construct($code, $type) {
 		$this->setBarcode($code, $type);
@@ -98,6 +99,7 @@ class TCPDFBarcode {
 	 * @param string $code code to print
  	 * @param string $type type of barcode: <ul><li>C39 : CODE 39</li><li>C39+ : CODE 39 with checksum</li><li>C39E : CODE 39 EXTENDED</li><li>C39E+ : CODE 39 EXTENDED with checksum</li><li>I25 : Interleaved 2 of 5</li><li>C128A : CODE 128 A</li><li>C128B : CODE 128 B</li><li>C128C : CODE 128 C</li><li>EAN2 : 2-Digits UPC-Based Extension</li><li>EAN5 : 5-Digits UPC-Based Extension</li><li>EAN8 : EAN 8</li><li>EAN13 : EAN 13</li><li>UPCA : UPC-A</li><li>UPCE : UPC-E</li><li>POSTNET : POSTNET</li><li>CODABAR : CODABAR</li></ul>
  	 * @return array
+	 * @psalm-external-mutation-free
 	 */
 	function setBarcode($code, $type) {
 		switch (strtoupper($type)) {
@@ -178,6 +180,7 @@ class TCPDFBarcode {
 	 * @param boolean $checksum if true add a checksum to the code
 	 * @return array barcode representation.
 	 * @access protected
+	 * @psalm-mutation-free
 	 */
 	function barcode_code39($code, $extended=false, $checksum=false) {
 		$chr['0'] = '111221211';
@@ -271,6 +274,7 @@ class TCPDFBarcode {
 	 * @param string $code code to represent.
 	 * @return encoded string.
 	 * @access protected
+	 * @psalm-pure
 	 */
 	function encode_code39_ext($code) {
 		$encode = array(
@@ -321,6 +325,7 @@ class TCPDFBarcode {
 	 * @param string $code code to represent.
 	 * @return char checksum.
 	 * @access protected
+	 * @psalm-pure
 	 */
 	function checksum_code39($code) {
 		$chars = array(
@@ -344,6 +349,7 @@ class TCPDFBarcode {
 	 * @param boolean $checksum if true add a checksum to the code
 	 * @return array barcode representation.
 	 * @access protected
+	 * @psalm-pure
 	 */
 	function barcode_i25($code) {
 		$chr['0'] = '11221';
@@ -402,6 +408,7 @@ class TCPDFBarcode {
 	 * @param string $type barcode type: A, B or C
 	 * @return array barcode representation.
 	 * @access protected
+	 * @psalm-pure
 	 */
 	function barcode_c128($code, $type="B") {
 		$chr = array(
@@ -596,6 +603,7 @@ class TCPDFBarcode {
 	 * @param $len (string) barcode type: 6 = UPC-E, 8 = EAN8, 13 = EAN13, 12 = UPC-A
 	 * @return array barcode representation.
 	 * @protected
+	 * @psalm-pure
 	 */
 	protected function barcode_eanupc($code, $len=13) {
 		$upce = false;
@@ -786,6 +794,7 @@ class TCPDFBarcode {
 	 * @param string $code zip code to represent. Must be a string containing a zip code of the form DDDDD or DDDDD-DDDD.
 	 * @return array barcode representation.
 	 * @access protected
+	 * @psalm-pure
 	 */
 	function barcode_postnet($code) {
 		// bar lenght
@@ -840,6 +849,7 @@ class TCPDFBarcode {
 	 * @param string $code code to represent.
 	 * @return array barcode representation.
 	 * @access protected
+	 * @psalm-pure
 	 */
 	function barcode_codabar($code) {
 		$chr = array(

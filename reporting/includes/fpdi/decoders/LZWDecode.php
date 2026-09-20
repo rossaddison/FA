@@ -29,6 +29,7 @@ class LZWDecode {
     var $nextBits = 0;
     var $andTable = array(511, 1023, 2047, 4095);
 
+    /** @psalm-mutation-free */
     function __construct(&$fpdi) {
         $this->fpdi =& $fpdi;
     }
@@ -37,6 +38,7 @@ class LZWDecode {
      * Method to decode LZW compressed data.
      *
      * @param string data    The compressed data.
+     * @psalm-external-mutation-free
      */
     function decode($data) {
 
@@ -97,6 +99,7 @@ class LZWDecode {
 
     /**
      * Initialize the string table.
+     * @psalm-external-mutation-free
      */
     function initsTable() {
         $this->sTable = array();
@@ -110,6 +113,7 @@ class LZWDecode {
 
     /**
      * Add a new string to the string table.
+     * @psalm-external-mutation-free
      */
     function addStringToTable ($oldString, $newString="") {
         $string = $oldString.$newString;
@@ -127,6 +131,7 @@ class LZWDecode {
     }
 
     // Returns the next 9, 10, 11 or 12 bits
+    /** @psalm-external-mutation-free */
     function getNextCode() {
         if ($this->bytePointer == strlen($this->data))
             return 257;

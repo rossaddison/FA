@@ -99,6 +99,7 @@ class email
     	$this->bcc[] = $mail=='' ? $name : ($this->encode($name)." <$mail>");
     }
 
+    /** @psalm-external-mutation-free */
     function attachment($file, $filename=null)
     {
     	if (!isset($filename))
@@ -111,6 +112,7 @@ class email
     	$this->subject = $this->encode($subject);
     }
 
+    /** @psalm-external-mutation-free */
     function text($text)
     {
         $this->body = "--$this->boundary\n";
@@ -119,6 +121,7 @@ class email
 	    $this->body .= $text."\n";
     }
 
+    /** @psalm-external-mutation-free */
     function html($html)
     {
         $this->body = "--$this->boundary\n";
@@ -127,6 +130,7 @@ class email
 	    $this->body .= "<html><body>\n".$html."\n</body></html>\n";
     }
 
+	/** @psalm-pure */
 	function mime_type($filename)
 	{
 		$file = basename($filename, '.zip');

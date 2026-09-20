@@ -178,6 +178,7 @@ class Cart
 	/*
 		Optional sorting items by stock_id.
 	*/
+	/** @psalm-pure */
 	function _cmp_lines($a, $b)
 	{
 		return strcmp($a->stock_id, $b->stock_id);
@@ -441,6 +442,7 @@ class Cart
 		$this->tax_group_array = get_tax_group_items_as_array($tax_group_id);
 	}
 
+	/** @psalm-external-mutation-free */
 	function set_sales_type($sales_type, $sales_name, $tax_included=0, $factor=0)
 	{
 	    $this->sales_type = $sales_type;
@@ -449,12 +451,14 @@ class Cart
 	    $this->price_factor = $factor;
 	}
 
+	/** @psalm-external-mutation-free */
 	function set_location($id, $name)
 	{
 		$this->Location = $id;
 		$this->location_name = $name;
 	}
 
+	/** @psalm-external-mutation-free */
 	function set_delivery($shipper, $destination, $address, $freight_cost=null)
 	{
 		$this->ship_via = $shipper;
@@ -493,11 +497,13 @@ class Cart
 		$this->line_items[$line_no]->quantity += $qty;
 	}
 
+	/** @psalm-external-mutation-free */
 	function remove_from_cart($line_no)
 	{
 		array_splice($this->line_items, $line_no, 1);
 	}
 
+	/** @psalm-external-mutation-free */
 	function clear_items()
 	{
 		unset($this->line_items);
@@ -507,6 +513,7 @@ class Cart
 		$this->customer_id = $this->order_no = 0;
 	}
 
+	/** @psalm-mutation-free */
 	function count_items()
 	{
 		$counter=0;
@@ -540,6 +547,7 @@ class Cart
 		return $total;
 	}
 
+	/** @psalm-mutation-free */
 	function has_items_dispatch()
 	{
 		foreach ($this->line_items as $ln_itm) {
@@ -549,6 +557,7 @@ class Cart
 		return false;
 	}
 
+	/** @psalm-mutation-free */
 	function any_already_delivered()
 	{
 		/* Checks if there have been any line item processed */
@@ -563,6 +572,7 @@ class Cart
 
 	}
 
+	/** @psalm-mutation-free */
 	function some_already_delivered($line_no)
 	{
 		/* Checks if there have been deliveries of a specific line item */
@@ -687,6 +697,7 @@ class Cart
 	/*
 		Order is ready for delivery in prepament mode.
 	*/
+	/** @psalm-mutation-free */
 	function is_released()
 	{
 		return floatcmp($this->sum_paid, $this->prep_amount) >= 0;
@@ -809,6 +820,7 @@ class line_details
 	}
 
 	// get unit price as stated on document
+	/** @psalm-mutation-free */
 	function line_price()
 	{
 		return $this->price;

@@ -26,11 +26,13 @@ class BoxReports
 	var $ar_reports;
 	var $ctrl_handlers = array();
 
+	/** @psalm-mutation-free */
 	function __construct()
 	{
 		$this->ar_classes = array();
 	}
 
+	/** @psalm-external-mutation-free */
 	function addReportClass($class_name, $class_id=null)
 	{
 		if (!$class_id)
@@ -40,6 +42,7 @@ class BoxReports
 		return $class_id;
 	}
 
+	/** @psalm-external-mutation-free */
 	function addReport($class, $id, $rep_name, $params=null)
 	{
 		unset($this->ar_reports[$class][$id]); // unset std report if any
@@ -160,6 +163,7 @@ class BoxReports
 	//
 	//	Register additional control handler
 	// $handle - name of global function f($name, $type) returning html code for control
+	/** @psalm-external-mutation-free */
 	function register_controls($handler) {
 		$this->ctrl_handlers[] = $handler;
 	}
@@ -482,6 +486,7 @@ class Report
 	var $ar_params;
 	var $controls;
 	
+	/** @psalm-mutation-free */
 	function __construct($id, $name, $ar_params = null)
 	{
 		$this->id = $id;
@@ -489,10 +494,12 @@ class Report
 		if ($ar_params) $this->set_controls($ar_params);
 	}
 	
+	/** @psalm-external-mutation-free */
 	function set_controls($ar_params) {
 		$this->controls = $ar_params;
 	}
 	
+	/** @psalm-mutation-free */
 	function get_controls() {
 		return $this->controls;
 	}

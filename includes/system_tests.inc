@@ -33,6 +33,7 @@ function tst_mysql(): array
 	return $test;
 }
 // test php mysql extension
+/** @psalm-pure */
 function tst_phpmysql(): array 
 {
 	$test['descr'] = _('PHP MySQL extension');
@@ -55,6 +56,7 @@ function tst_php(): array
 	return $test;
 }
 
+/** @psalm-pure */
 function tst_system(): array 
 {
 	$test['descr'] = _('Server system');
@@ -110,6 +112,7 @@ function tst_server(): array
 	return $test;
 }
 
+/** @psalm-pure */
 function tst_gettext(): array 
 {
 	$test['descr'] = _('Native gettext');

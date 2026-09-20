@@ -20,6 +20,7 @@ class attachments extends simple_crud {
 	var $sub_class;
 	var $class;
 	
+	/** @psalm-mutation-free */
 	function __construct($name, $id, $class, $subclass=null) {
 		$fields = array('type_no', 'trans_no','description','filename','tran_date' => 'date');
 		parent::__construct($name, $fields);
@@ -291,6 +292,7 @@ class attachments extends simple_crud {
 		return db_fetch_assoc($result);
 	}
 
+	/** @psalm-pure */
 	function delete_check() {
 		return true;
 	}

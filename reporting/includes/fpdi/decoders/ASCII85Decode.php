@@ -28,11 +28,13 @@ if (!defined("ORD_tilde"))
 
 class ASCII85Decode {
 
+    /** @psalm-mutation-free */
     function __construct(&$fpdi) {
         $this->fpdi =& $fpdi;
     }
 
 
+    /** @psalm-mutation-free */
     function decode($in) {
         $out = "";
         $state = 0;
