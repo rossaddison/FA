@@ -85,6 +85,7 @@ function print_remittances(): void
 
 	$cur = get_company_Pref('curr_default');
 
+	/** @var FrontReport $rep */
 	if ($email == 0)
 		$rep = new FrontReport(_('REMITTANCE'), "RemittanceBulk", user_pagesize(), 9, $orientation);
     if ($orientation == 'L')

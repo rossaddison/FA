@@ -62,6 +62,7 @@ function print_deliveries(): void
 
 	$cur = get_company_Pref('curr_default');
 
+	/** @var FrontReport $rep */
 	if ($email == 0)
 	{
 		if ($packing_slip == 0)

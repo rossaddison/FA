@@ -103,6 +103,7 @@ function print_statements(): void
 		$sql .= " ORDER by name";
 	$result = db_query($sql, "The customers could not be retrieved");
 
+	/** @var FrontReport $rep */
 	while ($myrow=db_fetch($result))
 	{
 		if ($currency != ALL_TEXT && $myrow['curr_code'] != $currency) {

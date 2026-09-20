@@ -60,6 +60,7 @@ function print_sales_orders(): void
     if ($orientation == 'L')
     	recalculate_cols($cols);
 
+	/** @var FrontReport $rep */
 	for ($i = $from; $i <= $to; $i++)
 	{
 		$myrow = get_sales_order_header($i, ST_SALESORDER);
