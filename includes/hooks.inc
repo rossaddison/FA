@@ -339,6 +339,11 @@ function activate_hooks(string|int|float|bool|null $ext, string|int|float|bool|a
 /*
 	Calls hook $method defined in extension $ext (if any)
 */
+/**
+ * @template T
+ * @param T $data
+ * @param-out T $data
+ */
 function hook_invoke(string|int|float|bool|null $ext, string|int|float|bool|null $method, mixed &$data, ?array $opts=null)
 {
 
@@ -356,6 +361,11 @@ function hook_invoke(string|int|float|bool|null $ext, string|int|float|bool|null
 /*
 	Calls hook $methods defined in all extensions (if any)
 */
+/**
+ * @template T
+ * @param T $data
+ * @param-out T $data
+ */
 function hook_invoke_all(string|int|float|bool|null $method, mixed &$data, array|int|null $opts=null): array
 {
 
@@ -381,6 +391,11 @@ function hook_invoke_all(string|int|float|bool|null $method, mixed &$data, array
 /*
 	Returns first non-null result returned from hook.
 */
+/**
+ * @template T
+ * @param T $data
+ * @param-out T $data
+ */
 function hook_invoke_first(?string $method, mixed &$data, ?array $opts=null)
 {
 
@@ -402,6 +417,11 @@ function hook_invoke_first(?string $method, mixed &$data, ?array $opts=null)
 	Returns last non-null result returned from modules method. Helps implement hooks overriding by 
 	extensions installed later.
 */
+/**
+ * @template T
+ * @param T $data
+ * @param-out T $data
+ */
 function hook_invoke_last(?string $method, mixed &$data, array|string|null $opts=null)
 {
 
@@ -447,6 +467,9 @@ function hook_invoke_last(?string $method, mixed &$data, array|string|null $opts
 	Invoked before transaction is written to database.
 */
 /**
+ * @template T
+ * @param T $cart
+ * @param-out T $cart
  * @return array<array-key, mixed>
  */
 function hook_db_prewrite(&$cart, string|int|float|bool|null $type): array
@@ -458,6 +481,9 @@ function hook_db_prewrite(&$cart, string|int|float|bool|null $type): array
 	Invoked after transaction has been written to database.
 */
 /**
+ * @template T
+ * @param T $cart
+ * @param-out T $cart
  * @return array<array-key, mixed>
  */
 function hook_db_postwrite(&$cart, string|int|float|bool|null $type): array
