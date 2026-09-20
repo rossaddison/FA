@@ -23,6 +23,7 @@ include_once($path_to_root . "/taxes/tax_calc.inc");
 
 class Cart 
 {
+	/** @var int|string */
 	var $trans_type; // invoice, order, quotation, delivery note ...
 
 	/**
@@ -39,36 +40,57 @@ class Cart
 	 * @var string
 	 */
 	var $cart_id;		// used to detect multi-tab edition conflits
+	/** @var array<int, line_details> */
 	var $line_items;  //array of objects of class line_details
 
+	/** @var array<int, int>|int */
 	var $src_docs = array();	// array of arrays(num1=>ver1,...) or 0 for no src
+	/** @var string|int|float|bool|null */
 	var $src_date;			// src document date (for info only)
 
+	/** @var string */
 	var $document_date;
+	/** @var string */
 	var $due_date;
+	/** @var string|int|float|bool|null */
 	var $sales_type; // set to the customer's sales type
+	/** @var string */
 	var $sales_type_name; // set to customer's sales type name
+	/** @var string|int|float|bool|null */
 	var $tax_included;
 
+	/** @var string */
 	var $customer_currency; // set to the customer's currency
+	/** @var float|int|string */
 	var $default_discount; // set to the customer's discount %
+	/** @var string */
 	var $customer_name;
+	/** @var string|int|float|bool|null */
 	var $customer_id;
+	/** @var string|int|float|bool|null */
 	var $Branch;
+	/** @var string */
 	var $email;
 
+	/** @var string */
 	var $deliver_to;
+	/** @var string */
 	var $delivery_address;
+	/** @var string */
 	var $phone;
 
+	/** @var string */
 	var $cust_ref;
+	/** @var string */
 	var $reference;
 
 	/**
 	 * @var string
 	 */
 	var $Comments;
+	/** @var string */
 	var $Location;
+	/** @var string */
 	var $location_name;
 
 	/**
@@ -76,38 +98,59 @@ class Cart
 	 */
 	var $order_no; 		// the original order number
 
+	/** @var string|int|float|bool|null */
 	var $ship_via;
+	/** @var float|int|string */
 	var $freight_cost = 0;
 
+	/** @var string|int|float|bool|null */
 	var $tax_group_id;
+	/** @var string */
 	var $tax_group_name;
+	/** @var array<array-key, mixed>|null */
 	var $tax_group_array = null; // saves db queries
+	/** @var float|int|string|null */
 	var $price_factor;	 // ditto for price calculations
 
+	/** @var array<string, string|null>|null */
 	var	$pos;			// user assigned POS
+	/** @var string|int|float|bool|null */
 	var $cash_account;
+	/** @var string|int|float|bool|null */
 	var $account_name;
+	/** @var string|int|float|bool|null */
 	var $cash_discount;	// not used as of FA 2.1
+	/** @var int|string */
 	var $dimension_id;
+	/** @var int|string */
 	var $dimension2_id;
+	/** @var string|int|float|bool|null */
 	var $payment;
+	/** @var array<string, string|int|float|bool|null> */
 	var $payment_terms = array('cash_sale' => false, 'days_before_due' => 0); // cached payment terms
+	/** @var float|int|string|null */
 	var $credit;
 	// prepayment mode:
 	/**
 	 * @var false
 	 */
 	var $prepaid=false;	// true for documents issued in prepayment mode
+	/** @var float|int|string */
 	var $prep_amount=0;	// prepayment required for SO, invoiced amount for prepaiament invoice
+	/** @var float|int|string|null */
 	var $sum_paid; 		// sum of all allocated prepayments both to order and related invoices
+	/** @var float|int|string|null */
 	var $alloc; 		// sum of payments allocated to this document
+	/** @var array<int, array<string, mixed>> */
 	var $prepayments = array(); // allocation records for this document
+	/** @var float|int|string|null */
 	var $ex_rate;
 
 	/**
 	 * @var false
 	 */
 	var $fixed_asset = false;
+	/** @var int|string|null */
 	var $bo_policy = null;
 
 	//-------------------------------------------------------------------------

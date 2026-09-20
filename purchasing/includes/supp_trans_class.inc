@@ -17,30 +17,46 @@ include_once($path_to_root . "/taxes/tax_calc.inc");
 class supp_trans 
 {
 
+	/** @var array<int, grn_item> */
 	var $grn_items; /*array of objects of class grn_item using the id as the pointer */
+	/** @var array<int, gl_codes> */
 	var $gl_codes; /*array of objects of class gl_codes using a counter as the pointer */
 
 	/**
 	 * @var int
 	 */
 	var $supplier_id;
+	/** @var string */
 	var $supplier_name;
+	/** @var string|int|float|bool|null */
 	var $terms;
+	/** @var float|int|string|null */
 	var $ex_rate;
 	
+	/** @var string */
 	var $tax_description;
+	/** @var string|int|float|bool|null */
 	var $tax_group_id;
+	/** @var string|int|float|bool|null */
 	var $tax_included;
 	
+	/** @var int|string */
 	var $trans_type;	// invoice or credit
+	/** @var string|int|float|bool|null|array */
 	var $trans_no;
 
+	/** @var string */
 	var $Comments;
+	/** @var string */
 	var $tran_date;
+	/** @var string */
 	var $due_date;
+	/** @var array<array-key, mixed> */
 	var $src_docs = array();		// source invoice for this credit note (if any)
 
+	/** @var string */
 	var $supp_reference;
+	/** @var string */
 	var $reference;
 
 	/**
@@ -52,13 +68,16 @@ class supp_trans
 	 * @var int
 	 */
 	var $ov_discount;
+	/** @var float|int|string */
 	var $ov_gst;
+	/** @var int */
 	var $gl_codes_counter=0;
 
 	/**
 	 * @var int
 	 */
 	var $credit = 0;
+	/** @var string */
 	var $currency;
 
 	/**
@@ -66,7 +85,9 @@ class supp_trans
 	 */
 	var $tax_overrides = array();		// array of taxes manually inserted during sales invoice entry
 
+	/** @var int|string */
 	var $dimension;
+	/** @var int|string */
 	var $dimension2;
 
 	function __construct($trans_type, $trans_no=0)

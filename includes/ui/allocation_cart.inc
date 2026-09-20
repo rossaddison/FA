@@ -18,17 +18,28 @@
 class allocation
 {
 
+	/** @var string|int|float|bool|null */
 	var $trans_no; 
+	/** @var string|int|float|bool|null */
 	var $type;
+	/** @var string|int|float|bool|null */
 	var $person_id = '';
+	/** @var string */
 	var $person_name = '';
+	/** @var string|int|float|bool|null */
 	var $person_type;	// PT_SUPPLIER/PT_CUSTOMER
+	/** @var string */
 	var $person_curr;
+	/** @var string */
 	var $date_;
+	/** @var float|int|string */
 	var $amount = 0; /*Total amount of the transaction in FX */
+	/** @var float|int|string */
 	var $bank_amount = 0;
+	/** @var string */
 	var $currency;
 
+	/** @var array<int, allocation_item> */
 	var $allocs; /*array of transactions allocated to */
 
 	function __construct($type, $trans_no, $person_id = null, $person_type_id=null)

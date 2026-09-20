@@ -14,34 +14,57 @@
 
 class purch_order 
 {
+	/** @var string|int|float|bool|null|array */
 	var $trans_no; 
+	/** @var int|string */
 	var $trans_type; // order/grn/invoice (direct)
+	/** @var array<int, po_line_details> */
 	var $line_items;
+	/** @var string */
 	var $curr_code;
+	/** @var string */
 	var $supp_ref;
+	/** @var string */
 	var $delivery_address;
+	/** @var string */
 	var $Comments;
+	/** @var string */
 	var $Location;
+	/** @var string|int|float|bool|null */
 	var $supplier_id;
+	/** @var string */
 	var $supplier_name;
+	/** @var string */
 	var $orig_order_date;
+	/** @var string */
 	var $due_date;
 
 	/**
 	 * @var int
 	 */
 	var $order_no; /*Only used for modification of existing orders otherwise only established when order committed */
+	/** @var int */
 	var $lines_on_order = 0;
+	/** @var float|int|string|null */
 	var $credit;
+	/** @var string|int|float|bool|null */
 	var $tax_group_id;
+	/** @var array<array-key, mixed>|null */
 	var $tax_group_array = null; // saves db queries
+	/** @var string|int|float|bool|null */
 	var $tax_included; // type of prices
+	/** @var string|int|float|bool|null */
 	var $terms;
+	/** @var float|int|string|null */
 	var $ex_rate;
+	/** @var string|int|float|bool|null */
 	var $cash_account;
+	/** @var int|string */
 	var $dimension;
+	/** @var int|string */
 	var $dimension2;
 
+	/** @var string */
 	var $reference;
 
 	/**
@@ -53,6 +76,7 @@ class purch_order
 	 * @var int
 	 */
 	var $prep_amount = 0; // prepayment required
+	/** @var float|int|string|null */
 	var $alloc; // sum of payments allocated
 
 	/**

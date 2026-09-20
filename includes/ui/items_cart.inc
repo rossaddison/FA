@@ -14,30 +14,50 @@ include_once($path_to_root . "/inventory/includes/inventory_db.inc");
 
 class items_cart
 {
+	/** @var int|string */
 	var $trans_type;
 	var $line_items;
+	/** @var array<int, gl_item> */
 	var $gl_items;
 
+	/** @var string|int|float|bool|null */
 	var	$order_id;
 
+	/** @var string|int|float|bool|null */
 	var $from_loc;
+	/** @var string|int|float|bool|null */
 	var $to_loc;
+	/** @var string */
 	var $tran_date;
+	/** @var string */
 	var $doc_date;
+	/** @var string */
 	var $event_date;
+	/** @var string|int|float|bool|null */
 	var $transfer_type;
+	/** @var string|int|float|bool|null */
 	var $increase;
+	/** @var string */
 	var $memo_;
+	/** @var string|int|float|bool|null */
 	var $branch_id;
+	/** @var string */
 	var $reference;
+	/** @var float|int|string */
 	var $original_amount;
+	/** @var string */
 	var $currency;
+	/** @var float|int|string */
 	var $rate;
+	/** @var string */
 	var $source_ref;
+	/** @var string|int|float|bool|null */
 	var $vat_category;
 
+	/** @var array<array-key, mixed>|null */
 	var $tax_info;	// tax info for the GL transaction
 
+	/** @var bool|null */
 	var $fixed_asset;
 
 	function __construct($type, $trans_no=0)

@@ -18,20 +18,30 @@ if (!defined('TB_PREF')) {
 
 class current_user
 {
+	/** @var int|string */
 	var $user = 0;
+	/** @var string */
 	var $loginname;
+	/** @var string */
 	var $username;
+	/** @var string */
 	var $name;
+	/** @var string */
 	var $email;
+	/** @var string|int|float|bool|null */
 	var $company; // user's company
+	/** @var string|int|float|bool|null */
 	var $pos;
+	/** @var string|int|float|bool|null */
 	var $access;
+	/** @var int|string */
 	var $timeout;
 
 	/**
 	 * @var int|null
 	 */
 	var $last_act;
+	/** @var bool */
 	var $role_set = false;
 
 	/**
@@ -58,6 +68,7 @@ class current_user
 	 * @var user_prefs
 	 */
 	var $prefs;
+	/** @var string|int|float|bool|null */
 	var $cur_con; // current db connection (can be different from $company for superuser)
 
 	function __construct()
