@@ -50,7 +50,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 		set_focus('bank_account_name');
 	} 
 	if ($Mode=='ADD_ITEM' && (gl_account_in_bank_accounts(get_post('account_code')) 
-			|| key_in_foreign_table(get_post('account_code'), 'gl_trans', 'account'))) {
+			|| (bool)key_in_foreign_table(get_post('account_code'), 'gl_trans', 'account'))) {
 		$input_error = 1;
 		display_error(_("The GL account selected is already in use or has transactions. Select another empty GL account."));
 		set_focus('account_code');
@@ -89,13 +89,13 @@ elseif( $Mode == 'Delete')
 	$cancel_delete = 0;
 	// PREVENT DELETES IF DEPENDENT RECORDS IN 'bank_trans'
 
-	if (key_in_foreign_table($bank_id, 'bank_trans', 'bank_act') || key_in_foreign_table(get_post('account_code'), 'gl_trans', 'account'))
+	if ((bool)key_in_foreign_table($bank_id, 'bank_trans', 'bank_act') || (bool)key_in_foreign_table(get_post('account_code'), 'gl_trans', 'account'))
 	{
 		$cancel_delete = 1;
 		display_error(_("Cannot delete this bank account because transactions have been created using this account."));
 	}
 
-	if (key_in_foreign_table($bank_id, 'sales_pos', 'pos_account'))
+	if ((bool)key_in_foreign_table($bank_id, 'sales_pos', 'pos_account'))
 	{
 		$cancel_delete = 1;
 		display_error(_("Cannot delete this bank account because POS definitions have been created using this account."));
@@ -144,7 +144,7 @@ while ($myrow = db_fetch($result))
     label_cell($myrow["bank_name"], "nowrap");
     label_cell($myrow["bank_account_number"], "nowrap");
     label_cell($myrow["bank_address"]);
-    if ($myrow["dflt_curr_act"])
+    if ((bool)$myrow["dflt_curr_act"])
 		label_cell(_("Yes"));
 	else
 		label_cell(_("No"));
@@ -163,11 +163,11 @@ function bank_account_settings(string|int|float|bool|array|null $bank_id): void
 {
 	global $Mode, $bank_account_types, $page_nested;
 
-	$is_used = $bank_id && key_in_foreign_table($bank_id, 'bank_trans', 'bank_act');
+	$is_used = (bool)$bank_id && (bool)key_in_foreign_table($bank_id, 'bank_trans', 'bank_act');
 	
 	start_table(TABLESTYLE2);
 
-	if ($bank_id) 
+	if ((bool)$bank_id) 
 	{
 	  	if ($Mode == 'Edit') {	
 			$myrow = row_or_empty(get_bank_account($bank_id));
@@ -226,7 +226,7 @@ function bank_account_settings(string|int|float|bool|array|null $bank_id): void
 	submit_add_or_update_center(!$bank_id, '', 'both');
 }
 
-if (!$bank_id)
+if (!(bool)$bank_id)
 {
 	unset($_POST['_tabs_sel']); // force settings tab for new customer
 	display_heading("");
@@ -237,7 +237,7 @@ else
 	if ($act)
 		display_heading((string)$act['bank_account_name']." - ".(string)$act['bank_curr_code']);
 }
-if ($bank_id)
+if ((bool)$bank_id)
 	hidden('bank_id', $bank_id);
 
 tabbed_content_start('tabs', array(

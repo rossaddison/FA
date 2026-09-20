@@ -251,7 +251,7 @@ function read_po_items(string|int|float|bool|null $order_no, purch_order &$order
 		while ($myrow = db_fetch($result))
         {
 			$data = get_purchase_data($order->supplier_id, $myrow['item_code']);
-			if ($data !== false && !$myrow['editable'] && $data['supplier_description'] != "" && 
+			if ($data !== false && !(bool)$myrow['editable'] && $data['supplier_description'] != "" && 
 				$myrow['description'] != $data['supplier_description']) // backward compatibility
 				$myrow['description'] = $data['supplier_description'];
 			if (is_null($myrow["units"]))
@@ -372,7 +372,7 @@ function get_sql_for_po_search_completed(string|array|null $from, string|array|n
 
 	}
 
-	if (!$also_closed)
+	if (!(bool)$also_closed)
 		$sql .= " AND isopen";
 	$sql .= " GROUP BY porder.order_no";
 	return $sql;

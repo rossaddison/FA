@@ -119,7 +119,7 @@ function display_gl_items(string|int|float|bool|supp_trans|null $title, ?items_c
 			_("Debit"), _("Credit"), _("Memo"), "");
 
 	if (count($order->gl_items)) $th[] = '';
-	if ($sub_type || $has_subaccounts)
+	if ((bool)$sub_type || $has_subaccounts)
 		array_insert($th, 2, _("Counterparty"));
 
 	table_header($th);
@@ -138,7 +138,7 @@ function display_gl_items(string|int|float|bool|supp_trans|null $title, ?items_c
 			$acc = $item->code_id . ($item->person_id ? sprintf(' %05d', $item->person_id) : '');
 			label_cells($acc, $item->description);
 
-		if ($sub_type || $has_subaccounts)
+		if ((bool)$sub_type || $has_subaccounts)
 			label_cell($item->person_name);
 
     		if ($dim >= 1)
@@ -174,7 +174,7 @@ function display_gl_items(string|int|float|bool|supp_trans|null $title, ?items_c
 
 	if ($order->count_gl_items()) 
 	{
-		$colspan = ($dim == 2 ? "4" : ($dim == 1 ? "3" : "2")) + ($sub_type || $has_subaccounts ? 1 : 0);
+		$colspan = ($dim == 2 ? "4" : ($dim == 1 ? "3" : "2")) + ((bool)$sub_type || $has_subaccounts ? 1 : 0);
 		start_row();
 		label_cell(_("Total"), "align=right colspan=" . $colspan);
 		amount_cell($order->gl_items_total_debit());
@@ -225,7 +225,7 @@ function gl_edit_item_controls(?items_cart &$order, string|int|float|bool|null $
 		$skip_bank = !$_SESSION["wa_current_user"]->can_access('SA_BANKJOURNAL');
 		echo gl_all_accounts_list('code_id', null, $skip_bank, true, _('[Select account]'), true, false, false);
 
-		if (is_subledger_account(get_post('code_id')))
+		if ((bool)is_subledger_account(get_post('code_id')))
 		{	// for home currency postings show all customers
 			$sel_cur = get_post('currency', $order->currency);
 			subledger_list_cells(null, 'person_id', get_post('code_id'), null);
@@ -241,7 +241,7 @@ function gl_edit_item_controls(?items_cart &$order, string|int|float|bool|null $
 	{
 		$skip_bank = !$_SESSION["wa_current_user"]->can_access('SA_BANKJOURNAL');
 		echo gl_all_accounts_list('code_id', null, $skip_bank, true, _('[Select account]'), true, false, false);
-		if ($sub_accounts)
+		if ((bool)$sub_accounts)
 		{
 			// for home currency postings show all customers
 			$sel_cur = get_post('currency', $order->currency);
@@ -260,7 +260,7 @@ function gl_edit_item_controls(?items_cart &$order, string|int|float|bool|null $
 	if (get_post('_code_id_update'))
 	{
 	    $Ajax->activate('code_id');
-		set_focus($sub_accounts ? 'person_id' : ($dim < 1 ? 'AmountDebit' : 'dimension_id'));
+		set_focus((bool)$sub_accounts ? 'person_id' : ($dim < 1 ? 'AmountDebit' : 'dimension_id'));
 	}
 	if ($dim < 1)
 		hidden('dimension_id', 0);

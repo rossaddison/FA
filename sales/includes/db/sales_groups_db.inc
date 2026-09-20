@@ -34,7 +34,7 @@ function delete_sales_group(string|int|float|bool|array|null $selected_id): void
 function get_sales_groups(int|array|null $show_inactive)
 {
 	$sql = "SELECT * FROM `".TB_PREF."groups`";
-	if (!$show_inactive) $sql .= " WHERE !inactive";
+	if (!(bool)$show_inactive) $sql .= " WHERE !inactive";
 	$sql .= " ORDER BY description";
 	return db_query($sql,"could not get groups");
 }
@@ -85,7 +85,7 @@ function delete_sales_area(string|int|float|bool|array|null $selected_id): void
 function get_sales_areas(int|array|null $show_inactive)
 {
 	$sql = "SELECT * FROM ".TB_PREF."areas";
-	if (!$show_inactive) $sql .= " WHERE !inactive";
+	if (!(bool)$show_inactive) $sql .= " WHERE !inactive";
 	return db_query($sql,"could not get areas");
 }
 
@@ -153,7 +153,7 @@ function delete_salesman(string|int|float|bool|array|null $selected_id): void
 function get_salesmen(int|array|null $show_inactive)
 {
 	$sql = "SELECT * FROM ".TB_PREF."salesman";
-	if (!$show_inactive) $sql .= " WHERE !inactive";
+	if (!(bool)$show_inactive) $sql .= " WHERE !inactive";
 	return db_query($sql,"could not get sales persons");
 }
 

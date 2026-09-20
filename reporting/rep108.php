@@ -56,7 +56,7 @@ function getTransactions(string|int|array|null $debtorno, string|array|null $sho
 			AND trans.type <> ".ST_CUSTDELIVERY." AND ISNULL(v.date_)
 			AND ABS(ABS(ov_amount) + ov_gst + ov_freight + ov_freight_tax + ov_discount) > ". FLOAT_COMP_DELTA;
 	
-  	if (!$show_also_allocated)
+  	if (!(bool)$show_also_allocated)
 		$sql .= " AND ABS(IF(prep_amount, prep_amount, ABS(ov_amount) + ov_gst + ov_freight + ov_freight_tax + ov_discount) - alloc) > ". FLOAT_COMP_DELTA;
 	$sql .= " ORDER BY tran_date";
 
@@ -78,7 +78,7 @@ function print_statements(): void
 	$comments = $_POST['PARAM_4'];
 	$orientation = $_POST['PARAM_5'];
 
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
 	$dec = user_price_dec();
 
 	$cols = array(4, 70, 120, 170, 280, 320, 360, 410, 460, 515);

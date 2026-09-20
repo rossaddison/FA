@@ -273,7 +273,7 @@ function db_close(string|int|float|bool|null $dbase = null): bool
 {
 	global $db;
 	
-	if (!$dbase)
+	if (!(bool)$dbase)
 		$dbase = $db;
 	return mysqli_close($dbase);
 }
@@ -304,7 +304,7 @@ function db_set_encoding(?string $ui_encoding=null): void
 		$ui_encoding = strtoupper($lang['encoding']);
 	}
 
-	if ($mysql_enc = get_mysql_encoding_name($ui_encoding))
+	if ((bool)($mysql_enc = get_mysql_encoding_name($ui_encoding)))
 		mysqli_set_charset($db, $mysql_enc);
 }
 

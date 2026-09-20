@@ -115,7 +115,7 @@ class current_user
 		if ($SysPrefs->login_delay > 0)
 			write_login_filelog($loginname, $Auth_Result);
 
-		if ($Auth_Result)
+		if ((bool)$Auth_Result)
 		{
 			$myrow = get_user_by_login($loginname);
 			if ($myrow['language'] != $dflt_lang)
@@ -126,7 +126,7 @@ class current_user
 			}
 
 			$this->old_db = isset($myrow["full_access"]);
-			if (! @$myrow["inactive"]) {
+			if (! (bool)(@$myrow["inactive"])) {
 				if ($this->old_db) { 
 					// Transition code:
 					// db was not yet upgraded after source update to v.2.2
@@ -664,7 +664,7 @@ function user_js_cache(string|int|float|bool|null $id=null): string
 {
 	global $path_to_root;
 
-	if (!$id)
+	if (!(bool)$id)
 		$id = @$_SESSION['wa_current_user']->user;
 
 	if (!$id)
@@ -772,10 +772,10 @@ function flush_dir(string|int|float|bool|null $path, string|int|float|bool|null 
 		return;
 
 	while(false !== ($fname = readdir($dir))) {
-		if($fname=='.' || $fname=='..' || $fname=='CVS' || (!$wipe && $fname=='index.php')) continue;
+		if($fname=='.' || $fname=='..' || $fname=='CVS' || (!(bool)$wipe && $fname=='index.php')) continue;
   		if(is_dir($path.'/'.$fname)) {
 		    flush_dir($path.'/'.$fname, $wipe);
-		    if ($wipe) @rmdir($path.'/'.$fname);
+		    if ((bool)$wipe) @rmdir($path.'/'.$fname);
 		} else
 		    @unlink($path.'/'.$fname);
 	}

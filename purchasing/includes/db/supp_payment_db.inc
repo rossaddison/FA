@@ -30,7 +30,7 @@ function write_supp_payment(?int $trans_no, string|int|float|bool|array|null $su
 
 	$bank = row_or_empty(get_bank_account($bank_account));
 
-	if (!$bank_amount) 	// auto 
+	if (!(bool)$bank_amount) 	// auto 
 	{
 		$rate = get_exchange_rate_from_to(get_supplier_currency($supplier_id),
 			$bank['bank_curr_code'], $date_ );

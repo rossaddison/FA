@@ -42,7 +42,7 @@ function stock_cost_update(string|array|null $stock_id, int|float|bool|null $mat
 	$qoh = get_qoh_on_date($stock_id);
 
    	$date_ = Today();
-	if (!is_date_in_fiscalyear($date_))
+	if (!(bool)is_date_in_fiscalyear($date_))
 		$date_ = end_fiscalyear();
 
 	if ($qoh > 0)
@@ -58,7 +58,7 @@ function stock_cost_update(string|array|null $stock_id, int|float|bool|null $mat
 
 			$cart = new items_cart(ST_COSTUPDATE);
 			$cart->tran_date = $cart->doc_date = $cart->event_date = $date_;
-			if (!is_date_in_fiscalyear($cart->tran_date))
+			if (!(bool)is_date_in_fiscalyear($cart->tran_date))
 				$cart->tran_date = end_fiscalyear();
 			$cart->reference = $Refs->get_next(ST_COSTUPDATE, $refline, $cart->tran_date, $date_);
  

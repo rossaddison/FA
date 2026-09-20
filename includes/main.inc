@@ -94,7 +94,7 @@ function cache_js_file(?string $fpath, string|bool|null $text): bool
 
     $file = force_open($fpath);
 	if (!$file) return false;
-	if (!fwrite($file, $text)) return false;
+	if (!(bool)fwrite($file, $text)) return false;
 	return fclose($file);
 
 }
@@ -326,7 +326,7 @@ function copy_files(array $flist, string|int|float|bool|null $from, string|int|f
 		if (file_exists($from.'/'.$file)) {
 			if (!copy_file($file, $from, $to))
 				return false;
-		} else if ($strict) {
+		} else if ((bool)$strict) {
 				unlink($to.'/'.$file);
 		}
 	}
@@ -344,7 +344,7 @@ function copy_file(string|int|float|bool|null $file, string|int|float|bool|null 
 		if (!copy_file(dirname($file), null, $to))
 			return false;
 	}
-	if (!$from) {
+	if (!(bool)$from) {
 	//		error_log( 'dodanie katalogu '.$to.'/'.$file);
 		return @mkdir($file=='.' ? $to : ($to.'/'.$file));
 	}

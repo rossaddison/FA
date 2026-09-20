@@ -46,7 +46,7 @@ function display_gl_heading(?array $myrow): void
 	else
 		array_insert($th, 3, array(_("Counterparty")));
 	
-	if($myrow['supp_reference'])
+	if((bool)$myrow['supp_reference'])
 	{
 		array_insert($th, 2, array(_("Supplier Reference")));
 	}
@@ -122,11 +122,11 @@ while ($myrow = db_fetch($result))
 	alt_table_row_color($k);
 
 	$counterpartyname = get_subaccount_name($myrow["account"], $myrow["person_id"]);
-	$counterparty_id = $counterpartyname ? sprintf(' %05d', $myrow["person_id"]) : '';
+	$counterparty_id = (bool)$counterpartyname ? sprintf(' %05d', $myrow["person_id"]) : '';
 
     label_cell(sql2date($myrow['tran_date']));
     label_cell((string)$myrow['account'].$counterparty_id);
-	label_cell((string)$myrow['account_name'] . ($counterpartyname ? ': '.$counterpartyname : ''));
+	label_cell((string)$myrow['account_name'] . ((bool)$counterpartyname ? ': '.$counterpartyname : ''));
 	if ($dim >= 1)
 		label_cell(get_dimension_string($myrow['dimension_id'], true));
 	if ($dim > 1)

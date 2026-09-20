@@ -142,7 +142,7 @@ function get_kit_price(string|int|float|bool|array|null $item_code, string|int|f
 	string|int|float|bool|array|null $date=null, string|int|float|bool|null $std = false)
 {
 	$kit_price = 0.00;
-	if (!$std) {
+	if (!(bool)$std) {
 		$kit_price = get_price( $item_code, $currency, $sales_type_id, 
 			$factor, $date);
 
@@ -225,11 +225,11 @@ function get_location(Cart &$cart)
 //
 function read_sales_trans(string|int|float|bool|null $doc_type, string|int|float|bool|array|null $trans_no, Cart &$cart): bool
 {
-	if (!is_array($trans_no) && $trans_no)
+	if (!is_array($trans_no) && (bool)$trans_no)
 		$trans_no = array($trans_no);
 
 	$cart->trans_type = $doc_type;
-	if (!$trans_no) { // new document
+	if (!(bool)$trans_no) { // new document
 		$cart->trans_no = $trans_no;
 	} else {
 		// read header data from first document

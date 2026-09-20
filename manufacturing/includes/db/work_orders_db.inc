@@ -355,7 +355,7 @@ function get_sql_for_work_orders(?int $outstanding_only, string|array|null $stoc
 		$sql .= " AND workorder.stock_id=".db_escape($stock_id);
 	}
 
-	if ($overdue)
+	if ((bool)$overdue)
 	{
 		$Today = date2sql(Today());
 

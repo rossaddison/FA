@@ -63,12 +63,12 @@ function print_bill_of_material(): void
     $comments = $_POST['PARAM_2'];
 	$orientation = $_POST['PARAM_3'];
 	$destination = $_POST['PARAM_4'];
-	if ($destination)
+	if ((bool)$destination)
 		include_once($path_to_root . "/reporting/includes/excel_report.inc");
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
 
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
 	$cols = array(0, 50, 305, 375, 445,	515);
 
 	$headers = array(_('Component'), _('Description'), _('Loc'), _('Wrk Ctr'), _('Quantity'));

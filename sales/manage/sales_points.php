@@ -57,7 +57,7 @@ if ($Mode=='UPDATE_ITEM' && can_process())
 
 if ($Mode == 'Delete')
 {
-	if (key_in_foreign_table($selected_id, 'users', 'pos'))
+	if ((bool)key_in_foreign_table($selected_id, 'users', 'pos'))
 	{
 		display_error(_("Cannot delete this POS because it is used in users setup."));
 	} else {
@@ -91,8 +91,8 @@ while ($myrow = db_fetch($result))
 {
     alt_table_row_color($k);
 	label_cell($myrow["pos_name"], "nowrap");
-	label_cell($myrow['credit_sale'] ? _('Yes') : _('No'));
-	label_cell($myrow['cash_sale'] ? _('Yes') : _('No'));
+	label_cell((bool)$myrow['credit_sale'] ? _('Yes') : _('No'));
+	label_cell((bool)$myrow['cash_sale'] ? _('Yes') : _('No'));
 	label_cell($myrow["location_name"], "");
 	label_cell($myrow["bank_account_name"], "");
 	inactive_control_cell($myrow["id"], $myrow["inactive"], "sales_pos", 'id');

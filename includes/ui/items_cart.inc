@@ -165,7 +165,7 @@ class items_cart
 	    $this->gl_items[$index]->person_id = $person_id;
 
         $gl_type = is_subledger_account($code_id);
-        if ($person_id != null && $gl_type)
+        if ($person_id != null && (bool)$gl_type)
 		{
 			$this->gl_items[$index]->person_type_id = $gl_type > 0 ? PT_CUSTOMER : PT_SUPPLIER;
 			$data = row_or_empty(get_subaccount_data($code_id, $person_id));
@@ -244,7 +244,7 @@ class items_cart
 	{
 		foreach ($this->gl_items as $gl_item)
 		{
-			if (is_subledger_account($gl_item->code_id))
+			if ((bool)is_subledger_account($gl_item->code_id))
 				return true;
 		}
 		return false;
@@ -257,7 +257,7 @@ class items_cart
 	{
 		foreach ($this->gl_items as $gl_item)
 		{
-			if (is_tax_account($gl_item->code_id))
+			if ((bool)is_tax_account($gl_item->code_id))
 				return true;
 		}
 		return false;
@@ -283,7 +283,7 @@ class items_cart
 
 		foreach($this->gl_items as $gl)
 		{
-            if ($person_type = is_subledger_account($gl->code_id))
+            if ((bool)($person_type = is_subledger_account($gl->code_id)))
 			{
 				$tax_info['person_type'] = $person_type < 0 ? PT_SUPPLIER : PT_CUSTOMER;
 				$tax_info['person_id'] = $gl->person_id;
@@ -297,7 +297,7 @@ class items_cart
 					$tax_info['tax_group'] = $supplier['tax_group_id'];
 				}
 				$subledger_sum += $gl->amount;
-			} elseif ($tax_id = is_tax_account($gl->code_id))
+			} elseif ((bool)($tax_id = is_tax_account($gl->code_id)))
 			{
 				$tax_type = row_or_empty(get_tax_type($tax_id));
 				if ($gl->code_id == $tax_type['purchasing_gl_code'] && $gl->amount > 0) {
@@ -391,13 +391,13 @@ class items_cart
 
 			// post to first found bank account using given gl acount code.
 			$is_bank_to = is_bank_account($gl->code_id);
-	    	if ($is_bank_to && (get_bank_account_currency($is_bank_to) == $this->currency)) // do not register exchange variations in bank trans
+	    	if ((bool)$is_bank_to && (get_bank_account_currency($is_bank_to) == $this->currency)) // do not register exchange variations in bank trans
     		{
     			if (!isset($bank_trans[$is_bank_to]))
     				$bank_trans[$is_bank_to] = 0;
 
 	    		$bank_trans[$is_bank_to] += $gl->amount;
-    		} elseif ($gl->person_id)
+    		} elseif ((bool)$gl->person_id)
     		{
     			$home_currency = get_company_currency();
 				// collect per counterparty amounts (in case more than one posting was done to the account),
@@ -546,7 +546,7 @@ class gl_item
 		$this->code_id = $code_id;
 		$this->person_id = $person_id;
         $gl_type = is_subledger_account($code_id);
-        if ($person_id != null  && $gl_type)
+        if ($person_id != null  && (bool)$gl_type)
 		{
 			$this->person_type_id = $gl_type > 0 ? PT_CUSTOMER : PT_SUPPLIER;
 			$data = row_or_empty(get_subaccount_data($code_id, $person_id));

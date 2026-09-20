@@ -42,7 +42,7 @@ function add_gl_trans(string|int|float|bool|null $type, string|int|float|bool|nu
 		else
 			$memo_ = $_SESSION["wa_current_user"]->username . " - " . $memo_;
 	}
-	if (!is_subledger_account($account) || $account==get_company_pref('grn_clearing_act'))
+	if (!(bool)is_subledger_account($account) || $account==get_company_pref('grn_clearing_act'))
 		$person_id = $person_type_id = null;
 	
 	$sql = "INSERT INTO ".TB_PREF."gl_trans ( type, type_no, tran_date,
@@ -171,7 +171,7 @@ function get_gl_transactions(string|array|null $from_date, string|int|float|bool
     if ($amount_max != null)
         $sql .= " AND ABS(gl.amount) <= ABS(".db_escape($amount_max).")";
 
-    if ($memo)
+    if ((bool)$memo)
         $sql .= " AND (gl.memo_ LIKE ". db_escape("%$memo%") . " OR c.memo_ LIKE " . db_escape("%$memo%") . ")";
 
     $sql .= " GROUP BY counter";
@@ -456,7 +456,7 @@ function get_only_budget_trans_from_to(string|int|float|bool|null $from_date, st
 function add_gl_tax_details(string|int|float|bool|null $gl_code, string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $amount, string|int|float|bool|null $ex_rate, string|int|float|bool|null $date, string|int|float|bool|null $memo, string|int|float|bool|null $included=0, string|int|float|bool|null $net_amount = null): void
 {
 	$tax_type = is_tax_account($gl_code);
-	if(!$tax_type) return;	// $gl_code is not tax account
+	if(!(bool)$tax_type) return;	// $gl_code is not tax account
 	
 	$tax = row_or_empty(get_tax_type($tax_type));
 	if ($trans_type == ST_SALESINVOICE || $trans_type == ST_CUSTDELIVERY || $trans_type == ST_CUSTCREDIT)
@@ -495,7 +495,7 @@ function add_trans_tax_details(string|int|float|bool|null $trans_type, string|in
 				.date2sql($tran_date)."',"
 				.(int)($tax_id).","
 				.(float)($rate).","
-				.(float)($ex_rate).",".($included ? 1:0).","
+				.(float)($ex_rate).",".((bool)$included ? 1:0).","
 				.db_escape($net_amount).","
 				.db_escape($amount).",".db_escape($memo).",".db_escape($reg_type, true).")";
 
@@ -616,7 +616,7 @@ function void_gl_trans(string|int|float|bool|null $type, string|int|float|bool|a
 
 function clear_gl_trans(string|int|float|bool|null $type, string|int|float|bool|null $trans_id, string|int|float|bool|null $nested=false): void
 {
-	if (!$nested)
+	if (!(bool)$nested)
 		begin_transaction();
 
 	$sql = "DELETE FROM ".TB_PREF."gl_trans WHERE type=".db_escape($type)
@@ -624,7 +624,7 @@ function clear_gl_trans(string|int|float|bool|null $type, string|int|float|bool|
 
 	db_query($sql, "could not clear gl transactions for type=$type and trans_no=$trans_id");
 
-	if (!$nested)
+	if (!(bool)$nested)
 		commit_transaction();
 }
 
@@ -663,16 +663,16 @@ function get_sql_for_journal_inquiry(string|int|array|null $filter, string|array
          WHERE gl.tran_date >= '" . date2sql($from) . "'
         AND gl.tran_date <= '" . date2sql($to) . "'
         AND gl.amount!=0";
-    if ($ref) {
+    if ((bool)$ref) {
         $sql .= " AND refs.reference LIKE ". db_escape("%$ref%");
     }
-    if ($memo) {
+    if ((bool)$memo) {
         $sql .= " AND com.memo_ LIKE ". db_escape("%$memo%");
     }
     if ($filter != -1) {
         $sql .= " AND gl.type=".db_escape($filter);
     }
-    if (!$alsoclosed) {
+    if (!(bool)$alsoclosed) {
         $sql .= " AND gl_seq=0";
     }
     else

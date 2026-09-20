@@ -81,7 +81,7 @@ function handle_new_order(): void
 	$_SESSION['transfer_items'] = new items_cart(ST_LOCTRANSFER);
   $_SESSION['transfer_items']->fixed_asset = isset($_GET['FixedAsset']);
 	$_POST['AdjDate'] = new_doc_date();
-	if (!is_date_in_fiscalyear($_POST['AdjDate']))
+	if (!(bool)is_date_in_fiscalyear($_POST['AdjDate']))
 		$_POST['AdjDate'] = end_fiscalyear();
 	$_SESSION['transfer_items']->tran_date = $_POST['AdjDate'];	
 }
@@ -110,7 +110,7 @@ if (isset($_POST['Process']))
 		set_focus('AdjDate');
 		$input_error = 1;
 	} 
-	elseif (!is_date_in_fiscalyear($_POST['AdjDate'])) 
+	elseif (!(bool)is_date_in_fiscalyear($_POST['AdjDate'])) 
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('AdjDate');

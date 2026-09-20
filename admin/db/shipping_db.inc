@@ -55,7 +55,7 @@ function delete_shipper(string|int|float|bool|array|null $selected_id): void
 function get_shippers(int|array|null $show_inactive)
 {
 	$sql = "SELECT * FROM ".TB_PREF."shippers";
-	if (!$show_inactive) $sql .= " WHERE !inactive";
+	if (!(bool)$show_inactive) $sql .= " WHERE !inactive";
 	$sql .= " ORDER BY shipper_id";
 	
 	return db_query($sql,"could not get shippers");

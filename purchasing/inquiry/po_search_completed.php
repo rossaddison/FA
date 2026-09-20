@@ -34,7 +34,7 @@ function edit_link(array|false|null $row)
 {
 	global $page_nested;
 
-	return $page_nested || !$row['isopen'] ? '' :
+	return $page_nested || !(bool)$row['isopen'] ? '' :
 		trans_editor_link(ST_PURCHORDER, $row["order_no"]);
 }
 
@@ -42,7 +42,7 @@ function receive_link(array|false|null $row): string
 {
 	global $page_nested;
 	
-	return $page_nested || !$row['OverDue'] ? '' :
+	return $page_nested || !(bool)$row['OverDue'] ? '' :
 		pager_link( _("Receive"),
 			"/purchasing/po_receive_items.php?PONumber=" . (string)$row["order_no"], ICON_RECEIVE);
 }

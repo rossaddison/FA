@@ -14,7 +14,7 @@ function pager_link(?string $link_text, ?string $url, string|bool|null $icon=fal
 {
 	global $path_to_root;
 	
-	if (user_graphic_links() && $icon)
+	if (user_graphic_links() && (bool)$icon)
 		$link_text = set_icon($icon, $link_text);
 
 	$href = $path_to_root . $url;
@@ -23,10 +23,10 @@ function pager_link(?string $link_text, ?string $url, string|bool|null $icon=fal
 
 function navi_button(?string $name, string|int|float|bool|null $value, string|int|float|bool|null $enabled=true, string|bool|null $icon = false): string {
 	global $path_to_root;
-  	return "<button ". ($enabled ? '':'disabled')
+  	return "<button ". ((bool)$enabled ? '':'disabled')
   		." class=\"navibutton\" type=\"submit\""
 	    ." name=\"$name\"  id=\"$name\" value=\"$value\">"
-	  	.($icon ? "<img src='$path_to_root/themes/".user_theme()."/images/".$icon."'>":'')
+	  	.((bool)$icon ? "<img src='$path_to_root/themes/".user_theme()."/images/".$icon."'>":'')
 		."<span>$value</span></button>\n";
 }
 

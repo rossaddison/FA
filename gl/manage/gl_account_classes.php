@@ -72,7 +72,7 @@ function can_delete(string|int|float|bool|array|null $selected_id): bool
 {
 	if ($selected_id == "")
 		return false;
-	if (key_in_foreign_table($selected_id, 'chart_types', 'class_id'))	
+	if ((bool)key_in_foreign_table($selected_id, 'chart_types', 'class_id'))	
 	{
 		display_error(_("Cannot delete this account class because GL account types have been created referring to it."));
 		return false;

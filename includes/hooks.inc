@@ -56,7 +56,7 @@ class hooks {
 					break;
 			}
 			db_close();
-			if (!$result)
+			if (!(bool)$result)
 				break;
 		}
 		set_global_connection(0); // return to siteadmin account
@@ -224,7 +224,7 @@ function install_hooks(string|int|float|bool|null $lang_code=null): void
 
 	$Hooks = array();
 	// include current language related $Hooks object if locale file exists
-	if (!$lang_code)
+	if (!(bool)$lang_code)
 		$lang_code = $_SESSION['language']->code;
 	$lang_code  = clean_file_name($lang_code);
 

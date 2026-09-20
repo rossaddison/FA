@@ -68,7 +68,7 @@ function add_sales_order(Cart &$order)
 		db_query($sql, "order Details Cannot be Added");
 
 	// Now mark quotation line as processed
-		if ($order->trans_type == ST_SALESORDER && $line->src_id)
+		if ($order->trans_type == ST_SALESORDER && (bool)$line->src_id)
 			update_parent_line(ST_SALESORDER, $line->src_id, $line->qty_dispatched); // clear all the quote despite all or the part was ordered
 	} /* inserted line items into sales order details */
 
@@ -182,7 +182,7 @@ function update_sales_order(?object $order): void
 		if ($SysPrefs->loc_notification() == 1 && is_inventory_item($line->stock_id))
 			$loc = calculate_reorder_level($order->Location, $line, $st_ids, $st_names, $st_num, $st_reorder); 
 
-		if (!$line->id) //new line
+		if (!(bool)$line->id) //new line
 			$sql = "INSERT INTO ".TB_PREF."sales_order_details
 			 (order_no, trans_type, stk_code,  description, unit_price, quantity,
 			  discount_percent, qty_sent)
@@ -546,11 +546,11 @@ function get_sql_for_sales_orders_view(string|int|array|null $trans_type, string
 		{
 			$date_after = date2sql($from);
 			$date_before = date2sql($to);
-			$by_date = $by_delivery ? 'delivery_date' : 'ord_date';
+			$by_date = (bool)$by_delivery ? 'delivery_date' : 'ord_date';
 			$sql .=  " AND sorder.$by_date >= '$date_after'"
 					." AND sorder.$by_date <= '$date_before'";
 		}
-		if ($no_auto)
+		if ((bool)$no_auto)
 		    $sql .= " AND sorder.reference != 'auto'";
 	}
 		if ($trans_type == ST_SALESQUOTE && !check_value('show_all'))

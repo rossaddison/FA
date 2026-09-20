@@ -90,7 +90,7 @@ function edit_link(array|false|null $row)
 	if ($page_nested)
 		return '';
 
-	return $row['type'] == ST_CUSTCREDIT && $row['order_'] ? '' : 	// allow  only free hand credit notes edition
+	return $row['type'] == ST_CUSTCREDIT && (bool)$row['order_'] ? '' : 	// allow  only free hand credit notes edition
 			trans_editor_link($row['type'], $row['trans_no']);
 }
 
@@ -132,7 +132,7 @@ function display_customer_summary(bool|array|null $customer_record): void
 {
 	$past1 = get_company_pref('past_due_days');
 	$past2 = 2 * $past1;
-    if ($customer_record && $customer_record["dissallow_invoices"] != 0)
+    if ((bool)$customer_record && $customer_record["dissallow_invoices"] != 0)
     {
     	echo "<center><font color=red size=4><b>" . _("CUSTOMER ACCOUNT IS ON HOLD") . "</font></b></center>";
     }

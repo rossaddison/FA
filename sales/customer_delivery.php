@@ -162,7 +162,7 @@ function check_data(): bool
 		return false;
 	}
 
-	if (!is_date_in_fiscalyear($_POST['DispatchDate'])) {
+	if (!(bool)is_date_in_fiscalyear($_POST['DispatchDate'])) {
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('DispatchDate');
 		return false;
@@ -250,7 +250,7 @@ function check_quantities(): int
 	// Update cart delivery quantities/descriptions
 	foreach ($_SESSION['Items']->line_items as $line=>$itm) {
 		if (isset($_POST['Line'.$line])) {
-			if($_SESSION['Items']->trans_no) {
+			if((bool)$_SESSION['Items']->trans_no) {
 				$min = $itm->qty_done;
 				$max = $itm->quantity;
 			} else {
@@ -283,7 +283,7 @@ function check_quantities(): int
 if (isset($_POST['process_delivery']) && check_data()) {
 	$dn = &$_SESSION['Items'];
 
-	if ($_POST['bo_policy']) {
+	if ((bool)$_POST['bo_policy']) {
 		$bo_policy = 0;
 	} else {
 		$bo_policy = 1;
@@ -361,7 +361,7 @@ shippers_list_cells(null, 'ship_via', $_POST['ship_via']);
 // set this up here cuz it's used to calc qoh
 if (!isset($_POST['DispatchDate']) || !is_date(post_scalar('DispatchDate'))) {
 	$_POST['DispatchDate'] = new_doc_date();
-	if (!is_date_in_fiscalyear($_POST['DispatchDate'])) {
+	if (!(bool)is_date_in_fiscalyear($_POST['DispatchDate'])) {
 		$_POST['DispatchDate'] = end_fiscalyear();
 	}
 }

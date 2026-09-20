@@ -26,7 +26,7 @@ function void_transaction(string|int|float|bool|array|null $type, string|int|flo
 		case ST_JOURNAL : // it's a journal entry
 			if (!exists_gl_trans($type, $type_no))
 				return _('Selected transaction does not exists.');
-			if ($wo = check_wo_costing($type, $type_no))
+			if ((bool)($wo = check_wo_costing($type, $type_no)))
 				return sprintf(_('This transaction cannot be voided because it is part of Work Order %s costs.'), $wo);
 			void_journal_trans($type, $type_no);
 			break;
@@ -96,7 +96,7 @@ function void_transaction(string|int|float|bool|array|null $type, string|int|flo
 			break;
 
 		case ST_WORKORDER : // it's a work order
-			if (!get_work_order($type_no, true))
+			if (!(bool)get_work_order($type_no, true))
 				return _('Selected transaction does not exists.');
 			void_work_order($type_no);
 			break;

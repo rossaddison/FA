@@ -612,7 +612,7 @@ function check_is_closed(string|int|float|bool|null $type, string|int|float|bool
 
     if (($type_no > 0) && is_closed_trans($type, $type_no))
     {
-    	if (!$msg)
+    	if (!(bool)$msg)
     		$msg = sprintf(_("%s #%s is closed for further edition."), $systypes_array[$type], $type_no);
 	   	display_error($msg, true);
 		display_footer_exit();
@@ -654,7 +654,7 @@ function check_is_editable(string|int|float|bool|array|null $trans_type, string|
 
 		if ($_SESSION['wa_current_user']->user != $audit['user'])
 		{
-	    	if (!$msg)
+	    	if (!(bool)$msg)
 		    	$msg = '<b>'._("You have no edit access to transactions created by other users.").'</b>';
 			display_note($msg);
 			display_footer_exit();

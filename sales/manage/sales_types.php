@@ -66,14 +66,14 @@ if ($Mode == 'Delete')
 {
 	// PREVENT DELETES IF DEPENDENT RECORDS IN 'debtor_trans'
 	
-	if (key_in_foreign_table($selected_id, 'debtor_trans', 'tpe'))
+	if ((bool)key_in_foreign_table($selected_id, 'debtor_trans', 'tpe'))
 	{
 		display_error(_("Cannot delete this sale type because customer transactions have been created using this sales type."));
 
 	}
 	else
 	{
-		if (key_in_foreign_table($selected_id, 'debtors_master', 'sales_type'))
+		if ((bool)key_in_foreign_table($selected_id, 'debtors_master', 'sales_type'))
 		{
 			display_error(_("Cannot delete this sale type because customers are currently set up to use this sales type."));
 		}
@@ -116,7 +116,7 @@ while ($myrow = db_fetch($result))
 	$f = number_format2($myrow["factor"],4);
 	if($myrow["id"] == $base_sales) $f = "<I>"._('Base')."</I>";
 	label_cell($f);
-	label_cell($myrow["tax_included"] ? _('Yes'):_('No'), 'align=center');
+	label_cell((bool)$myrow["tax_included"] ? _('Yes'):_('No'), 'align=center');
 	inactive_control_cell($myrow["id"], $myrow["inactive"], 'sales_types', 'id');
  	edit_button_cell("Edit".(string)$myrow['id'], _("Edit"));
  	delete_button_cell("Delete".(string)$myrow['id'], _("Delete"));

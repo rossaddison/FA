@@ -47,7 +47,7 @@ function get_tags(string|int|float|bool|null $type, string|int|float|bool|array|
 {
 	$sql = "SELECT * FROM ".TB_PREF."tags WHERE type=".db_escape($type);
 	
-	if (!$all) $sql .= " AND !inactive";
+	if (!(bool)$all) $sql .= " AND !inactive";
 	
 	$sql .= " ORDER BY name";
 

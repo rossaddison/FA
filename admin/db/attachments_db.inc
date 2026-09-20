@@ -96,7 +96,7 @@ function get_attachment_string(string|int|float|bool|null $type, string|int|floa
 function get_attached_documents(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."attachments WHERE type_no=".db_escape($type);
-	if ($trans_no)
+	if ((bool)$trans_no)
 		$sql .= " AND trans_no=".db_escape($trans_no);
 	$sql .= " ORDER BY trans_no";
 	return db_query($sql, "Could not retrieve attachments");

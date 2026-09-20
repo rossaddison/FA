@@ -62,12 +62,12 @@ function print_payment_report(): void
 	$comments = $_POST['PARAM_4'];
 	$orientation = $_POST['PARAM_5'];
 	$destination = $_POST['PARAM_6'];
-	if ($destination)
+	if ((bool)$destination)
 		include_once($path_to_root . "/reporting/includes/excel_report.inc");
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
 
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
 	if ($fromsupp == ALL_TEXT)
 		$from = _('All');
 	else
@@ -83,7 +83,7 @@ function print_payment_report(): void
 	else
 		$convert = false;
 
-	if ($no_zeros) $nozeros = _('Yes');
+	if ((bool)$no_zeros) $nozeros = _('Yes');
 	else $nozeros = _('No');
 
 	$cols = array(0, 100, 160, 210,	250, 320, 385, 450,	515);
@@ -123,7 +123,7 @@ function print_payment_report(): void
 		if (!$convert && $currency != $myrow['curr_code']) continue;
 
 		$res = getTransactions($myrow['supplier_id'], $to);
-		if ($no_zeros && db_num_rows($res)==0) continue;
+		if ((bool)$no_zeros && db_num_rows($res)==0) continue;
 
 		$rep->fontSize += 2;
 		$rep->TextCol(0, 6, (string)$myrow['name'].($myrow['inactive']==1 ? " ("._("Inactive").")" : "") . " - " . (string)$myrow['terms']);
@@ -137,7 +137,7 @@ function print_payment_report(): void
 		$total[0] = $total[1] = 0.0;
 		while ($trans=db_fetch($res))
 		{
-			if ($no_zeros && $trans['TranTotal'] == 0 && $trans['Balance'] == 0) continue;
+			if ((bool)$no_zeros && $trans['TranTotal'] == 0 && $trans['Balance'] == 0) continue;
 
 			if ($convert) $rate = $trans['rate'];
 			else $rate = 1.0;

@@ -79,7 +79,7 @@ function end_form(?int $breaks=0): void
 	if ($form_nested-- > 0) return;
 
 	$_SESSION['csrf_token'] = random_id();
-	if ($breaks)
+	if ((bool)$breaks)
 		br($breaks);
 	hidden('_focus');
 	hidden('_modified', get_post('_modified', 0));
@@ -121,7 +121,7 @@ function end_table(int|bool $breaks=0): void
 {
 	echo "</table></center>\n";
 	output_hidden();
-	if ($breaks)
+	if ((bool)$breaks)
 		br($breaks);
 }
 
@@ -139,7 +139,7 @@ function table_section(string|int|float|bool|null $number=1, string|bool|null $w
 	{
 		echo "</table>\n";
 		output_hidden();
-		$width = ($width ? "width='$width'" : "");
+		$width = ((bool)$width ? "width='$width'" : "");
 		echo "</td><td style='border-left:1px solid #cccccc;' $width>\n"; // outer table
 	}
 	echo "<table class='tablestyle_inner'>\n";
@@ -187,24 +187,24 @@ function access_string(string|int|float|bool|null $label, string|int|float|bool|
 
 	if (preg_match('/(.*)&([a-zA-Z0-9])(.*)/', $label, $slices))	
 	{
-		$label = $clean ? $slices[1].$slices[2].$slices[3] :
+		$label = (bool)$clean ? $slices[1].$slices[2].$slices[3] :
 			$slices[1].'<u>'.$slices[2].'</u>'.$slices[3];
 		$access = " accesskey='".strtoupper($slices[2])."'";
 	}
 	
 	$label = str_replace( '&&', '&', $label);
 
-	return $clean ? $label : array($label, $access);
+	return (bool)$clean ? $label : array($label, $access);
 }
 
 function hyperlink_back(string|int|float|bool|null $center=true, string|int|float|bool|null $no_menu=true, string|int|float|bool|null $type_no=0, string|int|float|bool|array|null $trans_no=0, string|int|float|bool|null $final=false): void
 {
 	global $path_to_root;
 
-	if ($center)
+	if ((bool)$center)
 		echo "<center>";
 	$id = 0;	
-	if ($no_menu && $trans_no != 0)
+	if ((bool)$no_menu && $trans_no != 0)
 	{
 		include_once($path_to_root."/admin/db/attachments_db.inc");
 		$id = has_attachment($type_no, $trans_no);
@@ -214,14 +214,14 @@ function hyperlink_back(string|int|float|bool|null $center=true, string|int|floa
 	$width = ($id != 0 ? "30%" : "20%");	
 	start_table(false, "width='$width'");
 	start_row();
-	if ($no_menu)
+	if ((bool)$no_menu)
 	{
 		echo "<td align=center><a href='javascript:window.print();'>"._("Print")."</a></td>\n";
 	}	
-	echo "<td align=center><a href='javascript:goBack(".($final ? '-2' : '').");'>".($no_menu ? _("Close") : _("Back"))."</a></td>\n";
+	echo "<td align=center><a href='javascript:goBack(".((bool)$final ? '-2' : '').");'>".((bool)$no_menu ? _("Close") : _("Back"))."</a></td>\n";
 	end_row();
 	end_table();
-	if ($center)
+	if ((bool)$center)
 		echo "</center>";
 	echo "<br>";
 }
@@ -259,7 +259,7 @@ function viewer_link(string|int|float|bool|null $label, ?string $url='', ?string
 	if ($url != "")
 	{
 		$pars = access_string($label);
-		if (user_graphic_links() && $icon)
+		if (user_graphic_links() && (bool)$icon)
 			$pars[0] = set_icon($icon, $pars[0]);
 		$preview_str = "<a target='_blank' $class $id href='$path_to_root/$url' onclick=\"javascript:openWindow(this.href,this.target); return false;\"$pars[1]>$pars[0]</a>";
 	}
@@ -344,7 +344,7 @@ function hyperlink_params_separate_td(string|int|float|bool|null $target, string
 
 function alt_table_row_color(int|string|null &$k, ?string $extra_class=null): void
 {
-	$classes = $extra_class ? array($extra_class) : array();
+	$classes = (bool)$extra_class ? array($extra_class) : array();
 	if ($k == 1)
 	{
 		array_push($classes, 'oddrow');
@@ -474,7 +474,7 @@ function tabbed_content_end(): void {
 function tab_changed(string|int|float|bool|null $name): array|null
 {
 	$to = find_submit("{$name}_", false);
-	if (!$to) return null;
+	if (!(bool)$to) return null;
 
 	return array('from' => $from = get_post("_{$name}_sel"),
 		'to' => $to);
@@ -499,7 +499,7 @@ function tab_closed(?string $name, ?string $tab): bool
 function tab_visible(?string $name, ?string $tab): bool
 {
 	$new = find_submit($name.'_', false);
-	return (get_post('_'.$name.'_sel') == $tab && !$new) || $new==$tab;
+	return (get_post('_'.$name.'_sel') == $tab && !(bool)$new) || $new==$tab;
 }
 
 /* Table editor interfaces. Key is editor type
@@ -683,7 +683,7 @@ function page_processing(bool $msg = false): void
 		$msg = _("Entered data has not been saved yet.\nDo you want to abandon changes?");
 
 	$js = "_validate._processing=" . (
-		$msg ? '\''.strtr($msg, array("\n"=>'\\n')) . '\';' : 'null;');
+		(bool)$msg ? '\''.strtr($msg, array("\n"=>'\\n')) . '\';' : 'null;');
 	if (in_ajax()) {
 		$Ajax->addScript(true, $js);
 	} else
@@ -694,7 +694,7 @@ function page_modified(string|int|float|bool|null $status = true): void
 {
 	global $Ajax;
 
-	$js = "_validate._modified=" . ($status ? 1:0).';';
+	$js = "_validate._modified=" . ((bool)$status ? 1:0).';';
 	if (in_ajax()) {
 		$Ajax->addScript(true, $js);
 	} else

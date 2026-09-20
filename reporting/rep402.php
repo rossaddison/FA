@@ -111,12 +111,12 @@ function print_work_order_listing(): void
 	$comments = $_POST['PARAM_4'];
 	$orientation = $_POST['PARAM_5'];
 	$destination = $_POST['PARAM_6'];
-	if ($destination)
+	if ((bool)$destination)
 		include_once($path_to_root . "/reporting/includes/excel_report.inc");
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
 
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
 
 	if ($item == '')
 		$items = _('All');
@@ -138,7 +138,7 @@ function print_work_order_listing(): void
 
 	$headers = array(_('Type'), '#', ('Reference'), _('Location'), _('Item'), _('Required'), _('Manufactured'), ' ', _('Date'), _('Required By'), _('Closed'));
 
-	if ($show_gl)
+	if ((bool)$show_gl)
 	{
 		$cols2 = $cols;
 		$headers2 = array(_("Transaction"), ' ', _("Date"), _("Account Code"),' ' . _("Account Name"), _("Debit"), _("Credit"), ' ', _("Memo"));
@@ -163,7 +163,7 @@ function print_work_order_listing(): void
     	recalculate_cols($cols);
 
     $rep->Font();
-    if ($show_gl)
+    if ((bool)$show_gl)
     	$rep->Info($params, $cols2, $headers2, $aligns, $cols, $headers);
     else	
     	$rep->Info($params, $cols, $headers, $aligns);
@@ -183,8 +183,8 @@ function print_work_order_listing(): void
 		$rep->TextCol(7, 8, '', -1);
 		$rep->TextCol(8, 9, sql2date($trans['date_']), -1);
 		$rep->TextCol(9, 10, sql2date($trans['required_by']), -1);
-		$rep->TextCol(10, 11, $trans['closed'] ? ' ' : _('No'), -1);
-		if ($show_gl)
+		$rep->TextCol(10, 11, (bool)$trans['closed'] ? ' ' : _('No'), -1);
+		if ((bool)$show_gl)
 		{
 			$rep->NewLine();
 			$productions = get_gl_wo_productions($trans['id'], true);

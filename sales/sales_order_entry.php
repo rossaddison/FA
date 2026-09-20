@@ -101,7 +101,7 @@ if (isset($_GET['NewDelivery']) && is_numeric($_GET['NewDelivery'])) {
 
 page($_SESSION['page_title'], false, false, "", $js);
 
-if (isset($_GET['ModifyOrderNumber']) && is_prepaid_order_open($_GET['ModifyOrderNumber']))
+if (isset($_GET['ModifyOrderNumber']) && (bool)is_prepaid_order_open($_GET['ModifyOrderNumber']))
 {
 	display_error(_("This order cannot be edited because there are invoices or payments related to it, and prepayment terms were used."));
 	end_page(); exit;
@@ -286,7 +286,7 @@ function copy_to_cart(): void
 		$cart->payment_terms = get_payment_terms($_POST['payment']);
 		$newpayment = true;
 	}
-	if ($cart->payment_terms['cash_sale']) {
+	if ((bool)$cart->payment_terms['cash_sale']) {
 		if ($newpayment) {
 			$cart->due_date = $cart->document_date;
 			$cart->phone = $cart->cust_ref = $cart->delivery_address = '';
@@ -301,7 +301,7 @@ function copy_to_cart(): void
 		$cart->delivery_address = $_POST['delivery_address'];
 		$cart->phone = $_POST['phone'];
 		$cart->ship_via = $_POST['ship_via'];
-		if (!$cart->trans_no || ($cart->trans_type == ST_SALESORDER && !$cart->is_started()))
+		if (!(bool)$cart->trans_no || ($cart->trans_type == ST_SALESORDER && !$cart->is_started()))
 			$cart->prep_amount = input_num('prep_amount', 0);
 	}
 	$cart->Location = $_POST['Location'];
@@ -389,7 +389,7 @@ function can_process(): bool {
 		set_focus('OrderDate');
 		return false;
 	}
-	if ($_SESSION['Items']->trans_type!=ST_SALESORDER && $_SESSION['Items']->trans_type!=ST_SALESQUOTE && !is_date_in_fiscalyear($_POST['OrderDate'])) {
+	if ($_SESSION['Items']->trans_type!=ST_SALESORDER && $_SESSION['Items']->trans_type!=ST_SALESQUOTE && !(bool)is_date_in_fiscalyear($_POST['OrderDate'])) {
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('OrderDate');
 		return false;
@@ -469,7 +469,7 @@ function can_process(): bool {
 		return false;
 	}
 
-	if ($_SESSION['Items']->payment_terms['cash_sale'] && 
+	if ((bool)$_SESSION['Items']->payment_terms['cash_sale'] && 
 		($_SESSION['Items']->trans_type == ST_CUSTDELIVERY || $_SESSION['Items']->trans_type == ST_SALESINVOICE)) 
 		$_SESSION['Items']->due_date = $_SESSION['Items']->document_date;
 	return true;
@@ -533,7 +533,7 @@ function check_item_data(): bool
 	global $SysPrefs;
 	
 	$is_inventory_item = is_inventory_item(get_post('stock_id'));
-	if(!get_post('stock_id_text', true)) {
+	if(!(bool)get_post('stock_id_text', true)) {
 		display_error( _("Item description cannot be empty."));
 		set_focus('stock_id_edit');
 		return false;
@@ -662,7 +662,7 @@ function create_cart(string|int|array|null $type, string|int|array|null $trans_n
 { 
 	global $Refs, $SysPrefs;
 
-	if (!$SysPrefs->db_ok) // create_cart is called before page() where the check is done
+	if (!(bool)$SysPrefs->db_ok) // create_cart is called before page() where the check is done
 		return;
 
 	processing_start();
@@ -716,7 +716,7 @@ if (isset($_POST['CancelItemChanges'])) {
 }
 
 //--------------------------------------------------------------------------------
-if ($_SESSION['Items']->fixed_asset)
+if ((bool)$_SESSION['Items']->fixed_asset)
 	check_db_has_disposable_fixed_assets(_("There are no fixed assets defined in the system."));
 else
 	check_db_has_stock_items(_("There are no inventory items defined in the system."));

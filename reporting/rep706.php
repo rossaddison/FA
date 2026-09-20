@@ -164,20 +164,20 @@ function print_balance_sheet(): void
 		$orientation = $_POST['PARAM_6'];
 		$destination = $_POST['PARAM_7'];
 	}
-	if ($destination)
+	if ((bool)$destination)
 		include_once($path_to_root . "/reporting/includes/excel_report.inc");
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
 	$labels = array();
 	$serie1 = array();
 	$serie2 = array();
-	if ($graphics)
+	if ((bool)$graphics)
 	{
 		include_once($path_to_root . "/reporting/includes/class.graphic.inc");
 		$pg = new Chart($graphics);
 	}
-	if (!$decimals)
+	if (!(bool)$decimals)
 		$dec = 0;
 	else
 		$dec = user_price_dec();
@@ -300,7 +300,7 @@ function print_balance_sheet(): void
 	$rep->Font();
 	$rep->NewLine();
 	$rep->Line($rep->row);
-	if ($graphics)
+	if ((bool)$graphics)
 	{
 		$labels[] = _('Calculated Return');
 		$serie1[] = abs($calc_period);

@@ -55,7 +55,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 function can_delete(string|int|float|bool|array|null $selected_id): bool
 {
-	if (key_in_foreign_table($selected_id, 'stock_master', 'fa_class_id'))
+	if ((bool)key_in_foreign_table($selected_id, 'stock_master', 'fa_class_id'))
 	{
 		display_error(_("Cannot delete this class because it is used by some fixed asset items."));
 		return false;

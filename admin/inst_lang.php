@@ -100,7 +100,7 @@ function display_languages(): void
 			button_cell('Edit'.$id, _("Edit"), _('Edit non standard language configuration'), 
 				ICON_EDIT);
 		elseif (check_pkg_upgrade($installed, $available)) // outdated or not installed language in repo
-			button_cell('Update'.$pkg_name, $installed ? _("Update") : _("Install"),
+			button_cell('Update'.$pkg_name, (bool)$installed ? _("Update") : _("Install"),
 				_('Upload and install latest language package'), ICON_DOWN);
 		else
 			label_cell('');
@@ -147,7 +147,7 @@ function handle_submit(string|int|float|bool|array|null $id): bool
 {
 	global $path_to_root, $installed_languages, $dflt_lang, $Mode;
 
-	if ($_POST['dflt']) {
+	if ((bool)$_POST['dflt']) {
 			$dflt_lang = $_POST['code'];
 	}
 	
@@ -269,7 +269,7 @@ if ($Mode == 'ADD_ITEM' || $Mode == 'UPDATE_ITEM')
 	if (check_data() && handle_submit($selected_id))
 		$Mode = 'RESET';
 
-if ($id = find_submit('Update', false))
+if ((bool)($id = find_submit('Update', false)))
 	install_language($id);
 
 if (get_post('_CurDflt_update') || (get_post('Refresh') && get_post('CurDflt', -1) != -1)) {

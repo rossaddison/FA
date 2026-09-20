@@ -42,7 +42,7 @@ function getTaxTransactions(string|array|null $from, string|array|null $to, stri
 		FROM ".TB_PREF."debtor_trans dt
 			LEFT JOIN ".TB_PREF."debtors_master d ON d.debtor_no=dt.debtor_no
 		WHERE (dt.type=".ST_SALESINVOICE." OR dt.type=".ST_CUSTCREDIT.") ";
-	if ($tax_id)
+	if ((bool)$tax_id)
 		$sql .= "AND tax_id<>'' ";
 	$sql .= "AND dt.tran_date >=".db_escape($fromdate)." AND dt.tran_date<=".db_escape($todate)."
 		ORDER BY d.debtor_no"; 
@@ -82,11 +82,11 @@ function print_sales_summary_report(): void
 		$tid = _('Yes');
 
 
-	if ($destination)
+	if ((bool)$destination)
 		include_once($path_to_root . "/reporting/includes/excel_report.inc");
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
 
 	$dec = user_price_dec();
 
@@ -145,7 +145,7 @@ function print_sales_summary_report(): void
 		$taxes = getTaxes($trans['type'], $trans['trans_no']);
 		if ($taxes != null)
 		{
-			if ($taxes['included_in_price'])
+			if ((bool)$taxes['included_in_price'])
 				$trans['total'] -= $taxes['tax'];
 			$tax += $taxes['tax'];
 		}	

@@ -352,11 +352,11 @@ function sql2date(string|int|float|bool|null $date_): string
 	//for MySQL dates are in the format YYYY-mm-dd
 	if ($date_ == null)
 		return "";
-	if (strpos($date_, "/")) 
+	if ((bool)strpos($date_, "/")) 
 	{ // In MySQL it could be either / or -
 		list($year, $month, $day) = explode("/", $date_);
 	} 
-	elseif (strpos ($date_, "-")) 
+	elseif ((bool)strpos ($date_, "-")) 
 	{
 		list($year, $month, $day) = explode("-", $date_);
 	}

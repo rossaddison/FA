@@ -209,12 +209,12 @@ function get_branch_contacts(string|int|float|bool|null $branch_code, ?string $a
 			.TB_PREF."crm_contacts r
 		WHERE r.person_id=p.id AND ((r.type='cust_branch' 
 			AND r.entity_id=".db_escape($branch_code).')';
-	if($customer_id) {
+	if((bool)$customer_id) {
 		$sql .= " OR (r.type='customer' AND r.entity_id=".db_escape($customer_id).")";
 	}
 	$sql .= ')';
 	
-	if ($action)
+	if ((bool)$action)
 		$sql .= ' AND (r.action='.db_escape($action).($default ? " OR r.action='general'" : '').')';
 	
 	$res = db_query($sql, "can't retrieve branch contacts");
@@ -242,16 +242,16 @@ function _get_branch_contacts(string|int|float|bool|null $branch_code, string|in
 		WHERE r.person_id=p.id AND r.type='cust_branch' 
 			AND r.entity_id=".db_escape($branch_code);
 
-	if ($action)
+	if ((bool)$action)
 		$sql .= ' AND (r.action='.db_escape($action).($default ? " OR r.action='general'":'').')';
 
-	if($customer_id) {
+	if((bool)$customer_id) {
 		$sql = "($sql) UNION (SELECT p.*, r.action, r.type, CONCAT(r.type,'.',r.action) as ext_type
 		FROM ".TB_PREF."crm_persons p,"
 			.TB_PREF."crm_contacts r 
 		WHERE r.person_id=p.id AND r.type='customer' 
 			AND r.entity_id=".db_escape($customer_id);
-		if ($action) 
+		if ((bool)$action) 
 			$sql .= ' AND (r.action='.db_escape($action).($default ? " OR r.action='general'":'').')';
 		$sql .= ')';
 	}
@@ -260,7 +260,7 @@ function _get_branch_contacts(string|int|float|bool|null $branch_code, string|in
 	$results = array();
 	$type = '';
 	while($contact = db_fetch($res)) {
-		if ($type && $type != $contact['type']) break; // skip cust when branch contacts found
+		if ((bool)$type && $type != $contact['type']) break; // skip cust when branch contacts found
 		$results[] = $contact;
 		$type = $contact['type'];
 	}
@@ -282,7 +282,7 @@ function get_default_branch(string|int|float|bool|null $customer_id, string|int|
 {
 	$sql = "SELECT * 
 		FROM ".TB_PREF."cust_branch WHERE debtor_no = ".db_escape($customer_id);
-	if($ar_account)
+	if((bool)$ar_account)
 		$sql .= " AND receivables_account=".db_escape($ar_account);
 	$result = db_query($sql,"cannot retrieve default branch");
 	return db_fetch($result);

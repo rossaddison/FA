@@ -357,9 +357,9 @@ function get_sql_for_customer_inquiry(string|array|null $from, string|array|null
 			LEFT JOIN ".TB_PREF."cust_branch as branch ON trans.branch_code=branch.branch_code,"
 			.TB_PREF."debtors_master as debtor
 		WHERE debtor.debtor_no = trans.debtor_no"; // exclude voided transactions and self-balancing (journal) transactions:
-    if (!$show_voided) 	
+    if (!(bool)$show_voided) 	
     	 	$sql .= " AND ISNULL(v.date_) AND (trans.ov_amount + trans.ov_gst + trans.ov_freight + trans.ov_freight_tax + trans.ov_discount) != 0";
-    if ($ref) {
+    if ((bool)$ref) {
     	$sql .= " AND trans.reference LIKE ". db_escape("%$ref%");
     }	 
 	if ($filter == '2')
@@ -450,7 +450,7 @@ function get_sql_for_sales_deliveries_view(string|array|null $from, string|array
 	}
 
 	//figure out the sql required from the inputs available
-	if ($delivery)
+	if ((bool)$delivery)
 	{
 		$sql .= " AND trans.trans_no LIKE ".db_escape('%' . $delivery . '%');
 		$sql .= " GROUP BY trans.trans_no";

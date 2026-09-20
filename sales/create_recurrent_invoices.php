@@ -117,7 +117,7 @@ if ($id != -1)
 	$myrow = get_recurrent_invoice($id);
 
 	$invs = array();
-	if (recurrent_invoice_ready($id, $date))
+	if ((bool)recurrent_invoice_ready($id, $date))
 	{
 			begin_transaction();
 
@@ -166,7 +166,7 @@ if ($id != -1)
 	$to = add_months($from, $myrow['monthly']);
 	$to = add_days($to, $myrow['days']);
 
-	if (!is_date_in_fiscalyear($date))
+	if (!(bool)is_date_in_fiscalyear($date))
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 	elseif (!date1_greater_date2(add_days(Today(), 1), $to))
 		display_error(_("Recurrent invoice cannot be generated before last day of covered period."));
@@ -212,7 +212,7 @@ $k = 0;
 $due = false;
 while ($myrow = db_fetch($result)) 
 {
-	if ($myrow['overdue'])
+	if ((bool)$myrow['overdue'])
 	{
 		start_row("class='overduebg'");
 		$due = true;
@@ -238,10 +238,10 @@ while ($myrow = db_fetch($result))
 	label_cell(sql2date($myrow['begin']),  "align='center'");
 	label_cell(sql2date($myrow['end']),	 "align='center'");
 	label_cell(calculate_next($myrow),	"align='center'");
-	if ($myrow['overdue'])
+	if ((bool)$myrow['overdue'])
 	{
 		$count = recurrent_invoice_count($myrow['id']);
-		if ($count)
+		if ((bool)$count)
 		{
 			button_cell("create".(string)$myrow["id"], sprintf(_("Create %s Invoice(s)"), $count), "", ICON_DOC, 'process');
 		} else {

@@ -42,7 +42,7 @@ function update_tax_group(string|int|float|bool|null $id, string|int|float|bool|
 function get_all_tax_groups(int|bool|array|null $all=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."tax_groups";
-	if (!$all) $sql .= " WHERE !inactive";
+	if (!(bool)$all) $sql .= " WHERE !inactive";
 	
 	return db_query($sql, "could not get all tax group");
 } 
@@ -110,7 +110,7 @@ function get_tax_group_rates(string|int|float|bool|null $group_id=null, bool $ta
 		  g.tax_shipping
 		FROM ".TB_PREF."tax_types t 
 		  LEFT JOIN ".TB_PREF."tax_group_items g ON t.id=g.tax_type_id
-	AND g.tax_group_id=". ($group_id ? db_escape($group_id) : "(SELECT MIN(id) FROM ".TB_PREF."tax_groups)")		  
+	AND g.tax_group_id=". ((bool)$group_id ? db_escape($group_id) : "(SELECT MIN(id) FROM ".TB_PREF."tax_groups)")		  
 	. " WHERE !t.inactive";
 	if ($tax_shipping)
 		$sql .= " AND g.tax_shipping=1";

@@ -37,13 +37,13 @@ function add_to_order(Cart &$order, string|array|null $new_item, string|int|floa
 			$price -= (float)$item['quantity']*$std_price*$price_factor;
 			$item_price = $std_price*$price_factor;
 		} else {
-			if ($item['quantity']) 
+			if ((bool)$item['quantity']) 
 				$price = $price/$item['quantity'];
 			$item_price = $price;
 		}
 		$item_price = round($item_price, user_price_dec());
 
-		if (!$item['is_foreign'] && $item['item_code'] != $item['stock_id'])
+		if (!(bool)$item['is_foreign'] && $item['item_code'] != $item['stock_id'])
 		{	// this is sales kit - recurse 
 			add_to_order($order, $item['stock_id'], $new_item_qty*(float)$item['quantity'],
 				$item_price, $discount);
@@ -125,7 +125,7 @@ function get_customer_details_to_order(Cart &$order, string|int|float|bool|array
 	elseif ($order->trans_type == ST_SALESQUOTE)
 		$order->due_date = add_days($order->document_date, $SysPrefs->default_quote_valid_days());
 
-	if($order->payment_terms['cash_sale']) {
+	if((bool)$order->payment_terms['cash_sale']) {
 		$order->set_location($order->pos["pos_location"], $order->pos["location_name"]);
 	} else
 		$order->set_location($myrow["default_location"], $myrow["location_name"]);
@@ -145,7 +145,7 @@ function display_order_summary(?string $title, Cart &$order, bool $editable_item
 
 	$th = array(_("Item Code"), _("Item Description"), _("Quantity"),
 		_("Delivered"),
-		_("Unit"), $order->tax_included ? _("Price after Tax") : _("Price before Tax"), _("Discount %"), _("Total"), "");
+		_("Unit"), (bool)$order->tax_included ? _("Price after Tax") : _("Price before Tax"), _("Discount %"), _("Total"), "");
 
 	if ($order->trans_no == 0) {
 	unset( $th[3] );
@@ -303,8 +303,8 @@ function display_order_header(Cart &$order, bool $editable, ?string $date_text):
 
 				if (!in_array($order->trans_type, array(ST_SALESQUOTE, ST_SALESORDER))
 					&& ($order->pos['cash_sale'] != $order->pos['credit_sale'])
-					&& (($order->payment_terms['cash_sale'] && !$order->pos['cash_sale']) ||
-						(!$order->payment_terms['cash_sale'] && !$order->pos['credit_sale']))) {
+					&& (((bool)$order->payment_terms['cash_sale'] && !(bool)$order->pos['cash_sale']) ||
+						(!(bool)$order->payment_terms['cash_sale'] && !(bool)$order->pos['credit_sale']))) {
 							// force payment terms refresh if terms are editable
 							// and pos have no permitions for terms selected in customer record.
 							// Terms are set to first terms in allowed category below.
@@ -375,22 +375,22 @@ function display_order_header(Cart &$order, bool $editable, ?string $date_text):
 
 	table_section(3);
 	start_row();
-	if (($order->pos['cash_sale'] || $order->pos['credit_sale']) 
+	if (((bool)$order->pos['cash_sale'] || (bool)$order->pos['credit_sale']) 
 		&& !$order->is_started()) {
 		 // editable payment type 
         if (isset($_POST['payment']) && $_POST['payment'] !== $order->payment) {
 			$order->payment = get_post('payment');
 			$order->payment_terms = get_payment_terms($order->payment);
 			$order->due_date = get_invoice_duedate($order->payment, $order->document_date);
-			if ($order->payment_terms['cash_sale']) {
+			if ((bool)$order->payment_terms['cash_sale']) {
 				$_POST['Location'] = $order->Location = $order->pos['pos_location'];
 				$order->location_name = $order->pos['location_name'];
 			}
 			$Ajax->activate('items_table');
 			$Ajax->activate('delivery');
 		}
-		$paymcat = !$order->pos['cash_sale'] ? PM_CREDIT : 
-			(!$order->pos['credit_sale'] ? PM_CASH : PM_ANY);
+		$paymcat = !(bool)$order->pos['cash_sale'] ? PM_CREDIT : 
+			(!(bool)$order->pos['credit_sale'] ? PM_CASH : PM_ANY);
 		// all terms are available for SO
 		$is_order = in_array($order->trans_type, array(ST_SALESQUOTE, ST_SALESORDER));
 		sale_payment_list_cells(_('Payment:'), 'payment', $is_order ? PM_ANY : $paymcat, null, true, $is_order);
@@ -576,7 +576,7 @@ function display_delivery_details(Cart &$order): void
 	div_start('delivery');	
 
 
-	if ($order->payment_terms['cash_sale']) {	// Direct payment sale
+	if ((bool)$order->payment_terms['cash_sale']) {	// Direct payment sale
 		$Ajax->activate('items_table');
 		display_heading(_('Cash payment'));
 		start_table(TABLESTYLE2, "width='60%'");

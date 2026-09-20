@@ -153,7 +153,7 @@ function can_process(): bool
 		set_focus('branch_id');
 		return false;
 	} 
-	if ($_SESSION['Items']->count_items() == 0 && !input_num('ChargeFreightCost',0))
+	if ($_SESSION['Items']->count_items() == 0 && !(bool)input_num('ChargeFreightCost',0))
 	{
 		display_error(_("You must enter at least one non empty item line."));
 		set_focus('AddItem');
@@ -171,7 +171,7 @@ function can_process(): bool
 		display_error(_("The entered date for the credit note is invalid."));
 		set_focus('OrderDate');
 		$input_error = 1;
-	} elseif (!is_date_in_fiscalyear($_POST['OrderDate'])) {
+	} elseif (!(bool)is_date_in_fiscalyear($_POST['OrderDate'])) {
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('OrderDate');
 		$input_error = 1;

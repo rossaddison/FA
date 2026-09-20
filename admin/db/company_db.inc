@@ -39,7 +39,7 @@ function get_company_pref(?string $prefs = null)
 
 	$all = $SysPrefs->prefs;
 
-	if ($prefs && is_string($prefs))
+	if ((bool)$prefs && is_string($prefs))
 		return @$all[$prefs];
 
 	if (!is_array($all))
@@ -142,7 +142,7 @@ function get_payment_terms(string|int|float|bool|array|null $selected_id)
 function get_payment_terms_all(int|array|null $show_inactive)
 {
 	$sql = "SELECT * FROM ".TB_PREF."payment_terms";
-	if (!$show_inactive) $sql .= " WHERE !inactive";
+	if (!(bool)$show_inactive) $sql .= " WHERE !inactive";
 	return db_query($sql,"could not get payment terms");
 }
 /*

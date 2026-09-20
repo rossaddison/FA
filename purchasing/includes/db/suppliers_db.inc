@@ -97,7 +97,7 @@ function get_supplier_details(string|int|float|bool|array|null $supplier_id, str
 	$past2 = 2 * $past1;
 	// removed - supp_trans.alloc from all summations
 
-	if ($all)
+	if ((bool)$all)
     	$value = "(trans.ov_amount + trans.ov_gst + trans.ov_discount)";
     else	
     	$value = "IF (trans.type=".ST_SUPPINVOICE." OR trans.type=".ST_BANKDEPOSIT." OR (trans.type=".ST_JOURNAL." AND (trans.ov_amount + trans.ov_gst + trans.ov_discount)>0), 
@@ -123,7 +123,7 @@ function get_supplier_details(string|int|float|bool|array|null $supplier_id, str
 		WHERE
 			 supp.payment_terms = ".TB_PREF."payment_terms.terms_indicator
 			 AND supp.supplier_id = $supplier_id ";
-	if (!$all)
+	if (!(bool)$all)
 		$sql .= "AND $value <> 0 ";  
 	$sql .= "GROUP BY
 			  supp.supp_name,

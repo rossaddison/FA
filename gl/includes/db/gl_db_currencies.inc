@@ -70,7 +70,7 @@ function get_currency(string|int|float|bool|array|null $curr_code)
 function get_currencies(int|bool|array|null $all=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."currencies";
-	if (!$all) $sql .= " WHERE !inactive";
+	if (!(bool)$all) $sql .= " WHERE !inactive";
 	return db_query($sql, "could not get currencies");
 }
 

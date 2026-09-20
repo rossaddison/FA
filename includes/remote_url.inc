@@ -64,7 +64,7 @@ function url_get_contents(?string $url, ?int $timeout=10): string|false|null
 
 		$response = stream_get_contents($fp);
 
-		if (!strpos($response, "200 OK\r\n"))
+		if (!(bool)strpos($response, "200 OK\r\n"))
 			return null;
 		// strip the headers
 		$pos = strpos($response, "\r\n\r\n");
@@ -79,7 +79,7 @@ function url_get_contents(?string $url, ?int $timeout=10): string|false|null
 function url_copy(?string $from, ?string $to, ?int $timeout=10): bool
 {
 	$f = fopen($to, 'wb');
-	if (!$f || !fwrite($f, url_get_contents($from, $timeout)))
+	if (!$f || !(bool)fwrite($f, url_get_contents($from, $timeout)))
 		return false;
 	fclose($f);
 	return true;

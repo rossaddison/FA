@@ -106,7 +106,7 @@ function depr_par(array|false|null $row): string {
 
 function status_title(array|false|null $row): string {
 
-   	if ($row['inactive'] || ($row['disposal_date'] !== NULL))
+   	if ((bool)$row['inactive'] || ($row['disposal_date'] !== NULL))
 		return _("Disposed"); // disposed or saled
 	elseif ($row['purchase_date'] === NULL)
 		return _("Purchasable"); // not yet purchased

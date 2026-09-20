@@ -40,7 +40,7 @@ function check_data(string|int|float|bool|array|null $selected_id): bool
 		set_focus('BuyRate');
 		return false;
 	}
-	if (!$selected_id && get_date_exchange_rate($_POST['curr_abrev'], $_POST['date_']))
+	if (!(bool)$selected_id && (bool)get_date_exchange_rate($_POST['curr_abrev'], $_POST['date_']))
 	{
 		display_error( _("The exchange rate for the date is already there."));
 		set_focus('date_');

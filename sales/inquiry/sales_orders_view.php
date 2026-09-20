@@ -106,7 +106,7 @@ function edit_link(array|false|null $row)
 {
 	global $page_nested;
 
-	if (is_prepaid_order_open($row['order_no']))
+	if ((bool)is_prepaid_order_open($row['order_no']))
 		return '';
 
 	return $page_nested ? '' : trans_editor_link($row['trans_type'], $row['order_no']);
@@ -164,7 +164,7 @@ function tmpl_checkbox(array|false|null $row): string
 	if ($page_nested)
 		return '';
 	$name = "chgtpl" .(string)$row['order_no'];
-	$value = $row['type'] ? 1:0;
+	$value = (bool)$row['type'] ? 1:0;
 
 // save also in hidden field for testing during 'Update'
 
@@ -193,7 +193,7 @@ function invoice_prep_link(array|false|null $row): string
 	// invoicing should be available only for partially allocated orders
 	return 
 		$row['inv_payments'] < $row['total'] ?
-		pager_link($row['ord_payments']  ? _("Prepayment Invoice") : _("Final Invoice"),
+		pager_link((bool)$row['ord_payments']  ? _("Prepayment Invoice") : _("Final Invoice"),
 		"/sales/customer_invoice.php?InvoicePrepayments=" .(string)$row['order_no'], ICON_DOC) : '';
 }
 

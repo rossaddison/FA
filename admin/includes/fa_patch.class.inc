@@ -197,7 +197,7 @@ class fa_patch {
 
 				set_time_limit($this->max_upgrade_time);
 				$result = db_import($this->backup, $this->companies[$this->cur_company], true, false);
-				if ($result)
+				if ((bool)$result)
 					$this->log_error(_("Upgrade failed. Original database content restored successfully."), 'Info');
 				else
 					$this->log_error(sprintf(_("Database restore operation failed. Original database content is in %s file."), $this->backup));

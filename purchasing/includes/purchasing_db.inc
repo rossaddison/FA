@@ -212,7 +212,7 @@ function add_direct_supp_trans(?object $cart)
 		$total += round2(($line->receive_qty * $line->price), user_price_dec());
 	}
 	$inv->tax_overrides = $cart->tax_overrides;
-	if (!$inv->tax_included) {
+	if (!(bool)$inv->tax_included) {
 		$taxes = $inv->get_taxes($inv->tax_group_id, 0, false);
 		foreach( $taxes as $taxitem) {
 			$total += isset($taxitem['Override']) ? $taxitem['Override'] : $taxitem['Value'];
@@ -223,7 +223,7 @@ function add_direct_supp_trans(?object $cart)
 
 	$inv_no = add_supp_invoice($inv);
 
-	if ($cart->cash_account) {
+	if ((bool)$cart->cash_account) {
 		$pmt_no = write_supp_payment(0, $inv->supplier_id, $cart->cash_account,	$inv->tran_date, $Refs->get_next(ST_SUPPAYMENT, null, $inv->tran_date), 
 			$total, 0, _('Payment for:').$inv->supp_reference .' ('.$type_shortcuts[ST_SUPPINVOICE].$inv_no.')' . ' ' . $cart->Comments, 0, 0, $cart->dimension, $cart->dimension2);
 		add_supp_allocation($total, ST_SUPPAYMENT, $pmt_no, ST_SUPPINVOICE, $inv_no, $inv->supplier_id, $inv->tran_date);

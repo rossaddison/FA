@@ -313,7 +313,7 @@ class references
 		$supp = @$context['supplier'] ? $context['supplier'] : '\d+';
 		$branch = @$context['branch'] ? $context['branch'] : '\d+';
 		$location = @$context['location'] ? $context['location'] : '[a-z0-9]+';
- 		$pos = @$context['pos'] ? $context['pos'] : '\d+';
+ 		$pos = (bool)(@$context['pos']) ? $context['pos'] : '\d+';
 		$user = sprintf("%02d", $_SESSION['wa_current_user']->user);
 
 		$regex = preg_replace(

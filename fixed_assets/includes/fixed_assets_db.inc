@@ -20,7 +20,7 @@ function process_fixed_asset_depreciation(string|array|null $stock_id, ?array $g
   begin_transaction();
 
   $date_ = Today();
-  if (!is_date_in_fiscalyear($date_))
+  if (!(bool)is_date_in_fiscalyear($date_))
     $date_ = end_fiscalyear();
 
   $stock_gl_code = row_or_empty(get_stock_gl_code($stock_id));
@@ -151,7 +151,7 @@ function get_sql_for_fixed_assets(string|bool|array|null $show_inactive = false)
     	." LEFT JOIN ".TB_PREF."stock_fa_class c ON s.fa_class_id=c.fa_class_id"
     	." WHERE s.mb_flag='F'";
 
-  	if (!$show_inactive)
+  	if (!(bool)$show_inactive)
     	$sql .= " AND !s.inactive ";
 
   	$sql .= " ORDER BY c.description ";

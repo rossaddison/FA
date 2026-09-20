@@ -120,12 +120,12 @@ function print_customer_details_listing(): void
     $comments = $_POST['PARAM_5'];
 	$orientation = $_POST['PARAM_6'];
 	$destination = $_POST['PARAM_7'];
-	if ($destination)
+	if ((bool)$destination)
 		include_once($path_to_root . "/reporting/includes/excel_report.inc");
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
 
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
     $dec = 0;
 
 	if ($area == ALL_NUMERIC)

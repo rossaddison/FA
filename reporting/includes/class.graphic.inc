@@ -1471,13 +1471,13 @@ class Chart
 		}		
 		if ($this->encoding == 'UTF-8')
 		{
-			if (is_arabic($string))
+			if ((bool)is_arabic($string))
 				$string = arabic($string);
-			elseif (is_hebrew($string))
+			elseif ((bool)is_hebrew($string))
 				$string = hebrew($string);
 		}
 		$y += $size + 3;	
-		if ($this->encoding == 'UTF-8' && is_arabic($string))
+		if ($this->encoding == 'UTF-8' && (bool)is_arabic($string))
 		{
 			$size += 2;
 			$string = str_replace(" ", "  ", $string);
@@ -1850,7 +1850,7 @@ $ignorelist = array (utf8_chr(0x0000), utf8_chr(0x064c), utf8_chr(0x064d), utf8_
 		{
 			if (array_key_exists($str1,$p_chars))
 			{
-				if (!$str_back || $str_back==" " || !array_key_exists($str_back,$p_chars))
+				if (!(bool)$str_back || $str_back==" " || !array_key_exists($str_back,$p_chars))
 				{
 					if (!array_key_exists($str_back, $p_chars) && !array_key_exists($str_next, $p_chars)) 
 						$output = $str1.$output;

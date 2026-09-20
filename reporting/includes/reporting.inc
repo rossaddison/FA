@@ -158,7 +158,7 @@ function print_link(?string $link_text, ?int $rep, ?array $pars = array(), ?stri
 	if ($id != '')
 		$id = " id='$id'";
 	$pars = access_string($link_text);
-	if (user_graphic_links() && $icon)
+	if (user_graphic_links() && (bool)$icon)
 		$pars[0] = set_icon($icon, $pars[0]);
 	return "<a target='_blank' href='$url'$id$class $pars[1]>$pars[0]</a>";
 }

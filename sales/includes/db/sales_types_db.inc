@@ -31,7 +31,7 @@ function update_sales_type(string|int|float|bool|null $id, string|int|float|bool
 function get_all_sales_types(int|bool|array|null $all=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."sales_types";
-	if (!$all)
+	if (!(bool)$all)
 		$sql .= " WHERE !inactive";
 	
 	return db_query($sql, "could not get all sales types");

@@ -61,7 +61,7 @@ function check_negative_stock(string|int|float|bool|array|null $stock_id, string
             WHERE stock_id=".db_escape($stock_id)."
             AND tran_date <= '$date'"; 
 
-    if ($location)
+    if ((bool)$location)
         $sql .= " AND loc_code = ".db_escape($location);
 
     $result = db_query($sql, "QOH calculation failed");
@@ -70,7 +70,7 @@ function check_negative_stock(string|int|float|bool|array|null $stock_id, string
 	// check also all stock changes after the date to avoid negative stock in future
 	$sql = TB_PREF."stock_moves WHERE stock_id=".db_escape($stock_id) . " AND tran_date > '$date'";
 
-	if ($location)
+	if ((bool)$location)
 		$sql .= " AND loc_code=".db_escape($location);
 
 	$rt = running_total_sql($sql, 'qty', 'tran_date');
@@ -79,7 +79,7 @@ function check_negative_stock(string|int|float|bool|array|null $stock_id, string
 	$history = db_query($sql, 'cannot check stock history');
 	$min_qos = db_fetch($history);
 
-	if ($min_qos && ($min_qos['qty'] < $qos['qty']))
+	if ((bool)$min_qos && ($min_qos['qty'] < $qos['qty']))
 		$qos = $min_qos;
 
 	return  -$delta_qty > $qos['qty'] ? $qos : null;
@@ -344,7 +344,7 @@ function adjust_deliveries(string|int|float|bool|null $stock_id, string|int|floa
 
 		$cart = new items_cart(ST_COSTUPDATE);
 		$cart->tran_date = $cart->doc_date = $cart->event_date = $to;
-		if (!is_date_in_fiscalyear($cart->tran_date))
+		if (!(bool)is_date_in_fiscalyear($cart->tran_date))
 			$cart->tran_date = end_fiscalyear();
 		$cart->reference = $Refs->get_next(ST_COSTUPDATE, null, $cart->tran_date, $to);
 

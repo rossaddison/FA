@@ -131,7 +131,7 @@ function trans_view(array $trans, string|int|float|bool|array|null $trans_no)
 function batch_checkbox(array|false|null $row): string
 {
 	$name = "Sel_" .(string)$row['trans_no'];
-	return $row['Done'] ? '' :
+	return (bool)$row['Done'] ? '' :
 		"<input type='checkbox' name='$name' value='1' >"
 // add also trans_no => branch code for checking after 'Batch' submit
 	 ."<input name='Sel_[".(string)$row['trans_no']."]' type='hidden' value='"

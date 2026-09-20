@@ -67,7 +67,7 @@ class contacts extends simple_crud {
 					$last = $myrow;
 				}
 
-				if ($myrow) {
+				if ((bool)$myrow) {
 					$description[] = $myrow['description'];
 					$myrow = db_fetch($contacts);
 				}

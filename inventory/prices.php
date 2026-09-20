@@ -82,7 +82,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 		display_error( _("The price entered must be numeric."));
 		set_focus('price');
 	}
-   	elseif ($Mode == 'ADD_ITEM' && get_stock_price_type_currency($_POST['stock_id'], $_POST['sales_type_id'], $_POST['curr_abrev']))
+   	elseif ($Mode == 'ADD_ITEM' && (bool)get_stock_price_type_currency($_POST['stock_id'], $_POST['sales_type_id'], $_POST['curr_abrev']))
    	{
       	$input_error = 1;
       	display_error( _("The sales pricing for this item, sales type and currency has already been added."));

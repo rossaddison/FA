@@ -49,7 +49,7 @@ if (!isset($_POST['supplier_id']))
 if (!isset($_POST['DatePaid']))
 {
 	$_POST['DatePaid'] = new_doc_date();
-	if (!is_date_in_fiscalyear($_POST['DatePaid']))
+	if (!(bool)is_date_in_fiscalyear($_POST['DatePaid']))
 		$_POST['DatePaid'] = end_fiscalyear();
 }
 
@@ -66,7 +66,7 @@ if (!isset($_POST['bank_account'])) { // first page call
 		$supp = isset($_POST['supplier_id']) ? $_POST['supplier_id'] : null;
 		//  get date and supplier
 		$inv = get_supp_trans($_GET['PInvoice'], $_GET['trans_type'], $supp);
-		if ($inv) {
+		if ((bool)$inv) {
 			$_SESSION['alloc']->person_id = $_POST['supplier_id'] = $inv['supplier_id'];
 			$_SESSION['alloc']->read();
 			$_POST['DatePaid'] = sql2date($inv['tran_date']);
@@ -194,7 +194,7 @@ function check_inputs(): bool
 		set_focus('DatePaid');
 		return false;
 	} 
-	elseif (!is_date_in_fiscalyear($_POST['DatePaid'])) 
+	elseif (!(bool)is_date_in_fiscalyear($_POST['DatePaid'])) 
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('DatePaid');

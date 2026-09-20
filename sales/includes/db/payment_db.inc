@@ -42,9 +42,9 @@ function write_customer_payment(string|int|float|bool|array|null $trans_no, stri
 
 	$bank = row_or_empty(get_bank_account($bank_account));
 
-	if (!$bank_amount) 	// backward compatibility workaround
+	if (!(bool)$bank_amount) 	// backward compatibility workaround
 	{
-		if(!$rate)
+		if(!(bool)$rate)
 			$rate = get_exchange_rate_from_to(get_customer_currency($customer_id),
 				$bank['bank_curr_code'], $date_ );
 

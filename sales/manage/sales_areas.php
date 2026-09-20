@@ -56,7 +56,7 @@ if ($Mode == 'Delete')
 
 	// PREVENT DELETES IF DEPENDENT RECORDS IN 'debtors_master'
 
-	if (key_in_foreign_table($selected_id, 'cust_branch', 'area'))
+	if ((bool)key_in_foreign_table($selected_id, 'cust_branch', 'area'))
 	{
 		$cancel_delete = 1;
 		display_error(_("Cannot delete this area because customer branches have been created using this area."));

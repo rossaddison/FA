@@ -205,13 +205,13 @@ function print_annual_expense_breakdown(): void
 		$thousands = $_POST['PARAM_4'];
 		$destination = $_POST['PARAM_5'];
 	}
-	if ($destination)
+	if ((bool)$destination)
 		include_once($path_to_root . "/reporting/includes/excel_report.inc");
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
 
-	$orientation = ($orientation ? 'L' : 'P');
-	if ($thousands)
+	$orientation = ((bool)$orientation ? 'L' : 'P');
+	if ((bool)$thousands)
 	{
 		$dec = 1;
 		$thousands = 1000;

@@ -38,7 +38,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
       	display_error( _("There is no item selected."));
 		set_focus('stock_id');
    	}
-   	elseif (!input_num('quantity'))
+   	elseif (!(bool)input_num('quantity'))
    	{
       	$input_error = 1;
       	display_error( _("The quantity entered was not positive number."));
@@ -115,7 +115,7 @@ set_global_stock_item($_POST['stock_id']);
 
 $units = $dec = '';
 $result = get_item_code_dflts($_POST['stock_id']);
-if ($result) {
+if ((bool)$result) {
 	$dec = $result['decimals'];
 	$units = $result['units'];
 	$dflt_desc = $result['description'];

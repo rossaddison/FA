@@ -22,7 +22,7 @@ function add_bank_account(string|int|float|bool|null $account_code, string|array
 	string|array|null $bank_name, string|array|null $bank_account_number, string|array|null $bank_address, string|array|null $bank_curr_code, 
 	string|array|null $dflt_curr_act, string|array|null $bank_charge_act): void
 {
-	if($dflt_curr_act) 	// only one default account for any currency
+	if((bool)$dflt_curr_act) 	// only one default account for any currency
 	  clear_dflt_curr_account($bank_curr_code);
 
 	$sql = "INSERT INTO ".TB_PREF."bank_accounts (account_code, account_type, 
@@ -41,7 +41,7 @@ function add_bank_account(string|int|float|bool|null $account_code, string|array
 function update_bank_account(string|int|float|bool|array|null $id, string|int|float|bool|null $account_code, string|array|null $account_type, string|array|null $bank_account_name, 
 	string|array|null $bank_name, string|array|null $bank_account_number, string|array|null $bank_address, string|array|null $bank_curr_code, string|array|null $dflt_curr_act, string|array|null $bank_charge_act): void
 {
-	if($dflt_curr_act) 	// only one default account for any currency
+	if((bool)$dflt_curr_act) 	// only one default account for any currency
 	  clear_dflt_curr_account($bank_curr_code);
 
 	$sql = "UPDATE ".TB_PREF."bank_accounts	SET account_type = ".db_escape($account_type).",
@@ -91,7 +91,7 @@ function get_bank_accounts(int|bool|array|null $show_inactive=false)
 	$sql = "SELECT account.*, gl_account.account_name
 		FROM ".TB_PREF."bank_accounts account, ".TB_PREF."chart_master gl_account
 		WHERE account.account_code = gl_account.account_code";
-	if (!$show_inactive) $sql .= " AND !account.inactive";
+	if (!(bool)$show_inactive) $sql .= " AND !account.inactive";
 	$sql .= " ORDER BY account_code, bank_curr_code";
 
 	return db_query($sql,"could not get bank accounts");

@@ -56,7 +56,7 @@ function send_css(string|int|float|bool|null $css = ''): void
 	{
 		echo "<link href='$css_file' rel='stylesheet' type='text/css'> \n";
 	}
-	if ($css)
+	if ((bool)$css)
 	{
 		echo "<link href='$css' rel='stylesheet' type='text/css'> \n";
 	}

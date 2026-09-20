@@ -101,7 +101,7 @@ function show_results(): void
 	if (!isset($_POST["account"]))
 		$_POST["account"] = null;
 
-	$act_name = $_POST["account"] ? get_gl_account_name($_POST["account"]) : "";
+	$act_name = (bool)$_POST["account"] ? get_gl_account_name($_POST["account"]) : "";
 	$dim = get_company_pref('use_dimension');
 
     /*Now get the transactions  */

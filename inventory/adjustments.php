@@ -87,7 +87,7 @@ function handle_new_order(): void
     $_SESSION['adj_items'] = new items_cart(ST_INVADJUST);
     $_SESSION['adj_items']->fixed_asset = isset($_GET['FixedAsset']);
 	$_POST['AdjDate'] = new_doc_date();
-	if (!is_date_in_fiscalyear($_POST['AdjDate']))
+	if (!(bool)is_date_in_fiscalyear($_POST['AdjDate']))
 		$_POST['AdjDate'] = end_fiscalyear();
 	$_SESSION['adj_items']->tran_date = $_POST['AdjDate'];	
 }
@@ -118,7 +118,7 @@ function can_process(): bool
 		set_focus('AdjDate');
 		return false;
 	} 
-	elseif (!is_date_in_fiscalyear($_POST['AdjDate'])) 
+	elseif (!(bool)is_date_in_fiscalyear($_POST['AdjDate'])) 
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('AdjDate');
@@ -150,7 +150,7 @@ if (isset($_POST['Process']) && can_process()){
 	$_SESSION['adj_items']->clear_items();
 	unset($_SESSION['adj_items']);
 
-  if ($fixed_asset)
+  if ((bool)$fixed_asset)
    	meta_forward($_SERVER['PHP_SELF'], "AddedID=$trans_no&FixedAsset=1");
   else
    	meta_forward($_SERVER['PHP_SELF'], "AddedID=$trans_no");
@@ -238,7 +238,7 @@ if (isset($_GET['NewAdjustment']) || !isset($_SESSION['adj_items']))
 //-----------------------------------------------------------------------------------------------
 start_form();
 
-if ($_SESSION['adj_items']->fixed_asset) {
+if ((bool)$_SESSION['adj_items']->fixed_asset) {
 	$items_title = _("Disposal Items");
 	$button_title = _("Process Disposal");
 } else {

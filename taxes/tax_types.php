@@ -72,7 +72,7 @@ if ($Mode=='UPDATE_ITEM' && can_process())
 
 function can_delete(string|int|float|bool|array|null $selected_id): bool
 {
-	if (key_in_foreign_table($selected_id, 'tax_group_items', 'tax_type_id'))
+	if ((bool)key_in_foreign_table($selected_id, 'tax_group_items', 'tax_type_id'))
 	{
 		display_error(_("Cannot delete this tax type because tax groups been created referring to it."));
 

@@ -152,7 +152,7 @@ function getTransactions(string|int|array|null $category, string|array|null $loc
 		$sql .= " AND item.category_id = ".db_escape($category);
 	if ($location != 'all')
 		$sql .= " AND IF(move.stock_id IS NULL, '1=1',move.loc_code = ".db_escape($location).")";
-  if($item_like)
+  if((bool)$item_like)
   {
     $regexp = null;
 
@@ -188,12 +188,12 @@ function print_stock_check(): void
 	$orientation = $_POST['PARAM_8'];
 	$destination = $_POST['PARAM_9'];
 
-	if ($destination)
+	if ((bool)$destination)
 		include_once($path_to_root . "/reporting/includes/excel_report.inc");
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
 
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
 	if ($category == ALL_NUMERIC)
 		$category = 0;
 	if ($category == 0)
@@ -207,7 +207,7 @@ function print_stock_check(): void
 		$loc = _('All');
 	else
 		$loc = get_location_name($location);
-	if ($shortage)
+	if ((bool)$shortage)
 	{
 		$short = _('Yes');
 		$available = _('Shortage');
@@ -218,9 +218,9 @@ function print_stock_check(): void
 		$available = _('Available');
 	}
 	$barcodes = !empty($SysPrefs->prefs['barcodes_on_stock']);
-	if ($no_zeros) $nozeros = _('Yes');
+	if ((bool)$no_zeros) $nozeros = _('Yes');
 	else $nozeros = _('No');
-	if ($check)
+	if ((bool)$check)
 	{
 		$cols = array(0, 75, 225, 250, 295, 345, 390, 445,	515);
 		$headers = array(_('Stock ID'), _('Description'), _('UOM'), _('Quantity'), _('Check'), _('Demand'), $available, _('On Order'));
@@ -281,9 +281,9 @@ function print_stock_check(): void
 		$demandqty += get_demand_asm_qty($trans['stock_id'], $loc_code);
 		$onorder = get_on_porder_qty($trans['stock_id'], $loc_code);
 		$onorder += get_on_worder_qty($trans['stock_id'], $loc_code);
-		if ($no_zeros && $trans['QtyOnHand'] == 0 && $demandqty == 0 && $onorder == 0)
+		if ((bool)$no_zeros && $trans['QtyOnHand'] == 0 && $demandqty == 0 && $onorder == 0)
 			continue;
-		if ($shortage && (float)$trans['QtyOnHand'] - $demandqty >= 0)
+		if ((bool)$shortage && (float)$trans['QtyOnHand'] - $demandqty >= 0)
 			continue;
 		if ($catt != $trans['cat_description'])
 		{
@@ -303,7 +303,7 @@ function print_stock_check(): void
 		$rep->TextCol(1, 2, (string)$trans['description'].($trans['inactive']==1 ? " ("._("Inactive").")" : ""), -1);
 		$rep->TextCol(2, 3, $trans['units']);
 		$rep->AmountCol(3, 4, $trans['QtyOnHand'], $dec);
-		if ($check)
+		if ((bool)$check)
 		{
 			$rep->TextCol(4, 5, "_________");
 			$rep->AmountCol(5, 6, $demandqty, $dec);
@@ -316,14 +316,14 @@ function print_stock_check(): void
 			$rep->AmountCol(5, 6, (float)$trans['QtyOnHand'] - $demandqty, $dec);
 			$rep->AmountCol(6, 7, $onorder, $dec);
 		}
-		if ($pictures || $barcodes)
+		if ((bool)$pictures || $barcodes)
 		{
 			$rep->NewLine();
 			if ($rep->row - $SysPrefs->pic_height < $rep->bottomMargin)
 				$rep->NewPage();
 			$firstcol = 1;	
 			$adjust = false;
-			if ($barcodes && barcode_check($trans['stock_id']))
+			if ($barcodes && (bool)barcode_check($trans['stock_id']))
 			{
 				$adjust = true;
 				$bar_y = $rep->GetY();
@@ -331,7 +331,7 @@ function print_stock_check(): void
 				$barcode = substr($barcode, 0, 8); // EAN 8 Check digit is auto computed and barcode printed
 				$rep->write1DBarcode($barcode, 'EAN8', $rep->cols[$firstcol++], $bar_y + 22, 22, $SysPrefs->pic_height, 1.2, $style, 'N');
 			}	
-			if ($pictures)
+			if ((bool)$pictures)
 			{
 				$adjust = true;
 				$image = company_path() . '/images/' . item_img_name($trans['stock_id']) . '.jpg';

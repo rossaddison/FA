@@ -71,7 +71,7 @@ if ($Mode == 'Delete')
 
 	// PREVENT DELETES IF DEPENDENT RECORDS IN 'debtors_master'
 
-	if (key_in_foreign_table($selected_id, 'cust_branch', 'salesman'))
+	if ((bool)key_in_foreign_table($selected_id, 'cust_branch', 'salesman'))
 	{
 		display_error(_("Cannot delete this sales-person because branches are set up referring to this sales-person - first alter the branches concerned."));
 	}

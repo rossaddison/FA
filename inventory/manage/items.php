@@ -74,7 +74,7 @@ function show_image(string|int|float|array|null $stock_id): void
 	$check_remove_image = false;
 	$stock_img_link = _("No image");
 
-	if (@$stock_id)
+	if ((bool)(@$stock_id))
 		foreach (array('jpg', 'png', 'gif') as $ext)
 		{
 			$file = company_path().'/images/'.item_img_name($stock_id). ".$ext";
@@ -227,9 +227,9 @@ if (isset($_POST['addupdate']))
 		display_error( _('The item code cannot be empty'));
 		set_focus('NewStockID');
 	}
-	elseif (strstr($_POST['NewStockID'], " ") || strstr($_POST['NewStockID'],"'") || 
-		strstr($_POST['NewStockID'], "+") || strstr($_POST['NewStockID'], "\"") || 
-		strstr($_POST['NewStockID'], "&") || strstr($_POST['NewStockID'], "\t")) 
+	elseif ((bool)strstr($_POST['NewStockID'], " ") || (bool)strstr($_POST['NewStockID'],"'") || 
+		(bool)strstr($_POST['NewStockID'], "+") || (bool)strstr($_POST['NewStockID'], "\"") || 
+		(bool)strstr($_POST['NewStockID'], "&") || (bool)strstr($_POST['NewStockID'], "\t")) 
 	{
 		$input_error = 1;
 		display_error( _('The item code cannot contain any of the following characters -  & + OR a space OR quotes'));
@@ -533,7 +533,7 @@ function item_settings(&$stock_id, bool $new_item): void
 	end_outer_table(1);
 
 	div_start('controls');
-	if (@$_REQUEST['popup']) hidden('popup', 1);
+	if ((bool)(@$_REQUEST['popup'])) hidden('popup', 1);
 	if (!isset($_POST['NewStockID']) || $new_item) 
 	{
 		submit_center('addupdate', _("Insert New Item"), true, '', 'default');

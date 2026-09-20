@@ -43,9 +43,9 @@ function print_sales_orders(): void
 	$comments = $_POST['PARAM_5'];
 	$orientation = $_POST['PARAM_6'];
 
-	if (!$from || !$to) return;
+	if (!(bool)$from || !(bool)$to) return;
 
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
 	$dec = user_price_dec();
 
 	$cols = array(4, 60, 225, 300, 325, 385, 450, 515);
@@ -163,7 +163,7 @@ function print_sales_orders(): void
 
 			$tax_type_name = $tax_item['tax_type_name'];
 
-			if ($myrow['tax_included'])
+			if ((bool)$myrow['tax_included'])
 			{
 				if ($SysPrefs->alternative_tax_include_on_docs() == 1)
 				{

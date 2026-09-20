@@ -203,7 +203,7 @@ function display_fiscalyear_edit(string|int|float|bool|array|null $selected_id):
 	else
 	{
 		$begin = next_begin_date();
-		if ($begin && $Mode != 'ADD_ITEM')
+		if ((bool)$begin && $Mode != 'ADD_ITEM')
 		{
 			$_POST['from_date'] = $begin;
 			$_POST['to_date'] = end_month(add_months($begin, 11));

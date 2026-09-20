@@ -63,7 +63,7 @@ function write_credit_note(Cart &$credit_note, string|int|float|bool|null $write
 	}
 	// If the Customer Branch AR Account is set to a Bank Account,
 	// the transaction will be settled at once.
-	if (is_bank_account($branch_data['receivables_account']))
+	if ((bool)is_bank_account($branch_data['receivables_account']))
 		$alloc = $credit_note_total + $items_added_tax + $credit_note->freight_cost + $freight_added_tax;
 	else
 		$alloc = 0;
@@ -90,7 +90,7 @@ function write_credit_note(Cart &$credit_note, string|int|float|bool|null $write
 		void_stock_move(ST_CUSTCREDIT, $credit_no);
 		void_trans_tax_details(ST_CUSTCREDIT, $credit_no);
 	}
-	if ($credit_invoice) {
+	if ((bool)$credit_invoice) {
 		update_customer_trans_version(get_parent_type(ST_CUSTCREDIT), $credit_note->src_docs );
 
 		$total = $credit_note_total + $credit_note->freight_cost + $items_added_tax 
@@ -103,7 +103,7 @@ function write_credit_note(Cart &$credit_note, string|int|float|bool|null $write
 	$total = 0;
 	foreach ($credit_note->line_items as $credit_line) {
 
-		if ($credit_invoice && $credit_line->qty_dispatched!=$credit_line->qty_old ) {
+		if ((bool)$credit_invoice && $credit_line->qty_dispatched!=$credit_line->qty_old ) {
 			update_parent_line(ST_CUSTCREDIT, $credit_line->src_id,($credit_line->qty_dispatched
 					-$credit_line->qty_old));
 		}
@@ -186,7 +186,7 @@ function add_credit_movements_item(Cart &$credit_note, &$credit_line,
     $curr_std_cost = get_unit_cost($credit_line->stock_id);
 
 	$reference = _("Return");
-	if ($credited_invoice) 
+	if ((bool)$credited_invoice) 
 		$reference .= ' '._("Ex Inv:").' ' . $credited_invoice;
 
     add_stock_move(ST_CUSTCREDIT,  $credit_line->stock_id,

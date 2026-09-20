@@ -1763,7 +1763,7 @@ if (!class_exists('TCPDF')) {
 		 * @see AliasNbPages(), PageNo(), Footer()
 		*/
 		function getAliasNbPages() {
-			if (strpos(strtolower($this->CurrentFont['type']), 'unicode')) {
+			if ((bool)strpos(strtolower($this->CurrentFont['type']), 'unicode')) {
 				return "{".$this->AliasNbPages."}";
             }
 			return $this->AliasNbPages;
@@ -3627,7 +3627,7 @@ if (!class_exists('TCPDF')) {
 				if ((method_exists($this,$mtd)) AND (!($resize AND function_exists($gdfunction)))) {
 					$info = $this->$mtd($file);
 				}
-				if (!$info) {
+				if (!(bool)$info) {
 					if (function_exists($gdfunction)) {
 						$img = $gdfunction($file);
 						if ($resize) {
@@ -4019,7 +4019,7 @@ if (!class_exists('TCPDF')) {
 			switch($dest) {
 				case 'I': {
 					//Send to standard output
-					if (ob_get_contents()) {
+					if ((bool)ob_get_contents()) {
 						$this->Error('Some data has already been output, can\'t send PDF file');
 					}
 					if (php_sapi_name() != 'cli') {
@@ -4040,7 +4040,7 @@ if (!class_exists('TCPDF')) {
 				}
 				case 'D': {
 					//Download file
-					if (ob_get_contents()) {
+					if ((bool)ob_get_contents()) {
 						$this->Error('Some data has already been output, can\'t send PDF file');
 					}
 					header('Content-Description: File Transfer');
@@ -6427,7 +6427,7 @@ if (!class_exists('TCPDF')) {
 				}
 				case "DF":
 				case "FD": {
-					if ((!$border_style) OR (isset($border_style["all"]))) {
+					if ((!(bool)$border_style) OR (isset($border_style["all"]))) {
 						$op = 'B';
 						if (isset($border_style["all"])) {
 							$this->SetLineStyle($border_style["all"]);
@@ -6449,7 +6449,7 @@ if (!class_exists('TCPDF')) {
 				}
 				default: {
 					$op = 'S';
-					if ((!$border_style) OR (isset($border_style["all"]))) {
+					if ((!(bool)$border_style) OR (isset($border_style["all"]))) {
 						if (isset($border_style["all"]) AND $border_style["all"]) {
 							$this->SetLineStyle($border_style["all"]);
 							$border_style = array();
@@ -6459,7 +6459,7 @@ if (!class_exists('TCPDF')) {
 					break;
 				}
 			}
-			if ($border_style) {
+			if ((bool)$border_style) {
 				$border_style2 = array();
 				foreach ($border_style as $line => $value) {
 					$lenght = strlen($line);
@@ -8016,7 +8016,7 @@ if (!class_exists('TCPDF')) {
 		* @since 3.0.000 (2008-03-27)
 		*/
 		function getPageGroupAlias() {
-			if (strpos(strtolower($this->CurrentFont['type']), 'unicode')) {
+			if ((bool)strpos(strtolower($this->CurrentFont['type']), 'unicode')) {
 				return "{".$this->currpagegroup."}";
             }
 			return $this->currpagegroup;
@@ -8580,7 +8580,7 @@ if (!class_exists('TCPDF')) {
 			if ($end===false) {
 				$end = strpos($data, 'showpage');
 			}
-			if ($end) {
+			if ((bool)$end) {
 				$data = substr($data, 0, $end);
 			}
 			$k = $this->k;
@@ -8846,7 +8846,7 @@ if (!class_exists('TCPDF')) {
 				$style["text"] = false;
 				$fontsize = 0;
 			}
-			if ($style["text"] AND isset($style["font"])) {
+			if ((bool)$style["text"] AND isset($style["font"])) {
 				$prevFontFamily = $this->FontFamily;
 				$prevFontStyle = $this->FontStyle;
 				$prevFontSizePt = $this->FontSizePt;
@@ -8951,9 +8951,9 @@ if (!class_exists('TCPDF')) {
 			$tempRTL = $this->rtl;
 			$this->rtl = false;
 			// print background color
-			if ($style["bgcolor"]) {
+			if ((bool)$style["bgcolor"]) {
 				$this->Rect($xpos_rect, $y, $fbw, $h, 'DF', '', $style["bgcolor"]);
-			} elseif ($style["border"]) {
+			} elseif ((bool)$style["border"]) {
 				$this->Rect($xpos_rect, $y, $fbw, $h, 'D');
 			}
 			// print bars
@@ -8969,7 +8969,7 @@ if (!class_exists('TCPDF')) {
 				}
 			}
 			// print text
-			if ($style["text"]) {
+			if ((bool)$style["text"]) {
 				// print text
 				$this->x = $xpos_text;
 				$this->y = $y + (float)$style["padding"] + $barh;
@@ -8978,7 +8978,7 @@ if (!class_exists('TCPDF')) {
 			// restore original direction
 			$this->rtl = $tempRTL;
 			// restore previous font
-			if ($style["text"] AND isset($style["font"])) {
+			if ((bool)$style["text"] AND isset($style["font"])) {
 				$this->SetFont($prevFontFamily, $prevFontStyle, $prevFontSizePt);
 			}
 			// restore colors
@@ -9524,7 +9524,7 @@ if (!class_exists('TCPDF')) {
 			$maxel = count($dom);
 			$key = 0;
 			while ($key < $maxel) {
-				if ($dom[$key]['tag'] OR ($key == 0)) {
+				if ((bool)$dom[$key]['tag'] OR ($key == 0)) {
 					if ((($dom[$key]['value'] == 'table') OR ($dom[$key]['value'] == 'tr')) AND (isset($dom[$key]['align']))) {
 						$dom[$key]['align'] = ($this->rtl)?'R':'L';
 					}
@@ -9663,7 +9663,7 @@ if (!class_exists('TCPDF')) {
 				if (isset($opentagpos)) {
 					unset($opentagpos);
 				}
-				if ($dom[$key]['tag']) {
+				if ((bool)$dom[$key]['tag']) {
 					if ($dom[$key]['opening']) {
 						// table content is handled in a special way
 						if (($dom[$key]['value'] == "td") OR ($dom[$key]['value'] == "th")) {

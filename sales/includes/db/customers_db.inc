@@ -80,7 +80,7 @@ function get_customer_details(string|int|float|bool|array|null $customer_id, str
 
 	$sign = "IF(trans.type IN(".implode(',',  array(ST_CUSTCREDIT,ST_CUSTPAYMENT,ST_BANKDEPOSIT))."), -1, 1)";
 	$value = "$sign*(IF(trans.prep_amount, trans.prep_amount,
-		ABS(trans.ov_amount + trans.ov_gst + trans.ov_freight + trans.ov_freight_tax + trans.ov_discount)) ".($all ? '' : "- trans.alloc").")";
+		ABS(trans.ov_amount + trans.ov_gst + trans.ov_freight + trans.ov_freight_tax + trans.ov_discount)) ".((bool)$all ? '' : "- trans.alloc").")";
 
 	$due = "IF (trans.type=".ST_SALESINVOICE.", trans.due_date, trans.tran_date)";
 	$sql = "SELECT debtor.name, debtor.curr_code, terms.terms,
@@ -100,10 +100,10 @@ function get_customer_details(string|int|float|bool|array|null $customer_id, str
 			 debtor.payment_terms = terms.terms_indicator
 			 AND debtor.credit_status = credit_status.id";
 
-	if ($customer_id)
+	if ((bool)$customer_id)
 		$sql .= " AND debtor.debtor_no = ".db_escape($customer_id);
 
-	if (!$all)
+	if (!(bool)$all)
 		$sql .= " AND ABS(IF(trans.prep_amount, trans.prep_amount, ABS(trans.ov_amount) + trans.ov_gst + trans.ov_freight + trans.ov_freight_tax + trans.ov_discount) - trans.alloc) > ".FLOAT_COMP_DELTA;
 
 	$sql .= " GROUP BY

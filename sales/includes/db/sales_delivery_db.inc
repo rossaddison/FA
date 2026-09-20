@@ -86,7 +86,7 @@ function write_sales_delivery(Cart &$delivery,string|int|float|bool|null $bo_pol
 			$delivery_line->item_description, $delivery_line->qty_dispatched,
 			$delivery_line->line_price(), $qty ? $line_tax/$qty : 0,
 			$delivery_line->discount_percent, $delivery_line->standard_cost, $delivery_line->src_id,
-			$trans_no ? $delivery_line->id : 0);
+			(bool)$trans_no ? $delivery_line->id : 0);
 
 	// Now update sales_order_details for the quantity delivered
 		if ($delivery_line->qty_old != $delivery_line->qty_dispatched)
@@ -232,7 +232,7 @@ function void_sales_delivery(string|int|float|bool|null $type, string|int|float|
 
 	$order = get_customer_trans_order($type, $type_no);
 
-	if ($order) {
+	if ((bool)$order) {
 		$auto = (get_reference(ST_SALESORDER, $order) == "auto");
 		while ($row = db_fetch($items_result)) {
 			update_parent_line(ST_CUSTDELIVERY, $row['src_id'], -$row['quantity'], $auto);

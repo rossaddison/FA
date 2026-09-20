@@ -63,7 +63,7 @@ function gl_payment_controls(string|int|float|bool|array|null $trans_no): void
 	global $Refs;
 	
 	if (!in_ajax()) {
-		if ($trans_no) {
+		if ((bool)$trans_no) {
 			$result = get_bank_trans(ST_BANKTRANSFER, $trans_no);
 
 			if (db_num_rows($result) != 2)
@@ -113,7 +113,7 @@ function gl_payment_controls(string|int|float|bool|array|null $trans_no): void
 
 	if (!isset($_POST['DatePaid'])) { // init page
 		$_POST['DatePaid'] = new_doc_date();
-		if (!is_date_in_fiscalyear($_POST['DatePaid']))
+		if (!(bool)is_date_in_fiscalyear($_POST['DatePaid']))
 			$_POST['DatePaid'] = end_fiscalyear();
 	}
     date_row(_("Transfer Date:"), 'DatePaid', '', true, 0, 0, 0, null, true);
@@ -153,7 +153,7 @@ function gl_payment_controls(string|int|float|bool|array|null $trans_no): void
 
 	end_outer_table(1); // outer table
 
-	if ($trans_no) {
+	if ((bool)$trans_no) {
 		hidden('_trans_no', $trans_no);
 		submit_center('submit', _("Modify Transfer"), true, '', 'default');
 	} else {
@@ -175,7 +175,7 @@ function check_valid_entries(string|int|float|bool|array|null $trans_no): bool
 		set_focus('DatePaid');
 		return false;
 	}
-	if (!is_date_in_fiscalyear($_POST['DatePaid']))
+	if (!(bool)is_date_in_fiscalyear($_POST['DatePaid']))
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('DatePaid');
@@ -199,7 +199,7 @@ function check_valid_entries(string|int|float|bool|array|null $trans_no): bool
 	$amnt_tr = input_num('charge') + input_num('amount');
 
 	$problemTransaction = null;
-	if ($trans_no) {
+	if ((bool)$trans_no) {
 		$problemTransaction = check_bank_transfer( $trans_no, $_POST['FromBankAccount'], $_POST['ToBankAccount'], $_POST['DatePaid'],
 			$amnt_tr, input_num('target_amount', $amnt_tr));
 
@@ -287,7 +287,7 @@ function check_valid_entries(string|int|float|bool|array|null $trans_no): bool
 function bank_transfer_handle_submit(): void
 {
 	$trans_no = array_key_exists('_trans_no', $_POST) ?  $_POST['_trans_no'] : null;
-	if ($trans_no) {
+	if ((bool)$trans_no) {
 		$trans_no = update_bank_transfer($trans_no, $_POST['FromBankAccount'], $_POST['ToBankAccount'], $_POST['DatePaid'],	input_num('amount'), 
 			$_POST['ref'], $_POST['memo_'], $_POST['dimension_id'], $_POST['dimension2_id'], input_num('charge'), input_num('target_amount'));
 	} else {
@@ -305,7 +305,7 @@ $trans_no = '';
 if (!$trans_no && isset($_POST['_trans_no'])) {
 	$trans_no = $_POST['_trans_no'];
 }
-if (!$trans_no && isset($_GET['trans_no'])) {
+if (!(bool)$trans_no && isset($_GET['trans_no'])) {
 	$trans_no = $_GET["trans_no"];
 }
 

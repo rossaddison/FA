@@ -32,10 +32,10 @@ function find_submit(string|int|float|bool|null $prefix, string|int|float|bool|n
 		if (strpos($postkey, $prefix) === 0)
 		{
 			$id = substr($postkey, strlen($prefix));
-			return $numeric ? (int)$id : $id;
+			return (bool)$numeric ? (int)$id : $id;
 		}
     }
-    return $numeric ? -1 : null;
+    return (bool)$numeric ? -1 : null;
 }
 /*
 	Helper function.
@@ -198,16 +198,16 @@ function submit(string|int|float|bool|null $name, string|int|float|bool|null $va
 		}
 	}
 	$submit_str = "<button class=\""
-	    .($atype ? 'ajaxsubmit' : 'inputsubmit')
+	    .((bool)$atype ? 'ajaxsubmit' : 'inputsubmit')
 		."\" type=\"submit\""
 		.$aspect
 	    ." name=\"$name\"  id=\"$name\" value=\"$value\""
-	    .($title ? " title='$title'" : '')
+	    .((bool)$title ? " title='$title'" : '')
 	    .">"
-		.($icon ? "<img src='$path_to_root/themes/".user_theme()."/images/$icon' height='12' alt=''>" : '')
+		.((bool)$icon ? "<img src='$path_to_root/themes/".user_theme()."/images/$icon' height='12' alt=''>" : '')
 		."<span>$value</span>"
 		."</button>\n";
-	if ($echo)
+	if ((bool)$echo)
 		echo $submit_str;
 	else
 		return $submit_str;
@@ -254,11 +254,11 @@ function submit_add_or_update(string|int|float|bool|null $add=true, string|int|f
 	elseif ($async === 'cancel')
 		$async = true;
 	
-	if ($add)
+	if ((bool)$add)
 		submit('ADD_ITEM', _("Add new"), true, $title, $async);
 	else {
 		submit('UPDATE_ITEM', _("Update"), true, _('Submit changes'), $async);
-		if ($clone) submit('CLONE', _("Clone"), true, 
+		if ((bool)$clone) submit('CLONE', _("Clone"), true, 
 			_('Edit new record with current data'), $async);
 		submit('RESET', _("Cancel"), true, _('Cancel edition'), $cancel);
 	}
@@ -274,7 +274,7 @@ function submit_add_or_update_center(bool $add=true, string|bool|null $title=fal
 function submit_add_or_update_row(string|int|float|bool|null $add=true, string|int|float|bool|null $right=true, string|int|float|bool|null $extra="", string|int|float|bool|null $title=false, string|int|float|bool|null $async=false, string|int|float|bool|null $clone = false): void
 {
 	echo "<tr>";
-	if ($right)
+	if ((bool)$right)
 		echo "<td>&nbsp;</td>\n";
 	echo "<td $extra>";
 	submit_add_or_update($add, $title, $async, $clone);
@@ -299,7 +299,7 @@ function submit_row(?string $name, ?string $value, bool $right=true, ?string $ex
 
 function submit_return(?string $name, string|int|float|bool|array|null $value, string|bool|null $title=false): void
 {
-	if (@$_REQUEST['popup']) {
+	if ((bool)(@$_REQUEST['popup'])) {
 		submit($name, $value, true, $title, 'selector');
 	}
 }
@@ -321,7 +321,7 @@ function set_icon(string|int|float|bool|null $icon, string|int|float|bool|null $
 	global $path_to_root;
 	if (basename($icon) === $icon) // standard icons does not contain path separator
 		$icon = "$path_to_root/themes/".user_theme()."/images/$icon";
-	return "<img src='$icon' style='vertical-align:middle;width:12px;height:12px;border:0;'".($title ? " title='$title'" : "")." >\n";	
+	return "<img src='$icon' style='vertical-align:middle;width:12px;height:12px;border:0;'".((bool)$title ? " title='$title'" : "")." >\n";	
 }
 
 function button(string|int|float|bool|null $name, string|int|float|bool|null $value, string|int|float|bool|null $title=false, string|int|float|bool|null $icon=false,  string|int|float|bool|null $aspect=''): string
@@ -333,15 +333,15 @@ function button(string|int|float|bool|null $name, string|int|float|bool|null $va
 		$rel = " rel='$value'";
 		$value = _("Select");
 	}
-	if (user_graphic_links() && $icon)
+	if (user_graphic_links() && (bool)$icon)
 	{
 		if ($value == _("Delete")) // Helper during implementation
 			$icon = ICON_DELETE;
 		return "<button type='submit' class='editbutton' name='"
 			.html_specials_encode(strtr($name, array('.'=>'=2E', '='=>'=3D',// ' '=>'=20','['=>'=5B'
 			)))
-			."' value='1'" . ($title ? " title='$title'":" title='$value'")
-			. ($aspect ? " aspect='$aspect'" : '')
+			."' value='1'" . ((bool)$title ? " title='$title'":" title='$value'")
+			. ((bool)$aspect ? " aspect='$aspect'" : '')
 			. $rel
 			." >".set_icon($icon)."</button>\n";
 	}
@@ -350,8 +350,8 @@ function button(string|int|float|bool|null $name, string|int|float|bool|null $va
 			.html_specials_encode(strtr($name, array('.'=>'=2E', '='=>'=3D',// ' '=>'=20','['=>'=5B'
 			)))
 			."' value='$value'"
-			.($title ? " title='$title'":'')
-			. ($aspect ? " aspect='$aspect'" : '')
+			.((bool)$title ? " title='$title'":'')
+			. ((bool)$aspect ? " aspect='$aspect'" : '')
 			. $rel
 			." >\n";
 }
@@ -396,7 +396,7 @@ function checkbox(string|int|float|bool|null $label, string|int|float|bool|null 
 
 	$str = '';	
 
-	if ($label)
+	if ((bool)$label)
 		$str .= $label . "  ";
 	if ($submit_on_change !== false) {
 		if ($submit_on_change === true)
@@ -409,8 +409,8 @@ function checkbox(string|int|float|bool|null $label, string|int|float|bool|null 
 	$str .= "<input"
 	    .($value == 1 ? ' checked':'')
 	    ." type='checkbox' name='$name' value='1'"
-	    .($submit_on_change ? " onclick='$submit_on_change'" : '')
-	    .($title ? " title='$title'" : '')
+	    .((bool)$submit_on_change ? " onclick='$submit_on_change'" : '')
+	    .((bool)$title ? " title='$title'" : '')
 	    ." >\n";
 
 	$Ajax->addUpdate($name, $name, $value);
@@ -450,8 +450,8 @@ function radio(?string $label, ?string $name, string|int|float|bool|null $value,
 			"JsHttpRequest.request(\"_{$name}_update\", this.form);";
 
 	return "<input type='radio' name=$name value='$value' ".($selected ? "checked":'')
-	    .($submit_on_change ? " onclick='$submit_on_change'" : '')
-		.">".($label ? $label : '');
+	    .((bool)$submit_on_change ? " onclick='$submit_on_change'" : '')
+		.">".((bool)$label ? $label : '');
 }
 
 //-----------------------------------------------------------------------------------
@@ -496,7 +496,7 @@ function amount_cell(string|int|float|bool|null $label, ?bool $bold=false, strin
 //JAM  Allow entered unit prices to be fractional
 function unit_amount_cell(string|int|float|bool|null $label, string|int|float|bool|null $bold=false, string|int|float|bool|null $params="", string|int|float|bool|null $id=null): void
 {
-	if ($bold)
+	if ((bool)$bold)
 		label_cell("<b>".unit_price_format($label)."</b>", "nowrap align=right ".$params, $id);
 	else
 		label_cell(unit_price_format($label), "nowrap align=right ".$params, $id);
@@ -515,7 +515,7 @@ function qty_cell(string|int|float|bool|null $label, string|bool|null $bold=fals
 {
 	if (!isset($dec))
 		$dec = get_qty_dec();
-	if ($bold)
+	if ((bool)$bold)
 		label_cell("<b>".number_format2($label, $dec)."</b>", "nowrap align=right", $id);
 	else
 		label_cell(number_format2($label, $dec), "nowrap align=right", $id);
@@ -548,7 +548,7 @@ function text_input(string|int|float|bool|null $name, string|int|float|bool|arra
 		$value = get_post($name);
 
 	return "<input $params type=\"text\" name=\"$name\" size=\"$size\" maxlength=\"$max\" value=\"$value\""
-	    .($title ? " title='$title'" : '')
+	    .((bool)$title ? " title='$title'" : '')
 	    .">";
 }
 
@@ -581,7 +581,7 @@ function text_cells_ex(?string $label, string|int|float|bool|null $name, string|
 	default_focus($name);
 	if (!isset($_POST[$name]) || $_POST[$name] == "")
 	{
-		if ($init)
+		if ((bool)$init)
 			$_POST[$name] = $init;
 		else
 			$_POST[$name] = "";
@@ -593,11 +593,11 @@ function text_cells_ex(?string $label, string|int|float|bool|null $name, string|
 		$max = $size;
 
 	echo "<td>";
-	$class = $submit_on_change ? 'class="searchbox"' : '';
+	$class = (bool)$submit_on_change ? 'class="searchbox"' : '';
 	echo "<input $class type=\"text\" name=\"$name\" size=\"$size\" maxlength=\"$max\" value=\"" . $_POST[$name]. "\""
-	 .($title ? " title='$title'": '')." >";
+	 .((bool)$title ? " title='$title'": '')." >";
 
-	if ($post_label)
+	if ((bool)$post_label)
 		echo " " . $post_label;
 
 	echo "</td>\n";
@@ -703,15 +703,15 @@ function date_cells(?string $label, string|int|float|bool|null $name, ?string $t
 	
 	$class = $submit_on_change ? 'date active' : 'date';
 
-	$aspect = $check ? 'aspect="cdate"' : '';
-	if ($check && (get_post($name) != Today()))
+	$aspect = (bool)$check ? 'aspect="cdate"' : '';
+	if ((bool)$check && (get_post($name) != Today()))
 		$aspect .= ' style="color:#FF0000"';
 
 	default_focus($name);
 	$size = (user_date_format()>3)?11:10; 
 	echo "<input type=\"text\" name=\"$name\" class=\"$class\" $aspect size=\"$size\" maxlength=\"12\" value=\"" 
 	 . $_POST[$name]. "\""
-	 .($title ? " title='$title'": '')." > $post_label";
+	 .((bool)$title ? " title='$title'": '')." > $post_label";
 	echo "</td>\n";
 	$Ajax->addUpdate($name, $name, $_POST[$name]);
 }
@@ -856,7 +856,7 @@ function amount_cells_ex(string|int|float|bool|null $label, string|int|float|boo
 
 	echo "<input class='amount' type=\"text\" name=\"$name\" size=\"$size\" maxlength=\"$max\" dec=\"$dec\" value=\"" . $_POST[$name]. "\">";
 
-	if ($post_label) {
+	if ((bool)$post_label) {
 		echo "<span id='_{$name}_label'> $post_label</span>";
 		$Ajax->addUpdate($name, '_'.$name.'_label', $post_label);
 	}
@@ -954,8 +954,8 @@ function textarea_cells(string|int|float|bool|null $label, string|int|float|bool
 	if ($value == null)
 		$value = (!isset($_POST[$name]) ? "" : $_POST[$name]);
 	echo "<td><textarea name='$name' cols='$cols' rows='$rows'"
-	.($title ? " title='$title'" : '')
-	.($max ? " maxlength=$max" : '')
+	.((bool)$title ? " title='$title'" : '')
+	.((bool)$max ? " maxlength=$max" : '')
 	.">$value</textarea></td>\n";
 	$Ajax->addUpdate($name, $name, $value);
 }
@@ -978,7 +978,7 @@ function inactive_control_cell(string|int|float|bool|null $id, string|int|float|
 	global	$Ajax;
 
 	$name = "Inactive". $id;
-	$value = $value ? 1:0;
+	$value = (bool)$value ? 1:0;
 
 	if (check_value('show_inactive')) {
 		if (isset($_POST['LInact'][$id]) && (get_post('_Inactive'.$id.'_update') || 

@@ -68,7 +68,7 @@ function get_bank_account_by_name(?string $name) {
     $sql = "SELECT * FROM ".TB_PREF."bank_accounts WHERE bank_name = ".db_escape($name);
     $result = db_query($sql, "could not retrieve bank account");
     $row = db_fetch($result);
-    return $row ? $row : false;
+    return (bool)$row ? $row : false;
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -87,9 +87,9 @@ function print_invoices(): void
 	$customer = $_POST['PARAM_6'];
 	$orientation = $_POST['PARAM_7'];
 
-	if (!$from || !$to) return;
+	if (!(bool)$from || !(bool)$to) return;
 
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
 	$dec = user_price_dec();
 
  	$fno = explode("-", $from);
@@ -125,7 +125,7 @@ function print_invoices(): void
 			$sign = 1;
 			$myrow = get_customer_trans($row['trans_no'], ST_SALESINVOICE);
 
-			if ($customer && $myrow['debtor_no'] != $customer) {
+			if ((bool)$customer && $myrow['debtor_no'] != $customer) {
 				continue;
 			}
 //			if ($currency != ALL_TEXT && $myrow['curr_code'] != $currency) {
@@ -295,7 +295,7 @@ function print_invoices(): void
     			else
     				$tax_type_name = (string)$tax_item['tax_type_name']." (".(string)$tax_item['rate']."%) ";
 
-    			if ($myrow['tax_included'])
+    			if ((bool)$myrow['tax_included'])
     			{
     				if ($SysPrefs->alternative_tax_include_on_docs() == 1)
     				{
@@ -324,7 +324,7 @@ function print_invoices(): void
 			$DisplayTotal = number_format2($sign*((float)$myrow["ov_freight"] + (float)$myrow["ov_gst"] +
 				(float)$myrow["ov_amount"]+(float)$myrow["ov_freight_tax"]),$dec);
 			$rep->Font('bold');
-			if (!$myrow['prepaid']) $rep->Font('bold');
+			if (!(bool)$myrow['prepaid']) $rep->Font('bold');
 				$rep->TextCol(3, 6, $rep->formData['prepaid'] ? _("TOTAL ORDER VAT INCL.") : _("TOTAL INVOICE"), - 2);
 			$rep->TextCol(6, 7, $DisplayTotal, -2);
 			if ($rep->formData['prepaid'])

@@ -100,12 +100,12 @@ function print_grn_valuation(): void
 	$comments = $_POST['PARAM_2'];
 	$orientation = $_POST['PARAM_3'];
 	$destination = $_POST['PARAM_4'];
-	if ($destination)
+	if ((bool)$destination)
 		include_once($path_to_root . "/reporting/includes/excel_report.inc");
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
 
- 	$orientation = ($orientation ? 'L' : 'P');
+ 	$orientation = ((bool)$orientation ? 'L' : 'P');
    	$dec = user_price_dec();
 
 	$cols = array(0, 75, 225, 260, 295, 330, 370, 410, 455, 515);
@@ -151,7 +151,7 @@ function print_grn_valuation(): void
 		$qdec = get_qty_dec($trans['item_code']);
 		$rep->TextCol(3, 4, $trans['batch_no']);
 
-		if ($trans['quantity_inv'])
+		if ((bool)$trans['quantity_inv'])
 		{
 			$suppinv = getSuppInvDetails($trans['grn_item_id']);
 			while ($inv=db_fetch($suppinv))

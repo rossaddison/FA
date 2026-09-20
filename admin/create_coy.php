@@ -129,7 +129,7 @@ function handle_submit(string|int|float|bool|array|null $selected_id): bool
 		} else {
 			if (strncmp(db_get_version(), "5.6", 3) >= 0) 
 				db_query("SET sql_mode = ''");
-			if (!db_import($path_to_root.'/sql/'.get_post('coa'), $conn, $selected_id)) {
+			if (!(bool)db_import($path_to_root.'/sql/'.get_post('coa'), $conn, $selected_id)) {
 				display_error(_('Cannot create new company due to bugs in sql file.'));
 				$error = true;
 			} 

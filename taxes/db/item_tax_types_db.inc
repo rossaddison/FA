@@ -48,7 +48,7 @@ function update_item_tax_type(string|int|float|bool|null $id, string|int|float|b
 function get_all_item_tax_types(int|bool|array|null $also_inactive=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."item_tax_types";
-	if (!$also_inactive)
+	if (!(bool)$also_inactive)
 		$sql .= " WHERE !inactive";
 
 	return db_query($sql, "could not get all item tax type");

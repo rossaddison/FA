@@ -24,7 +24,7 @@ if ($SysPrefs->use_popup_windows)
 if (user_use_date_picker())
 	$js .= get_js_date_picker();
 
-if (isset($_GET['outstanding_only']) && $_GET['outstanding_only'])
+if (isset($_GET['outstanding_only']) && (bool)$_GET['outstanding_only'])
 {
 	$outstanding_only = 1;
 	page(_($help_context = "Search Outstanding Dimensions"), false, false, "", $js);
@@ -104,7 +104,7 @@ function sum_dimension(array|false|null $row)
 
 function is_closed(array|false|null $row): string
 {
-	return $row['closed'] ? _('Yes') : _('No');
+	return (bool)$row['closed'] ? _('Yes') : _('No');
 }
 
 function is_overdue(array|false|null $row): bool

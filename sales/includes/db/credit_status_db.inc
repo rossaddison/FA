@@ -31,7 +31,7 @@ function update_credit_status(string|int|float|bool|null $status_id, string|int|
 function get_all_credit_status(int|bool|array|null $all=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."credit_status";
-	if (!$all) $sql .= " WHERE !inactive";
+	if (!(bool)$all) $sql .= " WHERE !inactive";
 
 	return db_query($sql, "could not get all credit status");
 }

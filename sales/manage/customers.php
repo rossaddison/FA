@@ -151,21 +151,21 @@ if (isset($_POST['delete']))
 
 	// PREVENT DELETES IF DEPENDENT RECORDS IN 'debtor_trans'
 
-	if (key_in_foreign_table($selected_id, 'debtor_trans', 'debtor_no'))
+	if ((bool)key_in_foreign_table($selected_id, 'debtor_trans', 'debtor_no'))
 	{
 		$cancel_delete = 1;
 		display_error(_("This customer cannot be deleted because there are transactions that refer to it."));
 	} 
 	else 
 	{
-		if (key_in_foreign_table($selected_id, 'sales_orders', 'debtor_no'))
+		if ((bool)key_in_foreign_table($selected_id, 'sales_orders', 'debtor_no'))
 		{
 			$cancel_delete = 1;
 			display_error(_("Cannot delete the customer record because orders have been created against it."));
 		} 
 		else 
 		{
-			if (key_in_foreign_table($selected_id, 'cust_branch', 'debtor_no'))
+			if ((bool)key_in_foreign_table($selected_id, 'cust_branch', 'debtor_no'))
 			{
 				$cancel_delete = 1;
 				display_error(_("Cannot delete this customer because there are branch records set up against it."));
@@ -190,7 +190,7 @@ function customer_settings(string|int|float|bool|array|null $selected_id): void
 {
 	global $SysPrefs, $path_to_root, $page_nested;
 	
-	if (!$selected_id) 
+	if (!(bool)$selected_id) 
 	{
 	 	if (list_updated('customer_id') || !isset($_POST['CustName'])) {
 			$_POST['CustName'] = $_POST['cust_ref'] = $_POST['address'] = $_POST['tax_id']  = '';
@@ -237,8 +237,8 @@ function customer_settings(string|int|float|bool|array|null $selected_id): void
 	text_row(_("GSTNo:"), 'tax_id', null, 40, 40);
 
 
-	if (!$selected_id || is_new_customer($selected_id) || (!key_in_foreign_table($selected_id, 'debtor_trans', 'debtor_no') &&
-		!key_in_foreign_table($selected_id, 'sales_orders', 'debtor_no'))) 
+	if (!(bool)$selected_id || is_new_customer($selected_id) || (!(bool)key_in_foreign_table($selected_id, 'debtor_trans', 'debtor_no') &&
+		!(bool)key_in_foreign_table($selected_id, 'sales_orders', 'debtor_no'))) 
 	{
 		currencies_list_row(_("Customer's Currency:"), 'curr_code', $_POST['curr_code']);
 	} 
@@ -249,7 +249,7 @@ function customer_settings(string|int|float|bool|array|null $selected_id): void
 	}
 	sales_types_list_row(_("Sales Type/Price List:"), 'sales_type', $_POST['sales_type']);
 
-	if($selected_id)
+	if((bool)$selected_id)
 		record_status_list_row(_("Customer status:"), 'inactive');
 	elseif (isset($SysPrefs->auto_create_branch) && $SysPrefs->auto_create_branch == 1)
 	{
@@ -281,7 +281,7 @@ function customer_settings(string|int|float|bool|array|null $selected_id): void
 	if ($dim < 2)
 		hidden('dimension2_id', 0);
 
-	if ($selected_id)  {
+	if ((bool)$selected_id)  {
 		start_row();
 		echo '<td class="label">'._('Customer branches').':</td>';
 	  	hyperlink_params_td($path_to_root . "/sales/manage/customer_branches.php",
@@ -291,7 +291,7 @@ function customer_settings(string|int|float|bool|array|null $selected_id): void
 	}
 
 	textarea_row(_("General Notes:"), 'notes', null, 35, 5);
-	if (!$selected_id && isset($SysPrefs->auto_create_branch) && $SysPrefs->auto_create_branch == 1)
+	if (!(bool)$selected_id && isset($SysPrefs->auto_create_branch) && $SysPrefs->auto_create_branch == 1)
 	{
 		table_section_title(_("Branch"));
 		locations_list_row(_("Default Inventory Location:"), 'location');
@@ -302,8 +302,8 @@ function customer_settings(string|int|float|bool|array|null $selected_id): void
 	end_outer_table(1);
 
 	div_start('controls');
-	if (@$_REQUEST['popup']) hidden('popup', 1);
-	if (!$selected_id)
+	if ((bool)(@$_REQUEST['popup'])) hidden('popup', 1);
+	if (!(bool)$selected_id)
 	{
 		submit_center('submit', _("Add New Customer"), true, '', false);
 	} 
@@ -345,7 +345,7 @@ else
 }
 
 //if (!$selected_id || list_updated('customer_id'))
-if (!$selected_id)
+if (!(bool)$selected_id)
 	unset($_POST['_tabs_sel']); // force settings tab for new customer
 
 tabbed_content_start('tabs', array(

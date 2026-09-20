@@ -97,12 +97,12 @@ function inventory_movements(): void
     $comments = $_POST['PARAM_4'];
 	$orientation = $_POST['PARAM_5'];
 	$destination = $_POST['PARAM_6'];
-	if ($destination)
+	if ((bool)$destination)
 		include_once($path_to_root . "/reporting/includes/excel_report.inc");
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
 
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
 	if ($category == ALL_NUMERIC)
 		$category = 0;
 	if ($category == 0)

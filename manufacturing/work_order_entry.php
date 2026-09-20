@@ -116,7 +116,7 @@ function safe_exit(): void
 if (!isset($_POST['date_']))
 {
 	$_POST['date_'] = new_doc_date();
-	if (!is_date_in_fiscalyear($_POST['date_']))
+	if (!(bool)is_date_in_fiscalyear($_POST['date_']))
 		$_POST['date_'] = end_fiscalyear();
 }
 
@@ -146,7 +146,7 @@ function can_process(): bool
 		set_focus('date_');
 		return false;
 	}
-	elseif (!is_date_in_fiscalyear($_POST['date_']))
+	elseif (!(bool)is_date_in_fiscalyear($_POST['date_']))
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('date_');
@@ -394,7 +394,7 @@ else
 if (get_post('type') == WO_ADVANCED)
 {
     qty_row(_("Quantity Required:"), 'quantity', null, null, null, $dec);
-    if ($_POST['released'])
+    if ((bool)$_POST['released'])
     	label_row(_("Quantity Manufactured:"), number_format($_POST['units_issued'], get_qty_dec(post_scalar('stock_id'))));
     date_row(_("Date") . ":", 'date_', '', true);
 	date_row(_("Date Required By") . ":", 'RequDate', '', null, $SysPrefs->default_wo_required_by());

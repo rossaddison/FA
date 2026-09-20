@@ -264,7 +264,7 @@ function get_grn_items(string|int|float|bool|array|null $grn_batch_id=0, string|
 	bool $is_invoiced_only=false, string|int|float|bool|array|null $invoice_no=0, string|array|null $begin="", string|array|null $end="")
 {
     $sql = "SELECT grn.*, grn_item.*, po_item.delivery_date as req_del_date,
-		grn_item.quantity_inv".($invoice_no ? "-invoice_item.quantity" : '')."  quantity_inv,
+		grn_item.quantity_inv".((bool)$invoice_no ? "-invoice_item.quantity" : '')."  quantity_inv,
     	po_item.unit_price,
     	po_item.act_price,
     	po_item.quantity_ordered,
@@ -288,7 +288,7 @@ function get_grn_items(string|int|float|bool|array|null $grn_batch_id=0, string|
 		AND grn_item.po_detail_item=po_item.po_detail_item";
 
 	if ($outstanding_only)
-    	$sql .= " AND (".($invoice_no ? "$inv_cond OR ":'')."grn_item.qty_recd - grn_item.quantity_inv > 0)";
+    	$sql .= " AND (".((bool)$invoice_no ? "$inv_cond OR ":'')."grn_item.qty_recd - grn_item.quantity_inv > 0)";
 
 	$sql .= " AND stock_item.stock_id=grn_item.item_code ";
 

@@ -82,12 +82,12 @@ function print_dimension_summary(): void
     $comments = $_POST['PARAM_3'];
 	$orientation = $_POST['PARAM_4'];
 	$destination = $_POST['PARAM_5'];
-	if ($destination)
+	if ((bool)$destination)
 		include_once($path_to_root . "/reporting/includes/excel_report.inc");
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
 
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
 	$cols = array(0, 50, 210, 250, 320, 395, 465,	515);
 
 	$headers = array(_('Reference'), _('Name'), _('Type'), _('Date'), _('Due Date'), _('Closed'), _('YTD'));
@@ -113,12 +113,12 @@ function print_dimension_summary(): void
 		$rep->TextCol(2, 3, $trans['type_']);
 		$rep->DateCol(3, 4, $trans['date_'], true);
 		$rep->DateCol(4, 5, $trans['due_date'], true);
-		if ($trans['closed'])
+		if ((bool)$trans['closed'])
 			$str = _('Yes');
 		else
 			$str = _('No');
 		$rep->TextCol(5, 6, $str);
-		if ($showbal)
+		if ((bool)$showbal)
 		{
 			$balance = getYTD($trans['id']);
 			$rep->AmountCol(6, 7, $balance, 0);

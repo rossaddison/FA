@@ -56,7 +56,7 @@ if ($Mode == 'Delete')
 
 	// PREVENT DELETES IF DEPENDENT RECORDS IN 'debtors_master'
 
-	if (key_in_foreign_table($selected_id, 'cust_branch', 'group_no'))
+	if ((bool)key_in_foreign_table($selected_id, 'cust_branch', 'group_no'))
 	{
 		$cancel_delete = 1;
 		display_error(_("Cannot delete this group because customers have been created using this group."));

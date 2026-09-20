@@ -118,7 +118,7 @@ if (db_num_rows($grns_result) > 0)
     table_header($th);
     while ($myrow = db_fetch($grns_result))
     {
-    	if (get_voided_entry(ST_SUPPRECEIVE, $myrow['id']))
+    	if ((bool)get_voided_entry(ST_SUPPRECEIVE, $myrow['id']))
     		continue;
 		alt_table_row_color($k);
 
@@ -145,7 +145,7 @@ if (db_num_rows($invoice_result) > 0)
     table_header($th);
     while ($myrow = db_fetch($invoice_result))
     {
-    	if (get_voided_entry($myrow["type"],$myrow["trans_no"]))
+    	if ((bool)get_voided_entry($myrow["type"],$myrow["trans_no"]))
     		continue;
     	alt_table_row_color($k);
 

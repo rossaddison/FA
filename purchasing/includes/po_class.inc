@@ -224,7 +224,7 @@ class purch_order
 			$total += $value;
 		}
 
-		if (!$this->tax_included ) {
+		if (!(bool)$this->tax_included ) {
 			$taxes = get_tax_for_items($items, $prices, 0, $this->tax_group_id,
 			$this->tax_included,  $this->tax_group_array);
 

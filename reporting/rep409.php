@@ -38,9 +38,9 @@ function print_workorders(): void
 	$comments = $_POST['PARAM_3'];
 	$orientation = $_POST['PARAM_4'];
 
-	if (!$from || !$to) return;
+	if (!(bool)$from || !(bool)$to) return;
 
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
 	$fno = explode("-", $from);
 	$tno = explode("-", $to);
 	$from = min($fno[0], $tno[0]);

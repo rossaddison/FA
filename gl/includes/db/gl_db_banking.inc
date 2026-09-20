@@ -55,7 +55,7 @@ function add_exchange_variation(string|int|float|bool|array|null $trans_no, stri
     	add_gl_trans(ST_JOURNAL, $trans_no, $date_, get_company_pref('exchange_diff_act'), 0, 0, 
     		_("Exchange Variance"), $diff, null, $person_type_id, $person_id);
 
-		if ($memo)
+		if ((bool)$memo)
 			add_comments(ST_JOURNAL, $trans_no, $date_, $memo);
 
 		$Refs->save(ST_JOURNAL, $trans_no, $ref);
@@ -265,8 +265,8 @@ function add_bank_transfer(string|array|null $from_account, string|array|null $t
 	}
 
 	// provide backward compatibility for extension modules (target amount can be not passed)
-	$to_currency = $target_amount ? $toact['bank_curr_code'] : $currency;
-	$to_amount = $target_amount ? $target_amount : $amount;
+	$to_currency = (bool)$target_amount ? $toact['bank_curr_code'] : $currency;
+	$to_amount = (bool)$target_amount ? $target_amount : $amount;
 
 	// do the destination account postings
 	$total += add_gl_trans($trans_type, $trans_no, $date_, $to_gl_account, $dim1, $dim2, $person_id,
@@ -407,7 +407,7 @@ function write_bank_transaction(string|int|float|bool|null $trans_type, string|i
 	hook_db_prewrite($args, $trans_type);
 
 	$aid = 0;
-	if ($trans_no) {
+	if ((bool)$trans_no) {
 		$old_trans = $trans_no;
 		$Refs->restore_last($trans_type, $trans_no);
 		$aid = has_attachment($trans_type, $trans_no);
@@ -480,7 +480,7 @@ function write_bank_transaction(string|int|float|bool|null $trans_type, string|i
 	{
 		$is_bank_to = is_bank_account($gl_item->code_id);
 
-		if ($trans_type == ST_BANKPAYMENT AND $is_bank_to)
+		if ($trans_type == ST_BANKPAYMENT AND (bool)$is_bank_to)
 		{
 			// we don't allow payments to go to a bank account. use transfer for this !
 			display_db_error("invalid payment entered. Cannot pay to another bank account", "");
@@ -491,13 +491,13 @@ function write_bank_transaction(string|int|float|bool|null $trans_type, string|i
     		$gl_item->dimension_id, $gl_item->dimension2_id, $gl_item->reference,
     		$gl_item->amount, $currency, $person_type_id, $person_id);
 
-    	if ($is_bank_to)
+    	if ((bool)$is_bank_to)
     	{
     		add_bank_trans($trans_type, $trans_no, $is_bank_to, $ref,
     			$date_, $gl_item->amount,
     			$person_type_id, $person_id, $currency,
     			"Cannot insert a destination bank transaction");
-    		if ($do_exchange_variance)
+    		if ((bool)$do_exchange_variance)
     		{
     			add_exchange_variation($trans_no1, $date_, $is_bank_to, $gl_item->code_id, 
     				$currency, $person_type_id, $person_id);
@@ -516,7 +516,7 @@ function write_bank_transaction(string|int|float|bool|null $trans_type, string|i
     add_gl_trans($trans_type, $trans_no, $date_, $bank_gl_account, $gl_item->dimension_id, $gl_item->dimension2_id, $memo_,
     	-$total, null, $person_type_id, $person_id);
 
-    if ($do_exchange_variance)
+    if ((bool)$do_exchange_variance)
     {
     	add_exchange_variation($trans_no1, $date_, $from_account, $bank_gl_account, 
     		$currency, $person_type_id, $person_id);
@@ -532,7 +532,7 @@ function write_bank_transaction(string|int|float|bool|null $trans_type, string|i
 	if ($old_trans) 
 	{
 		$msg = void_transaction($trans_type, $old_trans, $date_, _("Document reentered."));
-		if ($msg)
+		if ((bool)$msg)
 		{
 			display_error($msg);
 			return false;

@@ -69,7 +69,7 @@ function item_unit_used(string|int|float|bool|null $unit): bool {
  */
 function get_all_item_units(int|bool|array|null $all=false) {
     $sql = "SELECT * FROM ".TB_PREF."item_units";
-	if (!$all) $sql .= " WHERE !inactive";
+	if (!(bool)$all) $sql .= " WHERE !inactive";
 	$sql .= " ORDER BY name";
     return  db_query($sql, "could not get stock categories");
 }

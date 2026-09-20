@@ -44,7 +44,7 @@ function get_stock_movements(string|int|float|bool|null $stock_id, string|int|fl
   	$sql = "SELECT move.*, IF(ISNULL(supplier.supplier_id), debtor.name, supplier.supp_name) name,
 		IF(move.type=".ST_SUPPRECEIVE.", grn.reference, IF(move.type=".ST_CUSTCREDIT.", cust_trans.reference, move.reference)) reference";
 
-	if(!$StockLocation) {
+	if(!(bool)$StockLocation) {
 		 $sql .= ", move.loc_code";
 	}
   	$sql.=    " FROM ".TB_PREF."stock_moves move
@@ -55,7 +55,7 @@ function get_stock_movements(string|int|float|bool|null $stock_id, string|int|fl
 				LEFT JOIN ".TB_PREF."debtors_master debtor ON cust_trans.debtor_no=debtor.debtor_no
 		WHERE";
 
-  	if ($StockLocation) {
+  	if ((bool)$StockLocation) {
     	$sql.= " move.loc_code=".db_escape($StockLocation)." AND";
 	}
 

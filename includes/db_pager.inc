@@ -420,13 +420,13 @@ class db_pager {
 		
 		$page = find_submit($this->name.'_page_', false);
 		$sort = find_submit($this->name.'_sort_', true);
-		if ($page) {
+		if ((bool)$page) {
 			$this->change_page($page);
 			if ($page == 'next' && !$this->next_page ||
 				$page == 'last' && !$this->last_page)
 					set_focus($this->name.'_page_prev');
 			if ($page == 'prev' && !$this->prev_page ||
-				$page == 'first' && !$this->first_page)
+				$page == 'first' && !(bool)$this->first_page)
 					set_focus($this->name.'_page_next');
 		} elseif ($sort != -1) {
 			$this->sort_table($sort);
@@ -472,7 +472,7 @@ class db_pager {
 	//
 	function inactive_control_cell(&$row)
 	{
-		if ($this->inactive_ctrl) {
+		if ((bool)$this->inactive_ctrl) {
 				 
 			global	$Ajax;
 

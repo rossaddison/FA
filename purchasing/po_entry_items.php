@@ -146,7 +146,7 @@ if (isset($_GET['AddedID']))
 	display_footer_exit();	
 }
 
-if ($_SESSION['PO']->fixed_asset)
+if ((bool)$_SESSION['PO']->fixed_asset)
   check_db_has_purchasable_fixed_assets(_("There are no purchasable fixed assets defined in the system."));
 else
   check_db_has_purchasable_items(_("There are no purchasable inventory items defined in the system."));
@@ -227,7 +227,7 @@ function handle_cancel_po(): void
 
 function check_data(): bool
 {
-	if(!get_post('stock_id_text', true)) {
+	if(!(bool)get_post('stock_id_text', true)) {
 		display_error( _("Item description cannot be empty."));
 		set_focus('stock_id_edit');
 		return false;
@@ -350,7 +350,7 @@ function can_commit(): bool
 		return false;
 	} 
 	if (($_SESSION['PO']->trans_type == ST_SUPPRECEIVE || $_SESSION['PO']->trans_type == ST_SUPPINVOICE) 
-		&& !is_date_in_fiscalyear($_POST['OrderDate'])) {
+		&& !(bool)is_date_in_fiscalyear($_POST['OrderDate'])) {
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('OrderDate');
 		return false;
@@ -363,7 +363,7 @@ function can_commit(): bool
 		return false;
 	} 
 
-	if (!$_SESSION['PO']->order_no) 
+	if (!(bool)$_SESSION['PO']->order_no) 
 	{
     	if (!check_reference(get_post('ref'), $_SESSION['PO']->trans_type))
     	{
@@ -506,7 +506,7 @@ elseif ($_SESSION['PO']->trans_type == ST_SUPPINVOICE) {
 }	
 if ($_SESSION['PO']->order_has_items()) 
 {
-	if ($_SESSION['PO']->order_no)
+	if ((bool)$_SESSION['PO']->order_no)
 		submit_center_first('Commit', $update_txt, '', 'default');
 	else
 		submit_center_first('Commit', $process_txt, '', 'default');

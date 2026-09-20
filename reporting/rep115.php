@@ -130,12 +130,12 @@ function print_customer_balances(): void
     $comments = $_POST['PARAM_7'];
     $orientation = $_POST['PARAM_8'];
     $destination = $_POST['PARAM_9'];
-    if ($destination)
+    if ((bool)$destination)
         include_once($path_to_root . "/reporting/includes/excel_report.inc");
     else
         include_once($path_to_root . "/reporting/includes/pdf_report.inc");
 
-    $orientation = ($orientation ? 'L' : 'P');
+    $orientation = ((bool)$orientation ? 'L' : 'P');
     if ($fromcust == ALL_TEXT)
         $cust = _('All');
     else
@@ -165,7 +165,7 @@ function print_customer_balances(): void
     else
         $convert = false;
 
-    if ($no_zeros) $nozeros = _('Yes');
+    if ((bool)$no_zeros) $nozeros = _('Yes');
     else $nozeros = _('No');
 
     $cols = array(0, 100, 130, 190, 250, 320, 385, 450, 515);
@@ -236,7 +236,7 @@ function print_customer_balances(): void
 
         $res = get_transactions($myrow['debtor_no'], $from, $to);
 
-        if (db_num_rows($res) == 0 && !$no_zeros) 
+        if (db_num_rows($res) == 0 && !(bool)$no_zeros) 
         {
             $rep->TextCol(0, 2, (string)$myrow['name'].($myrow['inactive']==1 ? " ("._("Inactive").")" : ""));
             $rep->AmountCol(3, 4, $curr_open, $dec);
@@ -257,7 +257,7 @@ function print_customer_balances(): void
         $tot_cur_db += $curr_db;
         $tot_cur_cr += $curr_cr;
 
-        if ($no_zeros && $curr_open == 0.0 && $curr_db == 0.0 && $curr_cr == 0.0) continue;
+        if ((bool)$no_zeros && $curr_open == 0.0 && $curr_db == 0.0 && $curr_cr == 0.0) continue;
         $rep->TextCol(0, 2, (string)$myrow['name'].($myrow['inactive']==1 ? " ("._("Inactive").")" : ""));
         $rep->AmountCol(3, 4, $curr_open, $dec);
         $rep->AmountCol(4, 5, $curr_db, $dec);

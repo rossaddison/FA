@@ -39,7 +39,7 @@ function get_invoices(?string $supplier_id, string|array|null $to, string|bool|a
 	$PastDueDays2 = 2 * $PastDueDays1;
 
 	// Revomed allocated from sql
-	if ($all)
+	if ((bool)$all)
     	$value = "(trans.ov_amount + trans.ov_gst + trans.ov_discount)";
     else
     	$value = "IF (trans.type=".ST_SUPPINVOICE." OR trans.type=".ST_BANKDEPOSIT." OR (trans.type=".ST_JOURNAL." AND (trans.ov_amount + trans.ov_gst + trans.ov_discount)>0),  
@@ -61,7 +61,7 @@ function get_invoices(?string $supplier_id, string|array|null $to, string|bool|a
 			AND trans.supplier_id = ".db_escape($supplier_id)."
 			AND trans.tran_date <= '$todate'
 			AND ABS(trans.ov_amount + trans.ov_gst + trans.ov_discount) > ".FLOAT_COMP_DELTA;
-	if (!$all)
+	if (!(bool)$all)
 		$sql .= "AND $value <> 0 ";
 	$sql .= " ORDER BY trans.tran_date";
 
@@ -86,12 +86,12 @@ function print_aged_supplier_analysis(): void
 	$orientation = $_POST['PARAM_8'];
 	$destination = $_POST['PARAM_9'];
 
-	if ($destination)
+	if ((bool)$destination)
 		include_once($path_to_root . "/reporting/includes/excel_report.inc");
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
-	$orientation = ($orientation ? 'L' : 'P');
-	if ($graphics)
+	$orientation = ((bool)$orientation ? 'L' : 'P');
+	if ((bool)$graphics)
 	{
 		include_once($path_to_root . "/reporting/includes/class.graphic.inc");
 		$pg = new chart($graphics);
@@ -116,9 +116,9 @@ function print_aged_supplier_analysis(): void
 	else
 		$convert = false;
 
-	if ($no_zeros) $nozeros = _('Yes');
+	if ((bool)$no_zeros) $nozeros = _('Yes');
 	else $nozeros = _('No');
-	if ($show_all) $show = _('Yes');
+	if ((bool)$show_all) $show = _('Yes');
 	else $show = _('No');
 
 	$PastDueDays1 = get_company_pref('past_due_days');
@@ -188,7 +188,7 @@ function print_aged_supplier_analysis(): void
 			$supprec["Overdue2"],
 			$supprec["Balance"]);
 
-		if ($no_zeros && floatcmp(array_sum($str), 0) == 0) continue;
+		if ((bool)$no_zeros && floatcmp(array_sum($str), 0) == 0) continue;
 
 		$rep->fontSize += 2;
 		$rep->TextCol(0, 2,	(string)$myrow['name'].($myrow['inactive']==1 ? " ("._("Inactive").")" : ""));
@@ -202,7 +202,7 @@ function print_aged_supplier_analysis(): void
 		for ($i = 0; $i < count($str); $i++)
 			$rep->AmountCol($i + 3, $i + 4, $str[$i], $dec);
 		$rep->NewLine(1, 2);
-		if (!$summaryOnly)
+		if (!(bool)$summaryOnly)
 		{
 			$res = get_invoices($myrow['supplier_id'], $to, $show_all);
     		if (db_num_rows($res)==0)
@@ -228,7 +228,7 @@ function print_aged_supplier_analysis(): void
 			$rep->NewLine(2);
 		}
 	}
-	if ($summaryOnly)
+	if ((bool)$summaryOnly)
 	{
     	$rep->Line($rep->row  + 4);
     	$rep->NewLine();
@@ -239,14 +239,14 @@ function print_aged_supplier_analysis(): void
 	for ($i = 0; $i < count($total); $i++)
 	{
 		$rep->AmountCol($i + 3, $i + 4, $total[$i], $dec);
-		if ($graphics && $i < count($total) - 1)
+		if ((bool)$graphics && $i < count($total) - 1)
 		{
 			$serie[$i] = abs($total[$i]);
 		}
 	}
    	$rep->Line($rep->row  - 8);
    	$rep->NewLine();
-   	if ($graphics)
+   	if ((bool)$graphics)
    	{
 		$pg->setStream('png');
 		$pg->setLabels(array(_('Current'), $nowdue, $pastdue1, $pastdue2));

@@ -17,7 +17,7 @@ function output_html(string|int|float|bool|null $text): string
 	global $before_box, $Ajax, $messages;
 	// Fatal errors are not send to error_handler,
 	// so we must check the output
-	if ($text && preg_match('/\bFatal error(<.*?>)?:(.*)/i', $text, $m)) {
+	if ((bool)$text && preg_match('/\bFatal error(<.*?>)?:(.*)/i', $text, $m)) {
 		$Ajax->aCommands = array();  // Don't update page via ajax on errors
 		$text = preg_replace('/\bFatal error(<.*?>)?:(.*)/i','', $text);
 		$messages[] = array(E_ERROR, $m[2], null, null);

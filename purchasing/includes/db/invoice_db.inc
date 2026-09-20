@@ -36,7 +36,7 @@ function read_supplier_details_to_trans(supp_trans &$supp_trans, string|int|floa
     {
 		$supp_trans->tran_date = Today();
 
-		if (!is_date_in_fiscalyear($supp_trans->tran_date))
+		if (!(bool)is_date_in_fiscalyear($supp_trans->tran_date))
 			$supp_trans->tran_date = end_fiscalyear();
 	}
 
@@ -141,7 +141,7 @@ function add_supp_invoice(supp_trans &$supp_trans)
 	hook_db_prewrite($supp_trans, $trans_type);
 	$tax_total = 0;
     $taxes = $supp_trans->get_taxes($supp_trans->tax_group_id);
-	if ($trans_no) {
+	if ((bool)$trans_no) {
 		$allocs = get_payments_for($trans_no, $trans_type, $supp_trans->supplier_id); // save allocations
 		void_transaction($trans_type, $trans_no, $supp_trans->tran_date, _("Document reentered."));
 		$Refs->restore_last($trans_type, $trans_no);
@@ -159,7 +159,7 @@ function add_supp_invoice(supp_trans &$supp_trans)
 	$invoice_items_total = $supp_trans->get_items_total();
 
 	$item_added_tax = 0;
-    if (!$supp_trans->tax_included)
+    if (!(bool)$supp_trans->tax_included)
     {
 	    $taxes = $supp_trans->get_taxes($supp_trans->tax_group_id);
 	    foreach ($taxes as $n => $taxitem)
@@ -182,7 +182,7 @@ function add_supp_invoice(supp_trans &$supp_trans)
 		$supp_trans->reference, $supp_trans->supp_reference,
 		$invoice_items_total, $item_added_tax, $supp_trans->ov_discount, "", 0, $supp_trans->tax_included);
 
-	if ($trans_no)
+	if ((bool)$trans_no)
 		move_trans_attachments($trans_type, $trans_no, $invoice_id);
 
 	$supp_trans->trans_no = $invoice_id;
@@ -198,7 +198,7 @@ function add_supp_invoice(supp_trans &$supp_trans)
 		if ($taxitem['Net'] != 0)
 		{
 			if (isset($taxitem['Override'])) {
-				if ($supp_trans->tax_included) { // if tax included, fix net amount to preserve overall line price
+				if ((bool)$supp_trans->tax_included) { // if tax included, fix net amount to preserve overall line price
 					$net_diff += (float)$taxitem['Override'] - (float)$taxitem['Value'];
 					$taxitem['Net'] += (float)$taxitem['Override'] - (float)$taxitem['Value'];
 				}
@@ -665,7 +665,7 @@ function is_reference_already_there(string|int|float|bool|null $supplier_id, str
 		.db_escape($supplier_id) . " AND supp_reference=" 
 		.db_escape($supp_reference) 
 		. " AND ov_amount!=0"; // ignore voided invoice references
-	if ($trans_no)
+	if ((bool)$trans_no)
 		$sql .= " AND trans_no!=$trans_no";
 	$result=db_query($sql,"The sql to check for the previous entry of the same invoice failed");
 

@@ -39,7 +39,7 @@ function get_all_sales_points(int|bool|array|null $all=false)
 		.TB_PREF."sales_pos as pos
 		LEFT JOIN ".TB_PREF."locations as loc on pos.pos_location=loc.loc_code
 		LEFT JOIN ".TB_PREF."bank_accounts as acc on pos.pos_account=acc.id";
-	if (!$all) $sql .= " WHERE !pos.inactive";
+	if (!(bool)$all) $sql .= " WHERE !pos.inactive";
 	
 	return db_query($sql, "could not get all POS definitions");
 } 

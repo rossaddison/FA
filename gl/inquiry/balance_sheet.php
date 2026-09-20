@@ -63,7 +63,7 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
         if (!$net_balance)
             continue;
         
-        if ($drilldown && $levelptr == 0)
+        if ((bool)$drilldown && $levelptr == 0)
         {
             $url = "<a href='$path_to_root/gl/inquiry/gl_account_inquiry.php?TransFromDate=" 
                 . $from . "&TransToDate=" . $to . "&Dimension=" . $dimension . "&Dimension2=" . $dimension2 
@@ -92,7 +92,7 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 	//Display Type Summary if total is != 0  
 	if (($acctstotal + $typestotal) != 0)
 	{
-		if ($drilldown && $type == $_POST["AccGrp"])
+		if ((bool)$drilldown && $type == $_POST["AccGrp"])
 		{		
 			start_row("class='inquirybg' style='font-weight:bold'");
 			label_cell(_('Total') . " " . $typename);
@@ -102,7 +102,7 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 		//START Patch#1 : Display  only direct child types
 		$acctype1 = row_or_empty(get_account_type($type));
 		$parent1 = $acctype1["parent"];
-		if ($drilldown && $parent1 == $_POST["AccGrp"])
+		if ((bool)$drilldown && $parent1 == $_POST["AccGrp"])
 		//END Patch#2		
 		{
 			$url = "<a href='$path_to_root/gl/inquiry/balance_sheet.php?TransFromDate=" 

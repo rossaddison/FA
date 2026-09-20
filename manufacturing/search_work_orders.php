@@ -90,7 +90,7 @@ end_table();
 //-----------------------------------------------------------------------------
 function check_overdue(array|false|null $row): bool
 {
-	return (!$row["closed"] 
+	return (!(bool)$row["closed"] 
 		&& date_diff2(Today(), sql2date($row["required_by"]), "d") > 0);
 }
 
@@ -113,13 +113,13 @@ function wo_type_name(string|int|float|bool|array|null $dummy, string|int|float|
 
 function edit_link(array|false|null $row)
 {
-	return  $row['closed'] ? '<i>'._('Closed').'</i>' :
+	return  (bool)$row['closed'] ? '<i>'._('Closed').'</i>' :
 		trans_editor_link(ST_WORKORDER, $row["id"]);
 }
 
 function release_link(array|false|null $row): string
 {
-	return $row["closed"] ? '' : 
+	return (bool)$row["closed"] ? '' : 
 		($row["released"]==0 ?
 		pager_link(_('Release'),
 			"/manufacturing/work_order_release.php?trans_no=" . (string)$row["id"])
@@ -130,14 +130,14 @@ function release_link(array|false|null $row): string
 
 function produce_link(array|false|null $row): string
 {
-	return $row["closed"] || !$row["released"] ? '' :
+	return (bool)$row["closed"] || !(bool)$row["released"] ? '' :
 		pager_link(_('Produce'),
 			"/manufacturing/work_order_add_finished.php?trans_no=" .(string)$row["id"]);
 }
 
 function costs_link(array|false|null $row): string
 {
-	return $row["closed"] || !$row["released"] ? '' :
+	return (bool)$row["closed"] || !(bool)$row["released"] ? '' :
 		pager_link(_('Costs'),
 			"/manufacturing/work_order_costs.php?trans_no=" .(string)$row["id"]);
 }

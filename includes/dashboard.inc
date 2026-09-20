@@ -92,7 +92,7 @@ function display_title(?string $title, string|int|float|bool|null $id=false, str
 	start_form();
 	echo "<div>";
 	echo "<span class='headingtext'>$title</span>";
-	if ($id)
+	if ((bool)$id)
 	{
 		/*
 		global $Ajax;
@@ -123,7 +123,7 @@ function display_title(?string $title, string|int|float|bool|null $id=false, str
 			foreach ($sel1 as $i => $s)
 			{
 				echo "<option value='$i'";
-				if ($num && $i == $num) 
+				if ((bool)$num && $i == $num) 
 					echo " selected";
 				echo ">$s</option>";
 			}
@@ -136,7 +136,7 @@ function display_title(?string $title, string|int|float|bool|null $id=false, str
 			foreach ($sel as $i => $s)
 			{
 				echo "<option value='$i'";
-				if ($type && $i == $type) 
+				if ((bool)$type && $i == $type) 
 					echo " selected";
 				echo ">$s</option>";
 			}
@@ -914,7 +914,7 @@ function cash_flow(?string $today): void
 		$pg->type = $_POST['select_g5'];
 	if (isset($_POST['per_g5']))
 		$months = $_POST['per_g5'];
-	if (!is_date_in_fiscalyear($today))
+	if (!(bool)is_date_in_fiscalyear($today))
 		$today = end_fiscalyear();
 	$today1 = begin_month($today);
 	$today1 = add_months($today, -$months+1);
@@ -1060,7 +1060,7 @@ function customer_recurrent_invoices(?string $today): void
 	$k = 0;
 	while ($myrow = db_fetch($result)) 
 	{
-		if (!$myrow['overdue'])
+		if (!(bool)$myrow['overdue'])
 			continue;
 		alt_table_row_color($k);
 
@@ -1573,7 +1573,7 @@ function get_database_size(): string
 function calc_today(): string
 {
 	$today = Today();
-	if (!is_date_in_fiscalyear($today))
+	if (!(bool)is_date_in_fiscalyear($today))
 		$today = end_fiscalyear();
 	return $today;
 }

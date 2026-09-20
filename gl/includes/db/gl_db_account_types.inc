@@ -73,7 +73,7 @@ function get_account_types(int|bool|array|null $all=false, string|int|float|bool
 
 	$where = array();
 	
-	if (!$all)
+	if (!(bool)$all)
 		$where[] = "!inactive";
 
 	if ($class_id != false)  
@@ -152,7 +152,7 @@ function get_account_classes(int|bool|array|null $all=false, ?int $balance=-1)
 {
 	$sql = "SELECT * FROM ".TB_PREF."chart_class";
 
-	if (!$all) 
+	if (!(bool)$all) 
 		$sql .= " WHERE !inactive";
 	if ($balance == 0) 
 		$sql .= " AND ctype>".CL_EQUITY." OR ctype=0";

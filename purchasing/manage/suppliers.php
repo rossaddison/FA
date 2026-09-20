@@ -114,7 +114,7 @@ if (isset($_POST['delete']) && $_POST['delete'] != "")
 
 	// PREVENT DELETES IF DEPENDENT RECORDS IN 'supp_trans' , purch_orders
 
-	if (key_in_foreign_table($_POST['supplier_id'], 'supp_trans', 'supplier_id'))
+	if ((bool)key_in_foreign_table($_POST['supplier_id'], 'supp_trans', 'supplier_id'))
 	{
 		$cancel_delete = 1;
 		display_error(_("Cannot delete this supplier because there are transactions that refer to this supplier."));
@@ -122,7 +122,7 @@ if (isset($_POST['delete']) && $_POST['delete'] != "")
 	} 
 	else 
 	{
-		if (key_in_foreign_table($_POST['supplier_id'], 'purch_orders', 'supplier_id'))
+		if ((bool)key_in_foreign_table($_POST['supplier_id'], 'purch_orders', 'supplier_id'))
 		{
 			$cancel_delete = 1;
 			display_error(_("Cannot delete the supplier record because purchase orders have been created against this supplier."));
@@ -204,8 +204,8 @@ function supplier_settings(&$supplier_id): void
 
 	text_row(_("GSTNo:"), 'gst_no', null, 42, 40);
 	link_row(_("Website:"), 'website', null, 35, 55);
-	if ($supplier_id && !is_new_supplier($supplier_id) && (key_in_foreign_table($_POST['supplier_id'], 'supp_trans', 'supplier_id') ||
-		key_in_foreign_table($_POST['supplier_id'], 'purch_orders', 'supplier_id'))) 
+	if ($supplier_id && !is_new_supplier($supplier_id) && ((bool)key_in_foreign_table($_POST['supplier_id'], 'supp_trans', 'supplier_id') ||
+		(bool)key_in_foreign_table($_POST['supplier_id'], 'purch_orders', 'supplier_id'))) 
 	{
 		label_row(_("Supplier's Currency:"), post_scalar('curr_code'));
 		hidden('curr_code', post_scalar('curr_code'));
@@ -229,17 +229,17 @@ function supplier_settings(&$supplier_id): void
 		check_row(_("Prices contain tax included:"), 'tax_included');
 	else {
 		hidden('tax_included');
-		label_row(_("Prices contain tax included:"), $_POST['tax_included'] ? _('Yes') : _('No'));
+		label_row(_("Prices contain tax included:"), (bool)$_POST['tax_included'] ? _('Yes') : _('No'));
 	}
 
-	if (!$supplier_id) table_section(2);
+	if (!(bool)$supplier_id) table_section(2);
 
 	table_section_title(_("Accounts"));
 	gl_all_accounts_list_row(_("Accounts Payable Account:"), 'payable_account', $_POST['payable_account']);
 	gl_all_accounts_list_row(_("Purchase Account:"), 'purchase_account', $_POST['purchase_account'],
 		false, false, _("Use Item Inventory/COGS Account"));
 	gl_all_accounts_list_row(_("Purchase Discount Account:"), 'payment_discount_account', $_POST['payment_discount_account']);
-	if (!$supplier_id) {
+	if (!(bool)$supplier_id) {
 		table_section_title(_("Contact Data"));
 		text_row(_("Contact Person:"), 'contact', null, 42, 40);
 		text_row(_("Phone Number:"), 'phone', null, 32, 30);
@@ -263,7 +263,7 @@ function supplier_settings(&$supplier_id): void
 		hidden('dimension_id', 0);
 	if ($dim < 2)
 		hidden('dimension2_id', 0);
-	if (!$supplier_id)	
+	if (!(bool)$supplier_id)	
 		table_section(2);
 
 	table_section_title(_("Addresses"));
@@ -272,13 +272,13 @@ function supplier_settings(&$supplier_id): void
 
 	table_section_title(_("General"));
 	textarea_row(_("General Notes:"), 'notes', null, 35, 5);
-	if ($supplier_id)
+	if ((bool)$supplier_id)
 		record_status_list_row(_("Supplier status:"), 'inactive');
 	end_outer_table(1);
 
 	div_start('controls');
-	if (@$_REQUEST['popup']) hidden('popup', 1);
-	if ($supplier_id) 
+	if ((bool)(@$_REQUEST['popup'])) hidden('popup', 1);
+	if ((bool)$supplier_id) 
 	{
 		submit_center_first('submit', _("Update Supplier"), 
 		  _('Update supplier data'), $page_nested ? true : false);

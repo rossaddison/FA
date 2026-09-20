@@ -39,7 +39,7 @@ function get_invoices(?string $customer_id, string|array|null $to, string|bool|a
 	$sign = "IF(`type` IN(".implode(',',  array(ST_CUSTCREDIT,ST_CUSTPAYMENT,ST_BANKDEPOSIT))."), -1, 1)";
 
 	$value = "$sign*(IF(trans.prep_amount, trans.prep_amount,
-		ABS(trans.ov_amount + trans.ov_gst + trans.ov_freight + trans.ov_freight_tax + trans.ov_discount)) ".($all ? '' : "- trans.alloc").")";
+		ABS(trans.ov_amount + trans.ov_gst + trans.ov_freight + trans.ov_freight_tax + trans.ov_discount)) ".((bool)$all ? '' : "- trans.alloc").")";
 
 	$due = "IF (type=".ST_SALESINVOICE.", due_date, tran_date)";
 
@@ -77,12 +77,12 @@ function print_aged_customer_analysis(): void
     $comments = $_POST['PARAM_7'];
 	$orientation = $_POST['PARAM_8'];
 	$destination = $_POST['PARAM_9'];
-	if ($destination)
+	if ((bool)$destination)
 		include_once($path_to_root . "/reporting/includes/excel_report.inc");
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
-	$orientation = ($orientation ? 'L' : 'P');
-	if ($graphics)
+	$orientation = ((bool)$orientation ? 'L' : 'P');
+	if ((bool)$graphics)
 	{
 		include_once($path_to_root . "/reporting/includes/class.graphic.inc");
 		$pg = new chart($graphics);
@@ -106,9 +106,9 @@ function print_aged_customer_analysis(): void
 	else
 		$convert = false;
 
-	if ($no_zeros) $nozeros = _('Yes');
+	if ((bool)$no_zeros) $nozeros = _('Yes');
 	else $nozeros = _('No');
-	if ($show_all) $show = _('Yes');
+	if ((bool)$show_all) $show = _('Yes');
 	else $show = _('No');
 
 	$PastDueDays1 = get_company_pref('past_due_days');
@@ -168,7 +168,7 @@ function print_aged_customer_analysis(): void
 			(float)$custrec["Overdue1"]-(float)$custrec["Overdue2"],
 			$custrec["Overdue2"],
 			$custrec["Balance"]);
-		if ($no_zeros && floatcmp(array_sum($str), 0) == 0) continue;
+		if ((bool)$no_zeros && floatcmp(array_sum($str), 0) == 0) continue;
 
 		$rep->fontSize += 2;
 		$rep->TextCol(0, 2, (string)$myrow["name"].($myrow['inactive']==1 ? " ("._("Inactive").")" : ""));
@@ -182,7 +182,7 @@ function print_aged_customer_analysis(): void
 		for ($i = 0; $i < count($str); $i++)
 			$rep->AmountCol($i + 3, $i + 4, $str[$i], $dec);
 		$rep->NewLine(1, 2);
-		if (!$summaryOnly)
+		if (!(bool)$summaryOnly)
 		{
 			$res = get_invoices($myrow['debtor_no'], $to, $show_all);
     		if (db_num_rows($res)==0)
@@ -209,7 +209,7 @@ function print_aged_customer_analysis(): void
 			$rep->NewLine(2);
 		}
 	}
-	if ($summaryOnly)
+	if ((bool)$summaryOnly)
 	{
     	$rep->Line($rep->row  + 4);
     	$rep->NewLine();
@@ -221,13 +221,13 @@ function print_aged_customer_analysis(): void
 	for ($i = 0; $i < count($total); $i++)
 	{
 		$rep->AmountCol($i + 3, $i + 4, $total[$i], $dec);
-		if ($graphics && $i < count($total) - 1)
+		if ((bool)$graphics && $i < count($total) - 1)
 		{
 			$serie[] = abs($total[$i]);
 		}
 	}
    	$rep->Line($rep->row - 8);
-   	if ($graphics)
+   	if ((bool)$graphics)
    	{
 		$pg->setStream('png');
 		$pg->addSerie(_('Balances'), $serie);

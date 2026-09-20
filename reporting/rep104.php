@@ -80,12 +80,12 @@ function print_price_listing(): void
     $comments = $_POST['PARAM_5'];
 	$orientation = $_POST['PARAM_6'];
 	$destination = $_POST['PARAM_7'];
-	if ($destination)
+	if ((bool)$destination)
 		include_once($path_to_root . "/reporting/includes/excel_report.inc");
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
 
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
     $dec = user_price_dec();
 
 	$home_curr = get_company_pref('curr_default');
@@ -122,7 +122,7 @@ function print_price_listing(): void
     				    3 => array('text' => _('Sales Type'), 'from' => $stype, 'to' => ''),
     				    4 => array(  'text' => _('Show GP %'),'from' => $GP,'to' => ''));
 
-	if ($pictures)
+	if ((bool)$pictures)
 		$user_comp = user_company();
 	else
 		$user_comp = "";
@@ -157,7 +157,7 @@ function print_price_listing(): void
 		$rep->TextCol(2, 3, $myrow['units']);
 		$price = get_price($myrow['stock_id'], $currency, $salestype);
 		$rep->AmountCol(3, 4, $price, $dec);
-		if ($showGP)
+		if ((bool)$showGP)
 		{
 			$price2 = get_price($myrow['stock_id'], $home_curr, $salestype);
 			if ($price2 != 0.0)
@@ -166,7 +166,7 @@ function print_price_listing(): void
 				$disp = 0.0;
 			$rep->TextCol(4, 5,	number_format2($disp, user_percent_dec()) . " %");
 		}
-		if ($pictures)
+		if ((bool)$pictures)
 		{
 			$image = company_path(). "/images/"
 				. item_img_name($myrow['stock_id']) . ".jpg";

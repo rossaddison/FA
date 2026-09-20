@@ -357,7 +357,7 @@ function delete_this_fiscalyear(string|int|float|bool|array|null $selected_id): 
 			db_query($sql, "Could not delete gl trans");
 			$last_account = $row['account'];
 		}
-		if (is_account_balancesheet($row['account']) && $row['amount'])
+		if (is_account_balancesheet($row['account']) && (bool)$row['amount'])
 		{
 			$sql = "INSERT INTO ".TB_PREF."gl_trans (type, type_no, tran_date, account, memo_, amount, person_type_id, person_id) VALUES
 				(".ST_JOURNAL.", $trans_no, '$to', '{$row['account']}', '$ref', {$row['amount']}, "

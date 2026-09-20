@@ -178,7 +178,7 @@ function can_process(): bool
 		set_focus('DefaultReceivedDate');
 		return false;
 	}
-	if (!is_date_in_fiscalyear($_POST['DefaultReceivedDate'])) {
+	if (!(bool)is_date_in_fiscalyear($_POST['DefaultReceivedDate'])) {
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('DefaultReceivedDate');
 		return false;

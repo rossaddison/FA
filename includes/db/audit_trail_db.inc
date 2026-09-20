@@ -92,7 +92,7 @@ function close_transactions(string|array|null $todate): int {
 				$counter = 0; // reset counter on fiscal year change
 			}
 
-			$seq = $row['closed'] ? ++$counter : 0;
+			$seq = (bool)$row['closed'] ? ++$counter : 0;
 			if ($row['gl_seq'] != $seq)	{ // update transaction status only when gl_seq has changed
 				$sql2 = "UPDATE ".TB_PREF."audit_trail SET"
 					. " gl_seq=$seq"

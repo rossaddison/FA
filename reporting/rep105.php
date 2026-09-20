@@ -64,7 +64,7 @@ function GetSalesOrders(string|array|null $from, string|array|null $to, string|i
 		$sql .= " AND item.category_id=".db_escape($category);
 	if ($location != null)
 		$sql .= " AND sorder.from_stk_loc=".db_escape($location);
-	if ($backorder)
+	if ((bool)$backorder)
 		$sql .= " AND line.quantity - line.qty_sent > 0";
 	$sql .= " ORDER BY sorder.order_no";
 
@@ -85,11 +85,11 @@ function print_order_status_list(): void
 	$comments = $_POST['PARAM_5'];
 	$orientation = $_POST['PARAM_6'];
 	$destination = $_POST['PARAM_7'];
-	if ($destination)
+	if ((bool)$destination)
 		include_once($path_to_root . "/reporting/includes/excel_report.inc");
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
 
 	if ($category == ALL_NUMERIC)
 		$category = 0;

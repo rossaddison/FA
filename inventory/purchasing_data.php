@@ -60,7 +60,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
       	display_error( _("The conversion factor entered was not numeric. The conversion factor is the number by which the price must be divided by to get the unit price in our unit of measure."));
 		set_focus('conversion_factor');
    	}
-   	elseif ($Mode == 'ADD_ITEM' && get_item_purchasing_data($_POST['supplier_id'], $_POST['stock_id']))
+   	elseif ($Mode == 'ADD_ITEM' && (bool)get_item_purchasing_data($_POST['supplier_id'], $_POST['stock_id']))
    	{
       	$input_error = 1;
       	display_error( _("The purchasing data for this supplier has already been added."));

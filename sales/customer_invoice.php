@@ -199,7 +199,7 @@ function check_quantities(): int
 	$ok =1;
 	foreach ($_SESSION['Items']->line_items as $line_no=>$itm) {
 		if (isset($_POST['Line'.$line_no])) {
-			if($_SESSION['Items']->trans_no) {
+			if((bool)$_SESSION['Items']->trans_no) {
 				$min = $itm->qty_done;
 				$max = $itm->quantity;
 			} else {
@@ -248,7 +248,7 @@ function copy_to_cart(): void
 	$cart->due_date = $cart->document_date =  $_POST['InvoiceDate'];
 	$cart->Comments = $_POST['Comments'];
 	$cart->due_date =  $_POST['due_date'];
-	if (($cart->pos['cash_sale'] || $cart->pos['credit_sale']) && isset($_POST['payment'])) {
+	if (((bool)$cart->pos['cash_sale'] || (bool)$cart->pos['credit_sale']) && isset($_POST['payment'])) {
 		$cart->payment = $_POST['payment'];
 		$cart->payment_terms = get_payment_terms($_POST['payment']);
 	}
@@ -299,7 +299,7 @@ function check_data(): bool
 		return false;
 	}
 
-	if (!is_date_in_fiscalyear($_POST['InvoiceDate'])) {
+	if (!(bool)is_date_in_fiscalyear($_POST['InvoiceDate'])) {
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('InvoiceDate');
 		return false;
@@ -386,7 +386,7 @@ if(list_updated('payment')) {
 	$_POST['Comments'] = '';
 	$Ajax->activate('due_date');
 	$Ajax->activate('options');
-	if ($order->payment_terms['cash_sale']) {
+	if ((bool)$order->payment_terms['cash_sale']) {
 		$_POST['Location'] = $order->Location = $order->pos['pos_location'];
 		$order->location_name = $order->pos['location_name'];
 	}
@@ -431,9 +431,9 @@ if ($dim > 0)
 	$colspan = 3;
 label_cells(_("Customer"), $_SESSION['Items']->customer_name, "class='tableheader2'");
 label_cells(_("Branch"), get_branch_name($_SESSION['Items']->Branch), "class='tableheader2'");
-if (($_SESSION['Items']->pos['credit_sale'] || $_SESSION['Items']->pos['cash_sale'])) {
-	$paymcat = !$_SESSION['Items']->pos['cash_sale'] ? PM_CREDIT :
-		(!$_SESSION['Items']->pos['credit_sale'] ? PM_CASH : PM_ANY);
+if (((bool)$_SESSION['Items']->pos['credit_sale'] || (bool)$_SESSION['Items']->pos['cash_sale'])) {
+	$paymcat = !(bool)$_SESSION['Items']->pos['cash_sale'] ? PM_CREDIT :
+		(!(bool)$_SESSION['Items']->pos['credit_sale'] ? PM_CASH : PM_ANY);
 	label_cells(_("Payment terms:"), sale_payment_list('payment', $paymcat),
 		"class='tableheader2'", "colspan=$colspan");
 } else
@@ -478,7 +478,7 @@ if ($prepaid)
 
 if (!isset($_POST['InvoiceDate']) || !is_date(post_scalar('InvoiceDate'))) {
 	$_POST['InvoiceDate'] = new_doc_date();
-	if (!is_date_in_fiscalyear($_POST['InvoiceDate'])) {
+	if (!(bool)is_date_in_fiscalyear($_POST['InvoiceDate'])) {
 		$_POST['InvoiceDate'] = end_fiscalyear();
 	}
 }

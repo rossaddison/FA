@@ -75,11 +75,11 @@ function print_salesman_list(): void
 	$comments = $_POST['PARAM_3'];
 	$orientation = $_POST['PARAM_4'];
 	$destination = $_POST['PARAM_5'];
-	if ($destination)
+	if ((bool)$destination)
 		include_once($path_to_root . "/reporting/includes/excel_report.inc");
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
 
 	if ($summary == 0)
 		$sum = _("No");
@@ -155,7 +155,7 @@ function print_salesman_list(): void
 
 			$prov = $amt1*(float)$myrow['provision']/100 + $amt2*(float)$myrow['provision2']/100;
 		}
-		if (!$summary)
+		if (!(bool)$summary)
 		{
 			$rep->TextCol(0, 1,	$myrow['trans_no']);
 			$rep->TextCol(1, 2,	$myrow['DebtorName']);

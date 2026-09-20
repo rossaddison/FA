@@ -40,7 +40,7 @@ class sys_prefs extends stdClass
 		if (!property_exists($this, 'time_zone') or !$this->time_zone)
 			$this->time_zone = ini_get('date.timezone');
 
-		if (!$this->time_zone)
+		if (!(bool)$this->time_zone)
 			$this->time_zone = 'Europe/Berlin';
 			
 		if (!isset($this->use_popup_search))

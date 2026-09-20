@@ -70,12 +70,12 @@ function print_outstanding_GRN(): void
     $comments = $_POST['PARAM_1'];
 	$orientation = $_POST['PARAM_2'];
 	$destination = $_POST['PARAM_3'];
-	if ($destination)
+	if ((bool)$destination)
 		include_once($path_to_root . "/reporting/includes/excel_report.inc");
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
 
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
 	if ($fromsupp == ALL_TEXT)
 		$from = _('All');
 	else

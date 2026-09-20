@@ -66,9 +66,9 @@ function print_remittances(): void
 	$comments = $_POST['PARAM_4'];
 	$orientation = $_POST['PARAM_5'];
 
-	if (!$from || !$to) return;
+	if (!(bool)$from || !(bool)$to) return;
 
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
 	$dec = user_price_dec();
 
  	$fno = explode("-", $from);
@@ -99,7 +99,7 @@ function print_remittances(): void
 		foreach ($types as $j)
 		{
 			$myrow = get_remittance($j, $i);
-			if (!$myrow)
+			if (!(bool)$myrow)
 				continue;
 			if ($currency != ALL_TEXT && $myrow['curr_code'] != $currency) {
 				continue;

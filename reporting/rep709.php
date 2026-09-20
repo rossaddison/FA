@@ -97,12 +97,12 @@ function print_tax_report(): void
 	$orientation = $_POST['PARAM_4'];
 	$destination = $_POST['PARAM_5'];
 
-	if ($destination)
+	if ((bool)$destination)
 		include_once($path_to_root . "/reporting/includes/excel_report.inc");
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
 
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
 	$dec = user_price_dec();
 
 	$rep = new FrontReport(_('Tax Report'), "TaxReport", user_pagesize(), 9, $orientation);
@@ -131,7 +131,7 @@ function print_tax_report(): void
 
 	$rep->Font();
 	$rep->Info($params, $cols, $headers, $aligns);
-	if (!$summaryOnly)
+	if (!(bool)$summaryOnly)
 	{
 		$rep->NewPage();
 	}
@@ -148,7 +148,7 @@ function print_tax_report(): void
 			$trans['amount'] *= -1;
 		}
 
-		if (!$summaryOnly)
+		if (!(bool)$summaryOnly)
 		{
 			$rep->TextCol(0, 1, $systypes_array[$trans['trans_type']]);
 			if ($trans['memo'] == '')

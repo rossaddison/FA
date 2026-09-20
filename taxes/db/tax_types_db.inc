@@ -41,7 +41,7 @@ function get_all_tax_types(int|bool|array|null $all=false)
 				.TB_PREF."chart_master AS Chart1 ON tax_type.sales_gl_code = Chart1.account_code LEFT JOIN "
 				.TB_PREF."chart_master AS Chart2 ON tax_type.purchasing_gl_code = Chart2.account_code";
 
-	if (!$all) $sql .= " AND !tax_type.inactive";
+	if (!(bool)$all) $sql .= " AND !tax_type.inactive";
 	return db_query($sql, "could not get all tax types");
 }
 

@@ -152,7 +152,7 @@ function create_cart(string|int|array|null $type, string|int|array|null $trans_n
 	$cart = new items_cart($type);
     $cart->order_id = $trans_no;
 
-	if ($trans_no) {
+	if ((bool)$trans_no) {
 
 		$bank_trans = row_or_empty(db_fetch(get_bank_trans($type, $trans_no)));
 		$_POST['bank_account'] = $bank_trans["bank_act"];
@@ -184,7 +184,7 @@ function create_cart(string|int|array|null $type, string|int|array|null $trans_n
 		$result = get_gl_trans($type, $trans_no);
 		if ($result) {
 			while ($row = db_fetch($result)) {
-				if (is_bank_account($row['account'])) {
+				if ((bool)is_bank_account($row['account'])) {
 					// date exchange rate is currenly not stored in bank transaction,
 					// so we have to restore it from original gl amounts
 					$ex_rate = (float)$bank_trans['amount']/(float)$row['amount'];
@@ -202,7 +202,7 @@ function create_cart(string|int|array|null $type, string|int|array|null $trans_n
 	} else {
 		$cart->reference = $Refs->get_next($cart->trans_type, null, $cart->tran_date);
 		$cart->tran_date = new_doc_date();
-		if (!is_date_in_fiscalyear($cart->tran_date))
+		if (!(bool)is_date_in_fiscalyear($cart->tran_date))
 			$cart->tran_date = end_fiscalyear();
 	}
 
@@ -262,7 +262,7 @@ function check_trans(): int
 		set_focus('date_');
 		$input_error = 1;
 	}
-	elseif (!is_date_in_fiscalyear($_POST['date_']))
+	elseif (!(bool)is_date_in_fiscalyear($_POST['date_']))
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('date_');

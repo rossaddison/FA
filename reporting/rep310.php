@@ -110,12 +110,12 @@ function print_inventory_purchase(): void
 	$comments = $_POST['PARAM_6'];
 	$orientation = $_POST['PARAM_7'];
 	$destination = $_POST['PARAM_8'];
-	if ($destination)
+	if ((bool)$destination)
 		include_once($path_to_root . "/reporting/includes/excel_report.inc");
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
 
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
     $dec = user_price_dec();
 
 	if ($category == ALL_NUMERIC)

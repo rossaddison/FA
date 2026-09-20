@@ -54,10 +54,10 @@ function defaultCompany()
 
 	$login_timeout = $_SESSION["wa_current_user"]->last_act;
 
-	$title = $login_timeout ? _('Authorization timeout') : $SysPrefs->app_title." ".$version." - "._("Login");
+	$title = (bool)$login_timeout ? _('Authorization timeout') : $SysPrefs->app_title." ".$version." - "._("Login");
 	$encoding = isset($_SESSION['language']->encoding) ? $_SESSION['language']->encoding : "iso-8859-1";
 	$rtl = isset($_SESSION['language']->dir) ? $_SESSION['language']->dir : "ltr";
-	$onload = !$login_timeout ? "onload='defaultCompany()'" : "";
+	$onload = !(bool)$login_timeout ? "onload='defaultCompany()'" : "";
 
 	echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n";
 	echo "<html dir='$rtl' >\n";
@@ -66,7 +66,7 @@ function defaultCompany()
 	echo "<link href='$path_to_root/themes/$def_theme/default.css' rel='stylesheet' type='text/css'> \n";
  	echo "<link href='$path_to_root/themes/default/images/favicon.ico' rel='icon' type='image/x-icon'> \n";
 	send_scripts();
-	if (!$login_timeout)
+	if (!(bool)$login_timeout)
 	{
 		echo $js;
 	}
@@ -84,17 +84,17 @@ function defaultCompany()
 
 	start_row();
 	echo "<td align='center' colspan=2>";
-	if (!$login_timeout) { // FA logo
+	if (!(bool)$login_timeout) { // FA logo
     	echo "<a target='_blank' href='".$SysPrefs->power_url."'><img src='$path_to_root/themes/$def_theme/images/logo_frontaccounting.png' alt='FrontAccounting' height='50' onload='fixPNG(this)' border='0' ></a>";
 	} else { 
 		echo "<font size=5>"._('Authorization timeout')."</font>";
 	} 
 	echo "</td>\n";
 	end_row();
-	if (!$login_timeout)
+	if (!(bool)$login_timeout)
 		table_section_title(_("Version")." $version   Build ".$SysPrefs->build_version." - "._("Login"));
 
-	$value = $login_timeout ? $_SESSION['wa_current_user']->loginname : ($SysPrefs->allow_demo_mode ? "demouser":"");
+	$value = (bool)$login_timeout ? $_SESSION['wa_current_user']->loginname : ($SysPrefs->allow_demo_mode ? "demouser":"");
 
 	$allow = SECURE_ONLY !== true ? true : (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_NAME'] === "localhost";
 
@@ -106,7 +106,7 @@ function defaultCompany()
 
 		password_row(_("Password:"), 'password', $password);
 
-		if ($login_timeout) {
+		if ((bool)$login_timeout) {
 			hidden('company_login_name', user_company());
 		} else {
 			$coy =  user_company();

@@ -101,7 +101,7 @@ function display_bank_header(?items_cart &$order): void
 
 	table_section(3, "33%");
 
-	if (!$order->order_id && !get_post('bank_account'))
+	if (!(bool)$order->order_id && !get_post('bank_account'))
 	{
 		if ($_POST['PayType'] == PT_CUSTOMER)
 			$_POST['bank_account'] = get_default_customer_bank_account($_POST['person_id']);

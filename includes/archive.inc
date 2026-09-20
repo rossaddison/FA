@@ -169,11 +169,11 @@ class archive
 			$current = str_replace("\\", "/", $current);
 			$current = preg_replace("/\/+/", "/", $current);
 			$current = preg_replace("/\/$/", "", $current);
-			if (strstr($current, "*"))
+			if ((bool)strstr($current, "*"))
 			{
 				$regex = preg_replace("/([\\\^\$\.\[\]\|\(\)\?\+\{\}\/])/", "\\\\\\1", $current);
 				$regex = str_replace("*", ".*", $regex);
-				$dir = strstr($current, "/") ? substr($current, 0, strrpos($current, "/")) : ".";
+				$dir = (bool)strstr($current, "/") ? substr($current, 0, strrpos($current, "/")) : ".";
 				$temp = $this->parse_dir($dir);
 				foreach ($temp as $current2)
 					if (preg_match("/^{$regex}$/i", $current2['name']))
@@ -189,7 +189,7 @@ class archive
 			}
 			else if (@file_exists($current))
 				$files[] = array ('name' => $current, 'name2' => (string)$this->options['prepend'] .
-					preg_replace("/(\.+\/+)+/", "", ($this->options['storepaths'] == 0 && strstr($current, "/")) ?
+					preg_replace("/(\.+\/+)+/", "", ($this->options['storepaths'] == 0 && (bool)strstr($current, "/")) ?
 					substr($current, strrpos($current, "/") + 1) : $current),
 					'type' => @is_link($current) && $this->options['followlinks'] == 0 ? 2 : 0,
 					'ext' => substr($current, strrpos($current, ".")), 'stat' => stat($current));
@@ -205,7 +205,7 @@ class archive
 	{
 		if ($this->options['storepaths'] == 1 && !preg_match("/^(\.+\/*)+$/", $dirname))
 			$files = array (array ('name' => $dirname, 'name2' => (string)$this->options['prepend'] .
-				preg_replace("/(\.+\/+)+/", "", ($this->options['storepaths'] == 0 && strstr($dirname, "/")) ?
+				preg_replace("/(\.+\/+)+/", "", ($this->options['storepaths'] == 0 && (bool)strstr($dirname, "/")) ?
 				substr($dirname, strrpos($dirname, "/") + 1) : $dirname), 'type' => 5, 'stat' => stat($dirname)));
 		else
 			$files = array ();
@@ -226,7 +226,7 @@ class archive
 			}
 			else if (@file_exists($fullname))
 				$files[] = array ('name' => $fullname, 'name2' => (string)$this->options['prepend'] .
-					preg_replace("/(\.+\/+)+/", "", ($this->options['storepaths'] == 0 && strstr($fullname, "/")) ?
+					preg_replace("/(\.+\/+)+/", "", ($this->options['storepaths'] == 0 && (bool)strstr($fullname, "/")) ?
 					substr($fullname, strrpos($fullname, "/") + 1) : $fullname),
 					'type' => @is_link($fullname) && $this->options['followlinks'] == 0 ? 2 : 0,
 					'ext' => substr($file, strrpos($file, ".")), 'stat' => stat($fullname));

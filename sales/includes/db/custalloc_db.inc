@@ -89,7 +89,7 @@ function clear_cust_alloctions(string|int|float|bool|null $type, string|int|floa
 	 			so.alloc=so.alloc -  ca.amt
 			WHERE  ((ca.trans_type_from=".db_escape($type)." AND ca.trans_no_from=".db_escape($type_no).")
 				OR (ca.trans_type_to=".db_escape($type)." AND ca.trans_no_to=".db_escape($type_no)."))";
-	if ($person_id)
+	if ((bool)$person_id)
 		$sql .= " AND ca.person_id=".db_escape($person_id);
 	db_query($sql, "could not clear allocation");
 
@@ -97,7 +97,7 @@ function clear_cust_alloctions(string|int|float|bool|null $type, string|int|floa
 	$sql = "DELETE FROM ".TB_PREF."cust_allocations
 			WHERE  ((trans_type_from=".db_escape($type)." AND trans_no_from=".db_escape($type_no).")
 				OR (trans_type_to=".db_escape($type)." AND trans_no_to=".db_escape($type_no)."))";
-	if ($person_id)
+	if ((bool)$person_id)
 		$sql .= " AND person_id=".db_escape($person_id);
 
 	db_query($sql, "could not void debtor transactions for type=$type and trans_no=$type_no");
@@ -177,7 +177,7 @@ function get_allocatable_sales_orders(string|int|float|bool|null $customer_id = 
 	{
 		$sql .= " AND round(sorder.prep_amount)>0 and Total>0"; // only sales orders with prepayment level set and no yet fully invoiced
 	}
-	if ($customer_id)
+	if ((bool)$customer_id)
 		$sql .= " AND sorder.debtor_no=".db_escape($customer_id);
 
 	$sql .= " GROUP BY sorder.order_no";
@@ -215,7 +215,7 @@ function get_allocatable_to_cust_transactions(string|int|float|bool|null $custom
 	 		.TB_PREF."debtors_master as debtor
 	 WHERE
 	 	 trans.debtor_no=debtor.debtor_no";
-	if ($customer_id)
+	if ((bool)$customer_id)
 		$sql .= " AND trans.debtor_no=".db_escape($customer_id);
 
 	if ($trans_no != null and $type != null)
@@ -290,7 +290,7 @@ function get_allocatable_from_cust_transactions(string|int|float|bool|null $cust
 		$sql .= " GROUP BY type, trans_no";
 	}
 
-	if($customer_id)
+	if((bool)$customer_id)
 		$sql .= " AND trans.debtor_no=".db_escape($customer_id);
 
 	return db_query($sql." ORDER BY trans_no", "Cannot retreive alloc to transactions");
@@ -362,7 +362,7 @@ function get_sql_for_customer_allocation_inquiry(string|array|null $from, string
    	}
 
 
-   	if (!$settled)
+   	if (!(bool)$settled)
    	{
    		$sql .= " AND (ROUND(IF(trans.prep_amount,trans.prep_amount, ABS(trans.ov_amount) + trans.ov_gst + "
 		."trans.ov_freight + trans.ov_freight_tax + "

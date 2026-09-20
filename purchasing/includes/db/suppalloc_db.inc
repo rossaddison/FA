@@ -92,7 +92,7 @@ function clear_supp_alloctions(string|int|float|bool|null $type, string|int|floa
 	 			po.alloc=po.alloc -  ca.amt
 			WHERE  ((ca.trans_type_from=".db_escape($type)." AND ca.trans_no_from=".db_escape($type_no).")
 				OR (ca.trans_type_to=".db_escape($type)." AND ca.trans_no_to=".db_escape($type_no)."))";
-	if ($person_id)
+	if ((bool)$person_id)
 		$sql .= " AND ca.person_id=".db_escape($person_id);
 	db_query($sql, "could not clear allocation");
 
@@ -100,7 +100,7 @@ function clear_supp_alloctions(string|int|float|bool|null $type, string|int|floa
 	$sql = "DELETE FROM ".TB_PREF."supp_allocations
 			WHERE  ((trans_type_from=".db_escape($type)." AND trans_no_from=".db_escape($type_no).")
 				OR (trans_type_to=".db_escape($type)." AND trans_no_to=".db_escape($type_no)."))";
-	if ($person_id)
+	if ((bool)$person_id)
 		$sql .= " AND person_id=".db_escape($person_id);
 
 	db_query($sql, "could not void supp transactions for type=$type and trans_no=$type_no");
@@ -173,7 +173,7 @@ function get_allocatable_purch_orders(string|int|float|bool|null $supplier_id = 
 	{
 		$sql .= " AND ISNULL(grn.purch_order_no)"; // only sales orders no yet received
 	}
-	if ($supplier_id)
+	if ((bool)$supplier_id)
 		$sql .= " AND porder.supplier_id=".db_escape($supplier_id);
 
 	$sql .= " GROUP BY porder.order_no, grn.purch_order_no";
@@ -207,7 +207,7 @@ function get_allocatable_to_supp_transactions(string|int|float|bool|null $suppli
 	 		.TB_PREF."suppliers as supplier
 	 WHERE
 	 	 trans.supplier_id=supplier.supplier_id";
-	if ($supplier_id)
+	if ((bool)$supplier_id)
 		$sql .= " AND supplier.supplier_id=".db_escape($supplier_id);
 
 	if ($trans_no != null and $type != null)

@@ -56,7 +56,7 @@ if ($Mode == 'Delete')
 {
 	$cancel_delete = 0;
 
-	if (is_crm_category_used($selected_id))
+	if ((bool)is_crm_category_used($selected_id))
 	{
 		$cancel_delete = 1;
 		display_error(_("Cannot delete this category because there are contacts related to it."));
@@ -104,7 +104,7 @@ while ($myrow = db_fetch($result))
 	inactive_control_cell($myrow["id"], $myrow["inactive"], 'crm_categories', 'id');
 
  	edit_button_cell("Edit".(string)$myrow["id"], _("Edit"));
- 	if ($myrow["system"])
+ 	if ((bool)$myrow["system"])
 		label_cell('');
 	else
 		delete_button_cell("Delete".(string)$myrow["id"], _("Delete"));

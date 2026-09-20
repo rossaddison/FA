@@ -73,7 +73,7 @@ function get_item_categories(int|array|null $show_inactive, bool $fixed_asset=fa
 {
 	$sql = "SELECT c.*, t.name as tax_name FROM ".TB_PREF."stock_category c, "
 		.TB_PREF."item_tax_types t WHERE c.dflt_tax_type=t.id";
-	if (!$show_inactive)
+	if (!(bool)$show_inactive)
 		$sql .= " AND !c.inactive";
 	if ($fixed_asset)
 		$sql .= " AND c.dflt_mb_flag='F'";

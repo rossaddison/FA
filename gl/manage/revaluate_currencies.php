@@ -46,7 +46,7 @@ function check_data(): bool
 		set_focus('date');
 		return false;
 	}
-	if (!is_date_in_fiscalyear($_POST['date']))
+	if (!(bool)is_date_in_fiscalyear($_POST['date']))
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('date');

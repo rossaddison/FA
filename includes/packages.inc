@@ -182,7 +182,7 @@ function get_control_file(string|int|float|bool|null $file, string|bool|null $in
 				continue;
 			}
 		}
-		if ($key) { // save previous property if any
+		if ((bool)$key) { // save previous property if any
 			$pkg[$key] = ufmt_property($key, $value);
 		}
 		if (!strlen($line)) { // end of section
@@ -211,7 +211,7 @@ function get_control_file(string|int|float|bool|null $file, string|bool|null $in
 			return null;
 		}
 		
-	} while ((($line = fgets($list))!==false) || $key);
+	} while ((($line = fgets($list))!==false) || (bool)$key);
 	fclose($list);
 
 	return $index === false ? $pkg : $repo;
@@ -221,7 +221,7 @@ function get_control_file(string|int|float|bool|null $file, string|bool|null $in
 //
 function save_control_file(string|int|float|bool|null $fname, array $list, string|int|float|bool|null $zip=false): void 
 {
-	$file = $zip ?  gzopen($fname, 'wb') : fopen($fname, 'wb');
+	$file = (bool)$zip ?  gzopen($fname, 'wb') : fopen($fname, 'wb');
 	foreach($list as $section) {
 		foreach($section as $key => $value) {
 			if (is_array($value)) { // multiline value
@@ -241,11 +241,11 @@ function save_control_file(string|int|float|bool|null $fname, array $list, strin
 				// array elements on subsequent lines starting with white space
 				$value = implode("\n ", $value);
 			}
-			$zip ? gzwrite($file, "$key: $value\n") : fwrite($file, "$key: $value\n");
+			(bool)$zip ? gzwrite($file, "$key: $value\n") : fwrite($file, "$key: $value\n");
 		}
-		$zip ? gzwrite($file, "\n"): fwrite($file, "\n");
+		(bool)$zip ? gzwrite($file, "\n"): fwrite($file, "\n");
 	}
-	$zip ? gzclose($file) : fclose($file);
+	(bool)$zip ? gzclose($file) : fclose($file);
 }
 //
 //	Retrieve text field in localized version or default one 
@@ -254,7 +254,7 @@ function save_control_file(string|int|float|bool|null $fname, array $list, strin
 function pkg_prop(string|int|float|bool|null $pkg, string|int|float|bool|null $property, string|int|float|bool|null $lang=false) 
 {
 	
-	if ($lang && isset($pkg[$property.'-'.user_language()]))
+	if ((bool)$lang && isset($pkg[$property.'-'.user_language()]))
 		$prop = @$pkg[$pname];
 	else
 		$prop = @$pkg[$property];
@@ -328,7 +328,7 @@ function get_pkg_or_list(string|int|float|bool|array|null $type = null, string|i
 	// then complete package list or seek for pkg
 	$Packages = array();
 	foreach($Release as $fname => $parms) {
-		if ($type && !count(array_intersect(explode(' ', $parms['Type']), $type))) {
+		if ((bool)$type && !count(array_intersect(explode(' ', $parms['Type']), $type))) {
 			unset($Release[$fname]); continue; // no packages of selected type in this index
 		}
 		if ($Release[$fname]['Version'] != $repo_auth['branch']) {
@@ -376,7 +376,7 @@ function get_pkg_or_list(string|int|float|bool|array|null $type = null, string|i
 					}
 				}
 				if ($pkgname == null) {
-					$Packages[$outkey ? $outkey : $name] = $p;
+					$Packages[(bool)$outkey ? $outkey : $name] = $p;
 				} elseif ($pkgname == $pkg['Package']) {
 					//download package to temp directory
 					if ($download) {
@@ -429,7 +429,7 @@ function installed_package(string|int|float|bool|null $package): string|null
 function uninstall_package(string|int|float|bool|null $name): bool
 {
 	$name = installed_package($name);
-	if (!$name) return true; // not installed
+	if (!(bool)$name) return true; // not installed
 	$pkg = new package($name.'.pkg');
 	$pkg->uninstall();
 	if($name) {
@@ -476,7 +476,7 @@ function get_languages_list()
 		else
 			$pkgs[$l['package']] = array_merge($pkgs[$l['package']], $l);
 	}
-	if ($pkgs)
+	if ((bool)$pkgs)
 		ksort($pkgs);
 	return $pkgs;
 }
@@ -540,7 +540,7 @@ function get_extensions_list(?string $type = null)
 //		else
 			$pkgs[$ext['package']] = array_merge($pkgs[$ext['package']], $ext);
 	}
-	if ($pkgs)
+	if ((bool)$pkgs)
 		ksort($pkgs);
 	return $pkgs;
 }
@@ -568,7 +568,7 @@ function get_themes_list()
 		}
 	}
 	// TODO: Add other themes from themes directory
-	if ($pkgs)
+	if ((bool)$pkgs)
 		ksort($pkgs);
 	return $pkgs;
 }
@@ -602,7 +602,7 @@ function get_charts_list()
 		else
 			$pkgs[$ext['package']] = array_merge($pkgs[$ext['package']], $ext);
 	}
-	if ($pkgs)
+	if ((bool)$pkgs)
 		ksort($pkgs);
 	return $pkgs;
 }

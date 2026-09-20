@@ -62,11 +62,11 @@ function print_GL_transactions(): void
 		$orientation = $_POST['PARAM_5'];
 		$destination = $_POST['PARAM_6'];
 	}
-	if ($destination)
+	if ((bool)$destination)
 		include_once($path_to_root . "/reporting/includes/excel_report.inc");
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
 
 	$rep = new FrontReport(_('GL Account Transactions'), "GLAccountTransactions", user_pagesize(), 9, $orientation);
 	$dec = user_price_dec();

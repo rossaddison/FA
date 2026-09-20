@@ -145,8 +145,8 @@ if (get_post('creat')) {
 };
 
 if (get_post('restore')) {
-	if ($backup_name) {
-		if (db_import($backup_path, $conn, true, false, check_value('protect')))
+	if ((bool)$backup_name) {
+		if ((bool)db_import($backup_path, $conn, true, false, check_value('protect')))
 			display_notification(_("Restore backup completed."));
 		$SysPrefs->refresh(); // re-read system setup
 	} else
@@ -154,7 +154,7 @@ if (get_post('restore')) {
 }
 
 if (get_post('deldump')) {
-	if ($backup_name) {
+	if ((bool)$backup_name) {
 		if (unlink($backup_path)) {
 			display_notification(_("File successfully deleted.")." "
 					. _("Filename") . ": " . $backup_name);

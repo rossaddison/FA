@@ -36,7 +36,7 @@ function add_work_order_issue(string|int|float|bool|null $woid, string|array|nul
 
 	foreach ($items as $item)
 	{
-		if ($to_work_order)	// otherwise it is material return to inventory
+		if ((bool)$to_work_order)	// otherwise it is material return to inventory
 			$item->quantity = -$item->quantity;
 
 		$unit_cost = get_unit_cost($item->stock_id);
@@ -73,7 +73,7 @@ function add_work_order_issue(string|int|float|bool|null $woid, string|array|nul
     add_gl_trans_std_cost(ST_MANUISSUE, $number, $date_, $wip_account,
         0, 0, $date_.": "._("Issue to")." ".(string)$stockitem["description"], -$total_cost);
 
-	if ($memo_)
+	if ((bool)$memo_)
 		add_comments(ST_MANUISSUE, $number, $date_, $memo_);
 
 	$Refs->save(ST_MANUISSUE, $number, $ref);

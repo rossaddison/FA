@@ -42,9 +42,9 @@ function print_sales_quotations(): void
 	$comments = $_POST['PARAM_4'];
 	$orientation = $_POST['PARAM_5'];
 
-	if (!$from || !$to) return;
+	if (!(bool)$from || !(bool)$to) return;
 
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
 	$dec = user_price_dec();
 
 	$pictures = $SysPrefs->print_item_images_on_quote();
@@ -178,7 +178,7 @@ function print_sales_quotations(): void
 
 			$tax_type_name = $tax_item['tax_type_name'];
 
-			if ($myrow['tax_included'])
+			if ((bool)$myrow['tax_included'])
 			{
 				if ($SysPrefs->alternative_tax_include_on_docs() == 1)
 				{

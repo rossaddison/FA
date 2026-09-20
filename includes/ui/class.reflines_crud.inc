@@ -53,10 +53,10 @@ class fa_reflines extends simple_crud_view {
 			label_cell($systypes_array[$rec['trans_type']]);
 			label_cell($rec['prefix']);
 			label_cell($rec['pattern']);
-			label_cell($rec['default'] ? _("Yes") : _("No"));
+			label_cell((bool)$rec['default'] ? _("Yes") : _("No"));
 			label_cell($rec['description']);
 
-			if (check_value('show_inactive') && $rec['default'])
+			if (check_value('show_inactive') && (bool)$rec['default'])
 				label_cell('');
 			else
 				inactive_control_cell($rec["id"], $rec["inactive"], 'reflines', 'id');

@@ -139,9 +139,9 @@ class attachments extends simple_crud {
 		label_row(_($id_word), post_scalar('trans_no'));	
 		date_row(_("Date"), 'tran_date');
 		text_row_ex(_("Doc Title").':', 'description', 60, 60);
-		if ($this->selected_id)
+		if ((bool)$this->selected_id)
 			label_row(_("File:"), sprintf(_("%s [%s bytes]"), $row['filename'], $row['filesize']));
-		file_row( ($this->selected_id ? _("File change") : _("Select file")) . ":", 'file_attachment_name', 'file_attachment_name');
+		file_row( ((bool)$this->selected_id ? _("File change") : _("Select file")) . ":", 'file_attachment_name', 'file_attachment_name');
 		hidden('type_no', get_scalar('type_no'));
 		end_outer_table(1);	
 		div_end();

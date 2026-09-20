@@ -110,7 +110,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 		commit_transaction();
 		display_notification($note);
 
-		if (@$_REQUEST['popup']) {
+		if ((bool)(@$_REQUEST['popup'])) {
 			set_focus("Select".($_POST['branch_code'] == -1 ? $selected_id: $_POST['branch_code']));
 		}
 	}
@@ -295,7 +295,7 @@ $cols = array(
 		array('insert'=>true, 'fun'=>'del_link')
 	);
 
-	if (!@$_REQUEST['popup']) {
+	if (!(bool)(@$_REQUEST['popup'])) {
 		$cols[' '] = 'skip';
 	}
 $table =& new_db_pager('branch_tbl', $sql, $cols, 'cust_branch');

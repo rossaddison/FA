@@ -281,7 +281,7 @@ class JsHttpRequest
             (isset($_COOKIE)? $_COOKIE : array()) + 
             (isset($_POST)? $_POST : array()) + 
             (isset($_GET)? $_GET : array());
-        if (ini_get('register_globals')) {
+        if ((bool)ini_get('register_globals')) {
             // TODO?
         }
     }
@@ -297,11 +297,11 @@ class JsHttpRequest
         
         // Check for error & fetch a resulting data.
         $wasFatalError = false;
-        if (preg_match_all("/{$this->_uniqHash}(.*?){$this->_uniqHash}/sx", $text, $m)) {
+        if ((bool)preg_match_all("/{$this->_uniqHash}(.*?){$this->_uniqHash}/sx", $text, $m)) {
             // Display_errors:
             // 1. disabled manually after the library initialization, or
             // 2. was initially disabled and is not changed
-            $needRemoveErrorMessages = !ini_get('display_errors') || (!$this->_prevDisplayErrors && ini_get('display_errors') == $this->_magic);
+            $needRemoveErrorMessages = !(bool)ini_get('display_errors') || (!$this->_prevDisplayErrors && ini_get('display_errors') == $this->_magic);
             foreach ($m[0] as $error) {
                 if (preg_match('/\bFatal error(<.*?>)?:/i', $error)) {
                     $wasFatalError = true;

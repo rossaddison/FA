@@ -75,7 +75,7 @@ $opts = array(		// default options
 	// select content filtered by search field:
 	$search_submit = $opts['search_submit']===true ? '_'.$name.'_button' : $opts['search_submit'];
 	// select set by select content field
-	$search_button = $opts['editable'] ? '_'.$name.'_button' : ($search_box ? $search_submit : false);
+	$search_button = (bool)$opts['editable'] ? '_'.$name.'_button' : ((bool)$search_box ? $search_submit : false);
 
 	$select_submit =  $opts['select_submit'];
 	$spec_id = $opts['spec_id'];
@@ -91,7 +91,7 @@ $opts = array(		// default options
 		$class = 'combo3';
 	}
 
-	$disabled = $opts['disabled'] ? "disabled" : '';
+	$disabled = (bool)$opts['disabled'] ? "disabled" : '';
 	$multi = $opts['multi'];
 	
 	if(!count($opts['search'])) {
@@ -102,7 +102,7 @@ $opts = array(		// default options
 			'' : _('Press Space tab for search pattern entry');
 
 	if ($opts['box_hint'] === null)
-		$opts['box_hint'] = $search_box && $search_submit != false ?
+		$opts['box_hint'] = (bool)$search_box && $search_submit != false ?
 			($by_id ? _('Enter code fragment to search or * for all')
 			: _('Enter description fragment to search or * for all')) :'';
 
@@ -118,13 +118,13 @@ $opts = array(		// default options
 	if (isset($_POST['_'.$name.'_update'])) { // select list or search box change
 		if ($by_id) $txt = $_POST[$name];
 
-		if (!$opts['async'])
+		if (!(bool)$opts['async'])
 			$Ajax->activate('_page_body');
 		else
 			$Ajax->activate($name);
 	}
 	if (isset($_POST[$search_button])) {
-		if (!$opts['async'])
+		if (!(bool)$opts['async'])
 			$Ajax->activate('_page_body');
 		else
 			$Ajax->activate($name);
@@ -133,10 +133,10 @@ $opts = array(		// default options
 		// search related sql modifications
 
 		$rel = "rel='$search_box'"; // set relation to list
-		if ($opts['search_submit']) {
+		if ((bool)$opts['search_submit']) {
 			if (isset($_POST[$search_button])) {
 				$selected_id = array(); // ignore selected_id while search
-				if (!$opts['async'])
+				if (!(bool)$opts['async'])
 					$Ajax->activate('_page_body');
 				else
 					$Ajax->activate($name);
@@ -163,7 +163,7 @@ $opts = array(		// default options
 		$where = strpos($sql, 'WHERE')==false ? ' WHERE ':' AND ';
 		$where .= '('. implode(' AND ', $opts['where']) . ')';
 		$group_pos = strpos($sql, 'GROUP BY');
-		if ($group_pos) {
+		if ((bool)$group_pos) {
 			$group = substr($sql, $group_pos);
 			$sql = substr($sql, 0, $group_pos) . $where.' '.$group;
 		} else {
@@ -199,17 +199,17 @@ $opts = array(		// default options
  		 	if (in_array((string)$value, $selected_id, true)) {
 				$sel = 'selected';
 				$found = $value;
-				$edit = $opts['editable'] && $contact_row['editable'] 
+				$edit = (bool)$opts['editable'] && (bool)$contact_row['editable'] 
 					&& (@$_POST[$search_box] == $value)
 					? $contact_row[1] : false; // get non-formatted description
-				if ($edit)
+				if ((bool)$edit)
 					break;	// selected field is editable - abandon list construction
 			}
 			// show selected option even if inactive 
-			if (!$opts['show_inactive'] && @$contact_row['inactive'] && $sel==='') {
+			if (!(bool)$opts['show_inactive'] && (bool)(@$contact_row['inactive']) && $sel==='') {
 				continue;
 			} else 
-				$optclass = @$contact_row['inactive'] ? "class='inactive'" : '';
+				$optclass = (bool)(@$contact_row['inactive']) ? "class='inactive'" : '';
 
 			if ($first_id === false) {
 				$first_id = $value;
@@ -243,30 +243,30 @@ $opts = array(		// default options
 		$selected_id = array($first_id);
 	}
 	
-	$_POST[$name] = $multi ? $selected_id : $selected_id[0];
+	$_POST[$name] = (bool)$multi ? $selected_id : $selected_id[0];
 
 	if ($SysPrefs->use_popup_search)
-		$selector = "<select id='$name' autocomplete='off' ".($multi ? "multiple" : '')
+		$selector = "<select id='$name' autocomplete='off' ".((bool)$multi ? "multiple" : '')
 		. ($opts['height']!==false ? ' size="'.(string)$opts['height'].'"' : '')
-		. "$disabled name='$name".($multi ? '[]':'')."' class='$class' title='"
+		. "$disabled name='$name".((bool)$multi ? '[]':'')."' class='$class' title='"
 		. (string)$opts['sel_hint']."' $rel>".$selector."</select>\n";
 	else
-		$selector = "<select autocomplete='off' ".($multi ? "multiple" : '')
+		$selector = "<select autocomplete='off' ".((bool)$multi ? "multiple" : '')
 		. ($opts['height']!==false ? ' size="'.(string)$opts['height'].'"' : '')
-		. "$disabled name='$name".($multi ? '[]':'')."' class='$class' title='"
+		. "$disabled name='$name".((bool)$multi ? '[]':'')."' class='$class' title='"
 		. (string)$opts['sel_hint']."' $rel>".$selector."</select>\n";
-	if ($by_id && ($search_box != false || $opts['editable']) ) {
+	if ($by_id && ($search_box != false || (bool)$opts['editable']) ) {
 		// on first display show selector list
-		if (isset($_POST[$search_box]) && $opts['editable'] && $edit) {
+		if (isset($_POST[$search_box]) && (bool)$opts['editable'] && (bool)$edit) {
 			$selector = "<input type='hidden' name='$name' value='".$_POST[$name]."'>"
 			."<input type='text' $disabled name='{$name}_text' id='{$name}_text' size='".
 				(string)$opts['editable']."' maxlength='".(string)$opts['max']."' $rel value='$edit'>\n";
 				set_focus($name.'_text'); // prevent lost focus
-		} else if (get_post($search_submit ? $search_submit : "_{$name}_button"))
+		} else if (get_post((bool)$search_submit ? $search_submit : "_{$name}_button"))
 			set_focus($name); // prevent lost focus
-		if (!$opts['editable'])
+		if (!(bool)$opts['editable'])
 	 		$txt = $found;
-		$Ajax->addUpdate($name, $search_box, $txt ? $txt : '');
+		$Ajax->addUpdate($name, $search_box, (bool)$txt ? $txt : '');
 	}
 
 	$Ajax->addUpdate($name, "_{$name}_sel", $selector);
@@ -275,7 +275,7 @@ $opts = array(		// default options
 	$selector = "<span id='_{$name}_sel'>".$selector."</span>\n";
 
 	 // if selectable or editable list is used - add select button
-	if ($select_submit != false || $search_button) {
+	if ($select_submit != false || (bool)$search_button) {
 	// button class selects form reload/ajax selector update
 		$selector .= sprintf(SELECT_BUTTON, $disabled, user_theme(),
 			(fallback_mode() ? '' : 'display:none;'),
@@ -290,10 +290,10 @@ $opts = array(		// default options
 			.(string)$opts['box_hint']."'"
 			.(!fallback_mode() && !$by_id ? " style=display:none;":'')
 			.">\n";
-		if ($search_submit != false || $opts['editable']) {
+		if ($search_submit != false || (bool)$opts['editable']) {
 			$edit_entry .= sprintf(SEARCH_BUTTON, $disabled, user_theme(),
 				(fallback_mode() ? '' : 'display:none;'),
-				$search_submit ? $search_submit : "_{$name}_button")."\n";
+				(bool)$search_submit ? $search_submit : "_{$name}_button")."\n";
 		}
 	}
 	default_focus(($search_box && $by_id) ? $search_box : $name);
@@ -366,10 +366,10 @@ $opts = array(		// default options
   		}
 	}
 
-	if ($opts['editlink'])
+	if ((bool)$opts['editlink'])
 		$selector .= ' '.(string)$opts['editlink'];
 
-	if ($search_box && $opts['cells'])
+	if ($search_box && (bool)$opts['cells'])
 		$str = ($edit_entry!='' ? "<td>$edit_entry</td>" : '')."<td nowrap>$selector$img</td>";
 	else
 		$str = $edit_entry.$selector.$img;
@@ -411,7 +411,7 @@ $opts = array(		// default options
 	$select_submit =  $opts['select_submit'];
 	$spec_id = $opts['spec_id'];
 	$spec_option = $opts['spec_option'];
-	$disabled = $opts['disabled'] ? "disabled" : '';
+	$disabled = (bool)$opts['disabled'] ? "disabled" : '';
 	$multi = $opts['multi'];
 
 	if ($selected_id == null) {
@@ -421,7 +421,7 @@ $opts = array(		// default options
 		$selected_id = array((string)$selected_id); // code is generalized for multiple selection support
 
 	if (isset($_POST[ '_'.$name.'_update'])) {
-		if (!$opts['async'])
+		if (!(bool)$opts['async'])
 			$Ajax->activate('_page_body');
 		else
 			$Ajax->activate($name);
@@ -459,11 +459,11 @@ $opts = array(		// default options
 	if ($found===false) {
 		$selected_id = array($first_id);
 	}
-	$_POST[$name] = $multi ? $selected_id : $selected_id[0];
+	$_POST[$name] = (bool)$multi ? $selected_id : $selected_id[0];
 
-	$selector = "<select autocomplete='off' ".($multi  ? "multiple" : '')
+	$selector = "<select autocomplete='off' ".((bool)$multi  ? "multiple" : '')
 		. ($opts['height']!==false ? ' size="'.(string)$opts['height'].'"' : '')
-		. "$disabled name='$name".($multi ? '[]' : '')."' class='combo' title='"
+		. "$disabled name='$name".((bool)$multi ? '[]' : '')."' class='combo' title='"
 		. (string)$opts['sel_hint']."'>".$selector."</select>\n";
 
 	$Ajax->addUpdate($name, "_{$name}_sel", $selector);
@@ -496,7 +496,7 @@ function _format_add_curr(array|false|null $row, string|int|float|bool|null $pna
 	{
 		$company_currency = get_company_currency();
 	}
-	if (!$pname)
+	if (!(bool)$pname)
 	{
 		return $row[1] . ($row[2] == $company_currency ? '' : ("&nbsp;-&nbsp;" . $row[2]));
 	}		
@@ -763,7 +763,7 @@ function fiscalyears_list(string|int|float|bool|null $name, string|int|float|boo
 function _format_fiscalyears(array|false|null $row): string
 {
 	return sql2date($row[1]) . "&nbsp;-&nbsp;" . sql2date($row[2])
-	. "&nbsp;&nbsp;" . ($row[3] ? _('Closed') : _('Active'));
+	. "&nbsp;&nbsp;" . ((bool)$row[3] ? _('Closed') : _('Active'));
 }
 
 function fiscalyears_list_cells(string|int|float|bool|null $label, ?string $name, string|int|float|bool|array|null $selected_id=null): void
@@ -790,15 +790,15 @@ function dimensions_list(string|int|float|bool|null $name, string|int|float|bool
 
 	$options = array(
 		'order' => 'reference',
-		'spec_option'=>$no_option ? $showname : false,
+		'spec_option'=>(bool)$no_option ? $showname : false,
 		'spec_id' => 0,
 		'select_submit'=> $submit_on_change,
 		'async' => false,
 	);
 
-	if (!$showclosed)
+	if (!(bool)$showclosed)
 		$options['where'][] = "closed=0";
-	if($showtype)
+	if((bool)$showtype)
 		$options['where'][] = "type_=".db_escape($showtype);
 
 	return combo_input($name, $selected_id, $sql, 'id', 'ref', $options);
@@ -836,7 +836,7 @@ function stock_items_list(string|int|float|bool|null $name, string|int|float|boo
 	else
 		$sql .= " AND mb_flag!='F'";
 
-	if ($editkey)
+	if ((bool)$editkey)
 		set_editor('item', $name, $editkey);
 
 	$ret = combo_input($name, $selected_id, $sql, 'stock_id', 's.description',
@@ -852,7 +852,7 @@ function stock_items_list(string|int|float|bool|null $name, string|int|float|boo
 			'select_submit'=> $submit_on_change,
 			'category' => 2,
 			'order' => array('c.description','stock_id'),
-			'editlink' => $editkey ? add_edit_combo('item') : false,
+			'editlink' => (bool)$editkey ? add_edit_combo('item') : false,
 			'editable' => false,
 			'max' => 255
 		  ), $opts), $type );
@@ -1720,7 +1720,7 @@ function class_list_row(?string $label, ?string $name, string|int|float|bool|arr
 function stock_categories_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $spec_opt=false, string|int|float|bool|null $submit_on_change=false, string|int|float|bool|null $fixed_asset=false)
 {
 	$where_opts = array();
-	if ($fixed_asset)
+	if ((bool)$fixed_asset)
 		$where_opts[0] = "dflt_mb_flag='F'";
 	else
 		$where_opts[0] = "dflt_mb_flag!='F'";
@@ -1830,7 +1830,7 @@ function gl_all_accounts_list(string|int|float|bool|null $name, string|int|float
 		$sql = "SELECT chart.account_code, chart.account_name, type.name, chart.inactive, type.id
 			FROM ".TB_PREF."chart_master chart,".TB_PREF."chart_types type
 			WHERE chart.account_type=type.id";
-	if ($type_id ) $sql .= " AND chart.account_type=".db_escape($type_id);
+	if ((bool)$type_id ) $sql .= " AND chart.account_type=".db_escape($type_id);
 	$account = ($skip_bank_accounts ? "account2" : "account");
 	return combo_input($name, $selected_id, $sql, 'chart.account_code', 'chart.account_name',
 		array(
@@ -1912,7 +1912,7 @@ function languages_list(string|int|float|bool|null $name, string|int|float|bool|
 	global $installed_languages;
 
 	$items = array();
-	if ($all_option)
+	if ((bool)$all_option)
 		$items[''] = $all_option;
 	foreach ($installed_languages as $lang)
 			$items[$lang['code']] = $lang['name'];
@@ -2497,13 +2497,13 @@ function crm_category_types_list(string|int|float|bool|null $name, string|int|fl
 	$multi = false;
 	$groups = false;
 	$where = array();
-	if (@$filter['class']) {
+	if ((bool)(@$filter['class'])) {
 		$where[] = 'type='.db_escape($filter['class']);
 	} else
 		$groups = 'type';
-	if (@$filter['subclass']) $where[] = 'action='.db_escape($filter['subclass']);
-	if (@$filter['entity']) $where[] = 'entity_id='.db_escape($filter['entity']);
-	if (@$filter['multi']) { // contact category selector for person
+	if ((bool)(@$filter['subclass'])) $where[] = 'action='.db_escape($filter['subclass']);
+	if ((bool)(@$filter['entity'])) $where[] = 'entity_id='.db_escape($filter['entity']);
+	if ((bool)(@$filter['multi'])) { // contact category selector for person
 		$multi = true;
 	}
 
@@ -2647,7 +2647,7 @@ function subledger_list(string|int|float|bool|null $name, string|int|float|bool|
 {
 
 	$type = is_subledger_account($account);
-	if (!$type)
+	if (!(bool)$type)
 		return '';
 
 	if($type > 0)

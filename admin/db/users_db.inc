@@ -87,7 +87,7 @@ function get_users(int|bool|array|null $all=false)
 {
 	$sql = "SELECT u.*, r.role FROM ".TB_PREF."users u, ".TB_PREF."security_roles r
 		WHERE u.role_id=r.id";
-	if (!$all) $sql .= " AND !u.inactive";
+	if (!(bool)$all) $sql .= " AND !u.inactive";
 	
 	return db_query($sql, "could not get users");
 }

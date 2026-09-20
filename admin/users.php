@@ -33,7 +33,7 @@ function can_process(string|int|float|bool|array|null $new): bool
 		return false;
 	}
 
-	if (!$new && ($_POST['password'] != ""))
+	if (!(bool)$new && ($_POST['password'] != ""))
 	{
     	if (strlen($_POST['password']) < 4)
     	{
@@ -94,7 +94,7 @@ if (($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') && check_csrf_token())
 if ($Mode == 'Delete' && check_csrf_token())
 {
 	$cancel_delete = 0;
-    if (key_in_foreign_table($selected_id, 'audit_trail', 'user'))
+    if ((bool)key_in_foreign_table($selected_id, 'audit_trail', 'user'))
     {
         $cancel_delete = 1;
         display_error(_("Cannot delete this user because entries are associated with this user."));

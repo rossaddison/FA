@@ -63,7 +63,7 @@ function copy_to_trans(?supp_trans &$supp_trans): void
 	{
 		foreach ( $supp_trans->gl_codes as $gl_line)
 		{
-			if (!is_tax_account($gl_line->gl_code) || $supp_trans->tax_included)
+			if (!(bool)is_tax_account($gl_line->gl_code) || (bool)$supp_trans->tax_included)
 				$supp_trans->ov_amount += $gl_line->amount;
 		}
 	}
@@ -83,7 +83,7 @@ function invoice_header(?supp_trans &$supp_trans): void
 
 	table_section(1);
 
-	if ($supp_trans->trans_type == ST_SUPPCREDIT && $supp_trans->src_docs)
+	if ($supp_trans->trans_type == ST_SUPPCREDIT && (bool)$supp_trans->src_docs)
 	{
 		$_POST['supplier_id'] = $supp_trans->supplier_id;
 		$supp = $supp_trans->supplier_name." - ".$supp_trans->currency;
@@ -94,11 +94,11 @@ function invoice_header(?supp_trans &$supp_trans): void
     	if (!isset($_POST['supplier_id']) && (get_global_supplier() != ALL_TEXT))
     		$_POST['supplier_id'] = get_global_supplier();
 
-		if (!$supp_trans->trans_no)
+		if (!(bool)$supp_trans->trans_no)
 			supplier_list_row(_("Supplier:"), 'supplier_id', $_POST['supplier_id'], false, true);
 		else
 			label_row(_("Supplier:"), $supp_trans->supplier_name
-			.($supp_trans->currency ? ' - '.$supp_trans->currency  : '')
+			.((bool)$supp_trans->currency ? ' - '.$supp_trans->currency  : '')
 			.hidden('supplier_id', post_scalar('supplier_id'), false));
 	}
 	if ($supp_trans->supplier_id != $_POST['supplier_id'])
@@ -321,7 +321,7 @@ function display_gl_items(supp_trans &$supp_trans, string|int|float|bool|items_c
 			}	
 			end_row();
 			if ($mode > 1) {
-				if ($supp_trans->tax_included || !is_tax_account($entered_gl_code->gl_code))
+				if ((bool)$supp_trans->tax_included || !(bool)is_tax_account($entered_gl_code->gl_code))
 					$total_gl_value += $entered_gl_code->amount;
 			}		
 			else	
@@ -503,7 +503,7 @@ function display_grn_items(supp_trans &$supp_trans, ?int $mode=0): int|float
 	{
     	$th = array(_("Delivery"), _("P.O."), _("Item"), _("Description"),
     		_("Received On"), _("Quantity Received"), _("Quantity Invoiced"),
-    		_("Qty Yet To Invoice"), $supp_trans->tax_included ? _("Price after Tax") : _("Price before Tax"), 
+    		_("Qty Yet To Invoice"), (bool)$supp_trans->tax_included ? _("Price after Tax") : _("Price before Tax"), 
     		_("Total"), "");
     	if (($supp_trans->trans_type == ST_SUPPINVOICE) && $_SESSION["wa_current_user"]->can_access('SA_GRNDELETE'))	// Added 2008-10-18 by Joe Hunt. Only admins can remove GRNs
     		$th[] = "";

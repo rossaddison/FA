@@ -61,7 +61,7 @@ end_table();
 
 function journal_pos(array|false|null $row)
 {
-	return $row['gl_seq'] ? $row['gl_seq'] : '-';
+	return (bool)$row['gl_seq'] ? $row['gl_seq'] : '-';
 }
 
 function systype_name(string|int|float|bool|array|null $dummy, string|int|float|bool|null $type)

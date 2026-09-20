@@ -122,7 +122,7 @@ if (get_post('addupdate'))
 
 if (get_post('delete'))
 {
-	if (check_role_used(get_post('role'))) {
+	if ((bool)check_role_used(get_post('role'))) {
 		display_error(_("This role is currently assigned to some users and cannot be deleted"));
  	} else {
 		delete_security_role(get_post('role'));
@@ -183,7 +183,7 @@ if (get_post('_show_inactive_update')) {
 	$Ajax->activate('role');
 	set_focus('role');
 }
-if (find_submit('_Section')) {
+if ((bool)find_submit('_Section')) {
 	$Ajax->activate('details');
 }
 //-----------------------------------------------------------------------------------------------

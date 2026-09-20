@@ -23,7 +23,7 @@ define('EXPORT_MAX_INSERT', 50000);
 function array_natsort(array $aryData, ?string $strIndex, ?string $strSortBy, bool $strSortType=false)
 {
    //    if the parameters are invalid
-   if (!is_array($aryData) || !$strSortBy)
+   if (!is_array($aryData) || !(bool)$strSortBy)
        //    return the array
        return $aryData;
 
@@ -33,7 +33,7 @@ function array_natsort(array $aryData, ?string $strIndex, ?string $strSortBy, bo
    //    loop through the array
    foreach ($aryData as $key => $aryRow)
        //    set up the value in the array
-       $arySort[$strIndex ? $aryRow[$strIndex] : $key] = $aryRow[$strSortBy];
+       $arySort[(bool)$strIndex ? $aryRow[$strIndex] : $key] = $aryRow[$strSortBy];
 
    //    apply the natural sort
    natsort($arySort);
@@ -45,7 +45,7 @@ function array_natsort(array $aryData, ?string $strIndex, ?string $strSortBy, bo
 
    //    loop through the sorted and original data
 		foreach ($arySort as $arySortKey => $arySorted)
-			if($strIndex) 
+			if((bool)$strIndex) 
 			{
 				foreach ($aryData as $aryOriginal)
 				// if the key matches
@@ -99,7 +99,7 @@ function write_config_db(bool $new = false): int
 		}
 		else
 		{
-			if (!fwrite($zp, $msg))
+			if (!(bool)fwrite($zp, $msg))
 			{
 				fclose($zp);
 				return -2;
@@ -157,7 +157,7 @@ function write_extensions(?array $extensions=null, string|int|float|bool|array|n
 	}
 	else
 	{
-		if (!fwrite($zp, $msg))
+		if (!(bool)fwrite($zp, $msg))
 		{
 			display_error(sprintf(_("Cannot write to the extensions setup file '%s'."),
 				$filename));
@@ -237,7 +237,7 @@ function write_lang(): bool
 		}
 		else
 		{
-			if (!fwrite($zp, $msg))
+			if (!(bool)fwrite($zp, $msg))
 			{
 				display_error(_("Cannot write to the language file - ") . $filename);
 				fclose($zp);
@@ -319,10 +319,10 @@ function db_import(string|int|float|bool|null $filename, mixed $connection, stri
 	$check_line_len = false;
 
 	// uncompress gziped backup files
-	if (strpos($filename, ".gz") || strpos($filename, ".GZ"))
+	if ((bool)strpos($filename, ".gz") || (bool)strpos($filename, ".GZ"))
 	{	$lines = db_ungzip("lines", $filename);
 		$check_line_len = true;
-	} elseif (strpos($filename, ".zip") || strpos($filename, ".ZIP"))
+	} elseif ((bool)strpos($filename, ".zip") || (bool)strpos($filename, ".ZIP"))
 		$lines = db_unzip("lines", $filename);
 	else
 		$lines = file("". $filename);
@@ -336,7 +336,7 @@ function db_import(string|int|float|bool|null $filename, mixed $connection, stri
 		$gzfile_bug = $check_line_len && (strlen($line) == 8190); // there is a bug in php (at least 4.1.1-5.5.9) gzfile which limits line length to 8190 bytes!
 
 		$line = trim($line);
-		if ($init)
+		if ((bool)$init)
 			$line = str_replace("0_", $connection["tbpref"], $line);
 
 		if ($query_table == '') 
@@ -351,7 +351,7 @@ function db_import(string|int|float|bool|null $filename, mixed $connection, stri
 					}
 					$query_table = $table;
 					$skip = false;
-					if ($protect)
+					if ((bool)$protect)
 					{
 						foreach($protected as $protbl)
 							if (strpos($line, (string)$connection["tbpref"].$protbl) !== false)
@@ -384,7 +384,7 @@ function db_import(string|int|float|bool|null $filename, mixed $connection, stri
 	// otherwise text encoding can be broken during import
 	//
 	$encoding = 'utf8'; // UI encoding for default site language is the default
-	$new_db = $init || db_fixed();
+	$new_db = (bool)$init || db_fixed();
 	$new_file = count($set_names);
 	if ($new_db)
 	{
@@ -403,7 +403,7 @@ function db_import(string|int|float|bool|null $filename, mixed $connection, stri
 		if ($new_file) // import on old db is forbidden: this would destroy db content unless latin1 was used before in UI
 		{
 			$msg = _("This is new format backup file which cannot be restored on database not migrated to utf8.");
-			if ($return_errors)
+			if ((bool)$return_errors)
 				return $msg;
 			else
 				display_error($msg);
@@ -425,7 +425,7 @@ function db_import(string|int|float|bool|null $filename, mixed $connection, stri
 	fclose($f);
 	}
 /*/
-	if ($return_errors)
+	if ((bool)$return_errors)
 	{	// prevent errors display
 		$save_debug = $SysPrefs->go_debug;
 		$SysPrefs->go_debug = 0;
@@ -437,7 +437,7 @@ function db_import(string|int|float|bool|null $filename, mixed $connection, stri
 		{
 			if (!db_query($drop_query[0]))
 			{
-				if (!in_array(db_error_no(), $ignored_mysql_errors) || !$force)
+				if (!in_array(db_error_no(), $ignored_mysql_errors) || !(bool)$force)
 					$sql_errors[] = array(db_error_msg($db), $drop_query[1]);
 			}
 		}
@@ -450,7 +450,7 @@ function db_import(string|int|float|bool|null $filename, mixed $connection, stri
 		{
 			if (!db_query($table_query[0]))
 			{	
-				if (!in_array(db_error_no(), $ignored_mysql_errors) || !$force) {
+				if (!in_array(db_error_no(), $ignored_mysql_errors) || !(bool)$force) {
 					$sql_errors[] = array(db_error_msg($db), $table_query[1]);
 				}
 			}
@@ -464,13 +464,13 @@ function db_import(string|int|float|bool|null $filename, mixed $connection, stri
 		{
 			if (!db_query($data_query[0]))
 			{
-				if (!in_array(db_error_no(),$ignored_mysql_errors) || !$force)
+				if (!in_array(db_error_no(),$ignored_mysql_errors) || !(bool)$force)
 					$sql_errors[] = array(db_error_msg($db), $data_query[1]);
 			}
 		}
 	}
 
-	if ($return_errors)
+	if ((bool)$return_errors)
 		$SysPrefs->go_debug = $save_debug;
 
 	$SysPrefs->sql_trail = $trail;
@@ -481,7 +481,7 @@ function db_import(string|int|float|bool|null $filename, mixed $connection, stri
 	db_set_charset($db, $old_encoding); // restore connection encoding
 
 	if (count($sql_errors)) {
-		if ($return_errors)
+		if ((bool)$return_errors)
 			return $sql_errors;
 
 		// display first failure message; the rest are probably derivative 
@@ -569,7 +569,7 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
     // set max string size before writing to file
     $max_size = 1048576 * 2; // 2 MB
     // changes max size if value can be retrieved
-    if (ini_get("memory_limit"))
+    if ((bool)ini_get("memory_limit"))
     	$max_size = 1048576 * (int)ini_get("memory_limit");
     // set backupfile name
     if ($zip == "gzip")
@@ -593,7 +593,7 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
     $out.="# Compatibility: ".get_company_pref('version_id')."\n\n";
 
 	// write users comment
-	if ($comment)
+	if ((bool)$comment)
 	{
 		$out .= "# Comment:\n";
 		$comment=preg_replace("'\n'","\n# ","# ".$comment);
@@ -606,7 +606,7 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
 	if (db_fixed())
 	{
 		db_set_encoding();
-		if ($mysql_enc = get_mysql_encoding_name($_SESSION['language']->encoding))
+		if ((bool)($mysql_enc = get_mysql_encoding_name($_SESSION['language']->encoding)))
 			$out .= "\nSET NAMES $mysql_enc;\n";
 	}
     // get auto_increment values and names of all tables
@@ -1015,11 +1015,11 @@ function update_config_var(string|int|float|bool|null $file, string|int|float|bo
 	$strvalue = '$'."$variable = ".var_export($value, true).';';
 	$pattern = '/'.preg_quote('$'.$variable).'\s*=\s*[^;]*;/m';
 	$content = preg_replace($pattern, $strvalue, $content, -1, $result);
-	if (!$result)
+	if (!(bool)$result)
 	{
-		$strvalue = ($comment ? "// $comment" : '') ."\n$strvalue\n";
+		$strvalue = ((bool)$comment ? "// $comment" : '') ."\n$strvalue\n";
 		$content = preg_replace('/\?>\s*/m', $strvalue, $content, -1, $result);
-		if (!$result)
+		if (!(bool)$result)
 			$content .= $strvalue;
 	}
 

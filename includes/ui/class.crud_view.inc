@@ -207,7 +207,7 @@ class user_view {
 //			if ($all || array_key_exists($post, $input))
 //			{
 				if (@$fmt['fmt'] == 'check')
-					$value = @$input[$post] ? 1 : 0;
+					$value = (bool)(@$input[$post]) ? 1 : 0;
 				else
 					$value = $this->_format_input(@$input[$post], @$fmt['fmt']);
 
@@ -351,7 +351,7 @@ class simple_crud_view extends user_view {
 		// Restore previous mode/key (obsolete for views stored in session)
 
 		$mod = get_post($this->name.'Mode', $this->Mode);
-		if ($mod) {
+		if ((bool)$mod) {
 			if (is_array($mod)) {
 				$val = key($mod);
 				$this->selected_id = $val!==null ? @quoted_printable_decode($val) : $this->_none;
@@ -382,7 +382,7 @@ class simple_crud_view extends user_view {
 				$mod = $m; break;
 			}
 		}
-		if (!$mod && $_SERVER['REQUEST_METHOD'] == 'GET') // initialize on every GET
+		if (!(bool)$mod && $_SERVER['REQUEST_METHOD'] == 'GET') // initialize on every GET
 			$mod = 'RESET';
 
 		return $mod;

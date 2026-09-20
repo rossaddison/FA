@@ -73,7 +73,7 @@ function get_item_location(string|int|float|bool|array|null $item_location)
 function get_item_locations(int|array|null $show_inactive, string|int|array|null $fixed_asset = 0)
 {
 	$sql = "SELECT * FROM ".TB_PREF."locations WHERE fixed_asset = ".db_escape($fixed_asset);
-	if (!$show_inactive) $sql .= " AND !inactive";
+	if (!(bool)$show_inactive) $sql .= " AND !inactive";
 	return db_query($sql, "could not query locations");
 }
 

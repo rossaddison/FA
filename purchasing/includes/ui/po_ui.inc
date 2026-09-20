@@ -73,14 +73,14 @@ function create_new_po(?int $trans_type, string|int|array|null $trans_no): void
 
 	$cart = new purch_order;
 	$_POST['OrderDate'] = new_doc_date();
-	if (!is_date_in_fiscalyear($_POST['OrderDate']))
+	if (!(bool)is_date_in_fiscalyear($_POST['OrderDate']))
 		$_POST['OrderDate'] = end_fiscalyear();
 	$cart->due_date = $cart->orig_order_date = $_POST['OrderDate'];
 
 	$cart->trans_type = $trans_type;
 	$cart->order_no = $trans_no;
 	/*read in all the selected order into the Items cart  */
-	if ($trans_no) {
+	if ((bool)$trans_no) {
 		read_po($trans_no, $cart);
 		$cart->order_no = $trans_no;
 	} else
@@ -214,7 +214,7 @@ function display_po_items(purch_order &$order, bool $editable=true): void
 	$new = $order->order_no == 0;
 
    	$th = array(_("Item Code"), _("Item Description"), _("Quantity"), _("Received"),
-   		_("Unit"), _("Required Delivery Date"), $order->tax_included ? _("Price after Tax") : _("Price before Tax"), _("Line Total"), "");
+   		_("Unit"), _("Required Delivery Date"), (bool)$order->tax_included ? _("Price after Tax") : _("Price before Tax"), _("Line Total"), "");
 
 	if ($order->trans_type != ST_PURCHORDER)
 		array_remove($th, 5);

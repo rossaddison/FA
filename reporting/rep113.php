@@ -44,9 +44,9 @@ function print_credits(): void
 	$comments = $_POST['PARAM_5'];
 	$orientation = $_POST['PARAM_6'];
 
-	if (!$from || !$to) return;
+	if (!(bool)$from || !(bool)$to) return;
 
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
 	$dec = user_price_dec();
 
  	$fno = explode("-", $from);
@@ -165,7 +165,7 @@ function print_credits(): void
 			else
 				$tax_type_name = (string)$tax_item['tax_type_name']." (".(string)$tax_item['rate']."%) ";
 
-			if ($myrow['tax_included'])
+			if ((bool)$myrow['tax_included'])
 			{
 				if ($SysPrefs->alternative_tax_include_on_docs() == 1)
 				{

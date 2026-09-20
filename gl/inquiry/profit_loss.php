@@ -77,10 +77,10 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 			$acc_balance = get_budget_trans_from_to($begin, $end, $account["account_code"], $dimension, $dimension2);
 		else
 			$acc_balance = get_gl_trans_from_to($begin, $end, $account["account_code"], $dimension, $dimension2);
-		if (!$per_balance && !$acc_balance)
+		if (!$per_balance && !(bool)$acc_balance)
 			continue;
 		
-		if ($drilldown && $levelptr == 0)
+		if ((bool)$drilldown && $levelptr == 0)
 		{
 			$url = "<a href='$path_to_root/gl/inquiry/gl_account_inquiry.php?TransFromDate=" 
 				. $from . "&TransToDate=" . $to . "&Dimension=" . $dimension . "&Dimension2=" . $dimension2 
@@ -114,7 +114,7 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 	//Display Type Summary if total is != 0 
 	if (($code_per_balance + $per_balance_total + $code_acc_balance + $acc_balance_total) != 0)
 	{
-		if ($drilldown && $type == $_POST["AccGrp"])
+		if ((bool)$drilldown && $type == $_POST["AccGrp"])
 		{		
 			start_row("class='inquirybg' style='font-weight:bold'");
 			label_cell(_('Total') . " " . $typename);
@@ -126,7 +126,7 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 		//START Patch#1 : Display  only direct child types
 		$acctype1 = row_or_empty(get_account_type($type));
 		$parent1 = $acctype1["parent"];
-		if ($drilldown && $parent1 == $_POST["AccGrp"])
+		if ((bool)$drilldown && $parent1 == $_POST["AccGrp"])
 		//END Patch#2		
 		//elseif ($drilldown && $type != $_POST["AccGrp"])
 		{	

@@ -28,7 +28,7 @@ function can_process(): bool
 	if (!isset($Auth_Result))	// if not used external login: standard method
 		$Auth_Result = get_user_auth($_SESSION["wa_current_user"]->username, md5($_POST['cur_password']));
 
-	if (!$Auth_Result)
+	if (!(bool)$Auth_Result)
    	{
   		display_error( _("Invalid password entered."));
 		set_focus('cur_password');

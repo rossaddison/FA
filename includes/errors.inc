@@ -215,7 +215,7 @@ function display_db_error(string|int|float|bool|null $msg, string|array|null $sq
 	if (!$SysPrefs->go_debug)
 		error_log($str);
 	else {
-		if($msg)
+		if((bool)$msg)
 			fa_trigger_error($str, E_USER_ERROR);
 		else	// $msg can be null here only in debug mode, otherwise the error is ignored
 			fa_trigger_error($str, E_USER_WARNING);

@@ -87,13 +87,13 @@ function check_can_delete(string|int|float|bool|null $curr): bool
 		return false;
 
 	// PREVENT DELETES IF DEPENDENT RECORDS IN debtors_master
-	if (key_in_foreign_table($curr, 'debtors_master', 'curr_code'))
+	if ((bool)key_in_foreign_table($curr, 'debtors_master', 'curr_code'))
 	{
 		display_error(_("Cannot delete this currency, because customer accounts have been created referring to this currency."));
 		return false;
 	}
 
-	if (key_in_foreign_table($curr, 'suppliers', 'curr_code'))
+	if ((bool)key_in_foreign_table($curr, 'suppliers', 'curr_code'))
 	{
 		display_error(_("Cannot delete this currency, because supplier accounts have been created referring to this currency."));
 		return false;
@@ -106,7 +106,7 @@ function check_can_delete(string|int|float|bool|null $curr): bool
 	}
 	
 	// see if there are any bank accounts that use this currency
-	if (key_in_foreign_table($curr, 'bank_accounts', 'bank_curr_code'))
+	if ((bool)key_in_foreign_table($curr, 'bank_accounts', 'bank_curr_code'))
 	{
 		display_error(_("Cannot delete this currency, because thre are bank accounts that use this currency."));
 		return false;
@@ -159,7 +159,7 @@ function display_currencies(): void
 		label_cell($myrow["hundreds_name"]);
 		label_cell($myrow["country"]);
 		label_cell(	$myrow[1] == $company_currency ? '-' : 
-			($myrow["auto_update"] ? _('Yes') :_('No')), "align='center'");
+			((bool)$myrow["auto_update"] ? _('Yes') :_('No')), "align='center'");
 		inactive_control_cell($myrow["curr_abrev"], $myrow["inactive"], 'currencies', 'curr_abrev');
  		edit_button_cell("Edit".(string)$myrow["curr_abrev"], _("Edit"));
 		if ($myrow["curr_abrev"] != $company_currency)

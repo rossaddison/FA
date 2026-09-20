@@ -72,7 +72,7 @@ function print_bank_transactions_reconcile(): void
 	$to = $_POST['PARAM_2'];
 	$comments = $_POST['PARAM_3'];
 	$destination = $_POST['PARAM_4'];
-	if ($destination)
+	if ((bool)$destination)
 		include_once($path_to_root . "/reporting/includes/excel_report.inc");
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
@@ -141,7 +141,7 @@ function print_bank_transactions_reconcile(): void
 					$total_credit += abs($myrow['amount']);
 				}
 				$rep->AmountCol(7, 8, $total, $dec);
-				if ($myrow["reconciled"] && $myrow["reconciled"] != '0000-00-00')
+				if ((bool)$myrow["reconciled"] && $myrow["reconciled"] != '0000-00-00')
 					$rep->DateCol(8, 9,	$myrow["reconciled"], true);
 				$rep->TextCol(9, 10, $myrow['memo_']);
 				$rep->NewLine();
@@ -191,7 +191,7 @@ function print_bank_transactions_reconcile(): void
 		//display_notification($sql);
 		$t_result = db_query($sql,"Cannot retrieve reconciliation data");
 
-		if ($t_row = db_fetch($t_result)) {
+		if (($t_row = db_fetch($t_result)) !== false) {
 			$books_total = $t_row['books_total'];
 			$reconciled = $t_row['reconciled'];
 		}			

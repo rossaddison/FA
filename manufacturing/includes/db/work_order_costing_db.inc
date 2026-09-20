@@ -92,7 +92,7 @@ function update_material_cost(?string $stock_id, string|int|float|bool|null $qty
 		$cart = new items_cart(ST_COSTUPDATE);
 		$cart->tran_date = $cart->doc_date = $cart->event_date = $date;
 
-		if (!is_date_in_fiscalyear($cart->tran_date))
+		if (!(bool)is_date_in_fiscalyear($cart->tran_date))
 			$cart->tran_date = end_fiscalyear();
 
 		$cart->reference = $Refs->get_next(ST_COSTUPDATE, null, $cart->tran_date);
@@ -128,13 +128,13 @@ function add_wo_costs_journal(string|int|float|bool|null $wo_id, int|float|bool|
 
 	$wo = row_or_empty(get_work_order($wo_id));
 
-    if (!$ref) $ref = $Refs->get_next(ST_JOURNAL, null, $date);
+    if (!(bool)$ref) $ref = $Refs->get_next(ST_JOURNAL, null, $date);
 
 	add_gl_trans_std_cost(ST_JOURNAL, $journal_id, $date, $cr_acc,
 		$dim1, $dim2, $wo_cost_types[$cost_type], -$amount);
 
 	$is_bank_to = is_bank_account($cr_acc);
-	if ($is_bank_to)
+	if ((bool)$is_bank_to)
 	{
 		add_bank_trans(ST_JOURNAL, $journal_id, $is_bank_to, "",
 			$date, -$amount, PT_WORKORDER, $wo_id, get_company_currency(),
@@ -235,7 +235,7 @@ function void_wo_costing(string|int|float|bool|null $wo_id): void
 	while($row = db_fetch($res))
 	{
 		$is_bank_to = is_bank_account($row['account']);
-		if ($is_bank_to)
+		if ((bool)$is_bank_to)
 			void_bank_trans($row['trans_type'], $row['trans_no']);
 
 		// void any related gl trans

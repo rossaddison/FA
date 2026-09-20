@@ -189,7 +189,7 @@ function check_bank_account_history(string|int|float|bool|null $delta_amount, st
 	if ($delta_amount >= 0 && isset($date))
 		 return null;	// amount increase is always safe
 
-	$balance = $date ? get_bank_account_limit($bank_account, $date, $user) : 0;
+	$balance = (bool)$date ? get_bank_account_limit($bank_account, $date, $user) : 0;
 
 	if (!isset($balance) && isset($date))
 		return null;	// unlimited account
@@ -203,7 +203,7 @@ function check_bank_account_history(string|int|float|bool|null $delta_amount, st
 	$sql = "SELECT sum(amount) as amount, trans_date, trans_no, type
 			FROM ".TB_PREF."bank_trans
 			WHERE bank_act=".db_escape($bank_account);
-	if ($date)
+	if ((bool)$date)
 	{
 		$date = date2sql($date);
 		$sql .= " AND trans_date > '$date'";

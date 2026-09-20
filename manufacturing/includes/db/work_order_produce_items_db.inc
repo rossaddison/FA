@@ -88,7 +88,7 @@ function work_order_produce(string|int|float|bool|null $woid, string|int|float|b
 			$product["loc_code"], $date_, $ref, (float)$product['units_issued']+$quantity, $unit_cost);
 	}
 
-	if ($memo)
+	if ((bool)$memo)
 		add_comments(ST_MANURECEIVE, $id, $date_, $memo);
 
 	$Refs->save(ST_MANURECEIVE, $id, $ref);

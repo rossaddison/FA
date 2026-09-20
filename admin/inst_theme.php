@@ -24,7 +24,7 @@ page(_($help_context = "Install Themes"), false, false, '', $js);
 
 //---------------------------------------------------------------------------------------------
 
-if (($id = find_submit('Delete', false)) && isset($installed_extensions[$id])
+if (((bool)($id = find_submit('Delete', false))) && isset($installed_extensions[$id])
 	&& clean_user_themes($installed_extensions[$id]['package']))
 {
 	$extensions = get_company_extensions();
@@ -43,7 +43,7 @@ if (($id = find_submit('Delete', false)) && isset($installed_extensions[$id])
 	}
 }
 
-if ($id = find_submit('Update', false))
+if ((bool)($id = find_submit('Update', false)))
 	install_extension($id);
 
 //---------------------------------------------------------------------------------------------
@@ -78,7 +78,7 @@ start_form(true);
 			label_cell($available ? $available : _("None"));
 
 			if ($available && check_pkg_upgrade($installed, $available)) // outdated or not installed theme in repo
-				button_cell('Update'.$pkg_name, $installed ? _("Update") : _("Install"),
+				button_cell('Update'.$pkg_name, (bool)$installed ? _("Update") : _("Install"),
 					_('Upload and install latest extension package'), ICON_DOWN, 'process');
 			else
 				label_cell('');

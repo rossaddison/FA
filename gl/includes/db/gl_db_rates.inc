@@ -99,10 +99,10 @@ function add_exchange_rate(string|int|float|bool|array|null $curr_code, string|i
 
 function add_new_exchange_rate(string|int|float|bool|null $curr_code, string|int|float|bool|array|null $date_, string|int|float|bool|null $ex_rate): void
 {
-	if (is_company_currency($curr_code) || !$ex_rate)
+	if (is_company_currency($curr_code) || !(bool)$ex_rate)
 		return;
 
-	if (!get_date_exchange_rate($curr_code, $date_))
+	if (!(bool)get_date_exchange_rate($curr_code, $date_))
 		add_exchange_rate($curr_code, $date_, $ex_rate, $ex_rate);
 }
 
@@ -194,7 +194,7 @@ function get_extern_rate(string|int|float|bool|null $curr_b, mixed $provider, st
     	   		curl_setopt ($ch, CURLOPT_HEADER, 0);
 	       		curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
 	       		// prevent warning while safe_mode/open_basedir on (redirection doesn't occur at least on ECB page)
-		   		if (!ini_get('safe_mode') && !ini_get('open_basedir'))
+		   		if (!(bool)ini_get('safe_mode') && !(bool)ini_get('open_basedir'))
     	   			curl_setopt ($ch, CURLOPT_FOLLOWLOCATION, 1);
 	       		curl_setopt ($ch, CURLOPT_TIMEOUT, 3);
     	   		$contents = curl_exec ($ch);

@@ -108,7 +108,7 @@ function create_cart(string|int|array|null $type=0, string|int|array|null $trans
 	$cart = new items_cart($type);
     $cart->order_id = $trans_no;
 
-	if ($trans_no) {
+	if ((bool)$trans_no) {
 		$header = row_or_empty(get_journal($type, $trans_no));
 		$cart->event_date = sql2date($header['event_date']);
 		$cart->doc_date = sql2date($header['doc_date']);
@@ -122,7 +122,7 @@ function create_cart(string|int|array|null $type=0, string|int|array|null $trans
 		if ($result) {
 			while ($row = db_fetch($result)) {
 				$curr_amount = $cart->rate ? round((float)$row['amount']/$cart->rate, $_SESSION["wa_current_user"]->prefs->price_dec()) : $row['amount'];
-				if ($curr_amount)
+				if ((bool)$curr_amount)
 					$cart->add_gl_item($row['account'], $row['dimension_id'], $row['dimension2_id'], 
 						$curr_amount, $row['memo_'], '', $row['person_id']);
 			}
@@ -147,7 +147,7 @@ function create_cart(string|int|array|null $type=0, string|int|array|null $trans
 		{
 			$net_sum = 0;
 			foreach($cart->gl_items as $gl)
-                if (!is_tax_account($gl->code_id) && !is_subledger_account($gl->code_id))
+                if (!(bool)is_tax_account($gl->code_id) && !(bool)is_subledger_account($gl->code_id))
 					$net_sum += $gl->amount;
 
 			$ex_net = abs($net_sum) - array_sum($tax_info['net_amount']);
@@ -158,7 +158,7 @@ function create_cart(string|int|array|null $type=0, string|int|array|null $trans
 
 	} else {
 		$cart->tran_date = $cart->doc_date = $cart->event_date = new_doc_date();
-		if (!is_date_in_fiscalyear($cart->tran_date))
+		if (!(bool)is_date_in_fiscalyear($cart->tran_date))
 			$cart->tran_date = end_fiscalyear();
 		$cart->reference = $Refs->get_next(ST_JOURNAL, null, $cart->tran_date);
 	}
@@ -171,7 +171,7 @@ function create_cart(string|int|array|null $type=0, string|int|array|null $trans
 	$_POST['currency'] = $cart->currency;
 	$_POST['_ex_rate'] = exrate_format($cart->rate);
 	$_POST['source_ref'] = $cart->source_ref;
-	if (isset($cart->tax_info['net_amount']) || (!$trans_no && get_company_pref('default_gl_vat')))
+	if (isset($cart->tax_info['net_amount']) || (!(bool)$trans_no && get_company_pref('default_gl_vat')))
 		$_POST['taxable_trans'] = true;
 	$_SESSION['journal_items'] = &$cart;
 }
@@ -191,7 +191,7 @@ function update_tax_info(): void
 			}
 		} else
 			$_POST[$name] = $value;
-	$_POST['tax_date'] = $_SESSION['journal_items']->order_id ? $_SESSION['journal_items']->tax_info['tax_date'] : $_POST['date_'];
+	$_POST['tax_date'] = (bool)$_SESSION['journal_items']->order_id ? $_SESSION['journal_items']->tax_info['tax_date'] : $_POST['date_'];
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -217,7 +217,7 @@ if (isset($_POST['Process']))
 		set_focus('date_');
 		$input_error = 1;
 	} 
-	elseif (!is_date_in_fiscalyear($_POST['date_'])) 
+	elseif (!(bool)is_date_in_fiscalyear($_POST['date_'])) 
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('date_');
@@ -256,7 +256,7 @@ if (isset($_POST['Process']))
 			set_focus('tax_date');
 			$input_error = 1;
 		} 
-		elseif (!is_date_in_fiscalyear($_POST['tax_date']))
+		elseif (!(bool)is_date_in_fiscalyear($_POST['tax_date']))
 		{
 			display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 			set_focus('tax_date');
@@ -356,7 +356,7 @@ function check_item_data(): bool
 		set_focus('code_id');
    		return false;
 	}
-	if (is_subledger_account(get_post('code_id'))) {
+	if ((bool)is_subledger_account(get_post('code_id'))) {
 		if(!get_post('person_id')) {
 	   		display_error(_("You must select subledger account."));
    			$Ajax->activate('items_table');
@@ -403,7 +403,7 @@ function check_item_data(): bool
    		return false;
 	}
 
-	if (!$_SESSION["wa_current_user"]->can_access('SA_BANKJOURNAL') && is_bank_account($_POST['code_id'])) 
+	if (!$_SESSION["wa_current_user"]->can_access('SA_BANKJOURNAL') && (bool)is_bank_account($_POST['code_id'])) 
 	{
 		display_error(_("You cannot make a journal entry for a bank account. Please use one of the banking functions for bank transactions."));
 		set_focus('code_id');

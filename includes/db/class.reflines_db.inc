@@ -52,7 +52,7 @@ class reflines_db extends data_set {
 		if (substr_count($data['pattern'], '{') != substr_count($data['pattern'], '}'))
 			return $this->error(_("Curly brackets does not balance."));
 
-		if (preg_match_all('/\{([^\}]*)\}/', $data['pattern'], $match)) // placeholders defind in template
+		if ((bool)preg_match_all('/\{([^\}]*)\}/', $data['pattern'], $match)) // placeholders defind in template
 		{
 			$numph = 0;
 			foreach($match[1] as $ph) {

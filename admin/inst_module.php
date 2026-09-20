@@ -126,7 +126,7 @@ function display_extensions(array $mods): void
 			else
 				label_cell('');
 		} elseif (check_pkg_upgrade($installed, $available)) // outdated or not installed extension in repo
-			button_cell('Update'.$pkg_name, $installed ? _("Update") : _("Install"),
+			button_cell('Update'.$pkg_name, (bool)$installed ? _("Update") : _("Install"),
 				_('Upload and install latest extension package'), ICON_DOWN);
 		else
 			label_cell('');
@@ -214,7 +214,7 @@ if (get_post('Refresh')) {
 
 			if ($activated !== null)
 				$result &= $activated;
-			if ($activated || ($activated === null))
+			if ((bool)$activated || ($activated === null))
 				$exts[$i]['active'] = check_value('Active'.$i);
 		}
 	}
@@ -222,17 +222,17 @@ if (get_post('Refresh')) {
 	if (get_post('extset') == user_company())
 		$installed_extensions = $exts;
 	
-	if(!$result) {
+	if(!(bool)$result) {
 		display_error(_('Status change for some extensions failed.'));
 		$Ajax->activate('ext_tbl'); // refresh settings display
 	}else
 		display_notification(_('Current active extensions set has been saved.'));
 }
 
-if ($id = find_submit('Update', false))
+if ((bool)($id = find_submit('Update', false)))
 	install_extension($id);
 
-if ($id = find_submit('Local', false))
+if ((bool)($id = find_submit('Local', false)))
 	local_extension($id);
 
 if ($Mode == 'RESET')

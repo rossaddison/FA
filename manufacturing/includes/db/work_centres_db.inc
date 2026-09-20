@@ -31,7 +31,7 @@ function update_work_centre(string|int|float|bool|null $type_id, string|int|floa
 function get_all_work_centres(int|bool|array|null $all=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."workcentres";
-	if (!$all) $sql .= " WHERE !inactive";
+	if (!(bool)$all) $sql .= " WHERE !inactive";
 
 	return db_query($sql, "could not get all work centres");
 }

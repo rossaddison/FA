@@ -97,12 +97,12 @@ function print_inventory_planning(): void
     $comments = $_POST['PARAM_2'];
 	$orientation = $_POST['PARAM_3'];
 	$destination = $_POST['PARAM_4'];
-	if ($destination)
+	if ((bool)$destination)
 		include_once($path_to_root . "/reporting/includes/excel_report.inc");
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
 
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
 	if ($category == ALL_NUMERIC)
 		$category = 0;
 	if ($category == 0)

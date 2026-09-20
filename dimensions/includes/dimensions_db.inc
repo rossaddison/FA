@@ -210,7 +210,7 @@ function get_sql_for_search_dimensions(string|int|float|bool|null $dim, string|a
 		dim.closed
 		FROM ".TB_PREF."dimensions as dim WHERE id > 0";
 
-	if ($order)
+	if ((bool)$order)
 	{
 		$sql .= " AND reference LIKE ".db_escape("%". $order . "%");
 	} else {
@@ -218,13 +218,13 @@ function get_sql_for_search_dimensions(string|int|float|bool|null $dim, string|a
 		if ($dim == 1)
 			$sql .= " AND type_=1";
 
-		if ($open)
+		if ((bool)$open)
 			$sql .= " AND closed=0";
 
 		if ($type > 0)
 			$sql .= " AND type_=".db_escape($type);
 
-		if ($overdue)
+		if ((bool)$overdue)
 		{
 			$today = date2sql(Today());
 

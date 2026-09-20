@@ -86,13 +86,13 @@ function can_delete(string|int|float|bool|null $type): bool
 	if ($type == "")
 		return false;
 
-	if (key_in_foreign_table($type, 'chart_master', 'account_type'))
+	if ((bool)key_in_foreign_table($type, 'chart_master', 'account_type'))
 	{
 		display_error(_("Cannot delete this account group because GL accounts have been created referring to it."));
 		return false;
 	}
 
-	if (key_in_foreign_table($type, 'chart_types', 'parent'))
+	if ((bool)key_in_foreign_table($type, 'chart_types', 'parent'))
 	{
 		display_error(_("Cannot delete this account group because GL account groups have been created referring to it."));
 		return false;

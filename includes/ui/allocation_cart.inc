@@ -133,7 +133,7 @@ class allocation
 					$this->person_type = in_array($type, array(ST_SUPPCREDIT, ST_SUPPAYMENT)) ? PT_SUPPLIER : PT_CUSTOMER;
 			}
 
-			if ($trans_no) {
+			if ((bool)$trans_no) {
 				$trans = $this->person_type == PT_SUPPLIER ? get_supp_trans($trans_no, $type, $person_id)
 					: get_customer_trans($trans_no, $type, $person_id);
 
@@ -151,7 +151,7 @@ class allocation
 		outstanding balances ie Total-alloc >0 */
 
 		$this->allocs = array();
-		if ($this->person_id)
+		if ((bool)$this->person_id)
 		{
 			if ($this->person_type==PT_SUPPLIER)
 				$trans_items = get_allocatable_to_supp_transactions($this->person_id);
@@ -401,7 +401,7 @@ function check_allocations(): bool
 		 amount left to be allocated against the transaction under review;
 		 skip check if no allocation is set to avoid deadlock on mistakenly overallocated transactions*/
 		 $allocated = input_num('amount' . $counter);
-		 if ($allocated && ($allocated > input_num('un_allocated' . $counter)))
+		 if ((bool)$allocated && ($allocated > input_num('un_allocated' . $counter)))
 		 {
 			display_error(_("At least one transaction is overallocated."));
 			set_focus('amount'.$counter);

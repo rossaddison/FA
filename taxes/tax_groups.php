@@ -78,13 +78,13 @@ function can_delete(string|int|float|bool|array|null $selected_id): bool
 {
 	if ($selected_id == -1)
 		return false;
-	if (key_in_foreign_table($selected_id, 'cust_branch', 'tax_group_id'))	
+	if ((bool)key_in_foreign_table($selected_id, 'cust_branch', 'tax_group_id'))	
 	{
 		display_error(_("Cannot delete this tax group because customer branches been created referring to it."));
 		return false;
 	}
 
-	if (key_in_foreign_table($selected_id, 'suppliers', 'tax_group_id'))
+	if ((bool)key_in_foreign_table($selected_id, 'suppliers', 'tax_group_id'))
 	{
 		display_error(_("Cannot delete this tax group because suppliers been created referring to it."));
 		return false;

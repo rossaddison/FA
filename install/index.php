@@ -34,7 +34,7 @@ function subpage_title(?string $txt): void
 	echo '<center><img src="'.$path_to_root.'/themes/default/images/logo_frontaccounting.png" width="250" height="50" alt="Logo" >
 		</center>';
 
-	$page = @$_POST['Page'] ? $_POST['Page'] : 1;
+	$page = (bool)(@$_POST['Page']) ? $_POST['Page'] : 1;
 
 	display_heading(
 		$page == 6 ? $txt :
@@ -120,7 +120,7 @@ function install_connect_db() {
 	$conn = $_SESSION['inst_set'];
 
 	$db = db_create_db($conn);
-	if (!$db) {
+	if (!(bool)$db) {
 		display_error(_("Cannot connect to database. User or password is invalid or you have no permittions to create database."));
 	} else {
 		if (strncmp(db_get_version(), "5.6", 3) >= 0) 
@@ -135,7 +135,7 @@ function do_install(): bool {
 		$dflt_lang, $installed_languages;
 
 	$coa = $_SESSION['inst_set']['coa'];
-	if (install_connect_db() && db_import($path_to_root.'/sql/'.$coa, $_SESSION['inst_set'])) {
+	if (install_connect_db() && (bool)db_import($path_to_root.'/sql/'.$coa, $_SESSION['inst_set'])) {
 		$con = $_SESSION['inst_set'];
 		$table_prefix = $con['tbpref'];
 
@@ -261,7 +261,7 @@ elseif(get_post('install_langs'))
 		foreach($_POST['langs'] as $package => $ok) {
 			$ret &= install_language($package);
 		}
-	if ($ret) {
+	if ((bool)$ret) {
 		$_POST['Page'] = $_SESSION['inst_set']['sel_coas'] ? 4 : 5;
 	}
 }
@@ -274,7 +274,7 @@ elseif(get_post('install_coas'))
 		foreach($_POST['coas'] as $package => $ok) {
 			$ret &= install_extension($package);
 		}
-	if ($ret) {
+	if ((bool)$ret) {
 		if (file_exists($path_to_root . '/installed_extensions.php'))
 			include($path_to_root.'/installed_extensions.php');
 		$_POST['Page'] = 5;

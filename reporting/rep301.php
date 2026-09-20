@@ -145,14 +145,14 @@ function print_inventory_valuation_report(): void
     $comments = $_POST['PARAM_4'];
 	$orientation = $_POST['PARAM_5'];
 	$destination = $_POST['PARAM_6'];
-	if ($destination)
+	if ((bool)$destination)
 		include_once($path_to_root . "/reporting/includes/excel_report.inc");
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
 	$detail = !$detail;
     $dec = user_price_dec();
 
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
 	if ($category == ALL_NUMERIC)
 		$category = 0;
 	if ($category == 0)

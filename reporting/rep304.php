@@ -63,7 +63,7 @@ function getTransactions(string|int|array|null $category, string|array|null $loc
 		AND move.tran_date<='$to'
 		AND (trans.type=".ST_CUSTDELIVERY." OR move.type=".ST_CUSTCREDIT.")";
 
-	if (!$show_service)
+	if (!(bool)$show_service)
 		$sql .= " AND (item.mb_flag='B' OR item.mb_flag='M')";
 	else
 		$sql .= " AND item.mb_flag<>'F'";
@@ -98,12 +98,12 @@ function print_inventory_sales(): void
 	$comments = $_POST['PARAM_6'];
 	$orientation = $_POST['PARAM_7'];
 	$destination = $_POST['PARAM_8'];
-	if ($destination)
+	if ((bool)$destination)
 		include_once($path_to_root . "/reporting/includes/excel_report.inc");
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
 
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
     $dec = user_price_dec();
 
 	if ($category == ALL_NUMERIC)
@@ -122,7 +122,7 @@ function print_inventory_sales(): void
 		$fromc = _('All');
 	else
 		$fromc = get_customer_name($fromcust);
-	if ($show_service) $show_service_items = _('Yes');
+	if ((bool)$show_service) $show_service_items = _('Yes');
 	else $show_service_items = _('No');
 
 	$cols = array(0, 75, 175, 250, 300, 375, 450,	515);

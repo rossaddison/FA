@@ -35,7 +35,7 @@ function add_crm_person(string|int|float|bool|array|null $ref, string|int|float|
 
 	$ret = db_query($sql, "Can't insert crm person");
 	$id = db_insert_id();
-	if ($ret && $cat_ids) {
+	if ($ret && (bool)$cat_ids) {
 		if(!update_person_contacts($id, $cat_ids, $entity))
 			return null;
 	}
@@ -97,28 +97,28 @@ function get_crm_persons(string|int|float|bool|null $type=null, string|int|float
 		.TB_PREF."crm_contacts r WHERE ";
 	$sel = array('r.type=t.type', 'r.action=t.action', 'r.person_id=p.id');
 
-	if ($type) 
+	if ((bool)$type) 
 		$sel[] = 't.type='.db_escape($type);
 
-	if ($action) 
+	if ((bool)$action) 
 		$sel[] = 't.action='.db_escape($action);
 
 	if ($entity) 
 		$sel[] = 'r.entity_id='.db_escape($entity);
 
-	if ($person)
+	if ((bool)$person)
 		$sel[] = 'r.person_id='.db_escape($person);
 
 	$sql .= implode (" AND ", $sel);
 
-	if ($unique)
+	if ((bool)$unique)
 		$sql .= " GROUP BY person_id";
 	else
 	 	$sql .= " ORDER BY contact_id";
 
 	$result = db_query($sql, "Can't get crm persons");
 	// fallback to general contacts
-	if (!db_num_rows($result) && $action && $action != 'general')
+	if (!db_num_rows($result) && (bool)$action && $action != 'general')
 		return get_crm_persons($type, 'general', $entity, $person, $unique);
 	else
 		return $result;
@@ -162,7 +162,7 @@ function get_person_contacts(string|int|float|bool|null $id): array
 function update_person_contacts(string|int|float|bool|null $id, array $cat_ids, string|int|float|bool|null $entity_id=null, string|int|float|bool|null $type=null)
 {
 	$sql = "DELETE FROM ".TB_PREF."crm_contacts WHERE person_id=".db_escape($id);
-	if ($type)
+	if ((bool)$type)
 		$sql .= " AND type=".db_escape($type);
 
 	begin_transaction();
@@ -177,7 +177,7 @@ function update_person_contacts(string|int|float|bool|null $id, array $cat_ids, 
 		$sql = "INSERT INTO ".TB_PREF."crm_contacts (person_id,type,action,entity_id)
 			SELECT ".db_escape($id).",t.type, t.action,".db_escape($entity_id, true)."
 			FROM ".TB_PREF."crm_categories t WHERE t.id=".implode(' OR t.id=', $cat_ids);
-		if ($type)
+		if ((bool)$type)
 			$sql .= " AND t.type=".db_escape($type);
 		$ret = db_query($sql, "Can't update person contacts");
 	}
@@ -214,9 +214,9 @@ function add_crm_category(string|array|null $type, string|array|null $action, st
 function update_crm_category(string|int|float|bool|array|null $selected_id, string|array|null $type, string|array|null $action, string|array|null $name, string|array|null $description): void
 {
 	$sql = "UPDATE ".TB_PREF."crm_categories SET ";
-	if ($type)
+	if ((bool)$type)
 		$sql .= "type=".db_escape($type) . ",";
-	if ($action)
+	if ((bool)$action)
 		$sql .= "action=".db_escape($action) . ",";
 	$sql .= "name=".db_escape($name) . ","
 			."description=".db_escape($description)
@@ -237,7 +237,7 @@ function delete_crm_category(string|int|float|bool|array|null $selected_id): voi
 function get_crm_categories(int|array|null $show_inactive)
 {
 	$sql = "SELECT * FROM ".TB_PREF."crm_categories";
-	if (!$show_inactive) $sql .= " WHERE !inactive";
+	if (!(bool)$show_inactive) $sql .= " WHERE !inactive";
 	$sql .= " ORDER BY type, action";
 	return db_query($sql,"could not get areas");
 }
@@ -303,13 +303,13 @@ function delete_crm_contacts(string|int|float|bool|null $person_id = null, strin
 {
 	$sql = "DELETE FROM ".TB_PREF."crm_contacts WHERE ";
 
-	if ($person_id)
+	if ((bool)$person_id)
 		$where[] = 'person_id='.db_escape($person_id);
-	if ($type)
+	if ((bool)$type)
 		$where[] = 'type='.db_escape($type);
-	if ($entity_id)
+	if ((bool)$entity_id)
 		$where[] = 'entity_id='.db_escape($entity_id);
-	if ($action)
+	if ((bool)$action)
 		$where[] = 'action='.db_escape($action);
 
 	return db_query($sql.implode(' AND ', $where), "Can't delete crm contact");

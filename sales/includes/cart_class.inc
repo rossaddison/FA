@@ -290,7 +290,7 @@ class Cart
 				read_sales_trans($type, $trans_no, $this);
 				$this->prepayments = get_payments_for($trans_no[0], $type, $this->customer_id);
 				$this->update_payments();
-				if ($this->order_no) { // free hand credit notes have no order_no
+				if ((bool)$this->order_no) { // free hand credit notes have no order_no
 					$sodata = get_sales_order_header($this->order_no, ST_SALESORDER);
 					$this->cust_ref = $sodata["customer_ref"];
 				// currently currency is hard linked to debtor account
@@ -315,7 +315,7 @@ class Cart
 			else
 			  $this->customer_id = '';
 			$this->document_date = new_doc_date();
-			if (!is_date_in_fiscalyear($this->document_date))
+			if (!(bool)is_date_in_fiscalyear($this->document_date))
 				$this->document_date = end_fiscalyear();
 			$this->reference = $Refs->get_next($this->trans_type, null, array('date' => Today(),
 				'customer' => $this->customer_id));
@@ -425,7 +425,7 @@ class Cart
 		$this->payment_terms = get_payment_terms($payment);
 		$this->cash_discount = $cdiscount;
 
-		if ($this->payment_terms['cash_sale']) {
+		if ((bool)$this->payment_terms['cash_sale']) {
 			$this->Location = $this->pos['pos_location'];
 			$this->location_name = $this->pos['location_name'];
 		}
@@ -622,7 +622,7 @@ class Cart
 				}
 			}
 		}
-		if($this->tax_included)
+		if((bool)$this->tax_included)
 			return round($this->freight_cost*$tax_rate/($tax_rate+100),  user_price_dec());
 		else
 			return round($this->freight_cost*$tax_rate/100,  user_price_dec());
@@ -634,7 +634,7 @@ class Cart
 		
 		$total = $this->get_items_total() + $this->freight_cost;
 		$dec = user_price_dec();
-		if (!$this->tax_included ) {
+		if (!(bool)$this->tax_included ) {
 			$taxes = $this->get_taxes();
 			foreach($taxes as $tax)
 				$total += round($tax['Value'], $dec);

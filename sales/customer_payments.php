@@ -53,7 +53,7 @@ if (!isset($_POST['bank_account'])) { // first page call
 		$inv = get_customer_trans($_GET['SInvoice'], $type,  $cust);
 		$dflt_act = row_or_empty(get_default_bank_account($inv['curr_code']));
 		$_POST['bank_account'] = $dflt_act['id'];
-		if ($inv) {
+		if ((bool)$inv) {
 			$_POST['customer_id'] = $inv['debtor_no'];
 			$_SESSION['alloc']->set_person($inv['debtor_no'], PT_CUSTOMER);
 			$_SESSION['alloc']->read();
@@ -92,7 +92,7 @@ if (!isset($_POST['customer_id'])) {
 }
 if (!isset($_POST['DateBanked'])) {
 	$_POST['DateBanked'] = new_doc_date();
-	if (!is_date_in_fiscalyear($_POST['DateBanked'])) {
+	if (!(bool)is_date_in_fiscalyear($_POST['DateBanked'])) {
 		$_POST['DateBanked'] = end_fiscalyear();
 	}
 }
@@ -160,7 +160,7 @@ function can_process()
 		display_error(_("The entered date is invalid. Please enter a valid date for the payment."));
 		set_focus('DateBanked');
 		return false;
-	} elseif (!is_date_in_fiscalyear($_POST['DateBanked'])) {
+	} elseif (!(bool)is_date_in_fiscalyear($_POST['DateBanked'])) {
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('DateBanked');
 		return false;
@@ -265,7 +265,7 @@ function read_customer_data(): void
 	$_POST['pymt_discount'] = !$myrow ? 0 : $myrow["pymt_discount"];
 	// To support Edit feature
 	// If page is called first time and New entry fetch the nex reference number
-	if (!$_SESSION['alloc']->trans_no && !isset($_POST['charge'])) 
+	if (!(bool)$_SESSION['alloc']->trans_no && !isset($_POST['charge'])) 
 		$_POST['ref'] = $Refs->get_next(ST_CUSTPAYMENT, null, array(
 			'customer' => get_post('customer_id'), 'date' => get_post('DateBanked')));
 }

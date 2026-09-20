@@ -92,12 +92,12 @@ function print_supplier_balances(): void
     $comments = $_POST['PARAM_5'];
     $orientation = $_POST['PARAM_6'];
     $destination = $_POST['PARAM_7'];
-    if ($destination)
+    if ((bool)$destination)
         include_once($path_to_root . "/reporting/includes/excel_report.inc");
     else
         include_once($path_to_root . "/reporting/includes/pdf_report.inc");
 
-    $orientation = ($orientation ? 'L' : 'P');
+    $orientation = ((bool)$orientation ? 'L' : 'P');
     if ($fromsupp == ALL_TEXT)
         $supp = _('All');
     else
@@ -112,7 +112,7 @@ function print_supplier_balances(): void
     else
         $convert = false;
 
-    if ($no_zeros) $nozeros = _('Yes');
+    if ((bool)$no_zeros) $nozeros = _('Yes');
     else $nozeros = _('No');
 
     $cols = array(0, 100, 130, 190, 250, 320, 385, 450, 515);
@@ -170,7 +170,7 @@ function print_supplier_balances(): void
             $grandtotal[$i] += $init[$i];
         }
 
-        if (db_num_rows($res) == 0 && !$no_zeros) 
+        if (db_num_rows($res) == 0 && !(bool)$no_zeros) 
         {
             $rep->TextCol(0, 2, (string)$myrow['name'].($myrow['inactive']==1 ? " ("._("Inactive").")" : ""));
             $rep->AmountCol(3, 4, $init[3], $dec);
@@ -213,7 +213,7 @@ function print_supplier_balances(): void
             }
             $total[3] = $total[1] - $total[0];
         }
-		if ($no_zeros && $total[3] == 0.0 && $curr_db == 0.0 && $curr_cr == 0.0) continue;
+		if ((bool)$no_zeros && $total[3] == 0.0 && $curr_db == 0.0 && $curr_cr == 0.0) continue;
         $rep->TextCol(0, 2, (string)$myrow['name'].($myrow['inactive']==1 ? " ("._("Inactive").")" : ""));
         $rep->AmountCol(3, 4, $total[3] + $curr_cr - $curr_db, $dec);
         $rep->AmountCol(4, 5, $curr_db, $dec);

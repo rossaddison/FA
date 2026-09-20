@@ -68,7 +68,7 @@ function write_sales_invoice(&$invoice)
 	if (is_array($sales_order))
 			$sales_order = $sales_order[0]; // assume all crucial SO data are same for every delivery
 
-	if ($trans_no) {
+	if ((bool)$trans_no) {
 		$allocs = get_payments_for($trans_no, ST_SALESINVOICE, $invoice->customer_id);
 		delete_comments(ST_SALESINVOICE, $trans_no);
 		void_gl_trans(ST_SALESINVOICE, $trans_no, true);
@@ -115,7 +115,7 @@ function write_sales_invoice(&$invoice)
 			$invoice_line->item_description, $invoice_line->qty_dispatched,
 			$invoice_line->line_price(), $qty ? $line_tax/$qty : 0, $invoice_line->discount_percent,
 			$invoice_line->standard_cost, $invoice_line->src_id,
-			$trans_no ? $invoice_line->id : 0);
+			(bool)$trans_no ? $invoice_line->id : 0);
 
 		// Update delivery items for the quantity invoiced
 		if ($invoice_line->qty_old != $invoice_line->qty_dispatched)

@@ -76,9 +76,9 @@ function print_po(): void
 	$comments = $_POST['PARAM_4'];
 	$orientation = $_POST['PARAM_5'];
 
-	if (!$from || !$to) return;
+	if (!(bool)$from || !(bool)$to) return;
 
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
 	$dec = user_price_dec();
 
 	$cols = array(4, 60, 225, 300, 340, 385, 450, 515);
@@ -127,7 +127,7 @@ function print_po(): void
 			$data = get_purchase_data($myrow['supplier_id'], $myrow2['item_code']);
 			if ($data !== false)
 			{
-				if (!$myrow2['editable'] && $data['supplier_description'] != "" && 
+				if (!(bool)$myrow2['editable'] && $data['supplier_description'] != "" && 
 					$myrow2['description'] != $data['supplier_description']) // backward compatibility
 					$myrow2['description'] = $data['supplier_description'];
 				if ($data['suppliers_uom'] != "")
@@ -185,7 +185,7 @@ function print_po(): void
 
 			$tax_type_name = $tax_item['tax_type_name'];
 
-			if ($myrow['tax_included'])
+			if ((bool)$myrow['tax_included'])
 			{
 				if ($SysPrefs->alternative_tax_include_on_docs() == 1)
 				{

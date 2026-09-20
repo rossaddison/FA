@@ -96,7 +96,7 @@ function get_report_printer(string|int|float|bool|null $profile, string|int|floa
 		if (!$result) return false;
 
 		$ret = db_fetch($result);
-		if (!$ret) return false;
+		if (!(bool)$ret) return false;
 	}
 	return get_printer($ret['printer']);
 }

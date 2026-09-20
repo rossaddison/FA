@@ -51,7 +51,7 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 			$acc_balance = get_budget_trans_from_to($begin, $end, $account["account_code"], $dimension, $dimension2);
 		else
 			$acc_balance = get_gl_trans_from_to($begin, $end, $account["account_code"], $dimension, $dimension2);
-		if (!$per_balance && !$acc_balance)
+		if (!$per_balance && !(bool)$acc_balance)
 			continue;
 		
 		//Print Type Title if it has atleast one non-zero account	
@@ -187,20 +187,20 @@ function print_profit_and_loss_statement(): void
 		$orientation = $_POST['PARAM_7'];
 		$destination = $_POST['PARAM_8'];
 	}
-	if ($destination)
+	if ((bool)$destination)
 		include_once($path_to_root . "/reporting/includes/excel_report.inc");
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
 	$labels = array();
 	$serie1 = array();
 	$serie2 = array();
-	if ($graphics)
+	if ((bool)$graphics)
 	{
 		include_once($path_to_root . "/reporting/includes/class.graphic.inc");
 		$pg = new Chart($graphics);
 	}
-	if (!$decimals)
+	if (!(bool)$decimals)
 		$dec = 0;
 	else
 		$dec = user_price_dec();
@@ -316,7 +316,7 @@ function print_profit_and_loss_statement(): void
 	$rep->Font();
 	$rep->NewLine();
 	$rep->Line($rep->row);
-	if ($graphics)
+	if ((bool)$graphics)
 	{
 		$labels[] = _('Calculated Return');
 		$serie1[] = abs($salesper);

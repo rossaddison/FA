@@ -28,7 +28,7 @@ function get_tax_free_price_for_item(string|int|float|bool|null $stock_id, strin
 	if ($tax_included==0) return $price;
 	
 	// if array already read, then make a copy and use that
-	if ($tax_group_array)
+	if ((bool)$tax_group_array)
 		$ret_tax_array = $tax_group_array;
 	else
 		$ret_tax_array = get_tax_group_items_as_array($tax_group);
@@ -66,7 +66,7 @@ function get_full_price_for_item(string|int|float|bool|null $stock_id, string|in
 	if ($tax_included==1) return $price;
 
 	// if array already read, then make a copy and use that
-	if ($tax_group_array)
+	if ((bool)$tax_group_array)
 		$ret_tax_array = $tax_group_array;
 	else
 		$ret_tax_array = get_tax_group_items_as_array($tax_group);
@@ -143,7 +143,7 @@ function get_taxes_for_item(string|int|float|bool|null $stock_id, array $tax_gro
 
 function get_tax_for_items(array $items, array $prices, string|int|float|bool|null $shipping_cost, string|int|float|bool|null $tax_group, string|int|float|bool|null $tax_included=null, ?array $tax_items_array=null, ?int $tax_algorithm = null)
 {
-	if (!$tax_algorithm)
+	if (!(bool)$tax_algorithm)
 		$tax_algorithm = get_company_pref('tax_algorithm');
 	// first create and set an array with all the tax types of the tax group
 	if($tax_items_array!=null)

@@ -208,7 +208,7 @@ end_table();
 
 $result = get_max_reconciled(get_post('reconcile_date'), $_POST['bank_account']);
 
-if ($row = db_fetch($result)) {
+if (($row = db_fetch($result)) !== false) {
 	$_POST["reconciled"] = price_format((float)$row["end_balance"]-(float)$row["beg_balance"]);
 	$total = $row["total"];
 	if (!isset($_POST["beg_balance"])) { // new selected account/statement

@@ -94,12 +94,12 @@ function print_supplier_balances(): void
 	$comments = $_POST['PARAM_6'];
 	$orientation = $_POST['PARAM_7'];
 	$destination = $_POST['PARAM_8'];
-	if ($destination)
+	if ((bool)$destination)
 		include_once($path_to_root . "/reporting/includes/excel_report.inc");
 	else
 		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
 
-	$orientation = ($orientation ? 'L' : 'P');
+	$orientation = ((bool)$orientation ? 'L' : 'P');
 	if ($fromsupp == ALL_TEXT)
 		$supp = _('All');
 	else
@@ -114,7 +114,7 @@ function print_supplier_balances(): void
 	else
 		$convert = false;
 
-	if ($no_zeros) $nozeros = _('Yes');
+	if ((bool)$no_zeros) $nozeros = _('Yes');
 	else $nozeros = _('No');
 
 	$cols = array(0, 95, 140, 200,	250, 320, 385, 450,	515);
@@ -122,7 +122,7 @@ function print_supplier_balances(): void
 	$headers = array(_('Trans Type'), _('#'), _('Date'), _('Due Date'), _('Charges'),
 		_('Credits'), _('Allocated'), _('Outstanding'));
 
-	if ($show_balance)
+	if ((bool)$show_balance)
 		$headers[7] = _('Balance');
 	$aligns = array('left',	'left',	'left',	'left',	'right', 'right', 'right', 'right');
 
@@ -160,7 +160,7 @@ function print_supplier_balances(): void
 		$init[0] = round2(($bal != false ? abs($bal['charges']) : 0)*$rate, $dec);
 		$init[1] = round2(($bal != false ? abs($bal['credits']) : 0)*$rate, $dec);
 		$init[2] = round2(($bal != false ? $bal['Allocated'] : 0)*$rate, $dec);
-		if ($show_balance)
+		if ((bool)$show_balance)
 		{
 			$init[3] = $init[0] - $init[1];
 			$accumulate += $init[3];
@@ -168,7 +168,7 @@ function print_supplier_balances(): void
 		else	
 			$init[3] = round2(($bal != false ? $bal['OutStanding'] : 0)*$rate, $dec);
 		$res = getTransactions($myrow['supplier_id'], $from, $to);
-		if ($no_zeros && db_num_rows($res) == 0) continue;
+		if ((bool)$no_zeros && db_num_rows($res) == 0) continue;
 
 		$rep->fontSize += 2;
 		$rep->TextCol(0, 2, (string)$myrow['name'].($myrow['inactive']==1 ? " ("._("Inactive").")" : ""));
@@ -193,7 +193,7 @@ function print_supplier_balances(): void
 		}	
 		while ($trans=db_fetch($res))
 		{
-			if ($no_zeros && floatcmp(abs($trans['TotalAmount']), $trans['Allocated']) == 0) continue;
+			if ((bool)$no_zeros && floatcmp(abs($trans['TotalAmount']), $trans['Allocated']) == 0) continue;
 			$rep->NewLine(1, 2);
 			$rep->TextCol(0, 1, $systypes_array[$trans['type']]);
 			$rep->TextCol(1, 2,	$trans['reference']);
@@ -220,7 +220,7 @@ function print_supplier_balances(): void
 				$item[3] = $item[0] - $item[2];
 			else	
 				$item[3] = -$item[1] - $item[2];
-			if ($show_balance)	
+			if ((bool)$show_balance)	
 				$rep->AmountCol(7, 8, $accumulate, $dec);
 			else	
 				$rep->AmountCol(7, 8, $item[3], $dec);
@@ -229,7 +229,7 @@ function print_supplier_balances(): void
 				$total[$i] += $item[$i];
 				$grandtotal[$i] += $item[$i];
 			}
-			if ($show_balance)
+			if ((bool)$show_balance)
 				$total[3] = $total[0] - $total[1];
 		}
 		$rep->Line($rep->row - 8);
@@ -246,7 +246,7 @@ function print_supplier_balances(): void
 	$rep->fontSize += 2;
 	$rep->TextCol(0, 3,	_('Grand Total'));
 	$rep->fontSize -= 2;
-	if ($show_balance)
+	if ((bool)$show_balance)
 		$grandtotal[3] = $grandtotal[0] - $grandtotal[1];
 	for ($i = 0; $i < 4; $i++)
 		$rep->AmountCol($i + 4, $i + 5,$grandtotal[$i], $dec);

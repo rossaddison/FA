@@ -80,9 +80,9 @@ if (isset($_POST['add']) || isset($_POST['update']))
 		if (!isset($_POST['account_tags']))
 			$_POST['account_tags'] = array();
 
-    	if ($selected_account) 
+    	if ((bool)$selected_account) 
 		{
-			if (get_post('inactive') == 1 && is_bank_account($_POST['account_code']))
+			if (get_post('inactive') == 1 && (bool)is_bank_account($_POST['account_code']))
 			{
 				display_error(_("The account belongs to a bank account and cannot be inactivated."));
 			}
@@ -119,7 +119,7 @@ function can_delete(string|int|float|bool|null $selected_account): bool
 	if ($selected_account == "")
 		return false;
 
-	if (key_in_foreign_table($selected_account, 'gl_trans', 'account'))
+	if ((bool)key_in_foreign_table($selected_account, 'gl_trans', 'account'))
 	{
 		display_error(_("Cannot delete this account because transactions have been created using this account."));
 		return false;
@@ -131,7 +131,7 @@ function can_delete(string|int|float|bool|null $selected_account): bool
 		return false;
 	}
 
-	if (key_in_foreign_table($selected_account, 'bank_accounts', 'account_code'))
+	if ((bool)key_in_foreign_table($selected_account, 'bank_accounts', 'account_code'))
 	{
 		display_error(_("Cannot delete this account because it is used by a bank account."));
 		return false;

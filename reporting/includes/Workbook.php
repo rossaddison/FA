@@ -4443,7 +4443,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         }
         // Return data stored on disk
         if ($this->_using_tmpfile) {
-            if ($tmp = fread($this->_filehandle, $buffer)) {
+            if ((bool)($tmp = fread($this->_filehandle, $buffer))) {
                 return $tmp;
             }
         }
@@ -5670,7 +5670,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $record      = 0x01B8;                       // Record identifier
         $length      = 0x00000;                      // Bytes to follow
 
-        if (!$format) {
+        if (!(bool)$format) {
             $format = $this->_url_format;
         }
 
@@ -5730,7 +5730,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $record      = 0x01B8;                       // Record identifier
         $length      = 0x00000;                      // Bytes to follow
 
-        if (!$format) {
+        if (!(bool)$format) {
             $format = $this->_url_format;
         }
 
@@ -5802,7 +5802,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         $record      = 0x01B8;                       // Record identifier
         $length      = 0x00000;                      // Bytes to follow
     
-        if (!$format) {
+        if (!(bool)$format) {
             $format = $this->_url_format;
         }
     
@@ -6691,7 +6691,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
         if ($row_level) {
             $row_level++;
         }
-        if ($col_level) {
+        if ((bool)$col_level) {
             $col_level++;
         }
 

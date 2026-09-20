@@ -85,7 +85,7 @@ function exist_transaction(string|array|null $type, string|array|null $type_no):
 			break;
 
 		case ST_WORKORDER : // it's a work order
-			if (!get_work_order($type_no, true))
+			if (!(bool)get_work_order($type_no, true))
 				return false;
 			break;
 
@@ -120,7 +120,7 @@ function select_link(array|false|null $row): string
 {
 	if (!isset($row['type']))
 		$row['type'] = $_POST['filterType'];
-	if (!is_date_in_fiscalyear($row['trans_date'], true))
+	if (!(bool)is_date_in_fiscalyear($row['trans_date'], true))
 		return _("N/A");
   	return button('Edit'.(string)$row["trans_no"], _("Select"), _("Select"), ICON_EDIT);
 }
@@ -276,7 +276,7 @@ function check_valid_entries(): bool
 		set_focus('date_');
 		return false;
 	}
-	if (!is_date_in_fiscalyear($_POST['date_']))
+	if (!(bool)is_date_in_fiscalyear($_POST['date_']))
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('date_');
@@ -313,7 +313,7 @@ function handle_void_transaction(): void
 		$msg = void_transaction($_POST['filterType'], $_POST['trans_no'],
 			$_POST['date_'], $_POST['memo_']);
 
-		if (!$msg) 
+		if (!(bool)$msg) 
 		{
 			display_notification_centered(_("Selected transaction has been voided."));
 			unset($_POST['trans_no']);
@@ -332,7 +332,7 @@ function handle_void_transaction(): void
 if (!isset($_POST['date_']))
 {
 	$_POST['date_'] = Today();
-	if (!is_date_in_fiscalyear($_POST['date_']))
+	if (!(bool)is_date_in_fiscalyear($_POST['date_']))
 		$_POST['date_'] = end_fiscalyear();
 }		
 	

@@ -80,7 +80,7 @@ if ($Mode == 'Delete')
 {
 
 	// PREVENT DELETES IF DEPENDENT RECORDS IN 'stock_master'
-	if (key_in_foreign_table($selected_id, 'stock_master', 'category_id'))
+	if ((bool)key_in_foreign_table($selected_id, 'stock_master', 'category_id'))
 	{
 		display_error(_("Cannot delete this item category because items have been created using this item category."));
 	} 

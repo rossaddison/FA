@@ -264,7 +264,7 @@ function get_trans_view_str(string|int|float|bool|null $type, string|int|float|b
 function check_ui_refresh(?string $name=null): bool
 {
 	$bt = debug_backtrace();
-	if (!$name)
+	if (!(bool)$name)
 		$name = $bt[1]['function'];
 	$old = @$_SESSION['ui_context'][$name];
 	$new = $_SESSION['ui_context'][$name] = $bt[1]['args'];
@@ -285,7 +285,7 @@ function exchange_rate_display(string|int|float|bool|null $from_currency, string
 	if ($from_currency != $to_currency)
 	{
 	 	$rate = input_num('_ex_rate');
-	 	if (check_ui_refresh() || !$rate) { // readonly or ui context changed
+	 	if (check_ui_refresh() || !(bool)$rate) { // readonly or ui context changed
 			$comp_currency = get_company_currency();
 
 	 		if (!isset($from_currency))
@@ -300,10 +300,10 @@ function exchange_rate_display(string|int|float|bool|null $from_currency, string
 
 			$rate = get_date_exchange_rate($currency, $date_); // try local
 
-			if ($rate)
+			if ((bool)$rate)
 				$readonly = true; // if we have already local exrate keep it unchanged 
 
-			if (!$rate) {	// retry from remote service
+			if (!(bool)$rate) {	// retry from remote service
 				$row = row_or_empty(get_currency($currency));
 
  				if ($row['auto_update']) // autoupdate means use remote service & store exrate on first transaction.
@@ -319,7 +319,7 @@ function exchange_rate_display(string|int|float|bool|null $from_currency, string
 					}
 				}
 			}
-			if (!$rate)	{	// get and edit latest available
+			if (!(bool)$rate)	{	// get and edit latest available
 				$rate = get_exchange_rate_from_home_currency($currency, $date_);
 			}
 			if ($from_currency != $comp_currency)
@@ -396,7 +396,7 @@ function get_comments_string(string|int|float|bool|null $type, string|int|float|
 function view_stock_status(string|int|float|bool|null $stock_id, string|int|float|bool|null $description=null, bool $echo=true): string
 {
 	global $path_to_root;
-	if ($description)
+	if ((bool)$description)
 		$preview_str = "<a target='_blank' href='$path_to_root/inventory/inquiry/stock_status.php?stock_id=$stock_id&popup=1' onclick=\"javascript:openWindow(this.href,this.target); return false;\" >". (user_show_codes()?$stock_id . " - ":"") . $description."</a>";
 	else
 		$preview_str = "<a target='_blank' href='$path_to_root/inventory/inquiry/stock_status.php?stock_id=$stock_id&popup=1' onclick=\"javascript:openWindow(this.href,this.target); return false;\" >$stock_id</a>";
@@ -438,7 +438,7 @@ function display_customer_trans_tax_details(bool|mysqli_result $tax_items, ?int 
 	$first = true;
     while ($tax_item = db_fetch($tax_items))
     {
-     	if (!$tax_item['amount'])
+     	if (!(bool)$tax_item['amount'])
      		continue;
 
     	$tax = number_format2($tax_item['amount'],user_price_dec());
@@ -446,7 +446,7 @@ function display_customer_trans_tax_details(bool|mysqli_result $tax_items, ?int 
 			$tax_type_name = $tax_item['tax_type_name'];
 		else
 			$tax_type_name = (string)$tax_item['tax_type_name']." (".(string)$tax_item['rate']."%) ";
-    	if ($tax_item['included_in_price'])
+    	if ((bool)$tax_item['included_in_price'])
     	{
 			if ($SysPrefs->alternative_tax_include_on_docs() == 1)
   			{
@@ -471,11 +471,11 @@ function display_supp_trans_tax_details(bool|mysqli_result $tax_items, ?int $col
 {
     while ($tax_item = db_fetch($tax_items))
     {
-     	if (!$tax_item['amount'])
+     	if (!(bool)$tax_item['amount'])
      		continue;
 
     	$tax = number_format2(abs($tax_item['amount']),user_price_dec());
-    	if ($tax_item['included_in_price'])
+    	if ((bool)$tax_item['included_in_price'])
         	label_row(_("Included") . " " . (string)$tax_item['tax_type_name'] . " (" . (string)$tax_item['rate'] . "%) "
         		. ": $tax", '', "colspan=$columns align=right", "align=right");
     	else
@@ -498,7 +498,7 @@ function display_edit_tax_items(array $taxes, ?int $columns, string|int|float|bo
 				if (!isset($_POST['mantax['.(string)$taxitem['tax_type_id'].']']))
 					$_POST['mantax['.(string)$taxitem['tax_type_id'].']'] = price_format($amount);
 				start_row();
-				if ($tax_included) {
+				if ((bool)$tax_included) {
 					$colspan = $columns-1;
 					label_cell(_("Included") . " " . (string)$taxitem['tax_type_name'].":",
 						"colspan={$colspan} align='right'");
@@ -510,12 +510,12 @@ function display_edit_tax_items(array $taxes, ?int $columns, string|int|float|bo
 						null, "colspan=$columns align=right", null, user_price_dec());
 					$total +=  round2($amount, user_price_dec());
 				}
-				if ($rightspan)
+				if ((bool)$rightspan)
 					label_cell('', "colspan ='$rightspan'");
 				end_row();
 			} else {
 				$value = number_format2($taxitem['Value'],user_price_dec());
-				if ($tax_included)
+				if ((bool)$tax_included)
 				{
 					label_row(_("Included") . " " . (string)$taxitem['tax_type_name']
 						. " " . $value , "", "colspan=$columns align=right", "align=right", $rightspan);
@@ -536,7 +536,7 @@ function display_edit_tax_items(array $taxes, ?int $columns, string|int|float|bo
 
 function display_footer_exit(string|int|float|bool|null $space=2): void
 {
-	if ($space)
+	if ((bool)$space)
 		br($space);
 	end_page(false, false, true);
 	exit;
@@ -794,9 +794,9 @@ function quickentry_calculate(int|float|bool|null $base, string|int|float|bool|n
 					}
 
 					$part = $tax;
-					if (strpos($qe_line['action'], '+'))
+					if ((bool)strpos($qe_line['action'], '+'))
 						$base += $tax;
-					elseif (strpos($qe_line['action'], '-'))
+					elseif ((bool)strpos($qe_line['action'], '-'))
 						$base -= $tax;
 				}
 				$gl_entries[] = array(
@@ -1504,7 +1504,7 @@ if (!function_exists('_vd'))
     	$str .= print_r($mixed, true); //var_dump($mixed);
     	$str .= "</pre>\n";
 		display_notification('<table><tr><td>'.$str.'</td></tr></table>');
-    	if ($exit)
+    	if ((bool)$exit)
     		exit;
   	}
 }
@@ -1512,13 +1512,13 @@ if (!function_exists('_vd'))
 function _vl(mixed $mixed, string|int|float|bool|null $title = '', string|int|float|bool|null $exit = false): void
 {
 	error_log((!empty($title) ? ($title .':') : '') . print_r($mixed, true));
-	if ($exit)
+	if ((bool)$exit)
 		exit;
 }
 
 function display_backtrace(string|int|float|bool|null $cond=true, string|int|float|bool|null $msg=''): void {
-	if ($cond) {
-		if ($msg) 
+	if ((bool)$cond) {
+		if ((bool)$msg) 
 			$str = "<center><span class='headingtext'>$msg</span></center>\n";
 		else
 			$str = '';

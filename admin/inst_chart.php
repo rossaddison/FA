@@ -26,7 +26,7 @@ include_once($path_to_root . "/includes/ui.inc");
 
 //---------------------------------------------------------------------------------------------
 
-if ($id = find_submit('Delete', false))
+if ((bool)($id = find_submit('Delete', false)))
 {
 	$extensions = get_company_extensions();
 	if (($extensions[$id]['type']=='chart') && uninstall_package($extensions[$id]['package'])) {
@@ -38,7 +38,7 @@ if ($id = find_submit('Delete', false))
 	}
 }
 
-if ($id = find_submit('Update', false))
+if ((bool)($id = find_submit('Update', false)))
 	install_extension($id);
 
 //---------------------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ start_form(true);
 			label_cell($encoding ? $encoding : _("Unknown"));
 
 			if ($available && check_pkg_upgrade($installed, $available)) // outdated or not installed theme in repo
-				button_cell('Update'.$pkg_name, $installed ? _("Update") : _("Install"),
+				button_cell('Update'.$pkg_name, (bool)$installed ? _("Update") : _("Install"),
 					_('Upload and install latest extension package'), ICON_DOWN);
 			else
 				label_cell('');

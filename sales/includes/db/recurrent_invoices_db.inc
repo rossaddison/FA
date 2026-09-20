@@ -57,7 +57,7 @@ function delete_recurrent_invoice(string|int|float|bool|array|null $selected_id)
 function get_recurrent_invoices(?string $date=null)
 {
 	// last_sent stores end date of last generated invoice _plus_ 1 (or is empty)
-	if ($date)
+	if ((bool)$date)
 	{
 		$date = date2sql($date);
 		// we can issue invoice after or at last day of covered period

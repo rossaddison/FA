@@ -329,7 +329,7 @@ function get_chart_accounts_search(string|array|null $like, string|int|float|boo
 	else
 		$limit = 10;
 
-	if ($skip)
+	if ((bool)$skip)
 		$sql = "SELECT chart.account_code, chart.account_name, type.name, chart.inactive, type.id
 			FROM (".TB_PREF."chart_master chart,".TB_PREF."chart_types type) "
 			."LEFT JOIN ".TB_PREF."bank_accounts acc "
