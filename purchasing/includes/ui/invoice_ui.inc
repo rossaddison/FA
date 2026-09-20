@@ -256,7 +256,7 @@ function display_gl_items(supp_trans &$supp_trans, string|int|float|bool|items_c
 				unset($_POST['totamount']); // enable default
 				$Ajax->activate('totamount');
 			}
-			echo "&nbsp;".$qid['base_desc'].":"."&nbsp;";
+			echo "&nbsp;".(string)$qid['base_desc'].":"."&nbsp;";
 
 			$amount = input_num('totamount', $qid['base_amount']);
 			$dec = user_price_dec();
@@ -401,7 +401,7 @@ function display_grn_items_for_selection(supp_trans &$supp_trans, string|int|flo
             qty_cell($myrow["qty_recd"], false, $dec);
             qty_cell($myrow["quantity_inv"], false, $dec);
             if ($supp_trans->trans_type == ST_SUPPINVOICE)
-            	qty_cells(null, 'this_quantity_inv'.$n, number_format2($myrow["qty_recd"] - $myrow["quantity_inv"], $dec), 
+            	qty_cells(null, 'this_quantity_inv'.$n, number_format2((float)$myrow["qty_recd"] - (float)$myrow["quantity_inv"], $dec), 
             		null, null, $dec);
             else
             	qty_cells(null, 'This_QuantityCredited'.$n, number_format2(max($myrow["quantity_inv"], 0), $dec), 
@@ -410,12 +410,12 @@ function display_grn_items_for_selection(supp_trans &$supp_trans, string|int|flo
             if ($supp_trans->trans_type == ST_SUPPINVOICE)
             {
             	amount_cells(null, 'ChgPrice'.$n, price_decimal_format($myrow["unit_price"], $dec2), null, null, $dec2);
-            	amount_cell(round2($myrow["unit_price"] * ($myrow["qty_recd"] - $myrow["quantity_inv"]), user_price_dec()));
+            	amount_cell(round2((float)$myrow["unit_price"] * ((float)$myrow["qty_recd"] - (float)$myrow["quantity_inv"]), user_price_dec()));
             }
             else
             {
             	amount_cells(null, 'ChgPrice'.$n, price_decimal_format($myrow["act_price"], $dec2), null, null, $dec2);
-            	amount_cell(round2($myrow["act_price"] * max($myrow['quantity_inv'], 0), user_price_dec()));
+            	amount_cell(round2((float)$myrow["act_price"] * max($myrow['quantity_inv'], 0), user_price_dec()));
             }	
             if ($supp_trans->trans_type == ST_SUPPINVOICE)
         		submit_cells('grn_item_id'.$n, _("Add"), '', _("Add to Invoice"), true);

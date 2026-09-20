@@ -56,9 +56,9 @@ function display_supplier_summary(bool|array|null $supplier_record): void
 	    start_row();
 		label_cell($supplier_record["curr_code"]);
 	    label_cell($supplier_record["terms"]);
-	    amount_cell((float)$supplier_record["Balance"] - $supplier_record["Due"]);
-	    amount_cell((float)$supplier_record["Due"] - $supplier_record["Overdue1"]);
-	    amount_cell((float)$supplier_record["Overdue1"] - $supplier_record["Overdue2"]);
+	    amount_cell((float)$supplier_record["Balance"] - (float)$supplier_record["Due"]);
+	    amount_cell((float)$supplier_record["Due"] - (float)$supplier_record["Overdue1"]);
+	    amount_cell((float)$supplier_record["Overdue1"] - (float)$supplier_record["Overdue2"]);
 	    amount_cell($supplier_record["Overdue2"]);
 	    amount_cell($supplier_record["Balance"]);
 	    end_row();
@@ -95,7 +95,7 @@ function credit_link(array|false|null $row): string
 
 	if ($page_nested)
 		return '';
-	return $row['type'] == ST_SUPPINVOICE && $row["TotalAmount"] - $row["Allocated"] > 0 ?
+	return $row['type'] == ST_SUPPINVOICE && (float)$row["TotalAmount"] - (float)$row["Allocated"] > 0 ?
 		pager_link(_("Credit This"),
 			"/purchasing/supplier_credit.php?New=1&invoice_no=".
 			(string)$row['trans_no'], ICON_CREDIT)
@@ -111,7 +111,7 @@ function fmt_amount(array|false|null $row): string
 function prt_link(array|false|null $row)
 {
   	if ($row['type'] == ST_SUPPAYMENT || $row['type'] == ST_BANKPAYMENT || $row['type'] == ST_SUPPCREDIT) 
- 		return print_document_link($row['trans_no']."-".(string)$row['type'], _("Print Remittance"), true, ST_SUPPAYMENT, ICON_PRINT);
+ 		return print_document_link((string)$row['trans_no']."-".(string)$row['type'], _("Print Remittance"), true, ST_SUPPAYMENT, ICON_PRINT);
 }
 
 function check_overdue(array|false|null $row): bool

@@ -137,8 +137,8 @@ while ($myrow = db_fetch($result))
 	label_cell($myrow["name"]);
 
 	inactive_control_cell($myrow["id"], $myrow["inactive"], 'tax_groups', 'id');
- 	edit_button_cell("Edit".$myrow["id"], _("Edit"));
- 	delete_button_cell("Delete".$myrow["id"], _("Delete"));
+ 	edit_button_cell("Edit".(string)$myrow["id"], _("Edit"));
+ 	delete_button_cell("Delete".(string)$myrow["id"], _("Delete"));
 	end_row();
 }
 
@@ -179,22 +179,22 @@ while($item = db_fetch($items))
 	start_row();
 	if ($selected_id != -1)
 	{
-		check_cells($item['tax_type_name'], 'tax_type_id' . $item['tax_type_id'], 
+		check_cells($item['tax_type_name'], 'tax_type_id' . (string)$item['tax_type_id'], 
 			isset($item['rate']), true, false, "align='center'");
 		if (isset($item['rate']))
-			check_cells(null, 'tax_shipping' . $item['tax_type_id'], $item['tax_shipping']);
+			check_cells(null, 'tax_shipping' . (string)$item['tax_type_id'], $item['tax_shipping']);
 	}
 	else
 	{
-		check_cells($item['tax_type_name'], 'tax_type_id' . $item['tax_type_id'], 
+		check_cells($item['tax_type_name'], 'tax_type_id' . (string)$item['tax_type_id'], 
 			null, true, false, "align='center'");
-		if (get_post('_tax_type_id' . $item['tax_type_id'].'_update'))	
+		if (get_post('_tax_type_id' . (string)$item['tax_type_id'].'_update'))	
 		{
 			//$_POST['_tax_type_id' . $item['tax_type_id'].'_update'] = 0;
 			$Ajax->activate('_page_body');
 		}
-		if (check_value('tax_type_id' . $item['tax_type_id'])==1)
-			check_cells(null, 'tax_shipping' . $item['tax_type_id'], null);
+		if (check_value('tax_type_id' . (string)$item['tax_type_id'])==1)
+			check_cells(null, 'tax_shipping' . (string)$item['tax_type_id'], null);
 	}		
 	end_row();	
 	

@@ -189,7 +189,7 @@ function print_inventory_purchase(): void
 		if ($fromsupp == ALL_TEXT)
 		{
 			$rep->TextCol(0, 1, $trans['stock_id']);
-			$rep->TextCol(1, 2, $trans['description']. ($trans['inactive']==1 ? " ("._("Inactive").")" : ""), -1);
+			$rep->TextCol(1, 2, (string)$trans['description']. ($trans['inactive']==1 ? " ("._("Inactive").")" : ""), -1);
 			$rep->TextCol(2, 3, sql2date($trans['tran_date']));
 			$rep->TextCol(3, 4, $trans['supp_reference']);
 			$rep->TextCol(4, 5, $trans['supplier_name']);
@@ -197,13 +197,13 @@ function print_inventory_purchase(): void
 		else
 		{
 			$rep->TextCol(0, 1, $trans['stock_id']);
-			$rep->TextCol(1, 2, $trans['description'].($trans['inactive']==1 ? " ("._("Inactive").")" : ""), -1);
+			$rep->TextCol(1, 2, (string)$trans['description'].($trans['inactive']==1 ? " ("._("Inactive").")" : ""), -1);
 			$rep->TextCol(2, 3, sql2date($trans['tran_date']));
 			$rep->TextCol(3, 4, $trans['supp_reference']);
 		}	
 		$rep->AmountCol(5, 6, $trans['qty'], get_qty_dec($trans['stock_id']));
 		$rep->AmountCol(6, 7, $trans['price'], $dec);
-		$amt = $trans['qty'] * (float)$trans['price'];
+		$amt = (float)$trans['qty'] * (float)$trans['price'];
 		$rep->TextCol(7, 8, get_location_name($trans['loc_code']));
 		$rep->NewLine();
 

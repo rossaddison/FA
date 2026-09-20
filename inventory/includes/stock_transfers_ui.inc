@@ -21,7 +21,7 @@ function add_to_order(items_cart &$order, string|array|null $new_item, string|in
 		if ($order->find_cart_item($item['stock_id']))
 			display_error(_("For Part :") . (string)$item['stock_id'] . " " . "This item is already on this document. You can change the quantity on the existing line if necessary.");
 		else
-			$order->add_to_cart (count($order->line_items), $item['stock_id'], $new_item_qty * $item['quantity'], $standard_cost);
+			$order->add_to_cart (count($order->line_items), $item['stock_id'], $new_item_qty * (float)$item['quantity'], $standard_cost);
 	}
 }
 

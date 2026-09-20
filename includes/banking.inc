@@ -122,8 +122,8 @@ function exchange_variation(string|int|float|bool|null $pyt_type, string|int|flo
 	}
 	if (is_company_currency($curr))
 		return;
-	$inv_amt = round2($amount * $trans['rate'], user_price_dec()); 
-	$pay_amt = round2($amount * $pyt_trans['rate'], user_price_dec());
+	$inv_amt = round2($amount * (float)$trans['rate'], user_price_dec()); 
+	$pay_amt = round2($amount * (float)$pyt_trans['rate'], user_price_dec());
 	if ($inv_amt != $pay_amt)
 	{
 		$diff = $inv_amt - $pay_amt;

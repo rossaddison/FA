@@ -120,7 +120,7 @@ function display_wo_requirements(string|int|float|bool|null $woid, ?string $quan
 			if ($show_qoh)
 				$qoh = get_qoh_on_date($myrow["stock_id"], $myrow["loc_code"], $date);
 
-			if ($show_qoh && ($myrow["units_req"] * $quantity > $qoh) &&
+			if ($show_qoh && ((float)$myrow["units_req"] * $quantity > $qoh) &&
 				!$SysPrefs->allow_negative_stock())
 			{
 				// oops, we don't have enough of one of the component items
@@ -131,7 +131,7 @@ function display_wo_requirements(string|int|float|bool|null $woid, ?string $quan
 				alt_table_row_color($k);
 
         	if (user_show_codes())
-        		label_cell($myrow["stock_id"]. " - " . $myrow["description"]);
+        		label_cell((string)$myrow["stock_id"]. " - " . (string)$myrow["description"]);
         	else
         		label_cell($myrow["description"]);
 
@@ -139,7 +139,7 @@ function display_wo_requirements(string|int|float|bool|null $woid, ?string $quan
 			label_cell($myrow["WorkCentreDescription"]);
 			$dec = get_qty_dec($myrow["stock_id"]);
             qty_cell($myrow["units_req"], false, $dec);
-			qty_cell($myrow["units_req"] * $quantity, false, $dec);
+			qty_cell((float)$myrow["units_req"] * $quantity, false, $dec);
             qty_cell($myrow["units_issued"], false, $dec);
 			if ($show_qoh)
 				qty_cell($qoh, false, $dec);

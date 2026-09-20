@@ -116,7 +116,7 @@ function dispatch_link(array|false|null $row): string
 {
 	global $trans_type, $page_nested;
 
-	if ($row['ord_payments'] + $row['inv_payments'] < $row['prep_amount'])
+	if ((float)$row['ord_payments'] + (float)$row['inv_payments'] < $row['prep_amount'])
  		return '';
 
 	if ($trans_type == ST_SALESORDER)

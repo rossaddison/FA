@@ -62,7 +62,7 @@ class BoxReports
 		$st_classes = "<b>" . _("Report Classes:") . "</b><br>";
 
 		if (isset($_GET['Class']))
-			set_focus('class'.$_GET['Class']);
+			set_focus('class'.(string)$_GET['Class']);
 
 		$cur_class = $_REQUEST['Class'];
 

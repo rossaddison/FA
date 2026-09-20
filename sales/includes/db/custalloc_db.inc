@@ -378,7 +378,7 @@ function credit_sales_invoice_allocate(string|int|float|bool|null $invoice_no, s
 		WHERE (`type`=".ST_SALESINVOICE." AND trans_no=".db_escape($invoice_no).")";
 	$result = db_query($sql, "can't retrieve invoice totals");
 	$invoice = db_fetch($result);
-	$free = $invoice['total'] - $invoice['alloc'];
+	$free = (float)$invoice['total'] - (float)$invoice['alloc'];
 
 	if ($free < $amount) {
 	 // if there is not enough unallocated amount - remove some payment allocations
@@ -392,7 +392,7 @@ function credit_sales_invoice_allocate(string|int|float|bool|null $invoice_no, s
 
 			delete_cust_allocation($alloc['id']);
 			if ($unalloc < $alloc['amt'])
-				add_cust_allocation($alloc['amt']-$unalloc, $alloc['trans_type_from'],
+				add_cust_allocation((float)$alloc['amt']-$unalloc, $alloc['trans_type_from'],
 					$alloc['trans_no_from'], ST_SALESINVOICE, $invoice_no, $invoice['debtor_no'], $date);
 
 			update_debtor_trans_allocation($alloc['trans_type_to'], $alloc['trans_no_to'], $invoice['debtor_no']);

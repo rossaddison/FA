@@ -199,8 +199,8 @@ function add_supp_invoice(supp_trans &$supp_trans)
 		{
 			if (isset($taxitem['Override'])) {
 				if ($supp_trans->tax_included) { // if tax included, fix net amount to preserve overall line price
-					$net_diff += (float)$taxitem['Override'] - $taxitem['Value'];
-					$taxitem['Net'] += (float)$taxitem['Override'] - $taxitem['Value'];
+					$net_diff += (float)$taxitem['Override'] - (float)$taxitem['Value'];
+					$taxitem['Net'] += (float)$taxitem['Override'] - (float)$taxitem['Value'];
 				}
 				$taxitem['Value'] = $taxitem['Override'];
 			}
@@ -501,7 +501,7 @@ function read_supp_invoice(string|int|float|bool|null $trans_no, string|int|floa
            				$details_row["description"], 
            				$details_row['qty_recd'],
            				$details_row['quantity_inv'],
-           				($trans_type == ST_SUPPCREDIT ? -1 : 1) * $details_row["quantity"], 0, $details_row["FullUnitPrice"], // SUPPCREDIT quantities are stored negative in database
+           				($trans_type == ST_SUPPCREDIT ? -1 : 1) * (float)$details_row["quantity"], 0, $details_row["FullUnitPrice"], // SUPPCREDIT quantities are stored negative in database
            				0, 0);
              	}
              	else
@@ -591,12 +591,12 @@ function void_supp_invoice(string|int|float|bool|null $type, string|int|float|bo
 					$sql = "UPDATE ".TB_PREF."purch_order_details
         				SET quantity_ordered = quantity_ordered + ".-$details_row["quantity"].", ";
         			if ($match !== false)
-        				$sql .= "act_price=".$match['unit_price'].", ";
+        				$sql .= "act_price=".(string)$match['unit_price'].", ";
     				$sql .= "quantity_received = quantity_received + ".-$details_row["quantity"]."
-    				    WHERE po_detail_item = ".$details_row["po_detail_item_id"];
+    				    WHERE po_detail_item = ".(string)$details_row["po_detail_item_id"];
 					db_query($sql, "a purchase order details record could not be updated. This receipt of goods has not been processed ");
 					$sql = "UPDATE ".TB_PREF."grn_items SET qty_recd=qty_recd+".-$details_row["quantity"]."
-						WHERE id=".$details_row["grn_item_id"];
+						WHERE id=".(string)$details_row["grn_item_id"];
 					db_query($sql);
     			}
     			else
@@ -612,21 +612,21 @@ function void_supp_invoice(string|int|float|bool|null $type, string|int|float|bo
 					//Thus difference in PO and Supp Invoice should be handled separately
 					
 					$qoh = get_qoh_on_date($details_row["stock_id"]);
-					if ($diff*$details_row["quantity"] !=0 && $qoh <= 0)
+					if ($diff*(float)$details_row["quantity"] !=0 && $qoh <= 0)
 					{
 						global $Refs;
 
 						//Chaitanya : Post a journal entry
 						$id = get_next_trans_no(ST_JOURNAL);
 						$ref = $Refs->get_next(ST_JOURNAL, null, $date_);
-						add_journal(ST_JOURNAL, $id, $details_row["quantity"] * $diff, $old_date, get_company_currency(), $ref);
+						add_journal(ST_JOURNAL, $id, (float)$details_row["quantity"] * $diff, $old_date, get_company_currency(), $ref);
 						$stock_id = $details_row["stock_id"];
 						$stock_gl_code = get_stock_gl_code($stock_id);
-						$memo = "Reversing Supplier invoice adjustment for zero inventory of ".$stock_id." Invoice: ".$trans['reference'];
+						$memo = "Reversing Supplier invoice adjustment for zero inventory of ".$stock_id." Invoice: ".(string)$trans['reference'];
 						//Reverse the inventory effect if $qoh <=0
 						add_gl_trans_std_cost(ST_JOURNAL, $id, $old_date, 
 							$stock_gl_code["inventory_account"],
-							$details_row['dimension_id'], $details_row['dimension2_id'], $memo, $details_row["quantity"] * $diff);
+							$details_row['dimension_id'], $details_row['dimension2_id'], $memo, (float)$details_row["quantity"] * $diff);
 						//GL Posting to inventory adjustment account
 						add_gl_trans_std_cost(ST_JOURNAL, $id, $old_date, 
 							$stock_gl_code["adjustment_account"],
@@ -684,11 +684,11 @@ function remove_not_invoice_item(string|int|null $id): void
     $supp = get_supplier($grn["supplier_id"]);
 
 	$sql = "UPDATE ".TB_PREF."purch_order_details
-		SET quantity_received = qty_invoiced, quantity_ordered = qty_invoiced WHERE po_detail_item = ".$myrow["po_detail_item"];
+		SET quantity_received = qty_invoiced, quantity_ordered = qty_invoiced WHERE po_detail_item = ".(string)$myrow["po_detail_item"];
 	db_query($sql, "The quantity invoiced of the purchase order line could not be updated");
 
     $sql = "UPDATE ".TB_PREF."grn_items
-        SET qty_recd = quantity_inv WHERE id = ".$myrow["id"];
+        SET qty_recd = quantity_inv WHERE id = ".(string)$myrow["id"];
     db_query($sql, "The quantity invoiced off the items received record could not be updated");
 
     update_average_material_cost($grn["supplier_id"], $myrow["item_code"],

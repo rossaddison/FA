@@ -119,7 +119,7 @@ while ($myrow = db_fetch($result))
 	alt_table_row_color($k);
 
 	label_cell($myrow["cid"]);
-	label_cell('<a href="./gl_account_types.php?cid='.$myrow["cid"].'">'.$myrow['class_name'].'</a>');
+	label_cell('<a href="./gl_account_types.php?cid='.(string)$myrow["cid"].'">'.(string)$myrow['class_name'].'</a>');
 	if (isset($SysPrefs->use_oldstyle_convert) && $SysPrefs->use_oldstyle_convert == 1)
 	{
 		$myrow['ctype'] = ($myrow["ctype"] >= CL_ASSETS && $myrow["ctype"] < CL_INCOME ? 1 : 0);
@@ -128,8 +128,8 @@ while ($myrow = db_fetch($result))
 	else	
 		label_cell($class_types[$myrow["ctype"]]);
 	inactive_control_cell($myrow["cid"], $myrow["inactive"], 'chart_class', 'cid');
-	edit_button_cell("Edit".$myrow["cid"], _("Edit"));
-	delete_button_cell("Delete".$myrow["cid"], _("Delete"));
+	edit_button_cell("Edit".(string)$myrow["cid"], _("Edit"));
+	delete_button_cell("Delete".(string)$myrow["cid"], _("Delete"));
 	end_row();
 }
 inactive_control_row($th);

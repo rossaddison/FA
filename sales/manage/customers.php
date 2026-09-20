@@ -219,8 +219,8 @@ function customer_settings(string|int|float|bool|array|null $selected_id): void
 		$_POST['curr_code']  = $myrow["curr_code"];
 		$_POST['credit_status']  = $myrow["credit_status"];
 		$_POST['payment_terms']  = $myrow["payment_terms"];
-		$_POST['discount']  = percent_format($myrow["discount"] * 100);
-		$_POST['pymt_discount']  = percent_format($myrow["pymt_discount"] * 100);
+		$_POST['discount']  = percent_format((float)$myrow["discount"] * 100);
+		$_POST['pymt_discount']  = percent_format((float)$myrow["pymt_discount"] * 100);
 		$_POST['credit_limit']	= price_format($myrow["credit_limit"]);
 		$_POST['notes']  = $myrow["notes"];
 		$_POST['inactive'] = $myrow["inactive"];

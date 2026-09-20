@@ -234,20 +234,20 @@ function print_inventory_purchase(): void
 		$rep->TextCol(0, 1, $trans['stock_id']);
 		if ($fromsupp == ALL_TEXT)
 		{
-			$rep->TextCol(1, 2, $trans['description'].($trans['inactive']==1 ? " ("._("Inactive").")" : ""), -1);
+			$rep->TextCol(1, 2, (string)$trans['description'].($trans['inactive']==1 ? " ("._("Inactive").")" : ""), -1);
 			$rep->TextCol(2, 3, sql2date($trans['tran_date']));
 			$rep->TextCol(3, 4, $trans['supp_reference']);
 			$rep->TextCol(4, 5, $trans['supplier_name']);
 		}
 		else
 		{
-			$rep->TextCol(1, 2, $trans['description'].($trans['inactive']==1 ? " ("._("Inactive").")" : ""), -1);
+			$rep->TextCol(1, 2, (string)$trans['description'].($trans['inactive']==1 ? " ("._("Inactive").")" : ""), -1);
 			$rep->TextCol(2, 3, sql2date($trans['tran_date']));
 			$rep->TextCol(3, 4, $trans['supp_reference']);
 		}	
 		$rep->AmountCol(5, 6, $trans['qty'], get_qty_dec($trans['stock_id']));
 		$rep->AmountCol(6, 7, $trans['price'], $dec);
-		$amt = $trans['qty'] * $trans['price'];
+		$amt = (float)$trans['qty'] * $trans['price'];
 		$rep->AmountCol(7, 8, $amt, $dec);
 		$rep->fontSize += 2;
 		$total += $amt;

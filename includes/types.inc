@@ -132,7 +132,7 @@ function payment_person_name(string|int|float|bool|null $type, string|int|float|
 			return $person_id;
 		case PT_QUICKENTRY :
 			$qe = get_quick_entry($person_id);
-			return ($full ? $payment_person_types[$type] . " ":"") . $qe["description"];
+			return ($full ? $payment_person_types[$type] . " ":"") . (string)$qe["description"];
 		case PT_WORKORDER :
 			global $wo_cost_types;
 			return (!$full ? _('Work Order').' '.$person_id : get_trans_view_str(ST_WORKORDER, $person_id, _('Work Order').' '.$person_id));

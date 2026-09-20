@@ -103,7 +103,7 @@ function can_process(array $wo_details): bool
 		return false;
 	}
 	// don't produce more that required. Otherwise change the Work Order.
-	if (input_num('quantity') > ((float)$wo_details["units_reqd"] - $wo_details["units_issued"]))
+	if (input_num('quantity') > ((float)$wo_details["units_reqd"] - (float)$wo_details["units_issued"]))
 	{
 		display_error(_("The production exceeds the quantity needed. Please change the Work Order."));
 		set_focus('quantity');
@@ -133,7 +133,7 @@ function can_process(array $wo_details): bool
 			if (check_negative_stock($row["stock_id"], -$row['units_req'] * input_num('quantity'), $row["loc_code"], $_POST['date_']))
 			{
     			display_error( _("The production cannot be processed because a required item would cause a negative inventory balance :") .
-    				" " . $row['stock_id'] . " - " .  $row['description']);
+    				" " . (string)$row['stock_id'] . " - " .  (string)$row['description']);
     			$err = true;
 			}
 		}
@@ -177,7 +177,7 @@ hidden('selected_id', post_scalar('selected_id'));
 
 $dec = get_qty_dec($wo_details["stock_id"]);
 if (!isset($_POST['quantity']) || $_POST['quantity'] == '')
-	$_POST['quantity'] = qty_format(max($wo_details["units_reqd"] - $wo_details["units_issued"], 0), $wo_details["stock_id"], $dec);
+	$_POST['quantity'] = qty_format(max((float)$wo_details["units_reqd"] - (float)$wo_details["units_issued"], 0), $wo_details["stock_id"], $dec);
 
 start_table(TABLESTYLE2);
 br();

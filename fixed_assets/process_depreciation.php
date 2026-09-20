@@ -110,7 +110,7 @@ function show_gl_rows(): void {
     alt_table_row_color($k);
     label_cell($item['stock_id']);
     label_cell($myrow["date"]);
-    label_cell($item['cogs_account'].' '.get_gl_account_name($item["cogs_account"]));
+    label_cell((string)$item['cogs_account'].' '.get_gl_account_name($item["cogs_account"]));
     amount_cell($myrow["value"]);
     label_cell("");
     end_row();
@@ -118,7 +118,7 @@ function show_gl_rows(): void {
     alt_table_row_color($k);
     label_cell($item['stock_id']);
     label_cell($myrow["date"]);
-    label_cell($item["adjustment_account"].' '.get_gl_account_name($item["adjustment_account"]));
+    label_cell((string)$item["adjustment_account"].' '.get_gl_account_name($item["adjustment_account"]));
     label_cell("");
     amount_cell($myrow["value"]);
     end_row();

@@ -214,7 +214,7 @@ function check_data(): bool
 
 	if (is_reference_already_there($_SESSION['supp_trans']->supplier_id, $_POST['supp_reference'], $_SESSION['supp_trans']->trans_no))
 	{ 	/*Transaction reference already entered */
-		display_error(_("This invoice number has already been entered. It cannot be entered again.") . " (" . $_POST['supp_reference'] . ")");
+		display_error(_("This invoice number has already been entered. It cannot be entered again.") . " (" . (string)$_POST['supp_reference'] . ")");
 		set_focus('supp_reference');
 		return false;
 	}
@@ -227,7 +227,7 @@ function check_data(): bool
 				{
 					$stock = get_item($item->item_code);
 					display_error(_("The return cannot be processed because there is an insufficient quantity for item:") .
-						" " . $stock['stock_id'] . " - " . $stock['description'] . " - " .
+						" " . (string)$stock['stock_id'] . " - " . (string)$stock['description'] . " - " .
 						_("Quantity On Hand") . " = " . number_format2(get_qoh_on_date($stock['stock_id'], null, 
 						$_SESSION['supp_trans']->tran_date), get_qty_dec($stock['stock_id'])));
 					return false;

@@ -47,7 +47,7 @@ echo "<center>";
 br(1);
 if ($myrow["released"] == false)
 {
-    display_heading2(_("BOM for item:") . " " . $myrow["StockItemName"]);
+    display_heading2(_("BOM for item:") . " " . (string)$myrow["StockItemName"]);
     display_bom($myrow["stock_id"]);
 }
 else

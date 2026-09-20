@@ -34,7 +34,7 @@ function add_to_order(Cart &$order, string|array|null $new_item, string|int|floa
 		// rounding differences are included in last price item in kit
 		$item_num--;
 		if ($item_num) {
-			$price -= $item['quantity']*$std_price*$price_factor;
+			$price -= (float)$item['quantity']*$std_price*$price_factor;
 			$item_price = $std_price*$price_factor;
 		} else {
 			if ($item['quantity']) 
@@ -45,7 +45,7 @@ function add_to_order(Cart &$order, string|array|null $new_item, string|int|floa
 
 		if (!$item['is_foreign'] && $item['item_code'] != $item['stock_id'])
 		{	// this is sales kit - recurse 
-			add_to_order($order, $item['stock_id'], $new_item_qty*$item['quantity'],
+			add_to_order($order, $item['stock_id'], $new_item_qty*(float)$item['quantity'],
 				$item_price, $discount);
 		}
 		else
@@ -56,13 +56,13 @@ function add_to_order(Cart &$order, string|array|null $new_item, string|int|floa
 			{
 				if (strcasecmp($order_item->stock_id, $item['stock_id']) == 0)
 				{
-					display_warning(_("For Part :").$item['stock_id']. " " 
+					display_warning(_("For Part :").(string)$item['stock_id']. " " 
 						. _("This item is already on this document. You have been warned."));
 					break;
 				}
 			}
 			$order->add_to_cart (count($order->line_items),	$item['stock_id'], 
-				$new_item_qty*$item['quantity'], $item_price, $discount, 0,0, $description);
+				$new_item_qty*(float)$item['quantity'], $item_price, $discount, 0,0, $description);
 		}
 	}
 

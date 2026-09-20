@@ -69,7 +69,7 @@ function print_workorders(): void
 		{
 			$rep = new FrontReport("", "", user_pagesize(), 9, $orientation);
 			$rep->title = _('WORK ORDER');
-			$rep->filename = "WorkOrder" . $myrow['wo_ref'] . ".pdf";
+			$rep->filename = "WorkOrder" . (string)$myrow['wo_ref'] . ".pdf";
 		}
 		$rep->currency = $cur;
 		$rep->Font();
@@ -95,7 +95,7 @@ function print_workorders(): void
 			$dec = get_qty_dec($myrow2["stock_id"]);
 
 			$rep->AmountCol(4, 5,	$myrow2['units_req'], $dec, -2);
-			$rep->AmountCol(5, 6,	$myrow2['units_req'] * $myrow['units_issued'], $dec, -2);
+			$rep->AmountCol(5, 6,	(float)$myrow2['units_req'] * (float)$myrow['units_issued'], $dec, -2);
 			$rep->AmountCol(6, 7,	$myrow2['units_issued'], $dec, -2);
 			$rep->NewLine(1);
 			if ($rep->row < $rep->bottomMargin + (15 * $rep->lineHeight))

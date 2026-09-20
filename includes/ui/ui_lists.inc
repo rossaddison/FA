@@ -2290,7 +2290,7 @@ function printers_list(?string $name, string|int|float|bool|array|null $selected
 		$result = db_query($sql, 'cannot get all printers');
 		$printers = array();
 		while($myrow=db_fetch($result)) {
-			$printers[$myrow['id']] = $myrow['name'].'&nbsp;-&nbsp;'.$myrow['description'];
+			$printers[$myrow['id']] = (string)$myrow['name'].'&nbsp;-&nbsp;'.(string)$myrow['description'];
 		}
 	}
 	return array_selector($name, $selected_id, $printers, 

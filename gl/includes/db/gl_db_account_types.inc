@@ -37,7 +37,7 @@ function update_account_type(string|int|float|bool|null $id, string|int|float|bo
 		while ($myrow = db_fetch($result))
 		{
     		$sql = "UPDATE ".TB_PREF."chart_types SET parent=".db_escape($id)
-				." WHERE id = '".$myrow['id']."'";
+				." WHERE id = '".(string)$myrow['id']."'";
 			db_query($sql, "could not update account type");
 		}
 		$sql = "SELECT account_code 
@@ -50,7 +50,7 @@ function update_account_type(string|int|float|bool|null $id, string|int|float|bo
 		{
     		$sql = "UPDATE ".TB_PREF."chart_master 
     			SET account_type=".db_escape($id)
-				." WHERE account_code = '".$myrow['account_code']."'";
+				." WHERE account_code = '".(string)$myrow['account_code']."'";
 			db_query($sql, "could not update account");
 		}
 	}

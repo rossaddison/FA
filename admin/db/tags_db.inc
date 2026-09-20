@@ -182,7 +182,7 @@ function delete_tag_associations(?int $type, string|int|float|bool|null $recordi
 
 	while($ta = db_fetch($result)) {
 		$sql2 = "DELETE FROM ".TB_PREF."tag_associations WHERE 
-			record_id = '".$ta['record_id']."' AND tag_id=".$ta['tag_id'];
+			record_id = '".(string)$ta['record_id']."' AND tag_id=".(string)$ta['tag_id'];
 		db_query($sql2, "could not delete tag associations");
 	}
 }

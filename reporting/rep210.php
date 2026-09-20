@@ -137,7 +137,7 @@ function print_remittances(): void
 				$rep->TextCol(2, 3,	sql2date($myrow2['tran_date']), -2);
 				$rep->TextCol(3, 4,	sql2date($myrow2['due_date']), -2);
 				$rep->AmountCol(4, 5, $myrow2['Total'], $dec, -2);
-				$rep->AmountCol(5, 6, $myrow2['Total'] - $myrow2['alloc'], $dec, -2);
+				$rep->AmountCol(5, 6, (float)$myrow2['Total'] - (float)$myrow2['alloc'], $dec, -2);
 				$rep->AmountCol(6, 7, $myrow2['amt'], $dec, -2);
 
 				$total_allocated += $myrow2['amt'];
@@ -177,7 +177,7 @@ function print_remittances(): void
 			if ($words != "")
 			{
 				$rep->NewLine(2);
-				$rep->TextCol(1, 7, $myrow['curr_code'] . ": " . $words, - 2);
+				$rep->TextCol(1, 7, (string)$myrow['curr_code'] . ": " . $words, - 2);
 			}
 			$rep->Font();
 			if ($email == 1)

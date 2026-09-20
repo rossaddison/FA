@@ -213,7 +213,7 @@ function print_tax_report(): void
 		if ($id)
 		{
 			$tx = getTaxInfo($id);
-			$rep->TextCol(0, 1, $tx['name'] . " " . number_format2($tx['rate'], $dec) . "%");
+			$rep->TextCol(0, 1, (string)$tx['name'] . " " . number_format2($tx['rate'], $dec) . "%");
 		} else {
 			$rep->TextCol(0, 1, _('Exempt'));
 		}
@@ -221,8 +221,8 @@ function print_tax_report(): void
 		$rep->AmountCol(2, 3, $sum['taxout'], $dec);
 		$rep->AmountCol(3, 4, $sum['in'], $dec);
 		$rep->AmountCol(4, 5, $sum['taxin'], $dec); 
-		$rep->AmountCol(5, 6, $sum['taxout']+(float)$sum['taxin'], $dec);
-		$taxtotal += $sum['taxout']+(float)$sum['taxin'];
+		$rep->AmountCol(5, 6, (float)$sum['taxout']+(float)$sum['taxin'], $dec);
+		$taxtotal += (float)$sum['taxout']+(float)$sum['taxin'];
 		$rep->NewLine();
 	}
 

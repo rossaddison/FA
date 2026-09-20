@@ -144,12 +144,12 @@ function print_inventory_sales(): void
 		$rep->TextCol(1, 2, $trans['description']);
 		$rep->AmountCol(2, 3, $trans['quantity'], get_qty_dec($trans['stock_id']));
 		$rep->AmountCol(3, 4, $trans['unit_price'], $dec);
-		$rep->AmountCol(4, 5, $trans['quantity']*$trans['unit_price'], $dec);
+		$rep->AmountCol(4, 5, (float)$trans['quantity']*(float)$trans['unit_price'], $dec);
 		if ($trans['unit_price'] == 0)
 			$rep->TextCol(6, 7, _('Gift'));
 		$rep->fontSize += 2;
-		$total += $trans['quantity']*$trans['unit_price'];
-		$grandtotal += $trans['quantity']*$trans['unit_price'];
+		$total += (float)$trans['quantity']*(float)$trans['unit_price'];
+		$grandtotal += (float)$trans['quantity']*(float)$trans['unit_price'];
 	}
 	$rep->NewLine(2, 3);
 	$rep->TextCol(0, 4, _('Total'));

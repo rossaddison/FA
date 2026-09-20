@@ -92,7 +92,7 @@ function print_price_listing(): void
 	if ($currency == ALL_TEXT)
 		$currency = $home_curr;
 	$curr = get_currency($currency);
-	$curr_sel = $currency . " - " . $curr['currency'];
+	$curr_sel = $currency . " - " . (string)$curr['currency'];
 	if ($category == ALL_NUMERIC)
 		$category = 0;
 	if ($salestype == ALL_NUMERIC)
@@ -146,7 +146,7 @@ function print_price_listing(): void
 			$rep->Line($rep->row  - $rep->lineHeight);
 			$rep->NewLine(2);
 			$rep->fontSize += 2;
-			$rep->TextCol(0, 3, $myrow['category_id'] . " - " . $myrow['description']);
+			$rep->TextCol(0, 3, (string)$myrow['category_id'] . " - " . (string)$myrow['description']);
 			$catgor = $myrow['description'];
 			$rep->fontSize -= 2;
 			$rep->NewLine();
@@ -161,7 +161,7 @@ function print_price_listing(): void
 		{
 			$price2 = get_price($myrow['stock_id'], $home_curr, $salestype);
 			if ($price2 != 0.0)
-				$disp = ($price2 - $myrow['Standardcost']) * 100 / $price2;
+				$disp = ($price2 - (float)$myrow['Standardcost']) * 100 / $price2;
 			else
 				$disp = 0.0;
 			$rep->TextCol(4, 5,	number_format2($disp, user_percent_dec()) . " %");
@@ -202,7 +202,7 @@ function print_price_listing(): void
 			$rep->Line($rep->row  - $rep->lineHeight);
 			$rep->NewLine(2);
 			$rep->fontSize += 2;
-			$rep->TextCol(0, 3, $myrow['cat_id'] . " - " . $myrow['cat_name']);
+			$rep->TextCol(0, 3, (string)$myrow['cat_id'] . " - " . (string)$myrow['cat_name']);
 			$catgor = $myrow['cat_name'];
 			$rep->fontSize -= 2;
 			$rep->NewLine();

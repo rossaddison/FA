@@ -85,14 +85,14 @@ function print_gl_rows(FrontReport &$rep, string|bool|mysqli_result|null $result
 		$rep->Line($rep->row -= 4);
 		while($myrow = db_fetch($result)) {
 			$rep->NewLine();
-			$rep->TextCol(0, 2, $systypes_array[$myrow['type']] . ' ' . $myrow['type_no'], -2);
+			$rep->TextCol(0, 2, $systypes_array[$myrow['type']] . ' ' . (string)$myrow['type_no'], -2);
 			$rep->TextCol(2, 3, sql2date($myrow["tran_date"]), -2);
 			$rep->TextCol(3, 4, $myrow['account'], -2);
 			$rep->TextCol(4, 5, $myrow['account_name'], -2);
 			if ($myrow['amount'] > 0.0)
 				$rep->AmountCol(5, 6, $myrow['amount'], $dec);
 			else	
-				$rep->AmountCol(6, 7, $myrow['amount'] * -1, $dec, -1);
+				$rep->AmountCol(6, 7, (float)$myrow['amount'] * -1, $dec, -1);
 			$rep->TextCol(8, 11, $myrow['memo_']);
 		}
 	}

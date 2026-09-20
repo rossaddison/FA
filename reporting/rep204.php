@@ -125,11 +125,11 @@ function print_outstanding_GRN(): void
 		$rep->NewLine();
 		$rep->TextCol(0, 1, $GRNs['id']);
 		$rep->TextCol(1, 2, $GRNs['order_no']);
-		$rep->TextCol(2, 3, $GRNs['item_code'] . '-' . $GRNs['description']);
+		$rep->TextCol(2, 3, (string)$GRNs['item_code'] . '-' . (string)$GRNs['description']);
 		$rep->AmountCol(3, 4, $GRNs['qty_recd'], $dec2);
 		$rep->AmountCol(4, 5, $GRNs['quantity_inv'], $dec2);
-		$QtyOstg = $GRNs['qty_recd'] - $GRNs['quantity_inv'];
-		$Value = ($GRNs['qty_recd'] - $GRNs['quantity_inv']) * $GRNs['act_price'];
+		$QtyOstg = (float)$GRNs['qty_recd'] - (float)$GRNs['quantity_inv'];
+		$Value = ((float)$GRNs['qty_recd'] - (float)$GRNs['quantity_inv']) * (float)$GRNs['act_price'];
 		$rep->AmountCol(5, 6, $QtyOstg, $dec2);
 		$rep->AmountCol(6, 7, $GRNs['act_price'], $dec);
 		$rep->AmountCol(7, 8, $Value, $dec);

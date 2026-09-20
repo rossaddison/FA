@@ -167,8 +167,8 @@ while ($myrow = db_fetch($result))
 	label_cell($myrow["phone"]);
 	label_cell($myrow["phone2"]);
 	inactive_control_cell($myrow["loc_code"], $myrow["inactive"], 'locations', 'loc_code');
- 	edit_button_cell("Edit".$myrow["loc_code"], _("Edit"));
- 	delete_button_cell("Delete".$myrow["loc_code"], _("Delete"));
+ 	edit_button_cell("Edit".(string)$myrow["loc_code"], _("Edit"));
+ 	delete_button_cell("Delete".(string)$myrow["loc_code"], _("Delete"));
 	end_row();
 }
 	//END WHILE LIST LOOP

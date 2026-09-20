@@ -96,7 +96,7 @@ function print_sales_orders(): void
 		$items = $prices = array();
 		while ($myrow2=db_fetch($result))
 		{
-			$Net = round2(((1 - $myrow2["discount_percent"]) * $myrow2["unit_price"] * $myrow2["quantity"]),
+			$Net = round2(((1 - (float)$myrow2["discount_percent"]) * (float)$myrow2["unit_price"] * (float)$myrow2["quantity"]),
 			   user_price_dec());
 			$prices[] = $Net;
 			$items[] = $myrow2['stk_code'];
@@ -107,7 +107,7 @@ function print_sales_orders(): void
 			if ($myrow2["discount_percent"]==0)
 				$DisplayDiscount ="";
 			else
-				$DisplayDiscount = number_format2($myrow2["discount_percent"]*100,user_percent_dec()) . "%";
+				$DisplayDiscount = number_format2((float)$myrow2["discount_percent"]*100,user_percent_dec()) . "%";
 			$rep->TextCol(0, 1,	$myrow2['stk_code'], -2);
 			$oldrow = $rep->row;
 			$rep->TextColLines(1, 2, $myrow2['description'], -2);
@@ -145,7 +145,7 @@ function print_sales_orders(): void
 			$rep->TextCol(6, 7,	$DisplayFreight, -2);
 			$rep->NewLine();
 		}	
-		$DisplayTotal = number_format2($myrow["freight_cost"] + $SubTotal, $dec);
+		$DisplayTotal = number_format2((float)$myrow["freight_cost"] + $SubTotal, $dec);
 		if ($myrow['tax_included'] == 0) {
 			$rep->TextCol(3, 6, _("TOTAL ORDER EX VAT"), - 2);
 			$rep->TextCol(6, 7,	$DisplayTotal, -2);
@@ -191,15 +191,15 @@ function print_sales_orders(): void
 
 		$rep->NewLine();
 
-		$DisplayTotal = number_format2($myrow["freight_cost"] + $SubTotal, $dec);
+		$DisplayTotal = number_format2((float)$myrow["freight_cost"] + $SubTotal, $dec);
 		$rep->Font('bold');
 		$rep->TextCol(3, 6, _("TOTAL ORDER VAT INCL."), - 2);
 		$rep->TextCol(6, 7,	$DisplayTotal, -2);
-		$words = price_in_words($myrow["freight_cost"] + $SubTotal, ST_SALESORDER);
+		$words = price_in_words((float)$myrow["freight_cost"] + $SubTotal, ST_SALESORDER);
 		if ($words != "")
 		{
 			$rep->NewLine(1);
-			$rep->TextCol(1, 7, $myrow['curr_code'] . ": " . $words, - 2);
+			$rep->TextCol(1, 7, (string)$myrow['curr_code'] . ": " . $words, - 2);
 		}	
 		$rep->Font();
         if ($i == $to || $email == 1)

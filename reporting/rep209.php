@@ -134,11 +134,11 @@ function print_po(): void
 					$myrow2['units'] = $data['suppliers_uom'];
 				if ($data['conversion_factor'] != 1)
 				{
-					$myrow2['unit_price'] = round2($myrow2['unit_price'] * $data['conversion_factor'], user_price_dec());
-					$myrow2['quantity_ordered'] = round2($myrow2['quantity_ordered'] / $data['conversion_factor'], user_qty_dec());
+					$myrow2['unit_price'] = round2((float)$myrow2['unit_price'] * (float)$data['conversion_factor'], user_price_dec());
+					$myrow2['quantity_ordered'] = round2((float)$myrow2['quantity_ordered'] / (float)$data['conversion_factor'], user_qty_dec());
 				}
 			}
-			$Net = round2(($myrow2["unit_price"] * $myrow2["quantity_ordered"]), user_price_dec());
+			$Net = round2(((float)$myrow2["unit_price"] * (float)$myrow2["quantity_ordered"]), user_price_dec());
 			$prices[] = $Net;
 			$items[] = $myrow2['item_code'];
 			$SubTotal += $Net;
@@ -220,7 +220,7 @@ function print_po(): void
 		if ($words != "")
 		{
 			$rep->NewLine(1);
-			$rep->TextCol(1, 7, $myrow['curr_code'] . ": " . $words, - 2);
+			$rep->TextCol(1, 7, (string)$myrow['curr_code'] . ": " . $words, - 2);
 		}
 		$rep->Font();
 		if ($email == 1)

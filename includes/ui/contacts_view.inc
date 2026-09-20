@@ -52,7 +52,7 @@ class contacts extends simple_crud {
 					alt_table_row_color($k);
 					label_cell(implode('<br>',$description));
 					label_cell($last["ref"]);
-					label_cell($last["name"].' '.$last["name2"]);
+					label_cell((string)$last["name"].' '.(string)$last["name2"]);
 					label_cell($last["phone"]);
 					label_cell($last["phone2"]);
 					label_cell($last["fax"]);

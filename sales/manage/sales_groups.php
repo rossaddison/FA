@@ -96,8 +96,8 @@ while ($myrow = db_fetch($result))
 	label_cell($myrow["id"], "nowrap align='right'");
 	label_cell($myrow["description"]);
 	inactive_control_cell($myrow["id"], $myrow["inactive"], 'groups', 'id');
- 	edit_button_cell("Edit".$myrow["id"], _("Edit"));
- 	delete_button_cell("Delete".$myrow["id"], _("Delete"));
+ 	edit_button_cell("Edit".(string)$myrow["id"], _("Edit"));
+ 	delete_button_cell("Delete".(string)$myrow["id"], _("Delete"));
 	end_row();
 }
 

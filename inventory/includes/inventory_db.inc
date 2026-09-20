@@ -89,7 +89,7 @@ function calculate_reorder_level(string|int|float|bool|null $location, ?object $
 		{
 			$st_ids[] = $line->stock_id;
 			$st_names[] = $line->item_description;
-			$st_num[] = $qoh - $loc['reorder_level'];
+			$st_num[] = $qoh - (float)$loc['reorder_level'];
 			$st_reorder[] = $loc['reorder_level'];
 		}
 	}

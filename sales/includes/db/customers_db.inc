@@ -185,7 +185,7 @@ function get_current_cust_credit(string|int|float|bool|null $customer_id)
 
 	if (!is_array($custdet))
 		return 0;
-	return $custdet['credit_limit']-$custdet['Balance'];
+	return (float)$custdet['credit_limit']-(float)$custdet['Balance'];
 
 }
 

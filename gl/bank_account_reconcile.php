@@ -209,7 +209,7 @@ end_table();
 $result = get_max_reconciled(get_post('reconcile_date'), $_POST['bank_account']);
 
 if ($row = db_fetch($result)) {
-	$_POST["reconciled"] = price_format($row["end_balance"]-$row["beg_balance"]);
+	$_POST["reconciled"] = price_format((float)$row["end_balance"]-(float)$row["beg_balance"]);
 	$total = $row["total"];
 	if (!isset($_POST["beg_balance"])) { // new selected account/statement
 		$_POST["last_date"] = sql2date($row["last_date"]);
@@ -262,7 +262,7 @@ if (!isset($_POST['bank_account']))
 $sql = get_sql_for_bank_account_reconcile(get_post('bank_account'), get_post('reconcile_date'));
 
 $act = get_bank_account($_POST["bank_account"]);
-display_heading($act['bank_account_name']." - ".$act['bank_curr_code']);
+display_heading((string)$act['bank_account_name']." - ".(string)$act['bank_curr_code']);
 
 	$cols =
 	array(

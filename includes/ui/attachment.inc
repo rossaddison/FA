@@ -44,8 +44,8 @@ class attachments extends simple_crud {
 				} else {
 		    		Header("Content-type: 'application/octet-stream' ");
 			    	//header('Content-Length: '.$row['filesize']);
-		    		header('Content-Disposition: attachment; filename="'.$row['filename'].'"');
-		    		echo file_get_contents(company_path()."/attachments/".$row['unique_name']);
+		    		header('Content-Disposition: attachment; filename="'.(string)$row['filename'].'"');
+		    		echo file_get_contents(company_path()."/attachments/".(string)$row['unique_name']);
 			    	exit();
 				}
 			}
@@ -92,7 +92,7 @@ class attachments extends simple_crud {
 				label_cell($de['filetype']);
 				label_cell(sql2date($de['tran_date']));
 				edit_button_cell("{$this->name}Edit[{$de['id']}]", _("Edit"));
-				label_cell('<a target="_blank" class="viewlink" href="'.$path_to_root.'/admin/attachments.php?vw='.$de['id'].'" onclick="javascript:openWindow(this.href,this.target); return false;" accesskey="V"><img src="'.$path_to_root.'/themes/default/images/view.gif" style="vertical-align:middle;width:12px;height:12px;border:0;"></a>', 'style="text-align: center;" ');
+				label_cell('<a target="_blank" class="viewlink" href="'.$path_to_root.'/admin/attachments.php?vw='.(string)$de['id'].'" onclick="javascript:openWindow(this.href,this.target); return false;" accesskey="V"><img src="'.$path_to_root.'/themes/default/images/view.gif" style="vertical-align:middle;width:12px;height:12px;border:0;"></a>', 'style="text-align: center;" ');
 				button_cell("{$this->name}Download[{$de['id']}]", _("Download"), false, ICON_DOWN);
 				
 				delete_button_cell("{$this->name}Delete[{$de['id']}]", _("Delete"));

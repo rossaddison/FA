@@ -287,10 +287,10 @@ class FPDI extends FPDF_TPL {
             $this->_out('/FormType 1');
             
             $this->_out(sprintf('/BBox [%.2f %.2f %.2f %.2f]',
-                ($tpl['x'] + (isset($tpl['box']['x'])?$tpl['box']['x']:0))*$this->k,
-                ($tpl['h'] + (isset($tpl['box']['y'])?$tpl['box']['y']:0) - $tpl['y'])*$this->k,
-                ($tpl['w'] + (isset($tpl['box']['x'])?$tpl['box']['x']:0))*$this->k,
-                ($tpl['h'] + (isset($tpl['box']['y'])?$tpl['box']['y']:0) - $tpl['y']-$tpl['h'])*$this->k)
+                ((float)$tpl['x'] + (isset($tpl['box']['x'])?$tpl['box']['x']:0))*$this->k,
+                ((float)$tpl['h'] + (isset($tpl['box']['y'])?$tpl['box']['y']:0) - $tpl['y'])*$this->k,
+                ((float)$tpl['w'] + (isset($tpl['box']['x'])?$tpl['box']['x']:0))*$this->k,
+                ((float)$tpl['h'] + (isset($tpl['box']['y'])?$tpl['box']['y']:0) - $tpl['y']-$tpl['h'])*$this->k)
             );
             
             if (isset($tpl['box']))

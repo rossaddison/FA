@@ -94,7 +94,7 @@ function display_bank_header(?items_cart &$order): void
 				$Ajax->activate('footer');
 				$Ajax->activate('totamount');
 			}
-			amount_row($qid['base_desc'].":", 'totamount', price_format($qid['base_amount']),
+			amount_row((string)$qid['base_desc'].":", 'totamount', price_format($qid['base_amount']),
 				 null, "&nbsp;&nbsp;".submit('go', _("Go"), false, false, true));
 			break;	
     }

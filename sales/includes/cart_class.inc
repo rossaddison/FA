@@ -192,7 +192,7 @@ class Cart
 				if ($this->trans_type == ST_SALESINVOICE)
 					$line->src_no = $srcline['debtor_trans_no'];
 				$line->qty_old = $line->qty_dispatched = $line->quantity;
-				$line->quantity += $srcline['quantity'] - 
+				$line->quantity += (float)$srcline['quantity'] - 
 					($src_type==ST_SALESORDER ? $srcline['qty_sent'] : $srcline['qty_done']); // add free qty on src doc
 				$line_no++;
 			}

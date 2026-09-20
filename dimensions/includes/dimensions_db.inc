@@ -99,7 +99,7 @@ function get_dimension_string(int|string|null $id, bool $html=false, ?string $sp
 	else
 	{
 		$row = get_dimension($id, true);
-		$dim = $row['reference'] . $space . $row['name'];
+		$dim = (string)$row['reference'] . $space . (string)$row['name'];
 	}
 
 	return $dim;

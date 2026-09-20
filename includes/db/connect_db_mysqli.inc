@@ -249,7 +249,7 @@ function db_drop_db(mixed $connection): bool|mysqli_result
 		foreach ($all_tables as $table)
 		{
 			if (strpos($table['Name'], $connection["tbpref"]) === 0)
-				db_query("DROP TABLE `".$table['Name'] . "`");
+				db_query("DROP TABLE `".(string)$table['Name'] . "`");
 		}
 		//deleting the tables, how??
 		return true;

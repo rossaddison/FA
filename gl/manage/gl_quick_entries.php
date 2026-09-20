@@ -198,8 +198,8 @@ while ($myrow = db_fetch($result))
 	label_cell($myrow['description']);
 	label_cell($type_text);
 	label_cell($myrow['usage']);
-	edit_button_cell("Edit".$myrow["id"], _("Edit"));
-	delete_button_cell("Delete".$myrow["id"], _("Delete"));
+	edit_button_cell("Edit".(string)$myrow["id"], _("Edit"));
+	delete_button_cell("Delete".(string)$myrow["id"], _("Delete"));
 	end_row();
 }
 
@@ -287,7 +287,7 @@ if ($selected_id != -1)
 		} 
 		else 
 		{
-			label_cell($myrow['dest_id'].' '.$myrow['account_name']);
+			label_cell((string)$myrow['dest_id'].' '.(string)$myrow['account_name']);
 			if ($act_type == '=') 
 				label_cell('');
 			elseif ($act_type == '%') 
@@ -300,8 +300,8 @@ if ($selected_id != -1)
 			label_cell(get_dimension_string($myrow['dimension_id'], true));
    		if ($dim > 1)
 			label_cell(get_dimension_string($myrow['dimension2_id'], true));
-		edit_button_cell("BEd".$myrow["id"], _("Edit"));
-		delete_button_cell("BDel".$myrow["id"], _("Delete"));
+		edit_button_cell("BEd".(string)$myrow["id"], _("Edit"));
+		delete_button_cell("BDel".(string)$myrow["id"], _("Delete"));
 		end_row();
 	}
 	end_table(1);

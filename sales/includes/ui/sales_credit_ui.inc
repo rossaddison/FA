@@ -223,7 +223,7 @@ function display_credit_items(?string $title, Cart &$order): void
 
     $tax_total = display_edit_tax_items($taxes, $colspan, $order->tax_included, 2);
 
-    $display_total = price_format(($subtotal + $_POST['ChargeFreightCost'] + $tax_total));
+    $display_total = price_format(($subtotal + (float)$_POST['ChargeFreightCost'] + $tax_total));
 
     label_row(_("Credit Note Total"), $display_total, "colspan=$colspan align=right","class='amount'", 2);
 

@@ -452,7 +452,7 @@ function customer_top(?string $today, ?int $limit=10, string|int|null $width='33
 	{
 		$sales += round($myrow['total']);
 		alt_table_row_color($k);
-		$name = $myrow["debtor_no"]." ".htmlspecialchars_decode($myrow["name"]);
+		$name = (string)$myrow["debtor_no"]." ".htmlspecialchars_decode($myrow["name"]);
 		label_cell($name);
 		amount_cell($myrow['total']);
 		if ($pg != null)
@@ -494,7 +494,7 @@ function supplier_top(?string $today, ?int $limit=10, string|int|null $width='33
 	{
 		$total += $myrow['total'];
 		alt_table_row_color($k);
-		$name = $myrow["supplier_id"]." ".htmlspecialchars_decode($myrow["supp_name"]);
+		$name = (string)$myrow["supplier_id"]." ".htmlspecialchars_decode($myrow["supp_name"]);
 		label_cell($name);
 		amount_cell($myrow['total']);
 		if ($pg != null)
@@ -568,7 +568,7 @@ function stock_top(?string $today, ?int $limit=10, string|int|null $width='33', 
 		if ($type == 0)
 		{
 			$cost += $myrow['costs'];
-			$res += ($myrow['total'] - $myrow['costs']);
+			$res += ((float)$myrow['total'] - (float)$myrow['costs']);
 		}
 		alt_table_row_color($k);
 		$name = $myrow["description"];
@@ -577,7 +577,7 @@ function stock_top(?string $today, ?int $limit=10, string|int|null $width='33', 
 		if ($type == 0)
 		{
 			amount_cell($myrow['costs']);
-			amount_cell($myrow['total'] - $myrow['costs']);
+			amount_cell((float)$myrow['total'] - (float)$myrow['costs']);
 		}
 		qty_cell($myrow['qty']);
 		if ($pg != NULL)
@@ -587,7 +587,7 @@ function stock_top(?string $today, ?int $limit=10, string|int|null $width='33', 
 			if ($type == 0)
 			{
 				$costs[] = round($myrow['costs']);
-				$results[] = round($myrow['total'] - $myrow['costs']);
+				$results[] = round((float)$myrow['total'] - (float)$myrow['costs']);
 			}
 		}	
 		end_row();
@@ -630,7 +630,7 @@ function dimension_top(?string $today, ?int $limit=10, string|int|null $width='3
 	while ($myrow = db_fetch($result))
 	{
 		alt_table_row_color($k);
-		$name = $myrow['reference']." ".$myrow["name"];
+		$name = (string)$myrow['reference']." ".(string)$myrow["name"];
 		label_cell($name);
 		amount_cell($myrow['balance']);
 		amount_cell($myrow['result']);
@@ -732,7 +732,7 @@ function gl_week_performance(?string $today, string|int|null $width="33", ?int $
 		$week_names[] = $myrow['week_name']; 
 		$sales[] = round($myrow['sales']);
 		$costs[] = round($myrow['costs']);
-		$results[] = round($myrow['sales'] - $myrow['costs']);
+		$results[] = round((float)$myrow['sales'] - (float)$myrow['costs']);
 	}	
 	$pg->setLabels($week_names);
 	$pg->addSerie(_('Sales'), $sales, 'bar');
@@ -771,7 +771,7 @@ function gl_month_performance(?string $today, string|int|null $width="33", ?int 
 		$month_names[] = $myrow['month_name']; 
 		$sales[] = round($myrow['sales']);
 		$costs[] = round($myrow['costs']);
-		$results[] = round($myrow['sales'] - $myrow['costs']);
+		$results[] = round((float)$myrow['sales'] - (float)$myrow['costs']);
 	}	
 	$pg->setLabels($month_names);
 	$pg->addSerie(_('Sales'), $sales, 'bar');
@@ -817,8 +817,8 @@ function customer_aging(?string $today, string|int|null $width="33"): float
 	$past1a = $past1 + 1;
 	$past2a = $past2 + 1;
 	$names = array(_('Current'),"1-$past1", "$past1a-$past2", "$past2+");
-	$balances = array(round($row['Balance']-$row['Due']), round($row['Due'] - $row['Overdue1']), 
-		round($row['Overdue1'] - $row['Overdue2']), round($row['Overdue2']));
+	$balances = array(round((float)$row['Balance']-(float)$row['Due']), round((float)$row['Due'] - (float)$row['Overdue1']), 
+		round((float)$row['Overdue1'] - (float)$row['Overdue2']), round($row['Overdue2']));
 	$total = round($row['Balance']);
 	$pg->setLabels($names);
 	$pg->addSerie(_('Balances'), $balances);
@@ -876,8 +876,8 @@ function supplier_aging(?string $today, string|int|null $width="33"): float
 	$past1a = $past1 + 1;
 	$past2a = $past2 + 1;
 	$names = array(_('Current'),"1-$past1", "$past1a-$past2", "$past2+");
-	$balances = array(round($row['Balance']-$row['Due']), round($row['Due'] - $row['Overdue1']), 
-		round($row['Overdue1'] - $row['Overdue2']), round($row['Overdue2']));
+	$balances = array(round((float)$row['Balance']-(float)$row['Due']), round((float)$row['Due'] - (float)$row['Overdue1']), 
+		round((float)$row['Overdue1'] - (float)$row['Overdue2']), round($row['Overdue2']));
 	$total = round($row['Balance']);
 	$pg->setLabels($names);
 	$pg->addSerie(_('Balances'), $balances);
@@ -939,7 +939,7 @@ function cash_flow(?string $today): void
 			$sql .= " SUM(CASE WHEN trans_date < '$date[$i]' THEN amount ELSE 0 END) AS per0".($i+1).",";
 		$sql = substr($sql, 0, -1);
 		$sql .=	" FROM ".TB_PREF."bank_trans
-			WHERE bank_act=".$account['id'];
+			WHERE bank_act=".(string)$account['id'];
 		$res = db_query($sql, "Transactions for bank account could not be calculated");
 		$bal = db_fetch($res);
 		$is_home = is_company_currency($account['bank_curr_code']);
@@ -1026,7 +1026,7 @@ function customer_trans(?string $today): void
 		label_cell($myrow['reference']);
 		label_cell(sql2date($myrow['tran_date']));
 		label_cell(sql2date($myrow['due_date']));
-		$name = $myrow["debtor_no"]." ".$myrow["name"];
+		$name = (string)$myrow["debtor_no"]." ".(string)$myrow["name"];
 		label_cell($name);
 		label_cell($myrow['br_name']);
 		label_cell($myrow['curr_code']);
@@ -1117,7 +1117,7 @@ function supplier_trans(?string $today): void
 		label_cell($myrow['reference']);
 		label_cell(sql2date($myrow['tran_date']));
 		label_cell(sql2date($myrow['due_date']));
-		$name = $myrow["supplier_id"]." ".$myrow["supp_name"];
+		$name = (string)$myrow["supplier_id"]." ".(string)$myrow["supp_name"];
 		label_cell($name);
 		label_cell($myrow['curr_code']);
 		amount_cell($myrow['total']);
@@ -1186,7 +1186,7 @@ function bank_balance(?string $today, ?int $width): void
 	while ($myrow = db_fetch($result))
 	{
 		alt_table_row_color($k);
-		label_cell(viewer_link($myrow["bank_account_name"], 'gl/inquiry/bank_inquiry.php?bank_account='.$myrow["bank_act"]));
+		label_cell(viewer_link($myrow["bank_account_name"], 'gl/inquiry/bank_inquiry.php?bank_account='.(string)$myrow["bank_act"]));
 		label_cell($myrow["bank_curr_code"]);
 		amount_cell($myrow['balance']);
 		end_row();

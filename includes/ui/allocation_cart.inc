@@ -178,7 +178,7 @@ class allocation
 				sql2date($myrow["tran_date"]),
 				sql2date($myrow["due_date"]),
 				$myrow["Total"],
-				$myrow["alloc"] - $myrow["amt"], $myrow["amt"], $myrow["reference"],
+				(float)$myrow["alloc"] - (float)$myrow["amt"], $myrow["amt"], $myrow["reference"],
 				$this->person_type==PT_SUPPLIER ? $myrow["supp_reference"] : $myrow["customer_ref"]);
 		}
 

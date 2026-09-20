@@ -48,8 +48,8 @@ function display_kit_items(string|int|float|bool|null $selected_kit): void
         qty_cell($myrow["quantity"], false, 
 			$myrow["units"] == '' ? 0 : get_qty_dec($myrow["stock_id"]));
         label_cell($myrow["units"] == '' ? _('kit') : $myrow["units"]);
- 		edit_button_cell("Edit".$myrow['id'], _("Edit"));
- 		delete_button_cell("Delete".$myrow['id'], _("Delete"));
+ 		edit_button_cell("Edit".(string)$myrow['id'], _("Edit"));
+ 		delete_button_cell("Delete".(string)$myrow['id'], _("Delete"));
         end_row();
 
 	} //END WHILE LIST LOOP

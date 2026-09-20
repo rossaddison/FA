@@ -148,7 +148,7 @@ function print_GL_transactions(): void
 		if ($prev_balance == 0.0 && $rows == 0)
 			continue;
 		$rep->Font('bold');
-		$rep->TextCol(0, 4,	$account['account_code'] . " " . $account['account_name'], -2);
+		$rep->TextCol(0, 4,	(string)$account['account_code'] . " " . (string)$account['account_name'], -2);
 		$rep->TextCol(4, 6, _('Opening Balance'));
 		if ($prev_balance > 0.0)
 			$rep->AmountCol(7, 8, abs($prev_balance), $dec);

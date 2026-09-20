@@ -165,8 +165,8 @@ else
             label_cell($myrow["suppliers_uom"]);
             qty_cell($myrow['conversion_factor'], false, 'max');
             label_cell($myrow["supplier_description"]);
-		 	edit_button_cell("Edit".$myrow['supplier_id'], _("Edit"));
-		 	delete_button_cell("Delete".$myrow['supplier_id'], _("Delete"));
+		 	edit_button_cell("Edit".(string)$myrow['supplier_id'], _("Edit"));
+		 	delete_button_cell("Delete".(string)$myrow['supplier_id'], _("Delete"));
             end_row();
 
             $j++;

@@ -62,11 +62,11 @@ function delete_attachments(string|int|float|bool|null $type_no, string|int|floa
 	$dir =  company_path(). "/attachments";
 	while ($row = db_fetch($result))
 	{
-		$sql = "DELETE FROM ".TB_PREF."attachments WHERE unique_name='".$row['unique_name']."'";
+		$sql = "DELETE FROM ".TB_PREF."attachments WHERE unique_name='".(string)$row['unique_name']."'";
 		db_query($sql, "Could not delete attachment");
 
-		if (file_exists($dir."/".$row['unique_name'])) {
-			unlink($dir."/".$row['unique_name']);
+		if (file_exists($dir."/".(string)$row['unique_name'])) {
+			unlink($dir."/".(string)$row['unique_name']);
 		}
 	}
 }
@@ -82,8 +82,8 @@ function get_attachment_string(string|int|float|bool|null $type, string|int|floa
     {
         if (strlen($str_return))
             $str_return = $str_return . " \n";    
-        $str_return .= _("Attached File:")." <a target='_blank' href='$path_to_root/admin/attachments.php?vw=".$attachment["id"]."' onclick='javascript:openWindow(this.href, this.target);return false;'> ".
-        	$attachment["id"] . " " . $attachment["description"]. " - ". $attachment["filename"]."</a><br>";
+        $str_return .= _("Attached File:")." <a target='_blank' href='$path_to_root/admin/attachments.php?vw=".(string)$attachment["id"]."' onclick='javascript:openWindow(this.href, this.target);return false;'> ".
+        	(string)$attachment["id"] . " " . (string)$attachment["description"]. " - ". (string)$attachment["filename"]."</a><br>";
     }
     return $str_return . "<br>";
 }

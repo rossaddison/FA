@@ -467,7 +467,7 @@ function add_gl_tax_details(string|int|float|bool|null $gl_code, string|int|floa
 			$net_amount = 0;
 		} else { 
 			// calculate net amount
-			$net_amount = $amount/$tax['rate']*100; 
+			$net_amount = $amount/(float)$tax['rate']*100; 
 		}
 	}
 	add_trans_tax_details($trans_type, $trans_no, $tax['id'], $tax['rate'], $included, 

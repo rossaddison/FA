@@ -44,11 +44,11 @@ label_cells(_("Date of Deposit"), sql2date($receipt['tran_date']), "class='table
 end_row();
 start_row();
 label_cells(_("Customer Currency"), $receipt['curr_code'], "class='tableheader2'");
-label_cells(_("Amount"), price_format($receipt['Total'] - $receipt['ov_discount']), "class='tableheader2'");
+label_cells(_("Amount"), price_format((float)$receipt['Total'] - (float)$receipt['ov_discount']), "class='tableheader2'");
 label_cells(_("Discount"), price_format($receipt['ov_discount']), "class='tableheader2'");
 end_row();
 start_row();
-label_cells(_("Into Bank Account"), $receipt['bank_account_name'].' ['.$receipt['bank_curr_code'].']', "class='tableheader2'");
+label_cells(_("Into Bank Account"), (string)$receipt['bank_account_name'].' ['.(string)$receipt['bank_curr_code'].']', "class='tableheader2'");
 label_cells(_("Bank Amount"), price_format($receipt['bank_amount']), "class='tableheader2'");
 label_cells(_("Payment Type"), $bank_transfer_types[$receipt['BankTransType']], "class='tableheader2'");
 end_row();

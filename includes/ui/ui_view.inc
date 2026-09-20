@@ -353,7 +353,7 @@ function is_voided_display(string|int|float|bool|null $type, string|int|float|bo
 	echo "<tr><td align=center><font color=red>$label</font><br>";
 	echo "<font color=red>" . _("Date Voided:") . " " . sql2date($void_entry["date_"]) . "</font><br>";
 	if (strlen($void_entry["memo_"]) > 0)
-		echo "<center><font color=red>" . _("Memo:") . " " . $void_entry["memo_"] . "</font></center><br>";
+		echo "<center><font color=red>" . _("Memo:") . " " . (string)$void_entry["memo_"] . "</font></center><br>";
 	echo "</td></tr>";
 	end_table(1);
 
@@ -386,7 +386,7 @@ function get_comments_string(string|int|float|bool|null $type, string|int|float|
 	{
 		if (strlen($str_return))
 			$str_return = $str_return . " \n";
-		$str_return = $str_return . $comment["memo_"];
+		$str_return = $str_return . (string)$comment["memo_"];
 	}
 	return $str_return;
 }
@@ -445,7 +445,7 @@ function display_customer_trans_tax_details(bool|mysqli_result $tax_items, ?int 
 		if ($SysPrefs->suppress_tax_rates() == 1)
 			$tax_type_name = $tax_item['tax_type_name'];
 		else
-			$tax_type_name = $tax_item['tax_type_name']." (".$tax_item['rate']."%) ";
+			$tax_type_name = (string)$tax_item['tax_type_name']." (".(string)$tax_item['rate']."%) ";
     	if ($tax_item['included_in_price'])
     	{
 			if ($SysPrefs->alternative_tax_include_on_docs() == 1)
@@ -476,10 +476,10 @@ function display_supp_trans_tax_details(bool|mysqli_result $tax_items, ?int $col
 
     	$tax = number_format2(abs($tax_item['amount']),user_price_dec());
     	if ($tax_item['included_in_price'])
-        	label_row(_("Included") . " " . $tax_item['tax_type_name'] . " (" . $tax_item['rate'] . "%) "
+        	label_row(_("Included") . " " . (string)$tax_item['tax_type_name'] . " (" . (string)$tax_item['rate'] . "%) "
         		. ": $tax", '', "colspan=$columns align=right", "align=right");
     	else
-        	label_row($tax_item['tax_type_name'] . " (" . $tax_item['rate'] . "%)",
+        	label_row((string)$tax_item['tax_type_name'] . " (" . (string)$tax_item['rate'] . "%)",
         		$tax, "colspan=$columns align=right", "align=right");
     }
 }
@@ -572,7 +572,7 @@ function display_allocations(bool|mysqli_result $alloc_result, string|int|float|
     	if ($alloc_row['type'] == ST_SUPPAYMENT || $alloc_row['type'] == ST_BANKPAYMENT || $alloc_row['type'] == ST_SUPPCREDIT)
     		$alloc_row['Total'] = -$alloc_row['Total'];
     	amount_cell($alloc_row['Total']);
-   		amount_cell($alloc_row['Total'] - $alloc_row['alloc']);
+   		amount_cell($alloc_row['Total'] - (float)$alloc_row['alloc']);
     	amount_cell($alloc_row['amt']);
     	end_row();
 
@@ -785,7 +785,7 @@ function quickentry_calculate(int|float|bool|null $base, string|int|float|bool|n
 						if ($rates == 0)
 							continue 2;
 					}
-					$tax = round2($part * $item_tax['rate'],  user_price_dec());
+					$tax = round2($part * (float)$item_tax['rate'],  user_price_dec());
 					if ($tax == 0) continue 2;
 					$gl_code = ($type == QE_DEPOSIT || ($type == QE_JOURNAL && $base < 0)) 
 						? $item_tax['sales_gl_code'] : $item_tax['purchasing_gl_code'];

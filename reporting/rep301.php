@@ -79,7 +79,7 @@ function getAverageCost(?string $stock_id, string|array|null $location, string|a
 	{
 		$qty += $row['qty'];	
 		$price = get_domestic_price($row, $stock_id);
-        $tran_cost = $row['qty'] * $price;
+        $tran_cost = (float)$row['qty'] * $price;
         $tot_cost += $tran_cost;
 	}
 	if ($qty == 0)
@@ -217,7 +217,7 @@ function print_inventory_valuation_report(): void
 		if (isset($SysPrefs->use_costed_values) && $SysPrefs->use_costed_values==1)
 		{
 			$UnitCost = getAverageCost($trans['stock_id'], $location, $date);
-			$ItemTotal = $trans['QtyOnHand'] * $UnitCost;
+			$ItemTotal = (float)$trans['QtyOnHand'] * $UnitCost;
 		}	
 		else
 		{
@@ -229,7 +229,7 @@ function print_inventory_valuation_report(): void
 			$rep->NewLine();
 			$rep->fontSize -= 2;
 			$rep->TextCol(0, 1, $trans['stock_id']);
-			$rep->TextCol(1, 2, $trans['description'].($trans['inactive']==1 ? " ("._("Inactive").")" : ""), -1);
+			$rep->TextCol(1, 2, (string)$trans['description'].($trans['inactive']==1 ? " ("._("Inactive").")" : ""), -1);
 			$rep->TextCol(2, 3, $trans['units']);
 			$rep->AmountCol(3, 4, $trans['QtyOnHand'], get_qty_dec($trans['stock_id']));
 			

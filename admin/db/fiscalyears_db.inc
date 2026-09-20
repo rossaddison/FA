@@ -328,7 +328,7 @@ function delete_this_fiscalyear(string|int|float|bool|array|null $selected_id): 
 		$sql = "DELETE FROM ".TB_PREF."stock_moves WHERE tran_date <= '$to' AND loc_code = '{$row['loc_code']}' AND stock_id = '{$row['stock_id']}'";
 		db_query($sql, "Could not delete stock moves");
 		$qty = $row['qty'];
-		$std_cost = ($qty == 0 ? 0 : round2($row['std_cost'] / $qty, user_price_dec()));
+		$std_cost = ($qty == 0 ? 0 : round2((float)$row['std_cost'] / $qty, user_price_dec()));
 		$sql = "INSERT INTO ".TB_PREF."stock_moves (stock_id, loc_code, tran_date, reference, qty, standard_cost) VALUES
 			('{$row['stock_id']}', '{$row['loc_code']}', '$to', '$ref', $qty, $std_cost)";   
 		db_query($sql, "Could not insert stock move");

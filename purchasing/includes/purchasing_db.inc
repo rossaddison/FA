@@ -55,7 +55,7 @@ function get_purchase_price(string|int|float|bool|null $supplier_id, string|int|
 	if (db_num_rows($result) == 1)
 	{
 		$myrow = db_fetch($result);
-		return $myrow["price"] / $myrow['conversion_factor'];
+		return (float)$myrow["price"] / (float)$myrow['conversion_factor'];
 	} 
 	else 
 	{

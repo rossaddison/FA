@@ -30,7 +30,7 @@ function add_exchange_variation(string|int|float|bool|array|null $trans_no, stri
 		if ($row['for_amount'] == 0)
 			continue;
 		$rate = get_exchange_rate_from_home_currency($row['bank_curr_code'], $date_);
-		$for_amount += round2($row['for_amount'] * $rate, user_price_dec());
+		$for_amount += round2((float)$row['for_amount'] * $rate, user_price_dec());
 	}	
 	$amount = get_gl_trans_from_to("", $date_, $account);
 	$diff = $amount - $for_amount;
@@ -179,7 +179,7 @@ function add_exchange_variation_all(string|array|null $date, string|array|null $
 	while($row = db_fetch($res)) 
 	{
 		$exrate = get_exchange_rate_from_home_currency($row['curr_code'], $date);
-		$foreign = round2($row['amount']*$exrate, user_price_dec());
+		$foreign = round2((float)$row['amount']*$exrate, user_price_dec());
 		$home = round2(get_account_home_balance($row['debtor_no'], PT_CUSTOMER, $row['receivables_account'], $date), user_price_dec());
 		if ($foreign != $home) 
 		{
@@ -195,7 +195,7 @@ function add_exchange_variation_all(string|array|null $date, string|array|null $
 	while($row = db_fetch($res)) 
 	{
 		$exrate = get_exchange_rate_from_home_currency($row['curr_code'], $date);
-		$foreign = round2($row['amount']*$exrate, user_price_dec());
+		$foreign = round2((float)$row['amount']*$exrate, user_price_dec());
 		$home = round2(get_account_home_balance($row['supplier_id'], PT_SUPPLIER, $row['payable_account'], $date), user_price_dec());
 		if ($foreign != $home) 
 		{
@@ -236,7 +236,7 @@ function add_bank_transfer(string|array|null $from_account, string|array|null $t
 	
     $fromact = get_bank_account($from_account);
     $toact = get_bank_account($to_account);
-    $person_id = _("From")." ".$fromact['bank_account_name']." "._("To")." ".$toact['bank_account_name'];
+    $person_id = _("From")." ".(string)$fromact['bank_account_name']." "._("To")." ".(string)$toact['bank_account_name'];
 
 	$from_gl_account = get_bank_gl_account($from_account);
 	$to_gl_account = get_bank_gl_account($to_account);

@@ -52,7 +52,7 @@ function display_gl_heading(?array $myrow): void
 	}
     table_header($th);	
     start_row();	
-    label_cell("$trans_name #" . $_GET['trans_no']);
+    label_cell("$trans_name #" . (string)$_GET['trans_no']);
     label_cell($myrow["reference"], "align='center'");
 	if($myrow['supp_reference'])
 	{
@@ -125,8 +125,8 @@ while ($myrow = db_fetch($result))
 	$counterparty_id = $counterpartyname ? sprintf(' %05d', $myrow["person_id"]) : '';
 
     label_cell(sql2date($myrow['tran_date']));
-    label_cell($myrow['account'].$counterparty_id);
-	label_cell($myrow['account_name'] . ($counterpartyname ? ': '.$counterpartyname : ''));
+    label_cell((string)$myrow['account'].$counterparty_id);
+	label_cell((string)$myrow['account_name'] . ($counterpartyname ? ': '.$counterpartyname : ''));
 	if ($dim >= 1)
 		label_cell(get_dimension_string($myrow['dimension_id'], true));
 	if ($dim > 1)

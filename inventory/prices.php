@@ -160,8 +160,8 @@ while ($myrow = db_fetch($prices_list))
 	label_cell($myrow["curr_abrev"]);
     label_cell($myrow["sales_type"]);
     amount_cell($myrow["price"]);
- 	edit_button_cell("Edit".$myrow['id'], _("Edit"));
- 	delete_button_cell("Delete".$myrow['id'], _("Delete"));
+ 	edit_button_cell("Edit".(string)$myrow['id'], _("Edit"));
+ 	delete_button_cell("Delete".(string)$myrow['id'], _("Delete"));
     end_row();
 
 }

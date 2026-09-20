@@ -187,7 +187,7 @@ function create_cart(string|int|array|null $type, string|int|array|null $trans_n
 				if (is_bank_account($row['account'])) {
 					// date exchange rate is currenly not stored in bank transaction,
 					// so we have to restore it from original gl amounts
-					$ex_rate = $bank_trans['amount']/$row['amount'];
+					$ex_rate = (float)$bank_trans['amount']/(float)$row['amount'];
 				} else {
 					$cart->add_gl_item( $row['account'], $row['dimension_id'],
 						$row['dimension2_id'], $row['amount'], $row['memo_']);

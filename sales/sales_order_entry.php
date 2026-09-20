@@ -248,7 +248,7 @@ if (isset($_GET['AddedID'])) {
 
 	$row = db_fetch(get_allocatable_from_cust_transactions(null, $invoice, ST_SALESINVOICE));
 	if ($row !== false)
-		submenu_print(_("Print &Receipt"), $row['type'], $row['trans_no']."-".$row['type'], 'prtopt');
+		submenu_print(_("Print &Receipt"), $row['type'], (string)$row['trans_no']."-".(string)$row['type'], 'prtopt');
 
 	display_note(get_gl_view_str(ST_SALESINVOICE, $invoice, _("View the GL &Journal Entries for this Invoice")),0, 1);
 

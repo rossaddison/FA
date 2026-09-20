@@ -228,8 +228,8 @@ function print_customer_balances(): void
         $rate = $convert ? get_exchange_rate_from_home_currency($myrow['curr_code'], Today()) : 1;
         $bal = get_open_balance($myrow['debtor_no'], $from);
         $init = array();
-        $curr_db = $bal ? round2(abs($bal['charges'] * $rate), $dec) : 0; // db
-        $curr_cr = $bal ? round2(abs($bal['credits'] * $rate), $dec) : 0; // cr
+        $curr_db = $bal ? round2(abs((float)$bal['charges'] * $rate), $dec) : 0; // db
+        $curr_cr = $bal ? round2(abs((float)$bal['credits'] * $rate), $dec) : 0; // cr
 //        $curr_alloc = $bal ? round2($bal['Allocated'] * $rate, $dec) : 0;    // allocated
         $curr_open = $curr_db-$curr_cr;                        // balance
         $tot_open += $curr_open;
@@ -238,7 +238,7 @@ function print_customer_balances(): void
 
         if (db_num_rows($res) == 0 && !$no_zeros) 
         {
-            $rep->TextCol(0, 2, $myrow['name'].($myrow['inactive']==1 ? " ("._("Inactive").")" : ""));
+            $rep->TextCol(0, 2, (string)$myrow['name'].($myrow['inactive']==1 ? " ("._("Inactive").")" : ""));
             $rep->AmountCol(3, 4, $curr_open, $dec);
             $rep->AmountCol(7, 8, $curr_open, $dec);
             $rep->NewLine(1);
@@ -249,16 +249,16 @@ function print_customer_balances(): void
         {
 
             if ($trans['TotalAmount'] > 0.0)
-                $curr_db += round2(($trans['TotalAmount']) * $rate, $dec);
+                $curr_db += round2(((float)$trans['TotalAmount']) * $rate, $dec);
             else
-                $curr_cr += -round2(($trans['TotalAmount']) * $rate, $dec);
+                $curr_cr += -round2(((float)$trans['TotalAmount']) * $rate, $dec);
         }
 
         $tot_cur_db += $curr_db;
         $tot_cur_cr += $curr_cr;
 
         if ($no_zeros && $curr_open == 0.0 && $curr_db == 0.0 && $curr_cr == 0.0) continue;
-        $rep->TextCol(0, 2, $myrow['name'].($myrow['inactive']==1 ? " ("._("Inactive").")" : ""));
+        $rep->TextCol(0, 2, (string)$myrow['name'].($myrow['inactive']==1 ? " ("._("Inactive").")" : ""));
         $rep->AmountCol(3, 4, $curr_open, $dec);
         $rep->AmountCol(4, 5, $curr_db, $dec);
         $rep->AmountCol(5, 6, $curr_cr, $dec);

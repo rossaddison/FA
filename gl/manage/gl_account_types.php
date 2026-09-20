@@ -152,12 +152,12 @@ while ($myrow = db_fetch($result))
 	}
 
 	label_cell($myrow["id"]);
-	label_cell('<a href="./gl_accounts.php?id='.$myrow["id"].'">'.$myrow["name"].'</a>');
+	label_cell('<a href="./gl_accounts.php?id='.(string)$myrow["id"].'">'.(string)$myrow["name"].'</a>');
 	label_cell($parent_text);
 	label_cell($bs_text);
 	inactive_control_cell($myrow["id"], $myrow["inactive"], 'chart_types', 'id');
-	edit_button_cell("Edit".$myrow["id"], _("Edit"));
-	delete_button_cell("Delete".$myrow["id"], _("Delete"));
+	edit_button_cell("Edit".(string)$myrow["id"], _("Edit"));
+	delete_button_cell("Delete".(string)$myrow["id"], _("Delete"));
 	end_row();
 }
 

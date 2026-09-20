@@ -138,7 +138,7 @@ function print_receipts(): void
 				$rep->TextCol(2, 3,	sql2date($myrow2['tran_date']), -2);
 				$rep->TextCol(3, 4,	sql2date($myrow2['due_date']), -2);
 				$rep->AmountCol(4, 5, $myrow2['Total'], $dec, -2);
-				$rep->AmountCol(5, 6, $myrow2['Total'] - $myrow2['alloc'], $dec, -2);
+				$rep->AmountCol(5, 6, (float)$myrow2['Total'] - (float)$myrow2['alloc'], $dec, -2);
 				$rep->AmountCol(6, 7, $myrow2['amt'], $dec, -2);
 
 				$total_allocated += $myrow2['amt'];
@@ -160,7 +160,7 @@ function print_receipts(): void
 			$rep->AmountCol(6, 7, $total_allocated, $dec, -2);
 			$rep->NewLine();
 			$rep->TextCol(3, 6, _("Left to Allocate"), -2);
-			$rep->AmountCol(6, 7, $myrow['Total'] + $myrow['ov_discount'] - $total_allocated, $dec, -2);
+			$rep->AmountCol(6, 7, (float)$myrow['Total'] + (float)$myrow['ov_discount'] - $total_allocated, $dec, -2);
 			if (floatcmp($myrow['ov_discount'], 0))
 			{
 				$rep->NewLine();
@@ -176,7 +176,7 @@ function print_receipts(): void
 			if ($words != "")
 			{
 				$rep->NewLine(1);
-				$rep->TextCol(0, 7, $myrow['curr_code'] . ": " . $words, - 2);
+				$rep->TextCol(0, 7, (string)$myrow['curr_code'] . ": " . $words, - 2);
 			}
 			$rep->Font();
 			$rep->NewLine();

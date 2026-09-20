@@ -62,7 +62,7 @@ if ($show_currencies)
 	label_cells(_("Payment Currency"), $receipt['bank_curr_code'], "class='tableheader2'");
 label_cells(_("Amount"), number_format2(-$receipt['bank_amount'], user_price_dec()), "class='tableheader2'");
 if ($receipt['ov_discount'] != 0)
-	label_cells(_("Discount"), number_format2(-$receipt['ov_discount']*$receipt['rate'], user_price_dec()), "class='tableheader2'");
+	label_cells(_("Discount"), number_format2(-$receipt['ov_discount']*(float)$receipt['rate'], user_price_dec()), "class='tableheader2'");
 else
 	label_cells(_("Payment Type"), $bank_transfer_types[$receipt['BankTransType']], "class='tableheader2'");
 end_row();

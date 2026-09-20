@@ -125,12 +125,12 @@ while ($myrow = db_fetch($result))
 
 	label_cell($myrow["name"]);
 	label_cell(percent_format($myrow["rate"]), "align=right");
-	label_cell($myrow["sales_gl_code"] . "&nbsp;" . $myrow["SalesAccountName"]);
-	label_cell($myrow["purchasing_gl_code"] . "&nbsp;" . $myrow["PurchasingAccountName"]);
+	label_cell((string)$myrow["sales_gl_code"] . "&nbsp;" . (string)$myrow["SalesAccountName"]);
+	label_cell((string)$myrow["purchasing_gl_code"] . "&nbsp;" . (string)$myrow["PurchasingAccountName"]);
 
 	inactive_control_cell($myrow["id"], $myrow["inactive"], 'tax_types', 'id');
- 	edit_button_cell("Edit".$myrow["id"], _("Edit"));
- 	delete_button_cell("Delete".$myrow["id"], _("Delete"));
+ 	edit_button_cell("Edit".(string)$myrow["id"], _("Edit"));
+ 	delete_button_cell("Delete".(string)$myrow["id"], _("Delete"));
 
 	end_row();
 }

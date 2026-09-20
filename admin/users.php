@@ -152,9 +152,9 @@ while ($myrow = db_fetch($result))
 	elseif (check_value('show_inactive'))
 		label_cell('');
 
-	edit_button_cell("Edit".$myrow["id"], _("Edit"));
+	edit_button_cell("Edit".(string)$myrow["id"], _("Edit"));
     if ($not_me)
- 		delete_button_cell("Delete".$myrow["id"], _("Delete"));
+ 		delete_button_cell("Delete".(string)$myrow["id"], _("Delete"));
 	else
 		label_cell('');
 	end_row();

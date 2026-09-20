@@ -182,21 +182,21 @@ function print_aged_supplier_analysis(): void
 		$supprec['Overdue1'] *= $rate;
 		$supprec['Overdue2'] *= $rate;
 
-		$str = array((float)$supprec["Balance"] - $supprec["Due"],
-			(float)$supprec["Due"]-$supprec["Overdue1"],
-			(float)$supprec["Overdue1"]-$supprec["Overdue2"],
+		$str = array((float)$supprec["Balance"] - (float)$supprec["Due"],
+			(float)$supprec["Due"]-(float)$supprec["Overdue1"],
+			(float)$supprec["Overdue1"]-(float)$supprec["Overdue2"],
 			$supprec["Overdue2"],
 			$supprec["Balance"]);
 
 		if ($no_zeros && floatcmp(array_sum($str), 0) == 0) continue;
 
 		$rep->fontSize += 2;
-		$rep->TextCol(0, 2,	$myrow['name'].($myrow['inactive']==1 ? " ("._("Inactive").")" : ""));
+		$rep->TextCol(0, 2,	(string)$myrow['name'].($myrow['inactive']==1 ? " ("._("Inactive").")" : ""));
 		if ($convert) $rep->TextCol(2, 3,	$myrow['curr_code']);
 		$rep->fontSize -= 2;
-		$total[0] += ((float)$supprec["Balance"] - $supprec["Due"]);
-		$total[1] += ((float)$supprec["Due"]-$supprec["Overdue1"]);
-		$total[2] += ((float)$supprec["Overdue1"]-$supprec["Overdue2"]);
+		$total[0] += ((float)$supprec["Balance"] - (float)$supprec["Due"]);
+		$total[1] += ((float)$supprec["Due"]-(float)$supprec["Overdue1"]);
+		$total[2] += ((float)$supprec["Overdue1"]-(float)$supprec["Overdue2"]);
 		$total[3] += $supprec["Overdue2"];
 		$total[4] += $supprec["Balance"];
 		for ($i = 0; $i < count($str); $i++)
@@ -216,9 +216,9 @@ function print_aged_supplier_analysis(): void
 				$rep->TextCol(2, 3,	sql2date($trans['tran_date']), -2);
 				foreach ($trans as $i => $value)
 					$trans[$i] = (float)$trans[$i] * $rate;
-				$str = array($trans["Balance"] - (float)$trans["Due"],
-					$trans["Due"]-(float)$trans["Overdue1"],
-					$trans["Overdue1"]-(float)$trans["Overdue2"],
+				$str = array((float)$trans["Balance"] - (float)$trans["Due"],
+					(float)$trans["Due"]-(float)$trans["Overdue1"],
+					(float)$trans["Overdue1"]-(float)$trans["Overdue2"],
 					$trans["Overdue2"],
 					$trans["Balance"]);
 				for ($i = 0; $i < count($str); $i++)

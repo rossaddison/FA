@@ -142,8 +142,8 @@ while ($myrow = db_fetch($result))
     label_cell($pterm_types[$type]);
     label_cell($type == PTT_DAYS ? "$days "._("days") : ($type == PTT_FOLLOWING ? $days : _("N/A")));
 	inactive_control_cell($myrow["terms_indicator"], $myrow["inactive"], 'payment_terms', "terms_indicator");
- 	edit_button_cell("Edit".$myrow["terms_indicator"], _("Edit"));
- 	delete_button_cell("Delete".$myrow["terms_indicator"], _("Delete"));
+ 	edit_button_cell("Edit".(string)$myrow["terms_indicator"], _("Edit"));
+ 	delete_button_cell("Delete".(string)$myrow["terms_indicator"], _("Delete"));
     end_row();
 
 }

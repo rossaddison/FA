@@ -121,7 +121,7 @@ function create_cart(string|int|array|null $type=0, string|int|array|null $trans
 
 		if ($result) {
 			while ($row = db_fetch($result)) {
-				$curr_amount = $cart->rate ? round($row['amount']/$cart->rate, $_SESSION["wa_current_user"]->prefs->price_dec()) : $row['amount'];
+				$curr_amount = $cart->rate ? round((float)$row['amount']/$cart->rate, $_SESSION["wa_current_user"]->prefs->price_dec()) : $row['amount'];
 				if ($curr_amount)
 					$cart->add_gl_item($row['account'], $row['dimension_id'], $row['dimension2_id'], 
 						$curr_amount, $row['memo_'], '', $row['person_id']);
@@ -558,11 +558,11 @@ tabbed_content_start('tabs', array(
 			while ($tax = db_fetch($taxes))
 			{
 				start_row();
-				label_cell($tax['name'].' '.$tax['rate'].'%');
-				amount_cell(input_num('tax_in_'.$tax['id']));
-				amount_cell(input_num('tax_out_'.$tax['id']));
+				label_cell((string)$tax['name'].' '.(string)$tax['rate'].'%');
+				amount_cell(input_num('tax_in_'.(string)$tax['id']));
+				amount_cell(input_num('tax_out_'.(string)$tax['id']));
 
-				amount_cells(null, 'net_amount_'.$tax['id']);
+				amount_cells(null, 'net_amount_'.(string)$tax['id']);
 				end_row();
 			}
 			end_table(1);

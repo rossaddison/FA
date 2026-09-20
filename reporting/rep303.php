@@ -283,7 +283,7 @@ function print_stock_check(): void
 		$onorder += get_on_worder_qty($trans['stock_id'], $loc_code);
 		if ($no_zeros && $trans['QtyOnHand'] == 0 && $demandqty == 0 && $onorder == 0)
 			continue;
-		if ($shortage && $trans['QtyOnHand'] - $demandqty >= 0)
+		if ($shortage && (float)$trans['QtyOnHand'] - $demandqty >= 0)
 			continue;
 		if ($catt != $trans['cat_description'])
 		{
@@ -300,20 +300,20 @@ function print_stock_check(): void
 		$rep->NewLine();
 		$dec = get_qty_dec($trans['stock_id']);
 		$rep->TextCol(0, 1, $trans['stock_id']);
-		$rep->TextCol(1, 2, $trans['description'].($trans['inactive']==1 ? " ("._("Inactive").")" : ""), -1);
+		$rep->TextCol(1, 2, (string)$trans['description'].($trans['inactive']==1 ? " ("._("Inactive").")" : ""), -1);
 		$rep->TextCol(2, 3, $trans['units']);
 		$rep->AmountCol(3, 4, $trans['QtyOnHand'], $dec);
 		if ($check)
 		{
 			$rep->TextCol(4, 5, "_________");
 			$rep->AmountCol(5, 6, $demandqty, $dec);
-			$rep->AmountCol(6, 7, $trans['QtyOnHand'] - $demandqty, $dec);
+			$rep->AmountCol(6, 7, (float)$trans['QtyOnHand'] - $demandqty, $dec);
 			$rep->AmountCol(7, 8, $onorder, $dec);
 		}
 		else
 		{
 			$rep->AmountCol(4, 5, $demandqty, $dec);
-			$rep->AmountCol(5, 6, $trans['QtyOnHand'] - $demandqty, $dec);
+			$rep->AmountCol(5, 6, (float)$trans['QtyOnHand'] - $demandqty, $dec);
 			$rep->AmountCol(6, 7, $onorder, $dec);
 		}
 		if ($pictures || $barcodes)

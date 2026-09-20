@@ -96,10 +96,10 @@ while ($myrow = db_fetch($result))
 	
 	label_cell($myrow["fa_class_id"]);
 	label_cell($myrow["description"]);
-	label_cell($myrow["depreciation_rate"].'%');
+	label_cell((string)$myrow["depreciation_rate"].'%');
 	inactive_control_cell($myrow["fa_class_id"], $myrow["inactive"], 'stock_fa_classes', 'fa_class_id');
- 	edit_button_cell("Edit".$myrow["fa_class_id"], _("Edit"));
- 	delete_button_cell("Delete".$myrow["fa_class_id"], _("Delete"));
+ 	edit_button_cell("Edit".(string)$myrow["fa_class_id"], _("Edit"));
+ 	delete_button_cell("Delete".(string)$myrow["fa_class_id"], _("Delete"));
 	end_row();
 }
 inactive_control_row($th);

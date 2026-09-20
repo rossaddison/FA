@@ -118,8 +118,8 @@ while ($myrow = db_fetch($result))
 	label_cell($f);
 	label_cell($myrow["tax_included"] ? _('Yes'):_('No'), 'align=center');
 	inactive_control_cell($myrow["id"], $myrow["inactive"], 'sales_types', 'id');
- 	edit_button_cell("Edit".$myrow['id'], _("Edit"));
- 	delete_button_cell("Delete".$myrow['id'], _("Delete"));
+ 	edit_button_cell("Edit".(string)$myrow['id'], _("Edit"));
+ 	delete_button_cell("Delete".(string)$myrow['id'], _("Delete"));
 	end_row();
 }
 inactive_control_row($th);

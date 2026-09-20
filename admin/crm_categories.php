@@ -103,11 +103,11 @@ while ($myrow = db_fetch($result))
 	
 	inactive_control_cell($myrow["id"], $myrow["inactive"], 'crm_categories', 'id');
 
- 	edit_button_cell("Edit".$myrow["id"], _("Edit"));
+ 	edit_button_cell("Edit".(string)$myrow["id"], _("Edit"));
  	if ($myrow["system"])
 		label_cell('');
 	else
-		delete_button_cell("Delete".$myrow["id"], _("Delete"));
+		delete_button_cell("Delete".(string)$myrow["id"], _("Delete"));
 	end_row();
 }
 	

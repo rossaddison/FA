@@ -48,7 +48,7 @@ function display_wo_production(string|int|float|bool|null $prod_id): void
 	label_cell($myrow["id"]);
 	label_cell($myrow["reference"]);
 	label_cell(get_trans_view_str(ST_WORKORDER,$myrow["workorder_id"]));
-	label_cell($myrow["stock_id"] . " - " . $myrow["StockDescription"]);
+	label_cell((string)$myrow["stock_id"] . " - " . (string)$myrow["StockDescription"]);
 	qty_cell($myrow["quantity"], false, get_qty_dec($myrow["stock_id"]));
 	label_cell(sql2date($myrow["date_"]));
 	end_row();

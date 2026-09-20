@@ -87,7 +87,7 @@ function due_date(array|false|null $row)
 
 function fmt_balance(array|false|null $row)
 {
-	return ($row["type"] == ST_JOURNAL && $row["TotalAmount"] < 0 ? -$row["TotalAmount"] : $row["TotalAmount"]) - $row["Allocated"];
+	return ($row["type"] == ST_JOURNAL && $row["TotalAmount"] < 0 ? -$row["TotalAmount"] : $row["TotalAmount"]) - (float)$row["Allocated"];
 }
 
 /**
@@ -117,7 +117,7 @@ function alloc_link(array|false|null $row)
 	{
 		/*its a negative receipt */
 		return '';
-	} elseif (($row["type"] == ST_SALESINVOICE && ($row['TotalAmount'] - $row['Allocated']) > 0) || 
+	} elseif (($row["type"] == ST_SALESINVOICE && ((float)$row['TotalAmount'] - (float)$row['Allocated']) > 0) || 
 		($row["type"] == ST_JOURNAL && (ABS($row['TotalAmount']) - (float)$row['Allocated']) > 0) || $row["type"] == ST_BANKPAYMENT)
 		return pager_link(_("Payment"),
 			"/sales/customer_payments.php?customer_id=".(string)$row["debtor_no"]."&SInvoice=" . (string)$row["trans_no"]."&Type=".(string)$row["type"], ICON_MONEY);

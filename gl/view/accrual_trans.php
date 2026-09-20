@@ -77,7 +77,7 @@ while ($myrow = db_fetch($result))
 
 	label_cell($systypes_array[$myrow["type"]]);
 	$amount = price_format($myrow["amount"]);
-	$str = "<a href='#' onclick='return WindowClose(\"$amount\", \"$trandate\");' >".$myrow['type_no']."</a>";
+	$str = "<a href='#' onclick='return WindowClose(\"$amount\", \"$trandate\");' >".(string)$myrow['type_no']."</a>";
 	label_cell($str);
 	label_cell($trandate);
 

@@ -67,7 +67,7 @@ div_start('trans_tbl');
 if (!$page_nested)
 {
 	$act = get_bank_account($_POST["bank_account"]);
-	display_heading($act['bank_account_name']." - ".$act['bank_curr_code']);
+	display_heading((string)$act['bank_account_name']." - ".(string)$act['bank_curr_code']);
 }
 
 start_table(TABLESTYLE);

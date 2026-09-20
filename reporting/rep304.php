@@ -178,17 +178,17 @@ function print_inventory_sales(): void
 		$curr = get_customer_currency($trans['debtor_no']);
 		$rate = get_exchange_rate_from_home_currency($curr, sql2date($trans['tran_date']));
 		$trans['amt'] *= $rate;
-		$cb = (float)$trans['amt'] - $trans['cost'];
+		$cb = (float)$trans['amt'] - (float)$trans['cost'];
 		$rep->NewLine();
 		$rep->fontSize -= 2;
 		$rep->TextCol(0, 1, $trans['stock_id']);
 		if ($fromcust == ALL_TEXT)
 		{
-			$rep->TextCol(1, 2, $trans['description'].($trans['inactive']==1 ? " ("._("Inactive").")" : ""), -1);
+			$rep->TextCol(1, 2, (string)$trans['description'].($trans['inactive']==1 ? " ("._("Inactive").")" : ""), -1);
 			$rep->TextCol(2, 3, $trans['debtor_name']);
 		}
 		else
-			$rep->TextCol(1, 3, $trans['description'].($trans['inactive']==1 ? " ("._("Inactive").")" : ""), -1);
+			$rep->TextCol(1, 3, (string)$trans['description'].($trans['inactive']==1 ? " ("._("Inactive").")" : ""), -1);
 		$rep->AmountCol(3, 4, $trans['qty'], get_qty_dec($trans['stock_id']));
 		$rep->AmountCol(4, 5, $trans['amt'], $dec);
 		if (is_service($trans['mb_flag']))

@@ -114,11 +114,11 @@ function copy_link(array|false|null $row)
 function prt_link(array|false|null $row)
 {
   	if ($row['type'] == ST_CUSTPAYMENT || $row['type'] == ST_BANKDEPOSIT) 
-		return print_document_link($row['trans_no']."-".(string)$row['type'], _("Print Receipt"), true, ST_CUSTPAYMENT, ICON_PRINT);
+		return print_document_link((string)$row['trans_no']."-".(string)$row['type'], _("Print Receipt"), true, ST_CUSTPAYMENT, ICON_PRINT);
   	elseif ($row['type'] == ST_BANKPAYMENT) // bank payment printout not defined yet.
 		return '';
  	else
- 		return print_document_link($row['trans_no']."-".(string)$row['type'], _("Print"), true, $row['type'], ICON_PRINT);
+ 		return print_document_link((string)$row['trans_no']."-".(string)$row['type'], _("Print"), true, $row['type'], ICON_PRINT);
 }
 
 function check_overdue(array|false|null $row): bool
@@ -150,9 +150,9 @@ function display_customer_summary(bool|array|null $customer_record): void
 		start_row();
 	    label_cell($customer_record["curr_code"]);
 	    label_cell($customer_record["terms"]);
-		amount_cell((float)$customer_record["Balance"] - $customer_record["Due"]);
-		amount_cell((float)$customer_record["Due"] - $customer_record["Overdue1"]);
-		amount_cell((float)$customer_record["Overdue1"] - $customer_record["Overdue2"]);
+		amount_cell((float)$customer_record["Balance"] - (float)$customer_record["Due"]);
+		amount_cell((float)$customer_record["Due"] - (float)$customer_record["Overdue1"]);
+		amount_cell((float)$customer_record["Overdue1"] - (float)$customer_record["Overdue2"]);
 		amount_cell($customer_record["Overdue2"]);
 		amount_cell($customer_record["Balance"]);
 		end_row();

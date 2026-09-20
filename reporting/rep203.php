@@ -126,7 +126,7 @@ function print_payment_report(): void
 		if ($no_zeros && db_num_rows($res)==0) continue;
 
 		$rep->fontSize += 2;
-		$rep->TextCol(0, 6, $myrow['name'].($myrow['inactive']==1 ? " ("._("Inactive").")" : "") . " - " . $myrow['terms']);
+		$rep->TextCol(0, 6, (string)$myrow['name'].($myrow['inactive']==1 ? " ("._("Inactive").")" : "") . " - " . (string)$myrow['terms']);
 		if ($convert)
 			$rep->TextCol(6, 7,	$myrow['curr_code']);
 		$rep->fontSize -= 2;
@@ -154,9 +154,9 @@ function print_payment_report(): void
 				$trans['TranTotal'] = -$trans['TranTotal'];
 				$trans['Balance'] = -$trans['Balance'];
 			}
-			$item[0] = $trans['TranTotal'] * $rate;
+			$item[0] = (float)$trans['TranTotal'] * $rate;
 			$rep->AmountCol(6, 7, $item[0], $dec);
-			$item[1] = $trans['Balance'] * $rate;
+			$item[1] = (float)$trans['Balance'] * $rate;
 			$rep->AmountCol(7, 8, $item[1], $dec);
 			for ($i = 0; $i < 2; $i++)
 			{

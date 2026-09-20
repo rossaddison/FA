@@ -2115,10 +2115,10 @@ if (!class_exists('TCPDF')) {
 			$barcode = $this->getBarcode();
 			if (!empty($barcode)) {
 				$this->Ln();
-				$barcode_width = round(($this->getPageWidth() - (float)$ormargins['left'] - $ormargins['right'])/3);
+				$barcode_width = round(($this->getPageWidth() - (float)$ormargins['left'] - (float)$ormargins['right'])/3);
 				$this->write1DBarcode($barcode, "C128B", $this->GetX(), $cur_y + $line_width, $barcode_width, (($this->getFooterMargin() / 3) - $line_width), 0.3, '', '');
 			}
-			$pagenumtxt = $this->l['w_page']." ".$this->PageNo().' / '.$this->getAliasNbPages();
+			$pagenumtxt = (string)$this->l['w_page']." ".$this->PageNo().' / '.$this->getAliasNbPages();
 			$this->SetY($cur_y);
 			//Print page number
 			if ($this->getRTL()) {
@@ -2717,7 +2717,7 @@ if (!class_exists('TCPDF')) {
 			$this->FontSizePt = $size;
 			$this->FontSize = $size / $this->k;
 			if (isset($this->CurrentFont['desc']['Ascent']) AND ($this->CurrentFont['desc']['Ascent'] > 0)) {
-				$this->FontAscent = $this->CurrentFont['desc']['Ascent'] * $this->FontSize / 1000;
+				$this->FontAscent = (float)$this->CurrentFont['desc']['Ascent'] * $this->FontSize / 1000;
 			} else {
 				$this->FontAscent = 0.8 * $this->FontSize;
 			}
@@ -8884,7 +8884,7 @@ if (!class_exists('TCPDF')) {
 			if (empty($xres)) {
 				$xres = 0.4;
 			}
-			$fbw = ($arrcode["maxw"] * $xres) + (2 * (float)$style["padding"]);
+			$fbw = ((float)$arrcode["maxw"] * $xres) + (2 * (float)$style["padding"]);
 			$extraspace = ($this->cell_height_ratio * $fontsize / $this->k) + (2 * (float)$style["padding"]);
 			if (empty($h)) {
 				$h = 10 + $extraspace;
@@ -8935,7 +8935,7 @@ if (!class_exists('TCPDF')) {
 				}
 				case "S": { // stretch
 					$fbw = $w;
-					$xres = ($w - (2 * (float)$style["padding"])) / $arrcode["maxw"];
+					$xres = ($w - (2 * (float)$style["padding"])) / (float)$arrcode["maxw"];
 					if ($this->rtl) {
 						$xpos = $x - $w;
 					} else {
@@ -8962,8 +8962,8 @@ if (!class_exists('TCPDF')) {
 					$bw = ((float)$v["w"] * $xres);
 					if ($v["t"]) {
 						// braw a vertical bar
-						$ypos = $y + (float)$style["padding"] + ($v["p"] * $barh / $arrcode["maxh"]);
-						$this->Rect($xpos, $ypos, $bw, ($v["h"] * $barh  / $arrcode["maxh"]), 'DF', array("L"=>0,"T"=>0,"R"=>0,"B"=>0), $style["fgcolor"]);
+						$ypos = $y + (float)$style["padding"] + ((float)$v["p"] * $barh / $arrcode["maxh"]);
+						$this->Rect($xpos, $ypos, $bw, ((float)$v["h"] * $barh  / $arrcode["maxh"]), 'DF', array("L"=>0,"T"=>0,"R"=>0,"B"=>0), $style["fgcolor"]);
 					}
 					$xpos += $bw;
 				}
@@ -9229,7 +9229,7 @@ if (!class_exists('TCPDF')) {
 						}
 						if (($dom[$key]['value'] == "td") OR ($dom[$key]['value'] == "th")) {
 							$dom[($dom[$key]['parent'])]['content'] = "";
-							for ($i = ($dom[$key]['parent'] + 1); $i < $key; $i++) {
+							for ($i = ((float)$dom[$key]['parent'] + 1); $i < $key; $i++) {
 								$dom[($dom[$key]['parent'])]['content'] .= $a[($i-1)];
 							}
 							$key = $i;
@@ -10031,7 +10031,7 @@ if (!class_exists('TCPDF')) {
 					if (isset($tag['attribute']['src'])) {
 						// replace relative path with real server path
 						if ($tag['attribute']['src'][0] == '/') {
-							$tag['attribute']['src'] = $_SERVER['DOCUMENT_ROOT'].(string)$tag['attribute']['src'];
+							$tag['attribute']['src'] = (string)$_SERVER['DOCUMENT_ROOT'].(string)$tag['attribute']['src'];
 						}
 						$tag['attribute']['src'] = str_replace(K_PATH_URL, K_PATH_MAIN, $tag['attribute']['src']);
 						if (!isset($tag['attribute']['width'])) {
@@ -10180,7 +10180,7 @@ if (!class_exists('TCPDF')) {
 				case 'h4':
 				case 'h5':
 				case 'h6': {
-					$this->addHTMLVertSpace(1, $cell, ($tag['fontsize'] * 1.5) / $this->k);
+					$this->addHTMLVertSpace(1, $cell, ((float)$tag['fontsize'] * 1.5) / $this->k);
 					break;
 				}
 				default: {
@@ -10280,7 +10280,7 @@ if (!class_exists('TCPDF')) {
 									} else {
 										$fill = false;
 									}
-									$cw = abs((float)$cellpos['endx'] - $cellpos['startx']);
+									$cw = abs((float)$cellpos['endx'] - (float)$cellpos['startx']);
 									$this->x = $cellpos['startx'];
 									// design a cell around the text
 									$ccode = $this->FillColor."\n".$this->getCellCode($cw, $ch, "", $border, 1, '', $fill);
@@ -10297,7 +10297,7 @@ if (!class_exists('TCPDF')) {
 								} else {
 									$fill = false;
 								}
-								$cw = abs((float)$cellpos['endx'] - $cellpos['startx']);
+								$cw = abs((float)$cellpos['endx'] - (float)$cellpos['startx']);
 								$this->x = $cellpos['startx'];
 								$this->y = $parent['starty'];
 								// design a cell around the text
@@ -10414,7 +10414,7 @@ if (!class_exists('TCPDF')) {
 				case 'h4':
 				case 'h5':
 				case 'h6': {
-					$this->addHTMLVertSpace(1, $cell, ($parent['fontsize'] * 1.5) / $this->k);
+					$this->addHTMLVertSpace(1, $cell, ((float)$parent['fontsize'] * 1.5) / $this->k);
 					break;
 				}
 				default : {

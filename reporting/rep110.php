@@ -84,12 +84,12 @@ function print_deliveries(): void
 				if ($packing_slip == 0)
 				{
 					$rep->title = _('DELIVERY NOTE');
-					$rep->filename = "Delivery" . $myrow['reference'] . ".pdf";
+					$rep->filename = "Delivery" . (string)$myrow['reference'] . ".pdf";
 				}
 				else
 				{
 					$rep->title = _('PACKING SLIP');
-					$rep->filename = "Packing_slip" . $myrow['reference'] . ".pdf";
+					$rep->filename = "Packing_slip" . (string)$myrow['reference'] . ".pdf";
 				}
 			}
 			$rep->currency = ($cur == null ? "USD" : $cur);
@@ -108,7 +108,7 @@ function print_deliveries(): void
 				if ($myrow2["quantity"] == 0)
 					continue;
 
-				$Net = round2(((1 - $myrow2["discount_percent"]) * $myrow2["unit_price"] * $myrow2["quantity"]),
+				$Net = round2(((1 - (float)$myrow2["discount_percent"]) * (float)$myrow2["unit_price"] * (float)$myrow2["quantity"]),
 				   user_price_dec());
 				$SubTotal += $Net;
 	    		$DisplayPrice = number_format2($myrow2["unit_price"],$dec);
@@ -117,7 +117,7 @@ function print_deliveries(): void
 	    		if ($myrow2["discount_percent"]==0)
 		  			$DisplayDiscount ="";
 	    		else
-		  			$DisplayDiscount = number_format2($myrow2["discount_percent"]*100,user_percent_dec()) . "%";
+		  			$DisplayDiscount = number_format2((float)$myrow2["discount_percent"]*100,user_percent_dec()) . "%";
 				$rep->TextCol(0, 1,	$myrow2['stock_id'], -2);
 				$oldrow = $rep->row;
 				$rep->TextColLines(1, 2, $myrow2['StockDescription'], -2);
@@ -174,7 +174,7 @@ function print_deliveries(): void
  					if ($SysPrefs->suppress_tax_rates() == 1)
  		   				$tax_type_name = $tax_item['tax_type_name'];
  		   			else
- 		   				$tax_type_name = $tax_item['tax_type_name']." (".$tax_item['rate']."%) ";
+ 		   				$tax_type_name = (string)$tax_item['tax_type_name']." (".(string)$tax_item['rate']."%) ";
 
  					if ($myrow['tax_included'])
     				{
@@ -201,8 +201,8 @@ function print_deliveries(): void
 					$rep->NewLine();
     			}
     			$rep->NewLine();
-				$DisplayTotal = number_format2($myrow["ov_freight"] +$myrow["ov_freight_tax"] + $myrow["ov_gst"] +
-					$myrow["ov_amount"],$dec);
+				$DisplayTotal = number_format2((float)$myrow["ov_freight"] +(float)$myrow["ov_freight_tax"] + (float)$myrow["ov_gst"] +
+					(float)$myrow["ov_amount"],$dec);
 				$rep->Font('bold');
 				$rep->TextCol(3, 6, _("TOTAL DELIVERY INCL. VAT"), - 2);
 				$rep->TextCol(6, 7,	$DisplayTotal, -2);
@@ -210,7 +210,7 @@ function print_deliveries(): void
 				if ($words != "")
 				{
 					$rep->NewLine(1);
-					$rep->TextCol(1, 7, $myrow['curr_code'] . ": " . $words, - 2);
+					$rep->TextCol(1, 7, (string)$myrow['curr_code'] . ": " . $words, - 2);
 				}	
 				$rep->Font();
 			}	

@@ -243,7 +243,7 @@ while ($myrow = db_fetch($result))
 		$count = recurrent_invoice_count($myrow['id']);
 		if ($count)
 		{
-			button_cell("create".$myrow["id"], sprintf(_("Create %s Invoice(s)"), $count), "", ICON_DOC, 'process');
+			button_cell("create".(string)$myrow["id"], sprintf(_("Create %s Invoice(s)"), $count), "", ICON_DOC, 'process');
 		} else {
 			label_cell('');
 		}

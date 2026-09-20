@@ -197,7 +197,7 @@ function write_sales_invoice(&$invoice)
 				// extend invoice entry page with final amount after discount 
 				// and change line below.
 				$discount = 0; // $invoice->cash_discount*$amount;
-				$payment_info = $invoice->pos['pos_name'].' #'.$invoice_no;
+				$payment_info = (string)$invoice->pos['pos_name'].' #'.$invoice_no;
 				if (!empty($invoice->payment_info))
 					$payment_info .= ' ' . $invoice->payment_info;
 				$pmtno = write_customer_payment(0, $invoice->customer_id, 
@@ -238,7 +238,7 @@ function void_sales_invoice(string|int|float|bool|null $type, string|int|float|b
 		$lines = get_customer_trans_details($type, $type_no);
 		while($line = db_fetch($lines))
 		{
-			update_prepaid_so_line($line['src_id'], -$factor*$line['quantity']);
+			update_prepaid_so_line($line['src_id'], -$factor*(float)$line['quantity']);
 		}
 	}
 	else

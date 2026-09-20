@@ -43,7 +43,7 @@ function print_gl_rows(mysqli_result|FrontReport $result, string|bool|mysqli_res
 		while($myrow = db_fetch($result)) {
 			start_row();
 			label_cell(sql2date($myrow["tran_date"]));
-			label_cell(get_trans_view_str($myrow['type'],$myrow["type_no"], $systypes_array[$myrow['type']]. ' '.$myrow['type_no']));
+			label_cell(get_trans_view_str($myrow['type'],$myrow["type_no"], $systypes_array[$myrow['type']]. ' '.(string)$myrow['type_no']));
 		    label_cell($myrow['account']);
 			label_cell($myrow['account_name']);
 			display_debit_or_credit_cells($myrow['amount']);

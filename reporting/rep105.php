@@ -166,8 +166,8 @@ function print_order_status_list(): void
 		$dec = get_qty_dec($myrow['stk_code']);
 		$rep->AmountCol(2, 3, $myrow['quantity'], $dec);
 		$rep->AmountCol(3, 4, $myrow['qty_sent'], $dec);
-		$rep->AmountCol(4, 5, $myrow['quantity'] - $myrow['qty_sent'], $dec);
-		if ($myrow['quantity'] - $myrow['qty_sent'] > 0)
+		$rep->AmountCol(4, 5, (float)$myrow['quantity'] - (float)$myrow['qty_sent'], $dec);
+		if ((float)$myrow['quantity'] - (float)$myrow['qty_sent'] > 0)
 		{
 			$rep->Font('italic');
 			$rep->TextCol(5, 6,	_('Outstanding'));

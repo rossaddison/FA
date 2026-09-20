@@ -161,7 +161,7 @@ function show_results(): void
 	if ($show_balances) {
 	    $bfw = get_gl_balance_from_to($begin, $_POST['TransFromDate'], $_POST["account"], $_POST['Dimension'], $_POST['Dimension2']);
     	start_row("class='inquirybg'");
-    	label_cell("<b>"._("Opening Balance")." - ".$_POST['TransFromDate']."</b>", "colspan=$colspan");
+    	label_cell("<b>"._("Opening Balance")." - ".(string)$_POST['TransFromDate']."</b>", "colspan=$colspan");
     	display_debit_or_credit_cells($bfw, true);
     	label_cell("");
     	label_cell("");
@@ -187,7 +187,7 @@ function show_results(): void
     	label_cell($trandate);
     	
     	if ($_POST["account"] == null)
-    	    label_cell($myrow["account"] . ' ' . get_gl_account_name($myrow["account"]));
+    	    label_cell((string)$myrow["account"] . ' ' . get_gl_account_name($myrow["account"]));
     	
 		if ($dim >= 1)
 			label_cell(get_dimension_string($myrow['dimension_id'], true));
@@ -217,7 +217,7 @@ function show_results(): void
 
 	if ($show_balances) {
     	start_row("class='inquirybg'");
-    	label_cell("<b>" . _("Ending Balance") ." - ".$_POST['TransToDate']. "</b>", "colspan=$colspan");
+    	label_cell("<b>" . _("Ending Balance") ." - ".(string)$_POST['TransToDate']. "</b>", "colspan=$colspan");
     	display_debit_or_credit_cells($running_total, true);
     	label_cell("");
     	label_cell("");

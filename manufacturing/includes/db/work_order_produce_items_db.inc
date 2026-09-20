@@ -52,9 +52,9 @@ function work_order_produce(string|int|float|bool|null $woid, string|int|float|b
 		while ($component = db_fetch($bom))
 		{
 			if (!is_service($component["mb_flag"]))
-				$m_cost += $component['unit_cost']*$component['units_issued'];
+				$m_cost += (float)$component['unit_cost']*(float)$component['units_issued'];
 			else
-				$l_cost += $component['unit_cost']*$component['units_issued'];
+				$l_cost += (float)$component['unit_cost']*(float)$component['units_issued'];
 		}
 
 		// add additional material issues
@@ -62,9 +62,9 @@ function work_order_produce(string|int|float|bool|null $woid, string|int|float|b
 		while ($issue = db_fetch($issues))
 		{
 			if (!is_service($issue["mb_flag"]))
-				$m_cost += $issue['unit_cost']*$issue['qty_issued'];
+				$m_cost += (float)$issue['unit_cost']*(float)$issue['qty_issued'];
 			else
-				$l_cost += $issue['unit_cost']*$issue['qty_issued'];
+				$l_cost += (float)$issue['unit_cost']*(float)$issue['qty_issued'];
 		}
 
 		// and additional costs
@@ -79,13 +79,13 @@ function work_order_produce(string|int|float|bool|null $woid, string|int|float|b
 	    add_gl_trans_std_cost(ST_WORKORDER, $woid, $date_, $product['inventory_account'],
 	   	    0, 0, $memo, $total_cost);
 
-		$unit_cost = $total_cost/($product['units_issued']+$quantity);
+		$unit_cost = $total_cost/((float)$product['units_issued']+$quantity);
 
 		// first update material cost
-		update_material_cost($product['stock_id'], $product['units_issued']+$quantity, $unit_cost, $date_);
+		update_material_cost($product['stock_id'], (float)$product['units_issued']+$quantity, $unit_cost, $date_);
 
 		add_stock_move(ST_WORKORDER, $product["stock_id"], $woid,
-			$product["loc_code"], $date_, $ref, $product['units_issued']+$quantity, $unit_cost);
+			$product["loc_code"], $date_, $ref, (float)$product['units_issued']+$quantity, $unit_cost);
 	}
 
 	if ($memo)

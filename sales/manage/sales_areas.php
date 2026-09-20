@@ -100,8 +100,8 @@ while ($myrow = db_fetch($result))
 	
 	inactive_control_cell($myrow["area_code"], $myrow["inactive"], 'areas', 'area_code');
 
- 	edit_button_cell("Edit".$myrow["area_code"], _("Edit"));
- 	delete_button_cell("Delete".$myrow["area_code"], _("Delete"));
+ 	edit_button_cell("Edit".(string)$myrow["area_code"], _("Edit"));
+ 	delete_button_cell("Delete".(string)$myrow["area_code"], _("Delete"));
 	end_row();
 }
 	

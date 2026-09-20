@@ -161,10 +161,10 @@ function display_fiscalyears(): void
 		label_cell($from);
 		label_cell($to);
 		label_cell($closed_text);
-	 	edit_button_cell("Edit".$myrow['id'], _("Edit"));
+	 	edit_button_cell("Edit".(string)$myrow['id'], _("Edit"));
 		if ($myrow["id"] != $company_year) {
- 			delete_button_cell("Delete".$myrow['id'], _("Delete"));
-			submit_js_confirm("Delete".$myrow['id'],
+ 			delete_button_cell("Delete".(string)$myrow['id'], _("Delete"));
+			submit_js_confirm("Delete".(string)$myrow['id'],
 				sprintf(_("Are you sure you want to delete fiscal year %s - %s? All transactions are deleted and converted into relevant balances. Do you want to continue ?"), $from, $to));
 		} else
 			label_cell('');

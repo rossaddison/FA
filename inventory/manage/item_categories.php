@@ -144,8 +144,8 @@ while ($myrow = db_fetch($result))
 	if (!$fixed_asset)
 		label_cell($myrow["dflt_wip_act"], "align=center");
 	inactive_control_cell($myrow["category_id"], $myrow["inactive"], 'stock_category', 'category_id');
- 	edit_button_cell("Edit".$myrow["category_id"], _("Edit"));
- 	delete_button_cell("Delete".$myrow["category_id"], _("Delete"));
+ 	edit_button_cell("Edit".(string)$myrow["category_id"], _("Edit"));
+ 	delete_button_cell("Delete".(string)$myrow["category_id"], _("Delete"));
 	end_row();
 }
 

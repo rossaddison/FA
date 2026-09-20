@@ -140,7 +140,7 @@ while ($myrow = db_fetch($result))
     label_cell($myrow["bank_account_name"], "nowrap");
 	label_cell($bank_account_types[$myrow["account_type"]], "nowrap");
     label_cell($myrow["bank_curr_code"], "nowrap");
-    label_cell($myrow["account_code"] . " " . $myrow["account_name"], "nowrap");
+    label_cell((string)$myrow["account_code"] . " " . (string)$myrow["account_name"], "nowrap");
     label_cell($myrow["bank_name"], "nowrap");
     label_cell($myrow["bank_account_number"], "nowrap");
     label_cell($myrow["bank_address"]);
@@ -150,8 +150,8 @@ while ($myrow = db_fetch($result))
 		label_cell(_("No"));
 
 	inactive_control_cell($myrow["id"], $myrow["inactive"], 'bank_accounts', 'id');
- 	edit_button_cell("Edit".$myrow["id"], _("Edit"));
- 	delete_button_cell("Delete".$myrow["id"], _("Delete"));
+ 	edit_button_cell("Edit".(string)$myrow["id"], _("Edit"));
+ 	delete_button_cell("Delete".(string)$myrow["id"], _("Delete"));
     end_row(); 
 }
 
@@ -235,7 +235,7 @@ else
 {
 	$act = get_bank_account($bank_id);
 	if ($act)
-		display_heading($act['bank_account_name']." - ".$act['bank_curr_code']);
+		display_heading((string)$act['bank_account_name']." - ".(string)$act['bank_curr_code']);
 }
 if ($bank_id)
 	hidden('bank_id', $bank_id);

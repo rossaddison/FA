@@ -244,7 +244,7 @@ function set_grn_item_credited(&$entered_grn, string|int|float|bool|null $suppli
         qty_invoiced = qty_invoiced + ".db_escape($entered_grn->this_quantity_inv).",
         std_cost_unit=".db_escape($mcost).",
         act_price=".db_escape($taxfree_line)."
-        WHERE po_detail_item = ".$myrow["po_detail_item"];
+        WHERE po_detail_item = ".(string)$myrow["po_detail_item"];
 	db_query($sql, "a purchase order details record could not be updated. This receipt of goods has not been processed ");
 
 	//$sql = "UPDATE ".TB_PREF."grn_items SET qty_recd=0, quantity_inv=0 WHERE id=$entered_grn->id";
@@ -457,8 +457,8 @@ function void_grn(mixed $grn_batch): bool
         {
 
         	$sql = "UPDATE ".TB_PREF."purch_order_details
-                SET quantity_received = quantity_received - " . $myrow["qty_recd"] . "
-                WHERE po_detail_item = " . $myrow["po_detail_item"];
+                SET quantity_received = quantity_received - " . (string)$myrow["qty_recd"] . "
+                WHERE po_detail_item = " . (string)$myrow["po_detail_item"];
 
         	db_query($sql, "a purchase order details record could not be voided.");
         }

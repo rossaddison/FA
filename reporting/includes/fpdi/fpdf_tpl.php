@@ -335,14 +335,14 @@ class FPDF_TPL extends FPDF {
                 // lly
                 -$tpl['y']*$this->k,
                 // urx
-                ($tpl['w']+$tpl['x'])*$this->k,
+                ((float)$tpl['w']+$tpl['x'])*$this->k,
                 // ury
-                ($tpl['h']-$tpl['y'])*$this->k
+                ((float)$tpl['h']-$tpl['y'])*$this->k
             ));
             
             if ($tpl['x'] != 0 || $tpl['y'] != 0) {
                 $this->_out(sprintf('/Matrix [1 0 0 1 %.5F %.5F]',
-                     -$tpl['x']*$this->k*2, $tpl['y']*$this->k*2
+                     -$tpl['x']*$this->k*2, (float)$tpl['y']*$this->k*2
                 ));
             }
             

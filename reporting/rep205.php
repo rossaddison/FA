@@ -133,7 +133,7 @@ function print_supplier_details_listing(): void
 			// Here starts the new report lines
 			$contacts = get_supplier_contacts($myrow['supplier_id']);
 			$rep->TextCol(0, 1,	$myrow['supp_name']);
-			$rep->TextCol(1, 2,	_('Tax_Id') . ": " . $myrow['gst_no']);
+			$rep->TextCol(1, 2,	_('Tax_Id') . ": " . (string)$myrow['gst_no']);
 			$rep->TextCol(2, 3,	$myrow['contact']);
 			$rep->NewLine();
 			$adr = Explode("\n", $myrow['address']);
@@ -144,9 +144,9 @@ function print_supplier_details_listing(): void
 			$count1 = max($count1, 4); 
 			if (isset($adr[0]))
 				$rep->TextCol(0, 1, $adr[0]);
-			$rep->TextCol(1, 2,	_('Currency') . ": " . $myrow['curr_code']);
+			$rep->TextCol(1, 2,	_('Currency') . ": " . (string)$myrow['curr_code']);
 			if (isset($contacts[0]))
-				$rep->TextCol(2, 3, $contacts[0]['name']. " " .(string)$contacts[0]['name2']);
+				$rep->TextCol(2, 3, (string)$contacts[0]['name']. " " .(string)$contacts[0]['name2']);
 			if (isset($adr2[0]))	
 				$rep->TextCol(3, 4, $adr2[0]);
 			$rep->NewLine();
@@ -155,7 +155,7 @@ function print_supplier_details_listing(): void
 			if ($myrow['dimension_id'] != 0)
 			{
 				$dim = get_dimension($myrow['dimension_id']);
-				$rep->TextCol(1, 2,	_('Dimension') . ": " . $dim['name']);
+				$rep->TextCol(1, 2,	_('Dimension') . ": " . (string)$dim['name']);
 			}		
 			if (isset($contacts[0]))
 				$rep->TextCol(2, 3, _('Ph') . ": " . (string)$contacts[0]['phone']);
@@ -167,13 +167,13 @@ function print_supplier_details_listing(): void
 			if ($myrow['dimension2_id'] != 0)
 			{
 				$dim = get_dimension($myrow['dimension2_id']);
-				$rep->TextCol(1, 2,	_('Dimension') . " 2: " . $dim['name']);
+				$rep->TextCol(1, 2,	_('Dimension') . " 2: " . (string)$dim['name']);
 			}
 			if ($myrow['notes'] != '')
 			{
 				$oldrow = $rep->row;
 				$rep->NewLine();
-				$rep->TextColLines(1, 2, _("General Notes:")." ".$myrow['notes'], -2);
+				$rep->TextColLines(1, 2, _("General Notes:")." ".(string)$myrow['notes'], -2);
 				$newrow = $rep->row;
 				$rep->row = $oldrow;
 			}	

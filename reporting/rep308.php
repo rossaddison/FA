@@ -135,7 +135,7 @@ function avg_unit_cost(?string $stock_id, string|array|null $location, string|ar
 	{
 		$qty += $row['qty'];	
 		$price = get_domestic_price($row, $stock_id);
-        $tran_cost = $price * $row['qty'];
+        $tran_cost = $price * (float)$row['qty'];
         $tot_cost += $tran_cost;
 	}
 	if ($qty == 0)
@@ -186,7 +186,7 @@ function trans_qty_unit_cost(?string $stock_id, string|array|null $location, str
 	{
         $qty += $row['qty'];
         $price = get_domestic_price($row, $stock_id); 
-        $tran_cost = $row['qty'] * $price;
+        $tran_cost = (float)$row['qty'] * $price;
         $tot_cost += $tran_cost;
 	}	
 	if ($qty == 0)
@@ -256,7 +256,7 @@ function inventory_movements(): void
 		{
 			$rep->NewLine(2);
 			$rep->fontSize += 2;
-			$rep->TextCol(0, 3, $myrow['category_id'] . " - " . $myrow['description']);
+			$rep->TextCol(0, 3, (string)$myrow['category_id'] . " - " . (string)$myrow['description']);
 			$catgor = $myrow['description'];
 			$rep->fontSize -= 2;
 			$rep->NewLine();

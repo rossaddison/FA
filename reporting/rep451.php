@@ -137,7 +137,7 @@ function print_fixed_assets_valuation_report(): void
 				$rep->NewLine();
 		}
 		$UnitCost = $trans['purchase_cost'];
-		$Depreciation = $trans['purchase_cost'] - $trans['material_cost'];
+		$Depreciation = (float)$trans['purchase_cost'] - (float)$trans['material_cost'];
 		$Balance = $trans['material_cost'];
 		if ($detail)
 		{

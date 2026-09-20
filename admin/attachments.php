@@ -32,13 +32,13 @@ if ($view_id != -1)
 	if ($row['filename'] != "")
 	{
 		if(in_ajax()) {
-			$Ajax->popup($_SERVER['PHP_SELF'].'?vw='.$view_id);
+			$Ajax->popup((string)$_SERVER['PHP_SELF'].'?vw='.$view_id);
 		} else {
 			$type = ($row['filetype']) ? $row['filetype'] : 'application/octet-stream';	
     		header("Content-type: ".$type);
-    		header('Content-Length: '.$row['filesize']);
+    		header('Content-Length: '.(string)$row['filesize']);
  			header("Content-Disposition: inline");
-	    	echo file_get_contents(company_path(). "/attachments/".$row['unique_name']);
+	    	echo file_get_contents(company_path(). "/attachments/".(string)$row['unique_name']);
     		exit();
 		}
 	}	
@@ -54,13 +54,13 @@ if ($download_id != -1)
 	if ($row['filename'] != "")
 	{
 		if(in_ajax()) {
-			$Ajax->redirect($_SERVER['PHP_SELF'].'?dl='.$download_id);
+			$Ajax->redirect((string)$_SERVER['PHP_SELF'].'?dl='.$download_id);
 		} else {
 			$type = ($row['filetype']) ? $row['filetype'] : 'application/octet-stream';	
     		header("Content-type: ".$type);
-	    	header('Content-Length: '.$row['filesize']);
-    		header('Content-Disposition: attachment; filename="'.$row['filename'].'"');
-    		echo file_get_contents(company_path()."/attachments/".$row['unique_name']);
+	    	header('Content-Length: '.(string)$row['filesize']);
+    		header('Content-Disposition: attachment; filename="'.(string)$row['filename'].'"');
+    		echo file_get_contents(company_path()."/attachments/".(string)$row['unique_name']);
 	    	exit();
 		}
 	}	
@@ -154,8 +154,8 @@ if ($Mode == 'Delete')
 {
 	$row = get_attachment($selected_id);
 	$dir =  company_path()."/attachments";
-	if (file_exists($dir."/".$row['unique_name']))
-		unlink($dir."/".$row['unique_name']);
+	if (file_exists($dir."/".(string)$row['unique_name']))
+		unlink($dir."/".(string)$row['unique_name']);
 	delete_attachment($selected_id);	
 	display_notification(_("Attachment has been deleted.")); 
 	reset_form();

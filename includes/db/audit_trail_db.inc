@@ -96,7 +96,7 @@ function close_transactions(string|array|null $todate): int {
 			if ($row['gl_seq'] != $seq)	{ // update transaction status only when gl_seq has changed
 				$sql2 = "UPDATE ".TB_PREF."audit_trail SET"
 					. " gl_seq=$seq"
-					. " WHERE id=".$row['id'];
+					. " WHERE id=".(string)$row['id'];
 				db_query($sql2, "Cannot reindex journal");
 			}
 		}

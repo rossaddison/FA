@@ -184,10 +184,10 @@ function work_order_production_gl(string|int|float|bool|null $woid, ?string $sto
 	{
 		if ($SysPrefs->loc_notification() == 1 && is_inventory_item($bom_item['stock_id']))
 		{
-			$line = new line_details($bom_item['stock_id'], $bom_item["units_req"] * $quantity, 0, 0, 0, 0, $bom_item['description']);
+			$line = new line_details($bom_item['stock_id'], (float)$bom_item["units_req"] * $quantity, 0, 0, 0, 0, $bom_item['description']);
 			$loc = calculate_reorder_level($bom_item["loc_code"], $line, $st_ids, $st_names, $st_num, $st_reorder); 
 		}
-		update_wo_requirement_issued($bom_item['id'], $bom_item["units_req"] * $quantity, $bom_item["ComponentCost"]);
+		update_wo_requirement_issued($bom_item['id'], (float)$bom_item["units_req"] * $quantity, $bom_item["ComponentCost"]);
 
 		// insert a -ve stock move for each item
 		add_stock_move(ST_MANURECEIVE, $bom_item["stock_id"], $rcv_no,
@@ -198,10 +198,10 @@ function work_order_production_gl(string|int|float|bool|null $woid, ?string $sto
 		else
 			$ivaccount = $bom_item["cogs_account"];
 
-		$memo = $date_.": ".$bom_item["units_req"] ." * ".$bom_item["description"];
+		$memo = $date_.": ".(string)$bom_item["units_req"] ." * ".(string)$bom_item["description"];
 
 		$total_cost += add_gl_trans_std_cost(ST_MANURECEIVE, $rcv_no, $date_, $ivaccount, 0, 0,
-			$memo, -$bom_item["ComponentCost"] * $bom_item["units_req"] * $quantity);
+			$memo, -$bom_item["ComponentCost"] * (float)$bom_item["units_req"] * $quantity);
 	}
 
 	$wo = get_work_order($woid);

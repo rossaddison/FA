@@ -156,12 +156,12 @@ function get_kit_price(string|int|float|bool|array|null $item_code, string|int|f
 	while($item = db_fetch($kit)) {
 		if ($item['item_code'] != $item['stock_id']) {
 			// foreign/kit code
-			$kit_price += $item['quantity'] * get_kit_price( $item['stock_id'], 
+			$kit_price += (float)$item['quantity'] * get_kit_price( $item['stock_id'], 
 				$currency, $sales_type_id, $factor, $date, $std);
 
 		} else {
 			// stock item
-			$kit_price += $item['quantity'] * get_price( $item['stock_id'], 
+			$kit_price += (float)$item['quantity'] * get_price( $item['stock_id'], 
 				$currency, $sales_type_id, $factor, $date);
 		}
 	}

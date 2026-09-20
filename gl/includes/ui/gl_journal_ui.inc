@@ -67,12 +67,12 @@ function display_order_header(?items_cart &$Order): void
 		{
 			$accname = get_gl_account_name($qid['base_desc']);
 			label_row(($qid['base_amount'] == 0 ? _("Yearly") : _("Monthly")) . " ". _("balance from account")." ".
-				$qid['base_desc']." ".$accname."&nbsp;&nbsp;".submit('go', _("Go"), false, false, true),'', "colspan=2");
+				(string)$qid['base_desc']." ".$accname."&nbsp;&nbsp;".submit('go', _("Go"), false, false, true),'', "colspan=2");
 		}
 		else
 		{
 			text_row(_('Additional info:'), 'aux_info', null, 35, 255);
-			amount_row($qid['base_desc'].":", 'totamount', price_format($qid['base_amount']),
+			amount_row((string)$qid['base_desc'].":", 'totamount', price_format($qid['base_amount']),
 		 		null, "&nbsp;&nbsp;".submit('go', _("Go"), false, false, true));
 		}
 

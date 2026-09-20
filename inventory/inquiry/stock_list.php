@@ -32,7 +32,7 @@ if(get_post("search")) {
   $Ajax->activate("item_tbl");
 }
 
-start_form(false, false, $_SERVER['PHP_SELF'] . "?" . (string)$_SERVER['QUERY_STRING']);
+start_form(false, false, (string)$_SERVER['PHP_SELF'] . "?" . (string)$_SERVER['QUERY_STRING']);
 
 start_table(TABLESTYLE_NOBORDER);
 

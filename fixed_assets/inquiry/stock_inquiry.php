@@ -96,9 +96,9 @@ function depr_method_title(array|false|null $row) {
 
 function depr_par(array|false|null $row): string {
 	if ($row['depreciation_method'] == 'D')
-		return $row['depreciation_rate']*$row['depreciation_factor'].'%';
+		return (float)$row['depreciation_rate']*(float)$row['depreciation_factor'].'%';
 	elseif ($row['depreciation_method'] == 'N')
-		return $row['depreciation_rate'].' '._('years'
+		return (string)$row['depreciation_rate'].' '._('years'
 		);
 	else
 		return (string)$row['depreciation_rate'].'%';
@@ -146,7 +146,7 @@ function amount_link(array|false|null $row): string
 
 function depr_link(array|false|null $row): string
 {
-    return price_format((float)$row['purchase_cost'] - $row['material_cost']);
+    return price_format((float)$row['purchase_cost'] - (float)$row['material_cost']);
 }
 
 function balance_link(array|false|null $row): string

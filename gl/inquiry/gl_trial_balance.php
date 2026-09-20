@@ -128,7 +128,7 @@ function display_trial_balance(?string $type, ?string $typename): void
 		{
 			alt_table_row_color($k);
 
-			$url = "<a href='$path_to_root/gl/inquiry/gl_account_inquiry.php?TransFromDate=" . $_POST["TransFromDate"] . "&TransToDate=" . $_POST["TransToDate"] . "&account=" . $account["account_code"] . "&Dimension=" . $_POST["Dimension"] . "&Dimension2=" . $_POST["Dimension2"] . "'>" . $account["account_code"] . "</a>";
+			$url = "<a href='$path_to_root/gl/inquiry/gl_account_inquiry.php?TransFromDate=" . (string)$_POST["TransFromDate"] . "&TransToDate=" . (string)$_POST["TransToDate"] . "&account=" . (string)$account["account_code"] . "&Dimension=" . (string)$_POST["Dimension"] . "&Dimension2=" . (string)$_POST["Dimension2"] . "'>" . (string)$account["account_code"] . "</a>";
 
 			label_cell($url);
 			label_cell($account["account_name"]);
@@ -146,12 +146,12 @@ function display_trial_balance(?string $type, ?string $typename): void
 		{
 			if (!check_value('GroupTotalOnly'))
 			{
-				amount_cell($prev['debit']-$offset);
-				amount_cell($prev['credit']-$offset);
+				amount_cell((float)$prev['debit']-$offset);
+				amount_cell((float)$prev['credit']-$offset);
 				amount_cell($curr['debit']);
 				amount_cell($curr['credit']);
-				amount_cell($tot['debit']-$offset);
-				amount_cell($tot['credit']-$offset);
+				amount_cell((float)$tot['debit']-$offset);
+				amount_cell((float)$tot['credit']-$offset);
 			}
 			$pdeb += $prev['debit'];
 			$pcre += $prev['credit'];
@@ -179,7 +179,7 @@ function display_trial_balance(?string $type, ?string $typename): void
 			$printtitle = 1;
 
 		}
-		display_trial_balance($accounttype["id"], $accounttype["name"].' ('.$typename.')');
+		display_trial_balance($accounttype["id"], (string)$accounttype["name"].' ('.$typename.')');
 	}
 
 	start_row("class='inquirybg' style='font-weight:bold'");
@@ -250,7 +250,7 @@ $classresult = get_account_classes(false);
 while ($class = db_fetch($classresult))
 {
 	start_row("class='inquirybg' style='font-weight:bold'");
-	label_cell(_("Class")." - ".$class['cid'] ." - ".$class['class_name'], "colspan=8");
+	label_cell(_("Class")." - ".(string)$class['cid'] ." - ".(string)$class['class_name'], "colspan=8");
 	end_row();
 
 	//Get Account groups/types under this group/type with no parents

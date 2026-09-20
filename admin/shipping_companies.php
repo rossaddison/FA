@@ -103,8 +103,8 @@ while ($myrow = db_fetch($result))
 	label_cell($myrow["phone2"]);
 	label_cell($myrow["address"]);
 	inactive_control_cell($myrow["shipper_id"], $myrow["inactive"], 'shippers', 'shipper_id');
- 	edit_button_cell("Edit".$myrow["shipper_id"], _("Edit"));
- 	delete_button_cell("Delete".$myrow["shipper_id"], _("Delete"));
+ 	edit_button_cell("Edit".(string)$myrow["shipper_id"], _("Edit"));
+ 	delete_button_cell("Delete".(string)$myrow["shipper_id"], _("Delete"));
 	end_row();
 }
 

@@ -80,7 +80,7 @@ function display_type (?string $type, ?string $typename, int|string|null &$dec, 
 			$rep->NewLine();		
 		}
 		$nextlevel = $level + 1;
-		display_type($accounttype["id"], $accounttype["name"].' ('.$typename.')', $dec, $rep, $showbalance, $nextlevel);
+		display_type($accounttype["id"], (string)$accounttype["name"].' ('.$typename.')', $dec, $rep, $showbalance, $nextlevel);
 	}
 }
 

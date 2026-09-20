@@ -36,7 +36,7 @@ function display_dimension_balance(string|int|float|bool|null $id, string|int|fl
         {
 			alt_table_row_color($k);
 
-			label_cell($myrow["account"]." ".$myrow['account_name']);
+			label_cell((string)$myrow["account"]." ".(string)$myrow['account_name']);
 			display_debit_or_credit_cells($myrow["amt"]);
 			$total += $myrow["amt"];
 			end_row();

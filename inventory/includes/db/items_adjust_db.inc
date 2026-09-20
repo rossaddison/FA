@@ -111,7 +111,7 @@ function add_stock_adjustment_item(int|float|null $adj_id, string|int|float|bool
 	if (is_fixed_asset($mb_flag)) {
 		// get the initial value of the fixed assset.
 		$row = get_fixed_asset_move($stock_id, ST_SUPPRECEIVE);
-		$inv_value = $row['price'] * $quantity;
+		$inv_value = (float)$row['price'] * $quantity;
 		$adj_value = (-($row['price']) + $standard_cost) * $quantity;
 	}
 

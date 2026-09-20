@@ -49,7 +49,7 @@ function get_tax_free_price_for_item(string|int|float|bool|null $stock_id, strin
 	$tax = 0;
 	foreach ($tax_array as $taxitem)
 	{
-		$tax += round($price*$taxitem['rate']/(100+$tax_multiplier), user_price_dec());
+		$tax += round($price*(float)$taxitem['rate']/(100+$tax_multiplier), user_price_dec());
 	}
 	return $price-$tax;
 }
@@ -217,10 +217,10 @@ function get_tax_for_items(array $items, array $prices, string|int|float|bool|nu
 				$index = $item_tax['tax_type_id'];
 				if ($item_tax['rate'] !== null && $ret_tax_array[$index]['rate'] !== null) {
 					if($tax_included==1) {
-					   	$ret_tax_array[$index]['Value'] += round2($shipping_cost*$item_tax['rate']/(100+$tax_rate), $dec);
+					   	$ret_tax_array[$index]['Value'] += round2($shipping_cost*(float)$item_tax['rate']/(100+$tax_rate), $dec);
 					   	$ret_tax_array[$index]['Net'] += $shipping_net;
 					} else {
-						$ret_tax_array[$index]['Value'] += round2($shipping_cost * $item_tax['rate'] / 100, $dec);
+						$ret_tax_array[$index]['Value'] += round2($shipping_cost * (float)$item_tax['rate'] / 100, $dec);
 					   	$ret_tax_array[$index]['Net'] += $shipping_cost;
 					}
 				}
@@ -231,7 +231,7 @@ function get_tax_for_items(array $items, array $prices, string|int|float|bool|nu
 	if ($tax_algorithm == TCA_TOTALS ) {
 		// update taxes with 
 		foreach($ret_tax_array as $index => $item_tax) {
-			$ret_tax_array[$index]['Value'] = round2($item_tax['Net'] * $item_tax['rate'] / 100, $dec);
+			$ret_tax_array[$index]['Value'] = round2((float)$item_tax['Net'] * (float)$item_tax['rate'] / 100, $dec);
 		}
 	}
 

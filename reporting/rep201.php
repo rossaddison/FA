@@ -171,7 +171,7 @@ function print_supplier_balances(): void
 		if ($no_zeros && db_num_rows($res) == 0) continue;
 
 		$rep->fontSize += 2;
-		$rep->TextCol(0, 2, $myrow['name'].($myrow['inactive']==1 ? " ("._("Inactive").")" : ""));
+		$rep->TextCol(0, 2, (string)$myrow['name'].($myrow['inactive']==1 ? " ("._("Inactive").")" : ""));
 		if ($convert) $rep->TextCol(2, 3,	$myrow['curr_code']);
 		$rep->fontSize -= 2;
 		$rep->TextCol(3, 4,	_("Open Balance"));
@@ -206,14 +206,14 @@ function print_supplier_balances(): void
 				$item[0] = round2(abs($trans['TotalAmount']) * $rate, $dec);
 				$rep->AmountCol(4, 5, $item[0], $dec);
 				$accumulate += $item[0];
-				$item[2] = round2($trans['Allocated'] * $rate, $dec);
+				$item[2] = round2((float)$trans['Allocated'] * $rate, $dec);
 			}
 			else
 			{
 				$item[1] = round2(abs($trans['TotalAmount']) * $rate, $dec);
 				$rep->AmountCol(5, 6, $item[1], $dec);
 				$accumulate -= $item[1];
-				$item[2] = round2($trans['Allocated'] * $rate, $dec) * -1;
+				$item[2] = round2((float)$trans['Allocated'] * $rate, $dec) * -1;
 			}
 			$rep->AmountCol(6, 7, $item[2], $dec);
 			if ($trans['TotalAmount'] > 0.0)

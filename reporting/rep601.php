@@ -94,7 +94,7 @@ function print_bank_transactions(): void
 	$result = db_query($sql, "could not retreive bank accounts");
 	while ($account=db_fetch($result))
 	{
-		$act = $account['bank_account_name']." - ".$account['bank_curr_code']." - ".$account['bank_account_number'];
+		$act = (string)$account['bank_account_name']." - ".(string)$account['bank_curr_code']." - ".(string)$account['bank_account_number'];
 		$params =   array( 	0 => $comments,
 			1 => array('text' => _('Period'), 'from' => $from, 'to' => $to),
 			2 => array('text' => _('Bank Account'),'from' => $act,'to' => ''));

@@ -67,8 +67,8 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
         {
             $url = "<a href='$path_to_root/gl/inquiry/gl_account_inquiry.php?TransFromDate=" 
                 . $from . "&TransToDate=" . $to . "&Dimension=" . $dimension . "&Dimension2=" . $dimension2 
-                . "&account=" . $account['account_code'] . "'>" . $account['account_code'] 
-                ." ". $account['account_name'] ."</a>";                
+                . "&account=" . (string)$account['account_code'] . "'>" . (string)$account['account_code'] 
+                ." ". (string)$account['account_name'] ."</a>";                
                 
             start_row("class='stockmankobg'");
             label_cell($url);
@@ -188,7 +188,7 @@ function display_balance_sheet(): void
 				{
 					$url = "<a href='$path_to_root/gl/inquiry/balance_sheet.php?TransFromDate=" 
 						. $from . "&TransToDate=" . $to . "&Dimension=" . $dimension . "&Dimension2=" . $dimension2 
-						. "&AccGrp=" . $accounttype['id'] ."'>" . $accounttype['id']." ".$accounttype['name'] ."</a>";	
+						. "&AccGrp=" . (string)$accounttype['id'] ."'>" . (string)$accounttype['id']." ".(string)$accounttype['name'] ."</a>";	
 					alt_table_row_color($k);
 					label_cell($url);
 					amount_cell($TypeTotal * $convert);
@@ -199,7 +199,7 @@ function display_balance_sheet(): void
 
 			//Print Class Summary
 			start_row("class='inquirybg' style='font-weight:bold'");
-			label_cell(_('Total') . " " . $class["class_name"]);
+			label_cell(_('Total') . " " . (string)$class["class_name"]);
 			amount_cell($classclose * $convert);
 			end_row();		
 			
@@ -246,7 +246,7 @@ function display_balance_sheet(): void
 		$convert = get_class_type_convert($class["ctype"]); 
 		
 		//Print Class Name	
-		table_section_title($_POST["AccGrp"]. " " . get_account_type_name($_POST["AccGrp"]));	
+		table_section_title((string)$_POST["AccGrp"]. " " . get_account_type_name($_POST["AccGrp"]));	
 		
 		$classclose = display_type($accounttype["id"], $accounttype["name"], $from, $to, 
 			$convert, $dimension, $dimension2, $drilldown);

@@ -47,7 +47,7 @@ start_table(TABLESTYLE, "width='100%'");
 $th = array(_("Customer"));
 table_header($th);
 
-label_row(null, $myrow["DebtorName"] . "<br>" . nl2br($myrow["address"]), "nowrap");
+label_row(null, (string)$myrow["DebtorName"] . "<br>" . nl2br($myrow["address"]), "nowrap");
 
 end_table();
 /*end of the small table showing charge to account details */
@@ -58,7 +58,7 @@ start_table(TABLESTYLE, "width='100%'");
 $th = array(_("Branch"));
 table_header($th);
 
-label_row(null, $branch["br_name"] . "<br>" . nl2br($branch["br_address"]), "nowrap");
+label_row(null, (string)$branch["br_name"] . "<br>" . nl2br($branch["br_address"]), "nowrap");
 end_table();
 
 echo "</td><td>"; // outer table
@@ -99,7 +99,7 @@ if (db_num_rows($result) > 0)
 		if ($myrow2["quantity"] == 0) continue;
 		alt_table_row_color($k);
 
-		$value = round2(((1 - $myrow2["discount_percent"]) * $myrow2["unit_price"] * $myrow2["quantity"]),
+		$value = round2(((1 - (float)$myrow2["discount_percent"]) * (float)$myrow2["unit_price"] * (float)$myrow2["quantity"]),
 		   user_price_dec());
 		$sub_total += $value;
 
@@ -109,7 +109,7 @@ if (db_num_rows($result) > 0)
 		}
 		else
 		{
-		   $display_discount = percent_format($myrow2["discount_percent"]*100) . "%";
+		   $display_discount = percent_format((float)$myrow2["discount_percent"]*100) . "%";
 		}
 
 		label_cell($myrow2["stock_id"]);
@@ -127,7 +127,7 @@ else
 
 $display_sub_tot = price_format($sub_total);
 
-$credit_total = $myrow["ov_freight"]+$myrow["ov_gst"]+$myrow["ov_amount"]+$myrow["ov_freight_tax"];
+$credit_total = (float)$myrow["ov_freight"]+(float)$myrow["ov_gst"]+(float)$myrow["ov_amount"]+(float)$myrow["ov_freight_tax"];
 $display_total = price_format($credit_total);
 
 /*Print out the invoice text entered */

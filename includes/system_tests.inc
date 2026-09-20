@@ -276,7 +276,7 @@ function tst_langs(mixed $install): array
 		if (!$GetText->check_support($lang['code'], $lang['encoding']))
 		{
 			$test['result'] = false;
-			$test['comments'][] = sprintf(_('Missing system locale: %s'), $lang['code'].".".(string)$lang['encoding']);
+			$test['comments'][] = sprintf(_('Missing system locale: %s'), (string)$lang['code'].".".(string)$lang['encoding']);
 		};
 	}
 

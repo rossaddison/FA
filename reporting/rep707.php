@@ -297,7 +297,7 @@ function print_profit_and_loss_statement(): void
 		$rep->Line($rep->row);
 		$rep->NewLine();
 		$rep->Font('bold');
-		$rep->TextCol(0, 2,	_('Total') . " " . $class["class_name"]);
+		$rep->TextCol(0, 2,	_('Total') . " " . (string)$class["class_name"]);
 		$rep->AmountCol(2, 3, $class_per_total * $convert, $dec);
 		$rep->AmountCol(3, 4, $class_acc_total * $convert, $dec);
 		$rep->AmountCol(4, 5, Achieve($class_per_total, $class_acc_total), $pdec);

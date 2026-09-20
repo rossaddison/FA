@@ -549,9 +549,9 @@ function db_unzip(?string $mode, ?string $path): array|string|false
 function db_backup(array $conn, string|int|float|bool|array|null $ext='no', string|int|float|bool|array|null $comm='', string|int|float|bool|null $path='')
 {
 	if ($conn['tbpref'] != "")
-		$filename = $conn['dbname'] . "_" . (string)$conn['tbpref'] . date("Ymd_Hi") . ".sql";
+		$filename = (string)$conn['dbname'] . "_" . (string)$conn['tbpref'] . date("Ymd_Hi") . ".sql";
 	else
-		$filename = $conn['dbname'] . "_" . date("Ymd_Hi") . ".sql";
+		$filename = (string)$conn['dbname'] . "_" . date("Ymd_Hi") . ".sql";
 
 	return db_export($conn, $path . clean_file_name($filename), $ext, $comm);
 }
@@ -621,7 +621,7 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
         // get table structures
 	foreach ($all_tables as $table)
 	{
-		$res1 = db_query("SHOW CREATE TABLE `" . $table['Name'] . "`");
+		$res1 = db_query("SHOW CREATE TABLE `" . (string)$table['Name'] . "`");
 		$tmp = db_fetch($res1);
 		$table_sql[$table['Name']] = $tmp["Create Table"];
 	}

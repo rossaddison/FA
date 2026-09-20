@@ -47,7 +47,7 @@ function display_wo_issue(string|int|float|bool|null $issue_no): void
 	label_cell($myrow["issue_no"]);
 	label_cell($myrow["reference"]);
 	label_cell(get_trans_view_str(ST_WORKORDER,$myrow["workorder_id"]));
-	label_cell($myrow["stock_id"] . " - " . $myrow["description"]);
+	label_cell((string)$myrow["stock_id"] . " - " . (string)$myrow["description"]);
 	label_cell($myrow["location_name"]);
 	label_cell($myrow["WorkCentreName"]);
 	label_cell(sql2date($myrow["issue_date"]));
@@ -87,7 +87,7 @@ function display_wo_issue_details(string|int|float|bool|null $issue_no): void
 
 			alt_table_row_color($k);
 
-        	label_cell($myrow["stock_id"]  . " - " . $myrow["description"]);
+        	label_cell((string)$myrow["stock_id"]  . " - " . (string)$myrow["description"]);
             qty_cell($myrow["qty_issued"], false, get_qty_dec($myrow["stock_id"]));
 			label_cell($myrow["units"]);
 			amount_cell($myrow["unit_cost"]);

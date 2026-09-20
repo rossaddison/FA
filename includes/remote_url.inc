@@ -52,7 +52,7 @@ function url_get_contents(?string $url, ?int $timeout=10): string|false|null
 		fputs($fp, "GET $path HTTP/1.0\r\n" .
 			"Host: $host\r\n".
 			(isset($parsedUrl['pass']) ? "Authorization: Basic ".
-				base64_encode($parsedUrl['user'].':'.$parsedUrl['pass'])."\r\n" : '').
+				base64_encode((string)$parsedUrl['user'].':'.$parsedUrl['pass'])."\r\n" : '').
 			"User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.0.3) Gecko/20060426 Firefox/1.5.0.3\r\n" .
 			"Accept: */*\r\n" .
 			"Accept-Language: en-us,en;q=0.5\r\n" .

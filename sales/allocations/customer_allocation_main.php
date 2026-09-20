@@ -77,7 +77,7 @@ function amount_total(array|false|null $row): string
 
 function amount_left(array|false|null $row): string
 {
-	return price_format(($row['type'] == ST_JOURNAL && $row["Total"] < 0 ? -$row["Total"] : $row["Total"])-$row["alloc"]);
+	return price_format(($row['type'] == ST_JOURNAL && $row["Total"] < 0 ? -$row["Total"] : $row["Total"])-(float)$row["alloc"]);
 }
 
 function check_settled(array|false|null $row): bool

@@ -558,7 +558,7 @@ class Chart
 							$path = "M ".$p[0][0].",".$p[0][1];
 							foreach ($p as $ix => $y)
 							{
-								$this->svg->circle($p[$ix][0], $p[$ix][1], 2.5, $this->color['line'][$j], 2, $this->color['line'][$j], "class=\"tips\"", $this->series[$j]['label'].": ".number_format($this->series[$j]['data'][$ix], 2)); 
+								$this->svg->circle($p[$ix][0], $p[$ix][1], 2.5, $this->color['line'][$j], 2, $this->color['line'][$j], "class=\"tips\"", (string)$this->series[$j]['label'].": ".number_format($this->series[$j]['data'][$ix], 2)); 
 								if ($ix != 0)
 								{
 									if ($this->series[$j]['type'] == 4) // normal line
@@ -578,7 +578,7 @@ class Chart
 					}
 					else
 					{
-						$this->svg->rect( $x1, $y1, $x2, $y2-$y1, $this->color['bars'][$j], 1, $this->color['bars'][$j], "class=\"tips\"", $this->series[$j]['label'].": ".number_format($this->series[$j]['data'][$i], 2));
+						$this->svg->rect( $x1, $y1, $x2, $y2-$y1, $this->color['bars'][$j], 1, $this->color['bars'][$j], "class=\"tips\"", (string)$this->series[$j]['label'].": ".number_format($this->series[$j]['data'][$i], 2));
 						$x += $this->bar_width + 5;
 					}
 				}
@@ -667,7 +667,7 @@ class Chart
 				$y2	  = $y1 + $this->bar_width;
 				if ($this->stream == 'svg')
 				{
-					$this->svg->rect($x1, $y1, $x2-$x1, $y2-$y1, $this->color['bars'][$j], 1, $this->color['bars'][$j], "class=\"tips\"", $this->series[$j]['label'].": ".number_format($this->series[$j]['data'][$i], 2));
+					$this->svg->rect($x1, $y1, $x2-$x1, $y2-$y1, $this->color['bars'][$j], 1, $this->color['bars'][$j], "class=\"tips\"", (string)$this->series[$j]['label'].": ".number_format($this->series[$j]['data'][$i], 2));
 					$this->svg->text(($x2+10), ($y1+12), $this->number_formated($this->series[$j]['data'][$i], $this->dec2), $this->size, $this->color['bars'][$j], false, $this->align);
 					$y	 += $this->bar_width + 1;
 				}
@@ -722,7 +722,7 @@ class Chart
 				$path = "M ".$p[0][0].",".$p[0][1];
 				foreach ($p as $i => $y)
 				{
-					$this->svg->circle($p[$i][0], $p[$i][1], 2.5, $this->color['line'][$j], 3, $this->color['line'][$j], "class=\"tips\"", $this->series[$j]['label'].": ".number_format($this->series[$j]['data'][$i], 2)); 
+					$this->svg->circle($p[$i][0], $p[$i][1], 2.5, $this->color['line'][$j], 3, $this->color['line'][$j], "class=\"tips\"", (string)$this->series[$j]['label'].": ".number_format($this->series[$j]['data'][$i], 2)); 
 					if ($i != 0)
 					{
 						if ($this->type == 4) // normal line
@@ -836,8 +836,8 @@ class Chart
 		for ($i = $n - 1; $i > 0; --$i) 
 		{
 			$h_i = $cx[$i] - $cx[$i - 1];
-			$splines[$i]['d'] = ($splines[$i]['c'] - (float)$splines[$i - 1]['c']) / $h_i;
-			$splines[$i]['b'] = $h_i * (2.0 * (float)$splines[$i]['c'] + $splines[$i - 1]['c']) / 6.0 + ($cy[$i] - $cy[$i - 1]) / $h_i;
+			$splines[$i]['d'] = ((float)$splines[$i]['c'] - (float)$splines[$i - 1]['c']) / $h_i;
+			$splines[$i]['b'] = $h_i * (2.0 * (float)$splines[$i]['c'] + (float)$splines[$i - 1]['c']) / 6.0 + ($cy[$i] - $cy[$i - 1]) / $h_i;
 		}
 		for ($x = $minx; $x <= $maxx; $x += $step) 
 		{
@@ -862,7 +862,7 @@ class Chart
 				}
 			}
 			$dx = ($x - $s['x']);
-			$p1[$x] = (float)$s['a'] + ($s['b'] + ($s['c'] / 2.0 + $s['d'] * $dx / 6.0) * $dx) * $dx;
+			$p1[$x] = (float)$s['a'] + ((float)$s['b'] + ((float)$s['c'] / 2.0 + (float)$s['d'] * $dx / 6.0) * $dx) * $dx;
 		}
 		return $p1;
 	}

@@ -170,7 +170,7 @@ function print_inventory_planning(): void
 		$rep->NewLine();
 		$dec = get_qty_dec($trans['stock_id']);
 		$rep->TextCol(0, 1, $trans['stock_id']);
-		$rep->TextCol(1, 2, $trans['description'].($trans['inactive']==1 ? " ("._("Inactive").")" : ""), -1);
+		$rep->TextCol(1, 2, (string)$trans['description'].($trans['inactive']==1 ? " ("._("Inactive").")" : ""), -1);
 		$rep->AmountCol(2, 3, $period['prd0'], $dec);
 		$rep->AmountCol(3, 4, $period['prd1'], $dec);
 		$rep->AmountCol(4, 5, $period['prd2'], $dec);
@@ -185,7 +185,7 @@ function print_inventory_planning(): void
 		$rep->AmountCol(9, 10, $custqty, $dec);
 		$rep->AmountCol(10, 11, $suppqty, $dec);
 
-		$SuggestedTopUpOrder = $IdealStockHolding - $trans['qty_on_hand'] + $custqty - $suppqty;
+		$SuggestedTopUpOrder = $IdealStockHolding - (float)$trans['qty_on_hand'] + $custqty - $suppqty;
 		if ($SuggestedTopUpOrder < 0.0)
 			$SuggestedTopUpOrder = 0.0;
 		$rep->AmountCol(11, 12, $SuggestedTopUpOrder, $dec);

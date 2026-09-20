@@ -116,8 +116,8 @@ while ($myrow = db_fetch($result))
 	label_cell(percent_format($myrow["provision2"])." %", "nowrap align=right");
 	inactive_control_cell($myrow["salesman_code"], $myrow["inactive"],
 		'salesman', 'salesman_code');
- 	edit_button_cell("Edit".$myrow["salesman_code"], _("Edit"));
- 	delete_button_cell("Delete".$myrow["salesman_code"], _("Delete"));
+ 	edit_button_cell("Edit".(string)$myrow["salesman_code"], _("Edit"));
+ 	delete_button_cell("Delete".(string)$myrow["salesman_code"], _("Delete"));
   	end_row();
 
 } //END WHILE LIST LOOP

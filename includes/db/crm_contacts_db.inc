@@ -342,7 +342,7 @@ function get_crm_contact(string|int|float|bool|null $id)
 function is_crm_category_used(string|int|float|bool|null $id)
 {
 	$row = get_crm_category($id);
-	$sql = "SELECT COUNT(*) FROM ".TB_PREF."crm_contacts WHERE type='".$row['type']."' AND action='".$row['action']."'";
+	$sql = "SELECT COUNT(*) FROM ".TB_PREF."crm_contacts WHERE type='".(string)$row['type']."' AND action='".(string)$row['action']."'";
 	$result = db_query($sql, "check relations for crm_contacts failed");
 	$contacts = db_fetch($result);
 	return $contacts[0];

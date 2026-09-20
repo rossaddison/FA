@@ -47,7 +47,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
         
         while ($myrow = db_fetch($tax_types)) 
         {
-        	if (check_value('ExemptTax' . $myrow["id"]))
+        	if (check_value('ExemptTax' . (string)$myrow["id"]))
         	{
         		$exempt_from[$i] = $myrow["id"];
         		$i++;
@@ -136,8 +136,8 @@ while ($myrow = db_fetch($result2))
 	label_cell($myrow["name"]);
 	label_cell($disallow_text);
 	inactive_control_cell($myrow["id"], $myrow["inactive"], 'item_tax_types', 'id');
- 	edit_button_cell("Edit".$myrow["id"], _("Edit"));
- 	delete_button_cell("Delete".$myrow["id"], _("Delete"));
+ 	edit_button_cell("Edit".(string)$myrow["id"], _("Edit"));
+ 	delete_button_cell("Delete".(string)$myrow["id"], _("Delete"));
 	end_row();
 }
 
@@ -162,7 +162,7 @@ if ($selected_id != -1)
    		{
    			while ($exmp = db_fetch($exemptions)) 
    			{
-   				$_POST['ExemptTax' . $exmp["tax_type_id"]] = 1;
+   				$_POST['ExemptTax' . (string)$exmp["tax_type_id"]] = 1;
    			}
    		}	
 	}
@@ -194,7 +194,7 @@ if (!isset($_POST['exempt']) || $_POST['exempt'] == 0)
     
     	label_cell($myrow["name"]);
 		label_cell(percent_format($myrow["rate"])." %", "nowrap align=right");
-    	check_cells("", 'ExemptTax' . $myrow["id"], null);
+    	check_cells("", 'ExemptTax' . (string)$myrow["id"], null);
     	end_row();
     }
     

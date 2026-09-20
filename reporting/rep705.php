@@ -335,7 +335,7 @@ function print_annual_expense_breakdown(): void
 		$rep->Line($rep->row);
 		$rep->NewLine();
 		$rep->Font('bold');
-		$rep->TextCol(0, 2,	_('Total') . " " . $class["class_name"]);
+		$rep->TextCol(0, 2,	_('Total') . " " . (string)$class["class_name"]);
 		for ($i = 1; $i <= 13; $i++)
 		{
 			$rep->AmountCol($i + 1, $i + 2, $ctotal[$i] * $convert, $dec);

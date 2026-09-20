@@ -143,8 +143,8 @@ div_start('code_table');
             label_cell($units);
             label_cell($myrow["description"]);
             label_cell($myrow["cat_name"]);
-		 	edit_button_cell("Edit".$myrow['id'], _("Edit"));
-		 	edit_button_cell("Delete".$myrow['id'], _("Delete"));
+		 	edit_button_cell("Edit".(string)$myrow['id'], _("Edit"));
+		 	edit_button_cell("Delete".(string)$myrow['id'], _("Delete"));
             end_row();
 
             $j++;

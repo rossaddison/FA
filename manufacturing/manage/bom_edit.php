@@ -57,8 +57,8 @@ function display_bom_items(string|int|float|bool|null $selected_parent): void
         label_cell($myrow["WorkCentreDescription"]);
         qty_cell($myrow["quantity"], false, get_qty_dec($myrow["component"]));
         label_cell($myrow["units"]);
- 		edit_button_cell("Edit".$myrow['id'], _("Edit"));
- 		delete_button_cell("Delete".$myrow['id'], _("Delete"));
+ 		edit_button_cell("Edit".(string)$myrow['id'], _("Edit"));
+ 		delete_button_cell("Delete".(string)$myrow['id'], _("Delete"));
         end_row();
 
 	} //END WHILE LIST LOOP
@@ -161,7 +161,7 @@ if (list_updated('new_stock_id')) {
 	$item = get_item($_POST['new_stock_id']);
 	$_POST['stock_id'] = $_POST['new_stock_id'];
 	$Ajax->activate('_page_body');
-	display_notification(_("BOM copied to ") . $item['description']);
+	display_notification(_("BOM copied to ") . (string)$item['description']);
 }
 
 start_form();
@@ -206,7 +206,7 @@ start_form();
 			$_POST['component'] = $myrow["component"]; // by Tom Moulton
 			$_POST['workcentre_added']  = $myrow["workcentre_added"];
 			$_POST['quantity'] = number_format2($myrow["quantity"], get_qty_dec($myrow["component"]));
-			label_row(_("Component:"), $myrow["component"] . " - " . $myrow["description"]);
+			label_row(_("Component:"), (string)$myrow["component"] . " - " . (string)$myrow["description"]);
 		}
 		hidden('selected_id', $selected_id);
 	}
