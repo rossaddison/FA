@@ -183,6 +183,7 @@ function void_bank_trans(string|int|float|bool|null $type, string|int|float|bool
 *	Check account history to find transaction which would exceed authorized overdraft for given account.
 *	Returns null or transaction in conflict. Running balance is checked on daily basis only, to enable ID change after edition.
 *	$delta_amount - tested change in bank balance at $date.
+* @return array{amount: null|scalar, trans_date?: int|null|string, ...<array-key, null|string>}|null
 **/
 function check_bank_account_history(string|int|float|bool|null $delta_amount, string|array|null $bank_account, string|array|null $date=null, mixed $user=null, int|float|null $balance_offset = 0)
 {

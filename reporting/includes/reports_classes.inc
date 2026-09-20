@@ -42,13 +42,17 @@ class BoxReports
 		return $class_id;
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function addReport($class, $id, $rep_name, $params=null)
 	{
 		unset($this->ar_reports[$class][$id]); // unset std report if any
 		$this->ar_reports[$class][$id] = new Report($id, $rep_name, $params);
 	}
 
+	/** @return non-falsy-string|null */
 	function getDisplay($class=null)
 	{
 		global $path_to_root, $SysPrefs, $Ajax;
@@ -126,6 +130,7 @@ class BoxReports
 		return $st;
 	}
 
+	/** @return string */
 	function getOptions($controls, $id = 0)
 	{
 		$st = '';
@@ -163,7 +168,10 @@ class BoxReports
 	//
 	//	Register additional control handler
 	// $handle - name of global function f($name, $type) returning html code for control
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function register_controls($handler) {
 		$this->ctrl_handlers[] = $handler;
 	}
@@ -494,7 +502,10 @@ class Report
 		if ($ar_params) $this->set_controls($ar_params);
 	}
 	
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function set_controls($ar_params) {
 		$this->controls = $ar_params;
 	}

@@ -57,6 +57,7 @@ function gl_view(array|false|null $row)
 	return get_gl_view_str(ST_JOURNAL, $row["trans_no"]);
 }
 
+/** @return array{disposal_date: null|string, disposal_no: null|string, disposal_type: null|string, purchase_date: null|string, purchase_no: null|string, ...<array-key, mixed>}|false */
 function fa_prepare_row(array|false|null $row) {
   	$purchase = get_fixed_asset_purchase($row['stock_id']);
   	if ($purchase !== false) {

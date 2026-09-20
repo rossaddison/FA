@@ -133,7 +133,10 @@ print_profit_and_loss_statement();
 
 //----------------------------------------------------------------------------------------------------
 
-/** @psalm-pure */
+/**
+ * @psalm-pure
+ * @return 0|999|float
+ */
 function Achieve(string|int|float|bool|null $d1, string|int|float|bool|null $d2)
 {
 	if ($d1 == 0 && $d2 == 0)

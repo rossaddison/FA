@@ -988,6 +988,7 @@ function set_focus(string $name, ?int $form_no=0): void {
 //	Set default focus on first field $name if not set yet
 //	Returns unique name if $name=null
 //	
+/** @return non-empty-scalar */
 function default_focus(string|int|float|bool|null $name=null, ?int $form_no=0) {
 	static $next; 
 	if ($name==null) 

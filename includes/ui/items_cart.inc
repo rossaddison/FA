@@ -72,6 +72,7 @@ class items_cart
 
 	// --------------- line item functions
 
+	/** @return bool */
 	function add_to_cart($line_no, $stock_id, $qty, $standard_cost, $description=null)
 	{
 
@@ -99,24 +100,32 @@ class items_cart
 		return null;
 	}
 
+	/** @return void */
 	function update_cart_item($line_no, $qty, $standard_cost)
 	{
 		$this->line_items[$line_no]->quantity = $qty;
 		$this->line_items[$line_no]->standard_cost = $standard_cost;
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function remove_from_cart($line_no)
 	{
 		array_splice($this->line_items, $line_no, 1);
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return int<0, max>
+	 */
 	function count_items()
 	{
 		return count($this->line_items);
 	}
 
+	/** @return list<array<array-key, mixed>|null|scalar> */
 	function check_qoh($location, $date_, $reverse=false)
 	{
 		global $SysPrefs;
@@ -144,6 +153,7 @@ class items_cart
 
 	// ----------- GL item functions
 
+	/** @return bool */
 	function add_gl_item($code_id, $dimension_id, $dimension2_id, $amount, $memo='', $act_descr=null, $person_id=null, $date=null)
 	{
 		if (isset($code_id) && $code_id != "" && isset($amount) && isset($dimension_id)  &&
@@ -161,6 +171,7 @@ class items_cart
 		return false;
 	}
 
+	/** @return void */
 	function update_gl_item($index, $code_id, $dimension_id, $dimension2_id, $amount, $memo='', $act_descr=null, $person_id=null)
 	{
 	    $this->gl_items[$index]->code_id = $code_id;
@@ -188,13 +199,19 @@ class items_cart
 
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function remove_gl_item($index)
 	{
 		array_splice($this->gl_items, $index, 1);
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return int<0, max>
+	 */
 	function count_gl_items()
 	{
 		return count($this->gl_items);
@@ -235,7 +252,10 @@ class items_cart
 
 	// ------------ common functions
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function clear_items()
 	{
     	unset($this->line_items);
@@ -248,6 +268,7 @@ class items_cart
 	//
 	//	Check if cart contains virtual subaccount (AP/AR) postings
 	//
+	/** @return bool */
 	function has_sub_accounts()
 	{
 		foreach ($this->gl_items as $gl_item)
@@ -261,6 +282,7 @@ class items_cart
 	//
 	//	Check if cart contains postings to tax accounts
 	//
+	/** @return bool */
 	function has_taxes()
 	{
 		foreach ($this->gl_items as $gl_item)
@@ -347,7 +369,10 @@ class items_cart
 		return $tax_info;
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function set_currency($curr, $rate=0)
 	{
 		$this->currency = $curr;
@@ -357,6 +382,7 @@ class items_cart
 	/*
 		Reduce number of necessary gl posting lines.
 	*/
+	/** @return void */
 	function reduce_gl()
 	{
 		/* reduce additional postings */
@@ -378,6 +404,7 @@ class items_cart
 	/*
 		Write transaction GL postings, creating tax records and updating AP/AR/bank ledger if needed.
 	*/
+	/** @return void */
 	function write_gl($check_balance = true)
 	{
 		$delta = $this->gl_items_total();

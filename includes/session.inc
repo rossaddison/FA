@@ -15,6 +15,7 @@ define('SECURE_ONLY', true); // if you really need also http (unsecure) access a
 
 class SessionManager
 {
+   	/** @return void */
    	function sessionStart($name, $limit = 0, $path = '/', $domain = null, $secure = null)
 	{
 		// Set the cookie name
@@ -55,6 +56,7 @@ class SessionManager
 		}
 	}
 
+	/** @return bool */
 	function preventHijacking()
 	{
 		if (!isset($_SESSION['IPaddress']) || !isset($_SESSION['userAgent']))
@@ -69,6 +71,7 @@ class SessionManager
 		return true;
 	}
 
+	/** @return void */
 	function regenerateSession()
 	{
 		// If this session is obsolete it means there already is a new id
@@ -94,6 +97,7 @@ class SessionManager
 		unset($_SESSION['EXPIRES']);
 	}
 
+	/** @return bool */
 	function validateSession()
 	{
 		if (isset($_SESSION['OBSOLETE']) && !isset($_SESSION['EXPIRES']) )
@@ -171,6 +175,7 @@ function password_reset_success(): void
 	die();
 }
 
+/** @return bool */
 function check_faillog()
 {
 	global $SysPrefs, $login_faillog;

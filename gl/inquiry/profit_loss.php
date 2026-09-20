@@ -148,6 +148,7 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 	return $totals_arr;
 }	
 	
+/** @return 0|999|float */
 function Achieve(string|int|float|bool|null $d1, string|int|float|bool|null $d2)
 {
 	if ($d1 == 0 && $d2 == 0)

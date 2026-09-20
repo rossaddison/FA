@@ -82,17 +82,22 @@ class current_user
 		$this->prefs = new user_prefs();
 	}
 
+	/** @return bool */
 	function logged_in()
 	{
 		return $this->logged;
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function set_company($company)
 	{
 		$this->company = (int)$company;
 	}
 
+	/** @return bool */
 	function login($company, $loginname, $password)
 	{
 		global $security_areas, $security_groups, $security_headings, $path_to_root, $dflt_lang, $SysPrefs;
@@ -179,6 +184,7 @@ class current_user
 		return $this->logged;
 	}
 
+	/** @return bool */
 	function reset_password($company, $email) {
 		global $SysPrefs;
 
@@ -209,6 +215,7 @@ class current_user
    		return false;
     }
 
+	/** @return bool */
 	function check_user_access()
 	{
 		global $security_groups;
@@ -219,6 +226,7 @@ class current_user
 			return !isset($security_groups) && is_array($this->role_set);
 	}
 
+	/** @return bool */
 	function can_access($sec_area)
 	{
 		global $security_groups, $security_areas;
@@ -244,6 +252,7 @@ class current_user
 		return $this->can_access($page_level);
 	}
 
+	/** @return bool */
 	function check_application_access($waapp)
 	{
 		if (!$this->hide_inaccessible_menu_items())
@@ -263,6 +272,7 @@ class current_user
 
 	}
 
+	/** @return bool */
 	function check_module_access($module)
 	{
 
@@ -297,6 +307,7 @@ class current_user
 
 	}
 
+	/** @return bool */
 	function hide_inaccessible_menu_items()
 	{
 		global $SysPrefs;
@@ -312,11 +323,13 @@ class current_user
 		}
 	}
 
+	/** @return false|mysqli */
 	function set_db_connection($id = -1)
 	{
 		return set_global_connection($id);
 	}
 
+	/** @return void */
 	function update_prefs($prefs)
 	{
 		global $SysPrefs;
@@ -467,6 +480,7 @@ function user_company()
 	return isset($_SESSION["wa_current_user"]) ? $_SESSION["wa_current_user"]->company : $def_coy;
 }
 
+/** @return null|scalar */
 function user_pos()
 {
 	return $_SESSION["wa_current_user"]->pos;

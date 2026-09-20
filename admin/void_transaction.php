@@ -144,6 +144,7 @@ function ref_view(array|false|null $row)
 	return $row['ref'];
 }
 
+/** @return bool */
 function is_selected(array|false|null $row) // Function added by faisal
 {
 	global $selected_id;

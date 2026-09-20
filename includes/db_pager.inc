@@ -117,6 +117,7 @@ class db_pager {
 	//
 	//	Parse base sql select query	or use an associative array.
 	//
+	/** @return void */
 	function set_sql($sql)
 	{
 		global $SysPrefs;
@@ -165,7 +166,10 @@ class db_pager {
 	//
 	//	Set additional constraint on record set
 	//
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function set_where($where = null)
 	{
 	 	if ($where) {
@@ -182,6 +186,7 @@ class db_pager {
 	//
 	//	Set query result page
 	//
+	/** @return true */
 	function change_page($page=null) 
 	{
 	    $this->set_page($page);
@@ -192,6 +197,7 @@ class db_pager {
 	//	Change sort column direction 
 	//	in order asc->desc->none->asc
 	//
+	/** @return true */
 	function sort_table($col) 
 	{
 
@@ -213,6 +219,7 @@ class db_pager {
 	//
 	// Query database
 	//
+	/** @return bool */
 	function query() 
 	{
 		global $Ajax;
@@ -252,6 +259,7 @@ class db_pager {
 	//
 	//	Calculates page numbers for html controls.
 	//
+	/** @return void */
 	function set_page($to) 
 	{
 	    switch($to) {
@@ -282,6 +290,7 @@ class db_pager {
 	//
 	//	Set column definitions
 	//  $flds: array( fldname1, fldname2=>type,...)
+	/** @return void */
 	function set_columns($flds)
 	{
 		$this->columns = array();
@@ -324,6 +333,7 @@ class db_pager {
 	// $count==false - for current page data retrieval 
 	// $count==true  - for total records count
 	//
+	/** @return non-empty-string */
 	function _sql_gen($count=false) 
 	{
 		$select = $this->select;
@@ -381,6 +391,7 @@ class db_pager {
 	//
 	//	Initialization after changing record set
 	//
+	/** @return bool */
 	function _init() 
 	{
 		global $SysPrefs;
@@ -415,6 +426,7 @@ class db_pager {
 	//
 	//	Set current page in response to user control.
 	//
+	/** @return void */
 	function select_records() 
 	{
 		global $Ajax;
@@ -437,7 +449,10 @@ class db_pager {
 	//
 	//	Set check function to mark some rows.
 	//	
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function set_marker($func, $notice='', $markercl='overduebg', $msgclass='overduefg' )
 	{
 		$this->marker = $func;
@@ -449,7 +464,10 @@ class db_pager {
 	//	Set handler to display additional row between titles and pager body.
 	//	Return array of column contents.
 	//
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function set_header($func, $headercl='inquirybg')
 	{
 		$this->header_fun = $func;
@@ -459,7 +477,10 @@ class db_pager {
 	//	Set handler to display additional row between pager body and navibar.
 	//	Return array of column contents.
 	//
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function set_footer($func, $footercl='inquirybg')
 	{
 		$this->footer_fun = $func;
@@ -468,13 +489,17 @@ class db_pager {
 	//
 	//	Setter for table editors with inactive cell control.
 	//
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function set_inactive_ctrl($table, $key) {
 		$this->inactive_ctrl = array('table'=>$table, 'key'=>$key);
 	}
 	//
 	//	Helper for display inactive control cells
 	//
+	/** @return ''|null */
 	function inactive_control_cell(&$row)
 	{
 		if ((bool)$this->inactive_ctrl) {

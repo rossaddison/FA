@@ -11,6 +11,7 @@
 ***********************************************************************/
 require_once($path_to_root. "/admin/db/attachments_db.inc");
 //----------------------------------------------------------------------------------------
+/** @return float|int */
 function add_sales_order(Cart &$order)
 {
 	global $SysPrefs, $path_to_root, $Refs;
@@ -391,6 +392,7 @@ function close_sales_order(string|int|float|bool|null $order_no): void
 
 //---------------------------------------------------------------------------------------------------------------
 
+/** @return array<array-key, mixed>|null|scalar */
 function get_invoice_duedate(string|int|float|bool|array|null $terms, string|int|float|bool|array|null $invdate)
 {
 	if (!is_date($invdate))

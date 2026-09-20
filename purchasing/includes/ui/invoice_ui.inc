@@ -228,6 +228,7 @@ function display_gl_controls(supp_trans &$supp_trans, string|int|float|bool|null
 //		 = 2 display on view invoice
 //		 = 3 display on view credit
 
+/** @return float|int */
 function display_gl_items(supp_trans &$supp_trans, string|int|float|bool|items_cart|null $mode=0)
 {
 	global $path_to_root, $Ajax;

@@ -43,6 +43,7 @@ function get_qoh_on_date(string|int|float|bool|array|null $stock_id, string|int|
 *
 *	$delta_qty - tested change in stock qty at $date.
 *	$date - check date; when set to null checks all the stock history.
+* @return array<array-key, null|string>|false|null
 **/
 
 function check_negative_stock(string|int|float|bool|array|null $stock_id, string|int|float|bool|null $delta_qty, string|int|float|bool|array|null $location=null, string|int|float|bool|array|null $date=null)

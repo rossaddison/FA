@@ -51,6 +51,7 @@ if (isset($_POST['customer_id']))
 	$customer_id = $_POST['customer_id'];
 
 //--------------------------------------------------------------------------------
+/** @return string */
 function systype_name(string|int|float|bool|array|null $dummy, string|int|float|bool|null $type)
 {
 	global $systypes_array;

@@ -131,6 +131,7 @@ function display_bank_header(?items_cart &$order): void
 }
 //---------------------------------------------------------------------------------
 
+/** @return void */
 function display_gl_items(string|int|float|bool|supp_trans|null $title, ?items_cart &$order): void
 {
 	global $path_to_root;

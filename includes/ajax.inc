@@ -24,6 +24,7 @@ class Ajax extends JsHttpRequest {
 	//	This function is used in ctrl routines to activate
 	//	update of ajaxified html element selected by given name/id.
 	//
+	/** @return void */
 	function activate($trigname) {
 	  if (in_ajax()) {
 		$this->triggers[$trigname] = true;
@@ -33,6 +34,7 @@ class Ajax extends JsHttpRequest {
 	//	Javascript clientside redirection.
 	//	This is the last command added to reponse (if any).
 	//
+	/** @return void */
 	function redirect($url) {
 	    if(in_ajax()) {
 			$this->_addCommand(true, array('n'=>'rd'), absolute_url($url));
@@ -42,12 +44,14 @@ class Ajax extends JsHttpRequest {
 	//
 	// Popup window (target=_blank)
 	//
+	/** @return void */
 	function popup($url) {
 		  $this->_addCommand(true, array('n'=>'pu'), absolute_url($url));
 	}
 	//
 	// Adds an executable Javascript code.
 	//
+	/** @return static */
 	function addScript($trigger, $sJS)
 	{
 		$this->_addCommand($trigger, array('n'=>'js'),$sJS);
@@ -56,6 +60,7 @@ class Ajax extends JsHttpRequest {
 	//
 	// Assign target attribute with data.
 	//
+	/** @return static */
 	function addAssign($trigger, $sTarget,$sAttribute,$sData)
 	{
 		$this->_addCommand($trigger, array('n'=>'as','t'=>$sTarget,'p'=>$sAttribute),$sData);
@@ -64,6 +69,7 @@ class Ajax extends JsHttpRequest {
 	//
 	// Updates input element or label with data.
 	//
+	/** @return static */
 	function addUpdate($trigger, $sTarget, $sData)
 	{
 		$this->_addCommand($trigger, array('n'=>'up','t'=>$sTarget),$sData);
@@ -72,6 +78,7 @@ class Ajax extends JsHttpRequest {
 	//
 	// Set disable state of element.
 	//
+	/** @return static */
 	function addDisable($trigger, $sTarget, $sData=true)
 	{
 		$this->_addCommand($trigger, array('n'=>'di','t'=>$sTarget),$sData);
@@ -80,6 +87,7 @@ class Ajax extends JsHttpRequest {
 	//
 	// Set state of element to enabled.
 	//
+	/** @return static */
 	function addEnable($trigger, $sTarget, $sData=true)
 	{
 		$this->_addCommand($trigger, array('n'=>'di','t'=>$sTarget), !$sData);
@@ -88,6 +96,7 @@ class Ajax extends JsHttpRequest {
 	//
 	// Set current focus.
 	//
+	/** @return static */
 	function addFocus($trigger, $sTarget)
 	{
 		$this->_addCommand($trigger, array('n'=>'fc'),$sTarget);
@@ -96,6 +105,7 @@ class Ajax extends JsHttpRequest {
 	//
 	// Internal procedure adding command to response.
 	//
+	/** @return void */
 	function _addCommand($trigger, $aAttributes, $mData)
 	{
 	  	if ($this->isActive() && ($trigger !== false)) {
@@ -106,6 +116,7 @@ class Ajax extends JsHttpRequest {
 	  	}
 	}
 
+	/** @return void */
 	function run() 
 	{
 	    if (!$this->isActive()) return;
@@ -132,6 +143,7 @@ class Ajax extends JsHttpRequest {
 	}
 }
 
+/** @return bool */
 function in_ajax() {
     global $Ajax;
     return $Ajax->isActive();
@@ -140,6 +152,7 @@ function in_ajax() {
 // Returns absolute path of relative $url. To be used in ajax calls
 // for proper redirection from any referer page.
 //
+/** @return null|scalar */
 function absolute_url(string|int|float|bool|null $url) 
 {
    return strpos($url, '..')===0 ? dirname($_SERVER['PHP_SELF']).'/'.$url : $url;

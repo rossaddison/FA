@@ -244,19 +244,28 @@ class Chart
 		}
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function setDirection($dir='ltr')
 	{
 		$this->dir = $dir;
 	}
 	
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function setLanguage($lang='en')
 	{
 		$this->lang = $lang;
 	}
 	
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function setStream($stream = 'svg')
 	{
 		$this->stream = $stream;
@@ -267,13 +276,19 @@ class Chart
 		}
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function setLabels($labels)
 	{
 		$this->labels = $labels;
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function addSerie($label, $data, $type = false, $fill = false)
 	{
 		if ($label == false)
@@ -286,47 +301,67 @@ class Chart
 		$this->num_series++;
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function setXTitle($xtitle)
 	{
 		$this->axis_x = $xtitle;
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function setYTitle($ytitle)
 	{
 		$this->axis_y = $ytitle;
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function setTitle($title)
 	{
 		$this->title = $title;
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function setDTitle($dtitle)
 	{
 		$this->donut_title = $dtitle; 
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function setValues($values = false)
 	{
 		$this->set_values = $values;
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function setOutDir($dir)
 	{
 		$this->out_dir = $dir;
 	}
 
+	/** @return bool */
 	function isEmpty()
 	{
 		return (!isset($this->series[0]['data']) || count($this->series[0]['data']) == 0);
 	}
 
+	/** @return void */
 	function display($save="")
 	{
 		$this->encoding = strtoupper($_SESSION['language']->encoding);
@@ -603,6 +638,7 @@ class Chart
 		}
 	}
 
+	/** @return void */
 	function draw_vertical_bars()
 	{
 		$x	 = $this->graphic_area_x1 + 10;
@@ -734,6 +770,7 @@ class Chart
 		}
 	}
 
+	/** @return void */
 	function draw_horizontal_bars()
 	{
 		$y = 10;
@@ -776,6 +813,7 @@ class Chart
 		}
 	}
 
+	/** @return void */
 	function draw_lines()
 	{
 		for ($j = 0; $j < $this->num_series; $j++)
@@ -849,6 +887,7 @@ class Chart
 		}
 	}
 
+	/** @return void */
 	function draw_splines()
 	{
 		for ($j = 0; $j < $this->num_series; $j++)
@@ -877,6 +916,7 @@ class Chart
 		}
 	}
 
+	/** @return array<array-key, mixed>|false */
 	function imageSpline($p, $step = 1, $minx = -1, $maxx = -1)
 	{
 		$splines = array();
@@ -949,6 +989,7 @@ class Chart
 		return $p1;
 	}
 
+	/** @return void */
 	function draw_pie()
 	{
 		$n = count(self::$palette);
@@ -1046,6 +1087,7 @@ class Chart
 		}
 	}
 
+	/** @return void */
 	function draw_table()
 	{
 		$cs = $this->num_labels + 1;
@@ -1067,6 +1109,7 @@ class Chart
 		echo $html;
 	}
 
+	/** @return void */
 	function calculate_width()
 	{
 		$this->legend_box_width = ($this->legend_exists == true) ? ($this->string_width($this->max_legend_str, $this->size) + 70) : 0;
@@ -1151,7 +1194,10 @@ class Chart
 		$this->legend_box_x2   = $this->legend_box_x1 + $this->legend_box_width;
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function calculate_height()
 	{
 		switch ($this->type)
@@ -1216,6 +1262,7 @@ class Chart
 		$this->legend_box_y2   = $this->legend_box_y1 + $this->legend_box_height;
 	}
 
+	/** @return void */
 	function draw_legend()
 	{
 		$x1 = $this->legend_box_x1;
@@ -1324,7 +1371,10 @@ class Chart
 		return $p[4] - $p[0];
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function calculate_higher_value() 
 	{
 		$digits	  = strlen(round($this->max_value));
@@ -1333,7 +1383,10 @@ class Chart
 		$this->higher_value_str = $this->number_formated($this->higher_value, $this->dec1);
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return string
+	 */
 	function number_formated($number, $dec_size = 1)
 	{
 		if ($this->latin_notation == true) 
@@ -1341,6 +1394,7 @@ class Chart
 		return number_format(round($number, $dec_size), $dec_size, ".", ",");
 	}
 
+	/** @return void */
 	function load_color_palette($type)
 	{
 		// The usual color palette. Change if you like. Must be 6 colors.
@@ -1417,6 +1471,7 @@ class Chart
 		}
 	}
 
+	/** @return non-falsy-string */
 	function colorLuminate($hex, $percent) // Color lightner, minus is darker
 	{
 		$hex = ltrim($hex, '#');
@@ -1432,6 +1487,7 @@ class Chart
 		return '#' . implode($hex);
 	}
 	
+	/** @return bool */
 	function _imageline($image, $x1, $y1, $x2, $y2, $color, $thick = 1)
 	{
 		if ($thick == 1) 
@@ -1457,6 +1513,7 @@ class Chart
 		}
 	}
 
+	/** @return void */
 	function _imagestring($img, $size, $x, $y, $string, $col, $alt=0, $angle=0, $align=false)
 	{
 		if ($align == 'end')
@@ -1499,13 +1556,17 @@ class Chart
 		imagettftext($img, $size, $angle, round($x), $y  + $alt, $col, $this->fontfile, $string);
 	}
 
-	/** @psalm-pure */
+	/**
+	 * @psalm-pure
+	 * @return list{float|int|null|string, float|int|null|string, float|int|null|string}
+	 */
 	function hex2rgb($hex)
 	{
 		list($r, $g, $b) = sscanf($hex, "#%02x%02x%02x");
 		return array($r, $g, $b);
 	}
 
+	/** @return list{mixed, mixed} */
 	function _controlPoint($curr, $prev, $next, $reverse = false)
 	{
 		$p = $prev ? $prev : $curr;
@@ -1522,6 +1583,7 @@ class Chart
 		return array($x, $y);
 	}
 
+	/** @return non-falsy-string */
 	function _splineCommand($p, $i, $a)
 	{
 		$c = isset($a[$i - 1]) ? $a[$i - 1] : false;
@@ -1532,6 +1594,7 @@ class Chart
 		return " C".round($cps[0],1).",".round($cps[1],1)." ".round($cpe[0],1).",".round($cpe[1], 1)." $p[0],$p[1]";
 	}
 
+	/** @return void */
 	function clean_out_dir()
 	{
 		$dir = $this->out_dir;
@@ -1563,7 +1626,10 @@ class SVG
 		$this->svg = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" direction=\"$dir\" xml:lang=\"$lang\" width=\"$width\" height=\"$height\" viewPort=\"0 0 $width $height\"";
 		$this->svg .= ">\n";
 	}
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function circle($x, $y, $r, $bcolor=false, $line_width=1, $color=false, $style=false, $tooltip=false)
 	{
 		$this->svg .= "<circle cx=\"$x\" cy=\"$y\" r=\"$r\"";
@@ -1581,7 +1647,10 @@ class SVG
 		else
 			$this->svg .= " />\n";
 	}
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function rect($x1, $y1, $x2, $y2, $bcolor=false, $line_width=1, $color=false, $style=false, $tooltip=false)
 	{
 		$this->svg .= "<rect x=\"$x1\" y=\"$y1\" width=\"$x2\" height=\"$y2\"";
@@ -1599,7 +1668,10 @@ class SVG
 		else
 			$this->svg .= " />\n";
 	}
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function line($x1, $y1, $x2, $y2, $bcolor=false, $line_width=1, $color=false, $style=false, $tooltip=false)
 	{
 		$this->svg .= "<line x1=\"$x1\" y1=\"$y1\" x2=\"$x2\" y2=\"$y2\"";
@@ -1617,7 +1689,10 @@ class SVG
 		else
 			$this->svg .= " />\n";
 	}
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function polygon($p, $bcolor=false, $line_width=1, $color=false, $style=false, $tooltip=false)
 	{
 		$this->svg .= "<polygon points=\"$p\"";
@@ -1635,7 +1710,10 @@ class SVG
 		else
 			$this->svg .= " />\n";
 	}
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function polyline($p, $bcolor=false, $line_width=1, $color=false, $style=false, $tooltip=false)
 	{
 		$this->svg .= "<polyline points=\"$p\"";
@@ -1653,7 +1731,10 @@ class SVG
 		else
 			$this->svg .= " />\n";
 	}
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function path($d, $bcolor=false, $line_width=1, $color=false, $style=false, $tooltip=false)
 	{
 		$this->svg .= "<path d=\"$d\"";
@@ -1671,7 +1752,10 @@ class SVG
 		else
 			$this->svg .= " />\n";
 	}
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function text($x, $y, $text, $size=false, $color=false, $style=false, $align=false, $angle=false) // align start, middle, end. 
 	{
 		$this->svg .= "<text x=\"$x\" y=\"$y\"";
@@ -1687,37 +1771,54 @@ class SVG
 			$this->svg .= " transform=\"rotate($angle $x $y)\"";
 		$this->svg .= ">$text</text>\n";
 	}
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function other($s)
 	{
 		$this->svg .= $s;
 	}
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function style($s='')
 	{
 		$this->svg .= "<defs><style type=\"text/css\"><![CDATA[ $s ]]></style></defs>\n";
 	}
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function open_group($p = '')
 	{
 		$this->svg .= "<g $p>\n";
 	}
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function close_group()
 	{
 		$this->svg .= "</g>\n";
 	}
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function close()
 	{
 		$this->svg .= "</svg>\n";
 	}
+	/** @return true */
 	function draw()
 	{
 		//header('Content-Type: image/svg+xml');
 		echo $this->svg;
 		return true;
 	}
+	/** @return void */
 	function save($fileName)
 	{
 		file_put_contents($fileName, $this->svg);

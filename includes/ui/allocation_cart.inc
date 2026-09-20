@@ -63,7 +63,10 @@ class allocation
 		return $this->person_curr;
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return bool
+	 */
 	function add_item($type, $type_no, $date_, $due_date, $amount, $amount_allocated, 
 		$current_allocated, $ref, $foreign_ref)
 	{
@@ -79,7 +82,10 @@ class allocation
 		}
 	}
 	
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return bool
+	 */
 	function update_item($index, $type, $type_no, $date_, $due_date, 
 		$amount, $amount_allocated, $current_allocated, $ref, $foreign_ref)
 	{
@@ -117,6 +123,7 @@ class allocation
 	//
 	// FIXME - read all transactions below twice seems to be suboptimal
 	//
+	/** @return void */
 	function read($type = null, $trans_no = 0, $person_id=null, $person_type_id=null)
 	{
 		if ($type !== null) {	// otherwise re-read
@@ -218,6 +225,7 @@ class allocation
 	//
 	//	Update allocations in database.
 	//
+	/** @return void */
 	function write()
 	{
 		global 	$no_exchange_variations;

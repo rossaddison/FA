@@ -33,6 +33,7 @@ function add_dimension(string|int|float|bool|null $reference, string|int|float|b
 	return $id;
 }
 
+/** @return null|scalar */
 function update_dimension(string|int|float|bool|null $id, string|int|float|bool|null $name, string|int|float|bool|null $type_, string|int|float|bool|null $date_, string|int|float|bool|null $due_date, string|int|float|bool|null $memo_)
 {
 	begin_transaction();

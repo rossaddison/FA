@@ -43,6 +43,7 @@ function add_crm_person(string|int|float|bool|array|null $ref, string|int|float|
 	return $id;
 }
 
+/** @return null|scalar */
 function update_crm_person(string|int|float|bool|null $id, string|int|float|bool|null $ref, string|int|float|bool|null $name, string|int|float|bool|null $name2, string|int|float|bool|null $address, string|int|float|bool|null $phone, string|int|float|bool|null $phone2, string|int|float|bool|null $fax, string|int|float|bool|null $email, 
 	string|int|float|bool|null $lang, string|int|float|bool|null $notes, array $cat_ids, mixed $entity=null, string|int|float|bool|null $type=null)
 {

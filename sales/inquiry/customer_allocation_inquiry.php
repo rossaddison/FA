@@ -68,6 +68,7 @@ function order_link(array|false|null $row)
 		: "";
 }
 
+/** @return string */
 function systype_name(string|int|float|bool|array|null $dummy, string|int|float|bool|null $type)
 {
 	global $systypes_array;

@@ -27,6 +27,7 @@ page(_($help_context = "Customer Transactions"), isset($_GET['customer_id']), fa
 
 //------------------------------------------------------------------------------------------------
 
+/** @return string */
 function systype_name(string|int|float|bool|array|null $dummy, string|int|float|bool|null $type)
 {
 	global $systypes_array;
@@ -34,6 +35,7 @@ function systype_name(string|int|float|bool|array|null $dummy, string|int|float|
 	return $systypes_array[$type];
 }
 
+/** @return null|string */
 function order_view(array|false|null $row)
 {
 	return $row['order_']>0 ?

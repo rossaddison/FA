@@ -42,6 +42,7 @@ class archive
 		);
 	}
 
+	/** @return void */
 	function set_options($options)
 	{
 		foreach ($options as $key => $value)
@@ -66,6 +67,7 @@ class archive
 		}
 	}
 
+	/** @return 0|null */
 	function create_archive()
 	{
 		$this->make_list();
@@ -106,6 +108,7 @@ class archive
 		}
 	}
 
+	/** @return void */
 	function add_data($data)
 	{
 		if ($this->options['inmemory'] == 0)
@@ -114,6 +117,7 @@ class archive
 			$this->archive .= $data;
 	}
 
+	/** @return void */
 	function make_list()
 	{
 		if (!empty ($this->exclude)) {
@@ -130,6 +134,7 @@ class archive
 		unset ($this->exclude, $this->storeonly);
 	}
 
+	/** @return void */
 	function add_files($list)
 	{
 		$temp = $this->list_files($list);
@@ -137,6 +142,7 @@ class archive
 			$this->files[] = $current;
 	}
 
+	/** @return void */
 	function exclude_files($list)
 	{
 		$temp = $this->list_files($list);
@@ -144,6 +150,7 @@ class archive
 			$this->exclude[] = $current;
 	}
 
+	/** @return void */
 	function store_files($list)
 	{
 		$temp = $this->list_files($list);
@@ -248,6 +255,7 @@ class tar_file extends archive
 		$this->options['type'] = "tar";
 	}
 
+	/** @return 1 */
 	function create_tar()
 	{
 		$pwd = getcwd();
@@ -313,6 +321,7 @@ class tar_file extends archive
 		When $dry_run!=0 no file is written,
 		but list of existing files to be written is returned.
 	*/
+	/** @return list<string> */
 	function extract_files($dry_run = false)
 	{
 	$flist = array();
@@ -424,6 +433,7 @@ class tar_file extends archive
 		return $flist;
 	}
 
+	/** @return false|resource */
 	function open_archive()
 	{
 		return @fopen($this->options['name'], "rb");
@@ -439,6 +449,7 @@ class gzip_file extends tar_file
 		$this->options['type'] = "gzip";
 	}
 
+	/** @return 0|1 */
 	function create_gzip()
 	{
 		if ($this->options['inmemory'] == 0)
@@ -462,7 +473,10 @@ class gzip_file extends tar_file
 		return 1;
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return false|resource
+	 */
 	function open_archive()
 	{
 		return @gzopen($this->options['name'], "rb");

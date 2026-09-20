@@ -97,6 +97,7 @@ class purch_order
 		$this->lines_on_order = $this->order_no = $this->supplier_id = 0;
 	}
 	
+	/** @return void */
 	function set_supplier($supplier_id, $supplier_name, $curr_code, $tax_group_id, $tax_included)
 	{
 		$this->supplier_id = $supplier_id;
@@ -107,6 +108,7 @@ class purch_order
 		$this->tax_group_array = get_tax_group_items_as_array($tax_group_id);
 	}
 	
+	/** @return 0|1 */
 	function add_to_order($line_no, $stock_id, $qty, $item_descr, $price, $uom, $req_del_date, $qty_inv, $qty_recd)
 	{
 		if (isset($qty) && $qty != 0)
@@ -119,6 +121,7 @@ class purch_order
 		return 0;
 	}
 
+	/** @return void */
 	function update_order_item($line_no, $qty, $price, $req_del_date, $description="")
 	{
 		if ($description != "")
@@ -129,19 +132,28 @@ class purch_order
 		$this->line_items[$line_no]->item_description = $description;
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function remove_from_order($line_no)
 	{
 		array_splice($this->line_items, $line_no, 1);
 	}
 	
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return bool
+	 */
 	function order_has_items() 
 	{
 		return count($this->line_items) != 0;
 	}
 	
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function clear_items() 
 	{
     	unset($this->line_items);
@@ -152,7 +164,10 @@ class purch_order
 	}
 
 	
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return 0|1
+	 */
 	function any_already_received()
 	{
 		/* Checks if there have been deliveries or invoiced entered against any of the line items */
@@ -169,7 +184,10 @@ class purch_order
 		return 0;
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return 0|1
+	 */
 	function some_already_received($line_no)
 	{
 		/* Checks if there have been deliveries or amounts invoiced against a specific line item */
@@ -218,6 +236,7 @@ class purch_order
 	/*
 		Returns order value including all taxes
 	*/
+	/** @return 0|float */
 	function get_trans_total() {
 		
 		$total = 0;

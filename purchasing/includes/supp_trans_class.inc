@@ -97,6 +97,7 @@ class supp_trans
 		$this->read($trans_type, $trans_no);
 	}
 
+	/** @return void */
 	function read($trans_type, $trans_no)
 	{
 		$this->trans_type = $trans_type;
@@ -113,6 +114,7 @@ class supp_trans
 		}
 	}
 
+	/** @return 1 */
 	function add_grn_to_trans($grn_item_id, $po_detail_item, $item_code, $item_description, 
 		$qty_recd, $prev_quantity_inv, $this_quantity_inv, $order_price, $chg_price, 
 		$std_cost_unit=null, $gl_code='')
@@ -127,7 +129,10 @@ class supp_trans
 		return 1;
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return 1
+	 */
 	function add_gl_codes_to_trans($gl_code, $gl_act_name, $gl_dim, $gl_dim2, $amount, $memo_)
 	{
 		$this->gl_codes[$this->gl_codes_counter] = new gl_codes($this->gl_codes_counter, 
@@ -137,27 +142,39 @@ class supp_trans
 		return 1;
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function remove_grn_from_trans($grn_item_id)
 	{
 		unset($this->tax_overrides); // cancel tax overrides after cart change
 	    unset($this->grn_items[$grn_item_id]);
 	}
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function remove_gl_codes_from_trans($gl_code_counter)
 	{
 		unset($this->tax_overrides); // cancel tax overrides after cart change
 		unset($this->gl_codes[$gl_code_counter]);
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return bool
+	 */
 	function is_valid_trans_to_post()
 	{
 		return (count($this->grn_items) > 0 || count($this->gl_codes) > 0 || 
 			($this->ov_amount != 0) || ($this->ov_discount > 0));
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function clear_items()
 	{
 		unset($this->grn_items);

@@ -216,6 +216,7 @@ function add_exchange_variation_all(string|array|null $date, string|array|null $
 //	$to_account   -	target bank account id
 //	
 
+/** @return float|int */
 function add_bank_transfer(string|array|null $from_account, string|array|null $to_account, string|array|null $date_,
 	string|int|float|bool|null $amount, string|array|null $ref, string|array|null $memo_, string|array|null $dim1, string|array|null $dim2, string|int|float|bool|null $charge=0, int|float|bool|null $target_amount=0)
 {

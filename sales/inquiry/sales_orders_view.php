@@ -90,6 +90,7 @@ function check_overdue(array|false|null $row): bool|int
 			&& ($row['TotDelivered'] < $row['TotQuantity']));
 }
 
+/** @return null|string */
 function view_link(string|int|float|bool|array|null $dummy, string|int|float|bool|null $order_no)
 {
 	global $trans_type;

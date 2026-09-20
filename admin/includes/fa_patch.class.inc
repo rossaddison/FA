@@ -45,6 +45,7 @@ class fa_patch {
 	/*
 		Collect/log messages generated during upgrade process.
 	*/
+	/** @return false */
 	function log_error($msg, $type='Error')
 	{
 		if ($type == 'Error')
@@ -56,6 +57,7 @@ class fa_patch {
 	/*
 		Selectively extends access to selected security areas/sections.
 	*/
+	/** @return true */
 	function update_security_roles($sec_updates)
 	{
 		global $security_areas, $security_sections;
@@ -88,6 +90,7 @@ class fa_patch {
 	/*
 		Check and disable incompatible extensions.
 	*/
+	/** @return void */
 	function update_extensions()
 	{
 		global $version;
@@ -152,6 +155,7 @@ class fa_patch {
 	/*
 		Basic install procedure using sql file.
 	*/
+	/** @return bool */
 	function sql_install($company, $force=false) 
 	{
 		global $path_to_root;
@@ -221,6 +225,7 @@ class fa_patch {
 	/*
 		Main routine for single company upgrade.
 	*/
+	/** @return bool */
 	function upgrade_company($comp, $force=false)
 	{
 		$result = $this->pre_install($comp) && $this->sql_install($comp, $force) && $this->install($comp, $force);
@@ -234,7 +239,10 @@ class fa_patch {
 		Additional version specific php/sql upgrade procedures.
 		This procedure is performed after basic sql upgrade script is run.
 	*/
-	/** @psalm-pure */
+	/**
+	 * @psalm-pure
+	 * @return true
+	 */
 	function install($company, $force=false) 
 	{
 		return true;
@@ -243,7 +251,10 @@ class fa_patch {
 		Optional cleanup procedure.
 		This procedure is run in case of upgrade failure, before the backup is restored.
 	*/
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return void
+	 */
 	function post_fail($company)
 	{
 	}
@@ -252,7 +263,10 @@ class fa_patch {
 		Present upgrade parameters to administrator
 		This function presents upgrade choices, after selection company to be upgraded.
     */
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return void
+	 */
 	function show_params($comp)
     {
 	}
@@ -261,7 +275,10 @@ class fa_patch {
 	    Fetch & check upgrade parameters, check additional upgrade pre-conditions.
 		This function is run after successfull switching to target database connection.
     */
-	/** @psalm-pure */
+	/**
+	 * @psalm-pure
+	 * @return true
+	 */
 	function prepare()
     {
 		return true;

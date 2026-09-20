@@ -30,6 +30,7 @@ function add_supp_invoice_item(string|int|float|bool|null $supp_trans_type, stri
 
 //-------------------------------------------------------------------------------------------------------------
 
+/** @return int|string */
 function add_supp_invoice_gl_item(string|int|float|bool|null $supp_trans_type, int|float|null $supp_trans_no, string|int|float|bool|null $gl_code, string|int|float|bool|null $amount, string|int|float|bool|null $memo_, string|int|float|bool|null $dim_id=0, string|int|float|bool|null $dim2_id=0)
 {
 	return add_supp_invoice_item($supp_trans_type, $supp_trans_no,  "", "", $gl_code, $amount,

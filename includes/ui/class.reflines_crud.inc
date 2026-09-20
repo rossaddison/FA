@@ -28,6 +28,7 @@ class fa_reflines extends simple_crud_view {
 
 	}
 
+	/** @return bool */
 	function list_view($Mode)
 	{
 		global $systypes_array;
@@ -74,6 +75,7 @@ class fa_reflines extends simple_crud_view {
 		return true;
 	}
 
+	/** @return void */
 	function editor_view($Mode)
 	{
 		global $systypes_array;
@@ -109,6 +111,7 @@ class fa_reflines extends simple_crud_view {
 		$this->_record_controls();
 	}
 
+	/** @return void */
 	function show($Mode=null)
 	{
 		parent::show($Mode);

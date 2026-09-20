@@ -31,6 +31,7 @@ class reflines_db extends data_set {
 	/*
 		Prefix cannot be ambigous.
 	*/
+	/** @return bool */
 	function _check_prefix($data, $dummy_opt, $key)
 	{
 		$cond = "`id`<>".db_escape($key)." AND `trans_type`=".db_escape($data['trans_type']);
@@ -75,6 +76,7 @@ class reflines_db extends data_set {
 		return true;
 	}
 
+	/** @return int|string */
 	function is_used($prefix, $trans_type)
 	{
 
@@ -104,6 +106,7 @@ class reflines_db extends data_set {
 		return true;
 	}
 
+	/** @return bool|mysqli_result */
 	function _set_as_default($id, $type)
 	{
 		$sql  = "UPDATE ".TB_PREF."reflines SET `default`=(`id`=".db_escape($id).")
@@ -129,6 +132,7 @@ class reflines_db extends data_set {
 		return true;
 	}
 
+	/** @return array<array-key, null|string>|false */
 	function get_default($type)
 	{
 		$sql = "SELECT * FROM ".TB_PREF."reflines WHERE trans_type=".db_escape($type)." AND `default`";
@@ -165,6 +169,7 @@ class reflines_db extends data_set {
 		return $line ? $line['id'] : null;
 	}
 
+	/** @return bool|mysqli_result */
 	function save_next($type, $reference, $line=null)
 	{
 	    $sql = "UPDATE ".TB_PREF."reflines SET pattern=SUBSTRING(" . db_escape(trim($reference)) .", LENGTH(`prefix`)+1)"

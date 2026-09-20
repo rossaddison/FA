@@ -11,6 +11,7 @@
 ***********************************************************************/
 //-------------------------------------------------------------------------------------------------------------
 
+/** @return float|int */
 function add_stock_transfer(mixed $Items, string|array|null $location_from, string|array|null $location_to, string|array|null $date_, string|array|null $reference, string|array|null $memo_)
 {
 	global $SysPrefs, $path_to_root, $Refs;
@@ -105,6 +106,7 @@ function get_stock_transfer(string|int|float|bool|array|null $trans_no)
 
 //-------------------------------------------------------------------------------------------------------------
 
+/** @return bool|mysqli_result|null */
 function get_stock_transfer_items(string|int|float|bool|array|null $trans_no)
 {
 	$result = get_stock_moves(ST_LOCTRANSFER, $trans_no);

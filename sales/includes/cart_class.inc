@@ -178,7 +178,10 @@ class Cart
 	/*
 		Optional sorting items by stock_id.
 	*/
-	/** @psalm-pure */
+	/**
+	 * @psalm-pure
+	 * @return int<-1, 1>
+	 */
 	function _cmp_lines($a, $b)
 	{
 		return strcmp($a->stock_id, $b->stock_id);
@@ -187,6 +190,7 @@ class Cart
 	/*
 		Returns items array optionally sorted by item code.
 	*/
+	/** @return array<int, line_details> */
 	function get_items()
 	{
 		global $SysPrefs;
@@ -200,6 +204,7 @@ class Cart
 	//
 	//	Prepare cart to new child document entry, just after initial parent doc read.
 	//
+	/** @return void */
 	function prepare_child($type)
 	{
 		global $Refs;
@@ -241,6 +246,7 @@ class Cart
 	//
 	//	Prepares transaction for reedition updating with parent transaction data 
 	//
+	/** @return void */
 	function set_parent_constraints($sodata, $src_no) {
 
 		$srcdetails = get_sales_parent_lines($this->trans_type, $src_no);
@@ -278,6 +284,7 @@ class Cart
 	//-------------------------------------------------------------------------
 	// Reading document into cart
 	//
+	/** @return void */
 	function read($type, $trans_no=0, $prepare_child=false) {
 
 		global $SysPrefs, $Refs;
@@ -416,6 +423,7 @@ class Cart
 		return $ret;
 	}
 
+	/** @return void */
 	function set_customer($customer_id, $customer_name, $currency, $discount, $payment, $cdiscount=0)
 	{
 		$this->customer_name = $customer_name;
@@ -433,6 +441,7 @@ class Cart
 		$this->credit = get_current_cust_credit($customer_id);
 	}
 
+	/** @return void */
 	function set_branch($branch_id, $tax_group_id, $tax_group_name, $phone='', $email='')
 	{
 		$this->Branch = $branch_id;
@@ -442,7 +451,10 @@ class Cart
 		$this->tax_group_array = get_tax_group_items_as_array($tax_group_id);
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function set_sales_type($sales_type, $sales_name, $tax_included=0, $factor=0)
 	{
 	    $this->sales_type = $sales_type;
@@ -451,14 +463,20 @@ class Cart
 	    $this->price_factor = $factor;
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function set_location($id, $name)
 	{
 		$this->Location = $id;
 		$this->location_name = $name;
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function set_delivery($shipper, $destination, $address, $freight_cost=null)
 	{
 		$this->ship_via = $shipper;
@@ -468,6 +486,7 @@ class Cart
 			$this->freight_cost = $freight_cost;
 	}
 
+	/** @return 0|1 */
 	function add_to_cart($line_no, $stock_id, $qty, $price, $disc, $qty_done=0, $standard_cost=0, $description=null, $id=0, $src_no=0,
 		$src_id=0)
 	{
@@ -482,6 +501,7 @@ class Cart
 		return 0;
 	}
 
+	/** @return void */
 	function update_cart_item($line_no, $qty, $price, $disc, $description="")
 	{
 		if ($description != "")
@@ -492,18 +512,25 @@ class Cart
 		$this->line_items[$line_no]->discount_percent = $disc;
 	}
 
+	/** @return void */
 	function update_add_cart_item_qty($line_no, $qty)
 	{
 		$this->line_items[$line_no]->quantity += $qty;
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function remove_from_cart($line_no)
 	{
 		array_splice($this->line_items, $line_no, 1);
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function clear_items()
 	{
 		unset($this->line_items);
@@ -513,7 +540,10 @@ class Cart
 		$this->customer_id = $this->order_no = 0;
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return int<0, max>
+	 */
 	function count_items()
 	{
 		$counter=0;
@@ -523,6 +553,7 @@ class Cart
 		return $counter;
 	}
 
+	/** @return 0|float */
 	function get_items_total()
 	{
 		$total = 0;
@@ -535,6 +566,7 @@ class Cart
 		return $total;
 	}
 
+	/** @return 0|float */
 	function get_items_total_dispatch()
 	{
 		$total = 0;
@@ -547,7 +579,10 @@ class Cart
 		return $total;
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return bool
+	 */
 	function has_items_dispatch()
 	{
 		foreach ($this->line_items as $ln_itm) {
@@ -557,7 +592,10 @@ class Cart
 		return false;
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return 0|1
+	 */
 	function any_already_delivered()
 	{
 		/* Checks if there have been any line item processed */
@@ -572,7 +610,10 @@ class Cart
 
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return 0|1
+	 */
 	function some_already_delivered($line_no)
 	{
 		/* Checks if there have been deliveries of a specific line item */
@@ -619,6 +660,7 @@ class Cart
 			return ($this->freight_cost - $this->get_shipping_tax());
 	}
 
+	/** @return float */
 	function get_shipping_tax()
 	{
 
@@ -657,6 +699,7 @@ class Cart
 		Checks cart quantities on document_date.
 		Returns array of stock_ids which stock quantities would go negative on some day.
 	*/
+	/** @return list<array-key> */
 	function check_qoh($date=null, $location=null)
 	{
 		$low_stock = array();
@@ -690,6 +733,7 @@ class Cart
 	/*
 		Returns true for documents issued in prepayment cycle.
 	*/
+	/** @return false */
 	function is_prepaid()
 	{
 		return $this->prepaid; 
@@ -697,7 +741,10 @@ class Cart
 	/*
 		Order is ready for delivery in prepament mode.
 	*/
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return bool
+	 */
 	function is_released()
 	{
 		return floatcmp($this->sum_paid, $this->prep_amount) >= 0;
@@ -706,6 +753,7 @@ class Cart
 	/*
 		Check whether order has been already invoiced/send or not.
 	*/
+	/** @return false|null|string */
 	function is_started()
 	{
 		if ($this->trans_no==0)
@@ -719,6 +767,7 @@ class Cart
 		Check payment terms and prepayments selected for this invoice,
 		and updates	partial/final invoice value respectively.
 	*/
+	/** @return void */
 	function update_payments()
 	{
 		$remainder = prepaid_invoice_remainder($this->order_no);

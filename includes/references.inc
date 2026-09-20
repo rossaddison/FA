@@ -82,12 +82,16 @@ class references
 		$this->reflines = new reflines_db();
 	}
 
-	/** @psalm-pure */
+	/**
+	 * @psalm-pure
+	 * @return bool
+	 */
 	function _legacy_line($refline)
 	{
 		return strpbrk($refline['pattern'], '{}') == false;
 	}
 
+	/** @return string */
 	function _parse_next($type, $template, $context=null)
 	{
 		global $refline_options, $refline_placeholders;
@@ -199,6 +203,7 @@ class references
 	// 	$ref!=null => check reference is not used (or unique for $trans_no!=0)
 	//  $trans!=0 $ref=null => retrieve reference for the $type/$trans_no (if any)
 	//
+	/** @return false|null|string */
 	function _get($type, $trans_no=0, $ref=null)
 	{
 		$db_info = get_systype_db_info($type);
@@ -232,6 +237,7 @@ class references
 		return $result == false ? false : $result[0];
 	}
 
+	/** @return bool */
 	function is_new_reference($ref, $type, $trans_no=0)
 	{
 		return !$this->_get($type, $trans_no, $ref);
@@ -276,6 +282,7 @@ class references
 	// Check reference is valid before add/update transaction.
 	// FIXME: does not check leading zeros in number
 	//
+ 	/** @return 0|1|bool */
  	function is_valid($reference, $type, $context=null, $line=null)
 	{
  		if (!isset($line))
@@ -359,6 +366,7 @@ class references
 	//
 	//	Save reference (and prepare next) on write transaction.
 	//
+	/** @return void */
 	function save($type, $id, $reference, $line = null) 
 	{
 		if ($reference == 'auto')
@@ -383,6 +391,7 @@ class references
 	//
 	// Restore previous reference (if possible) after voiding transaction.
 	//
+	/** @return void */
 	function restore_last($type, $id)
 	{
 		// get refline for removed document reference

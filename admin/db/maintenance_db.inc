@@ -549,6 +549,7 @@ function db_unzip(?string $mode, ?string $path): array|string|false
     	return explode("\n", $file_data);
 }
 
+/** @return false|null|string */
 function db_backup(array $conn, string|int|float|bool|array|null $ext='no', string|int|float|bool|array|null $comm='', string|int|float|bool|null $path='')
 {
 	if ($conn['tbpref'] != "")

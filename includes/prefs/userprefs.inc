@@ -105,7 +105,10 @@ class user_prefs
 		}
 	}
 	
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return array{date_format: mixed, date_sep: mixed, dec_sep: mixed, def_print_destination: mixed, def_print_orientation: mixed, graphic_links: mixed, language: mixed, page_size: mixed, percent_dec: mixed, prices_dec: mixed, print_profile: mixed, qty_dec: mixed, query_size: mixed, rates_dec: mixed, rep_popup: mixed, save_report_selections: mixed, show_codes: mixed, show_gl: mixed, show_hints: mixed, startup_tab: mixed, sticky_doc_date: mixed, theme: mixed, tho_sep: mixed, use_date_picker: mixed}
+	 */
 	function get_all()
 	{
 			return array(
@@ -189,6 +192,7 @@ class user_prefs
 		return $this->date_sep;
 	}
 
+	/** @return non-falsy-string */
 	function date_display() 
 	{
 		global $SysPrefs;
@@ -303,7 +307,10 @@ class user_prefs
         return $this->def_print_orientation;
     }
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function set_dec($price_dec, $qty_dec, $exrate_dec, $percent_dec, $showgl, $showcodes) 
 	{
 		$this->price_dec = $price_dec;
@@ -314,7 +321,10 @@ class user_prefs
 		$this->show_codes = $showcodes;
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function set_format($date_format, $date_sep, $tho_sep, $dec_sep, $theme, $pagesize) 
 	{
 		$this->date_format = $date_format;

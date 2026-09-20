@@ -28,6 +28,7 @@ class hooks {
 	// $updates - table of filename => array(table, field, property)
 	// $check_only - don't update database, check table/field/property existence only
 	//
+	/** @return float|int|true */
 	function update_databases($comp, $updates, $check_only=false)
 	{
 		global $db_connections, $path_to_root;
@@ -66,7 +67,10 @@ class hooks {
 	//
 	//	Install additional tabs provided by extension
 	//
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return void
+	 */
 	function install_tabs($app)
 	{
 //		$app->add_application(new example_class); // add menu tab defined by example_class
@@ -74,7 +78,10 @@ class hooks {
 	//
 	//	Install additonal menu options provided by extension
 	//
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return void
+	 */
 	function install_options($app)
 	{
 //		global $path_to_root;
@@ -86,7 +93,10 @@ class hooks {
 //		}
 	}
 	
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return void
+	 */
 	function install_access()
 	{
 //		$security_areas['SA_EXAMPLE'] = array(SS_EXAMPLE|100, _("Example security area."));
@@ -99,14 +109,20 @@ class hooks {
 	//
 	//	Invoked for all modules before page header is displayed
 	//
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return void
+	 */
 	function pre_header($fun_args)
 	{
 	}
 	//
 	//	Invoked for all modules before page footer is displayed
 	//
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return void
+	 */
 	function pre_footer($fun_args)
 	{
 	}
@@ -118,7 +134,10 @@ class hooks {
 	//
 	//	Returns: amount in words as string.
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return void
+	 */
 	function price_in_words($amount, $doc_type)
 	{
 	}
@@ -130,7 +149,10 @@ class hooks {
 	// with apprioprate provider set, otherwise implement your own.
 	// Returns: $curr value in home currency units as a real number.
 
-	/** @psalm-pure */
+	/**
+	 * @psalm-pure
+	 * @return null
+	 */
 	function retrieve_exrate($curr, $date)
 	{
 //	 	$provider = 'ECB'; // 'ECB', 'YAHOO' or 'GOOGLE'
@@ -140,7 +162,10 @@ class hooks {
 
 	// External authentication
 	// If used should return true after successfull athentication, false otherwise.
-	/** @psalm-pure */
+	/**
+	 * @psalm-pure
+	 * @return null
+	 */
 	function authenticate($login, $password)
 	{
 		return null;
@@ -150,7 +175,10 @@ class hooks {
 	// or to print special tax report footer 
 	//
 	// Returns: nothing
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return void
+	 */
 	function tax_report_done()
 	{
 	}
@@ -158,19 +186,28 @@ class hooks {
 	// 'cart' => transaction data
 	// 'trans_type' => transaction type
 
-	/** @psalm-pure */
+	/**
+	 * @psalm-pure
+	 * @return true
+	 */
 	function db_prewrite(&$cart, $trans_type)
 	{
 		return true;
 	}
 
-	/** @psalm-pure */
+	/**
+	 * @psalm-pure
+	 * @return true
+	 */
 	function db_postwrite(&$cart, $trans_type)
 	{
 		return true;
 	}
 
-	/** @psalm-pure */
+	/**
+	 * @psalm-pure
+	 * @return true
+	 */
 	function db_prevoid($trans_type, $trans_no)
 	{
 		return true;
@@ -178,7 +215,10 @@ class hooks {
 	/*
 		This method is called after module install.
 	*/
-	/** @psalm-pure */
+	/**
+	 * @psalm-pure
+	 * @return true
+	 */
 	function install_extension($check_only=true)
 	{
 		return true;
@@ -186,7 +226,10 @@ class hooks {
 	/*
 		This method is called after module uninstall.
 	*/
-	/** @psalm-pure */
+	/**
+	 * @psalm-pure
+	 * @return true
+	 */
 	function uninstall_extension($check_only=true)
 	{
 		return true;
@@ -194,7 +237,10 @@ class hooks {
 	/*
 		This method is called on extension activation for company.
 	*/
-	/** @psalm-pure */
+	/**
+	 * @psalm-pure
+	 * @return true
+	 */
 	function activate_extension($company, $check_only=true)
 	{
 		return true;
@@ -202,7 +248,10 @@ class hooks {
 	/*
 		This method is called when extension is deactivated for company.
 	*/
-	/** @psalm-pure */
+	/**
+	 * @psalm-pure
+	 * @return true
+	 */
 	function deactivate_extension($company, $check_only=true)
 	{
 		return true;
@@ -220,6 +269,7 @@ class hooks {
 	 */
 	/* Default behavior check if there is enough quantity on hand and change the css
  	 * class if needed */
+	/** @return list{mixed, 'stockmankobg'}|true */
 	static function  default_get_dispatchable_quantity($line_item, $location, $date, $qoh) {
     	global $SysPrefs;
 

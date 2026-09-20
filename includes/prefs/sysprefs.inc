@@ -52,6 +52,7 @@ class sys_prefs extends stdClass
 	/*
 		Re-initialize company preferrencies.
 	*/
+	/** @return null */
 	function refresh()
 	{
 		global $db_version;
@@ -199,6 +200,7 @@ class sys_prefs extends stdClass
 		return $this->prefs['suppress_tax_rates'];
 	}
 
+	/** @return string */
 	function backup_dir($comp=null)
 	{
 		if (!isset($comp))

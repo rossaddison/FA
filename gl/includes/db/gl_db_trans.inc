@@ -76,6 +76,7 @@ function add_gl_trans(string|int|float|bool|null $type, string|int|float|bool|nu
 // $date_ is display date (non-sql)
 // $amount is in HOME currency
 
+/** @return 0|float */
 function add_gl_trans_std_cost(?int $type, string|int|float|bool|null $trans_id, string|int|float|bool|null $date_, string|int|float|bool|null $account, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2,
 	string|int|float|bool|null $memo_,	string|int|float|bool|null $amount, ?int $person_type_id=null, string|int|float|bool|null $person_id=null, ?string $err_msg="")
 {
@@ -88,6 +89,7 @@ function add_gl_trans_std_cost(?int $type, string|int|float|bool|null $trans_id,
 }
 
 // Function for even out rounding problems
+/** @return 0|float */
 function add_gl_balance(string|int|float|bool|null $type, string|int|float|bool|null $trans_id, string|int|float|bool|array|null $date_, string|int|float|bool|null $amount, ?int $person_type_id=null, string|int|float|bool|null $person_id=null)
 {
 	$amount = round2($amount, user_price_dec());

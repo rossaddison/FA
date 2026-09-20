@@ -13,6 +13,7 @@
 //
 //	FIXME - this should be revised for transaction update case.
 //
+/** @return float|int|null */
 function write_supp_trans(string|int|float|bool|null $type, ?int $trans_no, string|int|float|bool|null $supplier_id, string|int|float|bool|null $date_, string|int|float|bool|null $due_date, string|int|float|bool|null $reference, string|int|float|bool|null $supp_reference,
 	string|int|float|bool|null $amount, string|int|float|bool|null $amount_tax, string|int|float|bool|null $discount, ?string $err_msg="", string|int|float|bool|null $rate=0, string|int|float|bool|null $included=0)
 {

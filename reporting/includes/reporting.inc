@@ -14,6 +14,7 @@
 // or display_note(print_document_link($order_no, _("Print this order")));
 // You only need full parameter list for invoices/credit notes
 
+/** @return non-empty-string|null */
 function print_document_link(string|int|float|bool|array|null $doc_no, ?string $link_text, bool $link, string|int|float|bool|array|null $type_no, 
 	string|bool|null $icon=false, ?string $class='printlink', ?string $id='', ?int $email=0, ?int $extra=0)
 {

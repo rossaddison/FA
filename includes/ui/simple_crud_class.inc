@@ -141,6 +141,7 @@ class simple_crud {
 	//
 	//	Set record for edition
 	//
+	/** @return void */
 	function _edit($mode)
 	{
 		if ($this->Mode != $mode) {
@@ -154,6 +155,7 @@ class simple_crud {
 	//
 	//	Update record after edition
 	//
+	/** @return void */
 	function _update($mode)
 	{
 		$this->get_posts();
@@ -169,6 +171,7 @@ class simple_crud {
 	//
 	//	Add new record
 	//
+	/** @return void */
 	function _add($mode)
 	{
 		$this->get_posts();
@@ -182,6 +185,7 @@ class simple_crud {
 	//
 	//	Delete selected  record
 	//
+	/** @return void */
 	function _delete()
 	{
 		if ($this->delete_check())
@@ -191,7 +195,10 @@ class simple_crud {
 	//
 	//	Return to listing view
 	//
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function _cancel()
 	{
 		$this->selected_id = $this->_none;
@@ -201,6 +208,7 @@ class simple_crud {
 	//
 	// Clone record for new edition
 	//
+	/** @return void */
 	function _cloning()
 	{
 		$this->Mode = '';
@@ -210,6 +218,7 @@ class simple_crud {
 	/*
 		Generate form controls
 	*/
+	/** @return void */
 	function _bottom_controls()
 	{
 		$clone = $this->selected_id != $this->_none;
@@ -248,6 +257,7 @@ class simple_crud {
 	// Public functions
 	//
 	
+	/** @return non-falsy-string */
 	function tool_button($name, $selected_id=null, $params='')
 	{
 		$b = $this->tool_buttons[$name];
@@ -258,6 +268,7 @@ class simple_crud {
 				$b[0], $b[1], $b[2], $b[3])."</td>";
 	}
 	
+	/** @return void */
 	function set_posts()
 	{
 		foreach($this->fields as $name => $fmt) {
@@ -281,6 +292,7 @@ class simple_crud {
 	//
 	//	Get editor POST variables. 
 	//
+	/** @return void */
 	function get_posts() {
 		foreach ($this->fields as $name => $fmt) {
 			if (is_int($name)) {
@@ -302,6 +314,7 @@ class simple_crud {
 	}
 	//	Main function - display current CRUD editor content
 	//
+	/** @return void */
 	function show()
 	{
 		if (!isset($_POST[$this->name.'Mode']))
@@ -332,6 +345,7 @@ class simple_crud {
 	//
 	//	Read record from db for edition
 	//
+	/** @return array<never, never> */
 	function db_read() {
 		display_notification(__FUNCTION__. ' is not defined...');
 		return array();
@@ -339,6 +353,7 @@ class simple_crud {
 	//
 	//	Update record in db after edition
 	//
+	/** @return void */
 	function db_update()
 	{
 		$this->db_insert();
@@ -346,12 +361,14 @@ class simple_crud {
 	//
 	//	Delete record
 	//
+	/** @return void */
 	function db_delete() {
 		display_notification(__FUNCTION__. ' is not defined...');
 	}
 	//
 	//	Insert record
 	//
+	/** @return void */
 	function db_insert()
 	{
 		display_notification(__FUNCTION__. ' is not defined...');
@@ -360,18 +377,25 @@ class simple_crud {
 	//	Cancel edition
 	//	Optional things like focus set.
 	//
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return void
+	 */
 	function db_cancel()
 	{
 	}
 
 
+	/** @return true */
 	function delete_check() {
 		display_notification(__FUNCTION__. ' is not defined...');
 		return true; 
 	}
 
-	/** @psalm-pure */
+	/**
+	 * @psalm-pure
+	 * @return true
+	 */
 	function insert_check() {
 		return true;
 	}
@@ -385,6 +409,7 @@ class simple_crud {
 	//
 	//	Show database content in pager/table
 	//
+	/** @return void */
 	function list_view() {
 		display_notification(__FUNCTION__. ' is not defined...');
 	}
@@ -392,6 +417,7 @@ class simple_crud {
 	//
 	//	Show record editor screen content
 	//
+	/** @return void */
 	function editor_view() {
 		display_notification(__FUNCTION__. ' is not defined...');
 	}

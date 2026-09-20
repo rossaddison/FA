@@ -56,6 +56,7 @@ function get_customer_trans_version(string|int|float|bool|null $type, string|int
 //----------------------------------------------------------------------------------------
 // $Total, $Tax, $Freight, $discount all in customer's currency
 // date_ is display date (non-sql)
+/** @return array<array-key, mixed>|null|scalar */
 function write_customer_trans(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $debtor_no, string|int|float|bool|array|null $BranchNo,
 	string|int|float|bool|null $date_, string|int|float|bool|null $reference, string|int|float|bool|null $Total, int|float|bool|null $discount=0, string|int|float|bool|null $Tax=0, string|int|float|bool|null $Freight=0, string|int|float|bool|null $FreightTax=0,
 	string|int|float|bool|null $sales_type=0, string|int|float|bool|null $order_no=0, string|int|float|bool|null $ship_via=0, string|int|float|bool|null $due_date="",

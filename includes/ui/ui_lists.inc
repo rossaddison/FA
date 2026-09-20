@@ -521,6 +521,7 @@ function add_edit_combo(?string $type): string
 	return "<a target = '_blank' href='#' $onclick tabindex='-1'>$img</a>"; 
 }
 
+/** @return non-empty-string */
 function supplier_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $spec_option=false, bool $submit_on_change=false,
 	int|bool|array|null $all=false, bool $editkey = false)
 {
@@ -575,6 +576,7 @@ function supplier_list_row(?string $label, ?string $name, string|int|float|bool|
 }
 //----------------------------------------------------------------------------------------------
 
+/** @return non-empty-string */
 function customer_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $spec_option=false, bool $submit_on_change=false, 
 	int|bool|array|null $show_inactive=false, bool $editkey = false)
 {
@@ -632,6 +634,7 @@ function customer_list_row(?string $label, ?string $name, string|int|float|bool|
 
 //------------------------------------------------------------------------------------------------
 
+/** @return non-empty-string */
 function customer_branches_list(string|int|float|bool|null $customer_id, ?string $name, string|int|float|bool|array|null $selected_id=null,
 	bool $spec_option = true, bool $enabled=true, bool $submit_on_change=false, bool $editkey = false)
 {
@@ -679,6 +682,7 @@ function customer_branches_list_row(?string $label, string|int|float|bool|array|
 
 //------------------------------------------------------------------------------------------------
 
+/** @return non-empty-string */
 function locations_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $all_option=false, string|int|float|bool|null $submit_on_change=false, string|int|float|bool|null $fixed_asset=false)
 {
 
@@ -710,6 +714,7 @@ function locations_list_row(?string $label, ?string $name, string|int|float|bool
 
 //-----------------------------------------------------------------------------------------------
 
+/** @return non-empty-string */
 function currencies_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, bool $submit_on_change=false, bool $exclude_home_curr=false)
 {
 	$sql = "SELECT curr_abrev, currency, inactive FROM ".TB_PREF."currencies";
@@ -743,6 +748,7 @@ function currencies_list_row(?string $label, ?string $name, string|int|float|boo
 
 //---------------------------------------------------------------------------------------------------
 
+/** @return non-empty-string */
 function fiscalyears_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, bool $submit_on_change=false)
 {
 
@@ -783,6 +789,7 @@ function fiscalyears_list_row(?string $label, ?string $name, string|int|float|bo
 }
 //------------------------------------------------------------------------------------
 
+/** @return non-empty-string */
 function dimensions_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $no_option=false, string|int|float|bool|null $showname=' ',
 	string|int|float|bool|null $submit_on_change=false, string|int|float|bool|null $showclosed=false, string|int|float|bool|null $showtype=1)
 {
@@ -825,6 +832,7 @@ function dimensions_list_row(?string $label, ?string $name, string|int|float|boo
 
 //---------------------------------------------------------------------------------------------------
 
+/** @return non-empty-string */
 function stock_items_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $all_option=false, 
 	string|int|float|bool|null $submit_on_change=false, ?array $opts=array(), string|int|float|bool|null $editkey = false, ?string $type = "stock")
 {
@@ -899,6 +907,7 @@ function stock_items_list_row($label, $name, $selected_id=null, $all_option=fals
 //
 // Select item via foreign code.
 //
+/** @return non-empty-string */
 function sales_items_list(?string $name, string|int|float|bool|array|null $selected_id=null, string|bool|null $all_option=false, 
 	bool $submit_on_change=false, ?string $type='', ?array $opts=array())
 {
@@ -1175,6 +1184,7 @@ function stock_depreciable_fa_list_cells(?string $label, ?string $name, string|i
 
 //------------------------------------------------------------------------------------
 
+/** @return non-empty-string */
 function tax_types_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, bool $none_option=false, bool $submit_on_change=false)
 {
 	$sql = "SELECT id, CONCAT(name, ' (',rate,'%)') as name FROM ".TB_PREF."tax_types";
@@ -1208,6 +1218,7 @@ function tax_types_list_row(?string $label, ?string $name, string|int|float|bool
 
 //------------------------------------------------------------------------------------
 
+/** @return non-empty-string */
 function tax_groups_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null,
 	bool $none_option=false, bool $submit_on_change=false)
 {
@@ -1241,6 +1252,7 @@ function tax_groups_list_row(?string $label, ?string $name, string|int|float|boo
 
 //------------------------------------------------------------------------------------
 
+/** @return non-empty-string */
 function item_tax_types_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, bool $show_inactive = false)
 {
 	$sql ="SELECT id, name FROM ".TB_PREF."item_tax_types";
@@ -1268,6 +1280,7 @@ function item_tax_types_list_row(?string $label, ?string $name, string|int|float
 
 //------------------------------------------------------------------------------------
 
+/** @return non-empty-string */
 function shippers_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null)
 {
 	$sql = "SELECT shipper_id, shipper_name, inactive FROM ".TB_PREF."shippers";
@@ -1293,6 +1306,7 @@ function shippers_list_row(?string $label, ?string $name, string|int|float|bool|
 
 //-------------------------------------------------------------------------------------
 
+/** @return non-empty-string */
 function sales_persons_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $spec_opt=false)
 {
 	$sql = "SELECT salesman_code, salesman_name, inactive FROM ".TB_PREF."salesman";
@@ -1320,6 +1334,7 @@ function sales_persons_list_row(?string $label, ?string $name, string|int|float|
 
 //------------------------------------------------------------------------------------
 
+/** @return non-empty-string */
 function sales_areas_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $special_option=false)
 {
 	$sql = "SELECT area_code, description, inactive FROM ".TB_PREF."areas";
@@ -1346,6 +1361,7 @@ function sales_areas_list_row(?string $label, ?string $name, string|int|float|bo
 
 //------------------------------------------------------------------------------------
 
+/** @return non-empty-string */
 function sales_groups_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, bool $special_option=false)
 {
 	$sql = "SELECT id, description, inactive FROM `".TB_PREF."groups`";
@@ -1379,6 +1395,7 @@ function _format_template_items(array|false|null $row): string
 	return ($row[0] . "&nbsp;- &nbsp;" . _("Amount") . "&nbsp;".$row[1]);
 }
 
+/** @return non-empty-string */
 function templates_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, bool $special_option=false)
 {
 	$sql = "SELECT sorder.order_no,	Sum(line.unit_price*line.quantity*(1-line.discount_percent)) AS OrderValue
@@ -1409,6 +1426,7 @@ function templates_list_row(?string $label, ?string $name, string|int|float|bool
 
 //------------------------------------------------------------------------------------
 
+/** @return non-empty-string */
 function workorders_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null)
 {
 	$sql = "SELECT id, wo_ref FROM ".TB_PREF."workorders WHERE closed=0";
@@ -1433,6 +1451,7 @@ function workorders_list_row(string|int|float|bool|null $label, string|int|float
 
 //------------------------------------------------------------------------------------
 
+/** @return non-empty-string */
 function payment_terms_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null)
 {
 	$sql = "SELECT terms_indicator, terms, inactive FROM ".TB_PREF."payment_terms";
@@ -1457,6 +1476,7 @@ function payment_terms_list_row(?string $label, ?string $name, string|array|null
 
 //------------------------------------------------------------------------------------
 
+/** @return non-empty-string */
 function credit_status_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null)
 {
 	$sql ="SELECT id, reason_description, inactive FROM ".TB_PREF."credit_status";
@@ -1481,6 +1501,7 @@ function credit_status_list_row(?string $label, ?string $name, string|int|array|
 
 //-----------------------------------------------------------------------------------------------
 
+/** @return non-empty-string */
 function sales_types_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, bool $submit_on_change=false, string|bool|null $special_option=false)
 {
 	$sql = "SELECT id, sales_type, inactive FROM ".TB_PREF."sales_types";
@@ -1516,6 +1537,7 @@ function _format_date(array|false|null $row): string
 	return sql2date($row['reconciled']);
 }
 
+/** @return non-empty-string */
 function bank_reconciliation_list(string|array|null $account, ?string $name, string|int|float|bool|array|null $selected_id=null, bool $submit_on_change=false, string|bool|null $special_option=false)
 {
 	$sql = "SELECT reconciled, reconciled FROM ".TB_PREF."bank_trans
@@ -1549,6 +1571,7 @@ function bank_reconciliation_list_row($label, $account, $name, $selected_id=null
 */
 //-----------------------------------------------------------------------------------------------
 
+/** @return non-empty-string */
 function workcenter_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, bool $all_option=false)
 {
 
@@ -1580,6 +1603,7 @@ function workcenter_list_row(?string $label, ?string $name, string|int|float|boo
 
 //-----------------------------------------------------------------------------------------------
 
+/** @return non-empty-string */
 function bank_accounts_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $submit_on_change=false, string|int|float|bool|null $spec_option=false)
 {
 	$sql = "SELECT id, bank_account_name, bank_curr_code, inactive
@@ -1658,6 +1682,7 @@ function pos_list_row(?string $label, ?string $name, string|int|float|bool|array
 //-----------------------------------------------------------------------------------------------
 // Payment type selector for current user.
 //
+/** @return non-empty-string */
 function sale_payment_list(?string $name, ?int $category, string|int|float|bool|array|null $selected_id=null, bool $submit_on_change=true, bool $prepayments=true)
 {
 	$sql = "SELECT terms_indicator, terms, inactive FROM ".TB_PREF."payment_terms";
@@ -1689,6 +1714,7 @@ function sale_payment_list_cells(?string $label, ?string $name, ?int $category, 
 }
 //-----------------------------------------------------------------------------------------------
 
+/** @return non-empty-string */
 function class_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, bool $submit_on_change=false)
 {
 	$sql = "SELECT cid, class_name FROM ".TB_PREF."chart_class";
@@ -1718,6 +1744,7 @@ function class_list_row(?string $label, ?string $name, string|int|float|bool|arr
 }
 
 //-----------------------------------------------------------------------------------------------
+/** @return non-empty-string */
 function stock_categories_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $spec_opt=false, string|int|float|bool|null $submit_on_change=false, string|int|float|bool|null $fixed_asset=false)
 {
 	$where_opts = array();
@@ -1754,6 +1781,7 @@ function stock_categories_list_row(?string $label, ?string $name, string|int|flo
 }
 
 //-----------------------------------------------------------------------------------------------
+/** @return non-empty-string */
 function fixed_asset_classes_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $spec_opt=false, string|int|float|bool|null $submit_on_change=false)
 {
 	$sql = "SELECT c.fa_class_id, CONCAT(c.fa_class_id,' - ',c.description) `desc`, CONCAT(p.fa_class_id,' - ',p.description) `class`, c.inactive FROM "
@@ -1785,6 +1813,7 @@ function fixed_asset_classes_list_row(?string $label, ?string $name, string|int|
 
 //-----------------------------------------------------------------------------------------------
 
+/** @return non-empty-string */
 function gl_account_types_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $all_option=false, string|int|float|bool|null $all=true)
 {
 
@@ -1817,6 +1846,7 @@ function gl_account_types_list_row(?string $label, ?string $name, string|int|flo
 }
 
 //-----------------------------------------------------------------------------------------------
+/** @return non-empty-string */
 function gl_all_accounts_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, bool $skip_bank_accounts=false,
 	bool $cells=false, string|bool|null $all_option=false, bool $submit_on_change=false, int|bool|array|null $all=false, string|int|float|bool|null $type_id=false)
 {
@@ -2304,6 +2334,7 @@ function printers_list(?string $name, string|int|float|bool|array|null $selected
 
 //------------------------------------------------------------------------------------------------
 
+/** @return non-empty-string */
 function quick_entries_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $type=null, bool $submit_on_change=false)
 {
 	$where = false;
@@ -2383,6 +2414,7 @@ function class_types_list_row(?string $label, ?string $name, string|int|float|bo
 
 //------------------------------------------------------------------------------------------------
 
+/** @return non-empty-string */
 function security_roles_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, bool $new_item=false, bool $submit_on_change=false,
 	int|bool|array|null $show_inactive = false)
 {
@@ -2491,6 +2523,7 @@ function extset_list(?string $name, string|int|float|bool|null $value=null, bool
 		));
 }
 
+/** @return non-empty-string */
 function crm_category_types_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|array|null $filter=array(), bool $submit_on_change=true)
 {
 
@@ -2610,6 +2643,7 @@ function tax_algorithm_list_row(?string $label, ?string $name, string|int|float|
 	echo "</tr>\n";
 }
 
+/** @return non-empty-string */
 function refline_list(?string $name, string|int|float|bool|null $type, string|int|float|bool|null $value=null, bool $spec_option=false)
 {
 	$sql = "SELECT id, prefix, inactive FROM ".TB_PREF."reflines";
@@ -2645,6 +2679,7 @@ function refline_list_row(?string $label, ?string $name, ?int $type, string|int|
 
 //----------------------------------------------------------------------------------------------
 
+/** @return string */
 function subledger_list(string|int|float|bool|null $name, string|int|float|bool|array|null $account, string|int|float|bool|array|null $selected_id=null)
 {
 

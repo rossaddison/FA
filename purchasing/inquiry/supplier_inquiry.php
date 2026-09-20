@@ -66,6 +66,7 @@ function display_supplier_summary(bool|array|null $supplier_record): void
     end_table(1);
 }
 //------------------------------------------------------------------------------------------------
+/** @return string */
 function systype_name(string|int|float|bool|array|null $dummy, string|int|float|bool|null $type)
 {
 	global $systypes_array;

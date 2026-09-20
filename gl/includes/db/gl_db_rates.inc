@@ -121,6 +121,7 @@ function delete_exchange_rate(string|int|float|bool|null $rate_id): void
 //
 //	amount [home] = amount [curr] * ex_rate
 //
+/** @return float|int|numeric|string */
 function retrieve_exrate(string|int|float|bool|array|null $curr_b, string|int|float|bool|null $date)
 {
 	global $SysPrefs;

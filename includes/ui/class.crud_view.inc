@@ -50,7 +50,10 @@ class user_view {
 		$this->name = $name;
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return false
+	 */
 	function error($msg, $context=null)
 	{
 		// save error message
@@ -110,6 +113,7 @@ class user_view {
 	/**
 	*	Returns html element for given field
 	*	@mode - true for edit, false for read-only
+	* @return void
 	**/
 	function _format_cells($value, $fmt, $mode)
 	{
@@ -140,6 +144,7 @@ class user_view {
 	*
 	*	PHP->user format values convertion.
 	*
+	* @return void
 	**/
 	function set_output($data=null, &$output=null)
 	{
@@ -229,6 +234,7 @@ class user_view {
 	//
 	//	Return data formatted according to field descriptions.
 	//
+	/** @return array<array-key, mixed> */
 	function get_fields_views($input=null, $mode=null)
 	{
 
@@ -334,7 +340,10 @@ class simple_crud_view extends user_view {
 //		$this->_prev_status();
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function _add_action($name, $handler, $but_value=null, $but_title=false, $but_icon=false, $aspect='', $view=null)
 	{
 		$this->pre_handlers[$name] = $handler;
@@ -346,12 +355,16 @@ class simple_crud_view extends user_view {
 			$this->_add_mode($name, $view);
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function _add_mode($name, $view)
 	{
 		$this->views[$name] = $view;
 	}
 
+	/** @return void */
 	function _prev_status()
 	{
 		// Restore previous mode/key (obsolete for views stored in session)
@@ -370,6 +383,7 @@ class simple_crud_view extends user_view {
 		$this->Mode = $mod;
 	}
 
+	/** @return ''|'RESET'|key-of<array<array-key, mixed>> */
 	function _check_mode()
 	{
 		global $Ajax;
@@ -394,6 +408,7 @@ class simple_crud_view extends user_view {
 		return $mod;
 	}
 
+	/** @return void */
 	function display_error()
 	{
 		$this->errors = array_merge($this->data_set->errors, $this->errors);
@@ -409,6 +424,7 @@ class simple_crud_view extends user_view {
 	//
 	//	Set record for edition
 	//
+	/** @return void */
 	function _edit($mode)
 	{
 		if ($this->selected_id != $this->prev_id || $mode != $this->Mode) { // get record for edition
@@ -426,6 +442,7 @@ class simple_crud_view extends user_view {
 	//
 	//	Update record after edition
 	//
+	/** @return void */
 	function _update($mode)
 	{
 		if (!$this->options['update'])
@@ -448,6 +465,7 @@ class simple_crud_view extends user_view {
 	//
 	//	Add new record
 	//
+	/** @return void */
 	function _add($mode)
 	{
 		if (!$this->options['insert'])
@@ -472,6 +490,7 @@ class simple_crud_view extends user_view {
 	//
 	//	Delete selected  record
 	//
+	/** @return void */
 	function _delete()
 	{
 		if (!$this->options['delete'])
@@ -488,6 +507,7 @@ class simple_crud_view extends user_view {
 	//
 	//	Return to listing view
 	//
+	/** @return void */
 	function _cancel()
 	{
 		global $Ajax;
@@ -505,6 +525,7 @@ class simple_crud_view extends user_view {
 	//
 	// Clone record for new edition
 	//
+	/** @return void */
 	function _cloning()
 	{
 		if (!$this->options['clone'])
@@ -517,6 +538,7 @@ class simple_crud_view extends user_view {
 		Generate form controls
 	*/
 
+	/** @return void */
 	function _record_controls($list_view = false)
 	{
 		$clone = $this->options['clone'] && $this->selected_id != $this->_none;
@@ -550,6 +572,7 @@ class simple_crud_view extends user_view {
 	//
 	//	Submit buttons for form actions
 	//
+	/** @return void */
 	function action_button($action, $selected_id=null)
 	{
 		list($value, $title, $icon, $aspect) = $this->tool_buttons[$action];
@@ -559,6 +582,7 @@ class simple_crud_view extends user_view {
 	//
 	//	Tool button for grid line actions.
 	//
+	/** @return non-falsy-string */
 	function tool_button($name, $selected_id=null, $params='')
 	{
 		$b = $this->tool_buttons[$name];
@@ -571,6 +595,7 @@ class simple_crud_view extends user_view {
 	//
 	//	Main function - display current CRUD editor content
 	//
+	/** @return void */
 	function show($Mode=null)
 	{
 		if (!isset($Mode))
@@ -599,7 +624,10 @@ class simple_crud_view extends user_view {
 	//
 	//	Optional things like focus set performed on edition cancel.
 	//
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return void
+	 */
 	function cancel()
 	{
 	}
@@ -608,6 +636,7 @@ class simple_crud_view extends user_view {
 	//	Show database content in pager/table
 	//	parameter $Mode contains new mode on change, or '' otherwise
 	//
+	/** @return void */
 	function list_view($Mode) {
 		display_notification(__FUNCTION__. ' is not defined...');
 	}
@@ -616,6 +645,7 @@ class simple_crud_view extends user_view {
 	//	Show record editor screen content
 	//	parameter $Mode contains new mode on change, or '' otherwise
 	//
+	/** @return void */
 	function editor_view($Mode) {
 		display_notification(__FUNCTION__. ' is not defined...');
 	}
@@ -661,7 +691,10 @@ class selector_crud_view extends simple_crud_view {
 		return $mod;
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return void
+	 */
 	function cancel()
 	{
 		global $Ajax;
@@ -703,6 +736,7 @@ class table_crud_view extends simple_crud_view {
 	*	Show single line from record table
 	*
 	* @psalm-mutation-free
+	* @return void
 	**/
 	function show_record_row($line_no, $record=array())
 	{
@@ -746,13 +780,17 @@ class table_crud_view extends simple_crud_view {
 		}
 */
 	}
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return void
+	 */
 	function show_list_headers()
 	{
 	}
 	//
 	//	Main function - display current CRUD table content
 	//
+	/** @return void */
 	function show($Mode=null)
 	{
 		if (!isset($Mode))

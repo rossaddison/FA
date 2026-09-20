@@ -32,6 +32,7 @@ class contacts extends simple_crud {
 		$this->entity = $id;
 	}
 
+	/** @return void */
 	function list_view() {
 		br();
 
@@ -78,6 +79,7 @@ class contacts extends simple_crud {
 			end_table(1);
 	}
 	
+	/** @return void */
 	function editor_view()
 	{
 		br();
@@ -111,6 +113,7 @@ class contacts extends simple_crud {
 		end_outer_table(1);
 	}
 
+	/** @return int|null|string */
 	function db_insert() {
 			$dat = $this->data;
 			return add_crm_person($dat['ref'], $dat['name'], $dat['name2'], $dat['address'],
@@ -124,7 +127,10 @@ class contacts extends simple_crud {
 				post_scalar('lang'), post_scalar('notes'), $_POST['assgn'], $this->entity, $this->class);
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return bool
+	 */
 	function insert_check() {
 		if (strlen($_POST['name']) == 0) {
 			display_error(_("The contact name cannot be empty."));
@@ -144,17 +150,22 @@ class contacts extends simple_crud {
 		return true; 
 	}
 
+	/** @return array{contacts: array<array-key, mixed>, ...<array-key, null|string>}|false */
 	function db_read() {
 		return get_crm_person($this->selected_id);
 	}
 
-	/** @psalm-pure */
+	/**
+	 * @psalm-pure
+	 * @return true
+	 */
 	function delete_check() {
 		return true;
 	}
 	//
 	//	Delete all contacts for person in current class/entity
 	//
+	/** @return bool|mysqli_result */
 	function db_delete() {
 		if (delete_crm_contacts($this->selected_id, $this->class, $this->entity)) {
 			// if this is the last relation - delete contact data

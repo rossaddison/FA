@@ -145,6 +145,7 @@ function payment_person_name(string|int|float|bool|null $type, string|int|float|
 	}
 }
 
+/** @return bool */
 function payment_person_has_items(string|int|float|bool|null $type) {
 	switch ($type)
 	{

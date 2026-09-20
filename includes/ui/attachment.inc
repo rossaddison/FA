@@ -30,6 +30,7 @@ class attachments extends simple_crud {
 		
 	}
 
+	/** @return void */
 	function list_view() {
 		global $Ajax, $path_to_root, $session_debtor_no, $session_supplier_id;
 		br();
@@ -103,6 +104,7 @@ class attachments extends simple_crud {
 		end_table(1);
 	}
 	
+	/** @return void */
 	function editor_view(){
 		//global $Ajax;
 		br();
@@ -148,6 +150,7 @@ class attachments extends simple_crud {
 		div_end();
 	}
 
+	/** @return void */
 	function _bottom_controls()	{
 		$title=false;
 		$async='both';
@@ -187,6 +190,7 @@ class attachments extends simple_crud {
             return null;
     }
 
+	/** @return void */
 	function db_insert() {
 		$dat = $this->data;
 		if(!isset($max_image_size))
@@ -231,6 +235,7 @@ class attachments extends simple_crud {
 			display_error(_("No Attachment File Selected"));
 	}
 
+	/** @return void */
 	function db_update() {
 		$dat = $this->data;
 		if(!isset($max_image_size))
@@ -277,7 +282,10 @@ class attachments extends simple_crud {
 		}
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @psalm-external-mutation-free
+	 * @return bool
+	 */
 	function insert_check() {
 		if (strlen($_POST['description']) == 0) {
 			display_error(_("Description cannot be empty."));
@@ -287,19 +295,24 @@ class attachments extends simple_crud {
 		return true; 
 	}
 
+	/** @return array<string, null|string>|false */
 	function db_read() {
 		$sql = "SELECT * FROM ".TB_PREF."attachments WHERE id=".db_escape($this->selected_id);
 		$result = db_query($sql, "Could not get all data from ".TB_PREF."attachments table");
 		return db_fetch_assoc($result);
 	}
 
-	/** @psalm-pure */
+	/**
+	 * @psalm-pure
+	 * @return true
+	 */
 	function delete_check() {
 		return true;
 	}
 	//
 	//	Delete all attachments for Customer / Supplier in current class/entity
 	//
+	/** @return false */
 	function db_delete() {
 		$sql = "SELECT * FROM ".TB_PREF."attachments WHERE id = ".db_escape($this->selected_id);
 		$row = row_or_empty(db_fetch(db_query($sql), "Cannot retrieve attachment $this->selected_id"));

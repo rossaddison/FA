@@ -19,6 +19,7 @@ include_once($path_to_root . "/taxes/db/item_tax_types_db.inc");
 // for item $stock_id with line price $price,
 // with applicable tax rates $tax_group_array or group id $tax_group
 
+/** @return null|scalar */
 function get_tax_free_price_for_item(string|int|float|bool|null $stock_id, string|int|float|bool|null $price, string|int|float|bool|null $tax_group, string|int|float|bool|null $tax_included, ?array $tax_group_array=null)
 {
 	// if price is zero, then can't be taxed !
@@ -57,6 +58,7 @@ function get_tax_free_price_for_item(string|int|float|bool|null $stock_id, strin
 //	Full price (incl. VAT) for item $stock_id with line price $price,
 //	with tax rates $tax_group_array or applicable group $tax_group
 //
+/** @return null|scalar */
 function get_full_price_for_item(string|int|float|bool|null $stock_id, string|int|float|bool|null $price, string|int|float|bool|null $tax_group, string|int|float|bool|null $tax_included, ?array $tax_group_array=null)
 {
 	// if price is zero, then can't be taxed !

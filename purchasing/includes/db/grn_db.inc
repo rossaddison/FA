@@ -10,6 +10,7 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 //------------------- update average material cost ---------------------------------------------- 
+/** @return null|scalar */
 function update_average_material_cost(string|int|float|bool|null $supplier, string|int|float|bool|null $stock_id, string|int|float|bool|null $price, string|int|float|bool|null $qty, string|int|float|bool|null $date, bool $adj_only=false)
 {
 	// probably this function should be optimized
@@ -77,6 +78,7 @@ function update_average_material_cost(string|int|float|bool|null $supplier, stri
 
 //-------------------------------------------------------------------------------------------------------------
 
+/** @return int|string */
 function add_grn(purch_order &$po)
 {
 	global $Refs;

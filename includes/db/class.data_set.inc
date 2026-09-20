@@ -47,6 +47,7 @@ abstract class record_set {
 		$this->subset = $subset;
 	}
 
+	/** @return false */
 	function error($msg, $field=null) {
 		global $db;
 
@@ -70,6 +71,7 @@ abstract class record_set {
 	*	@check - validator description string in format: 'field_name:uid_modes:check_type[[:param1][:param2]...]'
 	*   parameters can be expressed with name in form: name=value
 	*	@msg - message stored on error
+	* @return void
 	**/
 	
 	function set_validator($check, $msg=null)
@@ -166,6 +168,7 @@ abstract class record_set {
 	*	Array contains true for editable, false for readonly fields.
 	*	This looks redundant ('forbidden' update_check could be used)
 	*	but in fact the constraints are related to exact record, so changes with key.
+	* @return array<array-key, bool>
 	**/
 	function edit_status($key)
 	{
@@ -223,6 +226,7 @@ abstract class record_set {
 	//
 	//	Generic update record routine
 	//
+	/** @return bool */
 	function update($key, $data)
 	{
 		if (!$this->update_check($key, $data))
@@ -233,6 +237,7 @@ abstract class record_set {
 	//
 	//	Generic delete record routine
 	//
+	/** @return bool */
 	function delete($key)
 	{
 		if (!$this->delete_check($key))
@@ -243,6 +248,7 @@ abstract class record_set {
 	//
 	//	Insert record
 	//
+	/** @return bool */
 	function insert($data)
 	{
 		if (!$this->insert_check($data))
@@ -493,6 +499,7 @@ class array_set extends record_set {
 	//
 	//	Delete record
 	//
+	/** @return bool */
 	function delete($key)
 	{
 		if (!parent::delete($key))

@@ -32,6 +32,7 @@ include_once($path_to_root . "/sales/includes/db/customers_db.inc");
 // $date_ is display date (non-sql)
 // $amount is in CUSTOMER'S currency
 
+/** @return float */
 function add_gl_trans_customer(?int $type, string|int|float|bool|null $type_no, string|int|float|bool|null $date_, string|int|float|bool|null $account, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2,
 	string|int|float|bool|null $amount, string|int|float|bool|null $customer_id, ?string $err_msg="", ?int $rate=0)
 {
@@ -53,6 +54,7 @@ function get_calculated_price(string|int|float|bool|null $stock_id, string|int|f
 	return round2($avg * (1 + $add_pct / 100), user_price_dec());
 }
 
+/** @return 0|float */
 function round_to_nearest(string|int|float|bool|null $price, string|int|float|bool|null $round_to)
 {
 	if ($price == 0)

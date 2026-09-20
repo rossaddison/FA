@@ -77,6 +77,7 @@ class Cpdf extends FPDI {
 	/*
 		Set lamguage for next report
 	*/
+	/** @return void */
 	function SetLang($code=null) 
 	{
 		global $installed_languages, $dflt_lang, $path_to_root, $local_path_to_root, $GetText;
@@ -139,6 +140,7 @@ class Cpdf extends FPDI {
     //      * I: italic
     //      * U: underline
     //      * D: line trough (aka "strike through")
+	/** @return void */
 	function selectFont($fontname, $style = '')
 	{
 		// Parse the style - check for special cases, otherwise leave as-is
@@ -188,33 +190,45 @@ class Cpdf extends FPDI {
 		$this->SetFont($fontname, $style);
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return void
+	 */
 	function Header1()
 	{
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return void
+	 */
 	function Footer()
 	{
 	}
 
+	/** @return void */
 	function newPage()
 	{
 		parent::AddPage();
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return void
+	 */
 	function line($x1,$y1,$x2,$y2, $style = array())
 	{
 		parent::Line($x1, $this->h-$y1, $x2, $this->h-$y2, $style);
 	}
 
+	/** @return void */
 	function rectangle($x, $y, $w, $h, $style='', $border_style=array(), $fill_color=array())
 	{
 		parent::Rect($x, $this->h-$y, $w, $h, $style, $border_style, $fill_color);
 	}
 
 
+	/** @return void */
 	function addText($xb,$yb,$size,$txt)//,$angle=0,$wordSpaceAdjust=0)
 	{
 		if ($this->isunicode && $this->encoding != "UTF-8")
@@ -223,7 +237,10 @@ class Cpdf extends FPDI {
 		$this->Text($xb, $this->h-$yb, $txt);
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return void
+	 */
 	function addInfo($label,$value)
 	{
 		if (in_array($label, array( 'Title', 'Subject', 'Author', 'Creator'))) {
@@ -232,11 +249,13 @@ class Cpdf extends FPDI {
 		}
 	}
 
+	/** @return void */
 	function addJpegFromFile($img,$x,$y,$w=0,$h=0)
 	{
 		$this->Image($img, $x, $this->h-$y-$h, $w, $h);
 	}
 
+	/** @return void */
 	function addPngFromFile($img,$x,$y,$w=0,$h=0)
 	{
 		$this->Image($img, $x, $this->h-$y-$h, $w, $h);
@@ -248,6 +267,7 @@ class Cpdf extends FPDI {
 	/**
 	* draw a part of an ellipse
 	* @psalm-mutation-free
+	* @return void
 	*/
 	function partEllipse($x0,$y0,$astart,$afinish,$r1,$r2=0,$angle=0,$nSeg=8)
 	{
@@ -264,12 +284,14 @@ class Cpdf extends FPDI {
 	* nSeg is not allowed to be less than 2, as this will simply draw a line (and will even draw a
 	* pretty crappy shape at 2, as we are approximating with bezier curves.
 	* @psalm-mutation-free
+	* @return void
 	*/
 	function ellipse($x0,$y0,$r1,$r2=0,$angle=0,$nSeg=8,$astart=0,$afinish=360,$close=1,$fill=0, $dummy=null)
 	{
 		parent::Ellipse($x0, $y0, $r1, $r2, $angle, $astart. $afinish, ($close?'C':''), "", "", $nSeg);
 	}
 
+	/** @return void */
 	function Stream($fname='')
 	{
 		parent::Output($fname, 'I');
@@ -344,6 +366,7 @@ class Cpdf extends FPDI {
 		return $ret;
 	}
 
+	/** @return void */
 	function Text($x, $y, $txt, $stroke=0, $clip=false)
 	{
 		parent::Text($x,$y, parent::unhtmlentities($txt), $stroke, $clip);

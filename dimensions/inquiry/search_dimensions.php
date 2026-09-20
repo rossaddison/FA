@@ -97,6 +97,7 @@ function view_link(array|false|null $row)
 	return get_dimensions_trans_view_str(ST_DIMENSION, $row["id"]);
 }
 
+/** @return null|string */
 function sum_dimension(array|false|null $row) 
 {
 	return get_dimension_balance($row['id'], $_POST['FromDate'], $_POST['ToDate']); 

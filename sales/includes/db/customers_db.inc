@@ -179,6 +179,7 @@ function get_customer_contacts(?string $customer_id, ?string $action=null): arra
 	return $results;
 }
 
+/** @return 0|float */
 function get_current_cust_credit(string|int|float|bool|null $customer_id)
 {
 	$custdet = get_customer_details($customer_id);

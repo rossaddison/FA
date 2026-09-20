@@ -25,6 +25,7 @@ class remote_printer {
 	//
 	//	Send file to remote network printer.
 	// 
+    /** @return string */
     function print_file($fname){
         
 		$queue = $this->queue;
@@ -94,6 +95,7 @@ class remote_printer {
     //
 	//	Print all waiting jobs on remote printer queue.
 	//
+    /** @return false|non-empty-string */
     function flush_queue($queue){
 		$stream = @fsockopen("tcp://".$this->host, $this->port,$errNo, $errStr, $this->timeout);
         if (!$stream){

@@ -214,6 +214,7 @@ function edit_link(array|false|null $row): string
   	return button('Edit'.(string)$row["id"], _("Edit"), _("Edit"), ICON_EDIT);
 }
 
+/** @return string */
 function view_link(array|false|null $row): string
 {
   	return button('view'.(string)$row["id"], _("View"), _("View"), ICON_VIEW);

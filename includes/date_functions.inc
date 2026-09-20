@@ -301,6 +301,7 @@ function add_days(string|int|float|bool|array|null $date, string|int|float|bool|
    	return __date($year, $month, $day);
 }
 
+/** @return string */
 function add_months(string|int|float|bool|array|null $date, string|int|float|bool|null $months) // accepts negative values as well
 {
 	global $SysPrefs;
@@ -325,6 +326,7 @@ function add_months(string|int|float|bool|array|null $date, string|int|float|boo
    	return __date($year, $month, $day);
 }
 
+/** @return string */
 function add_years(string|int|float|bool|null $date, string|int|float|bool|null $years) // accepts negative values as well
 {
 	global $SysPrefs;

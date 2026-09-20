@@ -67,6 +67,7 @@ class email
 			$this->bcc[] = $bcc;
     }
 
+    /** @return string */
     function encode($txt)
     {
 
@@ -84,22 +85,28 @@ class email
     // in $name in form: '"full name" <adr@host>'.
     // Don't use this form unless all the mail addresses are encoded in ASCII
     //
+    /** @return void */
     function to($name, $mail='')
     {
     	$this->to[] = $mail=='' ? $name : ($this->encode($name)." <$mail>");
     }
 
+    /** @return void */
     function cc($name, $mail='')
     {
     	$this->cc[] = $mail=='' ? $name : ($this->encode($name)." <$mail>");
     }
 
+    /** @return void */
     function bcc($name='', $mail='')
     {
     	$this->bcc[] = $mail=='' ? $name : ($this->encode($name)." <$mail>");
     }
 
-    /** @psalm-external-mutation-free */
+    /**
+     * @psalm-external-mutation-free
+     * @return void
+     */
     function attachment($file, $filename=null)
     {
     	if (!isset($filename))
@@ -107,12 +114,16 @@ class email
     	$this->attachment[$filename] = $file;
     }
 
+    /** @return void */
     function subject($subject)
     {
     	$this->subject = $this->encode($subject);
     }
 
-    /** @psalm-external-mutation-free */
+    /**
+     * @psalm-external-mutation-free
+     * @return void
+     */
     function text($text)
     {
         $this->body = "--$this->boundary\n";
@@ -121,7 +132,10 @@ class email
 	    $this->body .= $text."\n";
     }
 
-    /** @psalm-external-mutation-free */
+    /**
+     * @psalm-external-mutation-free
+     * @return void
+     */
     function html($html)
     {
         $this->body = "--$this->boundary\n";
@@ -130,7 +144,10 @@ class email
 	    $this->body .= "<html><body>\n".$html."\n</body></html>\n";
     }
 
-	/** @psalm-pure */
+	/**
+	 * @psalm-pure
+	 * @return 'application/pdf'|'application/unknown'|'application/vnd.ms-excel'|'application/x-gzip'|'application/x-tar'|'application/x-tar-gz'|'application/x-zip-compressed'|'text/html'
+	 */
 	function mime_type($filename)
 	{
 		$file = basename($filename, '.zip');
@@ -154,6 +171,7 @@ class email
 		return 'application/unknown';
 	}
 
+	/** @return int<0, max> */
 	function send()
     {
         // Add CC Recipients 

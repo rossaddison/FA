@@ -94,6 +94,7 @@ function display_order_header(?items_cart &$Order): void
 
 //---------------------------------------------------------------------------------
 
+/** @return void */
 function display_gl_items(string|int|float|bool|supp_trans|null $title, ?items_cart &$order): void
 {
 	global $path_to_root;

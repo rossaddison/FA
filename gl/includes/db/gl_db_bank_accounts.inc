@@ -389,6 +389,7 @@ function get_default_supplier_bank_account(string|int|float|bool|array|null $sup
 //	This function returns current allowed bank payment limit, or null if limit is not set.
 //	As of FA 2.3 check is done only on cash account, for which limit is bank amount as of the date selected.
 //
+/** @return 0|null|string */
 function get_bank_account_limit(string|int|array|null $account, string|int|array|null $date, mixed $user=null)
 {
 //	$user = current_user();

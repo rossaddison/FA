@@ -72,6 +72,7 @@ function clear_form(): void
 	$Ajax->activate('_page_body');
 }
 
+/** @return 0|null|string */
 function check_delete(string|array|null $name)
 {
 	// check if selected profile is used by any user

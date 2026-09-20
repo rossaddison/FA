@@ -67,6 +67,7 @@ function check_overdue(array|false|null $row): bool
 		$row['OverDue'] == 1;
 }
 
+/** @return string */
 function systype_name(string|int|float|bool|array|null $dummy, string|int|float|bool|null $type)
 {
 	global $systypes_array;
@@ -85,6 +86,7 @@ function due_date(array|false|null $row)
 		? $row["due_date"] : "";
 }
 
+/** @return float */
 function fmt_balance(array|false|null $row)
 {
 	$value = ($row["type"] == ST_BANKPAYMENT || $row["type"] == ST_SUPPCREDIT || $row["type"] == ST_SUPPAYMENT)	? -$row["TotalAmount"] - (float)$row["Allocated"]

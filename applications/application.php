@@ -44,7 +44,10 @@ define('MENU_SYSTEM', 'menu_system');
 			$this->items = array();
 		}
 		
-		/** @psalm-external-mutation-free */
+		/**
+		 * @psalm-external-mutation-free
+		 * @return menu_item
+		 */
 		function add_item($label, $link) 
 		{
 			$item = new menu_item($label,$link);
@@ -87,7 +90,10 @@ define('MENU_SYSTEM', 'menu_system');
 			$this->rappfunctions = array();
 		}
 		
-		/** @psalm-external-mutation-free */
+		/**
+		 * @psalm-external-mutation-free
+		 * @return app_function
+		 */
 		function add_lapp_function($label,$link="",$access='SA_OPEN',$category='')
 		{
 			$appfunction = new app_function($label,$link,$access,$category);
@@ -95,7 +101,10 @@ define('MENU_SYSTEM', 'menu_system');
 			return $appfunction;
 		}
 
-		/** @psalm-external-mutation-free */
+		/**
+		 * @psalm-external-mutation-free
+		 * @return app_function
+		 */
 		function add_rapp_function($label,$link="",$access='SA_OPEN',$category='')
 		{
 			$appfunction = new app_function($label,$link,$access,$category);
@@ -123,7 +132,10 @@ define('MENU_SYSTEM', 'menu_system');
 			$this->modules = array();
 		}
 		
-		/** @psalm-external-mutation-free */
+		/**
+		 * @psalm-external-mutation-free
+		 * @return module
+		 */
 		function add_module($name, $icon = null) 
 		{
 			$module = new module($name,$icon);
@@ -131,18 +143,25 @@ define('MENU_SYSTEM', 'menu_system');
 			return $module;
 		}
 		
-		/** @psalm-mutation-free */
+		/**
+		 * @psalm-mutation-free
+		 * @return void
+		 */
 		function add_lapp_function($level, $label,$link="",$access='SA_OPEN',$category='')
 		{
 			$this->modules[$level]->lappfunctions[] = new app_function($label, $link, $access, $category);
 		}
 		
-		/** @psalm-mutation-free */
+		/**
+		 * @psalm-mutation-free
+		 * @return void
+		 */
 		function add_rapp_function($level, $label,$link="",$access='SA_OPEN',$category='')
 		{
 			$this->modules[$level]->rappfunctions[] = new app_function($label, $link, $access, $category);
 		}
 		
+		/** @return void */
 		function add_extensions()
 		{
 			hook_invoke_all('install_options', $this);
@@ -150,7 +169,10 @@ define('MENU_SYSTEM', 'menu_system');
 		//
 		// Helper returning link to report class added by extension module.
 		//
-		/** @psalm-pure */
+		/**
+		 * @psalm-pure
+		 * @return string
+		 */
 		function report_class_url($class)
 		{
 			return "reporting/reports_main.php?Class=".$class;

@@ -45,6 +45,7 @@ class package extends gzip_file {
 	//
 	//	Install package and clean temp directory.
 	//
+	/** @return false|float|int */
 	function install()
 	{
 		global $path_to_root;
@@ -82,6 +83,7 @@ class package extends gzip_file {
 	//
 	//	Removing package related sources
 	//
+	/** @return float|int */
 	function uninstall()
 	{
 		global $path_to_root;
@@ -112,7 +114,10 @@ class package extends gzip_file {
 	//
 	//	Purge all package related configuration and data.
 	//
-	/** @psalm-pure */
+	/**
+	 * @psalm-pure
+	 * @return true
+	 */
 	function purge()
 	{
 		return true;
