@@ -102,7 +102,7 @@ function issue_edit_item_controls(items_cart &$order, string|int|float|bool|null
 	}
 	else
 	{
-  		$wo_details = row_or_empty(get_work_order($_SESSION['issue_items']->order_id));
+  		$wo_details = row_or_empty(get_work_order(session_obj('issue_items')->order_id));
 
   		stock_component_items_list_cells(null, 'stock_id', 
 			$wo_details["stock_id"], null, false, true);

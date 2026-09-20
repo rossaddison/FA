@@ -29,7 +29,7 @@ function processing_end(): void
 	page_processing(true);
     unset($_SESSION['Processing']);
     if ( isset($_SESSION['Items']) ) {
-		unset($_SESSION['Items']->line_items);
+		unset(session_obj('Items')->line_items);
 		unset($_SESSION['Items']);
     }
 }

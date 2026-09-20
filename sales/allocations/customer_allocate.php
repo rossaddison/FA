@@ -33,7 +33,7 @@ function clear_allocations(): void
 {
 	if (isset($_SESSION['alloc']))
 	{
-		unset($_SESSION['alloc']->allocs);
+		unset(session_obj('alloc')->allocs);
 		unset($_SESSION['alloc']);
 	}
 	//session_register('alloc');
@@ -95,7 +95,7 @@ if (isset($_POST['Process']))
 {
 	if (check_allocations())
 	{
-		$_SESSION['alloc']->write();
+		session_obj('alloc')->write();
 		clear_allocations();
 		$_POST['Cancel'] = 1;
 	}
@@ -118,13 +118,13 @@ if (isset($_GET['trans_no']) && isset($_GET['trans_type']))
 
 if(get_post('UpdateDisplay'))
 {
-	$_SESSION['alloc']->read();
+	session_obj('alloc')->read();
 	$Ajax->activate('alloc_tbl');
 }
 
 if (isset($_SESSION['alloc']))
 {
-	edit_allocations_for_transaction($_SESSION['alloc']->type, $_SESSION['alloc']->trans_no);
+	edit_allocations_for_transaction(session_obj('alloc')->type, session_obj('alloc')->trans_no);
 }
 
 //--------------------------------------------------------------------------------

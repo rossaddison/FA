@@ -55,15 +55,15 @@ if (!isset($_POST['bank_account'])) { // first page call
 		$_POST['bank_account'] = $dflt_act['id'];
 		if ((bool)$inv) {
 			$_POST['customer_id'] = $inv['debtor_no'];
-			$_SESSION['alloc']->set_person($inv['debtor_no'], PT_CUSTOMER);
-			$_SESSION['alloc']->read();
+			session_obj('alloc')->set_person($inv['debtor_no'], PT_CUSTOMER);
+			session_obj('alloc')->read();
 			$_POST['BranchID'] = $inv['branch_code'];
 			$_POST['DateBanked'] = sql2date($inv['tran_date']);
-			foreach($_SESSION['alloc']->allocs as $line => $trans) {
+			foreach(session_obj('alloc')->allocs as $line => $trans) {
 				if ($trans->type == $type && $trans->type_no == $_GET['SInvoice']) {
 					$un_allocated = $trans->amount - $trans->amount_allocated;
 					if ($un_allocated){
-						$_SESSION['alloc']->allocs[$line]->current_allocated = $un_allocated;
+						session_obj('alloc')->allocs[$line]->current_allocated = $un_allocated;
 						$_POST['amount'] = $_POST['amount'.$line] = price_format($un_allocated);
 					}
 					break;
@@ -79,15 +79,15 @@ if (list_updated('BranchID')) {
 	// when branch is selected via external editor also customer can change
 	$br = row_or_empty(get_branch(get_post('BranchID')));
 	$_POST['customer_id'] = $br['debtor_no'];
-	$_SESSION['alloc']->person_id = $br['debtor_no'];
+	session_obj('alloc')->person_id = $br['debtor_no'];
 	$Ajax->activate('customer_id');
 }
 
 if (!isset($_POST['customer_id'])) {
 	$_POST['customer_id'] = get_global_customer(false);
-	$_SESSION['alloc']->set_person($_POST['customer_id'], PT_CUSTOMER);
-	$_SESSION['alloc']->read();
-	$dflt_act = row_or_empty(get_default_bank_account($_SESSION['alloc']->person_curr));
+	session_obj('alloc')->set_person($_POST['customer_id'], PT_CUSTOMER);
+	session_obj('alloc')->read();
+	$dflt_act = row_or_empty(get_default_bank_account(session_obj('alloc')->person_curr));
 	$_POST['bank_account'] = $dflt_act['id'];
 }
 if (!isset($_POST['DateBanked'])) {
@@ -218,7 +218,7 @@ function can_process()
 	if (!db_has_currency_rates(get_customer_currency($_POST['customer_id']), $_POST['DateBanked'], true))
 		return false;
 
-	$_SESSION['alloc']->amount = input_num('amount');
+	session_obj('alloc')->amount = input_num('amount');
 
 	if (isset($_POST["TotalNumberOfAllocs"]))
 		return check_allocations();
@@ -239,15 +239,15 @@ if (get_post('AddPaymentItem') && can_process()) {
 
 	new_doc_date($_POST['DateBanked']);
 
-	$new_pmt = !(bool)$_SESSION['alloc']->trans_no;
+	$new_pmt = !(bool)session_obj('alloc')->trans_no;
 	//Chaitanya : 13-OCT-2011 - To support Edit feature
-	$payment_no = write_customer_payment($_SESSION['alloc']->trans_no, $_POST['customer_id'], $_POST['BranchID'],
+	$payment_no = write_customer_payment(session_obj('alloc')->trans_no, $_POST['customer_id'], $_POST['BranchID'],
 		$_POST['bank_account'], $_POST['DateBanked'], $_POST['ref'],
                 input_num('amount'), input_num('discount'), $_POST['memo_'], 0, input_num('charge'), input_num('bank_amount', input_num('amount')), $_POST['dimension_id'], $_POST['dimension2_id']);
 
-	$_SESSION['alloc']->trans_no = $payment_no;
-	$_SESSION['alloc']->date_ = $_POST['DateBanked'];
-	$_SESSION['alloc']->write();
+	session_obj('alloc')->trans_no = $payment_no;
+	session_obj('alloc')->date_ = $_POST['DateBanked'];
+	session_obj('alloc')->write();
 
 	unset($_SESSION['alloc']);
 	meta_forward($_SERVER['PHP_SELF'], $new_pmt ? "AddedID=$payment_no" : "UpdatedID=$payment_no");
@@ -265,7 +265,7 @@ function read_customer_data(): void
 	$_POST['pymt_discount'] = !$myrow ? 0 : $myrow["pymt_discount"];
 	// To support Edit feature
 	// If page is called first time and New entry fetch the nex reference number
-	if (!(bool)$_SESSION['alloc']->trans_no && !isset($_POST['charge'])) 
+	if (!(bool)session_obj('alloc')->trans_no && !isset($_POST['charge'])) 
 		$_POST['ref'] = $Refs->get_next(ST_CUSTPAYMENT, null, array(
 			'customer' => get_post('customer_id'), 'date' => get_post('DateBanked')));
 }
@@ -304,7 +304,7 @@ if (isset($_GET['trans_no']) && $_GET['trans_no'] > 0 )
 }
 
 //----------------------------------------------------------------------------------------------
-$new = !(bool)$_SESSION['alloc']->trans_no;
+$new = !(bool)session_obj('alloc')->trans_no;
 start_form();
 
 hidden('trans_no');
@@ -316,7 +316,7 @@ table_section(1);
 if ($new)
 	customer_list_row(_("From Customer:"), 'customer_id', null, false, true);
 else {
-	label_cells(_("From Customer:"), $_SESSION['alloc']->person_name, "class='label'");
+	label_cells(_("From Customer:"), session_obj('alloc')->person_name, "class='label'");
 	hidden('customer_id', post_scalar('customer_id'));
 }
 
@@ -327,11 +327,11 @@ if (db_customer_has_branches($_POST['customer_id'])) {
 }
 
 if (list_updated('customer_id') || ($new && list_updated('bank_account'))) {
-	$_SESSION['alloc']->set_person($_POST['customer_id'], PT_CUSTOMER);
-	$_SESSION['alloc']->read();
+	session_obj('alloc')->set_person($_POST['customer_id'], PT_CUSTOMER);
+	session_obj('alloc')->read();
 	$_POST['memo_'] = $_POST['amount'] = $_POST['discount'] = '';
 	if (list_updated('customer_id')) {
-		$dflt_act = row_or_empty(get_default_bank_account($_SESSION['alloc']->person_curr));
+		$dflt_act = row_or_empty(get_default_bank_account(session_obj('alloc')->person_curr));
 		$_POST['bank_account'] = $dflt_act['id'];
 	}
 	$Ajax->activate('_page_body');
@@ -355,10 +355,10 @@ ref_row(_("Reference:"), 'ref','' , null, '', ST_CUSTPAYMENT);
 table_section(3);
 
 $comp_currency = get_company_currency();
-$cust_currency = $_SESSION['alloc']->set_person($_POST['customer_id'], PT_CUSTOMER);
+$cust_currency = session_obj('alloc')->set_person($_POST['customer_id'], PT_CUSTOMER);
 if (!$cust_currency)
 	$cust_currency = $comp_currency;
-$_SESSION['alloc']->currency = $bank_currency = get_bank_account_currency($_POST['bank_account']);
+session_obj('alloc')->currency = $bank_currency = get_bank_account_currency($_POST['bank_account']);
 
 if ($cust_currency != $bank_currency)
 {

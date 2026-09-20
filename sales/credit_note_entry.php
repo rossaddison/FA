@@ -153,13 +153,13 @@ function can_process(): bool
 		set_focus('branch_id');
 		return false;
 	} 
-	if ($_SESSION['Items']->count_items() == 0 && !(bool)input_num('ChargeFreightCost',0))
+	if (session_obj('Items')->count_items() == 0 && !(bool)input_num('ChargeFreightCost',0))
 	{
 		display_error(_("You must enter at least one non empty item line."));
 		set_focus('AddItem');
 		return false;
 	}
-	if($_SESSION['Items']->trans_no == 0) {
+	if(session_obj('Items')->trans_no == 0) {
 	    if (!$Refs->is_valid($_POST['ref'], ST_CUSTCREDIT)) {
 			display_error( _("You must enter a reference."));
 			set_focus('ref');
@@ -193,7 +193,7 @@ if (isset($_POST['ProcessCredit']) && can_process()) {
 		$_POST['WriteOffGLCode'] = 0;
 	}
 	copy_to_cn();
-	$credit_no = $_SESSION['Items']->write($_POST['WriteOffGLCode']);
+	$credit_no = session_obj('Items')->write($_POST['WriteOffGLCode']);
 	if ($credit_no == -1)
 	{
 		display_error(_("The entered reference is already in use."));
@@ -201,7 +201,7 @@ if (isset($_POST['ProcessCredit']) && can_process()) {
 	}
 	else
 	{
-		new_doc_date($_SESSION['Items']->document_date);
+		new_doc_date(session_obj('Items')->document_date);
 		processing_end();
 		meta_forward($_SERVER['PHP_SELF'], "AddedID=$credit_no");
 	}
@@ -234,7 +234,7 @@ function check_item_data(): bool
 function handle_update_item(): void
 {
 	if ($_POST['UpdateItem'] != "" && check_item_data()) {
-		$_SESSION['Items']->update_cart_item($_POST['line_no'], input_num('qty'),
+		session_obj('Items')->update_cart_item($_POST['line_no'], input_num('qty'),
 			input_num('price'), input_num('Disc') / 100);
 	}
     line_start_focus();
@@ -244,7 +244,7 @@ function handle_update_item(): void
 
 function handle_delete_item(string|int|null $line_no): void
 {
-	$_SESSION['Items']->remove_from_cart($line_no);
+	session_obj('Items')->remove_from_cart($line_no);
     line_start_focus();
 }
 

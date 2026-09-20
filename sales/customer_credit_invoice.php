@@ -96,7 +96,7 @@ function can_process(): bool
 		return false;
 	}
 
-    if ($_SESSION['Items']->trans_no==0) {
+    if (session_obj('Items')->trans_no==0) {
 		if (!$Refs->is_valid($_POST['ref'], ST_CUSTCREDIT)) {
 			display_error(_("You must enter a reference."));
 			set_focus('ref');
@@ -138,13 +138,13 @@ if (isset($_GET['InvoiceNumber']) && $_GET['InvoiceNumber'] > 0) {
 function check_quantities(): int
 {
 	$ok =1;
-	foreach ($_SESSION['Items']->line_items as $line_no=>$itm) {
+	foreach (session_obj('Items')->line_items as $line_no=>$itm) {
 		if ($itm->quantity == $itm->qty_done) {
 			continue; // this line was fully credited/removed
 		}
 		if (isset($_POST['Line'.$line_no])) {
 			if (check_num('Line'.$line_no, 0, $itm->quantity)) {
-				$_SESSION['Items']->line_items[$line_no]->qty_dispatched =
+				session_obj('Items')->line_items[$line_no]->qty_dispatched =
 				  input_num('Line'.$line_no);
 			}
 			else {
@@ -155,7 +155,7 @@ function check_quantities(): int
 		if (isset($_POST['Line'.$line_no.'Desc'])) {
 			$line_desc = $_POST['Line'.$line_no.'Desc'];
 			if (strlen($line_desc) > 0) {
-				$_SESSION['Items']->line_items[$line_no]->item_description = $line_desc;
+				session_obj('Items')->line_items[$line_no]->item_description = $line_desc;
 			}
 	  	}
 	}
@@ -171,7 +171,7 @@ function copy_to_cart(): void
 	$cart->document_date =  $_POST['CreditDate'];
 	$cart->Location = (isset($_POST['Location']) ? $_POST['Location'] : "");
 	$cart->Comments = $_POST['CreditText'];
-	if ($_SESSION['Items']->trans_no == 0)
+	if (session_obj('Items')->trans_no == 0)
 		$cart->reference = $_POST['ref'];
 }
 //-----------------------------------------------------------------------------
@@ -190,15 +190,15 @@ function copy_from_cart(): void
 //-----------------------------------------------------------------------------
 
 if (isset($_POST['ProcessCredit']) && can_process()) {
-	$new_credit = ($_SESSION['Items']->trans_no == 0);
+	$new_credit = (session_obj('Items')->trans_no == 0);
 
 	if (!isset($_POST['WriteOffGLCode']))
 		$_POST['WriteOffGLCode'] = 0;
 
 	copy_to_cart();
 	if ($new_credit) 
-		new_doc_date($_SESSION['Items']->document_date);
-	$credit_no = $_SESSION['Items']->write($_POST['WriteOffGLCode']);
+		new_doc_date(session_obj('Items')->document_date);
+	$credit_no = session_obj('Items')->write($_POST['WriteOffGLCode']);
 	if ($credit_no == -1)
 	{
 		display_error(_("The entered reference is already in use."));
@@ -216,7 +216,7 @@ if (isset($_POST['ProcessCredit']) && can_process()) {
 //-----------------------------------------------------------------------------
 
 if (isset($_POST['Location'])) {
-	$_SESSION['Items']->Location = $_POST['Location'];
+	session_obj('Items')->Location = $_POST['Location'];
 }
 
 //-----------------------------------------------------------------------------
@@ -231,24 +231,24 @@ function display_credit_items(): void
 
     start_table(TABLESTYLE, "width='100%'");
     start_row();
-    label_cells(_("Customer"), $_SESSION['Items']->customer_name, "class='tableheader2'");
-	label_cells(_("Branch"), get_branch_name($_SESSION['Items']->Branch), "class='tableheader2'");
-    label_cells(_("Currency"), $_SESSION['Items']->customer_currency, "class='tableheader2'");
+    label_cells(_("Customer"), session_obj('Items')->customer_name, "class='tableheader2'");
+	label_cells(_("Branch"), get_branch_name(session_obj('Items')->Branch), "class='tableheader2'");
+    label_cells(_("Currency"), session_obj('Items')->customer_currency, "class='tableheader2'");
     end_row();
     start_row();
 
-    if ($_SESSION['Items']->trans_no==0) {
+    if (session_obj('Items')->trans_no==0) {
 		ref_cells(_("Reference"), 'ref', '', null, "class='tableheader2'", false, ST_CUSTCREDIT,
-		array('customer' => $_SESSION['Items']->customer_id,
-			'branch' => $_SESSION['Items']->Branch,
+		array('customer' => session_obj('Items')->customer_id,
+			'branch' => session_obj('Items')->Branch,
 			'date' => get_post('CreditDate')));
 	} else {
-		label_cells(_("Reference"), $_SESSION['Items']->reference, "class='tableheader2'");
+		label_cells(_("Reference"), session_obj('Items')->reference, "class='tableheader2'");
 	}
-    label_cells(_("Crediting Invoice"), get_customer_trans_view_str(ST_SALESINVOICE, array_keys($_SESSION['Items']->src_docs)), "class='tableheader2'");
+    label_cells(_("Crediting Invoice"), get_customer_trans_view_str(ST_SALESINVOICE, array_keys(session_obj('Items')->src_docs)), "class='tableheader2'");
 
 	if (!isset($_POST['ShipperID'])) {
-		$_POST['ShipperID'] = $_SESSION['Items']->ship_via;
+		$_POST['ShipperID'] = session_obj('Items')->ship_via;
 	}
 	label_cell(_("Shipping Company"), "class='tableheader2'");
 	shippers_list_cells(null, 'ShipperID', $_POST['ShipperID']);
@@ -260,9 +260,9 @@ function display_credit_items(): void
 
     start_table(TABLESTYLE, "width='100%'");
 
-    label_row(_("Invoice Date"), $_SESSION['Items']->src_date, "class='tableheader2'");
+    label_row(_("Invoice Date"), session_obj('Items')->src_date, "class='tableheader2'");
 
-    date_row(_("Credit Note Date"), 'CreditDate', '', $_SESSION['Items']->trans_no==0, 0, 0, 0, "class='tableheader2'");
+    date_row(_("Credit Note Date"), 'CreditDate', '', session_obj('Items')->trans_no==0, 0, 0, 0, "class='tableheader2'");
 
     end_table();
 
@@ -278,7 +278,7 @@ function display_credit_items(): void
 
     $k = 0; //row colour counter
 
-    foreach ($_SESSION['Items']->line_items as $line_no=>$ln_itm) {
+    foreach (session_obj('Items')->line_items as $line_no=>$ln_itm) {
 		if ($ln_itm->quantity == $ln_itm->qty_done) {
 			continue; // this line was fully credited/removed
 		}
@@ -303,7 +303,7 @@ function display_credit_items(): void
     }
 
     if (!check_num('ChargeFreightCost')) {
-    	$_POST['ChargeFreightCost'] = price_format($_SESSION['Items']->freight_cost);
+    	$_POST['ChargeFreightCost'] = price_format(session_obj('Items')->freight_cost);
     }
 	$colspan = 7;
 	start_row();
@@ -311,14 +311,14 @@ function display_credit_items(): void
 	small_amount_cells(null, "ChargeFreightCost", price_format(get_post('ChargeFreightCost',0)));
 	end_row();
 
-    $inv_items_total = $_SESSION['Items']->get_items_total_dispatch();
+    $inv_items_total = session_obj('Items')->get_items_total_dispatch();
 
     $display_sub_total = price_format($inv_items_total + input_num(post_scalar('ChargeFreightCost')));
     label_row(_("Sub-total"), $display_sub_total, "colspan=$colspan align=right", "align=right");
 
-    $taxes = $_SESSION['Items']->get_taxes(input_num(post_scalar('ChargeFreightCost')));
+    $taxes = session_obj('Items')->get_taxes(input_num(post_scalar('ChargeFreightCost')));
 
-    $tax_total = display_edit_tax_items($taxes, $colspan, $_SESSION['Items']->tax_included);
+    $tax_total = display_edit_tax_items($taxes, $colspan, session_obj('Items')->tax_included);
 
     $display_total = price_format(($inv_items_total + input_num('ChargeFreightCost') + $tax_total));
 
@@ -347,7 +347,7 @@ function display_credit_options(): void
 
 		/*if the credit note is a return of goods then need to know which location to receive them into */
 		if (!isset($_POST['Location']))
-			$_POST['Location'] = $_SESSION['Items']->Location;
+			$_POST['Location'] = session_obj('Items')->Location;
 	   	locations_list_row(_("Items Returned to Location"), 'Location', $_POST['Location']);
 	}
 	else

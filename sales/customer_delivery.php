@@ -118,7 +118,7 @@ if (isset($_GET['OrderNumber']) && $_GET['OrderNumber'] > 0) {
 	check_is_editable(ST_CUSTDELIVERY, $_GET['ModifyDelivery']);
 	$_SESSION['Items'] = new Cart(ST_CUSTDELIVERY,$_GET['ModifyDelivery']);
 
-	if (!$_SESSION['Items']->prepaid && $_SESSION['Items']->count_items() == 0) {
+	if (!session_obj('Items')->prepaid && session_obj('Items')->count_items() == 0) {
 		hyperlink_params($path_to_root . "/sales/inquiry/sales_orders_view.php",
 			_("Select a different delivery"), "OutstandingOnly=1");
 		echo "<br><center><b>" . _("This delivery has all items invoiced. There is nothing to modify.") .
@@ -174,7 +174,7 @@ function check_data(): bool
 		return false;
 	}
 
-	if ($_SESSION['Items']->trans_no==0) {
+	if (session_obj('Items')->trans_no==0) {
 		if (!$Refs->is_valid($_POST['ref'], ST_CUSTDELIVERY)) {
 			display_error(_("You must enter a reference."));
 			set_focus('ref');
@@ -191,7 +191,7 @@ function check_data(): bool
 		return false;
 	}
 
-	if ($_SESSION['Items']->has_items_dispatch() == 0 && input_num('ChargeFreightCost') == 0) {
+	if (session_obj('Items')->has_items_dispatch() == 0 && input_num('ChargeFreightCost') == 0) {
 		display_error(_("There are no item quantities on this delivery note."));
 		return false;
 	}
@@ -202,7 +202,7 @@ function check_data(): bool
 
 	copy_to_cart();
 
-	if (!sysprefs()->allow_negative_stock() && ($low_stock = $_SESSION['Items']->check_qoh()))
+	if (!sysprefs()->allow_negative_stock() && ($low_stock = session_obj('Items')->check_qoh()))
 	{
 		display_error(_("This document cannot be processed because there is insufficient quantity for items marked."));
 		return false;
@@ -248,9 +248,9 @@ function check_quantities(): int
 {
 	$ok =1;
 	// Update cart delivery quantities/descriptions
-	foreach ($_SESSION['Items']->line_items as $line=>$itm) {
+	foreach (session_obj('Items')->line_items as $line=>$itm) {
 		if (isset($_POST['Line'.$line])) {
-			if((bool)$_SESSION['Items']->trans_no) {
+			if((bool)session_obj('Items')->trans_no) {
 				$min = $itm->qty_done;
 				$max = $itm->quantity;
 			} else {
@@ -260,7 +260,7 @@ function check_quantities(): int
 			}
 
 			if (check_num('Line'.$line, $min, $max)) {
-				$_SESSION['Items']->line_items[$line]->qty_dispatched =
+				session_obj('Items')->line_items[$line]->qty_dispatched =
 				  input_num('Line'.$line);
 			} else {
 				set_focus('Line'.$line);
@@ -271,7 +271,7 @@ function check_quantities(): int
 		if (isset($_POST['Line'.$line.'Desc'])) {
 			$line_desc = $_POST['Line'.$line.'Desc'];
 			if (strlen($line_desc) > 0) {
-				$_SESSION['Items']->line_items[$line]->item_description = $line_desc;
+				session_obj('Items')->line_items[$line]->item_description = $line_desc;
 			}
 		}
 	}
@@ -325,35 +325,35 @@ echo "<tr><td>"; // outer table
 
 start_table(TABLESTYLE, "width='100%'");
 start_row();
-label_cells(_("Customer"), $_SESSION['Items']->customer_name, "class='tableheader2'");
-label_cells(_("Branch"), get_branch_name($_SESSION['Items']->Branch), "class='tableheader2'");
-label_cells(_("Currency"), $_SESSION['Items']->customer_currency, "class='tableheader2'");
+label_cells(_("Customer"), session_obj('Items')->customer_name, "class='tableheader2'");
+label_cells(_("Branch"), get_branch_name(session_obj('Items')->Branch), "class='tableheader2'");
+label_cells(_("Currency"), session_obj('Items')->customer_currency, "class='tableheader2'");
 end_row();
 start_row();
 
-if ($_SESSION['Items']->trans_no==0) {
+if (session_obj('Items')->trans_no==0) {
 	ref_cells(_("Reference"), 'ref', '', null, "class='tableheader2'", false, ST_CUSTDELIVERY,
-	array('customer' => $_SESSION['Items']->customer_id,
-			'branch' => $_SESSION['Items']->Branch,
+	array('customer' => session_obj('Items')->customer_id,
+			'branch' => session_obj('Items')->Branch,
 			'date' => get_post('DispatchDate')));
 } else {
-	label_cells(_("Reference"), $_SESSION['Items']->reference, "class='tableheader2'");
+	label_cells(_("Reference"), session_obj('Items')->reference, "class='tableheader2'");
 }
 
-label_cells(_("For Sales Order"), get_customer_trans_view_str(ST_SALESORDER, $_SESSION['Items']->order_no), "class='tableheader2'");
+label_cells(_("For Sales Order"), get_customer_trans_view_str(ST_SALESORDER, session_obj('Items')->order_no), "class='tableheader2'");
 
-label_cells(_("Sales Type"), $_SESSION['Items']->sales_type_name, "class='tableheader2'");
+label_cells(_("Sales Type"), session_obj('Items')->sales_type_name, "class='tableheader2'");
 end_row();
 start_row();
 
 if (!isset($_POST['Location'])) {
-	$_POST['Location'] = $_SESSION['Items']->Location;
+	$_POST['Location'] = session_obj('Items')->Location;
 }
 label_cell(_("Delivery From"), "class='tableheader2'");
 locations_list_cells(null, 'Location', null, false, true);
 
 if (!isset($_POST['ship_via'])) {
-	$_POST['ship_via'] = $_SESSION['Items']->ship_via;
+	$_POST['ship_via'] = session_obj('Items')->ship_via;
 }
 label_cell(_("Shipping Company"), "class='tableheader2'");
 shippers_list_cells(null, 'ship_via', $_POST['ship_via']);
@@ -365,7 +365,7 @@ if (!isset($_POST['DispatchDate']) || !is_date(post_scalar('DispatchDate'))) {
 		$_POST['DispatchDate'] = end_fiscalyear();
 	}
 }
-date_cells(_("Date"), 'DispatchDate', '', $_SESSION['Items']->trans_no==0, 0, 0, 0, "class='tableheader2'");
+date_cells(_("Date"), 'DispatchDate', '', session_obj('Items')->trans_no==0, 0, 0, 0, "class='tableheader2'");
 end_row();
 
 end_table();
@@ -375,9 +375,9 @@ echo "</td><td>";// outer table
 start_table(TABLESTYLE, "width='90%'");
 
 if (!isset($_POST['due_date']) || !is_date(post_scalar('due_date'))) {
-	$_POST['due_date'] = get_invoice_duedate($_SESSION['Items']->payment, $_POST['DispatchDate']);
+	$_POST['due_date'] = get_invoice_duedate(session_obj('Items')->payment, $_POST['DispatchDate']);
 }
-customer_credit_row($_SESSION['Items']->customer_id, $_SESSION['Items']->credit, "class='tableheader2'");
+customer_credit_row(session_obj('Items')->customer_id, session_obj('Items')->credit, "class='tableheader2'");
 
 $dim = get_company_pref('use_dimension');
 if ($dim > 0) {
@@ -405,7 +405,7 @@ end_table();
 echo "</td></tr>";
 end_table(1); // outer table
 
-$row = row_or_empty(get_customer_to_order($_SESSION['Items']->customer_id));
+$row = row_or_empty(get_customer_to_order(session_obj('Items')->customer_id));
 if ($row['dissallow_invoices'] == 1)
 {
 	display_error(_("The selected customer account is currently on hold. Please contact the credit control personnel to discuss."));
@@ -417,7 +417,7 @@ display_heading(_("Delivery Items"));
 div_start('Items');
 start_table(TABLESTYLE, "width='80%'");
 
-$new = $_SESSION['Items']->trans_no==0;
+$new = session_obj('Items')->trans_no==0;
 $th = array(_("Item Code"), _("Item Description"), 
 	$new ? _("Ordered") : _("Max. delivery"), _("Units"), $new ? _("Delivered") : _("Invoiced"),
 	_("This Delivery"), _("Price"), _("Tax Type"), _("Discount"), _("Total"));
@@ -426,7 +426,7 @@ table_header($th);
 $k = 0;
 $has_marked = false;
 
-foreach ($_SESSION['Items']->line_items as $line=>$ln_itm) {
+foreach (session_obj('Items')->line_items as $line=>$ln_itm) {
 	if ($ln_itm->quantity==$ln_itm->qty_done) {
 		continue; //this line is fully delivered
 	}
@@ -491,23 +491,23 @@ foreach ($_SESSION['Items']->line_items as $line=>$ln_itm) {
 }
 
 $_POST['ChargeFreightCost'] =  get_post('ChargeFreightCost', 
-	price_format($_SESSION['Items']->freight_cost));
+	price_format(session_obj('Items')->freight_cost));
 
 $colspan = 9;
 
 start_row();
 label_cell(_("Shipping Cost"), "colspan=$colspan align=right");
-small_amount_cells(null, 'ChargeFreightCost', $_SESSION['Items']->freight_cost);
+small_amount_cells(null, 'ChargeFreightCost', session_obj('Items')->freight_cost);
 end_row();
 
-$inv_items_total = $_SESSION['Items']->get_items_total_dispatch();
+$inv_items_total = session_obj('Items')->get_items_total_dispatch();
 
 $display_sub_total = price_format($inv_items_total + input_num('ChargeFreightCost'));
 
 label_row(_("Sub-total"), $display_sub_total, "colspan=$colspan align=right","align=right");
 
-$taxes = $_SESSION['Items']->get_taxes(input_num('ChargeFreightCost'));
-$tax_total = display_edit_tax_items($taxes, $colspan, $_SESSION['Items']->tax_included);
+$taxes = session_obj('Items')->get_taxes(input_num('ChargeFreightCost'));
+$tax_total = display_edit_tax_items($taxes, $colspan, session_obj('Items')->tax_included);
 
 $display_total = price_format(($inv_items_total + input_num('ChargeFreightCost') + $tax_total));
 

@@ -28,7 +28,7 @@ include_once($path_to_root . "/sales/includes/sales_db.inc");
 include_once($path_to_root . "/sales/includes/db/sales_types_db.inc");
 include_once($path_to_root . "/reporting/includes/reporting.inc");
 
-set_page_security( @$_SESSION['Items']->trans_type,
+set_page_security( @session_obj('Items')->trans_type,
 	array(	ST_SALESORDER=>'SA_SALESORDER',
 			ST_SALESQUOTE => 'SA_SALESQUOTE',
 			ST_CUSTDELIVERY => 'SA_SALESDELIVERY',
@@ -70,7 +70,7 @@ if (isset($_GET['NewDelivery']) && is_numeric($_GET['NewDelivery'])) {
 
 	if (isset($_GET['FixedAsset'])) {
 		$_SESSION['page_title'] = _($help_context = "Fixed Assets Sale");
-		$_SESSION['Items']->fixed_asset = true;
+		session_obj('Items')->fixed_asset = true;
   	} else
 		$_SESSION['page_title'] = _($help_context = "Direct Sales Invoice");
 
@@ -389,24 +389,24 @@ function can_process(): bool {
 		set_focus('OrderDate');
 		return false;
 	}
-	if ($_SESSION['Items']->trans_type!=ST_SALESORDER && $_SESSION['Items']->trans_type!=ST_SALESQUOTE && !(bool)is_date_in_fiscalyear($_POST['OrderDate'])) {
+	if (session_obj('Items')->trans_type!=ST_SALESORDER && session_obj('Items')->trans_type!=ST_SALESQUOTE && !(bool)is_date_in_fiscalyear($_POST['OrderDate'])) {
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('OrderDate');
 		return false;
 	}
-	if (count($_SESSION['Items']->line_items) == 0)	{
+	if (count(session_obj('Items')->line_items) == 0)	{
 		display_error(_("You must enter at least one non empty item line."));
 		set_focus('AddItem');
 		return false;
 	}
-	if (!sysprefs()->allow_negative_stock() && ($low_stock = $_SESSION['Items']->check_qoh()))
+	if (!sysprefs()->allow_negative_stock() && ($low_stock = session_obj('Items')->check_qoh()))
 	{
 		display_error(_("This document cannot be processed because there is insufficient quantity for items marked."));
 		return false;
 	}
-	if ($_SESSION['Items']->payment_terms['cash_sale'] == 0) {
-		if (!$_SESSION['Items']->is_started() && ($_SESSION['Items']->payment_terms['days_before_due'] == -1) && ((input_num('prep_amount')<=0) ||
-			input_num('prep_amount')>$_SESSION['Items']->get_trans_total())) {
+	if (session_obj('Items')->payment_terms['cash_sale'] == 0) {
+		if (!session_obj('Items')->is_started() && (session_obj('Items')->payment_terms['days_before_due'] == -1) && ((input_num('prep_amount')<=0) ||
+			input_num('prep_amount')>session_obj('Items')->get_trans_total())) {
 			display_error(_("Pre-payment required have to be positive and less than total amount."));
 			set_focus('prep_amount');
 			return false;
@@ -417,7 +417,7 @@ function can_process(): bool {
 			return false;
 		}
 
-		if ($_SESSION['Items']->trans_type != ST_SALESQUOTE && strlen($_POST['delivery_address']) <= 1) {
+		if (session_obj('Items')->trans_type != ST_SALESQUOTE && strlen($_POST['delivery_address']) <= 1) {
 			display_error( _("You should enter the street address in the box provided. Orders cannot be accepted without a valid street address."));
 			set_focus('delivery_address');
 			return false;
@@ -432,7 +432,7 @@ function can_process(): bool {
 			return false;
 		}
 		if (!is_date(post_scalar('delivery_date'))) {
-			if ($_SESSION['Items']->trans_type==ST_SALESQUOTE)
+			if (session_obj('Items')->trans_type==ST_SALESQUOTE)
 				display_error(_("The Valid date is invalid."));
 			else	
 				display_error(_("The delivery date is invalid."));
@@ -440,7 +440,7 @@ function can_process(): bool {
 			return false;
 		}
 		if (date1_greater_date2($_POST['OrderDate'], $_POST['delivery_date'])) {
-			if ($_SESSION['Items']->trans_type==ST_SALESQUOTE)
+			if (session_obj('Items')->trans_type==ST_SALESQUOTE)
 				display_error(_("The requested valid date is before the date of the quotation."));
 			else	
 				display_error(_("The requested delivery date is before the date of the order."));
@@ -456,22 +456,22 @@ function can_process(): bool {
 			return false;
 		}	
 	}	
-	if (!$Refs->is_valid($_POST['ref'], $_SESSION['Items']->trans_type)) {
+	if (!$Refs->is_valid($_POST['ref'], session_obj('Items')->trans_type)) {
 		display_error(_("You must enter a reference."));
 		set_focus('ref');
 		return false;
 	}
-	if (!db_has_currency_rates($_SESSION['Items']->customer_currency, $_POST['OrderDate']))
+	if (!db_has_currency_rates(session_obj('Items')->customer_currency, $_POST['OrderDate']))
 		return false;
 	
-   	if ($_SESSION['Items']->get_items_total() < 0) {
+   	if (session_obj('Items')->get_items_total() < 0) {
 		display_error("Invoice total amount cannot be less than zero.");
 		return false;
 	}
 
-	if ((bool)$_SESSION['Items']->payment_terms['cash_sale'] && 
-		($_SESSION['Items']->trans_type == ST_CUSTDELIVERY || $_SESSION['Items']->trans_type == ST_SALESINVOICE)) 
-		$_SESSION['Items']->due_date = $_SESSION['Items']->document_date;
+	if ((bool)session_obj('Items')->payment_terms['cash_sale'] && 
+		(session_obj('Items')->trans_type == ST_CUSTDELIVERY || session_obj('Items')->trans_type == ST_SALESINVOICE)) 
+		session_obj('Items')->due_date = session_obj('Items')->document_date;
 	return true;
 }
 
@@ -484,15 +484,15 @@ if (isset($_POST['update'])) {
 
 if (isset($_POST['ProcessOrder']) && can_process()) {
 
-	$modified = ($_SESSION['Items']->trans_no != 0);
-	$so_type = $_SESSION['Items']->so_type;
+	$modified = (session_obj('Items')->trans_no != 0);
+	$so_type = session_obj('Items')->so_type;
 
-	$ret = $_SESSION['Items']->write(1);
+	$ret = session_obj('Items')->write(1);
 	if ($ret == -1)
 	{
 		display_error(_("The entered reference is already in use."));
-		$ref = $Refs->get_next($_SESSION['Items']->trans_type, null, array('date' => Today()));
-		if ($ref != $_SESSION['Items']->reference)
+		$ref = $Refs->get_next(session_obj('Items')->trans_type, null, array('date' => Today()));
+		if ($ref != session_obj('Items')->reference)
 		{
 			unset($_POST['ref']); // force refresh reference
 			display_error(_("The reference number field has been increased. Please save the document again."));
@@ -505,9 +505,9 @@ if (isset($_POST['ProcessOrder']) && can_process()) {
 			$Ajax->activate('_page_body');
 			display_footer_exit();
 		}
-		$trans_no = key($_SESSION['Items']->trans_no);
-		$trans_type = $_SESSION['Items']->trans_type;
-		new_doc_date($_SESSION['Items']->document_date);
+		$trans_no = key(session_obj('Items')->trans_no);
+		$trans_type = session_obj('Items')->trans_type;
+		new_doc_date(session_obj('Items')->document_date);
 		processing_end();
 		if ($modified) {
 			if ($trans_type == ST_SALESQUOTE)
@@ -545,8 +545,8 @@ function check_item_data(): bool
 		display_error( _("Price for inventory item must be entered and can not be less than 0"));
 		set_focus('price');
 		return false;
-	} elseif (isset($_POST['LineNo']) && isset($_SESSION['Items']->line_items[$_POST['LineNo']])
-	    && !check_num('qty', $_SESSION['Items']->line_items[$_POST['LineNo']]->qty_done)) {
+	} elseif (isset($_POST['LineNo']) && isset(session_obj('Items')->line_items[$_POST['LineNo']])
+	    && !check_num('qty', session_obj('Items')->line_items[$_POST['LineNo']]->qty_done)) {
 
 		set_focus('qty');
 		display_error(_("You attempting to make the quantity ordered a quantity less than has already been delivered. The quantity delivered cannot be modified retrospectively."));
@@ -554,11 +554,11 @@ function check_item_data(): bool
 	}
 
 	$cost_home = get_unit_cost(get_post('stock_id')); // Added 2011-03-27 Joe Hunt
-	$cost = $cost_home / get_exchange_rate_from_home_currency($_SESSION['Items']->customer_currency, $_SESSION['Items']->document_date);
+	$cost = $cost_home / get_exchange_rate_from_home_currency(session_obj('Items')->customer_currency, session_obj('Items')->document_date);
 	if (input_num('price') < $cost)
 	{
 		$dec = user_price_dec();
-		$curr = $_SESSION['Items']->customer_currency;
+		$curr = session_obj('Items')->customer_currency;
 		$price = number_format2(input_num('price'), $dec);
 		if ($cost_home == $cost)
 			$std_cost = number_format2($cost_home, $dec);
@@ -577,7 +577,7 @@ function check_item_data(): bool
 function handle_update_item(): void
 {
 	if ($_POST['UpdateItem'] != '' && check_item_data()) {
-		$_SESSION['Items']->update_cart_item($_POST['LineNo'],
+		session_obj('Items')->update_cart_item($_POST['LineNo'],
 		 input_num('qty'), input_num('price'),
 		 input_num('Disc') / 100, $_POST['item_description'] );
 	}
@@ -589,8 +589,8 @@ function handle_update_item(): void
 
 function handle_delete_item(string|int|null $line_no): void
 {
-    if ($_SESSION['Items']->some_already_delivered($line_no) == 0) {
-	    $_SESSION['Items']->remove_from_cart($line_no);
+    if (session_obj('Items')->some_already_delivered($line_no) == 0) {
+	    session_obj('Items')->remove_from_cart($line_no);
     } else {
 		display_error(_("This item cannot be deleted because some of it has already been delivered."));
     }
@@ -620,28 +620,28 @@ function  handle_cancel_order(): void
 	global $path_to_root, $Ajax;
 
 
-	if ($_SESSION['Items']->trans_type == ST_CUSTDELIVERY) {
+	if (session_obj('Items')->trans_type == ST_CUSTDELIVERY) {
 		display_notification(_("Direct delivery entry has been cancelled as requested."), 1);
 		submenu_option(_("Enter a New Sales Delivery"),	"/sales/sales_order_entry.php?NewDelivery=1");
-	} elseif ($_SESSION['Items']->trans_type == ST_SALESINVOICE) {
+	} elseif (session_obj('Items')->trans_type == ST_SALESINVOICE) {
 		display_notification(_("Direct invoice entry has been cancelled as requested."), 1);
 		submenu_option(_("Enter a New Sales Invoice"),	"/sales/sales_order_entry.php?NewInvoice=1");
-	} elseif ($_SESSION['Items']->trans_type == ST_SALESQUOTE)
+	} elseif (session_obj('Items')->trans_type == ST_SALESQUOTE)
 	{
-		if ($_SESSION['Items']->trans_no != 0) 
-			delete_sales_order(key($_SESSION['Items']->trans_no), $_SESSION['Items']->trans_type);
+		if (session_obj('Items')->trans_no != 0) 
+			delete_sales_order(key(session_obj('Items')->trans_no), session_obj('Items')->trans_type);
 		display_notification(_("This sales quotation has been cancelled as requested."), 1);
 		submenu_option(_("Enter a New Sales Quotation"), "/sales/sales_order_entry.php?NewQuotation=Yes");
 	} else { // sales order
-		if ($_SESSION['Items']->trans_no != 0) {
-			$order_no = key($_SESSION['Items']->trans_no);
+		if (session_obj('Items')->trans_no != 0) {
+			$order_no = key(session_obj('Items')->trans_no);
 			if (sales_order_has_deliveries($order_no))
 			{
 				close_sales_order($order_no);
 				display_notification(_("Undelivered part of order has been cancelled as requested."), 1);
 				submenu_option(_("Select Another Sales Order for Edition"), "/sales/inquiry/sales_orders_view.php?type=".ST_SALESORDER);
 			} else {
-				delete_sales_order(key($_SESSION['Items']->trans_no), $_SESSION['Items']->trans_type);
+				delete_sales_order(key(session_obj('Items')->trans_no), session_obj('Items')->trans_type);
 
 				display_notification(_("This sales order has been cancelled as requested."), 1);
 				submenu_option(_("Enter a New Sales Order"), "/sales/sales_order_entry.php?NewOrder=Yes");
@@ -715,26 +715,26 @@ if (isset($_POST['CancelItemChanges'])) {
 }
 
 //--------------------------------------------------------------------------------
-if ((bool)$_SESSION['Items']->fixed_asset)
+if ((bool)session_obj('Items')->fixed_asset)
 	check_db_has_disposable_fixed_assets(_("There are no fixed assets defined in the system."));
 else
 	check_db_has_stock_items(_("There are no inventory items defined in the system."));
 
 check_db_has_customer_branches(_("There are no customers, or there are no customers with branches. Please define customers and customer branches."));
 
-if ($_SESSION['Items']->trans_type == ST_SALESINVOICE) {
+if (session_obj('Items')->trans_type == ST_SALESINVOICE) {
 	$idate = _("Invoice Date:");
 	$orderitems = _("Sales Invoice Items");
 	$deliverydetails = _("Enter Delivery Details and Confirm Invoice");
 	$cancelorder = _("Cancel Invoice");
 	$porder = _("Place Invoice");
-} elseif ($_SESSION['Items']->trans_type == ST_CUSTDELIVERY) {
+} elseif (session_obj('Items')->trans_type == ST_CUSTDELIVERY) {
 	$idate = _("Delivery Date:");
 	$orderitems = _("Delivery Note Items");
 	$deliverydetails = _("Enter Delivery Details and Confirm Dispatch");
 	$cancelorder = _("Cancel Delivery");
 	$porder = _("Place Delivery");
-} elseif ($_SESSION['Items']->trans_type == ST_SALESQUOTE) {
+} elseif (session_obj('Items')->trans_type == ST_SALESQUOTE) {
 	$idate = _("Quotation Date:");
 	$orderitems = _("Sales Quotation Items");
 	$deliverydetails = _("Enter Delivery Details and Confirm Quotation");
@@ -752,7 +752,7 @@ if ($_SESSION['Items']->trans_type == ST_SALESINVOICE) {
 start_form();
 
 hidden('cart_id');
-$customer_error = display_order_header($_SESSION['Items'], !$_SESSION['Items']->is_started(), $idate);
+$customer_error = display_order_header($_SESSION['Items'], !session_obj('Items')->is_started(), $idate);
 
 if ($customer_error == "") {
 	start_table(TABLESTYLE, "width='80%'", 10);
@@ -764,7 +764,7 @@ if ($customer_error == "") {
 	echo "</td></tr>";
 	end_table(1);
 
-	if ($_SESSION['Items']->trans_no == 0) {
+	if (session_obj('Items')->trans_no == 0) {
 
 		submit_center_first('ProcessOrder', $porder,
 		    _('Check entered data and save document'), 'default');
@@ -776,7 +776,7 @@ if ($customer_error == "") {
 		    _('Validate changes and update document'), 'default');
 		submit_center_last('CancelOrder', $cancelorder,
 	   		_('Cancels document entry or removes sales order when editing an old document'));
-		if ($_SESSION['Items']->trans_type==ST_SALESORDER)
+		if (session_obj('Items')->trans_type==ST_SALESORDER)
 			submit_js_confirm('CancelOrder', _('You are about to cancel undelivered part of this order.\nDo you want to continue?'));
 		else
 			submit_js_confirm('CancelOrder', _('You are about to void this Document.\nDo you want to continue?'));

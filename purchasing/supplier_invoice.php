@@ -31,8 +31,8 @@ if (isset($_GET['New']))
 {
 	if (isset( $_SESSION['supp_trans']))
 	{
-		unset ($_SESSION['supp_trans']->grn_items);
-		unset ($_SESSION['supp_trans']->gl_codes);
+		unset (session_obj('supp_trans')->grn_items);
+		unset (session_obj('supp_trans')->gl_codes);
 		unset ($_SESSION['supp_trans']);
 	}
 	$help_context = "Enter Supplier Invoice";
@@ -82,8 +82,8 @@ if (isset($_GET['New']))
 {
 	if (isset( $_SESSION['supp_trans']))
 	{
-		unset ($_SESSION['supp_trans']->grn_items);
-		unset ($_SESSION['supp_trans']->gl_codes);
+		unset (session_obj('supp_trans')->grn_items);
+		unset (session_obj('supp_trans')->gl_codes);
 		unset ($_SESSION['supp_trans']);
 	}
 
@@ -156,7 +156,7 @@ if (isset($_POST['AddGLCodeToTrans'])){
 
 	if ($input_error == false)
 	{
-		$_SESSION['supp_trans']->add_gl_codes_to_trans($_POST['gl_code'], $gl_act_name,
+		session_obj('supp_trans')->add_gl_codes_to_trans($_POST['gl_code'], $gl_act_name,
 			$_POST['dimension_id'], $_POST['dimension2_id'], 
 			input_num('amount'), $_POST['memo_']);
 		reset_tax_input();
@@ -177,31 +177,31 @@ function check_data(): bool
 		return false;
 	} 
 
-	if (!$_SESSION['supp_trans']->is_valid_trans_to_post())
+	if (!session_obj('supp_trans')->is_valid_trans_to_post())
 	{
 		display_error(_("The invoice cannot be processed because the there are no items or values on the invoice.  Invoices are expected to have a charge."));
 		return false;
 	}
 
-	if (!check_reference($_SESSION['supp_trans']->reference, ST_SUPPINVOICE, $_SESSION['supp_trans']->trans_no))
+	if (!check_reference(session_obj('supp_trans')->reference, ST_SUPPINVOICE, session_obj('supp_trans')->trans_no))
 	{
 		set_focus('reference');
 		return false;
 	}
 
-	if (!is_date( $_SESSION['supp_trans']->tran_date))
+	if (!is_date( session_obj('supp_trans')->tran_date))
 	{
 		display_error(_("The invoice as entered cannot be processed because the invoice date is in an incorrect format."));
 		set_focus('trans_date');
 		return false;
 	} 
-	elseif (!(bool)is_date_in_fiscalyear($_SESSION['supp_trans']->tran_date)) 
+	elseif (!(bool)is_date_in_fiscalyear(session_obj('supp_trans')->tran_date)) 
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('trans_date');
 		return false;
 	}
-	if (!is_date( $_SESSION['supp_trans']->due_date))
+	if (!is_date( session_obj('supp_trans')->due_date))
 	{
 		display_error(_("The invoice as entered cannot be processed because the due date is in an incorrect format."));
 		set_focus('due_date');
@@ -215,7 +215,7 @@ function check_data(): bool
 		return false;
 	}
 
-	if (is_reference_already_there($_SESSION['supp_trans']->supplier_id, $_POST['supp_reference'], $_SESSION['supp_trans']->trans_no))
+	if (is_reference_already_there(session_obj('supp_trans')->supplier_id, $_POST['supp_reference'], session_obj('supp_trans')->trans_no))
 	{ 	/*Transaction reference already entered */
 		display_error(_("This invoice number has already been entered. It cannot be entered again.") . " (" . (string)$_POST['supp_reference'] . ")");
 		set_focus('supp_reference');
@@ -236,7 +236,7 @@ function handle_commit_invoice(): void
 	$inv = $_SESSION['supp_trans'];
 	$invoice_no = add_supp_invoice($inv);
 
-    $_SESSION['supp_trans']->clear_items();
+    session_obj('supp_trans')->clear_items();
     unset($_SESSION['supp_trans']);
 
 	meta_forward($_SERVER['PHP_SELF'], "AddedID=$invoice_no");
@@ -302,7 +302,7 @@ function commit_item_data(string|int|null $n): void
 {
 	if (check_item_data($n))
 	{
-		$_SESSION['supp_trans']->add_grn_to_trans($n, $_POST['po_detail_item'.$n],
+		session_obj('supp_trans')->add_grn_to_trans($n, $_POST['po_detail_item'.$n],
 			$_POST['item_code'.$n], $_POST['item_description'.$n], $_POST['qty_recd'.$n],
 			$_POST['prev_quantity_inv'.$n], input_num('this_quantity_inv'.$n),
 			$_POST['order_price'.$n], input_num('ChgPrice'.$n));
@@ -335,7 +335,7 @@ if (isset($_POST['InvGRNAll']))
 $id3 = find_submit('Delete');
 if ($id3 != -1)
 {
-	$_SESSION['supp_trans']->remove_grn_from_trans($id3);
+	session_obj('supp_trans')->remove_grn_from_trans($id3);
 	$Ajax->activate('grn_items');
 	reset_tax_input();
 }
@@ -343,7 +343,7 @@ if ($id3 != -1)
 $id4 = find_submit('Delete2');
 if ($id4 != -1)
 {
-	$_SESSION['supp_trans']->remove_gl_codes_from_trans($id4);
+	session_obj('supp_trans')->remove_gl_codes_from_trans($id4);
 	clear_fields();
 	reset_tax_input();
 	$Ajax->activate('gl_items');
@@ -352,13 +352,13 @@ if ($id4 != -1)
 $id5 = find_submit('Edit');
 if ($id5 != -1)
 {
-    $_POST['gl_code'] = $_SESSION['supp_trans']->gl_codes[$id5]->gl_code;
-    $_POST['dimension_id'] = $_SESSION['supp_trans']->gl_codes[$id5]->gl_dim;
-    $_POST['dimension2_id'] = $_SESSION['supp_trans']->gl_codes[$id5]->gl_dim2;
-    $_POST['amount'] = $_SESSION['supp_trans']->gl_codes[$id5]->amount;
-    $_POST['memo_'] = $_SESSION['supp_trans']->gl_codes[$id5]->memo_;
+    $_POST['gl_code'] = session_obj('supp_trans')->gl_codes[$id5]->gl_code;
+    $_POST['dimension_id'] = session_obj('supp_trans')->gl_codes[$id5]->gl_dim;
+    $_POST['dimension2_id'] = session_obj('supp_trans')->gl_codes[$id5]->gl_dim2;
+    $_POST['amount'] = session_obj('supp_trans')->gl_codes[$id5]->amount;
+    $_POST['memo_'] = session_obj('supp_trans')->gl_codes[$id5]->memo_;
 
-       $_SESSION['supp_trans']->remove_gl_codes_from_trans($id5);
+       session_obj('supp_trans')->remove_gl_codes_from_trans($id5);
        reset_tax_input();
        $Ajax->activate('gl_items');
 }

@@ -69,7 +69,7 @@ function create_new_po(?int $trans_type, string|int|array|null $trans_no): void
 	global $Refs;
 
 	if (isset($_SESSION['PO']))
-		unset ($_SESSION['PO']->line_items, $_SESSION['PO']);
+		unset (session_obj('PO')->line_items, $_SESSION['PO']);
 
 	$cart = new purch_order;
 	$_POST['OrderDate'] = new_doc_date();
@@ -187,8 +187,8 @@ function display_po_header(?purch_order &$order): void
         {
     	  	$_POST['delivery_address'] = $loc_row["delivery_address"];
 			$Ajax->activate('delivery_address');
-    	  	$_SESSION['PO']->Location = $_POST['StkLocation'];
-    	  	$_SESSION['PO']->delivery_address = $_POST['delivery_address'];
+    	  	session_obj('PO')->Location = $_POST['StkLocation'];
+    	  	session_obj('PO')->delivery_address = $_POST['delivery_address'];
 
         }
         else

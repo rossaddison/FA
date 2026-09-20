@@ -40,21 +40,21 @@ if (isset($_GET['New']))
 {
 	if (isset( $_SESSION['supp_trans']))
 	{
-		unset ($_SESSION['supp_trans']->grn_items);
-		unset ($_SESSION['supp_trans']->gl_codes);
+		unset (session_obj('supp_trans')->grn_items);
+		unset (session_obj('supp_trans')->gl_codes);
 		unset ($_SESSION['supp_trans']);
 	}
 
 	if (isset($_GET['invoice_no']))
 	{
 		$_SESSION['supp_trans'] = new supp_trans(ST_SUPPINVOICE, $_GET['invoice_no']);
-		$_SESSION['supp_trans']->src_docs = array( $_GET['invoice_no'] => $_SESSION['supp_trans']->supp_reference);
+		session_obj('supp_trans')->src_docs = array( $_GET['invoice_no'] => session_obj('supp_trans')->supp_reference);
 
 
-		$_SESSION['supp_trans']->trans_type = ST_SUPPCREDIT;
-		$_SESSION['supp_trans']->trans_no = 0;
-		$_SESSION['supp_trans']->supp_reference = '';
-		$_SESSION['supp_trans']->reference = '';
+		session_obj('supp_trans')->trans_type = ST_SUPPCREDIT;
+		session_obj('supp_trans')->trans_no = 0;
+		session_obj('supp_trans')->supp_reference = '';
+		session_obj('supp_trans')->reference = '';
 		$help_context = "Supplier Credit Note";
 		$_SESSION['page_title'] = _("Supplier Credit Note");
 
@@ -151,7 +151,7 @@ if (isset($_POST['AddGLCodeToTrans'])) {
 
 	if ($input_error == false)
 	{
-		$_SESSION['supp_trans']->add_gl_codes_to_trans($_POST['gl_code'], $gl_act_name,
+		session_obj('supp_trans')->add_gl_codes_to_trans($_POST['gl_code'], $gl_act_name,
 			$_POST['dimension_id'], $_POST['dimension2_id'], 
 			input_num('amount'), $_POST['memo_']);
 		reset_tax_input();
@@ -172,32 +172,32 @@ function check_data(): bool
 		return false;
 	} 
 
-	if (!$_SESSION['supp_trans']->is_valid_trans_to_post())
+	if (!session_obj('supp_trans')->is_valid_trans_to_post())
 	{
 		display_error(_("The credit note cannot be processed because the there are no items or values on the invoice.  Credit notes are expected to have a charge."));
 		set_focus('');
 		return false;
 	}
 
-	if (!check_reference($_SESSION['supp_trans']->reference, ST_SUPPCREDIT, $_SESSION['supp_trans']->trans_no))
+	if (!check_reference(session_obj('supp_trans')->reference, ST_SUPPCREDIT, session_obj('supp_trans')->trans_no))
 	{
 		set_focus('reference');
 		return false;
 	}
 
-	if (!is_date($_SESSION['supp_trans']->tran_date))
+	if (!is_date(session_obj('supp_trans')->tran_date))
 	{
 		display_error(_("The credit note as entered cannot be processed because the date entered is not valid."));
 		set_focus('tran_date');
 		return false;
 	} 
-	elseif (!(bool)is_date_in_fiscalyear($_SESSION['supp_trans']->tran_date)) 
+	elseif (!(bool)is_date_in_fiscalyear(session_obj('supp_trans')->tran_date)) 
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('tran_date');
 		return false;
 	}
-	if (!is_date( $_SESSION['supp_trans']->due_date))
+	if (!is_date( session_obj('supp_trans')->due_date))
 	{
 		display_error(_("The invoice as entered cannot be processed because the due date is in an incorrect format."));
 		set_focus('due_date');
@@ -211,7 +211,7 @@ function check_data(): bool
 		return false;
 	}
 
-	if (is_reference_already_there($_SESSION['supp_trans']->supplier_id, $_POST['supp_reference'], $_SESSION['supp_trans']->trans_no))
+	if (is_reference_already_there(session_obj('supp_trans')->supplier_id, $_POST['supp_reference'], session_obj('supp_trans')->trans_no))
 	{ 	/*Transaction reference already entered */
 		display_error(_("This invoice number has already been entered. It cannot be entered again.") . " (" . (string)$_POST['supp_reference'] . ")");
 		set_focus('supp_reference');
@@ -219,16 +219,16 @@ function check_data(): bool
 	}
 
 	if (!sysprefs()->allow_negative_stock()) {
-		foreach ($_SESSION['supp_trans']->grn_items as $n => $item) {
+		foreach (session_obj('supp_trans')->grn_items as $n => $item) {
 			if (is_inventory_item($item->item_code))
 			{
-				if (check_negative_stock($item->item_code, -$item->this_quantity_inv, null, $_SESSION['supp_trans']->tran_date))
+				if (check_negative_stock($item->item_code, -$item->this_quantity_inv, null, session_obj('supp_trans')->tran_date))
 				{
 					$stock = row_or_empty(get_item($item->item_code));
 					display_error(_("The return cannot be processed because there is an insufficient quantity for item:") .
 						" " . (string)$stock['stock_id'] . " - " . (string)$stock['description'] . " - " .
 						_("Quantity On Hand") . " = " . number_format2(get_qoh_on_date($stock['stock_id'], null, 
-						$_SESSION['supp_trans']->tran_date), get_qty_dec($stock['stock_id'])));
+						session_obj('supp_trans')->tran_date), get_qty_dec($stock['stock_id'])));
 					return false;
 				}
 			}
@@ -248,7 +248,7 @@ function handle_commit_credit_note(): void
 
 	$invoice_no = add_supp_invoice($_SESSION['supp_trans']);
 
-    $_SESSION['supp_trans']->clear_items();
+    session_obj('supp_trans')->clear_items();
     unset($_SESSION['supp_trans']);
 
 	meta_forward($_SERVER['PHP_SELF'], "AddedID=$invoice_no");
@@ -285,7 +285,7 @@ function commit_item_data(string|int|null $n): void
 {
 	if (check_item_data($n))
 	{
-		$_SESSION['supp_trans']->add_grn_to_trans($n,
+		session_obj('supp_trans')->add_grn_to_trans($n,
     		$_POST['po_detail_item'.$n], $_POST['item_code'.$n],
     		$_POST['item_description'.$n], $_POST['qty_recd'.$n],
     		$_POST['prev_quantity_inv'.$n], input_num('This_QuantityCredited'.$n),
@@ -320,7 +320,7 @@ if (isset($_POST['InvGRNAll']))
 $id3 = find_submit('Delete');
 if ($id3 != -1)
 {
-	$_SESSION['supp_trans']->remove_grn_from_trans($id3);
+	session_obj('supp_trans')->remove_grn_from_trans($id3);
 	$Ajax->activate('grn_items');
 	reset_tax_input();
 }
@@ -328,7 +328,7 @@ if ($id3 != -1)
 $id4 = find_submit('Delete2');
 if ($id4 != -1)
 {
-	$_SESSION['supp_trans']->remove_gl_codes_from_trans($id4);
+	session_obj('supp_trans')->remove_gl_codes_from_trans($id4);
 	clear_fields();
 	reset_tax_input();
 	$Ajax->activate('gl_items');

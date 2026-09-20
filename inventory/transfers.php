@@ -74,16 +74,16 @@ function handle_new_order(): void
 {
 	if (isset($_SESSION['transfer_items']))
 	{
-		$_SESSION['transfer_items']->clear_items();
+		session_obj('transfer_items')->clear_items();
 		unset ($_SESSION['transfer_items']);
 	}
 
 	$_SESSION['transfer_items'] = new items_cart(ST_LOCTRANSFER);
-  $_SESSION['transfer_items']->fixed_asset = isset($_GET['FixedAsset']);
+  session_obj('transfer_items')->fixed_asset = isset($_GET['FixedAsset']);
 	$_POST['AdjDate'] = new_doc_date();
 	if (!(bool)is_date_in_fiscalyear($_POST['AdjDate']))
 		$_POST['AdjDate'] = end_fiscalyear();
-	$_SESSION['transfer_items']->tran_date = $_POST['AdjDate'];	
+	session_obj('transfer_items')->tran_date = $_POST['AdjDate'];	
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -142,11 +142,11 @@ if (isset($_POST['Process']))
 if (isset($_POST['Process']))
 {
 
-	$trans_no = add_stock_transfer($_SESSION['transfer_items']->line_items,
+	$trans_no = add_stock_transfer(session_obj('transfer_items')->line_items,
 		$_POST['FromStockLocation'], $_POST['ToStockLocation'],
 		$_POST['AdjDate'], $_POST['ref'], $_POST['memo_']);
 	new_doc_date($_POST['AdjDate']);
-	$_SESSION['transfer_items']->clear_items();
+	session_obj('transfer_items')->clear_items();
 	unset($_SESSION['transfer_items']);
 
    	meta_forward($_SERVER['PHP_SELF'], "AddedID=$trans_no");
@@ -171,8 +171,8 @@ function handle_update_item(): void
 {
 	$id = $_POST['LineNo'];
    	if (!isset($_POST['std_cost']))
-   		$_POST['std_cost'] = $_SESSION['transfer_items']->line_items[$id]->standard_cost;
-   	$_SESSION['transfer_items']->update_cart_item($id, input_num('qty'), $_POST['std_cost']);
+   		$_POST['std_cost'] = session_obj('transfer_items')->line_items[$id]->standard_cost;
+   	session_obj('transfer_items')->update_cart_item($id, input_num('qty'), $_POST['std_cost']);
 	line_start_focus();
 }
 
@@ -180,7 +180,7 @@ function handle_update_item(): void
 
 function handle_delete_item(string|int|null $id): void
 {
-	$_SESSION['transfer_items']->remove_from_cart($id);
+	session_obj('transfer_items')->remove_from_cart($id);
 	line_start_focus();
 }
 

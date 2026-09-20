@@ -60,12 +60,12 @@ function handle_new_order(): void
 {
 	if (isset($_SESSION['issue_items']))
 	{
-		$_SESSION['issue_items']->clear_items();
+		session_obj('issue_items')->clear_items();
 		unset ($_SESSION['issue_items']);
 	}
 
      $_SESSION['issue_items'] = new items_cart(ST_MANUISSUE);
-     $_SESSION['issue_items']->order_id = $_GET['trans_no'];
+     session_obj('issue_items')->order_id = $_GET['trans_no'];
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ function can_process(): bool
 		return false;
 	}
 
-	$failed_item = $_SESSION['issue_items']->check_qoh($_POST['Location'], $_POST['date_'], !(bool)$_POST['IssueType']);
+	$failed_item = session_obj('issue_items')->check_qoh($_POST['Location'], $_POST['date_'], !(bool)$_POST['IssueType']);
 	if ($failed_item)
 	{
    		display_error(_("The issue cannot be processed because it would cause negative inventory balance for marked items as of document date or later."));
@@ -103,8 +103,8 @@ if (isset($_POST['Process']) && can_process())
 {
 
 	// if failed, returns a stockID
-	$failed_data = add_work_order_issue($_SESSION['issue_items']->order_id,
-		$_POST['ref'], $_POST['IssueType'], $_SESSION['issue_items']->line_items,
+	$failed_data = add_work_order_issue(session_obj('issue_items')->order_id,
+		$_POST['ref'], $_POST['IssueType'], session_obj('issue_items')->line_items,
 		$_POST['Location'], $_POST['WorkCentre'], post_scalar('date_'), $_POST['memo_']);
 
 	if ($failed_data != null) 
@@ -115,7 +115,7 @@ if (isset($_POST['Process']) && can_process())
 	} 
 	else 
 	{
-		meta_forward($_SERVER['PHP_SELF'], "AddedID=".$_SESSION['issue_items']->order_id);
+		meta_forward($_SERVER['PHP_SELF'], "AddedID=".session_obj('issue_items')->order_id);
 	}
 
 } /*end of process credit note */
@@ -148,7 +148,7 @@ function handle_update_item(): void
     if($_POST['UpdateItem'] != "" && check_item_data())
     {
 		$id = $_POST['LineNo'];
-    	$_SESSION['issue_items']->update_cart_item($id, input_num('qty'), input_num('std_cost'));
+    	session_obj('issue_items')->update_cart_item($id, input_num('qty'), input_num('std_cost'));
     }
 	line_start_focus();
 }
@@ -157,7 +157,7 @@ function handle_update_item(): void
 
 function handle_delete_item(string|int|null $id): void
 {
-	$_SESSION['issue_items']->remove_from_cart($id);
+	session_obj('issue_items')->remove_from_cart($id);
 	line_start_focus();
 }
 
@@ -197,7 +197,7 @@ if (isset($_GET['trans_no']))
 
 //-----------------------------------------------------------------------------------------------
 
-display_wo_details($_SESSION['issue_items']->order_id);
+display_wo_details(session_obj('issue_items')->order_id);
 echo "<br>";
 
 start_form();

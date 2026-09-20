@@ -175,6 +175,18 @@ function password_reset_success(): void
 	die();
 }
 
+/**
+ * The cart-like objects kept in the session. Psalm forgets the type of a $_SESSION key after any function call, so the
+ * pages read them through this accessor, which states the type of each key.
+ *
+ * @param 'Items'|'PO'|'supp_trans'|'alloc'|'transfer_items'|'issue_items'|'adj_items'|'pay_items'|'journal_items'|'View' $key
+ * @return ($key is 'Items'|'View' ? Cart : ($key is 'PO' ? purch_order : ($key is 'supp_trans' ? supp_trans : ($key is 'alloc' ? allocation : items_cart))))
+ */
+function session_obj(string $key)
+{
+	return $_SESSION[$key];
+}
+
 /** @return bool */
 function check_faillog()
 {

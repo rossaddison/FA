@@ -80,16 +80,16 @@ function handle_new_order(): void
 {
 	if (isset($_SESSION['adj_items']))
 	{
-		$_SESSION['adj_items']->clear_items();
+		session_obj('adj_items')->clear_items();
 		unset ($_SESSION['adj_items']);
 	}
 
     $_SESSION['adj_items'] = new items_cart(ST_INVADJUST);
-    $_SESSION['adj_items']->fixed_asset = isset($_GET['FixedAsset']);
+    session_obj('adj_items')->fixed_asset = isset($_GET['FixedAsset']);
 	$_POST['AdjDate'] = new_doc_date();
 	if (!(bool)is_date_in_fiscalyear($_POST['AdjDate']))
 		$_POST['AdjDate'] = end_fiscalyear();
-	$_SESSION['adj_items']->tran_date = $_POST['AdjDate'];	
+	session_obj('adj_items')->tran_date = $_POST['AdjDate'];	
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -141,12 +141,12 @@ function can_process(): bool
 
 if (isset($_POST['Process']) && can_process()){
 
-  $fixed_asset = $_SESSION['adj_items']->fixed_asset; 
+  $fixed_asset = session_obj('adj_items')->fixed_asset; 
 
-	$trans_no = add_stock_adjustment($_SESSION['adj_items']->line_items,
+	$trans_no = add_stock_adjustment(session_obj('adj_items')->line_items,
 		$_POST['StockLocation'], $_POST['AdjDate'],	$_POST['ref'], $_POST['memo_']);
 	new_doc_date($_POST['AdjDate']);
-	$_SESSION['adj_items']->clear_items();
+	session_obj('adj_items')->clear_items();
 	unset($_SESSION['adj_items']);
 
   if ((bool)$fixed_asset)
@@ -182,7 +182,7 @@ function check_item_data(): bool
 function handle_update_item(): void
 {
 	$id = $_POST['LineNo'];
-   	$_SESSION['adj_items']->update_cart_item($id, input_num('qty'), 
+   	session_obj('adj_items')->update_cart_item($id, input_num('qty'), 
 		input_num('std_cost'));
 	line_start_focus();
 }
@@ -191,7 +191,7 @@ function handle_update_item(): void
 
 function handle_delete_item(string|int|null $id): void
 {
-	$_SESSION['adj_items']->remove_from_cart($id);
+	session_obj('adj_items')->remove_from_cart($id);
 	line_start_focus();
 }
 
@@ -237,7 +237,7 @@ if (isset($_GET['NewAdjustment']) || !isset($_SESSION['adj_items']))
 //-----------------------------------------------------------------------------------------------
 start_form();
 
-if ((bool)$_SESSION['adj_items']->fixed_asset) {
+if ((bool)session_obj('adj_items')->fixed_asset) {
 	$items_title = _("Disposal Items");
 	$button_title = _("Process Disposal");
 } else {

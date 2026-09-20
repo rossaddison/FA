@@ -57,47 +57,47 @@ if ($_GET['trans_type'] != ST_SALESQUOTE)
 echo "<tr valign=top><td>";
 
 start_table(TABLESTYLE, "width='95%'");
-label_row(_("Customer Name"), $_SESSION['View']->customer_name, "class='tableheader2'",
+label_row(_("Customer Name"), session_obj('View')->customer_name, "class='tableheader2'",
 	"colspan=3");
 start_row();
-label_cells(_("Customer Order Ref."), $_SESSION['View']->cust_ref, "class='tableheader2'");
-label_cells(_("Deliver To Branch"), $_SESSION['View']->deliver_to, "class='tableheader2'");
+label_cells(_("Customer Order Ref."), session_obj('View')->cust_ref, "class='tableheader2'");
+label_cells(_("Deliver To Branch"), session_obj('View')->deliver_to, "class='tableheader2'");
 end_row();
 start_row();
-label_cells(_("Ordered On"), $_SESSION['View']->document_date, "class='tableheader2'");
+label_cells(_("Ordered On"), session_obj('View')->document_date, "class='tableheader2'");
 if ($_GET['trans_type'] == ST_SALESQUOTE)
-	label_cells(_("Valid until"), $_SESSION['View']->due_date, "class='tableheader2'");
-elseif ($_SESSION['View']->reference == "auto")
-	label_cells(_("Due Date"), $_SESSION['View']->due_date, "class='tableheader2'");
+	label_cells(_("Valid until"), session_obj('View')->due_date, "class='tableheader2'");
+elseif (session_obj('View')->reference == "auto")
+	label_cells(_("Due Date"), session_obj('View')->due_date, "class='tableheader2'");
 else
-	label_cells(_("Requested Delivery"), $_SESSION['View']->due_date, "class='tableheader2'");
+	label_cells(_("Requested Delivery"), session_obj('View')->due_date, "class='tableheader2'");
 end_row();
 start_row();
-label_cells(_("Order Currency"), $_SESSION['View']->customer_currency, "class='tableheader2'");
-label_cells(_("Deliver From Location"), $_SESSION['View']->location_name, "class='tableheader2'");
+label_cells(_("Order Currency"), session_obj('View')->customer_currency, "class='tableheader2'");
+label_cells(_("Deliver From Location"), session_obj('View')->location_name, "class='tableheader2'");
 end_row();
 
 
-if ($_SESSION['View']->payment_terms['days_before_due']<0)
+if (session_obj('View')->payment_terms['days_before_due']<0)
 {
 start_row();
-label_cells(_("Payment Terms"), $_SESSION['View']->payment_terms['terms'], "class='tableheader2'");
-label_cells(_("Required Pre-Payment"), price_format($_SESSION['View']->prep_amount), "class='tableheader2'");
+label_cells(_("Payment Terms"), session_obj('View')->payment_terms['terms'], "class='tableheader2'");
+label_cells(_("Required Pre-Payment"), price_format(session_obj('View')->prep_amount), "class='tableheader2'");
 end_row();
 start_row();
-label_cells(_("Non-Invoiced Prepayments"), price_format($_SESSION['View']->alloc), "class='tableheader2'");
-label_cells(_("All Payments Allocated"), price_format($_SESSION['View']->sum_paid), "class='tableheader2'");
+label_cells(_("Non-Invoiced Prepayments"), price_format(session_obj('View')->alloc), "class='tableheader2'");
+label_cells(_("All Payments Allocated"), price_format(session_obj('View')->sum_paid), "class='tableheader2'");
 end_row();
 } else
-	label_row(_("Payment Terms"), $_SESSION['View']->payment_terms['terms'], "class='tableheader2'", "colspan=3");
+	label_row(_("Payment Terms"), session_obj('View')->payment_terms['terms'], "class='tableheader2'", "colspan=3");
 
-label_row(_("Delivery Address"), nl2br($_SESSION['View']->delivery_address),
+label_row(_("Delivery Address"), nl2br(session_obj('View')->delivery_address),
 	"class='tableheader2'", "colspan=3");
-label_row(_("Reference"), $_SESSION['View']->reference, "class='tableheader2'", "colspan=3");
-label_row(_("Telephone"), $_SESSION['View']->phone, "class='tableheader2'", "colspan=3");
-label_row(_("E-mail"), "<a href='mailto:" . $_SESSION['View']->email . "'>" . $_SESSION['View']->email . "</a>",
+label_row(_("Reference"), session_obj('View')->reference, "class='tableheader2'", "colspan=3");
+label_row(_("Telephone"), session_obj('View')->phone, "class='tableheader2'", "colspan=3");
+label_row(_("E-mail"), "<a href='mailto:" . session_obj('View')->email . "'>" . session_obj('View')->email . "</a>",
 	"class='tableheader2'", "colspan=3");
-label_row(_("Comments"), !empty($_SESSION['View']->Comments) ? nl2br($_SESSION['View']->Comments) : "", "class='tableheader2'", "colspan=3");
+label_row(_("Comments"), !empty(session_obj('View')->Comments) ? nl2br(session_obj('View')->Comments) : "", "class='tableheader2'", "colspan=3");
 end_table();
 
 if ($_GET['trans_type'] != ST_SALESQUOTE)
@@ -147,7 +147,7 @@ if ($_GET['trans_type'] != ST_SALESQUOTE)
 	$inv_numbers = array();
 	$invoices_total = 0;
 
-	if ($_SESSION['View']->prepaid)
+	if (session_obj('View')->prepaid)
 		$result = get_sales_order_invoices($_GET['trans_no']);
 	else
 		$result = get_sales_child_documents(ST_CUSTDELIVERY, $dn_numbers);
@@ -159,7 +159,7 @@ if ($_GET['trans_type'] != ST_SALESQUOTE)
 		{
 			alt_table_row_color($k);
 
-			$this_total = $_SESSION['View']->prepaid ? $inv_row["prep_amount"] : 
+			$this_total = session_obj('View')->prepaid ? $inv_row["prep_amount"] : 
 				(float)$inv_row["ov_freight"] + (float)$inv_row["ov_freight_tax"]  + (float)$inv_row["ov_gst"] + (float)$inv_row["ov_amount"];
 			$invoices_total += $this_total;
 
@@ -213,7 +213,7 @@ if ($_GET['trans_type'] != ST_SALESQUOTE)
 	end_table();
 }
 echo "<center>";
-if ($_SESSION['View']->so_type == 1)
+if (session_obj('View')->so_type == 1)
 	display_note(_("This Sales Order is used as a Template."), 0, 0, "class='currentfg'");
 display_heading2(_("Line Details"));
 
@@ -224,7 +224,7 @@ table_header($th);
 
 $k = 0;  //row colour counter
 
-foreach ($_SESSION['View']->line_items as $stock_item) {
+foreach (session_obj('View')->line_items as $stock_item) {
 
 	$line_total = round2($stock_item->quantity * $stock_item->price * (1 - $stock_item->discount_percent),
 	   user_price_dec());
@@ -244,20 +244,20 @@ foreach ($_SESSION['View']->line_items as $stock_item) {
 	end_row();
 }
 
-if ($_SESSION['View']->freight_cost != 0.0)
-	label_row(_("Shipping"), price_format($_SESSION['View']->freight_cost),
+if (session_obj('View')->freight_cost != 0.0)
+	label_row(_("Shipping"), price_format(session_obj('View')->freight_cost),
 		"align=right colspan=6", "nowrap align=right", 1);
 
-$sub_tot = $_SESSION['View']->get_items_total() + $_SESSION['View']->freight_cost;
+$sub_tot = session_obj('View')->get_items_total() + session_obj('View')->freight_cost;
 
 $display_sub_tot = price_format($sub_tot);
 
 label_row(_("Sub Total"), $display_sub_tot, "align=right colspan=6",
 	"nowrap align=right", 1);
 
-$taxes = $_SESSION['View']->get_taxes();
+$taxes = session_obj('View')->get_taxes();
 
-$tax_total = display_edit_tax_items($taxes, 6, $_SESSION['View']->tax_included,2);
+$tax_total = display_edit_tax_items($taxes, 6, session_obj('View')->tax_included,2);
 
 $display_total = price_format($sub_tot + $tax_total);
 
@@ -267,7 +267,7 @@ label_cell('', "colspan=2");
 end_row();
 end_table();
 
-display_allocations_to(PT_CUSTOMER, $_SESSION['View']->customer_id, $_GET['trans_type'], $_GET['trans_no'], $sub_tot + $tax_total);
+display_allocations_to(PT_CUSTOMER, session_obj('View')->customer_id, $_GET['trans_type'], $_GET['trans_no'], $sub_tot + $tax_total);
 
 end_page(true, false, false, get_scalar('trans_type'), $_GET['trans_no']);
 

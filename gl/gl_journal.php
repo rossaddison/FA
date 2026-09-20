@@ -179,10 +179,10 @@ function create_cart(string|int|array|null $type=0, string|int|array|null $trans
 function update_tax_info(): void
 {
 
-	if (!isset($_SESSION['journal_items']->tax_info) || list_updated('tax_category'))
-		$_SESSION['journal_items']->tax_info = $_SESSION['journal_items']->collect_tax_info();
+	if (!isset(session_obj('journal_items')->tax_info) || list_updated('tax_category'))
+		session_obj('journal_items')->tax_info = session_obj('journal_items')->collect_tax_info();
 
-	foreach ($_SESSION['journal_items']->tax_info as $name => $value)
+	foreach (session_obj('journal_items')->tax_info as $name => $value)
 		if (is_array($value))
 		{
 			foreach ($value as $id => $amount)
@@ -191,7 +191,7 @@ function update_tax_info(): void
 			}
 		} else
 			$_POST[$name] = $value;
-	$_POST['tax_date'] = (bool)$_SESSION['journal_items']->order_id ? $_SESSION['journal_items']->tax_info['tax_date'] : $_POST['date_'];
+	$_POST['tax_date'] = (bool)session_obj('journal_items')->order_id ? session_obj('journal_items')->tax_info['tax_date'] : $_POST['date_'];
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -199,12 +199,12 @@ if (isset($_POST['Process']))
 {
 	$input_error = 0;
 
-	if ($_SESSION['journal_items']->count_gl_items() < 1) {
+	if (session_obj('journal_items')->count_gl_items() < 1) {
 		display_error(_("You must enter at least one journal line."));
 		set_focus('code_id');
 		$input_error = 1;
 	}
-	if (abs($_SESSION['journal_items']->gl_items_total()) > 0.001)
+	if (abs(session_obj('journal_items')->gl_items_total()) > 0.001)
 	{
 		display_error(_("The journal must balance (debits equal to credits) before it can be processed."));
 		set_focus('code_id');
@@ -235,7 +235,7 @@ if (isset($_POST['Process']))
 		set_focus('doc_date');
 		$input_error = 1;
 	}
-	if (!check_reference($_POST['ref'], ST_JOURNAL, $_SESSION['journal_items']->order_id))
+	if (!check_reference($_POST['ref'], ST_JOURNAL, session_obj('journal_items')->order_id))
 	{
    		set_focus('ref');
    		$input_error = 1;
@@ -281,7 +281,7 @@ if (isset($_POST['Process']))
 				$net_amount += input_num('net_amount_'.$tax_id);
 			}
 			// in case no tax account used we have to guss tax register on customer/supplier used.
-			if ($net_amount && !$_SESSION['journal_items']->has_taxes() && !$_SESSION['journal_items']->has_sub_accounts())
+			if ($net_amount && !session_obj('journal_items')->has_taxes() && !session_obj('journal_items')->has_sub_accounts())
 			{
 				display_error(_("Cannot determine tax register to be used. You have to make at least one posting either to tax or customer/supplier account to use tax register."));
 				$_POST['tabs_gl'] = true; // force gl tab select
@@ -424,9 +424,9 @@ function handle_update_item(): void
     	else
     		$amount = -input_num('AmountCredit');
 
-    	$_SESSION['journal_items']->update_gl_item($_POST['Index'], $_POST['code_id'], 
+    	session_obj('journal_items')->update_gl_item($_POST['Index'], $_POST['code_id'], 
     	    $_POST['dimension_id'], $_POST['dimension2_id'], $amount, $_POST['LineMemo'], '', get_post('person_id'));
-    	unset($_SESSION['journal_items']->tax_info);
+    	unset(session_obj('journal_items')->tax_info);
 		line_start_focus();
     }
 }
@@ -435,8 +435,8 @@ function handle_update_item(): void
 
 function handle_delete_item(string|int|null $id): void
 {
-	$_SESSION['journal_items']->remove_gl_item($id);
-   	unset($_SESSION['journal_items']->tax_info);
+	session_obj('journal_items')->remove_gl_item($id);
+   	unset(session_obj('journal_items')->tax_info);
 	line_start_focus();
 }
 
@@ -452,9 +452,9 @@ function handle_new_item(): void
 	else
 		$amount = -input_num('AmountCredit');
 	
-	$_SESSION['journal_items']->add_gl_item($_POST['code_id'], $_POST['dimension_id'],
+	session_obj('journal_items')->add_gl_item($_POST['code_id'], $_POST['dimension_id'],
 		$_POST['dimension2_id'], $amount, $_POST['LineMemo'], '', get_post('person_id'));
-  	unset($_SESSION['journal_items']->tax_info);
+  	unset(session_obj('journal_items')->tax_info);
 	line_start_focus();
 }
 
@@ -469,7 +469,7 @@ if (isset($_POST['_taxable_trans_update']))
 
 if (tab_closed('tabs', 'gl'))
 {
-	$_SESSION['journal_items']->memo_ = $_POST['memo_'];
+	session_obj('journal_items')->memo_ = $_POST['memo_'];
 }
  elseif (tab_closed('tabs', 'tax'))
 {
@@ -486,7 +486,7 @@ if (tab_closed('tabs', 'gl'))
 }
 if (tab_opened('tabs', 'gl'))
 {
-	$_POST['memo_'] = $_SESSION['journal_items']->memo_;
+	$_POST['memo_'] = session_obj('journal_items')->memo_;
 } elseif (tab_opened('tabs', 'tax'))
 {
 	set_focus('tax_date');

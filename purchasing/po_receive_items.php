@@ -71,9 +71,9 @@ function display_po_receive_items(): void
     $total = 0;
     $k = 0; //row colour counter
 
-    if (count($_SESSION['PO']->line_items)> 0 )
+    if (count(session_obj('PO')->line_items)> 0 )
     {
-       	foreach ($_SESSION['PO']->line_items as $ln_itm)
+       	foreach (session_obj('PO')->line_items as $ln_itm)
        	{
 
 			alt_table_row_color($k);
@@ -115,9 +115,9 @@ function display_po_receive_items(): void
 	$display_sub_total = price_format($total/* + input_num('freight_cost')*/);
 
 	label_row(_("Sub-total"), $display_sub_total, "colspan=$colspan align=right","align=right");
-	$taxes = $_SESSION['PO']->get_taxes(input_num('freight_cost'), true);
+	$taxes = session_obj('PO')->get_taxes(input_num('freight_cost'), true);
 	
-	$tax_total = display_edit_tax_items($taxes, $colspan, $_SESSION['PO']->tax_included);
+	$tax_total = display_edit_tax_items($taxes, $colspan, session_obj('PO')->tax_included);
 
 	$display_total = price_format(($total + input_num('freight_cost') + $tax_total));
 
@@ -136,12 +136,12 @@ function check_po_changed(): bool
 	into the Items array. If they've changed then someone else must have altered them */
 	// Compare against COMPLETED items only !!
 	// Otherwise if you try to fullfill item quantities separately will give error.
-	$result = get_po_items($_SESSION['PO']->order_no);
+	$result = get_po_items(session_obj('PO')->order_no);
 
 	$line_no = 0;
 	while ($myrow = db_fetch($result))
 	{
-		$ln_item = $_SESSION['PO']->line_items[$line_no];
+		$ln_item = session_obj('PO')->line_items[$line_no];
 		// only compare against items that are outstanding
 		$qty_outstanding = $ln_item->quantity - $ln_item->qty_received;
 		if ($qty_outstanding > 0)
@@ -165,7 +165,7 @@ function check_po_changed(): bool
 function can_process(): bool
 {
 	
-	if (count($_SESSION['PO']->line_items) <= 0)
+	if (count(session_obj('PO')->line_items) <= 0)
 	{
         display_error(_("There is nothing to process. Please enter valid quantities greater than zero."));
     	return false;
@@ -190,7 +190,7 @@ function can_process(): bool
 	}
 
 	$something_received = 0;
-	foreach ($_SESSION['PO']->line_items as $order_line)
+	foreach (session_obj('PO')->line_items as $order_line)
 	{
 	  	if ($order_line->receive_qty > 0)
 	  	{
@@ -201,7 +201,7 @@ function can_process(): bool
 
     // Check whether trying to deliver more items than are recorded on the actual purchase order (+ overreceive allowance)
     $delivery_qty_too_large = 0;
-	foreach ($_SESSION['PO']->line_items as $order_line)
+	foreach (session_obj('PO')->line_items as $order_line)
 	{
 	  	if ($order_line->receive_qty+$order_line->qty_received >
 	  		$order_line->quantity * (1+ (sysprefs()->over_receive_allowance() / 100)))
@@ -245,9 +245,9 @@ function process_receive_po(): void
 
 		hyperlink_params("$path_to_root/purchasing/po_receive_items.php", 
 			 _("Re-Read the updated purchase order for receiving goods against"),
-			 "PONumber=" . $_SESSION['PO']->order_no);
+			 "PONumber=" . session_obj('PO')->order_no);
 
-		unset($_SESSION['PO']->line_items);
+		unset(session_obj('PO')->line_items);
 		unset($_SESSION['PO']);
 		unset($_POST['ProcessGoodsReceived']);
 		$Ajax->activate('_page_body');
@@ -263,7 +263,7 @@ function process_receive_po(): void
 	$grn_no = add_grn($grn);
 
 	new_doc_date($_POST['DefaultReceivedDate']);
-	unset($_SESSION['PO']->line_items);
+	unset(session_obj('PO')->line_items);
 	unset($_SESSION['PO']);
 
 	meta_forward($_SERVER['PHP_SELF'], "AddedID=$grn_no");
@@ -274,9 +274,9 @@ function process_receive_po(): void
 if (isset($_GET['PONumber']) && $_GET['PONumber'] > 0 && !isset($_POST['Update']))
 {
 	create_new_po(ST_PURCHORDER, $_GET['PONumber']);
-	$_SESSION['PO']->trans_type = ST_SUPPRECEIVE;
-	$_SESSION['PO']->reference = $Refs->get_next(ST_SUPPRECEIVE, null,
-		array('date' => Today(), 'supplier' => $_SESSION['PO']->supplier_id));
+	session_obj('PO')->trans_type = ST_SUPPRECEIVE;
+	session_obj('PO')->reference = $Refs->get_next(ST_SUPPRECEIVE, null,
+		array('date' => Today(), 'supplier' => session_obj('PO')->supplier_id));
 	copy_from_cart();
 }
 
@@ -287,7 +287,7 @@ if (isset($_POST['Update']) || isset($_POST['ProcessGoodsReceived']))
 
 	/* if update quantities button is hit page has been called and ${$line->line_no} would have be
  	set from the post to the quantity to be received in this receival*/
-	foreach ($_SESSION['PO']->line_items as $line)
+	foreach (session_obj('PO')->line_items as $line)
 	{
 	 if( ($line->quantity - $line->qty_received)>0) {
 		$_POST[$line->line_no] = max($_POST[$line->line_no], 0);
@@ -297,11 +297,11 @@ if (isset($_POST['Update']) || isset($_POST['ProcessGoodsReceived']))
 		if (!isset($_POST['DefaultReceivedDate']) || $_POST['DefaultReceivedDate'] == "")
 			$_POST['DefaultReceivedDate'] = new_doc_date();
 
-		$_SESSION['PO']->line_items[$line->line_no]->receive_qty = input_num($line->line_no);
+		session_obj('PO')->line_items[$line->line_no]->receive_qty = input_num($line->line_no);
 
 		if (isset($_POST[$line->stock_id . "Desc"]) && strlen($_POST[$line->stock_id . "Desc"]) > 0)
 		{
-			$_SESSION['PO']->line_items[$line->line_no]->item_description = $_POST[$line->stock_id . "Desc"];
+			session_obj('PO')->line_items[$line->line_no]->item_description = $_POST[$line->stock_id . "Desc"];
 		}
 	 }
 	}

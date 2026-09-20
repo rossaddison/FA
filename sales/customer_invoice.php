@@ -91,8 +91,8 @@ if (isset($_GET['AddedID'])) {
 
 } elseif (isset($_GET['RemoveDN'])) {
 
-	for($line_no = 0; $line_no < count($_SESSION['Items']->line_items); $line_no++) {
-		$line = &$_SESSION['Items']->line_items[$line_no];
+	for($line_no = 0; $line_no < count(session_obj('Items')->line_items); $line_no++) {
+		$line = &session_obj('Items')->line_items[$line_no];
 		if ($line->src_no == $_GET['RemoveDN']) {
 			$line->quantity = $line->qty_done;
 			$line->qty_dispatched=0;
@@ -101,7 +101,7 @@ if (isset($_GET['AddedID'])) {
 	unset($line);
 
     // Remove also src_doc delivery note
-    $sources = &$_SESSION['Items']->src_docs;
+    $sources = &session_obj('Items')->src_docs;
     unset($sources[$_GET['RemoveDN']]);
 }
 
@@ -138,7 +138,7 @@ if ( (isset($_GET['DeliveryNumber']) && ($_GET['DeliveryNumber'] > 0) )
 	processing_start();
 	$_SESSION['Items'] = new Cart(ST_SALESINVOICE, $_GET['ModifyInvoice']);
 
-	if ($_SESSION['Items']->count_items() == 0) {
+	if (session_obj('Items')->count_items() == 0) {
 		echo"<center><br><b>" . _("All quantities on this invoice has been credited. There is nothing to modify on this invoice") . "</b></center>";
 		display_footer_exit();
 	}
@@ -164,12 +164,12 @@ if ( (isset($_GET['DeliveryNumber']) && ($_GET['DeliveryNumber'] > 0) )
 	processing_start();
 
 	$_SESSION['Items'] = new cart(ST_SALESORDER, $order_no, ST_SALESINVOICE);
-	$_SESSION['Items']->order_no = $order_no;
-	$_SESSION['Items']->src_docs = array($order_no);
-	$_SESSION['Items']->trans_no = 0;
-	$_SESSION['Items']->trans_type = ST_SALESINVOICE;
+	session_obj('Items')->order_no = $order_no;
+	session_obj('Items')->src_docs = array($order_no);
+	session_obj('Items')->trans_no = 0;
+	session_obj('Items')->trans_type = ST_SALESINVOICE;
 
-	$_SESSION['Items']->update_payments();
+	session_obj('Items')->update_payments();
 
 	copy_from_cart();
 }
@@ -181,7 +181,7 @@ elseif (!processing_active()) {
 
 	end_page();
 	exit;
-} elseif (!isset($_POST['process_invoice']) && (!$_SESSION['Items']->is_prepaid() && !check_quantities())) {
+} elseif (!isset($_POST['process_invoice']) && (!session_obj('Items')->is_prepaid() && !check_quantities())) {
 	display_error(_("Selected quantity cannot be less than quantity credited nor more than quantity not invoiced yet."));
 }
 
@@ -189,7 +189,7 @@ if (isset($_POST['Update'])) {
 	$Ajax->activate('Items');
 }
 if (isset($_POST['_InvoiceDate_changed'])) {
-	$_POST['due_date'] = get_invoice_duedate($_SESSION['Items']->payment, $_POST['InvoiceDate']);
+	$_POST['due_date'] = get_invoice_duedate(session_obj('Items')->payment, $_POST['InvoiceDate']);
 	$Ajax->activate('due_date');
 }
 
@@ -197,9 +197,9 @@ if (isset($_POST['_InvoiceDate_changed'])) {
 function check_quantities(): int
 {
 	$ok =1;
-	foreach ($_SESSION['Items']->line_items as $line_no=>$itm) {
+	foreach (session_obj('Items')->line_items as $line_no=>$itm) {
 		if (isset($_POST['Line'.$line_no])) {
-			if((bool)$_SESSION['Items']->trans_no) {
+			if((bool)session_obj('Items')->trans_no) {
 				$min = $itm->qty_done;
 				$max = $itm->quantity;
 			} else {
@@ -208,7 +208,7 @@ function check_quantities(): int
 				$max = round2($itm->quantity - $itm->qty_done, get_qty_dec($itm->stock_id));
 			}
 			if (check_num('Line'.$line_no, $min, $max)) {
-				$_SESSION['Items']->line_items[$line_no]->qty_dispatched =
+				session_obj('Items')->line_items[$line_no]->qty_dispatched =
 				    input_num('Line'.$line_no);
 			}
 			else {
@@ -220,7 +220,7 @@ function check_quantities(): int
 		if (isset($_POST['Line'.$line_no.'Desc'])) {
 			$line_desc = $_POST['Line'.$line_no.'Desc'];
 			if (strlen($line_desc) > 0) {
-				$_SESSION['Items']->line_items[$line_no]->item_description = $line_desc;
+				session_obj('Items')->line_items[$line_no]->item_description = $line_desc;
 			}
 		}
 	}
@@ -252,7 +252,7 @@ function copy_to_cart(): void
 		$cart->payment = $_POST['payment'];
 		$cart->payment_terms = get_payment_terms($_POST['payment']);
 	}
-	if ($_SESSION['Items']->trans_no == 0)
+	if (session_obj('Items')->trans_no == 0)
 		$cart->reference = $_POST['ref'];
 	if (!$cart->is_prepaid())
 	{
@@ -276,7 +276,7 @@ function copy_from_cart(): void
 	$_POST['cart_id'] = $cart->cart_id;
 	$_POST['due_date'] = $cart->due_date;
  	$_POST['payment'] = $cart->payment;
-	if (!$_SESSION['Items']->is_prepaid())
+	if (!session_obj('Items')->is_prepaid())
 	{
 		$_POST['ship_via'] = $cart->ship_via;
 		$_POST['ChargeFreightCost'] = price_format($cart->freight_cost);
@@ -291,7 +291,7 @@ function check_data(): bool
 {
 	global $Refs;
 
-	$prepaid = $_SESSION['Items']->is_prepaid();
+	$prepaid = session_obj('Items')->is_prepaid();
 
 	if (!isset($_POST['InvoiceDate']) || !is_date(post_scalar('InvoiceDate'))) {
 		display_error(_("The entered invoice date is invalid."));
@@ -312,7 +312,7 @@ function check_data(): bool
 		return false;
 	}
 
-	if ($_SESSION['Items']->trans_no == 0) {
+	if (session_obj('Items')->trans_no == 0) {
 		if (!$Refs->is_valid($_POST['ref'], ST_SALESINVOICE)) {
 			display_error(_("You must enter a reference."));
 			set_focus('ref');
@@ -332,7 +332,7 @@ function check_data(): bool
 			return false;
 		}
 
-		if ($_SESSION['Items']->has_items_dispatch() == 0 && input_num('ChargeFreightCost') == 0) {
+		if (session_obj('Items')->has_items_dispatch() == 0 && input_num('ChargeFreightCost') == 0) {
 			display_error(_("There are no item quantities on this invoice."));
 			return false;
 		}
@@ -342,7 +342,7 @@ function check_data(): bool
 			return false;
 		}
 	} else {
-		if (($_SESSION['Items']->payment_terms['days_before_due'] == -1) && !count($_SESSION['Items']->prepayments)) {
+		if ((session_obj('Items')->payment_terms['days_before_due'] == -1) && !count(session_obj('Items')->prepayments)) {
 			display_error(_("There is no non-invoiced payments for this order. If you want to issue final invoice, select delayed or cash payment terms."));
 			return false;
 		}
@@ -353,13 +353,13 @@ function check_data(): bool
 
 //-----------------------------------------------------------------------------
 if (isset($_POST['process_invoice']) && check_data()) {
-	$newinvoice=  $_SESSION['Items']->trans_no == 0;
+	$newinvoice=  session_obj('Items')->trans_no == 0;
 	copy_to_cart();
 
 	if ($newinvoice) 
-		new_doc_date($_SESSION['Items']->document_date);
+		new_doc_date(session_obj('Items')->document_date);
 
-	$invoice_no = $_SESSION['Items']->write();
+	$invoice_no = session_obj('Items')->write();
 	if ($invoice_no == -1)
 	{
 		display_error(_("The entered reference is already in use."));
@@ -396,8 +396,8 @@ if(list_updated('payment')) {
 $dspans = array();
 $lastdn = ''; $spanlen=1;
 
-for ($line_no = 0; $line_no < count($_SESSION['Items']->line_items); $line_no++) {
-	$line = $_SESSION['Items']->line_items[$line_no];
+for ($line_no = 0; $line_no < count(session_obj('Items')->line_items); $line_no++) {
+	$line = session_obj('Items')->line_items[$line_no];
 	if ($line->quantity == $line->qty_done) {
 		continue;
 	}
@@ -415,10 +415,10 @@ $dspans[] = $spanlen;
 
 //-----------------------------------------------------------------------------
 
-$is_batch_invoice = count($_SESSION['Items']->src_docs) > 1;
-$prepaid = $_SESSION['Items']->is_prepaid();
+$is_batch_invoice = count(session_obj('Items')->src_docs) > 1;
+$prepaid = session_obj('Items')->is_prepaid();
 
-$is_edition = $_SESSION['Items']->trans_type == ST_SALESINVOICE && $_SESSION['Items']->trans_no != 0;
+$is_edition = session_obj('Items')->trans_type == ST_SALESINVOICE && session_obj('Items')->trans_no != 0;
 start_form();
 hidden('cart_id');
 
@@ -429,34 +429,34 @@ $colspan = 1;
 $dim = get_company_pref('use_dimension');
 if ($dim > 0) 
 	$colspan = 3;
-label_cells(_("Customer"), $_SESSION['Items']->customer_name, "class='tableheader2'");
-label_cells(_("Branch"), get_branch_name($_SESSION['Items']->Branch), "class='tableheader2'");
-if (((bool)$_SESSION['Items']->pos['credit_sale'] || (bool)$_SESSION['Items']->pos['cash_sale'])) {
-	$paymcat = !(bool)$_SESSION['Items']->pos['cash_sale'] ? PM_CREDIT :
-		(!(bool)$_SESSION['Items']->pos['credit_sale'] ? PM_CASH : PM_ANY);
+label_cells(_("Customer"), session_obj('Items')->customer_name, "class='tableheader2'");
+label_cells(_("Branch"), get_branch_name(session_obj('Items')->Branch), "class='tableheader2'");
+if (((bool)session_obj('Items')->pos['credit_sale'] || (bool)session_obj('Items')->pos['cash_sale'])) {
+	$paymcat = !(bool)session_obj('Items')->pos['cash_sale'] ? PM_CREDIT :
+		(!(bool)session_obj('Items')->pos['credit_sale'] ? PM_CASH : PM_ANY);
 	label_cells(_("Payment terms:"), sale_payment_list('payment', $paymcat),
 		"class='tableheader2'", "colspan=$colspan");
 } else
-	label_cells(_('Payment:'), $_SESSION['Items']->payment_terms['terms'], "class='tableheader2'", "colspan=$colspan");
+	label_cells(_('Payment:'), session_obj('Items')->payment_terms['terms'], "class='tableheader2'", "colspan=$colspan");
 
 end_row();
 start_row();
 
-if ($_SESSION['Items']->trans_no == 0) {
+if (session_obj('Items')->trans_no == 0) {
 	ref_cells(_("Reference"), 'ref', '', null, "class='tableheader2'", false, ST_SALESINVOICE,
-		array('customer' => $_SESSION['Items']->customer_id,
-			'branch' => $_SESSION['Items']->Branch,
+		array('customer' => session_obj('Items')->customer_id,
+			'branch' => session_obj('Items')->Branch,
 			'date' => get_post('InvoiceDate')));
 } else {
-	label_cells(_("Reference"), $_SESSION['Items']->reference, "class='tableheader2'");
+	label_cells(_("Reference"), session_obj('Items')->reference, "class='tableheader2'");
 }
 
-label_cells(_("Sales Type"), $_SESSION['Items']->sales_type_name, "class='tableheader2'");
+label_cells(_("Sales Type"), session_obj('Items')->sales_type_name, "class='tableheader2'");
 
-label_cells(_("Currency"), $_SESSION['Items']->customer_currency, "class='tableheader2'");
+label_cells(_("Currency"), session_obj('Items')->customer_currency, "class='tableheader2'");
 if ($dim > 0) {
 	label_cell(_("Dimension").":", "class='tableheader2'");
-	$_POST['dimension_id'] = $_SESSION['Items']->dimension_id;
+	$_POST['dimension_id'] = session_obj('Items')->dimension_id;
 	dimensions_list_cells(null, 'dimension_id', null, true, ' ', false, 1, false);
 }		
 else
@@ -466,12 +466,12 @@ end_row();
 start_row();
 
 if (!isset($_POST['ship_via'])) {
-	$_POST['ship_via'] = $_SESSION['Items']->ship_via;
+	$_POST['ship_via'] = session_obj('Items')->ship_via;
 }
 label_cell(_("Shipping Company"), "class='tableheader2'");
 if ($prepaid)
 {
-	$shipper = row_or_empty(get_shipper($_SESSION['Items']->ship_via));
+	$shipper = row_or_empty(get_shipper(session_obj('Items')->ship_via));
 	label_cells(null, $shipper['shipper_name']);
 } else
 	shippers_list_cells(null, 'ship_via', $_POST['ship_via']);
@@ -483,17 +483,17 @@ if (!isset($_POST['InvoiceDate']) || !is_date(post_scalar('InvoiceDate'))) {
 	}
 }
 
-date_cells(_("Date"), 'InvoiceDate', '', $_SESSION['Items']->trans_no == 0, 
+date_cells(_("Date"), 'InvoiceDate', '', session_obj('Items')->trans_no == 0, 
 	0, 0, 0, "class='tableheader2'", true);
 
 if (!isset($_POST['due_date']) || !is_date(post_scalar('due_date'))) {
-	$_POST['due_date'] = get_invoice_duedate($_SESSION['Items']->payment, $_POST['InvoiceDate']);
+	$_POST['due_date'] = get_invoice_duedate(session_obj('Items')->payment, $_POST['InvoiceDate']);
 }
 
 date_cells(_("Due Date"), 'due_date', '', null, 0, 0, 0, "class='tableheader2'");
 if ($dim > 1) {
 	label_cell(_("Dimension")." 2:", "class='tableheader2'");
-	$_POST['dimension2_id'] = $_SESSION['Items']->dimension2_id;
+	$_POST['dimension2_id'] = session_obj('Items')->dimension2_id;
 	dimensions_list_cells(null, 'dimension2_id', null, true, ' ', false, 2, false);
 }		
 else
@@ -501,7 +501,7 @@ else
 end_row();
 end_table();
 
-$row = row_or_empty(get_customer_to_order($_SESSION['Items']->customer_id));
+$row = row_or_empty(get_customer_to_order(session_obj('Items')->customer_id));
 if ($row['dissallow_invoices'] == 1)
 {
 	display_error(_("The selected customer account is currently on hold. Please contact the credit control personnel to discuss."));
@@ -538,7 +538,7 @@ $show_qoh = true;
 
 $dn_line_cnt = 0;
 
-foreach ($_SESSION['Items']->line_items as $line=>$ln_itm) {
+foreach (session_obj('Items')->line_items as $line=>$ln_itm) {
 	if (!$prepaid && ($ln_itm->quantity == $ln_itm->qty_done)) {
 		continue; // this line was fully invoiced
 	}
@@ -592,10 +592,10 @@ It seems unfair to charge the customer twice for freight if the order
 was not fully delivered the first time ?? */
 
 if (!isset($_POST['ChargeFreightCost']) || $_POST['ChargeFreightCost'] == "") {
-	if ($_SESSION['Items']->any_already_delivered() == 1) {
+	if (session_obj('Items')->any_already_delivered() == 1) {
 		$_POST['ChargeFreightCost'] = price_format(0);
 	} else {
-		$_POST['ChargeFreightCost'] = price_format($_SESSION['Items']->freight_cost);
+		$_POST['ChargeFreightCost'] = price_format(session_obj('Items')->freight_cost);
 	}
 
 	if (!check_num('ChargeFreightCost')) {
@@ -605,7 +605,7 @@ if (!isset($_POST['ChargeFreightCost']) || $_POST['ChargeFreightCost'] == "") {
 
 $accumulate_shipping = get_company_pref('accumulate_shipping');
 if ($is_batch_invoice && $accumulate_shipping)
-	set_delivery_shipping_sum(array_keys($_SESSION['Items']->src_docs));
+	set_delivery_shipping_sum(array_keys(session_obj('Items')->src_docs));
 
 $colspan = $prepaid ? 7:9;
 start_row();
@@ -619,14 +619,14 @@ label_cell('', 'colspan=2');
 }
 
 end_row();
-$inv_items_total = $_SESSION['Items']->get_items_total_dispatch();
+$inv_items_total = session_obj('Items')->get_items_total_dispatch();
 
 $display_sub_total = price_format($inv_items_total + input_num('ChargeFreightCost'));
 
 label_row(_("Sub-total"), $display_sub_total, "colspan=$colspan align=right","align=right", $is_batch_invoice ? 2 : 0);
 
-$taxes = $_SESSION['Items']->get_taxes(input_num('ChargeFreightCost'));
-$tax_total = display_edit_tax_items($taxes, $colspan, $_SESSION['Items']->tax_included, $is_batch_invoice ? 2 : 0);
+$taxes = session_obj('Items')->get_taxes(input_num('ChargeFreightCost'));
+$tax_total = display_edit_tax_items($taxes, $colspan, session_obj('Items')->tax_included, $is_batch_invoice ? 2 : 0);
 
 $display_total = price_format(($inv_items_total + input_num('ChargeFreightCost') + $tax_total));
 
@@ -639,21 +639,21 @@ start_table(TABLESTYLE2);
 if ($prepaid)
 {
 
-	label_row(_("Sales order:"), get_trans_view_str(ST_SALESORDER, $_SESSION['Items']->order_no, get_reference(ST_SALESORDER, $_SESSION['Items']->order_no)));
+	label_row(_("Sales order:"), get_trans_view_str(ST_SALESORDER, session_obj('Items')->order_no, get_reference(ST_SALESORDER, session_obj('Items')->order_no)));
 
 	$list = array(); $allocs = 0;
-	if (count($_SESSION['Items']->prepayments))
+	if (count(session_obj('Items')->prepayments))
 	{
-		foreach($_SESSION['Items']->prepayments as $pmt)
+		foreach(session_obj('Items')->prepayments as $pmt)
 		{
 			$list[] = get_trans_view_str($pmt['trans_type_from'], $pmt['trans_no_from'], get_reference($pmt['trans_type_from'], $pmt['trans_no_from']));
 			$allocs += $pmt['amt'];
 		}
 	}
 	label_row(_("Payments received:"), implode(',', $list));
-	label_row(_("Invoiced here:"), price_format($_SESSION['Items']->prep_amount), 'class=label');
-	label_row($_SESSION['Items']->payment_terms['days_before_due'] == -1 ? _("Left to be invoiced:") : _("Invoiced so far:"),
-		price_format($_SESSION['Items']->get_trans_total()-max($_SESSION['Items']->prep_amount, $allocs)), 'class=label');
+	label_row(_("Invoiced here:"), price_format(session_obj('Items')->prep_amount), 'class=label');
+	label_row(session_obj('Items')->payment_terms['days_before_due'] == -1 ? _("Left to be invoiced:") : _("Invoiced so far:"),
+		price_format(session_obj('Items')->get_trans_total()-max(session_obj('Items')->prep_amount, $allocs)), 'class=label');
 }
 
 textarea_row(_("Memo:"), 'Comments', null, 50, 4);

@@ -67,14 +67,14 @@ if (!isset($_POST['bank_account'])) { // first page call
 		//  get date and supplier
 		$inv = get_supp_trans($_GET['PInvoice'], $_GET['trans_type'], $supp);
 		if ((bool)$inv) {
-			$_SESSION['alloc']->person_id = $_POST['supplier_id'] = $inv['supplier_id'];
-			$_SESSION['alloc']->read();
+			session_obj('alloc')->person_id = $_POST['supplier_id'] = $inv['supplier_id'];
+			session_obj('alloc')->read();
 			$_POST['DatePaid'] = sql2date($inv['tran_date']);
 			$_POST['memo_'] = $inv['supp_reference'];
-			foreach($_SESSION['alloc']->allocs as $line => $trans) {
+			foreach(session_obj('alloc')->allocs as $line => $trans) {
 				if ($trans->type == $_GET['trans_type'] && $trans->type_no == $_GET['PInvoice']) {
 					$un_allocated = abs($trans->amount) - $trans->amount_allocated;
-					$_SESSION['alloc']->amount = $_SESSION['alloc']->allocs[$line]->current_allocated = $un_allocated;
+					session_obj('alloc')->amount = session_obj('alloc')->allocs[$line]->current_allocated = $un_allocated;
 					$_POST['amount'] = $_POST['amount'.$line] = price_format($un_allocated);
 					break;
 				}
@@ -219,7 +219,7 @@ function check_inputs(): bool
 	if (!db_has_currency_rates(get_supplier_currency($_POST['supplier_id']), $_POST['DatePaid'], true))
 		return false;
 
-	$_SESSION['alloc']->amount = -input_num('amount');
+	session_obj('alloc')->amount = -input_num('amount');
 
 	if (isset($_POST["TotalNumberOfAllocs"]))
 		return check_allocations();
@@ -236,9 +236,9 @@ function handle_add_payment(): void
 		input_num('charge'), input_num('bank_amount', input_num('amount')), $_POST['dimension_id'], $_POST['dimension2_id']);
 	new_doc_date($_POST['DatePaid']);
 
-	$_SESSION['alloc']->trans_no = $payment_id;
-	$_SESSION['alloc']->date_ = $_POST['DatePaid'];
-	$_SESSION['alloc']->write();
+	session_obj('alloc')->trans_no = $payment_id;
+	session_obj('alloc')->date_ = $_POST['DatePaid'];
+	session_obj('alloc')->write();
 
    	unset($_POST['bank_account']);
    	unset($_POST['DatePaid']);
@@ -276,13 +276,13 @@ start_form();
 
 	if (list_updated('supplier_id')) {
 		$_POST['amount'] = price_format(0);
-		$_SESSION['alloc']->person_id = get_post('supplier_id');
+		session_obj('alloc')->person_id = get_post('supplier_id');
 		$Ajax->activate('amount');
 	} elseif (list_updated('bank_account'))
 		$Ajax->activate('alloc_tbl');
 
 	if (list_updated('supplier_id') || list_updated('bank_account')) {
-	  $_SESSION['alloc']->read();
+	  session_obj('alloc')->read();
 	  $_POST['memo_'] = $_POST['amount'] = '';
 	  $Ajax->activate('alloc_tbl');
 	}
@@ -312,10 +312,10 @@ start_form();
 	table_section(3);
 
 	$comp_currency = get_company_currency();
-	$supplier_currency = $_SESSION['alloc']->set_person($_POST['supplier_id'], PT_SUPPLIER);
+	$supplier_currency = session_obj('alloc')->set_person($_POST['supplier_id'], PT_SUPPLIER);
 	if (!$supplier_currency)
 			$supplier_currency = $comp_currency;
-	$_SESSION['alloc']->currency = $bank_currency = get_bank_account_currency($_POST['bank_account']);
+	session_obj('alloc')->currency = $bank_currency = get_bank_account_currency($_POST['bank_account']);
 
 	if ($bank_currency != $supplier_currency) 
 	{
