@@ -34,7 +34,7 @@ page(_($help_context = "Tax Inquiry"), false, false, '', $js);
 //
 if (get_post('Show')) 
 {
-	$Ajax->activate('trans_tbl');
+	ajax()->activate('trans_tbl');
 }
 
 if (get_post('TransFromDate') == "" && get_post('TransToDate') == "")

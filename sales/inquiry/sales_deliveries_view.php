@@ -80,17 +80,17 @@ if (get_post('_DeliveryNumber_changed'))
 {
 	$disable = get_post('DeliveryNumber') !== '';
 
-	$Ajax->addDisable(true, 'DeliveryAfterDate', $disable);
-	$Ajax->addDisable(true, 'DeliveryToDate', $disable);
-	$Ajax->addDisable(true, 'StockLocation', $disable);
-	$Ajax->addDisable(true, '_SelectStockFromList_edit', $disable);
-	$Ajax->addDisable(true, 'SelectStockFromList', $disable);
+	ajax()->addDisable(true, 'DeliveryAfterDate', $disable);
+	ajax()->addDisable(true, 'DeliveryToDate', $disable);
+	ajax()->addDisable(true, 'StockLocation', $disable);
+	ajax()->addDisable(true, '_SelectStockFromList_edit', $disable);
+	ajax()->addDisable(true, 'SelectStockFromList', $disable);
 	// if search is not empty rewrite table
 	if ($disable) {
-		$Ajax->addFocus(true, 'DeliveryNumber');
+		ajax()->addFocus(true, 'DeliveryNumber');
 	} else
-		$Ajax->addFocus(true, 'DeliveryAfterDate');
-	$Ajax->activate('deliveries_tbl');
+		ajax()->addFocus(true, 'DeliveryAfterDate');
+	ajax()->activate('deliveries_tbl');
 }
 
 //-----------------------------------------------------------------------------------

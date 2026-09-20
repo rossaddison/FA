@@ -26,7 +26,6 @@ function add_to_order(items_cart &$order, string|array|null $new_item, int|float
 
 function display_order_header(items_cart &$order): void
 {
-	global $Refs;
 
 	start_outer_table(TABLESTYLE2, "width='70%'"); // outer table
 	table_section(1);
@@ -36,7 +35,7 @@ function display_order_header(items_cart &$order): void
 
 	table_section(2, "50%");
 
-	ref_row(_("Reference:"), 'ref', '', $Refs->get_next(ST_INVADJUST, null, array('location'=>get_post('StockLocation'), 'date'=>get_post('AdjDate'))),
+	ref_row(_("Reference:"), 'ref', '', refs()->get_next(ST_INVADJUST, null, array('location'=>get_post('StockLocation'), 'date'=>get_post('AdjDate'))),
 		 false, ST_INVADJUST);
 
 	end_outer_table(1); // outer table
@@ -138,7 +137,6 @@ function display_adjustment_items(?string $title, items_cart &$order): void
 
 function adjustment_edit_item_controls(items_cart &$order, string|int|float|bool|null $line_no=-1): void
 {
-	global $Ajax;
 	start_row();
 
 	$dec2 = 0;
@@ -156,7 +154,7 @@ function adjustment_edit_item_controls(items_cart &$order, string|int|float|bool
 		hidden('stock_id', post_scalar('stock_id'));
 		label_cell(post_scalar('stock_id'));
 		label_cell($order->line_items[$line_no]->item_description, 'nowrap');
-	    $Ajax->activate('items_table');
+	    ajax()->activate('items_table');
 	}
 	else
 	{
@@ -166,7 +164,7 @@ function adjustment_edit_item_controls(items_cart &$order, string|int|float|bool
 			stock_costable_items_list_cells(null, 'stock_id', null, false, true);
 
 		if (list_updated('stock_id')) {
-			$Ajax->activate('items_table');
+			ajax()->activate('items_table');
 		}
 
 	}
@@ -195,7 +193,7 @@ function adjustment_edit_item_controls(items_cart &$order, string|int|float|bool
 		amount_cell($price, false, '', 'initial_price');
 	} else {
 		if (get_post('_qty_changed')) {
-			$Ajax->activate('items_table');
+			ajax()->activate('items_table');
 			set_focus(input_num('qty') >= 0 ? 'std_cost' : 'AddItem');
 		}
 		if (input_num('qty') >= 0)

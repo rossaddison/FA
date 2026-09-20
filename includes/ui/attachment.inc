@@ -32,7 +32,7 @@ class attachments extends simple_crud {
 
 	/** @return void */
 	function list_view() {
-		global $Ajax, $path_to_root, $session_debtor_no, $session_supplier_id;
+		global $path_to_root, $session_debtor_no, $session_supplier_id;
 		br();
 		if(isset($_POST['attachmentDownload'])){
 			$keys =  array_keys($_POST['attachmentDownload']);
@@ -42,7 +42,7 @@ class attachments extends simple_crud {
 			
 			if ($row['unique_name'] != ""){
 				if(in_ajax()) {
-					$Ajax->redirect($path_to_root.'/admin/attachments.php?dl='.$keys[0]);
+					ajax()->redirect($path_to_root.'/admin/attachments.php?dl='.$keys[0]);
 				} else {
 		    		Header("Content-type: 'application/octet-stream' ");
 			    	//header('Content-Length: '.$row['filesize']);
@@ -59,7 +59,7 @@ class attachments extends simple_crud {
 			
 			if ($row['unique_name'] != ""){
 
-				$Ajax->redirect($path_to_root.'/admin/attachments.php?vw='.$keys[0]);	
+				ajax()->redirect($path_to_root.'/admin/attachments.php?vw='.$keys[0]);	
 				/*if(in_ajax()) {
 					
 				} else {					

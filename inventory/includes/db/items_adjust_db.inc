@@ -48,7 +48,7 @@ function add_stock_adjustment(?array $items, string|array|null $location, string
 
 	add_comments(ST_INVADJUST, $adj_id, $date_, $memo_);
 
-	$Refs->save(ST_INVADJUST, $adj_id, $reference);
+	refs()->save(ST_INVADJUST, $adj_id, $reference);
 	add_audit_trail(ST_INVADJUST, $adj_id, $date_);
 
 	$args->trans_no = $adj_id;

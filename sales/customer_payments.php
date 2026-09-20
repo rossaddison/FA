@@ -80,7 +80,7 @@ if (list_updated('BranchID')) {
 	$br = row_or_empty(get_branch(get_post('BranchID')));
 	$_POST['customer_id'] = $br['debtor_no'];
 	session_obj('alloc')->person_id = $br['debtor_no'];
-	$Ajax->activate('customer_id');
+	ajax()->activate('customer_id');
 }
 
 if (!isset($_POST['customer_id'])) {
@@ -140,7 +140,6 @@ elseif (isset($_GET['UpdatedID'])) {
 
 function can_process()
 {
-	global $Refs;
 
 	if (!get_post('customer_id'))
 	{
@@ -230,7 +229,7 @@ function can_process()
 
 if (isset($_POST['_customer_id_button'])) {
 //	unset($_POST['branch_id']);
-	$Ajax->activate('BranchID');
+	ajax()->activate('BranchID');
 }
 
 //----------------------------------------------------------------------------------------------
@@ -257,7 +256,6 @@ if (get_post('AddPaymentItem') && can_process()) {
 
 function read_customer_data(): void
 {
-	global $Refs;
 
 	$myrow = row_or_empty(get_customer_habit($_POST['customer_id']));
 
@@ -266,7 +264,7 @@ function read_customer_data(): void
 	// To support Edit feature
 	// If page is called first time and New entry fetch the nex reference number
 	if (!(bool)session_obj('alloc')->trans_no && !isset($_POST['charge'])) 
-		$_POST['ref'] = $Refs->get_next(ST_CUSTPAYMENT, null, array(
+		$_POST['ref'] = refs()->get_next(ST_CUSTPAYMENT, null, array(
 			'customer' => get_post('customer_id'), 'date' => get_post('DateBanked')));
 }
 
@@ -299,7 +297,7 @@ if (isset($_GET['trans_no']) && $_GET['trans_no'] > 0 )
 	else
 	{
 		$_SESSION['alloc'] = new allocation(ST_CUSTPAYMENT, $_POST['trans_no']);
-		$Ajax->activate('alloc_tbl');
+		ajax()->activate('alloc_tbl');
 	}
 }
 
@@ -334,7 +332,7 @@ if (list_updated('customer_id') || ($new && list_updated('bank_account'))) {
 		$dflt_act = row_or_empty(get_default_bank_account(session_obj('alloc')->person_curr));
 		$_POST['bank_account'] = $dflt_act['id'];
 	}
-	$Ajax->activate('_page_body');
+	ajax()->activate('_page_body');
 }
 
 bank_accounts_list_row(_("Into Bank Account:"), 'bank_account', null, true);

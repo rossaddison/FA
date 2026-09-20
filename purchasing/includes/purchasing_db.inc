@@ -160,7 +160,7 @@ function get_po_prepayments(?object $supp_trans): array
 //
 function add_direct_supp_trans(?object $cart)
 {
-	global $Refs, $type_shortcuts;
+	global $type_shortcuts;
 
 	if ($cart->trans_type != ST_PURCHORDER) {
 		// for direct grn/invoice set same dates for lines as for whole document
@@ -225,7 +225,7 @@ function add_direct_supp_trans(?object $cart)
 	$inv_no = add_supp_invoice($inv);
 
 	if ((bool)$cart->cash_account) {
-		$pmt_no = write_supp_payment(0, $inv->supplier_id, $cart->cash_account,	$inv->tran_date, $Refs->get_next(ST_SUPPAYMENT, null, $inv->tran_date), 
+		$pmt_no = write_supp_payment(0, $inv->supplier_id, $cart->cash_account,	$inv->tran_date, refs()->get_next(ST_SUPPAYMENT, null, $inv->tran_date), 
 			$total, 0, _('Payment for:').$inv->supp_reference .' ('.$type_shortcuts[ST_SUPPINVOICE].$inv_no.')' . ' ' . $cart->Comments, 0, 0, $cart->dimension, $cart->dimension2);
 		add_supp_allocation($total, ST_SUPPAYMENT, $pmt_no, ST_SUPPINVOICE, $inv_no, $inv->supplier_id, $inv->tran_date);
 		update_supp_trans_allocation(ST_SUPPINVOICE, $inv_no, $inv->supplier_id);

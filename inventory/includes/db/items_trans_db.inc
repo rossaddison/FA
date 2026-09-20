@@ -53,14 +53,13 @@ function stock_cost_update(string|array|null $stock_id, int|float|bool|null $mat
 
 		if ($value_of_change != 0)
 		{
-			global $Refs;
 			$stock_gl_code = row_or_empty(get_stock_gl_code($stock_id));
 
 			$cart = new items_cart(ST_COSTUPDATE);
 			$cart->tran_date = $cart->doc_date = $cart->event_date = $date_;
 			if (!(bool)is_date_in_fiscalyear($cart->tran_date))
 				$cart->tran_date = end_fiscalyear();
-			$cart->reference = $Refs->get_next(ST_COSTUPDATE, $refline, $cart->tran_date, $date_);
+			$cart->reference = refs()->get_next(ST_COSTUPDATE, $refline, $cart->tran_date, $date_);
  
 			if (!(bool)($memo_ ?? null))
 				$cart->memo_ = sprintf(_("Cost was %s changed to %s x quantity on hand of %s"),

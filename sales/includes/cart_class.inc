@@ -206,13 +206,12 @@ class Cart
 	/** @return void */
 	function prepare_child($type)
 	{
-		global $Refs;
 
 		if ($type === true)
 			$type = get_child_type($this->trans_type);
 
 		$this->trans_type = $type;
-		$this->reference = $Refs->get_next($this->trans_type, null, array('date' => $this->document_date,
+		$this->reference = refs()->get_next($this->trans_type, null, array('date' => $this->document_date,
 			'customer' => $this->customer_id, 'branch' => $this->Branch));
 		if ($type == ST_CUSTCREDIT)
 		    $this->src_date = $this->document_date;
@@ -286,7 +285,6 @@ class Cart
 	/** @return void */
 	function read($type, $trans_no=0, $prepare_child=false) {
 
-		global $Refs;
 
 		if (!is_array($trans_no)) $trans_no = array($trans_no);
 
@@ -324,7 +322,7 @@ class Cart
 			$this->document_date = new_doc_date();
 			if (!(bool)is_date_in_fiscalyear($this->document_date))
 				$this->document_date = end_fiscalyear();
-			$this->reference = $Refs->get_next($this->trans_type, null, array('date' => Today(),
+			$this->reference = refs()->get_next($this->trans_type, null, array('date' => Today(),
 				'customer' => $this->customer_id));
 			if ($type != ST_SALESORDER && $type != ST_SALESQUOTE) // Added 2.1 Joe Hunt 2008-11-12
 			{
@@ -363,13 +361,12 @@ class Cart
 	// $policy - 0 or 1:  writeoff/return for IV, back order/cancel for DN
 	function write($policy=0) {
 		
-		global $Refs;
 		
 		begin_transaction(); // prevents partial database changes in case of direct delivery/invoice
 		if ($this->reference != 'auto' && $this->trans_no == 0 && !is_new_reference($this->reference, $this->trans_type))
 		{
 			if (!empty(sysprefs()->prefs['ref_no_auto_increase']))
-				$this->reference = $Refs->get_next($this->trans_type, null, array('date' => Today()));
+				$this->reference = refs()->get_next($this->trans_type, null, array('date' => Today()));
 			else	
 			{
 				commit_transaction();

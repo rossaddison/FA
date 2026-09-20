@@ -16,7 +16,6 @@ include_once($path_to_root . "/manufacturing/includes/manufacturing_db.inc");
 
 function void_transaction(string|int|float|bool|array|null $type, string|int|float|bool|array|null $type_no, string|int|float|bool|array|null $date_, string|array|null $memo_): string|false
 {
-	global $Refs;
 	$void_entry = get_voided_entry($type, $type_no);
 
 	if ($void_entry != null)
@@ -128,7 +127,7 @@ function void_transaction(string|int|float|bool|array|null $type, string|int|flo
 
 	// only add an entry if it's actually been voided
 	add_audit_trail($type, $type_no, $date_, _("Voided.")."\n".$memo_);
-	$Refs->restore_last($type, $type_no);
+	refs()->restore_last($type, $type_no);
 	add_voided_entry($type, $type_no, $date_, $memo_);
 	return false;
 }

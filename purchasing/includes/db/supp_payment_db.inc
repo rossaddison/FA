@@ -13,7 +13,6 @@
 function write_supp_payment(?int $trans_no, string|int|float|bool|array|null $supplier_id, string|int|float|bool|array|null $bank_account,
 	string|int|float|bool|array|null $date_, string|int|float|bool|array|null $ref, string|int|float|bool|null $supp_amount, int|float|bool|null $supp_discount, string|array|null $memo_, int|float|bool|null $bank_charge=0, int|float|bool|null $bank_amount=0, string|int|float|bool|array|null $dimension=0, string|int|float|bool|array|null $dimension2=0)
 {
-	global $Refs;
 
 	begin_transaction();
 	$args = func_get_args(); while (count($args) < 12) $args[] = 0;
@@ -85,7 +84,7 @@ function write_supp_payment(?int $trans_no, string|int|float|bool|array|null $su
 
 	add_comments(ST_SUPPAYMENT, $payment_id, $date_, $memo_);
 
-	$Refs->save(ST_SUPPAYMENT, $payment_id, $ref);
+	refs()->save(ST_SUPPAYMENT, $payment_id, $ref);
 
 	$args->trans_no = $payment_id;
 	hook_db_postwrite($args, ST_SUPPAYMENT);

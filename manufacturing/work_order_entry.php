@@ -303,7 +303,7 @@ if (isset($_POST['close']))
 //-------------------------------------------------------------------------------------
 if (get_post('_type_update')) 
 {
-  $Ajax->activate('_page_body');
+  ajax()->activate('_page_body');
 }
 //-------------------------------------------------------------------------------------
 
@@ -362,7 +362,7 @@ else
 {
 	$_POST['units_issued'] = $_POST['released'] = 0;
 
-	ref_row(_("Reference:"), 'wo_ref', '', $Refs->get_next(ST_WORKORDER, null, get_post('date_')), false, ST_WORKORDER);
+	ref_row(_("Reference:"), 'wo_ref', '', refs()->get_next(ST_WORKORDER, null, get_post('date_')), false, ST_WORKORDER);
 
 	wo_types_list_row(_("Type:"), 'type', null);
 }
@@ -380,7 +380,7 @@ else
 {
 	stock_manufactured_items_list_row(_("Item:"), 'stock_id', null, false, true);
 	if (list_updated('stock_id'))
-		$Ajax->activate('quantity');
+		ajax()->activate('quantity');
 
 	locations_list_row(_("Destination Location:"), 'StockLocation', null);
 }
@@ -413,7 +413,7 @@ else
 		$_POST['cr_lab_acc'] = $bank_act['account_code'];
 		$_POST['Costs'] = price_format(get_post('type') == WO_ASSEMBLY ? $item['overhead_cost'] : 0);
 		$_POST['cr_acc'] = $bank_act['account_code'];
-		$Ajax->activate('_page_body');
+		ajax()->activate('_page_body');
 	}
 
 	amount_row($wo_cost_types[WO_LABOUR], 'Labour');

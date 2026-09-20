@@ -97,7 +97,7 @@ class BoxReports
 					."$acc[1]>$acc[0]</a><tr><td>\n";
 
 				if (@$_REQUEST['REP_ID'] == $report->id) {
-					$Ajax->activate($id);
+					ajax()->activate($id);
 				}
 
 				if (isset($_REQUEST['REP_ID']) && $_REQUEST['REP_ID']==$report->id) {
@@ -112,7 +112,7 @@ class BoxReports
 					$st_params .= "\n<input type=hidden name='Class' value=".$cur_class.">"
 						."\n</form></td></tr></table>\n";
 					set_focus('Rep'.$report->id);
-					$Ajax->addUpdate(true, 'rep_form', $st_params);
+					ajax()->addUpdate(true, 'rep_form', $st_params);
 				}
 			}
 			$st_reports .= "</table>";

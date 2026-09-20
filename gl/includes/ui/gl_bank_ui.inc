@@ -11,7 +11,6 @@
 ***********************************************************************/
 function display_bank_header(?items_cart &$order): void
 {
-	global $Ajax;
 	$payment = $order->trans_type == ST_BANKPAYMENT;
 
 	$customer_error = false;
@@ -43,11 +42,11 @@ function display_bank_header(?items_cart &$order): void
 	}
 	if (isset($_POST['_PayType_update'])) {
 		$_POST['person_id'] = '';
-		$Ajax->activate('pmt_header');
-		$Ajax->activate('code_id');
-		$Ajax->activate('pagehelp');
-		$Ajax->activate('editors');
-		$Ajax->activate('footer');
+		ajax()->activate('pmt_header');
+		ajax()->activate('code_id');
+		ajax()->activate('pagehelp');
+		ajax()->activate('editors');
+		ajax()->activate('footer');
 	}
     payment_person_types_list_row( $payment ? _("Pay To:"):_("From:"),
 		 'PayType', $_POST['PayType'], true);
@@ -91,8 +90,8 @@ function display_bank_header(?items_cart &$order): void
 			$qid = row_or_empty(get_quick_entry(get_post('person_id')));
 			if (list_updated('person_id')) {
 				unset($_POST['totamount']); // enable default
-				$Ajax->activate('footer');
-				$Ajax->activate('totamount');
+				ajax()->activate('footer');
+				ajax()->activate('totamount');
 			}
 			amount_row((string)$qid['base_desc'].":", 'totamount', price_format($qid['base_amount']),
 				 null, "&nbsp;&nbsp;".submit('go', _("Go"), false, false, true));
@@ -203,7 +202,6 @@ function display_gl_items(string|int|float|bool|supp_trans|null $title, ?items_c
 
 function gl_edit_item_controls(?items_cart &$order, string|int|float|bool|null $dim, string|int|float|bool|null $Index=null): void
 {
-	global $Ajax;
 	$payment = $order->trans_type == ST_BANKPAYMENT;
 
 	start_row();
@@ -219,12 +217,12 @@ function gl_edit_item_controls(?items_cart &$order, string|int|float|bool|null $
 		$_POST['LineMemo'] = $item->reference;
 
 		hidden('Index', $id);
-	    $Ajax->activate('items_table');
+	    ajax()->activate('items_table');
 	}
 	else
 	{
 		if(isset($_POST['_code_id_update'])) {
-			    $Ajax->activate('code_id');
+			    ajax()->activate('code_id');
 		}
 		if (list_updated('PayType') || list_updated('person_id'))
 		{
@@ -244,8 +242,8 @@ function gl_edit_item_controls(?items_cart &$order, string|int|float|bool|null $
 				$_POST['code_id'] =
 					get_company_pref($payment ? 'default_cogs_act':'default_inv_sales_act');
 			}
-			$Ajax->activate('dimension_id');
-			$Ajax->activate('dimension2_id');
+			ajax()->activate('dimension_id');
+			ajax()->activate('dimension2_id');
 		}
 	}
 	echo gl_all_accounts_list('code_id', null, true, true);

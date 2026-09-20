@@ -306,7 +306,6 @@ function get_purchases_from_trans(string|int|float|bool|null $stock_id, ?string 
 */
 function adjust_deliveries(string|int|float|bool|null $stock_id, string|int|float|bool|null $material_cost, string|int|float|bool|null $to): void
 {
-	global $Refs;
 
 	if (!is_inventory_item($stock_id))
 		return;
@@ -347,7 +346,7 @@ function adjust_deliveries(string|int|float|bool|null $stock_id, string|int|floa
 		$cart->tran_date = $cart->doc_date = $cart->event_date = $to;
 		if (!(bool)is_date_in_fiscalyear($cart->tran_date))
 			$cart->tran_date = end_fiscalyear();
-		$cart->reference = $Refs->get_next(ST_COSTUPDATE, null, $cart->tran_date, $to);
+		$cart->reference = refs()->get_next(ST_COSTUPDATE, null, $cart->tran_date, $to);
 
 		$cart->memo_ = _("Cost was ") . $old_cost. _(" changed to ") . $new_cost . _(" for item ")."'$stock_id'";
 
@@ -402,17 +401,16 @@ function handle_negative_inventory(string|int|float|bool|null $stock_id, string|
 
 	if ($qoh + $quantity <= 0 && $qoh > 0) //Positive inventory turning zero/negative
 	{
-		global $Refs;
 
 		$id = get_next_trans_no(ST_JOURNAL);
-		$ref = $Refs->get_next(ST_JOURNAL, null, $date_);
+		$ref = refs()->get_next(ST_JOURNAL, null, $date_);
 		$diff = round($qoh*get_unit_cost($stock_id) + $quantity*$standard_cost, user_price_dec());
 
 		if ($diff != 0)
 		{
 			begin_transaction();
 			add_journal(ST_JOURNAL, $id, $diff, $date_, get_company_currency(), $ref);
-			$Refs->save(ST_JOURNAL, $id, $ref);
+			refs()->save(ST_JOURNAL, $id, $ref);
 
 			$stock_gl_code = row_or_empty(get_stock_gl_code($stock_id));
 			$memo = _("Zero/negative inventory handling");
@@ -429,7 +427,7 @@ function handle_negative_inventory(string|int|float|bool|null $stock_id, string|
 
 			add_audit_trail(ST_JOURNAL, $id, $date_);
 			add_comments(ST_JOURNAL, $id, $date_, $memo);
-			$Refs->save(ST_JOURNAL, $id, $ref);	
+			refs()->save(ST_JOURNAL, $id, $ref);	
 			commit_transaction();
 		}
 	}

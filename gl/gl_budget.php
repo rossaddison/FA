@@ -46,10 +46,10 @@ if (isset($_POST['add']) || isset($_POST['delete']))
 	else
 		display_notification_centered(_("The Budget has been deleted."));
 
-	$Ajax->activate('budget_tbl');
+	ajax()->activate('budget_tbl');
 }
 if (isset($_POST['submit']) || isset($_POST['update']))
-	$Ajax->activate('budget_tbl');
+	ajax()->activate('budget_tbl');
 
 //-------------------------------------------------------------------------------------
 

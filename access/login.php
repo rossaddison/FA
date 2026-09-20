@@ -148,7 +148,7 @@ function defaultCompany()
 					echo "<input type='hidden' name='{$p}[$i]' value='$v'>";
 	}
 	end_form(1);
-	$Ajax->addScript(true, "if (document.forms.length) document.forms[0].password.focus();");
+	ajax()->addScript(true, "if (document.forms.length) document.forms[0].password.focus();");
 
     echo "<script language='JavaScript' type='text/javascript'>
     //<![CDATA[

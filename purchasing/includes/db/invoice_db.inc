@@ -127,7 +127,6 @@ function get_diff_in_home_currency(string|int|float|bool|null $supplier, ?string
 /** @return array<array-key, mixed>|null|scalar */
 function add_supp_invoice(supp_trans &$supp_trans)
 {
-	global $Refs;
 
 	//$company_currency = get_company_currency();
 	$trans_no = $supp_trans->trans_no;
@@ -145,7 +144,7 @@ function add_supp_invoice(supp_trans &$supp_trans)
 	if ((bool)$trans_no) {
 		$allocs = get_payments_for($trans_no, $trans_type, $supp_trans->supplier_id); // save allocations
 		void_transaction($trans_type, $trans_no, $supp_trans->tran_date, _("Document reentered."));
-		$Refs->restore_last($trans_type, $trans_no);
+		refs()->restore_last($trans_type, $trans_no);
 	} else
 		$allocs = get_po_prepayments($supp_trans);
 
@@ -336,10 +335,9 @@ function add_supp_invoice(supp_trans &$supp_trans)
 					$qoh = get_qoh_on_date($entered_grn->item_code);
 					if ($qoh <= 0)
 					{
-						global $Refs;
 
 						$id = get_next_trans_no(ST_JOURNAL);
-						$ref = $Refs->get_next(ST_JOURNAL, null, $date_);
+						$ref = refs()->get_next(ST_JOURNAL, null, $date_);
 						add_journal(ST_JOURNAL, $id, $diff, $date_, get_company_currency(), $ref);
 						$stock_id = $entered_grn->item_code;
 						$memo = _("Supplier invoice adjustment for zero inventory of ").$stock_id." "._("Invoice")." ".$supp_trans->reference;
@@ -354,7 +352,7 @@ function add_supp_invoice(supp_trans &$supp_trans)
 
 						add_audit_trail(ST_JOURNAL, $id, $date_);
 						add_comments(ST_JOURNAL, $id, $date_, $memo);
-						$Refs->save(ST_JOURNAL, $id, $ref);
+						refs()->save(ST_JOURNAL, $id, $ref);
 					}
 				}
 			}
@@ -371,7 +369,7 @@ function add_supp_invoice(supp_trans &$supp_trans)
 
 	add_comments($trans_type, $invoice_id, $date_, $supp_trans->Comments);
 
-	$Refs->save($trans_type, $invoice_id, $supp_trans->reference);
+	refs()->save($trans_type, $invoice_id, $supp_trans->reference);
 
 	if ($trans_type==ST_SUPPCREDIT && count($supp_trans->src_docs) == 1) // for credit issued to single invoice autoallocate amount
 	{
@@ -615,11 +613,10 @@ function void_supp_invoice(string|int|float|bool|null $type, string|int|float|bo
 					$qoh = get_qoh_on_date($details_row["stock_id"]);
 					if ($diff*(float)$details_row["quantity"] !=0 && $qoh <= 0)
 					{
-						global $Refs;
 
 						//Chaitanya : Post a journal entry
 						$id = get_next_trans_no(ST_JOURNAL);
-						$ref = $Refs->get_next(ST_JOURNAL, null, $date_);
+						$ref = refs()->get_next(ST_JOURNAL, null, $date_);
 						add_journal(ST_JOURNAL, $id, (float)$details_row["quantity"] * $diff, $old_date, get_company_currency(), $ref);
 						$stock_id = $details_row["stock_id"];
 						$stock_gl_code = row_or_empty(get_stock_gl_code($stock_id));
@@ -635,7 +632,7 @@ function void_supp_invoice(string|int|float|bool|null $type, string|int|float|bo
 						
 						add_audit_trail(ST_JOURNAL, $id, $old_date);
 						add_comments(ST_JOURNAL, $id, $old_date, $memo);
-						$Refs->save(ST_JOURNAL, $id, $ref);
+						refs()->save(ST_JOURNAL, $id, $ref);
 					}
 				}
          	}

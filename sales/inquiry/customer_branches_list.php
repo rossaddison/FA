@@ -25,7 +25,7 @@ $js = get_js_select_combo_item();
 page(_($help_context = "Customer Branches"), true, false, "", $js);
 
 if(get_post("search")) {
-  $Ajax->activate("customer_branch_tbl");
+  ajax()->activate("customer_branch_tbl");
 }
 
 start_form(false, false, (string)$_SERVER['PHP_SELF'] . "?" . (string)$_SERVER['QUERY_STRING']);

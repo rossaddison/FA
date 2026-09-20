@@ -278,7 +278,6 @@ function check_ui_refresh(?string $name=null): bool
 //
 function exchange_rate_display(string|int|float|bool|null $from_currency, string|int|float|bool|array|null $to_currency, string|int|float|bool|array|null $date_, bool $force_edit=false): void
 {
-    global $Ajax;
 
 	$readonly = false;
 
@@ -324,7 +323,7 @@ function exchange_rate_display(string|int|float|bool|null $from_currency, string
 			}
 			if ($from_currency != $comp_currency)
 				$rate = 1 / ($rate / get_exchange_rate_from_home_currency($to_currency, $date_));
-			$Ajax->activate('_ex_rate_span');
+			ajax()->activate('_ex_rate_span');
 		}
 
 		$rate = number_format2($rate, user_exrate_dec());
@@ -336,7 +335,7 @@ function exchange_rate_display(string|int|float|bool|null $from_currency, string
 
 		label_row(_("Exchange Rate:"), $span = "<span style='vertical-align:top;' id='_ex_rate_span'>$ctrl $from_currency = 1 $to_currency</span>" );
 
-	  	$Ajax->addUpdate('_ex_rate_span', '_ex_rate_span', $span);
+	  	ajax()->addUpdate('_ex_rate_span', '_ex_rate_span', $span);
 	}
 }
 
@@ -982,8 +981,7 @@ function get_js_set_combo_item(): string {
   If $form<0 $name is element id.
 */
 function set_focus(string $name, ?int $form_no=0): void {
-  global $Ajax;
-	$Ajax->addFocus(true, $name);
+	ajax()->addFocus(true, $name);
     $_POST['_focus'] = $name;
 }
 //

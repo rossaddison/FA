@@ -65,7 +65,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 				$_POST['bank_name'], $_POST['bank_account_number'], 
     			$_POST['bank_address'], $_POST['BankAccountCurrency'],
     			$_POST['dflt_curr_act'], $_POST['bank_charge_act']);
-			$Ajax->activate('bank_id'); // in case of status change
+			ajax()->activate('bank_id'); // in case of status change
 			display_notification(_('Bank account has been updated'));
     	} 
     	else 
@@ -77,7 +77,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 				$_POST['BankAccountCurrency'], $_POST['dflt_curr_act'], $_POST['bank_charge_act']);
 			$bank_id = $_POST['bank_id'] = db_insert_id();
 			display_notification(_('New bank account has been added'));
-  			$Ajax->activate('_page_body');
+  			ajax()->activate('_page_body');
   		}
  		$Mode = 'RESET';
 	}
@@ -114,7 +114,7 @@ if ($Mode == 'RESET')
 	$_POST['bank_name']  = 	$_POST['bank_account_name']  = '';
 	$_POST['bank_account_number'] = $_POST['bank_address'] = '';
 	$_POST['bank_charge_act'] = get_company_pref('bank_charge_act');
-	$Ajax->activate('_page_body');
+	ajax()->activate('_page_body');
 }
 if (!isset($_POST['bank_charge_act']))
 	$_POST['bank_charge_act'] = get_company_pref('bank_charge_act');

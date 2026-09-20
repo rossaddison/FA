@@ -119,7 +119,7 @@ if (isset($_GET['trans_no']) && isset($_GET['trans_type']))
 if(get_post('UpdateDisplay'))
 {
 	session_obj('alloc')->read();
-	$Ajax->activate('alloc_tbl');
+	ajax()->activate('alloc_tbl');
 }
 
 if (isset($_SESSION['alloc']))

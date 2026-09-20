@@ -48,7 +48,7 @@ function set_global_connection(string|int|float|bool|null $company=-1): mysqli|f
 
 function db_query(string $sql, ?string $err_msg=null): mysqli_result|bool
 {
-	global $db, $sql_queries, $Ajax, $db_connections, $db_last_inserted_id;
+	global $db, $sql_queries, $db_connections, $db_last_inserted_id;
 
 	// set current db prefix
 	$comp = isset($_SESSION["wa_current_user"]->cur_con) ? $_SESSION["wa_current_user"]->cur_con : 0;
@@ -57,7 +57,7 @@ function db_query(string $sql, ?string $err_msg=null): mysqli_result|bool
 
 	if (sysprefs()->show_sql)
 	{
-		$Ajax->activate('footer_debug');
+		ajax()->activate('footer_debug');
 		$sql_queries .= "<pre>$sql</pre>\n<hr>";
 	}
 

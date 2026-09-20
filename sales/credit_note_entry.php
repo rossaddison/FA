@@ -56,7 +56,7 @@ if (list_updated('branch_id')) {
 	// when branch is selected via external editor also customer can change
 	$br = row_or_empty(get_branch(get_post('branch_id')));
 	$_POST['customer_id'] = $br['debtor_no'];
-	$Ajax->activate('customer_id');
+	ajax()->activate('customer_id');
 }
 
 if (isset($_GET['AddedID'])) {
@@ -83,8 +83,7 @@ if (isset($_GET['AddedID'])) {
 //--------------------------------------------------------------------------------
 
 function line_start_focus(): void {
-  	global $Ajax;
-  	$Ajax->activate('items_table');
+  	ajax()->activate('items_table');
   	set_focus('_stock_id_edit');
 }
 
@@ -136,7 +135,6 @@ function handle_new_credit(string|int|array|null $trans_no): void
 
 function can_process(): bool
 {
-	global $Refs;
 
 	$input_error = 0;
 
@@ -160,7 +158,7 @@ function can_process(): bool
 		return false;
 	}
 	if(session_obj('Items')->trans_no == 0) {
-	    if (!$Refs->is_valid($_POST['ref'], ST_CUSTCREDIT)) {
+	    if (!refs()->is_valid($_POST['ref'], ST_CUSTCREDIT)) {
 			display_error( _("You must enter a reference."));
 			set_focus('ref');
 			$input_error = 1;

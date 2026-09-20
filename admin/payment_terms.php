@@ -155,7 +155,7 @@ end_table(1);
 
 //-------------------------------------------------------------------------------------------------
 if (list_updated('type')) {
-	$Ajax->activate('edits');
+	ajax()->activate('edits');
 }
 
 div_start('edits');

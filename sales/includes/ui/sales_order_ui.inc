@@ -241,7 +241,6 @@ function display_order_summary(?string $title, Cart &$order, bool $editable_item
 
 function display_order_header(Cart &$order, bool $editable, ?string $date_text): string
 {
-	global $Ajax;
 
 	start_outer_table(TABLESTYLE2, "width='80%'");
 
@@ -268,7 +267,7 @@ function display_order_header(Cart &$order, bool $editable, ?string $date_text):
 		if ($order->customer_id != get_post('customer_id', -1))
 		{
 			// customer has changed
-			$Ajax->activate('branch_id');
+			ajax()->activate('branch_id');
   		}
 		customer_branches_list_row(_("Branch:"),
 	  	  $_POST['customer_id'], 'branch_id', null, false, true, true, true);
@@ -313,18 +312,18 @@ function display_order_header(Cart &$order, bool $editable, ?string $date_text):
 							$order->payment = '';
 				} elseif (get_post('payment') !== $order->payment) {
 					$_POST['payment'] = $order->payment;
-					$Ajax->activate('delivery');
-					$Ajax->activate('payment');
+					ajax()->activate('delivery');
+					ajax()->activate('payment');
 				} else {
 					if ($order->trans_type == ST_SALESINVOICE)
 					{
 						$_POST['delivery_date'] = $order->due_date;
-						$Ajax->activate('delivery_date');
+						ajax()->activate('delivery_date');
 					}
-					$Ajax->activate('Location');
-					$Ajax->activate('deliver_to');
-					$Ajax->activate('phone');
-					$Ajax->activate('delivery_address');
+					ajax()->activate('Location');
+					ajax()->activate('deliver_to');
+					ajax()->activate('phone');
+					ajax()->activate('delivery_address');
 				}
 				// change prices if necessary
 				// what about discount in template case?
@@ -334,16 +333,16 @@ function display_order_header(Cart &$order, bool $editable, ?string $date_text):
 				if ($old_order->sales_type != $order->sales_type) {
 				//  || $old_order->default_discount!=$order->default_discount
 					$_POST['sales_type'] = $order->sales_type;
-					$Ajax->activate('sales_type');
+					ajax()->activate('sales_type');
 					$change_prices = 1;
 				}
 				if ($old_order->dimension_id != $order->dimension_id) {
 					$_POST['dimension_id'] = $order->dimension_id;
-				    $Ajax->activate('dimension_id');
+				    ajax()->activate('dimension_id');
 				}
 				if ($old_order->dimension2_id != $order->dimension2_id) {
 					$_POST['dimension2_id'] = $order->dimension2_id;
-				    $Ajax->activate('dimension2_id');
+				    ajax()->activate('dimension2_id');
 				}
 				unset($old_order);
 			}
@@ -385,8 +384,8 @@ function display_order_header(Cart &$order, bool $editable, ?string $date_text):
 				$_POST['Location'] = $order->Location = $order->pos['pos_location'];
 				$order->location_name = $order->pos['location_name'];
 			}
-			$Ajax->activate('items_table');
-			$Ajax->activate('delivery');
+			ajax()->activate('items_table');
+			ajax()->activate('delivery');
 		}
 		$paymcat = !(bool)$order->pos['cash_sale'] ? PM_CREDIT : 
 			(!(bool)$order->pos['credit_sale'] ? PM_CASH : PM_ANY);
@@ -407,7 +406,7 @@ function display_order_header(Cart &$order, bool $editable, ?string $date_text):
 		$myrow = row_or_empty(get_sales_type($_POST['sales_type']));
 		$order->set_sales_type($myrow['id'], $myrow['sales_type'],
 			$myrow['tax_included'], $myrow['factor']);
-		$Ajax->activate('sales_type');
+		ajax()->activate('sales_type');
 		$change_prices = 1;
 	}
 
@@ -425,13 +424,13 @@ function display_order_header(Cart &$order, bool $editable, ?string $date_text):
 				&& (get_base_sales_type()>0)) {
 					$change_prices = 1;
 			}
-			$Ajax->activate('_ex_rate');
+			ajax()->activate('_ex_rate');
 			if ($order->trans_type == ST_SALESINVOICE) {
 				$_POST['delivery_date'] = get_invoice_duedate(get_post('payment'), get_post('OrderDate'));
 			} else 
 				$_POST['delivery_date'] = add_days(get_post('OrderDate'), sysprefs()->default_delivery_required_by());
-			$Ajax->activate('items_table');
-			$Ajax->activate('delivery_date');
+			ajax()->activate('items_table');
+			ajax()->activate('delivery_date');
 		}
 		if ($order->trans_type != ST_SALESORDER && $order->trans_type != ST_SALESQUOTE)
 		{	// 2008-11-12 Joe Hunt added dimensions
@@ -462,7 +461,7 @@ function display_order_header(Cart &$order, bool $editable, ?string $date_text):
 			$line->price = get_kit_price($line->stock_id, $order->customer_currency,
 				$order->sales_type, $order->price_factor, get_post('OrderDate'));
 		}
-	    $Ajax->activate('items_table');
+	    ajax()->activate('items_table');
 	}
 
 	return $customer_error;
@@ -472,7 +471,6 @@ function display_order_header(Cart &$order, bool $editable, ?string $date_text):
 
 function sales_order_item_controls(Cart &$order, int|string|null &$rowcounter, string|int|float|bool|null $line_no=-1): void
 {
-    global $Ajax;
 
 	alt_table_row_color($rowcounter);
 
@@ -494,7 +492,7 @@ function sales_order_item_controls(Cart &$order, int|string|null &$rowcounter, s
 			hidden('item_description', post_scalar('item_description'));
 			label_cell(post_scalar('item_description'));
 		}
-	    $Ajax->activate('items_table');
+	    ajax()->activate('items_table');
 	}
 	else	// prepare new line
 	{
@@ -507,10 +505,10 @@ function sales_order_item_controls(Cart &$order, int|string|null &$rowcounter, s
             sales_items_list_cells(null,'stock_id', $_POST['stock_id'], false, true, true);
         }
         if (list_updated('stock_id')) {            
-            $Ajax->activate('price');
-            $Ajax->activate('units');
-            $Ajax->activate('qty');
-            $Ajax->activate('line_total');
+            ajax()->activate('price');
+            ajax()->activate('units');
+            ajax()->activate('qty');
+            ajax()->activate('line_total');
         }		
 
 		$item_info = row_or_empty(get_item_edit_info($_POST['stock_id']));
@@ -570,19 +568,18 @@ function sales_order_item_controls(Cart &$order, int|string|null &$rowcounter, s
 
 function display_delivery_details(Cart &$order): void
 {
-	global $Ajax;
 
 	div_start('delivery');	
 
 
 	if ((bool)$order->payment_terms['cash_sale']) {	// Direct payment sale
-		$Ajax->activate('items_table');
+		ajax()->activate('items_table');
 		display_heading(_('Cash payment'));
 		start_table(TABLESTYLE2, "width='60%'");
 
 		locations_list_row(_("Deliver from Location:"), 'Location', null, false, true);
  		if (list_updated('Location'))
- 			$Ajax->activate('items_table');
+ 			ajax()->activate('items_table');
 		label_row(_("Cash account:"), $order->pos['bank_account_name']);
 		textarea_row(_("Comments:"), "Comments", $order->Comments, 31, 5);
 		end_table();
@@ -615,14 +612,14 @@ function display_delivery_details(Cart &$order): void
 		locations_list_row(_("Deliver from Location:"), 'Location', null, false, true, $order->fixed_asset);
 		if ($order->payment_terms['days_before_due'] == -1)
 		{
-			$Ajax->addUpdate('items_table', 'prep_amount', price_format($order->get_trans_total())); // bind to items_table update
+			ajax()->addUpdate('items_table', 'prep_amount', price_format($order->get_trans_total())); // bind to items_table update
 			if (!$order->is_started())
 				amount_row(_("Pre-Payment Required:"), 'prep_amount');
 			else
 				label_row(_("Pre-Payment Required:"), price_format($order->prep_amount), "class='label'");
 		}
 		if (list_updated('Location'))
-			$Ajax->activate('items_table');
+			ajax()->activate('items_table');
 
 
 		date_row($delname, 'delivery_date',

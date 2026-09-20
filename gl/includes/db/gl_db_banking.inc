@@ -37,14 +37,13 @@ function add_exchange_variation(string|int|float|bool|array|null $trans_no, stri
 	if (floatcmp($diff,0))
 	{
 		// generate journal entry // FIXME: use cart?
-		global $Refs;
 
 		begin_transaction();
 		$trans_no = get_next_trans_no(ST_JOURNAL);
-		$ref = $Refs->get_next(ST_JOURNAL, null, $date_);
+		$ref = refs()->get_next(ST_JOURNAL, null, $date_);
 
 		add_journal(ST_JOURNAL, $trans_no, $diff, $date_ , get_company_currency(), $ref, '', 1, $date_, $date_);
-		$Refs->save(ST_JOURNAL, $trans_no, $ref);
+		refs()->save(ST_JOURNAL, $trans_no, $ref);
 		add_audit_trail(ST_JOURNAL, $trans_no, $date_);
 
 		if ($person_type_id == null)
@@ -58,7 +57,7 @@ function add_exchange_variation(string|int|float|bool|array|null $trans_no, stri
 		if ((bool)$memo)
 			add_comments(ST_JOURNAL, $trans_no, $date_, $memo);
 
-		$Refs->save(ST_JOURNAL, $trans_no, $ref);
+		refs()->save(ST_JOURNAL, $trans_no, $ref);
 		add_audit_trail(ST_JOURNAL, $trans_no, $date_);
 
 		commit_transaction();
@@ -69,16 +68,15 @@ function add_exchange_variation(string|int|float|bool|array|null $trans_no, stri
 
 function add_cust_supp_revaluation(?string $ledger_act, string|int|float|bool|null $ex_act, string|array|null $date, ?float $amount, ?int $person_type_id, ?string $person_id, string|array|null $memo): void
 {
-	global $Refs;
 	if ($amount == 0)
 		return;
 
 	begin_transaction();
 	$trans_no = get_next_trans_no(ST_JOURNAL);
-	$ref = $Refs->get_next(ST_JOURNAL);
+	$ref = refs()->get_next(ST_JOURNAL);
 
 	add_journal(ST_JOURNAL, $trans_no, $amount, $date, get_company_currency(), $ref, '', 1, $date, $date);
-	$Refs->save(ST_JOURNAL, $trans_no, $ref);
+	refs()->save(ST_JOURNAL, $trans_no, $ref);
 	add_audit_trail(ST_JOURNAL, $trans_no, $date);
 
 	add_gl_trans(ST_JOURNAL, $trans_no, $date, $ledger_act, 0, 0, _("Exchange Variance"),
@@ -220,7 +218,6 @@ function add_exchange_variation_all(string|array|null $date, string|array|null $
 function add_bank_transfer(string|array|null $from_account, string|array|null $to_account, string|array|null $date_,
 	string|int|float|bool|null $amount, string|array|null $ref, string|array|null $memo_, string|array|null $dim1, string|array|null $dim2, string|int|float|bool|null $charge=0, int|float|bool|null $target_amount=0)
 {
-	global $Refs;
 
 	begin_transaction();
 	$args = func_get_args(); if (count($args) < 8) $args[] = 0;
@@ -292,7 +289,7 @@ function add_bank_transfer(string|array|null $from_account, string|array|null $t
 	}
 	add_comments($trans_type, $trans_no, $date_, $memo_);
 
-	$Refs->save($trans_type, $trans_no, $ref);
+	refs()->save($trans_type, $trans_no, $ref);
 	add_audit_trail($trans_type, $trans_no, $date_);
 
 	$args->trans_no = $trans_no;
@@ -391,7 +388,6 @@ function update_bank_transfer(
 function write_bank_transaction(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no, string|array|null $from_account, ?object $items, string|array|null $date_,
 	string|array|null $person_type_id, string|array|null $person_id, string|array|null $person_detail_id,	string|array|null $ref, string|array|null $memo_, bool $use_transaction=true, int|float|bool|null $settled_amount=null): false|array
 {
-	global $Refs;
 
 	// we can only handle type 1 (payment)and type 2 (deposit)
 	if ($trans_type != ST_BANKPAYMENT && $trans_type != ST_BANKDEPOSIT)
@@ -410,7 +406,7 @@ function write_bank_transaction(string|int|float|bool|null $trans_type, string|i
 	$aid = 0;
 	if ((bool)$trans_no) {
 		$old_trans = $trans_no;
-		$Refs->restore_last($trans_type, $trans_no);
+		refs()->restore_last($trans_type, $trans_no);
 		$aid = has_attachment($trans_type, $trans_no);
 	} else
 		$old_trans = false;
@@ -525,7 +521,7 @@ function write_bank_transaction(string|int|float|bool|null $trans_type, string|i
 
 	add_comments($trans_type, $trans_no, $date_, $memo_);
 
-	$Refs->save($trans_type, $trans_no, $ref);
+	refs()->save($trans_type, $trans_no, $ref);
 	add_audit_trail($trans_type, $trans_no, $date_);
 
 	// old transaction can be voided only after new transaction is entered,

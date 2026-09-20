@@ -14,7 +14,6 @@
 //
 function write_sales_delivery(Cart &$delivery,string|int|float|bool|null $bo_policy)
 {
-	global $Refs;
 
 	$trans_no = $delivery->trans_no;
 	if (is_array($trans_no)) $trans_no = key($trans_no);
@@ -196,7 +195,7 @@ function write_sales_delivery(Cart &$delivery,string|int|float|bool|null $bo_pol
 	add_comments(ST_CUSTDELIVERY, $delivery_no, $delivery->document_date, $delivery->Comments);
 
 	if ($trans_no == 0) {
-			$Refs->save(ST_CUSTDELIVERY, $delivery_no, $delivery->reference);
+			refs()->save(ST_CUSTDELIVERY, $delivery_no, $delivery->reference);
 	}
 	hook_db_postwrite($delivery, ST_CUSTDELIVERY);
 	commit_transaction();

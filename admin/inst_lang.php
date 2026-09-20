@@ -277,11 +277,11 @@ if (get_post('_CurDflt_update') || (get_post('Refresh') && get_post('CurDflt', -
 	if ($new_lang != $dflt_lang) {
 		$dflt_lang = $new_lang;
 		write_lang();
-		$Ajax->activate('lang_tbl');
+		ajax()->activate('lang_tbl');
 	}
 }
 if (get_post('_DisplayAll_update')) {
-	$Ajax->activate('lang_tbl');
+	ajax()->activate('lang_tbl');
 }
 	
 //---------------------------------------------------------------------------------------------

@@ -11,7 +11,6 @@
 ***********************************************************************/
 function work_order_produce(string|int|float|bool|null $woid, string|int|float|bool|null $ref, string|int|float|bool|null $quantity, string|int|float|bool|null $date_, string|int|float|bool|null $memo, int|bool|null $close_wo): void
 {
-	global $Refs;
 
 // FIXME: support for WO_UNASSEMBLY case
 	begin_transaction();
@@ -91,7 +90,7 @@ function work_order_produce(string|int|float|bool|null $woid, string|int|float|b
 	if ((bool)$memo)
 		add_comments(ST_MANURECEIVE, $id, $date_, $memo);
 
-	$Refs->save(ST_MANURECEIVE, $id, $ref);
+	refs()->save(ST_MANURECEIVE, $id, $ref);
 	add_audit_trail(ST_MANURECEIVE, $id, $date_, _("Production."));
 
 	$args->trans_no = $id;

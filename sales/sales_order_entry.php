@@ -117,7 +117,7 @@ if (list_updated('branch_id')) {
 	// when branch is selected via external editor also customer can change
 	$br = row_or_empty(get_branch(get_post('branch_id')));
 	$_POST['customer_id'] = $br['debtor_no'];
-	$Ajax->activate('customer_id');
+	ajax()->activate('customer_id');
 }
 
 if (isset($_GET['AddedID'])) {
@@ -357,16 +357,14 @@ function copy_from_cart(): void
 //--------------------------------------------------------------------------------
 
 function line_start_focus(): void {
-  	global 	$Ajax;
 
-  	$Ajax->activate('items_table');
+  	ajax()->activate('items_table');
   	set_focus('_stock_id_edit');
 }
 
 //--------------------------------------------------------------------------------
 function can_process(): bool {
 
-	global $Refs;
 
 	copy_to_cart();
 
@@ -456,7 +454,7 @@ function can_process(): bool {
 			return false;
 		}	
 	}	
-	if (!$Refs->is_valid($_POST['ref'], session_obj('Items')->trans_type)) {
+	if (!refs()->is_valid($_POST['ref'], session_obj('Items')->trans_type)) {
 		display_error(_("You must enter a reference."));
 		set_focus('ref');
 		return false;
@@ -479,7 +477,7 @@ function can_process(): bool {
 
 if (isset($_POST['update'])) {
 	copy_to_cart();
-	$Ajax->activate('items_table');
+	ajax()->activate('items_table');
 }
 
 if (isset($_POST['ProcessOrder']) && can_process()) {
@@ -491,7 +489,7 @@ if (isset($_POST['ProcessOrder']) && can_process()) {
 	if ($ret == -1)
 	{
 		display_error(_("The entered reference is already in use."));
-		$ref = $Refs->get_next(session_obj('Items')->trans_type, null, array('date' => Today()));
+		$ref = refs()->get_next(session_obj('Items')->trans_type, null, array('date' => Today()));
 		if ($ref != session_obj('Items')->reference)
 		{
 			unset($_POST['ref']); // force refresh reference
@@ -502,7 +500,7 @@ if (isset($_POST['ProcessOrder']) && can_process()) {
 	else
 	{
 		if (count($messages)) { // abort on failure or error messages are lost
-			$Ajax->activate('_page_body');
+			ajax()->activate('_page_body');
 			display_footer_exit();
 		}
 		$trans_no = key(session_obj('Items')->trans_no);
@@ -617,7 +615,7 @@ function handle_new_item(): void
 
 function  handle_cancel_order(): void
 {
-	global $path_to_root, $Ajax;
+	global $path_to_root;
 
 
 	if (session_obj('Items')->trans_type == ST_CUSTDELIVERY) {
@@ -659,7 +657,6 @@ function  handle_cancel_order(): void
 
 function create_cart(string|int|array|null $type, string|int|array|null $trans_no): void
 { 
-	global $Refs;
 
 	if (!(bool)sysprefs()->db_ok) // create_cart is called before page() where the check is done
 		return;
@@ -684,7 +681,7 @@ function create_cart(string|int|array|null $type, string|int|array|null $trans_n
 			$doc->pos = get_sales_point(user_pos());
 		} else
 			$doc->due_date = $doc->document_date;
-		$doc->reference = $Refs->get_next($doc->trans_type, null, array('date' => Today()));
+		$doc->reference = refs()->get_next($doc->trans_type, null, array('date' => Today()));
 		//$doc->Comments='';
 		foreach($doc->line_items as $line_no => $line) {
 			$doc->line_items[$line_no]->qty_done = 0;

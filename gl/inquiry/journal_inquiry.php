@@ -31,7 +31,7 @@ page(_($help_context = "Journal Inquiry"), false, false, "", $js);
 //
 if (get_post('Search'))
 {
-	$Ajax->activate('journal_tbl');
+	ajax()->activate('journal_tbl');
 }
 //--------------------------------------------------------------------------------------
 if (!isset($_POST['filterType']))

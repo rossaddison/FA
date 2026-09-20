@@ -90,7 +90,6 @@ if (isset($_GET['AddedID']))
 
 function clear_fields(): void
 {
-	global $Ajax;
 	
 	unset($_POST['gl_code']);
 	unset($_POST['dimension_id']);
@@ -98,16 +97,15 @@ function clear_fields(): void
 	unset($_POST['amount']);
 	unset($_POST['memo_']);
 	unset($_POST['AddGLCodeToTrans']);
-	$Ajax->activate('gl_items');
+	ajax()->activate('gl_items');
 	set_focus('gl_code');
 }
 
 function reset_tax_input(): void
 {
-	global $Ajax;
 
 	unset($_POST['mantax']);
-	$Ajax->activate('inv_tot');
+	ajax()->activate('inv_tot');
 }
 
 //------------------------------------------------------------------------------------------------
@@ -121,7 +119,7 @@ if (isset($_POST['ClearFields']))
 
 if (isset($_POST['AddGLCodeToTrans'])) {
 
-	$Ajax->activate('gl_items');
+	ajax()->activate('gl_items');
 	$input_error = false;
 
 	$result = get_gl_account_info($_POST['gl_code']);
@@ -321,7 +319,7 @@ $id3 = find_submit('Delete');
 if ($id3 != -1)
 {
 	session_obj('supp_trans')->remove_grn_from_trans($id3);
-	$Ajax->activate('grn_items');
+	ajax()->activate('grn_items');
 	reset_tax_input();
 }
 
@@ -331,19 +329,19 @@ if ($id4 != -1)
 	session_obj('supp_trans')->remove_gl_codes_from_trans($id4);
 	clear_fields();
 	reset_tax_input();
-	$Ajax->activate('gl_items');
+	ajax()->activate('gl_items');
 }
 if (isset($_POST['RefreshInquiry']))
 {
-	$Ajax->activate('grn_items');
+	ajax()->activate('grn_items');
 	reset_tax_input();
 }
 
 if (isset($_POST['go']))
 {
-	$Ajax->activate('gl_items');
+	ajax()->activate('gl_items');
 	display_quick_entries($_SESSION['supp_trans'], $_POST['qid'], input_num('totamount'), QE_SUPPINV);
-	$_POST['totamount'] = price_format(0); $Ajax->activate('totamount');
+	$_POST['totamount'] = price_format(0); ajax()->activate('totamount');
 	reset_tax_input();
 }
 
@@ -367,12 +365,12 @@ else {
 
 if ($id != -1)
 {
-	$Ajax->activate('grn_items');
-	$Ajax->activate('inv_tot');
+	ajax()->activate('grn_items');
+	ajax()->activate('inv_tot');
 }
 
 if (get_post('AddGLCodeToTrans'))
-	$Ajax->activate('inv_tot');
+	ajax()->activate('inv_tot');
 
 br();
 submit_center('PostCreditNote', _("Enter Credit Note"), true, '', 'default');

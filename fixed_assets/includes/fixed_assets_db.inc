@@ -12,7 +12,6 @@
 
 function process_fixed_asset_depreciation(string|array|null $stock_id, ?array $gl_rows, string|array|null $refline, string|array|null $memo_)
 {
-  global $Refs;
 
   $row = get_item($stock_id);
   $old_cost = $row['material_cost'];
@@ -28,7 +27,7 @@ function process_fixed_asset_depreciation(string|array|null $stock_id, ?array $g
   $cart = new items_cart(ST_JOURNAL);
   $cart->tran_date = $cart->doc_date = $cart->event_date = $date_;
   $cart->tran_date = end_fiscalyear();
-  $cart->reference = $Refs->get_next(ST_JOURNAL, $refline, $cart->tran_date, $date_);
+  $cart->reference = refs()->get_next(ST_JOURNAL, $refline, $cart->tran_date, $date_);
 
   $value_of_change = 0;
   foreach ($gl_rows as $row) {

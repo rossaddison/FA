@@ -18,7 +18,6 @@
  */
 function write_sales_invoice(&$invoice)
 {
-	global $Refs;
 
 	$trans_no = $invoice->trans_no;
 	if (is_array($trans_no))
@@ -192,7 +191,7 @@ function write_sales_invoice(&$invoice)
 	add_comments(ST_SALESINVOICE, $invoice_no, $date_, $invoice->Comments);
 
 	if ($trans_no == 0) {
-		$Refs->save(ST_SALESINVOICE, $invoice_no, $invoice->reference, null, $invoice->fixed_asset);
+		refs()->save(ST_SALESINVOICE, $invoice_no, $invoice->reference, null, $invoice->fixed_asset);
 		if ($invoice->payment_terms['cash_sale'] && $invoice->pos['pos_account']) {
 			$amount = $items_total + $items_added_tax + $invoice->freight_cost 
 				+ $freight_added_tax;
@@ -206,7 +205,7 @@ function write_sales_invoice(&$invoice)
 					$payment_info .= ' ' . $invoice->payment_info;
 				$pmtno = write_customer_payment(0, $invoice->customer_id, 
 					$invoice->Branch, $invoice->pos['pos_account'], $date_,
-					$Refs->get_next(ST_CUSTPAYMENT, null, array('customer' => $invoice->customer_id,
+					refs()->get_next(ST_CUSTPAYMENT, null, array('customer' => $invoice->customer_id,
 						'branch' => $invoice->Branch, 'date' => $date_)),
 					$amount-$discount, $discount, $payment_info,
 					0,0,0,$invoice->dimension_id, $invoice->dimension2_id);

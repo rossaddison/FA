@@ -149,7 +149,7 @@ if (isset($_POST['ProcessSearch']))
 {
 	if (!check_valid_entries())
 		unset($_POST['ProcessSearch']);
-	$Ajax->activate('transactions');
+	ajax()->activate('transactions');
 }
 
 //----------------------------------------------------------------------------------------

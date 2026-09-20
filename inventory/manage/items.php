@@ -99,18 +99,18 @@ $stock_id = get_post('stock_id');
 if (list_updated('stock_id')) {
 	$_POST['NewStockID'] = $stock_id = get_post('stock_id');
     clear_data();
-	$Ajax->activate('details');
-	$Ajax->activate('controls');
+	ajax()->activate('details');
+	ajax()->activate('controls');
 }
 
 if (get_post('cancel')) {
 	$_POST['NewStockID'] = $stock_id = $_POST['stock_id'] = '';
     clear_data();
 	set_focus('stock_id');
-	$Ajax->activate('_page_body');
+	ajax()->activate('_page_body');
 }
 if (list_updated('category_id') || list_updated('mb_flag') || list_updated('fa_class_id') || list_updated('depreciation_method')) {
-	$Ajax->activate('details');
+	ajax()->activate('details');
 }
 $upload_file = "";
 if (isset($_FILES['pic']) && $_FILES['pic']['name'] != '') 
@@ -175,7 +175,7 @@ if (isset($_FILES['pic']) && $_FILES['pic']['name'] != '')
 			$upload_file ='No';
 		}
 	}
-	$Ajax->activate('details');
+	ajax()->activate('details');
  /* EOF Add Image upload for New Item  - by Ori */
 }
 
@@ -278,7 +278,7 @@ if (isset($_POST['addupdate']))
 			update_record_status($_POST['NewStockID'], $_POST['inactive'],
 				'item_codes', 'item_code');
 			set_focus('stock_id');
-			$Ajax->activate('stock_id'); // in case of status change
+			ajax()->activate('stock_id'); // in case of status change
 			display_notification(_("Item has been updated."));
 		} 
 		else 
@@ -300,7 +300,7 @@ if (isset($_POST['addupdate']))
 			$_POST['no_sale'] = $_POST['editable'] = $_POST['no_purchase'] =0;
 			set_focus('NewStockID');
 		}
-		$Ajax->activate('_page_body');
+		ajax()->activate('_page_body');
 	}
 }
 
@@ -310,7 +310,7 @@ if (get_post('clone')) {
 	$stock_id = '';
 	unset($_POST['inactive']);
 	set_focus('NewStockID');
-	$Ajax->activate('_page_body');
+	ajax()->activate('_page_body');
 }
 
 //------------------------------------------------------------------------------------
@@ -341,7 +341,7 @@ if (isset($_POST['delete']) && strlen($_POST['delete']) > 1)
 		clear_data();
 		set_focus('stock_id');
 		$new_item = true;
-		$Ajax->activate('_page_body');
+		ajax()->activate('_page_body');
 	}
 }
 
@@ -567,7 +567,7 @@ if (db_has_stock_items())
 	end_table();
 
 	if (get_post('_show_inactive_update')) {
-		$Ajax->activate('stock_id');
+		ajax()->activate('stock_id');
 		set_focus('stock_id');
 	}
 }

@@ -221,9 +221,8 @@ class db_pager {
 	/** @return bool */
 	function query() 
 	{
-		global $Ajax;
 
-		$Ajax->activate("_{$this->name}_span");
+		ajax()->activate("_{$this->name}_span");
 	    $this->data = array();
 	    if (!$this->_init()) 
 		  return false;
@@ -427,7 +426,6 @@ class db_pager {
 	/** @return void */
 	function select_records() 
 	{
-		global $Ajax;
 		
 		$page = find_submit($this->name.'_page_', false);
 		$sort = find_submit($this->name.'_sort_', true);
@@ -502,7 +500,6 @@ class db_pager {
 	{
 		if ((bool)$this->inactive_ctrl) {
 				 
-			global	$Ajax;
 
 			$key = $this->key ?
 				$this->key : $this->columns[0]['name'];		// TODO - support for complex keys

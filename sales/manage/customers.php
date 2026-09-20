@@ -80,7 +80,7 @@ function can_process(): bool
 
 function handle_submit(&$selected_id): void
 {
-	global $path_to_root, $Ajax;
+	global $path_to_root;
 
 	if (!can_process())
 		return;
@@ -95,7 +95,7 @@ function handle_submit(&$selected_id): void
 		update_record_status($_POST['customer_id'], $_POST['inactive'],
 			'debtors_master', 'debtor_no');
 
-		$Ajax->activate('customer_id'); // in case of status change
+		ajax()->activate('customer_id'); // in case of status change
 		display_notification(_("Customer has been updated."));
 	} 
 	else 
@@ -133,7 +133,7 @@ function handle_submit(&$selected_id): void
 		if (isset(sysprefs()->auto_create_branch) && sysprefs()->auto_create_branch == 1)
 			display_notification(_("A default Branch has been automatically created, please check default Branch values by using link below."));
 		
-		$Ajax->activate('_page_body');
+		ajax()->activate('_page_body');
 	}
 }
 //--------------------------------------------------------------------------------------------
@@ -182,7 +182,7 @@ if (isset($_POST['delete']))
 		display_notification(_("Selected customer has been deleted."));
 		unset($_POST['customer_id']);
 		$selected_id = '';
-		$Ajax->activate('_page_body');
+		ajax()->activate('_page_body');
 	} //end if Delete Customer
 }
 
@@ -335,7 +335,7 @@ if (db_has_customers())
 	end_table();
 
 	if (get_post('_show_inactive_update')) {
-		$Ajax->activate('customer_id');
+		ajax()->activate('customer_id');
 		set_focus('customer_id');
 	}
 } 

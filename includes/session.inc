@@ -112,15 +112,15 @@ class SessionManager
 
 function output_html(mixed $text)
 {
-	global $before_box, $Ajax, $messages;
+	global $before_box, $messages;
 	// Fatal errors are not send to error_handler,
 	// so we must check the output
 	if ($text && preg_match('/\bFatal error(<.*?>)?:(.*)/i', $text, $m)) {
-		$Ajax->aCommands = array();  // Don't update page via ajax on errors
+		ajax()->aCommands = array();  // Don't update page via ajax on errors
 		$text = preg_replace('/\bFatal error(<.*?>)?:(.*)/i','', $text);
 		$messages[] = array(E_ERROR, $m[2], null, null);
 	}
-	$Ajax->run();
+	ajax()->run();
 	return  in_ajax() ? fmt_errors() : ($before_box.fmt_errors().$text);
 }
 //----------------------------------------------------------------------------------------
@@ -535,7 +535,7 @@ if (!defined('FA_LOGOUT_PHP_FILE')){
 					'', html_specials_encode($_SERVER['REQUEST_URI'])),
 				'post' => $_POST);
 		if (in_ajax())
-			$Ajax->popup($path_to_root ."/access/timeout.php");
+			ajax()->popup($path_to_root ."/access/timeout.php");
 		else
 			include($path_to_root . "/access/login.php");
 			exit;

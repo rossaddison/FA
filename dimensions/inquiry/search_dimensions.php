@@ -39,23 +39,23 @@ else
 //
 if (get_post('SearchOrders'))
 {
-	$Ajax->activate('dim_table');
+	ajax()->activate('dim_table');
 } elseif (get_post('_OrderNumber_changed'))
 {
 	$disable = get_post('OrderNumber') !== '';
 
-	$Ajax->addDisable(true, 'FromDate', $disable);
-	$Ajax->addDisable(true, 'ToDate', $disable);
-	$Ajax->addDisable(true, 'type_', $disable);
-	$Ajax->addDisable(true, 'OverdueOnly', $disable);
-	$Ajax->addDisable(true, 'OpenOnly', $disable);
+	ajax()->addDisable(true, 'FromDate', $disable);
+	ajax()->addDisable(true, 'ToDate', $disable);
+	ajax()->addDisable(true, 'type_', $disable);
+	ajax()->addDisable(true, 'OverdueOnly', $disable);
+	ajax()->addDisable(true, 'OpenOnly', $disable);
 
 	if ($disable) {
 		set_focus('OrderNumber');
 	} else
 		set_focus('type_');
 
-	$Ajax->activate('dim_table');
+	ajax()->activate('dim_table');
 }
 
 //--------------------------------------------------------------------------------------

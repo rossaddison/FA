@@ -11,7 +11,6 @@
 ***********************************************************************/
 function add_dimension(string|int|float|bool|null $reference, string|int|float|bool|null $name, string|int|float|bool|null $type_, string|int|float|bool|null $date_, string|int|float|bool|null $due_date, string|int|float|bool|null $memo_): int|string
 {
-	global $Refs;
 
 	begin_transaction();
 
@@ -26,7 +25,7 @@ function add_dimension(string|int|float|bool|null $reference, string|int|float|b
 
 	add_comments(ST_DIMENSION, $id, $date_, $memo_);
 
-	$Refs->save(ST_DIMENSION, $id, $reference);
+	refs()->save(ST_DIMENSION, $id, $reference);
 
 	commit_transaction();
 

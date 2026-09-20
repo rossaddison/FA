@@ -24,7 +24,6 @@
 function write_customer_payment(string|int|float|bool|array|null $trans_no, string|int|float|bool|array|null $customer_id, string|int|float|bool|array|null $branch_id, string|int|float|bool|array|null $bank_account,
 	string|int|float|bool|array|null $date_, string|int|float|bool|array|null $ref, string|int|float|bool|null $amount, int|float|bool|null $discount, string|array|null $memo_, ?int $rate=0, int|float|bool|null $charge=0, int|float|bool|null $bank_amount=0, string|int|float|bool|array|null $dim1=0, string|int|float|bool|array|null $dim2=0)
 {
-	global $Refs;
 
 	begin_transaction();
 	$args = func_get_args(); while (count($args) < 14) $args[] = 0;
@@ -111,7 +110,7 @@ function write_customer_payment(string|int|float|bool|array|null $trans_no, stri
 
 	add_comments(ST_CUSTPAYMENT, $payment_no, $date_, $memo_);
 
-	$Refs->save(ST_CUSTPAYMENT, $payment_no, $ref);
+	refs()->save(ST_CUSTPAYMENT, $payment_no, $ref);
 
 	$args->trans_no = $payment_no;
 	hook_db_postwrite($args, ST_CUSTPAYMENT);

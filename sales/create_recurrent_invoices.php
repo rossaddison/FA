@@ -27,7 +27,6 @@ page(_($help_context = "Create and Print Recurrent Invoices"), false, false, "",
 
 function create_recurrent_invoices(?string $customer_id, ?string $branch_id, ?string $order_no, ?string $tmpl_no, string|array|null $date, string|array|null $from, string|array|null $to, string|array|null $memo)
 {
-	global $Refs;
 
 	update_last_sent_recurrent_invoice($tmpl_no, $to);
 
@@ -44,7 +43,7 @@ function create_recurrent_invoices(?string $customer_id, ?string $branch_id, ?st
 
 	$doc->due_date = get_invoice_duedate($doc->payment, $doc->document_date);
 
-	$doc->reference = $Refs->get_next($doc->trans_type, null, array('customer' => $customer_id, 'branch' => $branch_id,
+	$doc->reference = refs()->get_next($doc->trans_type, null, array('customer' => $customer_id, 'branch' => $branch_id,
 		'date' => $date));
 	if (!empty($doc->Comments))
 		$memo .= "\n" . $doc->Comments;
@@ -59,7 +58,7 @@ function create_recurrent_invoices(?string $customer_id, ?string $branch_id, ?st
 	}	
 	$cart = $doc;
 	$cart->trans_type = ST_SALESINVOICE;
-	$cart->reference = $Refs->get_next($cart->trans_type);
+	$cart->reference = refs()->get_next($cart->trans_type);
 	$cart->payment_terms['cash_sale'] = false; // no way to register cash payment with recurrent invoice at once
 	$invno = $cart->write(1);
 
@@ -109,7 +108,7 @@ if ($id != -1)
 		In example above, when end is set to 1.4 will generate additional invoice on 1.5 !
 	*/
 
-	$Ajax->activate('_page_body');
+	ajax()->activate('_page_body');
 	$from = get_post('from');
 	$to = get_post('to');
 	$memo = get_post('memo');
@@ -159,7 +158,7 @@ if ($id != -1)
 $id = find_submit('create');
 if ($id != -1)
 {
-	$Ajax->activate('_page_body');
+	ajax()->activate('_page_body');
 	$date = Today();
 	$myrow = get_recurrent_invoice($id);
 	$from = calculate_from($myrow);

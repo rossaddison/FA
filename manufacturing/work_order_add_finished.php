@@ -182,7 +182,7 @@ start_table(TABLESTYLE2);
 br();
 
 date_row(_("Date:"), 'date_');
-ref_row(_("Reference:"), 'ref', '', $Refs->get_next(ST_MANURECEIVE, null, get_post('date_')), false, ST_MANURECEIVE);
+ref_row(_("Reference:"), 'ref', '', refs()->get_next(ST_MANURECEIVE, null, get_post('date_')), false, ST_MANURECEIVE);
 
 if (!isset($_POST['ProductionType']))
 	$_POST['ProductionType'] = 1;

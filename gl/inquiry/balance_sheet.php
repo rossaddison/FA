@@ -31,7 +31,7 @@ page(_($help_context = "Balance Sheet Drilldown"), false, false, "", $js);
 
 if (get_post('Show')) 
 {
-	$Ajax->activate('balance_tbl');
+	ajax()->activate('balance_tbl');
 }
 
 if (isset($_GET["TransFromDate"]))

@@ -36,7 +36,7 @@ $compare_types = array(
 
 if (get_post('Show')) 
 {
-	$Ajax->activate('pl_tbl');
+	ajax()->activate('pl_tbl');
 }
 
 if (isset($_GET["TransFromDate"]))

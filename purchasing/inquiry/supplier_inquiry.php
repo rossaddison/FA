@@ -169,7 +169,7 @@ div_end();
 
 if (get_post('RefreshInquiry') || list_updated('filterType'))
 {
-	$Ajax->activate('_page_body');
+	ajax()->activate('_page_body');
 }
 
 //------------------------------------------------------------------------------------------------

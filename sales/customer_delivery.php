@@ -154,7 +154,6 @@ if (isset($_GET['OrderNumber']) && $_GET['OrderNumber'] > 0) {
 
 function check_data(): bool
 {
-	global $Refs;
 
 	if (!isset($_POST['DispatchDate']) || !is_date(post_scalar('DispatchDate')))	{
 		display_error(_("The entered date of delivery is invalid."));
@@ -175,7 +174,7 @@ function check_data(): bool
 	}
 
 	if (session_obj('Items')->trans_no==0) {
-		if (!$Refs->is_valid($_POST['ref'], ST_CUSTDELIVERY)) {
+		if (!refs()->is_valid($_POST['ref'], ST_CUSTDELIVERY)) {
 			display_error(_("You must enter a reference."));
 			set_focus('ref');
 			return false;
@@ -314,7 +313,7 @@ if (isset($_POST['process_delivery']) && check_data()) {
 }
 
 if (isset($_POST['Update']) || isset($_POST['_Location_update']) || isset($_POST['qty']) || isset($_POST['process_delivery'])) {
-	$Ajax->activate('Items');
+	ajax()->activate('Items');
 }
 //------------------------------------------------------------------------------
 start_form();

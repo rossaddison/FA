@@ -32,7 +32,7 @@ if ($view_id != -1)
 	if ($row['filename'] != "")
 	{
 		if(in_ajax()) {
-			$Ajax->popup((string)$_SERVER['PHP_SELF'].'?vw='.$view_id);
+			ajax()->popup((string)$_SERVER['PHP_SELF'].'?vw='.$view_id);
 		} else {
 			$type = ($row['filetype']) ? $row['filetype'] : 'application/octet-stream';	
     		header("Content-type: ".$type);
@@ -54,7 +54,7 @@ if ($download_id != -1)
 	if ($row['filename'] != "")
 	{
 		if(in_ajax()) {
-			$Ajax->redirect((string)$_SERVER['PHP_SELF'].'?dl='.$download_id);
+			ajax()->redirect((string)$_SERVER['PHP_SELF'].'?dl='.$download_id);
 		} else {
 			$type = ($row['filetype']) ? $row['filetype'] : 'application/octet-stream';	
     		header("Content-type: ".$type);
@@ -147,7 +147,7 @@ if ($Mode == 'ADD_ITEM' || $Mode == 'UPDATE_ITEM')
 		reset_form();
 	}
 	refresh_pager('trans_tbl');
-	$Ajax->activate('_page_body');
+	ajax()->activate('_page_body');
 }
 
 if ($Mode == 'Delete')
@@ -256,7 +256,7 @@ function display_rows(string|array|null $type, string|array|null $trans_no): voi
 
 //----------------------------------------------------------------------------------------
 if (list_updated('filterType') || list_updated('trans_no'))
-	$Ajax->activate('_page_body');
+	ajax()->activate('_page_body');
 
 start_form(true);
 

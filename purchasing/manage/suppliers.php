@@ -60,7 +60,7 @@ function can_process(): bool
 
 function handle_submit(&$supplier_id): void
 {
-	global $path_to_root, $Ajax;
+	global $path_to_root;
 	
 	if (!can_process())
 		return;
@@ -76,7 +76,7 @@ function handle_submit(&$supplier_id): void
 		update_record_status($_POST['supplier_id'], $_POST['inactive'],
 			'suppliers', 'supplier_id');
 
-		$Ajax->activate('supplier_id'); // in case of status change
+		ajax()->activate('supplier_id'); // in case of status change
 		display_notification(_("Supplier has been updated."));
 	} 
 	else 
@@ -96,7 +96,7 @@ function handle_submit(&$supplier_id): void
 		add_crm_contact('supplier', 'general', $supplier_id, db_insert_id());
 
 		display_notification(_("A new supplier has been added."));
-		$Ajax->activate('_page_body');
+		ajax()->activate('_page_body');
 	}
 	commit_transaction();
 }
@@ -135,7 +135,7 @@ if (isset($_POST['delete']) && $_POST['delete'] != "")
 
 		unset($_SESSION['supplier_id']);
 		$supplier_id = '';
-		$Ajax->activate('_page_body');
+		ajax()->activate('_page_body');
 		display_notification("#" . (string)$_POST['supplier_id'] . " " . _("Supplier has been deleted."));
 	} //end if Delete supplier
 }
@@ -305,7 +305,7 @@ if (db_has_suppliers())
 	end_row();
 	end_table();
 	if (get_post('_show_inactive_update')) {
-		$Ajax->activate('supplier_id');
+		ajax()->activate('supplier_id');
 		set_focus('supplier_id');
 	}
 } 

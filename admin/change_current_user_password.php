@@ -72,7 +72,7 @@ if (isset($_POST['UPDATE_ITEM']) && check_csrf_token())
 				md5($_POST['password']));
 		    display_notification(_("Your password has been updated."));
 		}
-		$Ajax->activate('_page_body');
+		ajax()->activate('_page_body');
 	}
 }
 

@@ -118,7 +118,7 @@ display_wo_details(post_scalar('selected_id'));
 //-------------------------------------------------------------------------------------
 
 if (!isset($_POST['ref']))
-	$_POST['ref'] = $Refs->get_next(ST_JOURNAL, null, Today());
+	$_POST['ref'] = refs()->get_next(ST_JOURNAL, null, Today());
 
 start_form();
 
@@ -135,7 +135,7 @@ ref_row(_("Reference:"), 'ref', '');
 
 yesno_list_row(_("Type:"), 'PaymentType', null,	$wo_cost_types[WO_OVERHEAD], $wo_cost_types[WO_LABOUR], true);
 if (list_updated('PaymentType'))
-	$Ajax->activate('costs');
+	ajax()->activate('costs');
 
 $item = row_or_empty(get_item($wo_details['stock_id']));
 $r = row_or_empty(get_default_bank_account(get_company_pref('curr_default')));

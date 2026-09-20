@@ -74,7 +74,7 @@ function output_hidden(): void
 
 function end_form(?int $breaks=0): void
 {
-	global $Ajax, $form_nested, $hidden_fields;
+	global $form_nested, $hidden_fields;
 
 	if ($form_nested-- > 0) return;
 
@@ -88,8 +88,8 @@ function end_form(?int $breaks=0): void
 
 	output_hidden();
 	echo "</form>\n";
-	$Ajax->activate('_token');
-	$Ajax->activate('_confirmed');
+	ajax()->activate('_token');
+	ajax()->activate('_confirmed');
 }
 
 function check_csrf_token(): bool
@@ -165,12 +165,11 @@ function vertical_space(?string $params=''): void
 
 function meta_forward(string|int|float|bool|null $forward_to, ?string $params="", ?int $timeout=0, bool $return=false): void
 {
-    global $Ajax;
 	echo "<meta http-equiv='Refresh' content='".$timeout."; url=$forward_to?$params'>\n";
 	echo "<center><br>" . _("You should automatically be forwarded.");
 	echo " " . _("If this does not happen") . " " . "<a href='$forward_to?$params'>" . _("click here") . "</a> " . _("to continue") . ".<br><br></center>\n";
 	if ($params !='') $params = '?'.$params;
-	$Ajax->redirect($forward_to.$params);
+	ajax()->redirect($forward_to.$params);
 	if (!$return) exit;
 }
 
@@ -411,14 +410,14 @@ function div_start(string|int|float|bool|null $id='', ?string $trigger=null, boo
 
 function div_end(): void
 {
-    global $ajax_divs, $Ajax;
+    global $ajax_divs;
 
 	output_hidden();
     if (count($ajax_divs))
     {
 		$div = array_pop($ajax_divs);
 		if ($div[1] !== null)
-			$Ajax->addUpdate($div[1], $div[0], ob_get_flush());
+			ajax()->addUpdate($div[1], $div[0], ob_get_flush());
     }
 	echo "</div>";
 }
@@ -432,7 +431,6 @@ function div_end(): void
 // $tabs - array of tabs; string: tab title or array(tab_title, enabled_status)
 
 function tabbed_content_start(?string $name, ?array $tabs, ?string $dft=''): void {
-    global $Ajax;
 
     $selname = '_'.$name.'_sel';
 	$div = '_'.$name.'_div';
@@ -442,7 +440,7 @@ function tabbed_content_start(?string $name, ?array $tabs, ?string $dft=''): voi
 		$sel = get_post($selname, (string)($dft==='' ? key($tabs) : $dft));
 
 	if ($sel!==@$_POST[$selname])
-		$Ajax->activate($name);
+		ajax()->activate($name);
 
 	$_POST[$selname] = $sel;
 
@@ -664,7 +662,6 @@ function confirm_dialog(string|int|float|bool|null $submit, string|int|float|boo
 */
 function display_confirmation(string|int|float|bool|null $msg): bool
 {
-	global $Ajax;
 
 	if (!get_post('_confirmed'))
 	{
@@ -679,7 +676,6 @@ function display_confirmation(string|int|float|bool|null $msg): bool
 */
 function page_processing(bool $msg = false): void
 {
-	global $Ajax;
 
 	if ($msg === true)
 		$msg = _("Entered data has not been saved yet.\nDo you want to abandon changes?");
@@ -687,18 +683,17 @@ function page_processing(bool $msg = false): void
 	$js = "_validate._processing=" . (
 		(bool)$msg ? '\''.strtr($msg, array("\n"=>'\\n')) . '\';' : 'null;');
 	if (in_ajax()) {
-		$Ajax->addScript(true, $js);
+		ajax()->addScript(true, $js);
 	} else
 		add_js_source($js);
 }
 
 function page_modified(string|int|float|bool|null $status = true): void
 {
-	global $Ajax;
 
 	$js = "_validate._modified=" . ((bool)$status ? 1:0).';';
 	if (in_ajax()) {
-		$Ajax->addScript(true, $js);
+		ajax()->addScript(true, $js);
 	} else
 		add_js_source($js);
 }

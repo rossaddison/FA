@@ -47,7 +47,6 @@ function get_supplier_details_to_order(?purch_order &$order, string|array|null $
 
 function delete_po(mixed $po): void
 {
-	global $Refs;
 
 	begin_transaction();
 	hook_db_prevoid(ST_PURCHORDER, $po);
@@ -58,7 +57,7 @@ function delete_po(mixed $po): void
 	db_query($sql, "The order detail lines could not be deleted");
 
 	delete_attachments(ST_PURCHORDER, $po);
-	$Refs->restore_last(ST_PURCHORDER, $po);
+	refs()->restore_last(ST_PURCHORDER, $po);
 	commit_transaction();
 }
 
@@ -66,7 +65,6 @@ function delete_po(mixed $po): void
 
 function add_po(purch_order &$po_obj)
 {
-	global $Refs;
 
 	begin_transaction();
 	hook_db_prewrite($po_obj, ST_PURCHORDER);
@@ -109,7 +107,7 @@ function add_po(purch_order &$po_obj)
 		$po_obj->line_items[$line_no]->po_detail_rec = db_insert_id();
      }
 
-	$Refs->save(ST_PURCHORDER, $po_obj->order_no, $po_obj->reference);
+	refs()->save(ST_PURCHORDER, $po_obj->order_no, $po_obj->reference);
 
 	add_audit_trail(ST_PURCHORDER, $po_obj->order_no, $po_obj->orig_order_date);
 	hook_db_postwrite($po_obj, ST_PURCHORDER);

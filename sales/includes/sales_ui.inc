@@ -44,11 +44,10 @@ function processing_active(): bool
 */
 function check_edit_conflicts(string|array|null $cart_id, ?string $cartname='Items'): void
 {
-	global $Ajax;
 
     if ((!isset(sysprefs()->no_check_edit_conflicts) || sysprefs()->no_check_edit_conflicts==0) && (bool)$cart_id && isset($_SESSION[$cartname]) && $cart_id != $_SESSION[$cartname]->cart_id) {
 		display_error(_('This edit session has been abandoned by opening sales document in another browser tab. You cannot edit more than one sales document at once.'));
-		$Ajax->activate('_page_body');
+		ajax()->activate('_page_body');
 		display_footer_exit();
 	}
 }

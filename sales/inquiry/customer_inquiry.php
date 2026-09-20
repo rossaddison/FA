@@ -212,7 +212,7 @@ div_end();
 
 if (get_post('RefreshInquiry') || list_updated('filterType'))
 {
-	$Ajax->activate('_page_body');
+	ajax()->activate('_page_body');
 }
 //------------------------------------------------------------------------------------------------
 $sql = get_sql_for_customer_inquiry(get_post('TransAfterDate'), get_post('TransToDate'),

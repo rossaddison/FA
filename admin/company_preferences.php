@@ -162,7 +162,7 @@ if (isset($_POST['update']) && $_POST['update'] != "")
 		$_SESSION['wa_current_user']->timeout = $_POST['login_tout'];
 		display_notification_centered(_("Company setup has been updated."));
 		set_focus('coy_name');
-		$Ajax->activate('_page_body');
+		ajax()->activate('_page_body');
 	}
 } /* end of if submit */
 

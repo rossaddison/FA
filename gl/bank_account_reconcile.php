@@ -103,25 +103,23 @@ function fmt_memo(array|false|null $row)
 
 function update_data(): void
 {
-	global $Ajax;
 	
 	unset($_POST["beg_balance"]);
 	unset($_POST["end_balance"]);
-	$Ajax->activate('summary');
+	ajax()->activate('summary');
 }
 //---------------------------------------------------------------------------------------------
 // Update db record if respective checkbox value has changed.
 //
 function change_tpl_flag(string|int|float|bool|null $reconcile_id): bool
 {
-	global	$Ajax;
 
 	if (!check_date() 
 		&& check_value("rec_".$reconcile_id)) // temporary fix
 		return false;
 
 	if (get_post('bank_date')=='')	// new reconciliation
-		$Ajax->activate('bank_date');
+		ajax()->activate('bank_date');
 
 	$_POST['bank_date'] = date2sql(get_post('reconcile_date'));
 	$reconcile_value = check_value("rec_".$reconcile_id) 
@@ -130,20 +128,19 @@ function change_tpl_flag(string|int|float|bool|null $reconcile_id): bool
 	update_reconciled_values($reconcile_id, $reconcile_value, $_POST['reconcile_date'],
 		input_num('end_balance'), $_POST['bank_account']);
 		
-	$Ajax->activate('reconciled');
-	$Ajax->activate('difference');
+	ajax()->activate('reconciled');
+	ajax()->activate('difference');
 	return true;
 }
 
 function set_tpl_flag(string|int|float|bool|null $reconcile_id): void
 {
-	global	$Ajax;
 
 	if (check_value("rec_".$reconcile_id))
 		return;
 
 	if (get_post('bank_date')=='')	// new reconciliation
-		$Ajax->activate('bank_date');
+		ajax()->activate('bank_date');
 
 	$_POST['bank_date'] = date2sql(get_post('reconcile_date'));
 	$reconcile_value =  ("'".$_POST['bank_date'] ."'");
@@ -151,8 +148,8 @@ function set_tpl_flag(string|int|float|bool|null $reconcile_id): void
 	update_reconciled_values($reconcile_id, $reconcile_value, $_POST['reconcile_date'],
 		input_num('end_balance'), $_POST['bank_account']);
 		
-	$Ajax->activate('reconciled');
-	$Ajax->activate('difference');
+	ajax()->activate('reconciled');
+	ajax()->activate('difference');
 }
 
 if (!isset($_POST['reconcile_date'])) { // init page
@@ -161,7 +158,7 @@ if (!isset($_POST['reconcile_date'])) { // init page
 }
 
 if (list_updated('bank_account')) {
-    $Ajax->activate('bank_date');
+    ajax()->activate('bank_date');
 	update_data();
 }
 if (list_updated('bank_date')) {
@@ -171,7 +168,7 @@ if (list_updated('bank_date')) {
 }
 if (get_post('_reconcile_date_changed')) {
 	$_POST['bank_date'] = check_date() ? date2sql(get_post('reconcile_date')) : '';
-    $Ajax->activate('bank_date');
+    ajax()->activate('bank_date');
 	update_data();
 }
 
@@ -186,7 +183,7 @@ if (isset($_POST['last']) && isset($_POST['Reconcile'])) {
 		if ($value != check_value('rec_'.$id))
 			if(!change_tpl_flag($id)) break;
 
-    $Ajax->activate('_page_body');
+    ajax()->activate('_page_body');
 }
 
 if (isset($_POST['last']) && isset($_POST['ReconcileAll'])) {
@@ -194,7 +191,7 @@ if (isset($_POST['last']) && isset($_POST['ReconcileAll'])) {
 	foreach($_POST['last'] as $id => $value)
 		set_tpl_flag($id);
 
-    $Ajax->activate('_page_body');
+    ajax()->activate('_page_body');
 }
 
 //------------------------------------------------------------------------------------------------

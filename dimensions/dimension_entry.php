@@ -105,7 +105,7 @@ function safe_exit(): void
 
 function can_process(): bool
 {
-	global $selected_id, $Refs;
+	global $selected_id;
 
 	if ($selected_id == -1) 
 	{
@@ -255,7 +255,7 @@ if ($selected_id != -1)
 else 
 {
 	$_POST['dimension_tags'] = array();
-	ref_row(_("Dimension Reference:"), 'ref', '', $Refs->get_next(ST_DIMENSION), false, ST_DIMENSION);
+	ref_row(_("Dimension Reference:"), 'ref', '', refs()->get_next(ST_DIMENSION), false, ST_DIMENSION);
 }
 
 text_row_ex(_("Name") . ":", 'name', 50, 75);

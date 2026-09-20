@@ -386,7 +386,6 @@ class simple_crud_view extends user_view {
 	/** @return ''|'RESET'|key-of<array<array-key, mixed>> */
 	function _check_mode()
 	{
-		global $Ajax;
 
 		$mod = '';//$this->Mode;
 		// Detect action (mode change)
@@ -394,8 +393,8 @@ class simple_crud_view extends user_view {
 
 			if (isset($_POST[$this->name.$m])) {
 				unset($_POST['_focus']); // focus on first form entry
-				$Ajax->activate($this->name.'_div');
-				$Ajax->activate($this->name.'_controls');
+				ajax()->activate($this->name.'_div');
+				ajax()->activate($this->name.'_controls');
 				$val = is_array($_POST[$this->name.$m]) ? key($_POST[$this->name.$m]) : null;
 				$this->prev_id = $this->selected_id;
 				$this->selected_id = $val!==null ? @quoted_printable_decode($val) : $this->_none;
@@ -510,7 +509,6 @@ class simple_crud_view extends user_view {
 	/** @return void */
 	function _cancel()
 	{
-		global $Ajax;
 		$this->selected_id = $this->_none;
 		if ($this->display_both)
 		{
@@ -519,7 +517,7 @@ class simple_crud_view extends user_view {
 		}
 		$this->cancel();
 		if (!$this->display_both)
-			$Ajax->activate($this->name.'_div');
+			ajax()->activate($this->name.'_div');
 		$this->Mode = 'RESET';
 	}
 	//
@@ -662,7 +660,6 @@ class selector_crud_view extends simple_crud_view {
 
 	function _check_mode()
 	{
-		global $Ajax;
 
 		// list controls lookup
 		$prev_mode = $this->Mode;
@@ -672,19 +669,19 @@ class selector_crud_view extends simple_crud_view {
 		$this->prev_id = $this->selected_id;
 		$this->selected_id = get_post($list);
 		if (list_updated($list)) {
-			$Ajax->activate($this->name);
-			$Ajax->activate($this->name.'_controls');
+			ajax()->activate($this->name);
+			ajax()->activate($this->name.'_controls');
 			$mod = $this->selected_id == $this->_none ? 'RESET' : 'Edit';
 		} else {
 			$mod = simple_crud_view::_check_mode();
 		}
 
 		if ($mod != $prev_mode) {
-			$Ajax->activate($this->name.'_controls');
+			ajax()->activate($this->name.'_controls');
 		}
 		if (get_post('_show_inactive_update'))
 		{
-			$Ajax->activate($this->name.'_id');
+			ajax()->activate($this->name.'_id');
 		}
 
 		$_POST[$list] = $this->selected_id;
@@ -697,10 +694,9 @@ class selector_crud_view extends simple_crud_view {
 	 */
 	function cancel()
 	{
-		global $Ajax;
 
 		$_POST[$this->name.'_id'] = $this->selected_id = $this->_none;
-		$Ajax->activate($this->name.'_id');
+		ajax()->activate($this->name.'_id');
 	}
 }
 

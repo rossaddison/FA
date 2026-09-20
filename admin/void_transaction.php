@@ -343,20 +343,20 @@ if (isset($_POST['ProcessVoiding']))
 {
 	if (!check_valid_entries())
 		unset($_POST['ProcessVoiding']);
-	$Ajax->activate('_page_body');
+	ajax()->activate('_page_body');
 }
 
 if (isset($_POST['ConfirmVoiding']))
 {
 	handle_void_transaction();
 	$selected_id = '';
-	$Ajax->activate('_page_body');
+	ajax()->activate('_page_body');
 }
 
 if (isset($_POST['CancelVoiding']))
 {
 	$selected_id = -1;
-	$Ajax->activate('_page_body');
+	ajax()->activate('_page_body');
 }
 
 //----------------------------------------------------------------------------------------

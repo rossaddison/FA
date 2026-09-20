@@ -103,7 +103,7 @@ if ($Mode == 'RESET')
 		$_POST['mb_flag'] = 'F';
 }
 if (list_updated('mb_flag')) {
-	$Ajax->activate('details');
+	ajax()->activate('details');
 }
 
 //----------------------------------------------------------------------------------

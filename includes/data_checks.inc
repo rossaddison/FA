@@ -666,13 +666,12 @@ function check_is_editable(string|int|float|bool|array|null $trans_type, string|
 
 function check_reference(string|int|float|bool|array|null $reference, string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no=0, mixed $context=null, string|int|float|bool|null $line=null): bool
 {
-	global $Refs;
 
-	if (!$Refs->is_valid($reference, $trans_type, $context, $line))
+	if (!refs()->is_valid($reference, $trans_type, $context, $line))
 	{
 		display_error(_("The entered reference is invalid.")); return false;
 	}
-	elseif (!$Refs->is_new_reference($reference, $trans_type, $trans_no))
+	elseif (!refs()->is_new_reference($reference, $trans_type, $trans_no))
 	{
 		display_error( _("The entered reference is already in use.")); return false;
 	}

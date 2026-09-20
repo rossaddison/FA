@@ -17,7 +17,6 @@ require_once($path_to_root. "/admin/db/attachments_db.inc");
 function add_work_order(string|int|float|bool|null $wo_ref, string|int|float|bool|null $loc_code, int|float|bool|null $units_reqd, string|int|float|bool|null $stock_id,
 	string|int|float|bool|null $type, string|int|float|bool|null $date_, string|int|float|bool|null $required_by, string|int|float|bool|null $memo_, int|float|bool|null $costs, string|int|float|bool|null $cr_acc, int|float|bool|null $labour, string|int|float|bool|null $cr_lab_acc): int|string
 {
-	global $Refs;
 
 	begin_transaction();
 	$args = func_get_args();
@@ -43,7 +42,7 @@ function add_work_order(string|int|float|bool|null $wo_ref, string|int|float|boo
 
 	add_comments(ST_WORKORDER, $woid, $required_by, $memo_);
 
-	$Refs->save(ST_WORKORDER, $woid, $wo_ref);
+	refs()->save(ST_WORKORDER, $woid, $wo_ref);
 	add_audit_trail(ST_WORKORDER, $woid, $date_);
 
 	$args->woid = $woid;
@@ -62,7 +61,7 @@ function add_work_order(string|int|float|bool|null $wo_ref, string|int|float|boo
 		if ($type == WO_UNASSEMBLY)
 			$units_reqd = -$units_reqd;
 
-		$ref = $Refs->get_next(ST_MANURECEIVE, null, $date_);
+		$ref = refs()->get_next(ST_MANURECEIVE, null, $date_);
 		work_order_produce($woid, $ref, $units_reqd, $date_, '', true);
 	}
 

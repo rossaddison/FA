@@ -101,11 +101,11 @@ if ($Mode == 'RESET')
 if (isset($_POST['_selected_id_update']) )
 {
 	$selected_id = $_POST['selected_id'];
-	$Ajax->activate('_page_body');
+	ajax()->activate('_page_body');
 }
 
 if (list_updated('stock_id')) 
-	$Ajax->activate('price_table');
+	ajax()->activate('price_table');
 //--------------------------------------------------------------------------------------------------
 
 $action = $_SERVER['PHP_SELF'];
@@ -133,7 +133,7 @@ $mb_flag = get_mb_flag($_POST['stock_id']);
 if ($mb_flag == -1)
 {
 	display_error(_("Entered item is not defined. Please re-enter."));
-  	$Ajax->activate('price_table');
+  	ajax()->activate('price_table');
 	set_focus('stock_id');
 }
 else

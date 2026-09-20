@@ -36,7 +36,7 @@ page(_($help_context = "General Ledger Inquiry"), false, false, '', $js);
 //
 if (get_post('Show')) 
 {
-	$Ajax->activate('trans_tbl');
+	ajax()->activate('trans_tbl');
 }
 
 if (isset($_GET["account"]))

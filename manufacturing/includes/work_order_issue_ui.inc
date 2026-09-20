@@ -83,7 +83,6 @@ function display_issue_items(?string $title, items_cart &$order): void
 
 function issue_edit_item_controls(items_cart &$order, string|int|float|bool|null $line_no=-1): void
 {
-	global $Ajax;
 	start_row();
 
 	$id = find_submit('Edit');
@@ -98,7 +97,7 @@ function issue_edit_item_controls(items_cart &$order, string|int|float|bool|null
 		hidden('stock_id', post_scalar('stock_id'));
 		label_cell(post_scalar('stock_id'));
 		label_cell($order->line_items[$id]->item_description);
-	    $Ajax->activate('items_table');
+	    ajax()->activate('items_table');
 	}
 	else
 	{
@@ -107,9 +106,9 @@ function issue_edit_item_controls(items_cart &$order, string|int|float|bool|null
   		stock_component_items_list_cells(null, 'stock_id', 
 			$wo_details["stock_id"], null, false, true);
 		if (list_updated('stock_id')) {
-			    $Ajax->activate('units');
-			    $Ajax->activate('qty');
-			    $Ajax->activate('std_cost');
+			    ajax()->activate('units');
+			    ajax()->activate('qty');
+			    ajax()->activate('std_cost');
 		}
 
     	$item_info = row_or_empty(get_item_edit_info($_POST['stock_id']));
@@ -150,7 +149,6 @@ function issue_edit_item_controls(items_cart &$order, string|int|float|bool|null
 
 function issue_options_controls(): void
 {
-	global $Refs;
 
 	echo "<br>";
 	start_table();
@@ -158,7 +156,7 @@ function issue_options_controls(): void
  	locations_list_row(_("From Location:"), 'Location');
  	workcenter_list_row(_("To Work Centre:"), 'WorkCentre');
 
-    ref_row(_("Reference:"), 'ref', '', $Refs->get_next(ST_MANUISSUE, null, array('date'=> get_post('date_'), 'location' => get_post('Location'))));
+    ref_row(_("Reference:"), 'ref', '', refs()->get_next(ST_MANUISSUE, null, array('date'=> get_post('date_'), 'location' => get_post('Location'))));
  
  	if (!isset($_POST['IssueType']))
  		$_POST['IssueType'] = 0;

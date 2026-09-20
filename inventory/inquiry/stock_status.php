@@ -30,7 +30,7 @@ include_once($path_to_root . "/inventory/includes/inventory_db.inc");
 include_once($path_to_root . "/includes/db/manufacturing_db.inc");
 
 if (list_updated('stock_id')) 
-	$Ajax->activate('status_tbl');
+	ajax()->activate('status_tbl');
 //----------------------------------------------------------------------------------------------------
 
 check_db_has_stock_items(_("There are no items defined in the system."));

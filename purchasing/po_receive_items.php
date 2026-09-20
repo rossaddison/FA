@@ -231,7 +231,7 @@ function can_process(): bool
 
 function process_receive_po(): void
 {
-	global $path_to_root, $Ajax;
+	global $path_to_root;
 
 	if (!can_process())
 		return;
@@ -250,7 +250,7 @@ function process_receive_po(): void
 		unset(session_obj('PO')->line_items);
 		unset($_SESSION['PO']);
 		unset($_POST['ProcessGoodsReceived']);
-		$Ajax->activate('_page_body');
+		ajax()->activate('_page_body');
 		display_footer_exit();
 	}
 	
@@ -275,7 +275,7 @@ if (isset($_GET['PONumber']) && $_GET['PONumber'] > 0 && !isset($_POST['Update']
 {
 	create_new_po(ST_PURCHORDER, $_GET['PONumber']);
 	session_obj('PO')->trans_type = ST_SUPPRECEIVE;
-	session_obj('PO')->reference = $Refs->get_next(ST_SUPPRECEIVE, null,
+	session_obj('PO')->reference = refs()->get_next(ST_SUPPRECEIVE, null,
 		array('date' => Today(), 'supplier' => session_obj('PO')->supplier_id));
 	copy_from_cart();
 }
@@ -305,7 +305,7 @@ if (isset($_POST['Update']) || isset($_POST['ProcessGoodsReceived']))
 		}
 	 }
 	}
-	$Ajax->activate('grn_items');
+	ajax()->activate('grn_items');
 }
 
 //--------------------------------------------------------------------------------------------------

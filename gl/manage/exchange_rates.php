@@ -109,7 +109,7 @@ function display_rates(string|int|float|bool|null $curr_code): void
 
 function display_rate_edit(): void
 {
-	global $selected_id, $Ajax;
+	global $selected_id;
 	$xchg_rate_provider = ((isset(sysprefs()->xr_providers) && isset(sysprefs()->dflt_xr_provider))
 		? sysprefs()->xr_providers[sysprefs()->dflt_xr_provider] : 'ECB');
 	start_table(TABLESTYLE2);
@@ -138,7 +138,7 @@ function display_rate_edit(): void
 	{
 		$_POST['BuyRate'] = 
 			maxprec_format(retrieve_exrate($_POST['curr_abrev'], post_scalar('date_')));
-		$Ajax->activate('BuyRate');
+		ajax()->activate('BuyRate');
 	}
 	amount_row(_("Exchange Rate:"), 'BuyRate', null, '',
 	  	submit('get_rate',_("Get"), false, _('Get current rate from') . ' ' . $xchg_rate_provider , true), 'max');

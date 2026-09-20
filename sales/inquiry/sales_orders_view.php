@@ -202,7 +202,7 @@ $id = find_submit('_chgtpl');
 if ($id != -1)
 {
 	sales_order_set_template($id, check_value('chgtpl'.$id));
-	$Ajax->activate('orders_tbl');
+	ajax()->activate('orders_tbl');
 }
 
 if (isset($_POST['Update']) && isset($_POST['last'])) {
@@ -220,11 +220,11 @@ if (get_post('_OrderNumber_changed') || get_post('_OrderReference_changed')) // 
 	$disable = get_post('OrderNumber') !== '' || get_post('OrderReference') !== '';
 
   	if ($show_dates) {
-		$Ajax->addDisable(true, 'OrdersAfterDate', $disable);
-		$Ajax->addDisable(true, 'OrdersToDate', $disable);
+		ajax()->addDisable(true, 'OrdersAfterDate', $disable);
+		ajax()->addDisable(true, 'OrdersToDate', $disable);
 	}
 
-	$Ajax->activate('orders_tbl');
+	ajax()->activate('orders_tbl');
 }
 
 start_form();

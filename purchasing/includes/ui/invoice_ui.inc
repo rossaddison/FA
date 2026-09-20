@@ -73,7 +73,6 @@ function copy_to_trans(?supp_trans &$supp_trans): void
 
 function invoice_header(?supp_trans &$supp_trans): void
 {
-	global $Ajax, $Refs;
 	
 	// if vars have been lost, recopy
 	if (!isset($_POST['tran_date']))
@@ -114,7 +113,7 @@ function invoice_header(?supp_trans &$supp_trans): void
 
    	date_row(_("Date") . ":", 'tran_date', '', true, 0, 0, 0, "", true);
 
-   	ref_row(_("Reference:"), 'reference', '', $Refs->get_next($supp_trans->trans_type, null, 
+   	ref_row(_("Reference:"), 'reference', '', refs()->get_next($supp_trans->trans_type, null, 
    		array('supplier' => get_post('supplier_id'), 'date' => get_post('tran_date'))), false, $supp_trans->trans_type);
 
 	if ($supp_trans->trans_type == ST_SUPPCREDIT)
@@ -126,11 +125,11 @@ function invoice_header(?supp_trans &$supp_trans): void
 	table_section(2, "33%");
 
 	if (isset($_POST['_tran_date_changed'])) {
-		$Ajax->activate('_ex_rate');
+		ajax()->activate('_ex_rate');
 		$supp_trans->tran_date = $_POST['tran_date'];
 		get_duedate_from_terms($supp_trans);
 		$_POST['due_date'] = $supp_trans->due_date;
-		$Ajax->activate('due_date');
+		ajax()->activate('due_date');
 	}
 
     date_row(_("Due Date") . ":", 'due_date');
@@ -165,7 +164,6 @@ function invoice_header(?supp_trans &$supp_trans): void
 
 function invoice_totals(supp_trans &$supp_trans): void
 {
-	global $Ajax;
 
 	copy_to_trans($supp_trans);
 
@@ -231,7 +229,7 @@ function display_gl_controls(supp_trans &$supp_trans, string|int|float|bool|null
 /** @return float|int */
 function display_gl_items(supp_trans &$supp_trans, string|int|float|bool|items_cart|null $mode=0)
 {
-	global $path_to_root, $Ajax;
+	global $path_to_root;
 
     // if displaying in form, and no items, exit
     if (($mode == 2 || $mode == 3) && count($supp_trans->gl_codes) == 0)
@@ -255,7 +253,7 @@ function display_gl_items(supp_trans &$supp_trans, string|int|float|bool|items_c
 			$qid = row_or_empty(get_quick_entry(get_post('qid')));
 			if (list_updated('qid')) {
 				unset($_POST['totamount']); // enable default
-				$Ajax->activate('totamount');
+				ajax()->activate('totamount');
 			}
 			echo "&nbsp;".(string)$qid['base_desc'].":"."&nbsp;";
 

@@ -53,14 +53,13 @@ if (isset($_GET['AddedID']))
 }
 
 if (isset($_POST['_DatePaid_changed'])) {
-	$Ajax->activate('_ex_rate');
+	ajax()->activate('_ex_rate');
 }
 
 //----------------------------------------------------------------------------------------
 
 function gl_payment_controls(string|int|float|bool|array|null $trans_no): void
 {
-	global $Refs;
 	
 	if (!in_ajax()) {
 		if ((bool)$trans_no) {
@@ -89,7 +88,7 @@ function gl_payment_controls(string|int|float|bool|array|null $trans_no): void
 			$_POST['dimension_id'] = $to_trans['dimension_id'];
 			$_POST['dimension2_id'] = $to_trans['dimension2_id'];
 		} else {
-			$_POST['ref'] = $Refs->get_next(ST_BANKTRANSFER, null, get_post('DatePaid'));
+			$_POST['ref'] = refs()->get_next(ST_BANKTRANSFER, null, get_post('DatePaid'));
 			$_POST['memo_'] = '';
 			$_POST['FromBankAccount'] = 0;
 			$_POST['ToBankAccount'] = 0;
@@ -118,7 +117,7 @@ function gl_payment_controls(string|int|float|bool|array|null $trans_no): void
 	}
     date_row(_("Transfer Date:"), 'DatePaid', '', true, 0, 0, 0, null, true);
 
-    ref_row(_("Reference:"), 'ref', '', $Refs->get_next(ST_BANKTRANSFER, null, get_post('DatePaid')), false, ST_BANKTRANSFER,
+    ref_row(_("Reference:"), 'ref', '', refs()->get_next(ST_BANKTRANSFER, null, get_post('DatePaid')), false, ST_BANKTRANSFER,
     	array('date' => get_post('DatePaid')));
 	$dim = get_company_pref('use_dimension');
 	if ($dim > 0)
@@ -167,7 +166,7 @@ function gl_payment_controls(string|int|float|bool|array|null $trans_no): void
 
 function check_valid_entries(string|int|float|bool|array|null $trans_no): bool
 {
-	global $Refs, $systypes_array;
+	global $systypes_array;
 	
 	if (!is_date(post_scalar('DatePaid'))) 
 	{

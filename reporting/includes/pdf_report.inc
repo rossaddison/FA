@@ -1051,9 +1051,9 @@ class FrontReport extends Cpdf
 						global $Ajax;
 
 						if (user_rep_popup()) 
-							$Ajax->popup($fname); // when embeded pdf viewer used
+							ajax()->popup($fname); // when embeded pdf viewer used
 						else
-							$Ajax->redirect($fname); // otherwise use faster method
+							ajax()->redirect($fname); // otherwise use faster method
 					} else {
 						header('Content-type: application/pdf');
 						header('Content-Disposition: inline; filename='.$this->filename);

@@ -15,7 +15,6 @@ include_once($path_to_root . "/includes/ui.inc");
 
 function display_credit_header(Cart &$order): string
 {
-	global $Ajax, $Refs;
 
 	start_outer_table(TABLESTYLE, "width='80%'");
 	table_section(1);
@@ -31,7 +30,7 @@ function display_credit_header(Cart &$order): string
 	if ($order->customer_id != $_POST['customer_id'] /*|| $order->sales_type != $_POST['sales_type_id']*/)
 	{
 		// customer has changed
-		$Ajax->activate('branch_id');
+		ajax()->activate('branch_id');
 	}
 
 	customer_branches_list_row(_("Branch:"), $_POST['customer_id'], 
@@ -48,10 +47,10 @@ function display_credit_header(Cart &$order): string
 		$_POST['deliver_to'] = $order->deliver_to;
 		$_POST['delivery_address'] = $order->delivery_address;
 		$_POST['phone'] = $order->phone;
-		$Ajax->activate('Location');
-		$Ajax->activate('deliver_to');
-		$Ajax->activate('phone');
-		$Ajax->activate('delivery_address');
+		ajax()->activate('Location');
+		ajax()->activate('deliver_to');
+		ajax()->activate('phone');
+		ajax()->activate('delivery_address');
 		// change prices if necessary
 		// what about discount in template case?
 		if ($old_order->customer_currency != $order->customer_currency) {
@@ -59,23 +58,23 @@ function display_credit_header(Cart &$order): string
 		}
 		if ($old_order->sales_type != $order->sales_type) {
 			$_POST['sales_type_id'] = $order->sales_type;
-			$Ajax->activate('sales_type_id');
+			ajax()->activate('sales_type_id');
 			$change_prices = 1;
 		}
 		if ($old_order->dimension_id != $order->dimension_id) {
 			$_POST['dimension_id'] = $order->dimension_id;
-			$Ajax->activate('dimension_id');
+			ajax()->activate('dimension_id');
 		}
 		if ($old_order->dimension2_id != $order->dimension2_id) {
 			$_POST['dimension2_id'] = $order->dimension2_id;
-			$Ajax->activate('dimension2_id');
+			ajax()->activate('dimension2_id');
 		}
 		unset($old_order);
 	}
 	set_global_customer($_POST['customer_id']);
 
 	if (!isset($_POST['ref']))
-		$_POST['ref'] = $Refs->get_next(ST_CUSTCREDIT, null, array('customer' => get_post('customer_id'),
+		$_POST['ref'] = refs()->get_next(ST_CUSTCREDIT, null, array('customer' => get_post('customer_id'),
 			'branch' => get_post('branch_id'), 'date' => get_post('OrderDate')));
 	if ($order->trans_no==0)
 		ref_row(_("Reference").':', 'ref', _('Reference number unique for this document type'), null, '', $order->trans_type, array('date'=> @$_POST['OrderDate']));
@@ -101,7 +100,7 @@ function display_credit_header(Cart &$order): string
 		$myrow = row_or_empty(get_sales_type($_POST['sales_type_id']));
 		$order->set_sales_type($myrow['id'], $myrow['sales_type'],
 		$myrow['tax_included'], $myrow['factor']);
-		$Ajax->activate('sales_type_id');
+		ajax()->activate('sales_type_id');
 		$change_prices = 1;
 	}
 
@@ -120,7 +119,7 @@ function display_credit_header(Cart &$order): string
 			&& (get_base_sales_type()>0)) {
 				$change_prices = 1;
 		}
-		$Ajax->activate('_ex_rate');
+		ajax()->activate('_ex_rate');
 	}
 	// added dimensions
 	$dim = get_company_pref('use_dimension');
@@ -143,7 +142,7 @@ function display_credit_header(Cart &$order): string
 			$line->price = get_price($line->stock_id, $order->customer_currency,
 				$order->sales_type, $order->price_factor, get_post('OrderDate'));
 		}
-	    $Ajax->activate('items_table');
+	    ajax()->activate('items_table');
 	}
 
 
@@ -235,7 +234,6 @@ function display_credit_items(?string $title, Cart &$order): void
 
 function credit_edit_item_controls(Cart &$order, string|int|float|bool|null $rowcounter, string|int|float|bool|null $line_no=-1): void
 {
-	global $Ajax;
 	alt_table_row_color($rowcounter);
 	$id = find_submit('Edit');
 
@@ -250,16 +248,16 @@ function credit_edit_item_controls(Cart &$order, string|int|float|bool|null $row
 		hidden('stock_id', post_scalar('stock_id'));
 		label_cell(post_scalar('stock_id'));
 		label_cell($order->line_items[$id]->item_description, "nowrap");
-	    $Ajax->activate('items_table');
+	    ajax()->activate('items_table');
 	}
 	else
 	{
 		stock_items_list_cells(null,'stock_id', null, false, true);
 		if (list_updated('stock_id')) {
-			    $Ajax->activate('price');
-			    $Ajax->activate('qty');
-			    $Ajax->activate('units');
-			    $Ajax->activate('line_total');
+			    ajax()->activate('price');
+			    ajax()->activate('qty');
+			    ajax()->activate('units');
+			    ajax()->activate('line_total');
 		}
   		$item_info = row_or_empty(get_item_edit_info($_POST['stock_id']));
 
@@ -306,11 +304,10 @@ function credit_edit_item_controls(Cart &$order, string|int|float|bool|null $row
 
 function credit_options_controls(?object $credit): void
 {
-	global $Ajax;
 	br();
 
 	if (isset($_POST['_CreditType_update']))
-		$Ajax->activate('options');
+		ajax()->activate('options');
 
 	div_start('options');
 	start_table(TABLESTYLE2);

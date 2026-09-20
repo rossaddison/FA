@@ -160,7 +160,7 @@ if (list_updated('new_stock_id')) {
 	copy_bom_items(post_scalar('stock_id'), post_scalar('new_stock_id'));
 	$item = row_or_empty(get_item($_POST['new_stock_id']));
 	$_POST['stock_id'] = $_POST['new_stock_id'];
-	$Ajax->activate('_page_body');
+	ajax()->activate('_page_body');
 	display_notification(_("BOM copied to ") . (string)$item['description']);
 }
 
@@ -174,7 +174,7 @@ end_row();
 if (list_updated('stock_id'))
 {
 	$selected_id = -1;
-	$Ajax->activate('_page_body');
+	ajax()->activate('_page_body');
 }
 end_table();
 br();
@@ -219,7 +219,7 @@ start_form();
 		echo stock_component_items_list('component', $selected_parent, null, false, true);
 		if (get_post('_component_update')) 
 		{
-			$Ajax->activate('quantity');
+			ajax()->activate('quantity');
 		}
 		echo "</td>";
 		end_row();

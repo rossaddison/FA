@@ -81,7 +81,6 @@ function update_average_material_cost(string|int|float|bool|null $supplier, stri
 /** @return int|string */
 function add_grn(purch_order &$po)
 {
-	global $Refs;
 
 	$date_ = $po->orig_order_date;
 
@@ -152,7 +151,7 @@ function add_grn(purch_order &$po)
 		$total += add_gl_trans_supplier(ST_SUPPRECEIVE, $grn, $date_, $clearing_act,
 			$accs['dimension_id'], $accs['dimension2_id'], -$total, null);
 	}
-	$Refs->save(ST_SUPPRECEIVE, $grn, $po->reference);
+	refs()->save(ST_SUPPRECEIVE, $grn, $po->reference);
 
 	add_audit_trail(ST_SUPPRECEIVE, $grn, $date_);
 

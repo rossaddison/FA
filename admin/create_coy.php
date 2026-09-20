@@ -174,7 +174,7 @@ function handle_submit(string|int|float|bool|array|null $selected_id): bool
 
 function handle_delete(string|int|float|bool|null $id): void
 {
-	global $Ajax, $def_coy, $db_connections, $comp_subdirs, $path_to_root, $Mode;
+	global $def_coy, $db_connections, $comp_subdirs, $path_to_root, $Mode;
 
 	// First make sure all company directories from the one under removal are writable. 
 	// Without this after operation we end up with changed per-company owners!
@@ -233,7 +233,7 @@ function handle_delete(string|int|float|bool|null $id): void
 		return;
 	}
 	display_notification(_("Selected company has been deleted"));
-	$Ajax->activate('_page_body');
+	ajax()->activate('_page_body');
 	$Mode = 'RESET';
 }
 

@@ -142,7 +142,7 @@ if (isset($_POST['go']) || isset($_POST['show']))
 				{
 					$cart = new items_cart(ST_JOURNAL);
 					$cart->memo_ = $memo;
-					$cart->reference = $Refs->get_next(ST_JOURNAL, null, $date);
+					$cart->reference = refs()->get_next(ST_JOURNAL, null, $date);
 					$cart->tran_date = $cart->doc_date = $cart->event_date = $date;
 					$cart->add_gl_item(get_post('acc_act'), 0, 0, -$am0, $cart->reference);
 					$cart->add_gl_item(get_post('res_act'), get_post('dimension_id'),

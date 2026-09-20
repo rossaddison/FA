@@ -74,7 +74,7 @@ function add_sales_order(Cart &$order)
 	} /* inserted line items into sales order details */
 
 	add_audit_trail($order->trans_type, $order_no, $order->document_date);
-	$Refs->save($order->trans_type, $order_no, $order->reference, null, $order->fixed_asset);
+	refs()->save($order->trans_type, $order_no, $order->reference, null, $order->fixed_asset);
 
 	hook_db_postwrite($order, $order->trans_type);
 	commit_transaction();
@@ -213,7 +213,7 @@ function update_sales_order(?object $order): void
 	if ($order->trans_type == ST_SALESORDER)
 		reallocate_payments($order_no, ST_SALESORDER, $ord_date, $total, $allocs, $order->customer_id);
 	add_audit_trail($order->trans_type, $order_no, $order->document_date, _("Updated."));
-	$Refs->save($order->trans_type, $order_no, $order->reference, null, $order->fixed_asset);
+	refs()->save($order->trans_type, $order_no, $order->reference, null, $order->fixed_asset);
 
 	hook_db_postwrite($order, $order->trans_type);
 	commit_transaction();

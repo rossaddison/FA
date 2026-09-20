@@ -47,7 +47,7 @@ end_table();
 
 if(get_post('RefreshInquiry'))
 {
-	$Ajax->activate('totals_tbl');
+	ajax()->activate('totals_tbl');
 }
 
 function gl_view(array|false|null $row)

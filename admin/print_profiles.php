@@ -65,11 +65,11 @@ function get_reports() {
 
 function clear_form(): void 
 {
-	global $selected_id, $Ajax;
+	global $selected_id;
 
 	$selected_id = '';
 	$_POST['name'] = '';
-	$Ajax->activate('_page_body');
+	ajax()->activate('_page_body');
 }
 
 /** @return 0|null|string */
@@ -122,7 +122,7 @@ if(get_post('delete'))
 }
 
 if(get_post('_profile_id_update')) {
-	$Ajax->activate('_page_body');
+	ajax()->activate('_page_body');
 }
 
 start_form();

@@ -15,7 +15,6 @@
 //
 function write_credit_note(Cart &$credit_note, string|int|float|bool|null $write_off_acc)
 {
-	global $Refs;
 
 	if (is_array($credit_note->src_docs))
 	{
@@ -167,7 +166,7 @@ function write_credit_note(Cart &$credit_note, string|int|float|bool|null $write
 	add_comments(ST_CUSTCREDIT, $credit_no, $credit_date, $credit_note->Comments);
 
 	if ($trans_no == 0) {
-		$Refs->save(ST_CUSTCREDIT, $credit_no, $credit_note->reference);
+		refs()->save(ST_CUSTCREDIT, $credit_no, $credit_note->reference);
 	}
 	hook_db_postwrite($credit_note, ST_CUSTCREDIT);
 	commit_transaction();

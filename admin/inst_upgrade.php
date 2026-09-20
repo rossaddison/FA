@@ -43,7 +43,7 @@ if (get_post('Upgrade'))
 				display_notification(_("Company upgraded successfully."));
 
 			$site_status = get_site_status($db_connections); // update info
-		    $Ajax->activate('_page_body');
+		    ajax()->activate('_page_body');
 		}
 	}
 }
@@ -51,11 +51,11 @@ $i = find_submit('Clear');
 if ($i != -1)
 {
   unlink(VARLOG_PATH.'/upgrade.'.$i.'.log');
-  $Ajax->activate('_page_body');
+  ajax()->activate('_page_body');
 }
 if (get_post('_select_comp_update'))
 {
-  $Ajax->activate('_page_body');
+  ajax()->activate('_page_body');
 }
 
 start_form();

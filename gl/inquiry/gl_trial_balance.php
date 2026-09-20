@@ -35,7 +35,7 @@ $pdeb = $pcre = $cdeb = $ccre = $tdeb = $tcre = $pbal = $cbal = $tbal = 0;
 //
 if (get_post('Show'))
 {
-	$Ajax->activate('balance_tbl');
+	ajax()->activate('balance_tbl');
 }
 
 

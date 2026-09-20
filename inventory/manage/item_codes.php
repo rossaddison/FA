@@ -96,7 +96,7 @@ if ($Mode == 'RESET')
 }
 
 if (list_updated('stock_id')) 
-	$Ajax->activate('_page_body');
+	ajax()->activate('_page_body');
 
 //--------------------------------------------------------------------------------------------------
 

@@ -62,23 +62,23 @@ if (isset($_GET['order_number']))
 //
 if (get_post('SearchOrders')) 
 {
-	$Ajax->activate('orders_tbl');
+	ajax()->activate('orders_tbl');
 } elseif (get_post('_order_number_changed')) 
 {
 	$disable = get_post('order_number') !== '';
 
-	$Ajax->addDisable(true, 'OrdersAfterDate', $disable);
-	$Ajax->addDisable(true, 'OrdersToDate', $disable);
-	$Ajax->addDisable(true, 'StockLocation', $disable);
-	$Ajax->addDisable(true, '_SelectStockFromList_edit', $disable);
-	$Ajax->addDisable(true, 'SelectStockFromList', $disable);
+	ajax()->addDisable(true, 'OrdersAfterDate', $disable);
+	ajax()->addDisable(true, 'OrdersToDate', $disable);
+	ajax()->addDisable(true, 'StockLocation', $disable);
+	ajax()->addDisable(true, '_SelectStockFromList_edit', $disable);
+	ajax()->addDisable(true, 'SelectStockFromList', $disable);
 
 	if ($disable) {
-		$Ajax->addFocus(true, 'order_number');
+		ajax()->addFocus(true, 'order_number');
 	} else
-		$Ajax->addFocus(true, 'OrdersAfterDate');
+		ajax()->addFocus(true, 'OrdersAfterDate');
 
-	$Ajax->activate('orders_tbl');
+	ajax()->activate('orders_tbl');
 }
 //---------------------------------------------------------------------------------------------
 

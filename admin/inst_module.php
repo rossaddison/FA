@@ -60,7 +60,7 @@ function local_extension(string|int|null $id): bool
 		$hooks = new $hooks_class;
 		$hooks->install_extension(false);
 	}
-	$Ajax->activate('ext_tbl'); // refresh settings display
+	ajax()->activate('ext_tbl'); // refresh settings display
 	if (!update_extensions($exts))
 		return false;
 	return true;
@@ -224,7 +224,7 @@ if (get_post('Refresh')) {
 	
 	if(!(bool)$result) {
 		display_error(_('Status change for some extensions failed.'));
-		$Ajax->activate('ext_tbl'); // refresh settings display
+		ajax()->activate('ext_tbl'); // refresh settings display
 	}else
 		display_notification(_('Current active extensions set has been saved.'));
 }
@@ -244,7 +244,7 @@ if ($Mode == 'RESET')
 //---------------------------------------------------------------------------------------------
 start_form(true);
 if (list_updated('extset'))
-	$Ajax->activate('_page_body');
+	ajax()->activate('_page_body');
 
 $set = get_post('extset', -1);
 

@@ -186,11 +186,11 @@ elseif (!processing_active()) {
 }
 
 if (isset($_POST['Update'])) {
-	$Ajax->activate('Items');
+	ajax()->activate('Items');
 }
 if (isset($_POST['_InvoiceDate_changed'])) {
 	$_POST['due_date'] = get_invoice_duedate(session_obj('Items')->payment, $_POST['InvoiceDate']);
-	$Ajax->activate('due_date');
+	ajax()->activate('due_date');
 }
 
 //-----------------------------------------------------------------------------
@@ -289,7 +289,6 @@ function copy_from_cart(): void
 
 function check_data(): bool
 {
-	global $Refs;
 
 	$prepaid = session_obj('Items')->is_prepaid();
 
@@ -313,7 +312,7 @@ function check_data(): bool
 	}
 
 	if (session_obj('Items')->trans_no == 0) {
-		if (!$Refs->is_valid($_POST['ref'], ST_SALESINVOICE)) {
+		if (!refs()->is_valid($_POST['ref'], ST_SALESINVOICE)) {
 			display_error(_("You must enter a reference."));
 			set_focus('ref');
 			return false;
@@ -384,8 +383,8 @@ if(list_updated('payment')) {
 	$order->payment_terms = get_payment_terms($order->payment);
 	$_POST['due_date'] = $order->due_date = get_invoice_duedate($order->payment, $order->document_date);
 	$_POST['Comments'] = '';
-	$Ajax->activate('due_date');
-	$Ajax->activate('options');
+	ajax()->activate('due_date');
+	ajax()->activate('options');
 	if ((bool)$order->payment_terms['cash_sale']) {
 		$_POST['Location'] = $order->Location = $order->pos['pos_location'];
 		$order->location_name = $order->pos['location_name'];

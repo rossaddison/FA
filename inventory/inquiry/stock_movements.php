@@ -42,7 +42,7 @@ else
 
 if(get_post('ShowMoves'))
 {
-	$Ajax->activate('doc_tbl');
+	ajax()->activate('doc_tbl');
 }
 
 if (isset($_GET['stock_id']))
@@ -67,7 +67,7 @@ if (!$page_nested)
 		check_cells(_("Show inactive:"), 'show_inactive', null, true);
 
 		if (get_post('_show_inactive_update')) {
-			$Ajax->activate('stock_id');
+			ajax()->activate('stock_id');
 			set_focus('stock_id');
 		}
 	} else

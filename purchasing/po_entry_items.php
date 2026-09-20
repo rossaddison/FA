@@ -153,9 +153,8 @@ else
 //--------------------------------------------------------------------------------------------------
 
 function line_start_focus(): void {
-  global 	$Ajax;
 
-  $Ajax->activate('items_table');
+  ajax()->activate('items_table');
   set_focus('_stock_id_edit');
 }
 //--------------------------------------------------------------------------------------------------
@@ -443,7 +442,7 @@ function handle_commit_order(): void
 //---------------------------------------------------------------------------------------------------
 if (isset($_POST['update'])) {
 	copy_to_cart();
-	$Ajax->activate('items_table');
+	ajax()->activate('items_table');
 }
 
 $id = find_submit('Delete');

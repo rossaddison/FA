@@ -16,7 +16,6 @@ include_once($path_to_root . "/includes/ui/items_cart.inc");
 
 function display_order_header(?items_cart &$Order): void
 {
-	global $Ajax;
 
 	$qes = has_quick_entries(QE_JOURNAL);
 	$new = $Order->order_id==0;
@@ -27,7 +26,7 @@ function display_order_header(?items_cart &$Order): void
     if (input_changed('date_'))
     {
     	unset($_POST['ref']);
-    	$Ajax->activate('ref');
+    	ajax()->activate('ref');
     }
 
 	currencies_list_row(_('Currency:'), 'currency', null, true);
@@ -60,7 +59,7 @@ function display_order_header(?items_cart &$Order): void
 		$qid = row_or_empty(get_quick_entry(get_post('quick')));
 		if (list_updated('quick')) {
 			unset($_POST['totamount']); // enable default
-		$Ajax->activate('totamount');
+		ajax()->activate('totamount');
 		}
 		end_row();
 		if ($qid['bal_type'] == 1)
@@ -192,7 +191,6 @@ function display_gl_items(string|int|float|bool|supp_trans|null $title, ?items_c
 
 function gl_edit_item_controls(?items_cart &$order, string|int|float|bool|null $dim, array|string|null $sub_accounts, string|int|float|bool|null $Index=null): void
 {
-	global $Ajax;
 	start_row();
 
 	$id = find_submit('Edit');
@@ -236,7 +234,7 @@ function gl_edit_item_controls(?items_cart &$order, string|int|float|bool|null $
 			dimensions_list_cells(null, 'dimension_id', null, true, " ", false, 1);
 		if ($dim > 1) 
 			dimensions_list_cells(null, 'dimension2_id', null, true, " ", false, 2);
-	    $Ajax->activate('items_table');
+	    ajax()->activate('items_table');
 	}
 	else
 	{
@@ -260,7 +258,7 @@ function gl_edit_item_controls(?items_cart &$order, string|int|float|bool|null $
 
 	if (get_post('_code_id_update'))
 	{
-	    $Ajax->activate('code_id');
+	    ajax()->activate('code_id');
 		set_focus((bool)$sub_accounts ? 'person_id' : ($dim < 1 ? 'AmountDebit' : 'dimension_id'));
 	}
 	if ($dim < 1)

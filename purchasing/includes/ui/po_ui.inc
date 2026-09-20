@@ -66,7 +66,6 @@ function copy_to_cart(): void
 
 function create_new_po(?int $trans_type, string|int|array|null $trans_no): void
 {
-	global $Refs;
 
 	if (isset($_SESSION['PO']))
 		unset (session_obj('PO')->line_items, $_SESSION['PO']);
@@ -84,7 +83,7 @@ function create_new_po(?int $trans_type, string|int|array|null $trans_no): void
 		read_po($trans_no, $cart);
 		$cart->order_no = $trans_no;
 	} else
-		$cart->reference = $Refs->get_next($trans_type, null,
+		$cart->reference = refs()->get_next($trans_type, null,
 			array('supplier_id' => $cart->supplier_id, 'date' => get_post('OrderDate')));
 	$_SESSION['PO'] = &$cart;
 }
@@ -93,7 +92,6 @@ function create_new_po(?int $trans_type, string|int|array|null $trans_no): void
 
 function display_po_header(?purch_order &$order): void
 {
-	global $Ajax, $Refs;
 
 	$editable = ($order->order_no == 0);
 
@@ -127,8 +125,8 @@ function display_po_header(?purch_order &$order): void
 				$line->quantity/get_purchase_conversion_factor ($old_supp, $line->stock_id)
 					*get_purchase_conversion_factor ($order->supplier_id, $line->stock_id);
 		}
-	    $Ajax->activate('items_table');
-	    $Ajax->activate('due_date');
+	    ajax()->activate('items_table');
+	    ajax()->activate('due_date');
 	}
 	set_global_supplier($_POST['supplier_id']);
 
@@ -140,7 +138,7 @@ function display_po_header(?purch_order &$order): void
 		$order->orig_order_date = $_POST['OrderDate'];
 	    get_duedate_from_terms($order);
 	    $_POST['due_date'] = $order->due_date;
-		$Ajax->activate('due_date');
+		ajax()->activate('due_date');
 	}
 	supplier_credit_row($order->supplier_id, $order->credit);
 
@@ -186,7 +184,7 @@ function display_po_header(?purch_order &$order): void
         if ($loc_row)
         {
     	  	$_POST['delivery_address'] = $loc_row["delivery_address"];
-			$Ajax->activate('delivery_address');
+			ajax()->activate('delivery_address');
     	  	session_obj('PO')->Location = $_POST['StkLocation'];
     	  	session_obj('PO')->delivery_address = $_POST['delivery_address'];
 
@@ -354,7 +352,6 @@ function display_po_summary(purch_order &$po, bool $is_self=false, bool $editabl
 
 function po_item_controls(purch_order &$order, int|string|null &$rowcounter, string|int|float|bool|null $line_no=-1): void
 {
-   global $Ajax;
 
 	alt_table_row_color($rowcounter);
 	$new = $order->order_no == 0;
@@ -384,7 +381,7 @@ function po_item_controls(purch_order &$order, int|string|null &$rowcounter, str
 			label_cell($order->line_items[$id]->item_description); 
 		}
 
-	    $Ajax->activate('items_table');
+	    ajax()->activate('items_table');
 		$qty_rcvd = $order->line_items[$id]->qty_received;
 	}
 	else
@@ -397,11 +394,11 @@ function po_item_controls(purch_order &$order, int|string|null &$rowcounter, str
 			stock_items_list_cells(null, 'stock_id', null, false, true, false, true, array('editable' => 30, 'where'=>array("NOT no_purchase")));
 
 		if (list_updated('stock_id')) {
-			    $Ajax->activate('price');
-			    $Ajax->activate('units');
-			    $Ajax->activate('qty');
-			    $Ajax->activate('req_del_date');
-			    $Ajax->activate('line_total');
+			    ajax()->activate('price');
+			    ajax()->activate('units');
+			    ajax()->activate('qty');
+			    ajax()->activate('req_del_date');
+			    ajax()->activate('line_total');
 		}
 
 		$dec = 0; $_POST['units'] = '';
@@ -465,7 +462,6 @@ function po_item_controls(purch_order &$order, int|string|null &$rowcounter, str
  */
 function display_po_footer(&$trans): void
 {
-	global $Ajax;
 
 start_table(TABLESTYLE2);
 

@@ -29,7 +29,7 @@ else
 page(_($help_context = "Suppliers"), true, false, "", $js);
 
 if(get_post("search")) {
-  $Ajax->activate("supplier_tbl");
+  ajax()->activate("supplier_tbl");
 }
 
 start_form(false, false, (string)$_SERVER['PHP_SELF'] . "?" . (string)$_SERVER['QUERY_STRING']);

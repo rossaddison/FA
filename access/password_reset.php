@@ -82,7 +82,7 @@ function defaultCompany()
 		 onclick='set_fullmode();'></center>\n";
 
 	end_form(1);
-	$Ajax->addScript(true, "document.forms[0].password.focus();");
+	ajax()->addScript(true, "document.forms[0].password.focus();");
 
     echo "<script language='JavaScript' type='text/javascript'>
     //<![CDATA[

@@ -35,7 +35,7 @@ check_db_has_bank_accounts(_("There are no bank accounts defined in the system."
 //
 if (get_post('Show'))
 {
-	$Ajax->activate('trans_tbl');
+	ajax()->activate('trans_tbl');
 }
 //------------------------------------------------------------------------------------------------
 

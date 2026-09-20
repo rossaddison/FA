@@ -139,7 +139,6 @@ function check_years_before(string|array|null $date, bool $closed=false): bool
 //---------------------------------------------------------------------------------------------
 function close_year(string|int|float|bool|null $year): bool
 {
-	global $Refs;
 
 	$co = get_company_prefs();
 	if (get_gl_account($co['retained_earnings_act']) == false || get_gl_account($co['profit_loss_year_act']) == false)
@@ -171,7 +170,7 @@ function close_year(string|int|float|bool|null $year): bool
 	if ($balance != 0.0)
 	{
 		$cart = new items_cart(ST_JOURNAL);
-		$cart->reference = $Refs->get_next(ST_JOURNAL, null, $to);
+		$cart->reference = refs()->get_next(ST_JOURNAL, null, $to);
 		$cart->tran_date = $cart->doc_date = $cart->event_date = $to;
 
 		$cart->add_gl_item($co['retained_earnings_act'], 0, 0, -$balance, _("Closing Year"), '', 0);
@@ -370,13 +369,12 @@ function delete_this_fiscalyear(string|int|float|bool|array|null $selected_id): 
 	}
 	if ($new)
 	{
-		global $Refs;
 		$trans_type = ST_JOURNAL;
 		$date_ = sql2date($to);
-		$reference = $Refs->get_next($trans_type, null, $date_);
-		$Refs->save($trans_type, $trans_no, $reference);
+		$reference = refs()->get_next($trans_type, null, $date_);
+		refs()->save($trans_type, $trans_no, $reference);
 		add_journal($trans_type, $trans_no, $total, $date_, get_company_currency(), $reference);
-		$Refs->save($trans_type, $trans_no, $reference);
+		refs()->save($trans_type, $trans_no, $reference);
 		add_audit_trail($trans_type, $trans_no, $date_);
 	}
 	$sql = "SELECT bank_act, SUM(amount) AS amount FROM ".TB_PREF."bank_trans WHERE trans_date <= '$to' GROUP BY bank_act";

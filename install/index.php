@@ -315,8 +315,8 @@ elseif(get_post('install_coas'))
 
 if (list_updated('inst_lang')) {
 	$_SESSION['inst_set']['inst_lang'] = get_post('inst_lang');
-	$Ajax->setEncoding($inst_langs[get_post('inst_lang')]['encoding']);
-	$Ajax->activate('welcome');
+	ajax()->setEncoding($inst_langs[get_post('inst_lang')]['encoding']);
+	ajax()->activate('welcome');
 }
 
 start_form();

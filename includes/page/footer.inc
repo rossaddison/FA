@@ -20,12 +20,12 @@ function page_footer(string|int|float|bool|null $no_menu=false, bool $is_index=f
 	$rend = new renderer();
 	$rend->menu_footer($no_menu, $is_index);
 
-	$edits = "editors = ".$Ajax->php2js($Editors).";";
-	$Ajax->addScript('editors', $edits);
+	$edits = "editors = ".ajax()->php2js($Editors).";";
+	ajax()->addScript('editors', $edits);
 
 	echo "<script type='text/javascript'>
 		_focus = '" . get_post('_focus') . "';
-		_validate = " . $Ajax->php2js($Validate).";
+		_validate = " . ajax()->php2js($Validate).";
 		var $edits
 	</script>";
 

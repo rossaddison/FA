@@ -122,7 +122,6 @@ function write_supp_journal(string|int|float|bool|null $trans_type, string|int|f
  */
 function write_journal_entries(&$cart)
 {
-	global $Refs;
 
 	$date_ = $cart->tran_date;
 	$ref   = $cart->reference;
@@ -164,7 +163,7 @@ function write_journal_entries(&$cart)
 	add_journal($trans_type, $trans_id, $total,	$date_ , $cart->currency, $ref,
 		$cart->source_ref, $cart->rate, $cart->event_date, $cart->doc_date);
 
-	$Refs->save($trans_type, $trans_id, $ref);
+	refs()->save($trans_type, $trans_id, $ref);
 	if ($new) {
 		add_comments($trans_type, $trans_id, $date_, $memo_);
 	} else {

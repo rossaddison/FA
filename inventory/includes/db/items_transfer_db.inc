@@ -43,7 +43,7 @@ function add_stock_transfer(mixed $Items, string|array|null $location_from, stri
 
 	add_comments(ST_LOCTRANSFER, $transfer_id, $date_, $memo_);
 
-	$Refs->save(ST_LOCTRANSFER, $transfer_id, $reference);
+	refs()->save(ST_LOCTRANSFER, $transfer_id, $reference);
 	add_audit_trail(ST_LOCTRANSFER, $transfer_id, $date_);
 
 	$args->trans_no = $transfer_id;

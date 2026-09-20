@@ -91,7 +91,7 @@ if (isset($_POST['UpdateData']))
 
 if (list_updated('stock_id') || $should_update) {
 	unset($_POST['memo_']);
-	$Ajax->activate('cost_table');
+	ajax()->activate('cost_table');
 }
 //-----------------------------------------------------------------------------------------
 

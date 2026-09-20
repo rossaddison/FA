@@ -22,7 +22,7 @@ if (get_post('view')) {
 	} else {
 		$filename = sysprefs()->backup_dir() . clean_file_name(get_post('backups'));
 		if (in_ajax()) 
-			$Ajax->popup( $filename );
+			ajax()->popup( $filename );
 		else {
 			header('Content-type: text/plain');
 			header('Content-Length: '.filesize($filename));
@@ -79,7 +79,7 @@ function generate_backup(array $conn, string|array|null $ext='no', string|array|
 
 function get_backup_file_combo(): string
 {
-	global $path_to_root, $Ajax;
+	global $path_to_root;
 	
 	$ar_files = array();
     default_focus('backups');
@@ -96,7 +96,7 @@ function get_backup_file_combo(): string
 
 	$selector = "<select name='backups' size=2 style='height:160px;min-width:230px'>$opt_files</select>";
 
-	$Ajax->addUpdate('backups', "_backups_sel", $selector);
+	ajax()->addUpdate('backups', "_backups_sel", $selector);
 	$selector = "<span id='_backups_sel'>".$selector."</span>\n";
 
 	return $selector;
@@ -138,7 +138,7 @@ $backup_path = sysprefs()->backup_dir() . $backup_name;
 
 if (get_post('creat')) {
 	generate_backup($conn, get_post('comp'), get_post('comments'));
-	$Ajax->activate('backups');
+	ajax()->activate('backups');
 	sysprefs()->refresh(); // re-read system setup
 };
 
@@ -156,7 +156,7 @@ if (get_post('deldump')) {
 		if (unlink($backup_path)) {
 			display_notification(_("File successfully deleted.")." "
 					. _("Filename") . ": " . $backup_name);
-			$Ajax->activate('backups');
+			ajax()->activate('backups');
 		}
 		else
 			display_error(_("Can't delete backup file."));
@@ -177,7 +177,7 @@ if (get_post('upload'))
 		elseif (is_uploaded_file($tmpname)) {
 			rename($tmpname, sysprefs()->backup_dir() . $fname);
 			display_notification(_("File uploaded to backup directory"));
-			$Ajax->activate('backups');
+			ajax()->activate('backups');
 		} else
 			display_error(_("File was not uploaded into the system."));
 	} else

@@ -29,7 +29,6 @@ function add_to_order(items_cart &$order, string|array|null $new_item, string|in
 
 function display_order_header(items_cart &$order): void
 {
-	global $Refs;
 
 	start_outer_table(TABLESTYLE, "width='70%'");
 
@@ -42,7 +41,7 @@ function display_order_header(items_cart &$order): void
 
     date_row(_("Date:"), 'AdjDate', '', true);
 
-	ref_row(_("Reference:"), 'ref', '', $Refs->get_next(ST_LOCTRANSFER, null, array('date'=>get_post('AdjDate'), 'location'=> get_post('FromStockLocation'))), false, ST_LOCTRANSFER);
+	ref_row(_("Reference:"), 'ref', '', refs()->get_next(ST_LOCTRANSFER, null, array('date'=>get_post('AdjDate'), 'location'=> get_post('FromStockLocation'))), false, ST_LOCTRANSFER);
 
 	end_outer_table(1); // outer table
 }
@@ -103,7 +102,6 @@ function display_transfer_items(?string $title, items_cart &$order): void
 
 function transfer_edit_item_controls(items_cart &$order, string|int|float|bool|null $line_no=-1): void
 {
-	global $Ajax;
 	start_row();
 
 	$id = find_submit('Edit');
@@ -116,7 +114,7 @@ function transfer_edit_item_controls(items_cart &$order, string|int|float|bool|n
 		hidden('stock_id', post_scalar('stock_id'));
 		label_cell(post_scalar('stock_id'));
 		label_cell($order->line_items[$id]->item_description);
-	    $Ajax->activate('items_table');
+	    ajax()->activate('items_table');
 	}
 	else
 	{
@@ -126,8 +124,8 @@ function transfer_edit_item_controls(items_cart &$order, string|int|float|bool|n
 			sales_items_list_cells(null,'stock_id', null, false, true, true);
 
 		if (list_updated('stock_id')) {
-			$Ajax->activate('units');
-			$Ajax->activate('qty');
+			ajax()->activate('units');
+			ajax()->activate('qty');
 		}
 
     	$item_info = row_or_empty(get_item_edit_info($_POST['stock_id']));

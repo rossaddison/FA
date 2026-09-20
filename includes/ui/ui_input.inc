@@ -52,13 +52,13 @@ function input_changed(?string $name): bool
 //
 function simple_page_mode(bool $numeric_id = true): void
 {
-	global $Ajax, $Mode, $selected_id;
+	global $Mode, $selected_id;
 
 	$default = $numeric_id ? -1 : '';
 	$selected_id = get_post('selected_id', $default);
 	foreach (array('ADD_ITEM', 'UPDATE_ITEM', 'RESET', 'CLONE') as $m) {
 		if (isset($_POST[$m])) {
-			$Ajax->activate('_page_body');
+			ajax()->activate('_page_body');
 			if ($m == 'RESET'  || $m == 'CLONE') 
 				$selected_id = $default;
 			unset($_POST['_focus']);
@@ -71,7 +71,7 @@ function simple_page_mode(bool $numeric_id = true): void
 //				$selected_id = strtr(substr($p, strlen($m)), array('%2E'=>'.'));
 				unset($_POST['_focus']); // focus on first form entry
 				$selected_id = quoted_printable_decode(substr($p, strlen($m)));
-				$Ajax->activate('_page_body');
+				ajax()->activate('_page_body');
 				$Mode = $m;
 				return;
 			}
@@ -131,13 +131,13 @@ $hidden_fields = array();
 
 function hidden(string|int|float|bool|null $name, string|int|float|bool|null $value=null, bool $echo=true): ?string
 {
-  	global $Ajax, $hidden_fields;
+  	global $hidden_fields;
 	
 	if ($value === null) 
 		$value = get_post($name);
 	
   	$ret = "<input type=\"hidden\" name=\"$name\" value=\"$value\">";
-	$Ajax->addUpdate($name, $name, $value);
+	ajax()->addUpdate($name, $name, $value);
 	if ($echo) {
 		$hidden_fields[] = $ret;
 		return null;
@@ -305,12 +305,11 @@ function submit_return(?string $name, string|int|float|bool|array|null $value, s
 }
 
 function submit_js_confirm(?string $name, ?string $msg, bool $set = true): void {
-	global $Ajax;
 	$js = "_validate.$name=".($set ? "function(){ return confirm('"
 				. strtr($msg, array("\n"=>'\\n')) . "');};"
 				: 'null;');
 	if (in_ajax()) {
-		$Ajax->addScript(true, $js);
+		ajax()->addScript(true, $js);
 	} else
 		add_js_source($js);
 }
@@ -392,7 +391,6 @@ function check_value(string|array $name): int|array
 
 function checkbox(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $value=null, string|int|float|bool|null $submit_on_change=false, string|int|float|bool|null $title=false): string
 {
-  	global $Ajax;
 
 	$str = '';	
 
@@ -413,7 +411,7 @@ function checkbox(string|int|float|bool|null $label, string|int|float|bool|null 
 	    .((bool)$title ? " title='$title'" : '')
 	    ." >\n";
 
-	$Ajax->addUpdate($name, $name, $value);
+	ajax()->addUpdate($name, $name, $value);
 	return $str;
 }
 
@@ -462,12 +460,11 @@ function labelheader_cell(string|int|float|bool|null $label, ?string $params="")
 
 function label_cell(string|int|float|bool|null $label, ?string $params="", string|int|null $id=null): string|int|float|bool|null
 {
-    global $Ajax;
 
 	if(isset($id))
 	{
 	    $params .= " id='$id'";
-	    $Ajax->addUpdate($id, $id, $label);
+	    ajax()->addUpdate($id, $id, $label);
 	}
 	echo "<td $params>$label</td>\n";
 
@@ -557,7 +554,6 @@ function text_input(string|int|float|bool|null $name, string|int|float|bool|arra
 function text_cells(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $value=null, string|int|float|bool|null $size="", string|int|float|bool|null $max="", string|int|float|bool|null $title=false, 
 	string|int|float|bool|null $labparams="", string|int|float|bool|null $post_label="", array|string $inparams=""): void
 {
-  	global $Ajax;
 
 	default_focus($name);
 	if ($label != null)
@@ -570,13 +566,12 @@ function text_cells(string|int|float|bool|null $label, string|int|float|bool|nul
 		echo " " . $post_label;
 
 	echo "</td>\n";
-	$Ajax->addUpdate($name, $name, $value);
+	ajax()->addUpdate($name, $name, $value);
 }
 
 function text_cells_ex(?string $label, string|int|float|bool|null $name, string|int|float|bool|null $size, string|int|float|bool|null $max=null, string|int|float|bool|null $init=null, string|int|float|bool|null $title=null,
 	string|int|float|bool|null $labparams=null, string|int|float|bool|null $post_label=null, string|bool|null $submit_on_change=false): void
 {
-  	global $Ajax;
 
 	default_focus($name);
 	if (!isset($_POST[$name]) || $_POST[$name] == "")
@@ -601,7 +596,7 @@ function text_cells_ex(?string $label, string|int|float|bool|null $name, string|
 		echo " " . $post_label;
 
 	echo "</td>\n";
-	$Ajax->addUpdate($name, $name, $_POST[$name]);
+	ajax()->addUpdate($name, $name, $_POST[$name]);
 }
 
 function text_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|array|null $value, string|int|float|bool|null $size, string|int|float|bool|null $max, string|int|float|bool|null $title=null, ?string $params="", ?string $post_label=""): void
@@ -668,7 +663,7 @@ function link_row_ex(string|int|float|bool|null $label, string|int|float|bool|nu
 function date_cells(?string $label, string|int|float|bool|null $name, ?string $title = null, string|bool|null $check=null, string|int|float|bool|null $inc_days=0, 
 	?int $inc_months=0, ?int $inc_years=0, ?string $params=null, bool $submit_on_change=false): void
 {
-	global $path_to_root, $Ajax;
+	global $path_to_root;
 
 	if (!isset($_POST[$name]) || $_POST[$name] == "")
 	{
@@ -713,7 +708,7 @@ function date_cells(?string $label, string|int|float|bool|null $name, ?string $t
 	 . $_POST[$name]. "\""
 	 .((bool)$title ? " title='$title'": '')." > $post_label";
 	echo "</td>\n";
-	$Ajax->addUpdate($name, $name, $_POST[$name]);
+	ajax()->addUpdate($name, $name, $_POST[$name]);
 }
 
 function date_row(string|int|float|bool|null $label, string|int|float|bool|null $name, ?string $title=null, string|bool|null $check=null, string|int|float|bool|null $inc_days=0, ?int $inc_months=0, 
@@ -760,11 +755,10 @@ function file_row(string|int|float|bool|null $label, string|int|float|bool|null 
 */
 function ref_cells(?string $label, ?string $name, ?string $title=null, string|int|float|bool|null $init=null, ?string $params=null, string|bool|null $submit_on_change=false, string|int|float|bool|null $type=null, string|array|null $context=null): void
 {
-	global $Ajax, $Refs;
 
 	if (isset($type)) {
 		if (!(bool)($_POST[$name.'_list'] ?? null)) // restore refline id
-			$_POST[$name.'_list'] = $Refs->reflines->find_refline_id(!(bool)($_POST[$name] ?? null) ? $init : $_POST[$name], $type);
+			$_POST[$name.'_list'] = refs()->reflines->find_refline_id(!(bool)($_POST[$name] ?? null) ? $init : $_POST[$name], $type);
 
 		if (!(bool)($_POST[$name] ?? null)) // initialization
 		{
@@ -772,20 +766,20 @@ function ref_cells(?string $label, ?string $name, ?string $title=null, string|in
 			{
 				$_POST[$name] = $init;
 			} else {
-				$_POST[$name] = $Refs->get_next($type, $_POST[$name.'_list'], $context);
+				$_POST[$name] = refs()->get_next($type, $_POST[$name.'_list'], $context);
 			}
-			$Ajax->addUpdate(true, $name, $_POST[$name]);
+			ajax()->addUpdate(true, $name, $_POST[$name]);
 		}
 
 		if (check_ui_refresh($name)) { // call context changed
-			$_POST[$name] = $Refs->normalize($_POST[$name], $type, $context, $_POST[$name.'_list']);
-			$Ajax->addUpdate(true, $name, $_POST[$name]);
+			$_POST[$name] = refs()->normalize($_POST[$name], $type, $context, $_POST[$name.'_list']);
+			ajax()->addUpdate(true, $name, $_POST[$name]);
 		}
 
-		if ($Refs->reflines->count($type)>1) {
+		if (refs()->reflines->count($type)>1) {
 			if (list_updated($name.'_list')) {
-				$_POST[$name] = $Refs->get_next($type, $_POST[$name.'_list'], $context);
-				$Ajax->addUpdate(true, $name, $_POST[$name]);
+				$_POST[$name] = refs()->get_next($type, $_POST[$name.'_list'], $context);
+				ajax()->addUpdate(true, $name, $_POST[$name]);
 			}
 			$list = refline_list($name.'_list', $type);
 		} else {
@@ -829,7 +823,6 @@ function percent_row(?string $label, ?string $name, string|array|null $init=null
 
 function amount_cells_ex(string|int|float|bool|null $label, string|int|float|bool|null $name, ?int $size, ?int $max=null, string|int|float|bool|null $init=null, string|int|float|bool|null $params=null, string|int|float|bool|null $post_label=null, string|int|float|bool|null $dec=null): void
 {
-	global $Ajax;
 
 	if (!isset($dec))
 	  	$dec = user_price_dec();
@@ -858,11 +851,11 @@ function amount_cells_ex(string|int|float|bool|null $label, string|int|float|boo
 
 	if ((bool)$post_label) {
 		echo "<span id='_{$name}_label'> $post_label</span>";
-		$Ajax->addUpdate($name, '_'.$name.'_label', $post_label);
+		ajax()->addUpdate($name, '_'.$name.'_label', $post_label);
 	}
 	echo "</td>\n";
-	$Ajax->addUpdate($name, $name, $_POST[$name]);
-	$Ajax->addAssign($name, $name, 'dec', $dec);
+	ajax()->addUpdate($name, $name, $_POST[$name]);
+	ajax()->addAssign($name, $name, 'dec', $dec);
 }
 
 
@@ -946,7 +939,6 @@ function small_qty_cells(string|int|float|bool|null $label, ?string $name, ?stri
 
 function textarea_cells(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $value, string|int|float|bool|null $cols, string|int|float|bool|null $rows, ?int $max=255, ?string $title = null, ?string $params=""): void
 {
-  	global $Ajax;
 
 	default_focus($name);
 	if ($label != null)
@@ -957,7 +949,7 @@ function textarea_cells(string|int|float|bool|null $label, string|int|float|bool
 	.((bool)$title ? " title='$title'" : '')
 	.((bool)$max ? " maxlength=$max" : '')
 	.">$value</textarea></td>\n";
-	$Ajax->addUpdate($name, $name, $value);
+	ajax()->addUpdate($name, $name, $value);
 }
 
 function textarea_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|array|null $value, string|int|float|bool|null $cols, string|int|float|bool|null $rows, ?int $max=255, ?string $title=null, ?string $params=""): void
@@ -975,7 +967,6 @@ function textarea_row(string|int|float|bool|null $label, string|int|float|bool|n
 //
 function inactive_control_cell(string|int|float|bool|null $id, string|int|float|bool|null $value, string|int|float|bool|null $table, string|int|float|bool|null $key): void
 {
-	global	$Ajax;
 
 	$name = "Inactive". $id;
 	$value = (bool)$value ? 1:0;
@@ -1004,12 +995,11 @@ function inactive_control_row(array $th): void {
 //	Inserts additional column header when display of inactive records is on.
 //
 function inactive_control_column(array &$th): void {
-	global $Ajax;
 	
 	if (check_value('show_inactive')) 
 		array_insert($th, count($th)-2 , _("Inactive"));
 	if (get_post('_show_inactive_update')) {
-		$Ajax->activate('_page_body');
+		ajax()->activate('_page_body');
 	}
 }
 

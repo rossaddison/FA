@@ -130,7 +130,6 @@ function show_gl_rows(): void {
 }
 
 function show_gl_controls(): void {
-  global $Ajax;
 
   check_db_has_depreciable_fixed_assets('There are no active fixed asset defined in the system.');
  
@@ -149,9 +148,9 @@ function show_gl_controls(): void {
     unset($_POST['memo_']);
   }
 
-  $Ajax->activate('depreciation_date');
-  $Ajax->activate('months');
-  $Ajax->activate('memo_');
+  ajax()->activate('depreciation_date');
+  ajax()->activate('months');
+  ajax()->activate('memo_');
 
   start_table(TABLESTYLE2);
 

@@ -92,7 +92,7 @@ if (isset($_POST['add']) || isset($_POST['update']))
 					'chart_master', 'account_code');
 				update_tag_associations(TAG_ACCOUNT, post_scalar('account_code'), 
 					$_POST['account_tags']);
-				$Ajax->activate('account_code'); // in case of status change
+				ajax()->activate('account_code'); // in case of status change
 				display_notification(_("Account data has been updated."));
 			}
 		}
@@ -108,7 +108,7 @@ if (isset($_POST['add']) || isset($_POST['update']))
 			else
                  display_error(_("Account not added, possible duplicate Account Code."));
 		}
-		$Ajax->activate('_page_body');
+		ajax()->activate('_page_body');
 	}
 } 
 
@@ -188,7 +188,7 @@ if (isset($_POST['delete']))
 		$selected_account = $_POST['AccountList'] = '';
 		display_notification(_("Selected account has been deleted"));
 		unset($_POST['account_code']);
-		$Ajax->activate('_page_body');
+		ajax()->activate('_page_body');
 	}
 } 
 
@@ -209,7 +209,7 @@ if (db_has_gl_accounts())
 	end_row();
 	end_table();
 	if (get_post('_show_inactive_update')) {
-		$Ajax->activate('AccountList');
+		ajax()->activate('AccountList');
 		set_focus('AccountList');
 	}
 }

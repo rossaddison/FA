@@ -49,7 +49,6 @@ function delete_wo_costing(string|int|float|bool|null $trans_type, string|int|fl
 */
 function update_material_cost(?string $stock_id, string|int|float|bool|null $qty, string|int|float|bool|null $unit_cost, string|int|float|bool|null $date): void
 {
-	global $Refs;
 
 	$item = row_or_empty(get_item($stock_id));
 	$avg_cost =  $item['material_cost'];
@@ -95,7 +94,7 @@ function update_material_cost(?string $stock_id, string|int|float|bool|null $qty
 		if (!(bool)is_date_in_fiscalyear($cart->tran_date))
 			$cart->tran_date = end_fiscalyear();
 
-		$cart->reference = $Refs->get_next(ST_COSTUPDATE, null, $cart->tran_date);
+		$cart->reference = refs()->get_next(ST_COSTUPDATE, null, $cart->tran_date);
 
 		$cart->memo_ = sprintf(_("COGS changed from %s to %s for %d %s of '%s'"), $avg_cost, $unit_cost, $qty_delayed, $item['units'], $stock_id);
 
@@ -120,7 +119,7 @@ function add_wo_costs_journal(string|int|float|bool|null $wo_id, int|float|bool|
 {
 //-------- this should be done by single call to write_journal_entries() using items_cart()
 //
-	global $Refs, $wo_cost_types;
+	global $wo_cost_types;
 
 	begin_transaction();
 
@@ -128,7 +127,7 @@ function add_wo_costs_journal(string|int|float|bool|null $wo_id, int|float|bool|
 
 	$wo = row_or_empty(get_work_order($wo_id));
 
-    if (!(bool)$ref) $ref = $Refs->get_next(ST_JOURNAL, null, $date);
+    if (!(bool)$ref) $ref = refs()->get_next(ST_JOURNAL, null, $date);
 
 	add_gl_trans_std_cost(ST_JOURNAL, $journal_id, $date, $cr_acc,
 		$dim1, $dim2, $wo_cost_types[$cost_type], -$amount);
@@ -148,7 +147,7 @@ function add_wo_costs_journal(string|int|float|bool|null $wo_id, int|float|bool|
 	$wo = row_or_empty(get_work_order($wo_id));
 	$wip = $wo['wip_account'];
 
-	$Refs->save(ST_JOURNAL, $journal_id, $ref);
+	refs()->save(ST_JOURNAL, $journal_id, $ref);
 
 	add_wo_costing($wo_id, $cost_type, ST_JOURNAL, $journal_id);
 
@@ -228,7 +227,6 @@ function check_wo_costing(string|int|float|bool|null $type, string|int|float|boo
 
 function void_wo_costing(string|int|float|bool|null $wo_id): void
 {
-	global $Refs;
 
 	$res = get_wo_costing($wo_id);
 
@@ -246,7 +244,7 @@ function void_wo_costing(string|int|float|bool|null $wo_id): void
 		void_gl_trans($type, $trans_no, true);
 		add_audit_trail($type, $trans_no, $date, $memo);
 		add_voided_entry($type, $trans_no, $date, $memo);
-		$Refs->restore_last($type, $trans_no);
+		refs()->restore_last($type, $trans_no);
 	}
 
 	$sql = "DELETE FROM ".TB_PREF."wo_costing WHERE workorder_id=".db_escape($wo_id);

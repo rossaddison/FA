@@ -191,7 +191,7 @@ while($item = db_fetch($items))
 		if (get_post('_tax_type_id' . (string)$item['tax_type_id'].'_update'))	
 		{
 			//$_POST['_tax_type_id' . $item['tax_type_id'].'_update'] = 0;
-			$Ajax->activate('_page_body');
+			ajax()->activate('_page_body');
 		}
 		if (check_value('tax_type_id' . (string)$item['tax_type_id'])==1)
 			check_cells(null, 'tax_shipping' . (string)$item['tax_type_id'], null);

@@ -62,7 +62,7 @@ function display_kit_items(string|int|float|bool|null $selected_kit): void
 /** @return 0|array<array-key, mixed>|null|string */
 function update_kit(string|array|null $selected_kit, string|int|float|bool|null $component_id)
 {
-	global $Mode, $Ajax;
+	global $Mode;
 
 	if (!check_num('quantity', 0))
 	{
@@ -125,7 +125,7 @@ function update_kit(string|array|null $selected_kit, string|int|float|bool|null 
 		display_notification(_("Component of selected kit has been updated."));
 	}
 	$Mode = 'RESET';
-	$Ajax->activate('_page_body');
+	ajax()->activate('_page_body');
 
 	return $selected_kit;
 }
@@ -135,7 +135,7 @@ function update_kit(string|array|null $selected_kit, string|int|float|bool|null 
 if (get_post('update_name')) {
 	update_kit_props(get_post('item_code'), get_post('description'), get_post('category'));
 	display_notification(_('Kit common properties has been updated'));
-	$Ajax->activate('_page_body');
+	ajax()->activate('_page_body');
 }
 
 if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
@@ -189,7 +189,7 @@ $props = get_kit_props($_POST['item_code']);
 if (list_updated('item_code')) {
 	if (get_post('item_code') == '')
 		$_POST['description'] = '';
-	$Ajax->activate('_page_body');
+	ajax()->activate('_page_body');
 }
 
 $selected_kit = $_POST['item_code'];
@@ -237,8 +237,8 @@ if (get_post('item_code') == '') {
 	if (list_updated('component')) 
 	{
 		$_POST['quantity'] = number_format2(1, $dec);
-		$Ajax->activate('quantity');
-		$Ajax->activate('category');
+		ajax()->activate('quantity');
+		ajax()->activate('category');
 	}
 	
 	qty_row(_("Quantity:"), 'quantity', number_format2(1, $dec), '', $units, $dec);

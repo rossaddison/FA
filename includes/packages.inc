@@ -618,7 +618,7 @@ function get_charts_list()
 //
 function install_language(string|int|float|bool|null $pkg_name): bool
 {
-	global $path_to_root, $installed_languages, $Ajax;
+	global $path_to_root, $installed_languages;
 	
 	$pkg = get_pkg_or_list('language', $pkg_name);
 
@@ -647,7 +647,7 @@ function install_language(string|int|float|bool|null $pkg_name): bool
 			$installed_languages[$i] = $lang;
 			write_lang($installed_languages);
 			unlink(VARLIB_PATH."/".(string)$pkg['Filename'].'.pkg');
-			$Ajax->activate('lang_tbl');
+			ajax()->activate('lang_tbl');
 		} else {
 			display_error(implode('<br>', $package->error));
 			return false;
@@ -701,7 +701,7 @@ function install_extension(string|int|float|bool|null $pkg_name): bool
 			}
 
 			unlink(VARLIB_PATH."/".(string)$pkg['Filename'].'.pkg');
-			$Ajax->activate('ext_tbl');
+			ajax()->activate('ext_tbl');
 			return $ret;
 		} else {
 			display_error(implode('<br>', $package->error));

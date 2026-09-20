@@ -14,7 +14,6 @@
 function add_work_order_issue(string|int|float|bool|null $woid, string|array|null $ref, string|array|null $to_work_order, ?array $items, string|array|null $location, string|array|null $workcentre,
 	string|int|float|bool|null $date_, string|array|null $memo_): void
 {
-	global $Refs;
 
 	begin_transaction();
 	$args = func_get_args();
@@ -76,7 +75,7 @@ function add_work_order_issue(string|int|float|bool|null $woid, string|array|nul
 	if ((bool)$memo_)
 		add_comments(ST_MANUISSUE, $number, $date_, $memo_);
 
-	$Refs->save(ST_MANUISSUE, $number, $ref);
+	refs()->save(ST_MANUISSUE, $number, $ref);
 	add_audit_trail(ST_MANUISSUE, $number, $date_);
 
 	$args->trans_no = $number;

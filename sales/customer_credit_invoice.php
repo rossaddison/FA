@@ -84,7 +84,6 @@ if (isset($_GET['AddedID'])) {
 
 function can_process(): bool
 {
-	global $Refs;
 
 	if (!is_date(post_scalar('CreditDate'))) {
 		display_error(_("The entered date is invalid."));
@@ -97,7 +96,7 @@ function can_process(): bool
 	}
 
     if (session_obj('Items')->trans_no==0) {
-		if (!$Refs->is_valid($_POST['ref'], ST_CUSTCREDIT)) {
+		if (!refs()->is_valid($_POST['ref'], ST_CUSTCREDIT)) {
 			display_error(_("You must enter a reference."));
 			set_focus('ref');
 			return false;
@@ -331,11 +330,10 @@ function display_credit_items(): void
 //-----------------------------------------------------------------------------
 function display_credit_options(): void
 {
-	global $Ajax;
 	br();
 
 	if (isset($_POST['_CreditType_update']))
-		$Ajax->activate('options');
+		ajax()->activate('options');
 
  	div_start('options');
 	start_table(TABLESTYLE2);
@@ -365,7 +363,7 @@ function display_credit_options(): void
 if (get_post('Update'))
 {
 	copy_to_cart();
-	$Ajax->activate('credit_items');
+	ajax()->activate('credit_items');
 }
 //-----------------------------------------------------------------------------
 

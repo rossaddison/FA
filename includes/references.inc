@@ -449,14 +449,25 @@ class references
 //
 function is_new_reference(string|int|float|bool|null $ref, string|int|float|bool|null $type, ?int $trans_no=0)
 {
-	global $Refs;
 
-	return $Refs->is_new_reference($ref, $type, $trans_no);
+	return refs()->is_new_reference($ref, $type, $trans_no);
 }
 
 function get_reference(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no)
 {
+
+	return refs()->_get($type, $trans_no);
+}
+
+/**
+ * The $Refs object created by session.inc. Psalm forgets the type of a global after any function call, so code
+ * reaches it through this accessor instead of `global $Refs`.
+ *
+ * @return references
+ */
+function refs()
+{
 	global $Refs;
 
-	return $Refs->_get($type, $trans_no);
+	return $Refs;
 }

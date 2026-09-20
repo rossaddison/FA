@@ -24,13 +24,13 @@ simple_page_mode2(true);
 
 function simple_page_mode2(bool $numeric_id = true): void
 {
-	global $Ajax, $Mode2, $selected_id2;
+	global $Mode2, $selected_id2;
 
 	$default = $numeric_id ? -1 : '';
 	$selected_id2 = get_post('selected_id2', $default);
 	foreach (array('ADD_ITEM2', 'UPDATE_ITEM2', 'RESET2') as $m) {
 		if (isset($_POST[$m])) {
-			$Ajax->activate('_page_body');
+			ajax()->activate('_page_body');
 			if ($m == 'RESET2') 
 				$selected_id2 = $default;
 			$Mode2 = $m; return;
@@ -42,7 +42,7 @@ function simple_page_mode2(bool $numeric_id = true): void
 //				$selected_id2 = strtr(substr($p, strlen($m)), array('%2E'=>'.'));
 				unset($_POST['_focus']); // focus on first form entry
 				$selected_id2 = quoted_printable_decode(substr($p, strlen($m)));
-				$Ajax->activate('_page_body');
+				ajax()->activate('_page_body');
 				$Mode2 = $m;
 				return;
 			}
@@ -239,7 +239,7 @@ if (get_post('type') == QE_JOURNAL)
 
 if (list_updated('bal_type') || list_updated('type'))
 {
-	$Ajax->activate('qe');
+	ajax()->activate('qe');
 }
 
 if (get_post('type') == QE_JOURNAL && get_post('bal_type') == 1)
@@ -328,7 +328,7 @@ if ($selected_id != -1)
 
 	quick_actions_list_row(_("Posted").":",'actn', null, true);
 	if (list_updated('actn'))
-		$Ajax->activate('edit_line');
+		ajax()->activate('edit_line');
 
 	$actn = strtolower(substr($_POST['actn'],0,1));
 

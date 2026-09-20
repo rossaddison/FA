@@ -147,7 +147,7 @@ if ($Mode == 'RESET' || get_post('_customer_id_update'))
 	unset($_POST);
 	$_POST['show_inactive'] = $inact;
 	$_POST['customer_id'] = $cust_id;
-	$Ajax->activate('_page_body');
+	ajax()->activate('_page_body');
 }
 
 /** @psalm-pure */

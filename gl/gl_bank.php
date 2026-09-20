@@ -55,19 +55,18 @@ if (isset($_GET['ModifyDeposit']) || isset($_GET['ModifyPayment']))
 if (list_updated('PersonDetailID')) {
 	$br = row_or_empty(get_branch(get_post('PersonDetailID')));
 	$_POST['person_id'] = $br['debtor_no'];
-	$Ajax->activate('person_id');
+	ajax()->activate('person_id');
 }
 
 //--------------------------------------------------------------------------------------------------
 function line_start_focus(): void {
-  	global 	$Ajax;
 
     unset($_POST['amount']);
     unset($_POST['dimension_id']);
     unset($_POST['dimension2_id']);
     unset($_POST['LineMemo']);
-  	$Ajax->activate('items_table');
-  	$Ajax->activate('footer');
+  	ajax()->activate('items_table');
+  	ajax()->activate('footer');
   	set_focus('_code_id_edit');
 }
 
@@ -142,7 +141,6 @@ if (isset($_GET['UpdatedDep']))
 
 function create_cart(string|int|array|null $type, string|int|array|null $trans_no): void
 {
-	global $Refs;
 
 	if (isset($_SESSION['pay_items']))
 	{
@@ -200,7 +198,7 @@ function create_cart(string|int|array|null $type, string|int|array|null $trans_n
 			$cart->gl_items[$line_no]->amount *= $ex_rate;
 
 	} else {
-		$cart->reference = $Refs->get_next($cart->trans_type, null, $cart->tran_date);
+		$cart->reference = refs()->get_next($cart->trans_type, null, $cart->tran_date);
 		$cart->tran_date = new_doc_date();
 		if (!(bool)is_date_in_fiscalyear($cart->tran_date))
 			$cart->tran_date = end_fiscalyear();
@@ -216,7 +214,7 @@ function create_cart(string|int|array|null $type, string|int|array|null $trans_n
 
 function check_trans(): int
 {
-	global $Refs, $systypes_array;
+	global $systypes_array;
 
 	$input_error = 0;
 
@@ -393,7 +391,7 @@ if (isset($_POST['go']))
 {
 	display_quick_entries($_SESSION['pay_items'], $_POST['person_id'], input_num('totamount'), 
 		session_obj('pay_items')->trans_type==ST_BANKPAYMENT ? QE_PAYMENT : QE_DEPOSIT);
-	$_POST['totamount'] = price_format(0); $Ajax->activate('totamount');
+	$_POST['totamount'] = price_format(0); ajax()->activate('totamount');
 	line_start_focus();
 }
 //-----------------------------------------------------------------------------------------------

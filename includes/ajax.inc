@@ -145,8 +145,7 @@ class Ajax extends JsHttpRequest {
 
 /** @return bool */
 function in_ajax() {
-    global $Ajax;
-    return $Ajax->isActive();
+    return ajax()->isActive();
 }
 
 // Returns absolute path of relative $url. To be used in ajax calls
@@ -156,4 +155,17 @@ function in_ajax() {
 function absolute_url(string|int|float|bool|null $url) 
 {
    return strpos($url, '..')===0 ? dirname($_SERVER['PHP_SELF']).'/'.$url : $url;
+}
+
+/**
+ * The $Ajax object created by session.inc. Psalm forgets the type of a global after any function call, so code
+ * reaches it through this accessor instead of `global $Ajax`.
+ *
+ * @return Ajax
+ */
+function ajax()
+{
+	global $Ajax;
+
+	return $Ajax;
 }

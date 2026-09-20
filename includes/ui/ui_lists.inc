@@ -30,7 +30,7 @@ define('SELECT_BUTTON', "<input %s type='submit' class='combo_select' style='bor
 function combo_input(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id, string|int|float|bool|null $sql, string|int|float|bool|null $valfield, string|int|float|bool|null $namefield,
 	?array $options=null, ?string $type=null): string
 {
-global $Ajax, $path_to_root;
+global $path_to_root;
 
 $opts = array(		// default options
 	'where'=> array(),		// additional constraints
@@ -119,15 +119,15 @@ $opts = array(		// default options
 		if ($by_id) $txt = $_POST[$name];
 
 		if (!(bool)$opts['async'])
-			$Ajax->activate('_page_body');
+			ajax()->activate('_page_body');
 		else
-			$Ajax->activate($name);
+			ajax()->activate($name);
 	}
 	if (isset($_POST[$search_button])) {
 		if (!(bool)$opts['async'])
-			$Ajax->activate('_page_body');
+			ajax()->activate('_page_body');
 		else
-			$Ajax->activate($name);
+			ajax()->activate($name);
 	}
 	if ($search_box) {
 		// search related sql modifications
@@ -137,9 +137,9 @@ $opts = array(		// default options
 			if (isset($_POST[$search_button])) {
 				$selected_id = array(); // ignore selected_id while search
 				if (!(bool)$opts['async'])
-					$Ajax->activate('_page_body');
+					ajax()->activate('_page_body');
 				else
-					$Ajax->activate($name);
+					ajax()->activate($name);
 			}
 			if ($txt == '') {
 				if ($spec_option === false && $selected_id == array())
@@ -266,10 +266,10 @@ $opts = array(		// default options
 			set_focus($name); // prevent lost focus
 		if (!(bool)$opts['editable'])
 	 		$txt = $found;
-		$Ajax->addUpdate($name, $search_box, (bool)$txt ? $txt : '');
+		ajax()->addUpdate($name, $search_box, (bool)$txt ? $txt : '');
 	}
 
-	$Ajax->addUpdate($name, "_{$name}_sel", $selector);
+	ajax()->addUpdate($name, "_{$name}_sel", $selector);
 
 	// span for select list/input field update
 	$selector = "<span id='_{$name}_sel'>".$selector."</span>\n";
@@ -391,7 +391,6 @@ function list_updated(string|int|float|bool|null $name): bool
 
 function array_selector(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id, array $items, ?array $options=null): string
 {
-	global $Ajax;
 
 $opts = array(		// default options
 	'spec_option'=>false, 	// option text or false
@@ -422,9 +421,9 @@ $opts = array(		// default options
 
 	if (isset($_POST[ '_'.$name.'_update'])) {
 		if (!(bool)$opts['async'])
-			$Ajax->activate('_page_body');
+			ajax()->activate('_page_body');
 		else
-			$Ajax->activate($name);
+			ajax()->activate($name);
 	}
 
 	// ------ make selector ----------
@@ -466,7 +465,7 @@ $opts = array(		// default options
 		. "$disabled name='$name".((bool)$multi ? '[]' : '')."' class='combo' title='"
 		. (string)$opts['sel_hint']."'>".$selector."</select>\n";
 
-	$Ajax->addUpdate($name, "_{$name}_sel", $selector);
+	ajax()->addUpdate($name, "_{$name}_sel", $selector);
 
 	$selector = "<span id='_{$name}_sel'>".$selector."</span>\n";
 

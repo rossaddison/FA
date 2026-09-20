@@ -37,22 +37,22 @@ else
 //
 if (get_post('SearchOrders')) 
 {
-	$Ajax->activate('orders_tbl');
+	ajax()->activate('orders_tbl');
 } elseif (get_post('_OrderNumber_changed')) 
 {
 	$disable = get_post('OrderNumber') !== '';
 
-	$Ajax->addDisable(true, 'StockLocation', $disable);
-	$Ajax->addDisable(true, 'OverdueOnly', $disable);
-	$Ajax->addDisable(true, 'OpenOnly', $disable);
-	$Ajax->addDisable(true, 'SelectedStockItem', $disable);
+	ajax()->addDisable(true, 'StockLocation', $disable);
+	ajax()->addDisable(true, 'OverdueOnly', $disable);
+	ajax()->addDisable(true, 'OpenOnly', $disable);
+	ajax()->addDisable(true, 'SelectedStockItem', $disable);
 
 	if ($disable) {
 		set_focus('OrderNumber');
 	} else
 		set_focus('StockLocation');
 
-	$Ajax->activate('orders_tbl');
+	ajax()->activate('orders_tbl');
 }
 
 //--------------------------------------------------------------------------------------

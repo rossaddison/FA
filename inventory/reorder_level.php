@@ -36,8 +36,8 @@ if (isset($_GET['stock_id']))
 
 if (list_updated('stock_id')) 
 {
-	$Ajax->activate('show_heading');
-	$Ajax->activate('reorders');
+	ajax()->activate('show_heading');
+	ajax()->activate('reorders');
 }
 //------------------------------------------------------------------------------------
 

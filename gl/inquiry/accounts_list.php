@@ -25,7 +25,7 @@ $js = get_js_select_combo_item();
 page(_($help_context = "GL Accounts"), true, false, "", $js);
 
 if(get_post("search")) {
-  	$Ajax->activate("account_tbl");
+  	ajax()->activate("account_tbl");
 }
 
 // Filter form. Use query string so the client_id will not disappear

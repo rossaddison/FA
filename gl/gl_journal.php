@@ -39,10 +39,9 @@ page($_SESSION['page_title'], false, false,'', $js);
 //--------------------------------------------------------------------------------------------------
 
 function line_start_focus(): void {
-  global 	$Ajax;
 
   unset($_POST['Index']);
-  $Ajax->activate('tabs');
+  ajax()->activate('tabs');
   unset($_POST['_code_id_edit'], $_POST['code_id'], $_POST['AmountDebit'], 
   	$_POST['AmountCredit'], $_POST['dimension_id'], $_POST['dimension2_id']);
   set_focus('_code_id_edit');
@@ -97,7 +96,6 @@ elseif (isset($_GET['ModifyGL']))
 
 function create_cart(string|int|array|null $type=0, string|int|array|null $trans_no=0): void
 {
-	global $Refs;
 
 	if (isset($_SESSION['journal_items']))
 	{
@@ -160,7 +158,7 @@ function create_cart(string|int|array|null $type=0, string|int|array|null $trans
 		$cart->tran_date = $cart->doc_date = $cart->event_date = new_doc_date();
 		if (!(bool)is_date_in_fiscalyear($cart->tran_date))
 			$cart->tran_date = end_fiscalyear();
-		$cart->reference = $Refs->get_next(ST_JOURNAL, null, $cart->tran_date);
+		$cart->reference = refs()->get_next(ST_JOURNAL, null, $cart->tran_date);
 	}
 
 	$_POST['memo_'] = $cart->memo_;
@@ -349,7 +347,6 @@ if (isset($_POST['Process']))
 
 function check_item_data(): bool
 {
-	global $Ajax;
 
 	if (!get_post('code_id')) {
    		display_error(_("You must select GL account."));
@@ -359,7 +356,7 @@ function check_item_data(): bool
 	if ((bool)is_subledger_account(get_post('code_id'))) {
 		if(!get_post('person_id')) {
 	   		display_error(_("You must select subledger account."));
-   			$Ajax->activate('items_table');
+   			ajax()->activate('items_table');
 			set_focus('person_id');
 	   		return false;
 	   	}
@@ -464,7 +461,7 @@ if (isset($_POST['_taxable_trans_update']))
 		$_POST['tabs_gl'] = true; // force tax tab select
 	else
 		set_focus('taxable_trans');
-	$Ajax->activate('tabs');
+	ajax()->activate('tabs');
 }
 
 if (tab_closed('tabs', 'gl'))
@@ -509,13 +506,13 @@ if (isset($_POST['CancelItemChanges']))
 if (isset($_POST['go']))
 {
 	display_quick_entries($_SESSION['journal_items'], $_POST['quick'], input_num('totamount'), QE_JOURNAL, get_post('aux_info'));
-	$_POST['totamount'] = price_format(0); $Ajax->activate('totamount');
+	$_POST['totamount'] = price_format(0); ajax()->activate('totamount');
 	line_start_focus();
 }
 
 if (list_updated('tax_category'))
 {
-	$Ajax->activate('tabs');
+	ajax()->activate('tabs');
 }
 
 //-----------------------------------------------------------------------------------------------

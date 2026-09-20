@@ -48,9 +48,8 @@ if (isset($_GET['AddedID']))
 //--------------------------------------------------------------------------------------------------
 
 function line_start_focus(): void {
-  global 	$Ajax;
 
-  $Ajax->activate('items_table');
+  ajax()->activate('items_table');
   set_focus('_stock_id_edit');
 }
 

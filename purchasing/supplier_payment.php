@@ -54,7 +54,7 @@ if (!isset($_POST['DatePaid']))
 }
 
 if (isset($_POST['_DatePaid_changed'])) {
-  $Ajax->activate('_ex_rate');
+  ajax()->activate('_ex_rate');
 }
 
 //----------------------------------------------------------------------------------------
@@ -124,7 +124,6 @@ function get_default_supplier_payment_bank_account(string|int|float|bool|array|n
 
 function check_inputs(): bool
 {
-	global $Refs;
 
 	if (!get_post('supplier_id')) 
 	{
@@ -277,14 +276,14 @@ start_form();
 	if (list_updated('supplier_id')) {
 		$_POST['amount'] = price_format(0);
 		session_obj('alloc')->person_id = get_post('supplier_id');
-		$Ajax->activate('amount');
+		ajax()->activate('amount');
 	} elseif (list_updated('bank_account'))
-		$Ajax->activate('alloc_tbl');
+		ajax()->activate('alloc_tbl');
 
 	if (list_updated('supplier_id') || list_updated('bank_account')) {
 	  session_obj('alloc')->read();
 	  $_POST['memo_'] = $_POST['amount'] = '';
-	  $Ajax->activate('alloc_tbl');
+	  ajax()->activate('alloc_tbl');
 	}
 
 	set_global_supplier($_POST['supplier_id']);
@@ -305,7 +304,7 @@ start_form();
 
     date_row(_("Date Paid") . ":", 'DatePaid', '', true, 0, 0, 0, null, true);
 
-    ref_row(_("Reference:"), 'ref', '', $Refs->get_next(ST_SUPPAYMENT, null, 
+    ref_row(_("Reference:"), 'ref', '', refs()->get_next(ST_SUPPAYMENT, null, 
     	array('supplier'=>get_post('supplier_id'), 'date'=>get_post('DatePaid'))), false, ST_SUPPAYMENT);
 
 
