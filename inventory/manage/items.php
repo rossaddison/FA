@@ -250,7 +250,7 @@ if (isset($_POST['addupdate']))
     elseif ($_POST['depreciation_rate'] < 0) {
       $_POST['depreciation_rate'] = 0;
     }
-    $move_row = get_fixed_asset_move(post_scalar('NewStockID'), ST_SUPPRECEIVE);
+    $move_row = get_fixed_asset_move(post_scalar('NewStockID'), ST_SUPPRECEIVE) ?: array();
     if ($move_row && isset($_POST['depreciation_start']) && strtotime($_POST['depreciation_start']) < strtotime($move_row['tran_date'])) {
       display_warning(_('The depracation cannot start before the fixed asset purchase date'));
     }
@@ -394,7 +394,7 @@ function item_settings(&$stock_id, bool $new_item): void
 
 	if ($new_item && (list_updated('category_id') || !isset($_POST['sales_account']))) { // changed category for new item or first page view
 
-		$category_record = get_item_category($_POST['category_id']);
+		$category_record = get_item_category($_POST['category_id']) ?: array();
 
 		$_POST['tax_type_id'] = $category_record["dflt_tax_type"];
 		$_POST['units'] = $category_record["dflt_units"];
@@ -437,7 +437,7 @@ function item_settings(&$stock_id, bool $new_item): void
 		array_selector_row(_("Depreciation Method").":", "depreciation_method", null, $depreciation_methods, array('select_submit'=> true));
 
 		if (!isset($_POST['depreciation_rate']) || (list_updated('fa_class_id') || list_updated('depreciation_method'))) {
-			$class_row = get_fixed_asset_class($_POST['fa_class_id']);
+			$class_row = get_fixed_asset_class($_POST['fa_class_id']) ?: array();
 			$_POST['depreciation_rate'] = get_post('depreciation_method') == 'N' ? ceil(100/(float)$class_row['depreciation_rate'])
 				: $class_row['depreciation_rate'];
 		}
@@ -692,7 +692,7 @@ function generateBarcode(): string {
 
 		// LETS CHECK TO SEE IF THIS NUMBER HAS EVER BEEN USED
 		$query = "SELECT stock_id FROM ".TB_PREF."stock_master WHERE stock_id='" . $tmpBarcodeID . "'";
-		$arr_stock = db_fetch(db_query($query));
+		$arr_stock = db_fetch(db_query($query)) ?: array();
   
 		if (  !$arr_stock || !$arr_stock['stock_id'] ) {
 			return $tmpBarcodeID;

@@ -110,7 +110,7 @@ function add_stock_adjustment_item(int|float|null $adj_id, string|int|float|bool
 
 	if (is_fixed_asset($mb_flag)) {
 		// get the initial value of the fixed assset.
-		$row = get_fixed_asset_move($stock_id, ST_SUPPRECEIVE);
+		$row = get_fixed_asset_move($stock_id, ST_SUPPRECEIVE) ?: array();
 		$inv_value = (float)$row['price'] * $quantity;
 		$adj_value = (-($row['price']) + $standard_cost) * $quantity;
 	}
@@ -118,7 +118,7 @@ function add_stock_adjustment_item(int|float|null $adj_id, string|int|float|bool
 	if ($standard_cost > 0 || is_fixed_asset($mb_flag))
 	{
 
-		$stock_gl_codes = get_stock_gl_code($stock_id);
+		$stock_gl_codes = get_stock_gl_code($stock_id) ?: array();
 
 		add_gl_trans_std_cost(ST_INVADJUST, $adj_id, $date_,
 			$stock_gl_codes['adjustment_account'], $stock_gl_codes['dimension_id'], $stock_gl_codes['dimension2_id'], $memo_, $adj_value  );

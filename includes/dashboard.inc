@@ -809,7 +809,7 @@ function customer_aging(?string $today, string|int|null $width="33"): float
 		$sql .= " AND ABS(IF(trans.prep_amount, trans.prep_amount, ABS(trans.ov_amount) + trans.ov_gst + trans.ov_freight + trans.ov_freight_tax + trans.ov_discount) - trans.alloc) > ".FLOAT_COMP_DELTA;
     $result = db_query($sql,"The customer details could not be retrieved");
 
-    $row = db_fetch($result);
+    $row = db_fetch($result) ?: array();
 
 	$title = _("Total Customers Aged Analysis");
 	check_page_security('SA_SALESTRANSVIEW');
@@ -841,7 +841,7 @@ function customer_balance(?string $today)
 				 LEFT JOIN ".TB_PREF."debtor_trans trans ON trans.tran_date <= '$today' AND debtor.debtor_no = trans.debtor_no AND trans.type <> ".ST_CUSTDELIVERY."
 			WHERE ABS(trans.ov_amount + trans.ov_gst + trans.ov_freight + trans.ov_freight_tax + trans.ov_discount) - trans.alloc > ".FLOAT_COMP_DELTA;
     $result = db_query($sql,"The customer details could not be retrieved");
-    $row = db_fetch($result);
+    $row = db_fetch($result) ?: array();
 	return $row[0];
 }
 
@@ -868,7 +868,7 @@ function supplier_aging(?string $today, string|int|null $width="33"): float
 			AND ABS(trans.ov_amount + trans.ov_gst + trans.ov_discount) - trans.alloc > ".FLOAT_COMP_DELTA;
     $result = db_query($sql,"The supplier details could not be retrieved");
 
-    $row = db_fetch($result);
+    $row = db_fetch($result) ?: array();
 
 	$title = _("Total Suppliers Aged Analysis");
 	check_page_security('SA_SUPPLIERANALYTIC');
@@ -901,7 +901,7 @@ function supplier_balance(?string $today)
 			AND ABS(trans.ov_amount + trans.ov_gst + trans.ov_discount) > ".FLOAT_COMP_DELTA."
 			AND ABS(trans.ov_amount + trans.ov_gst + trans.ov_discount) - trans.alloc > ".FLOAT_COMP_DELTA;
     $result = db_query($sql,"The supplier details could not be retrieved");
-    $row = db_fetch($result);
+    $row = db_fetch($result) ?: array();
 	return $row[0];
 }
 
@@ -941,7 +941,7 @@ function cash_flow(?string $today): void
 		$sql .=	" FROM ".TB_PREF."bank_trans
 			WHERE bank_act=".(string)$account['id'];
 		$res = db_query($sql, "Transactions for bank account could not be calculated");
-		$bal = db_fetch($res);
+		$bal = db_fetch($res) ?: array();
 		$is_home = is_company_currency($account['bank_curr_code']);
 		for ($i = 1; $i <= $months; $i++)
 			$balance[$i - 1] = $bal['per0'.$i];
@@ -1201,7 +1201,7 @@ function get_num_customers()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."debtors_master";
 	$result = db_query($sql, "Fail in count customers");
-    $row = db_fetch($result);
+    $row = db_fetch($result) ?: array();
 	return $row[0];
 }
 
@@ -1212,7 +1212,7 @@ function get_num_branches()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."cust_branch";
 	$result = db_query($sql, "Fail in count branches");
-    $row = db_fetch($result);
+    $row = db_fetch($result) ?: array();
 	return $row[0];
 }
 
@@ -1223,7 +1223,7 @@ function get_num_salesmen()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."salesman";
 	$result = db_query($sql, "Fail in count salesmen");
-    $row = db_fetch($result);
+    $row = db_fetch($result) ?: array();
 	return $row[0];
 }
 
@@ -1240,7 +1240,7 @@ function get_num_overdue_sales()
 			+ trans.ov_freight_tax + trans.ov_discount - trans.alloc) > ".FLOAT_COMP_DELTA." 
 			AND DATEDIFF('$today', trans.due_date) > 0";
 	$result = db_query($sql);
-    $row = db_fetch($result);
+    $row = db_fetch($result) ?: array();
 	return $row[0];
 }
 
@@ -1251,7 +1251,7 @@ function get_num_suppliers()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."suppliers";
 	$result = db_query($sql, "Fail in count suppliers");
-    $row = db_fetch($result);
+    $row = db_fetch($result) ?: array();
 	return $row[0];
 }
 
@@ -1263,7 +1263,7 @@ function get_new_purch_orders()
 	$sql = "SELECT count(*) FROM ".TB_PREF."purch_orders po, ".TB_PREF."purch_order_details pd WHERE po.order_no = pd.order_no AND 
 		quantity_received < quantity_ordered";
 	$result = db_query($sql, "Fail in count purch orders");
-    $row = db_fetch($result);
+    $row = db_fetch($result) ?: array();
 	return $row[0];
 }
 
@@ -1274,7 +1274,7 @@ function get_num_supp_invoices()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."supp_trans WHERE (ov_amount+ov_discount+ov_gst - alloc) <> 0";
 	$result = db_query($sql, "Fail in count purch invoices");
-    $row = db_fetch($result);
+    $row = db_fetch($result) ?: array();
 	return $row[0];
 }
 
@@ -1287,7 +1287,7 @@ function get_num_overdue_purch()
 
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."supp_trans WHERE (ov_amount+ov_discount+ov_gst - alloc) > ".FLOAT_COMP_DELTA." AND DATEDIFF('$today', due_date) > 0";
 	$result = db_query($sql, "Fail in count purch invoices");
-    $row = db_fetch($result);
+    $row = db_fetch($result) ?: array();
 	return $row[0];
 }
 
@@ -1298,7 +1298,7 @@ function get_num_items()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."stock_master";
 	$result = db_query($sql, "Fail in count stock master");
-    $row = db_fetch($result);
+    $row = db_fetch($result) ?: array();
 	return $row[0];
 }
 
@@ -1309,7 +1309,7 @@ function get_num_locations()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."locations";
 	$result = db_query($sql, "Fail in count locations");
-    $row = db_fetch($result);
+    $row = db_fetch($result) ?: array();
 	return $row[0];
 }
 
@@ -1321,7 +1321,7 @@ function get_num_kits()
 	$sql="SELECT count(*) FROM ".TB_PREF."item_codes";
 
 	$result = db_query($sql, "Fail in count kits");
-    $row = db_fetch($result);
+    $row = db_fetch($result) ?: array();
 	return $row[0];
 }
 
@@ -1352,7 +1352,7 @@ function get_num_assembled()
 	$sql = "SELECT count(*) FROM ".TB_PREF."workorders WHERE closed = 1 AND type = ".WO_ASSEMBLY." AND released_date >= '$begin'
 		AND released_date <= '$today'";
 	$result = db_query($sql, "Fail in count workorders");
-    $row = db_fetch($result);
+    $row = db_fetch($result) ?: array();
 	return $row[0];
 }
 
@@ -1366,7 +1366,7 @@ function get_num_manufactured()
 	$sql = "SELECT count(*) FROM ".TB_PREF."workorders WHERE closed = 1 AND type = ".WO_ADVANCED." AND released_date >= '$begin'
 		AND released_date <= '$today'";
 	$result = db_query($sql, "Fail in count workorders");
-    $row = db_fetch($result);
+    $row = db_fetch($result) ?: array();
 	return $row[0];
 }
 	
@@ -1377,7 +1377,7 @@ function get_num_workcentres()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."workcentres";
 	$result = db_query($sql, "Fail in count work centres");
-    $row = db_fetch($result);
+    $row = db_fetch($result) ?: array();
 	return $row[0];
 }
 	
@@ -1388,7 +1388,7 @@ function get_open_workorders()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."workorders WHERE closed = 0";
 	$result = db_query($sql, "Fail in count workorders");
-    $row = db_fetch($result);
+    $row = db_fetch($result) ?: array();
 	return $row[0];
 }
 
@@ -1399,7 +1399,7 @@ function get_num_fixed_assets()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."stock_master WHERE mb_flag = 'F'";
 	$result = db_query($sql, "Fail in count fixed assets");
-    $row = db_fetch($result);
+    $row = db_fetch($result) ?: array();
 	return $row[0];
 }
 
@@ -1411,7 +1411,7 @@ function get_num_fixed_locations()
 	$sql = "SELECT count(*) FROM ".TB_PREF."stock_master s LEFT JOIN ".TB_PREF."loc_stock l ON s.stock_id = l.stock_id 
 		WHERE mb_flag = 'F'";
 	$result = db_query($sql, "Fail in count locations");
-    $row = db_fetch($result);
+    $row = db_fetch($result) ?: array();
 	return $row[0];
 }
 
@@ -1423,7 +1423,7 @@ function get_num_fixed_categories()
 	$sql = "SELECT count(*) FROM ".TB_PREF."stock_category c LEFT JOIN ".TB_PREF."stock_master s ON c.category_id = s.category_id 
 		WHERE mb_flag = 'F'";
 	$result = db_query($sql, "Fail in count categories");
-    $row = db_fetch($result);
+    $row = db_fetch($result) ?: array();
 	return $row[0];
 }
 
@@ -1434,7 +1434,7 @@ function get_num_fixed_classes()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."stock_fa_class";
 	$result = db_query($sql, "Fail in count fa classes");
-    $row = db_fetch($result);
+    $row = db_fetch($result) ?: array();
 	return $row[0];
 }
 
@@ -1445,7 +1445,7 @@ function get_num_dimensions()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."dimensions";
 	$result = db_query($sql, "Fail in count dimensions");
-    $row = db_fetch($result);
+    $row = db_fetch($result) ?: array();
 	return $row[0];
 }
 
@@ -1456,7 +1456,7 @@ function get_dim_type2()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."dimensions WHERE type_ = 2";
 	$result = db_query($sql, "Fail in count simensions 2");
-    $row = db_fetch($result);
+    $row = db_fetch($result) ?: array();
 	return $row[0];
 }
 
@@ -1467,7 +1467,7 @@ function get_dim_closed()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."dimensions WHERE closed = 1";
 	$result = db_query($sql, "Fail in count closed dimensions");
-    $row = db_fetch($result);
+    $row = db_fetch($result) ?: array();
 	return $row[0];
 }
 
@@ -1506,7 +1506,7 @@ function get_today_deposits(?string $today)
 		return 0;
 	else
 	{
-		$row = db_fetch($result);
+		$row = db_fetch($result) ?: array();
 		return $row[0];
 	}
 }
@@ -1524,7 +1524,7 @@ function get_today_payments(?string $today)
 		return 0;
 	else
 	{
-		$row = db_fetch($result);
+		$row = db_fetch($result) ?: array();
 		return $row[0];
 	}
 }
@@ -1536,7 +1536,7 @@ function get_num_users()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."users";
 	$result = db_query($sql, "could not get num users");
-    $row = db_fetch($result);
+    $row = db_fetch($result) ?: array();
 	return $row[0];
 }
 

@@ -51,7 +51,7 @@ if (!isset($_POST['bank_account'])) { // first page call
 		$type = !isset($_GET['Type']) ? ST_SALESINVOICE : $_GET['Type'];
 		$cust = !isset($_GET['customer_id']) ? null : $_GET['customer_id'];
 		$inv = get_customer_trans($_GET['SInvoice'], $type,  $cust);
-		$dflt_act = get_default_bank_account($inv['curr_code']);
+		$dflt_act = get_default_bank_account($inv['curr_code']) ?: array();
 		$_POST['bank_account'] = $dflt_act['id'];
 		if ($inv) {
 			$_POST['customer_id'] = $inv['debtor_no'];
@@ -77,7 +77,7 @@ if (!isset($_POST['bank_account'])) { // first page call
 
 if (list_updated('BranchID')) {
 	// when branch is selected via external editor also customer can change
-	$br = get_branch(get_post('BranchID'));
+	$br = get_branch(get_post('BranchID')) ?: array();
 	$_POST['customer_id'] = $br['debtor_no'];
 	$_SESSION['alloc']->person_id = $br['debtor_no'];
 	$Ajax->activate('customer_id');
@@ -87,7 +87,7 @@ if (!isset($_POST['customer_id'])) {
 	$_POST['customer_id'] = get_global_customer(false);
 	$_SESSION['alloc']->set_person($_POST['customer_id'], PT_CUSTOMER);
 	$_SESSION['alloc']->read();
-	$dflt_act = get_default_bank_account($_SESSION['alloc']->person_curr);
+	$dflt_act = get_default_bank_account($_SESSION['alloc']->person_curr) ?: array();
 	$_POST['bank_account'] = $dflt_act['id'];
 }
 if (!isset($_POST['DateBanked'])) {
@@ -259,7 +259,7 @@ function read_customer_data(): void
 {
 	global $Refs;
 
-	$myrow = get_customer_habit($_POST['customer_id']);
+	$myrow = get_customer_habit($_POST['customer_id']) ?: array();
 
 	$_POST['HoldAccount'] = !$myrow ? false : $myrow["dissallow_invoices"];
 	$_POST['pymt_discount'] = !$myrow ? 0 : $myrow["pymt_discount"];
@@ -279,7 +279,7 @@ if (isset($_GET['trans_no']) && $_GET['trans_no'] > 0 )
 	$_POST['trans_no'] = $_GET['trans_no'];
 
 	$new = 0;
-	$myrow = get_customer_trans($_POST['trans_no'], ST_CUSTPAYMENT);
+	$myrow = get_customer_trans($_POST['trans_no'], ST_CUSTPAYMENT) ?: array();
 	$_POST['customer_id'] = $myrow["debtor_no"];
 	$_POST['customer_name'] = $myrow["DebtorName"];
 	$_POST['BranchID'] = $myrow["branch_code"];
@@ -331,7 +331,7 @@ if (list_updated('customer_id') || ($new && list_updated('bank_account'))) {
 	$_SESSION['alloc']->read();
 	$_POST['memo_'] = $_POST['amount'] = $_POST['discount'] = '';
 	if (list_updated('customer_id')) {
-		$dflt_act = get_default_bank_account($_SESSION['alloc']->person_curr);
+		$dflt_act = get_default_bank_account($_SESSION['alloc']->person_curr) ?: array();
 		$_POST['bank_account'] = $dflt_act['id'];
 	}
 	$Ajax->activate('_page_body');
@@ -367,7 +367,7 @@ if ($cust_currency != $bank_currency)
 
 amount_row(_("Bank Charge:"), 'charge', null, '', $bank_currency);
 
-$row = get_customer($_POST['customer_id']);
+$row = get_customer($_POST['customer_id']) ?: array();
 $_POST['dimension_id'] = !$row ? 0 : $row['dimension_id'];
 $_POST['dimension2_id'] = !$row ? 0 : $row['dimension2_id'];
 $dim = get_company_pref('use_dimension');

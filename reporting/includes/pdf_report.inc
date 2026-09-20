@@ -261,7 +261,7 @@ class FrontReport extends Cpdf
 		$this->addInfo('Subject', $this->title);
 		$this->addInfo('Author', $SysPrefs->app_title . ' ' . $version);
 		$this->addInfo('Creator',$SysPrefs->power_by . ' - ' . $SysPrefs->power_url);
-		$year = get_current_fiscalyear();
+		$year = get_current_fiscalyear() ?: array();
 		if ($year['closed'] == 0)
 			$how = _("Active");
 		else

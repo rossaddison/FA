@@ -120,7 +120,7 @@ else
 
 set_global_stock_item($_POST['stock_id']);
 
-$myrow = get_item($_POST['stock_id']);
+$myrow = get_item($_POST['stock_id']) ?: array();
 
 div_start('cost_table');
 

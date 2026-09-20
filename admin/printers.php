@@ -113,7 +113,7 @@ start_table(TABLESTYLE2);
 if ($selected_id != -1) 
 {
 	if ($Mode == 'Edit') {
-		$myrow = get_printer($selected_id);
+		$myrow = get_printer($selected_id) ?: array();
 		$_POST['name'] = $myrow['name'];
 		$_POST['descr'] = $myrow['description'];
 		$_POST['queue'] = $myrow['queue'];

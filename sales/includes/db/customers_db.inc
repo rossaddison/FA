@@ -219,7 +219,7 @@ function get_customer_currency(string|int|float|bool|array|null $customer_id=nul
 
 	$result = db_query($sql, "Retreive currency of customer $customer_id");
 
-	$myrow=db_fetch_row($result);
+	$myrow=db_fetch_row($result) ?: array();
 	return $myrow ? $myrow[0] : get_company_currency();
 }
 

@@ -109,7 +109,7 @@ function create_cart(string|int|array|null $type=0, string|int|array|null $trans
     $cart->order_id = $trans_no;
 
 	if ($trans_no) {
-		$header = get_journal($type, $trans_no);
+		$header = get_journal($type, $trans_no) ?: array();
 		$cart->event_date = sql2date($header['event_date']);
 		$cart->doc_date = sql2date($header['doc_date']);
 		$cart->tran_date = sql2date($header['tran_date']);

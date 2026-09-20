@@ -30,7 +30,7 @@ function get_qoh_on_date(string|int|float|bool|array|null $stock_id, string|int|
 
     $result = db_query($sql, "QOH calculation failed");
 
-    $myrow = db_fetch_row($result);
+    $myrow = db_fetch_row($result) ?: array();
 
     $qoh =  $myrow[0];
 		return $qoh ? $qoh : 0;
@@ -170,7 +170,7 @@ function last_negative_stock_begin_date(string|int|float|bool|null $stock_id, st
 		GROUP BY stock_id ORDER BY tran_date";
 
 	$result = db_query($sql, "The dstock moves could not be retrieved");
-	$row = db_fetch_row($result);
+	$row = db_fetch_row($result) ?: array();
 	return $row[3];
 }
 
@@ -256,14 +256,14 @@ function get_deliveries_from_trans(string|int|float|bool|null $stock_id, ?string
         WHERE stock_id=".db_escape($stock_id)." AND qty < 0 AND
             trans_id>='$move_id' GROUP BY stock_id";
 	$result = db_query($sql, "The deliveries could not be updated");
-	$row = db_fetch_row($result);
+	$row = db_fetch_row($result) ?: array();
 	
     $sql = "SELECT IF(type=".ST_SUPPRECEIVE." OR type=".ST_SUPPCREDIT.", price, standard_cost)
         FROM ".TB_PREF."stock_moves
         WHERE stock_id=".db_escape($stock_id)
             ." AND trans_id ='$move_id'";
     $result = db_query($sql, "The deliveries could not be updated");
-    $cost = db_fetch_row($result);
+    $cost = db_fetch_row($result) ?: array();
 
 	// Adjusting QOH valuation 
 	$sql = "SELECT SUM(qty)
@@ -271,7 +271,7 @@ function get_deliveries_from_trans(string|int|float|bool|null $stock_id, ?string
 		WHERE stock_id=".db_escape($stock_id)." AND
 			trans_id<'$move_id' GROUP BY stock_id";
 	$result = db_query($sql, "The deliveries could not be updated");
-	$qoh = db_fetch_row($result);
+	$qoh = db_fetch_row($result) ?: array();
 
 	$qty = $row[0] - $qoh[0]; //QOH prior to -ve stock is subtracted
 	$final_cost = $row[1] - $qoh[0]*$cost[0];
@@ -336,7 +336,7 @@ function adjust_deliveries(string|int|float|bool|null $stock_id, string|int|floa
 
 	if ($diff != 0)
 	{
-		$stock_gl_code = get_stock_gl_code($stock_id);
+		$stock_gl_code = get_stock_gl_code($stock_id) ?: array();
 
 		$dec = user_price_dec();
 		$old_cost = -round2($old_sales_cost-$old_purchase_cost,$dec);
@@ -413,7 +413,7 @@ function handle_negative_inventory(string|int|float|bool|null $stock_id, string|
 			add_journal(ST_JOURNAL, $id, $diff, $date_, get_company_currency(), $ref);
 			$Refs->save(ST_JOURNAL, $id, $ref);
 
-			$stock_gl_code = get_stock_gl_code($stock_id);
+			$stock_gl_code = get_stock_gl_code($stock_id) ?: array();
 			$memo = _("Zero/negative inventory handling");
 			//Reverse the inventory effect if $qoh <=0
 			add_gl_trans_std_cost(ST_JOURNAL, $id, $date_, 
@@ -535,7 +535,7 @@ function get_location_name(string|int|float|bool|array|null $loc_code)
 
 	if (db_num_rows($result) == 1)
 	{
-		$row = db_fetch_row($result);
+		$row = db_fetch_row($result) ?: array();
 		return $row[0];
 	}
 
@@ -554,7 +554,7 @@ function get_mb_flag(string|int|float|bool|array|null $stock_id)
 	if (db_num_rows($result) == 0)
 		return -1;
 
-	$myrow = db_fetch_row($result);
+	$myrow = db_fetch_row($result) ?: array();
 	return $myrow[0];
 }
 

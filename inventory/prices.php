@@ -179,7 +179,7 @@ echo "<br>";
 
 if ($Mode == 'Edit')
 {
-	$myrow = get_stock_price($selected_id);
+	$myrow = get_stock_price($selected_id) ?: array();
 	$_POST['curr_abrev'] = $myrow["curr_abrev"];
 	$_POST['sales_type_id'] = $myrow["sales_type_id"];
 	$_POST['price'] = price_format($myrow["price"]);
@@ -199,7 +199,7 @@ if (!isset($_POST['price'])) {
 		get_post('curr_abrev'),	get_post('sales_type_id')));
 }
 
-$kit = get_item_code_dflts($_POST['stock_id']);
+$kit = get_item_code_dflts($_POST['stock_id']) ?: array();
 $units = $kit ? $kit["units"] : '';
 small_amount_row(_("Price:"), 'price', null, '', _('per') .' '.$units);
 

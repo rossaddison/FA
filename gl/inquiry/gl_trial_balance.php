@@ -114,14 +114,14 @@ function display_trial_balance(?string $type, ?string $typename): void
 		// If we want to remove the balanced part for the past years, this option removes the common part from from the prev and tot figures.
 		if (@$SysPrefs->clear_trial_balance_opening)
 		{
-			$open = get_balance($account["account_code"], $_POST['Dimension'], $_POST['Dimension2'], $begin,  $begin, false, true);
+			$open = get_balance($account["account_code"], $_POST['Dimension'], $_POST['Dimension2'], $begin,  $begin, false, true) ?: array();
 			$offset = min($open['debit'], $open['credit']);
 		} else
 			$offset = 0;
 
-		$prev = get_balance($account["account_code"], $_POST['Dimension'], $_POST['Dimension2'], $begin, $_POST['TransFromDate'], false, false);
-		$curr = get_balance($account["account_code"], $_POST['Dimension'], $_POST['Dimension2'], $_POST['TransFromDate'], $_POST['TransToDate'], true, true);
-		$tot = get_balance($account["account_code"], $_POST['Dimension'], $_POST['Dimension2'], $begin, $_POST['TransToDate'], false, true);
+		$prev = get_balance($account["account_code"], $_POST['Dimension'], $_POST['Dimension2'], $begin, $_POST['TransFromDate'], false, false) ?: array();
+		$curr = get_balance($account["account_code"], $_POST['Dimension'], $_POST['Dimension2'], $_POST['TransFromDate'], $_POST['TransToDate'], true, true) ?: array();
+		$tot = get_balance($account["account_code"], $_POST['Dimension'], $_POST['Dimension2'], $begin, $_POST['TransToDate'], false, true) ?: array();
 		if (check_value("NoZero") && !$prev['balance'] && !$curr['balance'] && !$tot['balance'])
 			continue;
 		if (!check_value('GroupTotalOnly'))
@@ -213,7 +213,7 @@ gl_inquiry_controls();
 
 if (isset($_POST['TransFromDate']))
 {
-	$row = get_current_fiscalyear();
+	$row = get_current_fiscalyear() ?: array();
 	if (date1_greater_date2($_POST['TransFromDate'], sql2date($row['end'])))
 	{
 		display_error(_("The from date cannot be bigger than the fiscal year end."));

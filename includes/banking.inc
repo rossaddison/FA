@@ -33,7 +33,7 @@ function get_exchange_rate_from_home_currency(string|int|float|bool|null $curren
 		return 1.0000;
 
 
-	$rate = get_last_exchange_rate($currency_code, $date_);
+	$rate = get_last_exchange_rate($currency_code, $date_) ?: array();
 
 	if (!$rate)
 	{
@@ -102,9 +102,9 @@ function exchange_variation(string|int|float|bool|null $pyt_type, string|int|flo
 	
 	if ($person_type == PT_CUSTOMER)
 	{
-		$trans = get_customer_trans($trans_no, $type);
-		$pyt_trans = get_customer_trans($pyt_no, $pyt_type);
-		$cust_accs = get_branch_accounts($trans['branch_code']);
+		$trans = get_customer_trans($trans_no, $type) ?: array();
+		$pyt_trans = get_customer_trans($pyt_no, $pyt_type) ?: array();
+		$cust_accs = get_branch_accounts($trans['branch_code']) ?: array();
 		$ar_ap_act = $cust_accs['receivables_account'];
 		$person_id = $trans['debtor_no'];
 		$curr = $trans['curr_code'];
@@ -112,9 +112,9 @@ function exchange_variation(string|int|float|bool|null $pyt_type, string|int|flo
 	}
 	else
 	{
-		$trans = get_supp_trans($trans_no, $type);
-		$pyt_trans = get_supp_trans($pyt_no, $pyt_type);
-		$supp_accs = get_supplier_accounts($trans['supplier_id']);
+		$trans = get_supp_trans($trans_no, $type) ?: array();
+		$pyt_trans = get_supp_trans($pyt_no, $pyt_type) ?: array();
+		$supp_accs = get_supplier_accounts($trans['supplier_id']) ?: array();
 		$ar_ap_act = $supp_accs['payable_account'];
 		$person_id = $trans['supplier_id'];
 		$curr = $trans['curr_code'];

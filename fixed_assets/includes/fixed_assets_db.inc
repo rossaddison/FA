@@ -23,7 +23,7 @@ function process_fixed_asset_depreciation(string|array|null $stock_id, ?array $g
   if (!is_date_in_fiscalyear($date_))
     $date_ = end_fiscalyear();
 
-  $stock_gl_code = get_stock_gl_code($stock_id);
+  $stock_gl_code = get_stock_gl_code($stock_id) ?: array();
 
   $cart = new items_cart(ST_JOURNAL);
   $cart->tran_date = $cart->doc_date = $cart->event_date = $date_;

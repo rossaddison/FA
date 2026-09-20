@@ -122,7 +122,7 @@ function print_work_order_listing(): void
 		$items = _('All');
 	else
 	{
-		$row = get_item($item);
+		$row = get_item($item) ?: array();
 		$items = $row['description']; 
 	}
 

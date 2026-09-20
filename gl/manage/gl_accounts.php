@@ -220,7 +220,7 @@ start_table(TABLESTYLE2);
 if ($selected_account != "") 
 {
 	//editing an existing account
-	$myrow = get_gl_account($selected_account);
+	$myrow = get_gl_account($selected_account) ?: array();
 
 	$_POST['account_code'] = $myrow["account_code"];
 	$_POST['account_code2'] = $myrow["account_code2"];

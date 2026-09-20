@@ -143,7 +143,7 @@ function get_account_home_balance(?string $person_id, ?int $person_type, ?string
 			WHERE person_id=".db_escape($person_id)." AND account='$rec_account' 
 			AND person_type_id=$person_type AND tran_date <= '$to'";
 	$result = db_query($sql, "The AR/AP balance for customer $person_id could not be calculated");
-	$row = db_fetch_row($result);
+	$row = db_fetch_row($result) ?: array();
 	return $row[0];
 }
 
@@ -234,8 +234,8 @@ function add_bank_transfer(string|array|null $from_account, string|array|null $t
 
 	$trans_no = get_next_trans_no($trans_type);
 	
-    $fromact = get_bank_account($from_account);
-    $toact = get_bank_account($to_account);
+    $fromact = get_bank_account($from_account) ?: array();
+    $toact = get_bank_account($to_account) ?: array();
     $person_id = _("From")." ".(string)$fromact['bank_account_name']." "._("To")." ".(string)$toact['bank_account_name'];
 
 	$from_gl_account = get_bank_gl_account($from_account);

@@ -102,7 +102,7 @@ function issue_edit_item_controls(items_cart &$order, string|int|float|bool|null
 	}
 	else
 	{
-  		$wo_details = get_work_order($_SESSION['issue_items']->order_id);
+  		$wo_details = get_work_order($_SESSION['issue_items']->order_id) ?: array();
 
   		stock_component_items_list_cells(null, 'stock_id', 
 			$wo_details["stock_id"], null, false, true);
@@ -112,7 +112,7 @@ function issue_edit_item_controls(items_cart &$order, string|int|float|bool|null
 			    $Ajax->activate('std_cost');
 		}
 
-    	$item_info = get_item_edit_info($_POST['stock_id']);
+    	$item_info = get_item_edit_info($_POST['stock_id']) ?: array();
 
    		$dec = $item_info["decimals"];
    		$_POST['qty'] =	number_format2(0, $dec);

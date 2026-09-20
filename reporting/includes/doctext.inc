@@ -36,7 +36,7 @@
 
 	if (!in_array($this->formData['doctype'], array(ST_STATEMENT, ST_WORKORDER)))
 	{
-		$row = get_payment_terms($this->formData['payment_terms']);
+		$row = get_payment_terms($this->formData['payment_terms']) ?: array();
 		$Payment_Terms = _("Payment Terms") . ': ' . $row["terms"];
 		if ($this->formData['doctype'] == ST_SALESINVOICE && $this->formData['prepaid'])
 			$this->formData['prepaid'] = ($row['days_before_due'] >= 0) ? 'final' : 'partial';

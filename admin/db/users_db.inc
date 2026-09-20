@@ -176,7 +176,7 @@ function check_user_activity(string|int|float|bool|null $id)
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."audit_trail WHERE audit_trail.user="
 		. db_escape($id);
 	$result = db_query($sql,"Cant check user activity");
-	$ret = db_fetch($result);
+	$ret = db_fetch($result) ?: array();
 
 	return $ret[0];
 }

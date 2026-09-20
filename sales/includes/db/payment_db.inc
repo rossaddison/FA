@@ -40,7 +40,7 @@ function write_customer_payment(string|int|float|bool|array|null $trans_no, stri
 	  	void_cust_allocations(ST_CUSTPAYMENT, $trans_no, $date_);
 	}
 
-	$bank = get_bank_account($bank_account);
+	$bank = get_bank_account($bank_account) ?: array();
 
 	if (!$bank_amount) 	// backward compatibility workaround
 	{
@@ -65,7 +65,7 @@ function write_customer_payment(string|int|float|bool|array|null $trans_no, stri
 
 	if ($branch_id != ANY_NUMERIC) {
 
-		$branch_data = get_branch_accounts($branch_id);
+		$branch_data = get_branch_accounts($branch_id) ?: array();
 
 		$debtors_account = $branch_data["receivables_account"];
 		$discount_account = $branch_data["payment_discount_account"];
@@ -165,7 +165,7 @@ function get_cust_bank_charge(?int $type, string|array|null $trans_no)
 	if (!db_num_rows($result))
 		return 0;
 
-	$myrow = db_fetch($result);
+	$myrow = db_fetch($result) ?: array();
 	return $myrow['0'];
 }
 

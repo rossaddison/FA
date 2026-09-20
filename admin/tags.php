@@ -153,7 +153,7 @@ if ($selected_id != -1) // We've selected a tag
 {
 	if ($Mode == 'Edit') {
 		// Editing an existing tag
-		$myrow = get_tag($selected_id);
+		$myrow = get_tag($selected_id) ?: array();
 	
 		$_POST['name'] = $myrow["name"];
 		$_POST['description'] = $myrow["description"];

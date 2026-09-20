@@ -59,14 +59,14 @@ function display_type (?string $type, ?string $typename, int|string|null &$dec, 
 		// If we want to remove the balanced part for the past years, this option removes the common part from from the prev and tot figures.
 		if (@$SysPrefs->clear_trial_balance_opening)
 		{
-			$open = get_balance($account["account_code"], $dimension, $dimension2, $begin,  $begin, false, true);
+			$open = get_balance($account["account_code"], $dimension, $dimension2, $begin,  $begin, false, true) ?: array();
 			$offset = min($open['debit'], $open['credit']);
 		} else
 			$offset = 0;
 
-		$prev = get_balance($account["account_code"], $dimension, $dimension2, $begin, $from, false, false);
-		$curr = get_balance($account["account_code"], $dimension, $dimension2, $from, $to, true, true);
-		$tot = get_balance($account["account_code"], $dimension, $dimension2, $begin, $to, false, true);
+		$prev = get_balance($account["account_code"], $dimension, $dimension2, $begin, $from, false, false) ?: array();
+		$curr = get_balance($account["account_code"], $dimension, $dimension2, $from, $to, true, true) ?: array();
+		$tot = get_balance($account["account_code"], $dimension, $dimension2, $begin, $to, false, true) ?: array();
 
 		if ($zero == 0 && !$prev['balance'] && !$curr['balance'] && !$tot['balance'])
 			continue;

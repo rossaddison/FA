@@ -67,6 +67,6 @@ function delete_security_role(string|array|null $id): void
 function check_role_used(string|array|null $id) {
 	$sql = "SELECT count(*) FROM ".TB_PREF."users WHERE role_id=".(int)$id;
 	$ret = db_query($sql, 'cannot check role usage');
-	$row = db_fetch($ret);
+	$row = db_fetch($ret) ?: array();
 	return $row[0];
 }

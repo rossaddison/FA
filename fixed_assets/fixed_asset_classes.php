@@ -114,7 +114,7 @@ start_table(TABLESTYLE2);
 if ($selected_id != -1) 
 {
  	if ($Mode == 'Edit') {
-		$myrow = get_fixed_asset_class($selected_id);
+		$myrow = get_fixed_asset_class($selected_id) ?: array();
 
 		$_POST['fa_class_id'] = $myrow["fa_class_id"];
 		$_POST['parent_id'] = $myrow["parent_id"];

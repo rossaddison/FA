@@ -98,7 +98,7 @@ function display_credit_header(Cart &$order): string
     sales_types_list_row(_("Sales Type"), 'sales_type_id', $_POST['sales_type_id'], true);
 	
 	if ($order->sales_type != $_POST['sales_type_id']) {
-		$myrow = get_sales_type($_POST['sales_type_id']);
+		$myrow = get_sales_type($_POST['sales_type_id']) ?: array();
 		$order->set_sales_type($myrow['id'], $myrow['sales_type'],
 		$myrow['tax_included'], $myrow['factor']);
 		$Ajax->activate('sales_type_id');
@@ -261,7 +261,7 @@ function credit_edit_item_controls(Cart &$order, string|int|float|bool|null $row
 			    $Ajax->activate('units');
 			    $Ajax->activate('line_total');
 		}
-  		$item_info = get_item_edit_info($_POST['stock_id']);
+  		$item_info = get_item_edit_info($_POST['stock_id']) ?: array();
 
 		$dec = !$item_info ? 0 :  $item_info['decimals'];
    		$_POST['qty'] = number_format2(0, $dec);

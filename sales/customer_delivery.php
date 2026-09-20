@@ -405,7 +405,7 @@ end_table();
 echo "</td></tr>";
 end_table(1); // outer table
 
-$row = get_customer_to_order($_SESSION['Items']->customer_id);
+$row = get_customer_to_order($_SESSION['Items']->customer_id) ?: array();
 if ($row['dissallow_invoices'] == 1)
 {
 	display_error(_("The selected customer account is currently on hold. Please contact the credit control personnel to discuss."));

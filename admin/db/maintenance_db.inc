@@ -622,7 +622,7 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
 	foreach ($all_tables as $table)
 	{
 		$res1 = db_query("SHOW CREATE TABLE `" . (string)$table['Name'] . "`");
-		$tmp = db_fetch($res1);
+		$tmp = db_fetch($res1) ?: array();
 		$table_sql[$table['Name']] = $tmp["Create Table"];
 	}
 
@@ -675,7 +675,7 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
 					$field_null = array();
 					for ($j = 0; $j < db_num_rows($res3); $j++)
 					{
-						$row3 = db_fetch($res3);
+						$row3 = db_fetch($res3) ?: array();
 						$field_null[] = $row3[2]=='YES' && $row3[4]===null;
 					}
 	
@@ -684,7 +684,7 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
 					$insert = '';
 					for ($j = 0; $j < db_num_rows($res2); $j++)
 					{
-						$row2 = db_fetch_row($res2);
+						$row2 = db_fetch_row($res2) ?: array();
 						$values = '(';
 						for ($k = 0; $k < $nf = db_num_fields($res2); $k++)
 						{

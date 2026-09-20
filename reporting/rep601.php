@@ -38,7 +38,7 @@ function get_bank_balance_to(string|array|null $to, ?string $account)
 	$sql = "SELECT SUM(amount) FROM ".TB_PREF."bank_trans WHERE bank_act=".db_escape($account)."
 	AND trans_date < '$to'";
 	$result = db_query($sql, "The starting balance on hand could not be calculated");
-	$row = db_fetch_row($result);
+	$row = db_fetch_row($result) ?: array();
 	return $row[0];
 }
 

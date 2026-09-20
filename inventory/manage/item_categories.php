@@ -161,7 +161,7 @@ if ($selected_id != -1)
 {
  	if ($Mode == 'Edit') {
 		//editing an existing item category
-		$myrow = get_item_category($selected_id);
+		$myrow = get_item_category($selected_id) ?: array();
 
 		$_POST['category_id'] = $myrow["category_id"];
 		$_POST['description']  = $myrow["description"];

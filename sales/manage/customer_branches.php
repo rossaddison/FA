@@ -48,7 +48,7 @@ $_POST['branch_code'] = $selected_id;
 
 if (isset($_GET['SelectedBranch']))
 {
-	$br = get_branch($_GET['SelectedBranch']);
+	$br = get_branch($_GET['SelectedBranch']) ?: array();
 	$_POST['customer_id'] = $br['debtor_no'];
 	$selected_id = $_POST['branch_code'] = $br['branch_code'];
 	$Mode = 'Edit';
@@ -178,7 +178,7 @@ function branch_settings(string|int|float|bool|array|null $selected_id, bool $nu
 	{
 	 	if ($Mode == 'Edit' || !isset($_POST['br_name'])) {
 			//editing an existing branch
-			$myrow = get_cust_branch($_POST['customer_id'], $_POST['branch_code']);
+			$myrow = get_cust_branch($_POST['customer_id'], $_POST['branch_code']) ?: array();
 			set_focus('br_name');
 	    	$_POST['branch_code'] = $myrow["branch_code"];
 		    $_POST['br_name']  = $myrow["br_name"];
@@ -202,7 +202,7 @@ function branch_settings(string|int|float|bool|array|null $selected_id, bool $nu
 	}
 	elseif ($Mode != 'ADD_ITEM')
 	{
-		$myrow = get_default_info_for_branch($_POST['customer_id']);
+		$myrow = get_default_info_for_branch($_POST['customer_id']) ?: array();
 		if($myrow && !$num_branches) {
 			$_POST['br_name'] = $myrow["name"];
 			$_POST['br_ref'] = $myrow["debtor_ref"];

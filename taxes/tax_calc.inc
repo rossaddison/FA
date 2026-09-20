@@ -95,7 +95,7 @@ function get_full_price_for_item(string|int|float|bool|null $stock_id, string|in
 
 function get_taxes_for_item(string|int|float|bool|null $stock_id, array $tax_group_items_array): array|null
 {
-	$item_tax_type = get_item_tax_type_for_item($stock_id);
+	$item_tax_type = get_item_tax_type_for_item($stock_id) ?: array();
 	
 	// if the item is exempt from all taxes then return 0
 	if ($item_tax_type["exempt"])

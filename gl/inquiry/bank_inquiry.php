@@ -66,7 +66,7 @@ $result = get_bank_trans_for_bank_account(post_scalar('bank_account'), post_scal
 div_start('trans_tbl');
 if (!$page_nested)
 {
-	$act = get_bank_account($_POST["bank_account"]);
+	$act = get_bank_account($_POST["bank_account"]) ?: array();
 	display_heading((string)$act['bank_account_name']." - ".(string)$act['bank_curr_code']);
 }
 

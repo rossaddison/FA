@@ -127,7 +127,7 @@ class allocation
 			} else { // guess person_type_id
 				if (in_array($type, array(ST_BANKPAYMENT, ST_BANKDEPOSIT)))
 				{
-					$bank_trans = db_fetch(get_bank_trans($type, $trans_no));
+					$bank_trans = db_fetch(get_bank_trans($type, $trans_no)) ?: array();
 					$this->person_type = $bank_trans['person_type_id'];
 				} else
 					$this->person_type = in_array($type, array(ST_SUPPCREDIT, ST_SUPPAYMENT)) ? PT_SUPPLIER : PT_CUSTOMER;
@@ -410,9 +410,9 @@ function check_allocations(): bool
 
 		if ($_SESSION['alloc']->person_type == PT_CUSTOMER) {
 			if ($_SESSION['alloc']->allocs[$counter]->type == ST_SALESORDER)
-				$trans = get_sales_order_header($_SESSION['alloc']->allocs[$counter]->type_no, $_SESSION['alloc']->allocs[$counter]->type);
+				$trans = get_sales_order_header($_SESSION['alloc']->allocs[$counter]->type_no, $_SESSION['alloc']->allocs[$counter]->type) ?: array();
 			else
-				$trans = get_customer_trans($_SESSION['alloc']->allocs[$counter]->type_no, $_SESSION['alloc']->allocs[$counter]->type,$_SESSION['alloc']->person_id);
+				$trans = get_customer_trans($_SESSION['alloc']->allocs[$counter]->type_no, $_SESSION['alloc']->allocs[$counter]->type,$_SESSION['alloc']->person_id) ?: array();
 
 			if ($trans['debtor_no'] != $_SESSION['alloc']->person_id) {
 				display_error(_("Allocated transaction allocated is not related to company selected."));
@@ -421,9 +421,9 @@ function check_allocations(): bool
 			}
 		} elseif ($_SESSION['alloc']->person_type == PT_SUPPLIER) {
 			if ($_SESSION['alloc']->allocs[$counter]->type == ST_PURCHORDER)
-                $trans = get_po($_SESSION['alloc']->allocs[$counter]->type_no);
+                $trans = get_po($_SESSION['alloc']->allocs[$counter]->type_no) ?: array();
             else
-                $trans = get_supp_trans($_SESSION['alloc']->allocs[$counter]->type_no, $_SESSION['alloc']->allocs[$counter]->type,  $_SESSION['alloc']->person_id);			
+                $trans = get_supp_trans($_SESSION['alloc']->allocs[$counter]->type_no, $_SESSION['alloc']->allocs[$counter]->type,  $_SESSION['alloc']->person_id) ?: array();			
 			if ($trans['supplier_id'] != $_SESSION['alloc']->person_id) {
 				display_error(_("Allocated transaction allocated is not related to company selected."));
 				set_focus('amount'.$counter);

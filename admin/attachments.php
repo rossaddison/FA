@@ -28,7 +28,7 @@ else
 	$view_id = find_submit('view');
 if ($view_id != -1)
 {
-	$row = get_attachment($view_id);
+	$row = get_attachment($view_id) ?: array();
 	if ($row['filename'] != "")
 	{
 		if(in_ajax()) {
@@ -50,7 +50,7 @@ else
 
 if ($download_id != -1)
 {
-	$row = get_attachment($download_id);
+	$row = get_attachment($download_id) ?: array();
 	if ($row['filename'] != "")
 	{
 		if(in_ajax()) {
@@ -119,7 +119,7 @@ if ($Mode == 'ADD_ITEM' || $Mode == 'UPDATE_ITEM')
 		// protect against directory traversal
 		if ($Mode == 'UPDATE_ITEM')
 		{
-		    $row = get_attachment($selected_id);
+		    $row = get_attachment($selected_id) ?: array();
 		    if ($row['filename'] == "")
         		exit();
 			$unique_name = $row['unique_name'];
@@ -152,7 +152,7 @@ if ($Mode == 'ADD_ITEM' || $Mode == 'UPDATE_ITEM')
 
 if ($Mode == 'Delete')
 {
-	$row = get_attachment($selected_id);
+	$row = get_attachment($selected_id) ?: array();
 	$dir =  company_path()."/attachments";
 	if (file_exists($dir."/".(string)$row['unique_name']))
 		unlink($dir."/".(string)$row['unique_name']);
@@ -273,7 +273,7 @@ if ($selected_id != -1)
 {
 	if ($Mode == 'Edit')
 	{
-		$row = get_attachment($selected_id);
+		$row = get_attachment($selected_id) ?: array();
 		$_POST['trans_no']  = $row["trans_no"];
 		$_POST['description']  = $row["description"];
 		hidden('trans_no', $row['trans_no']);

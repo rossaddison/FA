@@ -200,8 +200,8 @@ function add_credit_movements_item(Cart &$credit_note, &$credit_line,
 function add_gl_trans_credit_costs(?object $order, ?object $order_line, string|int|float|bool|null $credit_no, string|int|float|bool|null $date_,
 	?string $credit_type, string|int|float|bool|null $write_off_gl_code, &$branch_data)
 {
-	$stock_gl_codes = get_stock_gl_code($order_line->stock_id);
-	$customer = get_customer($order->customer_id);
+	$stock_gl_codes = get_stock_gl_code($order_line->stock_id) ?: array();
+	$customer = get_customer($order->customer_id) ?: array();
 	// If there is a Customer Dimension, then override with this,
 	// else take the Item Dimension (if any)
 	$dim = ($order->dimension_id != $customer['dimension_id'] ? $order->dimension_id : 
@@ -225,7 +225,7 @@ function add_gl_trans_credit_costs(?object $order, ?object $order_line, string|i
 		if ($credit_type == "WriteOff") {
 			$stock_entry_account = $write_off_gl_code;
 		} else {
-			$stock_gl_code = get_stock_gl_code($order_line->stock_id);
+			$stock_gl_code = get_stock_gl_code($order_line->stock_id) ?: array();
 			$stock_entry_account = $stock_gl_code["inventory_account"];
 		}
 

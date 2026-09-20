@@ -187,7 +187,7 @@ else
 $dec2 = 6;
 if ($Mode =='Edit')
 {
-	$myrow = get_item_purchasing_data($selected_id, $_POST['stock_id']);
+	$myrow = get_item_purchasing_data($selected_id, $_POST['stock_id']) ?: array();
 
     $supp_name = $myrow["supp_name"];
     $_POST['price'] = price_decimal_format($myrow["price"], $dec2);

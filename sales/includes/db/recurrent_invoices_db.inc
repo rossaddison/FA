@@ -90,7 +90,7 @@ function check_recurrent_invoice_description(string|int|float|bool|null $descrip
 		$sql .= " AND id<>".db_escape($id);
 
 	$result = db_query($sql,"could not check recurrent invoice");
-	$row = db_fetch($result);
+	$row = db_fetch($result) ?: array();
 	return !$row[0];
 }
 
@@ -107,7 +107,7 @@ function recurrent_invoice_ready(string|int|null $selected_id, string|array|null
 		id=".db_escape($selected_id);
 
 	$result = db_query($sql,"could not get recurrent invoice");
-	$ret =  db_fetch($result);
+	$ret =  db_fetch($result) ?: array();
 
 	return $ret['overdue'];
 }
@@ -133,7 +133,7 @@ function recurrent_invoice_count(string|int|null $id)
 		WHERE rec.debtor_no!=0 AND !ISNULL(debtor.debtor_no) AND rec.id=".db_escape($id);
 
 	$sql = "SELECT count(*) FROM ($sql1 UNION $sql2) a";
-	$result = db_fetch(db_query($sql, "cannot count recurrent invoices"));
+	$result = db_fetch(db_query($sql, "cannot count recurrent invoices")) ?: array();
 
 	return $result[0];
 }
@@ -141,7 +141,7 @@ function recurrent_invoice_count(string|int|null $id)
 function check_recurrent_invoice_prices(string|int|null $id): int
 {
 	$errors = 0;
-	$inv = get_recurrent_invoice($id);
+	$inv = get_recurrent_invoice($id) ?: array();
 
 	$sql1 = "SELECT debtor.curr_code
 		FROM ".TB_PREF."recurrent_invoices rec
@@ -159,7 +159,7 @@ function check_recurrent_invoice_prices(string|int|null $id): int
 
 	$currs = db_query($sql, "cannot count recurrent invoices");
 
-	$template = get_sales_order_header($inv['order_no'], ST_SALESORDER);
+	$template = get_sales_order_header($inv['order_no'], ST_SALESORDER) ?: array();
 
 	while ($curr = db_fetch($currs))
 	{
@@ -179,7 +179,7 @@ function check_recurrent_invoice_prices(string|int|null $id): int
 */
 function check_sales_order_type(string|int|float|bool|null $order_no): bool
 {
-	$myrow = get_sales_order_header($order_no, ST_SALESORDER);
+	$myrow = get_sales_order_header($order_no, ST_SALESORDER) ?: array();
 
 	return !$myrow['prepaid'];
 }

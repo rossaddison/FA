@@ -54,7 +54,7 @@ function stock_cost_update(string|array|null $stock_id, int|float|bool|null $mat
 		if ($value_of_change != 0)
 		{
 			global $Refs;
-			$stock_gl_code = get_stock_gl_code($stock_id);
+			$stock_gl_code = get_stock_gl_code($stock_id) ?: array();
 
 			$cart = new items_cart(ST_COSTUPDATE);
 			$cart->tran_date = $cart->doc_date = $cart->event_date = $date_;

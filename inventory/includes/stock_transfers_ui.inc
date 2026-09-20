@@ -130,7 +130,7 @@ function transfer_edit_item_controls(items_cart &$order, string|int|float|bool|n
 			$Ajax->activate('qty');
 		}
 
-    	$item_info = get_item_edit_info($_POST['stock_id']);
+    	$item_info = get_item_edit_info($_POST['stock_id']) ?: array();
 
 		$dec = $item_info['decimals'];
    		$_POST['qty'] = number_format2(0, $dec);

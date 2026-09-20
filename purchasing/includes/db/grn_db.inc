@@ -16,7 +16,7 @@ function update_average_material_cost(string|int|float|bool|null $supplier, stri
 	// passing transaction cart as argument. This would
 	// save a couple of db calls like get_supplier()
 	
-	$supp = get_supplier($supplier);
+	$supp = get_supplier($supplier) ?: array();
     if ($supplier != null) {
 		$currency = $supp['curr_code'];
         if ($supp['tax_included'])
@@ -42,7 +42,7 @@ function update_average_material_cost(string|int|float|bool|null $supplier, stri
 	
 	$sql = "SELECT mb_flag, material_cost FROM ".TB_PREF."stock_master WHERE stock_id=".db_escape($stock_id);
 	$result = db_query($sql);
-	$myrow = db_fetch($result);
+	$myrow = db_fetch($result) ?: array();
 	$material_cost = $myrow['material_cost'];
 	
 	$cost_adjust = false;
@@ -105,7 +105,7 @@ function add_grn(purch_order &$po)
 	{
 		if ($order_line->receive_qty != 0 && $order_line->receive_qty != "" && isset($order_line->receive_qty))
 		{
-			$stock_gl_code = get_stock_gl_code($order_line->stock_id);
+			$stock_gl_code = get_stock_gl_code($order_line->stock_id) ?: array();
 
 			/*Update sales_order_details for the new quantity received and the standard cost used for postings to GL 
 			  and recorded in the stock movements for FIFO/LIFO stocks valuations*/
@@ -146,7 +146,7 @@ function add_grn(purch_order &$po)
 	} /*end of order_line loop */
 
 	if ($clearing_act && $total != 0.0) {
-		$accs = get_supplier_accounts($po->supplier_id);
+		$accs = get_supplier_accounts($po->supplier_id) ?: array();
 		$total += add_gl_trans_supplier(ST_SUPPRECEIVE, $grn, $date_, $clearing_act,
 			$accs['dimension_id'], $accs['dimension2_id'], -$total, null);
 	}
@@ -207,7 +207,7 @@ function get_grn_batch_from_item(mixed $item)
 {
 	$sql = "SELECT grn_batch_id FROM ".TB_PREF."grn_items WHERE id=".db_escape($item);
 	$result = db_query($sql, "Could not retreive GRN batch id");
-	$row = db_fetch_row($result);
+	$row = db_fetch_row($result) ?: array();
 	return $row[0];
 }
 
@@ -234,7 +234,7 @@ function set_grn_item_credited(&$entered_grn, string|int|float|bool|null $suppli
     	AND item.item_code=".db_escape($entered_grn->item_code);
 
 	$result = db_query($sql, "Could not retreive GRNS");
-	$myrow = db_fetch($result);
+	$myrow = db_fetch($result) ?: array();
 
 	$sql = "UPDATE ".TB_PREF."purch_order_details
         SET quantity_received = quantity_received + "
@@ -375,7 +375,7 @@ function read_grn(string|array|null $grn_batch, purch_order &$order): void
 
 	$result = db_query($sql, "The grn sent is not valid");
 
-	$row = db_fetch($result);
+	$row = db_fetch($result) ?: array();
 	$po_number = $row["purch_order_no"];
 	$order->ex_rate = $row["rate"];
 

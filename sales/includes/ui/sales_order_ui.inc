@@ -75,7 +75,7 @@ function get_customer_details_to_order(Cart &$order, string|int|float|bool|array
 	
 	$ret_error = "";
 
-	$myrow = get_customer_to_order($customer_id);
+	$myrow = get_customer_to_order($customer_id) ?: array();
 
 	$name = $myrow['name'];
 
@@ -105,7 +105,7 @@ function get_customer_details_to_order(Cart &$order, string|int|float|bool|array
 		return _("The selected customer and branch are not valid, or the customer does not have any branches.");
 	}
 
-	$myrow = db_fetch($result);
+	$myrow = db_fetch($result) ?: array();
 
 	// FIX - implement editable contact selector in sales order 
 	$contact = get_branch_contacts($branch_id, 'order', $customer_id);
@@ -352,7 +352,7 @@ function display_order_header(Cart &$order, bool $editable, ?string $date_text):
 		} // changed branch
 		else
 		{
-			$row = get_customer_to_order($_POST['customer_id']);
+			$row = get_customer_to_order($_POST['customer_id']) ?: array();
 			if ($row && $row['dissallow_invoices'] == 1)
 				$customer_error = _("The selected customer account is currently on hold. Please contact the credit control personnel to discuss.");
 		}
@@ -405,7 +405,7 @@ function display_order_header(Cart &$order, bool $editable, ?string $date_text):
 		label_row(_("Price List:"), $order->sales_type_name);
 	}
 	if ($order->sales_type != $_POST['sales_type']) {
-		$myrow = get_sales_type($_POST['sales_type']);
+		$myrow = get_sales_type($_POST['sales_type']) ?: array();
 		$order->set_sales_type($myrow['id'], $myrow['sales_type'],
 			$myrow['tax_included'], $myrow['factor']);
 		$Ajax->activate('sales_type');
@@ -514,7 +514,7 @@ function sales_order_item_controls(Cart &$order, int|string|null &$rowcounter, s
             $Ajax->activate('line_total');
         }		
 
-		$item_info = get_item_edit_info($_POST['stock_id']);
+		$item_info = get_item_edit_info($_POST['stock_id']) ?: array();
 		$units = ''; $dec = 2;
 		if ($item_info) {
 				$units = $item_info["units"];

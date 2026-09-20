@@ -102,7 +102,7 @@ function getTransactions(string|int|array|null $debtorno, string|array|null $bra
 
     $result = db_query($sql,"No transactions were returned");
 
-	$row = db_fetch_row($result);
+	$row = db_fetch_row($result) ?: array();
 	return $row[0];
 }
 
@@ -242,7 +242,7 @@ function print_customer_details_listing(): void
 				$rep->TextCol(0, 1, $adr[1]);
 			if ($myrow['dimension_id'] != 0)
 			{
-				$dim = get_dimension($myrow['dimension_id']);
+				$dim = get_dimension($myrow['dimension_id']) ?: array();
 				$rep->TextCol(1, 2,	_('Dimension') . ": " . (string)$dim['name']);
 			}		
 			if (isset($contacts[0]))
@@ -254,7 +254,7 @@ function print_customer_details_listing(): void
 				$rep->TextCol(0, 1, $adr[2]);
 			if ($myrow['dimension2_id'] != 0)
 			{
-				$dim = get_dimension($myrow['dimension2_id']);
+				$dim = get_dimension($myrow['dimension2_id']) ?: array();
 				$rep->TextCol(1, 2,	_('Dimension') . " 2: " . (string)$dim['name']);
 			}	
 			if ($myrow['notes'] != '')

@@ -156,7 +156,7 @@ function print_aged_customer_analysis(): void
 
 		if ($convert) $rate = get_exchange_rate_from_home_currency($myrow['curr_code'], $to);
 		else $rate = 1.0;
-		$custrec = get_customer_details($myrow['debtor_no'], $to, $show_all);
+		$custrec = get_customer_details($myrow['debtor_no'], $to, $show_all) ?: array();
 		if (!$custrec)
 			continue;
 		$custrec['Balance'] *= $rate;

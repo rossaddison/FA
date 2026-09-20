@@ -98,7 +98,7 @@ function print_bill_of_material(): void
 				$rep->NewLine(2, 3);
 			}
 			$rep->TextCol(0, 1, $trans['parent']);
-			$desc = get_item($trans['parent']);
+			$desc = get_item($trans['parent']) ?: array();
 			$rep->TextCol(1, 2, $desc['description']);
 			$parent = $trans['parent'];
 			$rep->NewLine();
@@ -108,7 +108,7 @@ function print_bill_of_material(): void
 		$dec = get_qty_dec($trans['component']);
 		$rep->TextCol(0, 1, $trans['component']);
 		$rep->TextCol(1, 2, $trans['CompDescription']);
-		$wc = get_work_centre($trans['workcentre_added']);
+		$wc = get_work_centre($trans['workcentre_added']) ?: array();
 		$rep->TextCol(2, 3, get_location_name($trans['loc_code']));
 		$rep->TextCol(3, 4, $wc['name']);
 		$rep->AmountCol(4, 5, $trans['quantity'], $dec);

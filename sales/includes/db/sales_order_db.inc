@@ -90,7 +90,7 @@ function delete_sales_order(string|int|float|bool|null $order_no, string|int|flo
 	begin_transaction();
 	hook_db_prevoid($trans_type, $order_no);
 
-	$order = get_sales_order_header($order_no, $trans_type);
+	$order = get_sales_order_header($order_no, $trans_type) ?: array();
 	
 	$sql = "DELETE FROM ".TB_PREF."sales_orders WHERE order_no=" . db_escape($order_no) 
 		. " AND trans_type=".db_escape($trans_type);
@@ -309,7 +309,7 @@ function get_sales_order_details(string|int|float|bool|array|null $order_no, str
 function read_sales_order(string|int|float|bool|null $order_no, Cart &$order, string|int|float|bool|null $trans_type): bool
 {
 
-	$myrow = get_sales_order_header($order_no, $trans_type);
+	$myrow = get_sales_order_header($order_no, $trans_type) ?: array();
 
 	$order->trans_type = $myrow['trans_type'];
 	$order->so_type =  $myrow["type"];
@@ -368,7 +368,7 @@ function sales_order_has_deliveries(string|int|float|bool|null $order_no): bool
 
 	$result = db_query($sql, "could not query for sales order usage");
 
-	$row = db_fetch_row($result);
+	$row = db_fetch_row($result) ?: array();
 
 	if ($row[0] > 0)
 		return true;  // 2010-04-21 added check for eventually voided deliveries, Joe Hunt
@@ -398,7 +398,7 @@ function get_invoice_duedate(string|int|float|bool|array|null $terms, string|int
 		return new_doc_date();
 	}
 	
-	$myrow = get_payment_terms($terms);
+	$myrow = get_payment_terms($terms) ?: array();
 	
 	if (!$myrow)
 		return $invdate;
@@ -625,7 +625,7 @@ function is_sales_order_started(string|int|float|bool|null $order_no)
 	$sql = "SELECT count(*) FROM ".TB_PREF."sales_order_details WHERE order_no=".db_escape($order_no)." AND trans_type=".ST_SALESORDER
 		." AND (invoiced!=0 OR qty_sent!=0)";
 
-	$result = db_fetch(db_query($sql, "cannot retrieve sales invoices for sales order"));
+	$result = db_fetch(db_query($sql, "cannot retrieve sales invoices for sales order")) ?: array();
 	return $result[0];
 }
 
@@ -660,7 +660,7 @@ function is_prepaid_order_open(string|int|float|bool|array|null $order_no)
 		AND o.trans_type = ".ST_SALESORDER."
 		AND o.order_no = " . db_escape($order_no);
 
-	$result = db_fetch(db_query($sql, "cannot check prepaid order open"));
+	$result = db_fetch(db_query($sql, "cannot check prepaid order open")) ?: array();
 
 	return $result[0];
 }

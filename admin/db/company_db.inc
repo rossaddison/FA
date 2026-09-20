@@ -173,7 +173,7 @@ function key_in_foreign_table(string|int|float|bool|array|null $id, string|array
 	$sql = "SELECT sum(cnt) FROM (". implode(' UNION ', $sqls).") as counts";
 
 	$result = db_query($sql, "check relations for ".implode(',',$tables)." failed");
-	$count =  db_fetch($result);
+	$count =  db_fetch($result) ?: array();
 
 	return $count[0];
 }

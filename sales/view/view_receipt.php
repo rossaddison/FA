@@ -28,7 +28,7 @@ if (isset($_GET["trans_no"]))
 	$trans_id = $_GET["trans_no"];
 }
 
-$receipt = get_customer_trans($trans_id, ST_CUSTPAYMENT);
+$receipt = get_customer_trans($trans_id, ST_CUSTPAYMENT) ?: array();
 
 if (!empty($SysPrefs->prefs['company_logo_on_views']))
 	company_logo_on_view();

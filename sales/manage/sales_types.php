@@ -140,7 +140,7 @@ if ($selected_id != -1)
 {
 
  	if ($Mode == 'Edit') {
-		$myrow = get_sales_type($selected_id);
+		$myrow = get_sales_type($selected_id) ?: array();
 
 		$_POST['sales_type']  = $myrow["sales_type"];
 		$_POST['tax_included']  = $myrow["tax_included"];

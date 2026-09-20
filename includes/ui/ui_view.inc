@@ -304,7 +304,7 @@ function exchange_rate_display(string|int|float|bool|null $from_currency, string
 				$readonly = true; // if we have already local exrate keep it unchanged 
 
 			if (!$rate) {	// retry from remote service
-				$row = get_currency($currency);
+				$row = get_currency($currency) ?: array();
 
  				if ($row['auto_update']) // autoupdate means use remote service & store exrate on first transaction.
  				{
@@ -684,7 +684,7 @@ function display_quick_entries(&$cart, string|int|float|bool|array|null $id, int
 function quickentry_calculate(int|float|bool|null $base, string|int|float|bool|null $id, string|int|float|bool|null $taxgroup=null, string|int|float|bool|null $date=null): array|int
 {
 		$gl_entries = array();
-		$qe = get_quick_entry($id);
+		$qe = get_quick_entry($id) ?: array();
 		$type = $qe['type'];
 		$total = $base;
 		// quick entry made on account balance is special case.
@@ -774,7 +774,7 @@ function quickentry_calculate(int|float|bool|null $base, string|int|float|bool|n
 					else
 						$part = $base/100;
 
-					$item_tax = get_tax_type($qe_line['dest_id']);
+					$item_tax = get_tax_type($qe_line['dest_id']) ?: array();
 					//if ($type == QE_SUPPINV && substr($qe_line['action'],0,1) != 'T')
 					if ($type == QE_SUPPINV)
 					{

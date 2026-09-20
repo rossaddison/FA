@@ -174,7 +174,7 @@ function print_aged_supplier_analysis(): void
 		if ($convert) $rate = get_exchange_rate_from_home_currency($myrow['curr_code'], $to);
 		else $rate = 1.0;
 
-		$supprec = get_supplier_details($myrow['supplier_id'], $to, $show_all);
+		$supprec = get_supplier_details($myrow['supplier_id'], $to, $show_all) ?: array();
 		if (!$supprec)
 			continue;
 		$supprec['Balance'] *= $rate;

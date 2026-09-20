@@ -143,7 +143,7 @@ class reflines_db extends data_set {
 		if (!$all)
 			$sql .= " AND !inactive";
 		$result = db_query($sql, "cannot retreive refline count for transaction type $type");
-		$rec = db_fetch($result);
+		$rec = db_fetch($result) ?: array();
 		return $rec ? $rec[0] : 0;
 	}
 
@@ -157,7 +157,7 @@ class reflines_db extends data_set {
 		if ($fallback)	// if not found return refline with empty prefix
 			$sql .= " UNION SELECT * FROM ".TB_PREF."reflines WHERE trans_type=".db_escape($type)." AND `prefix`=''";
 		$ret = db_query($sql, "cannot check reference line id");
-		$line = db_fetch($ret);
+		$line = db_fetch($ret) ?: array();
 
 		if (!$fallback && (db_num_rows($fallback) != 1))	// more than one record means ambigous reference line
 			return null;

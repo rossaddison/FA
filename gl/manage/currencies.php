@@ -187,7 +187,7 @@ function display_currency_edit(string|int|float|bool|array|null $selected_id): v
 	{
 		if ($Mode == 'Edit') {
 			//editing an existing currency
-			$myrow = get_currency($selected_id);
+			$myrow = get_currency($selected_id) ?: array();
 
 			$_POST['Abbreviation'] = $myrow["curr_abrev"];
 			$_POST['Symbol'] = $myrow["curr_symbol"];

@@ -120,7 +120,7 @@ if ($selected_id != -1)
  	if ($Mode == 'Edit') {
 		//editing an existing Shipper
 
-		$myrow = get_shipper($selected_id);
+		$myrow = get_shipper($selected_id) ?: array();
 
 		$_POST['shipper_name']	= $myrow["shipper_name"];
 		$_POST['contact']	= $myrow["contact"];

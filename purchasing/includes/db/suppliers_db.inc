@@ -186,7 +186,7 @@ function get_supplier_contacts(?string $supplier_id, ?string $action=null): arra
 
 function get_current_supp_credit(string|int|float|bool|null $supplier_id)
 {
-	$suppdet = get_supplier_details($supplier_id);
+	$suppdet = get_supplier_details($supplier_id) ?: array();
 	return $suppdet['cur_credit'];
 
 }
@@ -204,7 +204,7 @@ function get_supplier_currency(string|int|float|bool|array|null $supplier_id)
 
 	$result = db_query($sql, "Retreive currency of supplier $supplier_id");
 
-	$myrow=db_fetch_row($result);
+	$myrow=db_fetch_row($result) ?: array();
 	return $myrow ? $myrow[0] : get_company_currency();
 }
 

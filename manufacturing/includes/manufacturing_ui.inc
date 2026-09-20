@@ -58,7 +58,7 @@ function display_bom(string|int|float|bool|null $item_check): void
         	}
 		}
 
-		$item = get_item($item_check);
+		$item = get_item($item_check) ?: array();
 		if ($item['labour_cost'] != 0)
 		{
 			$total_cost += $item['labour_cost'];

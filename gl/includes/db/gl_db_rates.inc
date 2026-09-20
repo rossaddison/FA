@@ -37,7 +37,7 @@ function get_date_exchange_rate(string|int|float|bool|array|null $curr_code, str
 
 	if(db_num_rows($result) == 0) 
 		return 0;
-	$row = db_fetch($result);
+	$row = db_fetch($result) ?: array();
 	return $row[0];
 }
 

@@ -108,7 +108,7 @@ function get_bank_gl_account(string|int|float|bool|null $id)
 
 	$result = db_query($sql, "could not retreive bank account for $id");
 
-	$bank_account = db_fetch($result);
+	$bank_account = db_fetch($result) ?: array();
 
 	return $bank_account['account_code'];
 }
@@ -124,7 +124,7 @@ function get_bank_charge_account(string|int|float|bool|array|null $id)
 
 	$result = db_query($sql, "could not retreive bank account for $id");
 
-	$bank_account = db_fetch($result);
+	$bank_account = db_fetch($result) ?: array();
 
 	return $bank_account['bank_charge_act'];
 }
@@ -371,8 +371,8 @@ function get_default_customer_bank_account(string|array|null $cust_id)
 {
 	$sql = "SELECT curr_code FROM ".TB_PREF."debtors_master WHERE debtor_no=".db_escape($cust_id);
 	$result = db_query($sql, "could not retreive default customer currency code");
-	$row = db_fetch_row($result);
-	$ba = get_default_bank_account($row[0]);
+	$row = db_fetch_row($result) ?: array();
+	$ba = get_default_bank_account($row[0]) ?: array();
 	return $ba['id'];
 }
 
@@ -380,8 +380,8 @@ function get_default_supplier_bank_account(string|int|float|bool|array|null $sup
 {
 	$sql = "SELECT curr_code FROM ".TB_PREF."suppliers WHERE supplier_id=".db_escape($supplier_id);
 	$result = db_query($sql, "could not retreive default supplier currency code");
-	$row = db_fetch_row($result);
-	$ba = get_default_bank_account($row[0]);
+	$row = db_fetch_row($result) ?: array();
+	$ba = get_default_bank_account($row[0]) ?: array();
 	return $ba['id'];
 }
 //---------------------------------------------------------------------------------------------
@@ -393,7 +393,7 @@ function get_bank_account_limit(string|int|array|null $account, string|int|array
 {
 //	$user = current_user();
 
-	$bankacc = get_bank_account($account);
+	$bankacc = get_bank_account($account) ?: array();
 	if ($bankacc['account_type'] != BT_CASH)
 		return null;
 	return max(0, get_balance_before_for_bank_account($account, add_days($date,1))); // in case of manco made before the check was implemented
@@ -427,7 +427,7 @@ function get_bank_account_currency(string|int|float|bool|array|null $id)
 	$sql= "SELECT bank_curr_code FROM ".TB_PREF."bank_accounts WHERE id=".db_escape($id);
 	$result = db_query($sql, "retreive bank account currency");
 
-	$myrow = db_fetch_row($result);
+	$myrow = db_fetch_row($result) ?: array();
 	return $myrow[0];
 }
 

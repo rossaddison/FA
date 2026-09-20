@@ -113,7 +113,7 @@ class attachments extends simple_crud {
 		
 		if($this->selected_id != null && $this->selected_id != "") {
 			$sql = "SELECT * FROM ".TB_PREF."attachments WHERE id = ".db_escape($this->selected_id);
-			$row = db_fetch(db_query($sql), "Cannot retrieve attachment $this->selected_id");
+			$row = db_fetch(db_query($sql), "Cannot retrieve attachment $this->selected_id") ?: array();
 			$_POST['tran_date'] = sql2date($row['tran_date']);
 			$_POST['title'] = $row['description'];
 			$_POST['trans_no'] = $row['trans_no'];
@@ -180,7 +180,7 @@ class attachments extends simple_crud {
     function _get_unique_name($selected_id) {
         if ($selected_id != null && $selected_id != "") {
             $sql = "SELECT * FROM ".TB_PREF."attachments WHERE id = ".db_escape($this->selected_id);
-            $row = db_fetch(db_query($sql), "Cannot retrieve attachment $this->selected_id");
+            $row = db_fetch(db_query($sql), "Cannot retrieve attachment $this->selected_id") ?: array();
             return $row['unique_name'];
         }
             return null;
@@ -299,7 +299,7 @@ class attachments extends simple_crud {
 	//
 	function db_delete() {
 		$sql = "SELECT * FROM ".TB_PREF."attachments WHERE id = ".db_escape($this->selected_id);
-		$row = db_fetch(db_query($sql), "Cannot retrieve attachment $this->selected_id");
+		$row = db_fetch(db_query($sql), "Cannot retrieve attachment $this->selected_id") ?: array();
 
 		$dir =  company_path()."/attachments";
 		if ($row['unique_name'] && file_exists($dir."/".$row['unique_name']))

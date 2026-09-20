@@ -152,7 +152,7 @@ class current_user
 					$this->role_set = array();
 	        	    $this->access = $myrow["role_id"];
 					// store area codes available for current user role
-					$role = get_security_role($this->access);
+					$role = get_security_role($this->access) ?: array();
 					if (!$role) 
 						return false;
 					foreach( $role['areas'] as $code )

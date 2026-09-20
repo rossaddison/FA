@@ -54,7 +54,7 @@ check_db_has_customer_branches(_("There are no customers, or there are no custom
 
 if (list_updated('branch_id')) {
 	// when branch is selected via external editor also customer can change
-	$br = get_branch(get_post('branch_id'));
+	$br = get_branch(get_post('branch_id')) ?: array();
 	$_POST['customer_id'] = $br['debtor_no'];
 	$Ajax->activate('customer_id');
 }

@@ -32,7 +32,7 @@ function add_work_order_issue(string|int|float|bool|null $woid, string|array|nul
 
 	$issue_total = $total_cost = 0;
 
-	$wo = get_work_order($woid);
+	$wo = get_work_order($woid) ?: array();
 
 	foreach ($items as $item)
 	{
@@ -54,7 +54,7 @@ function add_work_order_issue(string|int|float|bool|null $woid, string|array|nul
 		$unit_cost = get_unit_cost($item->stock_id);
 		$issue_cost = $unit_cost * $item->quantity;
 
-        $stockitem = get_item($item->stock_id);
+        $stockitem = get_item($item->stock_id) ?: array();
 
 		// Compatibility for Service Items
 		if (!is_service($stockitem["mb_flag"]))
@@ -66,7 +66,7 @@ function add_work_order_issue(string|int|float|bool|null $woid, string|array|nul
                 $date_.": "._("Issue of")." ".(string)$stockitem["description"], -$issue_cost);
 	}
 
-    $stockitem = get_item($wo['stock_id']);
+    $stockitem = get_item($wo['stock_id']) ?: array();
 
    	$wip_account = $stockitem["wip_account"];
 
@@ -165,7 +165,7 @@ function exists_work_order_issue(string|int|float|bool|array|null $issue_no): bo
 
 function check_void_wo_issue(string|int|float|bool|null $issue_no)
 {
-	$issue = get_work_order_issue($issue_no);
+	$issue = get_work_order_issue($issue_no) ?: array();
 
 	return $issue['closed'] ? $issue['workorder_id'] : 0;
 }
@@ -177,7 +177,7 @@ function void_work_order_issue(string|int|float|bool|null $type_no): void
 	begin_transaction();
 	hook_db_prevoid(ST_MANUISSUE, $type_no);
 
-	$void_entry = get_voided_entry(ST_MANUISSUE, $type_no);
+	$void_entry = get_voided_entry(ST_MANUISSUE, $type_no) ?: array();
 	if ($void_entry)
 		return;
 

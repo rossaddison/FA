@@ -32,7 +32,7 @@ $result = get_bank_trans(ST_BANKDEPOSIT, $trans_no);
 if (db_num_rows($result) != 1)
 	display_db_error("duplicate payment bank transaction found", "");
 
-$to_trans = db_fetch($result);
+$to_trans = db_fetch($result) ?: array();
 
 $company_currency = get_company_currency();
 

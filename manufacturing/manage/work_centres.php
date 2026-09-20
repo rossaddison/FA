@@ -126,7 +126,7 @@ if ($selected_id != -1)
 {
  	if ($Mode == 'Edit') {
 		//editing an existing status code
-		$myrow = get_work_centre($selected_id);
+		$myrow = get_work_centre($selected_id) ?: array();
 		
 		$_POST['name']  = $myrow["name"];
 		$_POST['description']  = $myrow["description"];

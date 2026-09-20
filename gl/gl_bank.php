@@ -53,7 +53,7 @@ if (isset($_GET['ModifyDeposit']) || isset($_GET['ModifyPayment']))
 
 //----------------------------------------------------------------------------------------
 if (list_updated('PersonDetailID')) {
-	$br = get_branch(get_post('PersonDetailID'));
+	$br = get_branch(get_post('PersonDetailID')) ?: array();
 	$_POST['person_id'] = $br['debtor_no'];
 	$Ajax->activate('person_id');
 }
@@ -154,20 +154,20 @@ function create_cart(string|int|array|null $type, string|int|array|null $trans_n
 
 	if ($trans_no) {
 
-		$bank_trans = db_fetch(get_bank_trans($type, $trans_no));
+		$bank_trans = db_fetch(get_bank_trans($type, $trans_no)) ?: array();
 		$_POST['bank_account'] = $bank_trans["bank_act"];
 		$_POST['PayType'] = $bank_trans["person_type_id"];
 		$cart->reference = $bank_trans["ref"];
 
 		if ($bank_trans["person_type_id"] == PT_CUSTOMER)
 		{
-			$trans = get_customer_trans($trans_no, $type);	
+			$trans = get_customer_trans($trans_no, $type) ?: array();	
 			$_POST['person_id'] = $trans["debtor_no"];
 			$_POST['PersonDetailID'] = $trans["branch_code"];
 		}
 		elseif ($bank_trans["person_type_id"] == PT_SUPPLIER)
 		{
-			$trans = get_supp_trans($trans_no, $type);
+			$trans = get_supp_trans($trans_no, $type) ?: array();
 			$_POST['person_id'] = $trans["supplier_id"];
 		}
 		elseif ($bank_trans["person_type_id"] == PT_MISC)
@@ -302,7 +302,7 @@ if (isset($_POST['Process']) && !check_trans())
 		$_SESSION['pay_items']->trans_type, $_SESSION['pay_items']->order_id, $_POST['bank_account'],
 		$_SESSION['pay_items'], $_POST['date_'],
 		$_POST['PayType'], $_POST['person_id'], get_post('PersonDetailID'),
-		$_POST['ref'], $_POST['memo_'], true, input_num('settled_amount', null));
+		$_POST['ref'], $_POST['memo_'], true, input_num('settled_amount', null)) ?: array();
 
 	$trans_type = $trans[0];
    	$trans_no = $trans[1];

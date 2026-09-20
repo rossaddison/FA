@@ -25,7 +25,7 @@ function get_supplier_details_to_order(?purch_order &$order, string|array|null $
 			  supp.supp_name";
 
 	$result = db_query($sql, "The supplier details could not be retreived");
-	$myrow = db_fetch($result);
+	$myrow = db_fetch($result) ?: array();
 
 	$order->credit = $myrow["cur_credit"];
 	$order->terms = array( 
@@ -201,7 +201,7 @@ function read_po_header(string|int|float|bool|null $order_no, purch_order &$orde
 	if (db_num_rows($result) == 1)
 	{
 
-      	$myrow = db_fetch($result);
+      	$myrow = db_fetch($result) ?: array();
 
       	$order->trans_type = ST_PURCHORDER;
       	$order->order_no = $order_no;

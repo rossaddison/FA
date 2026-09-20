@@ -77,7 +77,7 @@ function get_price (string|int|float|bool|array|null $stock_id, string|int|float
 
 	if ($factor === null) 
 	{
-		$myrow = get_sales_type($sales_type_id);
+		$myrow = get_sales_type($sales_type_id) ?: array();
 		$factor = $myrow['factor'];
 	}
 

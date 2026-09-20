@@ -54,7 +54,7 @@ function get_purchase_price(string|int|float|bool|null $supplier_id, string|int|
 
 	if (db_num_rows($result) == 1)
 	{
-		$myrow = db_fetch($result);
+		$myrow = db_fetch($result) ?: array();
 		return (float)$myrow["price"] / (float)$myrow['conversion_factor'];
 	} 
 	else 
@@ -75,7 +75,7 @@ function get_purchase_conversion_factor(string|int|float|bool|null $supplier_id,
 
 	if (db_num_rows($result) == 1)
 	{
-		$myrow = db_fetch($result);
+		$myrow = db_fetch($result) ?: array();
 		return $myrow['conversion_factor'];
 	} 
 	else 
@@ -201,7 +201,7 @@ function add_direct_supp_trans(?object $cart)
 	$inv->reference = $ref;
 	$inv->supp_reference = $cart->supp_ref;
 	$inv->tax_included = $cart->tax_included;
-	$supp = get_supplier($cart->supplier_id);
+	$supp = get_supplier($cart->supplier_id) ?: array();
 	$inv->tax_group_id = $supp['tax_group_id'];
 	$inv->ov_amount = $inv->ov_gst = $inv->ov_discount = 0;
 	$total = 0;

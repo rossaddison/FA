@@ -82,7 +82,7 @@ function print_audit_trail(): void
 
     $aligns = array('left', 'left', 'left', 'left', 'left', 'left', 'left', 'right');
 
-	$usr = get_user($user);
+	$usr = get_user($user) ?: array();
 	$user_id = isset($usr['user_id']) ? $usr['user_id'] : "";
     $params =   array( 	0 => $comments,
     				    1 => array('text' => _('Period'), 'from' => $from,'to' => $to),

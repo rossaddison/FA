@@ -212,7 +212,7 @@ function print_tax_report(): void
 	{
 		if ($id)
 		{
-			$tx = getTaxInfo($id);
+			$tx = getTaxInfo($id) ?: array();
 			$rep->TextCol(0, 1, (string)$tx['name'] . " " . number_format2($tx['rate'], $dec) . "%");
 		} else {
 			$rep->TextCol(0, 1, _('Exempt'));

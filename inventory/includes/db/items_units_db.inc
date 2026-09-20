@@ -60,7 +60,7 @@ function get_unit_descr(string|int|float|bool|null $unit)
 function item_unit_used(string|int|float|bool|null $unit): bool {
 	$sql= "SELECT COUNT(*) FROM ".TB_PREF."stock_master WHERE units=".db_escape($unit);
 	$result = db_query($sql, "could not query stock master");
-	$myrow = db_fetch_row($result);
+	$myrow = db_fetch_row($result) ?: array();
 	return ($myrow[0] > 0);
 }
 

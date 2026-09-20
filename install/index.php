@@ -155,7 +155,7 @@ function do_install(): bool {
 		$_SESSION['wa_current_user']->cur_con = 0;
 		
 		update_company_prefs(array('coy_name'=>$con['name']));
-		$admin = get_user_by_login('admin');
+		$admin = get_user_by_login('admin') ?: array();
 		update_user_prefs($admin['id'], array(
 			'language' => $con['lang'], 
 			'password' => md5($con['pass']),

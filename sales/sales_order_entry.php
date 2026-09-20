@@ -115,7 +115,7 @@ elseif (isset($_GET['ModifyQuotationNumber']))
 
 if (list_updated('branch_id')) {
 	// when branch is selected via external editor also customer can change
-	$br = get_branch(get_post('branch_id'));
+	$br = get_branch(get_post('branch_id')) ?: array();
 	$_POST['customer_id'] = $br['debtor_no'];
 	$Ajax->activate('customer_id');
 }
@@ -138,7 +138,7 @@ if (isset($_GET['AddedID'])) {
 
 	submenu_option(_("Enter a &New Order"),	"/sales/sales_order_entry.php?NewOrder=0");
 
-	$order = get_sales_order_header($order_no, ST_SALESORDER);
+	$order = get_sales_order_header($order_no, ST_SALESORDER) ?: array();
 	$customer_id = $order['debtor_no'];	
 	if ($order['prep_amount'] > 0)
 	{

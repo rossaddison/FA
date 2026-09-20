@@ -120,7 +120,7 @@ function is_tax_gl_unique(string|array|null $gl_code, string|int|array|null $gl_
 		$sql .= " AND id!=".db_escape($selected_id);
 
 	$res = db_query($sql, "could not query gl account uniqueness");
-	$row = db_fetch($res);
+	$row = db_fetch($res) ?: array();
 
 	return $gl_code2 == -1 ? ($row[0] <= 1) : ($row[0] == 0);
 }
@@ -134,7 +134,7 @@ function is_tax_account(string|int|float|bool|null $account_code)
 		sales_gl_code=".db_escape($account_code)." OR purchasing_gl_code=".db_escape($account_code);
 	$result = db_query($sql, "checking account is tax account");
 	if (db_num_rows($result) > 0) {
-		$acct = db_fetch($result);
+		$acct = db_fetch($result) ?: array();
 		return $acct['id'];
 	} else
 		return false;

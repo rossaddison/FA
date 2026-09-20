@@ -36,7 +36,7 @@ function get_domestic_price(?array $myrow, ?string $stock_id)
         if ($myrow['person_id'] > 0)
         {
             // Do we have foreign currency?
-            $supp = get_supplier($myrow['person_id']);
+            $supp = get_supplier($myrow['person_id']) ?: array();
             $currency = $supp['curr_code'];
             $ex_rate = $myrow['ex_rate'];
             $price *= $ex_rate;

@@ -121,7 +121,7 @@ if ($selected_id != -1)
 {
  	if ($Mode == 'Edit') {
 		//editing an existing area
-		$myrow = get_crm_category($selected_id);
+		$myrow = get_crm_category($selected_id) ?: array();
 
 		$_POST['name']  = $myrow["name"];
 		$_POST['type']  = $myrow["type"];

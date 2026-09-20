@@ -127,7 +127,7 @@ function get_balance_before_for_bank_account(string|int|float|bool|null $bank_ac
 		WHERE bank_act=".db_escape($bank_account) . "
 			AND trans_date < '$from'";
 	$before_qty = db_query($sql, "The starting balance on hand could not be calculated");
-	$bfw_row = db_fetch_row($before_qty);
+	$bfw_row = db_fetch_row($before_qty) ?: array();
 	return $bfw_row[0];
 }
 //----------------------------------------------------------------------------------------
@@ -145,7 +145,7 @@ function get_gl_trans_value(string|int|float|bool|null $account, string|int|floa
 
 	$result = db_query($sql, "query for gl trans value");
 
-	$row = db_fetch_row($result);
+	$row = db_fetch_row($result) ?: array();
 	return $row[0];
 }
 

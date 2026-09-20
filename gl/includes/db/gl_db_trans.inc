@@ -303,7 +303,7 @@ function get_gl_balance_from_to(?string $from_date, string|int|float|bool|array|
 
 	$result = db_query($sql, "The starting balance for account $account could not be calculated");
 
-	$row = db_fetch_row($result);
+	$row = db_fetch_row($result) ?: array();
 	return round2($row[0], user_price_dec());
 }
 
@@ -327,7 +327,7 @@ function get_gl_trans_from_to(string|int|float|bool|null $from_date, string|int|
 
 	$result = db_query($sql, "Transactions for account $account could not be calculated");
 
-	$row = db_fetch_row($result);
+	$row = db_fetch_row($result) ?: array();
 	return round2($row[0], user_price_dec());
 }
 
@@ -385,7 +385,7 @@ function get_budget_trans_from_to(string|int|float|bool|null $from_date, string|
   		$sql .= " AND dimension2_id = ".($dimension2<0?0:db_escape($dimension2));
 	$result = db_query($sql,"No budget accounts were returned");
 
-	$row = db_fetch_row($result);
+	$row = db_fetch_row($result) ?: array();
 	return $row[0];
 }
 //-------------------------------------------------------------------------------------
@@ -446,7 +446,7 @@ function get_only_budget_trans_from_to(string|int|float|bool|null $from_date, st
 		 ." AND dimension2_id = ".db_escape($dimension2);
 	$result = db_query($sql,"No budget accounts were returned");
 
-	$row = db_fetch_row($result);
+	$row = db_fetch_row($result) ?: array();
 	return $row[0];
 }
 
@@ -458,7 +458,7 @@ function add_gl_tax_details(string|int|float|bool|null $gl_code, string|int|floa
 	$tax_type = is_tax_account($gl_code);
 	if(!$tax_type) return;	// $gl_code is not tax account
 	
-	$tax = get_tax_type($tax_type);
+	$tax = get_tax_type($tax_type) ?: array();
 	if ($trans_type == ST_SALESINVOICE || $trans_type == ST_CUSTDELIVERY || $trans_type == ST_CUSTCREDIT)
 		$amount = -$amount;
 	// we have to restore net amount as we cannot know the base amount

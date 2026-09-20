@@ -182,7 +182,7 @@ function display_po_header(?purch_order &$order): void
     {
     	/*If this is the first time the form loaded set up defaults */
 
-		$loc_row = get_item_location(get_post('StkLocation'));
+		$loc_row = get_item_location(get_post('StkLocation')) ?: array();
         if ($loc_row)
         {
     	  	$_POST['delivery_address'] = $loc_row["delivery_address"];
@@ -405,7 +405,7 @@ function po_item_controls(purch_order &$order, int|string|null &$rowcounter, str
 		}
 
 		$dec = 0; $_POST['units'] = '';
-    	$item_info = get_item_edit_info($_POST['stock_id']);
+    	$item_info = get_item_edit_info($_POST['stock_id']) ?: array();
     	if ($item_info) {
 			$_POST['units'] = $item_info["units"];
 	   		$dec = $item_info["decimals"];

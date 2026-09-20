@@ -34,7 +34,7 @@ if ($_GET['trans_no'] != "")
 display_heading($systypes_array[ST_WORKORDER] . " # " . $woid);
 
 br(1);
-$myrow = get_work_order($woid);
+$myrow = get_work_order($woid) ?: array();
 
 if ($myrow["type"]  == WO_ADVANCED)
 	display_wo_details($woid, true);

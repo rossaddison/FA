@@ -58,7 +58,7 @@ function months_between_dates(string|int|float|bool|null $start, string|int|floa
 function compute_gl_rows_for_depreciation(bool|array|null $item, string|array|null $no_months, string|int|float|bool|null $period): array {
   $rows = array();
 
-  $year = get_current_fiscalyear();
+  $year = get_current_fiscalyear() ?: array();
   $y = date('Y', strtotime($year['end']));
 
   switch ($item['depreciation_method']) {

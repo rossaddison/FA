@@ -34,12 +34,12 @@ elseif (isset($_POST["trans_no"]))
 
 // 3 different queries to get the information - what a JOKE !!!!
 
-$myrow = get_customer_trans($trans_id, ST_SALESINVOICE);
-$paym = get_payment_terms($myrow['payment_terms']);
+$myrow = get_customer_trans($trans_id, ST_SALESINVOICE) ?: array();
+$paym = get_payment_terms($myrow['payment_terms']) ?: array();
 
-$branch = get_branch($myrow["branch_code"]);
+$branch = get_branch($myrow["branch_code"]) ?: array();
 
-$sales_order = get_sales_order_header($myrow["order_"], ST_SALESORDER);
+$sales_order = get_sales_order_header($myrow["order_"], ST_SALESORDER) ?: array();
 
 if (!empty($SysPrefs->prefs['company_logo_on_views']))
 	company_logo_on_view();

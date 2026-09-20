@@ -133,7 +133,7 @@ if (isset($_POST['AddGLCodeToTrans'])) {
 	}
 	else
 	{
-		$myrow = db_fetch_row($result);
+		$myrow = db_fetch_row($result) ?: array();
 		$gl_act_name = $myrow[1];
 		if (!check_num('amount'))
 		{
@@ -225,7 +225,7 @@ function check_data(): bool
 			{
 				if (check_negative_stock($item->item_code, -$item->this_quantity_inv, null, $_SESSION['supp_trans']->tran_date))
 				{
-					$stock = get_item($item->item_code);
+					$stock = get_item($item->item_code) ?: array();
 					display_error(_("The return cannot be processed because there is an insufficient quantity for item:") .
 						" " . (string)$stock['stock_id'] . " - " . (string)$stock['description'] . " - " .
 						_("Quantity On Hand") . " = " . number_format2(get_qoh_on_date($stock['stock_id'], null, 
