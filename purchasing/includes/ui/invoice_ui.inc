@@ -55,7 +55,7 @@ function copy_to_trans(?supp_trans &$supp_trans): void
 	{
 		foreach ( $supp_trans->grn_items as $grn)
 		{
-			$supp_trans->ov_amount += round2(($grn->this_quantity_inv * $grn->chg_price),
+			$supp_trans->ov_amount += (float)round2(($grn->this_quantity_inv * $grn->chg_price),
 			  user_price_dec());
 		}
 	}
@@ -175,7 +175,7 @@ function invoice_totals(supp_trans &$supp_trans): void
     $taxes = $supp_trans->get_taxes($supp_trans->tax_group_id);
     $tax_total = display_edit_tax_items($taxes, $colspan, $supp_trans->tax_included, 0, true);
 
-    $display_total = price_format($supp_trans->ov_amount + $tax_total);
+    $display_total = price_format((float)$supp_trans->ov_amount + (float)$tax_total);
 	start_row();
 	if ($supp_trans->trans_type == ST_SUPPINVOICE)
     	label_cells(_("Invoice Total:"), 
@@ -321,11 +321,11 @@ function display_gl_items(supp_trans &$supp_trans, string|int|float|bool|items_c
 			end_row();
 			if ($mode > 1) {
 				if ((bool)$supp_trans->tax_included || !(bool)is_tax_account($entered_gl_code->gl_code))
-					$total_gl_value += $entered_gl_code->amount;
+					$total_gl_value += (float)$entered_gl_code->amount;
 			}		
 			else	
-				$total_gl_value += $entered_gl_code->amount;
-			$total += $entered_gl_code->amount;	
+				$total_gl_value += (float)$entered_gl_code->amount;
+			$total += (float)$entered_gl_code->amount;	
 			$i++;
 			if ($i > 15)
 			{
@@ -414,7 +414,7 @@ function display_grn_items_for_selection(supp_trans &$supp_trans, string|int|flo
             else
             {
             	amount_cells(null, 'ChgPrice'.$n, price_decimal_format($myrow["act_price"], $dec2), null, null, $dec2);
-            	amount_cell(round2((float)$myrow["act_price"] * max($myrow['quantity_inv'], 0), user_price_dec()));
+            	amount_cell(round2((float)$myrow["act_price"] * (float)max($myrow['quantity_inv'], 0), user_price_dec()));
             }	
             if ($supp_trans->trans_type == ST_SUPPINVOICE)
         		submit_cells('grn_item_id'.$n, _("Add"), '', _("Add to Invoice"), true);
@@ -546,7 +546,7 @@ function display_grn_items(supp_trans &$supp_trans, ?int $mode=0): int|float
             }
 			qty_cell(abs($entered_grn->this_quantity_inv), true, $dec);
 			amount_decimal_cell($entered_grn->chg_price);
-			amount_cell( round2($entered_grn->chg_price * abs($entered_grn->this_quantity_inv), user_price_dec()), true);
+			amount_cell( round2((float)$entered_grn->chg_price * (float)abs($entered_grn->this_quantity_inv), user_price_dec()), true);
 
 			if ($mode == 1)
 			{
@@ -556,7 +556,7 @@ function display_grn_items(supp_trans &$supp_trans, ?int $mode=0): int|float
 			}	
 			end_row();
 
-    		$total_grn_value += round2($entered_grn->chg_price * abs($entered_grn->this_quantity_inv),
+    		$total_grn_value += (float)round2($entered_grn->chg_price * abs($entered_grn->this_quantity_inv),
 			   user_price_dec());
 
     		$i++;

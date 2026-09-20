@@ -224,7 +224,7 @@ class supp_trans
         foreach ($this->grn_items as $ln_itm) 
         {
         	$items[] = $ln_itm->item_code;
-        	$prices[] =round( ($ln_itm->this_quantity_inv * $ln_itm->chg_price),
+        	$prices[] =round( ((float)$ln_itm->this_quantity_inv * (float)$ln_itm->chg_price),
 				user_price_dec());
         }
 
@@ -270,13 +270,13 @@ class supp_trans
 			$tax_group = null;
 
 		foreach ($this->grn_items as $ln_itm)
-    		$total += round(($ln_itm->this_quantity_inv * $ln_itm->taxfree_charge_price($tax_group_id, $tax_group)),
+    		$total += (float)round(($ln_itm->this_quantity_inv * $ln_itm->taxfree_charge_price($tax_group_id, $tax_group)),
 			 user_price_dec());
 
    		foreach ($this->gl_codes as $gl_line)
    		{
    			if (!(bool)is_tax_account($gl_line->gl_code))
-   				$total += $gl_line->amount;
+   				$total += (float)$gl_line->amount;
    		}
    		return $total;
     }
@@ -288,12 +288,12 @@ class supp_trans
 		$total = 0;
 
 		foreach ($this->grn_items as $ln_itm)
-			$total += round($ln_itm->this_quantity_inv * $ln_itm->chg_price, user_price_dec());
+			$total += (float)round($ln_itm->this_quantity_inv * $ln_itm->chg_price, user_price_dec());
 
 		foreach ($this->gl_codes as $gl_line)
 		{
    			if (!(bool)is_tax_account($gl_line->gl_code) || (bool)$this->tax_included)
-				$total += $gl_line->amount;
+				$total += (float)$gl_line->amount;
 		}
 		return $total;
 	}

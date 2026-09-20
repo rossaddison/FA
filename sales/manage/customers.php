@@ -89,7 +89,7 @@ function handle_submit(&$selected_id): void
 	{
 		update_customer($_POST['customer_id'], $_POST['CustName'], $_POST['cust_ref'], $_POST['address'],
 			$_POST['tax_id'], $_POST['curr_code'], $_POST['dimension_id'], $_POST['dimension2_id'],
-			$_POST['credit_status'], $_POST['payment_terms'], input_num('discount') / 100, input_num('pymt_discount') / 100,
+			$_POST['credit_status'], $_POST['payment_terms'], (float)input_num('discount') / 100.0, (float)input_num('pymt_discount') / 100.0,
 			input_num('credit_limit'), $_POST['sales_type'], $_POST['notes']);
 
 		update_record_status($_POST['customer_id'], $_POST['inactive'],
@@ -104,7 +104,7 @@ function handle_submit(&$selected_id): void
 		begin_transaction();
 		add_customer($_POST['CustName'], $_POST['cust_ref'], $_POST['address'],
 			$_POST['tax_id'], $_POST['curr_code'], $_POST['dimension_id'], $_POST['dimension2_id'],
-			$_POST['credit_status'], $_POST['payment_terms'], input_num('discount') / 100, input_num('pymt_discount') / 100,
+			$_POST['credit_status'], $_POST['payment_terms'], (float)input_num('discount') / 100.0, (float)input_num('pymt_discount') / 100.0,
 			input_num('credit_limit'), $_POST['sales_type'], $_POST['notes']);
 
 		$selected_id = $_POST['customer_id'] = db_insert_id();
@@ -219,8 +219,8 @@ function customer_settings(string|int|float|bool|array|null $selected_id): void
 		$_POST['curr_code']  = $myrow["curr_code"];
 		$_POST['credit_status']  = $myrow["credit_status"];
 		$_POST['payment_terms']  = $myrow["payment_terms"];
-		$_POST['discount']  = percent_format((float)$myrow["discount"] * 100);
-		$_POST['pymt_discount']  = percent_format((float)$myrow["pymt_discount"] * 100);
+		$_POST['discount']  = percent_format((float)$myrow["discount"] * 100.0);
+		$_POST['pymt_discount']  = percent_format((float)$myrow["pymt_discount"] * 100.0);
 		$_POST['credit_limit']	= price_format($myrow["credit_limit"]);
 		$_POST['notes']  = $myrow["notes"];
 		$_POST['inactive'] = $myrow["inactive"];

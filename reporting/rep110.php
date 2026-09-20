@@ -109,16 +109,16 @@ function print_deliveries(): void
 				if ($myrow2["quantity"] == 0)
 					continue;
 
-				$Net = round2(((1 - (float)$myrow2["discount_percent"]) * (float)$myrow2["unit_price"] * (float)$myrow2["quantity"]),
+				$Net = round2(((1.0 - (float)$myrow2["discount_percent"]) * (float)$myrow2["unit_price"] * (float)$myrow2["quantity"]),
 				   user_price_dec());
-				$SubTotal += $Net;
+				$SubTotal += (float)$Net;
 	    		$DisplayPrice = number_format2($myrow2["unit_price"],$dec);
 	    		$DisplayQty = number_format2($myrow2["quantity"],get_qty_dec($myrow2['stock_id']));
 	    		$DisplayNet = number_format2($Net,$dec);
 	    		if ($myrow2["discount_percent"]==0)
 		  			$DisplayDiscount ="";
 	    		else
-		  			$DisplayDiscount = number_format2((float)$myrow2["discount_percent"]*100,user_percent_dec()) . "%";
+		  			$DisplayDiscount = number_format2((float)$myrow2["discount_percent"]*100.0,user_percent_dec()) . "%";
 				$rep->TextCol(0, 1,	$myrow2['stock_id'], -2);
 				$oldrow = $rep->row;
 				$rep->TextColLines(1, 2, $myrow2['StockDescription'], -2);

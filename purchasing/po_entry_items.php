@@ -233,7 +233,7 @@ function check_data(): bool
 	}
 
 	$dec = get_qty_dec(post_scalar('stock_id'));
-	$min = 1 / pow(10, $dec);
+	$min = 1.0 / (float)pow(10, $dec);
     if (!check_num('qty',$min))
     {
     	$min = number_format2($min, $dec);

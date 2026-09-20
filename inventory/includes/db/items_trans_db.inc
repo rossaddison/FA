@@ -47,7 +47,7 @@ function stock_cost_update(string|array|null $stock_id, int|float|bool|null $mat
 
 	if ($qoh > 0)
 	{
-		$new_cost = $material_cost + $labour_cost + $overhead_cost;
+		$new_cost = (float)$material_cost + (float)$labour_cost + $overhead_cost;
 
 		$value_of_change = round2($qoh * ($new_cost - $last_cost), user_price_dec());
 

@@ -51,7 +51,7 @@ function get_calculated_price(string|int|float|bool|null $stock_id, string|int|f
 	$avg = get_unit_cost($stock_id);
 	if ($avg == 0)
 		return 0;
-	return round2($avg * (1 + $add_pct / 100), user_price_dec());
+	return round2($avg * (1.0 + (float)($add_pct / 100)), user_price_dec());
 }
 
 /** @return 0|float */
@@ -65,9 +65,9 @@ function round_to_nearest(string|int|float|bool|null $price, string|int|float|bo
 	else
 		$mod = ($round_to % $pow);
 	if ($mod != 0)
-		$price = ceil($price) - ($pow - $round_to) / $pow;
+		$price = (float)ceil($price) - (float)(((float)($pow - $round_to)) / (float)$pow);
 	else	
-    	$price = ceil($price * ($pow / $round_to)) / ($pow / $round_to);
+    	$price = (float)ceil($price * ($pow / $round_to)) / ((float)($pow / $round_to));
     return $price;
 
 }
@@ -123,7 +123,7 @@ function get_price (string|int|float|bool|array|null $stock_id, string|int|float
 	{
 		$price = get_calculated_price($stock_id, $add_pct);
 		if ($currency != $home_curr)
-			$price /= $rate;
+			$price /= (float)$rate;
 		if ($factor != 0)
 			$price *= $factor;
 	}	

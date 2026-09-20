@@ -75,7 +75,7 @@ function alloc_link(array|false|null $row): string
 
 function amount_left(array|false|null $row): string
 {
- 	return price_format($row['type'] == ST_JOURNAL ?  abs($row["Total"])-(float)$row["alloc"] : -$row["Total"]-(float)$row["alloc"]);
+ 	return price_format($row['type'] == ST_JOURNAL ?  (float)abs($row["Total"])-(float)$row["alloc"] : (float)(-$row["Total"])-(float)$row["alloc"]);
 }
 
 function amount_total(array|false|null $row): string

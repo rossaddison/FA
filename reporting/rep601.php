@@ -142,12 +142,12 @@ function print_bank_transactions(): void
 					if ($myrow['amount'] > 0.0)
 					{
 						$rep->AmountCol(5, 6, abs($myrow['amount']), $dec);
-						$total_debit += abs($myrow['amount']);
+						$total_debit += (float)abs($myrow['amount']);
 					}
 					else
 					{
 						$rep->AmountCol(6, 7, abs($myrow['amount']), $dec);
-						$total_credit += abs($myrow['amount']);
+						$total_credit += (float)abs($myrow['amount']);
 					}
 					$rep->AmountCol(7, 8, $total, $dec);
 					$rep->NewLine();

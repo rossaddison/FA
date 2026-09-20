@@ -54,7 +54,7 @@ if (isset($_POST['UpdateData']))
 {
 	$old_cost = get_unit_cost($_POST['stock_id']);
 
-   	$new_cost = input_num('material_cost') + input_num('labour_cost')
+   	$new_cost = (float)input_num('material_cost') + (float)input_num('labour_cost')
 	     + input_num('overhead_cost');
 
    	$should_update = true;

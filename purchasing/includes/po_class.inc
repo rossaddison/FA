@@ -234,7 +234,7 @@ class purch_order
 
 		foreach ($this->line_items as $ln_itm) {
 			$items[] = $ln_itm->stock_id;
-			$prices[] = round($ln_itm->price * ($receival ? $ln_itm->receive_qty : $ln_itm->quantity),  user_price_dec());
+			$prices[] = round((float)$ln_itm->price * ((float)($receival ? $ln_itm->receive_qty : $ln_itm->quantity)),  user_price_dec());
 		}
 		$taxes = get_tax_for_items($items, $prices, $shipping_cost,
 		  $this->tax_group_id, $this->tax_included,  $this->tax_group_array);
@@ -263,9 +263,9 @@ class purch_order
 
 		foreach ($this->line_items as $ln_itm) {
 			$items[] = $ln_itm->stock_id;
-			$value = round($ln_itm->quantity * $ln_itm->price, $dec);
+			$value = round((float)$ln_itm->quantity * (float)$ln_itm->price, $dec);
 			$prices[] =$value;
-			$total += $value;
+			$total += (float)$value;
 		}
 
 		if (!(bool)$this->tax_included ) {
@@ -273,7 +273,7 @@ class purch_order
 			$this->tax_included,  $this->tax_group_array);
 
 			foreach($taxes as $tax)
-				$total += round($tax['Value'], $dec);
+				$total += (float)round($tax['Value'], $dec);
 		}
 		return $total;
 	}
@@ -377,7 +377,7 @@ class po_line_details
 	 */
 	function taxfree_charge_value($po)
 	{
-		return get_tax_free_price_for_item($this->stock_id, $this->receive_qty*$this->price,
+		return get_tax_free_price_for_item($this->stock_id, (float)$this->receive_qty*(float)$this->price,
 		  $po->tax_group_id, $po->tax_included, $po->tax_group_array);
 	}
 }

@@ -99,9 +99,9 @@ if (db_num_rows($result) > 0)
 		if ($myrow2["quantity"] == 0) continue;
 		alt_table_row_color($k);
 
-		$value = round2(((1 - (float)$myrow2["discount_percent"]) * (float)$myrow2["unit_price"] * (float)$myrow2["quantity"]),
+		$value = round2(((1.0 - (float)$myrow2["discount_percent"]) * (float)$myrow2["unit_price"] * (float)$myrow2["quantity"]),
 		   user_price_dec());
-		$sub_total += $value;
+		$sub_total += (float)$value;
 
 		if ($myrow2["discount_percent"] == 0)
 		{
@@ -109,7 +109,7 @@ if (db_num_rows($result) > 0)
 		}
 		else
 		{
-		   $display_discount = percent_format((float)$myrow2["discount_percent"]*100) . "%";
+		   $display_discount = percent_format((float)$myrow2["discount_percent"]*100.0) . "%";
 		}
 
 		label_cell($myrow2["stock_id"]);

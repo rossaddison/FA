@@ -236,7 +236,7 @@ function check_trans(): int
 
 	if ($limit !== null && floatcmp($limit, -$amnt_chg) < 0)
 	{
-		display_error(sprintf(_("The total bank amount exceeds allowed limit (%s)."), price_format($limit-session_obj('pay_items')->original_amount)));
+		display_error(sprintf(_("The total bank amount exceeds allowed limit (%s)."), price_format((float)$limit-(float)session_obj('pay_items')->original_amount)));
 		set_focus('code_id');
 		$input_error = 1;
 	}
@@ -344,7 +344,7 @@ function check_item_data(): bool
 
 function handle_update_item(): void
 {
-	$amount = (session_obj('pay_items')->trans_type==ST_BANKPAYMENT ? 1:-1) * input_num('amount');
+	$amount = ((float)(session_obj('pay_items')->trans_type==ST_BANKPAYMENT ? 1:-1)) * (float)input_num('amount');
     if($_POST['UpdateItem'] != "" && check_item_data())
     {
     	session_obj('pay_items')->update_gl_item($_POST['Index'], $_POST['code_id'], 
@@ -367,7 +367,7 @@ function handle_new_item(): void
 {
 	if (!check_item_data())
 		return;
-	$amount = (session_obj('pay_items')->trans_type==ST_BANKPAYMENT ? 1:-1) * input_num('amount');
+	$amount = ((float)(session_obj('pay_items')->trans_type==ST_BANKPAYMENT ? 1:-1)) * (float)input_num('amount');
 
 	session_obj('pay_items')->add_gl_item($_POST['code_id'], $_POST['dimension_id'],
 		$_POST['dimension2_id'], $amount, $_POST['LineMemo']);

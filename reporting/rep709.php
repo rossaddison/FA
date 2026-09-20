@@ -174,22 +174,22 @@ function print_tax_report(): void
 		}
 		$tax_type = $trans['tax_type_id'];
 		if ($trans['trans_type']==ST_JOURNAL && $trans['reg_type']==TR_INPUT) {
-			$taxes[$tax_type]['taxin'] += $trans['amount'];
-			$taxes[$tax_type]['in'] += $trans['net_amount'];
+			$taxes[$tax_type]['taxin'] += (float)$trans['amount'];
+			$taxes[$tax_type]['in'] += (float)$trans['net_amount'];
 		}
 		elseif ($trans['trans_type']==ST_JOURNAL && $trans['reg_type']==TR_OUTPUT) {
-			$taxes[$tax_type]['taxout'] += $trans['amount'];
-			$taxes[$tax_type]['out'] += $trans['net_amount'];
+			$taxes[$tax_type]['taxout'] += (float)$trans['amount'];
+			$taxes[$tax_type]['out'] += (float)$trans['net_amount'];
 		}
 		elseif (in_array($trans['trans_type'], array(ST_BANKDEPOSIT,ST_SALESINVOICE,ST_CUSTCREDIT))) {
-			$taxes[$tax_type]['taxout'] += $trans['amount'];
-			$taxes[$tax_type]['out'] += $trans['net_amount'];
+			$taxes[$tax_type]['taxout'] += (float)$trans['amount'];
+			$taxes[$tax_type]['out'] += (float)$trans['net_amount'];
 		} elseif ($trans['reg_type'] !== NULL) {
-			$taxes[$tax_type]['taxin'] += $trans['amount'];
-			$taxes[$tax_type]['in'] += $trans['net_amount'];
+			$taxes[$tax_type]['taxin'] += (float)$trans['amount'];
+			$taxes[$tax_type]['in'] += (float)$trans['net_amount'];
 		}
-		$totalnet += $trans['net_amount'];
-		$totaltax += $trans['amount'];
+		$totalnet += (float)$trans['net_amount'];
+		$totaltax += (float)$trans['amount'];
 	}
 	
 	// Summary
@@ -222,7 +222,7 @@ function print_tax_report(): void
 		$rep->AmountCol(3, 4, $sum['in'], $dec);
 		$rep->AmountCol(4, 5, $sum['taxin'], $dec); 
 		$rep->AmountCol(5, 6, (float)$sum['taxout']+(float)$sum['taxin'], $dec);
-		$taxtotal += (float)$sum['taxout']+(float)$sum['taxin'];
+		$taxtotal += (float)((float)$sum['taxout']+(float)$sum['taxin']);
 		$rep->NewLine();
 	}
 

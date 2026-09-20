@@ -146,7 +146,7 @@ function print_statements(): void
 		{
 			$DisplayTotal = number_format2(Abs($myrow2["TotalAmount"]),$dec);
 			$DisplayAlloc = number_format2($myrow2["Allocated"],$dec);
-			$DisplayNet = number_format2(Abs($myrow2["TotalAmount"]) - (float)$myrow2["Allocated"],$dec);
+			$DisplayNet = number_format2((float)Abs($myrow2["TotalAmount"]) - (float)$myrow2["Allocated"],$dec);
 
 			$rep->TextCol(0, 1, $systypes_array[$myrow2['type']], -2);
 			$rep->TextCol(1, 2,	$myrow2['reference'], -2);

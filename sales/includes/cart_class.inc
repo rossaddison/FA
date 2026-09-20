@@ -226,7 +226,7 @@ class Cart
 			$line = &$this->line_items[$line_no];
 			$line->src_id = $line->id; // save src line ids for update
 			$line->qty_dispatched = $type == ST_CUSTCREDIT ? '0' : 
-				 (($this->prepaid && $type == ST_SALESINVOICE) ? $line->quantity : $line->quantity - $line->qty_done);
+				 (($this->prepaid && $type == ST_SALESINVOICE) ? $line->quantity : (float)$line->quantity - (float)$line->qty_done);
 			$line->qty_old = 0;
 		}
 		unset($line);
@@ -273,8 +273,8 @@ class Cart
 				if ($this->trans_type == ST_SALESINVOICE)
 					$line->src_no = $srcline['debtor_trans_no'];
 				$line->qty_old = $line->qty_dispatched = $line->quantity;
-				$line->quantity += (float)$srcline['quantity'] - 
-					($src_type==ST_SALESORDER ? $srcline['qty_sent'] : $srcline['qty_done']); // add free qty on src doc
+				$line->quantity += (float)((float)$srcline['quantity'] - 
+					($src_type==ST_SALESORDER ? $srcline['qty_sent'] : $srcline['qty_done'])); // add free qty on src doc
 				$line_no++;
 			}
 		}
@@ -585,7 +585,7 @@ class Cart
 
 		foreach ($this->line_items as $ln_itm) {
 			$price = $ln_itm->line_price();
-			$total += round($ln_itm->quantity * $price * (1 - $ln_itm->discount_percent), 
+			$total += (float)round($ln_itm->quantity * $price * (1 - $ln_itm->discount_percent), 
 			   user_price_dec());
 		}
 		return $total;
@@ -598,7 +598,7 @@ class Cart
 
 		foreach ($this->line_items as $ln_itm) {
 			$price = $ln_itm->line_price();
-			$total += round(($ln_itm->qty_dispatched * $price * (1 - $ln_itm->discount_percent)), 
+			$total += (float)round(($ln_itm->qty_dispatched * $price * (1 - $ln_itm->discount_percent)), 
 			   user_price_dec());
 		}
 		return $total;
@@ -661,7 +661,7 @@ class Cart
 			$items[] = $ln_itm->stock_id;
 			$prices[] = round(((
 				$this->trans_type==ST_SALESORDER ? 	$ln_itm->quantity : $ln_itm->qty_dispatched) *
-				$ln_itm->line_price()* (1 - $ln_itm->discount_percent)),  user_price_dec());
+				$ln_itm->line_price()* (1.0 - (float)$ln_itm->discount_percent)),  user_price_dec());
 		}
 
 		$taxes = get_tax_for_items($items, $prices, $shipping_cost,
@@ -683,7 +683,7 @@ class Cart
 		if ($this->tax_included==0)
 			return $this->freight_cost;
 		else
-			return ($this->freight_cost - $this->get_shipping_tax());
+			return ((float)$this->freight_cost - (float)$this->get_shipping_tax());
 	}
 
 	/** @return float */
@@ -701,21 +701,21 @@ class Cart
 			}
 		}
 		if((bool)$this->tax_included)
-			return round($this->freight_cost*$tax_rate/($tax_rate+100),  user_price_dec());
+			return round((float)$this->freight_cost*(float)$tax_rate/($tax_rate+100),  user_price_dec());
 		else
-			return round($this->freight_cost*$tax_rate/100,  user_price_dec());
+			return round((float)$this->freight_cost*(float)$tax_rate/100,  user_price_dec());
 	}
 	/*
 		Returns transaction value including all taxes
 	*/
 	function get_trans_total() {
 		
-		$total = $this->get_items_total() + $this->freight_cost;
+		$total = (float)$this->get_items_total() + (float)$this->freight_cost;
 		$dec = user_price_dec();
 		if (!(bool)$this->tax_included ) {
 			$taxes = $this->get_taxes();
 			foreach($taxes as $tax)
-				$total += round($tax['Value'], $dec);
+				$total += (float)round($tax['Value'], $dec);
 		}
 
 		return $total;
@@ -742,7 +742,7 @@ class Cart
 				if (!$this->trans_no) // new delivery
 					$qtys[$line_item->stock_id]['qty'] = $line_item->qty_dispatched + @$qtys[$line_item->stock_id]['qty'];
 				else	// DN modification: check change in quantity
-					$qtys[$line_item->stock_id]['qty'] = ($line_item->qty_dispatched-$line_item->qty_old) + @$qtys[$line_item->stock_id]['qty'];
+					$qtys[$line_item->stock_id]['qty'] = ((float)$line_item->qty_dispatched-(float)$line_item->qty_old) + @$qtys[$line_item->stock_id]['qty'];
 				$qtys[$line_item->stock_id]['line'] = $line_no;
 			}
 		}

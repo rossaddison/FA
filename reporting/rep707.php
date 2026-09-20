@@ -80,8 +80,8 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 			$rep->NewPage();
 		}
 
-		$code_per_balance += $per_balance;
-		$code_acc_balance += $acc_balance;
+		$code_per_balance += (float)$per_balance;
+		$code_acc_balance += (float)$acc_balance;
 	}
 		
 	//Get Account groups/types under this group/type
@@ -143,7 +143,7 @@ function Achieve(string|int|float|bool|null $d1, string|int|float|bool|null $d2)
 		return 0;
 	elseif ($d2 == 0)
 		return 999;
-	$ret = ($d1 / $d2 * 100.0);
+	$ret = ((float)$d1 / (float)$d2 * 100.0);
 	if ($ret > 999)
 		$ret = 999;
 	return $ret;
@@ -315,8 +315,8 @@ function print_profit_and_loss_statement(): void
 	
 	$rep->Font('bold');	
 	$rep->TextCol(0, 2,	_('Calculated Return'));
-	$rep->AmountCol(2, 3, $salesper *-1, $dec); // always convert
-	$rep->AmountCol(3, 4, $salesacc * -1, $dec);
+	$rep->AmountCol(2, 3, (float)$salesper *(float)(-1), $dec); // always convert
+	$rep->AmountCol(3, 4, (float)$salesacc * (float)(-1), $dec);
 	$rep->AmountCol(4, 5, Achieve($salesper, $salesacc), $pdec);
 	$rep->Font();
 	$rep->NewLine();
@@ -338,8 +338,8 @@ function print_profit_and_loss_statement(): void
 		$pg->latin_notation = (sysprefs()->decseps[user_dec_sep()] != ".");
 		$filename = company_path(). "/pdf_files/". random_id().".png";
 		$pg->display($filename, true);
-		$w = $pg->width / 1.5;
-		$h = $pg->height / 1.5;
+		$w = (float)$pg->width / 1.5;
+		$h = (float)$pg->height / 1.5;
 		$x = ($rep->pageWidth - $w) / 2;
 		$rep->NewLine(2);
 		if ($rep->row - $h < $rep->bottomMargin)

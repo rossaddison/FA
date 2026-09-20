@@ -92,7 +92,7 @@ function print_gl_rows(FrontReport &$rep, string|bool|mysqli_result|null $result
 			if ($myrow['amount'] > 0.0)
 				$rep->AmountCol(5, 6, $myrow['amount'], $dec);
 			else	
-				$rep->AmountCol(6, 7, (float)$myrow['amount'] * -1, $dec, -1);
+				$rep->AmountCol(6, 7, (float)$myrow['amount'] * (float)(-1), $dec, -1);
 			$rep->TextCol(8, 11, $myrow['memo_']);
 		}
 	}

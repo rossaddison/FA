@@ -146,9 +146,9 @@ function create_cart(string|int|array|null $type=0, string|int|array|null $trans
 			$net_sum = 0;
 			foreach($cart->gl_items as $gl)
                 if (!(bool)is_tax_account($gl->code_id) && !(bool)is_subledger_account($gl->code_id))
-					$net_sum += $gl->amount;
+					$net_sum += (float)$gl->amount;
 
-			$ex_net = abs($net_sum) - array_sum($tax_info['net_amount']);
+			$ex_net = (float)abs($net_sum) - (float)array_sum($tax_info['net_amount']);
 			if ($ex_net > 0)
 				$tax_info['net_amount_ex'] = $ex_net;
 		}
@@ -276,7 +276,7 @@ if (isset($_POST['Process']))
 			while ($tax = db_fetch($taxes))
 			{
 				$tax_id = $tax['id'];
-				$net_amount += input_num('net_amount_'.$tax_id);
+				$net_amount += (float)input_num('net_amount_'.$tax_id);
 			}
 			// in case no tax account used we have to guss tax register on customer/supplier used.
 			if ($net_amount && !session_obj('journal_items')->has_taxes() && !session_obj('journal_items')->has_sub_accounts())

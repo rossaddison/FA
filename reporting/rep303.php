@@ -74,7 +74,7 @@ function barcode_check(?string $code, bool $return_value = false, bool $get_type
 		
 		$calc = 0;
 		for ($i = 0; $i < (strlen($code) - 1); $i++)
-			$calc += ($i % 2 ? $code[$i] * 1 :  $code[$i] * 3);
+			$calc += ((float)($i % 2 ? $code[$i] * 1 :  $code[$i] * 3));
 
 		if (substr(10 - (substr($calc, -1)), -1) != substr($code, -1))
 			return false;

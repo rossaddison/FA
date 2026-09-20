@@ -53,10 +53,10 @@ $overdue_items = false;
 foreach ($purchase_order->line_items as $stock_item)
 {
 
-	$line_total = $stock_item->quantity * $stock_item->price;
+	$line_total = (float)$stock_item->quantity * (float)$stock_item->price;
 
 	// if overdue and outstanding quantities, then highlight as so
-	if (($stock_item->quantity - $stock_item->qty_received > 0)	&&
+	if (((float)$stock_item->quantity - (float)$stock_item->qty_received > 0)	&&
 		date1_greater_date2(Today(), $stock_item->req_del_date))
 	{
     	start_row("class='overduebg'");
@@ -79,7 +79,7 @@ foreach ($purchase_order->line_items as $stock_item)
 	qty_cell($stock_item->qty_inv, false, $dec);
 	end_row();
 
-	$total += $line_total;
+	$total += (float)$line_total;
 }
 
 $display_sub_tot = number_format2($total,user_price_dec());
@@ -89,7 +89,7 @@ label_row(_("Sub Total"), $display_sub_tot,
 $taxes = $purchase_order->get_taxes();
 $tax_total = display_edit_tax_items($taxes, 6, $purchase_order->tax_included,2);
 
-$display_total = price_format(($total + $tax_total));
+$display_total = price_format(((float)$total + (float)$tax_total));
 
 start_row();
 label_cells(_("Amount Total"), $display_total, "colspan=6 align='right'","align='right'");
@@ -161,7 +161,7 @@ echo "</td></tr>";
 
 end_table(1); // outer table
 
-display_allocations_to(PT_SUPPLIER, $purchase_order->supplier_id, ST_PURCHORDER, $purchase_order->order_no, $total + $tax_total);
+display_allocations_to(PT_SUPPLIER, $purchase_order->supplier_id, ST_PURCHORDER, $purchase_order->order_no, (float)$total + (float)$tax_total);
 
 //----------------------------------------------------------------------------------------------------
 

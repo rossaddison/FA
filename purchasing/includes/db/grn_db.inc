@@ -132,8 +132,8 @@ function add_grn(purch_order &$po)
 				$order_line->item_description); 
 
 			/*Need to insert a grn item */ // also need to check for over-receive.(within allowance)
-			if ($order_line->receive_qty + $order_line->qty_received > $order_line->quantity)
-				$order_line->quantity = $order_line->receive_qty + $order_line->qty_received;
+			if ((float)$order_line->receive_qty + (float)$order_line->qty_received > $order_line->quantity)
+				$order_line->quantity = (float)$order_line->receive_qty + (float)$order_line->qty_received;
 			$grn_item = add_grn_detail_item($grn, $order_line->po_detail_rec,
 				$order_line->stock_id, $order_line->item_description,
 				$order_line->standard_cost,	$order_line->receive_qty, $order_line->price, $order_line->quantity);

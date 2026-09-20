@@ -195,7 +195,7 @@ function check_valid_entries(string|int|float|bool|array|null $trans_no): bool
 
 	$limit = get_bank_account_limit($_POST['FromBankAccount'], $_POST['DatePaid']);
 
-	$amnt_tr = input_num('charge') + input_num('amount');
+	$amnt_tr = (float)input_num('charge') + (float)input_num('amount');
 
 	$problemTransaction = null;
 	if ((bool)$trans_no) {

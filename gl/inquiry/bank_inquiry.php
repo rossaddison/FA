@@ -135,7 +135,7 @@ label_cell(_("Ending Balance")." - ". (string)$_POST['TransToDate'], "colspan=4"
 amount_cell($debit);
 amount_cell(-$credit);
 //display_debit_or_credit_cells($running_total);
-amount_cell($debit+$credit);
+amount_cell((float)$debit+(float)$credit);
 label_cell("", "colspan=4");
 end_row();
 end_table(2);

@@ -254,7 +254,7 @@ function days_in_month(string|int|float|bool|null $month, string|int|float|bool|
 	}
 	elseif (sysprefs()->date_system == 2)
 	{
-		$days_in_month = array(30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, (((((11 * $year) + 14) % 30) < 11) ? 30 : 29));
+		$days_in_month = array(30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, ((((((float)(11 * $year)) + 14.0) % 30) < 11) ? 30 : 29));
 	}
 	else // gregorian date
 		$days_in_month = array(31, ((!($year % 4 ) && (($year % 100) || !($year % 400)))?29:28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
@@ -394,7 +394,7 @@ and converts to a yyyy/mm/dd format */
 		global $tmonths;
 		$month = array_search($month, $tmonths);
 	}
-	if ($year+$day+$month) {
+	if ((float)$year+(float)$day+$month) {
 		//to modify assumption in 2030
 		if (sysprefs()->date_system == 0 || sysprefs()->date_system == 3)
 		{
@@ -513,7 +513,7 @@ provided that both dates are after 1970. Also only works for dates up to the yea
 		case "s":
 			return $difference;
 		case "y":
-			return (int)($difference / (24 * 60 * 60 * 365.25));
+			return (int)((float)$difference / ((float)(24 * 60 * 60 * 365.25)));
 		default:
 			Return 0;
 	}
@@ -549,7 +549,7 @@ function gregorian_to_jalali (string|int|float|bool|null $g_y, string|int|float|
    	$gm = $g_m - 1;
    	$gd = $g_d - 1;
 
-   	$g_day_no = 365 * $gy + div($gy + 3, 4) - div($gy + 99, 100) + div($gy + 399, 400);
+   	$g_day_no = 365.0 * (float)$gy + div((float)$gy + 3.0, 4) - div((float)$gy + 99.0, 100) + div((float)$gy + 399.0, 400);
 
    	for ($i = 0; $i < $gm; ++$i)
       	$g_day_no += $g_days_in_month[$i];
@@ -590,7 +590,7 @@ function jalali_to_gregorian(string|int|float|bool|null $j_y, string|int|float|b
    	$jm = $j_m - 1;
    	$jd = $j_d - 1;
 
-   	$j_day_no = 365 * $jy + div($jy, 33) * 8 + div($jy % 33 + 3, 4);
+   	$j_day_no = 365.0 * (float)$jy + div($jy, 33) * 8 + div((float)($jy % 33) + 3.0, 4);
    	for ($i = 0; $i < $jm; ++$i)
       	$j_day_no += $j_days_in_month[$i];
 
@@ -644,24 +644,24 @@ function gregorian_to_islamic(string|int|float|bool|null $g_y, string|int|float|
 	if (($y > 1582) || (($y == 1582) && ($m > 10)) || (($y == 1582) && 
 		($m == 10) && ($d > 14))) 
 	{
-		$jd = (int)((1461 * ($y + 4800 + (int)(($m - 14) / 12)))/ 4) + 
-			(int)((367 * ($m - 2 - 12 * ((int)(($m - 14) / 12)))) / 12) - 
-			(int)((3 * ((int)(($y + 4900 + (int)(($m - 14) / 12)) / 100))) / 4) + $d - 32075;
+		$jd = (float)((int)((1461 * ($y + 4800 + (int)(($m - 14) / 12)))/ 4)) + 
+			(float)((int)((367 * ($m - 2 - 12 * ((int)(($m - 14) / 12)))) / 12)) - 
+			(int)((3 * ((int)(((float)((float)$y + 4900.0 + (int)(((float)($m - 14)) / 12.0))) / 100.0))) / 4) + $d - 32075;
 	} 
 	else 
 	{
-		$jd = 367 * $y - (int)((7 * ($y + 5001 + (int)(($m - 9) / 7))) / 4) + 
-			(int)((275 * $m) / 9) + $d + 1729777;
+		$jd = 367.0 * (float)$y - (int)(((float)(7.0 * ((float)((float)$y + 5001.0 + (int)(((float)($m - 9)) / 7.0))))) / 4.0) + 
+			(int)(((float)(275 * $m)) / 9.0) + $d + 1729777;
 	}
-	$l = $jd - 1948440 + 10632;
-	$n = (int)(($l - 1) / 10631);
-	$l = $l - 10631 * $n + 354;
-	$j = ((int)((10985 - $l) / 5316)) * ((int)((50 * $l) / 17719)) + 
-		((int)($l / 5670)) * ((int)((43 * $l) / 15238));
-	$l = $l - ((int)((30 - $j) / 15)) * ((int)((17719 * $j) / 50)) - 
+	$l = (float)$jd - 1948440.0 + 10632;
+	$n = (int)(((float)((float)$l - 1.0)) / 10631.0);
+	$l = (float)$l - (float)(10631 * $n) + 354;
+	$j = ((int)(((float)(10985.0 - (float)$l)) / 5316.0)) * ((int)(((float)(50.0 * (float)$l)) / 17719.0)) + 
+		((int)((float)$l / 5670.0)) * ((int)(((float)(43.0 * (float)$l)) / 15238.0));
+	$l = (float)$l - (float)(((int)((30 - $j) / 15)) * ((int)((17719 * $j) / 50))) - 
 		((int)($j / 16)) * ((int)((15238 * $j) / 43)) + 29;
-	$m = (int)((24 * $l) / 709);
-	$d = $l - (int)((709 * $m) / 24);
+	$m = (int)(((float)(24.0 * (float)$l)) / 709.0);
+	$d = (float)$l - (float)((int)((709 * $m) / 24));
 	$y = 30 * $n + $j - 30;
 	return array($y, $m, $d);
 }
@@ -673,29 +673,29 @@ function islamic_to_gregorian(string|int|float|bool|null $i_y, string|int|float|
 	$m = $i_m;
 	$d = $i_d;
 
-	$jd = (int)((11 * $y + 3) / 30) + 354 * $y + 30 * $m - (int)(($m - 1) / 2) + $d + 1948440 - 385;
+	$jd = (float)((int)((11 * $y + 3) / 30)) + (float)(354 * $y) + 30 * $m - (int)(((float)($m - 1)) / 2.0) + $d + 1948440 - 385;
 	if ($jd > 2299160)
 	{
-		$l = $jd + 68569;
-		$n = (int)((4 * $l) / 146097);
-		$l = $l - (int)((146097 * $n + 3) / 4);
-		$i = (int)((4000 * ($l + 1)) / 1461001);
-		$l = $l - (int)((1461 * $i) / 4) + 31;
-		$j = (int)((80 * $l) / 2447);
-		$d = $l - (int)((2447 * $j) / 80);
+		$l = (float)$jd + 68569.0;
+		$n = (int)(((float)(4.0 * (float)$l)) / 146097.0);
+		$l = (float)$l - (float)((int)((146097 * $n + 3) / 4));
+		$i = (int)(((float)(4000.0 * ((float)((float)$l + 1.0)))) / 1461001.0);
+		$l = (float)$l - (float)((int)((1461 * $i) / 4)) + 31;
+		$j = (int)(((float)(80.0 * (float)$l)) / 2447.0);
+		$d = (float)$l - (float)((int)((2447 * $j) / 80));
 		$l= (int)($j / 11);
 		$m = $j + 2 - 12 * $l;
 		$y = 100 * ($n - 49) + $i + $l;
 	} 
 	else 
 	{
-		$j = $jd + 1402;
-		$k = (int)(($j - 1) / 1461);
-		$l = $j - 1461 * $k;
-		$n = (int)(($l - 1) / 365) - (int)($l / 1461);
-		$i = $l - 365 * $n + 30;
-		$j = (int)((80 * $i) / 2447);
-		$d = $i - (int)((2447 * $j) / 80);
+		$j = (float)$jd + 1402.0;
+		$k = (int)(((float)((float)$j - 1.0)) / 1461.0);
+		$l = (float)$j - (float)(1461 * $k);
+		$n = (int)(((float)((float)$l - 1.0)) / 365.0) - (int)((float)$l / 1461.0);
+		$i = (float)$l - (float)(365 * $n) + 30;
+		$j = (int)(((float)(80.0 * (float)$i)) / 2447.0);
+		$d = (float)$i - (float)((int)((2447 * $j) / 80));
 		$i = (int)($j / 11);
 		$m = $j + 2 - 12 * $i;
 		$y = 4 * $k + $n + $i - 4716;

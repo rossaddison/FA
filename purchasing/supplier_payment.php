@@ -73,7 +73,7 @@ if (!isset($_POST['bank_account'])) { // first page call
 			$_POST['memo_'] = $inv['supp_reference'];
 			foreach(session_obj('alloc')->allocs as $line => $trans) {
 				if ($trans->type == $_GET['trans_type'] && $trans->type_no == $_GET['PInvoice']) {
-					$un_allocated = abs($trans->amount) - $trans->amount_allocated;
+					$un_allocated = (float)abs($trans->amount) - (float)$trans->amount_allocated;
 					session_obj('alloc')->amount = session_obj('alloc')->allocs[$line]->current_allocated = $un_allocated;
 					$_POST['amount'] = $_POST['amount'.$line] = price_format($un_allocated);
 					break;

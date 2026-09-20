@@ -293,10 +293,10 @@ function display_credit_items(): void
     	label_cell($ln_itm->units);
 		amount_cells(null, 'Line'.$line_no, number_format2($ln_itm->qty_dispatched, $dec),
 			null, null, $dec);
-    	$line_total =($ln_itm->qty_dispatched * $ln_itm->price * (1 - $ln_itm->discount_percent));
+    	$line_total =((float)$ln_itm->qty_dispatched * (float)$ln_itm->price * (1.0 - (float)$ln_itm->discount_percent));
 
     	amount_cell($ln_itm->price);
-    	percent_cell($ln_itm->discount_percent*100);
+    	percent_cell((float)$ln_itm->discount_percent*100.0);
     	amount_cell($line_total);
     	end_row();
     }
@@ -312,14 +312,14 @@ function display_credit_items(): void
 
     $inv_items_total = session_obj('Items')->get_items_total_dispatch();
 
-    $display_sub_total = price_format($inv_items_total + input_num(post_scalar('ChargeFreightCost')));
+    $display_sub_total = price_format((float)$inv_items_total + (float)input_num(post_scalar('ChargeFreightCost')));
     label_row(_("Sub-total"), $display_sub_total, "colspan=$colspan align=right", "align=right");
 
     $taxes = session_obj('Items')->get_taxes(input_num(post_scalar('ChargeFreightCost')));
 
     $tax_total = display_edit_tax_items($taxes, $colspan, session_obj('Items')->tax_included);
 
-    $display_total = price_format(($inv_items_total + input_num('ChargeFreightCost') + $tax_total));
+    $display_total = price_format(((float)$inv_items_total + (float)input_num('ChargeFreightCost') + $tax_total));
 
     label_row(_("Credit Note Total"), $display_total, "colspan=$colspan align=right", "align=right");
 

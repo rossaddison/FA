@@ -184,7 +184,7 @@ function print_customer_balances(): void
 		if ((bool)$show_balance)
 		{
 			$init[3] = $init[0] - $init[1];
-			$accumulate += $init[3];
+			$accumulate += (float)$init[3];
 		}	
 		else	
 			$init[3] = round2(($bal != false ? $bal['OutStanding'] : 0)*$rate, $dec);
@@ -205,8 +205,8 @@ function print_customer_balances(): void
 		$total = array(0,0,0,0);
 		for ($i = 0; $i < 4; $i++)
 		{
-			$total[$i] += $init[$i];
-			$grandtotal[$i] += $init[$i];
+			$total[$i] += (float)$init[$i];
+			$grandtotal[$i] += (float)$init[$i];
 		}
 		$rep->NewLine(1, 2);
 		$rep->Line($rep->row + 4);
@@ -234,17 +234,17 @@ function print_customer_balances(): void
 				$trans['TotalAmount'] *= -1;
 			if ($trans['TotalAmount'] > 0.0)
 			{
-				$item[0] = round2((float)$trans['TotalAmount'] * $rate, $dec);
+				$item[0] = round2((float)$trans['TotalAmount'] * (float)$rate, $dec);
 				$rep->AmountCol(4, 5, $item[0], $dec);
-				$accumulate += $item[0];
-				$item[2] = round2((float)$trans['Allocated'] * $rate, $dec);
+				$accumulate += (float)$item[0];
+				$item[2] = round2((float)$trans['Allocated'] * (float)$rate, $dec);
 			}
 			else
 			{
 				$item[1] = round2(abs($trans['TotalAmount']) * $rate, $dec);
 				$rep->AmountCol(5, 6, $item[1], $dec);
-				$accumulate -= $item[1];
-				$item[2] = round2((float)$trans['Allocated'] * $rate, $dec) * -1;
+				$accumulate -= (float)$item[1];
+				$item[2] = (float)round2((float)$trans['Allocated'] * (float)$rate, $dec) * (float)(-1);
 			}
 			$rep->AmountCol(6, 7, $item[2], $dec);
 			if (($trans['type'] == ST_JOURNAL && $item[0]) || $trans['type'] == ST_SALESINVOICE || $trans['type'] == ST_BANKPAYMENT)
@@ -261,7 +261,7 @@ function print_customer_balances(): void
 				$grandtotal[$i] += $item[$i];
 			}
 			if ((bool)$show_balance)
-				$total[3] = $total[0] - $total[1];
+				$total[3] = (float)$total[0] - (float)$total[1];
 		}
 		$rep->Line($rep->row - 8);
 		$rep->NewLine(2);
@@ -275,7 +275,7 @@ function print_customer_balances(): void
 	$rep->TextCol(0, 3, _('Grand Total'));
 	$rep->fontSize -= 2;
 	if ((bool)$show_balance)
-		$grandtotal[3] = $grandtotal[0] - $grandtotal[1];
+		$grandtotal[3] = (float)$grandtotal[0] - (float)$grandtotal[1];
 	for ($i = 0; $i < 4; $i++)
 		$rep->AmountCol($i + 4, $i + 5, $grandtotal[$i], $dec);
 	$rep->Line($rep->row  - 4);

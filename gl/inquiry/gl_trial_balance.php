@@ -145,12 +145,12 @@ function display_trial_balance(?string $type, ?string $typename): void
 		{
 			if (!check_value('GroupTotalOnly'))
 			{
-				amount_cell((float)$prev['debit']-$offset);
-				amount_cell((float)$prev['credit']-$offset);
+				amount_cell((float)$prev['debit']-(float)$offset);
+				amount_cell((float)$prev['credit']-(float)$offset);
 				amount_cell($curr['debit']);
 				amount_cell($curr['credit']);
-				amount_cell((float)$tot['debit']-$offset);
-				amount_cell((float)$tot['credit']-$offset);
+				amount_cell((float)$tot['debit']-(float)$offset);
+				amount_cell((float)$tot['credit']-(float)$offset);
 			}
 			$pdeb += $prev['debit'];
 			$pcre += $prev['credit'];

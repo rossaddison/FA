@@ -243,7 +243,7 @@ amount_cells_ex("", "beg_balance", 15);
 amount_cells_ex("", "end_balance", 15);
 
 $reconciled = input_num('reconciled');
-$difference = input_num("end_balance") - input_num("beg_balance") - $reconciled;
+$difference = (float)input_num("end_balance") - (float)input_num("beg_balance") - $reconciled;
 
 amount_cell($total);
 amount_cell($reconciled, false, '', "reconciled");

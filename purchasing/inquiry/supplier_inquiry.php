@@ -118,7 +118,7 @@ function prt_link(array|false|null $row)
 function check_overdue(array|false|null $row): bool
 {
 	return $row['OverDue'] == 1
-		&& (abs($row["TotalAmount"]) - (float)$row["Allocated"] != 0);
+		&& ((float)abs($row["TotalAmount"]) - (float)$row["Allocated"] != 0);
 }
 
 function edit_link(array|false|null $row)

@@ -283,7 +283,7 @@ function check_item_data(string|int|null $n): bool
 	if (sysprefs()->check_qty_charged_vs_del_qty == true && ($_POST['qty_recd'.$n] != $_POST['prev_quantity_inv'.$n])
 		&& (bool)($_POST['prev_quantity_inv'.$n] ?? null))
 	{
-		if (input_num('this_quantity_inv'.$n) / ($_POST['qty_recd'.$n] - $_POST['prev_quantity_inv'.$n]) >
+		if ((float)input_num('this_quantity_inv'.$n) / ((float)($_POST['qty_recd'.$n] - $_POST['prev_quantity_inv'.$n])) >
 			(1+ ($margin / 100)))
 		{
 			display_error( _("The quantity being invoiced is more than the outstanding quantity by more than the allowed over-charge percentage. The system is set up to prohibit this. See the system administrator to modify the set up parameters if necessary.")

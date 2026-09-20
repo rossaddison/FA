@@ -37,13 +37,13 @@ function write_sales_delivery(Cart &$delivery,string|int|float|bool|null $bo_pol
 
 	foreach ($taxes as $taxitem) {
 		$taxitem['Value'] =  round2($taxitem['Value'], user_price_dec());
-		$tax_total +=  $taxitem['Value'];
+		$tax_total +=  (float)$taxitem['Value'];
 	}
 	/* Insert/update the debtor_trans */
 	$delivery_no = write_customer_trans(ST_CUSTDELIVERY, $trans_no, $delivery->customer_id,
 		$delivery->Branch, $delivery->document_date, $delivery->reference,
 		$delivery_items_total, 0,
-		$delivery->tax_included ? 0 : $tax_total-$freight_tax,
+		$delivery->tax_included ? 0 : (float)$tax_total-(float)$freight_tax,
 		$delivery->freight_cost,
 		$delivery->tax_included ? 0 : $freight_tax,
 		$delivery->sales_type, $delivery->order_no,
@@ -72,31 +72,31 @@ function write_sales_delivery(Cart &$delivery,string|int|float|bool|null $bo_pol
 		$qty = $delivery_line->qty_dispatched;
 		$line_price = $delivery_line->line_price();
 		$line_taxfree_price = get_tax_free_price_for_item($delivery_line->stock_id,
-			$delivery_line->price*$qty, 0, $delivery->tax_included,
+			(float)$delivery_line->price*(float)$qty, 0, $delivery->tax_included,
 			$delivery->tax_group_array);
 
 		$line_tax = get_full_price_for_item($delivery_line->stock_id,
-				$delivery_line->price * $qty, 0, $delivery->tax_included, $delivery->tax_group_array) - $line_taxfree_price;
+				(float)$delivery_line->price * (float)$qty, 0, $delivery->tax_included, $delivery->tax_group_array) - $line_taxfree_price;
 
 		$delivery_line->standard_cost = get_unit_cost($delivery_line->stock_id);
 
 		/* add delivery details for all lines */
 		write_customer_trans_detail_item(ST_CUSTDELIVERY, $delivery_no, $delivery_line->stock_id,
 			$delivery_line->item_description, $delivery_line->qty_dispatched,
-			$delivery_line->line_price(), $qty ? $line_tax/$qty : 0,
+			$delivery_line->line_price(), $qty ? (float)$line_tax/(float)$qty : 0,
 			$delivery_line->discount_percent, $delivery_line->standard_cost, $delivery_line->src_id,
 			(bool)$trans_no ? $delivery_line->id : 0);
 
 	// Now update sales_order_details for the quantity delivered
 		if ($delivery_line->qty_old != $delivery_line->qty_dispatched)
 			update_parent_line(ST_CUSTDELIVERY, $delivery_line->src_id,
-				$delivery_line->qty_dispatched-$delivery_line->qty_old);
+				(float)$delivery_line->qty_dispatched-(float)$delivery_line->qty_old);
 
 		if ($delivery_line->qty_dispatched != 0) {
 			add_stock_move(ST_CUSTDELIVERY, $delivery_line->stock_id, $delivery_no,
 				$delivery->Location, $delivery->document_date, $delivery->reference,
 				-$delivery_line->qty_dispatched, $delivery_line->standard_cost,
-				 $line_price*(1-$delivery_line->discount_percent));
+				 $line_price*(1.0-(float)$delivery_line->discount_percent));
 
 			$mb_flag = get_mb_flag($delivery_line->stock_id);
 
@@ -159,7 +159,7 @@ function write_sales_delivery(Cart &$delivery,string|int|float|bool|null $bo_pol
 					/*now the stock entry*/
 					add_gl_trans_std_cost(ST_CUSTDELIVERY, $delivery_no, $delivery->document_date,
 						$stock_gl_code["inventory_account"], $dim, $dim2, "",
-						(-$delivery_line->standard_cost * $delivery_line->qty_dispatched),
+						((float)(-$delivery_line->standard_cost) * (float)$delivery_line->qty_dispatched),
 						PT_CUSTOMER, $delivery->customer_id,
 						"The stock side of the cost of sales GL posting could not be inserted");
 				}				
@@ -211,7 +211,7 @@ function adjust_shipping_charge(Cart &$delivery, string|int|float|bool|null $tra
   	$row = db_fetch_row($result);
   	if (!is_array($row)) $freight = 0;
   	else $freight = $row[0];
-  	if ($freight < $delivery->freight_cost) $delivery->freight_cost = $delivery->freight_cost - $freight;
+  	if ($freight < $delivery->freight_cost) $delivery->freight_cost = (float)$delivery->freight_cost - (float)$freight;
   	else $delivery->freight_cost = 0;
 }
 

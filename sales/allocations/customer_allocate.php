@@ -63,7 +63,7 @@ function edit_allocations_for_transaction(string|int|float|bool|null $type, stri
 	{
 	    $total = _("Amount to be settled:") . " <b>" . price_format($cart->amount).' '.$cart->person_curr."</b>";
 		if ($cart->currency != $cart->person_curr)
-    		$total .= sprintf(" (%s %s/%s)",  exrate_format($cart->bank_amount/$cart->amount), $cart->currency, $cart->person_curr);
+    		$total .= sprintf(" (%s %s/%s)",  exrate_format((float)$cart->bank_amount/(float)$cart->amount), $cart->currency, $cart->person_curr);
 	   	display_heading2($total);
 	}
 

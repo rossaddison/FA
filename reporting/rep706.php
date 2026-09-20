@@ -72,8 +72,8 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 
 		$rep->NewLine();
 
-		$code_open_balance += $prev_balance;
-		$code_period_balance += $curr_balance;
+		$code_open_balance += (float)$prev_balance;
+		$code_period_balance += (float)$curr_balance;
 	}
 		
 	//Get Account groups/types under this group/type
@@ -291,8 +291,8 @@ function print_balance_sheet(): void
 
 	$rep->Font('bold');	
 	$rep->TextCol(0, 2,	_('Total') . " " . _('Liabilities') . _(' and ') . _('Equities'));
-	$topen = $equity_open * $econvert + $liability_open * $lconvert + $calc_open;
-	$tperiod = $equity_period * $econvert + $liability_period * $lconvert + $calc_period;
+	$topen = (float)$equity_open * (float)$econvert + (float)$liability_open * (float)$lconvert + $calc_open;
+	$tperiod = (float)$equity_period * (float)$econvert + (float)$liability_period * (float)$lconvert + $calc_period;
 	$tclose = $topen + $tperiod;
 	$rep->AmountCol(2, 3, $topen, $dec);
 	$rep->AmountCol(3, 4, $tperiod, $dec);
@@ -318,8 +318,8 @@ function print_balance_sheet(): void
 		$pg->latin_notation = (sysprefs()->decseps[user_dec_sep()] != ".");
 		$filename = company_path(). "/pdf_files/". random_id().".png";
 		$pg->display($filename, true);
-		$w = $pg->width / 1.5;
-		$h = $pg->height / 1.5;
+		$w = (float)$pg->width / 1.5;
+		$h = (float)$pg->height / 1.5;
 		$x = ($rep->pageWidth - $w) / 2;
 		$rep->NewLine(2);
 		if ($rep->row - $h < $rep->bottomMargin)

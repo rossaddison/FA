@@ -192,7 +192,7 @@ function can_process(): bool
             		if (has_stock_holding($bom_item["ResourceType"]))
             		{
 
-                		$quantity = (float)$bom_item["quantity"] * input_num('quantity');
+                		$quantity = (float)$bom_item["quantity"] * (float)input_num('quantity');
 
                         if (check_negative_stock($bom_item["component"], -$quantity, $bom_item["loc_code"], $_POST['date_']))
                 		{

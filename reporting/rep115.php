@@ -228,11 +228,11 @@ function print_customer_balances(): void
         $rate = $convert ? get_exchange_rate_from_home_currency($myrow['curr_code'], Today()) : 1;
         $bal = row_or_empty(get_open_balance($myrow['debtor_no'], $from));
         $init = array();
-        $curr_db = $bal ? round2(abs((float)$bal['charges'] * $rate), $dec) : 0; // db
-        $curr_cr = $bal ? round2(abs((float)$bal['credits'] * $rate), $dec) : 0; // cr
+        $curr_db = $bal ? round2(abs((float)$bal['charges'] * (float)$rate), $dec) : 0; // db
+        $curr_cr = $bal ? round2(abs((float)$bal['credits'] * (float)$rate), $dec) : 0; // cr
 //        $curr_alloc = $bal ? round2($bal['Allocated'] * $rate, $dec) : 0;    // allocated
-        $curr_open = $curr_db-$curr_cr;                        // balance
-        $tot_open += $curr_open;
+        $curr_open = (float)$curr_db-(float)$curr_cr;                        // balance
+        $tot_open += (float)$curr_open;
 
         $res = get_transactions($myrow['debtor_no'], $from, $to);
 
@@ -249,20 +249,20 @@ function print_customer_balances(): void
         {
 
             if ($trans['TotalAmount'] > 0.0)
-                $curr_db += round2(((float)$trans['TotalAmount']) * $rate, $dec);
+                $curr_db += (float)round2(((float)$trans['TotalAmount']) * $rate, $dec);
             else
-                $curr_cr += -round2(((float)$trans['TotalAmount']) * $rate, $dec);
+                $curr_cr += (float)(-round2(((float)$trans['TotalAmount']) * $rate, $dec));
         }
 
-        $tot_cur_db += $curr_db;
-        $tot_cur_cr += $curr_cr;
+        $tot_cur_db += (float)$curr_db;
+        $tot_cur_cr += (float)$curr_cr;
 
         if ((bool)$no_zeros && $curr_open == 0.0 && $curr_db == 0.0 && $curr_cr == 0.0) continue;
         $rep->TextCol(0, 2, (string)$myrow['name'].($myrow['inactive']==1 ? " ("._("Inactive").")" : ""));
         $rep->AmountCol(3, 4, $curr_open, $dec);
         $rep->AmountCol(4, 5, $curr_db, $dec);
         $rep->AmountCol(5, 6, $curr_cr, $dec);
-        $rep->AmountCol(7, 8, $curr_open+$curr_db-$curr_cr, $dec);
+        $rep->AmountCol(7, 8, (float)$curr_open+(float)$curr_db-$curr_cr, $dec);
         $rep->NewLine(1);
 
     }
@@ -273,7 +273,7 @@ function print_customer_balances(): void
     $rep->TextCol(0, 3, _('Grand Total'));
     $rep->fontSize -= 2;
 
-    $tot_bal = $tot_open+$tot_cur_db-$tot_cur_cr;
+    $tot_bal = (float)$tot_open+(float)$tot_cur_db-$tot_cur_cr;
 
     $rep->AmountCol(3, 4, $tot_open, $dec);
     $rep->AmountCol(4, 5, $tot_cur_db, $dec);

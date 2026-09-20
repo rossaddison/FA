@@ -95,8 +95,8 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 			end_row();
 		}
 			
-		$code_per_balance += $per_balance;
-		$code_acc_balance += $acc_balance;
+		$code_per_balance += (float)$per_balance;
+		$code_acc_balance += (float)$acc_balance;
 	}
 
 	$levelptr = 1;
@@ -155,7 +155,7 @@ function Achieve(string|int|float|bool|null $d1, string|int|float|bool|null $d2)
 		return 0;
 	elseif ($d2 == 0)
 		return 999;
-	$ret = ($d1 / $d2 * 100.0);
+	$ret = ((float)$d1 / (float)$d2 * 100.0);
 	if ($ret > 999)
 		$ret = 999;
 	return $ret;
@@ -297,8 +297,8 @@ function display_profit_and_loss(string|array|null $compare): void
 		
 		start_row("class='inquirybg' style='font-weight:bold'");
 		label_cell(_('Calculated Return'));
-		amount_cell($salesper *-1);
-		amount_cell($salesacc * -1);
+		amount_cell((float)$salesper *(float)(-1));
+		amount_cell((float)$salesacc * (float)(-1));
 		amount_cell(achieve($salesper, $salesacc));
 		end_row();		
 

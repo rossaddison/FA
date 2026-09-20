@@ -30,10 +30,10 @@ function add_exchange_variation(string|int|float|bool|array|null $trans_no, stri
 		if ($row['for_amount'] == 0)
 			continue;
 		$rate = get_exchange_rate_from_home_currency($row['bank_curr_code'], $date_);
-		$for_amount += round2((float)$row['for_amount'] * $rate, user_price_dec());
+		$for_amount += (float)round2((float)$row['for_amount'] * $rate, user_price_dec());
 	}	
 	$amount = get_gl_trans_from_to("", $date_, $account);
-	$diff = $amount - $for_amount;
+	$diff = (float)$amount - (float)$for_amount;
 	if (floatcmp($diff,0))
 	{
 		// generate journal entry // FIXME: use cart?
@@ -241,7 +241,7 @@ function add_bank_transfer(string|array|null $from_account, string|array|null $t
 	
 	$total = 0;
 	// do the source account postings
-    $total += add_gl_trans($trans_type, $trans_no, $date_, $from_gl_account, $dim1, $dim2, $person_id,
+    $total += (float)add_gl_trans($trans_type, $trans_no, $date_, $from_gl_account, $dim1, $dim2, $person_id,
 		-($amount + $charge), $currency);
 
     add_bank_trans($trans_type, $trans_no, $from_account, $ref,
@@ -484,7 +484,7 @@ function write_bank_transaction(string|int|float|bool|null $trans_type, string|i
 		}
 
     	// do the destination account postings
-    	$total += add_gl_trans($trans_type, $trans_no, $date_, $gl_item->code_id,
+    	$total += (float)add_gl_trans($trans_type, $trans_no, $date_, $gl_item->code_id,
     		$gl_item->dimension_id, $gl_item->dimension2_id, $gl_item->reference,
     		$gl_item->amount, $currency, $person_type_id, $person_id);
 

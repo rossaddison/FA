@@ -116,8 +116,8 @@ if (db_has_gl_accounts())
 			$btotal += $d;
 		}
 		$lamount = get_gl_trans_from_to(add_years($date_, -1), add_years(end_month($date_), -1), post_scalar('account'), post_scalar('dim1'), post_scalar('dim2'));
-		$total += input_num('amount'.$i);
-		$ltotal += $lamount;
+		$total += (float)input_num('amount'.$i);
+		$ltotal += (float)$lamount;
 		label_cell(number_format2($lamount, 0), "nowrap align=right");
 		$date_ = add_months($date_, 1);
 		end_row();

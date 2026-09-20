@@ -50,7 +50,7 @@ function write_supp_payment(?int $trans_no, string|int|float|bool|array|null $su
 
 	$total = 0;
     $supplier_accounts = row_or_empty(get_supplier_accounts($supplier_id));
-	$total += add_gl_trans_supplier(ST_SUPPAYMENT, $payment_id, $date_, $supplier_accounts["payable_account"], $dimension, $dimension2,
+	$total += (float)add_gl_trans_supplier(ST_SUPPAYMENT, $payment_id, $date_, $supplier_accounts["payable_account"], $dimension, $dimension2,
 		$supp_amount + $supp_discount, $supplier_id, "", $rate);
 
 	// Now credit discount received account with discounts
@@ -68,7 +68,7 @@ function write_supp_payment(?int $trans_no, string|int|float|bool|array|null $su
 	}
 
 	$total += add_gl_trans(ST_SUPPAYMENT, $payment_id, $date_, $bank['account_code'], $dimension, $dimension2, '',
-		-($bank_amount + $bank_charge), $bank['bank_curr_code'], PT_SUPPLIER, $supplier_id);
+		-((float)$bank_amount + (float)$bank_charge), $bank['bank_curr_code'], PT_SUPPLIER, $supplier_id);
 
 	/*Post a balance post if $total != 0 due to variance in AP and bank posted values*/
 	if ($total != 0)
@@ -80,7 +80,7 @@ function write_supp_payment(?int $trans_no, string|int|float|bool|array|null $su
 
    /*now enter the bank_trans entry */
 	add_bank_trans(ST_SUPPAYMENT, $payment_id, $bank_account, $ref,
-		$date_, -($bank_amount + $bank_charge), PT_SUPPLIER, $supplier_id);
+		$date_, -((float)$bank_amount + (float)$bank_charge), PT_SUPPLIER, $supplier_id);
 
 	add_comments(ST_SUPPAYMENT, $payment_id, $date_, $memo_);
 

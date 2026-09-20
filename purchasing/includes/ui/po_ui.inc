@@ -122,7 +122,7 @@ function display_po_header(?purch_order &$order): void
 			$line = &$order->line_items[$line_no];
 			$line->price =  get_purchase_price ($order->supplier_id, $line->stock_id);
 			$line->quantity =
-				$line->quantity/get_purchase_conversion_factor ($old_supp, $line->stock_id)
+				(float)$line->quantity/(float)get_purchase_conversion_factor ($old_supp, $line->stock_id)
 					*get_purchase_conversion_factor ($order->supplier_id, $line->stock_id);
 		}
 	    ajax()->activate('items_table');
@@ -228,7 +228,7 @@ function display_po_items(purch_order &$order, bool $editable=true): void
 	$k = 0;
    	foreach ($order->line_items as $line_no => $po_line)
    	{
-    	$line_total =	round($po_line->quantity * $po_line->price,  user_price_dec());
+    	$line_total =	round((float)$po_line->quantity * (float)$po_line->price,  user_price_dec());
     	if (!$editable || ($id != $line_no))
 		{
     		alt_table_row_color($k);
@@ -259,7 +259,7 @@ function display_po_items(purch_order &$order, bool $editable=true): void
 		{
 			po_item_controls($order, $k, $line_no);
 		}
-		$total += $line_total;
+		$total += (float)$line_total;
     }
 
 	if ($id==-1 && $editable)
@@ -277,7 +277,7 @@ function display_po_items(purch_order &$order, bool $editable=true): void
 	
 	$tax_total = display_edit_tax_items($taxes, $colspan, $order->tax_included, 2, $order->trans_type==ST_SUPPINVOICE);
 
-	$display_total = price_format(($total + input_num('freight_cost') + $tax_total));
+	$display_total = price_format(((float)$total + (float)input_num('freight_cost') + $tax_total));
 
 	start_row();
 	label_cells(_("Amount Total"), $display_total, "colspan=$colspan align='right'","align='right'");
@@ -434,7 +434,7 @@ function po_item_controls(purch_order &$order, int|string|null &$rowcounter, str
    	else	
 		unit_amount_cells(null, 'price');
 
-	$line_total = round(input_num('qty') * input_num('price'),  user_price_dec());
+	$line_total = round((float)input_num('qty') * (float)input_num('price'),  user_price_dec());
 	amount_cell($line_total, false, '','line_total');
 
 	if ($id!=-1)

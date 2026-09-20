@@ -61,7 +61,7 @@ function add_work_order_issue(string|int|float|bool|null $woid, string|array|nul
 		else
 			$ivaccount = $stockitem["cogs_account"];
 
-        $total_cost += add_gl_trans_std_cost(ST_MANUISSUE, $number, $date_, $ivaccount, 0, 0,
+        $total_cost += (float)add_gl_trans_std_cost(ST_MANUISSUE, $number, $date_, $ivaccount, 0, 0,
                 $date_.": "._("Issue of")." ".(string)$stockitem["description"], -$issue_cost);
 	}
 

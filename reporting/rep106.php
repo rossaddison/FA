@@ -140,20 +140,20 @@ function print_salesman_list(): void
 			$rep->TextCol(6, 7,	number_format2($myrow['provision2'], user_percent_dec()) ." %");
 			$rep->NewLine(2);
 			$salesman = $myrow['salesman_code'];
-			$total += $subtotal;
-			$provtotal += $subprov;
+			$total += (float)$subtotal;
+			$provtotal += (float)$subprov;
 			$subtotal = 0;
 			$subprov = 0;
 		}
 		$rate = $myrow['rate'];
 		$amt = (float)$myrow['InvoiceTotal'] * $rate;
 		if ($myrow['provision2'] == 0)
-			$prov = (float)$myrow['provision'] * $amt / 100;
+			$prov = (float)$myrow['provision'] * (float)$amt / 100;
 		else {
-			$amt1 = min($amt, max(0, (float)$myrow['break_pt']-$subtotal));
-			$amt2 = $amt - $amt1;
+			$amt1 = min($amt, max(0, (float)$myrow['break_pt']-(float)$subtotal));
+			$amt2 = (float)$amt - (float)$amt1;
 
-			$prov = $amt1*(float)$myrow['provision']/100 + $amt2*(float)$myrow['provision2']/100;
+			$prov = (float)$amt1*(float)$myrow['provision']/100 + (float)$amt2*(float)$myrow['provision2']/100;
 		}
 		if (!(bool)$summary)
 		{
@@ -166,8 +166,8 @@ function print_salesman_list(): void
 			$rep->AmountCol(6, 7, $prov, $dec);
 			$rep->NewLine();
 		}
-		$subtotal += $amt;
-		$subprov += $prov;
+		$subtotal += (float)$amt;
+		$subprov += (float)$prov;
 	}
 	if ($salesman != 0)
 	{
@@ -178,8 +178,8 @@ function print_salesman_list(): void
 		$rep->AmountCol(6, 7, $subprov, $dec);
 		$rep->Line($rep->row  - 4);
 		$rep->NewLine(2);
-		$total += $subtotal;
-		$provtotal += $subprov;
+		$total += (float)$subtotal;
+		$provtotal += (float)$subprov;
 	}
 	$rep->fontSize += 2;
 	$rep->TextCol(0, 3, _('Grand Total'));

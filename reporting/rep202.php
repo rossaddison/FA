@@ -260,8 +260,8 @@ function print_aged_supplier_analysis(): void
 		$pg->latin_notation = (sysprefs()->decseps[user_dec_sep()] != ".");
 		$filename = company_path(). "/pdf_files/". random_id().".png";
 		$pg->display($filename, true);
-		$w = $pg->width / 1.5;
-		$h = $pg->height / 1.5;
+		$w = (float)$pg->width / 1.5;
+		$h = (float)$pg->height / 1.5;
 		$x = ($rep->pageWidth - $w) / 2;
 		$rep->NewLine(2);
 		if ($rep->row - $h < $rep->bottomMargin)

@@ -506,7 +506,7 @@ function display_edit_tax_items(array $taxes, ?int $columns, string|int|float|bo
 					label_cell($taxitem['tax_type_name'], "colspan=$columns align='right'");
 					amount_cells(null, 'mantax['.(string)$taxitem['tax_type_id'].']',
 						null, "colspan=$columns align=right", null, user_price_dec());
-					$total +=  round2($amount, user_price_dec());
+					$total +=  (float)round2($amount, user_price_dec());
 				}
 				if ((bool)$rightspan)
 					label_cell('', "colspan ='$rightspan'");
@@ -522,7 +522,7 @@ function display_edit_tax_items(array $taxes, ?int $columns, string|int|float|bo
 				{
 					label_row($taxitem['tax_type_name'],
 						$value, "colspan=$columns align=right", "align=right", $rightspan);
-					$total +=  round2($taxitem['Value'], user_price_dec());
+					$total +=  (float)round2($taxitem['Value'], user_price_dec());
 				}
 			}
 		}
@@ -574,7 +574,7 @@ function display_allocations(bool|mysqli_result $alloc_result, string|int|float|
     	amount_cell($alloc_row['amt']);
     	end_row();
 
-    	$total_allocated += $alloc_row['amt'];
+    	$total_allocated += (float)$alloc_row['amt'];
     }
     start_row();
    	label_cell(_("Total Allocated:"), "align=right colspan=5");
@@ -585,7 +585,7 @@ function display_allocations(bool|mysqli_result $alloc_result, string|int|float|
 		start_row();
 	    label_cell(_("Left to Allocate:"), "align=right colspan=5");
 	    $total = round2($total, user_price_dec());
-    	amount_cell($total - $total_allocated);
+    	amount_cell((float)$total - (float)$total_allocated);
     	end_row();
 	}
     end_table(1);
@@ -766,7 +766,7 @@ function quickentry_calculate(int|float|bool|null $base, string|int|float|bool|n
 				case "t-": // ditto & reduce base amount
 					if ($first)
 					{
-						$taxbase = $base/($totrate+100);
+						$taxbase = $base/((float)$totrate+100.0);
 						$first = false;
 					}
 
@@ -786,7 +786,7 @@ function quickentry_calculate(int|float|bool|null $base, string|int|float|bool|n
 						if ($rates == 0)
 							continue 2;
 					}
-					$tax = round2($part * (float)$item_tax['rate'],  user_price_dec());
+					$tax = round2((float)$part * (float)$item_tax['rate'],  user_price_dec());
 					if ($tax == 0) continue 2;
 					$gl_code = ($type == QE_DEPOSIT || ($type == QE_JOURNAL && $base < 0)) 
 						? $item_tax['sales_gl_code'] : $item_tax['purchasing_gl_code'];
@@ -820,15 +820,15 @@ function quickentry_calculate(int|float|bool|null $base, string|int|float|bool|n
 /** @psalm-pure */
 function _number_to_words(int|float|null $number): string 
 { 
-    $Bn = floor($number / 1000000000); /* Billions (giga) */ 
-    $number -= $Bn * 1000000000; 
-    $Gn = floor($number / 1000000);  /* Millions (mega) */ 
-    $number -= $Gn * 1000000; 
-    $kn = floor($number / 1000);     /* Thousands (kilo) */ 
-    $number -= $kn * 1000; 
-    $Hn = floor($number / 100);      /* Hundreds (hecto) */ 
-    $number -= $Hn * 100; 
-    $Dn = floor($number / 10);       /* Tens (deca) */ 
+    $Bn = floor((float)$number / 1000000000.0); /* Billions (giga) */ 
+    $number -= (float)($Bn * 1000000000); 
+    $Gn = floor((float)$number / 1000000.0);  /* Millions (mega) */ 
+    $number -= (float)$Gn * 1000000.0; 
+    $kn = floor((float)$number / 1000.0);     /* Thousands (kilo) */ 
+    $number -= (float)$kn * 1000.0; 
+    $Hn = floor((float)$number / 100.0);      /* Hundreds (hecto) */ 
+    $number -= (float)$Hn * 100.0; 
+    $Dn = floor((float)$number / 10.0);       /* Tens (deca) */ 
     $n = $number % 10;               /* Ones */
 
     $res = ""; 
@@ -854,7 +854,7 @@ function _number_to_words(int|float|null $number): string
         if (!empty($res)) 
             $res .= " and "; 
         if ($Dn < 2) 
-            $res .= $ones[$Dn * 10 + $n]; 
+            $res .= $ones[(float)$Dn * 10.0 + $n]; 
         else 
         { 
             $res .= $tens[$Dn]; 
@@ -884,7 +884,7 @@ function price_in_words(string|int|float|bool|null $amount, mixed $document=0)
 	if ($dec > 0)
 	{
 		$divisor = pow(10, $dec);
-        $frac = round2($amount - floor($amount), $dec) * $divisor;
+        $frac = (float)round2($amount - floor($amount), $dec) * (float)$divisor;
 		$frac = sprintf("%0{$dec}d", round2($frac, 0));
 		$and = _("and");
     	$frac = " $and $frac/$divisor";

@@ -89,8 +89,8 @@ function due_date(array|false|null $row)
 /** @return float */
 function fmt_balance(array|false|null $row)
 {
-	$value = ($row["type"] == ST_BANKPAYMENT || $row["type"] == ST_SUPPCREDIT || $row["type"] == ST_SUPPAYMENT)	? -$row["TotalAmount"] - (float)$row["Allocated"]
-		: ($row["type"] == ST_JOURNAL ? abs($row["TotalAmount"]) - (float)$row["Allocated"] :
+	$value = ($row["type"] == ST_BANKPAYMENT || $row["type"] == ST_SUPPCREDIT || $row["type"] == ST_SUPPAYMENT)	? (float)(-$row["TotalAmount"]) - (float)$row["Allocated"]
+		: ($row["type"] == ST_JOURNAL ? (float)abs($row["TotalAmount"]) - (float)$row["Allocated"] :
 			(float)$row["TotalAmount"] - (float)$row["Allocated"]);
 	return $value;
 }

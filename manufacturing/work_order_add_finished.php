@@ -129,7 +129,7 @@ function can_process(array $wo_details): bool
 			if ($row['mb_flag'] == 'D') // service, non stock
 				continue;
 
-			if (check_negative_stock($row["stock_id"], -$row['units_req'] * input_num('quantity'), $row["loc_code"], $_POST['date_']))
+			if (check_negative_stock($row["stock_id"], (float)(-$row['units_req']) * (float)input_num('quantity'), $row["loc_code"], $_POST['date_']))
 			{
     			display_error( _("The production cannot be processed because a required item would cause a negative inventory balance :") .
     				" " . (string)$row['stock_id'] . " - " .  (string)$row['description']);

@@ -389,7 +389,7 @@ class tar_file extends archive
 								if ( $tst < 0 && $this->options['overwrite'] == 0)
 									$this->error[] = "{$file['name']} already exists.";
 							}
-							fseek($fp, ($file['stat'][7] + 511) & ~511, SEEK_CUR); // skip data
+							fseek($fp, ((float)$file['stat'][7] + 511.0) & ~511, SEEK_CUR); // skip data
 						} else {
 							$dat = fread($fp, $file['stat'][7]);
 							$tail = $file['stat'][7] % 512;

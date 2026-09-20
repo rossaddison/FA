@@ -89,18 +89,18 @@ function display_type (?string $type, ?string $typename, int|string|null &$dec, 
 		}
 		else
 		{
-			$rep->AmountCol(2, 3, (float)$prev['debit']-$offset, $dec);
-			$rep->AmountCol(3, 4, (float)$prev['credit']-$offset, $dec);
+			$rep->AmountCol(2, 3, (float)$prev['debit']-(float)$offset, $dec);
+			$rep->AmountCol(3, 4, (float)$prev['credit']-(float)$offset, $dec);
 			$rep->AmountCol(4, 5, $curr['debit'], $dec);
 			$rep->AmountCol(5, 6, $curr['credit'], $dec);
-			$rep->AmountCol(6, 7, (float)$tot['debit']-$offset, $dec);
-			$rep->AmountCol(7, 8, (float)$tot['credit']-$offset, $dec);
-			$pdeb += (float)$prev['debit']-$offset;
-			$pcre += (float)$prev['credit']-$offset;
+			$rep->AmountCol(6, 7, (float)$tot['debit']-(float)$offset, $dec);
+			$rep->AmountCol(7, 8, (float)$tot['credit']-(float)$offset, $dec);
+			$pdeb += (float)((float)$prev['debit']-(float)$offset);
+			$pcre += (float)((float)$prev['credit']-(float)$offset);
 			$cdeb += $curr['debit'];
 			$ccre += $curr['credit'];
-			$tdeb += (float)$tot['debit']-$offset;
-			$tcre += (float)$tot['credit']-$offset;
+			$tdeb += (float)((float)$tot['debit']-(float)$offset);
+			$tcre += (float)((float)$tot['credit']-(float)$offset);
 		}	
 
 		$pbal += $prev['balance'];

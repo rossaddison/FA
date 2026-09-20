@@ -188,16 +188,16 @@ function print_invoices(): void
 				if ($myrow2["quantity"] == 0)
 					continue;
 
-				$Net = round2($sign * ((1 - (float)$myrow2["discount_percent"]) * (float)$myrow2["unit_price"] * (float)$myrow2["quantity"]),
+				$Net = round2((float)$sign * ((float)((1.0 - (float)$myrow2["discount_percent"]) * (float)$myrow2["unit_price"] * (float)$myrow2["quantity"])),
 				   user_price_dec());
-				$SubTotal += $Net;
+				$SubTotal += (float)$Net;
 	    		$DisplayPrice = number_format2($myrow2["unit_price"],$dec);
-	    		$DisplayQty = number_format2($sign*(float)$myrow2["quantity"],get_qty_dec($myrow2['stock_id']));
+	    		$DisplayQty = number_format2((float)$sign*(float)$myrow2["quantity"],get_qty_dec($myrow2['stock_id']));
 	    		$DisplayNet = number_format2($Net,$dec);
 	    		if ($myrow2["discount_percent"]==0)
 		  			$DisplayDiscount ="";
 	    		else
-		  			$DisplayDiscount = number_format2((float)$myrow2["discount_percent"]*100,user_percent_dec()) . "%";
+		  			$DisplayDiscount = number_format2((float)$myrow2["discount_percent"]*100.0,user_percent_dec()) . "%";
 				$c=0;
 				$rep->TextCol($c++, $c,	$myrow2['stock_id'], -2);
 				$oldrow = $rep->row;
@@ -277,7 +277,7 @@ function print_invoices(): void
 			$rep->NewLine();
 			if ($myrow['ov_freight'] != 0.0)
 			{
-   				$DisplayFreight = number_format2($sign*(float)$myrow["ov_freight"],$dec);
+   				$DisplayFreight = number_format2((float)$sign*(float)$myrow["ov_freight"],$dec);
 				$rep->TextCol(3, 6, _("Shipping"), -2);
 				$rep->TextCol(6, 7,	$DisplayFreight, -2);
 				$rep->NewLine();
@@ -288,7 +288,7 @@ function print_invoices(): void
     		{
     			if ($tax_item['amount'] == 0)
     				continue;
-    			$DisplayTax = number_format2($sign*(float)$tax_item['amount'], $dec);
+    			$DisplayTax = number_format2((float)$sign*(float)$tax_item['amount'], $dec);
 
     			if (sysprefs()->suppress_tax_rates() == 1)
     				$tax_type_name = $tax_item['tax_type_name'];
@@ -302,7 +302,7 @@ function print_invoices(): void
     					if ($first)
     					{
 							$rep->TextCol(3, 6, _("Total Tax Excluded"), -2);
-							$rep->TextCol(6, 7,	number_format2($sign*(float)$tax_item['net_amount'], $dec), -2);
+							$rep->TextCol(6, 7,	number_format2((float)$sign*(float)$tax_item['net_amount'], $dec), -2);
 							$rep->NewLine();
     					}
 						$rep->TextCol(3, 6, $tax_type_name, -2);
@@ -321,8 +321,8 @@ function print_invoices(): void
     		}
 
     		$rep->NewLine();
-			$DisplayTotal = number_format2($sign*((float)$myrow["ov_freight"] + (float)$myrow["ov_gst"] +
-				(float)$myrow["ov_amount"]+(float)$myrow["ov_freight_tax"]),$dec);
+			$DisplayTotal = number_format2((float)$sign*((float)((float)$myrow["ov_freight"] + (float)$myrow["ov_gst"] +
+				(float)$myrow["ov_amount"]+(float)$myrow["ov_freight_tax"])),$dec);
 			$rep->Font('bold');
 			if (!(bool)$myrow['prepaid']) $rep->Font('bold');
 				$rep->TextCol(3, 6, $rep->formData['prepaid'] ? _("TOTAL ORDER VAT INCL.") : _("TOTAL INVOICE"), - 2);

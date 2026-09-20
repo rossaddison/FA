@@ -205,7 +205,7 @@ function check_quantities(): int
 			} else {
 				$min = 0;
 				// Fixing floating point problem in PHP.
-				$max = round2($itm->quantity - $itm->qty_done, get_qty_dec($itm->stock_id));
+				$max = round2((float)$itm->quantity - (float)$itm->qty_done, get_qty_dec($itm->stock_id));
 			}
 			if (check_num('Line'.$line_no, $min, $max)) {
 				session_obj('Items')->line_items[$line_no]->qty_dispatched =
@@ -563,9 +563,9 @@ foreach (session_obj('Items')->line_items as $line=>$ln_itm) {
 	} else {
 		small_qty_cells(null, 'Line'.$line, qty_format($ln_itm->qty_dispatched, $ln_itm->stock_id, $dec), null, null, $dec);
 	}
-	$display_discount_percent = percent_format($ln_itm->discount_percent*100) . " %";
+	$display_discount_percent = percent_format((float)$ln_itm->discount_percent*100.0) . " %";
 
-	$line_total = ($ln_itm->qty_dispatched * $ln_itm->price * (1 - $ln_itm->discount_percent));
+	$line_total = ((float)$ln_itm->qty_dispatched * (float)$ln_itm->price * (1.0 - (float)$ln_itm->discount_percent));
 
 	amount_cell($ln_itm->price);
 	label_cell($ln_itm->tax_type_name);
@@ -620,14 +620,14 @@ label_cell('', 'colspan=2');
 end_row();
 $inv_items_total = session_obj('Items')->get_items_total_dispatch();
 
-$display_sub_total = price_format($inv_items_total + input_num('ChargeFreightCost'));
+$display_sub_total = price_format((float)$inv_items_total + (float)input_num('ChargeFreightCost'));
 
 label_row(_("Sub-total"), $display_sub_total, "colspan=$colspan align=right","align=right", $is_batch_invoice ? 2 : 0);
 
 $taxes = session_obj('Items')->get_taxes(input_num('ChargeFreightCost'));
 $tax_total = display_edit_tax_items($taxes, $colspan, session_obj('Items')->tax_included, $is_batch_invoice ? 2 : 0);
 
-$display_total = price_format(($inv_items_total + input_num('ChargeFreightCost') + $tax_total));
+$display_total = price_format(((float)$inv_items_total + (float)input_num('ChargeFreightCost') + $tax_total));
 
 label_row(_("Invoice Total"), $display_total, "colspan=$colspan align=right","align=right", $is_batch_invoice ? 2 : 0);
 

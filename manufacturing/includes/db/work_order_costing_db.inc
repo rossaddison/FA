@@ -199,7 +199,7 @@ function work_order_production_gl(string|int|float|bool|null $woid, ?string $sto
 
 		$memo = $date_.": ".(string)$bom_item["units_req"] ." * ".(string)$bom_item["description"];
 
-		$total_cost += add_gl_trans_std_cost(ST_MANURECEIVE, $rcv_no, $date_, $ivaccount, 0, 0,
+		$total_cost += (float)add_gl_trans_std_cost(ST_MANURECEIVE, $rcv_no, $date_, $ivaccount, 0, 0,
 			$memo, -$bom_item["ComponentCost"] * (float)$bom_item["units_req"] * $quantity);
 	}
 

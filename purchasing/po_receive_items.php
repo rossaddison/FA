@@ -78,15 +78,15 @@ function display_po_receive_items(): void
 
 			alt_table_row_color($k);
 
-    		$qty_outstanding = $ln_itm->quantity - $ln_itm->qty_received;
+    		$qty_outstanding = (float)$ln_itm->quantity - (float)$ln_itm->qty_received;
 
  			if (!isset($_POST['Update']) && !isset($_POST['ProcessGoodsReceived']) && $ln_itm->receive_qty == 0)
     	  	{   //If no quantites yet input default the balance to be received
     	    	$ln_itm->receive_qty = $qty_outstanding;
     		}
 
-    		$line_total = ($ln_itm->receive_qty * $ln_itm->price);
-    		$total += $line_total;
+    		$line_total = ((float)$ln_itm->receive_qty * (float)$ln_itm->price);
+    		$total += (float)$line_total;
 
 			label_cell($ln_itm->stock_id);
 			if ($qty_outstanding > 0)
@@ -119,7 +119,7 @@ function display_po_receive_items(): void
 	
 	$tax_total = display_edit_tax_items($taxes, $colspan, session_obj('PO')->tax_included);
 
-	$display_total = price_format(($total + input_num('freight_cost') + $tax_total));
+	$display_total = price_format(((float)$total + (float)input_num('freight_cost') + $tax_total));
 
 	start_row();
 	label_cells(_("Amount Total"), $display_total, "colspan=$colspan align='right'","align='right'");
@@ -143,7 +143,7 @@ function check_po_changed(): bool
 	{
 		$ln_item = session_obj('PO')->line_items[$line_no];
 		// only compare against items that are outstanding
-		$qty_outstanding = $ln_item->quantity - $ln_item->qty_received;
+		$qty_outstanding = (float)$ln_item->quantity - (float)$ln_item->qty_received;
 		if ($qty_outstanding > 0)
 		{
     		if ($ln_item->qty_inv != $myrow["qty_invoiced"]	||
@@ -203,7 +203,7 @@ function can_process(): bool
     $delivery_qty_too_large = 0;
 	foreach (session_obj('PO')->line_items as $order_line)
 	{
-	  	if ($order_line->receive_qty+$order_line->qty_received >
+	  	if ((float)$order_line->receive_qty+(float)$order_line->qty_received >
 	  		$order_line->quantity * (1+ (sysprefs()->over_receive_allowance() / 100)))
 	  	{
 			$delivery_qty_too_large = 1;
@@ -289,7 +289,7 @@ if (isset($_POST['Update']) || isset($_POST['ProcessGoodsReceived']))
  	set from the post to the quantity to be received in this receival*/
 	foreach (session_obj('PO')->line_items as $line)
 	{
-	 if( ($line->quantity - $line->qty_received)>0) {
+	 if( ((float)$line->quantity - (float)$line->qty_received)>0) {
 		$_POST[$line->line_no] = max($_POST[$line->line_no], 0);
 		if (!check_num($line->line_no))
 			$_POST[$line->line_no] = number_format2(0, get_qty_dec($line->stock_id));

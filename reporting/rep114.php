@@ -127,8 +127,8 @@ function print_sales_summary_report(): void
 				$rep->TextCol(1, 2,	$tax_id);
 				$rep->AmountCol(2, 3, $total, $dec);
 				$rep->AmountCol(3, 4, $tax, $dec);
-				$totalnet += $total;
-				$totaltax += $tax;
+				$totalnet += (float)$total;
+				$totaltax += (float)$tax;
 				$total = $tax = 0;
 				$rep->NewLine();
 
@@ -149,7 +149,7 @@ function print_sales_summary_report(): void
 				$trans['total'] -= $taxes['tax'];
 			$tax += $taxes['tax'];
 		}	
-		$total += $trans['total']; 
+		$total += (float)$trans['total']; 
 	}
 	if ($custno != 0)
 	{
@@ -157,8 +157,8 @@ function print_sales_summary_report(): void
 		$rep->TextCol(1, 2,	$tax_id);
 		$rep->AmountCol(2, 3, $total, $dec);
 		$rep->AmountCol(3, 4, $tax, $dec);
-		$totalnet += $total;
-		$totaltax += $tax;
+		$totalnet += (float)$total;
+		$totaltax += (float)$tax;
 		$rep->NewLine();
 	}
 	$rep->Font('bold');

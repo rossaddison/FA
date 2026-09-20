@@ -391,7 +391,7 @@ function get_gl_wo_cost(string|int|float|bool|null $woid, ?int $cost_type): floa
 	$cost = 0;
 	$result = get_gl_wo_cost_trans($woid, $cost_type);
 	while ($row = db_fetch($result))
-		$cost += -$row['amount'];
+		$cost += (float)(-$row['amount']);
 	return $cost;
 }
 

@@ -61,7 +61,7 @@ if (!isset($_POST['bank_account'])) { // first page call
 			$_POST['DateBanked'] = sql2date($inv['tran_date']);
 			foreach(session_obj('alloc')->allocs as $line => $trans) {
 				if ($trans->type == $type && $trans->type_no == $_GET['SInvoice']) {
-					$un_allocated = $trans->amount - $trans->amount_allocated;
+					$un_allocated = (float)$trans->amount - (float)$trans->amount_allocated;
 					if ($un_allocated){
 						session_obj('alloc')->allocs[$line]->current_allocated = $un_allocated;
 						$_POST['amount'] = $_POST['amount'.$line] = price_format($un_allocated);
@@ -287,7 +287,7 @@ if (isset($_GET['trans_no']) && $_GET['trans_no'] > 0 )
 	$_POST['charge'] =  price_format($charge);
 	$_POST['DateBanked'] =  sql2date($myrow['tran_date']);
 	$_POST["amount"] = price_format((float)$myrow['Total'] - (float)$myrow['ov_discount']);
-	$_POST["bank_amount"] = price_format((float)$myrow['bank_amount']+$charge);
+	$_POST["bank_amount"] = price_format((float)$myrow['bank_amount']+(float)$charge);
 	$_POST["discount"] = price_format($myrow['ov_discount']);
 	$_POST["memo_"] = get_comments_string(ST_CUSTPAYMENT,$_POST['trans_no']);
 
@@ -342,7 +342,7 @@ read_customer_data();
 set_global_customer($_POST['customer_id']);
 if (isset($_POST['HoldAccount']) && $_POST['HoldAccount'] != 0)	
 	display_warning(_("This customer account is on hold."));
-$display_discount_percent = percent_format((float)$_POST['pymt_discount']*100) . "%";
+$display_discount_percent = percent_format((float)$_POST['pymt_discount']*100.0) . "%";
 
 table_section(2);
 

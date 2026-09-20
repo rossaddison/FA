@@ -153,7 +153,7 @@ function add_supp_invoice(supp_trans &$supp_trans)
     foreach ($taxes as $n => $taxitem)
     {
 		$taxes[$n]['Value'] =  round2($taxitem['Value'], user_price_dec());
-    	$tax_total += $taxes[$n]['Value'];
+    	$tax_total += (float)$taxes[$n]['Value'];
     }
 
 	$invoice_items_total = $supp_trans->get_items_total();
@@ -199,7 +199,7 @@ function add_supp_invoice(supp_trans &$supp_trans)
 		{
 			if (isset($taxitem['Override'])) {
 				if ((bool)$supp_trans->tax_included) { // if tax included, fix net amount to preserve overall line price
-					$net_diff += (float)$taxitem['Override'] - (float)$taxitem['Value'];
+					$net_diff += (float)((float)$taxitem['Override'] - (float)$taxitem['Value']);
 					$taxitem['Net'] += (float)$taxitem['Override'] - (float)$taxitem['Value'];
 				}
 				$taxitem['Value'] = $taxitem['Override'];
@@ -212,7 +212,7 @@ function add_supp_invoice(supp_trans &$supp_trans)
 			{
 				if ($trans_type == ST_SUPPCREDIT)
 					$taxitem['Value'] = -$taxitem['Value'];
-				$total += add_gl_trans_supplier($trans_type, $invoice_id, $date_,
+				$total += (float)add_gl_trans_supplier($trans_type, $invoice_id, $date_,
 					$taxitem['purchasing_gl_code'], $dim, $dim2, $taxitem['Value'],
 					$supp_trans->supplier_id,
 					"A general ledger transaction for the tax amount could not be added");
@@ -223,12 +223,12 @@ function add_supp_invoice(supp_trans &$supp_trans)
 		$net_diff = -$net_diff;
 
     /* Now the AP account */
-    $total += add_gl_trans_supplier($trans_type, $invoice_id, $date_, $supplier["payable_account"], $dim, $dim2,
+    $total += (float)add_gl_trans_supplier($trans_type, $invoice_id, $date_, $supplier["payable_account"], $dim, $dim2,
 		-($invoice_items_total +  $item_added_tax + $supp_trans->ov_discount),
 		$supp_trans->supplier_id,
 		"The general ledger transaction for the control total could not be added");
 
-	$to_allocate = ($invoice_items_total + $item_added_tax + $supp_trans->ov_discount);
+	$to_allocate = ((float)$invoice_items_total + (float)$item_added_tax + $supp_trans->ov_discount);
 
     foreach ($supp_trans->gl_codes as $entered_gl_code)
     {
@@ -257,7 +257,7 @@ function add_supp_invoice(supp_trans &$supp_trans)
     foreach ($supp_trans->grn_items as $line_no => $entered_grn)
     {
     	// moved this line up to calculate the taxfree price.
-    	$taxfree_line = get_tax_free_price_for_item($entered_grn->item_code, $entered_grn->this_quantity_inv * $entered_grn->chg_price, 
+    	$taxfree_line = get_tax_free_price_for_item($entered_grn->item_code, (float)$entered_grn->this_quantity_inv * (float)$entered_grn->chg_price, 
 			  $supp_trans->tax_group_id, $supp_trans->tax_included) - $net_diff; $net_diff = 0;
     	if ($trans_type == ST_SUPPCREDIT)
     	{
@@ -274,7 +274,7 @@ function add_supp_invoice(supp_trans &$supp_trans)
 
 		
 		$line_tax = get_full_price_for_item($entered_grn->item_code,
-			$entered_grn->this_quantity_inv * $entered_grn->chg_price, $supp_trans->tax_group_id, $supp_trans->tax_included) - $taxfree_line;
+			(float)$entered_grn->this_quantity_inv * (float)$entered_grn->chg_price, $supp_trans->tax_group_id, $supp_trans->tax_included) - $taxfree_line;
 
 		$stock_gl_code = row_or_empty(get_stock_gl_code($entered_grn->item_code));
 
@@ -360,7 +360,7 @@ function add_supp_invoice(supp_trans &$supp_trans)
 		}
 		update_purchase_value($entered_grn->item_code, $entered_grn->chg_price * $ex_rate);
 		add_supp_invoice_item($trans_type, $invoice_id, $entered_grn->item_code,
-			$entered_grn->item_description, 0, 	$entered_grn->chg_price, $line_tax/$entered_grn->this_quantity_inv,
+			$entered_grn->item_description, 0, 	$entered_grn->chg_price, (float)$line_tax/(float)$entered_grn->this_quantity_inv,
 			$entered_grn->this_quantity_inv, $entered_grn->id, $entered_grn->po_detail_item, "");
     } /* end of GRN postings */
 
@@ -500,7 +500,7 @@ function read_supp_invoice(string|int|float|bool|null $trans_no, string|int|floa
            				$details_row["description"], 
            				$details_row['qty_recd'],
            				$details_row['quantity_inv'],
-           				($trans_type == ST_SUPPCREDIT ? -1 : 1) * (float)$details_row["quantity"], 0, $details_row["FullUnitPrice"], // SUPPCREDIT quantities are stored negative in database
+           				((float)($trans_type == ST_SUPPCREDIT ? -1 : 1)) * (float)$details_row["quantity"], 0, $details_row["FullUnitPrice"], // SUPPCREDIT quantities are stored negative in database
            				0, 0);
              	}
              	else
@@ -706,7 +706,7 @@ function remove_not_invoice_item(string|int|null $id): void
             $total = 0;
             $stock_gl_code = row_or_empty(get_stock_gl_code($myrow['item_code']));
             $date = sql2date($grn["delivery_date"]);
-            $total += add_gl_trans_supplier(ST_SUPPRECEIVE, $myrow['grn_batch_id'], $date, $stock_gl_code["inventory_account"],
+            $total += (float)add_gl_trans_supplier(ST_SUPPRECEIVE, $myrow['grn_batch_id'], $date, $stock_gl_code["inventory_account"],
                 $stock_gl_code['dimension_id'], $stock_gl_code['dimension2_id'],
                 -$myrow['QtyOstdg'] * $price, $grn["supplier_id"], "", 0, _("GRN Removal"));
             $total += add_gl_trans_supplier(ST_SUPPRECEIVE, $myrow['grn_batch_id'], $date, $clearing_act,

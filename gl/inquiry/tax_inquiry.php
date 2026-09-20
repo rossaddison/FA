@@ -90,7 +90,7 @@ function show_results(): void
 		$payable = $tx['payable'];
 		$collectible = -$tx['collectible'];
 		$net = $collectible + $payable;
-		$total += $net;
+		$total += (float)$net;
 		alt_table_row_color($k);
 		label_cell((string)$tx['name'] . " " . (string)$tx['rate'] . "%");
 		label_cell(_("Charged on sales") . " (" . _("Output Tax")."):");

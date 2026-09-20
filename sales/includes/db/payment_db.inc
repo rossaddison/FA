@@ -60,7 +60,7 @@ function write_customer_payment(string|int|float|bool|array|null $trans_no, stri
 	$total = 0;
 
 	/* Bank account entry first */
-	$total += add_gl_trans(ST_CUSTPAYMENT, $payment_no, $date_,
+	$total += (float)add_gl_trans(ST_CUSTPAYMENT, $payment_no, $date_,
 		$bank_gl_account, $dim1, $dim2, '', ($bank_amount - $charge),  $bank['bank_curr_code'], PT_CUSTOMER, $customer_id);
 
 	if ($branch_id != ANY_NUMERIC) {
@@ -106,7 +106,7 @@ function write_customer_payment(string|int|float|bool|array|null $trans_no, stri
 
 	/*now enter the bank_trans entry */
 	add_bank_trans(ST_CUSTPAYMENT, $payment_no, $bank_account, $ref,
-		$date_, $bank_amount - $charge, PT_CUSTOMER, $customer_id);
+		$date_, (float)$bank_amount - (float)$charge, PT_CUSTOMER, $customer_id);
 
 	add_comments(ST_CUSTPAYMENT, $payment_no, $date_, $memo_);
 

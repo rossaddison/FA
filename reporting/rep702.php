@@ -87,8 +87,8 @@ function print_list_of_journal_entries(): void
                 $rep->NewLine();
             	$rep->AmountCol(4, 5, $debit, $dec);
             	$rep->AmountCol(5, 6, abs($credit), $dec);
-            	$totdeb += $debit;
-            	$totcre += $credit;
+            	$totdeb += (float)$debit;
+            	$totcre += (float)$credit;
             	$debit = $credit = 0.0;
 				$rep->Line($rep->row -= 4);
                 $rep->NewLine();
@@ -129,8 +129,8 @@ function print_list_of_journal_entries(): void
 		$rep->NewLine();
 		$rep->AmountCol(4, 5, $debit, $dec);
 		$rep->AmountCol(5, 6, abs($credit), $dec);
-		$totdeb += $debit;
-		$totcre += $credit;
+		$totdeb += (float)$debit;
+		$totcre += (float)$credit;
 		$rep->Line($rep->row -= 4);
 		$rep->NewLine();
         $rep->TextCol(0, 4, _("Total"));

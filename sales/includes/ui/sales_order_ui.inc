@@ -164,7 +164,7 @@ function display_order_summary(?string $title, Cart &$order, bool $editable_item
 	foreach ($order->get_items() as $line_no=>$stock_item)
 	{
 
-		$line_total = round($stock_item->qty_dispatched * $stock_item->price * (1 - $stock_item->discount_percent),
+		$line_total = round((float)$stock_item->qty_dispatched * (float)$stock_item->price * (1.0 - (float)$stock_item->discount_percent),
 		   user_price_dec());
 
 		$qoh_msg = '';
@@ -187,7 +187,7 @@ function display_order_summary(?string $title, Cart &$order, bool $editable_item
 			label_cell($stock_item->units);
 			amount_cell($stock_item->price);
 
-			percent_cell($stock_item->discount_percent * 100);
+			percent_cell((float)$stock_item->discount_percent * 100.0);
 			amount_cell($line_total);
 
 			if ($editable_items)
@@ -204,7 +204,7 @@ function display_order_summary(?string $title, Cart &$order, bool $editable_item
 			sales_order_item_controls($order, $k,  $line_no);
 		}
 
-		$total += $line_total;
+		$total += (float)$line_total;
 	}
 
 	if ($id==-1 && $editable_items)
@@ -218,12 +218,12 @@ function display_order_summary(?string $title, Cart &$order, bool $editable_item
 	small_amount_cells(null, 'freight_cost', price_format(get_post('freight_cost',0)));
 	label_cell('', 'colspan=2');
 	end_row();
-	$display_sub_total = price_format($total + input_num('freight_cost'));
+	$display_sub_total = price_format((float)$total + (float)input_num('freight_cost'));
 	label_row(_("Sub-total"), $display_sub_total, "colspan=$colspan align=right","align=right", 2);
 	$taxes = $order->get_taxes(input_num('freight_cost'));
 	$tax_total = display_edit_tax_items($taxes, $colspan, $order->tax_included, 2);
 
-	$display_total = price_format(($total + input_num('freight_cost') + $tax_total));
+	$display_total = price_format(((float)$total + (float)input_num('freight_cost') + $tax_total));
 
 	start_row();
 	label_cells(_("Amount Total"), $display_total, "colspan=$colspan align=right","align=right");
@@ -369,7 +369,7 @@ function display_order_header(Cart &$order, bool $editable, ?string $date_text):
 
 	customer_credit_row($_POST['customer_id'], $order->credit);
 
-	label_row(_("Customer Discount:"), ($order->default_discount * 100) . "%");
+	label_row(_("Customer Discount:"), ((float)$order->default_discount * 100.0) . "%");
 
 	table_section(3);
 	start_row();
@@ -481,7 +481,7 @@ function sales_order_item_controls(Cart &$order, int|string|null &$rowcounter, s
 		$dec = get_qty_dec(post_scalar('stock_id'));
 		$_POST['qty'] = number_format2($order->line_items[$id]->qty_dispatched, $dec);
 		$_POST['price'] = price_format($order->line_items[$id]->price);
-		$_POST['Disc'] = percent_format($order->line_items[$id]->discount_percent*100);
+		$_POST['Disc'] = percent_format((float)$order->line_items[$id]->discount_percent*100.0);
 		$units = $order->line_items[$id]->units;
 		$_POST['item_description'] = $order->line_items[$id]->item_description;
 		hidden('stock_id', post_scalar('stock_id'));
@@ -523,7 +523,7 @@ function sales_order_item_controls(Cart &$order, int|string|null &$rowcounter, s
 			$order->price_factor, get_post('OrderDate'));
 		$_POST['price'] = price_format($price);
 		// default to the customer's discount %
-		$_POST['Disc'] = percent_format($order->default_discount * 100);
+		$_POST['Disc'] = percent_format((float)$order->default_discount * 100.0);
 	}
 
 	if ($order->fixed_asset) {
@@ -542,7 +542,7 @@ function sales_order_item_controls(Cart &$order, int|string|null &$rowcounter, s
 
 	small_amount_cells(null, 'Disc', percent_format(post_scalar('Disc')), null, null, user_percent_dec());
 
-	$line_total = input_num('qty') * input_num('price') * (1 - input_num('Disc') / 100);
+	$line_total = (float)input_num('qty') * (float)input_num('price') * (1.0 - (float)((float)input_num('Disc') / 100.0));
 
 	amount_cell($line_total, false, '','line_total');
 

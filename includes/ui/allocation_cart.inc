@@ -256,13 +256,13 @@ class allocation
 
 		if ($amount > 0) {
 			foreach ($this->allocs as $alloc_item) {
-				$allocatable = $alloc_item->amount - $alloc_item->amount_allocated;
+				$allocatable = (float)$alloc_item->amount - (float)$alloc_item->amount_allocated;
 				if ($allocatable > 0) {
 					if ($amount >= $allocatable) {
 						$alloc_item->current_allocated = $allocatable;
-						$amount -= $allocatable;
+						$amount -= (float)$allocatable;
 					} else {
-						$alloc_item->current_allocated += $amount;
+						$alloc_item->current_allocated += (float)$amount;
 						break;
 					}
 				}
@@ -314,7 +314,7 @@ class allocation
 						$amount, $this->person_type);
 
 				//////////////////////////////////////////////////////////////
-				$total_allocated += $alloc_item->current_allocated;
+				$total_allocated += (float)$alloc_item->current_allocated;
 			}
 
 		}  /*end of the loop through the array of allocations made */
@@ -422,7 +422,7 @@ function show_allocatable(bool $show_totals): void {
 					 price_format($un_allocated), false));
 				end_row();
 
-   	    		$total_allocated += input_num('amount' . $id);
+   	    		$total_allocated += (float)input_num('amount' . $id);
 		   	}
 		}
 		if ($show_totals) {
@@ -438,7 +438,7 @@ function show_allocatable(bool $show_totals): void {
     	    }
 	        else
         		$font1 = $font2 = "";
-			$left_to_allocate = price_format($amount - $total_allocated);
+			$left_to_allocate = price_format((float)$amount - (float)$total_allocated);
 	        label_row(_("Left to Allocate"), $font1 . $left_to_allocate . $font2, 
 				"colspan=8 align=right", "nowrap align=right id='left_to_allocate'",
 				 3);
@@ -500,12 +500,12 @@ function check_allocations(): bool
 
 		session_obj('alloc')->allocs[$counter]->current_allocated = input_num('amount' . $counter);
 
-		$total_allocated += input_num('amount' . $counter);
+		$total_allocated += (float)input_num('amount' . $counter);
 	}
 
 	$amount = abs(session_obj('alloc')->amount);
 
-	if ($total_allocated - ($amount + input_num('discount'))  > sysprefs()->allocation_settled_allowance())
+	if ((float)$total_allocated - ((float)((float)$amount + (float)input_num('discount')))  > sysprefs()->allocation_settled_allowance())
 	{
 		display_error(_("These allocations cannot be processed because the amount allocated is more than the total amount left to allocate."));
 		return false;

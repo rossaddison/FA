@@ -195,7 +195,7 @@ function check_bank_account_history(string|int|float|bool|null $delta_amount, st
 	if (!isset($balance) && isset($date))
 		return null;	// unlimited account
 
-	$balance += $balance_offset;
+	$balance += (float)$balance_offset;
 	if (floatcmp($balance, -$delta_amount) < 0)
 		return array('amount' => $balance + $delta_amount, 'trans_date'=> date2sql($date));
 

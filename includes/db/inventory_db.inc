@@ -404,7 +404,7 @@ function handle_negative_inventory(string|int|float|bool|null $stock_id, string|
 
 		$id = get_next_trans_no(ST_JOURNAL);
 		$ref = refs()->get_next(ST_JOURNAL, null, $date_);
-		$diff = round($qoh*get_unit_cost($stock_id) + $quantity*$standard_cost, user_price_dec());
+		$diff = round((float)$qoh*(float)get_unit_cost($stock_id) + $quantity*$standard_cost, user_price_dec());
 
 		if ($diff != 0)
 		{

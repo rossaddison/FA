@@ -148,7 +148,7 @@ while ($myrow = db_fetch($result))
 	else
 	{
 		$quantity_formatted = number_format2(-$myrow["qty"], $dec);
-		$total_out += -$myrow["qty"];
+		$total_out += (float)(-$myrow["qty"]);
 	}
 	$after_qty += $myrow["qty"];
 

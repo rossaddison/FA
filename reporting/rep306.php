@@ -247,7 +247,7 @@ function print_inventory_purchase(): void
 		}	
 		$rep->AmountCol(5, 6, $trans['qty'], get_qty_dec($trans['stock_id']));
 		$rep->AmountCol(6, 7, $trans['price'], $dec);
-		$amt = (float)$trans['qty'] * $trans['price'];
+		$amt = (float)$trans['qty'] * (float)$trans['price'];
 		$rep->AmountCol(7, 8, $amt, $dec);
 		$rep->fontSize += 2;
 		$total += $amt;

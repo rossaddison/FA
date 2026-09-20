@@ -76,7 +76,7 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
             end_row();
         }
         
-        $acctstotal += $net_balance;
+        $acctstotal += (float)$net_balance;
     }	
 	
 	$levelptr = 1;
@@ -90,13 +90,13 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 	}
 
 	//Display Type Summary if total is != 0  
-	if (($acctstotal + $typestotal) != 0)
+	if (((float)$acctstotal + (float)$typestotal) != 0)
 	{
 		if ((bool)$drilldown && $type == $_POST["AccGrp"])
 		{		
 			start_row("class='inquirybg' style='font-weight:bold'");
 			label_cell(_('Total') . " " . $typename);
-			amount_cell(($acctstotal + $typestotal) * $convert);
+			amount_cell(((float)$acctstotal + (float)$typestotal) * $convert);
 			end_row();
 		}
 		//START Patch#1 : Display  only direct child types
@@ -111,11 +111,11 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 				
 			alt_table_row_color($k);
 			label_cell($url);
-			amount_cell(($acctstotal + $typestotal) * $convert);
+			amount_cell(((float)$acctstotal + (float)$typestotal) * $convert);
 			end_row();
 		}
 	}
-	return ($acctstotal + $typestotal);
+	return ((float)$acctstotal + (float)$typestotal);
 }	
 	
 function inquiry_controls(): void
@@ -231,7 +231,7 @@ function display_balance_sheet(): void
 		
 		start_row("class='inquirybg' style='font-weight:bold'");
 		label_cell(_('Total') . " " . _('Liabilities') . _(' and ') . _('Equities'));
-		amount_cell($lclose * $lconvert + $equityclose * $econvert + $calculateclose);
+		amount_cell((float)$lclose * (float)$lconvert + (float)$equityclose * (float)$econvert + $calculateclose);
 		end_row();
 	}
 	else //Drill Down

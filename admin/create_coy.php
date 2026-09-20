@@ -202,7 +202,7 @@ function handle_delete(string|int|float|bool|null $id): void
 	}
 	// 'shift' company directories names
 	for ($i = $id+1; $i < count($db_connections); $i++) {
-		if (!rename(company_path($i), company_path($i-1))) {
+		if (!rename(company_path($i), company_path((float)$i-1.0))) {
 			display_error(_("Cannot rename company subdirectory"));
 			return;
 		}

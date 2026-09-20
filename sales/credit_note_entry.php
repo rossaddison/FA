@@ -233,7 +233,7 @@ function handle_update_item(): void
 {
 	if ($_POST['UpdateItem'] != "" && check_item_data()) {
 		session_obj('Items')->update_cart_item($_POST['line_no'], input_num('qty'),
-			input_num('price'), input_num('Disc') / 100);
+			input_num('price'), (float)input_num('Disc') / 100.0);
 	}
     line_start_focus();
 }
@@ -255,7 +255,7 @@ function handle_new_item(): void
 		return;
 
 	add_to_order($_SESSION['Items'], $_POST['stock_id'], input_num('qty'),
-		input_num('price'), input_num('Disc') / 100);
+		input_num('price'), (float)input_num('Disc') / 100.0);
     line_start_focus();
 }
 //-----------------------------------------------------------------------------

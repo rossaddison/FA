@@ -77,7 +77,7 @@ class user_view {
 			case 'number':
 				    return user_numeric($value);
 			case 'percent':
-					return user_numeric($value)/100;
+					return (float)user_numeric($value)/100.0;
 			case 'check':
 					return isset($value) ? 1 : 0;
 			case 'text':

@@ -58,7 +58,7 @@ end_table();
 function check_overdue(array|false|null $row): bool
 {
 	return ($row['OverDue'] == 1 
-		&& (abs($row["TotalAmount"]) - (float)$row["Allocated"] != 0));
+		&& ((float)abs($row["TotalAmount"]) - (float)$row["Allocated"] != 0));
 }
 
 function order_link(array|false|null $row)
@@ -120,7 +120,7 @@ function alloc_link(array|false|null $row)
 		/*its a negative receipt */
 		return '';
 	} elseif (($row["type"] == ST_SALESINVOICE && ((float)$row['TotalAmount'] - (float)$row['Allocated']) > 0) || 
-		($row["type"] == ST_JOURNAL && (ABS($row['TotalAmount']) - (float)$row['Allocated']) > 0) || $row["type"] == ST_BANKPAYMENT)
+		($row["type"] == ST_JOURNAL && ((float)ABS($row['TotalAmount']) - (float)$row['Allocated']) > 0) || $row["type"] == ST_BANKPAYMENT)
 		return pager_link(_("Payment"),
 			"/sales/customer_payments.php?customer_id=".(string)$row["debtor_no"]."&SInvoice=" . (string)$row["trans_no"]."&Type=".(string)$row["type"], ICON_MONEY);
 

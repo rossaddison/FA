@@ -55,11 +55,11 @@ function write_sales_invoice(&$invoice)
 	$dec = user_price_dec();
 	foreach ($taxes as $taxitem) {
 		$taxitem['Value'] =  round2($taxitem['Value'], $dec);
-		$ov_gst +=  $taxitem['Value'];
+		$ov_gst +=  (float)$taxitem['Value'];
 	}
 
 	if($invoice->tax_included==0) {
-	    $items_added_tax = $ov_gst-$freight_tax;
+	    $items_added_tax = (float)$ov_gst-(float)$freight_tax;
 	    $freight_added_tax = $freight_tax;
 	} else {
 	    $items_added_tax = 0;
@@ -107,16 +107,16 @@ function write_sales_invoice(&$invoice)
 	foreach ($invoice->line_items as $line_no => $invoice_line) {
 		$qty = $invoice_line->qty_dispatched;
 		$line_taxfree_price = get_tax_free_price_for_item($invoice_line->stock_id,
-			$invoice_line->price * $qty, 0, $invoice->tax_included,
+			(float)$invoice_line->price * (float)$qty, 0, $invoice->tax_included,
 			$invoice->tax_group_array);
 
 		$line_tax = get_full_price_for_item($invoice_line->stock_id,
-			$invoice_line->price * $qty, 0, $invoice->tax_included,
+			(float)$invoice_line->price * (float)$qty, 0, $invoice->tax_included,
 			$invoice->tax_group_array) - $line_taxfree_price;
 
 		write_customer_trans_detail_item(ST_SALESINVOICE, $invoice_no, $invoice_line->stock_id,
 			$invoice_line->item_description, $invoice_line->qty_dispatched,
-			$invoice_line->line_price(), $qty ? $line_tax/$qty : 0, $invoice_line->discount_percent,
+			$invoice_line->line_price(), $qty ? (float)$line_tax/(float)$qty : 0, $invoice_line->discount_percent,
 			$invoice_line->standard_cost, $invoice_line->src_id,
 			(bool)$trans_no ? $invoice_line->id : 0);
 
@@ -124,9 +124,9 @@ function write_sales_invoice(&$invoice)
 		if ($invoice_line->qty_old != $invoice_line->qty_dispatched)
 		{
 			if ($invoice->is_prepaid())
-				update_prepaid_so_line($invoice_line->src_id, $invoice_line->qty_dispatched-$invoice_line->qty_old);
+				update_prepaid_so_line($invoice_line->src_id, (float)$invoice_line->qty_dispatched-(float)$invoice_line->qty_old);
 			else
-				update_parent_line(ST_SALESINVOICE, $invoice_line->src_id, ($invoice_line->qty_dispatched-$invoice_line->qty_old));
+				update_parent_line(ST_SALESINVOICE, $invoice_line->src_id, ((float)$invoice_line->qty_dispatched-(float)$invoice_line->qty_old));
 		}
 		if ($invoice_line->qty_dispatched != 0) {
 			$stock_gl_code = row_or_empty(get_stock_gl_code($invoice_line->stock_id));
@@ -144,7 +144,7 @@ function write_sales_invoice(&$invoice)
 					($customer['dimension_id'] != 0 ? $customer["dimension_id"] : $stock_gl_code["dimension_id"]));
 				$dim2 = ($invoice->dimension2_id != $customer['dimension2_id'] ? $invoice->dimension2_id : 
 					($customer['dimension2_id'] != 0 ? $customer["dimension2_id"] : $stock_gl_code["dimension2_id"]));
-				$total += add_gl_trans_customer(ST_SALESINVOICE, $invoice_no, $date_, $sales_account, $dim, $dim2,
+				$total += (float)add_gl_trans_customer(ST_SALESINVOICE, $invoice_no, $date_, $sales_account, $dim, $dim2,
 					-$line_taxfree_price*$prepaid_factor,
 					$invoice->customer_id, "The sales price GL posting could not be inserted");
 
@@ -159,15 +159,15 @@ function write_sales_invoice(&$invoice)
 		} /*quantity dispatched is more than 0 */
 	} /*end of delivery_line loop */
 
-	if (($items_total + $charge_shipping) != 0) {
-		$total += add_gl_trans_customer(ST_SALESINVOICE, $invoice_no, $date_, $branch_data["receivables_account"], $invoice->dimension_id, $invoice->dimension2_id,
+	if (((float)$items_total + (float)$charge_shipping) != 0) {
+		$total += (float)add_gl_trans_customer(ST_SALESINVOICE, $invoice_no, $date_, $branch_data["receivables_account"], $invoice->dimension_id, $invoice->dimension2_id,
 			($items_total + $charge_shipping + $items_added_tax + $freight_added_tax)*$prepaid_factor,
 			$invoice->customer_id, "The total debtor GL posting could not be inserted");
 	}
-	$to_allocate = ($items_total + $charge_shipping + $items_added_tax + $freight_added_tax);
+	$to_allocate = ((float)$items_total + (float)$charge_shipping + $items_added_tax + $freight_added_tax);
 
 	if ($charge_shipping != 0) {
-		$total += add_gl_trans_customer(ST_SALESINVOICE, $invoice_no, $date_, $company_data["freight_act"], $invoice->dimension_id, $invoice->dimension2_id,
+		$total += (float)add_gl_trans_customer(ST_SALESINVOICE, $invoice_no, $date_, $company_data["freight_act"], $invoice->dimension_id, $invoice->dimension2_id,
 			-$invoice->get_tax_free_shipping()*$prepaid_factor, $invoice->customer_id,
 			"The freight GL posting could not be inserted");
 	}
@@ -176,10 +176,10 @@ function write_sales_invoice(&$invoice)
 		if ($taxitem['Net'] != 0) {
 			$ex_rate = get_exchange_rate_from_home_currency(get_customer_currency($invoice->customer_id), $date_);
 			add_trans_tax_details(ST_SALESINVOICE, $invoice_no, $taxitem['tax_type_id'],
-				$taxitem['rate'], $invoice->tax_included, $prepaid_factor*(float)$taxitem['Value'],
+				$taxitem['rate'], $invoice->tax_included, (float)$prepaid_factor*(float)$taxitem['Value'],
 				 $taxitem['Net'], $ex_rate, $date_, $invoice->reference, TR_OUTPUT);
 			if (isset($taxitem['sales_gl_code']) && !empty($taxitem['sales_gl_code']) && $taxitem['Value'] != 0)
-				$total += add_gl_trans_customer(ST_SALESINVOICE, $invoice_no, $date_, $taxitem['sales_gl_code'], $invoice->dimension_id, $invoice->dimension2_id,
+				$total += (float)add_gl_trans_customer(ST_SALESINVOICE, $invoice_no, $date_, $taxitem['sales_gl_code'], $invoice->dimension_id, $invoice->dimension2_id,
 					(-$taxitem['Value'])*$prepaid_factor, $invoice->customer_id,
 					"A tax GL posting could not be inserted");
 		}
@@ -193,7 +193,7 @@ function write_sales_invoice(&$invoice)
 	if ($trans_no == 0) {
 		refs()->save(ST_SALESINVOICE, $invoice_no, $invoice->reference, null, $invoice->fixed_asset);
 		if ($invoice->payment_terms['cash_sale'] && $invoice->pos['pos_account']) {
-			$amount = $items_total + $items_added_tax + $invoice->freight_cost 
+			$amount = (float)$items_total + (float)$items_added_tax + $invoice->freight_cost 
 				+ $freight_added_tax;
 			if ($amount != 0) {
 				// to use debtors.pmt_discount on cash sale:
@@ -207,7 +207,7 @@ function write_sales_invoice(&$invoice)
 					$invoice->Branch, $invoice->pos['pos_account'], $date_,
 					refs()->get_next(ST_CUSTPAYMENT, null, array('customer' => $invoice->customer_id,
 						'branch' => $invoice->Branch, 'date' => $date_)),
-					$amount-$discount, $discount, $payment_info,
+					(float)$amount-(float)$discount, $discount, $payment_info,
 					0,0,0,$invoice->dimension_id, $invoice->dimension2_id);
 				add_cust_allocation($amount, ST_CUSTPAYMENT, $pmtno, ST_SALESINVOICE, $invoice_no, $invoice->customer_id, $date_);
 
@@ -241,7 +241,7 @@ function void_sales_invoice(string|int|float|bool|null $type, string|int|float|b
 		$lines = get_customer_trans_details($type, $type_no);
 		while($line = db_fetch($lines))
 		{
-			update_prepaid_so_line($line['src_id'], -$factor*(float)$line['quantity']);
+			update_prepaid_so_line($line['src_id'], (float)(-$factor)*(float)$line['quantity']);
 		}
 	}
 	else

@@ -363,7 +363,7 @@ function number_format2(string|int|float|bool|null $number, int|string $decimals
 
 	$number = (float)$number;
 	if($decimals==='max')
-		$dec = 15 - floor(log10(abs($number)));
+		$dec = 15.0 - (float)floor(log10(abs($number)));
 	else {
 		$delta = ($number < 0 ? -.0000000001 : .0000000001);
 		$number += $delta;

@@ -161,7 +161,7 @@ function print_remittances(): void
 			$rep->TextCol(3, 6, _("Left to Allocate"), -2);
 			$myrow['Total'] *= -1;
 			$myrow['ov_discount'] *= -1;
-			$rep->AmountCol(6, 7, $myrow['Total'] + $myrow['ov_discount'] - $total_allocated, $dec, -2);
+			$rep->AmountCol(6, 7, (float)$myrow['Total'] + (float)$myrow['ov_discount'] - $total_allocated, $dec, -2);
 			if (floatcmp($myrow['ov_discount'], 0))
 			{
 				$rep->NewLine();

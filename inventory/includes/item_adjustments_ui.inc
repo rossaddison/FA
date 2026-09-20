@@ -69,7 +69,7 @@ function display_adjustment_items(?string $title, items_cart &$order): void
 	foreach ($order->line_items as $line_no=>$stock_item)
 	{
 
-		$total += ($stock_item->standard_cost * $stock_item->quantity);
+		$total += ((float)($stock_item->standard_cost * $stock_item->quantity));
 
 		if ($id != $line_no)
 		{
@@ -98,7 +98,7 @@ function display_adjustment_items(?string $title, items_cart &$order): void
     	   		$price = get_purchase_value($stock_item->stock_id);
 				amount_cell($price);
       		} else
-				amount_cell($stock_item->standard_cost * $stock_item->quantity);
+				amount_cell((float)$stock_item->standard_cost * (float)$stock_item->quantity);
 
       		if (!$order->fixed_asset) {
       			if ($id == -1)
