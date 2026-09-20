@@ -145,7 +145,7 @@ function print_receipts(): void
 
 				$total_allocated += $myrow2['amt'];
 				$rep->NewLine(1);
-				if ($rep->row < $rep->bottomMargin + (15 * $rep->lineHeight))
+				if ($rep->row < $rep->bottomMargin + (15.0 * $rep->lineHeight))
 					$rep->NewPage();
 			}
 
@@ -156,7 +156,7 @@ function print_receipts(): void
 				$rep->TextColLines(1, 5, $memo, -2);
 			}
 
-			$rep->row = $rep->bottomMargin + (16 * $rep->lineHeight);
+			$rep->row = $rep->bottomMargin + (16.0 * $rep->lineHeight);
 
 			$rep->TextCol(3, 6, _("Total Allocated"), -2);
 			$rep->AmountCol(6, 7, $total_allocated, $dec, -2);

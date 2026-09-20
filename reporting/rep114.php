@@ -116,7 +116,7 @@ function print_sales_summary_report(): void
 	$rep->NewLine(2);
 	
 	$custno = 0;
-	$tax = $total = 0;
+	$tax = $total = 0.0;
 	$custname = $tax_id = "";
 	while ($trans=db_fetch($transactions))
 	{
@@ -135,7 +135,7 @@ function print_sales_summary_report(): void
 
 				if ($rep->row < $rep->bottomMargin + $rep->lineHeight)
 				{
-					$rep->Line($rep->row - 2);
+					$rep->Line($rep->row - 2.0);
 					$rep->NewPage();
 				}
 			}
@@ -168,7 +168,7 @@ function print_sales_summary_report(): void
 	$rep->TextCol(0, 2,	_("Total"));
 	$rep->AmountCol(2, 3, $totalnet, $dec);
 	$rep->AmountCol(3, 4, $totaltax, $dec);
-	$rep->Line($rep->row - 5);
+	$rep->Line($rep->row - 5.0);
 	$rep->Font();
 
 	$rep->End();

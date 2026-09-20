@@ -16,7 +16,7 @@ function add_exchange_variation(string|int|float|bool|array|null $trans_no, stri
 		return false;
 	if ($date_ == null)
 		$date_ = Today();
-	$for_amount = 0;
+	$for_amount = 0.0;
 
 	// We have to calculate all the currency accounts belonging to the GL account
 	// upto $date_ and calculate with the exchange rates. And then compare with the GL account balance.
@@ -239,7 +239,7 @@ function add_bank_transfer(string|array|null $from_account, string|array|null $t
 	$from_gl_account = get_bank_gl_account($from_account);
 	$to_gl_account = get_bank_gl_account($to_account);
 	
-	$total = 0;
+	$total = 0.0;
 	// do the source account postings
     $total += (float)add_gl_trans($trans_type, $trans_no, $date_, $from_gl_account, $dim1, $dim2, $person_id,
 		-($amount + $charge), $currency);
@@ -472,7 +472,7 @@ function write_bank_transaction(string|int|float|bool|null $trans_type, string|i
     	$person_type_id, $person_id,
     	$currency,
     	"Cannot insert a source bank transaction");
-	$total = 0;
+	$total = 0.0;
 	foreach ($items->gl_items as $gl_item)
 	{
 		$is_bank_to = is_bank_account($gl_item->code_id);

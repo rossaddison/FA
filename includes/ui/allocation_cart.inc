@@ -285,7 +285,7 @@ class allocation
 		 	clear_cust_alloctions($this->type, $this->trans_no, $this->person_id, $this->date_);
 
 		// now add the new allocations
-		$total_allocated = 0;
+		$total_allocated = 0.0;
 		$dec = user_price_dec();
 		foreach ($this->allocs as $alloc_item)
 		{
@@ -382,7 +382,7 @@ function show_allocatable(bool $show_totals): void {
 
 	global $systypes_array;
 	
-    $k = $total_allocated = 0;
+    $k = $total_allocated = 0.0;
 
 	$cart = $_SESSION['alloc'];
 	$supp_ref = in_array($cart->type, array(ST_SUPPCREDIT, ST_SUPPAYMENT, ST_BANKPAYMENT));
@@ -452,7 +452,7 @@ function show_allocatable(bool $show_totals): void {
 function check_allocations(): bool
 {
 
-	$total_allocated = 0;
+	$total_allocated = 0.0;
 
 	for ($counter = 0; $counter < get_post("TotalNumberOfAllocs"); $counter++)
 	{

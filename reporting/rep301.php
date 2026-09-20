@@ -203,7 +203,7 @@ function print_inventory_valuation_report(): void
 				$rep->AmountCol(5, 6, $total, $dec);
 				if ($detail)
 				{
-					$rep->Line($rep->row - 2);
+					$rep->Line($rep->row - 2.0);
 					$rep->NewLine();
 				}
 				$rep->NewLine();
@@ -251,13 +251,13 @@ function print_inventory_valuation_report(): void
 	$rep->Amountcol(5, 6, $total, $dec);
 	if ($detail)
 	{
-		$rep->Line($rep->row - 2);
+		$rep->Line($rep->row - 2.0);
 		$rep->NewLine();
 	}
 	$rep->NewLine(2, 1);
 	$rep->TextCol(0, 4, _('Grand Total'));
 	$rep->AmountCol(5, 6, $grandtotal, $dec);
-	$rep->Line($rep->row  - 4);
+	$rep->Line($rep->row  - 4.0);
 	$rep->NewLine();
     $rep->End();
 }

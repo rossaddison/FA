@@ -189,7 +189,7 @@ function print_aged_customer_analysis(): void
 			$res = get_invoices($myrow['debtor_no'], $to, $show_all);
     		if (db_num_rows($res)==0)
 				continue;
-    		$rep->Line($rep->row + 4);
+    		$rep->Line($rep->row + 4.0);
 			while ($trans=db_fetch($res))
 			{
 				$rep->NewLine(1, 2);
@@ -207,13 +207,13 @@ function print_aged_customer_analysis(): void
 				for ($i = 0; $i < count($str); $i++)
 					$rep->AmountCol($i + 3, $i + 4, $str[$i], $dec);
 			}
-			$rep->Line($rep->row - 8);
+			$rep->Line($rep->row - 8.0);
 			$rep->NewLine(2);
 		}
 	}
 	if ((bool)$summaryOnly)
 	{
-    	$rep->Line($rep->row  + 4);
+    	$rep->Line($rep->row  + 4.0);
     	$rep->NewLine();
 	}
 	$rep->fontSize += 2;
@@ -228,7 +228,7 @@ function print_aged_customer_analysis(): void
 			$serie[] = abs($total[$i]);
 		}
 	}
-   	$rep->Line($rep->row - 8);
+   	$rep->Line($rep->row - 8.0);
    	if ((bool)$graphics)
    	{
 		$pg->setStream('png');
@@ -245,7 +245,7 @@ function print_aged_customer_analysis(): void
 		//sleep(5);
 		$w = (float)$pg->width / 1.5;
 		$h = (float)$pg->height / 1.5;
-		$x = ($rep->pageWidth - $w) / 2;
+		$x = ($rep->pageWidth - $w) / 2.0;
 		$rep->NewLine(2);
 		if ($rep->row - $h < $rep->bottomMargin)
 			$rep->NewPage();

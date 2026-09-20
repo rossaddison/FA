@@ -261,7 +261,7 @@ class supp_trans
 	//
     function get_total_taxfree($tax_group_id=null)
     {
-    	$total = 0;
+    	$total = 0.0;
 
 		// preload the taxgroup !
 		if ($tax_group_id != null)
@@ -285,7 +285,7 @@ class supp_trans
 	//
 	function get_items_total()
 	{
-		$total = 0;
+		$total = 0.0;
 
 		foreach ($this->grn_items as $ln_itm)
 			$total += (float)round($ln_itm->this_quantity_inv * $ln_itm->chg_price, user_price_dec());

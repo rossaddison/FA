@@ -52,7 +52,7 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 {
 	global $path_to_root, $levelptr, $k;
 	
-	$acctstotal = 0;
+	$acctstotal = 0.0;
 	$typestotal = 0;
 	
 	//Get Accounts directly under this group/type

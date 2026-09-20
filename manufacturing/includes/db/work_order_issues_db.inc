@@ -29,7 +29,7 @@ function add_work_order_issue(string|int|float|bool|null $woid, string|array|nul
 
 	$number = db_insert_id();
 
-	$issue_total = $total_cost = 0;
+	$issue_total = $total_cost = 0.0;
 
 	$wo = row_or_empty(get_work_order($woid));
 

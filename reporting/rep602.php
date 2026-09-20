@@ -118,7 +118,7 @@ function print_bank_transactions_reconcile(): void
 		$rep->NewLine(2);
 		// Keep a running total as we loop through
 		// the transactions.
-		$total_debit = $total_credit = 0;			
+		$total_debit = $total_credit = 0.0;			
 		if ($rows > 0)
 		{
 			
@@ -148,7 +148,7 @@ function print_bank_transactions_reconcile(): void
 				$rep->NewLine();
 				if ($rep->row < $rep->bottomMargin + $rep->lineHeight)
 				{
-					$rep->Line($rep->row - 2);
+					$rep->Line($rep->row - 2.0);
 					$rep->NewPage();
 				}
 			}
@@ -218,7 +218,7 @@ function print_bank_transactions_reconcile(): void
 		$rep->Font();
 		$rep->NewLine(2);	
 			
-		$rep->Line($rep->row - $rep->lineHeight + 4);
+		$rep->Line($rep->row - $rep->lineHeight + 4.0);
 		$rep->NewLine(2, 1);			
 			
 	}

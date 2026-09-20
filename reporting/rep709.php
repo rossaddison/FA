@@ -169,7 +169,7 @@ function print_tax_report(): void
 
 			if ($rep->row < $rep->bottomMargin + $rep->lineHeight)
 			{
-				$rep->Line($rep->row - 2);
+				$rep->Line($rep->row - 2.0);
 				$rep->NewPage();
 			}
 		}
@@ -208,7 +208,7 @@ function print_tax_report(): void
 	$rep->aligns = $aligns2;
 	$rep->NewPage();
 
-	$taxtotal = 0;
+	$taxtotal = 0.0;
 	foreach( $taxes as $id=>$sum)
 	{
 		if ($id)
@@ -232,7 +232,7 @@ function print_tax_report(): void
 	$rep->Line($rep->row + $rep->lineHeight);
 	$rep->TextCol(3, 5,	_("Total payable or refund"));
 	$rep->AmountCol(5, 6, $taxtotal, $dec);
-	$rep->Line($rep->row - 5);
+	$rep->Line($rep->row - 5.0);
 	$rep->Font();
 	$rep->NewLine();
 

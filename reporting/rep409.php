@@ -100,7 +100,7 @@ function print_workorders(): void
 			$rep->AmountCol(5, 6,	(float)$myrow2['units_req'] * (float)$myrow['units_issued'], $dec, -2);
 			$rep->AmountCol(6, 7,	$myrow2['units_issued'], $dec, -2);
 			$rep->NewLine(1);
-			if ($rep->row < $rep->bottomMargin + (15 * $rep->lineHeight))
+			if ($rep->row < $rep->bottomMargin + (15.0 * $rep->lineHeight))
 				$rep->NewPage();
 		}
 		$memo = get_comments_string(ST_WORKORDER, $i);

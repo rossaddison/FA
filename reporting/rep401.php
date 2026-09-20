@@ -95,7 +95,7 @@ function print_bill_of_material(): void
 		{
 			if ($parent != '')
 			{
-				$rep->Line($rep->row - 2);
+				$rep->Line($rep->row - 2.0);
 				$rep->NewLine(2, 3);
 			}
 			$rep->TextCol(0, 1, $trans['parent']);
@@ -114,7 +114,7 @@ function print_bill_of_material(): void
 		$rep->TextCol(3, 4, $wc['name']);
 		$rep->AmountCol(4, 5, $trans['quantity'], $dec);
 	}
-	$rep->Line($rep->row - 4);
+	$rep->Line($rep->row - 4.0);
 	$rep->NewLine();
     $rep->End();
 }

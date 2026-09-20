@@ -151,7 +151,7 @@ function print_inventory_planning(): void
 		{
 			if ($catt != '')
 			{
-				$rep->Line($rep->row - 2);
+				$rep->Line($rep->row - 2.0);
 				$rep->NewLine(2, 3);
 			}
 			$rep->TextCol(0, 1, $trans['category_id']);
@@ -191,7 +191,7 @@ function print_inventory_planning(): void
 			$SuggestedTopUpOrder = 0.0;
 		$rep->AmountCol(11, 12, $SuggestedTopUpOrder, $dec);
 	}
-	$rep->Line($rep->row - 4);
+	$rep->Line($rep->row - 4.0);
 	$rep->NewLine();
     $rep->End();
 }

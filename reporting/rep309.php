@@ -128,7 +128,7 @@ function print_inventory_sales(): void
 				$rep->NewLine(2, 3);
 				$rep->TextCol(0, 4, _('Total'));
 				$rep->AmountCol(4, 5, $total, $dec);
-				$rep->Line($rep->row - 2);
+				$rep->Line($rep->row - 2.0);
 				$rep->NewLine();
 				$rep->NewLine();
 				$total = 0.0;
@@ -155,13 +155,13 @@ function print_inventory_sales(): void
 	$rep->NewLine(2, 3);
 	$rep->TextCol(0, 4, _('Total'));
 	$rep->AmountCol(4, 5, $total, $dec);
-	$rep->Line($rep->row - 2);
+	$rep->Line($rep->row - 2.0);
 	$rep->NewLine();
 	$rep->NewLine(2, 1);
 	$rep->TextCol(0, 4, _('Grand Total'));
 	$rep->AmountCol(4, 5, $grandtotal, $dec);
 
-	$rep->Line($rep->row  - 4);
+	$rep->Line($rep->row  - 4.0);
 	$rep->NewLine();
     $rep->End();
 }

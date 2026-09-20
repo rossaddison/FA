@@ -191,7 +191,7 @@ function print_GL_transactions(): void
 				$rep->NewLine();
 				if ($rep->row < $rep->bottomMargin + $rep->lineHeight)
 				{
-					$rep->Line($rep->row - 2);
+					$rep->Line($rep->row - 2.0);
 					$rep->NewPage();
 				}
 			}
@@ -204,7 +204,7 @@ function print_GL_transactions(): void
 		else
 			$rep->AmountCol(8, 9, abs($total), $dec);
 		$rep->Font();
-		$rep->Line($rep->row - $rep->lineHeight + 4);
+		$rep->Line($rep->row - $rep->lineHeight + 4.0);
 		$rep->NewLine(2, 1);
 	}
 	$rep->End();

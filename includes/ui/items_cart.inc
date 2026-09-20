@@ -245,7 +245,7 @@ class items_cart
 	/** @psalm-mutation-free */
 	function gl_items_total()
 	{
-		$total = 0;
+		$total = 0.0;
 		foreach ($this->gl_items as $gl_item)
 			$total += (float)$gl_item->amount;
 		return $total;
@@ -254,7 +254,7 @@ class items_cart
 	/** @psalm-mutation-free */
 	function gl_items_total_debit()
 	{
-		$total = 0;
+		$total = 0.0;
 		foreach ($this->gl_items as $gl_item)
 		{
 			if ($gl_item->amount > 0)
@@ -266,7 +266,7 @@ class items_cart
 	/** @psalm-mutation-free */
 	function gl_items_total_credit()
 	{
-		$total = 0;
+		$total = 0.0;
 		foreach ($this->gl_items as $gl_item)
 		{
 			if ($gl_item->amount < 0)
@@ -331,7 +331,7 @@ class items_cart
 	function collect_tax_info()
 	{
 		$tax_info = array();
-		$subledger_sum = $net_sum = 0;
+		$subledger_sum = $net_sum = 0.0;
 
 		$tax_info['tax_date'] = $this->tran_date;
 		$vat_percent = get_company_pref('partial_vat_percent');
@@ -375,7 +375,7 @@ class items_cart
 					// we can have both input and output tax postings in some cases like intra-EU trade.
 					// so just calculate net_amount from the higher in/out tax
 					$tax_info['net_amount'][$tax_id]
-						= (float)$sign*(float)round2(max(abs(@$tax_info['tax_in'][$tax_id]), abs(@$tax_info['tax_out'][$tax_id]))/$tax_type['rate']*100, user_price_dec())/$factor;
+						= (float)$sign*(float)round2(max(abs(@$tax_info['tax_in'][$tax_id]), abs(@$tax_info['tax_out'][$tax_id]))/$tax_type['rate']*100.0, user_price_dec())/$factor;
 
 				}
 			} else
@@ -445,7 +445,7 @@ class items_cart
 		}
 
 		$bank_trans = $supp_trans = $cust_trans = array();
-		$total_gl = 0;
+		$total_gl = 0.0;
 		foreach($this->gl_items as $gl)
 		{
 			if (!isset($gl->date))

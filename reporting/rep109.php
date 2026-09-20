@@ -94,7 +94,7 @@ function print_sales_orders(): void
 		$rep->NewPage();
 
 		$result = get_sales_order_details($i, ST_SALESORDER);
-		$SubTotal = 0;
+		$SubTotal = 0.0;
 		$items = $prices = array();
 		while ($myrow2=db_fetch($result))
 		{
@@ -124,7 +124,7 @@ function print_sales_orders(): void
 				$rep->TextCol(6, 7,	$DisplayNet, -2);
 			}
 			$rep->row = $newrow;
-			if ($rep->row < $rep->bottomMargin + (15 * $rep->lineHeight))
+			if ($rep->row < $rep->bottomMargin + (15.0 * $rep->lineHeight))
 				$rep->NewPage();
 		}
 		if ($myrow['comments'] != "")
@@ -134,7 +134,7 @@ function print_sales_orders(): void
 		}
 		$DisplaySubTot = number_format2($SubTotal,$dec);
 
-		$rep->row = $rep->bottomMargin + (15 * $rep->lineHeight);
+		$rep->row = $rep->bottomMargin + (15.0 * $rep->lineHeight);
 		$doctype = ST_SALESORDER;
 
 		$rep->TextCol(3, 6, _("Sub-total"), -2);

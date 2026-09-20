@@ -180,7 +180,7 @@ function print_order_status_list(): void
 	$rep->NewLine();
 	$rep->TextCol(1, 6, _("Grand Total")); 
 	$rep->AmountCol(6, 7, $grand_total);
-	$rep->Line($rep->row - 5);
+	$rep->Line($rep->row - 5.0);
 	$rep->End();
 }
 

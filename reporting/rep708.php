@@ -48,10 +48,10 @@ function display_type (?string $type, ?string $typename, int|string|null &$dec, 
 		//Print Type Title if it has atleast one non-zero account	
 		if (!$printtitle)
 		{	
-			$rep->row -= 4;
+			$rep->row -= 4.0;
 			$rep->TextCol(0, 8, _("Group")." - ".$type ." - ".$typename);	
 			$printtitle = 1;
-			$rep->row -= 4;
+			$rep->row -= 4.0;
 			$rep->Line($rep->row);
 			$rep->NewLine();			
 		}
@@ -111,7 +111,7 @@ function display_type (?string $type, ?string $typename, int|string|null &$dec, 
 
 		if ($rep->row < $rep->bottomMargin + $rep->lineHeight)
 		{
-			$rep->Line($rep->row - 2);
+			$rep->Line($rep->row - 2.0);
 			$rep->NewPage();
 		}
 	}
@@ -123,10 +123,10 @@ function display_type (?string $type, ?string $typename, int|string|null &$dec, 
 		//Print Type Title if has sub types and not previously printed
 		if (!$printtitle)
 		{
-			$rep->row -= 4;
+			$rep->row -= 4.0;
 			$rep->TextCol(0, 8, _("Group")." - ".$type ." - ".$typename);	
 			$printtitle = 1;
-			$rep->row -= 4;
+			$rep->row -= 4.0;
 			$rep->Line($rep->row);
 			$rep->NewLine();		
 		}
@@ -276,7 +276,7 @@ function print_trial_balance(): void
 		$rep->AmountCol(7, 8, abs($tbal), $dec);
 	$rep->NewLine();
 
-	$rep->Line($rep->row + 10);
+	$rep->Line($rep->row + 10.0);
 	if (($pbal = round2($pbal, $dec)) != 0.0 && $dimension == 0 && $dimension2 == 0)
 	{
 		$rep->NewLine(2);

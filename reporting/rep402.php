@@ -78,12 +78,12 @@ function print_gl_rows(FrontReport &$rep, string|bool|mysqli_result|null $result
 
     if (db_num_rows($result))
     {
-		$rep->Line($rep->row -= 4);
+		$rep->Line($rep->row -= 4.0);
 		$rep->NewLine();
 		$rep->Font('italic');
 		$rep->TextCol(3, 11, $title);
 		$rep->Font();
-		$rep->Line($rep->row -= 4);
+		$rep->Line($rep->row -= 4.0);
 		while($myrow = db_fetch($result)) {
 			$rep->NewLine();
 			$rep->TextCol(0, 2, $systypes_array[$myrow['type']] . ' ' . (string)$myrow['type_no'], -2);
@@ -199,7 +199,7 @@ function print_work_order_listing(): void
 
 			$wo = get_gl_trans(ST_WORKORDER, $trans['id']);
 			print_gl_rows($rep, $wo, _("Finished Product Receival"));
-			$rep->Line($rep->row - 2);
+			$rep->Line($rep->row - 2.0);
 			$rep->NewLine();
 		}
 		$rep->NewLine();

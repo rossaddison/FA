@@ -169,7 +169,7 @@ function inventory_movements(): void
 		$rep->AmountCol(6, 7, $qoh_end, $stock_qty_dec);
 		$rep->NewLine(0, 1);
 	}
-	$rep->Line($rep->row  - 4);
+	$rep->Line($rep->row  - 4.0);
 
 	$rep->NewLine();
     $rep->End();

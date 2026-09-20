@@ -114,7 +114,7 @@ function print_salesman_list(): void
 
 	$rep->NewPage();
 	$salesman = 0;
-	$subtotal = $total = $subprov = $provtotal = 0;
+	$subtotal = $total = $subprov = $provtotal = 0.0;
 
 	$result = GetSalesmanTrans($from, $to);
 
@@ -125,12 +125,12 @@ function print_salesman_list(): void
 		{
 			if ($salesman != 0)
 			{
-				$rep->Line($rep->row - 8);
+				$rep->Line($rep->row - 8.0);
 				$rep->NewLine(2);
 				$rep->TextCol(0, 3, _('Total'));
 				$rep->AmountCol(5, 6, $subtotal, $dec);
 				$rep->AmountCol(6, 7, $subprov, $dec);
-    			$rep->Line($rep->row  - 4);
+    			$rep->Line($rep->row  - 4.0);
     			$rep->NewLine(2);
 			}
 			$rep->TextCol(0, 2,	(string)$myrow['salesman_code']." ".(string)$myrow['salesman_name']);
@@ -143,18 +143,18 @@ function print_salesman_list(): void
 			$salesman = $myrow['salesman_code'];
 			$total += (float)$subtotal;
 			$provtotal += (float)$subprov;
-			$subtotal = 0;
-			$subprov = 0;
+			$subtotal = 0.0;
+			$subprov = 0.0;
 		}
 		$rate = $myrow['rate'];
 		$amt = (float)$myrow['InvoiceTotal'] * $rate;
 		if ($myrow['provision2'] == 0)
-			$prov = (float)$myrow['provision'] * (float)$amt / 100;
+			$prov = (float)$myrow['provision'] * (float)$amt / 100.0;
 		else {
 			$amt1 = min($amt, max(0, (float)$myrow['break_pt']-(float)$subtotal));
 			$amt2 = (float)$amt - (float)$amt1;
 
-			$prov = (float)$amt1*(float)$myrow['provision']/100 + (float)$amt2*(float)$myrow['provision2']/100;
+			$prov = (float)$amt1*(float)$myrow['provision']/100.0 + (float)$amt2*(float)$myrow['provision2']/100.0;
 		}
 		if (!(bool)$summary)
 		{
@@ -172,12 +172,12 @@ function print_salesman_list(): void
 	}
 	if ($salesman != 0)
 	{
-		$rep->Line($rep->row - 4);
+		$rep->Line($rep->row - 4.0);
 		$rep->NewLine(2);
 		$rep->TextCol(0, 3, _('Total'));
 		$rep->AmountCol(5, 6, $subtotal, $dec);
 		$rep->AmountCol(6, 7, $subprov, $dec);
-		$rep->Line($rep->row  - 4);
+		$rep->Line($rep->row  - 4.0);
 		$rep->NewLine(2);
 		$total += (float)$subtotal;
 		$provtotal += (float)$subprov;
@@ -187,7 +187,7 @@ function print_salesman_list(): void
 	$rep->fontSize -= 2;
 	$rep->AmountCol(5, 6, $total, $dec);
 	$rep->AmountCol(6, 7, $provtotal, $dec);
-	$rep->Line($rep->row  - 4);
+	$rep->Line($rep->row  - 4.0);
 	$rep->NewLine();
 	$rep->End();
 }

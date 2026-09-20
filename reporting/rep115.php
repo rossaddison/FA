@@ -245,7 +245,7 @@ function print_customer_balances(): void
             $rep->NewLine(1);
             continue;
         }
-        $curr_db = $curr_cr = 0;
+        $curr_db = $curr_cr = 0.0;
         while ($trans = db_fetch($res)) //Detail starts here
         {
 
@@ -268,7 +268,7 @@ function print_customer_balances(): void
 
     }
 
-    $rep->Line($rep->row + 4);
+    $rep->Line($rep->row + 4.0);
     $rep->NewLine();
     $rep->fontSize += 2;
     $rep->TextCol(0, 3, _('Grand Total'));
@@ -280,7 +280,7 @@ function print_customer_balances(): void
     $rep->AmountCol(4, 5, $tot_cur_db, $dec);
     $rep->AmountCol(5, 6, $tot_cur_cr, $dec);
     $rep->AmountCol(7, 8, $tot_bal, $dec);
-    $rep->Line($rep->row - 6, 1);
+    $rep->Line($rep->row - 6.0, 1);
     $rep->NewLine();
     $rep->End();
 }

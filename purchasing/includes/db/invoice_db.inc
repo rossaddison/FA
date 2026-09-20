@@ -139,7 +139,7 @@ function add_supp_invoice(supp_trans &$supp_trans)
 
 	begin_transaction();
 	hook_db_prewrite($supp_trans, $trans_type);
-	$tax_total = 0;
+	$tax_total = 0.0;
     $taxes = $supp_trans->get_taxes($supp_trans->tax_group_id);
 	if ((bool)$trans_no) {
 		$allocs = get_payments_for($trans_no, $trans_type, $supp_trans->supplier_id); // save allocations
@@ -187,11 +187,11 @@ function add_supp_invoice(supp_trans &$supp_trans)
 
 	$supp_trans->trans_no = $invoice_id;
 
-	$total = 0;
+	$total = 0.0;
 
     /* Now the TAX account */
     $taxes = $supp_trans->get_taxes($supp_trans->tax_group_id, 0, false);
-	$net_diff = 0;
+	$net_diff = 0.0;
 
     foreach ($taxes as $taxitem)
     {
@@ -258,7 +258,7 @@ function add_supp_invoice(supp_trans &$supp_trans)
     {
     	// moved this line up to calculate the taxfree price.
     	$taxfree_line = get_tax_free_price_for_item($entered_grn->item_code, (float)$entered_grn->this_quantity_inv * (float)$entered_grn->chg_price, 
-			  $supp_trans->tax_group_id, $supp_trans->tax_included) - $net_diff; $net_diff = 0;
+			  $supp_trans->tax_group_id, $supp_trans->tax_included) - $net_diff; $net_diff = 0.0;
     	if ($trans_type == ST_SUPPCREDIT)
     	{
 			$entered_grn->this_quantity_inv = -$entered_grn->this_quantity_inv;
@@ -703,7 +703,7 @@ function remove_not_invoice_item(string|int|null $id): void
     if ($clearing_act) {    // otherwise GRN clearing account is not used
         if (is_inventory_item($myrow['item_code']))
         {
-            $total = 0;
+            $total = 0.0;
             $stock_gl_code = row_or_empty(get_stock_gl_code($myrow['item_code']));
             $date = sql2date($grn["delivery_date"]);
             $total += (float)add_gl_trans_supplier(ST_SUPPRECEIVE, $myrow['grn_batch_id'], $date, $stock_gl_code["inventory_account"],

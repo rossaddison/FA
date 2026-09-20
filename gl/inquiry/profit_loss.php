@@ -60,8 +60,8 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 {
 	global $path_to_root, $levelptr, $k;
 		
-	$code_per_balance = 0;
-	$code_acc_balance = 0;
+	$code_per_balance = 0.0;
+	$code_acc_balance = 0.0;
 	$per_balance_total = 0;
 	$acc_balance_total = 0;
 	unset($totals_arr);

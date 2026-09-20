@@ -43,7 +43,7 @@ $th = array(_("Item Code"), _("Item Description"), _("Required by"), _("Quantity
 
 table_header($th);
 
-$total = 0;
+$total = 0.0;
 $k = 0;  //row colour counter
 $overdue_items = false;
 

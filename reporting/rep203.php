@@ -134,7 +134,7 @@ function print_payment_report(): void
 		$rep->NewLine(1, 2);
 		if (db_num_rows($res)==0)
 			continue;
-		$rep->Line($rep->row + 4);
+		$rep->Line($rep->row + 4.0);
 		$total[0] = $total[1] = 0.0;
 		while ($trans=db_fetch($res))
 		{
@@ -165,7 +165,7 @@ function print_payment_report(): void
 				$grandtotal[$i] += $item[$i];
 			}
 		}
-		$rep->Line($rep->row - 8);
+		$rep->Line($rep->row - 8.0);
 		$rep->NewLine(2);
 		$rep->TextCol(0, 3,	_('Total'));
 		for ($i = 0; $i < 2; $i++)
@@ -173,7 +173,7 @@ function print_payment_report(): void
 			$rep->AmountCol($i + 6, $i + 7, $total[$i], $dec);
 			$total[$i] = 0.0;
 		}
-    	$rep->Line($rep->row  - 4);
+    	$rep->Line($rep->row  - 4.0);
     	$rep->NewLine(2);
 	}
 	$rep->fontSize += 2;
@@ -181,7 +181,7 @@ function print_payment_report(): void
 	$rep->fontSize -= 2;
 	for ($i = 0; $i < 2; $i++)
 		$rep->AmountCol($i + 6, $i + 7,$grandtotal[$i], $dec);
-	$rep->Line($rep->row  - 4);
+	$rep->Line($rep->row  - 4.0);
 	$rep->NewLine();
     $rep->End();
 }

@@ -81,7 +81,7 @@ function show_results(): void
 	$th = array(_("Type"), _("Description"), _("Amount"), _("Outputs")."/"._("Inputs"));
 	table_header($th);
 	$k = 0;
-	$total = 0;
+	$total = 0.0;
 
 	$taxes = get_tax_summary($_POST['TransFromDate'], $_POST['TransToDate']);
 

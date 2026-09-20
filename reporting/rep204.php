@@ -101,9 +101,9 @@ function print_outstanding_GRN(): void
     $rep->Info($params, $cols, $headers, $aligns);
     $rep->NewPage();
 
-	$Tot_Val=0;
+	$Tot_Val=0.0;
 	$Supplier = '';
-	$SuppTot_Val=0;
+	$SuppTot_Val=0.0;
 	$res = getTransactions($fromsupp);
 
 	While ($GRNs = db_fetch($res))
@@ -116,9 +116,9 @@ function print_outstanding_GRN(): void
 				$rep->NewLine(2);
 				$rep->TextCol(0, 7, _('Total'));
 				$rep->AmountCol(7, 8, $SuppTot_Val, $dec);
-				$rep->Line($rep->row - 2);
+				$rep->Line($rep->row - 2.0);
 				$rep->NewLine(3);
-				$SuppTot_Val = 0;
+				$SuppTot_Val = 0.0;
 			}
 			$rep->TextCol(0, 6, $GRNs['supp_name']);
 			$Supplier = $GRNs['supplier_id'];
@@ -144,14 +144,14 @@ function print_outstanding_GRN(): void
 		$rep->NewLine();
 		$rep->TextCol(0, 7, _('Total'));
 		$rep->AmountCol(7, 8, $SuppTot_Val, $dec);
-		$rep->Line($rep->row - 2);
+		$rep->Line($rep->row - 2.0);
 		$rep->NewLine(3);
-		$SuppTot_Val = 0;
+		$SuppTot_Val = 0.0;
 	}
 	$rep->NewLine(2);
 	$rep->TextCol(0, 7, _('Grand Total'));
 	$rep->AmountCol(7, 8, $Tot_Val, $dec);
-	$rep->Line($rep->row - 2);
+	$rep->Line($rep->row - 2.0);
 	$rep->NewLine();
     $rep->End();
 }

@@ -115,7 +115,7 @@ if (db_num_rows($result) > 0)
 	table_header($th);
 
 	$k = 0;	//row colour counter
-	$sub_total = 0;
+	$sub_total = 0.0;
 	while ($myrow2 = db_fetch($result))
 	{
 		if($myrow2['quantity']==0) continue;

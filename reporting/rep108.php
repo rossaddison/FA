@@ -163,7 +163,7 @@ function print_statements(): void
 			$rep->TextCol(7, 8,	$DisplayAlloc, -2);
 			$rep->TextCol(8, 9,	$DisplayNet, -2);
 			$rep->NewLine();
-			if ($rep->row < $rep->bottomMargin + (10 * $rep->lineHeight))
+			if ($rep->row < $rep->bottomMargin + (10.0 * $rep->lineHeight))
 				$rep->NewPage();
 		}
 		$nowdue = "1-" . $PastDueDays1 . " " . _("Days");
@@ -176,9 +176,9 @@ function print_statements(): void
 			number_format2(((float)$CustomerRecord["Overdue1"]-(float)$CustomerRecord["Overdue2"]) ,$dec),
 			number_format2($CustomerRecord["Overdue2"],$dec),
 			number_format2($CustomerRecord["Balance"],$dec));
-		$col = array($rep->cols[0], $rep->cols[0] + 110, $rep->cols[0] + 210, $rep->cols[0] + 310,
-			$rep->cols[0] + 410, $rep->cols[0] + 510);
-		$rep->row = $rep->bottomMargin + (10 * $rep->lineHeight - 6);
+		$col = array($rep->cols[0], $rep->cols[0] + 110.0, $rep->cols[0] + 210.0, $rep->cols[0] + 310.0,
+			$rep->cols[0] + 410.0, $rep->cols[0] + 510.0);
+		$rep->row = $rep->bottomMargin + (10.0 * $rep->lineHeight - 6.0);
 		for ($i = 0; $i < 5; $i++)
 			$rep->TextWrap($col[$i], $rep->row, $col[$i + 1] - $col[$i], $str[$i], 'right');
 		$rep->NewLine();

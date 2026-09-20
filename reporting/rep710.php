@@ -124,7 +124,7 @@ function print_audit_trail(): void
 		}
         $rep->NewLine(1, 2);
     }
-    $rep->Line($rep->row  + 4);
+    $rep->Line($rep->row  + 4.0);
 	if ($systype != -1) {
         $rep->NewLine(1, 2);
         $rep->TextCol(6, 7, _('Total'));

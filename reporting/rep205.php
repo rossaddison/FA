@@ -197,7 +197,7 @@ function print_supplier_details_listing(): void
 			if ($newrow != 0 && $newrow < $rep->row)
 				$rep->row = $newrow;
 			$rep->NewLine();
-			$rep->Line($rep->row + 8);
+			$rep->Line($rep->row + 8.0);
 			$rep->NewLine(0, 3);
 		}
 	}

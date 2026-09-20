@@ -324,8 +324,8 @@ class db_pager {
 	  	if ($page > $max) 
 	    	$page = $max;
 	  	$this->curr_page = $page;
-	  	$this->next_page = ($page < $max) ? $page+1 : null;
-	  	$this->prev_page = ($page > 1) ? ($page-1) : null;
+	  	$this->next_page = ($page < $max) ? $page+1.0 : null;
+	  	$this->prev_page = ($page > 1) ? ($page-1.0) : null;
 	  	$this->last_page = ($page < $max) ? $max : null;
 	  	$this->first_page = ($page != 1) ? 1: null;
 	}

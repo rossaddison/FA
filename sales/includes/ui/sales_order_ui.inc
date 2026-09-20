@@ -155,7 +155,7 @@ function display_order_summary(?string $title, Cart &$order, bool $editable_item
 
 	table_header($th);
 
-	$total = 0;
+	$total = 0.0;
 	$k = 0;  //row colour counter
 
 	$id = find_submit('Edit');

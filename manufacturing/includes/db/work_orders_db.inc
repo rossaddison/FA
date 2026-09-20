@@ -388,7 +388,7 @@ function get_sql_for_where_used(string|array|null $stock_id): string
  */
 function get_gl_wo_cost(string|int|float|bool|null $woid, ?int $cost_type): float|int
 {
-	$cost = 0;
+	$cost = 0.0;
 	$result = get_gl_wo_cost_trans($woid, $cost_type);
 	while ($row = db_fetch($result))
 		$cost += (float)(-$row['amount']);

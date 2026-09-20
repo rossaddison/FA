@@ -160,7 +160,7 @@ function print_invoices(): void
 			$rep->SetHeaderType('Header2');
 			$rep->NewPage();
 			// calculate summary start row for later use
-			$summary_start_row = $rep->bottomMargin + (15 * $rep->lineHeight);
+			$summary_start_row = $rep->bottomMargin + (15.0 * $rep->lineHeight);
 
 			$show_this_payment = $rep->formData['prepaid'] == 'partial'; // include payments invoiced here in summary
 
@@ -183,7 +183,7 @@ function print_invoices(): void
 			}
 
    			$result = get_customer_trans_details(ST_SALESINVOICE, $row['trans_no']);
-			$SubTotal = 0;
+			$SubTotal = 0.0;
 			while ($myrow2=db_fetch($result))
 			{
 				if ($myrow2["quantity"] == 0)
@@ -240,7 +240,7 @@ function print_invoices(): void
 				// Partial invoices table
 				$rep->TextCol(0, 3,_("Prepayments invoiced to this order up to day:"));
 				$rep->TextCol(0, 3,	str_pad('', 150, '_'));
-				$rep->cols[2] -= 20;
+				$rep->cols[2] -= 20.0;
 				$rep->aligns[2] = 'right';
 				$rep->NewLine(); $c = 0; $tot_pym=0;
 				$rep->TextCol(0, 3,	str_pad('', 150, '_'));
@@ -269,8 +269,8 @@ function print_invoices(): void
 
 			$doctype = ST_SALESINVOICE;
     		$rep->row = $summary_start_row;
-			$rep->cols[2] += 20;
-			$rep->cols[3] += 20;
+			$rep->cols[2] += 20.0;
+			$rep->cols[3] += 20.0;
 			$rep->aligns[3] = 'left';
 
 			$rep->TextCol(3, 6, _("Sub-total"), -2);

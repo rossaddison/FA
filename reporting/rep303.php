@@ -73,7 +73,7 @@ function barcode_check(?string $code, bool $return_value = false, bool $get_type
 			$fill .= "0";
 		$code = $fill . $code;
 		
-		$calc = 0;
+		$calc = 0.0;
 		for ($i = 0; $i < (strlen($code) - 1); $i++)
 			$calc += ((float)($i % 2 ? $code[$i] * 1 :  $code[$i] * 3));
 
@@ -291,7 +291,7 @@ function print_stock_check(): void
 		{
 			if ($catt != '')
 			{
-				$rep->Line($rep->row - 2);
+				$rep->Line($rep->row - 2.0);
 				$rep->NewLine(2, 3);
 			}
 			$rep->TextCol(0, 1, $trans['category_id']);
@@ -346,7 +346,7 @@ function print_stock_check(): void
 				$rep->row -= sysprefs()->pic_height;
 		}
 	}
-	$rep->Line($rep->row - 4);
+	$rep->Line($rep->row - 4.0);
 	$rep->NewLine();
     $rep->End();
 }

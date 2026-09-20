@@ -47,7 +47,7 @@ function write_credit_note(Cart &$credit_note, string|int|float|bool|null $write
 
 	$taxes = $credit_note->get_taxes();
 
-	$tax_total = 0;
+	$tax_total = 0.0;
 	foreach ($taxes as $taxitem) {
 		$taxitem['Value'] =  round2($taxitem['Value'], user_price_dec());
 		$tax_total += (float)$taxitem['Value'];
@@ -211,7 +211,7 @@ function add_gl_trans_credit_costs(?object $order, ?object $order_line, string|i
 	$dim2 = ($order->dimension2_id != $customer['dimension2_id'] ? $order->dimension2_id : 
 		($customer['dimension2_id'] != 0 ? $customer["dimension2_id"] : $stock_gl_codes["dimension2_id"]));
 
-	$total = 0;
+	$total = 0.0;
 	/* insert gl_trans to credit stock and debit cost of sales at standard cost*/
 	$unit_cost = get_unit_cost($order_line->stock_id);
 

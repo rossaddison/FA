@@ -127,7 +127,7 @@ $j = 1;
 $k = 0; //row colour counter
 
 $total_in = 0;
-$total_out = 0;
+$total_out = 0.0;
 
 while ($myrow = db_fetch($result))
 {

@@ -122,7 +122,7 @@ function print_po(): void
 		$rep->NewPage();
 
 		$result = get_po_details($i);
-		$SubTotal = 0;
+		$SubTotal = 0.0;
 		$items = $prices = array();
 		while ($myrow2=db_fetch($result))
 		{
@@ -159,7 +159,7 @@ function print_po(): void
 			$rep->TextCol(5, 6,	$DisplayPrice, -2);
 			$rep->TextCol(6, 7,	$DisplayNet, -2);
 			$rep->NewLine(1);
-			if ($rep->row < $rep->bottomMargin + (15 * $rep->lineHeight))
+			if ($rep->row < $rep->bottomMargin + (15.0 * $rep->lineHeight))
 				$rep->NewPage();
 		}
 		if ($myrow['comments'] != "")
@@ -169,7 +169,7 @@ function print_po(): void
 		}
 		$DisplaySubTot = number_format2($SubTotal,$dec);
 
-		$rep->row = $rep->bottomMargin + (15 * $rep->lineHeight);
+		$rep->row = $rep->bottomMargin + (15.0 * $rep->lineHeight);
 		$doctype = ST_PURCHORDER;
 
 		$rep->TextCol(3, 6, _("Sub-total"), -2);

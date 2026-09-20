@@ -43,10 +43,10 @@ function display_type (?string $type, ?string $typename, int|string|null &$dec, 
 				$prefix .= '         ';
 			}
 			$printtitle = 1;
-			$rep->row -= 4;
+			$rep->row -= 4.0;
 			$rep->TextCol(0, 1, $type);
 			$rep->TextCol(1, 4, $prefix.$typename);
-			$rep->row -= 4;
+			$rep->row -= 4.0;
 			$rep->Line($rep->row);
 			$rep->NewLine();		
 		}			
@@ -73,10 +73,10 @@ function display_type (?string $type, ?string $typename, int|string|null &$dec, 
 		if (!$printtitle)
 		{
 			$printtitle = 1;
-			$rep->row -= 4;
+			$rep->row -= 4.0;
 			$rep->TextCol(0, 1, $type);
 			$rep->TextCol(1, 4, $typename);
-			$rep->row -= 4;
+			$rep->row -= 4.0;
 			$rep->Line($rep->row);
 			$rep->NewLine();		
 		}
@@ -139,7 +139,7 @@ function print_Chart_of_Accounts(): void
 		}
 		$rep->NewLine();
 	}
-	$rep->Line($rep->row + 10);
+	$rep->Line($rep->row + 10.0);
 	$rep->End();
 }
 

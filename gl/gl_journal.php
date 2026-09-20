@@ -144,7 +144,7 @@ function create_cart(string|int|array|null $type=0, string|int|array|null $trans
 		}
 		if (isset($tax_info['net_amount']))	// guess exempt sales/purchase if any tax has been found
 		{
-			$net_sum = 0;
+			$net_sum = 0.0;
 			foreach($cart->gl_items as $gl)
                 if (!(bool)is_tax_account($gl->code_id) && !(bool)is_subledger_account($gl->code_id))
 					$net_sum += (float)$gl->amount;
@@ -273,7 +273,7 @@ if (isset($_POST['Process']))
    			$input_error = 1;
 		} else {
 			$taxes = get_all_tax_types();
-			$net_amount = 0;
+			$net_amount = 0.0;
 			while ($tax = db_fetch($taxes))
 			{
 				$tax_id = $tax['id'];

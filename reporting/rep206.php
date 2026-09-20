@@ -146,12 +146,12 @@ function print_supplier_balances(): void
     $sql .= " ORDER BY supp_name";
     $result = db_query($sql, "The suppliers could not be retrieved");
 
-	$tot_cur_cr = $tot_cur_db = 0;
+	$tot_cur_cr = $tot_cur_db = 0.0;
     while ($myrow=db_fetch($result))
     {
         if (!$convert && $currency != $myrow['curr_code'])
             continue;
-        $accumulate = 0;
+        $accumulate = 0.0;
         $rate = $convert ? get_exchange_rate_from_home_currency($myrow['curr_code'], Today()) : 1;
         $bal = get_open_balance($myrow['supplier_id'], $from);
 		$init = array();
@@ -181,7 +181,7 @@ function print_supplier_balances(): void
 
             continue;
         }
-        $curr_db = $curr_cr = 0;
+        $curr_db = $curr_cr = 0.0;
         while ($trans=db_fetch($res))
         {
             //if ($no_zeros && floatcmp(abs($trans['TotalAmount']), $trans['Allocated']) == 0) continue;
@@ -227,7 +227,7 @@ function print_supplier_balances(): void
         //$rep->Line($rep->row  - 2);
         $rep->NewLine();
     }
-    $rep->Line($rep->row + 4); // added line by Joe
+    $rep->Line($rep->row + 4.0); // added line by Joe
     $rep->NewLine();
     $rep->fontSize += 2;
     $rep->TextCol(0, 3,    _('Grand Total'));
@@ -241,6 +241,6 @@ function print_supplier_balances(): void
 	$rep->AmountCol(5, 6,$tot_cur_cr, $dec);
 
     $rep->AmountCol(7, 8,$grandtotal[3], $dec);
-    $rep->Line($rep->row - 6, 1);
+    $rep->Line($rep->row - 6.0, 1);
     $rep->End();
 }

@@ -94,7 +94,7 @@ function print_sales_quotations(): void
 		$rep->NewPage();
 
 		$result = get_sales_order_details($i, ST_SALESQUOTE);
-		$SubTotal = 0;
+		$SubTotal = 0.0;
 		$items = $prices = array();
 		while ($myrow2=db_fetch($result))
 		{
@@ -139,7 +139,7 @@ function print_sales_quotations(): void
 					$rep->NewLine();
 				}
 			}
-			if ($rep->row < $rep->bottomMargin + (15 * $rep->lineHeight))
+			if ($rep->row < $rep->bottomMargin + (15.0 * $rep->lineHeight))
 				$rep->NewPage();
 		}
 		if ($myrow['comments'] != "")
@@ -149,7 +149,7 @@ function print_sales_quotations(): void
 		}
 		$DisplaySubTot = number_format2($SubTotal,$dec);
 
-		$rep->row = $rep->bottomMargin + (15 * $rep->lineHeight);
+		$rep->row = $rep->bottomMargin + (15.0 * $rep->lineHeight);
 		$doctype = ST_SALESQUOTE;
 
 		$rep->TextCol(3, 6, _("Sub-total"), -2);

@@ -581,11 +581,11 @@ class Cart
 	/** @return 0|float */
 	function get_items_total()
 	{
-		$total = 0;
+		$total = 0.0;
 
 		foreach ($this->line_items as $ln_itm) {
 			$price = $ln_itm->line_price();
-			$total += (float)round($ln_itm->quantity * $price * (1 - $ln_itm->discount_percent), 
+			$total += (float)round($ln_itm->quantity * $price * (1.0 - $ln_itm->discount_percent), 
 			   user_price_dec());
 		}
 		return $total;
@@ -594,11 +594,11 @@ class Cart
 	/** @return 0|float */
 	function get_items_total_dispatch()
 	{
-		$total = 0;
+		$total = 0.0;
 
 		foreach ($this->line_items as $ln_itm) {
 			$price = $ln_itm->line_price();
-			$total += (float)round(($ln_itm->qty_dispatched * $price * (1 - $ln_itm->discount_percent)), 
+			$total += (float)round(($ln_itm->qty_dispatched * $price * (1.0 - $ln_itm->discount_percent)), 
 			   user_price_dec());
 		}
 		return $total;
@@ -703,7 +703,7 @@ class Cart
 		if((bool)$this->tax_included)
 			return round((float)$this->freight_cost*(float)$tax_rate/($tax_rate+100),  user_price_dec());
 		else
-			return round((float)$this->freight_cost*(float)$tax_rate/100,  user_price_dec());
+			return round((float)$this->freight_cost*(float)$tax_rate/100.0,  user_price_dec());
 	}
 	/*
 		Returns transaction value including all taxes

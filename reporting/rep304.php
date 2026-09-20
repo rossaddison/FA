@@ -165,7 +165,7 @@ function print_inventory_sales(): void
 				$rep->AmountCol(4, 5, $total, $dec);
 				$rep->AmountCol(5, 6, $total1, $dec);
 				$rep->AmountCol(6, 7, $total2, $dec);
-				$rep->Line($rep->row - 2);
+				$rep->Line($rep->row - 2.0);
 				$rep->NewLine();
 				$rep->NewLine();
 				$total = $total1 = $total2 = 0.0;
@@ -210,7 +210,7 @@ function print_inventory_sales(): void
 	$rep->AmountCol(4, 5, $total, $dec);
 	$rep->AmountCol(5, 6, $total1, $dec);
 	$rep->AmountCol(6, 7, $total2, $dec);
-	$rep->Line($rep->row - 2);
+	$rep->Line($rep->row - 2.0);
 	$rep->NewLine();
 	$rep->NewLine(2, 1);
 	$rep->TextCol(0, 4, _('Grand Total'));
@@ -218,7 +218,7 @@ function print_inventory_sales(): void
 	$rep->AmountCol(5, 6, $grandtotal1, $dec);
 	$rep->AmountCol(6, 7, $grandtotal2, $dec);
 
-	$rep->Line($rep->row  - 4);
+	$rep->Line($rep->row  - 4.0);
 	$rep->NewLine();
     $rep->End();
 }

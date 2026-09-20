@@ -113,7 +113,7 @@ if ($_GET['trans_type'] != ST_SALESQUOTE)
 	table_header($th);
 
 	$dn_numbers = array();
-	$delivery_total = 0;
+	$delivery_total = 0.0;
 
 	if ($result = get_sales_child_documents(ST_SALESORDER, $_GET['trans_no'])) {
 
@@ -146,7 +146,7 @@ if ($_GET['trans_type'] != ST_SALESQUOTE)
 	table_header($th);
 	
 	$inv_numbers = array();
-	$invoices_total = 0;
+	$invoices_total = 0.0;
 
 	if (session_obj('View')->prepaid)
 		$result = get_sales_order_invoices($_GET['trans_no']);
@@ -182,7 +182,7 @@ if ($_GET['trans_type'] != ST_SALESQUOTE)
 	$th = array(_("#"), _("Ref"), _("Date"), _("Total"));
 	table_header($th);
 
-	$credits_total = 0;
+	$credits_total = 0.0;
 
 	if ($result = get_sales_child_documents(ST_SALESINVOICE, $inv_numbers)) {
 		$k = 0;

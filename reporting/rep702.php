@@ -84,14 +84,14 @@ function print_list_of_journal_entries(): void
         {
             if ($typeno != 0)
             {
-                $rep->Line($rep->row += 6);
+                $rep->Line($rep->row += 6.0);
                 $rep->NewLine();
             	$rep->AmountCol(4, 5, $debit, $dec);
             	$rep->AmountCol(5, 6, abs($credit), $dec);
             	$totdeb += (float)$debit;
             	$totcre += (float)$credit;
             	$debit = $credit = 0.0;
-				$rep->Line($rep->row -= 4);
+				$rep->Line($rep->row -= 4.0);
                 $rep->NewLine();
             }
             $typeno = $myrow['type_no'];
@@ -126,18 +126,18 @@ function print_list_of_journal_entries(): void
     }
 	if ($typeno != 0)
 	{
-		$rep->Line($rep->row += 6);
+		$rep->Line($rep->row += 6.0);
 		$rep->NewLine();
 		$rep->AmountCol(4, 5, $debit, $dec);
 		$rep->AmountCol(5, 6, abs($credit), $dec);
 		$totdeb += (float)$debit;
 		$totcre += (float)$credit;
-		$rep->Line($rep->row -= 4);
+		$rep->Line($rep->row -= 4.0);
 		$rep->NewLine();
         $rep->TextCol(0, 4, _("Total"));
 		$rep->AmountCol(4, 5, $totdeb, $dec);
 		$rep->AmountCol(5, 6, abs($totcre), $dec);
-		$rep->Line($rep->row -= 4);
+		$rep->Line($rep->row -= 4.0);
 	}
     $rep->End();
 }

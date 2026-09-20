@@ -80,7 +80,7 @@ end_table();
 echo "</td></tr>";
 end_table(1); // outer table
 
-$sub_total = 0;
+$sub_total = 0.0;
 
 $result = get_customer_trans_details(ST_CUSTCREDIT, $trans_id);
 
@@ -93,7 +93,7 @@ if (db_num_rows($result) > 0)
 	table_header($th);
 
 	$k = 0;	//row colour counter
-	$sub_total = 0;
+	$sub_total = 0.0;
 
 	while ($myrow2 = db_fetch($result))
 	{

@@ -258,7 +258,7 @@ class purch_order
 	/** @return 0|float */
 	function get_trans_total() {
 		
-		$total = 0;
+		$total = 0.0;
 		$dec = user_price_dec();
 
 		foreach ($this->line_items as $ln_itm) {

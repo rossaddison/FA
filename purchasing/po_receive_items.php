@@ -69,7 +69,7 @@ function display_po_receive_items(): void
 
     /*show the line items on the order with the quantity being received for modification */
 
-    $total = 0;
+    $total = 0.0;
     $k = 0; //row colour counter
 
     if (count(session_obj('PO')->line_items)> 0 )

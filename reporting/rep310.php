@@ -176,7 +176,7 @@ function print_inventory_purchase(): void
 		if ($event != $trans['trans_no'])
 		{
 			if ($event != '')
-				$rep->Line($rep->row - 2);
+				$rep->Line($rep->row - 2.0);
 			$event = $trans['trans_no'];
 		}
 		$stock_id = $trans['stock_id'];
@@ -215,7 +215,7 @@ function print_inventory_purchase(): void
 //		$total_qty += $trans['qty'];
 	}
 
-	$rep->Line($rep->row - 4);
+	$rep->Line($rep->row - 4.0);
 	$rep->NewLine();
 	$rep->End();
 }

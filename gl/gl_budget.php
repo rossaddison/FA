@@ -100,7 +100,7 @@ if (db_has_gl_accounts())
 	}
 	hidden('begin');
 	hidden('end');
-	$total = $btotal = $ltotal = 0;
+	$total = $btotal = $ltotal = 0.0;
 	for ($i = 0, $date_ = $_POST['begin']; date1_greater_date2($_POST['end'], $date_); $i++)
 	{
 		start_row();

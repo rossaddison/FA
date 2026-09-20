@@ -101,7 +101,7 @@ function print_credits(): void
 		$rep->NewPage();
 
 		$result = get_customer_trans_details(ST_CUSTCREDIT, $i);
-		$SubTotal = 0;
+		$SubTotal = 0.0;
 		while ($myrow2=db_fetch($result))
 		{
 			if ($myrow2["quantity"] == 0)
@@ -128,7 +128,7 @@ function print_credits(): void
 			$rep->TextCol(5, 6,	$DisplayDiscount, -2);
 			$rep->TextCol(6, 7,	$DisplayNet, -2);
 			$rep->row = $newrow;
-			if ($rep->row < $rep->bottomMargin + (15 * $rep->lineHeight))
+			if ($rep->row < $rep->bottomMargin + (15.0 * $rep->lineHeight))
 				$rep->NewPage();
 		}
 
@@ -141,7 +141,7 @@ function print_credits(): void
 
 		$DisplaySubTot = number_format2($SubTotal,$dec);
 
-		$rep->row = $rep->bottomMargin + (15 * $rep->lineHeight);
+		$rep->row = $rep->bottomMargin + (15.0 * $rep->lineHeight);
 		$doctype = ST_CUSTCREDIT;
 
 		$rep->TextCol(3, 6, _("Sub-total"), -2);

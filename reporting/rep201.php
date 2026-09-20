@@ -154,7 +154,7 @@ function print_supplier_balances(): void
 	{
 		if (!$convert && $currency != $myrow['curr_code'])
 			continue;
-		$accumulate = 0;
+		$accumulate = 0.0;
 		$rate = $convert ? get_exchange_rate_from_home_currency($myrow['curr_code'], Today()) : 1;
 		$bal = get_open_balance($myrow['supplier_id'], $from);
 		$init = array();
@@ -187,7 +187,7 @@ function print_supplier_balances(): void
 			$grandtotal[$i] += (float)$init[$i];
 		}
 		$rep->NewLine(1, 2);
-		$rep->Line($rep->row + 4);
+		$rep->Line($rep->row + 4.0);
 		if (db_num_rows($res)==0) {
 			$rep->NewLine(1, 2);
 			continue;
@@ -233,7 +233,7 @@ function print_supplier_balances(): void
 			if ((bool)$show_balance)
 				$total[3] = (float)$total[0] - (float)$total[1];
 		}
-		$rep->Line($rep->row - 8);
+		$rep->Line($rep->row - 8.0);
 		$rep->NewLine(2);
 		$rep->TextCol(0, 3,	_('Total'));
 		for ($i = 0; $i < 4; $i++)
@@ -241,7 +241,7 @@ function print_supplier_balances(): void
 			$rep->AmountCol($i + 4, $i + 5, $total[$i], $dec);
 			$total[$i] = 0.0;
 		}
-    	$rep->Line($rep->row  - 4);
+    	$rep->Line($rep->row  - 4.0);
     	$rep->NewLine(2);
 	}
 	$rep->fontSize += 2;
@@ -251,7 +251,7 @@ function print_supplier_balances(): void
 		$grandtotal[3] = (float)$grandtotal[0] - (float)$grandtotal[1];
 	for ($i = 0; $i < 4; $i++)
 		$rep->AmountCol($i + 4, $i + 5,$grandtotal[$i], $dec);
-	$rep->Line($rep->row  - 4);
+	$rep->Line($rep->row  - 4.0);
 	$rep->NewLine();
     $rep->End();
 }

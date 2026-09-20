@@ -178,7 +178,7 @@ function work_order_production_gl(string|int|float|bool|null $woid, ?string $sto
 	$result = get_wo_requirements($woid);
 
 	// credit all the components
-	$total_cost = 0;
+	$total_cost = 0.0;
 	while ($bom_item = db_fetch($result))
 	{
 		if (sysprefs()->loc_notification() == 1 && is_inventory_item($bom_item['stock_id']))

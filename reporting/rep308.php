@@ -307,7 +307,7 @@ function inventory_movements(): void
 		
 		$rep->NewLine(0, 1);
 	}
-	$rep->Line($rep->row  - 4);
+	$rep->Line($rep->row  - 4.0);
 	$rep->NewLine(2);
 	$rep->TextCol(0, 1,	_("Total Movement"));
 	$rep->AmountCol(5, 6, $totval_open);
@@ -317,7 +317,7 @@ function inventory_movements(): void
 	$rep->NewLine(1);
 	$rep->TextCol(0, 1,	_("Total Out"));
 	$rep->AmountCol(14, 15, $totval_close);
-	$rep->Line($rep->row  - 4);
+	$rep->Line($rep->row  - 4.0);
 
     $rep->End();
 }

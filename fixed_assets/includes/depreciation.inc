@@ -35,7 +35,7 @@ function depreciation_months(?string $depreciation_start): float|int {
 
   $start = next_depreciation_date($depreciation_start);
 
-  return 12.0 - (float)date('n', $start) + 1;
+  return 12.0 - (float)date('n', $start) + 1.0;
 
   //$d1 = date('j', $start); // day of the month
   //$d2 = date('t', $start); // number of days in month
@@ -66,8 +66,8 @@ function compute_gl_rows_for_depreciation(bool|array|null $item, string|array|nu
 
   switch ($item['depreciation_method']) {
 	case 'D':
-		$line_value = (float)$item['purchase_cost']*(float)$item['depreciation_rate']/100/12;
-		$value = (float)$item['material_cost'] * (float)$item['depreciation_rate'] * (float)$item['depreciation_factor']/100/12;
+		$line_value = (float)$item['purchase_cost']*(float)$item['depreciation_rate']/100.0/12.0;
+		$value = (float)$item['material_cost'] * (float)$item['depreciation_rate'] * (float)$item['depreciation_factor']/100.0/12.0;
 		if ($value < $line_value)
 			$value = $line_value;
 		break;
@@ -75,7 +75,7 @@ function compute_gl_rows_for_depreciation(bool|array|null $item, string|array|nu
     case 'S':	// purchase_cost stores start cost of item
 		$done_months = months_between_dates($item['depreciation_start'], $item['depreciation_date']);
 		$remaining_months = 12.0 * 100.0/(float)$item['depreciation_rate'] - $done_months;
-		$value = (float)$item['purchase_cost']*(float)$item['depreciation_rate']/100/12;
+		$value = (float)$item['purchase_cost']*(float)$item['depreciation_rate']/100.0/12.0;
 		break;
 
 	case 'N':
@@ -107,7 +107,7 @@ function compute_gl_rows_for_depreciation(bool|array|null $item, string|array|nu
 
     if (FA_YEARLY == $period) {
       // yearly
-      if ($i == (float)$m + (float)$no_months - 1)
+      if ($i == (float)$m + (float)$no_months - 1.0)
         $rows[] = array('date' => $date, 'value' => $total);
       /*else
         $rows[] = array('date' => $date, 'value' => 0);

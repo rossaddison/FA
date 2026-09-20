@@ -32,7 +32,7 @@ function write_sales_delivery(Cart &$delivery,string|int|float|bool|null $bo_pol
 // mark sales order for concurrency conflicts check
 	update_sales_order_version($delivery->src_docs);
 
-	$tax_total = 0;
+	$tax_total = 0.0;
 	$taxes = $delivery->get_taxes(); // all taxes with freight_tax
 
 	foreach ($taxes as $taxitem) {

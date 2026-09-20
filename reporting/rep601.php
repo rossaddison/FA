@@ -123,7 +123,7 @@ function print_bank_transactions(): void
 			$rep->Font();
 			$total = $prev_balance;
 			$rep->NewLine(2);
-			$total_debit = $total_credit = 0;
+			$total_debit = $total_credit = 0.0;
 			if ($rows > 0)
 			{
 				// Keep a running total as we loop through
@@ -154,7 +154,7 @@ function print_bank_transactions(): void
 					$rep->NewLine();
 					if ($rep->row < $rep->bottomMargin + $rep->lineHeight)
 					{
-						$rep->Line($rep->row - 2);
+						$rep->Line($rep->row - 2.0);
 						$rep->NewPage();
 					}
 				}
@@ -174,7 +174,7 @@ function print_bank_transactions(): void
 			else
 				$rep->AmountCol(6, 7, abs($total), $dec);
 			$rep->Font();
-			$rep->Line($rep->row - $rep->lineHeight + 4);
+			$rep->Line($rep->row - $rep->lineHeight + 4.0);
 			$rep->NewLine(2, 1);
 			
 			// Print the difference between starting and ending balances.

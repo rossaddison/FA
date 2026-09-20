@@ -184,7 +184,7 @@ function print_price_listing(): void
 		else
 			$rep->NewLine(0, 1);
 	}
-	$rep->Line($rep->row  - 4);
+	$rep->Line($rep->row  - 4.0);
 
 	$result = get_kits($category);
 
@@ -215,7 +215,7 @@ function print_price_listing(): void
 		$rep->AmountCol(3, 4, $price, $dec);
 		$rep->NewLine(0, 1);
 	}
-	$rep->Line($rep->row  - 4);
+	$rep->Line($rep->row  - 4.0);
 	$rep->NewLine();
     $rep->End();
 }

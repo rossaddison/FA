@@ -286,7 +286,7 @@ function display_gl_items(supp_trans &$supp_trans, string|int|float|bool|items_c
 		$th[] = "";
 	}	
 	table_header($th);
-	$total_gl_value=$total = 0;
+	$total_gl_value=$total = 0.0;
 	$i = $k = 0;
 
 	if (count($supp_trans->gl_codes) > 0)
@@ -516,7 +516,7 @@ function display_grn_items(supp_trans &$supp_trans, ?int $mode=0): int|float
 			_("Quantity"), _("Price"), _("Line Value"));
 
 	table_header($th);
-    $total_grn_value = 0;
+    $total_grn_value = 0.0;
     $i = $k = 0;
 
 	if (count($supp_trans->grn_items) > 0)

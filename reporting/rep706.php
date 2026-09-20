@@ -29,8 +29,8 @@ include_once($path_to_root . "/admin/db/tags_db.inc");
 
 function display_type (?string $type, ?string $typename, string|int|float|bool|array|null $from, string|int|float|bool|array|FrontReport|null $to, string|int|float|bool|array|null $convert, int|string|null &$dec, FrontReport &$rep, string|int|float|bool|array|null $dimension, string|int|float|bool|array|null $dimension2, mixed $tags, object &$pg, mixed $graphics, array &$labels, array &$serie1, array &$serie2)
 {
-	$code_open_balance = 0;
-	$code_period_balance = 0;
+	$code_open_balance = 0.0;
+	$code_period_balance = 0.0;
 	$open_balance_total = 0;
 	$period_balance_total = 0;
 	$totals_arr = array();
@@ -57,9 +57,9 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 		if (!$printtitle)
 		{
 			$printtitle = 1;
-			$rep->row -= 4;
+			$rep->row -= 4.0;
 			$rep->TextCol(0, 5, $typename);
-			$rep->row -= 4;
+			$rep->row -= 4.0;
 			$rep->Line($rep->row);
 			$rep->NewLine();		
 		}			
@@ -85,9 +85,9 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 		if (!$printtitle)
 		{
 			$printtitle = 1;
-			$rep->row -= 4;
+			$rep->row -= 4.0;
 			$rep->TextCol(0, 5, $typename);
-			$rep->row -= 4;
+			$rep->row -= 4.0;
 			$rep->Line($rep->row);
 			$rep->NewLine();		
 		}
@@ -101,7 +101,7 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 	//Display Type Summary if total is != 0 OR head is printed (Needed in case of unused hierarchical COA) 
 	if (($code_open_balance + $open_balance_total + $code_period_balance + $period_balance_total) != 0 || $printtitle)
 	{
-		$rep->row += 6;
+		$rep->row += 6.0;
 		$rep->Line($rep->row);
 		$rep->NewLine();
 		$rep->TextCol(0, 2,	_('Total') . " " . $typename);
@@ -252,7 +252,7 @@ function print_balance_sheet(): void
 		}
 		
 		//Print Class Summary	
-		$rep->row += 6;
+		$rep->row += 6.0;
 		$rep->Line($rep->row);
 		$rep->NewLine();
 		$rep->Font('bold');
@@ -321,7 +321,7 @@ function print_balance_sheet(): void
 		$pg->display($filename, true);
 		$w = (float)$pg->width / 1.5;
 		$h = (float)$pg->height / 1.5;
-		$x = ($rep->pageWidth - $w) / 2;
+		$x = ($rep->pageWidth - $w) / 2.0;
 		$rep->NewLine(2);
 		if ($rep->row - $h < $rep->bottomMargin)
 			$rep->NewPage();

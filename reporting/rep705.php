@@ -105,9 +105,9 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 		if (!$printtitle)
 		{
 			$printtitle = 1;
-			$rep->row -= 4;
+			$rep->row -= 4.0;
 			$rep->TextCol(0, 5, $typename);
-			$rep->row -= 4;
+			$rep->row -= 4.0;
 			$rep->Line($rep->row);
 			$rep->NewLine();
 		}			
@@ -135,9 +135,9 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 		if (!$printtitle)
 		{
 			$printtitle = 1;
-			$rep->row -= 4;
+			$rep->row -= 4.0;
 			$rep->TextCol(0, 5, $typename);
-			$rep->row -= 4;
+			$rep->row -= 4.0;
 			$rep->Line($rep->row);
 			$rep->NewLine();
 		}
@@ -153,7 +153,7 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 	//Display Type Summary if total is != 0 OR head is printed (Needed in case of unused hierarchical COA) 
 	if ($printtitle)
 	{
-		$rep->row += 6;
+		$rep->row += 6.0;
 		$rep->Line($rep->row);
 		$rep->NewLine();
 		$rep->TextCol(0, 2,	_('Total') . " " . $typename);
@@ -332,7 +332,7 @@ function print_annual_expense_breakdown(): void
 		}
 		
 		//Print Class Summary	
-		$rep->row += 6;
+		$rep->row += 6.0;
 		$rep->Line($rep->row);
 		$rep->NewLine();
 		$rep->Font('bold');

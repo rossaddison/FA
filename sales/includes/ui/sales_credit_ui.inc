@@ -165,7 +165,7 @@ function display_credit_items(?string $title, Cart &$order): void
 
     table_header($th);
 
-    $subtotal = 0;
+    $subtotal = 0.0;
     $k = 0;  //row colour counter
 
     $id = find_submit('Edit');

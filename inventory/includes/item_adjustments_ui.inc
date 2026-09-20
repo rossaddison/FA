@@ -61,7 +61,7 @@ function display_adjustment_items(?string $title, items_cart &$order): void
 	}
 
 	table_header($th);
-	$total = 0;
+	$total = 0.0;
 	$k = 0;  //row colour counter
 
 	$low_stock = $order->check_qoh($_POST['StockLocation'], $_POST['AdjDate']);

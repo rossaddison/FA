@@ -57,7 +57,7 @@ function write_customer_payment(string|int|float|bool|array|null $trans_no, stri
 
 	$bank_gl_account = get_bank_gl_account($bank_account);
 
-	$total = 0;
+	$total = 0.0;
 
 	/* Bank account entry first */
 	$total += (float)add_gl_trans(ST_CUSTPAYMENT, $payment_no, $date_,

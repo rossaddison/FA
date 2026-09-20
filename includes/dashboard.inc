@@ -447,7 +447,7 @@ function customer_top(?string $today, ?int $limit=10, string|int|null $width='33
 	check_page_security('SA_SALESTRANSVIEW');
 	$k = 0; //row colour counter
 	$names = $totals = array();
-	$sales = 0;
+	$sales = 0.0;
 	while ($myrow = db_fetch($result))
 	{
 		$sales += (float)round($myrow['total']);
@@ -561,7 +561,7 @@ function stock_top(?string $today, ?int $limit=10, string|int|null $width='33', 
 	check_page_security($sec);
 	$k = 0; //row colour counter
 	$names = $totals = $costs = $results = array();
-	$sales = $cost = $res = 0;
+	$sales = $cost = $res = 0.0;
 	while ($myrow = db_fetch($result))
 	{
 		$sales += $myrow['total'];
@@ -668,7 +668,7 @@ function gl_top(?string $today, string|int|null $width='33', ?object &$pg=null):
 	display_title($title);
 	start_table(TABLESTYLE2, "width='$width%'");
 	check_page_security('SA_GLANALYTIC');
-	$total = 0;
+	$total = 0.0;
 	$names = $totals = array();
 	while ($myrow = db_fetch($result))
 	{
@@ -1565,7 +1565,7 @@ function get_database_size(): string
 		$size += $row['Data_length'];
 		$size += $row['Index_length'];
     }
-	return number_format2(((float)$size / 1024.0 / 1024), 2).' MB';
+	return number_format2(((float)$size / 1024.0 / 1024.0), 2).' MB';
 }
 
 function calc_today(): string

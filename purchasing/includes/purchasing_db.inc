@@ -205,7 +205,7 @@ function add_direct_supp_trans(?object $cart)
 	$supp = row_or_empty(get_supplier($cart->supplier_id));
 	$inv->tax_group_id = $supp['tax_group_id'];
 	$inv->ov_amount = $inv->ov_gst = $inv->ov_discount = 0;
-	$total = 0;
+	$total = 0.0;
 		foreach($cart->line_items as $key => $line) {
 		$inv->add_grn_to_trans($line->grn_item_id, $line->po_detail_rec, $line->stock_id,
 			$line->item_description, $line->receive_qty, 0, $line->receive_qty,

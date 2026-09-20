@@ -224,7 +224,7 @@ function display_po_items(purch_order &$order, bool $editable=true): void
    	table_header($th);
 
 	$id = find_submit('Edit');
-	$total = 0;
+	$total = 0.0;
 	$k = 0;
    	foreach ($order->line_items as $line_no => $po_line)
    	{

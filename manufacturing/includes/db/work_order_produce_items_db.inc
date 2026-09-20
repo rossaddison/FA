@@ -47,7 +47,7 @@ function work_order_produce(string|int|float|bool|null $woid, string|int|float|b
 
 		// sum collected BOM material & labour costs (no way for separate overhead here for now - needs flag in bom or stock_master)
 		$bom = get_wo_requirements($woid);
-		$m_cost = $l_cost = 0;
+		$m_cost = $l_cost = 0.0;
 		while ($component = db_fetch($bom))
 		{
 			if (!is_service($component["mb_flag"]))

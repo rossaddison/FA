@@ -182,7 +182,7 @@ function print_inventory_purchase(): void
 					$rep->TextCol(4, 5, $supplier_name);
 					$rep->AmountCol(5, 7, $total_qty, get_qty_dec($stock_id));
 					$rep->AmountCol(7, 8, $total_supp, $dec);
-					$rep->Line($rep->row - 2);
+					$rep->Line($rep->row - 2.0);
 					$rep->NewLine();
 					$total_supp = $total_qty = 0.0;
 					$supplier_name = $trans['supplier_name'];
@@ -202,7 +202,7 @@ function print_inventory_purchase(): void
 				$rep->TextCol(4, 5, $supplier_name);
 				$rep->AmountCol(5, 7, $total_qty, get_qty_dec($stock_id));
 				$rep->AmountCol(7, 8, $total_supp, $dec);
-				$rep->Line($rep->row - 2);
+				$rep->Line($rep->row - 2.0);
 				$rep->NewLine();
 				$total_supp = $total_qty = 0.0;
 			}
@@ -216,7 +216,7 @@ function print_inventory_purchase(): void
 				$rep->TextCol(0, 1, _('Total'));
 				$rep->TextCol(1, 7, $catt);
 				$rep->AmountCol(7, 8, $total, $dec);
-				$rep->Line($rep->row - 2);
+				$rep->Line($rep->row - 2.0);
 				$rep->NewLine();
 				$rep->NewLine();
 				$total = 0.0;
@@ -266,7 +266,7 @@ function print_inventory_purchase(): void
 			$rep->TextCol(4, 5, $supplier_name);
 			$rep->AmountCol(5, 7, $total_qty, get_qty_dec($stock_id));
 			$rep->AmountCol(7, 8, $total_supp, $dec);
-			$rep->Line($rep->row - 2);
+			$rep->Line($rep->row - 2.0);
 			$rep->NewLine();
 			$rep->NewLine();
 			$total_supp = $total_qty = 0.0;
@@ -281,7 +281,7 @@ function print_inventory_purchase(): void
 		$rep->TextCol(4, 5, $supplier_name);
 		$rep->AmountCol(5, 7, $total_qty, get_qty_dec($stock_id));
 		$rep->AmountCol(7, 8, $total_supp, $dec);
-		$rep->Line($rep->row - 2);
+		$rep->Line($rep->row - 2.0);
 		$rep->NewLine();
 		$rep->NewLine();
 	}
@@ -290,13 +290,13 @@ function print_inventory_purchase(): void
 	$rep->TextCol(0, 1, _('Total'));
 	$rep->TextCol(1, 7, $catt);
 	$rep->AmountCol(7, 8, $total, $dec);
-	$rep->Line($rep->row - 2);
+	$rep->Line($rep->row - 2.0);
 	$rep->NewLine();
 	$rep->NewLine(2, 1);
 	$rep->TextCol(0, 7, _('Grand Total'));
 	$rep->AmountCol(7, 8, $grandtotal, $dec);
 
-	$rep->Line($rep->row  - 4);
+	$rep->Line($rep->row  - 4.0);
 	$rep->NewLine();
     $rep->End();
 }

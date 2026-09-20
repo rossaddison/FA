@@ -104,7 +104,7 @@ function print_deliveries(): void
 			$rep->NewPage();
 
    			$result = get_customer_trans_details(ST_CUSTDELIVERY, $i);
-			$SubTotal = 0;
+			$SubTotal = 0.0;
 			while ($myrow2=db_fetch($result))
 			{
 				if ($myrow2["quantity"] == 0)
@@ -138,7 +138,7 @@ function print_deliveries(): void
 				}
 				$rep->row = $newrow;
 				//$rep->NewLine(1);
-				if ($rep->row < $rep->bottomMargin + (15 * $rep->lineHeight))
+				if ($rep->row < $rep->bottomMargin + (15.0 * $rep->lineHeight))
 					$rep->NewPage();
 			}
 
@@ -151,7 +151,7 @@ function print_deliveries(): void
 
    			$DisplaySubTot = number_format2($SubTotal,$dec);
 
-    		$rep->row = $rep->bottomMargin + (15 * $rep->lineHeight);
+    		$rep->row = $rep->bottomMargin + (15.0 * $rep->lineHeight);
 			$doctype=ST_CUSTDELIVERY;
 			if ($packing_slip == 0)
 			{

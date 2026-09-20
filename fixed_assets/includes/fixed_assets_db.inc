@@ -29,7 +29,7 @@ function process_fixed_asset_depreciation(string|array|null $stock_id, ?array $g
   $cart->tran_date = end_fiscalyear();
   $cart->reference = refs()->get_next(ST_JOURNAL, $refline, $cart->tran_date, $date_);
 
-  $value_of_change = 0;
+  $value_of_change = 0.0;
   foreach ($gl_rows as $row) {
     $value_of_change += (float)round2($row['value'], user_price_dec());
 

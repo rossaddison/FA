@@ -486,7 +486,7 @@ function display_supp_trans_tax_details(bool|mysqli_result $tax_items, ?int $col
 
 function display_edit_tax_items(array $taxes, ?int $columns, string|int|float|bool|null $tax_included, ?int $rightspan=0, bool $editable=false): int|float
 {
-	$total = 0;
+	$total = 0.0;
 
     foreach ($taxes as $taxitem)
 	{
@@ -556,7 +556,7 @@ function display_allocations(bool|mysqli_result $alloc_result, string|int|float|
     $th = array( _("Type"), _("Number"), _("Date"), _("Total Amount"),
     	_("Left to Allocate"), _("This Allocation"));
 	table_header($th);
-    $k = $total_allocated = 0;
+    $k = $total_allocated = 0.0;
 
     while ($alloc_row = db_fetch($alloc_result))
     {
@@ -821,7 +821,7 @@ function quickentry_calculate(int|float|bool|null $base, string|int|float|bool|n
 function _number_to_words(int|float|null $number): string 
 { 
     $Bn = floor((float)$number / 1000000000.0); /* Billions (giga) */ 
-    $number -= (float)($Bn * 1000000000); 
+    $number -= (float)($Bn * 1000000000.0); 
     $Gn = floor((float)$number / 1000000.0);  /* Millions (mega) */ 
     $number -= (float)$Gn * 1000000.0; 
     $kn = floor((float)$number / 1000.0);     /* Thousands (kilo) */ 

@@ -50,7 +50,7 @@ function write_sales_invoice(&$invoice)
 		$gl_date = $invoice->document_date;
 	}
 
-	$ov_gst = 0;
+	$ov_gst = 0.0;
 	$taxes = $invoice->get_taxes(); // all taxes with freight_tax
 	$dec = user_price_dec();
 	foreach ($taxes as $taxitem) {
@@ -100,7 +100,7 @@ function write_sales_invoice(&$invoice)
 	} else
 		move_trans_attachments(ST_SALESINVOICE, $trans_no, $invoice_no);
 
-	$total = 0;
+	$total = 0.0;
 	// for prepayments use deferred income account if set
 	$sales_account = $invoice->is_prepaid() ? get_company_pref('deferred_income_act') : 0;
 

@@ -134,13 +134,13 @@ function print_grn_valuation(): void
 		{
 			if ($stock_id != '')
 			{
-				$rep->Line($rep->row  - 4);
+				$rep->Line($rep->row  - 4.0);
 				$rep->NewLine(2);
 				$rep->TextCol(0, 3, _('Total'));
 				$rep->AmountCol(5, 6, $qtotal, $qdec);
 				$rep->AmountCol(8, 9, $total, $dec);
 				$rep->NewLine();
-				$total = $qtotal = 0;
+				$total = $qtotal = 0.0;
 			}
 			$stock_id = $trans['item_code'];
 		}
@@ -190,18 +190,18 @@ function print_grn_valuation(): void
 	}
 	if ($stock_id != '')
 	{
-		$rep->Line($rep->row  - 4);
+		$rep->Line($rep->row  - 4.0);
 		$rep->NewLine(2);
 		$rep->TextCol(0, 3, _('Total'));
 		$rep->AmountCol(5, 6, $qtotal, $qdec);
 		$rep->AmountCol(8, 9, $total, $dec);
-		$rep->Line($rep->row  - 4);
+		$rep->Line($rep->row  - 4.0);
 		$rep->NewLine(2);
 		$rep->TextCol(0, 7, _('Grand Total'));
 		$rep->AmountCol(8, 9, $grandtotal, $dec);
 	}
 
-	$rep->Line($rep->row  - 4);
+	$rep->Line($rep->row  - 4.0);
 	$rep->NewLine();
     $rep->End();
 }
