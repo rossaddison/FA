@@ -160,6 +160,10 @@ class Cart
 	//  $trans_no!=0 && $prepare_child==true => prepare for child doc entry
 	//	$prepare_child is set to ST_SALESINVOICE for prepayment invoices
 	//
+	/**
+	 * @param string|int|array<array-key, mixed>|null $type
+	 * @param int|bool|null $prepare_child
+	 */
 	function __construct($type, $trans_no=0, $prepare_child=false) {
 		/*Constructor function initialises a new shopping cart */
 		$this->line_items = array();
@@ -244,7 +248,10 @@ class Cart
 	//
 	//	Prepares transaction for reedition updating with parent transaction data 
 	//
-	/** @return void */
+	/**
+	 * @param bool|array<array-key, mixed>|null $sodata
+	 * @return void
+	 */
 	function set_parent_constraints($sodata, $src_no) {
 
 		$srcdetails = get_sales_parent_lines($this->trans_type, $src_no);
@@ -482,7 +489,19 @@ class Cart
 			$this->freight_cost = $freight_cost;
 	}
 
-	/** @return 0|1 */
+	/**
+	 * @param int|null $line_no
+	 * @param string|null $stock_id
+	 * @param string|int|float|null $qty
+	 * @param string|float|null $price
+	 * @param string|int|null $qty_done
+	 * @param string|int|null $standard_cost
+	 * @param string|array<array-key, mixed>|null $description
+	 * @param string|int|null $id
+	 * @param int|null $src_no
+	 * @param int|null $src_id
+	 * @return 0|1
+	 */
 	function add_to_cart($line_no, $stock_id, $qty, $price, $disc, $qty_done=0, $standard_cost=0, $description=null, $id=0, $src_no=0,
 		$src_id=0)
 	{
@@ -497,7 +516,12 @@ class Cart
 		return 0;
 	}
 
-	/** @return void */
+	/**
+	 * @param int|float|bool|null $qty
+	 * @param int|float|bool|null $price
+	 * @param int|float|null $disc
+	 * @return void
+	 */
 	function update_cart_item($line_no, $qty, $price, $disc, $description="")
 	{
 		if ($description != "")
@@ -515,6 +539,7 @@ class Cart
 	}
 
 	/**
+	 * @param string|int|null $line_no
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -607,6 +632,7 @@ class Cart
 	}
 
 	/**
+	 * @param string|int|null $line_no
 	 * @psalm-mutation-free
 	 * @return 0|1
 	 */

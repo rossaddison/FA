@@ -37,7 +37,10 @@ define('MENU_SYSTEM', 'menu_system');
 		var $title;
 		var $items;
 		
-		/** @psalm-mutation-free */
+		/**
+		 * @param string|null $title
+		 * @psalm-mutation-free
+		 */
 		function __construct($title) 
 		{
 			$this->title = $title;
@@ -45,6 +48,8 @@ define('MENU_SYSTEM', 'menu_system');
 		}
 		
 		/**
+		 * @param string|null $label
+		 * @param string|null $link
 		 * @psalm-external-mutation-free
 		 * @return menu_item
 		 */
@@ -123,7 +128,11 @@ define('MENU_SYSTEM', 'menu_system');
 		var $modules;
 		var $enabled;
 		
-		/** @psalm-mutation-free */
+		/**
+		 * @param string|null $id
+		 * @param string|null $name
+		 * @psalm-mutation-free
+		 */
 		function __construct($id, $name, $enabled=true) 
 		{
 			$this->id = $id;
@@ -133,6 +142,7 @@ define('MENU_SYSTEM', 'menu_system');
 		}
 		
 		/**
+		 * @param string|null $name
 		 * @psalm-external-mutation-free
 		 * @return module
 		 */
@@ -144,6 +154,11 @@ define('MENU_SYSTEM', 'menu_system');
 		}
 		
 		/**
+		 * @param int|null $level
+		 * @param string|null $label
+		 * @param string|null $link
+		 * @param string|null $access
+		 * @param string|null $category
 		 * @psalm-mutation-free
 		 * @return void
 		 */
@@ -153,6 +168,11 @@ define('MENU_SYSTEM', 'menu_system');
 		}
 		
 		/**
+		 * @param int|null $level
+		 * @param string|null $label
+		 * @param string|null $link
+		 * @param string|null $access
+		 * @param string|null $category
 		 * @psalm-mutation-free
 		 * @return void
 		 */

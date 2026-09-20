@@ -21,7 +21,11 @@ class contacts extends simple_crud {
 	var $sub_class;
 	var $class;
 	
-	/** @psalm-mutation-free */
+	/**
+	 * @param string|null $name
+	 * @param string|null $class
+	 * @psalm-mutation-free
+	 */
 	function __construct($name, $id, $class, $subclass=null) {
 		$fields = array('ref','name','name2','address', 'phone', 'phone2','fax',
 			'email','lang','notes', 'assgn' =>array('fld'=>'contacts'));

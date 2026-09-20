@@ -71,6 +71,13 @@ class FrontReport extends Cpdf
 	
 	var $dest;	// destination: email or printer
 	
+	/**
+	 * @param string|null $title
+	 * @param string|null $filename
+	 * @param string|int|null $size
+	 * @param int|null $fontsize
+	 * @param string|null $orientation
+	 */
 	function __construct($title, $filename, $size = 'A4', $fontsize = 9, $orientation = 'P', $margins = NULL, $excelColWidthFactor = NULL)
 	{
 		global $page_security;
@@ -246,11 +253,27 @@ class FrontReport extends Cpdf
 	 *   An empty string can also be used which will retain the font currently in use if
 	 *   you just want to change the style.
 	 */
+	/**
+	 * @param string|null $style
+	 * @param string|null $fontname
+	 */
 	function Font($style = '', $fontname = '')
 	{
 		$this->selectFont($fontname, $style);
 	}
 
+	/**
+	 * @param array<array-key, mixed>|null $params
+	 * @param array<array-key, mixed>|null $cols
+	 * @param array<array-key, mixed>|null $headers
+	 * @param array<array-key, mixed>|null $aligns
+	 * @param array<array-key, mixed>|null $cols2
+	 * @param array<array-key, mixed>|null $headers2
+	 * @param array<array-key, mixed>|null $aligns2
+	 * @param bool $companylogoenable
+	 * @param bool $footerenable
+	 * @param string|null $footertext
+	 */
 	function Info($params, $cols, $headers, $aligns,
 		$cols2 = null, $headers2 = null, $aligns2 = null,
 		$companylogoenable = false, $footerenable = false, $footertext = '')
@@ -427,6 +450,9 @@ class FrontReport extends Cpdf
 	/*
 		Set header handler
 	*/
+	/**
+	 * @param string|null $name
+	 */
 	function SetHeaderType($name) {
 		$this->headerTmpl = $name;
 	}
@@ -694,6 +720,9 @@ class FrontReport extends Cpdf
 			return $date;
 	}
 
+	/**
+	 * @param string|null $logo
+	 */
 	function AddImage($logo, $x, $y, $w, $h)
 	{
 		if (strpos($logo, ".png") || strpos($logo, ".PNG"))
@@ -740,6 +769,14 @@ class FrontReport extends Cpdf
 		return $this->TextWrap($c, $this->row - $r, $n - $c + $corr, $txt, $align, $border, $fill, $link, $stretch);
 	}
 
+	/**
+	 * @param string|null $str
+	 * @param string|null $align
+	 * @param int|null $border
+	 * @param int|null $fill
+	 * @param int|null $stretch
+	 * @param bool $spacebreak
+	 */
 	function TextWrap($xpos, $ypos, $len, $str, $align = 'left', $border = 0, $fill = 0, $link = NULL, $stretch = 1, $spacebreak=false)
 	{
 		$str = ($str != NULL ? strtr($str, array("\r"=>'')) : "");
@@ -752,11 +789,30 @@ class FrontReport extends Cpdf
 		return $this->addTextWrap($xpos, $ypos, $len, $this->fontSize, $str, $align, $border, $fill, $link, $stretch, $spacebreak);
 	}
 
+	/**
+	 * @param int|null $c
+	 * @param int|null $n
+	 * @param int|null $corr
+	 * @param int|null $r
+	 * @param int|null $border
+	 * @param int|null $fill
+	 * @param int|null $stretch
+	 */
 	function TextCol($c, $n, $txt, $corr=0, $r=0, $border=0, $fill=0, $link=NULL, $stretch=1)
 	{
 		return $this->TextWrap($this->cols[$c], $this->row - $r, $this->cols[$n] - $this->cols[$c] + $corr, $txt, $this->aligns[$c], $border, $fill, $link, $stretch);
 	}
 	
+	/**
+	 * @param int|null $c
+	 * @param int|null $n
+	 * @param int|null $corr
+	 * @param int|null $r
+	 * @param int|null $border
+	 * @param int|null $fill
+	 * @param int|null $stretch
+	 * @param bool $color_red
+	 */
 	function AmountCol($c, $n, $txt, $dec=0, $corr=0, $r=0, $border=0, $fill=0, $link=NULL, $stretch=1, $color_red=false)
 	{
 		if ($color_red && $txt < 0)
@@ -778,6 +834,17 @@ class FrontReport extends Cpdf
 		return $ret;	
 	}
 	
+	/**
+	 * @param int|null $c
+	 * @param int|null $n
+	 * @param string|int|float|null $txt
+	 * @param bool $conv
+	 * @param int|null $corr
+	 * @param int|null $r
+	 * @param int|null $border
+	 * @param int|null $fill
+	 * @param int|null $stretch
+	 */
 	function DateCol($c, $n, $txt, $conv=false, $corr=0, $r=0, $border=0, $fill=0, $link=NULL, $stretch=1)
 	{
 		if ($conv)
@@ -790,6 +857,16 @@ class FrontReport extends Cpdf
 		return $this->TextWrap($this->cols2[$c], $this->row - $r, $this->cols2[$n] - $this->cols2[$c] + $corr, $txt, $this->aligns2[$c], $border, $fill, $link, $stretch);
 	}
 
+	/**
+	 * @param int|null $c
+	 * @param int|null $n
+	 * @param string|null $txt
+	 * @param int|null $corr
+	 * @param int|null $r
+	 * @param int|null $border
+	 * @param int|null $fill
+	 * @param int|null $stretch
+	 */
 	function TextColLines($c, $n, $txt, $corr=0, $r=0, $border=0, $fill=0, $link=NULL, $stretch=0)
 	{
 		$this->row -= $r;
@@ -855,6 +932,9 @@ class FrontReport extends Cpdf
 		parent::line($from, $row, $to, $row2);
 	}
 
+	/**
+	 * @param int|null $height
+	 */
 	function Line($row, $height = 0, $dummy1=null, $dummy2=null, $dummy3=null)
 	{
 		$oldLineWidth = $this->GetLineWidth();
@@ -903,6 +983,11 @@ class FrontReport extends Cpdf
 			$this->SetLineWidth($oldLineWidth);
 	}
 	
+	/**
+	 * @param int|null $l
+	 * @param int|null $np
+	 * @param bool|null $h
+	 */
 	function NewLine($l=1, $np=0, $h = NULL)
 	{
 		// If the line height wasn't specified, use the current setting
@@ -948,6 +1033,9 @@ class FrontReport extends Cpdf
 			$this->{$this->headerTmpl}();
 	}
 
+	/**
+	 * @param string|null $subject
+	 */
 	function End($email=0, $subject='')
 	{
 		global $SysPrefs, $path_to_root;

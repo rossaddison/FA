@@ -108,7 +108,16 @@ class purch_order
 		$this->tax_group_array = get_tax_group_items_as_array($tax_group_id);
 	}
 	
-	/** @return 0|1 */
+	/**
+	 * @param int|null $line_no
+	 * @param string|int|float|bool|null $qty
+	 * @param string|array<array-key, mixed>|null $item_descr
+	 * @param string|int|float|bool|null $price
+	 * @param string|null $uom
+	 * @param string|int|null $qty_inv
+	 * @param string|int|null $qty_recd
+	 * @return 0|1
+	 */
 	function add_to_order($line_no, $stock_id, $qty, $item_descr, $price, $uom, $req_del_date, $qty_inv, $qty_recd)
 	{
 		if (isset($qty) && $qty != 0)
@@ -121,7 +130,11 @@ class purch_order
 		return 0;
 	}
 
-	/** @return void */
+	/**
+	 * @param int|float|bool|null $qty
+	 * @param int|float|bool|null $price
+	 * @return void
+	 */
 	function update_order_item($line_no, $qty, $price, $req_del_date, $description="")
 	{
 		if ($description != "")
@@ -133,6 +146,7 @@ class purch_order
 	}
 
 	/**
+	 * @param string|int|null $line_no
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -185,6 +199,7 @@ class purch_order
 	}
 
 	/**
+	 * @param string|int|null $line_no
 	 * @psalm-mutation-free
 	 * @return 0|1
 	 */
@@ -206,6 +221,10 @@ class purch_order
 	//	Returns taxes for PO/GRN.
 	//	$receival=true in purchase receive context.
 	//
+	/**
+	 * @param int|float|bool|null $shipping_cost
+	 * @param bool $receival
+	 */
 	function get_taxes($shipping_cost=null, $receival=false)
 	{
 		$items = array();
@@ -304,6 +323,9 @@ class po_line_details
 	/** @var string|int|float|bool|null */
 	var $descr_editable;
 
+	/**
+	 * @param int|null $grn_item_id
+	 */
 	function __construct($line_no, $stock_item, $item_descr, $qty, $prc, $uom, $req_del_date, 
 		$qty_inv, $qty_recd, $grn_item_id=0)
 	{
@@ -345,6 +367,9 @@ class po_line_details
 	//
 	// GRN line tax free value.
 	//
+	/**
+	 * @param purch_order $po
+	 */
 	function taxfree_charge_value($po)
 	{
 		return get_tax_free_price_for_item($this->stock_id, $this->receive_qty*$this->price,

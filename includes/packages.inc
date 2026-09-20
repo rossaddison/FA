@@ -20,6 +20,10 @@ define('PUBKEY_PATH', $path_to_root);
 //
 class package extends gzip_file {
 
+	/**
+	 * @param string|null $filename
+	 * @param string|null $basedir
+	 */
 	function __construct($filename, $basedir=null)
 	{
 		global $path_to_root;

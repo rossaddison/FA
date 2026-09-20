@@ -15,7 +15,13 @@ define('SECURE_ONLY', true); // if you really need also http (unsecure) access a
 
 class SessionManager
 {
-   	/** @return void */
+   	/**
+   	 * @param string|null $name
+   	 * @param int|null $limit
+   	 * @param string|null $path
+   	 * @param bool|null $secure
+   	 * @return void
+   	 */
    	function sessionStart($name, $limit = 0, $path = '/', $domain = null, $secure = null)
 	{
 		// Set the cookie name

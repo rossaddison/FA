@@ -185,7 +185,10 @@ class db_pager {
 	//
 	//	Set query result page
 	//
-	/** @return true */
+	/**
+	 * @param string|int|null $page
+	 * @return true
+	 */
 	function change_page($page=null) 
 	{
 	    $this->set_page($page);
@@ -196,7 +199,10 @@ class db_pager {
 	//	Change sort column direction 
 	//	in order asc->desc->none->asc
 	//
-	/** @return true */
+	/**
+	 * @param string|int|null $col
+	 * @return true
+	 */
 	function sort_table($col) 
 	{
 
@@ -331,7 +337,10 @@ class db_pager {
 	// $count==false - for current page data retrieval 
 	// $count==true  - for total records count
 	//
-	/** @return non-empty-string */
+	/**
+	 * @param bool $count
+	 * @return non-empty-string
+	 */
 	function _sql_gen($count=false) 
 	{
 		$select = $this->select;
@@ -446,6 +455,10 @@ class db_pager {
 	//	Set check function to mark some rows.
 	//	
 	/**
+	 * @param string|null $func
+	 * @param string|null $notice
+	 * @param string|null $markercl
+	 * @param string|null $msgclass
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -486,6 +499,8 @@ class db_pager {
 	//	Setter for table editors with inactive cell control.
 	//
 	/**
+	 * @param string|null $table
+	 * @param string|null $key
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */

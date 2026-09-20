@@ -42,6 +42,12 @@ class allocation
 	/** @var array<int, allocation_item> */
 	var $allocs; /*array of transactions allocated to */
 
+	/**
+	 * @param string|int|array<array-key, mixed>|null $type
+	 * @param string|int|array<array-key, mixed>|null $trans_no
+	 * @param string|array<array-key, mixed>|null $person_id
+	 * @param int|null $person_type_id
+	 */
 	function __construct($type, $trans_no, $person_id = null, $person_type_id=null)
 	{
 		/** @var array<int, allocation_item> */
@@ -84,6 +90,7 @@ class allocation
 	}
 	
 	/**
+	 * @param int|null $index
 	 * @psalm-external-mutation-free
 	 * @return bool
 	 */
@@ -102,7 +109,18 @@ class allocation
 		}
 	}
 	
-	/** @psalm-mutation-free */
+	/**
+	 * @param string|null $type
+	 * @param string|null $type_no
+	 * @param string|null $date_
+	 * @param string|null $due_date
+	 * @param string|null $amount
+	 * @param float|null $amount_allocated
+	 * @param string|null $current_allocated
+	 * @param string|null $ref
+	 * @param string|null $foreign_ref
+	 * @psalm-mutation-free
+	 */
 	function add_or_update_item($type, $type_no, $date_, $due_date, 
 		$amount, $amount_allocated, $current_allocated, $ref, $foreign_ref)
 	{

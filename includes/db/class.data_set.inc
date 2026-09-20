@@ -71,6 +71,8 @@ abstract class record_set {
 	*	@check - validator description string in format: 'field_name:uid_modes:check_type[[:param1][:param2]...]'
 	*   parameters can be expressed with name in form: name=value
 	*	@msg - message stored on error
+	* @param string|null $check
+	* @param string|null $msg
 	* @return void
 	**/
 	
@@ -261,7 +263,12 @@ abstract class record_set {
 
 class data_set extends record_set {
 
-	/** @psalm-mutation-free */
+	/**
+	 * @param string|null $name
+	 * @param array<array-key, mixed>|null $fields
+	 * @param string|null $key
+	 * @psalm-mutation-free
+	 */
 	function __construct($name, $fields, $key, $subset=null)
 	{
 		parent::__construct($name, $fields, $key, $subset);
@@ -298,6 +305,9 @@ class data_set extends record_set {
 	//
 	//	Generic list record routine
 	//
+	/**
+	 * @param string|null $where
+	 */
 	function get_all($where=null, $order_by=null)
 	{
 		$fields = array();

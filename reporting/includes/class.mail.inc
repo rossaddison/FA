@@ -114,13 +114,17 @@ class email
     	$this->attachment[$filename] = $file;
     }
 
-    /** @return void */
+    /**
+     * @param string|null $subject
+     * @return void
+     */
     function subject($subject)
     {
     	$this->subject = $this->encode($subject);
     }
 
     /**
+     * @param string|null $text
      * @psalm-external-mutation-free
      * @return void
      */
@@ -145,6 +149,7 @@ class email
     }
 
 	/**
+	 * @param string|null $filename
 	 * @psalm-pure
 	 * @return 'application/pdf'|'application/unknown'|'application/vnd.ms-excel'|'application/x-gzip'|'application/x-tar'|'application/x-tar-gz'|'application/x-zip-compressed'|'text/html'
 	 */

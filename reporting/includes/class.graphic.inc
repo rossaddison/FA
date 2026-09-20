@@ -191,6 +191,11 @@ class Chart
 	var $legend_box_y2 = 0;
 
 
+	/**
+	 * @param string|null $id
+	 * @param int|null $width
+	 * @param int|null $height
+	 */
 	function __construct($type = 1, $id = 'id', $width = 0, $height = 0)
 	{
 		$this->encoding = strtoupper($_SESSION['language']->encoding);
@@ -262,6 +267,7 @@ class Chart
 	}
 	
 	/**
+	 * @param string|null $stream
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -276,6 +282,7 @@ class Chart
 	}
 
 	/**
+	 * @param array<array-key, mixed>|null $labels
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -285,6 +292,9 @@ class Chart
 	}
 
 	/**
+	 * @param string|null $label
+	 * @param string|bool|null $type
+	 * @param bool $fill
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -301,6 +311,7 @@ class Chart
 	}
 
 	/**
+	 * @param string|null $xtitle
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -310,6 +321,7 @@ class Chart
 	}
 
 	/**
+	 * @param string|null $ytitle
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -328,6 +340,7 @@ class Chart
 	}
 
 	/**
+	 * @param string|null $dtitle
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -337,6 +350,7 @@ class Chart
 	}
 
 	/**
+	 * @param bool $values
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -360,7 +374,10 @@ class Chart
 		return (!isset($this->series[0]['data']) || count($this->series[0]['data']) == 0);
 	}
 
-	/** @return void */
+	/**
+	 * @param string|null $save
+	 * @return void
+	 */
 	function display($save="")
 	{
 		$this->encoding = strtoupper($_SESSION['language']->encoding);
@@ -915,7 +932,12 @@ class Chart
 		}
 	}
 
-	/** @return array<array-key, mixed>|false */
+	/**
+	 * @param int|null $step
+	 * @param int|null $minx
+	 * @param int|null $maxx
+	 * @return array<array-key, mixed>|false
+	 */
 	function imageSpline($p, $step = 1, $minx = -1, $maxx = -1)
 	{
 		$splines = array();
@@ -1383,6 +1405,7 @@ class Chart
 	}
 
 	/**
+	 * @param int|null $dec_size
 	 * @psalm-mutation-free
 	 * @return string
 	 */
@@ -1470,7 +1493,11 @@ class Chart
 		}
 	}
 
-	/** @return non-falsy-string */
+	/**
+	 * @param string|null $hex
+	 * @param float|null $percent
+	 * @return non-falsy-string
+	 */
 	function colorLuminate($hex, $percent) // Color lightner, minus is darker
 	{
 		$hex = ltrim($hex, '#');
@@ -1486,7 +1513,11 @@ class Chart
 		return '#' . implode($hex);
 	}
 	
-	/** @return bool */
+	/**
+	 * @param bool|GdImage|null $image
+	 * @param int|null $thick
+	 * @return bool
+	 */
 	function _imageline($image, $x1, $y1, $x2, $y2, $color, $thick = 1)
 	{
 		if ($thick == 1) 
@@ -1512,7 +1543,13 @@ class Chart
 		}
 	}
 
-	/** @return void */
+	/**
+	 * @param bool|GdImage|null $img
+	 * @param int|null $alt
+	 * @param int|null $angle
+	 * @param string|bool|null $align
+	 * @return void
+	 */
 	function _imagestring($img, $size, $x, $y, $string, $col, $alt=0, $angle=0, $align=false)
 	{
 		if ($align == 'end')
@@ -1556,6 +1593,7 @@ class Chart
 	}
 
 	/**
+	 * @param string|null $hex
 	 * @psalm-pure
 	 * @return list{float|int|null|string, float|int|null|string, float|int|null|string}
 	 */
@@ -1565,7 +1603,10 @@ class Chart
 		return array($r, $g, $b);
 	}
 
-	/** @return list{mixed, mixed} */
+	/**
+	 * @param bool $reverse
+	 * @return list{mixed, mixed}
+	 */
 	function _controlPoint($curr, $prev, $next, $reverse = false)
 	{
 		$p = $prev ? $prev : $curr;
@@ -1582,7 +1623,10 @@ class Chart
 		return array($x, $y);
 	}
 
-	/** @return non-falsy-string */
+	/**
+	 * @param array<array-key, mixed>|null $a
+	 * @return non-falsy-string
+	 */
 	function _splineCommand($p, $i, $a)
 	{
 		$c = isset($a[$i - 1]) ? $a[$i - 1] : false;
@@ -1626,6 +1670,10 @@ class SVG
 		$this->svg .= ">\n";
 	}
 	/**
+	 * @param int|float|null $r
+	 * @param int|null $line_width
+	 * @param string|bool|null $style
+	 * @param string|bool|null $tooltip
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -1647,6 +1695,9 @@ class SVG
 			$this->svg .= " />\n";
 	}
 	/**
+	 * @param int|null $line_width
+	 * @param string|bool|null $style
+	 * @param string|bool|null $tooltip
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -1668,6 +1719,10 @@ class SVG
 			$this->svg .= " />\n";
 	}
 	/**
+	 * @param int|null $line_width
+	 * @param bool $color
+	 * @param bool $style
+	 * @param bool $tooltip
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -1731,6 +1786,10 @@ class SVG
 			$this->svg .= " />\n";
 	}
 	/**
+	 * @param string|null $d
+	 * @param int|null $line_width
+	 * @param string|bool|null $style
+	 * @param string|bool|null $tooltip
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -1752,6 +1811,9 @@ class SVG
 			$this->svg .= " />\n";
 	}
 	/**
+	 * @param string|bool|null $style
+	 * @param string|bool|null $align
+	 * @param int|bool|null $angle
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -1779,6 +1841,7 @@ class SVG
 		$this->svg .= $s;
 	}
 	/**
+	 * @param string|null $s
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */

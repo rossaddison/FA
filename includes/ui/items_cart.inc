@@ -61,6 +61,10 @@ class items_cart
 	/** @var bool|null */
 	var $fixed_asset;
 
+	/**
+	 * @param string|int|array<array-key, mixed>|null $type
+	 * @param int|null $trans_no
+	 */
 	function __construct($type, $trans_no=0)
 	{
 		$this->trans_type = $type;
@@ -73,7 +77,11 @@ class items_cart
 
 	// --------------- line item functions
 
-	/** @return bool */
+	/**
+	 * @param int|null $line_no
+	 * @param int|float|bool|null $qty
+	 * @return bool
+	 */
 	function add_to_cart($line_no, $stock_id, $qty, $standard_cost, $description=null)
 	{
 
@@ -101,7 +109,10 @@ class items_cart
 		return null;
 	}
 
-	/** @return void */
+	/**
+	 * @param int|float|bool|null $qty
+	 * @return void
+	 */
 	function update_cart_item($line_no, $qty, $standard_cost)
 	{
 		$this->line_items[$line_no]->quantity = $qty;
@@ -109,6 +120,7 @@ class items_cart
 	}
 
 	/**
+	 * @param string|int|null $line_no
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -126,7 +138,10 @@ class items_cart
 		return count($this->line_items);
 	}
 
-	/** @return list<array<array-key, mixed>|null|scalar> */
+	/**
+	 * @param bool $reverse
+	 * @return list<array<array-key, mixed>|null|scalar>
+	 */
 	function check_qoh($location, $date_, $reverse=false)
 	{
 
@@ -153,7 +168,11 @@ class items_cart
 
 	// ----------- GL item functions
 
-	/** @return bool */
+	/**
+	 * @param string|null $act_descr
+	 * @param string|int|array<array-key, mixed>|null $person_id
+	 * @return bool
+	 */
 	function add_gl_item($code_id, $dimension_id, $dimension2_id, $amount, $memo='', $act_descr=null, $person_id=null, $date=null)
 	{
 		if (isset($code_id) && $code_id != "" && isset($amount) && isset($dimension_id)  &&
@@ -171,7 +190,12 @@ class items_cart
 		return false;
 	}
 
-	/** @return void */
+	/**
+	 * @param int|float|bool|null $amount
+	 * @param string|null $act_descr
+	 * @param string|array<array-key, mixed>|null $person_id
+	 * @return void
+	 */
 	function update_gl_item($index, $code_id, $dimension_id, $dimension2_id, $amount, $memo='', $act_descr=null, $person_id=null)
 	{
 	    $this->gl_items[$index]->code_id = $code_id;
@@ -200,6 +224,7 @@ class items_cart
 	}
 
 	/**
+	 * @param string|int|null $index
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -405,7 +430,10 @@ class items_cart
 	/*
 		Write transaction GL postings, creating tax records and updating AP/AR/bank ledger if needed.
 	*/
-	/** @return void */
+	/**
+	 * @param bool $check_balance
+	 * @return void
+	 */
 	function write_gl($check_balance = true)
 	{
 		$delta = $this->gl_items_total();

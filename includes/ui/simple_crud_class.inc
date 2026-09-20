@@ -38,7 +38,10 @@ class simple_crud {
 	var $dec;
 	//
 	//
-	/** @psalm-mutation-free */
+	/**
+	 * @param array<array-key, mixed>|null $fields
+	 * @psalm-mutation-free
+	 */
 	function __construct($name, $fields = null)
 	{
 		$this->name = $name;
@@ -140,7 +143,10 @@ class simple_crud {
 	//
 	//	Set record for edition
 	//
-	/** @return void */
+	/**
+	 * @param string|null $mode
+	 * @return void
+	 */
 	function _edit($mode)
 	{
 		if ($this->Mode != $mode) {

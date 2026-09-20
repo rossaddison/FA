@@ -140,6 +140,9 @@ class reflines_db extends data_set {
 		return db_fetch($result);
 	}
 
+	/**
+	 * @param bool $all
+	 */
 	function count($type, $all=false)
 	{
 		$sql = "SELECT count(*) FROM ".TB_PREF."reflines WHERE trans_type=".db_escape($type);
@@ -154,6 +157,9 @@ class reflines_db extends data_set {
 	/*
 		Recognize refline by reference prefix
 	*/
+	/**
+	 * @param bool $fallback
+	 */
 	function find_refline_id($reference, $type, $fallback=true)
 	{
 		$sql = "SELECT * FROM ".TB_PREF."reflines WHERE trans_type=".db_escape($type)

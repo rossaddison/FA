@@ -90,6 +90,10 @@ class supp_trans
 	/** @var int|string */
 	var $dimension2;
 
+	/**
+	 * @param int|null $trans_type
+	 * @param string|int|array<array-key, mixed>|null $trans_no
+	 */
 	function __construct($trans_type, $trans_no=0)
 	{
 		$this->trans_type = $trans_type;
@@ -116,7 +120,13 @@ class supp_trans
 		}
 	}
 
-	/** @return 1 */
+	/**
+	 * @param int|float|bool|null $this_quantity_inv
+	 * @param string|int|float|bool|null $chg_price
+	 * @param int|bool|null $std_cost_unit
+	 * @param string|int|bool|null $gl_code
+	 * @return 1
+	 */
 	function add_grn_to_trans($grn_item_id, $po_detail_item, $item_code, $item_description, 
 		$qty_recd, $prev_quantity_inv, $this_quantity_inv, $order_price, $chg_price, 
 		$std_cost_unit=null, $gl_code='')
@@ -132,6 +142,7 @@ class supp_trans
 	}
 
 	/**
+	 * @param string|int|float|bool|null $amount
 	 * @psalm-external-mutation-free
 	 * @return 1
 	 */
@@ -145,6 +156,7 @@ class supp_trans
 	}
 
 	/**
+	 * @param string|int|null $grn_item_id
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -154,6 +166,7 @@ class supp_trans
 	    unset($this->grn_items[$grn_item_id]);
 	}
 	/**
+	 * @param string|int|null $gl_code_counter
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -189,6 +202,10 @@ class supp_trans
 		$this->gl_codes = array();
 	}
 
+    /**
+     * @param int|null $shipping_cost
+     * @param bool $gl_codes
+     */
     function get_taxes($tax_group_id=null, $shipping_cost=0, $gl_codes=true)
     {
     	$items = array();
@@ -335,6 +352,9 @@ all the info to do the necessary entries without looking up ie additional querie
 		  $this->chg_price, $tax_group_id, $this->tax_included, $tax_group);
 	}
 
+	/**
+	 * @param array<array-key, mixed>|null $tax_group
+	 */
 	function taxfree_charge_price($tax_group_id, $tax_group=null)
 	{
 		return get_tax_free_price_for_item($this->item_code, $this->chg_price, 
@@ -361,7 +381,10 @@ class gl_codes
 	/** @var string */
 	var $memo_;
 
-	/** @psalm-mutation-free */
+	/**
+	 * @param int|null $Counter
+	 * @psalm-mutation-free
+	 */
 	function __construct($Counter, $gl_code, $gl_act_name, $gl_dim, $gl_dim2, $amount, $memo_)
 	{
 

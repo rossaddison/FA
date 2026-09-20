@@ -45,7 +45,11 @@ class fa_patch {
 	/*
 		Collect/log messages generated during upgrade process.
 	*/
-	/** @return false */
+	/**
+	 * @param string|bool|null $msg
+	 * @param string|null $type
+	 * @return false
+	 */
 	function log_error($msg, $type='Error')
 	{
 		if ($type == 'Error')
@@ -187,6 +191,9 @@ class fa_patch {
 	/*
 		Post install procedures: update database version, or restore databse from backup file in case of errors
 	*/
+	/**
+	 * @param bool $result
+	 */
 	function post_install($result=true)
 	{
 		global $db_version;

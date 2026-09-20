@@ -91,7 +91,10 @@ class references
 		return strpbrk($refline['pattern'], '{}') == false;
 	}
 
-	/** @return string */
+	/**
+	 * @param string|null $template
+	 * @return string
+	 */
 	function _parse_next($type, $template, $context=null)
 	{
 		global $refline_options, $refline_placeholders;
@@ -266,6 +269,7 @@ class references
  	*	Normalize reference to format allowed by refline (optionally selected by prefix).
  	*	FIXME: currently this is fake function which return either input reference or 
  	*	next reference when no line has been recognized.
+	* @param string|array<array-key, mixed>|null $context
 	**/
 	function normalize($ref, $type, $context, $line=null)
 	{
@@ -417,7 +421,10 @@ class references
 	//
 	//	Increments (or decrements if $back==true) reference template
 	//
-	/** @psalm-pure */
+	/**
+	 * @param bool $back
+	 * @psalm-pure
+	 */
 	function _increment($reference, $back=false) 
 	{
 		// Legacy code used when no palceholder is in use:

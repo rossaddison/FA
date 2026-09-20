@@ -184,6 +184,7 @@ class user_view {
 	*	User->php format values convertion.
 	*	$input - data in user format
 	*	$all - return also null values for non-existing input field.
+	* @param bool $all
 	**/
 	function get_input($input=null, $all=false)
 	{
@@ -341,6 +342,13 @@ class simple_crud_view extends user_view {
 	}
 
 	/**
+	 * @param string|null $name
+	 * @param string|null $handler
+	 * @param string|null $but_value
+	 * @param string|bool|null $but_title
+	 * @param string|bool|null $but_icon
+	 * @param string|null $aspect
+	 * @param string|null $view
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -423,7 +431,10 @@ class simple_crud_view extends user_view {
 	//
 	//	Set record for edition
 	//
-	/** @return void */
+	/**
+	 * @param string|null $mode
+	 * @return void
+	 */
 	function _edit($mode)
 	{
 		if ($this->selected_id != $this->prev_id || $mode != $this->Mode) { // get record for edition
@@ -536,7 +547,10 @@ class simple_crud_view extends user_view {
 		Generate form controls
 	*/
 
-	/** @return void */
+	/**
+	 * @param bool $list_view
+	 * @return void
+	 */
 	function _record_controls($list_view = false)
 	{
 		$clone = $this->options['clone'] && $this->selected_id != $this->_none;
@@ -570,7 +584,10 @@ class simple_crud_view extends user_view {
 	//
 	//	Submit buttons for form actions
 	//
-	/** @return void */
+	/**
+	 * @param string|null $action
+	 * @return void
+	 */
 	function action_button($action, $selected_id=null)
 	{
 		list($value, $title, $icon, $aspect) = $this->tool_buttons[$action];
@@ -580,7 +597,12 @@ class simple_crud_view extends user_view {
 	//
 	//	Tool button for grid line actions.
 	//
-	/** @return non-falsy-string */
+	/**
+	 * @param string|null $name
+	 * @param string|null $selected_id
+	 * @param string|null $params
+	 * @return non-falsy-string
+	 */
 	function tool_button($name, $selected_id=null, $params='')
 	{
 		$b = $this->tool_buttons[$name];

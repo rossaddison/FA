@@ -66,6 +66,14 @@ class FrontReport extends Spreadsheet_Excel_Writer_Workbook
 	
 	var $sheet;
 
+	/**
+	 * @param string|null $title
+	 * @param string|null $filename
+	 * @param string|int|null $size
+	 * @param int|null $fontsize
+	 * @param string|null $orientation
+	 * @param float|null $excelColWidthFactor
+	 */
 	function __construct($title, $filename, $size = 'A4', $fontsize = 9, $orientation = 'P', $margins = NULL, $excelColWidthFactor = 6.5)
 	{
 		global $page_security;
@@ -183,6 +191,9 @@ class FrontReport extends Spreadsheet_Excel_Writer_Workbook
 	/*
 		Set header handler
 	*/
+	/**
+	 * @param string|null $name
+	 */
 	function SetHeaderType($name) {
 		$this->headerFunc = $name;
 	}
@@ -217,6 +228,10 @@ class FrontReport extends Spreadsheet_Excel_Writer_Workbook
 		return $this->formatAmount[$dec];
 	}
 
+	/**
+	 * @param string|null $fontname
+	 * @param string|null $style
+	 */
 	function Font($fontname = '', $style = 'normal')
 	{
 	}
@@ -226,6 +241,15 @@ class FrontReport extends Spreadsheet_Excel_Writer_Workbook
 		$this->fontSize = $size;
 	}
 
+	/**
+	 * @param array<array-key, mixed>|null $params
+	 * @param array<array-key, mixed>|null $cols
+	 * @param array<array-key, mixed>|null $headers
+	 * @param array<array-key, mixed>|null $aligns
+	 * @param array<array-key, mixed>|null $cols2
+	 * @param array<array-key, mixed>|null $headers2
+	 * @param array<array-key, mixed>|null $aligns2
+	 */
 	function Info($params, $cols, $headers, $aligns,
 		$cols2 = null, $headers2 = null, $aligns2 = null)
 	{
@@ -499,6 +523,9 @@ class FrontReport extends Spreadsheet_Excel_Writer_Workbook
 			return $date;
 	}
 		
+	/**
+	 * @param string|null $logo
+	 */
 	function AddImage($logo, $x, $y, $w, $h)
 	{
 		return;
@@ -534,11 +561,27 @@ class FrontReport extends Spreadsheet_Excel_Writer_Workbook
 		return;
 	}
 
+	/**
+	 * @param string|null $str
+	 * @param string|null $align
+	 * @param int|null $border
+	 * @param int|null $fill
+	 * @param int|null $stretch
+	 */
 	function TextWrap($xpos, $ypos, $len, $str, $align = 'left', $border = 0, $fill = 0, $link = NULL, $stretch = 0)
 	{
 		return;
 	}
 
+	/**
+	 * @param int|null $c
+	 * @param int|null $n
+	 * @param int|null $corr
+	 * @param int|null $r
+	 * @param int|null $border
+	 * @param int|null $fill
+	 * @param int|null $stretch
+	 */
 	function TextCol($c, $n, $txt, $corr=0, $r=0, $border=0, $fill=0, $link=NULL, $stretch=0)
 	{
 		$txt = html_entity_decode($txt);	
@@ -550,6 +593,16 @@ class FrontReport extends Spreadsheet_Excel_Writer_Workbook
 			$this->sheet->mergeCells($this->y, $c, $this->y, $n - 1);
 	}
 
+	/**
+	 * @param int|null $c
+	 * @param int|null $n
+	 * @param int|null $corr
+	 * @param int|null $r
+	 * @param int|null $border
+	 * @param int|null $fill
+	 * @param int|null $stretch
+	 * @param bool $color_red
+	 */
 	function AmountCol($c, $n, $txt, $dec=0, $corr=0, $r=0, $border=0, $fill=0, $link=NULL, $stretch=0, $color_red=false) 
 	{ 
 		if (!is_numeric($txt))
@@ -564,6 +617,17 @@ class FrontReport extends Spreadsheet_Excel_Writer_Workbook
 		$this->sheet->writeNumber($this->y, $c, $txt, $this->NumFormat($dec)); 
 	}
 	
+	/**
+	 * @param int|null $c
+	 * @param int|null $n
+	 * @param string|int|float|null $txt
+	 * @param bool $conv
+	 * @param int|null $corr
+	 * @param int|null $r
+	 * @param int|null $border
+	 * @param int|null $fill
+	 * @param int|null $stretch
+	 */
 	function DateCol($c, $n, $txt, $conv=false, $corr=0, $r=0, $border=0, $fill=0, $link=NULL, $stretch=0) 
 	{
 		if (!$conv)
@@ -581,6 +645,16 @@ class FrontReport extends Spreadsheet_Excel_Writer_Workbook
 			$this->sheet->mergeCells($this->y, $c, $this->y, $n - 1);
 	}
 
+	/**
+	 * @param int|null $c
+	 * @param int|null $n
+	 * @param string|null $txt
+	 * @param int|null $corr
+	 * @param int|null $r
+	 * @param int|null $border
+	 * @param int|null $fill
+	 * @param int|null $stretch
+	 */
 	function TextColLines($c, $n, $txt, $corr=0, $r=0, $border=0, $fill=0, $link=NULL, $stretch=0)
 	{
 		return;
@@ -635,6 +709,9 @@ class FrontReport extends Spreadsheet_Excel_Writer_Workbook
 		return;
 	}
 
+	/**
+	 * @param int|null $height
+	 */
 	function Line($row, $height = 0)
 	{
 		return;
@@ -645,6 +722,11 @@ class FrontReport extends Spreadsheet_Excel_Writer_Workbook
 		return;
 	}
 	
+	/**
+	 * @param int|null $l
+	 * @param int|null $np
+	 * @param bool|null $h
+	 */
 	function NewLine($l=1, $np=0, $h=NULL)
 	{
 		$this->y += $l;
@@ -707,6 +789,9 @@ class FrontReport extends Spreadsheet_Excel_Writer_Workbook
   		return ($px / $unit_offset_length);
   	}	
 
+	/**
+	 * @param string|null $subject
+	 */
 	function End($email=0, $subject='')
 	{
 		global $path_to_root;

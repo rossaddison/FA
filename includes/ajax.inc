@@ -34,7 +34,10 @@ class Ajax extends JsHttpRequest {
 	//	Javascript clientside redirection.
 	//	This is the last command added to reponse (if any).
 	//
-	/** @return void */
+	/**
+	 * @param string|null $url
+	 * @return void
+	 */
 	function redirect($url) {
 	    if(in_ajax()) {
 			$this->_addCommand(true, array('n'=>'rd'), absolute_url($url));
@@ -44,14 +47,21 @@ class Ajax extends JsHttpRequest {
 	//
 	// Popup window (target=_blank)
 	//
-	/** @return void */
+	/**
+	 * @param string|null $url
+	 * @return void
+	 */
 	function popup($url) {
 		  $this->_addCommand(true, array('n'=>'pu'), absolute_url($url));
 	}
 	//
 	// Adds an executable Javascript code.
 	//
-	/** @return static */
+	/**
+	 * @param string|bool|null $trigger
+	 * @param string|null $sJS
+	 * @return static
+	 */
 	function addScript($trigger, $sJS)
 	{
 		$this->_addCommand($trigger, array('n'=>'js'),$sJS);
@@ -60,7 +70,10 @@ class Ajax extends JsHttpRequest {
 	//
 	// Assign target attribute with data.
 	//
-	/** @return static */
+	/**
+	 * @param string|null $sAttribute
+	 * @return static
+	 */
 	function addAssign($trigger, $sTarget,$sAttribute,$sData)
 	{
 		$this->_addCommand($trigger, array('n'=>'as','t'=>$sTarget,'p'=>$sAttribute),$sData);
@@ -78,7 +91,12 @@ class Ajax extends JsHttpRequest {
 	//
 	// Set disable state of element.
 	//
-	/** @return static */
+	/**
+	 * @param bool $trigger
+	 * @param string|null $sTarget
+	 * @param bool $sData
+	 * @return static
+	 */
 	function addDisable($trigger, $sTarget, $sData=true)
 	{
 		$this->_addCommand($trigger, array('n'=>'di','t'=>$sTarget),$sData);
@@ -96,7 +114,11 @@ class Ajax extends JsHttpRequest {
 	//
 	// Set current focus.
 	//
-	/** @return static */
+	/**
+	 * @param bool $trigger
+	 * @param string|null $sTarget
+	 * @return static
+	 */
 	function addFocus($trigger, $sTarget)
 	{
 		$this->_addCommand($trigger, array('n'=>'fc'),$sTarget);
@@ -105,7 +127,10 @@ class Ajax extends JsHttpRequest {
 	//
 	// Internal procedure adding command to response.
 	//
-	/** @return void */
+	/**
+	 * @param array<array-key, mixed>|null $aAttributes
+	 * @return void
+	 */
 	function _addCommand($trigger, $aAttributes, $mData)
 	{
 	  	if ($this->isActive() && ($trigger !== false)) {

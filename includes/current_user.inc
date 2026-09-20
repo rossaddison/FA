@@ -327,7 +327,10 @@ class current_user
 		return set_global_connection($id);
 	}
 
-	/** @return void */
+	/**
+	 * @param int|array<array-key, mixed>|null $prefs
+	 * @return void
+	 */
 	function update_prefs($prefs)
 	{
 

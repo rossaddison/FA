@@ -32,7 +32,11 @@ class BoxReports
 		$this->ar_classes = array();
 	}
 
-	/** @psalm-external-mutation-free */
+	/**
+	 * @param string|null $class_name
+	 * @param int|null $class_id
+	 * @psalm-external-mutation-free
+	 */
 	function addReportClass($class_name, $class_id=null)
 	{
 		if (!$class_id)
@@ -43,6 +47,10 @@ class BoxReports
 	}
 
 	/**
+	 * @param int|null $class
+	 * @param int|null $id
+	 * @param string|null $rep_name
+	 * @param array<array-key, mixed>|null $params
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -178,6 +186,9 @@ class BoxReports
 	//
 	//	Returns html code for input control $name of type $type 
 	//
+	/**
+	 * @param string|null $name
+	 */
 	function get_ctrl($name, $type)
 	{
 		global $path_to_root, $type_shortcuts;

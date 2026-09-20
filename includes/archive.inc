@@ -42,7 +42,10 @@ class archive
 		);
 	}
 
-	/** @return void */
+	/**
+	 * @param array<array-key, mixed>|null $options
+	 * @return void
+	 */
 	function set_options($options)
 	{
 		foreach ($options as $key => $value)
@@ -108,7 +111,10 @@ class archive
 		}
 	}
 
-	/** @return void */
+	/**
+	 * @param string|null $data
+	 * @return void
+	 */
 	function add_data($data)
 	{
 		if ($this->options['inmemory'] == 0)
@@ -209,6 +215,9 @@ class archive
 		return $files;
 	}
 
+	/**
+	 * @param string|array<array-key, mixed>|null $dirname
+	 */
 	function parse_dir($dirname)
 	{
 		if ($this->options['storepaths'] == 1 && !preg_match("/^(\.+\/*)+$/", $dirname))
@@ -321,7 +330,10 @@ class tar_file extends archive
 		When $dry_run!=0 no file is written,
 		but list of existing files to be written is returned.
 	*/
-	/** @return list<string> */
+	/**
+	 * @param bool $dry_run
+	 * @return list<string>
+	 */
 	function extract_files($dry_run = false)
 	{
 	$flist = array();
