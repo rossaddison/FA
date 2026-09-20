@@ -14,10 +14,14 @@ include_once($path_to_root."/includes/packages.inc");
 //	Utility class contains basic database upgrade routines.
 //
 class fa_patch {
+	/** @var string */
 	var $previous;				// previous database version 
+	/** @var string */
 	var $version;		 		// version after upgrade
+	/** @var string */
 	var $description;			// short patch description
 
+	/** @var string */
 	var $sql;					// basic sql file
 
 	/** @var int|string */

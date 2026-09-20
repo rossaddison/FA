@@ -49,10 +49,13 @@ class db_pager {
 	 * @var string
 	 */
 	var $width;			// table width (default '95%')
+	/** @var string|null */
 	var $header_fun;	// additional row between title and body
 	/** @var string|null */
 	var $header_class;
+    /** @var string|null */
     var $row_fun;       // Function for row preprocessing
+	/** @var string|null */
 	var $footer_fun;
 	/** @var string|null */
 	var $footer_class;
@@ -86,6 +89,7 @@ class db_pager {
 	    
 	/** @var int */
 	var $page_len;
+	/** @var int|string */
 	var $rec_count;
 	
 	/**
@@ -112,6 +116,7 @@ class db_pager {
 	 * @var string
 	 */
 	var $order;
+	/** @var array<int, string> */
 	var	$extra_where = array();
 	
 	/**

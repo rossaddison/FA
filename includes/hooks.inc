@@ -19,6 +19,7 @@
 // To find how various hooks are processed look into respective hook_* functions below.
 //
 class hooks {
+	/** @var string|null */
 	var $module_name; // extension module name.
 	/** @var string|null */
 	var $path = null;

@@ -66,6 +66,7 @@ class Chart
 	var $id;
 	/** @var array<int, string> */
 	var $labels = array();
+	/** @var array<int, array<string, mixed>> */
 	var $series = array();
 
 	/**
