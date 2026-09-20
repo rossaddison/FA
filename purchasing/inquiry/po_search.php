@@ -90,6 +90,7 @@ function edit_link(array|false|null $row)
 	return trans_editor_link(ST_PURCHORDER, $row["order_no"]);
 }
 
+/** @return non-empty-string|null */
 function prt_link(array|false|null $row)
 {
 	return print_document_link($row['order_no'], _("Print"), true, ST_PURCHORDER, ICON_PRINT);

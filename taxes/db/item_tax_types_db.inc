@@ -122,6 +122,7 @@ function get_item_tax_type_exemptions(string|int|float|bool|null $id)
 	return db_select($sql, "could not get item tax type exemptions");
 }
 
+/** @return null|string */
 function item_type_inactive(string|null $id)
 {
 	$type = row_or_empty(get_item_tax_type($id));

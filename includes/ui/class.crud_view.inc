@@ -759,6 +759,7 @@ class table_crud_view extends simple_crud_view {
 	*	Returns selector string from data or current selected_id
 	*
 	* @psalm-mutation-free
+	* @return null|string
 	**/
 	function curr_id($data=null)
 	{

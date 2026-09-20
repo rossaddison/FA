@@ -184,6 +184,7 @@ function get_supplier_contacts(?string $supplier_id, ?string $action=null): arra
 	return $results;
 }
 
+/** @return null|string */
 function get_current_supp_credit(string|int|float|bool|null $supplier_id)
 {
 	$suppdet = row_or_empty(get_supplier_details($supplier_id));

@@ -88,7 +88,10 @@ define('MENU_SYSTEM', 'menu_system');
         /** @var string */
         var $category;
 		
-		/** @psalm-mutation-free */
+		/**
+		 * @psalm-mutation-free
+		 * @return app_function
+		 */
 		function __construct($label,$link,$access='SA_OPEN',$category='')
 		{
 			$this->label = $label;
@@ -114,6 +117,7 @@ define('MENU_SYSTEM', 'menu_system');
 		/**
 		 * @param string|null $name
 		 * @psalm-mutation-free
+		 * @return module
 		 */
 		function __construct($name,$icon = null) 
 		{

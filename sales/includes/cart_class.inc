@@ -677,6 +677,7 @@ class Cart
 	}
 
 
+	/** @return float|int|string */
 	function get_tax_free_shipping()
 	{
 
@@ -708,6 +709,7 @@ class Cart
 	/*
 		Returns transaction value including all taxes
 	*/
+	/** @return float */
 	function get_trans_total() {
 		
 		$total = (float)$this->get_items_total() + (float)$this->freight_cost;
@@ -922,7 +924,10 @@ class line_details
 	}
 
 	// get unit price as stated on document
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return float|int|string
+	 */
 	function line_price()
 	{
 		return $this->price;

@@ -958,6 +958,7 @@ function sales_items_list_cells(string|int|float|bool|null $label, ?string $name
 		'', array('cells'=>true, 'max'=>50)); // maximum is set to 50 and not default 255.
 }
 
+/** @return non-empty-string */
 function sales_kits_list(?string $name, string|int|float|bool|array|null $selected_id=null, string|bool|null $all_option=false, bool $submit_on_change=false)
 {
 	return sales_items_list($name, $selected_id, $all_option, $submit_on_change,
@@ -976,6 +977,7 @@ function sales_local_items_list_row(?string $label, ?string $name, string|int|fl
 }
 //------------------------------------------------------------------------------------
 
+/** @return non-empty-string */
 function stock_manufactured_items_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null,
 	string|int|float|bool|null $all_option=false, bool $submit_on_change=false)
 {
@@ -1002,6 +1004,7 @@ function stock_manufactured_items_list_row(?string $label, ?string $name, string
 }
 //------------------------------------------------------------------------------------
 
+/** @return non-empty-string */
 function stock_component_items_list(?string $name, string|int|float|bool|null $parent_stock_id, string|int|float|bool|array|null $selected_id=null,
 	bool $all_option=false, bool $submit_on_change=false, bool $editkey = false)
 {
@@ -1022,6 +1025,7 @@ function stock_component_items_list_cells(string|int|float|bool|null $label, ?st
 }
 //------------------------------------------------------------------------------------
 
+/** @return non-empty-string */
 function stock_costable_items_list(?string $name, string|int|float|bool|array|null $selected_id=null,
 	bool $all_option=false, bool $submit_on_change=false)
 {
@@ -1039,6 +1043,7 @@ function stock_costable_items_list_cells(?string $label, ?string $name, string|i
 }
 
 //------------------------------------------------------------------------------------
+/** @return non-empty-string */
 function stock_purchasable_items_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null,	
 	string|int|float|bool|null $all_option=false, bool $submit_on_change=false, bool $all=false, bool $editkey=false)
 {

@@ -110,6 +110,7 @@ function fmt_amount(array|false|null $row): string
 	return price_format($value);
 }
 
+/** @return non-empty-string|null */
 function prt_link(array|false|null $row)
 {
   	if ($row['type'] == ST_SUPPAYMENT || $row['type'] == ST_BANKPAYMENT || $row['type'] == ST_SUPPCREDIT) 

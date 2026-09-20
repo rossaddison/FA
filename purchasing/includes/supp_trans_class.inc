@@ -259,6 +259,7 @@ class supp_trans
 	//
 	//	Returns total invoice amount without taxes.
 	//
+    /** @return float */
     function get_total_taxfree($tax_group_id=null)
     {
     	$total = 0.0;
@@ -283,6 +284,7 @@ class supp_trans
 	//
 	//	Returns transaction total 
 	//
+	/** @return float */
 	function get_items_total()
 	{
 		$total = 0.0;
@@ -355,6 +357,7 @@ all the info to do the necessary entries without looking up ie additional querie
 		$this->tax_included = $tax_included;
 	}
 
+	/** @return null|scalar */
 	function full_charge_price($tax_group_id, $tax_group=null)
 	{
 		return get_full_price_for_item($this->item_code, 
@@ -363,6 +366,7 @@ all the info to do the necessary entries without looking up ie additional querie
 
 	/**
 	 * @param array<array-key, mixed>|null $tax_group
+	 * @return null|scalar
 	 */
 	function taxfree_charge_price($tax_group_id, $tax_group=null)
 	{

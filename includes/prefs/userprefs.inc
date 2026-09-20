@@ -166,55 +166,82 @@ class user_prefs
 			'def_print_orientation' => $this->def_print_orientation);
 	}
 	
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return string
+	 */
 	function language() 
 	{
 		return $this->language;
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return null|scalar
+	 */
 	function qty_dec() 
 	{
 		return $this->qty_dec;
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return null|scalar
+	 */
 	function price_dec() 
 	{
 		return $this->price_dec;
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return null|scalar
+	 */
 	function exrate_dec() 
 	{
 		return $this->exrate_dec;
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return null|scalar
+	 */
 	function percent_dec() 
 	{
 		return $this->percent_dec;
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return null|scalar
+	 */
 	function show_gl_info() 
 	{
 		return $this->show_gl_info;
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return null|scalar
+	 */
 	function show_codes() 
 	{
 		return $this->show_codes;
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return null|scalar
+	 */
 	function date_format() 
 	{
 		return $this->date_format;
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return null|scalar
+	 */
 	function date_sep() 
 	{
 		return $this->date_sep;
@@ -238,97 +265,145 @@ class user_prefs
 			return "Y".$sep."M".$sep."j";
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return null|scalar
+	 */
 	function tho_sep() 
 	{
 		return $this->tho_sep;
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return null|scalar
+	 */
 	function dec_sep() 
 	{
 		return $this->dec_sep;
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return string
+	 */
 	function get_theme() 
 	{
 		return $this->theme;
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return null|scalar
+	 */
 	function get_pagesize() 
 	{
 		return $this->pagesize;
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return null|scalar
+	 */
 	function show_hints() 
 	{
 		return $this->show_hints;
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return null|scalar
+	 */
 	function print_profile() 
 	{
 		return $this->print_profile;
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return null|scalar
+	 */
 	function rep_popup() 
 	{
 		return $this->rep_popup;
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return null|scalar
+	 */
 	function query_size() 
 	{
 		return $this->query_size;
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return null|scalar
+	 */
 	function graphic_links() 
 	{
 		return $this->graphic_links;
 	}
 	
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return null|scalar
+	 */
 	function sticky_date()
 	{
 		return $this->sticky_date;
 	}
 	
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return string
+	 */
 	function start_up_tab()
 	{
 		return $this->startup_tab;
 	}
 
-    /** @psalm-mutation-free */
+    /**
+     * @psalm-mutation-free
+     * @return null|scalar
+     */
     function transaction_days() 
     {
         return $this->transaction_days;
     }
 
-    /** @psalm-mutation-free */
+    /**
+     * @psalm-mutation-free
+     * @return null|scalar
+     */
     function save_report_selections() 
     {
         return $this->save_report_selections;
     }
 
-    /** @psalm-mutation-free */
+    /**
+     * @psalm-mutation-free
+     * @return null|scalar
+     */
     function use_date_picker() 
     {
         return $this->use_date_picker;
     }
 
-    /** @psalm-mutation-free */
+    /**
+     * @psalm-mutation-free
+     * @return null|scalar
+     */
     function def_print_destination() 
     {
         return $this->def_print_destination;
     }
 
-    /** @psalm-mutation-free */
+    /**
+     * @psalm-mutation-free
+     * @return null|scalar
+     */
     function def_print_orientation() 
     {
         return $this->def_print_orientation;

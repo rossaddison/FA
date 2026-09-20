@@ -454,12 +454,14 @@ class references
 //
 //	Check if reference was not used so far (for other transaction than $trans_no)
 //
+/** @return bool */
 function is_new_reference(string|int|float|bool|null $ref, string|int|float|bool|null $type, ?int $trans_no=0)
 {
 
 	return refs()->is_new_reference($ref, $type, $trans_no);
 }
 
+/** @return false|null|string */
 function get_reference(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no)
 {
 

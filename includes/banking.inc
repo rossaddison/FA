@@ -27,6 +27,7 @@ function get_company_currency()
 
 //----------------------------------------------------------------------------------
 
+/** @return float(1)|null|string */
 function get_exchange_rate_from_home_currency(string|int|float|bool|null $currency_code, string|int|float|bool|null $date_)
 {
 	if ($currency_code == get_company_currency() || $currency_code == null)

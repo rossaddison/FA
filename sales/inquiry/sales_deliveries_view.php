@@ -147,6 +147,7 @@ function edit_link(array|false|null $row)
 		trans_editor_link(ST_CUSTDELIVERY, $row['trans_no']);
 }
 
+/** @return non-empty-string|null */
 function prt_link(array|false|null $row)
 {
 	return print_document_link($row['trans_no'], _("Print"), true, ST_CUSTDELIVERY, ICON_PRINT);

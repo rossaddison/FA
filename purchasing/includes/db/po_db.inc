@@ -63,6 +63,7 @@ function delete_po(mixed $po): void
 
 //----------------------------------------------------------------------------------------
 
+/** @return int */
 function add_po(purch_order &$po_obj)
 {
 
@@ -118,6 +119,7 @@ function add_po(purch_order &$po_obj)
 
 //----------------------------------------------------------------------------------------
 
+/** @return int */
 function update_po(purch_order &$po_obj)
 {
 	begin_transaction();

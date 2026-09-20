@@ -477,6 +477,7 @@ class Chart
 
 	/**
 	 * @param string|null $save
+	 * @return null|true
 	 */
 	function create_graphic($save="")
 	{

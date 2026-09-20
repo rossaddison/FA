@@ -126,6 +126,7 @@ class fa_patch {
 	/*
 		Pre-install maintenance: login to company, open upgrade log, make a backup
 	*/
+	/** @return bool */
 	function pre_install($company)
 	{
 
@@ -200,6 +201,7 @@ class fa_patch {
 	*/
 	/**
 	 * @param bool $result
+	 * @return array<array-key, mixed>|bool|string
 	 */
 	function post_install($result=true)
 	{

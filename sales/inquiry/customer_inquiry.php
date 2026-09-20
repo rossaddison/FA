@@ -115,6 +115,7 @@ function copy_link(array|false|null $row)
             . (string)$row['order_'], ICON_DOC);
 }
 
+/** @return null|string */
 function prt_link(array|false|null $row)
 {
   	if ($row['type'] == ST_CUSTPAYMENT || $row['type'] == ST_BANKDEPOSIT) 

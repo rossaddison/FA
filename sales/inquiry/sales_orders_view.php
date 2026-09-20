@@ -97,6 +97,7 @@ function view_link(string|int|float|bool|array|null $dummy, string|int|float|boo
 	return  get_customer_trans_view_str($trans_type, $order_no);
 }
 
+/** @return non-empty-string|null */
 function prt_link(array|false|null $row)
 {
 	global $trans_type;

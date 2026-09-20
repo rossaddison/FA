@@ -35,6 +35,7 @@ function view_link(array $trans)
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
 
+/** @return non-empty-string|null */
 function prt_link(array|false|null $row)
 {
 	if (!isset($row['type']))

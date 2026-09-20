@@ -48,6 +48,7 @@ function receive_link(array|false|null $row): string
 			"/purchasing/po_receive_items.php?PONumber=" . (string)$row["order_no"], ICON_RECEIVE);
 }
 
+/** @return non-empty-string|null */
 function prt_link(array|false|null $row)
 {
 	return print_document_link($row['order_no'], _("Print"), true, ST_PURCHORDER, ICON_PRINT);

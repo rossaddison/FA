@@ -141,6 +141,7 @@ class allocation
 	 * @param string|null $ref
 	 * @param string|null $foreign_ref
 	 * @psalm-mutation-free
+	 * @return bool
 	 */
 	function add_or_update_item($type, $type_no, $date_, $due_date, 
 		$amount, $amount_allocated, $current_allocated, $ref, $foreign_ref)

@@ -106,6 +106,7 @@ abstract class record_set {
 	*	Validate data
 	*	@key - record key (u/d)
 	*	@data - data to be validated (i/u)
+	* @return bool
 	**/
 	function _validate($key, $data)
 	{
@@ -311,6 +312,7 @@ class data_set extends record_set {
 	//
 	/**
 	 * @param string|null $where
+	 * @return bool|mysqli_result
 	 */
 	function get_all($where=null, $order_by=null)
 	{

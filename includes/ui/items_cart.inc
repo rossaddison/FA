@@ -100,6 +100,7 @@ class items_cart
 		return false;
 	}
 
+	/** @return line_item|null */
 	function find_cart_item($stock_id)
 	{
 		foreach($this->line_items as $line_no=>$line) {
@@ -242,7 +243,10 @@ class items_cart
 		return count($this->gl_items);
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return float
+	 */
 	function gl_items_total()
 	{
 		$total = 0.0;
@@ -251,7 +255,10 @@ class items_cart
 		return $total;
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return float
+	 */
 	function gl_items_total_debit()
 	{
 		$total = 0.0;
@@ -263,7 +270,10 @@ class items_cart
 		return $total;
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return float
+	 */
 	function gl_items_total_credit()
 	{
 		$total = 0.0;

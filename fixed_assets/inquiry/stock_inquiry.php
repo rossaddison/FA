@@ -84,6 +84,7 @@ function fa_prepare_row(array|false|null $row) {
   	return $row;
 }
 
+/** @return null|scalar */
 function fa_link(array|false|null $row)
 {
   	$url = "inventory/manage/items.php?FixedAsset=1&stock_id=".(string)$row['stock_id'];

@@ -10,6 +10,7 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
+/** @return false|float|int */
 function process_fixed_asset_depreciation(string|null $stock_id, ?array $gl_rows, string|array|null $refline, string|array|null $memo_)
 {
 

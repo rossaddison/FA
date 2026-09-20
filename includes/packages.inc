@@ -42,6 +42,7 @@ class package extends gzip_file {
 	//
 	//	Used by archive class. Use create_archive() instead.
 	//	
+	/** @return 0|1 */
 	function create_pkg() 
 	{
 		return $this->create_gzip();

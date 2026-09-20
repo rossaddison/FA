@@ -246,6 +246,7 @@ class current_user
 			&& ($this->company == 0 || (($code&~0xff) != SS_SADMIN));
 	}
 
+	/** @return bool */
 	function can_access_page($page_level)
 	{
 		return $this->can_access($page_level);
@@ -471,6 +472,7 @@ function user_numeric(string|int|float|bool|array|null $input): int|float|false 
 	  	return $num;
 }
 
+/** @return null|scalar */
 function user_company()
 {
 	global $def_coy;
@@ -639,6 +641,7 @@ function user_def_print_orientation()
     return $_SESSION["wa_current_user"]->prefs->def_print_orientation();
 }
 
+/** @return bool */
 function user_check_access(string|int|float|bool|null $sec_area)
 {
 	return $_SESSION["wa_current_user"]->can_access($sec_area);

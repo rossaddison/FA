@@ -72,6 +72,7 @@ function round_to_nearest(string|int|float|bool|null $price, string|int|float|bo
 
 }
 
+/** @return 0|float */
 function get_price (string|int|float|bool|null $stock_id, string|int|float|bool|null $currency, string|int|float|bool|null $sales_type_id, string|int|float|bool|null $factor=null, string|int|float|bool|null $date=null)
 {
 	if ($date == null)

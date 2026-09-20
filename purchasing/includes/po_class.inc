@@ -363,6 +363,7 @@ class po_line_details
 	}
 	
 	// Deprecated, use with care. If you need line value as it is calculated in invoice, use taxfree_charge_value below.
+ 	/** @return null|scalar */
  	function taxfree_charge_price($po)
 	{
 		return get_tax_free_price_for_item($this->stock_id, $this->price, 
@@ -374,6 +375,7 @@ class po_line_details
 	//
 	/**
 	 * @param purch_order $po
+	 * @return null|scalar
 	 */
 	function taxfree_charge_value($po)
 	{

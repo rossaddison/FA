@@ -14,6 +14,7 @@ include_once($path_to_root . "/includes/types.inc");
 
 //--------------------------------------------------------------------------------------
 
+/** @return null|scalar */
 function get_supplier_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $label="", bool $icon=false, 
 	?string $class='', string|int|float|bool|null $id='')
 {
@@ -40,6 +41,7 @@ function get_supplier_trans_view_str(string|int|float|bool|null $type, string|in
 
 //--------------------------------------------------------------------------------------
 
+/** @return null|scalar */
 function get_gl_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $label="", bool $force=false, ?string $class='', ?string $id='')
 {
 	if (!$force && !user_show_gl_info())
@@ -111,6 +113,7 @@ function get_customer_trans_view_str(string|int|float|bool|null $type, string|in
 
 //--------------------------------------------------------------------------------------
 
+/** @return null|scalar */
 function get_banking_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $label="", 
 	bool $icon=false, ?string $class='', string|int|float|bool|null $id='')
 {
@@ -132,6 +135,7 @@ function get_banking_trans_view_str(string|int|float|bool|null $type, string|int
 
 //--------------------------------------------------------------------------------------
 
+/** @return null|scalar */
 function get_inventory_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $label="", 
 	bool $icon=false, ?string $class='', string|int|float|bool|null $id='')
 {
@@ -153,6 +157,7 @@ function get_inventory_trans_view_str(string|int|float|bool|null $type, string|i
 
 //--------------------------------------------------------------------------------------
 
+/** @return null|scalar */
 function get_manufacturing_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $label="", 
 	bool $icon=false, ?string $class='', string|int|float|bool|null $id='')
 {
@@ -177,6 +182,7 @@ function get_manufacturing_trans_view_str(string|int|float|bool|null $type, stri
 
 //--------------------------------------------------------------------------------------
 
+/** @return null|scalar */
 function get_dimensions_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $label="", bool $icon=false, 
 	?string $class='', string|int|float|bool|null $id='')
 {
@@ -193,6 +199,7 @@ function get_dimensions_trans_view_str(string|int|float|bool|null $type, string|
 /*
 	Journal entry or cost update postings link
 */
+/** @return null|scalar */
 function get_journal_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $label="", bool $icon=false, 
 	?string $class='', string|int|float|bool|null $id='')
 {
@@ -209,6 +216,7 @@ function get_journal_trans_view_str(string|int|float|bool|null $type, string|int
 
 //--------------------------------------------------------------------------------------
 
+/** @return null|scalar */
 function get_package_view_str(string|int|float|bool|null $pkg, string|int|float|bool|null $label="", bool $icon=false, ?string $class='', ?string $id='')
 {
 	if ($label == "")

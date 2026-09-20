@@ -299,6 +299,7 @@ function add_bank_transfer(string|null $from_account, string|null $to_account, s
 	return $trans_no;
 }
 
+/** @return array{account: null|string, amount: null|scalar, bank_account_name: null|string, trans_date?: int|null|string, ...<array-key, null|string>}|null */
 function check_bank_transfer(string|int|float|bool|null $trans_no, string|null $from_account, string|array|null $to_account, string|null $date_,
     int|float|null $amount, int|float|bool|null $target_amount=0)
 {
@@ -352,6 +353,7 @@ function check_bank_transfer(string|int|float|bool|null $trans_no, string|null $
 	return $problemTransaction;
 }
 
+/** @return float|int */
 function update_bank_transfer(
 	string|null $trans_no, string|null $from_account, string|null $to_account, string|null $date_,
 	int|float|bool|null $amount, string|null $ref, string|null $memo_, string|null $dim1, string|null $dim2, int|float|bool|null $charge=0, int|float|bool|null $target_amount=0)

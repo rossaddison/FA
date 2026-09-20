@@ -97,6 +97,7 @@ function calculate_reorder_level(string|int|float|bool|null $location, ?object $
 	return $loc;
 }
 
+/** @return int<0, max> */
 function send_reorder_email(string|int|float|bool|null $loc, array $st_ids, array $st_names, string|int|float|bool|null $st_num, string|int|float|bool|null $st_reorder)
 {
 	global $path_to_root;

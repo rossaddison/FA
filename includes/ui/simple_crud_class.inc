@@ -424,7 +424,10 @@ class simple_crud {
 		return true;
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return true
+	 */
 	function update_check() 
 	{
 		return $this->insert_check(); 

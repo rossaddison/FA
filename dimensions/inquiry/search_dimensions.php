@@ -121,6 +121,7 @@ function edit_link(array|false|null $row): string
 			"/dimensions/dimension_entry.php?trans_no=" . (string)$row["id"], ICON_EDIT);
 }
 
+/** @return non-empty-string|null */
 function prt_link(array|false|null $row)
 {
 	return print_document_link($row['id'], _("Print"), true, ST_DIMENSION, ICON_PRINT);

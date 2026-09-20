@@ -64,6 +64,7 @@ function check_paths(): void
 	}
 }
 
+/** @return false|null|string */
 function generate_backup(array $conn, string|null $ext='no', string|null $comm='')
 {
 

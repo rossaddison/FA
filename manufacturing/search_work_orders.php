@@ -105,6 +105,7 @@ function view_stock(array|false|null $row): string
 	return view_stock_status($row["stock_id"], $row["description"], false);
 }
 
+/** @return string */
 function wo_type_name(string|int|float|bool|array|null $dummy, string|int|float|bool|null $type)
 {
 	global $wo_types_array;
@@ -148,6 +149,7 @@ function view_gl_link(array|false|null $row)
 	return get_gl_view_str(ST_WORKORDER, $row['id']);
 }
 
+/** @return non-empty-string|null */
 function prt_link(array|false|null $row)
 {
 	return print_document_link($row['id'], _("Print"), true, ST_WORKORDER, ICON_PRINT);

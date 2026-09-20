@@ -37,6 +37,7 @@ class BoxReports
 	 * @param string|null $class_name
 	 * @param int|null $class_id
 	 * @psalm-external-mutation-free
+	 * @return int
 	 */
 	function addReportClass($class_name, $class_id=null)
 	{

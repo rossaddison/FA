@@ -367,6 +367,7 @@ function get_default_bank_account(string|int|float|bool|null $curr=null)
 	return db_fetch($result);
 }
 
+/** @return null|string */
 function get_default_customer_bank_account(string|null $cust_id)
 {
 	$sql = "SELECT curr_code FROM ".TB_PREF."debtors_master WHERE debtor_no=".db_escape($cust_id);
@@ -376,6 +377,7 @@ function get_default_customer_bank_account(string|null $cust_id)
 	return $ba['id'];
 }
 
+/** @return null|string */
 function get_default_supplier_bank_account(string|int|float|bool|null $supplier_id)
 {
 	$sql = "SELECT curr_code FROM ".TB_PREF."suppliers WHERE supplier_id=".db_escape($supplier_id);

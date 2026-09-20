@@ -43,6 +43,7 @@ class reflines_db extends data_set {
 		return db_num_rows($this->get_all($cond)) == 0;
 	}
 
+	/** @return bool */
 	function _check_template($data, $dummy_opt, $key)
 	{
 		global $refline_options, $refline_placeholders;
@@ -94,6 +95,7 @@ class reflines_db extends data_set {
 		return db_num_rows($res);
 	}
 
+	/** @return bool */
 	function delete_check($ref_id)
 	{
 		$rec = $this->get($ref_id);
