@@ -90,7 +90,7 @@ function get_contacts_for_branch(?string $branch): array
 /**
  * @return null|string
  */
-function getTransactions(string|int|null $debtorno, string|null $branchcode, string|array|null $date)
+function getTransactions(string|int|null $debtorno, string|null $branchcode, string|null $date)
 {
 	$date = date2sql($date);
 

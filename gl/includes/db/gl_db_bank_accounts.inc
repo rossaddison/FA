@@ -275,7 +275,7 @@ function get_quick_entry_line(string|int|float|bool|null $selected_id)
 /**
  * @return mysqli_result
  */
-function get_max_reconciled(string|array|null $date, string|null $bank_account)
+function get_max_reconciled(string|null $date, string|null $bank_account)
 {
 	$date = date2sql($date);
 	 // temporary fix to enable fix of invalid entries made in 2.2RC
@@ -309,7 +309,7 @@ function get_ending_reconciled(string|null $bank_account, string|int|null $bank_
 
 //---------------------------------------------------------------------------------------------
 
-function get_sql_for_bank_account_reconcile(string|null $bank_account, string|array|null $date): string
+function get_sql_for_bank_account_reconcile(string|null $bank_account, string|null $date): string
 {
 	$sql = "SELECT	bt.type, trans_no, ref, trans_date,
 				amount,	person_id, person_type_id, reconciled, bt.id, c.memo_
@@ -325,7 +325,7 @@ function get_sql_for_bank_account_reconcile(string|null $bank_account, string|ar
 
 //---------------------------------------------------------------------------------------------
 
-function update_reconciled_values(string|int|float|bool|null $reconcile_id, ?string $reconcile_value, string|array|null $reconcile_date, int|float|bool|null $end_balance, string|null $bank_account): void
+function update_reconciled_values(string|int|float|bool|null $reconcile_id, ?string $reconcile_value, string|null $reconcile_date, int|float|bool|null $end_balance, string|null $bank_account): void
 {
 	$sql = "UPDATE ".TB_PREF."bank_trans SET reconciled=$reconcile_value"
 		." WHERE id=".db_escape($reconcile_id);
@@ -390,7 +390,7 @@ function get_default_supplier_bank_account(string|int|float|bool|null $supplier_
 //	As of FA 2.3 check is done only on cash account, for which limit is bank amount as of the date selected.
 //
 /** @return 0|null|string */
-function get_bank_account_limit(string|int|array|null $account, string|int|array|null $date, mixed $user=null)
+function get_bank_account_limit(string|int|null $account, string|int|null $date, mixed $user=null)
 {
 //	$user = current_user();
 

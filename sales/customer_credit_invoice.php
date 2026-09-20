@@ -90,7 +90,7 @@ function can_process(): bool
 		display_error(_("The entered date is invalid."));
 		set_focus('CreditDate');
 		return false;
-	} elseif (!(bool)is_date_in_fiscalyear($_POST['CreditDate']))	{
+	} elseif (!(bool)is_date_in_fiscalyear(post_scalar('CreditDate')))	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('CreditDate');
 		return false;

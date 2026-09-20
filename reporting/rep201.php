@@ -59,7 +59,7 @@ function get_open_balance(?string $supplier_id, string|array|null $to)
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(string|int|array|null $supplier_id, string|array|null $from, string|array|null $to)
+function getTransactions(string|int|null $supplier_id, string|null $from, string|null $to)
 {
 	$from = date2sql($from);
 	$to = date2sql($to);

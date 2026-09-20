@@ -35,7 +35,7 @@ display_heading(_("Purchase Order") . " #" . (string)$_GET['trans_no']);
 
 $purchase_order = new purch_order;
 
-read_po($_GET['trans_no'], $purchase_order);
+read_po(get_scalar('trans_no'), $purchase_order);
 echo "<br>";
 display_po_summary($purchase_order, true);
 
@@ -166,5 +166,5 @@ display_allocations_to(PT_SUPPLIER, $purchase_order->supplier_id, ST_PURCHORDER,
 
 //----------------------------------------------------------------------------------------------------
 
-end_page(true, false, false, ST_PURCHORDER, $_GET['trans_no']);
+end_page(true, false, false, ST_PURCHORDER, get_scalar('trans_no'));
 

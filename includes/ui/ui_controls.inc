@@ -197,7 +197,7 @@ function access_string(string|int|float|bool|null $label, string|int|float|bool|
 	return (bool)$clean ? $label : array($label, $access);
 }
 
-function hyperlink_back(string|int|float|bool|null $center=true, string|int|float|bool|null $no_menu=true, string|int|float|bool|null $type_no=0, string|int|float|bool|array|null $trans_no=0, string|int|float|bool|null $final=false): void
+function hyperlink_back(string|int|float|bool|null $center=true, string|int|float|bool|null $no_menu=true, string|int|float|bool|null $type_no=0, string|int|float|bool|null $trans_no=0, string|int|float|bool|null $final=false): void
 {
 	global $path_to_root;
 
@@ -288,7 +288,7 @@ function submenu_option(?string $title, ?string $url, string|int|float|bool|null
 	display_note( menu_link($url, $title, $id), 0, 1);
 }
 
-function submenu_view(?string $title, ?int $type, string|array|null $number, string|int|float|bool|null $id=null): void
+function submenu_view(?string $title, ?int $type, string|null $number, string|int|float|bool|null $id=null): void
 {
 	display_note(get_trans_view_str($type, $number, $title, false, 'viewlink', $id), 0, 1);
 }

@@ -273,7 +273,7 @@ function read_po_items(string|int|float|bool|null $order_no, purch_order &$order
 
 //----------------------------------------------------------------------------------------
 
-function read_po(string|int|float|bool|array|null $order_no, purch_order &$order, bool $open_items_only=false): void
+function read_po(string|int|float|bool|null $order_no, purch_order &$order, bool $open_items_only=false): void
 {
 	$result = read_po_header($order_no, $order);
 
@@ -313,7 +313,7 @@ function get_short_info(string|null $stock_id)
 /**
  * @return non-falsy-string
  */
-function get_sql_for_po_search_completed(string|array|null $from, string|array|null $to, string|int|float|bool|null $supplier_id=ALL_TEXT, string|int|float|bool|null $location=ALL_TEXT,
+function get_sql_for_po_search_completed(string|null $from, string|null $to, string|int|float|bool|null $supplier_id=ALL_TEXT, string|int|float|bool|null $location=ALL_TEXT,
 	string|array|null $order_number = '', string|null $stock_id = '', string|bool|array|null $also_closed=false): string
 {
 	$sql = "SELECT 
@@ -376,7 +376,7 @@ function get_sql_for_po_search_completed(string|array|null $from, string|array|n
 	return $sql;
 }
 
-function get_sql_for_po_search(string|array|null $from, string|array|null $to, string|int|float|bool|null $supplier_id=ALL_TEXT, string|int|float|bool|null $location=ALL_TEXT, string|int|float|bool|null $order_number='', string|null $stock_id=''): string
+function get_sql_for_po_search(string|null $from, string|null $to, string|int|float|bool|null $supplier_id=ALL_TEXT, string|int|float|bool|null $location=ALL_TEXT, string|int|float|bool|null $order_number='', string|null $stock_id=''): string
 {
 	$sql = "SELECT 
 		porder.order_no, 

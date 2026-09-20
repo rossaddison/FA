@@ -116,7 +116,7 @@ if (isset($_GET['OrderNumber']) && $_GET['OrderNumber'] > 0) {
 
 } elseif (isset($_GET['ModifyDelivery']) && $_GET['ModifyDelivery'] > 0) {
 
-	check_is_editable(ST_CUSTDELIVERY, $_GET['ModifyDelivery']);
+	check_is_editable(ST_CUSTDELIVERY, get_scalar('ModifyDelivery'));
 	$_SESSION['Items'] = new Cart(ST_CUSTDELIVERY,$_GET['ModifyDelivery']);
 
 	if (!session_obj('Items')->prepaid && session_obj('Items')->count_items() == 0) {
@@ -162,7 +162,7 @@ function check_data(): bool
 		return false;
 	}
 
-	if (!(bool)is_date_in_fiscalyear($_POST['DispatchDate'])) {
+	if (!(bool)is_date_in_fiscalyear(post_scalar('DispatchDate'))) {
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('DispatchDate');
 		return false;
@@ -361,7 +361,7 @@ shippers_list_cells(null, 'ship_via', $_POST['ship_via']);
 // set this up here cuz it's used to calc qoh
 if (!isset($_POST['DispatchDate']) || !is_date(post_scalar('DispatchDate'))) {
 	$_POST['DispatchDate'] = new_doc_date();
-	if (!(bool)is_date_in_fiscalyear($_POST['DispatchDate'])) {
+	if (!(bool)is_date_in_fiscalyear(post_scalar('DispatchDate'))) {
 		$_POST['DispatchDate'] = end_fiscalyear();
 	}
 }
@@ -375,7 +375,7 @@ echo "</td><td>";// outer table
 start_table(TABLESTYLE, "width='90%'");
 
 if (!isset($_POST['due_date']) || !is_date(post_scalar('due_date'))) {
-	$_POST['due_date'] = get_invoice_duedate(session_obj('Items')->payment, $_POST['DispatchDate']);
+	$_POST['due_date'] = get_invoice_duedate(session_obj('Items')->payment, post_scalar('DispatchDate'));
 }
 customer_credit_row(session_obj('Items')->customer_id, session_obj('Items')->credit, "class='tableheader2'");
 

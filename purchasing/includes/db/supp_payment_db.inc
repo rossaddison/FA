@@ -10,8 +10,8 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 /** @return float|int|null|string */
-function write_supp_payment(?int $trans_no, string|int|float|bool|array|null $supplier_id, string|int|float|bool|array|null $bank_account,
-	string|int|float|bool|array|null $date_, string|int|float|bool|array|null $ref, string|int|float|bool|null $supp_amount, int|float|bool|null $supp_discount, string|array|null $memo_, int|float|bool|null $bank_charge=0, int|float|bool|null $bank_amount=0, string|int|float|bool|array|null $dimension=0, string|int|float|bool|array|null $dimension2=0)
+function write_supp_payment(?int $trans_no, string|int|float|bool|null $supplier_id, string|int|float|bool|null $bank_account,
+	string|int|float|bool|null $date_, string|int|float|bool|null $ref, string|int|float|bool|null $supp_amount, int|float|bool|null $supp_discount, string|null $memo_, int|float|bool|null $bank_charge=0, int|float|bool|null $bank_amount=0, string|int|float|bool|null $dimension=0, string|int|float|bool|null $dimension2=0)
 {
 
 	begin_transaction();

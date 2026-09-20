@@ -178,7 +178,7 @@ function can_process(): bool
 		set_focus('DefaultReceivedDate');
 		return false;
 	}
-	if (!(bool)is_date_in_fiscalyear($_POST['DefaultReceivedDate'])) {
+	if (!(bool)is_date_in_fiscalyear(post_scalar('DefaultReceivedDate'))) {
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('DefaultReceivedDate');
 		return false;
@@ -274,7 +274,7 @@ function process_receive_po(): void
 
 if (isset($_GET['PONumber']) && $_GET['PONumber'] > 0 && !isset($_POST['Update']))
 {
-	create_new_po(ST_PURCHORDER, $_GET['PONumber']);
+	create_new_po(ST_PURCHORDER, get_scalar('PONumber'));
 	session_obj('PO')->trans_type = ST_SUPPRECEIVE;
 	session_obj('PO')->reference = refs()->get_next(ST_SUPPRECEIVE, null,
 		array('date' => Today(), 'supplier' => session_obj('PO')->supplier_id));

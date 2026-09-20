@@ -33,7 +33,7 @@ print_customer_balances();
 /**
  * @return array<array-key, null|string>|false
  */
-function get_open_balance(?string $debtorno, string|array|null $to)
+function get_open_balance(?string $debtorno, string|null $to)
 {
 	if((bool)$to)
 		$to = date2sql($to);
@@ -61,7 +61,7 @@ function get_open_balance(?string $debtorno, string|array|null $to)
 /**
  * @return bool|mysqli_result
  */
-function get_transactions(?string $debtorno, string|array|null $from, string|array|null $to)
+function get_transactions(?string $debtorno, string|null $from, string|null $to)
 {
 	$from = date2sql($from);
 	$to = date2sql($to);

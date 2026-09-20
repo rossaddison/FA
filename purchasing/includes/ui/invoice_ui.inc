@@ -120,7 +120,7 @@ function invoice_header(?supp_trans &$supp_trans): void
 	{
 		label_row(_("Source Invoices:"), implode(',' , $supp_trans->src_docs),'','','src_docs');
 	}
-		text_row(_("Supplier's Ref.:"), 'supp_reference', $_POST['supp_reference'], 20, 60);
+		text_row(_("Supplier's Ref.:"), 'supp_reference', post_scalar('supp_reference'), 20, 60);
 
 	table_section(2, "33%");
 
@@ -151,7 +151,7 @@ function invoice_header(?supp_trans &$supp_trans): void
 	if ($supp_trans->currency != $company_currency)
 	{
         label_row(_("Supplier's Currency:"), "<b>" . $supp_trans->currency . "</b>");
-		exchange_rate_display($company_currency, $supp_trans->currency, $_POST['tran_date']);
+		exchange_rate_display($company_currency, $supp_trans->currency, post_scalar('tran_date'));
 	}
 
   	label_row(_("Tax Group:"), $supp_trans->tax_description);
@@ -356,7 +356,7 @@ function display_grn_items_for_selection(supp_trans &$supp_trans, string|int|flo
 	else
 	{ // only invoiced
 		if (isset($_POST['receive_begin']) && isset($_POST['receive_end']))
-			$result = get_grn_items(0, $supp_trans->supplier_id, false, true, 0, $_POST['receive_begin'], $_POST['receive_end']);
+			$result = get_grn_items(0, $supp_trans->supplier_id, false, true, 0, post_scalar('receive_begin'), post_scalar('receive_end'));
 		elseif ($supp_trans->src_docs)
 			$result = get_grn_items(0, $supp_trans->supplier_id, false, true, array_keys($supp_trans->src_docs));
 		else

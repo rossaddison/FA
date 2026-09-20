@@ -9,8 +9,8 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_exchange_variation(string|int|float|bool|array|null $trans_no, string|int|float|bool|array|null $date_, string|int|float|bool|null $acc_id, string|int|float|bool|null $account,
-    ?string $currency, string|int|float|bool|null $person_type_id=null, string|int|float|bool|null $person_id = "", string|array|null $memo=''): bool
+function add_exchange_variation(string|int|float|bool|array|null $trans_no, string|int|float|bool|null $date_, string|int|float|bool|null $acc_id, string|int|float|bool|null $account,
+    ?string $currency, string|int|float|bool|null $person_type_id=null, string|int|float|bool|null $person_id = "", string|null $memo=''): bool
 {
 	if (is_company_currency($currency))
 		return false;
@@ -66,7 +66,7 @@ function add_exchange_variation(string|int|float|bool|array|null $trans_no, stri
 	return false;
 }
 
-function add_cust_supp_revaluation(?string $ledger_act, string|int|float|bool|null $ex_act, string|array|null $date, ?float $amount, ?int $person_type_id, ?string $person_id, string|array|null $memo): void
+function add_cust_supp_revaluation(?string $ledger_act, string|int|float|bool|null $ex_act, string|null $date, ?float $amount, ?int $person_type_id, ?string $person_id, string|null $memo): void
 {
 	if ($amount == 0)
 		return;
@@ -90,7 +90,7 @@ function add_cust_supp_revaluation(?string $ledger_act, string|int|float|bool|nu
 /**
  * @return mysqli_result
  */
-function get_cust_account_curr_balances(string|array|null $date)
+function get_cust_account_curr_balances(string|null $date)
 {
 	$to = date2sql($date);
 
@@ -113,7 +113,7 @@ function get_cust_account_curr_balances(string|array|null $date)
 /**
  * @return mysqli_result
  */
-function get_supp_account_curr_balances(string|array|null $date)
+function get_supp_account_curr_balances(string|null $date)
 {
 	$to = date2sql($date);
 
@@ -133,7 +133,7 @@ function get_supp_account_curr_balances(string|array|null $date)
 /**
  * @return null|string
  */
-function get_account_home_balance(?string $person_id, ?int $person_type, ?string $rec_account, string|array|null $to_date)
+function get_account_home_balance(?string $person_id, ?int $person_type, ?string $rec_account, string|null $to_date)
 {
 	$to = date2sql($to_date);
 
@@ -150,7 +150,7 @@ function get_account_home_balance(?string $person_id, ?int $person_type, ?string
 // Note: in 2.4.9 sparse 'ref' argument was removed (generated transactions use
 // next references from default refline).
 //
-function add_exchange_variation_all(string|array|null $date, string|array|null $memo): array
+function add_exchange_variation_all(string|null $date, string|null $memo): array
 {
 	begin_transaction();
 	$exchanged = false;
@@ -215,8 +215,8 @@ function add_exchange_variation_all(string|array|null $date, string|array|null $
 //	
 
 /** @return float|int */
-function add_bank_transfer(string|array|null $from_account, string|array|null $to_account, string|array|null $date_,
-	string|int|float|bool|null $amount, string|array|null $ref, string|array|null $memo_, string|array|null $dim1, string|array|null $dim2, string|int|float|bool|null $charge=0, int|float|bool|null $target_amount=0)
+function add_bank_transfer(string|null $from_account, string|null $to_account, string|null $date_,
+	string|int|float|bool|null $amount, string|null $ref, string|null $memo_, string|null $dim1, string|null $dim2, string|int|float|bool|null $charge=0, int|float|bool|null $target_amount=0)
 {
 
 	begin_transaction();
@@ -299,7 +299,7 @@ function add_bank_transfer(string|array|null $from_account, string|array|null $t
 	return $trans_no;
 }
 
-function check_bank_transfer(string|int|float|bool|array|null $trans_no, string|array|null $from_account, string|array|null $to_account, string|array|null $date_,
+function check_bank_transfer(string|int|float|bool|null $trans_no, string|null $from_account, string|array|null $to_account, string|null $date_,
     int|float|null $amount, int|float|bool|null $target_amount=0)
 {
 	$dbResult = get_bank_trans(ST_BANKTRANSFER, $trans_no);
@@ -353,8 +353,8 @@ function check_bank_transfer(string|int|float|bool|array|null $trans_no, string|
 }
 
 function update_bank_transfer(
-	string|array|null $trans_no, string|array|null $from_account, string|array|null $to_account, string|array|null $date_,
-	int|float|bool|null $amount, string|array|null $ref, string|array|null $memo_, string|array|null $dim1, string|array|null $dim2, int|float|bool|null $charge=0, int|float|bool|null $target_amount=0)
+	string|null $trans_no, string|null $from_account, string|null $to_account, string|null $date_,
+	int|float|bool|null $amount, string|null $ref, string|null $memo_, string|null $dim1, string|null $dim2, int|float|bool|null $charge=0, int|float|bool|null $target_amount=0)
 {
 	begin_transaction();
 	delete_comments(ST_BANKTRANSFER, $trans_no);
@@ -385,8 +385,8 @@ function update_bank_transfer(
 /**
  * @return false|list{mixed, mixed}
  */
-function write_bank_transaction(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no, string|array|null $from_account, ?object $items, string|array|null $date_,
-	string|array|null $person_type_id, string|array|null $person_id, string|array|null $person_detail_id,	string|array|null $ref, string|array|null $memo_, bool $use_transaction=true, int|float|bool|null $settled_amount=null): false|array
+function write_bank_transaction(string|int|float|bool|null $trans_type, string|int|float|bool|null $trans_no, string|null $from_account, ?object $items, string|null $date_,
+	string|null $person_type_id, string|null $person_id, string|null $person_detail_id,	string|null $ref, string|null $memo_, bool $use_transaction=true, int|float|bool|null $settled_amount=null): false|array
 {
 
 	// we can only handle type 1 (payment)and type 2 (deposit)

@@ -11,7 +11,7 @@
 ***********************************************************************/
 
 /** @return float|int */
-function add_stock_adjustment(?array $items, string|array|null $location, string|array|null $date_, string|array|null $reference, string|array|null $memo_)
+function add_stock_adjustment(?array $items, string|null $location, string|null $date_, string|null $reference, string|null $memo_)
 {
 	global $SysPrefs, $path_to_root, $Refs;
 
@@ -72,7 +72,7 @@ function void_stock_adjustment(string|int|float|bool|null $type_no): void
 //-------------------------------------------------------------------------------------------------------------
 
 /** @return bool|mysqli_result|null */
-function get_stock_adjustment_items(string|int|float|bool|array|null $trans_no)
+function get_stock_adjustment_items(string|int|float|bool|null $trans_no)
 {
 	$result = get_stock_moves(ST_INVADJUST, $trans_no);
 

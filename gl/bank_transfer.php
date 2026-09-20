@@ -59,7 +59,7 @@ if (isset($_POST['_DatePaid_changed'])) {
 
 //----------------------------------------------------------------------------------------
 
-function gl_payment_controls(string|int|float|bool|array|null $trans_no): void
+function gl_payment_controls(string|int|float|bool|null $trans_no): void
 {
 	
 	if (!in_ajax()) {
@@ -107,13 +107,13 @@ function gl_payment_controls(string|int|float|bool|array|null $trans_no): void
 
 	bank_accounts_list_row(_("From Account:"), 'FromBankAccount', null, true);
 
-	bank_balance_row($_POST['FromBankAccount']);
+	bank_balance_row(post_scalar('FromBankAccount'));
 
     bank_accounts_list_row(_("To Account:"), 'ToBankAccount', null, true);
 
 	if (!isset($_POST['DatePaid'])) { // init page
 		$_POST['DatePaid'] = new_doc_date();
-		if (!(bool)is_date_in_fiscalyear($_POST['DatePaid']))
+		if (!(bool)is_date_in_fiscalyear(post_scalar('DatePaid')))
 			$_POST['DatePaid'] = end_fiscalyear();
 	}
     date_row(_("Transfer Date:"), 'DatePaid', '', true, 0, 0, 0, null, true);
@@ -165,7 +165,7 @@ function gl_payment_controls(string|int|float|bool|array|null $trans_no): void
 
 //----------------------------------------------------------------------------------------
 
-function check_valid_entries(string|int|float|bool|array|null $trans_no): bool
+function check_valid_entries(string|int|float|bool|null $trans_no): bool
 {
 	global $systypes_array;
 	
@@ -175,7 +175,7 @@ function check_valid_entries(string|int|float|bool|array|null $trans_no): bool
 		set_focus('DatePaid');
 		return false;
 	}
-	if (!(bool)is_date_in_fiscalyear($_POST['DatePaid']))
+	if (!(bool)is_date_in_fiscalyear(post_scalar('DatePaid')))
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('DatePaid');
@@ -194,13 +194,13 @@ function check_valid_entries(string|int|float|bool|array|null $trans_no): bool
 		return false;
 	}
 
-	$limit = get_bank_account_limit($_POST['FromBankAccount'], $_POST['DatePaid']);
+	$limit = get_bank_account_limit(post_scalar('FromBankAccount'), post_scalar('DatePaid'));
 
 	$amnt_tr = (float)input_num('charge') + (float)input_num('amount');
 
 	$problemTransaction = null;
 	if ((bool)$trans_no) {
-		$problemTransaction = check_bank_transfer( $trans_no, $_POST['FromBankAccount'], $_POST['ToBankAccount'], $_POST['DatePaid'],
+		$problemTransaction = check_bank_transfer( $trans_no, post_scalar('FromBankAccount'), $_POST['ToBankAccount'], post_scalar('DatePaid'),
 			$amnt_tr, input_num('target_amount', $amnt_tr));
 
 	if ($problemTransaction != null	) {
@@ -220,7 +220,7 @@ function check_valid_entries(string|int|float|bool|array|null $trans_no): bool
 		return false;
 		}
 	} else {
-		if (null != ($problemTransaction = check_bank_account_history(-$amnt_tr, post_scalar('FromBankAccount'), $_POST['DatePaid']))) {
+		if (null != ($problemTransaction = check_bank_account_history(-$amnt_tr, post_scalar('FromBankAccount'), post_scalar('DatePaid')))) {
 			if (!array_key_exists('trans_no', $problemTransaction)) {
 				display_error(sprintf(
 					_("This bank transfer would result in exceeding authorized overdraft limit of the account (%s)"),
@@ -273,10 +273,10 @@ function check_valid_entries(string|int|float|bool|array|null $trans_no): bool
 		return false;
 	}
 
-	if (!db_has_currency_rates(get_bank_account_currency(post_scalar('FromBankAccount')), $_POST['DatePaid']))
+	if (!db_has_currency_rates(get_bank_account_currency(post_scalar('FromBankAccount')), post_scalar('DatePaid')))
 		return false;
 
-	if (!db_has_currency_rates(get_bank_account_currency(post_scalar('ToBankAccount')), $_POST['DatePaid']))
+	if (!db_has_currency_rates(get_bank_account_currency(post_scalar('ToBankAccount')), post_scalar('DatePaid')))
 		return false;
 
     return true;
@@ -288,12 +288,12 @@ function bank_transfer_handle_submit(): void
 {
 	$trans_no = array_key_exists('_trans_no', $_POST) ?  $_POST['_trans_no'] : null;
 	if ((bool)$trans_no) {
-		$trans_no = update_bank_transfer($trans_no, $_POST['FromBankAccount'], $_POST['ToBankAccount'], $_POST['DatePaid'],	input_num('amount'), 
-			$_POST['ref'], $_POST['memo_'], $_POST['dimension_id'], $_POST['dimension2_id'], input_num('charge'), input_num('target_amount'));
+		$trans_no = update_bank_transfer($trans_no, post_scalar('FromBankAccount'), post_scalar('ToBankAccount'), post_scalar('DatePaid'),	input_num('amount'), 
+			post_scalar('ref'), post_scalar('memo_'), post_scalar('dimension_id'), post_scalar('dimension2_id'), input_num('charge'), input_num('target_amount'));
 	} else {
 		new_doc_date($_POST['DatePaid']);
-		$trans_no = add_bank_transfer($_POST['FromBankAccount'], $_POST['ToBankAccount'], $_POST['DatePaid'], input_num('amount'), $_POST['ref'], 
-			$_POST['memo_'], $_POST['dimension_id'], $_POST['dimension2_id'], input_num('charge'), input_num('target_amount'));
+		$trans_no = add_bank_transfer(post_scalar('FromBankAccount'), post_scalar('ToBankAccount'), post_scalar('DatePaid'), input_num('amount'), post_scalar('ref'), 
+			post_scalar('memo_'), post_scalar('dimension_id'), post_scalar('dimension2_id'), input_num('charge'), input_num('target_amount'));
 	}
 
 	meta_forward($_SERVER['PHP_SELF'], "AddedID=$trans_no");

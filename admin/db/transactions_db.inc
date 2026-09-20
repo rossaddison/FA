@@ -59,7 +59,7 @@ function get_sql_for_view_transactions(string|int|float|bool|null $filtertype, s
 	return $sql;
 }
 
-function transaction_exists(string|bool|array|null $trans_type, string|bool|array|null $trans_no): int|string
+function transaction_exists(string|bool|null $trans_type, string|bool|null $trans_no): int|string
 {
 	return db_num_rows(db_query(get_sql_for_view_transactions($trans_type, $trans_no, $trans_no, $dummy)));
 }

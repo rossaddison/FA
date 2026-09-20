@@ -64,7 +64,7 @@ function get_audit_trail_last(string|int|float|bool|null $trans_type, string|int
 	Confirm and close for edition all transactions up to date $todate, 
 	and reindex	journal.
 */
-function close_transactions(string|array|null $todate): int {
+function close_transactions(string|null $todate): int {
 
 	begin_transaction();
 
@@ -139,7 +139,7 @@ function get_journal_number(string|int|float|bool|null $type, string|int|float|b
 /*
 	Closed transactions have gl_seq number assigned.
 */
-function is_closed_trans(string|int|float|bool|array|null $type, string|int|float|bool|array|null $trans_no): bool {
+function is_closed_trans(string|int|float|bool|null $type, string|int|float|bool|null $trans_no): bool {
 
 	return get_journal_number($type, $trans_no) > 0;
 }

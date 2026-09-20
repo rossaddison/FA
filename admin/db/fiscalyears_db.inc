@@ -13,7 +13,7 @@ require_once($path_to_root. "/includes/ui/items_cart.inc");
 require_once($path_to_root. "/admin/db/attachments_db.inc");
 
 // fiscal year routines
-function add_fiscalyear(string|array|null $from_date, string|array|null $to_date, string|null $closed): void
+function add_fiscalyear(string|null $from_date, string|null $to_date, string|null $closed): void
 {
 	$from = date2sql($from_date);
 	$to = date2sql($to_date);
@@ -124,7 +124,7 @@ function next_begin_date(): false|string
 	return add_days(sql2date($row[0]), 1);
 }
 
-function check_years_before(string|array|null $date, bool $closed=false): bool
+function check_years_before(string|null $date, bool $closed=false): bool
 {
 	$date = date2sql($date);
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."fiscal_year WHERE begin < '$date'";
@@ -205,7 +205,7 @@ function delete_attachments_and_comments(string|int|null $type_no, string|int|fl
 }	
 
 //---------------------------------------------------------------------------------------------
-function delete_this_fiscalyear(string|int|float|bool|array|null $selected_id): void
+function delete_this_fiscalyear(string|int|float|bool|null $selected_id): void
 {
 	global $db_connections;
 	

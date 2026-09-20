@@ -154,7 +154,7 @@ if ($selected_id != -1)
 
 text_row_ex(_("Sales Type Name").':', 'sales_type', 20);
 amount_row(_("Calculation factor").':', 'factor', null, null, null, 4);
-check_row(_("Tax included").':', 'tax_included', $_POST['tax_included']);
+check_row(_("Tax included").':', 'tax_included', post_scalar('tax_included'));
 
 end_table(1);
 

@@ -87,7 +87,7 @@ function handle_new_order(): void
     $_SESSION['adj_items'] = new items_cart(ST_INVADJUST);
     session_obj('adj_items')->fixed_asset = isset($_GET['FixedAsset']);
 	$_POST['AdjDate'] = new_doc_date();
-	if (!(bool)is_date_in_fiscalyear($_POST['AdjDate']))
+	if (!(bool)is_date_in_fiscalyear(post_scalar('AdjDate')))
 		$_POST['AdjDate'] = end_fiscalyear();
 	session_obj('adj_items')->tran_date = $_POST['AdjDate'];	
 }
@@ -117,7 +117,7 @@ function can_process(): bool
 		set_focus('AdjDate');
 		return false;
 	} 
-	elseif (!(bool)is_date_in_fiscalyear($_POST['AdjDate'])) 
+	elseif (!(bool)is_date_in_fiscalyear(post_scalar('AdjDate'))) 
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('AdjDate');
@@ -144,7 +144,7 @@ if (isset($_POST['Process']) && can_process()){
   $fixed_asset = session_obj('adj_items')->fixed_asset; 
 
 	$trans_no = add_stock_adjustment(session_obj('adj_items')->line_items,
-		$_POST['StockLocation'], $_POST['AdjDate'],	$_POST['ref'], $_POST['memo_']);
+		post_scalar('StockLocation'), post_scalar('AdjDate'),	post_scalar('ref'), post_scalar('memo_'));
 	new_doc_date($_POST['AdjDate']);
 	session_obj('adj_items')->clear_items();
 	unset($_SESSION['adj_items']);
@@ -199,7 +199,7 @@ function handle_delete_item(string|int|null $id): void
 
 function handle_new_item(): void
 {
-	add_to_order($_SESSION['adj_items'], $_POST['stock_id'], 
+	add_to_order($_SESSION['adj_items'], post_scalar('stock_id'), 
 	input_num('qty'), input_num('std_cost'));
 	line_start_focus();
 }

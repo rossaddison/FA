@@ -100,7 +100,7 @@ if (can_process($myrow))
 
     date_row(_("Released Date") . ":", 'released_date');
 
-    textarea_row(_("Memo:"), 'memo_', $_POST['memo_'], 40, 5);
+    textarea_row(_("Memo:"), 'memo_', post_scalar('memo_'), 40, 5);
 
     end_table(1);
 

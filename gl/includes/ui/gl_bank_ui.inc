@@ -64,7 +64,7 @@ function display_bank_header(?items_cart &$order): void
 
         	if (db_customer_has_branches(post_scalar('person_id')))
         	{
-        		customer_branches_list_row(_("Branch:"), $_POST['person_id'], 
+        		customer_branches_list_row(_("Branch:"), post_scalar('person_id'), 
 					'PersonDetailID', null, false, true, true, true);
         	}
         	else
@@ -112,11 +112,11 @@ function display_bank_header(?items_cart &$order): void
     
     bank_accounts_list_row( $payment ? _("From:") : _("Into:"), 'bank_account', null, true);
     if ($payment)
-		bank_balance_row($_POST['bank_account']);
+		bank_balance_row(post_scalar('bank_account'));
 
 	$bank_currency = get_bank_account_currency(post_scalar('bank_account'));
 
-	exchange_rate_display(get_company_currency(), $bank_currency, $_POST['date_']);
+	exchange_rate_display(get_company_currency(), $bank_currency, post_scalar('date_'));
 
 	end_outer_table(1); // outer table
 

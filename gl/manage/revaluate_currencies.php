@@ -47,7 +47,7 @@ function check_data(): bool
 		set_focus('date');
 		return false;
 	}
-	if (!(bool)is_date_in_fiscalyear($_POST['date']))
+	if (!(bool)is_date_in_fiscalyear(post_scalar('date')))
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('date');
@@ -64,7 +64,7 @@ function handle_submit(): void
 	if (!check_data())
 		return;
 
-	$trans = add_exchange_variation_all($_POST['date'], $_POST['memo_']);
+	$trans = add_exchange_variation_all(post_scalar('date'), post_scalar('memo_'));
 
 	meta_forward($_SERVER['PHP_SELF'], "BA=".$trans[0]."&JE=".$trans[1]);
 	//clear_data();

@@ -222,7 +222,7 @@ pos_list_row(_("User's POS"). ':', 'pos', null);
 print_profiles_list_row(_("Printing profile"). ':', 'print_profile', null,
 	_('Browser printing support'));
 
-check_row(_("Use popup window for reports:"), 'rep_popup', $_POST['rep_popup'],
+check_row(_("Use popup window for reports:"), 'rep_popup', post_scalar('rep_popup'),
 	false, _('Set this option to on if your browser directly supports pdf files'));
 
 end_table(1);

@@ -84,7 +84,7 @@ if ($Mode == 'ADD_ITEM' || $Mode == 'UPDATE_ITEM')
 	$filename = basename($_FILES['filename']['name']);
 	if (($_POST['filterType'] == ST_ITEM || $_POST['filterType'] == ST_FIXEDASSET) && $Mode == 'ADD_ITEM')
 		$_POST['trans_no'] = get_item_code_id(post_scalar('trans_no'));
-	if (!transaction_exists($_POST['filterType'], $_POST['trans_no']))
+	if (!transaction_exists(post_scalar('filterType'), post_scalar('trans_no')))
 		display_error(_("Selected transaction does not exists."));
 	elseif ($Mode == 'ADD_ITEM' && !in_array(strtoupper(substr($filename, strlen($filename) - 3)), array('JPG','PNG','GIF', 'PDF', 'DOC', 'ODT')))
 	{
@@ -230,7 +230,7 @@ function delete_link(array|false|null $row): string
   	return button('Delete'.(string)$row["id"], _("Delete"), _("Delete"), ICON_DELETE);
 }
 
-function display_rows(string|array|null $type, string|array|null $trans_no): void
+function display_rows(string|null $type, string|null $trans_no): void
 {
 	$sql = get_sql_for_attached_documents($type, $type==ST_SUPPLIER || $type==ST_CUSTOMER || $type==ST_BANKACCOUNT ? $trans_no : 
 		($type==ST_ITEM || $type==ST_FIXEDASSET ? get_item_code_id($trans_no) : 0));

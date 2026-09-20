@@ -27,7 +27,7 @@ include_once($path_to_root . "/admin/db/tags_db.inc");
 
 //----------------------------------------------------------------------------------------------------
 
-function display_type (?string $type, ?string $typename, string|int|float|bool|array|null $from, string|int|float|bool|array|FrontReport|null $to, string|int|float|bool|array|null $begin, string|int|float|bool|array|null $end, string|int|float|bool|array|FrontReport|null $compare, string|int|float|bool|array|null $convert, int|string|null &$dec, int|string|null &$pdec, FrontReport &$rep, string|int|float|bool|array|null $dimension, string|int|float|bool|array|null $dimension2, mixed $tags, object &$pg, mixed $graphics, array &$labels, array &$serie1, array &$serie2)
+function display_type (?string $type, ?string $typename, string|int|float|bool|array|null $from, string|int|float|bool|array|FrontReport|null $to, string|int|float|bool|null $begin, string|int|float|bool|array|null $end, string|int|float|bool|array|FrontReport|null $compare, string|int|float|bool|array|null $convert, int|string|null &$dec, int|string|null &$pdec, FrontReport &$rep, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2, mixed $tags, object &$pg, mixed $graphics, array &$labels, array &$serie1, array &$serie2)
 {
 	$code_per_balance = 0.0;
 	$code_acc_balance = 0.0;

@@ -61,7 +61,7 @@ function display_kit_items(string|int|float|bool|null $selected_kit): void
 //--------------------------------------------------------------------------------------------------
 
 /** @return 0|array<array-key, mixed>|null|string */
-function update_kit(string|array|null $selected_kit, string|int|float|bool|null $component_id)
+function update_kit(string|null $selected_kit, string|int|float|bool|null $component_id)
 {
 	global $Mode;
 

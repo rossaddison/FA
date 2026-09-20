@@ -47,7 +47,7 @@ include_once($path_to_root . "/fixed_assets/includes/fixed_assets_db.inc");
 $user_comp = user_company();
 $new_item = get_post('stock_id')=='' || get_post('cancel') || get_post('clone'); 
 //------------------------------------------------------------------------------------
-function set_edit(string|int|float|bool|array|null $stock_id): void
+function set_edit(string|int|float|bool|null $stock_id): void
 {
 	$_POST = array_merge($_POST, get_item($stock_id));
 
@@ -306,7 +306,7 @@ if (isset($_POST['addupdate']))
 }
 
 if (get_post('clone')) {
-	set_edit($_POST['stock_id']); // restores data for disabled inputs too
+	set_edit(post_scalar('stock_id')); // restores data for disabled inputs too
 	unset($_POST['stock_id']);
 	$stock_id = '';
 	unset($_POST['inactive']);
@@ -316,7 +316,7 @@ if (get_post('clone')) {
 
 //------------------------------------------------------------------------------------
 
-function check_usage(string|int|float|bool|array|null $stock_id, bool $dispmsg=true): bool
+function check_usage(string|int|float|bool|null $stock_id, bool $dispmsg=true): bool
 {
 	$msg = item_in_foreign_codes($stock_id);
 
@@ -332,7 +332,7 @@ function check_usage(string|int|float|bool|array|null $stock_id, bool $dispmsg=t
 if (isset($_POST['delete']) && strlen($_POST['delete']) > 1) 
 {
 
-	if (check_usage($_POST['NewStockID'])) {
+	if (check_usage(post_scalar('NewStockID'))) {
 
 		$stock_id = $_POST['NewStockID'];
 		delete_item($stock_id);
@@ -378,7 +378,7 @@ function item_settings(&$stock_id, bool $new_item): void
 		if (get_post('NewStockID') != get_post('stock_id') || get_post('addupdate')) { // first item display
 
 			$_POST['NewStockID'] = $_POST['stock_id'];
-			set_edit($_POST['stock_id']);
+			set_edit(post_scalar('stock_id'));
 		}
 		label_row(_("Item Code:"),post_scalar('NewStockID'));
 		hidden('NewStockID', post_scalar('NewStockID'));
@@ -412,7 +412,7 @@ function item_settings(&$stock_id, bool $new_item): void
 
 	}
 	$fresh_item = !isset($_POST['NewStockID']) || $new_item 
-		|| check_usage($_POST['stock_id'],false);
+		|| check_usage(post_scalar('stock_id'),false);
 
 	// show inactive item tax type in selector only if already set.
   item_tax_types_list_row(_("Item Tax Type:"), 'tax_type_id', null, !$new_item && item_type_inactive(get_post('tax_type_id')));

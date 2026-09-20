@@ -85,17 +85,17 @@ if (isset($_GET['NewJournal']))
 }
 elseif (isset($_GET['ModifyGL']))
 {
-	check_is_editable($_GET['trans_type'], $_GET['trans_no']);
+	check_is_editable($_GET['trans_type'], get_scalar('trans_no'));
 
 	if (!isset($_GET['trans_type']) || $_GET['trans_type']!= 0) {
 		display_error(_("You can edit directly only journal entries created via Journal Entry page."));
 		hyperlink_params("$path_to_root/gl/gl_journal.php", _("Entry &New Journal Entry"), "NewJournal=Yes");
 		display_footer_exit();
 	}
-	create_cart($_GET['trans_type'], $_GET['trans_no']);
+	create_cart(get_scalar('trans_type'), get_scalar('trans_no'));
 }
 
-function create_cart(string|int|array|null $type=0, string|int|array|null $trans_no=0): void
+function create_cart(string|int|null $type=0, string|int|null $trans_no=0): void
 {
 
 	if (isset($_SESSION['journal_items']))
@@ -216,7 +216,7 @@ if (isset($_POST['Process']))
 		set_focus('date_');
 		$input_error = 1;
 	} 
-	elseif (!(bool)is_date_in_fiscalyear($_POST['date_'])) 
+	elseif (!(bool)is_date_in_fiscalyear(post_scalar('date_'))) 
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('date_');
@@ -255,7 +255,7 @@ if (isset($_POST['Process']))
 			set_focus('tax_date');
 			$input_error = 1;
 		} 
-		elseif (!(bool)is_date_in_fiscalyear($_POST['tax_date']))
+		elseif (!(bool)is_date_in_fiscalyear(post_scalar('tax_date')))
 		{
 			display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 			set_focus('tax_date');
@@ -362,14 +362,14 @@ function check_item_data(): bool
 	   		return false;
 	   	}
 	}
-	if (isset($_POST['dimension_id']) && $_POST['dimension_id'] != 0 && dimension_is_closed($_POST['dimension_id'])) 
+	if (isset($_POST['dimension_id']) && $_POST['dimension_id'] != 0 && dimension_is_closed(post_scalar('dimension_id'))) 
 	{
 		display_error(_("Dimension is closed."));
 		set_focus('dimension_id');
 		return false;
 	}
 
-	if (isset($_POST['dimension2_id']) && $_POST['dimension2_id'] != 0 && dimension_is_closed($_POST['dimension2_id'])) 
+	if (isset($_POST['dimension2_id']) && $_POST['dimension2_id'] != 0 && dimension_is_closed(post_scalar('dimension2_id'))) 
 	{
 		display_error(_("Dimension is closed."));
 		set_focus('dimension2_id');
@@ -506,7 +506,7 @@ if (isset($_POST['CancelItemChanges']))
 
 if (isset($_POST['go']))
 {
-	display_quick_entries($_SESSION['journal_items'], $_POST['quick'], input_num('totamount'), QE_JOURNAL, get_post('aux_info'));
+	display_quick_entries($_SESSION['journal_items'], post_scalar('quick'), input_num('totamount'), QE_JOURNAL, get_post('aux_info'));
 	$_POST['totamount'] = price_format(0); ajax()->activate('totamount');
 	line_start_focus();
 }

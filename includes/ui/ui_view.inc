@@ -62,7 +62,7 @@ function get_gl_view_str(string|int|float|bool|null $type, string|int|float|bool
 /**
  * @return non-empty-string|null
  */
-function get_gl_view_str_cell(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $label="")
+function get_gl_view_str_cell(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $label="")
 {
 	$str = get_gl_view_str($type, $trans_no, $label);
 	if ($str != "")
@@ -222,7 +222,7 @@ function get_package_view_str(string|int|float|bool|null $pkg, string|int|float|
 
 //--------------------------------------------------------------------------------------
 
-function get_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $label="", bool $icon=false, 
+function get_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $label="", bool $icon=false, 
 	?string $class='', string|int|float|bool|null $id='')
 {
 	$view_str = get_customer_trans_view_str($type, $trans_no, $label, $icon, $class, $id);
@@ -276,7 +276,7 @@ function check_ui_refresh(?string $name=null): bool
 // When there is no exrate for today, 
 // gets it form ECB and stores in local database.
 //
-function exchange_rate_display(string|int|float|bool|null $from_currency, string|int|float|bool|array|null $to_currency, string|int|float|bool|array|null $date_, bool $force_edit=false): void
+function exchange_rate_display(string|int|float|bool|null $from_currency, string|int|float|bool|null $to_currency, string|int|float|bool|null $date_, bool $force_edit=false): void
 {
 
 	$readonly = false;
@@ -341,7 +341,7 @@ function exchange_rate_display(string|int|float|bool|null $from_currency, string
 
 //--------------------------------------------------------------------------------------
 
-function is_voided_display(string|int|float|bool|null $type, string|int|float|bool|array|null $id, ?string $label): bool
+function is_voided_display(string|int|float|bool|null $type, string|int|float|bool|null $id, ?string $label): bool
 {
 	$void_entry = get_voided_entry($type, $id);
 
@@ -361,7 +361,7 @@ function is_voided_display(string|int|float|bool|null $type, string|int|float|bo
 
 //--------------------------------------------------------------------------------------
 
-function comments_display_row(string|int|array|null $type, string|int|float|bool|array|null $id): void
+function comments_display_row(string|int|null $type, string|int|float|bool|null $id): void
 {
 	$comments = get_comments($type, $id);
 	if ($comments and db_num_rows($comments))
@@ -377,7 +377,7 @@ function comments_display_row(string|int|array|null $type, string|int|float|bool
 
 //--------------------------------------------------------------------------------------
 
-function get_comments_string(string|int|float|bool|null $type, string|int|float|bool|array|null $type_no): string
+function get_comments_string(string|int|float|bool|null $type, string|int|float|bool|null $type_no): string
 {
 	$str_return = "";
 	$result = get_comments($type, $type_no);
@@ -610,7 +610,7 @@ function display_allocations_from(string|int|null $person_type, string|int|float
 
 //--------------------------------------------------------------------------------------
 
-function display_allocations_to(?int $person_type, string|int|float|bool|null $person_id, string|int|array|null $type, string|int|float|bool|array|null $type_no, string|int|float|bool|null $total): void
+function display_allocations_to(?int $person_type, string|int|float|bool|null $person_id, string|int|null $type, string|int|float|bool|null $type_no, string|int|float|bool|null $total): void
 {
 	switch ($person_type)
 	{
@@ -633,7 +633,7 @@ function display_allocations_to(?int $person_type, string|int|float|bool|null $p
 /**
  * @param items_cart $cart
  */
-function display_quick_entries(&$cart, string|int|float|bool|array|null $id, int|float|bool|null $base, ?string $type, string|array|null $descr=''): int
+function display_quick_entries(&$cart, string|int|float|bool|null $id, int|float|bool|null $base, ?string $type, string|array|null $descr=''): int
 {
 	$bank_amount = 0;
 
@@ -1639,7 +1639,7 @@ function payment_link(string|int|float|bool|null $name, array $options): string|
 	return strtr($link, $patterns);
 }
 
-function trans_editor_link(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no): string
+function trans_editor_link(string|int|float|bool|null $type, string|int|float|bool|null $trans_no): string
 {
 	global $path_to_root;
 

@@ -97,7 +97,7 @@ end_table(1);
 if ($overdue_items)
 	display_note(_("Marked items were delivered overdue."), 0, 0, "class='overduefg'");
 
-is_voided_display(ST_SUPPRECEIVE, $_GET['trans_no'], _("This delivery has been voided."));
+is_voided_display(ST_SUPPRECEIVE, get_scalar('trans_no'), _("This delivery has been voided."));
 
-end_page(true, false, false, ST_SUPPRECEIVE, $_GET['trans_no']);
+end_page(true, false, false, ST_SUPPRECEIVE, get_scalar('trans_no'));
 

@@ -44,7 +44,7 @@ if (isset($_POST['go']) || isset($_POST['show']))
 		set_focus('date_');
 		$input_error = 1;
 	}
-	elseif (!(bool)is_date_in_fiscalyear($_POST['date_']))
+	elseif (!(bool)is_date_in_fiscalyear(post_scalar('date_')))
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('date_');

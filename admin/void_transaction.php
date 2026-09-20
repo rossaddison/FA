@@ -31,7 +31,7 @@ page(_($help_context = "Void a Transaction"), false, false, "", $js);
 
 simple_page_mode(true);
 //----------------------------------------------------------------------------------------
-function exist_transaction(string|array|null $type, string|array|null $type_no): bool
+function exist_transaction(string|null $type, string|null $type_no): bool
 {
 	$void_entry = get_voided_entry($type, $type_no);
 
@@ -227,7 +227,7 @@ function voiding_controls()
     	submit_center('ProcessVoiding', _("Void Transaction"), true, '', 'default');
     else 
     {
- 		if (!exist_transaction($_POST['filterType'],$_POST['trans_no']))
+ 		if (!exist_transaction(post_scalar('filterType'),post_scalar('trans_no')))
  		{
 			display_error(_("The entered transaction does not exist or cannot be voided."));
 			unset($_POST['trans_no']);
@@ -268,7 +268,7 @@ function voiding_controls()
 
 function check_valid_entries(): bool
 {
-	if (is_closed_trans($_POST['filterType'],$_POST['trans_no']))
+	if (is_closed_trans(post_scalar('filterType'),post_scalar('trans_no')))
 	{
 		display_error(_("The selected transaction was closed for edition and cannot be voided."));
 		set_focus('trans_no');
@@ -280,7 +280,7 @@ function check_valid_entries(): bool
 		set_focus('date_');
 		return false;
 	}
-	if (!(bool)is_date_in_fiscalyear($_POST['date_']))
+	if (!(bool)is_date_in_fiscalyear(post_scalar('date_')))
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('date_');
@@ -314,8 +314,8 @@ function handle_void_transaction(): void
 			return;
 		}
 
-		$msg = void_transaction($_POST['filterType'], $_POST['trans_no'],
-			$_POST['date_'], $_POST['memo_']);
+		$msg = void_transaction(post_scalar('filterType'), post_scalar('trans_no'),
+			post_scalar('date_'), post_scalar('memo_'));
 
 		if (!(bool)$msg) 
 		{
@@ -336,7 +336,7 @@ function handle_void_transaction(): void
 if (!isset($_POST['date_']))
 {
 	$_POST['date_'] = Today();
-	if (!(bool)is_date_in_fiscalyear($_POST['date_']))
+	if (!(bool)is_date_in_fiscalyear(post_scalar('date_')))
 		$_POST['date_'] = end_fiscalyear();
 }		
 	

@@ -110,7 +110,7 @@ function show_results(): void
     	$_POST['Dimension'] = 0;
     if (!isset($_POST['Dimension2']))
     	$_POST['Dimension2'] = 0;
-	$result = get_gl_transactions($_POST['TransFromDate'], $_POST['TransToDate'], -1,
+	$result = get_gl_transactions(post_scalar('TransFromDate'), $_POST['TransToDate'], -1,
     	post_scalar("account"), post_scalar('Dimension'), post_scalar('Dimension2'), null,
     	input_num('amount_min'), input_num('amount_max'), null, null, $_POST['Memo']);
 

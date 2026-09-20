@@ -196,7 +196,7 @@ templates_list_row(_("Template:"), 'order_no');
 customer_list_row(_("Customer:"), 'debtor_no', null, " ", true);
 
 if ($_POST['debtor_no'] > 0)
-	customer_branches_list_row(_("Branch:"), $_POST['debtor_no'], 'group_no', null, false);
+	customer_branches_list_row(_("Branch:"), post_scalar('debtor_no'), 'group_no', null, false);
 else	
 	sales_groups_list_row(_("Sales Group:"), 'group_no', null);
 

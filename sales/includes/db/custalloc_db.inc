@@ -296,7 +296,7 @@ function get_allocatable_from_cust_transactions(string|int|float|bool|null $cust
 	return db_query($sql." ORDER BY trans_no", "Cannot retreive alloc to transactions");
 }
 
-function get_sql_for_customer_allocation_inquiry(string|array|null $from, string|array|null $to, string|null $customer, string|array|null $filterType, int|array|null $settled): string
+function get_sql_for_customer_allocation_inquiry(string|null $from, string|null $to, string|null $customer, string|array|null $filterType, int|array|null $settled): string
 {
   	$data_after = date2sql($from);
   	$date_to = date2sql($to);

@@ -67,7 +67,7 @@ function get_last_exchange_rate(string|int|float|bool|null $curr_code, string|in
 
 //---------------------------------------------------------------------------------------------
 
-function update_exchange_rate(string|null $curr_code, string|array|null $date_, int|float|bool|null $buy_rate, int|float|bool|null $sell_rate): void
+function update_exchange_rate(string|null $curr_code, string|null $date_, int|float|bool|null $buy_rate, int|float|bool|null $sell_rate): void
 {
 	if (is_company_currency($curr_code))
 		display_db_error("Exchange rates cannot be set for company currency", "", true);
@@ -122,7 +122,7 @@ function delete_exchange_rate(string|int|float|bool|null $rate_id): void
 //	amount [home] = amount [curr] * ex_rate
 //
 /** @return float|int|numeric|string */
-function retrieve_exrate(string|int|float|bool|array|null $curr_b, string|int|float|bool|null $date)
+function retrieve_exrate(string|int|float|bool|null $curr_b, string|int|float|bool|null $date)
 {
 
 	$xchg_rate_provider = ((isset(sysprefs()->xr_providers) && isset(sysprefs()->dflt_xr_provider)) 

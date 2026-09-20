@@ -48,7 +48,7 @@ if (isset($_GET["AccGrp"]))
 
 //----------------------------------------------------------------------------------------------------
 
-function display_type (?string $type, ?string $typename, string|int|float|bool|array|null $from, string|int|float|bool|array|FrontReport|null $to, string|int|float|bool|array|null $convert, string|int|float|bool|array|null $dimension, string|int|float|bool|array|FrontReport|null $dimension2, string|int|float|bool|array|null $drilldown)
+function display_type (?string $type, ?string $typename, string|int|float|bool|array|null $from, string|int|float|bool|FrontReport|null $to, string|int|float|bool|array|null $convert, string|int|float|bool|null $dimension, string|int|float|bool|FrontReport|null $dimension2, string|int|float|bool|array|null $drilldown)
 {
 	global $path_to_root, $levelptr, $k;
 	

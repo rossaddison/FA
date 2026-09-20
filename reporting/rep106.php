@@ -34,7 +34,7 @@ print_salesman_list();
 /**
  * @return mysqli_result
  */
-function GetSalesmanTrans(string|array|null $from, string|array|null $to)
+function GetSalesmanTrans(string|null $from, string|null $to)
 {
 	$fromdate = date2sql($from);
 	$todate = date2sql($to);

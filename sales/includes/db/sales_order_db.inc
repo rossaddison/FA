@@ -393,7 +393,7 @@ function close_sales_order(string|int|float|bool|null $order_no): void
 //---------------------------------------------------------------------------------------------------------------
 
 /** @return array<array-key, mixed>|null|scalar */
-function get_invoice_duedate(string|int|float|bool|array|null $terms, string|int|float|bool|array|null $invdate)
+function get_invoice_duedate(string|int|float|bool|null $terms, string|int|float|bool|null $invdate)
 {
 	if (!is_date($invdate))
 	{
@@ -483,7 +483,7 @@ function get_branch_to_order(string|int|float|bool|null $customer_id, string|int
  * @return non-falsy-string
  */
 function get_sql_for_sales_orders_view(string|int|null $trans_type, string|array|null $trans_no, string|array|null $filter, 
-	string|null $stock_item='', string|array|null $from='', string|array|null $to='', string|array|null $ref='', string|int|float|bool|null $location=ALL_TEXT, string|int|float|bool|null $customer_id=ALL_TEXT, int|array|null $show_voided = 0, string|int|array|null $by_delivery=0, string|int|array|null $no_auto=0): string
+	string|null $stock_item='', string|null $from='', string|null $to='', string|array|null $ref='', string|int|float|bool|null $location=ALL_TEXT, string|int|float|bool|null $customer_id=ALL_TEXT, int|array|null $show_voided = 0, string|int|array|null $by_delivery=0, string|int|array|null $no_auto=0): string
 {
     if ($filter=='OutstandingOnly')
         $order_value = 'Sum(line.unit_price*(line.quantity-line.qty_sent)*(1-line.discount_percent))+freight_cost';

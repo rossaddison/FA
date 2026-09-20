@@ -189,7 +189,7 @@ $_POST['depreciation_period'] = $myrow['depreciation_period'];
 
 table_section_title(_("General GL"));
 
-text_row(_("Past Due Days Interval:"), 'past_due_days', $_POST['past_due_days'], 6, 6, '', "", _("days"));
+text_row(_("Past Due Days Interval:"), 'past_due_days', post_scalar('past_due_days'), 6, 6, '', "", _("days"));
 
 accounts_type_list_row(_("Accounts Type:"), 'accounts_alpha', $_POST['accounts_alpha']); 
 
@@ -207,13 +207,13 @@ tax_algorithm_list_row(_("Tax Algorithm:"), 'tax_algorithm', post_scalar('tax_al
 
 table_section_title(_("Dimension Defaults"));
 
-text_row(_("Dimension Required By After:"), 'default_dim_required', $_POST['default_dim_required'], 6, 6, '', "", _("days"));
+text_row(_("Dimension Required By After:"), 'default_dim_required', post_scalar('default_dim_required'), 6, 6, '', "", _("days"));
 
 //----------------
 
 table_section_title(_("Customers and Sales"));
 
-amount_row(_("Default Credit Limit:"), 'default_credit_limit', $_POST['default_credit_limit']);
+amount_row(_("Default Credit Limit:"), 'default_credit_limit', post_scalar('default_credit_limit'));
 
 yesno_list_row(_("Invoice Identification:"), 'print_invoice_no', $_POST['print_invoice_no'], $name_yes=_("Number"), $name_no=_("Reference"));
 
@@ -221,7 +221,7 @@ check_row(_("Accumulate batch shipping:"), 'accumulate_shipping', null);
 
 check_row(_("Print Item Image on Quote:"), 'print_item_images_on_quote', null);
 
-textarea_row(_("Legal Text on Invoice:"), 'legal_text', $_POST['legal_text'], 32, 4);
+textarea_row(_("Legal Text on Invoice:"), 'legal_text', post_scalar('legal_text'), 32, 4);
 
 gl_all_accounts_list_row(_("Shipping Charged Account:"), 'freight_act', $_POST['freight_act']);
 
@@ -241,9 +241,9 @@ gl_all_accounts_list_row(_("Sales Discount Account:"), 'default_sales_discount_a
 
 gl_all_accounts_list_row(_("Prompt Payment Discount Account:"), 'default_prompt_payment_act');
 
-text_row(_("Quote Valid Days:"), 'default_quote_valid_days', $_POST['default_quote_valid_days'], 6, 6, '', "", _("days"));
+text_row(_("Quote Valid Days:"), 'default_quote_valid_days', post_scalar('default_quote_valid_days'), 6, 6, '', "", _("days"));
 
-text_row(_("Delivery Required By:"), 'default_delivery_required', $_POST['default_delivery_required'], 6, 6, '', "", _("days"));
+text_row(_("Delivery Required By:"), 'default_delivery_required', post_scalar('default_delivery_required'), 6, 6, '', "", _("days"));
 
 //---------------
 
@@ -263,7 +263,7 @@ gl_all_accounts_list_row(_("Purchase Discount Account:"), 'pyt_discount_act', $_
 
 gl_all_accounts_list_row(_("GRN Clearing Account:"), 'grn_clearing_act', get_post('grn_clearing_act'), true, false, _("No postings on GRN"));
 
-text_row(_("Receival Required By:"), 'default_receival_required', $_POST['default_receival_required'], 6, 6, '', "", _("days"));
+text_row(_("Receival Required By:"), 'default_receival_required', post_scalar('default_receival_required'), 6, 6, '', "", _("days"));
 
 check_row(_("Show PO item codes:"), 'show_po_item_codes', null);
 
@@ -301,7 +301,7 @@ array_selector_row (_("Depreciation Period:"), 'depreciation_period', $_POST['de
 
 table_section_title(_("Manufacturing Defaults"));
 
-text_row(_("Work Order Required By After:"), 'default_workorder_required', $_POST['default_workorder_required'], 6, 6, '', "", _("days"));
+text_row(_("Work Order Required By After:"), 'default_workorder_required', post_scalar('default_workorder_required'), 6, 6, '', "", _("days"));
 
 //----------------
 

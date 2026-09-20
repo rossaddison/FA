@@ -68,7 +68,7 @@ function delete_customer(string|int|float|bool|null $customer_id): void
 /**
  * @return array<array-key, null|string>|false
  */
-function get_customer_details(string|int|float|bool|null $customer_id, string|array|null $to=null, string|bool|array|null $all=true)
+function get_customer_details(string|int|float|bool|null $customer_id, string|null $to=null, string|bool|array|null $all=true)
 {
 
 	if ($to == null)

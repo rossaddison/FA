@@ -64,7 +64,7 @@ function copy_to_cart(): void
 
 //---------------------------------------------------------------------------------------------------
 
-function create_new_po(?int $trans_type, string|int|array|null $trans_no): void
+function create_new_po(?int $trans_type, string|int|null $trans_no): void
 {
 
 	if (isset($_SESSION['PO']))
@@ -72,7 +72,7 @@ function create_new_po(?int $trans_type, string|int|array|null $trans_no): void
 
 	$cart = new purch_order;
 	$_POST['OrderDate'] = new_doc_date();
-	if (!(bool)is_date_in_fiscalyear($_POST['OrderDate']))
+	if (!(bool)is_date_in_fiscalyear(post_scalar('OrderDate')))
 		$_POST['OrderDate'] = end_fiscalyear();
 	$cart->due_date = $cart->orig_order_date = $_POST['OrderDate'];
 
@@ -146,7 +146,7 @@ function display_po_header(?purch_order &$order): void
 	{
 		label_row(_("Supplier Currency:"), $order->curr_code);
 		exchange_rate_display(get_company_currency(), $order->curr_code,
-			$_POST['OrderDate']);
+			post_scalar('OrderDate'));
 	}
 
     if ($editable)
@@ -195,7 +195,7 @@ function display_po_header(?purch_order &$order): void
         }
     }
 
-	textarea_row(_("Deliver to:"), 'delivery_address', $_POST['delivery_address'], 35, 4);
+	textarea_row(_("Deliver to:"), 'delivery_address', post_scalar('delivery_address'), 35, 4);
 
 	end_outer_table(); // outer table
 }

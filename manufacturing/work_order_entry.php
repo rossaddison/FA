@@ -117,7 +117,7 @@ function safe_exit(): void
 if (!isset($_POST['date_']))
 {
 	$_POST['date_'] = new_doc_date();
-	if (!(bool)is_date_in_fiscalyear($_POST['date_']))
+	if (!(bool)is_date_in_fiscalyear(post_scalar('date_')))
 		$_POST['date_'] = end_fiscalyear();
 }
 
@@ -147,7 +147,7 @@ function can_process(): bool
 		set_focus('date_');
 		return false;
 	}
-	elseif (!(bool)is_date_in_fiscalyear($_POST['date_']))
+	elseif (!(bool)is_date_in_fiscalyear(post_scalar('date_')))
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('date_');

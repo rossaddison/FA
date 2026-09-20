@@ -186,7 +186,7 @@ function new_doc_date(string|int|float|bool|array|null $date=null): string
 	return $_SESSION['_default_date'];
 }
 
-function is_date_in_fiscalyear(string|int|float|bool|array|null $date, bool $convert=false): int|bool
+function is_date_in_fiscalyear(string|int|float|bool|null $date, bool $convert=false): int|bool
 {
 	global $path_to_root;
 	include_once($path_to_root . "/admin/db/fiscalyears_db.inc");
@@ -235,7 +235,7 @@ function end_fiscalyear(): string
 	return sql2date($myrow['end']);
 }
 
-function begin_month(string|int|float|bool|array|null $date): string
+function begin_month(string|int|float|bool|null $date): string
 {
     list($day, $month, $year) = explode_date_to_dmy($date);
     if (sysprefs()->date_system == 1)
@@ -262,7 +262,7 @@ function days_in_month(string|int|float|bool|null $month, string|int|float|bool|
 	return $days_in_month[$month - 1];
 }
 
-function end_month(string|int|float|bool|array|null $date): string
+function end_month(string|int|float|bool|null $date): string
 {
 
     list($day, $month, $year) = explode_date_to_dmy($date);
@@ -278,7 +278,7 @@ function end_month(string|int|float|bool|array|null $date): string
    	return __date($year, $month, days_in_month($month, $year));
 }
 
-function add_days(string|int|float|bool|array|null $date, string|int|float|bool|null $days): string // accepts negative values as well
+function add_days(string|int|float|bool|null $date, string|int|float|bool|null $days): string // accepts negative values as well
 {
     list($day, $month, $year) = explode_date_to_dmy($date);
    	$timet = mktime(0,0,0, $month, $day + $days, $year);
@@ -295,7 +295,7 @@ function add_days(string|int|float|bool|array|null $date, string|int|float|bool|
 }
 
 /** @return string */
-function add_months(string|int|float|bool|array|null $date, string|int|float|bool|null $months) // accepts negative values as well
+function add_months(string|int|float|bool|null $date, string|int|float|bool|null $months) // accepts negative values as well
 {
 
     list($day, $month, $year) = explode_date_to_dmy($date);
@@ -444,7 +444,7 @@ function sql_date_comp(string|int|float|bool|null $date1, string|int|null $date2
 /*
 	Compare dates in user format.
 */
-function date_comp(string|array|null $date1, ?string $date2): int
+function date_comp(string|null $date1, ?string $date2): int
 {
 	$date1 = date2sql($date1);
 	$date2 = date2sql($date2);
@@ -484,7 +484,7 @@ function date1_greater_date2 (string|int|float|bool|array|null $date1, string|in
 	return 0;
 }
 
-function date_diff2 (?string $date1, string|array|null $date2, ?string $period): int 
+function date_diff2 (?string $date1, string|null $date2, ?string $period): int 
 {
 
 /* expects dates in the format specified in $DefaultDateFormat - period can be one of 'd','w','y','m'

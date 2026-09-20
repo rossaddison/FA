@@ -268,7 +268,7 @@ label_cell('', "colspan=2");
 end_row();
 end_table();
 
-display_allocations_to(PT_CUSTOMER, session_obj('View')->customer_id, $_GET['trans_type'], $_GET['trans_no'], (float)$sub_tot + (float)$tax_total);
+display_allocations_to(PT_CUSTOMER, session_obj('View')->customer_id, get_scalar('trans_type'), get_scalar('trans_no'), (float)$sub_tot + (float)$tax_total);
 
-end_page(true, false, false, get_scalar('trans_type'), $_GET['trans_no']);
+end_page(true, false, false, get_scalar('trans_type'), get_scalar('trans_no'));
 

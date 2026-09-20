@@ -134,7 +134,7 @@ if ( (isset($_GET['DeliveryNumber']) && ($_GET['DeliveryNumber'] > 0) )
 
 } elseif (isset($_GET['ModifyInvoice']) && $_GET['ModifyInvoice'] > 0) {
 
-	check_is_editable(ST_SALESINVOICE, $_GET['ModifyInvoice']);
+	check_is_editable(ST_SALESINVOICE, get_scalar('ModifyInvoice'));
 
 	processing_start();
 	$_SESSION['Items'] = new Cart(ST_SALESINVOICE, $_GET['ModifyInvoice']);
@@ -190,7 +190,7 @@ if (isset($_POST['Update'])) {
 	ajax()->activate('Items');
 }
 if (isset($_POST['_InvoiceDate_changed'])) {
-	$_POST['due_date'] = get_invoice_duedate(session_obj('Items')->payment, $_POST['InvoiceDate']);
+	$_POST['due_date'] = get_invoice_duedate(session_obj('Items')->payment, post_scalar('InvoiceDate'));
 	ajax()->activate('due_date');
 }
 
@@ -299,7 +299,7 @@ function check_data(): bool
 		return false;
 	}
 
-	if (!(bool)is_date_in_fiscalyear($_POST['InvoiceDate'])) {
+	if (!(bool)is_date_in_fiscalyear(post_scalar('InvoiceDate'))) {
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('InvoiceDate');
 		return false;
@@ -478,7 +478,7 @@ if ($prepaid)
 
 if (!isset($_POST['InvoiceDate']) || !is_date(post_scalar('InvoiceDate'))) {
 	$_POST['InvoiceDate'] = new_doc_date();
-	if (!(bool)is_date_in_fiscalyear($_POST['InvoiceDate'])) {
+	if (!(bool)is_date_in_fiscalyear(post_scalar('InvoiceDate'))) {
 		$_POST['InvoiceDate'] = end_fiscalyear();
 	}
 }
@@ -487,7 +487,7 @@ date_cells(_("Date"), 'InvoiceDate', '', session_obj('Items')->trans_no == 0,
 	0, 0, 0, "class='tableheader2'", true);
 
 if (!isset($_POST['due_date']) || !is_date(post_scalar('due_date'))) {
-	$_POST['due_date'] = get_invoice_duedate(session_obj('Items')->payment, $_POST['InvoiceDate']);
+	$_POST['due_date'] = get_invoice_duedate(session_obj('Items')->payment, post_scalar('InvoiceDate'));
 }
 
 date_cells(_("Due Date"), 'due_date', '', null, 0, 0, 0, "class='tableheader2'");

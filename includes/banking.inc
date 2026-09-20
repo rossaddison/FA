@@ -27,7 +27,7 @@ function get_company_currency()
 
 //----------------------------------------------------------------------------------
 
-function get_exchange_rate_from_home_currency(string|int|float|bool|null $currency_code, string|int|float|bool|array|null $date_)
+function get_exchange_rate_from_home_currency(string|int|float|bool|null $currency_code, string|int|float|bool|null $date_)
 {
 	if ($currency_code == get_company_currency() || $currency_code == null)
 		return 1.0000;
@@ -64,7 +64,7 @@ function to_home_currency(string|int|float|bool|null $amount, string|int|float|b
 
 //----------------------------------------------------------------------------------
 
-function get_exchange_rate_from_to(string|int|float|bool|null $from_curr_code, string|int|float|bool|null $to_curr_code, string|int|float|bool|array|null $date_)
+function get_exchange_rate_from_to(string|int|float|bool|null $from_curr_code, string|int|float|bool|null $to_curr_code, string|int|float|bool|null $date_)
 {
 //	echo "converting from $from_curr_code to $to_curr_code <BR>";
 	if ($from_curr_code == $to_curr_code)

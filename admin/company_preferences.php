@@ -264,7 +264,7 @@ table_section(1);
 table_section_title(_("General settings"));
 
 text_row_ex(_("Name (to appear on reports):"), 'coy_name', 50, 50);
-textarea_row(_("Address:"), 'postal_address', $_POST['postal_address'], 34, 5);
+textarea_row(_("Address:"), 'postal_address', post_scalar('postal_address'), 34, 5);
 text_row_ex(_("Domicile:"), 'domicile', 25, 55);
 
 text_row_ex(_("Phone Number:"), 'phone', 25, 55);
@@ -279,15 +279,15 @@ currencies_list_row(_("Home Currency:"), 'curr_default', $_POST['curr_default'])
 
 label_row(_("Company Logo:"), post_scalar('coy_logo'));
 file_row(_("New Company Logo (.jpg)") . ":", 'pic', 'pic');
-check_row(_("Delete Company Logo:"), 'del_coy_logo', $_POST['del_coy_logo']);
+check_row(_("Delete Company Logo:"), 'del_coy_logo', post_scalar('del_coy_logo'));
 
-check_row(_("Time Zone on Reports"), 'time_zone', $_POST['time_zone']);
-check_row(_("Company Logo on Reports"), 'company_logo_report', $_POST['company_logo_report']);
-check_row(_("Use Barcodes on Stocks"), 'barcodes_on_stock', $_POST['barcodes_on_stock']);
-check_row(_("Auto Increase of Document References"), 'ref_no_auto_increase', $_POST['ref_no_auto_increase']);
-check_row(_("Use Dimensions on Recurrent Invoices"), 'dim_on_recurrent_invoice', $_POST['dim_on_recurrent_invoice']);
-check_row(_("Use Long Descriptions on Invoices"), 'long_description_invoice', $_POST['long_description_invoice']);
-check_row(_("Company Logo on Views"), 'company_logo_on_views', $_POST['company_logo_on_views']);
+check_row(_("Time Zone on Reports"), 'time_zone', post_scalar('time_zone'));
+check_row(_("Company Logo on Reports"), 'company_logo_report', post_scalar('company_logo_report'));
+check_row(_("Use Barcodes on Stocks"), 'barcodes_on_stock', post_scalar('barcodes_on_stock'));
+check_row(_("Auto Increase of Document References"), 'ref_no_auto_increase', post_scalar('ref_no_auto_increase'));
+check_row(_("Use Dimensions on Recurrent Invoices"), 'dim_on_recurrent_invoice', post_scalar('dim_on_recurrent_invoice'));
+check_row(_("Use Long Descriptions on Invoices"), 'long_description_invoice', post_scalar('long_description_invoice'));
+check_row(_("Company Logo on Views"), 'company_logo_on_views', post_scalar('company_logo_on_views'));
 label_row(_("Database Scheme Version"), post_scalar('version_id'));
 
 table_section(2);
@@ -298,7 +298,7 @@ text_row_ex(_("Tax Periods:"), 'tax_prd', 10, 10, '', null, null, _('Months.'));
 text_row_ex(_("Tax Last Period:"), 'tax_last', 10, 10, '', null, null, _('Months back.'));
 check_row(_("Put alternative Tax Include on Docs"), 'alternative_tax_include_on_docs', null);
 check_row(_("Suppress Tax Rates on Docs"), 'suppress_tax_rates', null);
-check_row(_("Automatic Revaluation Currency Accounts"), 'auto_curr_reval', $_POST['auto_curr_reval']);
+check_row(_("Automatic Revaluation Currency Accounts"), 'auto_curr_reval', post_scalar('auto_curr_reval'));
 
 table_section_title(_("Sales Pricing"));
 sales_types_list_row(_("Base for auto price calculations:"), 'base_sales', $_POST['base_sales'], false,
@@ -317,7 +317,7 @@ number_list_row(_("Use Dimensions:"), 'use_dimension', null, 0, 2);
 
 table_section_title(_("User Interface Options"));
 
-check_row(_("Short Name and Name in List"), 'shortname_name_in_list', $_POST['shortname_name_in_list']);
+check_row(_("Short Name and Name in List"), 'shortname_name_in_list', post_scalar('shortname_name_in_list'));
 check_row(_("Open Print Dialog Direct on Reports"), 'print_dialog_direct', null);
 check_row(_("Search Item List"), 'no_item_list', null);
 check_row(_("Search Customer List"), 'no_customer_list', null);

@@ -33,7 +33,7 @@ function display_credit_header(Cart &$order): string
 		ajax()->activate('branch_id');
 	}
 
-	customer_branches_list_row(_("Branch:"), $_POST['customer_id'], 
+	customer_branches_list_row(_("Branch:"), post_scalar('customer_id'), 
 	  	'branch_id', null, false, true, true, true);
 
 	if (($order->customer_id != $_POST['customer_id']) ||
@@ -41,7 +41,7 @@ function display_credit_header(Cart &$order): string
 	{
 
 		$old_order = (PHP_VERSION<5) ? $order : clone $order;
-		$customer_error = get_customer_details_to_order($order, $_POST['customer_id'], $_POST['branch_id']);
+		$customer_error = get_customer_details_to_order($order, post_scalar('customer_id'), post_scalar('branch_id'));
 
 		$_POST['Location'] = $order->Location;
 		$_POST['deliver_to'] = $order->deliver_to;
@@ -88,7 +88,7 @@ function display_credit_header(Cart &$order): string
 		
 		label_row(_("Customer Currency:"), $order->customer_currency);
 		exchange_rate_display(get_company_currency(), $order->customer_currency,
-			$_POST['OrderDate']);
+			post_scalar('OrderDate'));
 	}
 	table_section(3);
 

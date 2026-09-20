@@ -97,7 +97,7 @@ function check_recurrent_invoice_description(string|int|float|bool|null $descrip
 /**
  * @return null|string
  */
-function recurrent_invoice_ready(string|int|null $selected_id, string|array|null $date)
+function recurrent_invoice_ready(string|int|null $selected_id, string|null $date)
 {
 	$date = date2sql($date);
 

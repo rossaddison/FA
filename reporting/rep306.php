@@ -33,7 +33,7 @@ print_inventory_purchase();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(string|int|array|null $category, string|array|null $location, string|array|null $fromsupp, string|null $item, string|array|null $from, string|array|null $to)
+function getTransactions(string|int|array|null $category, string|array|null $location, string|array|null $fromsupp, string|null $item, string|null $from, string|null $to)
 {
 	$from = date2sql($from);
 	$to = date2sql($to);

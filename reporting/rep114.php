@@ -32,7 +32,7 @@ print_sales_summary_report();
 /**
  * @return bool|mysqli_result
  */
-function getTaxTransactions(string|array|null $from, string|array|null $to, string|array|null $tax_id)
+function getTaxTransactions(string|null $from, string|null $to, string|array|null $tax_id)
 {
 	$fromdate = date2sql($from);
 	$todate = date2sql($to);

@@ -219,7 +219,7 @@ function post_void_supp_trans(string|int|float|bool|null $type, string|int|float
 
 //----------------------------------------------------------------------------------------
 
-function get_sql_for_supplier_inquiry(string|array|null $filter, string|array|null $after_date, string|array|null $to_date, string|int|float|bool|null $supplier_id=ALL_TEXT): string
+function get_sql_for_supplier_inquiry(string|array|null $filter, string|null $after_date, string|null $to_date, string|int|float|bool|null $supplier_id=ALL_TEXT): string
 {
     $date_after = date2sql($after_date);
     $date_to = date2sql($to_date);

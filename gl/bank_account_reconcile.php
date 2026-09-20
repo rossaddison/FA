@@ -126,7 +126,7 @@ function change_tpl_flag(string|int|float|bool|null $reconcile_id): bool
 	$reconcile_value = check_value("rec_".$reconcile_id) 
 						? ("'".$_POST['bank_date'] ."'") : 'NULL';
 	
-	update_reconciled_values($reconcile_id, $reconcile_value, $_POST['reconcile_date'],
+	update_reconciled_values($reconcile_id, $reconcile_value, post_scalar('reconcile_date'),
 		input_num('end_balance'), post_scalar('bank_account'));
 		
 	ajax()->activate('reconciled');
@@ -146,7 +146,7 @@ function set_tpl_flag(string|int|float|bool|null $reconcile_id): void
 	$_POST['bank_date'] = date2sql(get_post('reconcile_date'));
 	$reconcile_value =  ("'".$_POST['bank_date'] ."'");
 	
-	update_reconciled_values($reconcile_id, $reconcile_value, $_POST['reconcile_date'],
+	update_reconciled_values($reconcile_id, $reconcile_value, post_scalar('reconcile_date'),
 		input_num('end_balance'), post_scalar('bank_account'));
 		
 	ajax()->activate('reconciled');

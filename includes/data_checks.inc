@@ -44,7 +44,7 @@ function check_db_has_currencies(string|int|float|bool|null $msg): void
 /**
  * @return 1|bool
  */
-function db_has_currency_rates(string|int|float|bool|null $currency, string|int|array|null $date_, bool $msg=false): int|bool
+function db_has_currency_rates(string|int|float|bool|null $currency, string|int|null $date_, bool $msg=false): int|bool
 {
 	$date = date2sql($date_);
 
@@ -646,7 +646,7 @@ function check_deferred_income_act(?string $msg): void
     }
 }
 
-function check_is_editable(string|int|float|bool|array|null $trans_type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $msg=null): void
+function check_is_editable(string|int|float|bool|array|null $trans_type, string|int|float|bool|null $trans_no, string|int|float|bool|null $msg=null): void
 {
 	if (!$_SESSION['wa_current_user']->can_access('SA_EDITOTHERSTRANS'))
 	{

@@ -32,7 +32,7 @@ print_tax_report();
 /**
  * @return mysqli_result
  */
-function getTaxTransactions(string|array|null $from, string|array|null $to)
+function getTaxTransactions(string|null $from, string|null $to)
 {
 	$fromdate = date2sql($from);
 	$todate = date2sql($to);

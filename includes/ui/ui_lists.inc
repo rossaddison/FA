@@ -668,7 +668,7 @@ function customer_branches_list_cells(string|int|float|bool|null $label,string|i
 	echo "</td>\n";
 }
 
-function customer_branches_list_row(?string $label, string|int|float|bool|array|null $customer_id, ?string $name, string|int|float|bool|array|null $selected_id=null, 
+function customer_branches_list_row(?string $label, string|int|float|bool|null $customer_id, ?string $name, string|int|float|bool|array|null $selected_id=null, 
 	bool $all_option = true, bool $enabled=true, bool $submit_on_change=false, bool $editkey = false): void
 {
 	echo "<tr><td class='label'>$label</td>";
@@ -1550,7 +1550,7 @@ function bank_reconciliation_list(string|null $account, ?string $name, string|in
 		) );
 }
 
-function bank_reconciliation_list_cells(?string $label,string|array|null $account, ?string $name, string|int|float|bool|array|null $selected_id=null, bool $submit_on_change=false, string|bool|null $special_option=false): void
+function bank_reconciliation_list_cells(?string $label,string|null $account, ?string $name, string|int|float|bool|array|null $selected_id=null, bool $submit_on_change=false, string|bool|null $special_option=false): void
 {
 	if ($label != null)
 		echo "<td>$label</td>\n";
@@ -1761,7 +1761,7 @@ function stock_categories_list(string|int|float|bool|null $name, string|int|floa
  		));
 }
 
-function stock_categories_list_cells(string|int|float|bool|null $label, ?string $name, string|int|float|bool|array|null $selected_id=null, bool $spec_opt=false, bool $submit_on_change=false, string|bool|array|null $fixed_asset=false): void
+function stock_categories_list_cells(string|int|float|bool|null $label, ?string $name, string|int|float|bool|array|null $selected_id=null, bool $spec_opt=false, bool $submit_on_change=false, string|bool|null $fixed_asset=false): void
 {
 	if ($label != null)
 		echo "<td>$label</td>\n";
@@ -1770,7 +1770,7 @@ function stock_categories_list_cells(string|int|float|bool|null $label, ?string 
 	echo "</td>\n";
 }
 
-function stock_categories_list_row(?string $label, ?string $name, string|int|float|bool|array|null $selected_id=null, bool $spec_opt=false, bool $submit_on_change=false, string|bool|array|null $fixed_asset=false): void
+function stock_categories_list_row(?string $label, ?string $name, string|int|float|bool|array|null $selected_id=null, bool $spec_opt=false, bool $submit_on_change=false, string|bool|null $fixed_asset=false): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	stock_categories_list_cells(null, $name, $selected_id, $spec_opt, $submit_on_change, $fixed_asset);
@@ -2657,7 +2657,7 @@ function refline_list(?string $name, string|int|float|bool|null $type, string|in
 		);
 }
 
-function refline_list_row(?string $label, ?string $name, ?int $type, string|int|float|bool|array|null $selected_id=null, bool $spec_option=false): void
+function refline_list_row(?string $label, ?string $name, ?int $type, string|int|float|bool|null $selected_id=null, bool $spec_option=false): void
 {
 	echo "<tr>";
 	if ($label != null)
@@ -2701,7 +2701,7 @@ function subledger_list(string|int|float|bool|null $name, string|int|float|bool|
 	) );
 }
 
-function subledger_list_cells(string|int|float|bool|null $label, ?string $name, string|array|null $account, string|int|float|bool|array|null $selected_id=null): void
+function subledger_list_cells(string|int|float|bool|null $label, ?string $name, string|null $account, string|int|float|bool|array|null $selected_id=null): void
 {
 	if ($label != null)
 		echo "<td>$label</td>\n";

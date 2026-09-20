@@ -83,7 +83,7 @@ function show_results(): void
 	$k = 0;
 	$total = 0.0;
 
-	$taxes = get_tax_summary($_POST['TransFromDate'], $_POST['TransToDate']);
+	$taxes = get_tax_summary(post_scalar('TransFromDate'), post_scalar('TransToDate'));
 
 	while ($tx = db_fetch($taxes))
 	{

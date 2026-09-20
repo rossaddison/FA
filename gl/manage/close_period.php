@@ -63,7 +63,7 @@ function handle_submit(): void
 	if (!check_data())
 		return;
 
-	if (!close_transactions($_POST['date']))
+	if (!close_transactions(post_scalar('date')))
 	{
 		display_notification(
 			sprintf( _("All transactions resulting in GL accounts changes up to %s has been closed for further edition."),

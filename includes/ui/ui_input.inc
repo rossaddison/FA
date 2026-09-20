@@ -297,7 +297,7 @@ function submit_row(?string $name, ?string $value, bool $right=true, ?string $ex
 	echo "</tr>\n";
 }
 
-function submit_return(?string $name, string|int|float|bool|array|null $value, string|bool|null $title=false): void
+function submit_return(?string $name, string|int|float|bool|null $value, string|bool|null $title=false): void
 {
 	if ((bool)(@$_REQUEST['popup'])) {
 		submit($name, $value, true, $title, 'selector');
@@ -420,7 +420,7 @@ function check(string|int|float|bool|null $label, string|int|float|bool|null $na
 	echo checkbox($label, $name, $value, $submit_on_change, $title);
 }
 
-function check_cells(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|array|null $value=null, bool $submit_on_change=false, string|bool|null $title=false,
+function check_cells(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $value=null, bool $submit_on_change=false, string|bool|null $title=false,
 	?string $params=''): void
 {
 	if ($label != null)
@@ -430,7 +430,7 @@ function check_cells(string|int|float|bool|null $label, string|int|float|bool|nu
 	echo "</td>";
 }
 
-function check_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|array|null $value=null, bool $submit_on_change=false, string|bool|null $title=false): void
+function check_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $value=null, bool $submit_on_change=false, string|bool|null $title=false): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	echo check_cells(NULL, $name, $value, $submit_on_change, $title);
@@ -552,7 +552,7 @@ function text_input(string|int|float|bool|null $name, string|int|float|bool|arra
 //-----------------------------------------------------------------------------------
 
 function text_cells(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $value=null, string|int|float|bool|null $size="", string|int|float|bool|null $max="", string|int|float|bool|null $title=false, 
-	string|int|float|bool|null $labparams="", string|int|float|bool|null $post_label="", array|string $inparams=""): void
+	string|int|float|bool|null $labparams="", string|int|float|bool|null $post_label="", string $inparams=""): void
 {
 
 	default_focus($name);
@@ -599,7 +599,7 @@ function text_cells_ex(?string $label, string|int|float|bool|null $name, string|
 	ajax()->addUpdate($name, $name, $_POST[$name]);
 }
 
-function text_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|array|null $value, string|int|float|bool|null $size, string|int|float|bool|null $max, string|int|float|bool|null $title=null, ?string $params="", ?string $post_label=""): void
+function text_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $value, string|int|float|bool|null $size, string|int|float|bool|null $max, string|int|float|bool|null $title=null, ?string $params="", ?string $post_label=""): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	text_cells(null, $name, $value, $size, $max, $title, $params, $post_label);
@@ -801,7 +801,7 @@ function ref_cells(?string $label, ?string $name, ?string $title=null, string|in
 
 //-----------------------------------------------------------------------------------
 
-function ref_row(?string $label, ?string $name, ?string $title=null, string|int|float|bool|array|null $init=null, string|bool|null $submit_on_change=false, string|int|float|bool|null $type=null, string|array|null $context = null): void
+function ref_row(?string $label, ?string $name, ?string $title=null, string|int|float|bool|null $init=null, string|bool|null $submit_on_change=false, string|int|float|bool|null $type=null, string|array|null $context = null): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	ref_cells(null, $name, $title, $init, null, $submit_on_change, $type, $context);
@@ -875,14 +875,14 @@ function unit_amount_cells(?string $label, ?string $name, string|int|float|bool|
 	amount_cells_ex($label, $name, 15, 15, $init, $params, $post_label, $dec+2);
 }
 
-function amount_row(string|int|float|bool|null $label, ?string $name, string|int|float|bool|array|null $init=null, ?string $params=null, string|int|float|bool|null $post_label=null, string|int|float|bool|null $dec=null): void
+function amount_row(string|int|float|bool|null $label, ?string $name, string|int|float|bool|null $init=null, ?string $params=null, string|int|float|bool|null $post_label=null, string|int|float|bool|null $dec=null): void
 {
 	echo "<tr>";
 	amount_cells($label, $name, $init, $params, $post_label, $dec);
 	echo "</tr>\n";
 }
 
-function small_amount_row(?string $label, ?string $name, string|int|array|null $init=null, ?string $params=null, ?string $post_label=null, string|int|float|bool|null $dec=null): void
+function small_amount_row(?string $label, ?string $name, string|int|null $init=null, ?string $params=null, ?string $post_label=null, string|int|float|bool|null $dec=null): void
 {
 	echo "<tr>";
 	small_amount_cells($label, $name, $init, $params, $post_label, $dec);
@@ -921,7 +921,7 @@ function small_qty_row(?string $label, ?string $name, string|int|float|bool|null
 
 //-----------------------------------------------------------------------------------
 
-function small_amount_cells(?string $label, string|int|float|bool|null $name, string|int|float|bool|array|null $init=null, string|int|float|bool|null $params=null, string|int|float|bool|null $post_label=null, string|int|float|bool|null $dec=null): void
+function small_amount_cells(?string $label, string|int|float|bool|null $name, string|int|float|bool|null $init=null, string|int|float|bool|null $params=null, string|int|float|bool|null $post_label=null, string|int|float|bool|null $dec=null): void
 {
 	amount_cells_ex($label, $name, 7, 12, $init, $params, $post_label, $dec);
 }
@@ -952,7 +952,7 @@ function textarea_cells(string|int|float|bool|null $label, string|int|float|bool
 	ajax()->addUpdate($name, $name, $value);
 }
 
-function textarea_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|array|null $value, string|int|float|bool|null $cols, string|int|float|bool|null $rows, ?int $max=255, ?string $title=null, ?string $params=""): void
+function textarea_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $value, string|int|float|bool|null $cols, string|int|float|bool|null $rows, ?int $max=255, ?string $title=null, ?string $params=""): void
 {
 	echo "<tr><td class='label'>$label</td>";
 	textarea_cells(null, $name, $value, $cols, $rows, $max, $title, $params);
@@ -1027,7 +1027,7 @@ function supplier_credit_row(string|int|float|bool|null $supplier, string|int|fl
 		."</a>", $parms);
 }
 
-function bank_balance_row(string|int|float|bool|array|null $bank_acc, ?string $parms=''): void
+function bank_balance_row(string|int|float|bool|null $bank_acc, ?string $parms=''): void
 {
 	global $path_to_root;
 

@@ -33,7 +33,7 @@ print_bank_transactions();
 /**
  * @return null|string
  */
-function get_bank_balance_to(string|array|null $to, ?string $account)
+function get_bank_balance_to(string|null $to, ?string $account)
 {
 	$to = date2sql($to);
 	$sql = "SELECT SUM(amount) FROM ".TB_PREF."bank_trans WHERE bank_act=".db_escape($account)."
@@ -46,7 +46,7 @@ function get_bank_balance_to(string|array|null $to, ?string $account)
 /**
  * @return bool|mysqli_result
  */
-function get_bank_transactions(string|array|null $from, string|array|null $to, ?string $account)
+function get_bank_transactions(string|null $from, string|null $to, ?string $account)
 {
 	$from = date2sql($from);
 	$to = date2sql($to);

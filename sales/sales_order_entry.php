@@ -63,11 +63,11 @@ if (user_use_date_picker()) {
 if (isset($_GET['NewDelivery']) && is_numeric($_GET['NewDelivery'])) {
 
 	$_SESSION['page_title'] = _($help_context = "Direct Sales Delivery");
-	create_cart(ST_CUSTDELIVERY, $_GET['NewDelivery']);
+	create_cart(ST_CUSTDELIVERY, get_scalar('NewDelivery'));
 
 } elseif (isset($_GET['NewInvoice']) && is_numeric($_GET['NewInvoice'])) {
 
-	create_cart(ST_SALESINVOICE, $_GET['NewInvoice']);
+	create_cart(ST_SALESINVOICE, get_scalar('NewInvoice'));
 
 	if (isset($_GET['FixedAsset'])) {
 		$_SESSION['page_title'] = _($help_context = "Fixed Assets Sale");
@@ -79,13 +79,13 @@ if (isset($_GET['NewDelivery']) && is_numeric($_GET['NewDelivery'])) {
 
 	$help_context = 'Modifying Sales Order';
 	$_SESSION['page_title'] = sprintf( _("Modifying Sales Order # %d"), $_GET['ModifyOrderNumber']);
-	create_cart(ST_SALESORDER, $_GET['ModifyOrderNumber']);
+	create_cart(ST_SALESORDER, get_scalar('ModifyOrderNumber'));
 
 } elseif (isset($_GET['ModifyQuotationNumber']) && is_numeric($_GET['ModifyQuotationNumber'])) {
 
 	$help_context = 'Modifying Sales Quotation';
 	$_SESSION['page_title'] = sprintf( _("Modifying Sales Quotation # %d"), $_GET['ModifyQuotationNumber']);
-	create_cart(ST_SALESQUOTE, $_GET['ModifyQuotationNumber']);
+	create_cart(ST_SALESQUOTE, get_scalar('ModifyQuotationNumber'));
 
 } elseif (isset($_GET['NewOrder'])) {
 
@@ -97,7 +97,7 @@ if (isset($_GET['NewDelivery']) && is_numeric($_GET['NewDelivery'])) {
 	create_cart(ST_SALESQUOTE, 0);
 } elseif (isset($_GET['NewQuoteToSalesOrder'])) {
 	$_SESSION['page_title'] = _($help_context = "Sales Order Entry");
-	create_cart(ST_SALESQUOTE, $_GET['NewQuoteToSalesOrder']);
+	create_cart(ST_SALESQUOTE, get_scalar('NewQuoteToSalesOrder'));
 }
 
 page($_SESSION['page_title'], false, false, "", $js);
@@ -108,9 +108,9 @@ if (isset($_GET['ModifyOrderNumber']) && (bool)is_prepaid_order_open(get_scalar(
 	end_page(); exit;
 }
 if (isset($_GET['ModifyOrderNumber']))
-	check_is_editable(ST_SALESORDER, $_GET['ModifyOrderNumber']);
+	check_is_editable(ST_SALESORDER, get_scalar('ModifyOrderNumber'));
 elseif (isset($_GET['ModifyQuotationNumber']))
-	check_is_editable(ST_SALESQUOTE, $_GET['ModifyQuotationNumber']);
+	check_is_editable(ST_SALESQUOTE, get_scalar('ModifyQuotationNumber'));
 
 //-----------------------------------------------------------------------------
 
@@ -388,7 +388,7 @@ function can_process(): bool {
 		set_focus('OrderDate');
 		return false;
 	}
-	if (session_obj('Items')->trans_type!=ST_SALESORDER && session_obj('Items')->trans_type!=ST_SALESQUOTE && !(bool)is_date_in_fiscalyear($_POST['OrderDate'])) {
+	if (session_obj('Items')->trans_type!=ST_SALESORDER && session_obj('Items')->trans_type!=ST_SALESQUOTE && !(bool)is_date_in_fiscalyear(post_scalar('OrderDate'))) {
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('OrderDate');
 		return false;
@@ -460,7 +460,7 @@ function can_process(): bool {
 		set_focus('ref');
 		return false;
 	}
-	if (!db_has_currency_rates(session_obj('Items')->customer_currency, $_POST['OrderDate']))
+	if (!db_has_currency_rates(session_obj('Items')->customer_currency, post_scalar('OrderDate')))
 		return false;
 	
    	if (session_obj('Items')->get_items_total() < 0) {

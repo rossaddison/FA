@@ -30,7 +30,7 @@ include_once($path_to_root . "/fixed_assets/includes/fa_classes_db.inc");
 /**
  * @return false|null|string
  */
-function find_last_location(?string $stock_id, string|array|null $end_date)
+function find_last_location(?string $stock_id, string|null $end_date)
 {
 	$end_date = date2sql($end_date);
 	$sql = "SELECT loc_code FROM ".TB_PREF."stock_moves WHERE stock_id = ".db_escape($stock_id)." AND

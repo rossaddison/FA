@@ -50,7 +50,7 @@ if (!isset($_POST['supplier_id']))
 if (!isset($_POST['DatePaid']))
 {
 	$_POST['DatePaid'] = new_doc_date();
-	if (!(bool)is_date_in_fiscalyear($_POST['DatePaid']))
+	if (!(bool)is_date_in_fiscalyear(post_scalar('DatePaid')))
 		$_POST['DatePaid'] = end_fiscalyear();
 }
 
@@ -112,7 +112,7 @@ if (isset($_GET['AddedID'])) {
 
 //----------------------------------------------------------------------------------------
 
-function get_default_supplier_payment_bank_account(string|int|float|bool|array|null $supplier_id, string|array|null $date)
+function get_default_supplier_payment_bank_account(string|int|float|bool|null $supplier_id, string|null $date)
 {
 	$previous_payment = row_or_empty(get_supp_payment_before($supplier_id, date2sql($date)));
 	if ($previous_payment)
@@ -194,14 +194,14 @@ function check_inputs(): bool
 		set_focus('DatePaid');
 		return false;
 	} 
-	elseif (!(bool)is_date_in_fiscalyear($_POST['DatePaid'])) 
+	elseif (!(bool)is_date_in_fiscalyear(post_scalar('DatePaid'))) 
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('DatePaid');
 		return false;
 	}
 
-	$limit = get_bank_account_limit($_POST['bank_account'], $_POST['DatePaid']);
+	$limit = get_bank_account_limit(post_scalar('bank_account'), post_scalar('DatePaid'));
 
 	if (($limit !== null) && (floatcmp($limit, input_num('amount')) < 0))
 	{
@@ -216,7 +216,7 @@ function check_inputs(): bool
 		return false;
 	}
 
-	if (!db_has_currency_rates(get_supplier_currency(post_scalar('supplier_id')), $_POST['DatePaid'], true))
+	if (!db_has_currency_rates(get_supplier_currency(post_scalar('supplier_id')), post_scalar('DatePaid'), true))
 		return false;
 
 	session_obj('alloc')->amount = -input_num('amount');
@@ -231,9 +231,9 @@ function check_inputs(): bool
 
 function handle_add_payment(): void
 {
-	$payment_id = write_supp_payment(0, $_POST['supplier_id'], $_POST['bank_account'],
-		$_POST['DatePaid'], $_POST['ref'], input_num('amount'),	input_num('discount'), $_POST['memo_'], 
-		input_num('charge'), input_num('bank_amount', input_num('amount')), $_POST['dimension_id'], $_POST['dimension2_id']);
+	$payment_id = write_supp_payment(0, post_scalar('supplier_id'), post_scalar('bank_account'),
+		post_scalar('DatePaid'), post_scalar('ref'), input_num('amount'),	input_num('discount'), post_scalar('memo_'), 
+		input_num('charge'), input_num('bank_amount', input_num('amount')), post_scalar('dimension_id'), post_scalar('dimension2_id'));
 	new_doc_date($_POST['DatePaid']);
 
 	session_obj('alloc')->trans_no = $payment_id;
@@ -291,7 +291,7 @@ start_form();
 
 	if (!list_updated('bank_account') && !get_post('__ex_rate_changed'))
 	{
-		$_POST['bank_account'] = get_default_supplier_payment_bank_account($_POST['supplier_id'], $_POST['DatePaid']);
+		$_POST['bank_account'] = get_default_supplier_payment_bank_account(post_scalar('supplier_id'), post_scalar('DatePaid'));
 	} else
 	{
 		$_POST['amount'] = price_format(0);
@@ -299,7 +299,7 @@ start_form();
 
     bank_accounts_list_row(_("From Bank Account:"), 'bank_account', null, true);
 
-	bank_balance_row($_POST['bank_account']);
+	bank_balance_row(post_scalar('bank_account'));
 
 	table_section(2);
 

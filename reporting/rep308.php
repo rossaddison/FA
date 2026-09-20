@@ -54,7 +54,7 @@ function get_domestic_price(?array $myrow, ?string $stock_id)
 /**
  * @return mysqli_result
  */
-function fetch_items(string|int|array|null $category=0)
+function fetch_items(string|int|null $category=0)
 {
 		$sql = "SELECT stock_id, stock.description AS name,
 				stock.category_id,units,
@@ -71,7 +71,7 @@ function fetch_items(string|int|array|null $category=0)
 /**
  * @return null|string
  */
-function trans_qty(?string $stock_id, string|array|null $location, string|array|null $from_date, string|array|null $to_date, bool $inward = true)
+function trans_qty(?string $stock_id, string|null $location, string|null $from_date, string|null $to_date, bool $inward = true)
 {
 	if ($from_date == null)
 		$from_date = Today();
@@ -104,7 +104,7 @@ function trans_qty(?string $stock_id, string|array|null $location, string|array|
 
 }
 
-function avg_unit_cost(?string $stock_id, string|null $location, string|array|null $to_date)
+function avg_unit_cost(?string $stock_id, string|null $location, string|null $to_date)
 {
 	if ($to_date == null)
 		$to_date = Today();
@@ -146,7 +146,7 @@ function avg_unit_cost(?string $stock_id, string|null $location, string|array|nu
 
 //----------------------------------------------------------------------------------------------------
 
-function trans_qty_unit_cost(?string $stock_id, string|null $location, string|array|null $from_date, string|array|null $to_date, bool $inward = true)
+function trans_qty_unit_cost(?string $stock_id, string|null $location, string|null $from_date, string|null $to_date, bool $inward = true)
 {
 	if ($from_date == null)
 		$from_date = Today();

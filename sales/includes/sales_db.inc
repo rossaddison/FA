@@ -72,7 +72,7 @@ function round_to_nearest(string|int|float|bool|null $price, string|int|float|bo
 
 }
 
-function get_price (string|int|float|bool|null $stock_id, string|int|float|bool|null $currency, string|int|float|bool|array|null $sales_type_id, string|int|float|bool|null $factor=null, string|int|float|bool|array|null $date=null)
+function get_price (string|int|float|bool|null $stock_id, string|int|float|bool|null $currency, string|int|float|bool|null $sales_type_id, string|int|float|bool|null $factor=null, string|int|float|bool|null $date=null)
 {
 	if ($date == null)
 	    $date = new_doc_date();
@@ -140,7 +140,7 @@ function get_price (string|int|float|bool|null $stock_id, string|int|float|bool|
 //  When $std==true price is calculated as a sum of all included stock items,
 //	otherwise all prices set for kits and items are accepted.
 //
-function get_kit_price(string|int|float|bool|array|null $item_code, string|int|float|bool|array|null $currency, string|int|float|bool|array|null $sales_type_id, string|int|float|bool|null $factor=null, 
+function get_kit_price(string|int|float|bool|null $item_code, string|int|float|bool|null $currency, string|int|float|bool|null $sales_type_id, string|int|float|bool|null $factor=null, 
 	string|int|float|bool|array|null $date=null, string|int|float|bool|null $std = false)
 {
 	$kit_price = 0.00;
@@ -364,7 +364,7 @@ function get_sales_parent_lines(string|int|float|bool|null $trans_type, string|i
 
 }
 
-function get_sales_parent_numbers(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no): array
+function get_sales_parent_numbers(string|int|float|bool|null $trans_type, string|int|float|bool|null $trans_no): array
 {
 	$trans = array();
 	$res = get_sales_parent_lines($trans_type, $trans_no, false);

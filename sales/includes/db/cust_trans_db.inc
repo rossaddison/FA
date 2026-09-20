@@ -312,7 +312,7 @@ function post_void_customer_trans(string|int|float|bool|null $type, string|int|f
 }
 
 //----------------------------------------------------------------------------------------
-function get_sql_for_customer_inquiry(string|array|null $from, string|array|null $to, string|int|float|bool|null $cust_id = ALL_TEXT, string|int|float|bool|array|null $filter = ALL_TEXT, int|array|null $show_voided = 0, string|array|null $ref=''): string
+function get_sql_for_customer_inquiry(string|null $from, string|null $to, string|int|float|bool|null $cust_id = ALL_TEXT, string|int|float|bool|array|null $filter = ALL_TEXT, int|array|null $show_voided = 0, string|array|null $ref=''): string
 {
     $date_after = date2sql($from);
     $date_to = date2sql($to);
@@ -416,7 +416,7 @@ function get_sql_for_customer_inquiry(string|array|null $from, string|array|null
    	return $sql;
 }
 
-function get_sql_for_sales_deliveries_view(string|array|null $from, string|array|null $to, string|null $customer_id, string|null $stock_item, string|null $location, string|array|null $delivery, string|bool|array|null $outstanding=false): string
+function get_sql_for_sales_deliveries_view(string|null $from, string|null $to, string|null $customer_id, string|null $stock_item, string|null $location, string|array|null $delivery, string|bool|array|null $outstanding=false): string
 {
 	$sql = "SELECT trans.trans_no,
 			debtor.name,

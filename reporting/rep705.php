@@ -77,7 +77,7 @@ function getPeriods(string|int|float|bool|null $yr, string|int|float|bool|null $
 
 //----------------------------------------------------------------------------------------------------
 
-function display_type (?string $type, ?string $typename, string|int|float|bool|array|null $yr, string|int|float|bool|array|FrontReport|null $mo, string|int|float|bool|array|null $convert, int|string|null &$dec, FrontReport &$rep, string|int|float|bool|array|null $dimension, string|int|float|bool|array|null $dimension2, 
+function display_type (?string $type, ?string $typename, string|int|float|bool|null $yr, string|int|float|bool|array|FrontReport|null $mo, string|int|float|bool|array|null $convert, int|string|null &$dec, FrontReport &$rep, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2, 
 								mixed $tags, string|int|float|bool|FrontReport|null $thousands)
 {
 	$ctotal = array(1 => 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);

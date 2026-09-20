@@ -101,7 +101,7 @@ function view_link(array|false|null $row)
 /** @return null|string */
 function sum_dimension(array|false|null $row) 
 {
-	return get_dimension_balance($row['id'], $_POST['FromDate'], $_POST['ToDate']); 
+	return get_dimension_balance($row['id'], post_scalar('FromDate'), post_scalar('ToDate')); 
 }
 
 /** @psalm-pure */
@@ -127,7 +127,7 @@ function prt_link(array|false|null $row)
 }
 
 
-$sql = get_sql_for_search_dimensions($dim, $_POST['FromDate'], $_POST['ToDate'],
+$sql = get_sql_for_search_dimensions($dim, post_scalar('FromDate'), post_scalar('ToDate'),
 	post_scalar('OrderNumber'), post_scalar('type_'), check_value('OpenOnly'), check_value('OverdueOnly'));
 
 $cols = array(

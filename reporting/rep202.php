@@ -33,7 +33,7 @@ print_aged_supplier_analysis();
 /**
  * @return mysqli_result
  */
-function get_invoices(?string $supplier_id, string|array|null $to, string|bool|array|null $all=true)
+function get_invoices(?string $supplier_id, string|null $to, string|bool|array|null $all=true)
 {
 	$todate = date2sql($to);
 	$PastDueDays1 = get_company_pref('past_due_days');

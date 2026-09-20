@@ -39,7 +39,7 @@ if (user_use_date_picker())
 if (isset($_GET['ModifyOrderNumber']) && is_numeric($_GET['ModifyOrderNumber'])) {
 
 	$_SESSION['page_title'] = _($help_context = "Modify Purchase Order #") . $_GET['ModifyOrderNumber'];
-	create_new_po(ST_PURCHORDER, $_GET['ModifyOrderNumber']);
+	create_new_po(ST_PURCHORDER, get_scalar('ModifyOrderNumber'));
 	copy_from_cart();
 } elseif (isset($_GET['NewOrder'])) {
 
@@ -66,7 +66,7 @@ if (isset($_GET['ModifyOrderNumber']) && is_numeric($_GET['ModifyOrderNumber']))
 page($_SESSION['page_title'], false, false, "", $js);
 
 if (isset($_GET['ModifyOrderNumber']))
-	check_is_editable(ST_PURCHORDER, $_GET['ModifyOrderNumber']);
+	check_is_editable(ST_PURCHORDER, get_scalar('ModifyOrderNumber'));
 
 //---------------------------------------------------------------------------------------------------
 
@@ -349,7 +349,7 @@ function can_commit(): bool
 		return false;
 	} 
 	if ((session_obj('PO')->trans_type == ST_SUPPRECEIVE || session_obj('PO')->trans_type == ST_SUPPINVOICE) 
-		&& !(bool)is_date_in_fiscalyear($_POST['OrderDate'])) {
+		&& !(bool)is_date_in_fiscalyear(post_scalar('OrderDate'))) {
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('OrderDate');
 		return false;
@@ -396,7 +396,7 @@ function can_commit(): bool
 		set_focus('StkLocation');
 		return false;
 	} 
-	if (!db_has_currency_rates(session_obj('PO')->curr_code, $_POST['OrderDate'], true))
+	if (!db_has_currency_rates(session_obj('PO')->curr_code, post_scalar('OrderDate'), true))
 		return false;
 	if (session_obj('PO')->order_has_items() == false)
 	{

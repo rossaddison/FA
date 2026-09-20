@@ -16,7 +16,7 @@
 // $amount is in $currency currency
 // if $currency is not set, then defaults to no conversion
 
-function add_gl_trans(string|int|float|bool|null $type, string|int|float|bool|null $trans_id, string|int|float|bool|array|null $date_, string|int|float|bool|null $account, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2, string|int|float|bool|null $memo_,
+function add_gl_trans(string|int|float|bool|null $type, string|int|float|bool|null $trans_id, string|int|float|bool|null $date_, string|int|float|bool|null $account, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2, string|int|float|bool|null $memo_,
 	string|int|float|bool|null $amount, string|int|float|bool|null $currency=null, string|int|float|bool|null $person_type_id=null, string|int|float|bool|null $person_id=null,	string|int|float|bool|null $err_msg="", string|int|float|bool|null $rate=0): float
 {
 
@@ -89,7 +89,7 @@ function add_gl_trans_std_cost(?int $type, string|int|float|bool|null $trans_id,
 
 // Function for even out rounding problems
 /** @return 0|float */
-function add_gl_balance(string|int|float|bool|null $type, string|int|float|bool|null $trans_id, string|int|float|bool|array|null $date_, string|int|float|bool|null $amount, ?int $person_type_id=null, string|int|float|bool|null $person_id=null)
+function add_gl_balance(string|int|float|bool|null $type, string|int|float|bool|null $trans_id, string|int|float|bool|null $date_, string|int|float|bool|null $amount, ?int $person_type_id=null, string|int|float|bool|null $person_id=null)
 {
 	$amount = round2($amount, user_price_dec());
 
@@ -107,7 +107,7 @@ function add_gl_balance(string|int|float|bool|null $type, string|int|float|bool|
 /**
  * @return mysqli_result
  */
-function get_gl_transactions(string|array|null $from_date, string|int|float|bool|array|null $to_date, ?int $trans_no=0,
+function get_gl_transactions(string|null $from_date, string|int|float|bool|array|null $to_date, ?int $trans_no=0,
     string|int|float|bool|null $account=null, string|int|null $dimension=0, string|int|null $dimension2=0, string|null $filter_type=null,
         int|float|bool|null $amount_min=null, int|float|bool|null $amount_max=null, string|int|float|bool|null $person_type=null, string|int|float|bool|null $person_id=null, string|array|null $memo='')
 {
@@ -453,7 +453,7 @@ function get_only_budget_trans_from_to(string|int|float|bool|null $from_date, st
 //--------------------------------------------------------------------------------
 //	Stores journal/bank transaction tax details if applicable
 //
-function add_gl_tax_details(string|int|float|bool|null $gl_code, string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $amount, string|int|float|bool|null $ex_rate, string|int|float|bool|null $date, string|int|float|bool|null $memo, string|int|float|bool|null $included=0, string|int|float|bool|null $net_amount = null): void
+function add_gl_tax_details(string|int|float|bool|null $gl_code, string|int|float|bool|null $trans_type, string|int|float|bool|null $trans_no, string|int|float|bool|null $amount, string|int|float|bool|null $ex_rate, string|int|float|bool|null $date, string|int|float|bool|null $memo, string|int|float|bool|null $included=0, string|int|float|bool|null $net_amount = null): void
 {
 	$tax_type = is_tax_account($gl_code);
 	if(!(bool)$tax_type) return;	// $gl_code is not tax account
@@ -545,7 +545,7 @@ function clear_trans_tax_details(string|int|float|bool|null $type, string|int|fl
 /**
  * @return mysqli_result
  */
-function get_tax_summary(string|array|null $from, string|array|null $to, bool $also_zero_purchases=false)
+function get_tax_summary(string|null $from, string|null $to, bool $also_zero_purchases=false)
 {
 	$fromdate = date2sql($from);
 	$todate = date2sql($to);
@@ -631,7 +631,7 @@ function clear_gl_trans(string|int|float|bool|null $type, string|int|float|bool|
 /**
  * @return non-falsy-string
  */
-function get_sql_for_journal_inquiry(string|int|null $filter, string|array|null $from, string|array|null $to, string|array|null $ref='', string|array|null $memo='', int|bool|array|null $alsoclosed=false,
+function get_sql_for_journal_inquiry(string|int|null $filter, string|null $from, string|null $to, string|array|null $ref='', string|array|null $memo='', int|bool|array|null $alsoclosed=false,
          string|null $user_id=null): string
 {
     $sql = "SELECT  IFNULL(a.gl_seq,0) as gl_seq,

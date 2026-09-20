@@ -80,7 +80,7 @@ function display_gl_heading(?array $myrow): void
 		label_cells(_('Source document'), $header["source_ref"], "class='tableheader2'");
 	}
 	end_row();
-	comments_display_row($_GET['type_id'], $_GET['trans_no']);
+	comments_display_row(get_scalar('type_id'), get_scalar('trans_no'));
     end_table(1);
 }
 $result = get_gl_trans(get_scalar('type_id'), get_scalar('trans_no'));
@@ -159,6 +159,6 @@ if ($heading_shown)
 
 //end of while loop
 
-is_voided_display(get_scalar('type_id'), $_GET['trans_no'], _("This transaction has been voided."));
+is_voided_display(get_scalar('type_id'), get_scalar('trans_no'), _("This transaction has been voided."));
 
-end_page(true, false, false, get_scalar('type_id'), $_GET['trans_no']);
+end_page(true, false, false, get_scalar('type_id'), get_scalar('trans_no'));

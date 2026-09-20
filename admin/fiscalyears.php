@@ -66,7 +66,7 @@ function handle_submit()
 	{
 		if ($_POST['closed'] == 1)
 		{
-			if (check_years_before($_POST['from_date'], false))
+			if (check_years_before(post_scalar('from_date'), false))
 			{
 				display_error( _("Cannot CLOSE this year because there are open fiscal years before"));
 				set_focus('closed');
@@ -86,7 +86,7 @@ function handle_submit()
 	{
 		if (!check_data())
 			return false;
-   		add_fiscalyear($_POST['from_date'], $_POST['to_date'], post_scalar('closed'));
+   		add_fiscalyear(post_scalar('from_date'), post_scalar('to_date'), post_scalar('closed'));
 		display_notification(_('New fiscal year has been added'));
 	}
 	$Mode = 'RESET';
@@ -94,7 +94,7 @@ function handle_submit()
 
 //---------------------------------------------------------------------------------------------
 
-function check_can_delete(string|int|float|bool|array|null $selected_id): bool
+function check_can_delete(string|int|float|bool|null $selected_id): bool
 {
 	$myrow = row_or_empty(get_fiscalyear($selected_id));
 	// PREVENT DELETES IF DEPENDENT RECORDS IN gl_trans
@@ -179,7 +179,7 @@ function display_fiscalyears(): void
 
 //---------------------------------------------------------------------------------------------
 
-function display_fiscalyear_edit(string|int|float|bool|array|null $selected_id): void
+function display_fiscalyear_edit(string|int|float|bool|null $selected_id): void
 {
 	global $Mode;
 

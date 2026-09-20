@@ -93,7 +93,7 @@ if (!isset($_POST['customer_id'])) {
 }
 if (!isset($_POST['DateBanked'])) {
 	$_POST['DateBanked'] = new_doc_date();
-	if (!(bool)is_date_in_fiscalyear($_POST['DateBanked'])) {
+	if (!(bool)is_date_in_fiscalyear(post_scalar('DateBanked'))) {
 		$_POST['DateBanked'] = end_fiscalyear();
 	}
 }
@@ -160,7 +160,7 @@ function can_process()
 		display_error(_("The entered date is invalid. Please enter a valid date for the payment."));
 		set_focus('DateBanked');
 		return false;
-	} elseif (!(bool)is_date_in_fiscalyear($_POST['DateBanked'])) {
+	} elseif (!(bool)is_date_in_fiscalyear(post_scalar('DateBanked'))) {
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('DateBanked');
 		return false;
@@ -215,7 +215,7 @@ function can_process()
 		return false;
 	}
 
-	if (!db_has_currency_rates(get_customer_currency(post_scalar('customer_id')), $_POST['DateBanked'], true))
+	if (!db_has_currency_rates(get_customer_currency(post_scalar('customer_id')), post_scalar('DateBanked'), true))
 		return false;
 
 	session_obj('alloc')->amount = input_num('amount');
@@ -241,9 +241,9 @@ if (get_post('AddPaymentItem') && can_process()) {
 
 	$new_pmt = !(bool)session_obj('alloc')->trans_no;
 	//Chaitanya : 13-OCT-2011 - To support Edit feature
-	$payment_no = write_customer_payment(session_obj('alloc')->trans_no, $_POST['customer_id'], $_POST['BranchID'],
-		$_POST['bank_account'], $_POST['DateBanked'], $_POST['ref'],
-                input_num('amount'), input_num('discount'), $_POST['memo_'], 0, input_num('charge'), input_num('bank_amount', input_num('amount')), $_POST['dimension_id'], $_POST['dimension2_id']);
+	$payment_no = write_customer_payment(session_obj('alloc')->trans_no, post_scalar('customer_id'), post_scalar('BranchID'),
+		post_scalar('bank_account'), post_scalar('DateBanked'), post_scalar('ref'),
+                input_num('amount'), input_num('discount'), post_scalar('memo_'), 0, input_num('charge'), input_num('bank_amount', input_num('amount')), post_scalar('dimension_id'), post_scalar('dimension2_id'));
 
 	session_obj('alloc')->trans_no = $payment_no;
 	session_obj('alloc')->date_ = $_POST['DateBanked'];
@@ -290,7 +290,7 @@ if (isset($_GET['trans_no']) && $_GET['trans_no'] > 0 )
 	$_POST["amount"] = price_format((float)$myrow['Total'] - (float)$myrow['ov_discount']);
 	$_POST["bank_amount"] = price_format((float)$myrow['bank_amount']+(float)$charge);
 	$_POST["discount"] = price_format($myrow['ov_discount']);
-	$_POST["memo_"] = get_comments_string(ST_CUSTPAYMENT,$_POST['trans_no']);
+	$_POST["memo_"] = get_comments_string(ST_CUSTPAYMENT,post_scalar('trans_no'));
 
 	//Prepare allocation cart 
 	if (isset($_POST['trans_no']) && $_POST['trans_no'] > 0 )
@@ -320,7 +320,7 @@ else {
 }
 
 if (db_customer_has_branches(post_scalar('customer_id'))) {
-	customer_branches_list_row(_("Branch:"), $_POST['customer_id'], 'BranchID', null, false, true, true);
+	customer_branches_list_row(_("Branch:"), post_scalar('customer_id'), 'BranchID', null, false, true, true);
 } else {
 	hidden('BranchID', ANY_NUMERIC);
 }

@@ -34,7 +34,7 @@ inventory_movements();
 /**
  * @return bool|mysqli_result
  */
-function fetch_items(string|int|array|null $category=0)
+function fetch_items(string|int|null $category=0)
 {
 		$sql = "SELECT stock_id, stock.description AS name,
 				stock.category_id,
@@ -52,7 +52,7 @@ function fetch_items(string|int|array|null $category=0)
 /**
  * @return null|string
  */
-function trans_qty(?string $stock_id, string|null $location, string|array|null $from_date, string|array|null $to_date, bool $inward = true)
+function trans_qty(?string $stock_id, string|null $location, string|null $from_date, string|null $to_date, bool $inward = true)
 {
 	if ($from_date == null)
 		$from_date = Today();

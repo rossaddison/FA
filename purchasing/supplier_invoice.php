@@ -49,7 +49,7 @@ if (isset($_GET['New']))
 page($_SESSION['page_title'], false, false, "", $js);
 
 if (isset($_GET['ModifyInvoice']))
-	check_is_editable(ST_SUPPINVOICE, $_GET['ModifyInvoice']);
+	check_is_editable(ST_SUPPINVOICE, get_scalar('ModifyInvoice'));
 
 check_db_has_suppliers(_("There are no suppliers defined in the system."));
 
@@ -377,7 +377,7 @@ if ($_SESSION["wa_current_user"]->can_access('SA_GRNDELETE'))
 if (isset($_POST['go']))
 {
 	ajax()->activate('gl_items');
-	display_quick_entries($_SESSION['supp_trans'], $_POST['qid'], input_num('totamount'), QE_SUPPINV);
+	display_quick_entries($_SESSION['supp_trans'], post_scalar('qid'), input_num('totamount'), QE_SUPPINV);
 	$_POST['totamount'] = price_format(0); ajax()->activate('totamount');
 	reset_tax_input();
 }

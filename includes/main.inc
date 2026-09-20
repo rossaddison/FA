@@ -54,7 +54,7 @@ function page(string $title, ?bool $no_menu=false, bool $is_index=false, string 
 	}
 }
 
-function end_page(bool|int|null $no_menu=false, bool $is_index=false, bool $final_screen=false, int|string $type_no=0, int|string|array $trans_no=0): void
+function end_page(bool|int|null $no_menu=false, bool $is_index=false, bool $final_screen=false, int|string $type_no=0, int|string $trans_no=0): void
 {
 	global $path_to_root, $page_nested;
 

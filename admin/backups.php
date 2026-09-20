@@ -64,7 +64,7 @@ function check_paths(): void
 	}
 }
 
-function generate_backup(array $conn, string|array|null $ext='no', string|array|null $comm='')
+function generate_backup(array $conn, string|null $ext='no', string|null $comm='')
 {
 
 	$filename = db_backup($conn, $ext, $comm, sysprefs()->backup_dir());

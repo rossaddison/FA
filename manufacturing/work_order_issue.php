@@ -77,7 +77,7 @@ function can_process(): bool
 		set_focus('date_');
 		return false;
 	} 
-	elseif (!(bool)is_date_in_fiscalyear($_POST['date_']))
+	elseif (!(bool)is_date_in_fiscalyear(post_scalar('date_')))
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('date_');
@@ -105,7 +105,7 @@ if (isset($_POST['Process']) && can_process())
 	// if failed, returns a stockID
 	$failed_data = add_work_order_issue(session_obj('issue_items')->order_id,
 		post_scalar('ref'), $_POST['IssueType'], session_obj('issue_items')->line_items,
-		post_scalar('Location'), post_scalar('WorkCentre'), post_scalar('date_'), $_POST['memo_']);
+		post_scalar('Location'), post_scalar('WorkCentre'), post_scalar('date_'), post_scalar('memo_'));
 
 	if ($failed_data != null) 
 	{

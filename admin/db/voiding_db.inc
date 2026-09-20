@@ -14,7 +14,7 @@ include_once($path_to_root . "/purchasing/includes/purchasing_db.inc");
 include_once($path_to_root . "/inventory/includes/inventory_db.inc");
 include_once($path_to_root . "/manufacturing/includes/manufacturing_db.inc");
 
-function void_transaction(string|int|float|bool|array|null $type, string|int|float|bool|array|null $type_no, string|int|float|bool|array|null $date_, string|array|null $memo_): string|false
+function void_transaction(string|int|float|bool|null $type, string|int|float|bool|null $type_no, string|int|float|bool|null $date_, string|null $memo_): string|false
 {
 	$void_entry = get_voided_entry($type, $type_no);
 

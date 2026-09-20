@@ -12,7 +12,7 @@
 include_once($path_to_root . "/sales/includes/cart_class.inc");
 
 //--------------------------------------------------------------------------------
-function add_to_order(Cart &$order, string|array|null $new_item, string|int|float|bool|null $new_item_qty, string|int|float|bool|array|null $price, string|int|float|bool|null $discount, string|array|null $description=''): void
+function add_to_order(Cart &$order, string|null $new_item, string|int|float|bool|null $new_item_qty, string|int|float|bool|array|null $price, string|int|float|bool|null $discount, string|array|null $description=''): void
 {
 	// calculate item price to sum of kit element prices factor for 
 	// value distribution over all exploded kit items
@@ -69,7 +69,7 @@ function add_to_order(Cart &$order, string|array|null $new_item, string|int|floa
 }
 //---------------------------------------------------------------------------------
 
-function get_customer_details_to_order(Cart &$order, string|int|float|bool|array|null $customer_id, string|int|float|bool|array|null $branch_id): string
+function get_customer_details_to_order(Cart &$order, string|int|float|bool|null $customer_id, string|int|float|bool|null $branch_id): string
 {
 	
 	$ret_error = "";
@@ -270,7 +270,7 @@ function display_order_header(Cart &$order, bool $editable, ?string $date_text):
 			ajax()->activate('branch_id');
   		}
 		customer_branches_list_row(_("Branch:"),
-	  	  $_POST['customer_id'], 'branch_id', null, false, true, true, true);
+	  	  post_scalar('customer_id'), 'branch_id', null, false, true, true, true);
 
 		if( ($order->customer_id != get_post('customer_id', -1)) ||
 			($order->Branch != get_post('branch_id', -1)) ||
@@ -292,7 +292,7 @@ function display_order_header(Cart &$order, bool $editable, ?string $date_text):
 
 				$old_order = (PHP_VERSION<5) ? $order : clone $order;
 
-				$customer_error = get_customer_details_to_order($order, $_POST['customer_id'], $_POST['branch_id']);
+				$customer_error = get_customer_details_to_order($order, post_scalar('customer_id'), post_scalar('branch_id'));
 				$_POST['Location'] = $order->Location;
 				$_POST['deliver_to'] = $order->deliver_to;
 				$_POST['delivery_address'] = $order->delivery_address;
@@ -518,7 +518,7 @@ function sales_order_item_controls(Cart &$order, int|string|null &$rowcounter, s
 				$dec = $item_info['decimals'];
 		}
 		$_POST['qty'] = number_format2(1, $dec);
-		$price = get_kit_price($_POST['stock_id'],
+		$price = get_kit_price(post_scalar('stock_id'),
 			$order->customer_currency, $order->sales_type,
 			$order->price_factor, get_post('OrderDate'));
 		$_POST['price'] = price_format($price);

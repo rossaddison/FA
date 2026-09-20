@@ -62,7 +62,7 @@ function handle_submit()
 	if ($selected_id != "")
 	{
 
-		update_exchange_rate(post_scalar('curr_abrev'), $_POST['date_'],
+		update_exchange_rate(post_scalar('curr_abrev'), post_scalar('date_'),
 		input_num('BuyRate'), input_num('BuyRate'));
 	}
 	else
@@ -138,7 +138,7 @@ function display_rate_edit(): void
 	if (isset($_POST['get_rate']))
 	{
 		$_POST['BuyRate'] = 
-			maxprec_format(retrieve_exrate($_POST['curr_abrev'], post_scalar('date_')));
+			maxprec_format(retrieve_exrate(post_scalar('curr_abrev'), post_scalar('date_')));
 		ajax()->activate('BuyRate');
 	}
 	amount_row(_("Exchange Rate:"), 'BuyRate', null, '',

@@ -30,7 +30,7 @@ if (user_use_date_picker())
 //----------------------------------------------------------------------------------------
 
 if (isset($_GET['ModifyCredit'])) {
-    check_is_editable(ST_SUPPCREDIT, $_GET['ModifyCredit']);
+    check_is_editable(ST_SUPPCREDIT, get_scalar('ModifyCredit'));
     $_SESSION['page_title'] = sprintf( _("Modifying Supplier Credit # %d"), $_GET['ModifyCredit']);
     $_SESSION['supp_trans'] = new supp_trans(ST_SUPPCREDIT, $_GET['ModifyCredit']);
 }
@@ -341,7 +341,7 @@ if (isset($_POST['RefreshInquiry']))
 if (isset($_POST['go']))
 {
 	ajax()->activate('gl_items');
-	display_quick_entries($_SESSION['supp_trans'], $_POST['qid'], input_num('totamount'), QE_SUPPINV);
+	display_quick_entries($_SESSION['supp_trans'], post_scalar('qid'), input_num('totamount'), QE_SUPPINV);
 	$_POST['totamount'] = price_format(0); ajax()->activate('totamount');
 	reset_tax_input();
 }

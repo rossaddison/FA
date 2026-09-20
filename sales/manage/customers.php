@@ -187,7 +187,7 @@ if (isset($_POST['delete']))
 	} //end if Delete Customer
 }
 
-function customer_settings(string|int|float|bool|array|null $selected_id): void 
+function customer_settings(string|int|float|bool|null $selected_id): void 
 {
 	global $path_to_root, $page_nested;
 	
@@ -231,9 +231,9 @@ function customer_settings(string|int|float|bool|array|null $selected_id): void
 	table_section(1);
 	table_section_title(_("Name and Address"));
 
-	text_row(_("Customer Name:"), 'CustName', $_POST['CustName'], 40, 80);
+	text_row(_("Customer Name:"), 'CustName', post_scalar('CustName'), 40, 80);
 	text_row(_("Customer Short Name:"), 'cust_ref', null, 30, 30);
-	textarea_row(_("Address:"), 'address', $_POST['address'], 35, 5);
+	textarea_row(_("Address:"), 'address', post_scalar('address'), 35, 5);
 
 	text_row(_("GSTNo:"), 'tax_id', null, 40, 40);
 
@@ -268,7 +268,7 @@ function customer_settings(string|int|float|bool|array|null $selected_id): void
 
 	percent_row(_("Discount Percent:"), 'discount', $_POST['discount']);
 	percent_row(_("Prompt Payment Discount Percent:"), 'pymt_discount', $_POST['pymt_discount']);
-	amount_row(_("Credit Limit:"), 'credit_limit', $_POST['credit_limit']);
+	amount_row(_("Credit Limit:"), 'credit_limit', post_scalar('credit_limit'));
 
 	payment_terms_list_row(_("Payment Terms:"), 'payment_terms', $_POST['payment_terms']);
 	credit_status_list_row(_("Credit Status:"), 'credit_status', $_POST['credit_status']); 

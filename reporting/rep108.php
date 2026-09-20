@@ -34,7 +34,7 @@ print_statements();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(string|int|array|null $debtorno, string|array|null $show_also_allocated)
+function getTransactions(string|int|null $debtorno, string|array|null $show_also_allocated)
 {
 	$date = date('Y-m-d');
 

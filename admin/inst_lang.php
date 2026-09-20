@@ -190,7 +190,7 @@ function handle_submit(string|int|float|bool|array|null $id): bool
 
 //---------------------------------------------------------------------------------------------
 
-function display_language_edit(string|int|float|bool|array|null $selected_id): void
+function display_language_edit(string|int|float|bool|null $selected_id): void
 {
 	global $installed_languages, $dflt_lang;
 

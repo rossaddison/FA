@@ -170,7 +170,7 @@ function can_process(): bool
 		display_error(_("The entered date for the credit note is invalid."));
 		set_focus('OrderDate');
 		$input_error = 1;
-	} elseif (!(bool)is_date_in_fiscalyear($_POST['OrderDate'])) {
+	} elseif (!(bool)is_date_in_fiscalyear(post_scalar('OrderDate'))) {
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('OrderDate');
 		$input_error = 1;
@@ -255,7 +255,7 @@ function handle_new_item(): void
 	if (!check_item_data())
 		return;
 
-	add_to_order($_SESSION['Items'], $_POST['stock_id'], input_num('qty'),
+	add_to_order($_SESSION['Items'], post_scalar('stock_id'), input_num('qty'),
 		input_num('price'), (float)input_num('Disc') / 100.0);
     line_start_focus();
 }

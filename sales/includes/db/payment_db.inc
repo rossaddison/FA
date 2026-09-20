@@ -21,8 +21,8 @@
 	$charge - in bank currency
 */
 /** @return null|scalar */
-function write_customer_payment(string|int|float|bool|array|null $trans_no, string|int|float|bool|array|null $customer_id, string|int|float|bool|array|null $branch_id, string|int|float|bool|array|null $bank_account,
-	string|int|float|bool|array|null $date_, string|int|float|bool|array|null $ref, string|int|float|bool|null $amount, int|float|bool|null $discount, string|array|null $memo_, ?int $rate=0, int|float|bool|null $charge=0, int|float|bool|null $bank_amount=0, string|int|float|bool|array|null $dim1=0, string|int|float|bool|array|null $dim2=0)
+function write_customer_payment(string|int|float|bool|null $trans_no, string|int|float|bool|null $customer_id, string|int|float|bool|null $branch_id, string|int|float|bool|null $bank_account,
+	string|int|float|bool|null $date_, string|int|float|bool|null $ref, string|int|float|bool|null $amount, int|float|bool|null $discount, string|null $memo_, ?int $rate=0, int|float|bool|null $charge=0, int|float|bool|null $bank_amount=0, string|int|float|bool|null $dim1=0, string|int|float|bool|null $dim2=0)
 {
 
 	begin_transaction();

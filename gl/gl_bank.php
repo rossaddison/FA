@@ -38,10 +38,10 @@ if (isset($_GET['NewPayment'])) {
 	create_cart(ST_BANKDEPOSIT, 0);
 } else if(isset($_GET['ModifyPayment'])) {
 	$_SESSION['page_title'] = _($help_context = "Modify Bank Account Entry")." #".(string)$_GET['trans_no'];
-	create_cart(ST_BANKPAYMENT, $_GET['trans_no']);
+	create_cart(ST_BANKPAYMENT, get_scalar('trans_no'));
 } else if(isset($_GET['ModifyDeposit'])) {
 	$_SESSION['page_title'] = _($help_context = "Modify Bank Deposit Entry")." #".(string)$_GET['trans_no'];
-	create_cart(ST_BANKDEPOSIT, $_GET['trans_no']);
+	create_cart(ST_BANKDEPOSIT, get_scalar('trans_no'));
 }
 page($_SESSION['page_title'], false, false, '', $js);
 
@@ -139,7 +139,7 @@ if (isset($_GET['UpdatedDep']))
 
 //--------------------------------------------------------------------------------------------------
 
-function create_cart(string|int|array|null $type, string|int|array|null $trans_no): void
+function create_cart(string|int|null $type, string|int|null $trans_no): void
 {
 
 	if (isset($_SESSION['pay_items']))
@@ -230,7 +230,7 @@ function check_trans(): int
 		$input_error = 1;
 	}
 
-	$limit = get_bank_account_limit($_POST['bank_account'], $_POST['date_']);
+	$limit = get_bank_account_limit(post_scalar('bank_account'), post_scalar('date_'));
 
 	$amnt_chg = -session_obj('pay_items')->gl_items_total()-session_obj('pay_items')->original_amount;
 
@@ -240,7 +240,7 @@ function check_trans(): int
 		set_focus('code_id');
 		$input_error = 1;
 	}
-	if ($trans = check_bank_account_history($amnt_chg, post_scalar('bank_account'), $_POST['date_'])) {
+	if ($trans = check_bank_account_history($amnt_chg, post_scalar('bank_account'), post_scalar('date_'))) {
 
 		if (isset($trans['trans_no'])) {
 			display_error(sprintf(_("The bank transaction would result in exceed of authorized overdraft limit for transaction: %s #%s on %s."),
@@ -260,7 +260,7 @@ function check_trans(): int
 		set_focus('date_');
 		$input_error = 1;
 	}
-	elseif (!(bool)is_date_in_fiscalyear($_POST['date_']))
+	elseif (!(bool)is_date_in_fiscalyear(post_scalar('date_')))
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('date_');
@@ -276,7 +276,7 @@ function check_trans(): int
 		set_focus('person_id');
 		$input_error = 1;
 	}
-	if (!db_has_currency_rates(get_bank_account_currency(post_scalar('bank_account')), $_POST['date_'], true))
+	if (!db_has_currency_rates(get_bank_account_currency(post_scalar('bank_account')), post_scalar('date_'), true))
 		$input_error = 1;
 
 	if (isset($_POST['settled_amount']) && in_array(get_post('PayType'), array(PT_SUPPLIER, PT_CUSTOMER)) && (input_num('settled_amount') <= 0)) {
@@ -297,10 +297,10 @@ if (isset($_POST['Process']) && !check_trans())
 	add_new_exchange_rate(get_bank_account_currency(get_post('bank_account')), get_post('date_'), input_num('_ex_rate'));
 
 	$trans = row_or_empty(write_bank_transaction(
-		session_obj('pay_items')->trans_type, session_obj('pay_items')->order_id, $_POST['bank_account'],
-		$_SESSION['pay_items'], $_POST['date_'],
-		$_POST['PayType'], $_POST['person_id'], get_post('PersonDetailID'),
-		$_POST['ref'], $_POST['memo_'], true, input_num('settled_amount', null)));
+		session_obj('pay_items')->trans_type, session_obj('pay_items')->order_id, post_scalar('bank_account'),
+		$_SESSION['pay_items'], post_scalar('date_'),
+		post_scalar('PayType'), post_scalar('person_id'), get_post('PersonDetailID'),
+		post_scalar('ref'), post_scalar('memo_'), true, input_num('settled_amount', null)));
 
 	$trans_type = $trans[0];
    	$trans_no = $trans[1];
@@ -389,7 +389,7 @@ if (isset($_POST['CancelItemChanges']) || isset($_POST['Index']))
 
 if (isset($_POST['go']))
 {
-	display_quick_entries($_SESSION['pay_items'], $_POST['person_id'], input_num('totamount'), 
+	display_quick_entries($_SESSION['pay_items'], post_scalar('person_id'), input_num('totamount'), 
 		session_obj('pay_items')->trans_type==ST_BANKPAYMENT ? QE_PAYMENT : QE_DEPOSIT);
 	$_POST['totamount'] = price_format(0); ajax()->activate('totamount');
 	line_start_focus();

@@ -550,7 +550,7 @@ function db_unzip(?string $mode, ?string $path): array|string|false
 }
 
 /** @return false|null|string */
-function db_backup(array $conn, string|int|float|bool|array|null $ext='no', string|int|float|bool|array|null $comm='', string|int|float|bool|null $path='')
+function db_backup(array $conn, string|int|float|bool|null $ext='no', string|int|float|bool|null $comm='', string|int|float|bool|null $path='')
 {
 	if ($conn['tbpref'] != "")
 		$filename = (string)$conn['dbname'] . "_" . (string)$conn['tbpref'] . date("Ymd_Hi") . ".sql";

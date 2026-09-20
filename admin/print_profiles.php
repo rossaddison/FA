@@ -74,7 +74,7 @@ function clear_form(): void
 }
 
 /** @return 0|null|string */
-function check_delete(string|array|null $name)
+function check_delete(string|null $name)
 {
 	// check if selected profile is used by any user
 	if ($name=='') return 0; // cannot delete system default profile

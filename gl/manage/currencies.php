@@ -178,7 +178,7 @@ function display_currencies(): void
 
 //---------------------------------------------------------------------------------------------
 
-function display_currency_edit(string|int|float|bool|array|null $selected_id): void
+function display_currency_edit(string|int|float|bool|null $selected_id): void
 {
 	global $Mode;
 	

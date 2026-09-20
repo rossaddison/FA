@@ -135,7 +135,7 @@ function dimension_has_payments(string|int|float|bool|null $id): bool
 	return ($row[0] > 0);
 }
 
-function dimension_is_closed(string|array|null $id): bool
+function dimension_is_closed(string|null $id): bool
 {
 	$result = row_or_empty(get_dimension($id));
 	return ($result['closed'] == '1');
@@ -182,7 +182,7 @@ function get_dimension_balance_all(string|int|float|bool|null $id, string|int|fl
 /**
  * @return null|string
  */
-function get_dimension_balance(string|int|float|bool|null $id, string|array|null $from, string|array|null $to) 
+function get_dimension_balance(string|int|float|bool|null $id, string|null $from, string|null $to) 
 {
 	$id = db_escape($id);
 	$sql = "SELECT SUM(amount)
@@ -199,7 +199,7 @@ function get_dimension_balance(string|int|float|bool|null $id, string|array|null
 
 //--------------------------------------------------------------------------------------
 
-function get_sql_for_search_dimensions(string|int|float|bool|null $dim, string|array|null $from, string|array|null $to, string|int|float|bool|null $order='', string|int|null $type = -1, int|bool|array|null $open=false, int|bool|array|null $overdue = false): string
+function get_sql_for_search_dimensions(string|int|float|bool|null $dim, string|null $from, string|null $to, string|int|float|bool|null $order='', string|int|null $type = -1, int|bool|array|null $open=false, int|bool|array|null $overdue = false): string
 {
 	$sql = "SELECT dim.id,
 		dim.reference,

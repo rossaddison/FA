@@ -86,7 +86,7 @@ function delete_supplier(string|null $supplier_id): void
 /**
  * @return array<array-key, null|string>|false
  */
-function get_supplier_details(string|int|float|bool|array|null $supplier_id, string|array|null $to=null, string|bool|array|null $all=true)
+function get_supplier_details(string|int|float|bool|array|null $supplier_id, string|null $to=null, string|bool|array|null $all=true)
 {
 
 	if ($to == null)

@@ -52,7 +52,7 @@ if (isset($_GET['AddedID']))
 	display_notification_centered(_("Inventory transfer has been processed"));
 	display_note(get_trans_view_str($trans_type, $trans_no, _("&View this transfer")));
 
-  $itm = row_or_empty(db_fetch(get_stock_transfer_items($_GET['AddedID'])));
+  $itm = row_or_empty(db_fetch(get_stock_transfer_items(get_scalar('AddedID'))));
 
   if (is_fixed_asset($itm['mb_flag']))
 	  hyperlink_params($_SERVER['PHP_SELF'], _("Enter &Another Fixed Assets Transfer"), "NewTransfer=1&FixedAsset=1");
@@ -81,7 +81,7 @@ function handle_new_order(): void
 	$_SESSION['transfer_items'] = new items_cart(ST_LOCTRANSFER);
   session_obj('transfer_items')->fixed_asset = isset($_GET['FixedAsset']);
 	$_POST['AdjDate'] = new_doc_date();
-	if (!(bool)is_date_in_fiscalyear($_POST['AdjDate']))
+	if (!(bool)is_date_in_fiscalyear(post_scalar('AdjDate')))
 		$_POST['AdjDate'] = end_fiscalyear();
 	session_obj('transfer_items')->tran_date = $_POST['AdjDate'];	
 }
@@ -110,7 +110,7 @@ if (isset($_POST['Process']))
 		set_focus('AdjDate');
 		$input_error = 1;
 	} 
-	elseif (!(bool)is_date_in_fiscalyear($_POST['AdjDate'])) 
+	elseif (!(bool)is_date_in_fiscalyear(post_scalar('AdjDate'))) 
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('AdjDate');
@@ -143,8 +143,8 @@ if (isset($_POST['Process']))
 {
 
 	$trans_no = add_stock_transfer(session_obj('transfer_items')->line_items,
-		$_POST['FromStockLocation'], $_POST['ToStockLocation'],
-		$_POST['AdjDate'], $_POST['ref'], $_POST['memo_']);
+		post_scalar('FromStockLocation'), post_scalar('ToStockLocation'),
+		post_scalar('AdjDate'), post_scalar('ref'), post_scalar('memo_'));
 	new_doc_date($_POST['AdjDate']);
 	session_obj('transfer_items')->clear_items();
 	unset($_SESSION['transfer_items']);
@@ -190,7 +190,7 @@ function handle_new_item(): void
 {
 	if (!isset($_POST['std_cost']))
    		$_POST['std_cost'] = 0;
-	add_to_order($_SESSION['transfer_items'], $_POST['stock_id'], input_num('qty'), $_POST['std_cost']);
+	add_to_order($_SESSION['transfer_items'], post_scalar('stock_id'), input_num('qty'), $_POST['std_cost']);
 	unset($_POST['stock_id']);
 	line_start_focus();
 }

@@ -90,13 +90,13 @@ function can_process(array $wo_details): bool
 		set_focus('date_');
 		return false;
 	}
-	elseif (!(bool)is_date_in_fiscalyear($_POST['date_']))
+	elseif (!(bool)is_date_in_fiscalyear(post_scalar('date_')))
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('date_');
 		return false;
 	}
-	if (date_diff2(sql2date($wo_details["released_date"]), $_POST['date_'], "d") > 0)
+	if (date_diff2(sql2date($wo_details["released_date"]), post_scalar('date_'), "d") > 0)
 	{
 		display_error(_("The production date cannot be before the release date of the work order."));
 		set_focus('date_');
