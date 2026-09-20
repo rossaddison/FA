@@ -33,7 +33,7 @@ function get_all_work_centres(int|bool|array|null $all=false)
 	$sql = "SELECT * FROM ".TB_PREF."workcentres";
 	if (!(bool)$all) $sql .= " WHERE !inactive";
 
-	return db_query($sql, "could not get all work centres");
+	return db_select($sql, "could not get all work centres");
 }
 
 /**
@@ -43,7 +43,7 @@ function get_work_centre(string|int|float|bool|null $type_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."workcentres WHERE id=".db_escape($type_id);
 
-	$result = db_query($sql, "could not get work centre");
+	$result = db_select($sql, "could not get work centre");
 
 	return db_fetch($result);
 }

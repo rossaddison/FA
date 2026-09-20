@@ -17,7 +17,7 @@ function get_fixed_asset_classes()
 {
 	$sql="SELECT * FROM ".TB_PREF."stock_fa_class";
 
-	$result = db_query($sql,"fixed asset classes could not be retrieved");
+	$result = db_select($sql,"fixed asset classes could not be retrieved");
 
 	return $result;
 }
@@ -29,7 +29,7 @@ function get_fixed_asset_classname(string|array|null $class)
 {
 	$sql="SELECT description FROM ".TB_PREF."stock_fa_class WHERE fa_class_id = ".db_escape($class);
 
-	$result = db_query($sql,"fixed asset class name could not be retrieved");
+	$result = db_select($sql,"fixed asset class name could not be retrieved");
 
 	$row = db_fetch_row($result);
 	

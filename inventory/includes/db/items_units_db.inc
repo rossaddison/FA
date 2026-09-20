@@ -39,7 +39,7 @@ function get_item_unit(string|int|float|bool|null $unit)
 {
 	$sql="SELECT * FROM ".TB_PREF."item_units WHERE abbr=".db_escape($unit);
 
-	$result = db_query($sql,"an unit of measure could not be retrieved");
+	$result = db_select($sql,"an unit of measure could not be retrieved");
 
 	return db_fetch($result);
 }
@@ -51,7 +51,7 @@ function get_unit_descr(string|int|float|bool|null $unit)
 {
 	$sql = "SELECT name FROM ".TB_PREF."item_units WHERE abbr=".db_escape($unit);
 
-	$result = db_query($sql, "could not retrieve unit description");
+	$result = db_select($sql, "could not retrieve unit description");
 
 	$row = db_fetch_row($result);
 	return is_array($row) ? $row[0] : false;
@@ -59,7 +59,7 @@ function get_unit_descr(string|int|float|bool|null $unit)
 
 function item_unit_used(string|int|float|bool|null $unit): bool {
 	$sql= "SELECT COUNT(*) FROM ".TB_PREF."stock_master WHERE units=".db_escape($unit);
-	$result = db_query($sql, "could not query stock master");
+	$result = db_select($sql, "could not query stock master");
 	$myrow = row_or_empty(db_fetch_row($result));
 	return ($myrow[0] > 0);
 }
@@ -71,7 +71,7 @@ function get_all_item_units(int|bool|array|null $all=false) {
     $sql = "SELECT * FROM ".TB_PREF."item_units";
 	if (!(bool)$all) $sql .= " WHERE !inactive";
 	$sql .= " ORDER BY name";
-    return  db_query($sql, "could not get stock categories");
+    return  db_select($sql, "could not get stock categories");
 }
 // 2008-06-15. Added to get a measure of unit by given stock_id
 /**
@@ -81,7 +81,7 @@ function get_unit_dec(string|int|float|bool|null $stock_id)
 {
 	$sql = "SELECT decimals FROM ".TB_PREF."item_units,	".TB_PREF."stock_master
 		WHERE abbr=units AND stock_id=".db_escape($stock_id)." LIMIT 1";
-	$result = db_query($sql, "could not get unit decimals");
+	$result = db_select($sql, "could not get unit decimals");
 
 	$row = db_fetch_row($result);
 	return is_array($row) ? $row[0] : false;

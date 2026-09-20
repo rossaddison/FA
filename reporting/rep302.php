@@ -83,7 +83,7 @@ function getPeriods(string|int|float|bool|null $stockid, string|int|float|bool|n
 			AND loc_code ='$location'
 			AND (type=13 OR type=11)";
 
-    $TransResult = db_query($sql,"No transactions were returned");
+    $TransResult = db_select($sql,"No transactions were returned");
 	return db_fetch($TransResult);
 }
 

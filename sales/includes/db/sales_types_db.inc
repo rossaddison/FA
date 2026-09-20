@@ -34,7 +34,7 @@ function get_all_sales_types(int|bool|array|null $all=false)
 	if (!(bool)$all)
 		$sql .= " WHERE !inactive";
 	
-	return db_query($sql, "could not get all sales types");
+	return db_select($sql, "could not get all sales types");
 } 
 
 /**
@@ -44,7 +44,7 @@ function get_sales_type(string|int|float|bool|array|null $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."sales_types WHERE id=".db_escape($id);
 	
-	$result = db_query($sql, "could not get sales type");
+	$result = db_select($sql, "could not get sales type");
 	
 	return db_fetch($result);
 }
@@ -56,7 +56,7 @@ function get_sales_type_name(string|array|null $id)
 {
 	$sql = "SELECT sales_type FROM ".TB_PREF."sales_types WHERE id=".db_escape($id);
 	
-	$result = db_query($sql, "could not get sales type");
+	$result = db_select($sql, "could not get sales type");
 	
 	$row = db_fetch_row($result);
 	return is_array($row) ? $row[0] : false;

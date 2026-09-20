@@ -76,7 +76,7 @@ function get_bank_account(string|int|float|bool|array|null $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."bank_accounts WHERE id=".db_escape($id);
 
-	$result = db_query($sql, "could not retreive bank account for $id");
+	$result = db_select($sql, "could not retreive bank account for $id");
 
 	return db_fetch($result);
 }
@@ -94,7 +94,7 @@ function get_bank_accounts(int|bool|array|null $show_inactive=false)
 	if (!(bool)$show_inactive) $sql .= " AND !account.inactive";
 	$sql .= " ORDER BY account_code, bank_curr_code";
 
-	return db_query($sql,"could not get bank accounts");
+	return db_select($sql,"could not get bank accounts");
 }
 
 //---------------------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ function get_bank_gl_account(string|int|float|bool|null $id)
 {
 	$sql = "SELECT account_code FROM ".TB_PREF."bank_accounts WHERE id=".db_escape($id);
 
-	$result = db_query($sql, "could not retreive bank account for $id");
+	$result = db_select($sql, "could not retreive bank account for $id");
 
 	$bank_account = row_or_empty(db_fetch($result));
 
@@ -122,7 +122,7 @@ function get_bank_charge_account(string|int|float|bool|array|null $id)
 {
 	$sql = "SELECT bank_charge_act FROM ".TB_PREF."bank_accounts WHERE id=".db_escape($id);
 
-	$result = db_query($sql, "could not retreive bank account for $id");
+	$result = db_select($sql, "could not retreive bank account for $id");
 
 	$bank_account = row_or_empty(db_fetch($result));
 
@@ -204,7 +204,7 @@ function has_quick_entries(?string $type=null): bool
 	if ($type != null)
 		$sql .= " WHERE type=".db_escape($type);
 
-	$result = db_query($sql, "could not retreive quick entries");
+	$result = db_select($sql, "could not retreive quick entries");
 	return db_num_rows($result) > 0;
 }
 
@@ -218,7 +218,7 @@ function get_quick_entries(string|int|float|bool|null $type = null)
 		$sql .= " WHERE type=".db_escape($type);
 	$sql .= " ORDER BY description";
 
-	return db_query($sql, "could not retreive quick entries");
+	return db_select($sql, "could not retreive quick entries");
 }
 
 /**
@@ -228,7 +228,7 @@ function get_quick_entry(string|int|float|bool|array|null $selected_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."quick_entries WHERE id=".db_escape($selected_id);
 
-	$result = db_query($sql, "could not retreive quick entry $selected_id");
+	$result = db_select($sql, "could not retreive quick entry $selected_id");
 
 	return db_fetch($result);
 }
@@ -245,14 +245,14 @@ function get_quick_entry_lines(string|int|float|bool|null $qid)
 		WHERE 
 			qid=".db_escape($qid)." ORDER by id";
 
-	return db_query($sql, "could not retreive quick entries");
+	return db_select($sql, "could not retreive quick entries");
 }
 
 function has_quick_entry_lines(string|int|float|bool|null $qid): bool
 {
 	$sql = "SELECT id FROM ".TB_PREF."quick_entry_lines WHERE qid=".db_escape($qid);
 
-	$result = db_query($sql, "could not retreive quick entries");
+	$result = db_select($sql, "could not retreive quick entries");
 	return db_num_rows($result) > 0;
 }
 
@@ -265,7 +265,7 @@ function get_quick_entry_line(string|int|float|bool|null $selected_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."quick_entry_lines WHERE id=".db_escape($selected_id);
 
-	$result = db_query($sql, "could not retreive quick entry for $selected_id");
+	$result = db_select($sql, "could not retreive quick entry for $selected_id");
 
 	return db_fetch($result);
 }
@@ -289,7 +289,7 @@ function get_max_reconciled(string|array|null $date, string|array|null $bank_acc
 		WHERE bank_act=".db_escape($bank_account);
 	//	." AND trans.reconciled IS NOT NULL";
 
-	return db_query($sql,"Cannot retrieve reconciliation data");
+	return db_select($sql,"Cannot retrieve reconciliation data");
 
 }
 
@@ -303,7 +303,7 @@ function get_ending_reconciled(string|array|null $bank_account, string|int|array
 	$sql = "SELECT ending_reconcile_balance
 		FROM ".TB_PREF."bank_accounts WHERE id=".db_escape($bank_account)
 		. " AND last_reconciled_date=".db_escape($bank_date);
-	$result = db_query($sql,"Cannot retrieve last reconciliation");
+	$result = db_select($sql,"Cannot retrieve last reconciliation");
 	return db_fetch($result);
 }
 
@@ -362,7 +362,7 @@ function get_default_bank_account(string|int|float|bool|null $curr=null)
 		." OR b.bank_curr_code='$home_curr'
 		ORDER BY fall_back, dflt_curr_act desc";
 
-	$result = db_query($sql, "could not retreive default bank account");
+	$result = db_select($sql, "could not retreive default bank account");
 
 	return db_fetch($result);
 }
@@ -370,7 +370,7 @@ function get_default_bank_account(string|int|float|bool|null $curr=null)
 function get_default_customer_bank_account(string|array|null $cust_id)
 {
 	$sql = "SELECT curr_code FROM ".TB_PREF."debtors_master WHERE debtor_no=".db_escape($cust_id);
-	$result = db_query($sql, "could not retreive default customer currency code");
+	$result = db_select($sql, "could not retreive default customer currency code");
 	$row = row_or_empty(db_fetch_row($result));
 	$ba = row_or_empty(get_default_bank_account($row[0]));
 	return $ba['id'];
@@ -379,7 +379,7 @@ function get_default_customer_bank_account(string|array|null $cust_id)
 function get_default_supplier_bank_account(string|int|float|bool|array|null $supplier_id)
 {
 	$sql = "SELECT curr_code FROM ".TB_PREF."suppliers WHERE supplier_id=".db_escape($supplier_id);
-	$result = db_query($sql, "could not retreive default supplier currency code");
+	$result = db_select($sql, "could not retreive default supplier currency code");
 	$row = row_or_empty(db_fetch_row($result));
 	$ba = row_or_empty(get_default_bank_account($row[0]));
 	return $ba['id'];
@@ -410,7 +410,7 @@ function identify_bank_account(string|int|float|bool|null $account_number)
 	$sql .= " UNION (SELECT supplier_id AS id, ".BO_SUPPLIER." AS type FROM ".TB_PREF."suppliers WHERE REPLACE(bank_account,' ', '')=$number)";
 	$sql .= " UNION (SELECT branch_code AS id, ".BO_CUSTBRANCH." AS type FROM ".TB_PREF."cust_branch WHERE REPLACE(bank_account,' ', '')=$number)";
 
-	$result = db_query($sql, 'bank account identification failed');
+	$result = db_select($sql, 'bank account identification failed');
 
 	if (db_num_rows($result))
 		return db_fetch($result);
@@ -426,7 +426,7 @@ function identify_bank_account(string|int|float|bool|null $account_number)
 function get_bank_account_currency(string|int|float|bool|array|null $id)
 {
 	$sql= "SELECT bank_curr_code FROM ".TB_PREF."bank_accounts WHERE id=".db_escape($id);
-	$result = db_query($sql, "retreive bank account currency");
+	$result = db_select($sql, "retreive bank account currency");
 
 	$myrow = row_or_empty(db_fetch_row($result));
 	return $myrow[0];

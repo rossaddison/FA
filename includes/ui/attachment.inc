@@ -87,7 +87,7 @@ class attachments extends simple_crud {
 			$filters['visible'] = 1;
 
 		$sql = "SELECT * FROM ".TB_PREF."attachments WHERE trans_no=".db_escape($this->entity)." AND type_no = ".db_escape(isset($_GET['type_no']) ? $_GET['type_no'] : ST_CUSTOMER);
-		$result = db_query($sql, "Could not get data from ".TB_PREF."attachments table");
+		$result = db_select($sql, "Could not get data from ".TB_PREF."attachments table");
 		$attachments = Array();
 		while($row = db_fetch_assoc($result))
 			$attachments[] = $row;
@@ -308,7 +308,7 @@ class attachments extends simple_crud {
 	/** @return array<string, null|string>|false */
 	function db_read() {
 		$sql = "SELECT * FROM ".TB_PREF."attachments WHERE id=".db_escape($this->selected_id);
-		$result = db_query($sql, "Could not get all data from ".TB_PREF."attachments table");
+		$result = db_select($sql, "Could not get all data from ".TB_PREF."attachments table");
 		return db_fetch_assoc($result);
 	}
 

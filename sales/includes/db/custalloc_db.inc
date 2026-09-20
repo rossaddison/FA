@@ -376,7 +376,7 @@ function credit_sales_invoice_allocate(string|int|float|bool|null $invoice_no, s
 
 	$sql = "SELECT ov_freight+ov_gst+ov_amount+ov_freight_tax as total, alloc, debtor_no FROM ".TB_PREF."debtor_trans
 		WHERE (`type`=".ST_SALESINVOICE." AND trans_no=".db_escape($invoice_no).")";
-	$result = db_query($sql, "can't retrieve invoice totals");
+	$result = db_select($sql, "can't retrieve invoice totals");
 	$invoice = row_or_empty(db_fetch($result));
 	$free = (float)$invoice['total'] - (float)$invoice['alloc'];
 
@@ -385,7 +385,7 @@ function credit_sales_invoice_allocate(string|int|float|bool|null $invoice_no, s
 		$sql = "SELECT * FROM ".TB_PREF."cust_allocations
 			WHERE (trans_type_to=".ST_SALESINVOICE." AND trans_no_to=".db_escape($invoice_no)." AND person_id=".db_escape($invoice['debtor_no']).")
 			AND trans_type_from <> ".ST_CUSTCREDIT;
-		$result = db_query($sql, "can't retrieve invoice allocations");
+		$result = db_select($sql, "can't retrieve invoice allocations");
 
 		while(($free < $amount) && ($alloc = db_fetch($result))) {
 			$unalloc = min($alloc['amt'], $amount-$free);

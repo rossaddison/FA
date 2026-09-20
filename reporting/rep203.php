@@ -117,7 +117,7 @@ function print_payment_report(): void
 		$sql .= "supplier_id=".db_escape($fromsupp)." AND ";
 	$sql .= "s.payment_terms = pt.terms_indicator
 		ORDER BY supp_name";
-	$result = db_query($sql, "The customers could not be retrieved");
+	$result = db_select($sql, "The customers could not be retrieved");
 
 	while ($myrow=db_fetch($result))
 	{

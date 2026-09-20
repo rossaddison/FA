@@ -57,7 +57,7 @@ function get_item_code(string|int|float|bool|null $id)
 {
 	$sql="SELECT * FROM ".TB_PREF."item_codes WHERE id=".db_escape($id);
 
-	$result = db_query($sql,"item code could not be retrieved");
+	$result = db_select($sql,"item code could not be retrieved");
 
 	return db_fetch($result);
 }
@@ -116,7 +116,7 @@ function get_item_code_dflts(string|int|float|bool|array|null $stock_id)
 		FROM ".TB_PREF."stock_master,".TB_PREF."item_units
 		WHERE stock_id=".db_escape($stock_id);
 
-	$result = db_query($sql,"item code defaults could not be retrieved");
+	$result = db_select($sql,"item code defaults could not be retrieved");
 	return db_fetch($result);
 }
 //
@@ -154,7 +154,7 @@ function get_kit_props(string|int|float|bool|array|null $kit_code)
 {
 	$sql = "SELECT description, category_id FROM ".TB_PREF."item_codes "
 		. " WHERE item_code=".db_escape($kit_code);
-	$res = db_query($sql, "kit name query failed");
+	$res = db_select($sql, "kit name query failed");
 	return db_fetch($res);
 }
 
@@ -175,5 +175,5 @@ function get_where_used(string|int|float|bool|null $item_code)
 		.TB_PREF."item_codes "
 		. " WHERE stock_id=".db_escape($item_code)."
 			AND item_code!=".db_escape($item_code);
-	return db_query($sql, "where used query failed");
+	return db_select($sql, "where used query failed");
 }

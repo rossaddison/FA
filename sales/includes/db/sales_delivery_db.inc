@@ -207,7 +207,7 @@ function write_sales_delivery(Cart &$delivery,string|int|float|bool|null $bo_pol
 function adjust_shipping_charge(Cart &$delivery, string|int|float|bool|null $trans_no): void
 {
   	$sql = "SELECT sum(ov_freight) as freight FROM ".TB_PREF."debtor_trans WHERE order_ = $trans_no AND type = " . ST_CUSTDELIVERY . " AND debtor_no = " . $delivery->customer_id;
-  	$result = db_query($sql, "Can not find delivery notes");
+  	$result = db_select($sql, "Can not find delivery notes");
   	$row = db_fetch_row($result);
   	if (!is_array($row)) $freight = 0;
   	else $freight = $row[0];

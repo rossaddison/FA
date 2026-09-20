@@ -55,7 +55,7 @@ function exists_bank_trans(string|int|float|bool|array|null $type, string|int|fl
 		FROM ".TB_PREF."bank_trans
 		WHERE type=".db_escape($type)
 		." AND trans_no=".db_escape($type_no);
-	$result = db_query($sql, "Cannot retreive a bank transaction");
+	$result = db_select($sql, "Cannot retreive a bank transaction");
 
     return (db_num_rows($result) > 0);
 }
@@ -89,7 +89,7 @@ function get_bank_trans(string|int|float|bool|null $type, string|int|float|bool|
 		$sql .= " AND bt.person_id = ".db_escape($person_id);
 	$sql .= " ORDER BY trans_date, bt.id";
 
-	return db_query($sql, "query for bank transaction");
+	return db_select($sql, "query for bank transaction");
 }
 
 //----------------------------------------------------------------------------------------
@@ -111,7 +111,7 @@ function get_bank_trans_for_bank_account(string|int|float|bool|null $bank_accoun
 			AND amount != 0
 		ORDER BY trans_date, t.id";
 
-	return db_query($sql,"The transactions for '" . $bank_account . "' could not be retrieved");
+	return db_select($sql,"The transactions for '" . $bank_account . "' could not be retrieved");
 }
 
 //----------------------------------------------------------------------------------------
@@ -126,7 +126,7 @@ function get_balance_before_for_bank_account(string|int|float|bool|null $bank_ac
 		FROM ".TB_PREF."bank_trans
 		WHERE bank_act=".db_escape($bank_account) . "
 			AND trans_date < '$from'";
-	$before_qty = db_query($sql, "The starting balance on hand could not be calculated");
+	$before_qty = db_select($sql, "The starting balance on hand could not be calculated");
 	$bfw_row = row_or_empty(db_fetch_row($before_qty));
 	return $bfw_row[0];
 }
@@ -143,7 +143,7 @@ function get_gl_trans_value(string|int|float|bool|null $account, string|int|floa
 			." AND type=".db_escape($type)
 			." AND type_no=".db_escape($trans_no);
 
-	$result = db_query($sql, "query for gl trans value");
+	$result = db_select($sql, "query for gl trans value");
 
 	$row = row_or_empty(db_fetch_row($result));
 	return $row[0];
@@ -211,7 +211,7 @@ function check_bank_account_history(string|int|float|bool|null $delta_amount, st
 	}
 	$sql .= " GROUP BY trans_date ORDER BY trans_date ASC";
 
-	$history = db_query($sql, "cannot retrieve cash account history");
+	$history = db_select($sql, "cannot retrieve cash account history");
 
 	while ($trans = db_fetch($history)) {
 		$balance += $trans['amount'];

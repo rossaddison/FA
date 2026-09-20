@@ -96,7 +96,7 @@ function get_supp_trans(string|int|float|bool|array|null $trans_no, string|int|f
 			AND account.id=bank_trans.bank_act ";
 	}
 
-	$result = db_query($sql, "Cannot retreive a supplier transaction");
+	$result = db_select($sql, "Cannot retreive a supplier transaction");
 
     if (db_num_rows($result) == 0)
     {
@@ -150,7 +150,7 @@ function get_supp_payment_before(string|int|float|bool|null $supplier_id, string
 	. "LIMIT 1 "
 	;
 
-	$result = db_query($sql, "Cannot retreive a previous supplier payment");
+	$result = db_select($sql, "Cannot retreive a previous supplier payment");
 
 	if (db_num_rows($result) == 0)
 	{
@@ -169,7 +169,7 @@ function exists_supp_trans(string|int|float|bool|array|null $type, string|int|fl
 
 	$sql = "SELECT trans_no FROM ".TB_PREF."supp_trans WHERE type=".db_escape($type)."
 		AND trans_no=".db_escape($type_no);
-	$result = db_query($sql, "Cannot retreive a supplier transaction");
+	$result = db_select($sql, "Cannot retreive a supplier transaction");
 
     return (db_num_rows($result) > 0);
 }

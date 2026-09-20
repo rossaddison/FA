@@ -58,7 +58,7 @@ function get_gl_accounts(string|array|null $from=null, string|array|null $to=nul
 		$sql .= " AND account_type=".db_escape($type);
 	$sql .= " ORDER BY account_code";
 
-	return db_query($sql, "could not get gl accounts");
+	return db_select($sql, "could not get gl accounts");
 }
 
 /**
@@ -68,7 +68,7 @@ function get_gl_account(string|int|float|bool|null $code)
 {
 	$sql = "SELECT * FROM ".TB_PREF."chart_master WHERE account_code=".db_escape($code);
 
-	$result = db_query($sql, "could not get gl account");
+	$result = db_select($sql, "could not get gl account");
 	return db_fetch($result);
 }
 
@@ -83,7 +83,7 @@ function is_account_balancesheet(string|int|float|bool|array|null $code): bool
 			AND	act_type.class_id=act_class.cid
 			AND coa.account_code=".db_escape($code);
 
-	$result = db_query($sql,"could not retreive the account class for $code");
+	$result = db_select($sql,"could not retreive the account class for $code");
 	$row = row_or_empty(db_fetch_row($result));
 	return $row[0] > 0 && $row[0] < CL_INCOME;
 }
@@ -95,7 +95,7 @@ function get_gl_account_name(string|int|float|bool|array|null $code)
 {
 	$sql = "SELECT account_name from ".TB_PREF."chart_master WHERE account_code=".db_escape($code);
 
-	$result = db_query($sql,"could not retreive the account name for $code");
+	$result = db_select($sql,"could not retreive the account name for $code");
 
 	if (db_num_rows($result) == 1)
 	{
@@ -128,7 +128,7 @@ function gl_account_in_company_defaults(string|int|float|bool|null $acc): bool
 		OR name='default_adj_act'
 		OR name='default_inv_sales_act'
 		OR name='default_wip_act') AND value=".db_escape($acc);
-	$result = db_query($sql,"Couldn't test for default company GL codes");
+	$result = db_select($sql,"Couldn't test for default company GL codes");
 
 	$myrow = row_or_empty(db_fetch_row($result));
 	return ($myrow[0] > 0); 
@@ -144,7 +144,7 @@ function gl_account_in_stock_category(string|int|float|bool|null $acc): bool
 			OR dflt_cogs_act=$acc
 			OR dflt_adjustment_act=$acc 
 			OR dflt_sales_act=$acc";
-	$result = db_query($sql,"Couldn't test for existing stock category GL codes");
+	$result = db_select($sql,"Couldn't test for existing stock category GL codes");
 
 	$myrow = row_or_empty(db_fetch_row($result));
 	return ($myrow[0] > 0); 
@@ -160,7 +160,7 @@ function gl_account_in_stock_master(string|int|float|bool|null $acc): bool
 			OR cogs_account=$acc
 			OR adjustment_account=$acc 
 			OR sales_account=$acc";
-	$result = db_query($sql,"Couldn't test for existing stock GL codes");
+	$result = db_select($sql,"Couldn't test for existing stock GL codes");
 
 	$myrow = row_or_empty(db_fetch_row($result));
 	return ($myrow[0] > 0); 
@@ -174,7 +174,7 @@ function gl_account_in_tax_types(string|int|float|bool|null $acc): bool
 		FROM ".TB_PREF."tax_types
 		WHERE sales_gl_code=$acc 
 			OR purchasing_gl_code=$acc";
-	$result = db_query($sql,"Couldn't test for existing tax GL codes");
+	$result = db_select($sql,"Couldn't test for existing tax GL codes");
 
 	$myrow = row_or_empty(db_fetch_row($result));
 	return ($myrow[0] > 0); 
@@ -190,7 +190,7 @@ function gl_account_in_cust_branch(string|int|float|bool|null $acc): bool
 			OR sales_discount_account=$acc
 			OR receivables_account=$acc
 			OR payment_discount_account=$acc";
-	$result = db_query($sql,"Couldn't test for existing cust branch GL codes");
+	$result = db_select($sql,"Couldn't test for existing cust branch GL codes");
 
 	$myrow = row_or_empty(db_fetch_row($result));
 	return ($myrow[0] > 0); 
@@ -205,7 +205,7 @@ function gl_account_in_suppliers(string|int|float|bool|null $acc): bool
 		WHERE purchase_account=$acc
 			OR payment_discount_account=$acc
 			OR payable_account=$acc";
-	$result = db_query($sql,"Couldn't test for existing suppliers GL codes");
+	$result = db_select($sql,"Couldn't test for existing suppliers GL codes");
 
 	$myrow = row_or_empty(db_fetch_row($result));
 	return ($myrow[0] > 0); 
@@ -219,7 +219,7 @@ function gl_account_in_quick_entry_lines(string|int|float|bool|null $acc): bool
 	"SELECT COUNT(*)
 		FROM ".TB_PREF."quick_entry_lines
 		WHERE dest_id=$acc AND UPPER(LEFT(action, 1)) <> 'T'";
-	$result = db_query($sql,"Couldn't test for existing Quick Entry Line GL codes");
+	$result = db_select($sql,"Couldn't test for existing Quick Entry Line GL codes");
 
 	$myrow = row_or_empty(db_fetch_row($result));
 	return ($myrow[0] > 0); 
@@ -241,7 +241,7 @@ function is_subledger_account(string|int|float|bool|array|null $account)
 		FROM ".TB_PREF."suppliers 
 		WHERE payable_account=".db_escape($account);
 
-	$result = db_query($sql,"Couldn't test AR/AP account");
+	$result = db_select($sql,"Couldn't test AR/AP account");
 	$myrow = db_fetch_row($result);
 	return $myrow == false ? 0 : $myrow[0];
 }
@@ -260,7 +260,7 @@ function get_subaccount_data(string|int|float|bool|null $code_id, string|int|flo
 			FROM ".TB_PREF."suppliers supp
 			WHERE supplier_id=".db_escape($person_id)." 
 				AND payable_account=".db_escape($code_id);
-	$result = db_query($sql, 'cannot retrieve counterparty name');
+	$result = db_select($sql, 'cannot retrieve counterparty name');
 
 	return  db_fetch($result);
 }
@@ -279,7 +279,7 @@ function get_subaccount_name(?string $code_id, ?string $person_id)
 			FROM ".TB_PREF."suppliers supp
 			WHERE payable_account=".db_escape($code_id)." 
 				AND supplier_id=".db_escape($person_id);
-	$result = db_query($sql, 'cannot retrieve counterparty name');
+	$result = db_select($sql, 'cannot retrieve counterparty name');
 	$row = row_or_empty(db_fetch($result));
 
 	return  $row ? $row['ref'] : '';
@@ -289,7 +289,7 @@ function gl_account_in_bank_accounts(string|array|null $acc): bool
 {
 	$sql= "SELECT COUNT(*) FROM ".TB_PREF."bank_accounts WHERE 
 		account_code=".db_escape($acc);
-	$result = db_query($sql,"Couldn't test bank account GL codes");
+	$result = db_select($sql,"Couldn't test bank account GL codes");
 
 	$myrow = row_or_empty(db_fetch_row($result));
 	return ($myrow[0] > 0); 
@@ -309,7 +309,7 @@ function gl_account_in_bank_accounts(string|array|null $acc): bool
 function is_bank_account(string|int|float|bool|array|null $account_code)
 {
 	$sql= "SELECT id FROM ".TB_PREF."bank_accounts WHERE account_code=".db_escape($account_code);
-	$result = db_query($sql, "checking account is bank account");
+	$result = db_select($sql, "checking account is bank account");
 	if (db_num_rows($result) > 0) {
 		$acct = row_or_empty(db_fetch($result));
 		return $acct['id'];
@@ -343,5 +343,5 @@ function get_chart_accounts_search(string|array|null $like, string|int|float|boo
           	chart.account_code LIKE " . db_escape("%" . $like. "%") . "
         	) 
     		ORDER BY chart.account_code LIMIT 0,".(int)($limit); // We only display 10 items.
-	return db_query($sql, "Failed in retreiving GL account list.");
+	return db_select($sql, "Failed in retreiving GL account list.");
 }

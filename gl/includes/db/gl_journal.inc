@@ -75,7 +75,7 @@ function get_journal(string|int|float|bool|null $type, string|int|float|bool|arr
 	$sql = "SELECT * FROM ".TB_PREF."journal 
 	   WHERE `type`=".db_escape($type)." AND " ."`trans_no`=".db_escape($trans_no);
 
-	$myrow= db_query($sql, 'cannot retrieve journal entry');
+	$myrow= db_select($sql, 'cannot retrieve journal entry');
 	return db_fetch($myrow);
 }
 

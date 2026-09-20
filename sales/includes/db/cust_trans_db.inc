@@ -45,7 +45,7 @@ function get_customer_trans_version(string|int|float|bool|null $type, string|int
 
 	$sql .= implode(' OR ', $trans_no) . ')';
 
-	$res = db_query($sql, 'document version retreival');
+	$res = db_select($sql, 'document version retreival');
 
 	$vers = array();
 	while($mysql=db_fetch($res)) {
@@ -206,7 +206,7 @@ function get_customer_trans(string|int|float|bool|array|null $trans_id, string|i
 		$sql .= " AND branch.branch_code = trans.branch_code ";
 	}
 
-	$result = db_query($sql, "Cannot retreive a debtor transaction");
+	$result = db_select($sql, "Cannot retreive a debtor transaction");
 
 	if (db_num_rows($result) == 0) {
 		// can't return nothing
@@ -230,7 +230,7 @@ function exists_customer_trans(string|int|float|bool|array|null $type, string|in
 	$sql = "SELECT trans_no FROM ".TB_PREF."debtor_trans WHERE type=".db_escape($type)."
 		AND trans_no=".db_escape($type_no);
 
-	$result = db_query($sql, "Cannot retreive a debtor transaction");
+	$result = db_select($sql, "Cannot retreive a debtor transaction");
 
 	return (db_num_rows($result) > 0);
 }
@@ -246,7 +246,7 @@ function get_customer_trans_order(string|int|float|bool|null $type, string|int|f
 {
 	$sql = "SELECT order_ FROM ".TB_PREF."debtor_trans WHERE type=".db_escape($type)." AND trans_no=".db_escape($type_no);
 
-	$result = db_query($sql, "The debtor transaction could not be queried");
+	$result = db_select($sql, "The debtor transaction could not be queried");
 
 	$row = db_fetch_row($result);
 
@@ -269,7 +269,7 @@ function get_customer_details_from_trans(string|int|float|bool|null $type, strin
 		AND debtor.debtor_no = trans.debtor_no
 		AND	branch.branch_code = trans.branch_code";
 
-	$result = db_query($sql, "could not get customer details from trans");
+	$result = db_select($sql, "could not get customer details from trans");
 	return db_fetch($result);
 }
 

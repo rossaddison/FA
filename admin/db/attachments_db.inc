@@ -58,7 +58,7 @@ function delete_attachments(string|int|float|bool|null $type_no, string|int|floa
 	$type_no = db_escape($type_no);
 	$trans_no = db_escape($trans_no);
 	$sql = "SELECT * FROM ".TB_PREF."attachments WHERE type_no = $type_no AND trans_no = $trans_no";
-	$result = db_query($sql, "Could not retrieve attachments");
+	$result = db_select($sql, "Could not retrieve attachments");
 	$dir =  company_path(). "/attachments";
 	while ($row = db_fetch($result))
 	{
@@ -77,7 +77,7 @@ function get_attachment_string(string|int|float|bool|null $type, string|int|floa
 	global $path_to_root;
     $str_return = "";    
     $sql = "SELECT * FROM ".TB_PREF."attachments WHERE type_no=".db_escape($type)." AND trans_no=".db_escape($id)." ORDER BY trans_no";
-    $return = db_query($sql, "Could not retrieve attachments");
+    $return = db_select($sql, "Could not retrieve attachments");
     while ($attachment = db_fetch($return))
     {
         if (strlen($str_return))
@@ -108,7 +108,7 @@ function get_attached_documents(string|int|float|bool|null $type, string|int|flo
 function get_attachment(string|int|float|bool|array|null $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."attachments WHERE id=".db_escape($id);
-	$result = db_query($sql, "Could not retrieve attachments");
+	$result = db_select($sql, "Could not retrieve attachments");
 	return db_fetch($result);
 }
 
@@ -118,7 +118,7 @@ function get_attachment(string|int|float|bool|array|null $id)
 function has_attachment(string|int|float|bool|null $type, string|int|float|bool|null $id)
 {
 	$sql = "SELECT DISTINCT * FROM ".TB_PREF."attachments WHERE type_no=".db_escape($type)." AND trans_no=".db_escape($id);
-	$result = db_query($sql, "Could not retrieve attachments");
+	$result = db_select($sql, "Could not retrieve attachments");
 	$myrow = db_fetch($result);
 	if ($myrow === false)
 		return 0;

@@ -92,7 +92,7 @@ function get_price (string|int|float|bool|array|null $stock_id, string|int|float
 		WHERE stock_id = ".db_escape($stock_id)."
 			AND (curr_abrev = ".db_escape($currency)." OR curr_abrev = ".db_escape($home_curr).")";
 
-	$result = db_query($sql, "There was a problem retrieving the pricing information for the part $stock_id for customer");
+	$result = db_select($sql, "There was a problem retrieving the pricing information for the part $stock_id for customer");
 	$num_rows = db_num_rows($result);
 	$rate = round2(get_exchange_rate_from_home_currency($currency, $date),
 	    user_exrate_dec());
@@ -213,7 +213,7 @@ function get_location(Cart &$cart)
 		" AND qty!=0 ".
 		" AND location.loc_code=move.loc_code";
 
-	$result = db_query($sql, 'Retreiving inventory location');
+	$result = db_select($sql, 'Retreiving inventory location');
 
 	if (db_num_rows($result)) {
 		return db_fetch($result);

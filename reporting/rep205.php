@@ -40,7 +40,7 @@ function get_supplier_details_for_report()
 			WHERE inactive = 0
 	 		ORDER BY supp_name";
 
-    return db_query($sql,"No transactions were returned");
+    return db_select($sql,"No transactions were returned");
 }
 
 
@@ -57,7 +57,7 @@ function getTransactions(string|int|array|null $supplier_id, string|array|null $
 		AND (type=".ST_SUPPINVOICE." OR type=".ST_SUPPCREDIT.")
 		AND tran_date >='$date'";
 
-    $result = db_query($sql,"No transactions were returned");
+    $result = db_select($sql,"No transactions were returned");
 
 	$row = row_or_empty(db_fetch_row($result));
 	return $row[0];

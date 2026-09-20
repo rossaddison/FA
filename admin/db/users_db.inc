@@ -89,7 +89,7 @@ function get_users(int|bool|array|null $all=false)
 		WHERE u.role_id=r.id";
 	if (!(bool)$all) $sql .= " AND !u.inactive";
 	
-	return db_query($sql, "could not get users");
+	return db_select($sql, "could not get users");
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -101,7 +101,7 @@ function get_user(string|int|float|bool|array|null $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."users WHERE id=".db_escape($id);
 
-	$result = db_query($sql, "could not get user $id");
+	$result = db_select($sql, "could not get user $id");
 
 	return db_fetch($result);
 }
@@ -115,7 +115,7 @@ function get_user_by_login(string|int|float|bool|null $user_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."users WHERE user_id=".db_escape($user_id);
 
-	$result = db_query($sql, "could not get user $user_id");
+	$result = db_select($sql, "could not get user $user_id");
 
 	return db_fetch($result);
 }
@@ -129,7 +129,7 @@ function get_user_by_email(string|int|float|bool|null $email)
 {
 	$sql = "SELECT * FROM ".TB_PREF."users WHERE email=".db_escape($email);
 
-	$result = db_query($sql, "could not get user for email $email");
+	$result = db_select($sql, "could not get user for email $email");
 
 	if (db_num_rows($result) != 1)
 		return false;
@@ -175,7 +175,7 @@ function check_user_activity(string|int|float|bool|null $id)
 {
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."audit_trail WHERE audit_trail.user="
 		. db_escape($id);
-	$result = db_query($sql,"Cant check user activity");
+	$result = db_select($sql,"Cant check user activity");
 	$ret = row_or_empty(db_fetch($result));
 
 	return $ret[0];
@@ -189,7 +189,7 @@ function show_users_online(): string
 	if (!isset(sysprefs()->show_users_online) || sysprefs()->show_users_online == 0 || !defined('TB_PREF') || 
 		!isset($GetText) || !isset($db))
 		return "";
-	$result = db_query("SHOW TABLES LIKE '".TB_PREF."useronline'");	
+	$result = db_select("SHOW TABLES LIKE '".TB_PREF."useronline'");	
 	if (db_num_rows($result) == 1)
 	{
 		$timeoutseconds = 120;
@@ -226,7 +226,7 @@ function show_users_online(): string
 		db_query("DELETE FROM ".TB_PREF."useronline WHERE timestamp<". $timeout);
 
 		// Select online users
-		$result = db_query("SELECT DISTINCT ip FROM ".TB_PREF."useronline");
+		$result = db_select("SELECT DISTINCT ip FROM ".TB_PREF."useronline");
 		$users = db_num_rows($result);
 	}
 	else

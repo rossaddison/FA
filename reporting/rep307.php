@@ -77,7 +77,7 @@ function trans_qty(?string $stock_id, string|array|null $location, string|array|
 	else
 		$sql .= " AND qty < 0 ";
 
-	$result = db_query($sql, "QOH calculation failed");
+	$result = db_select($sql, "QOH calculation failed");
 
 	$myrow = row_or_empty(db_fetch_row($result));	
 

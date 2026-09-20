@@ -117,7 +117,7 @@ function get_crm_persons(string|int|float|bool|null $type=null, string|int|float
 	else
 	 	$sql .= " ORDER BY contact_id";
 
-	$result = db_query($sql, "Can't get crm persons");
+	$result = db_select($sql, "Can't get crm persons");
 	// fallback to general contacts
 	if (!db_num_rows($result) && (bool)$action && $action != 'general')
 		return get_crm_persons($type, 'general', $entity, $person, $unique);
@@ -132,7 +132,7 @@ function get_crm_person(string|int|float|bool|null $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."crm_persons WHERE id=".db_escape($id);
 
-	$res = db_query($sql, "Can't get crm persons");
+	$res = db_select($sql, "Can't get crm persons");
 
 	$person = db_fetch($res);
 	$person['contacts'] = get_person_contacts($id);
@@ -151,7 +151,7 @@ function get_person_contacts(string|int|float|bool|null $id): array
 			AND r.person_id=".db_escape($id);
 
 	$contacts = array();
-	$ret = db_query($sql, "Can't get crm person contacts");
+	$ret = db_select($sql, "Can't get crm person contacts");
 	while($cont = db_fetch_row($ret))
 		$contacts[] = $cont[0];
 	return $contacts;
@@ -240,7 +240,7 @@ function get_crm_categories(int|array|null $show_inactive)
 	$sql = "SELECT * FROM ".TB_PREF."crm_categories";
 	if (!(bool)$show_inactive) $sql .= " WHERE !inactive";
 	$sql .= " ORDER BY type, action";
-	return db_query($sql,"could not get areas");
+	return db_select($sql,"could not get areas");
 }
 
 /**
@@ -250,7 +250,7 @@ function get_crm_category(string|int|float|bool|array|null $selected_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."crm_categories WHERE id=".db_escape($selected_id);
 
-	$result = db_query($sql,"could not get crm category");
+	$result = db_select($sql,"could not get crm category");
 	return db_fetch($result);
 }
 
@@ -261,7 +261,7 @@ function get_crm_category_name(string|int|float|bool|null $id)
 {
 	$sql = "SELECT name FROM ".TB_PREF."crm_categories WHERE id=".db_escape($id);
 
-	$result = db_query($sql, "could not get sales type");
+	$result = db_select($sql, "could not get sales type");
 
 	$row = db_fetch_row($result);
 	return is_array($row) ? $row[0] : false;
@@ -344,7 +344,7 @@ function is_crm_category_used(string|int|float|bool|null $id)
 {
 	$row = row_or_empty(get_crm_category($id));
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."crm_contacts WHERE type='".(string)$row['type']."' AND action='".(string)$row['action']."'";
-	$result = db_query($sql, "check relations for crm_contacts failed");
+	$result = db_select($sql, "check relations for crm_contacts failed");
 	$contacts = row_or_empty(db_fetch($result));
 	return $contacts[0];
 }

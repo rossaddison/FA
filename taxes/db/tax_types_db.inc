@@ -42,7 +42,7 @@ function get_all_tax_types(int|bool|array|null $all=false)
 				.TB_PREF."chart_master AS Chart2 ON tax_type.purchasing_gl_code = Chart2.account_code";
 
 	if (!(bool)$all) $sql .= " AND !tax_type.inactive";
-	return db_query($sql, "could not get all tax types");
+	return db_select($sql, "could not get all tax types");
 }
 
 /**
@@ -52,7 +52,7 @@ function get_all_tax_types_simple()
 {
 	$sql = "SELECT * FROM ".TB_PREF."tax_types WHERE !inactive";
 
-	return db_query($sql, "could not get all tax types");
+	return db_select($sql, "could not get all tax types");
 }
 
 /**
@@ -68,7 +68,7 @@ function get_tax_type(string|int|float|bool|null $type_id)
 				.TB_PREF."chart_master AS Chart2 ON tax_type.purchasing_gl_code = Chart2.account_code 
 			WHERE id=".db_escape($type_id);
 
-	$result = db_query($sql, "could not get tax type");
+	$result = db_select($sql, "could not get tax type");
 	return db_fetch($result);
 }
 
@@ -79,7 +79,7 @@ function get_tax_type_rate(?string $type_id)
 {
 	$sql = "SELECT rate FROM ".TB_PREF."tax_types WHERE id=".db_escape($type_id);
 
-	$result = db_query($sql, "could not get tax type rate");
+	$result = db_select($sql, "could not get tax type rate");
 
 	$row = db_fetch_row($result);
 	return is_array($row) ? $row[0] : false;
@@ -119,7 +119,7 @@ function is_tax_gl_unique(string|array|null $gl_code, string|int|array|null $gl_
 	if ($selected_id != -1)
 		$sql .= " AND id!=".db_escape($selected_id);
 
-	$res = db_query($sql, "could not query gl account uniqueness");
+	$res = db_select($sql, "could not query gl account uniqueness");
 	$row = row_or_empty(db_fetch($res));
 
 	return $gl_code2 == -1 ? ($row[0] <= 1) : ($row[0] == 0);
@@ -132,7 +132,7 @@ function is_tax_account(string|int|float|bool|null $account_code)
 {
 	$sql= "SELECT id FROM ".TB_PREF."tax_types WHERE 
 		sales_gl_code=".db_escape($account_code)." OR purchasing_gl_code=".db_escape($account_code);
-	$result = db_query($sql, "checking account is tax account");
+	$result = db_select($sql, "checking account is tax account");
 	if (db_num_rows($result) > 0) {
 		$acct = row_or_empty(db_fetch($result));
 		return $acct['id'];

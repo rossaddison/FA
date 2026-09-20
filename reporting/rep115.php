@@ -54,7 +54,7 @@ function get_open_balance(?string $debtorno, string|array|null $to)
     	$sql .= " AND t.tran_date < '$to'";
 	$sql .= " GROUP BY debtor_no";
 
-    $result = db_query($sql,"No transactions were returned");
+    $result = db_select($sql,"No transactions were returned");
     return db_fetch($result);
 }
 
@@ -98,7 +98,7 @@ function get_transactions(?string $debtorno, string|array|null $from, string|arr
     $sql .= " AND ISNULL(voided.id)
         ORDER BY trans.tran_date ";
     
-    return db_query($sql,"No transactions were returned");
+    return db_select($sql,"No transactions were returned");
 }
 
 /**
@@ -109,7 +109,7 @@ function get_customer_reference (string|int|float|bool|null $order_number)
 
     $sql = "SELECT customer_ref FROM ".TB_PREF."sales_orders WHERE order_no =".db_escape($order_number)." AND trans_type=".ST_SALESORDER."";
 
-    $result = db_query($sql,"No Transcation were returned");
+    $result = db_select($sql,"No Transcation were returned");
 
     $val = row_or_empty(db_fetch($result));
 
@@ -219,7 +219,7 @@ function print_customer_balances(): void
 
 	$sql .= " GROUP BY d.debtor_no ORDER BY name";
 
-    $result = db_query($sql, "The customers could not be retrieved");
+    $result = db_select($sql, "The customers could not be retrieved");
 
 	$tot_cur_cr = $tot_cur_db = $tot_open = $tot_bal = 0;
     while ($myrow = db_fetch($result))

@@ -24,7 +24,7 @@ function add_exchange_variation(string|int|float|bool|array|null $trans_no, stri
 		FROM ".TB_PREF."bank_trans bt, ".TB_PREF."bank_accounts ba
 		WHERE ba.id = bt.bank_act AND ba.account_code = ".db_escape($account)." AND bt.trans_date<='".date2sql($date_)."'
 		GROUP BY ba.bank_curr_code";	
-	$result = db_query($sql, "Transactions for bank account $acc_id could not be calculated");
+	$result = db_select($sql, "Transactions for bank account $acc_id could not be calculated");
 	while ($row = db_fetch($result))
 	{
 		if ($row['for_amount'] == 0)
@@ -106,7 +106,7 @@ function get_cust_account_curr_balances(string|array|null $date)
     		AND t.branch_code=b.branch_code AND dt.curr_code<>'".get_company_pref('curr_default')."' 
     		GROUP BY t.debtor_no, b.receivables_account";
 
-    $result = db_query($sql,"Open balances in foreign currency for cannot be retrieved");
+    $result = db_select($sql,"Open balances in foreign currency for cannot be retrieved");
 	return  $result;
 }
 
@@ -126,7 +126,7 @@ function get_supp_account_curr_balances(string|array|null $date)
     		AND supp.curr_code<>'".get_company_pref('curr_default')."' 
     		GROUP BY t.supplier_id";
 
-    $result = db_query($sql,"Open balances in foreign currency for cannot be retrieved");
+    $result = db_select($sql,"Open balances in foreign currency for cannot be retrieved");
 	return  $result;
 }
 
@@ -140,7 +140,7 @@ function get_account_home_balance(?string $person_id, ?int $person_type, ?string
     $sql = "SELECT SUM(amount) FROM ".TB_PREF."gl_trans  
 			WHERE person_id=".db_escape($person_id)." AND account='$rec_account' 
 			AND person_type_id=$person_type AND tran_date <= '$to'";
-	$result = db_query($sql, "The AR/AP balance for customer $person_id could not be calculated");
+	$result = db_select($sql, "The AR/AP balance for customer $person_id could not be calculated");
 	$row = row_or_empty(db_fetch_row($result));
 	return $row[0];
 }
@@ -156,7 +156,7 @@ function add_exchange_variation_all(string|array|null $date, string|array|null $
 	$exchanged = false;
 	$trans_no = get_next_trans_no(ST_JOURNAL);
 	$sql = "SELECT * FROM ".TB_PREF."bank_accounts";
-	$result = db_query($sql, "could not retreive bank accounts");
+	$result = db_select($sql, "could not retreive bank accounts");
 	$b_num = 0;
 	while ($myrow = db_fetch($result))
 	{

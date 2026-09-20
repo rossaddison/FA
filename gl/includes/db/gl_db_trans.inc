@@ -184,7 +184,7 @@ function get_gl_transactions(string|array|null $from_date, string|int|float|bool
 
     $sql .= " ORDER BY tran_date, counter";
 
-    return db_query($sql, "The transactions for could not be retrieved");
+    return db_select($sql, "The transactions for could not be retrieved");
 }
 
 //--------------------------------------------------------------------------------
@@ -301,7 +301,7 @@ function get_gl_balance_from_to(?string $from_date, string|int|float|bool|array|
 	if ($dimension2 != 0)
   		$sql .= " AND dimension2_id = ".($dimension2<0 ? 0 : db_escape($dimension2));
 
-	$result = db_query($sql, "The starting balance for account $account could not be calculated");
+	$result = db_select($sql, "The starting balance for account $account could not be calculated");
 
 	$row = row_or_empty(db_fetch_row($result));
 	return round2($row[0], user_price_dec());
@@ -325,7 +325,7 @@ function get_gl_trans_from_to(string|int|float|bool|null $from_date, string|int|
 	if ($dimension2 != 0)
   		$sql .= " AND dimension2_id = ".($dimension2<0 ? 0 : db_escape($dimension2));
 
-	$result = db_query($sql, "Transactions for account $account could not be calculated");
+	$result = db_select($sql, "Transactions for account $account could not be calculated");
 
 	$row = row_or_empty(db_fetch_row($result));
 	return round2($row[0], user_price_dec());
@@ -356,7 +356,7 @@ function get_balance(?string $account, string|int|float|bool|array|null $dimensi
 		.($dimension == 0 ? ''  : " AND dimension_id = ".($dimension<0 ? 0 : db_escape($dimension)))
 		.($dimension2 == 0 ? '' : " AND dimension2_id = ".($dimension2<0 ? 0 : db_escape($dimension2)));
 
-	$result = db_query($sql,"No general ledger accounts were returned");
+	$result = db_select($sql,"No general ledger accounts were returned");
 
 	return db_fetch($result);
 }
@@ -383,7 +383,7 @@ function get_budget_trans_from_to(string|int|float|bool|null $from_date, string|
   		$sql .= " AND dimension_id = ".($dimension<0?0:db_escape($dimension));
 	if ($dimension2 != 0)
   		$sql .= " AND dimension2_id = ".($dimension2<0?0:db_escape($dimension2));
-	$result = db_query($sql,"No budget accounts were returned");
+	$result = db_select($sql,"No budget accounts were returned");
 
 	$row = row_or_empty(db_fetch_row($result));
 	return $row[0];
@@ -395,7 +395,7 @@ function exists_gl_budget(string|int|null $date_, string|int|float|bool|null $ac
 	$sql = "SELECT account FROM ".TB_PREF."budget_trans WHERE account=".db_escape($account)
 	." AND tran_date='$date_' AND
 		dimension_id=".db_escape($dimension)." AND dimension2_id=".db_escape($dimension2);
-	$result = db_query($sql, "Cannot retreive a gl transaction");
+	$result = db_select($sql, "Cannot retreive a gl transaction");
 
     return (db_num_rows($result) > 0);
 }
@@ -444,7 +444,7 @@ function get_only_budget_trans_from_to(string|int|float|bool|null $from_date, st
 		." AND tran_date >= '$from' AND tran_date <= '$to'
 		 AND dimension_id = ".db_escape($dimension)
 		 ." AND dimension2_id = ".db_escape($dimension2);
-	$result = db_query($sql,"No budget accounts were returned");
+	$result = db_select($sql,"No budget accounts were returned");
 
 	$row = row_or_empty(db_fetch_row($result));
 	return $row[0];
@@ -582,7 +582,7 @@ function get_tax_summary(string|array|null $from, string|array|null $to, bool $a
 		GROUP BY ttype.id";
 
 		// display_error($sql);
-    return db_query($sql,"Cannot retrieve tax summary");
+    return db_select($sql,"Cannot retrieve tax summary");
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -591,7 +591,7 @@ function exists_gl_trans(string|int|float|bool|array|null $type, string|int|floa
 {
 	$sql = "SELECT type_no FROM ".TB_PREF."gl_trans WHERE type=".db_escape($type)
 		." AND type_no=".db_escape($trans_id);
-	$result = db_query($sql, "Cannot retreive a gl transaction");
+	$result = db_select($sql, "Cannot retreive a gl transaction");
 
     return (db_num_rows($result) > 0);
 }

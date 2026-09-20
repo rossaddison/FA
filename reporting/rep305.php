@@ -87,7 +87,7 @@ function getSuppInvDetails(?string $grn_item_id)
 			AND inv_line.grn_item_id = ".$grn_item_id."
 			ORDER BY inv_line.id asc";
 
-	return db_query($sql,"No transactions were returned");
+	return db_select($sql,"No transactions were returned");
 }
 
 //----------------------------------------------------------------------------------------------------

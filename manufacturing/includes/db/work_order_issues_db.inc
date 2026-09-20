@@ -93,7 +93,7 @@ function get_work_order_issues(string|int|float|bool|null $woid)
 {
 	$sql = "SELECT * FROM ".TB_PREF."wo_issues WHERE workorder_id=".db_escape($woid)
 	." ORDER BY issue_no";
-    return db_query($sql, "The work order issues could not be retrieved");
+    return db_select($sql, "The work order issues could not be retrieved");
 }
 
 /**
@@ -108,7 +108,7 @@ function get_additional_issues(string|int|float|bool|null $woid)
 		WHERE issue.issue_no=item.issue_id
 		AND issue.workorder_id=".db_escape($woid)
 		." ORDER BY item.id";
-    return db_query($sql, "The work order issues could not be retrieved");
+    return db_select($sql, "The work order issues could not be retrieved");
 }
 //--------------------------------------------------------------------------------------
 
@@ -129,7 +129,7 @@ function get_work_order_issue(string|int|float|bool|null $issue_no)
 		AND loc.loc_code = issue.loc_code
 		AND center.id = issue.workcentre_id
 		AND item.stock_id = wo.stock_id";
-    $result = db_query($sql, "A work order issue could not be retrieved");
+    $result = db_select($sql, "A work order issue could not be retrieved");
 
     return db_fetch($result);
 }
@@ -147,7 +147,7 @@ function get_work_order_issue_details(string|int|float|bool|null $issue_no)
 		WHERE issue_id=".db_escape($issue_no)."
 		AND item.stock_id=issue.stock_id
 		ORDER BY issue.id";
-    return db_query($sql, "The work order issue items could not be retrieved");
+    return db_select($sql, "The work order issue items could not be retrieved");
 }
 
 //--------------------------------------------------------------------------------------
@@ -155,7 +155,7 @@ function get_work_order_issue_details(string|int|float|bool|null $issue_no)
 function exists_work_order_issue(string|int|float|bool|array|null $issue_no): bool
 {
 	$sql = "SELECT issue_no FROM ".TB_PREF."wo_issues WHERE issue_no=".db_escape($issue_no);
-	$result = db_query($sql, "Cannot retreive a wo issue");
+	$result = db_select($sql, "Cannot retreive a wo issue");
 
     return (db_num_rows($result) > 0);
 }

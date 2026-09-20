@@ -64,7 +64,7 @@ function get_kits(string|int|array|null $category=0)
 	if ($category != 0)
 		$sql .= " AND c.category_id = ".db_escape($category);
 	$sql .= " GROUP BY i.item_code";
-    return db_query($sql,"No kits were returned");
+    return db_select($sql,"No kits were returned");
 }
 
 //----------------------------------------------------------------------------------------------------

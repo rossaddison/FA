@@ -28,7 +28,7 @@ function read_supplier_details_to_trans(supp_trans &$supp_trans, string|int|floa
 		AND supp.payment_terms=terms.terms_indicator
 		AND supp.supplier_id = ".db_escape($supplier_id)." GROUP BY supp.supp_name";
 
-	$result = db_query($sql, "The supplier record selected: " . $supplier_id . " cannot be retrieved");
+	$result = db_select($sql, "The supplier record selected: " . $supplier_id . " cannot be retrieved");
 
 	$myrow = row_or_empty(db_fetch($result));
 
@@ -73,7 +73,7 @@ function update_supp_received_items_for_invoice(string|int|float|bool|null $id, 
 	{
 		$sql = "SELECT act_price, unit_price FROM ".TB_PREF."purch_order_details WHERE
 			po_detail_item = ".db_escape($po_detail_item);
-		$result = db_query($sql, "The old actual price of the purchase order line could not be retrieved");
+		$result = db_select($sql, "The old actual price of the purchase order line could not be retrieved");
 		$row = row_or_empty(db_fetch($result));
 		$ret = $row['act_price'];
 
@@ -84,7 +84,7 @@ function update_supp_received_items_for_invoice(string|int|float|bool|null $id, 
 				.TB_PREF."grn_items line
 			WHERE
 				grn.id = line.grn_batch_id AND line.id=".db_escape($id);
-		$result = db_query($sql, "The old delivery date from the received record cout not be retrieved");
+		$result = db_select($sql, "The old delivery date from the received record cout not be retrieved");
 		$row = row_or_empty(db_fetch($result));
 		$date = $row['delivery_date'];
 	}
@@ -427,7 +427,7 @@ function get_po_invoices_credits(string|int|float|bool|null $po_number)
 			AND po.order_no = poline.order_no
 			AND poline.order_no = ".db_escape($po_number);
 
-	return db_query($sql, "The invoices/credits for the po $po_number could not be retreived");
+	return db_select($sql, "The invoices/credits for the po $po_number could not be retreived");
 }
 
 //----------------------------------------------------------------------------------------
@@ -442,7 +442,7 @@ function get_tax_overrides(string|int|float|bool|null $trans_type, string|int|fl
 		WHERE trans_type=".db_escape($trans_type)." AND trans_no=".db_escape($trans_no)
 		." AND amount>0"; // skip reposting of nondeductible VAT
 
-	$result = db_query($sql, 'Cannot retrieve tax overrides');
+	$result = db_select($sql, 'Cannot retrieve tax overrides');
 	while($row = db_fetch($result))
 	{
 		$tax_overrides[$row['id']] = $row['amount'];
@@ -463,7 +463,7 @@ function read_supp_invoice(string|int|float|bool|null $trans_no, string|int|floa
 		WHERE trans_no = ".db_escape($trans_no)." AND type = ".db_escape($trans_type)."
 		AND sup.supplier_id=trans.supplier_id";
 
-	$result = db_query($sql, "Cannot retreive a supplier transaction");
+	$result = db_select($sql, "Cannot retreive a supplier transaction");
 
 	if (db_num_rows($result) == 1)
 	{
@@ -537,7 +537,7 @@ function get_matching_invoice_item(?string $stock_id, ?string $po_item_id)
 		WHERE supp_trans_type = ".ST_SUPPINVOICE." AND stock_id = "
 		.db_escape($stock_id)." AND po_detail_item_id = ".db_escape($po_item_id)."
 		AND supp_trans_no = trans_no";
-	$result = db_query($sql, "Cannot retreive supplier transaction detail records");
+	$result = db_select($sql, "Cannot retreive supplier transaction detail records");
 	return db_fetch($result);  
 }
 
@@ -654,7 +654,7 @@ function void_supp_invoice(string|int|float|bool|null $type, string|int|float|bo
 function get_gl_account_info(string|array|null $acc)
 {
 	$sql = "SELECT account_code, account_name FROM ".TB_PREF."chart_master WHERE account_code=".db_escape($acc);
-	return db_query($sql,"get account information");
+	return db_select($sql,"get account information");
 }
 
 function is_reference_already_there(string|int|float|bool|null $supplier_id, string|array|null $supp_reference, string|int|float|bool|null $trans_no=0): bool
@@ -665,7 +665,7 @@ function is_reference_already_there(string|int|float|bool|null $supplier_id, str
 		. " AND ov_amount!=0"; // ignore voided invoice references
 	if ((bool)$trans_no)
 		$sql .= " AND trans_no!=$trans_no";
-	$result=db_query($sql,"The sql to check for the previous entry of the same invoice failed");
+	$result=db_select($sql,"The sql to check for the previous entry of the same invoice failed");
 
 	$myrow = row_or_empty(db_fetch_row($result));
 	return $myrow[0] > 0;
@@ -728,7 +728,7 @@ function find_src_invoices(?object $cart): array
 			FROM ".TB_PREF."supp_invoice_items items
 			LEFT JOIN ".TB_PREF."supp_trans trans ON trans.trans_no=items.supp_trans_no AND trans.`type`=items.supp_trans_type
 			WHERE items.po_detail_item_id IN (" . implode(',', $po_ids). ")"." AND items.supp_trans_type=20";
-		$result = db_query($sql, "cannot find source invoice details");
+		$result = db_select($sql, "cannot find source invoice details");
 		while ($rec = db_fetch($result))
 		{
 			$invoices[$rec['trans_no']] = $rec['supp_reference']; // array($rec['reference'], $rec['supp_reference']);

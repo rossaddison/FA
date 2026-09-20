@@ -130,7 +130,7 @@ function get_supplier_details(string|int|float|bool|array|null $supplier_id, str
 			  ".TB_PREF."payment_terms.terms,
 			  ".TB_PREF."payment_terms.days_before_due,
 			  ".TB_PREF."payment_terms.day_in_following_month";
-    $result = db_query($sql,"The customer details could not be retrieved");
+    $result = db_select($sql,"The customer details could not be retrieved");
     $supp = db_fetch($result);
 
     return $supp;
@@ -143,7 +143,7 @@ function get_supplier(string|int|float|bool|array|null $supplier_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."suppliers WHERE supplier_id=".db_escape($supplier_id);
 
-	$result = db_query($sql, "could not get supplier");
+	$result = db_select($sql, "could not get supplier");
 
 	return db_fetch($result);
 }
@@ -155,7 +155,7 @@ function get_supplier_name(string|int|float|bool|array|null $supplier_id)
 {
 	$sql = "SELECT supp_name AS name FROM ".TB_PREF."suppliers WHERE supplier_id=".db_escape($supplier_id);
 
-	$result = db_query($sql, "could not get supplier");
+	$result = db_select($sql, "could not get supplier");
 
 	$row = db_fetch_row($result);
 
@@ -169,7 +169,7 @@ function get_supplier_accounts(string|int|float|bool|array|null $supplier_id)
 {
 	$sql = "SELECT payable_account,purchase_account,payment_discount_account, dimension_id, dimension2_id FROM ".TB_PREF."suppliers WHERE supplier_id=".db_escape($supplier_id);
 
-	$result = db_query($sql, "could not get supplier");
+	$result = db_select($sql, "could not get supplier");
 
 	return db_fetch($result);
 }
@@ -202,7 +202,7 @@ function get_supplier_currency(string|int|float|bool|array|null $supplier_id)
 {
     $sql = "SELECT curr_code FROM ".TB_PREF."suppliers WHERE supplier_id = ".db_escape($supplier_id);
 
-	$result = db_query($sql, "Retreive currency of supplier $supplier_id");
+	$result = db_select($sql, "Retreive currency of supplier $supplier_id");
 
 	$myrow=row_or_empty(db_fetch_row($result));
 	return $myrow ? $myrow[0] : get_company_currency();
@@ -227,6 +227,6 @@ function get_suppliers_search(string|array|null $supplier)
 			gst_no LIKE " . db_escape("%" . $supplier. "%") . ")
 		ORDER BY supp_name LIMIT 0,".(int)($limit);
 
-	return db_query($sql, "Failed in retreiving supplier list.");
+	return db_select($sql, "Failed in retreiving supplier list.");
 }
 

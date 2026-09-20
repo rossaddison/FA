@@ -38,7 +38,7 @@ function get_bank_balance_to(string|array|null $to, ?string $account)
 	$to = date2sql($to);
 	$sql = "SELECT SUM(amount) FROM ".TB_PREF."bank_trans WHERE bank_act=".db_escape($account)."
 	AND trans_date < '$to'";
-	$result = db_query($sql, "The starting balance on hand could not be calculated");
+	$result = db_select($sql, "The starting balance on hand could not be calculated");
 	$row = row_or_empty(db_fetch_row($result));
 	return $row[0];
 }
@@ -92,7 +92,7 @@ function print_bank_transactions(): void
 	$sql = "SELECT id, bank_account_name, bank_curr_code, bank_account_number FROM ".TB_PREF."bank_accounts";
 	if ($acc != ALL_TEXT)
 		$sql .= " WHERE id = ".db_escape($acc);
-	$result = db_query($sql, "could not retreive bank accounts");
+	$result = db_select($sql, "could not retreive bank accounts");
 	while ($account=db_fetch($result))
 	{
 		$act = (string)$account['bank_account_name']." - ".(string)$account['bank_curr_code']." - ".(string)$account['bank_account_number'];

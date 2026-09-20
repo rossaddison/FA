@@ -266,7 +266,7 @@ function get_sales_order_header(string|int|float|bool|array|null $order_no, stri
 		AND sorder.trans_type = " . db_escape($trans_type) ."
 		AND sorder.order_no = " . db_escape($order_no );
 
-	$result = db_query($sql, "order Retreival");
+	$result = db_select($sql, "order Retreival");
 
 	$num = db_num_rows($result);
 	if ($num > 1)
@@ -303,7 +303,7 @@ function get_sales_order_details(string|int|float|bool|array|null $order_no, str
 				AND order_no =".db_escape($order_no) 
 				." AND trans_type = ".db_escape($trans_type) . " ORDER BY id";
 
-	return db_query($sql, "Retreive order Line Items");
+	return db_select($sql, "Retreive order Line Items");
 }
 //----------------------------------------------------------------------------------------
 
@@ -367,14 +367,14 @@ function sales_order_has_deliveries(string|int|float|bool|null $order_no): bool
 	"sales_order_details WHERE order_no=".db_escape($order_no)
 	." AND trans_type=".ST_SALESORDER;
 
-	$result = db_query($sql, "could not query for sales order usage");
+	$result = db_select($sql, "could not query for sales order usage");
 
 	$row = row_or_empty(db_fetch_row($result));
 
 	if ($row[0] > 0)
 		return true;  // 2010-04-21 added check for eventually voided deliveries, Joe Hunt
 	$sql = "SELECT order_ FROM ".TB_PREF."debtor_trans WHERE type=".ST_CUSTDELIVERY." AND order_=".db_escape($order_no);
-	$result = db_query($sql,"The related delivery notes could not be retreived");
+	$result = db_select($sql,"The related delivery notes could not be retreived");
 	return (db_num_rows($result) > 0);	
 }
 
@@ -444,7 +444,7 @@ function get_customer_to_order(string|int|float|bool|array|null $customer_id) {
 			AND cust.debtor_no=".db_escape($customer_id)
 		." GROUP by cust.debtor_no";
 
-	$result =db_query($sql,"Customer Record Retreive");
+	$result =db_select($sql,"Customer Record Retreive");
 	return 	db_fetch($result);
 }
 
@@ -468,7 +468,7 @@ function get_branch_to_order(string|int|float|bool|null $customer_id, string|int
 				AND branch.branch_code=".db_escape($branch_id)."
 				AND branch.debtor_no=".db_escape($customer_id);
 
-  	    return db_query($sql,"Customer Branch Record Retreive");
+  	    return db_select($sql,"Customer Branch Record Retreive");
 }
 
 /*
@@ -678,7 +678,7 @@ function last_sales_order_detail(?object $order, ?string $field)
             WHERE debtor_no=" . db_escape($order->customer_id) . "
             ORDER BY d.id DESC LIMIT 1";
 
-        $last_query=db_query($sql, "Could not retrieve last order detail");
+        $last_query=db_select($sql, "Could not retrieve last order detail");
         $row = db_fetch_row($last_query);
         return $row == false ? false : $row[0];
 }

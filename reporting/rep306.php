@@ -90,7 +90,7 @@ function get_supp_inv_reference(?string $supplier_id, ?string $stock_id, ?string
 		AND trans.supplier_id=".db_escape($supplier_id)."
 		AND line.stock_id=".db_escape($stock_id)."
 		AND trans.tran_date=".db_escape($date);
-    $result = db_query($sql,"No transactions were returned");
+    $result = db_select($sql,"No transactions were returned");
     $row = db_fetch_row($result);
 	return is_array($row) ? $row[0] : '';
 }

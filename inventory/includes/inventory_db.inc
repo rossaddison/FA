@@ -64,7 +64,7 @@ function get_stock_movements(string|int|float|bool|null $stock_id, string|int|fl
 		AND move.tran_date <= '" . $before_date . "'
 		AND move.stock_id = ".db_escape($stock_id) . " ORDER BY move.tran_date, move.trans_id";
 
-  	return db_query($sql, "could not query stock moves");
+  	return db_select($sql, "could not query stock moves");
 }
 
 /**
@@ -78,7 +78,7 @@ function calculate_reorder_level(string|int|float|bool|null $location, ?object $
 		WHERE stock.loc_code=loc.loc_code
 		AND stock.stock_id = '" . $line->stock_id . "'
 		AND stock.loc_code = '" . $location . "'";
-	$res = db_query($sql,"a location could not be retreived");
+	$res = db_select($sql,"a location could not be retreived");
 	$loc = db_fetch($res);
 	if ($loc['email'] != "")
 	{

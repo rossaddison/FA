@@ -78,7 +78,7 @@ function close_transactions(string|array|null $todate): int {
 		. " WHERE NOT ISNULL(a.gl_seq) AND gl.amount!=0"	// skip old audit records and voided transactions
 		. " GROUP BY  a.id, gl.tran_date, a.fiscal_year, a.gl_seq ORDER BY a.fiscal_year, gl.tran_date, a.id";
 
-	$result = db_query($sql, "Cannot select transactions for closing");
+	$result = db_select($sql, "Cannot select transactions for closing");
 
 	if (db_num_rows($result)) {
 		$last_year = 0;
@@ -127,7 +127,7 @@ function get_journal_number(string|int|float|bool|null $type, string|int|float|b
 		." AND gl_date<='$cdate'"; // date is stored in sql format
 //		." AND (gl_date<='$cdate'" // some transaction can be not sequenced due to 0 amount, however after edition this could change
 //		." OR gl_seq>0)";
-	$res = db_query($sql, "Cannot check transaction");
+	$res = db_select($sql, "Cannot check transaction");
 	if (db_num_rows($res))
 	{
 		$myrow =row_or_empty(db_fetch($res));

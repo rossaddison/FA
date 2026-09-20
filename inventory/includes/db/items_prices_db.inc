@@ -45,7 +45,7 @@ function get_prices(string|int|float|bool|array|null $stock_id)
 		AND stock_id=".db_escape($stock_id)
 		." ORDER BY curr_abrev, sales_type_id";
 
-	return db_query($sql,"item prices could not be retreived");
+	return db_select($sql,"item prices could not be retreived");
 }
 
 /**
@@ -55,7 +55,7 @@ function get_stock_price(string|int|float|bool|null $price_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."prices WHERE id=".db_escape($price_id);
 
-	$result = db_query($sql,"price could not be retreived");
+	$result = db_select($sql,"price could not be retreived");
 
 	return db_fetch($result);
 }
@@ -69,7 +69,7 @@ function get_stock_price_type_currency(string|int|float|bool|array|null $stock_i
 		AND sales_type_id=".db_escape($type)."
 		AND curr_abrev=".db_escape($currency);
 
-	$result = db_query($sql,"price could not be retreived");
+	$result = db_select($sql,"price could not be retreived");
 
 	return db_fetch($result);
 }

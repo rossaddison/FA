@@ -67,7 +67,7 @@ function get_invoices(?string $supplier_id, string|array|null $to, string|bool|a
 	$sql .= " ORDER BY trans.tran_date";
 
 
-	return db_query($sql, "The supplier details could not be retrieved");
+	return db_select($sql, "The supplier details could not be retrieved");
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -167,7 +167,7 @@ function print_aged_supplier_analysis(): void
 	if ($fromsupp != ALL_TEXT)
 		$sql .= " WHERE supplier_id=".db_escape($fromsupp);
 	$sql .= " ORDER BY supp_name";
-	$result = db_query($sql, "The suppliers could not be retrieved");
+	$result = db_select($sql, "The suppliers could not be retrieved");
 
 	while ($myrow=db_fetch($result))
 	{

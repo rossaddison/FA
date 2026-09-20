@@ -614,7 +614,7 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
 			$out .= "\nSET NAMES $mysql_enc;\n";
 	}
     // get auto_increment values and names of all tables
-    $res = db_query("show table status");
+    $res = db_select("show table status");
     $all_tables = array();
     while($row = db_fetch($res))
     {
@@ -625,7 +625,7 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
         // get table structures
 	foreach ($all_tables as $table)
 	{
-		$res1 = db_query("SHOW CREATE TABLE `" . (string)$table['Name'] . "`");
+		$res1 = db_select("SHOW CREATE TABLE `" . (string)$table['Name'] . "`");
 		$tmp = row_or_empty(db_fetch($res1));
 		$table_sql[$table['Name']] = $tmp["Create Table"];
 	}
@@ -674,7 +674,7 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
 					$out.="### Data of table `".$tablename."` ###\n";
 	
 					// check if field types are NULL or NOT NULL
-					$res3 = db_query("SHOW COLUMNS FROM `" . $tablename . "`");
+					$res3 = db_select("SHOW COLUMNS FROM `" . $tablename . "`");
 	
 					$field_null = array();
 					for ($j = 0; $j < db_num_rows($res3); $j++)
@@ -683,7 +683,7 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
 						$field_null[] = $row3[2]=='YES' && $row3[4]===null;
 					}
 	
-					$res2 = db_query("SELECT * FROM `" . $tablename . "`");
+					$res2 = db_select("SELECT * FROM `" . $tablename . "`");
 					$maxinsert = 0;
 					$insert = '';
 					for ($j = 0; $j < db_num_rows($res2); $j++)

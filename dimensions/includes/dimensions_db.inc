@@ -77,7 +77,7 @@ function get_dimension(string|int|float|bool|array|null $id, bool $allow_null=fa
 {
     $sql = "SELECT * FROM ".TB_PREF."dimensions	WHERE id=".db_escape($id);
 
-	$result = db_query($sql, "The dimension could not be retrieved");
+	$result = db_select($sql, "The dimension could not be retrieved");
 
 	if (!$allow_null && db_num_rows($result) == 0)
 		display_db_error("Could not find dimension $id", $sql);
@@ -130,7 +130,7 @@ function dimension_has_payments(string|int|float|bool|null $id): bool
 {
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."gl_trans WHERE dimension_id = ".db_escape($id)
 	 . " OR dimension2_id = ".db_escape($id);
-	$res = db_query($sql, "Transactions could not be calculated");
+	$res = db_select($sql, "Transactions could not be calculated");
 	$row = row_or_empty(db_fetch_row($res));
 	return ($row[0] > 0);
 }
@@ -174,7 +174,7 @@ function get_dimension_balance_all(string|int|float|bool|null $id, string|int|fl
 			trans.account = coa.account_code
 		AND	(dimension_id = ".db_escape($id)." OR dimension2_id = ".db_escape($id).")
 		AND	tran_date >= '$from' AND tran_date <= '$to' GROUP BY account";
-	return db_query($sql, "Transactions could not be calculated");
+	return db_select($sql, "Transactions could not be calculated");
 }
 
 //--------------------------------------------------------------------------------------
@@ -191,7 +191,7 @@ function get_dimension_balance(string|int|float|bool|null $id, string|array|null
 				tran_date >= '" .	date2sql($from) . "' 
 			AND	tran_date <= '" . date2sql($to) . "' 
 			AND (dimension_id = $id OR dimension2_id = $id)";
-	$res = db_query($sql, "Sum of transactions could not be calculated");
+	$res = db_select($sql, "Sum of transactions could not be calculated");
 	$row = row_or_empty(db_fetch_row($res));
 
 	return $row[0];

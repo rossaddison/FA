@@ -44,7 +44,7 @@ function get_all_tax_groups(int|bool|array|null $all=false)
 	$sql = "SELECT * FROM ".TB_PREF."tax_groups";
 	if (!(bool)$all) $sql .= " WHERE !inactive";
 	
-	return db_query($sql, "could not get all tax group");
+	return db_select($sql, "could not get all tax group");
 } 
 
 /**
@@ -54,7 +54,7 @@ function get_tax_group(string|int|float|bool|null $type_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."tax_groups WHERE id=".db_escape($type_id);
 	
-	$result = db_query($sql, "could not get tax group");
+	$result = db_select($sql, "could not get tax group");
 	
 	return db_fetch($result);
 }
@@ -114,7 +114,7 @@ function get_tax_group_rates(string|int|float|bool|null $group_id=null, bool $ta
 	if ($tax_shipping)
 		$sql .= " AND g.tax_shipping=1";
 
-	return db_query($sql, "cannot get tax types as array");
+	return db_select($sql, "cannot get tax types as array");
 }
 
 function get_tax_group_items_as_array(string|int|float|bool|null $id): array

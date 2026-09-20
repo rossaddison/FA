@@ -35,7 +35,7 @@ function find_last_location(?string $stock_id, string|array|null $end_date)
 	$end_date = date2sql($end_date);
 	$sql = "SELECT loc_code FROM ".TB_PREF."stock_moves WHERE stock_id = ".db_escape($stock_id)." AND
 		tran_date <= '$end_date' ORDER BY tran_date DESC LIMIT 1";
-	$res = db_query($sql,"No stock moves were returned");
+	$res = db_select($sql,"No stock moves were returned");
 	$row = db_fetch_row($res);
 	return is_array($row) ? $row[0] : false;
 }
@@ -99,7 +99,7 @@ function print_fixed_assets_valuation_report(): void
 
 	//$res = getTransactions($category, $location, $date);
 	$sql = get_sql_for_fixed_assets(false);
-	$res = db_query($sql,"No transactions were returned");
+	$res = db_select($sql,"No transactions were returned");
 	
 	$total = $grandtotal = 0.0;
 	$catt = '';

@@ -70,7 +70,7 @@ function get_customer_details_for_report(string|int|array|null $area=0, string|i
 			debtor.debtor_no,
 			branch.branch_code";
 
-    return db_query($sql,"No transactions were returned");
+    return db_select($sql,"No transactions were returned");
 }
 
 function get_contacts_for_branch(?string $branch): array
@@ -80,7 +80,7 @@ function get_contacts_for_branch(?string $branch): array
 			.TB_PREF."crm_contacts r
 		WHERE r.person_id=p.id AND r.type='cust_branch' 
 			AND r.entity_id=".db_escape($branch);
-	$res = db_query($sql, "can't retrieve branch contacts");
+	$res = db_select($sql, "can't retrieve branch contacts");
 	$results = array();
 	while($contact = db_fetch($res))
 		$results[] = $contact;
@@ -101,7 +101,7 @@ function getTransactions(string|int|array|null $debtorno, string|array|null $bra
 		AND (type=".ST_SALESINVOICE." OR type=".ST_CUSTCREDIT.")
 		AND tran_date >='$date'";
 
-    $result = db_query($sql,"No transactions were returned");
+    $result = db_select($sql,"No transactions were returned");
 
 	$row = row_or_empty(db_fetch_row($result));
 	return $row[0];

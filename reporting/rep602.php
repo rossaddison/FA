@@ -39,7 +39,7 @@ function get_bank_balance_to(string|array|null $to, ?string $account)
 	$to = date2sql($to);
 	$sql = "SELECT SUM(amount) FROM ".TB_PREF."bank_trans WHERE bank_act=".db_escape($account)."
 	AND trans_date < '$to'";
-	$result = db_query($sql, "The starting balance on hand could not be calculated");
+	$result = db_select($sql, "The starting balance on hand could not be calculated");
 	$row = row_or_empty(db_fetch_row($result));
 	return $row[0];
 }
@@ -61,7 +61,7 @@ function get_bank_transactions(string|array|null $from, string|array|null $to, ?
 		AND trans.amount <> 0
 		ORDER BY trans_date,trans.id";
 
-	return db_query($sql,"The transactions for '$account' could not be retrieved");
+	return db_select($sql,"The transactions for '$account' could not be retrieved");
 }
 
 function print_bank_transactions_reconcile(): void
@@ -190,7 +190,7 @@ function print_bank_transactions_reconcile(): void
 			
 		//	." AND trans.reconciled IS NOT NULL";
 		//display_notification($sql);
-		$t_result = db_query($sql,"Cannot retrieve reconciliation data");
+		$t_result = db_select($sql,"Cannot retrieve reconciliation data");
 
 		if (($t_row = db_fetch($t_result)) !== false) {
 			$books_total = $t_row['books_total'];

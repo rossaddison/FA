@@ -48,7 +48,7 @@ function get_remittance(string|int|null $type, ?string $trans_no)
 		WHERE trans.supplier_id = supplier.supplier_id
 		AND trans.type = ".db_escape($type)."
 		AND trans.trans_no = ".db_escape($trans_no);
-   	$result = db_query($sql, "The remittance cannot be retrieved");
+   	$result = db_select($sql, "The remittance cannot be retrieved");
    	if (db_num_rows($result) == 0)
    		return false;
     return db_fetch($result);

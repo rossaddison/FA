@@ -115,7 +115,7 @@ function get_customer_details(string|int|float|bool|array|null $customer_id, str
 				credit_status.dissallow_invoices,
 				credit_status.reason_description";
 
-    $result = db_query($sql,"The customer details could not be retrieved");
+    $result = db_select($sql,"The customer details could not be retrieved");
 
     $customer_record = db_fetch($result);
 
@@ -131,7 +131,7 @@ function get_customer(string|int|float|bool|array|null $customer_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."debtors_master WHERE debtor_no=".db_escape($customer_id);
 
-	$result = db_query($sql, "could not get customer");
+	$result = db_select($sql, "could not get customer");
 
 	return db_fetch($result);
 }
@@ -143,7 +143,7 @@ function get_customer_name(string|int|float|bool|array|null $customer_id)
 {
 	$sql = "SELECT name FROM ".TB_PREF."debtors_master WHERE debtor_no=".db_escape($customer_id);
 
-	$result = db_query($sql, "could not get customer");
+	$result = db_select($sql, "could not get customer");
 
 	$row = db_fetch_row($result);
 
@@ -161,7 +161,7 @@ function get_customer_habit(string|array|null $customer_id)
 			WHERE debtor.credit_status = credit_status.id
 			AND debtor.debtor_no = ".db_escape($customer_id);
 
-	$result = db_query($sql, "could not query customers");
+	$result = db_select($sql, "could not query customers");
 
 	return db_fetch($result);
 }
@@ -204,7 +204,7 @@ function get_customer_by_ref(string|int|float|bool|null $reference)
 {
 	$sql = "SELECT * FROM ".TB_PREF."debtors_master WHERE debtor_ref=".db_escape($reference);
 
-	$result = db_query($sql, "could not get customer");
+	$result = db_select($sql, "could not get customer");
 
 	return db_fetch($result);
 }
@@ -218,7 +218,7 @@ function get_customer_currency(string|int|float|bool|array|null $customer_id=nul
     		LEFT JOIN ".TB_PREF."cust_branch branch ON branch.debtor_no=cust.debtor_no
     	WHERE " .(isset($branch_id) ? "branch_code = ".db_escape($branch_id) : "cust.debtor_no = ".db_escape($customer_id));
 
-	$result = db_query($sql, "Retreive currency of customer $customer_id");
+	$result = db_select($sql, "Retreive currency of customer $customer_id");
 
 	$myrow=row_or_empty(db_fetch_row($result));
 	return $myrow ? $myrow[0] : get_company_currency();
@@ -242,5 +242,5 @@ function get_customers_search(string|array|null $customer)
     	     tax_id LIKE " . db_escape("%" . $customer. "%").")
 	  ORDER BY name LIMIT 0,".(int)($limit);
 
-	return db_query($sql, "Failed in retreiving customer list.");
+	return db_select($sql, "Failed in retreiving customer list.");
 }

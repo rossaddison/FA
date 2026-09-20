@@ -186,7 +186,7 @@ $opts = array(		// default options
 	$pname = false;
 	if (($type === "customer" || $type === "supplier") && !empty(sysprefs()->prefs['shortname_name_in_list']))
 		$pname = true;
-	if($result = db_query($sql)) {
+	if($result = db_select($sql)) {
 		while ($contact_row = db_fetch($result)) {
 			$value = $contact_row[0];
 			$descr = $opts['format']==null ?  $contact_row[1] :
@@ -2285,7 +2285,7 @@ function print_profiles_list_row(?string $label, ?string $name, string|int|float
 {
 	$sql = "SELECT profile FROM ".TB_PREF."print_profiles"
 		." GROUP BY profile";
-	$result = db_query($sql, 'cannot get all profile names');
+	$result = db_select($sql, 'cannot get all profile names');
 	$profiles = array();
 	while($myrow=db_fetch($result)) {
 		$profiles[$myrow['profile']] = $myrow['profile'];
@@ -2311,7 +2311,7 @@ function printers_list(?string $name, string|int|float|bool|array|null $selected
 
 	if (!$printers) {
 		$sql = "SELECT id, name, description FROM ".TB_PREF."printers";	
-		$result = db_query($sql, 'cannot get all printers');
+		$result = db_select($sql, 'cannot get all printers');
 		$printers = array();
 		while($myrow=db_fetch($result)) {
 			$printers[$myrow['id']] = (string)$myrow['name'].'&nbsp;-&nbsp;'.(string)$myrow['description'];

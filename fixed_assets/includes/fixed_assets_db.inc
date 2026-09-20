@@ -72,7 +72,7 @@ function get_fixed_asset_move(string|int|float|bool|null $stock_id, ?int $tran_t
 	    WHERE stock_id=".db_escape($stock_id)."
 	    	AND type=".db_escape($tran_type);
 
-  $result = db_query($sql, "cannot retrieve fixed asset move");
+  $result = db_select($sql, "cannot retrieve fixed asset move");
 
   if (db_num_rows($result) == 0)
     return false;
@@ -92,7 +92,7 @@ function get_fixed_asset_disposal(string|int|float|bool|null $stock_id) {
         ORDER BY tran_date DESC
         LIMIT 1";
 
-  $result = db_query($sql, "cannot retrieve fixed asset move");
+  $result = db_select($sql, "cannot retrieve fixed asset move");
 
   if (db_num_rows($result) == 0)
     return false;
@@ -116,7 +116,7 @@ function get_fixed_asset_purchase(string|int|float|bool|null $stock_id)
     	ORDER BY t.tran_date DESC
     	LIMIT 1";
 
-  	$result = db_query($sql, "cannot retrieve fixed asset move");
+  	$result = db_select($sql, "cannot retrieve fixed asset move");
 
   	if (db_num_rows($result) == 0)
     	return false;
@@ -134,7 +134,7 @@ function get_fixed_asset_class(string|int|float|bool|array|null $id)
 {
 	$sql="SELECT * FROM ".TB_PREF."stock_fa_class WHERE fa_class_id=".db_escape($id);
 
-	$result = db_query($sql,"a fixed asset class could not be retrieved");
+	$result = db_select($sql,"a fixed asset class could not be retrieved");
 
 	return db_fetch($result);
 }

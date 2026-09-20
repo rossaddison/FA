@@ -140,7 +140,7 @@ function get_counterparty_name(string|int|float|bool|array|null $trans_type, str
 			return null;
 	}
 
-	$result = db_query($sql, 'cannot retrieve counterparty name');
+	$result = db_select($sql, 'cannot retrieve counterparty name');
 	if (db_num_rows($result))
 	{
 		$row = row_or_empty(db_fetch($result));
@@ -173,7 +173,7 @@ function get_next_trans_no (string|int|float|bool|null $trans_type): float|int{
 	$sql2 = "SELECT MAX(`id`) as last_no FROM ".TB_PREF."voided WHERE `type`=".db_escape($trans_type);
 
 	$sql = "SELECT max(last_no) last_no FROM ($sql1 UNION $sql2) a";
-    $result = db_query($sql,"The next transaction number for $trans_type could not be retrieved");
+    $result = db_select($sql,"The next transaction number for $trans_type could not be retrieved");
     $myrow = row_or_empty(db_fetch_row($result));
 
     return $myrow[0] + 1;

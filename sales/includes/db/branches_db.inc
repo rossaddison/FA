@@ -74,7 +74,7 @@ function branch_in_foreign_table(string|array|null $customer_id, string|int|floa
 {
 	$sql= "SELECT COUNT(*) FROM ".TB_PREF."$table WHERE branch_code=".db_escape($branch_code)
 		." AND debtor_no = ".db_escape($customer_id);
-	$result = db_query($sql,"could not query $table");
+	$result = db_select($sql,"could not query $table");
 	$myrow = row_or_empty(db_fetch_row($result));
 	return ($myrow[0] > 0);
 }
@@ -91,7 +91,7 @@ function get_branch(string|array|null $branch_id)
 		WHERE branch.salesman=salesman.salesman_code 
 			AND branch_code=".db_escape($branch_id);
 
-	$result = db_query($sql, "Cannot retreive a customer branch");
+	$result = db_select($sql, "Cannot retreive a customer branch");
 
 	return db_fetch($result);
 }
@@ -104,7 +104,7 @@ function get_cust_branch(string|array|null $customer_id, string|array|null $bran
 	$sql = "SELECT * FROM ".TB_PREF."cust_branch
 		WHERE branch_code=".db_escape($branch_code)."
 		AND debtor_no=".db_escape($customer_id);
-	$result = db_query($sql,"check failed");
+	$result = db_select($sql,"check failed");
 	return db_fetch($result);
 }
 
@@ -116,7 +116,7 @@ function get_branch_accounts(string|int|float|bool|array|null $branch_id)
 	$sql = "SELECT receivables_account,sales_account, sales_discount_account, payment_discount_account 
 		FROM ".TB_PREF."cust_branch WHERE branch_code=".db_escape($branch_id);
 	
-	$result = db_query($sql, "Cannot retreive a customer branch");
+	$result = db_select($sql, "Cannot retreive a customer branch");
 	
 	return db_fetch($result);
 }
@@ -129,7 +129,7 @@ function get_branch_name(string|int|float|bool|null $branch_id)
 	$sql = "SELECT br_name FROM ".TB_PREF."cust_branch 
 		WHERE branch_code = ".db_escape($branch_id);
 
-	$result = db_query($sql,"could not retreive name for branch" . $branch_id);
+	$result = db_select($sql,"could not retreive name for branch" . $branch_id);
 
 	$myrow = row_or_empty(db_fetch_row($result));
 	return $myrow[0];
@@ -143,7 +143,7 @@ function get_cust_branches_from_group(?string $group_no)
 	$sql = "SELECT branch_code, debtor_no FROM ".TB_PREF."cust_branch 
 		WHERE group_no = ".db_escape($group_no);
 
-	return db_query($sql,"could not retreive branches for group " . $group_no);
+	return db_select($sql,"could not retreive branches for group " . $group_no);
 }
 
 /**
@@ -153,7 +153,7 @@ function get_default_info_for_branch(string|array|null $customer_id)
 {
 	$sql = "SELECT name, address, debtor_ref
 		FROM ".TB_PREF."debtors_master WHERE debtor_no = ".db_escape($customer_id);
-	$result = db_query($sql,"check failed");
+	$result = db_select($sql,"check failed");
 	return db_fetch($result);
 }
 
@@ -217,7 +217,7 @@ function get_branch_contacts(string|int|float|bool|null $branch_code, ?string $a
 	if ((bool)$action)
 		$sql .= ' AND (r.action='.db_escape($action).($default ? " OR r.action='general'" : '').')';
 	
-	$res = db_query($sql, "can't retrieve branch contacts");
+	$res = db_select($sql, "can't retrieve branch contacts");
 
 	$results = array();
 	while($contact = db_fetch($res))
@@ -256,7 +256,7 @@ function _get_branch_contacts(string|int|float|bool|null $branch_code, string|in
 		$sql .= ')';
 	}
 
-	$res = db_query($sql, "can't retrieve branch contacts");
+	$res = db_select($sql, "can't retrieve branch contacts");
 	$results = array();
 	$type = '';
 	while($contact = db_fetch($res)) {
@@ -284,7 +284,7 @@ function get_default_branch(string|int|float|bool|null $customer_id, string|int|
 		FROM ".TB_PREF."cust_branch WHERE debtor_no = ".db_escape($customer_id);
 	if((bool)$ar_account)
 		$sql .= " AND receivables_account=".db_escape($ar_account);
-	$result = db_query($sql,"cannot retrieve default branch");
+	$result = db_select($sql,"cannot retrieve default branch");
 	return db_fetch($result);
 }
 
@@ -313,6 +313,6 @@ function  get_branches_search(string|int|float|bool|null $customer, string|array
 			AND b.br_name LIKE " . db_escape("%" . $branch. "%") . "
 		ORDER BY b.br_name LIMIT 0,".(int)($limit);
 
-	return db_query($sql, "Failed in retreiving branches list.");
+	return db_select($sql, "Failed in retreiving branches list.");
 }
 

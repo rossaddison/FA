@@ -160,7 +160,7 @@ function get_cust_bank_charge(?int $type, string|array|null $trans_no)
 			WHERE pmt.amount!=0 AND charge.amount!=0 AND trans.amount!=0
 				AND trans.type=".db_escape($type)." AND trans.trans_no=".db_escape($trans_no);
 
-	$result = db_query($sql, "cannot retrieve bank charge");
+	$result = db_select($sql, "cannot retrieve bank charge");
 
 	if (!db_num_rows($result))
 		return 0;

@@ -28,7 +28,7 @@ function get_qoh_on_date(string|int|float|bool|array|null $stock_id, string|int|
     if ($location != null)
         $sql .= " AND loc_code = ".db_escape($location);
 
-    $result = db_query($sql, "QOH calculation failed");
+    $result = db_select($sql, "QOH calculation failed");
 
     $myrow = row_or_empty(db_fetch_row($result));
 
@@ -65,7 +65,7 @@ function check_negative_stock(string|int|float|bool|array|null $stock_id, string
     if ((bool)$location)
         $sql .= " AND loc_code = ".db_escape($location);
 
-    $result = db_query($sql, "QOH calculation failed");
+    $result = db_select($sql, "QOH calculation failed");
     $qos = db_fetch_assoc($result);
 
 	// check also all stock changes after the date to avoid negative stock in future
@@ -77,7 +77,7 @@ function check_negative_stock(string|int|float|bool|array|null $stock_id, string
 	$rt = running_total_sql($sql, 'qty', 'tran_date');
 
 	$sql = "SELECT  {$qos['qty']}+total qty, tran_date FROM ($rt) stock_status ORDER by total, tran_date";
-	$history = db_query($sql, 'cannot check stock history');
+	$history = db_select($sql, 'cannot check stock history');
 	$min_qos = db_fetch($history);
 
 	if ((bool)$min_qos && ($min_qos['qty'] < $qos['qty']))
@@ -98,7 +98,7 @@ function get_item_edit_info(string|array|null $stock_id)
 			.TB_PREF."item_units unit
 		WHERE stock_id=".db_escape($stock_id)
 		." AND item.units=unit.abbr";
-	$result = db_query($sql, "The standard cost cannot be retrieved");
+	$result = db_select($sql, "The standard cost cannot be retrieved");
 
 	$row = db_fetch($result);
 	if (is_array($row) && $row['decimals'] == -1)
@@ -116,7 +116,7 @@ function get_unit_cost(string|int|float|bool|array|null $stock_id)
 	$sql = "SELECT material_cost
 		FROM ".TB_PREF."stock_master
 		WHERE stock_id=".db_escape($stock_id);
-	$result = db_query($sql, "The standard cost cannot be retrieved");
+	$result = db_select($sql, "The standard cost cannot be retrieved");
 
 	$myrow = db_fetch_row($result);
 
@@ -133,7 +133,7 @@ function get_purchase_cost(string|int|float|bool|null $stock_id)
 	$sql = "SELECT purchase_cost
 		FROM ".TB_PREF."stock_master
 		WHERE stock_id=".db_escape($stock_id);
-	$result = db_query($sql, "The purchase cost cannot be retrieved");
+	$result = db_select($sql, "The purchase cost cannot be retrieved");
 
 	$myrow = db_fetch_row($result);
 
@@ -147,7 +147,7 @@ function is_inventory_item(string|int|float|bool|array|null $stock_id): bool
 	$sql = "SELECT stock_id FROM "
 		.TB_PREF."stock_master
 		WHERE stock_id=".db_escape($stock_id)." AND mb_flag <> 'D'";
-	$result = db_query($sql, "Cannot query is inventory item or not");
+	$result = db_select($sql, "Cannot query is inventory item or not");
 
 	return db_num_rows($result) > 0;
 }
@@ -170,7 +170,7 @@ function last_negative_stock_begin_date(string|int|float|bool|null $stock_id, st
 		AND qty <> 0
 		GROUP BY stock_id ORDER BY tran_date";
 
-	$result = db_query($sql, "The dstock moves could not be retrieved");
+	$result = db_select($sql, "The dstock moves could not be retrieved");
 	$row = row_or_empty(db_fetch_row($result));
 	return $row[3];
 }
@@ -187,7 +187,7 @@ function get_already_delivered(string|int|float|bool|null $stock_id, string|int|
 		WHERE stock_id = ".db_escape($stock_id)."
 		AND loc_code = ".db_escape($location)."
 		AND type=".ST_CUSTDELIVERY." AND trans_no=".db_escape($trans_no);
-	$result = db_query($sql, "Could not get stock moves");
+	$result = db_select($sql, "Could not get stock moves");
 	$row = db_fetch_row($result);
 	return is_array($row) ? $row[0] : false;
 }
@@ -204,7 +204,7 @@ function last_negative_stock_trans_id(string|int|float|bool|null $stock_id, stri
 		WHERE stock_id=".db_escape($stock_id)." 
 		AND qty <> 0 order by trans_id asc";
 	
-	$result = db_query($sql, "The query on stock moves failed.");
+	$result = db_select($sql, "The query on stock moves failed.");
 	
 	$qty = 0;
 	$flag = 0;
@@ -241,7 +241,7 @@ function get_deliveries_between(string|int|float|bool|null $stock_id, string|int
 		WHERE type=".ST_CUSTDELIVERY." AND stock_id=".db_escape($stock_id)." AND
 			tran_date>='$from' AND tran_date<='$to' GROUP BY stock_id";
 
-	$result = db_query($sql, "The deliveries could not be updated");
+	$result = db_select($sql, "The deliveries could not be updated");
 	return db_fetch_row($result);
 }
 
@@ -256,14 +256,14 @@ function get_deliveries_from_trans(string|int|float|bool|null $stock_id, ?string
         FROM ".TB_PREF."stock_moves
         WHERE stock_id=".db_escape($stock_id)." AND qty < 0 AND
             trans_id>='$move_id' GROUP BY stock_id";
-	$result = db_query($sql, "The deliveries could not be updated");
+	$result = db_select($sql, "The deliveries could not be updated");
 	$row = row_or_empty(db_fetch_row($result));
 	
     $sql = "SELECT IF(type=".ST_SUPPRECEIVE." OR type=".ST_SUPPCREDIT.", price, standard_cost)
         FROM ".TB_PREF."stock_moves
         WHERE stock_id=".db_escape($stock_id)
             ." AND trans_id ='$move_id'";
-    $result = db_query($sql, "The deliveries could not be updated");
+    $result = db_select($sql, "The deliveries could not be updated");
     $cost = row_or_empty(db_fetch_row($result));
 
 	// Adjusting QOH valuation 
@@ -271,7 +271,7 @@ function get_deliveries_from_trans(string|int|float|bool|null $stock_id, ?string
 		FROM ".TB_PREF."stock_moves
 		WHERE stock_id=".db_escape($stock_id)." AND
 			trans_id<'$move_id' GROUP BY stock_id";
-	$result = db_query($sql, "The deliveries could not be updated");
+	$result = db_select($sql, "The deliveries could not be updated");
 	$qoh = row_or_empty(db_fetch_row($result));
 
 	$qty = $row[0] - $qoh[0]; //QOH prior to -ve stock is subtracted
@@ -293,7 +293,7 @@ function get_purchases_from_trans(string|int|float|bool|null $stock_id, ?string 
 		FROM ".TB_PREF."stock_moves
 		WHERE stock_id=".db_escape($stock_id)." AND qty > 0 AND 
 			trans_id>'$move_id' GROUP BY stock_id";
-	$result = db_query($sql, "Could not get get_purchases_from_trans");
+	$result = db_select($sql, "Could not get get_purchases_from_trans");
 	$row = db_fetch_row($result);
 	
 	return $row;
@@ -367,7 +367,7 @@ function get_stock_gl_code(string|int|float|bool|array|null $stock_id)
 		adjustment_account, sales_account, wip_account, dimension_id, dimension2_id FROM
 		".TB_PREF."stock_master WHERE stock_id = ".db_escape($stock_id);
 
-	$get = db_query($sql,"retreive stock gl code");
+	$get = db_select($sql,"retreive stock gl code");
 	return db_fetch($get);
 }
 
@@ -379,7 +379,7 @@ function get_purchase_value(string|int|float|bool|array|null $stock_id)
 	$sql = "SELECT purchase_cost FROM
 		".TB_PREF."stock_master WHERE stock_id = ".db_escape($stock_id);
 
-	$result = db_query($sql,"retreive stock purchase price");
+	$result = db_select($sql,"retreive stock purchase price");
 	$row = db_fetch_row($result);
 	return is_array($row) ? $row[0] : false;
 }
@@ -482,7 +482,7 @@ function get_stock_moves(?int $type, string|int|float|bool|null $type_no)
 		." AND trans_no=".db_escape($type_no)
 		." ORDER BY trans_id";
 
-	return db_query($sql, "Could not get stock moves");
+	return db_select($sql, "Could not get stock moves");
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -496,7 +496,7 @@ function void_stock_move(string|int|float|bool|null $type, string|int|float|bool
 				LEFT JOIN ".TB_PREF."suppliers supplier ON IFNULL(grn.supplier_id, credit.supplier_id)=supplier.supplier_id
 			WHERE move.type=".db_escape($type)." AND move.trans_no=".db_escape($type_no);
 
-    $result = db_query($sql, "Could not void stock moves");
+    $result = db_select($sql, "Could not void stock moves");
     while ($row = db_fetch($result))
     {
 		//Skip cost averaging of service items and if it is a location move
@@ -530,7 +530,7 @@ function get_location_name(string|int|float|bool|array|null $loc_code)
 	$sql = "SELECT location_name FROM ".TB_PREF."locations
 		WHERE loc_code=".db_escape($loc_code);
 
-	$result = db_query($sql, "could not retreive the location name for $loc_code");
+	$result = db_select($sql, "could not retreive the location name for $loc_code");
 
 	if (db_num_rows($result) == 1)
 	{
@@ -548,7 +548,7 @@ function get_mb_flag(string|int|float|bool|array|null $stock_id)
 {
 	$sql = "SELECT mb_flag FROM ".TB_PREF."stock_master
 		WHERE stock_id = ".db_escape($stock_id);
-	$result = db_query($sql, "retreive mb_flag from item");
+	$result = db_select($sql, "retreive mb_flag from item");
 	
 	if (db_num_rows($result) == 0)
 		return -1;

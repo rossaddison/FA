@@ -73,7 +73,7 @@ class fa_patch {
 	{
 		global $security_areas, $security_sections;
 
-		$roles = db_query("SELECT * FROM ".TB_PREF."security_roles");
+		$roles = db_select("SELECT * FROM ".TB_PREF."security_roles");
 
 		while($role = db_fetch($roles))
 		{

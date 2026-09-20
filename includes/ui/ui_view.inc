@@ -1568,7 +1568,7 @@ function payment_link(string|int|float|bool|null $name, array $options): string|
     {
         // For XRPL USD payment links, get the account from XUMM XRP bank account
         $sql = "SELECT bank_account_number FROM ".TB_PREF."bank_accounts WHERE bank_name = 'XUMM XRP'";
-        $result = db_query($sql, "could not retrieve XUMM XRP bank account number");
+        $result = db_select($sql, "could not retrieve XUMM XRP bank account number");
         $row = db_fetch($result);
         if ($row == false) {
             display_error(_("Could not retrieve XUMM XRP bank account number"));
@@ -1582,7 +1582,7 @@ function payment_link(string|int|float|bool|null $name, array $options): string|
         // For XRPL USD links, get issuer and currency format from the XRPL USD bank account
         if (substr($name, 0, 4) == 'XRPL') {
             $sql = "SELECT bank_account_number FROM ".TB_PREF."bank_accounts WHERE bank_name = '$name'";
-            $result = db_query($sql, "could not retrieve $name bank account number");
+            $result = db_select($sql, "could not retrieve $name bank account number");
             $row = db_fetch($result);
             if ($row == false) {
                 display_error(sprintf(_("Could not retrieve %s bank account number"), $name));
@@ -1614,7 +1614,7 @@ function payment_link(string|int|float|bool|null $name, array $options): string|
 			$curr_code = 'XRP';
 			$date = date('Y-m-d');
 			$sql = "SELECT rate_buy FROM ".TB_PREF."exchange_rates WHERE curr_code = '$curr_code' AND date_ = '$date'";
-			$result = db_query($sql, "could not retrieve exchange rate for $curr_code - $date");
+			$result = db_select($sql, "could not retrieve exchange rate for $curr_code - $date");
 			$row = db_fetch($result);
 			if ($row == false) {
 				display_error(sprintf(_("Could not retrieve exchange rate for %s - %s"), $curr_code, $date));

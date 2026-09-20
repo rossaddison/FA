@@ -27,7 +27,7 @@ function get_wo_requirements(string|int|float|bool|array|null $woid)
 		AND loc.loc_code = req.loc_code
 		AND center.id=workcentre";
 
-	return db_query($sql, "The work order requirements could not be retrieved");    
+	return db_select($sql, "The work order requirements could not be retrieved");    
 }
 
 /**
@@ -39,7 +39,7 @@ function get_requirements_costs(string|int|float|bool|null $woid): int|string
 		FROM ".TB_PREF."wo_requirements
 		WHERE workorder_id=".db_escape($woid);
 
-	$result = db_query($sql, "The work order requirements costs could not be retrieved");
+	$result = db_select($sql, "The work order requirements costs could not be retrieved");
 	$costs = row_or_empty(db_fetch($result));
 
 	return $costs['cost'] ? $costs['cost'] : 0;

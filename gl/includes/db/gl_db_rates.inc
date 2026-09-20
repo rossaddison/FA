@@ -17,7 +17,7 @@ include_once($path_to_root . "/includes/remote_url.inc");
 function get_exchange_rate(string|int|float|bool|null $rate_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."exchange_rates WHERE id=".db_escape($rate_id);
-	$result = db_query($sql, "could not get exchange rate for $rate_id");
+	$result = db_select($sql, "could not get exchange rate for $rate_id");
 
 	return db_fetch($result);
 }
@@ -33,7 +33,7 @@ function get_date_exchange_rate(string|int|float|bool|array|null $curr_code, str
 			FROM ".TB_PREF."exchange_rates
 			WHERE curr_code=".db_escape($curr_code)
 				." AND date_='$date'";
-	$result = db_query($sql, "could not get exchange rate for $curr_code - $date_");
+	$result = db_select($sql, "could not get exchange rate for $curr_code - $date_");
 
 	if(db_num_rows($result) == 0) 
 		return 0;
@@ -56,7 +56,7 @@ function get_last_exchange_rate(string|int|float|bool|null $curr_code, string|in
 			WHERE curr_code = ".db_escape($curr_code)."
 				AND date_ <= '$date' GROUP BY rate_buy ORDER BY date_ Desc LIMIT 1";
 
-	$result = db_query($sql, "could not query exchange rates");
+	$result = db_select($sql, "could not query exchange rates");
 
 
 	if (db_num_rows($result) == 0)

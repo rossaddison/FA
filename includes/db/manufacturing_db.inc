@@ -24,7 +24,7 @@ function get_demand_qty(string|int|float|bool|null $stock_id, string|int|float|b
 	if ($location != "")
 		$sql .= " AND sorder.from_stk_loc =".db_escape($location);
 
-    $result = db_query($sql,"No transactions were returned");
+    $result = db_select($sql,"No transactions were returned");
 	$row = db_fetch($result);
 	if ($row === false)
 		return 0;
@@ -46,7 +46,7 @@ function load_stock_levels(string|int|float|bool|null $location): array
 		$sql .= " AND loc_code = ".db_escape($location);
 	$sql .= " GROUP BY stock_id";
 
-	$result = db_query($sql, "QOH calculation failed");
+	$result = db_select($sql, "QOH calculation failed");
 	while ($row = db_fetch($result))
 		$qoh_stock[$row[0]] = $row[1];
 
@@ -79,7 +79,7 @@ function stock_demand_manufacture(string|int|float|bool|null $stock_id, string|i
 		$sql = "SELECT parent, component, quantity FROM "
 			.TB_PREF."bom WHERE parent = ".db_escape($stock_id);
 		if ($location != "") $sql .= " AND loc_code = ".db_escape($location);
-		$result = db_query($sql, "Could not search bom");
+		$result = db_select($sql, "Could not search bom");
 		$bom = array();
 		// Even if we get no results, remember that fact 
 		$bom[] = array($stock_id, '', 0); 
@@ -120,7 +120,7 @@ function get_demand_asm_qty(string|int|float|bool|null $stock_id, string|int|flo
 	if ($location != "")
 		$sql .= " AND sorder.from_stk_loc =".db_escape($location);
 	$sql .= " GROUP BY line.stk_code";
-    $result = db_query($sql, "No transactions were returned");
+    $result = db_select($sql, "No transactions were returned");
 	while ($row = db_fetch_row($result)) {
 		$demand_qty += stock_demand_manufacture($row[0], $row[1], $stock_id, $location);
 	}
@@ -139,7 +139,7 @@ function get_on_porder_qty(string|int|float|bool|null $stock_id, string|array|nu
 	if ($location != "")
 		$sql .= " AND po.into_stock_location=".db_escape($location);
 	$sql .= " AND line.item_code=".db_escape($stock_id);
-	$qoo_result = db_query($sql,"could not receive quantity on order for item");
+	$qoo_result = db_select($sql,"could not receive quantity on order for item");
 
 	if (db_num_rows($qoo_result) == 1)
 	{
@@ -170,7 +170,7 @@ function get_on_worder_qty(string|int|float|bool|null $stock_id, string|array|nu
 		if ($location != "")
 			$sql .= " AND loc_code=".db_escape($location);
 
-		$qoo_result = db_query($sql,"could not receive quantity on order for item");
+		$qoo_result = db_select($sql,"could not receive quantity on order for item");
 		if (db_num_rows($qoo_result) == 1)
 		{
 			$qoo_row = row_or_empty(db_fetch_row($qoo_result));
@@ -229,7 +229,7 @@ function get_bom(mixed $item)
 		AND centre.id=bom.workcentre_added
 		AND bom.loc_code = loc.loc_code ORDER BY bom.id";
 	
-	return db_query($sql, "The bill of material could not be retrieved");
+	return db_select($sql, "The bill of material could not be retrieved");
 }
 
 //--------------------------------------------------------------------------------------
@@ -245,7 +245,7 @@ function get_component_from_bom(string|int|float|bool|array|null $selected_id)
 		WHERE id=".db_escape($selected_id)."
 		AND item.stock_id=bom.component";
 
-	$result = db_query($sql, "could not get bom");
+	$result = db_select($sql, "could not get bom");
 	return db_fetch($result);
 }
 //--------------------------------------------------------------------------------------
@@ -267,7 +267,7 @@ function is_component_already_on_bom(string|array|null $component, string|array|
 		AND component=".db_escape($component) . "
 		AND workcentre_added=".db_escape($workcentre_added) . "
 		AND loc_code=".db_escape($loc_code);
-	$result = db_query($sql,"check failed");
+	$result = db_select($sql,"check failed");
 
 	return (db_num_rows($result) > 0);
 }

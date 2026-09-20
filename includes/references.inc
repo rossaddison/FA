@@ -194,7 +194,7 @@ class references
 				." WHERE ISNULL(v.id)"
 				.($type_fld ? " AND tbl.`$type_fld`=$type" : '')
 				." AND `$ref_fld` REGEXP ".db_escape('^'.preg_quote($prefix).'[0-9]*'.preg_quote($postfix).'$');
-		$result = db_query($sql, 'cannot retrieve last reference');
+		$result = db_select($sql, 'cannot retrieve last reference');
 		$result = db_fetch_row($result);
 
 			// fill with zeros to the length of original index placeholder

@@ -61,7 +61,7 @@ function get_item_tax_type(string|int|float|bool|array|null $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."item_tax_types WHERE id=".db_escape($id);
 	
-	$result = db_query($sql, "could not get item tax type");
+	$result = db_select($sql, "could not get item tax type");
 	
 	return db_fetch($result);
 }
@@ -77,7 +77,7 @@ function get_item_tax_type_for_item(string|int|float|bool|null $stock_id)
 		WHERE item.stock_id=".db_escape($stock_id)."
 		AND item_tax_type.id=item.tax_type_id";
 	
-	$result = db_query($sql, "could not get item tax type");
+	$result = db_select($sql, "could not get item tax type");
 	
 	return db_fetch($result);	
 }
@@ -119,7 +119,7 @@ function get_item_tax_type_exemptions(string|int|float|bool|null $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."item_tax_type_exemptions WHERE item_tax_type_id=".db_escape($id);
 	
-	return db_query($sql, "could not get item tax type exemptions");
+	return db_select($sql, "could not get item tax type exemptions");
 }
 
 function item_type_inactive(string|array|null $id)

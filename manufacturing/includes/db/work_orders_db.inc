@@ -137,7 +137,7 @@ function get_work_order(string|int|float|bool|array|null $woid, bool $allow_null
 		AND wo.id=".db_escape($woid)."
 		GROUP BY wo.id";
 
-	$result = db_query($sql, "The work order could not be retrieved");
+	$result = db_select($sql, "The work order could not be retrieved");
 
 	if (!$allow_null && db_num_rows($result) == 0)
 	{
@@ -153,7 +153,7 @@ function get_work_order(string|int|float|bool|array|null $woid, bool $allow_null
 function work_order_has_productions(string|int|float|bool|null $woid): bool
 {
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."wo_manufacture WHERE workorder_id=".db_escape($woid);
-	$result = db_query($sql, "query work order for productions");
+	$result = db_select($sql, "query work order for productions");
 
 	$myrow = row_or_empty(db_fetch_row($result));
 	return ($myrow[0] > 0);
@@ -165,7 +165,7 @@ function work_order_has_productions(string|int|float|bool|null $woid): bool
 function work_order_has_issues(string|int|float|bool|null $woid): bool
 {
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."wo_issues WHERE workorder_id=".db_escape($woid);
-	$result = db_query($sql, "query work order for issues");
+	$result = db_select($sql, "query work order for issues");
 
 	$myrow = row_or_empty(db_fetch_row($result));
 	return ($myrow[0] > 0);
@@ -217,7 +217,7 @@ function close_work_order(string|int|float|bool|null $woid): void
 function work_order_is_closed(?string $woid): bool
 {
 	$sql = "SELECT closed FROM ".TB_PREF."workorders WHERE id = ".db_escape($woid);
-	$result = db_query($sql, "could not query work order");
+	$result = db_select($sql, "could not query work order");
 	$row = row_or_empty(db_fetch_row($result));
 	return ($row[0] > 0);
 }

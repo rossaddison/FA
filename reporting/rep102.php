@@ -149,7 +149,7 @@ function print_aged_customer_analysis(): void
 	if ($fromcust != ALL_TEXT)
 		$sql .= " WHERE debtor_no=".db_escape($fromcust);
 	$sql .= " ORDER BY name";
-	$result = db_query($sql, "The customers could not be retrieved");
+	$result = db_select($sql, "The customers could not be retrieved");
 
 	while ($myrow=db_fetch($result))
 	{

@@ -51,7 +51,7 @@ function get_tags(string|int|float|bool|null $type, string|int|float|bool|array|
 	
 	$sql .= " ORDER BY name";
 
-	return db_query($sql, "could not get tags");
+	return db_select($sql, "could not get tags");
 }
 
 //--------------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ function get_tag(string|int|float|bool|null $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."tags WHERE id = ".db_escape($id);
 
-	$result = db_query($sql, "could not get tag");
+	$result = db_select($sql, "could not get tag");
 
 	return db_fetch($result);
 }
@@ -77,7 +77,7 @@ function get_tag_type(string|int|float|bool|null $id)
 {
 	$sql = "SELECT type FROM ".TB_PREF."tags WHERE id = ".db_escape($id);
 
-	$result = db_query($sql, "could not get tag type");
+	$result = db_select($sql, "could not get tag type");
 
 	$row = db_fetch_row($result);
 	return is_array($row) ? $row[0] : false;
@@ -92,7 +92,7 @@ function get_tag_name(string|int|float|bool|null $id)
 {
 	$sql = "SELECT name FROM ".TB_PREF."tags WHERE id = ".db_escape($id);
 
-	$result = db_query($sql, "could not get tag name");
+	$result = db_select($sql, "could not get tag name");
 	
 	$row = row_or_empty(db_fetch_row($result));
 	return $row ? $row[0] : '';
@@ -123,7 +123,7 @@ function get_tag_description(string|int|float|bool|null $id)
 {
 	$sql = "SELECT description FROM ".TB_PREF."tags WHERE id = ".db_escape($id);
 
-	$result = db_query($sql, "could not get tag description");
+	$result = db_select($sql, "could not get tag description");
 
 	$row = db_fetch_row($result);
 	return is_array($row) ? $row[0] : false;
@@ -178,7 +178,7 @@ function delete_tag_associations(?int $type, string|int|float|bool|null $recordi
 			WHERE tags.type = ".db_escape($type)." AND ta.record_id = ".db_escape($recordid);
 	if (!$all)
 		$sql .= " AND tags.inactive = 0";
-	$result = db_query($sql, "could not select tag associations");
+	$result = db_select($sql, "could not select tag associations");
 
 	while($ta = db_fetch($result)) {
 		$sql2 = "DELETE FROM ".TB_PREF."tag_associations WHERE 
@@ -214,7 +214,7 @@ function get_records_associated_with_tag(string|int|float|bool|null $id)
 		INNER JOIN ".TB_PREF."tags AS tags ON ta.tag_id = tags.id
 	        WHERE tags.id = ".db_escape($id);
 
-	return db_query($sql, "could not get tag associations for tag");
+	return db_select($sql, "could not get tag associations for tag");
 }
 
 //--------------------------------------------------------------------------------------
@@ -228,7 +228,7 @@ function get_tags_associated_with_record(?int $type, string|int|float|bool|null 
 				INNER JOIN ".TB_PREF."tags AS tags ON tags.id = ta.tag_id 
 				WHERE tags.type = $type	AND ta.record_id = ".db_escape($recordid);
 
-	return db_query($sql, "could not get tags associations for record");
+	return db_select($sql, "could not get tags associations for record");
 }
 
 //--------------------------------------------------------------------------------------
@@ -240,7 +240,7 @@ function is_record_in_tags(?array $tags, ?int $type, ?string $recordid): bool
 		$sql = "SELECT ta.record_id FROM ".TB_PREF."tag_associations AS ta 
 				INNER JOIN ".TB_PREF."tags AS tags ON tags.id = ta.tag_id 
 				WHERE tags.type = $type AND tags.id = $id AND ta.record_id = ".db_escape($recordid);
-		$res = db_query($sql, "could not get tags associations for record");
+		$res = db_select($sql, "could not get tags associations for record");
 		if (db_num_rows($res) == 0)
 			return false;
 	}

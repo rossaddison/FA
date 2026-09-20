@@ -82,7 +82,7 @@ function get_item_categories(int|array|null $show_inactive, bool $fixed_asset=fa
 
 	$sql .= " ORDER by description";
 
-	return db_query($sql, "could not get stock categories");
+	return db_select($sql, "could not get stock categories");
 }
 
 /**
@@ -92,7 +92,7 @@ function get_item_category(string|int|float|bool|array|null $id)
 {
 	$sql="SELECT * FROM ".TB_PREF."stock_category WHERE category_id=".db_escape($id);
 
-	$result = db_query($sql,"an item category could not be retrieved");
+	$result = db_select($sql,"an item category could not be retrieved");
 
 	return db_fetch($result);
 }
@@ -104,7 +104,7 @@ function get_category_name(string|array|null $id)
 {
 	$sql = "SELECT description FROM ".TB_PREF."stock_category WHERE category_id=".db_escape($id);
 
-	$result = db_query($sql, "could not get sales type");
+	$result = db_select($sql, "could not get sales type");
 
 	$row = db_fetch_row($result);
 	return is_array($row) ? $row[0] : false;

@@ -59,7 +59,7 @@ function getYTD(?string $dim)
 		WHERE (dimension_id = ".db_escape($dim)." OR dimension2_id = ".db_escape($dim).")
 		AND tran_date >= '$date'";
 
-    $TransResult = db_query($sql,"No transactions were returned");
+    $TransResult = db_select($sql,"No transactions were returned");
 	if (db_num_rows($TransResult) == 1)
 	{
 		$DemandRow = row_or_empty(db_fetch_row($TransResult));

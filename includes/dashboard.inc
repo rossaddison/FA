@@ -438,7 +438,7 @@ function customer_top(?string $today, ?int $limit=10, string|int|null $width='33
 		AND (trans.type = ".ST_SALESINVOICE." OR trans.type = ".ST_CUSTCREDIT.")
 		AND tran_date >= '$begin' AND tran_date <= '$today' GROUP by d.debtor_no ORDER BY total DESC, d.debtor_no
 		LIMIT $limit";
-	$result = db_query($sql);
+	$result = db_select($sql);
 	$title = sprintf(_("Top %s customers in fiscal year"), $limit);
 	display_title($title);
 	$th = array(_("Customer"), _("Amount"));
@@ -480,7 +480,7 @@ function supplier_top(?string $today, ?int $limit=10, string|int|null $width='33
 		AND (trans.type = ".ST_SUPPINVOICE." OR trans.type = ".ST_SUPPCREDIT.")
 		AND tran_date >= '$begin' AND tran_date <= '$today' GROUP by s.supplier_id ORDER BY total DESC, s.supplier_id
 		LIMIT $limit";
-	$result = db_query($sql);
+	$result = db_select($sql);
 	$title = sprintf(_("Top %s suppliers in fiscal year"), $limit);
 	display_title($title);
 	$th = array(_("Supplier"), _("Amount"));
@@ -544,7 +544,7 @@ function stock_top(?string $today, ?int $limit=10, string|int|null $width='33', 
 	if ($type != 2)
 		$sql .= "AND tran_date >= '$begin' ";
 	$sql .= "AND tran_date <= '$today' GROUP by s.stock_id ORDER BY total DESC, s.stock_id LIMIT $limit";
-	$result = db_query($sql);
+	$result = db_select($sql);
 	if ($type == 1)
 		$title = sprintf(_("Top %s Manufactured Items in fiscal year"), $limit);
 	elseif ($type == 2)
@@ -618,7 +618,7 @@ function dimension_top(?string $today, ?int $limit=10, string|int|null $width='3
 		LEFT JOIN ".TB_PREF."chart_class AS c ON t.class_id = c.cid
 		WHERE IF(c.ctype > 3, tran_date >= '$begin', tran_date >= '0000-00-00') 
 		AND tran_date <= '$today'  AND d.reference IS NOT NULL GROUP BY d.reference ORDER BY result DESC LIMIT $limit"; 	
-	$result = db_query($sql, "Transactions could not be calculated");
+	$result = db_select($sql, "Transactions could not be calculated");
 	$title = sprintf(_("Top %s Dimensions in fiscal year"), $limit);
 	display_title($title);
 	$th = array(_("Dimension"), _("Balance"), _("Result"));
@@ -663,7 +663,7 @@ function gl_top(?string $today, string|int|null $width='33', ?object &$pg=null):
 		account = a.account_code AND a.account_type = t.id AND t.class_id = c.cid
 		AND IF(c.ctype > 3, tran_date >= '$begin', tran_date >= '0000-00-00') 
 		AND tran_date <= '$today' GROUP BY c.cid ORDER BY c.cid"; 
-	$result = db_query($sql, "Transactions could not be calculated");
+	$result = db_select($sql, "Transactions could not be calculated");
 	$title = _("Class Balances");
 	display_title($title);
 	start_table(TABLESTYLE2, "width='$width%'");
@@ -722,7 +722,7 @@ function gl_week_performance(?string $today, string|int|null $width="33", ?int $
 			AND tran_date >= '$begin' AND tran_date <= '$today1' 
 			GROUP BY week_name ORDER BY week_name DESC LIMIT 0, $weeks) b 
 		GROUP BY week_name ORDER BY week_name ASC";
-	$result = db_query($sql, "Transactions could not be calculated");
+	$result = db_select($sql, "Transactions could not be calculated");
 	$title = sprintf(_("Last %s weeks Performance"), $weeks);
 	check_page_security('SA_GLANALYTIC');
 	$week_names = $sales = $costs = $results = array();
@@ -760,7 +760,7 @@ function gl_month_performance(?string $today, string|int|null $width="33", ?int 
 			AND tran_date >= '$begin' AND tran_date <= '$today1' 
 			GROUP BY month_name ORDER BY month_name DESC LIMIT 0, $months) b 
 		GROUP BY month_name ORDER BY month_name ASC";
-	$result = db_query($sql, "Transactions could not be calculated");
+	$result = db_select($sql, "Transactions could not be calculated");
 	$title = sprintf(_("Last %s Months Performance"), $months);
 	check_page_security('SA_GLANALYTIC');
 	$month_names = $sales = $costs = $results = array();
@@ -805,7 +805,7 @@ function customer_aging(?string $today, string|int|null $width="33"): float
 					debtor.payment_terms = terms.terms_indicator
 	 			AND debtor.credit_status = credit_status.id";
 		$sql .= " AND ABS(IF(trans.prep_amount, trans.prep_amount, ABS(trans.ov_amount) + trans.ov_gst + trans.ov_freight + trans.ov_freight_tax + trans.ov_discount) - trans.alloc) > ".FLOAT_COMP_DELTA;
-    $result = db_query($sql,"The customer details could not be retrieved");
+    $result = db_select($sql,"The customer details could not be retrieved");
 
     $row = row_or_empty(db_fetch($result));
 
@@ -838,7 +838,7 @@ function customer_balance(?string $today)
 			FROM ".TB_PREF."debtors_master debtor
 				 LEFT JOIN ".TB_PREF."debtor_trans trans ON trans.tran_date <= '$today' AND debtor.debtor_no = trans.debtor_no AND trans.type <> ".ST_CUSTDELIVERY."
 			WHERE ABS(trans.ov_amount + trans.ov_gst + trans.ov_freight + trans.ov_freight_tax + trans.ov_discount) - trans.alloc > ".FLOAT_COMP_DELTA;
-    $result = db_query($sql,"The customer details could not be retrieved");
+    $result = db_select($sql,"The customer details could not be retrieved");
     $row = row_or_empty(db_fetch($result));
 	return $row[0];
 }
@@ -864,7 +864,7 @@ function supplier_aging(?string $today, string|int|null $width="33"): float
 			 LEFT JOIN ".TB_PREF."supp_trans trans ON supp.supplier_id = trans.supplier_id AND trans.tran_date <= '$today1'
 			AND ABS(trans.ov_amount + trans.ov_gst + trans.ov_discount) > ".FLOAT_COMP_DELTA."
 			AND ABS(trans.ov_amount + trans.ov_gst + trans.ov_discount) - trans.alloc > ".FLOAT_COMP_DELTA;
-    $result = db_query($sql,"The supplier details could not be retrieved");
+    $result = db_select($sql,"The supplier details could not be retrieved");
 
     $row = row_or_empty(db_fetch($result));
 
@@ -898,7 +898,7 @@ function supplier_balance(?string $today)
 			AND trans.tran_date <= '$today'
 			AND ABS(trans.ov_amount + trans.ov_gst + trans.ov_discount) > ".FLOAT_COMP_DELTA."
 			AND ABS(trans.ov_amount + trans.ov_gst + trans.ov_discount) - trans.alloc > ".FLOAT_COMP_DELTA;
-    $result = db_query($sql,"The supplier details could not be retrieved");
+    $result = db_select($sql,"The supplier details could not be retrieved");
     $row = row_or_empty(db_fetch($result));
 	return $row[0];
 }
@@ -938,7 +938,7 @@ function cash_flow(?string $today): void
 		$sql = substr($sql, 0, -1);
 		$sql .=	" FROM ".TB_PREF."bank_trans
 			WHERE bank_act=".(string)$account['id'];
-		$res = db_query($sql, "Transactions for bank account could not be calculated");
+		$res = db_select($sql, "Transactions for bank account could not be calculated");
 		$bal = row_or_empty(db_fetch($res));
 		$is_home = is_company_currency($account['bank_curr_code']);
 		for ($i = 1; $i <= $months; $i++)
@@ -1009,7 +1009,7 @@ function customer_trans(?string $today): void
 			AND trans.type = ".ST_SALESINVOICE." AND (trans.ov_amount + trans.ov_gst + trans.ov_freight 
 			+ trans.ov_freight_tax + trans.ov_discount - trans.alloc) > ".FLOAT_COMP_DELTA." 
 			AND DATEDIFF('$today', trans.due_date) > 0 ORDER BY days DESC";
-	$result = db_query($sql);
+	$result = db_select($sql);
 	$title = db_num_rows($result) . _(" overdue Sales Invoices");
   	display_title($title);
 	$th = array("#", _("Ref."), _("Date"), _("Due Date"), _("Customer"), _("Branch"), _("Currency"), 
@@ -1093,7 +1093,7 @@ function supplier_trans(?string $today): void
 		WHERE s.supplier_id = trans.supplier_id
 			AND trans.type = ".ST_SUPPINVOICE." AND (ABS(trans.ov_amount + trans.ov_gst + 
 				trans.ov_discount) - trans.alloc) > ".FLOAT_COMP_DELTA." ORDER BY days DESC";
-	$result = db_query($sql);
+	$result = db_select($sql);
 	$title = db_num_rows($result) . _(" unpaid Purchase Invoices");
 	display_title($title);
 	$th = array("#", _("Ref."), _("Date"), _("Due Date"), _("Supplier"), _("Currency"), _("Total"), 
@@ -1143,7 +1143,7 @@ function stock_below_reorder(?string $today, ?int $type): void
 		LEFT JOIN ".TB_PREF."locations l ON l.loc_code = st.loc_code 
           WHERE ISNULL(v.id) AND tran_date <= '$today' AND sm.mb_flag = 'B'
 			GROUP BY sm.stock_id HAVING q <= r";
-	$result = db_query($sql,"an item reorder could not be retreived");
+	$result = db_select($sql,"an item reorder could not be retreived");
 	$title = db_num_rows($result) . _(" items are below Reorder Level");
 	display_title($title);
 	$th = array("#", _("Location"), _("Stock Id"), _('Description'), _("Reorder"), _("qty")); 
@@ -1174,7 +1174,7 @@ function bank_balance(?string $today, ?int $width): void
 	            AND inactive <> 1
 	            GROUP BY bank_act, bank_account_name
 				ORDER BY bank_account_name";
-	$result = db_query($sql);
+	$result = db_select($sql);
 	$title = _("Bank Account Balances");
 	display_title($title);
 	$th = array(_("Account"), _("Currency"), _("Balance"));
@@ -1198,7 +1198,7 @@ function bank_balance(?string $today, ?int $width): void
 function get_num_customers()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."debtors_master";
-	$result = db_query($sql, "Fail in count customers");
+	$result = db_select($sql, "Fail in count customers");
     $row = row_or_empty(db_fetch($result));
 	return $row[0];
 }
@@ -1209,7 +1209,7 @@ function get_num_customers()
 function get_num_branches()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."cust_branch";
-	$result = db_query($sql, "Fail in count branches");
+	$result = db_select($sql, "Fail in count branches");
     $row = row_or_empty(db_fetch($result));
 	return $row[0];
 }
@@ -1220,7 +1220,7 @@ function get_num_branches()
 function get_num_salesmen()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."salesman";
-	$result = db_query($sql, "Fail in count salesmen");
+	$result = db_select($sql, "Fail in count salesmen");
     $row = row_or_empty(db_fetch($result));
 	return $row[0];
 }
@@ -1237,7 +1237,7 @@ function get_num_overdue_sales()
 		WHERE trans.type = ".ST_SALESINVOICE." AND (trans.ov_amount + trans.ov_gst + trans.ov_freight 
 			+ trans.ov_freight_tax + trans.ov_discount - trans.alloc) > ".FLOAT_COMP_DELTA." 
 			AND DATEDIFF('$today', trans.due_date) > 0";
-	$result = db_query($sql);
+	$result = db_select($sql);
     $row = row_or_empty(db_fetch($result));
 	return $row[0];
 }
@@ -1248,7 +1248,7 @@ function get_num_overdue_sales()
 function get_num_suppliers()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."suppliers";
-	$result = db_query($sql, "Fail in count suppliers");
+	$result = db_select($sql, "Fail in count suppliers");
     $row = row_or_empty(db_fetch($result));
 	return $row[0];
 }
@@ -1260,7 +1260,7 @@ function get_new_purch_orders()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."purch_orders po, ".TB_PREF."purch_order_details pd WHERE po.order_no = pd.order_no AND 
 		quantity_received < quantity_ordered";
-	$result = db_query($sql, "Fail in count purch orders");
+	$result = db_select($sql, "Fail in count purch orders");
     $row = row_or_empty(db_fetch($result));
 	return $row[0];
 }
@@ -1271,7 +1271,7 @@ function get_new_purch_orders()
 function get_num_supp_invoices()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."supp_trans WHERE (ov_amount+ov_discount+ov_gst - alloc) <> 0";
-	$result = db_query($sql, "Fail in count purch invoices");
+	$result = db_select($sql, "Fail in count purch invoices");
     $row = row_or_empty(db_fetch($result));
 	return $row[0];
 }
@@ -1284,7 +1284,7 @@ function get_num_overdue_purch()
 	$today = date2sql(calc_today());
 
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."supp_trans WHERE (ov_amount+ov_discount+ov_gst - alloc) > ".FLOAT_COMP_DELTA." AND DATEDIFF('$today', due_date) > 0";
-	$result = db_query($sql, "Fail in count purch invoices");
+	$result = db_select($sql, "Fail in count purch invoices");
     $row = row_or_empty(db_fetch($result));
 	return $row[0];
 }
@@ -1295,7 +1295,7 @@ function get_num_overdue_purch()
 function get_num_items()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."stock_master";
-	$result = db_query($sql, "Fail in count stock master");
+	$result = db_select($sql, "Fail in count stock master");
     $row = row_or_empty(db_fetch($result));
 	return $row[0];
 }
@@ -1306,7 +1306,7 @@ function get_num_items()
 function get_num_locations()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."locations";
-	$result = db_query($sql, "Fail in count locations");
+	$result = db_select($sql, "Fail in count locations");
     $row = row_or_empty(db_fetch($result));
 	return $row[0];
 }
@@ -1318,7 +1318,7 @@ function get_num_kits()
 {
 	$sql="SELECT count(*) FROM ".TB_PREF."item_codes";
 
-	$result = db_query($sql, "Fail in count kits");
+	$result = db_select($sql, "Fail in count kits");
     $row = row_or_empty(db_fetch($result));
 	return $row[0];
 }
@@ -1336,7 +1336,7 @@ function get_num_reorder(): int|string
 			reorders.stock_id = st.stock_id
           WHERE ISNULL(v.id) AND tran_date <= '$today' AND sm.mb_flag = 'B'
 			GROUP BY st.stock_id HAVING q <= r";
-	$result = db_query($sql,"an item reorder could not be retreived");
+	$result = db_select($sql,"an item reorder could not be retreived");
 	return db_num_rows($result);
 }
 
@@ -1349,7 +1349,7 @@ function get_num_assembled()
 	$today = date2sql(calc_today());
 	$sql = "SELECT count(*) FROM ".TB_PREF."workorders WHERE closed = 1 AND type = ".WO_ASSEMBLY." AND released_date >= '$begin'
 		AND released_date <= '$today'";
-	$result = db_query($sql, "Fail in count workorders");
+	$result = db_select($sql, "Fail in count workorders");
     $row = row_or_empty(db_fetch($result));
 	return $row[0];
 }
@@ -1363,7 +1363,7 @@ function get_num_manufactured()
 	$today = date2sql(calc_today());
 	$sql = "SELECT count(*) FROM ".TB_PREF."workorders WHERE closed = 1 AND type = ".WO_ADVANCED." AND released_date >= '$begin'
 		AND released_date <= '$today'";
-	$result = db_query($sql, "Fail in count workorders");
+	$result = db_select($sql, "Fail in count workorders");
     $row = row_or_empty(db_fetch($result));
 	return $row[0];
 }
@@ -1374,7 +1374,7 @@ function get_num_manufactured()
 function get_num_workcentres()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."workcentres";
-	$result = db_query($sql, "Fail in count work centres");
+	$result = db_select($sql, "Fail in count work centres");
     $row = row_or_empty(db_fetch($result));
 	return $row[0];
 }
@@ -1385,7 +1385,7 @@ function get_num_workcentres()
 function get_open_workorders()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."workorders WHERE closed = 0";
-	$result = db_query($sql, "Fail in count workorders");
+	$result = db_select($sql, "Fail in count workorders");
     $row = row_or_empty(db_fetch($result));
 	return $row[0];
 }
@@ -1396,7 +1396,7 @@ function get_open_workorders()
 function get_num_fixed_assets()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."stock_master WHERE mb_flag = 'F'";
-	$result = db_query($sql, "Fail in count fixed assets");
+	$result = db_select($sql, "Fail in count fixed assets");
     $row = row_or_empty(db_fetch($result));
 	return $row[0];
 }
@@ -1408,7 +1408,7 @@ function get_num_fixed_locations()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."stock_master s LEFT JOIN ".TB_PREF."loc_stock l ON s.stock_id = l.stock_id 
 		WHERE mb_flag = 'F'";
-	$result = db_query($sql, "Fail in count locations");
+	$result = db_select($sql, "Fail in count locations");
     $row = row_or_empty(db_fetch($result));
 	return $row[0];
 }
@@ -1420,7 +1420,7 @@ function get_num_fixed_categories()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."stock_category c LEFT JOIN ".TB_PREF."stock_master s ON c.category_id = s.category_id 
 		WHERE mb_flag = 'F'";
-	$result = db_query($sql, "Fail in count categories");
+	$result = db_select($sql, "Fail in count categories");
     $row = row_or_empty(db_fetch($result));
 	return $row[0];
 }
@@ -1431,7 +1431,7 @@ function get_num_fixed_categories()
 function get_num_fixed_classes()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."stock_fa_class";
-	$result = db_query($sql, "Fail in count fa classes");
+	$result = db_select($sql, "Fail in count fa classes");
     $row = row_or_empty(db_fetch($result));
 	return $row[0];
 }
@@ -1442,7 +1442,7 @@ function get_num_fixed_classes()
 function get_num_dimensions()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."dimensions";
-	$result = db_query($sql, "Fail in count dimensions");
+	$result = db_select($sql, "Fail in count dimensions");
     $row = row_or_empty(db_fetch($result));
 	return $row[0];
 }
@@ -1453,7 +1453,7 @@ function get_num_dimensions()
 function get_dim_type2()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."dimensions WHERE type_ = 2";
-	$result = db_query($sql, "Fail in count simensions 2");
+	$result = db_select($sql, "Fail in count simensions 2");
     $row = row_or_empty(db_fetch($result));
 	return $row[0];
 }
@@ -1464,7 +1464,7 @@ function get_dim_type2()
 function get_dim_closed()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."dimensions WHERE closed = 1";
-	$result = db_query($sql, "Fail in count closed dimensions");
+	$result = db_select($sql, "Fail in count closed dimensions");
     $row = row_or_empty(db_fetch($result));
 	return $row[0];
 }
@@ -1482,7 +1482,7 @@ function get_dim_total(): array
 		WHERE IF(c.ctype > 3, tran_date >= '$begin', tran_date >= '0000-00-00') 
 		AND tran_date <= '$today'  AND d.reference IS NOT NULL GROUP BY d.reference"; 	
 	$bal = $res = 0.0;
-	$result = db_query($sql, "Transactions could not be calculated");
+	$result = db_select($sql, "Transactions could not be calculated");
 	while ($row = db_fetch($result))
 	{
 		$bal += $row['balance'];
@@ -1533,7 +1533,7 @@ function get_today_payments(?string $today)
 function get_num_users()
 {
 	$sql = "SELECT count(*) FROM ".TB_PREF."users";
-	$result = db_query($sql, "could not get num users");
+	$result = db_select($sql, "could not get num users");
     $row = row_or_empty(db_fetch($result));
 	return $row[0];
 }
@@ -1559,7 +1559,7 @@ function get_database_size(): string
 	$sql = "SHOW TABLE STATUS FROM $dbase";
 	if (!empty($tb_pref))
 		$sql .= " LIKE '{$tb_pref}%'";
-	$result = db_query($sql, "could not get database size");
+	$result = db_select($sql, "could not get database size");
     $size = 0;
     while ($row = db_fetch($result)) {
 		$size += $row['Data_length'];

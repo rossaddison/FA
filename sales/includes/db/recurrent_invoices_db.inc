@@ -68,7 +68,7 @@ function get_recurrent_invoices(?string $date=null)
 
 	$sql .= " FROM ".TB_PREF."recurrent_invoices ORDER BY description, group_no, debtor_no";
 
-	return db_query($sql,"could not get recurrent invoices");
+	return db_select($sql,"could not get recurrent invoices");
 }
 
 /**
@@ -78,7 +78,7 @@ function get_recurrent_invoice(string|int|float|bool|array|null $selected_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."recurrent_invoices WHERE id=".db_escape($selected_id);
 
-	$result = db_query($sql,"could not get recurrent invoice");
+	$result = db_select($sql,"could not get recurrent invoice");
 	return db_fetch($result);
 }
 
@@ -89,7 +89,7 @@ function check_recurrent_invoice_description(string|int|float|bool|null $descrip
 	if (isset($id))
 		$sql .= " AND id<>".db_escape($id);
 
-	$result = db_query($sql,"could not check recurrent invoice");
+	$result = db_select($sql,"could not check recurrent invoice");
 	$row = row_or_empty(db_fetch($result));
 	return !$row[0];
 }
@@ -106,7 +106,7 @@ function recurrent_invoice_ready(string|int|null $selected_id, string|array|null
 		FROM ".TB_PREF."recurrent_invoices WHERE 
 		id=".db_escape($selected_id);
 
-	$result = db_query($sql,"could not get recurrent invoice");
+	$result = db_select($sql,"could not get recurrent invoice");
 	$ret =  row_or_empty(db_fetch($result));
 
 	return $ret['overdue'];
@@ -157,7 +157,7 @@ function check_recurrent_invoice_prices(string|int|null $id): int
 
 	$sql = "SELECT distinct * FROM ($sql1 UNION $sql2) a";
 
-	$currs = db_query($sql, "cannot count recurrent invoices");
+	$currs = db_select($sql, "cannot count recurrent invoices");
 
 	$template = row_or_empty(get_sales_order_header($inv['order_no'], ST_SALESORDER));
 

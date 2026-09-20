@@ -33,7 +33,7 @@ function get_all_credit_status(int|bool|array|null $all=false)
 	$sql = "SELECT * FROM ".TB_PREF."credit_status";
 	if (!(bool)$all) $sql .= " WHERE !inactive";
 
-	return db_query($sql, "could not get all credit status");
+	return db_select($sql, "could not get all credit status");
 }
 
 /**
@@ -43,7 +43,7 @@ function get_credit_status(string|int|float|bool|null $status_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."credit_status WHERE id=".db_escape($status_id);
 
-	$result = db_query($sql, "could not get credit status");
+	$result = db_select($sql, "could not get credit status");
 
 	return db_fetch($result);
 }

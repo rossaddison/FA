@@ -102,7 +102,7 @@ function print_statements(): void
 		$sql .= " WHERE debtor_no = ".db_escape($customer);
 	else
 		$sql .= " ORDER by name";
-	$result = db_query($sql, "The customers could not be retrieved");
+	$result = db_select($sql, "The customers could not be retrieved");
 
 	/** @var FrontReport $rep */
 	while ($myrow=db_fetch($result))

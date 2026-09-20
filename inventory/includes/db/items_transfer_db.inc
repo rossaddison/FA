@@ -97,7 +97,7 @@ function get_stock_transfer(string|int|float|bool|array|null $trans_no)
 				LEFT JOIN ".TB_PREF."locations loc ON loc.loc_code=move.loc_code
 			WHERE type=".ST_LOCTRANSFER." AND trans_no=".db_escape($trans_no). " AND qty>0 LIMIT 1) loc_to";
 
-	$result = db_query($sql, "Could not get transfer common data");
+	$result = db_select($sql, "Could not get transfer common data");
 
 	$data = db_fetch($result);
 

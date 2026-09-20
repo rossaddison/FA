@@ -58,7 +58,7 @@ function get_shippers(int|array|null $show_inactive)
 	if (!(bool)$show_inactive) $sql .= " WHERE !inactive";
 	$sql .= " ORDER BY shipper_id";
 	
-	return db_query($sql,"could not get shippers");
+	return db_select($sql,"could not get shippers");
 }
 
 //--------------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ function get_shipper(string|int|float|bool|array|null $selected_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."shippers WHERE shipper_id=".db_escape($selected_id);
 
-	$result = db_query($sql, "could not get shipper");
+	$result = db_select($sql, "could not get shipper");
 	return db_fetch($result);
 }
 

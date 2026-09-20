@@ -339,7 +339,7 @@ function get_oldest_delivery_date(string|int|float|bool|null $invoice_no)
 			WHERE
 				inv.debtor_trans_type=".ST_SALESINVOICE
 				." AND inv.debtor_trans_no=".db_escape($invoice_no);
-	$res = db_query($sql, 'cannot find oldest delivery date');
+	$res = db_select($sql, 'cannot find oldest delivery date');
 	$date = row_or_empty(db_fetch($res));
 	return $date[0];
 }
@@ -359,7 +359,7 @@ function get_oldest_payment_date(string|int|float|bool|null $invoice_no)
 			WHERE
 				alloc.trans_type_to=".ST_SALESINVOICE." AND alloc.trans_no_to=".db_escape($invoice_no)
 			." AND alloc.trans_type_from=payment.type AND alloc.trans_no_from=payment.trans_no";
-	$res = db_query($sql, 'cannot find oldest delivery date');
+	$res = db_select($sql, 'cannot find oldest delivery date');
 	$date = row_or_empty(db_fetch($res));
 	return $date[0];
 }

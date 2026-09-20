@@ -131,7 +131,7 @@ function get_payment_terms(string|int|float|bool|array|null $selected_id)
 	$sql = "SELECT *, (t.days_before_due=0) AND (t.day_in_following_month=0) as cash_sale
 	 FROM ".TB_PREF."payment_terms t WHERE terms_indicator=".db_escape($selected_id);
 
-	$result = db_query($sql,"could not get payment term");
+	$result = db_select($sql,"could not get payment term");
 
 	return db_fetch($result);
 }
@@ -143,7 +143,7 @@ function get_payment_terms_all(int|array|null $show_inactive)
 {
 	$sql = "SELECT * FROM ".TB_PREF."payment_terms";
 	if (!(bool)$show_inactive) $sql .= " WHERE !inactive";
-	return db_query($sql,"could not get payment terms");
+	return db_select($sql,"could not get payment terms");
 }
 /*
 	Return number of records in tables, where some foreign key $id is used.
@@ -172,7 +172,7 @@ function key_in_foreign_table(string|int|float|bool|array|null $id, string|array
 
 	$sql = "SELECT sum(cnt) FROM (". implode(' UNION ', $sqls).") as counts";
 
-	$result = db_query($sql, "check relations for ".implode(',',$tables)." failed");
+	$result = db_select($sql, "check relations for ".implode(',',$tables)." failed");
 	$count =  row_or_empty(db_fetch($result));
 
 	return $count[0];

@@ -94,6 +94,20 @@ function db_query(string $sql, ?string $err_msg=null): mysqli_result|bool
 }
 
 /**
+ * db_query() for a statement that returns rows. db_query() answers with a bool for INSERT/UPDATE/DELETE, so a query
+ * whose result is fetched from goes through this function, which returns the result set. A failed query used to reach
+ * db_fetch() as false and raise the same TypeError here.
+ */
+function db_select(string $sql, ?string $err_msg=null): mysqli_result
+{
+	$result = db_query($sql, $err_msg);
+	if (!$result instanceof mysqli_result) {
+		throw new TypeError('db_select(): the query did not return a result set: ' . $sql);
+	}
+	return $result;
+}
+
+/**
  * A row, or an empty array when the lookup found none: db_fetch() and the get_*() lookups built on it return false when
  * there is no row, and reading $row['x'] of false is a warning.
  *
@@ -263,7 +277,7 @@ function db_drop_db(mixed $connection): bool|mysqli_result
 	}
 	else
 	{
-    	$res = db_query("show table status");
+    	$res = db_select("show table status");
     	$all_tables = array();
     	while($row = db_fetch($res))
     		$all_tables[] = $row;

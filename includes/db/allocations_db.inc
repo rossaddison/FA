@@ -27,7 +27,7 @@ function get_payments_for(string|int|float|bool|array|null $trans_no, string|int
 			(SELECT alloc.*, trans.tran_date FROM ".TB_PREF."supp_allocations alloc
 				LEFT JOIN ".TB_PREF."supp_trans trans ON trans.type=alloc.trans_type_from AND trans.trans_no=alloc.trans_no_from
 			WHERE (trans_type_to=".db_escape($trans_type)." AND trans_no_to=".db_escape($trans_no)." AND person_id=".db_escape($person_id)."))";
-	$result = db_query($sql, "error reading current allocations");
+	$result = db_select($sql, "error reading current allocations");
 
 	while($dat = db_fetch($result))
 	{

@@ -47,7 +47,7 @@ function get_supp_po(string|array|null $order_no)
 		WHERE po.supplier_id = supplier.supplier_id
 		AND loc.loc_code = into_stock_location
 		AND po.order_no = ".db_escape($order_no);
-   	$result = db_query($sql, "The order cannot be retrieved");
+   	$result = db_select($sql, "The order cannot be retrieved");
     return db_fetch($result);
 }
 
@@ -61,7 +61,7 @@ function get_po_details(string|array|null $order_no)
 			LEFT JOIN ".TB_PREF."stock_master item ON poline.item_code=item.stock_id
 		WHERE order_no =".db_escape($order_no)." ";
 	$sql .= " ORDER BY po_detail_item";
-	return db_query($sql, "Retreive order Line Items");
+	return db_select($sql, "Retreive order Line Items");
 }
 
 function print_po(): void

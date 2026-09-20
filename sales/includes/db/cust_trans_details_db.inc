@@ -40,7 +40,7 @@ if (!is_array($debtor_trans_no))
 	$sql.=	") AND debtor_trans_type=".db_escape($debtor_trans_type)."
 		AND item.stock_id=line.stock_id
 		ORDER BY id";
-	return db_query($sql, "The debtor transaction detail could not be queried");
+	return db_select($sql, "The debtor transaction detail could not be queried");
 }
 
 //----------------------------------------------------------------------------------------

@@ -56,7 +56,7 @@ function delete_currency(string|int|float|bool|null $curr_code): void
 function get_currency(string|int|float|bool|array|null $curr_code)
 {
 	$sql = "SELECT * FROM ".TB_PREF."currencies WHERE curr_abrev=".db_escape($curr_code);
-	$result = db_query($sql, "could not get currency $curr_code");
+	$result = db_select($sql, "could not get currency $curr_code");
 
 	$row = db_fetch($result);
 	return $row;
@@ -71,6 +71,6 @@ function get_currencies(int|bool|array|null $all=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."currencies";
 	if (!(bool)$all) $sql .= " WHERE !inactive";
-	return db_query($sql, "could not get currencies");
+	return db_select($sql, "could not get currencies");
 }
 

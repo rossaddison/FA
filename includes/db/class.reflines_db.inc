@@ -89,7 +89,7 @@ class reflines_db extends data_set {
 			LEFT JOIN ".TB_PREF."reflines line ON ref.type=line.trans_type AND substr(ref.reference,1, LENGTH(line.prefix))= line.prefix AND line.prefix<>''
 			WHERE ".($prefix == '' ? "ISNULL(prefix)" : "prefix=".db_escape($prefix));
 
-		$res = db_query($sql, "cannot check reference line");
+		$res = db_select($sql, "cannot check reference line");
 
 		return db_num_rows($res);
 	}
@@ -136,7 +136,7 @@ class reflines_db extends data_set {
 	function get_default($type)
 	{
 		$sql = "SELECT * FROM ".TB_PREF."reflines WHERE trans_type=".db_escape($type)." AND `default`";
-		$result = db_query($sql, "cannot retreive default refline for trnasaction type $type");
+		$result = db_select($sql, "cannot retreive default refline for trnasaction type $type");
 		return db_fetch($result);
 	}
 
@@ -149,7 +149,7 @@ class reflines_db extends data_set {
 
 		if (!$all)
 			$sql .= " AND !inactive";
-		$result = db_query($sql, "cannot retreive refline count for transaction type $type");
+		$result = db_select($sql, "cannot retreive refline count for transaction type $type");
 		$rec = row_or_empty(db_fetch($result));
 		return $rec ? $rec[0] : 0;
 	}
@@ -166,7 +166,7 @@ class reflines_db extends data_set {
 			." AND CHAR_LENGTH(`prefix`) AND LEFT(".db_escape($reference).", CHAR_LENGTH(`prefix`)) = `prefix`";
 		if ($fallback)	// if not found return refline with empty prefix
 			$sql .= " UNION SELECT * FROM ".TB_PREF."reflines WHERE trans_type=".db_escape($type)." AND `prefix`=''";
-		$ret = db_query($sql, "cannot check reference line id");
+		$ret = db_select($sql, "cannot check reference line id");
 		$line = row_or_empty(db_fetch($ret));
 
 		if (!$fallback && (db_num_rows($fallback) != 1))	// more than one record means ambigous reference line

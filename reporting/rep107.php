@@ -54,7 +54,7 @@ function get_invoice_range(?string $from, ?string $to, string|bool|array|null $c
 
 	$sql .= " ORDER BY trans.tran_date, trans.$ref";
 
-	return db_query($sql, "Cant retrieve invoice range");
+	return db_select($sql, "Cant retrieve invoice range");
 }
 
 print_invoices();
@@ -66,7 +66,7 @@ print_invoices();
  */
 function get_bank_account_by_name(?string $name) {
     $sql = "SELECT * FROM ".TB_PREF."bank_accounts WHERE bank_name = ".db_escape($name);
-    $result = db_query($sql, "could not retrieve bank account");
+    $result = db_select($sql, "could not retrieve bank account");
     $row = db_fetch($result);
     return (bool)$row ? $row : false;
 }

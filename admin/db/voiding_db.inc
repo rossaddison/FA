@@ -142,7 +142,7 @@ function get_voided_entry(string|int|float|bool|array|null $type, string|int|flo
 	$sql = "SELECT * FROM ".TB_PREF."voided WHERE type=".db_escape($type)
 		." AND id=".db_escape($type_no);
 
-	$result = db_query($sql, "could not query voided transaction table");
+	$result = db_select($sql, "could not query voided transaction table");
 
 	return db_fetch($result);
 }

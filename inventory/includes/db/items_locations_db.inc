@@ -60,7 +60,7 @@ function get_item_location(string|int|float|bool|array|null $item_location)
 {
 	$sql="SELECT * FROM ".TB_PREF."locations WHERE loc_code=".db_escape($item_location);
 
-	$result = db_query($sql,"a location could not be retrieved");
+	$result = db_select($sql,"a location could not be retrieved");
 
 	return db_fetch($result);
 }
@@ -74,7 +74,7 @@ function get_item_locations(int|array|null $show_inactive, string|int|array|null
 {
 	$sql = "SELECT * FROM ".TB_PREF."locations WHERE fixed_asset = ".db_escape($fixed_asset);
 	if (!(bool)$show_inactive) $sql .= " AND !inactive";
-	return db_query($sql, "could not query locations");
+	return db_select($sql, "could not query locations");
 }
 
 //------------------------------------------------------------------------------------
@@ -101,6 +101,6 @@ function get_loc_details(string|int|float|bool|array|null $stock_id, ?int $fixed
 		AND reorders.stock_id = ".db_escape($stock_id)
 	    ." WHERE stock.fixed_asset = ".db_escape($fixed_asset)
 		." ORDER BY reorders.loc_code";
-	return db_query($sql,"an item reorder could not be retreived");
+	return db_select($sql,"an item reorder could not be retreived");
 }
 

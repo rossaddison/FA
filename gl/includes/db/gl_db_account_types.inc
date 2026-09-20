@@ -32,7 +32,7 @@ function update_account_type(string|int|float|bool|null $id, string|int|float|bo
 			FROM ".TB_PREF."chart_types 
 			WHERE parent = ".db_escape($old_id);
 
-		$result = db_query($sql, "could not get account type");
+		$result = db_select($sql, "could not get account type");
 
 		while ($myrow = db_fetch($result))
 		{
@@ -44,7 +44,7 @@ function update_account_type(string|int|float|bool|null $id, string|int|float|bo
 			FROM ".TB_PREF."chart_master 
 			WHERE account_type = ".db_escape($old_id);
 
-		$result = db_query($sql, "could not get account");
+		$result = db_select($sql, "could not get account");
 
 		while ($myrow = db_fetch($result))
 		{
@@ -88,7 +88,7 @@ function get_account_types(int|bool|array|null $all=false, string|int|float|bool
 		$sql .= ' WHERE '.implode(' AND ', $where);
 	$sql .= " ORDER BY class_id, id, parent";
 
-	return db_query($sql, "could not get account types");
+	return db_select($sql, "could not get account types");
 }
 
 /**
@@ -98,7 +98,7 @@ function get_account_type(string|int|float|bool|array|null $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."chart_types WHERE id = ".db_escape($id);
 
-	$result = db_query($sql, "could not get account type");
+	$result = db_select($sql, "could not get account type");
 
 	return db_fetch($result);
 }
@@ -110,7 +110,7 @@ function get_account_type_name(string|array|null $id)
 {
 	$sql = "SELECT name FROM ".TB_PREF."chart_types WHERE id = ".db_escape($id);
 
-	$result = db_query($sql, "could not get account type");
+	$result = db_select($sql, "could not get account type");
 
 	$row = db_fetch_row($result);
 	return is_array($row) ? $row[0] : false;
@@ -160,7 +160,7 @@ function get_account_classes(int|bool|array|null $all=false, ?int $balance=-1)
 		$sql .= " AND ctype>0 AND ctype<".CL_INCOME; 
 	$sql .= " ORDER BY ctype, cid";
 
-	return db_query($sql, "could not get account classes");
+	return db_select($sql, "could not get account classes");
 }
 
 /**
@@ -170,7 +170,7 @@ function get_account_class(string|int|float|bool|null $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."chart_class WHERE cid = ".db_escape($id);
 
-	$result = db_query($sql, "could not get account type");
+	$result = db_select($sql, "could not get account type");
 
 	return db_fetch($result);
 }
@@ -182,7 +182,7 @@ function get_account_class_name(?string $id)
 {
 	$sql = "SELECT class_name FROM ".TB_PREF."chart_class WHERE cid =".db_escape($id);
 
-	$result = db_query($sql, "could not get account type");
+	$result = db_select($sql, "could not get account type");
 
 	$row = row_or_empty(db_fetch_row($result));
 	return $row[0];

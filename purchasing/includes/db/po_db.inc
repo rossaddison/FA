@@ -24,7 +24,7 @@ function get_supplier_details_to_order(?purch_order &$order, string|array|null $
 		GROUP BY
 			  supp.supp_name";
 
-	$result = db_query($sql, "The supplier details could not be retreived");
+	$result = db_select($sql, "The supplier details could not be retreived");
 	$myrow = row_or_empty(db_fetch($result));
 
 	$order->credit = $myrow["cur_credit"];
@@ -177,7 +177,7 @@ function update_po(purch_order &$po_obj)
  */
 function get_po(string|int|float|bool|null $order_no) {
     $sql = "SELECT * FROM ".TB_PREF."purch_orders WHERE order_no = ".db_escape($order_no);
-    $result = db_query($sql);
+    $result = db_select($sql);
 
     return db_fetch($result);
 }
@@ -194,7 +194,7 @@ function read_po_header(string|int|float|bool|null $order_no, purch_order &$orde
 		AND loc.loc_code = into_stock_location
 		AND po.order_no = ".db_escape($order_no);
 
-   	$result = db_query($sql, "The order cannot be retrieved");
+   	$result = db_select($sql, "The order cannot be retrieved");
 
 	if (db_num_rows($result) == 1)
 	{
@@ -242,7 +242,7 @@ function read_po_items(string|int|float|bool|null $order_no, purch_order &$order
 
 	$sql .= " ORDER BY po_detail_item";
 
-	$result = db_query($sql, "The lines on the purchase order cannot be retrieved");
+	$result = db_select($sql, "The lines on the purchase order cannot be retrieved");
 
     if (db_num_rows($result) > 0)
     {
@@ -293,7 +293,7 @@ function get_po_items(string|int|float|bool|null $order_no)
 		WHERE order_no=".db_escape($order_no)
 		." ORDER BY po_detail_item";
 
-	$result = db_query($sql, "could not query purch order details");
+	$result = db_select($sql, "could not query purch order details");
     check_db_error("Could not check that the details of the purchase order had not been changed by another user ", $sql);
     return $result;
 }
@@ -307,7 +307,7 @@ function get_short_info(string|array|null $stock_id)
 	$sql = "SELECT description, units, mb_flag
 		FROM ".TB_PREF."stock_master WHERE stock_id = ".db_escape($stock_id);
 
-	return db_query($sql,"The stock details for " . $stock_id . " could not be retrieved");
+	return db_select($sql,"The stock details for " . $stock_id . " could not be retrieved");
 }
 
 /**

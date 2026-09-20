@@ -51,7 +51,7 @@ function get_purchase_price(string|int|float|bool|null $supplier_id, string|int|
 	$sql = "SELECT price, conversion_factor FROM ".TB_PREF."purch_data 
 		WHERE supplier_id = ".db_escape($supplier_id) . " 
 		AND stock_id = ".db_escape($stock_id);
-	$result = db_query($sql, "The supplier pricing details for " . $stock_id . " could not be retrieved");    
+	$result = db_select($sql, "The supplier pricing details for " . $stock_id . " could not be retrieved");    
 
 	if (db_num_rows($result) == 1)
 	{
@@ -72,7 +72,7 @@ function get_purchase_conversion_factor(string|int|float|bool|null $supplier_id,
 	$sql = "SELECT conversion_factor FROM ".TB_PREF."purch_data 
 		WHERE supplier_id = ".db_escape($supplier_id)." 
 		AND stock_id = ".db_escape($stock_id);
-	$result = db_query($sql, "The supplier pricing details for " . $stock_id . " could not be retrieved");    
+	$result = db_select($sql, "The supplier pricing details for " . $stock_id . " could not be retrieved");    
 
 	if (db_num_rows($result) == 1)
 	{
@@ -94,7 +94,7 @@ function get_purchase_data(string|int|float|bool|null $supplier_id, string|int|f
 	$sql = "SELECT * FROM ".TB_PREF."purch_data 
 		WHERE supplier_id = ".db_escape($supplier_id) . "
 		AND stock_id = ".db_escape($stock_id);
-	$result = db_query($sql, "The supplier pricing details for " . $stock_id . " could not be retrieved");    
+	$result = db_select($sql, "The supplier pricing details for " . $stock_id . " could not be retrieved");    
 
 	return db_fetch($result);
 }
@@ -144,7 +144,7 @@ function get_po_prepayments(?object $supp_trans): array
 			LEFT JOIN ".TB_PREF."purch_order_details line ON line.order_no=allocs.trans_no_to AND trans_type_to=".ST_PURCHORDER."
 		WHERE line.po_detail_item IN(".implode(',', array_values($line_ids)).")";
 
-	$result = db_query($sql, "Cannot retrieve po prepayments");
+	$result = db_select($sql, "Cannot retrieve po prepayments");
 
 	while($dat = db_fetch($result))
 	{

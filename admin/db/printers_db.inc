@@ -35,7 +35,7 @@ function write_printer_def(string|int|float|bool|null $id, string|array|null $na
 function get_all_printers() 
 {
 	$sql = "SELECT * FROM ".TB_PREF."printers";
-	return db_query($sql,"could not get printer definitions");
+	return db_select($sql,"could not get printer definitions");
 }
 
 /**
@@ -46,7 +46,7 @@ function get_printer(string|int|float|bool|null $id)
 		$sql = "SELECT * FROM ".TB_PREF."printers
 			WHERE id=".db_escape($id);
 
-		$result = db_query($sql,"could not get printer definition");
+		$result = db_select($sql,"could not get printer definition");
 		return  db_fetch($result);
 }
 
@@ -119,6 +119,6 @@ function delete_printer_profile(string|int|float|bool|array|null $name)
 function get_print_profile(string|array|null $name)
 {
 	$sql = "SELECT	* FROM ".TB_PREF."print_profiles WHERE profile=".db_escape($name);
-	return db_query($sql,"could not get printing profile");
+	return db_select($sql,"could not get printing profile");
 }
 

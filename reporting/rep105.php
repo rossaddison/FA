@@ -69,7 +69,7 @@ function GetSalesOrders(string|array|null $from, string|array|null $to, string|i
 		$sql .= " AND line.quantity - line.qty_sent > 0";
 	$sql .= " ORDER BY sorder.order_no";
 
-	return db_query($sql, "Error getting order details");
+	return db_select($sql, "Error getting order details");
 }
 
 //----------------------------------------------------------------------------------------------------

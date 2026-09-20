@@ -42,7 +42,7 @@ function update_average_material_cost(string|int|float|bool|null $supplier, stri
         handle_negative_inventory($stock_id, $qty, $price_in_home_currency, $date);
 	
 	$sql = "SELECT mb_flag, material_cost FROM ".TB_PREF."stock_master WHERE stock_id=".db_escape($stock_id);
-	$result = db_query($sql);
+	$result = db_select($sql);
 	$myrow = row_or_empty(db_fetch($result));
 	$material_cost = $myrow['material_cost'];
 	
@@ -207,7 +207,7 @@ function add_grn_detail_item(string|int|null $grn_batch_id, string|int|float|boo
 function get_grn_batch_from_item(mixed $item)
 {
 	$sql = "SELECT grn_batch_id FROM ".TB_PREF."grn_items WHERE id=".db_escape($item);
-	$result = db_query($sql, "Could not retreive GRN batch id");
+	$result = db_select($sql, "Could not retreive GRN batch id");
 	$row = row_or_empty(db_fetch_row($result));
 	return $row[0];
 }
@@ -218,7 +218,7 @@ function get_grn_batch_from_item(mixed $item)
 function get_grn_batch(?string $grn)
 {
 	$sql = "SELECT * FROM ".TB_PREF."grn_batch WHERE id=".db_escape($grn);
-	$result = db_query($sql, "Could not retreive GRN batch id");
+	$result = db_select($sql, "Could not retreive GRN batch id");
 	return db_fetch($result);
 }
 
@@ -237,7 +237,7 @@ function set_grn_item_credited(&$entered_grn, string|int|float|bool|null $suppli
 		AND item.id=".db_escape($entered_grn->id)."
     	AND item.item_code=".db_escape($entered_grn->item_code);
 
-	$result = db_query($sql, "Could not retreive GRNS");
+	$result = db_select($sql, "Could not retreive GRNS");
 	$myrow = row_or_empty(db_fetch($result));
 
 	$sql = "UPDATE ".TB_PREF."purch_order_details
@@ -312,7 +312,7 @@ function get_grn_items(string|int|float|bool|array|null $grn_batch_id=0, string|
 
 	$sql .= " ORDER BY grn.delivery_date, grn.id, grn_item.id";
 
-	return db_query($sql, "Could not retreive GRNS");
+	return db_select($sql, "Could not retreive GRNS");
 }
 
 //----------------------------------------------------------------------------------------
@@ -333,7 +333,7 @@ function get_grn_item_detail(string|int|null $grn_item_no)
  			AND item.stock_id=grn.item_code
 			AND grn.id=".db_escape($grn_item_no);
 
-	$result = db_query($sql, "could not retreive grn item details");
+	$result = db_select($sql, "could not retreive grn item details");
 	return db_fetch($result);
 }
 
@@ -408,7 +408,7 @@ function get_po_grns(string|int|float|bool|null $po_number)
 {
     $sql = "SELECT * FROM ".TB_PREF."grn_batch WHERE purch_order_no=".db_escape($po_number);
 
-	return db_query($sql, "The grns for the po $po_number could not be retreived");
+	return db_select($sql, "The grns for the po $po_number could not be retreived");
 }
 
 //----------------------------------------------------------------------------------------------------------
@@ -416,7 +416,7 @@ function get_po_grns(string|int|float|bool|null $po_number)
 function exists_grn(mixed $grn_batch): bool
 {
 	$sql = "SELECT id FROM ".TB_PREF."grn_batch WHERE id=".db_escape($grn_batch);
-	$result = db_query($sql, "Cannot retreive a grn");
+	$result = db_select($sql, "Cannot retreive a grn");
 
     return (db_num_rows($result) > 0);
 }
@@ -431,7 +431,7 @@ function exists_grn_on_invoices(mixed $grn_batch): bool
 		WHERE inv.grn_item_id=grn.id
 		AND quantity != 0
 		AND grn_batch_id=".db_escape($grn_batch);
-	$result = db_query($sql, "Cannot query GRNs");
+	$result = db_select($sql, "Cannot query GRNs");
 
     return (db_num_rows($result) > 0);
 }

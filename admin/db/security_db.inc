@@ -17,7 +17,7 @@
 function get_security_role(string|int|float|bool|array|null $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."security_roles WHERE id=".(int)$id;
-	$ret = db_query($sql, "could not retrieve security roles");
+	$ret = db_select($sql, "could not retrieve security roles");
 	$row = db_fetch($ret);
 	if ($row != false) {
 		$row['areas'] = explode(';', $row['areas']);
@@ -66,7 +66,7 @@ function delete_security_role(string|array|null $id): void
  */
 function check_role_used(string|array|null $id) {
 	$sql = "SELECT count(*) FROM ".TB_PREF."users WHERE role_id=".(int)$id;
-	$ret = db_query($sql, 'cannot check role usage');
+	$ret = db_select($sql, 'cannot check role usage');
 	$row = row_or_empty(db_fetch($ret));
 	return $row[0];
 }

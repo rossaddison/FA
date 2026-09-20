@@ -70,7 +70,7 @@ function getPeriods(string|int|float|bool|null $yr, string|int|float|bool|null $
 	if ($dimension2 != 0)
   		$sql .= " AND dimension2_id = ".($dimension2<0?0:db_escape($dimension2));
 
-	$result = db_query($sql, "Transactions for account $account could not be calculated");
+	$result = db_select($sql, "Transactions for account $account could not be calculated");
 
 	return db_fetch($result);
 }
@@ -231,7 +231,7 @@ function print_annual_expense_breakdown(): void
 
 	// from now
 	$sql = "SELECT begin, end, YEAR(end) AS yr, MONTH(end) AS mo FROM ".TB_PREF."fiscal_year WHERE id=".db_escape($year);
-	$result = db_query($sql, "could not get fiscal year");
+	$result = db_select($sql, "could not get fiscal year");
 	$row = row_or_empty(db_fetch($result));
 	
 	$year = sql2date($row['begin'])." - ".sql2date($row['end']);

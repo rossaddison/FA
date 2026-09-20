@@ -53,7 +53,7 @@ function get_open_balance(?string $supplier_id, string|array|null $to)
         $sql .= " AND t.tran_date < '$to'";
     $sql .= " GROUP BY supplier_id";
 
-    $result = db_query($sql,"No transactions were returned");
+    $result = db_select($sql,"No transactions were returned");
     return db_fetch($result);
 }
 
@@ -144,7 +144,7 @@ function print_supplier_balances(): void
     if ($fromsupp != ALL_TEXT)
         $sql .= " WHERE supplier_id=".db_escape($fromsupp);
     $sql .= " ORDER BY supp_name";
-    $result = db_query($sql, "The suppliers could not be retrieved");
+    $result = db_select($sql, "The suppliers could not be retrieved");
 
 	$tot_cur_cr = $tot_cur_db = 0.0;
     while ($myrow=db_fetch($result))

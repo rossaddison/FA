@@ -61,7 +61,7 @@ function GetSalesmanTrans(string|array|null $from, string|array|null $to)
 		    AND trans.tran_date<='$todate'
 		ORDER BY salesman.salesman_code, trans.tran_date";
 
-	return db_query($sql, "Error getting order details");
+	return db_select($sql, "Error getting order details");
 }
 
 //----------------------------------------------------------------------------------------------------

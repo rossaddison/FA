@@ -54,7 +54,7 @@ function get_supp_invoice_items(string|int|float|bool|null $supp_trans_type, str
 		WHERE supp_trans_type = ".db_escape($supp_trans_type)."
 			AND supp_trans_no = ".db_escape($supp_trans_no)
 			." ORDER BY inv.id";
-	return db_query($sql, "Cannot retreive supplier transaction detail records");
+	return db_select($sql, "Cannot retreive supplier transaction detail records");
 }
 
 function void_supp_invoice_items(string|int|float|bool|null $type, string|int|float|bool|null $type_no): void

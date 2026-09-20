@@ -60,7 +60,7 @@ function stock_item_heading(string|int|float|bool|array|null $stock_id): void
 {
 	if ($stock_id != "") 
 	{
-		$result = db_query("SELECT description, units FROM ".TB_PREF."stock_master WHERE stock_id=".db_escape($stock_id));
+		$result = db_select("SELECT description, units FROM ".TB_PREF."stock_master WHERE stock_id=".db_escape($stock_id));
         $myrow = row_or_empty(db_fetch_row($result));
         
     	display_heading("$stock_id - $myrow[0]"); 

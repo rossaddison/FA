@@ -130,7 +130,7 @@ function get_item(string|int|float|bool|array|null $stock_id)
 			.TB_PREF."item_tax_types taxtype
 		WHERE taxtype.id=item.tax_type_id
 		AND stock_id=".db_escape($stock_id);
-	$result = db_query($sql,"an item could not be retreived");
+	$result = db_select($sql,"an item could not be retreived");
 
 	return db_fetch_assoc($result);
 }
@@ -164,7 +164,7 @@ function item_in_foreign_codes(string|int|float|bool|null $stock_id): string
 	$msg = '';
 
 	foreach($sqls as $sql=>$err) {
-		$result = db_query($sql, "could not query stock usage");
+		$result = db_select($sql, "could not query stock usage");
 		$myrow = row_or_empty(db_fetch_row($result));
 		if ($myrow[0] > 0) 
 		{
@@ -239,7 +239,7 @@ function get_items_search(string|array|null $description, string|int|float|bool|
 
 	$sql .= " GROUP BY i.item_code ORDER BY i.description LIMIT 0,".(int)($limit);
 
-	return db_query($sql, "Failed in retreiving item list.");
+	return db_select($sql, "Failed in retreiving item list.");
 }
 
 /**
@@ -252,7 +252,7 @@ function get_item_code_id(string|int|float|bool|array|null $stock_id)
 		WHERE ic.item_code = ".db_escape($stock_id)." AND ic.item_code = ic.stock_id AND
     	ic.stock_id = sm.stock_id";
 
-	$result = db_query($sql, "could not get item id");
+	$result = db_select($sql, "could not get item id");
 	$row = db_fetch_row($result);
 
 	return is_array($row) ? $row[0] : false;

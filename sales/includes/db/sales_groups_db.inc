@@ -36,7 +36,7 @@ function get_sales_groups(int|array|null $show_inactive)
 	$sql = "SELECT * FROM `".TB_PREF."groups`";
 	if (!(bool)$show_inactive) $sql .= " WHERE !inactive";
 	$sql .= " ORDER BY description";
-	return db_query($sql,"could not get groups");
+	return db_select($sql,"could not get groups");
 }
 
 /**
@@ -46,7 +46,7 @@ function get_sales_group(string|int|float|bool|array|null $selected_id)
 {
 	$sql = "SELECT * FROM `".TB_PREF."groups` WHERE id=".db_escape($selected_id);
 
-	$result = db_query($sql,"could not get group");
+	$result = db_select($sql,"could not get group");
 	return db_fetch($result);
 }
 
@@ -56,7 +56,7 @@ function get_sales_group(string|int|float|bool|array|null $selected_id)
 function get_sales_group_name(?string $group_no)
 {
 	$sql = "SELECT description FROM `".TB_PREF."groups` WHERE id = ".db_escape($group_no);
-	$result = db_query($sql, "could not get group");
+	$result = db_select($sql, "could not get group");
 	$row = db_fetch($result);
 	return is_array($row) ? $row[0] : false;
 }
@@ -86,7 +86,7 @@ function get_sales_areas(int|array|null $show_inactive)
 {
 	$sql = "SELECT * FROM ".TB_PREF."areas";
 	if (!(bool)$show_inactive) $sql .= " WHERE !inactive";
-	return db_query($sql,"could not get areas");
+	return db_select($sql,"could not get areas");
 }
 
 /**
@@ -96,7 +96,7 @@ function get_sales_area(string|int|float|bool|array|null $selected_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."areas WHERE area_code=".db_escape($selected_id);
 
-	$result = db_query($sql,"could not get area");
+	$result = db_select($sql,"could not get area");
 	return db_fetch($result);
 }
 
@@ -107,7 +107,7 @@ function get_area_name(string|array|null $id)
 {
 	$sql = "SELECT description FROM ".TB_PREF."areas WHERE area_code=".db_escape($id);
 
-	$result = db_query($sql, "could not get sales type");
+	$result = db_select($sql, "could not get sales type");
 
 	$row = db_fetch_row($result);
 	return is_array($row) ? $row[0] : false;
@@ -154,7 +154,7 @@ function get_salesmen(int|array|null $show_inactive)
 {
 	$sql = "SELECT * FROM ".TB_PREF."salesman";
 	if (!(bool)$show_inactive) $sql .= " WHERE !inactive";
-	return db_query($sql,"could not get sales persons");
+	return db_select($sql,"could not get sales persons");
 }
 
 /**
@@ -164,7 +164,7 @@ function get_salesman(string|int|float|bool|array|null $selected_id)
 {
 	$sql = "SELECT *  FROM ".TB_PREF."salesman WHERE salesman_code=".db_escape($selected_id);
 
-	$result = db_query($sql,"could not get sales person");
+	$result = db_select($sql,"could not get sales person");
 	return db_fetch($result);
 }
 
@@ -175,7 +175,7 @@ function get_salesman_name(string|array|null $id)
 {
 	$sql = "SELECT salesman_name FROM ".TB_PREF."salesman WHERE salesman_code=".db_escape($id);
 
-	$result = db_query($sql, "could not get sales type");
+	$result = db_select($sql, "could not get sales type");
 
 	$row = db_fetch_row($result);
 	return is_array($row) ? $row[0] : false;

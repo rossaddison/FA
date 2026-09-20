@@ -113,7 +113,7 @@ function get_work_order_produce(string|int|float|bool|null $id)
 		WHERE prod.workorder_id=wo.id
 		AND item.stock_id=wo.stock_id
 		AND prod.id=".db_escape($id);
-    $result = db_query($sql, "The work order production could not be retrieved");
+    $result = db_select($sql, "The work order production could not be retrieved");
 
     return db_fetch($result);
 }
@@ -127,7 +127,7 @@ function get_work_order_productions(string|int|float|bool|null $woid)
 {
 	$sql = "SELECT * FROM ".TB_PREF."wo_manufacture WHERE workorder_id="
 		.db_escape($woid)." ORDER BY id";
-    return db_query($sql, "The work order issues could not be retrieved");
+    return db_select($sql, "The work order issues could not be retrieved");
 }
 
 //--------------------------------------------------------------------------------------
@@ -135,7 +135,7 @@ function get_work_order_productions(string|int|float|bool|null $woid)
 function exists_work_order_produce(string|int|float|bool|array|null $id): bool
 {
 	$sql = "SELECT id FROM ".TB_PREF."wo_manufacture WHERE id=".db_escape($id);
-	$result = db_query($sql, "Cannot retreive a wo production");
+	$result = db_select($sql, "Cannot retreive a wo production");
 
     return (db_num_rows($result) > 0);
 }

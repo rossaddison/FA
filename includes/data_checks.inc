@@ -567,7 +567,7 @@ function check_db_has_tags(string|int|float|bool|null $type, string|int|float|bo
 
 function check_empty_result(?string $sql): bool
 {
-	$result = db_query($sql, "could not do check empty query");	
+	$result = db_select($sql, "could not do check empty query");	
 	
 	$myrow = db_fetch_row($result);
 	return is_array($myrow) ? $myrow[0] > 0 : false;

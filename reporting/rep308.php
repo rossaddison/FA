@@ -65,7 +65,7 @@ function fetch_items(string|int|array|null $category=0)
 			$sql .= " AND cat.category_id = ".db_escape($category);
 		$sql .= " ORDER BY stock.category_id, stock_id";
 
-    return db_query($sql,"No transactions were returned");
+    return db_select($sql,"No transactions were returned");
 }
 
 /**
@@ -96,7 +96,7 @@ function trans_qty(?string $stock_id, string|array|null $location, string|array|
 	else
 		$sql .= " AND qty < 0 ";
 
-	$result = db_query($sql, "QOH calculation failed");
+	$result = db_select($sql, "QOH calculation failed");
 
 	$myrow = row_or_empty(db_fetch_row($result));	
 

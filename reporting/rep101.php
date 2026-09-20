@@ -54,7 +54,7 @@ function get_open_balance(?string $debtorno, string|array|null $to)
     	$sql .= " AND t.tran_date < '$to'";
 	$sql .= " GROUP BY debtor_no";
 
-    $result = db_query($sql,"No transactions were returned");
+    $result = db_select($sql,"No transactions were returned");
     return db_fetch($result);
 }
 
@@ -168,7 +168,7 @@ function print_customer_balances(): void
 	if ($fromcust != ALL_TEXT)
 		$sql .= "WHERE debtor_no=".db_escape($fromcust);
 	$sql .= " ORDER BY name";
-	$result = db_query($sql, "The customers could not be retrieved");
+	$result = db_select($sql, "The customers could not be retrieved");
 
 	while ($myrow = db_fetch($result))
 	{

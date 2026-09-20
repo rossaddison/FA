@@ -63,7 +63,7 @@ function getTaxTransactions(string|array|null $from, string|array|null $to)
 			AND taxrec.tran_date <= '$todate'
 		ORDER BY taxrec.trans_type, taxrec.tran_date, taxrec.trans_no, taxrec.ex_rate";
 
-    return db_query($sql,"No transactions were returned");
+    return db_select($sql,"No transactions were returned");
 }
 
 /**
@@ -72,7 +72,7 @@ function getTaxTransactions(string|array|null $from, string|array|null $to)
 function getTaxTypes()
 {
 	$sql = "SELECT * FROM ".TB_PREF."tax_types ORDER BY id";
-    return db_query($sql,"No transactions were returned");
+    return db_select($sql,"No transactions were returned");
 }
 
 /**
@@ -81,7 +81,7 @@ function getTaxTypes()
 function getTaxInfo(string|int|float|bool|null $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."tax_types WHERE id=$id";
-    $result = db_query($sql,"No transactions were returned");
+    $result = db_select($sql,"No transactions were returned");
     return db_fetch($result);
 }
 

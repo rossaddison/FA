@@ -58,7 +58,7 @@ function get_items_purchasing_data(string|int|float|bool|array|null $stock_id)
 			INNER JOIN ".TB_PREF."suppliers supplier ON pdata.supplier_id=supplier.supplier_id
 		WHERE stock_id = ".db_escape($stock_id);
 
-    return db_query($sql, "The supplier purchasing details for the selected part could not be retrieved");
+    return db_select($sql, "The supplier purchasing details for the selected part could not be retrieved");
 }
 
 /**
@@ -72,7 +72,7 @@ function get_item_purchasing_data(string|int|float|bool|array|null $selected_id,
 		WHERE pdata.supplier_id=".db_escape($selected_id)."
 			AND pdata.stock_id=".db_escape($stock_id);
 
-	$result = db_query($sql, "The supplier purchasing details for the selected supplier and item could not be retrieved");
+	$result = db_select($sql, "The supplier purchasing details for the selected supplier and item could not be retrieved");
 
 	return db_fetch($result);
 }

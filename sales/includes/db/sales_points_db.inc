@@ -41,7 +41,7 @@ function get_all_sales_points(int|bool|array|null $all=false)
 		LEFT JOIN ".TB_PREF."bank_accounts as acc on pos.pos_account=acc.id";
 	if (!(bool)$all) $sql .= " WHERE !pos.inactive";
 	
-	return db_query($sql, "could not get all POS definitions");
+	return db_select($sql, "could not get all POS definitions");
 } 
 
 /**
@@ -55,7 +55,7 @@ function get_sales_point(string|int|float|bool|null $id)
 		LEFT JOIN ".TB_PREF."bank_accounts as acc on pos.pos_account=acc.id
 		WHERE pos.id=".db_escape($id);
 	
-	$result = db_query($sql, "could not get POS definition");
+	$result = db_select($sql, "could not get POS definition");
 	
 	return db_fetch($result);
 }
@@ -67,7 +67,7 @@ function get_sales_point_name(string|int|float|bool|null $id)
 {
 	$sql = "SELECT pos_name FROM ".TB_PREF."sales_pos WHERE id=".db_escape($id);
 	
-	$result = db_query($sql, "could not get POS name");
+	$result = db_select($sql, "could not get POS name");
 	
 	$row = db_fetch_row($result);
 	return is_array($row) ? $row[0] : false;
