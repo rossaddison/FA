@@ -109,9 +109,9 @@ function display_rates(string|int|float|bool|null $curr_code): void
 
 function display_rate_edit(): void
 {
-	global $selected_id, $Ajax, $SysPrefs;
-	$xchg_rate_provider = ((isset($SysPrefs->xr_providers) && isset($SysPrefs->dflt_xr_provider))
-		? $SysPrefs->xr_providers[$SysPrefs->dflt_xr_provider] : 'ECB');
+	global $selected_id, $Ajax;
+	$xchg_rate_provider = ((isset(sysprefs()->xr_providers) && isset(sysprefs()->dflt_xr_provider))
+		? sysprefs()->xr_providers[sysprefs()->dflt_xr_provider] : 'ECB');
 	start_table(TABLESTYLE2);
 
 	if ($selected_id != "")

@@ -229,10 +229,9 @@ function get_customer_currency(string|int|float|bool|array|null $customer_id=nul
  */
 function get_customers_search(string|array|null $customer)
 {
-	global $SysPrefs;
 
-	if (isset($SysPrefs->max_rows_in_search))
-		$limit = $SysPrefs->max_rows_in_search;
+	if (isset(sysprefs()->max_rows_in_search))
+		$limit = sysprefs()->max_rows_in_search;
 	else
 		$limit = 10;
 

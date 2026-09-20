@@ -23,9 +23,9 @@ $selected_id = get_post('profile_id','');
 // Returns array of defined reports
 //
 function get_reports() {
-	global $path_to_root, $SysPrefs;
+	global $path_to_root;
 
-	if ($SysPrefs->go_debug || !isset($_SESSION['reports'])) {	
+	if (sysprefs()->go_debug || !isset($_SESSION['reports'])) {	
 	// to save time, store in session.
 		$paths = array (
 			$path_to_root.'/reporting/',

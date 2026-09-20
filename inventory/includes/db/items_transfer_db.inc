@@ -25,7 +25,7 @@ function add_stock_transfer(mixed $Items, string|array|null $location_from, stri
 
 	$transfer_id = get_next_trans_no(ST_LOCTRANSFER);
 
-	if ($SysPrefs->loc_notification() == 1)
+	if (sysprefs()->loc_notification() == 1)
 	{
 		include_once($path_to_root . "/inventory/includes/inventory_db.inc");
 		$st_ids = array();
@@ -35,7 +35,7 @@ function add_stock_transfer(mixed $Items, string|array|null $location_from, stri
 	}
 	foreach ($Items as $line_item)
 	{
-		if ($SysPrefs->loc_notification() == 1)
+		if (sysprefs()->loc_notification() == 1)
 			$loc = calculate_reorder_level($location_from, $line_item, $st_ids, $st_names, $st_num, $st_reorder); 
 		add_stock_transfer_item($transfer_id, $line_item->stock_id, $location_from,
 			$location_to, $date_, $reference, $line_item->quantity);
@@ -51,7 +51,7 @@ function add_stock_transfer(mixed $Items, string|array|null $location_from, stri
 
 	commit_transaction();
 	
-	if ($SysPrefs->loc_notification() == 1 && count($st_ids) > 0)
+	if (sysprefs()->loc_notification() == 1 && count($st_ids) > 0)
 		send_reorder_email($loc, $st_ids, $st_names, $st_num, $st_reorder);
 
 	return $transfer_id;

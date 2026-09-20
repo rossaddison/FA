@@ -18,7 +18,7 @@ include_once($path_to_root . "/includes/ui.inc");
 include_once($path_to_root . "/reporting/includes/reporting.inc");
 
 $js = "";
-if ($SysPrefs->use_popup_windows)
+if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 600);
 if (user_use_date_picker())
 	$js .= get_js_date_picker();
@@ -27,13 +27,13 @@ page(_($help_context = "Create and Print Recurrent Invoices"), false, false, "",
 
 function create_recurrent_invoices(?string $customer_id, ?string $branch_id, ?string $order_no, ?string $tmpl_no, string|array|null $date, string|array|null $from, string|array|null $to, string|array|null $memo)
 {
-	global $Refs, $SysPrefs;
+	global $Refs;
 
 	update_last_sent_recurrent_invoice($tmpl_no, $to);
 
 	$doc = new Cart(ST_SALESORDER, array($order_no));
 	
-	if (!empty($SysPrefs->prefs['dim_on_recurrent_invoice']))
+	if (!empty(sysprefs()->prefs['dim_on_recurrent_invoice']))
 		$doc->trans_type = ST_SALESINVOICE;
 	
 	get_customer_details_to_order($doc, $customer_id, $branch_id);

@@ -128,11 +128,10 @@ class items_cart
 	/** @return list<array<array-key, mixed>|null|scalar> */
 	function check_qoh($location, $date_, $reverse=false)
 	{
-		global $SysPrefs;
 
 		$low_stock = array();
 
-    	if (!$SysPrefs->allow_negative_stock())
+    	if (!sysprefs()->allow_negative_stock())
     	{
 			foreach ($this->line_items as $line_no => $line_item)
 				if (has_stock_holding($line_item->mb_flag) || is_fixed_asset($line_item->mb_flag))

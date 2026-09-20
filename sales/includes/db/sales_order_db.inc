@@ -47,7 +47,7 @@ function add_sales_order(Cart &$order)
 
 	$order->trans_no = array($order_no=>0);
 
-	if ($SysPrefs->loc_notification() == 1)
+	if (sysprefs()->loc_notification() == 1)
 	{
 		include_once($path_to_root . "/inventory/includes/inventory_db.inc");
 		$st_ids = array();
@@ -57,7 +57,7 @@ function add_sales_order(Cart &$order)
 	}
 	foreach ($order->line_items as $line)
 	{
-		if ($SysPrefs->loc_notification() == 1 && is_inventory_item($line->stock_id))
+		if (sysprefs()->loc_notification() == 1 && is_inventory_item($line->stock_id))
 			$loc = calculate_reorder_level($order->Location, $line, $st_ids, $st_names, $st_num, $st_reorder); 
 
 		$sql = "INSERT INTO ".TB_PREF."sales_order_details (order_no, trans_type, stk_code, description, unit_price, quantity, discount_percent) VALUES (";
@@ -79,7 +79,7 @@ function add_sales_order(Cart &$order)
 	hook_db_postwrite($order, $order->trans_type);
 	commit_transaction();
 
-	if ($SysPrefs->loc_notification() == 1 && count($st_ids) > 0)
+	if (sysprefs()->loc_notification() == 1 && count($st_ids) > 0)
 		send_reorder_email($loc, $st_ids, $st_names, $st_num, $st_reorder);
 	return $order_no;
 }
@@ -170,7 +170,7 @@ function update_sales_order(?object $order): void
 
 	db_query($sql, "Old order Cannot be Deleted");
 
-	if ($SysPrefs->loc_notification() == 1)
+	if (sysprefs()->loc_notification() == 1)
 	{
 		include_once($path_to_root . "/inventory/includes/inventory_db.inc");
 		$st_ids = array();
@@ -180,7 +180,7 @@ function update_sales_order(?object $order): void
 	}
 	foreach ($order->line_items as $line)
 	{
-		if ($SysPrefs->loc_notification() == 1 && is_inventory_item($line->stock_id))
+		if (sysprefs()->loc_notification() == 1 && is_inventory_item($line->stock_id))
 			$loc = calculate_reorder_level($order->Location, $line, $st_ids, $st_names, $st_num, $st_reorder); 
 
 		if (!(bool)$line->id) //new line
@@ -217,7 +217,7 @@ function update_sales_order(?object $order): void
 
 	hook_db_postwrite($order, $order->trans_type);
 	commit_transaction();
-	if ($SysPrefs->loc_notification() == 1 && count($st_ids) > 0)
+	if (sysprefs()->loc_notification() == 1 && count($st_ids) > 0)
 		send_reorder_email($loc, $st_ids, $st_names, $st_num, $st_reorder);
 }
 

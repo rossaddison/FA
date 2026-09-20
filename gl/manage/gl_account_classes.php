@@ -24,7 +24,6 @@ simple_page_mode(false);
 
 function can_process(): bool 
 {
-	global $SysPrefs;
 
 	if (strlen(trim($_POST['id'])) == 0) 
 	{
@@ -38,7 +37,7 @@ function can_process(): bool
 		set_focus('name');
 		return false;
 	}
-	if (isset($SysPrefs->use_oldstyle_convert) && $SysPrefs->use_oldstyle_convert == 1)
+	if (isset(sysprefs()->use_oldstyle_convert) && sysprefs()->use_oldstyle_convert == 1)
 		$_POST['Balance'] = check_value('Balance');
 	return true;
 }
@@ -108,7 +107,7 @@ $result = get_account_classes(check_value('show_inactive'));
 start_form();
 start_table(TABLESTYLE);
 $th = array(_("Class ID"), _("Class Name"), _("Class Type"), "", "");
-if (isset($SysPrefs->use_oldstyle_convert) && $SysPrefs->use_oldstyle_convert == 1)
+if (isset(sysprefs()->use_oldstyle_convert) && sysprefs()->use_oldstyle_convert == 1)
 	$th[2] = _("Balance Sheet");
 inactive_control_column($th);
 table_header($th);
@@ -120,7 +119,7 @@ while ($myrow = db_fetch($result))
 
 	label_cell($myrow["cid"]);
 	label_cell('<a href="./gl_account_types.php?cid='.(string)$myrow["cid"].'">'.(string)$myrow['class_name'].'</a>');
-	if (isset($SysPrefs->use_oldstyle_convert) && $SysPrefs->use_oldstyle_convert == 1)
+	if (isset(sysprefs()->use_oldstyle_convert) && sysprefs()->use_oldstyle_convert == 1)
 	{
 		$myrow['ctype'] = ($myrow["ctype"] >= CL_ASSETS && $myrow["ctype"] < CL_INCOME ? 1 : 0);
 		label_cell(($myrow['ctype'] == 1 ? _("Yes") : _("No")));
@@ -146,7 +145,7 @@ if ($selected_id != "")
 	
 		$_POST['id']  = $myrow["cid"];
 		$_POST['name']  = $myrow["class_name"];
-		if (isset($SysPrefs->use_oldstyle_convert) && $SysPrefs->use_oldstyle_convert == 1)
+		if (isset(sysprefs()->use_oldstyle_convert) && sysprefs()->use_oldstyle_convert == 1)
 			$_POST['ctype'] = ($myrow["ctype"] >= CL_ASSETS && $myrow["ctype"] < CL_INCOME ? 1 : 0);
 		else
 			$_POST['ctype']  = $myrow["ctype"];
@@ -164,7 +163,7 @@ else
 
 text_row_ex(_("Class Name:"), 'name', 50, 60);
 
-if (isset($SysPrefs->use_oldstyle_convert) && $SysPrefs->use_oldstyle_convert == 1)
+if (isset(sysprefs()->use_oldstyle_convert) && sysprefs()->use_oldstyle_convert == 1)
 	check_row(_("Balance Sheet"), 'ctype', null);
 else
 	class_types_list_row(_("Class Type:"), 'ctype', null);

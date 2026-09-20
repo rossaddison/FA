@@ -146,7 +146,7 @@ function print_po(): void
 			$DisplayPrice = price_decimal_format($myrow2["unit_price"],$dec2);
 			$DisplayQty = number_format2($myrow2["quantity_ordered"],get_qty_dec($myrow2['item_code']));
 			$DisplayNet = number_format2($Net,$dec);
-			if ($SysPrefs->show_po_item_codes()) {
+			if (sysprefs()->show_po_item_codes()) {
 				$rep->TextCol(0, 1,	$myrow2['item_code'], -2);
 				$rep->TextCol(1, 2,	$myrow2['description'], -2);
 			} else
@@ -187,7 +187,7 @@ function print_po(): void
 
 			if ((bool)$myrow['tax_included'])
 			{
-				if ($SysPrefs->alternative_tax_include_on_docs() == 1)
+				if (sysprefs()->alternative_tax_include_on_docs() == 1)
 				{
 					if ($first)
 					{

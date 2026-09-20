@@ -278,7 +278,7 @@ function check_ui_refresh(?string $name=null): bool
 //
 function exchange_rate_display(string|int|float|bool|null $from_currency, string|int|float|bool|array|null $to_currency, string|int|float|bool|array|null $date_, bool $force_edit=false): void
 {
-    global $Ajax, $SysPrefs;
+    global $Ajax;
 
 	$readonly = false;
 
@@ -311,7 +311,7 @@ function exchange_rate_display(string|int|float|bool|null $from_currency, string
  					$rate = retrieve_exrate($currency, $date_);
 					if (!$rate)
 						display_warning(sprintf(_("Cannot retrieve exchange rate for currency %s. Please adjust approximate rate if needed."), $currency));
-					elseif ($SysPrefs->xr_provider_authoritative) {
+					elseif (sysprefs()->xr_provider_authoritative) {
 						// if the remote exrate is considered authoritative we can store the rate here,
 						// otherwise exrate will be stored during transaction write
 						$readonly = true;
@@ -433,7 +433,6 @@ function display_debit_or_credit_cells(string|int|float|bool|null $value, bool $
 
 function display_customer_trans_tax_details(bool|mysqli_result $tax_items, ?int $columns): void
 {
-	global $SysPrefs;
 
 	$first = true;
     while ($tax_item = db_fetch($tax_items))
@@ -442,13 +441,13 @@ function display_customer_trans_tax_details(bool|mysqli_result $tax_items, ?int 
      		continue;
 
     	$tax = number_format2($tax_item['amount'],user_price_dec());
-		if ($SysPrefs->suppress_tax_rates() == 1)
+		if (sysprefs()->suppress_tax_rates() == 1)
 			$tax_type_name = $tax_item['tax_type_name'];
 		else
 			$tax_type_name = (string)$tax_item['tax_type_name']." (".(string)$tax_item['rate']."%) ";
     	if ((bool)$tax_item['included_in_price'])
     	{
-			if ($SysPrefs->alternative_tax_include_on_docs() == 1)
+			if (sysprefs()->alternative_tax_include_on_docs() == 1)
   			{
   				if ($first)
   					label_row(_("Total Tax Excluded"), number_format2($tax_item['net_amount'], user_price_dec()),
@@ -1008,14 +1007,14 @@ function reset_focus(): void
 
 function get_js_date_picker(): string
 {
-    global $SysPrefs, $tmonths;
+    global $tmonths;
 
     $fpath = user_js_cache().'/'.'date_picker.js';
 
-    if (!file_exists($fpath) || $SysPrefs->go_debug) {
+    if (!file_exists($fpath) || sysprefs()->go_debug) {
 
-	$date_system = $SysPrefs->date_system;
-	$dateseps = $SysPrefs->dateseps;
+	$date_system = sysprefs()->date_system;
+	$dateseps = sysprefs()->dateseps;
 	$how = user_date_format();				// 0 = us/ca, 1 = eu, au, nz, 2 = jp, sw
 	$sep = $dateseps[user_date_sep()];		// date separator
 	$wstart = (($date_system == 1 || $date_system == 2 || $date_system == 3) ? 6 : ($how == 0 || $how == 3 ? 0 : 1));	// weekstart (sun = 0, mon = 1)
@@ -1676,17 +1675,16 @@ function trans_editor_link(string|int|float|bool|null $type, string|int|float|bo
 function company_logo_on_view(): void
 {
 	// Display View Header
-	global $SysPrefs;
 
-	$logo = company_path() . "/images/" . (string)$SysPrefs->prefs['coy_logo'];
+	$logo = company_path() . "/images/" . (string)sysprefs()->prefs['coy_logo'];
 	$nl = 1;
-	if (!empty($SysPrefs->prefs['company_logo_report']) && $SysPrefs->prefs['coy_logo'] != '' && file_exists($logo))
+	if (!empty(sysprefs()->prefs['company_logo_report']) && sysprefs()->prefs['coy_logo'] != '' && file_exists($logo))
 	{
 		$size = getimagesize($logo);
 		$height = $size[0] > 150 ? $size[1] * 150 / $size[0] : 30; 
 		$text = "<img src='$logo' height=$height>";
 	}
 	else
-		$text = $SysPrefs->prefs['coy_name'];
+		$text = sysprefs()->prefs['coy_name'];
 	display_note($text, 0, $nl, "style='font-size:16px;font-weight:600'");
 }

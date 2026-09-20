@@ -19,7 +19,7 @@ include_once($path_to_root . "/manufacturing/includes/manufacturing_ui.inc");
 include_once($path_to_root . "/reporting/includes/reporting.inc");
 
 $js = "";
-if ($SysPrefs->use_popup_windows)
+if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(800, 500);
 if (isset($_GET['outstanding_only']) && ($_GET['outstanding_only'] == true))
 {

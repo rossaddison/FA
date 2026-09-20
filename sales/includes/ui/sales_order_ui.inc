@@ -71,7 +71,6 @@ function add_to_order(Cart &$order, string|array|null $new_item, string|int|floa
 
 function get_customer_details_to_order(Cart &$order, string|int|float|bool|array|null $customer_id, string|int|float|bool|array|null $branch_id): string
 {
-	global $SysPrefs;
 	
 	$ret_error = "";
 
@@ -121,9 +120,9 @@ function get_customer_details_to_order(Cart &$order, string|int|float|bool|array
 		$order->due_date = get_invoice_duedate($order->payment, $order->document_date);
 	}
 	elseif ($order->trans_type == ST_SALESORDER)
-		$order->due_date = add_days($order->document_date, $SysPrefs->default_delivery_required_by());
+		$order->due_date = add_days($order->document_date, sysprefs()->default_delivery_required_by());
 	elseif ($order->trans_type == ST_SALESQUOTE)
-		$order->due_date = add_days($order->document_date, $SysPrefs->default_quote_valid_days());
+		$order->due_date = add_days($order->document_date, sysprefs()->default_quote_valid_days());
 
 	if((bool)$order->payment_terms['cash_sale']) {
 		$order->set_location($order->pos["pos_location"], $order->pos["location_name"]);
@@ -242,7 +241,7 @@ function display_order_summary(?string $title, Cart &$order, bool $editable_item
 
 function display_order_header(Cart &$order, bool $editable, ?string $date_text): string
 {
-	global $Ajax, $SysPrefs;
+	global $Ajax;
 
 	start_outer_table(TABLESTYLE2, "width='80%'");
 
@@ -430,7 +429,7 @@ function display_order_header(Cart &$order, bool $editable, ?string $date_text):
 			if ($order->trans_type == ST_SALESINVOICE) {
 				$_POST['delivery_date'] = get_invoice_duedate(get_post('payment'), get_post('OrderDate'));
 			} else 
-				$_POST['delivery_date'] = add_days(get_post('OrderDate'), $SysPrefs->default_delivery_required_by());
+				$_POST['delivery_date'] = add_days(get_post('OrderDate'), sysprefs()->default_delivery_required_by());
 			$Ajax->activate('items_table');
 			$Ajax->activate('delivery_date');
 		}

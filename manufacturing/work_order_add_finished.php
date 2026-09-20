@@ -21,7 +21,7 @@ include_once($path_to_root . "/manufacturing/includes/manufacturing_db.inc");
 include_once($path_to_root . "/manufacturing/includes/manufacturing_ui.inc");
 
 $js = "";
-if ($SysPrefs->use_popup_windows)
+if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 500);
 if (user_use_date_picker())
 	$js .= get_js_date_picker();
@@ -69,7 +69,6 @@ if ($wo_details === false)
 
 function can_process(array $wo_details): bool
 {
-	global $SysPrefs;
 
 	if (!check_reference($_POST['ref'], ST_MANURECEIVE))
 	{
@@ -110,7 +109,7 @@ function can_process(array $wo_details): bool
 		return false;
 	}
 	// if unassembling we need to check the qoh
-	if (($_POST['ProductionType'] == 0) && !$SysPrefs->allow_negative_stock())
+	if (($_POST['ProductionType'] == 0) && !sysprefs()->allow_negative_stock())
 	{
 		if (check_negative_stock($wo_details["stock_id"], -input_num('quantity'), $wo_details["loc_code"], $_POST['date_']))
 		{
@@ -121,7 +120,7 @@ function can_process(array $wo_details): bool
 	}
 
 	// if production we need to check the qoh of the wo requirements
-	if (($_POST['ProductionType'] == 1) && !$SysPrefs->allow_negative_stock())
+	if (($_POST['ProductionType'] == 1) && !sysprefs()->allow_negative_stock())
 	{
     	$err = false;
     	$result = get_wo_requirements($_POST['selected_id']);

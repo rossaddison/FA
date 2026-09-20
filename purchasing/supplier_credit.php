@@ -21,7 +21,7 @@ include_once($path_to_root . "/includes/data_checks.inc");
 include_once($path_to_root . "/purchasing/includes/purchasing_db.inc");
 include_once($path_to_root . "/purchasing/includes/purchasing_ui.inc");
 $js = "";
-if ($SysPrefs->use_popup_windows)
+if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 500);
 if (user_use_date_picker())
 	$js .= get_js_date_picker();
@@ -164,7 +164,6 @@ if (isset($_POST['AddGLCodeToTrans'])) {
 
 function check_data(): bool
 {
-	global $SysPrefs;
 
 	if (!get_post('supplier_id')) 
 	{
@@ -219,7 +218,7 @@ function check_data(): bool
 		return false;
 	}
 
-	if (!$SysPrefs->allow_negative_stock()) {
+	if (!sysprefs()->allow_negative_stock()) {
 		foreach ($_SESSION['supp_trans']->grn_items as $n => $item) {
 			if (is_inventory_item($item->item_code))
 			{

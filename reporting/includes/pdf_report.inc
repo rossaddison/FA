@@ -255,12 +255,12 @@ class FrontReport extends Cpdf
 		$cols2 = null, $headers2 = null, $aligns2 = null,
 		$companylogoenable = false, $footerenable = false, $footertext = '')
 	{
-		global $SysPrefs, $version;
+		global $version;
 
 		$this->addInfo('Title', $this->title);
 		$this->addInfo('Subject', $this->title);
-		$this->addInfo('Author', $SysPrefs->app_title . ' ' . $version);
-		$this->addInfo('Creator',$SysPrefs->power_by . ' - ' . $SysPrefs->power_url);
+		$this->addInfo('Author', sysprefs()->app_title . ' ' . $version);
+		$this->addInfo('Creator',sysprefs()->power_by . ' - ' . sysprefs()->power_url);
 		$year = row_or_empty(get_current_fiscalyear());
 		if ($year['closed'] == 0)
 			$how = _("Active");
@@ -297,7 +297,6 @@ class FrontReport extends Cpdf
 	//
 	function Header()
 	{
-		global $SysPrefs;
 		
 		$companyCol = $this->endLine - 150;
 		$titleCol = $this->leftMargin + 100;
@@ -315,7 +314,7 @@ class FrontReport extends Cpdf
 		$this->Font();
 		$this->fontSize -= 4;
 		$logo = company_path() . "/images/" . $this->company['coy_logo'];
-		if (!empty($SysPrefs->prefs['company_logo_report']) && $this->company['coy_logo'] != '' && file_exists($logo))
+		if (!empty(sysprefs()->prefs['company_logo_report']) && $this->company['coy_logo'] != '' && file_exists($logo))
 		{
 			$size = getimagesize($logo);
 			$height = $size[0] > 150 ? $size[1] * 150 / $size[0] : 30; 
@@ -953,10 +952,10 @@ class FrontReport extends Cpdf
 	{
 		global $SysPrefs, $path_to_root;
 
-		if (!empty($SysPrefs->prefs['print_dialog_direct']))		
+		if (!empty(sysprefs()->prefs['print_dialog_direct']))		
 			$this->includeJS("print();"); // force to open print dialog
 
-		if ($SysPrefs->pdf_debug == 1)
+		if (sysprefs()->pdf_debug == 1)
 		{
 			$pdfcode = $this->Output('','S');
 			$pdfcode = str_replace("\n", "\n<br>", html_specials_encode($pdfcode));

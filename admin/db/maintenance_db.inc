@@ -267,10 +267,10 @@ function write_lang(): bool
 */
 function db_import(string|int|float|bool|null $filename, mixed $connection, string|int|float|bool|null $force=true, string|int|float|bool|null $init=true, string|int|float|bool|array|null $protect=false, string|int|float|bool|null $return_errors=false): array|string|bool
 {
-	global $db, $SysPrefs;
+	global $db;
 
-	$trail = $SysPrefs->sql_trail;
-	$SysPrefs->sql_trail = false;
+	$trail = sysprefs()->sql_trail;
+	sysprefs()->sql_trail = false;
 
 	$allowed_commands = array(
 		"create"  => 'table_queries', 
@@ -428,8 +428,8 @@ function db_import(string|int|float|bool|null $filename, mixed $connection, stri
 /*/
 	if ((bool)$return_errors)
 	{	// prevent errors display
-		$save_debug = $SysPrefs->go_debug;
-		$SysPrefs->go_debug = 0;
+		$save_debug = sysprefs()->go_debug;
+		sysprefs()->go_debug = 0;
 	}
 	// execute drop tables if exists queries
 	if (is_array($drop_queries))
@@ -472,9 +472,9 @@ function db_import(string|int|float|bool|null $filename, mixed $connection, stri
 	}
 
 	if ((bool)$return_errors)
-		$SysPrefs->go_debug = $save_debug;
+		sysprefs()->go_debug = $save_debug;
 
-	$SysPrefs->sql_trail = $trail;
+	sysprefs()->sql_trail = $trail;
 
 	db_query("SET foreign_key_checks=1");
 	if ($delimiter != ';') db_query("delimiter ;"); // just for any case
@@ -567,7 +567,7 @@ function db_backup(array $conn, string|int|float|bool|array|null $ext='no', stri
 function db_export(array $conn, ?string $filename, string|int|float|bool|null $zip='no', string|int|float|bool|null $comment='')
 {
 
-	global $SysPrefs, $version;
+	global $version;
 
     $error = false;
     // set max string size before writing to file
@@ -590,8 +590,8 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
     //create comment
     $out="# MySQL dump of database '".(string)$conn["dbname"]."' on host '".(string)$conn["host"]."'\n";
     $out.="# Backup Date and Time: ".date("Y-m-d H:i")."\n";
-    $out.="# Built by " . $SysPrefs->app_title . " " . $version ."\n";
-    $out.="# ".$SysPrefs->power_url."\n";
+    $out.="# Built by " . sysprefs()->app_title . " " . $version ."\n";
+    $out.="# ".sysprefs()->power_url."\n";
     $out.="# Company: ". @html_entity_decode($company, ENT_QUOTES, $_SESSION['language']->encoding)."\n";
     $out.="# User: ".$_SESSION["wa_current_user"]->name."\n\n";
     $out.="# Compatibility: ".get_company_pref('version_id')."\n\n";

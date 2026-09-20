@@ -266,7 +266,7 @@ number_list_row(_("Type"), 'type_', null, 1, $dim);
 
 date_row(_("Start Date") . ":", 'date_');
 
-date_row(_("Date Required By") . ":", 'due_date', '', null, $SysPrefs->default_dimension_required_by());
+date_row(_("Date Required By") . ":", 'due_date', '', null, sysprefs()->default_dimension_required_by());
 
 tag_list_row(_("Tags:"), 'dimension_tags', 5, TAG_DIMENSION, true);
 

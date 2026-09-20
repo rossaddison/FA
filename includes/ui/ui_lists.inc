@@ -30,7 +30,7 @@ define('SELECT_BUTTON', "<input %s type='submit' class='combo_select' style='bor
 function combo_input(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id, string|int|float|bool|null $sql, string|int|float|bool|null $valfield, string|int|float|bool|null $namefield,
 	?array $options=null, ?string $type=null): string
 {
-global $Ajax, $path_to_root, $SysPrefs ;
+global $Ajax, $path_to_root;
 
 $opts = array(		// default options
 	'where'=> array(),		// additional constraints
@@ -184,7 +184,7 @@ $opts = array(		// default options
 	$lastcat = null;
 	$edit = false;
 	$pname = false;
-	if (($type === "customer" || $type === "supplier") && !empty($SysPrefs->prefs['shortname_name_in_list']))
+	if (($type === "customer" || $type === "supplier") && !empty(sysprefs()->prefs['shortname_name_in_list']))
 		$pname = true;
 	if($result = db_query($sql)) {
 		while ($contact_row = db_fetch($result)) {
@@ -245,7 +245,7 @@ $opts = array(		// default options
 	
 	$_POST[$name] = (bool)$multi ? $selected_id : $selected_id[0];
 
-	if ($SysPrefs->use_popup_search)
+	if (sysprefs()->use_popup_search)
 		$selector = "<select id='$name' autocomplete='off' ".((bool)$multi ? "multiple" : '')
 		. ($opts['height']!==false ? ' size="'.(string)$opts['height'].'"' : '')
 		. "$disabled name='$name".((bool)$multi ? '[]':'')."' class='$class' title='"
@@ -299,12 +299,12 @@ $opts = array(		// default options
 	default_focus(($search_box && $by_id) ? $search_box : $name);
 
 	$img = "";
-	if ($SysPrefs->use_popup_search && (!isset($opts['fixed_asset']) || !$opts['fixed_asset']))
+	if (sysprefs()->use_popup_search && (!isset($opts['fixed_asset']) || !$opts['fixed_asset']))
 	{
 		$img_title = "";
 		$link = "";
   		$id = $name;
-  		if ($SysPrefs->use_popup_windows) {
+  		if (sysprefs()->use_popup_windows) {
   			if ($type != NULL) {
 	    		switch (strtolower($type)) {
 	      			case "stock":
@@ -508,9 +508,9 @@ function _format_add_curr(array|false|null $row, string|int|float|bool|null $pna
 
 function add_edit_combo(?string $type): string
 {
-	global $path_to_root, $popup_editors, $SysPrefs;
+	global $path_to_root, $popup_editors;
 
-	if (!isset($SysPrefs->use_icon_for_editkey) || $SysPrefs->use_icon_for_editkey==0)
+	if (!isset(sysprefs()->use_icon_for_editkey) || sysprefs()->use_icon_for_editkey==0)
 		return "";
 	// Derive theme path
 	$theme_path = $path_to_root . '/themes/' . user_theme();
@@ -525,8 +525,7 @@ function add_edit_combo(?string $type): string
 function supplier_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $spec_option=false, bool $submit_on_change=false,
 	int|bool|array|null $all=false, bool $editkey = false)
 {
-	global $SysPrefs;
-	if (!empty($SysPrefs->prefs['shortname_name_in_list']))
+	if (!empty(sysprefs()->prefs['shortname_name_in_list']))
 		$sql = "SELECT supplier_id, supp_ref, supp_name, curr_code, inactive FROM ".TB_PREF."suppliers ";
 	else	
 		$sql = "SELECT supplier_id, supp_ref, curr_code, inactive FROM ".TB_PREF."suppliers ";
@@ -580,8 +579,7 @@ function supplier_list_row(?string $label, ?string $name, string|int|float|bool|
 function customer_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $spec_option=false, bool $submit_on_change=false, 
 	int|bool|array|null $show_inactive=false, bool $editkey = false)
 {
-	global $SysPrefs;
-	if (!empty($SysPrefs->prefs['shortname_name_in_list']))
+	if (!empty(sysprefs()->prefs['shortname_name_in_list']))
 		$sql = "SELECT debtor_no, debtor_ref, name, curr_code, inactive FROM ".TB_PREF."debtors_master ";
 	else	
 		$sql = "SELECT debtor_no, debtor_ref, curr_code, inactive FROM ".TB_PREF."debtors_master ";
@@ -2044,37 +2042,33 @@ function wo_types_list_row(?string $label, ?string $name, string|int|float|bool|
 
 function dateformats_list_row(?string $label, ?string $name, string|int|float|bool|null $value=null): void
 {
-	global $SysPrefs;
 
 	echo "<tr><td class='label'>$label</td>\n<td>";
-	echo array_selector( $name, $value, $SysPrefs->dateformats );
+	echo array_selector( $name, $value, sysprefs()->dateformats );
 	echo "</td></tr>\n";
 }
 
 function dateseps_list_row(?string $label, ?string $name, string|int|float|bool|null $value=null): void
 {
-	global $SysPrefs;
 
 	echo "<tr><td class='label'>$label</td>\n<td>";
-	echo array_selector( $name, $value, $SysPrefs->dateseps );
+	echo array_selector( $name, $value, sysprefs()->dateseps );
 	echo "</td></tr>\n";
 }
 
 function thoseps_list_row(?string $label, ?string $name, string|int|float|bool|null $value=null): void
 {
-	global $SysPrefs;
 
 	echo "<tr><td class='label'>$label</td>\n<td>";
-	echo array_selector( $name, $value, $SysPrefs->thoseps );
+	echo array_selector( $name, $value, sysprefs()->thoseps );
 	echo "</td></tr>\n";
 }
 
 function decseps_list_row(?string $label, ?string $name, string|int|float|bool|null $value=null): void
 {
-	global $SysPrefs;
 
 	echo "<tr><td class='label'>$label</td>\n<td>";
-	echo array_selector( $name, $value, $SysPrefs->decseps );
+	echo array_selector( $name, $value, sysprefs()->decseps );
 	echo "</td></tr>\n";
 }
 
@@ -2101,10 +2095,9 @@ function themes_list_row(?string $label, ?string $name, string|int|float|bool|nu
 
 function pagesizes_list_row(?string $label, ?string $name, string|int|null $value=null): void
 {
-	global $SysPrefs;
 
 	$items = array();
-	foreach ($SysPrefs->pagesizes as $pz)
+	foreach (sysprefs()->pagesizes as $pz)
 		$items[$pz] = $pz;
 
 	echo "<tr><td class='label'>$label</td>\n<td>";

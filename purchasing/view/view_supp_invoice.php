@@ -19,7 +19,7 @@ include_once($path_to_root . "/includes/session.inc");
 include_once($path_to_root . "/purchasing/includes/purchasing_ui.inc");
 
 $js = "";
-if ($SysPrefs->use_popup_windows)
+if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 500);
 page(_($help_context = "View Supplier Invoice"), true, false, "", $js);
 
@@ -38,7 +38,7 @@ read_supp_invoice($trans_no, ST_SUPPINVOICE, $supp_trans);
 
 $supplier_curr_code = get_supplier_currency($supp_trans->supplier_id);
 
-if (!empty($SysPrefs->prefs['company_logo_on_views']))
+if (!empty(sysprefs()->prefs['company_logo_on_views']))
 	company_logo_on_view();
 
 display_heading(_("SUPPLIER INVOICE") . " # " . $trans_no);

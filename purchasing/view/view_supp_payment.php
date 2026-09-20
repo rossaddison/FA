@@ -17,7 +17,7 @@ include($path_to_root . "/includes/session.inc");
 include_once($path_to_root . "/includes/ui.inc");
 include_once($path_to_root . "/purchasing/includes/purchasing_db.inc");
 $js = "";
-if ($SysPrefs->use_popup_windows)
+if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 500);
 page(_($help_context = "View Payment to Supplier"), true, false, "", $js);
 
@@ -42,7 +42,7 @@ if ($receipt['bank_curr_code'] != $receipt['curr_code'])
 	$show_both_amounts = true;
 }
 
-if (!empty($SysPrefs->prefs['company_logo_on_views']))
+if (!empty(sysprefs()->prefs['company_logo_on_views']))
 	company_logo_on_view();
 
 echo "<center>";

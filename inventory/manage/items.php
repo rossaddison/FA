@@ -15,7 +15,7 @@ include($path_to_root . "/includes/session.inc");
 include($path_to_root . "/reporting/includes/tcpdf.php");
 
 $js = "";
-if ($SysPrefs->use_popup_windows)
+if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 500);
 if (user_use_date_picker())
 	$js .= get_js_date_picker();
@@ -69,7 +69,6 @@ function del_image(string|int|float|bool|array|null $stock_id): bool
 
 function show_image(string|int|float|array|null $stock_id): void
 {
-	global $SysPrefs;
 
 	$check_remove_image = false;
 	$stock_img_link = _("No image");
@@ -82,7 +81,7 @@ function show_image(string|int|float|array|null $stock_id): void
 				// rand() call is necessary here to avoid caching problems.
 				$check_remove_image = true; // fixme
 				$stock_img_link = "<img id='item_img' alt = '[".$stock_id.".$ext"."]' src='".$file."?nocache=".rand()."'"
-					." height='".$SysPrefs->pic_height."' border='0'>";
+					." height='".sysprefs()->pic_height."' border='0'>";
 				break;
 			}
 		}
@@ -151,9 +150,9 @@ if (isset($_FILES['pic']) && $_FILES['pic']['name'] != '')
 		display_warning(_('Only graphics files are supported - a file extension of .jpg, .png or .gif is expected'));
 		$upload_file ='No';
 	} 
-	elseif ( $_FILES['pic']['size'] > ($SysPrefs->max_image_size * 1024)) 
+	elseif ( $_FILES['pic']['size'] > (sysprefs()->max_image_size * 1024)) 
 	{ //File Size Check
-		display_warning(_('The file size is over the maximum allowed. The maximum size allowed in KB is') . ' ' . $SysPrefs->max_image_size);
+		display_warning(_('The file size is over the maximum allowed. The maximum size allowed in KB is') . ' ' . sysprefs()->max_image_size);
 		$upload_file ='No';
 	} 
 	elseif ( $_FILES['pic']['type'] == "text/plain" ) 
@@ -348,7 +347,7 @@ if (isset($_POST['delete']) && strlen($_POST['delete']) > 1)
 
 function item_settings(&$stock_id, bool $new_item): void 
 {
-	global $SysPrefs, $path_to_root, $page_nested, $depreciation_methods;
+	global $path_to_root, $page_nested, $depreciation_methods;
 
 	start_outer_table(TABLESTYLE2);
 
@@ -361,7 +360,7 @@ function item_settings(&$stock_id, bool $new_item): void
 	{
 		$tmpCodeID=null;
 		$post_label = null;
-		if (!empty($SysPrefs->prefs['barcodes_on_stock']))
+		if (!empty(sysprefs()->prefs['barcodes_on_stock']))
 		{
 			$post_label = '<button class="ajaxsubmit" type="submit" aspect=\'default\'  name="generateBarcode"  id="generateBarcode" value="Generate Barcode EAN8"> '._("Generate EAN-8 Barcode").' </button>';
 			if (isset($_POST['generateBarcode']))

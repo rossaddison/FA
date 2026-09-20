@@ -21,7 +21,7 @@ include_once($path_to_root . "/manufacturing/includes/manufacturing_db.inc");
 include_once($path_to_root . "/manufacturing/includes/manufacturing_ui.inc");
 
 $js = "";
-if ($SysPrefs->use_popup_windows)
+if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 500);
 if (user_use_date_picker())
 	$js .= get_js_date_picker();
@@ -122,7 +122,7 @@ if (!isset($_POST['date_']))
 
 function can_process(): bool
 {
-	global $selected_id, $SysPrefs;
+	global $selected_id;
 
 	if (!isset($selected_id))
 	{
@@ -179,7 +179,7 @@ function can_process(): bool
     		return false;
     	}
 
-        if (!$SysPrefs->allow_negative_stock())
+        if (!sysprefs()->allow_negative_stock())
         {
         	if ($_POST['type'] == WO_ASSEMBLY)
         	{
@@ -397,7 +397,7 @@ if (get_post('type') == WO_ADVANCED)
     if ((bool)$_POST['released'])
     	label_row(_("Quantity Manufactured:"), number_format($_POST['units_issued'], get_qty_dec(post_scalar('stock_id'))));
     date_row(_("Date") . ":", 'date_', '', true);
-	date_row(_("Date Required By") . ":", 'RequDate', '', null, $SysPrefs->default_wo_required_by());
+	date_row(_("Date Required By") . ":", 'RequDate', '', null, sysprefs()->default_wo_required_by());
 }
 else
 {

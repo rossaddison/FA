@@ -214,7 +214,7 @@ function print_inventory_valuation_report(): void
 			if ($detail)
 				$rep->NewLine();
 		}
-		if (isset($SysPrefs->use_costed_values) && $SysPrefs->use_costed_values==1)
+		if (isset(sysprefs()->use_costed_values) && sysprefs()->use_costed_values==1)
 		{
 			$UnitCost = getAverageCost($trans['stock_id'], $location, $date);
 			$ItemTotal = (float)$trans['QtyOnHand'] * $UnitCost;

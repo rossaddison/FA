@@ -20,7 +20,7 @@ if (get_post('view')) {
 	if (!get_post('backups')) {
 		display_error(_('Select backup file first.'));
 	} else {
-		$filename = $SysPrefs->backup_dir() . clean_file_name(get_post('backups'));
+		$filename = sysprefs()->backup_dir() . clean_file_name(get_post('backups'));
 		if (in_ajax()) 
 			$Ajax->popup( $filename );
 		else {
@@ -41,7 +41,7 @@ if (get_post('view')) {
 
 if (get_post('download')) {
 	if (get_post('backups')) {
-		download_file($SysPrefs->backup_dir().clean_file_name(get_post('backups')));
+		download_file(sysprefs()->backup_dir().clean_file_name(get_post('backups')));
 		exit;
 	} else
 		display_error(_("Select backup file first."));
@@ -53,12 +53,11 @@ check_paths();
 
 function check_paths(): void
 {
-  global $SysPrefs;
 
-	if (!file_exists($SysPrefs->backup_dir())) {
+	if (!file_exists(sysprefs()->backup_dir())) {
 		display_error (_("Backup paths have not been set correctly.") 
 			._("Please contact System Administrator.")."<br>" 
-			. _("cannot find backup directory") . " - " . $SysPrefs->backup_dir() . "<br>");
+			. _("cannot find backup directory") . " - " . sysprefs()->backup_dir() . "<br>");
 		end_page();
 		exit;
 	}
@@ -66,9 +65,8 @@ function check_paths(): void
 
 function generate_backup(array $conn, string|array|null $ext='no', string|array|null $comm='')
 {
-	global $SysPrefs;
 
-	$filename = db_backup($conn, $ext, $comm, $SysPrefs->backup_dir());
+	$filename = db_backup($conn, $ext, $comm, sysprefs()->backup_dir());
 	if ($filename)
 		display_notification(_("Backup successfully generated."). ' '
 			. _("Filename") . ": " . $filename);
@@ -81,11 +79,11 @@ function generate_backup(array $conn, string|array|null $ext='no', string|array|
 
 function get_backup_file_combo(): string
 {
-	global $path_to_root, $Ajax, $SysPrefs;
+	global $path_to_root, $Ajax;
 	
 	$ar_files = array();
     default_focus('backups');
-    $dh = opendir($SysPrefs->backup_dir());
+    $dh = opendir(sysprefs()->backup_dir());
 	while (($file = readdir($dh)) !== false)
 		$ar_files[] = $file;
 	closedir($dh);
@@ -136,19 +134,19 @@ function download_file(?string $filename): bool
 
 $conn = $db_connections[user_company()];
 $backup_name = clean_file_name(get_post('backups'));
-$backup_path = $SysPrefs->backup_dir() . $backup_name;
+$backup_path = sysprefs()->backup_dir() . $backup_name;
 
 if (get_post('creat')) {
 	generate_backup($conn, get_post('comp'), get_post('comments'));
 	$Ajax->activate('backups');
-	$SysPrefs->refresh(); // re-read system setup
+	sysprefs()->refresh(); // re-read system setup
 };
 
 if (get_post('restore')) {
 	if ((bool)$backup_name) {
 		if ((bool)db_import($backup_path, $conn, true, false, check_value('protect')))
 			display_notification(_("Restore backup completed."));
-		$SysPrefs->refresh(); // re-read system setup
+		sysprefs()->refresh(); // re-read system setup
 	} else
 		display_error(_("Select backup file first."));
 }
@@ -177,7 +175,7 @@ if (get_post('upload'))
 		elseif ($fname != clean_file_name($fname))
 			display_error(_("Filename contains forbidden chars. Please rename file and try again."));
 		elseif (is_uploaded_file($tmpname)) {
-			rename($tmpname, $SysPrefs->backup_dir() . $fname);
+			rename($tmpname, sysprefs()->backup_dir() . $fname);
 			display_notification(_("File uploaded to backup directory"));
 			$Ajax->activate('backups');
 		} else

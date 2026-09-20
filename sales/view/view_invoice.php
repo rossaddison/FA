@@ -18,7 +18,7 @@ include_once($path_to_root . "/sales/includes/sales_ui.inc");
 include_once($path_to_root . "/sales/includes/sales_db.inc");
 
 $js = "";
-if ($SysPrefs->use_popup_windows)
+if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 600);
 page(_($help_context = "View Sales Invoice"), true, false, "", $js);
 
@@ -41,7 +41,7 @@ $branch = row_or_empty(get_branch($myrow["branch_code"]));
 
 $sales_order = row_or_empty(get_sales_order_header($myrow["order_"], ST_SALESORDER));
 
-if (!empty($SysPrefs->prefs['company_logo_on_views']))
+if (!empty(sysprefs()->prefs['company_logo_on_views']))
 	company_logo_on_view();
 
 display_heading(sprintf($myrow['prep_amount'] > 0 ? (

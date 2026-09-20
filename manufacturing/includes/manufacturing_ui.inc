@@ -85,7 +85,6 @@ function display_bom(string|int|float|bool|null $item_check): void
 
 function display_wo_requirements(string|int|float|bool|null $woid, ?string $quantity, bool $show_qoh=false, string|int|float|bool|null $date=null): void
 {
-	global $SysPrefs;
 
     $result = get_wo_requirements($woid);
 
@@ -121,7 +120,7 @@ function display_wo_requirements(string|int|float|bool|null $woid, ?string $quan
 				$qoh = get_qoh_on_date($myrow["stock_id"], $myrow["loc_code"], $date);
 
 			if ($show_qoh && ((float)$myrow["units_req"] * $quantity > $qoh) &&
-				!$SysPrefs->allow_negative_stock())
+				!sysprefs()->allow_negative_stock())
 			{
 				// oops, we don't have enough of one of the component items
 				start_row("class='stockmankobg'");

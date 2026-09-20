@@ -21,10 +21,10 @@ this can be a string either "d/m/Y" for UK/Australia/New Zealand dates or
 
 function __date(string|int|float|bool|null $year, string|int|float|bool|null $month, string|int|float|bool|null $day): string
 {
-	global $SysPrefs, $tmonths;
+	global $tmonths;
 	
 	$how = user_date_format();
-	$sep = $SysPrefs->dateseps[user_date_sep()];
+	$sep = sysprefs()->dateseps[user_date_sep()];
 	$day = (int)$day;
 	$month = (int)$month;
 	if ($how < 3)
@@ -50,12 +50,11 @@ function __date(string|int|float|bool|null $year, string|int|float|bool|null $mo
 
 function is_date(?string $date_): int 
 {
-	global $SysPrefs;
 
 	if ($date_ == null || $date_ == "")
 		return 0;
 	$how = user_date_format();
-	$sep = $SysPrefs->dateseps[user_date_sep()];
+	$sep = sysprefs()->dateseps[user_date_sep()];
 
 	$date_ = trim($date_);
 	$date = str_replace($sep, "", $date_);
@@ -134,10 +133,9 @@ function is_date(?string $date_): int
 
 	if (is_long((int)$day) && is_long((int)$month) && is_long((int)$year))
 	{
-		global $SysPrefs;
-		if ($SysPrefs->date_system == 1)
+		if (sysprefs()->date_system == 1)
 			list($year, $month, $day) = jalali_to_gregorian($year, $month, $day);  
-		elseif ($SysPrefs->date_system == 2)	
+		elseif (sysprefs()->date_system == 2)	
 			list($year, $month, $day) = islamic_to_gregorian($year, $month, $day);  
 		if (checkdate((int)$month, (int)$day, (int)$year))
 		{
@@ -156,14 +154,13 @@ function is_date(?string $date_): int
 
 function Today(): string 
 {
-	global $SysPrefs;
 
 	$year = date("Y");
 	$month = date("n");
 	$day = date("j");
-	if ($SysPrefs->date_system == 1)
+	if (sysprefs()->date_system == 1)
 		list($year, $month, $day) = gregorian_to_jalali($year, $month, $day);
-	elseif ($SysPrefs->date_system == 2)	
+	elseif (sysprefs()->date_system == 2)	
 		list($year, $month, $day) = gregorian_to_islamic($year, $month, $day);
 	return __date($year, $month, $day);	
 }
@@ -240,24 +237,22 @@ function end_fiscalyear(): string
 
 function begin_month(string|int|float|bool|array|null $date): string
 {
-	global $SysPrefs;
     list($day, $month, $year) = explode_date_to_dmy($date);
-    if ($SysPrefs->date_system == 1)
+    if (sysprefs()->date_system == 1)
     	list($year, $month, $day) = gregorian_to_jalali($year, $month, $day);
-    elseif ($SysPrefs->date_system == 2)	
+    elseif (sysprefs()->date_system == 2)	
     	list($year, $month, $day) = gregorian_to_islamic($year, $month, $day);
    	return __date($year, $month, 1);
 }
 
 function days_in_month(string|int|float|bool|null $month, string|int|float|bool|null $year): int
 {
-	global $SysPrefs;
 
-	if ($SysPrefs->date_system == 1)
+	if (sysprefs()->date_system == 1)
 	{
 		$days_in_month = array(31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, ((((((($year - (($year > 0) ? 474 : 473)) % 2820) + 474) + 38) * 682) % 2816) < 682 ? 30 : 29));
 	}
-	elseif ($SysPrefs->date_system == 2)
+	elseif (sysprefs()->date_system == 2)
 	{
 		$days_in_month = array(30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, (((((11 * $year) + 14) % 30) < 11) ? 30 : 29));
 	}
@@ -269,14 +264,13 @@ function days_in_month(string|int|float|bool|null $month, string|int|float|bool|
 
 function end_month(string|int|float|bool|array|null $date): string
 {
-	global $SysPrefs;
 
     list($day, $month, $year) = explode_date_to_dmy($date);
-	if ($SysPrefs->date_system == 1)
+	if (sysprefs()->date_system == 1)
 	{
 		list($year, $month, $day) = gregorian_to_jalali($year, $month, $day);
 	}
-	elseif ($SysPrefs->date_system == 2)
+	elseif (sysprefs()->date_system == 2)
 	{
 		list($year, $month, $day) = gregorian_to_islamic($year, $month, $day);
 	}
@@ -286,14 +280,13 @@ function end_month(string|int|float|bool|array|null $date): string
 
 function add_days(string|int|float|bool|array|null $date, string|int|float|bool|null $days): string // accepts negative values as well
 {
-	global $SysPrefs;
     list($day, $month, $year) = explode_date_to_dmy($date);
    	$timet = mktime(0,0,0, $month, $day + $days, $year);
-    if ($SysPrefs->date_system == 1 || $SysPrefs->date_system == 2)
+    if (sysprefs()->date_system == 1 || sysprefs()->date_system == 2)
     {
-    	if ($SysPrefs->date_system == 1)
+    	if (sysprefs()->date_system == 1)
     		list($year, $month, $day) = gregorian_to_jalali(date("Y", $timet), date("n", $timet), date("j", $timet));
-    	elseif ($SysPrefs->date_system == 2) 	
+    	elseif (sysprefs()->date_system == 2) 	
     		list($year, $month, $day) = gregorian_to_islamic(date("Y", $timet), date("n", $timet), date("j", $timet));
     	return __date($year, $month, $day);
     }
@@ -304,7 +297,6 @@ function add_days(string|int|float|bool|array|null $date, string|int|float|bool|
 /** @return string */
 function add_months(string|int|float|bool|array|null $date, string|int|float|bool|null $months) // accepts negative values as well
 {
-	global $SysPrefs;
 
     list($day, $month, $year) = explode_date_to_dmy($date);
 
@@ -314,11 +306,11 @@ function add_months(string|int|float|bool|array|null $date, string|int|float|boo
 
    	$timet = mktime(0,0,0, $month, min($day, days_in_month($month, $year)), $year);
 
-    if ($SysPrefs->date_system == 1 || $SysPrefs->date_system == 2)
+    if (sysprefs()->date_system == 1 || sysprefs()->date_system == 2)
     {
-    	if ($SysPrefs->date_system == 1)
+    	if (sysprefs()->date_system == 1)
     		list($year, $month, $day) = gregorian_to_jalali(date("Y", $timet), date("n", $timet), date("j", $timet));
-    	elseif ($SysPrefs->date_system == 2) 	
+    	elseif (sysprefs()->date_system == 2) 	
     		list($year, $month, $day) = gregorian_to_islamic(date("Y", $timet), date("n", $timet), date("j", $timet));
     	return __date($year, $month, $day);
     }
@@ -329,15 +321,14 @@ function add_months(string|int|float|bool|array|null $date, string|int|float|boo
 /** @return string */
 function add_years(string|int|float|bool|null $date, string|int|float|bool|null $years) // accepts negative values as well
 {
-	global $SysPrefs;
 
     list($day, $month, $year) = explode_date_to_dmy($date);
    	$timet = Mktime(0,0,0, $month, $day, $year + $years);
-    if ($SysPrefs->date_system == 1 || $SysPrefs->date_system == 2)
+    if (sysprefs()->date_system == 1 || sysprefs()->date_system == 2)
     {
-    	if ($SysPrefs->date_system == 1)
+    	if (sysprefs()->date_system == 1)
     		list($year, $month, $day) = gregorian_to_jalali(date("Y", $timet), date("n", $timet), date("j", $timet));
-    	elseif ($SysPrefs->date_system == 2) 	
+    	elseif (sysprefs()->date_system == 2) 	
     		list($year, $month, $day) = gregorian_to_islamic(date("Y", $timet), date("n", $timet), date("j", $timet));
     	return __date($year, $month, $day);
     }
@@ -349,7 +340,6 @@ function add_years(string|int|float|bool|null $date, string|int|float|bool|null 
 
 function sql2date(string|int|float|bool|null $date_): string 
 {
-	global $SysPrefs;
 
 	//for MySQL dates are in the format YYYY-mm-dd
 	if ($date_ == null)
@@ -369,9 +359,9 @@ function sql2date(string|int|float|bool|null $date_): string
 	{  /*chop off the time stuff */
 		$day = substr($day, 0, 2);
 	}
-	if ($SysPrefs->date_system == 1)
+	if (sysprefs()->date_system == 1)
 		list($year, $month, $day) = gregorian_to_jalali($year, $month, $day);
-	elseif ($SysPrefs->date_system == 2)
+	elseif (sysprefs()->date_system == 2)
 		list($year, $month, $day) = gregorian_to_islamic($year, $month, $day);
 	return __date($year, $month, $day);	
 } // end function sql2date
@@ -379,12 +369,12 @@ function sql2date(string|int|float|bool|null $date_): string
 
 function date2sql(?string $date_): string|int
 {
-	global $SysPrefs, $tmonths;
+	global $tmonths;
 /* takes a date in a the format specified in $DefaultDateFormat
 and converts to a yyyy/mm/dd format */
 
 	$how = user_date_format();
-	$sep = $SysPrefs->dateseps[user_date_sep()];
+	$sep = sysprefs()->dateseps[user_date_sep()];
 
 	$date_ = trim($date_);
 	if ($date_ == null || strlen($date_) == 0)
@@ -406,7 +396,7 @@ and converts to a yyyy/mm/dd format */
 	}
 	if ($year+$day+$month) {
 		//to modify assumption in 2030
-		if ($SysPrefs->date_system == 0 || $SysPrefs->date_system == 3)
+		if (sysprefs()->date_system == 0 || sysprefs()->date_system == 3)
 		{
 			if ((int)$year < 60)
 			{
@@ -421,9 +411,9 @@ and converts to a yyyy/mm/dd format */
 		{
 			return 0;
 		}
-		if ($SysPrefs->date_system == 1)
+		if (sysprefs()->date_system == 1)
 			list($year, $month, $day) = jalali_to_gregorian($year, $month, $day); 
-		elseif ($SysPrefs->date_system == 2)
+		elseif (sysprefs()->date_system == 2)
 			list($year, $month, $day) = islamic_to_gregorian($year, $month, $day); 
 	}
 	return sprintf("%04d-%02d-%02d", $year, $month, $day);

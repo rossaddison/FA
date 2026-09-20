@@ -71,8 +71,7 @@ function gl_inquiry_controls(): void
 
 function display_trial_balance(?string $type, ?string $typename): void
 {
-	global $path_to_root, $SysPrefs,
-		 $k, $pdeb, $pcre, $cdeb, $ccre, $tdeb, $tcre, $pbal, $cbal, $tbal;
+	global $path_to_root, $k, $pdeb, $pcre, $cdeb, $ccre, $tdeb, $tcre, $pbal, $cbal, $tbal;
 
 	$printtitle = 0; //Flag for printing type name
 
@@ -112,7 +111,7 @@ function display_trial_balance(?string $type, ?string $typename): void
 
 		// FA doesn't really clear the closed year, therefore the brought forward balance includes all the transactions from the past, even though the balance is null.
 		// If we want to remove the balanced part for the past years, this option removes the common part from from the prev and tot figures.
-		if (@$SysPrefs->clear_trial_balance_opening)
+		if (@sysprefs()->clear_trial_balance_opening)
 		{
 			$open = row_or_empty(get_balance($account["account_code"], $_POST['Dimension'], $_POST['Dimension2'], $begin,  $begin, false, true));
 			$offset = min($open['debit'], $open['credit']);

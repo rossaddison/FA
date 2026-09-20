@@ -213,10 +213,9 @@ function get_supplier_currency(string|int|float|bool|array|null $supplier_id)
  */
 function get_suppliers_search(string|array|null $supplier)
 {
-	global $SysPrefs;
 
-	if (isset($SysPrefs->max_rows_in_search))
-		$limit = $SysPrefs->max_rows_in_search;
+	if (isset(sysprefs()->max_rows_in_search))
+		$limit = sysprefs()->max_rows_in_search;
 	else
 		$limit = 10;
 

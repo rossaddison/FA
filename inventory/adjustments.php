@@ -22,7 +22,7 @@ include_once($path_to_root . "/fixed_assets/includes/fixed_assets_db.inc");
 include_once($path_to_root . "/inventory/includes/item_adjustments_ui.inc");
 include_once($path_to_root . "/inventory/includes/inventory_db.inc");
 $js = "";
-if ($SysPrefs->use_popup_windows)
+if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(800, 500);
 if (user_use_date_picker())
 	$js .= get_js_date_picker();
@@ -96,7 +96,6 @@ function handle_new_order(): void
 
 function can_process(): bool
 {
-	global $SysPrefs;
 
 	$adj = &$_SESSION['adj_items'];
 
@@ -124,7 +123,7 @@ function can_process(): bool
 		set_focus('AdjDate');
 		return false;
 	}
-	elseif (!$SysPrefs->allow_negative_stock())
+	elseif (!sysprefs()->allow_negative_stock())
 	{
 		$low_stock = $adj->check_qoh($_POST['StockLocation'], $_POST['AdjDate']);
 

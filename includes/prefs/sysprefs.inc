@@ -18,6 +18,111 @@ include_once($path_to_root . "/admin/db/company_db.inc");
 */
 class sys_prefs extends stdClass
 {
+	/** @var string|null */
+	var $error_logfile;
+	/** @var string|null */
+	var $app_title;
+	/** @var int|string|bool|null */
+	var $no_check_edit_conflicts;
+	/** @var int|string|bool|null */
+	var $use_icon_for_editkey;
+	/** @var int|string|bool|null */
+	var $auto_create_branch;
+	/** @var int|string|bool|null */
+	var $use_popup_windows;
+	/** @var int|string|bool|null */
+	var $use_audit_trail;
+	/** @var int|string|bool|null */
+	var $use_oldstyle_convert;
+	/** @var int|string|bool|null */
+	var $show_users_online;
+	/** @var int|string|bool|null */
+	var $old_style_help;
+	/** @var string|null */
+	var $help_base_url;
+	/** @var string|null */
+	var $comp_path;
+	/** @var int|string|null */
+	var $date_system;
+	/** @var int|string|bool|null */
+	var $allow_gl_reopen;
+	/** @var int|string|null */
+	var $dflt_date_fmt;
+	/** @var int|string|null */
+	var $dflt_date_sep;
+	/** @var int|string|bool|null */
+	var $check_qty_charged_vs_del_qty;
+	/** @var int|string|bool|null */
+	var $check_price_charged_vs_order_price;
+	/** @var float|int|string|null */
+	var $config_allocation_settled_allowance;
+	/** @var int|string|bool|null */
+	var $use_costed_values;
+	/** @var int|string|bool|null */
+	var $show_menu_category_icons;
+	/** @var int|string|bool|null */
+	var $allow_demo_mode;
+	/** @var int|string|bool|null */
+	var $allow_password_reset;
+	/** @var int|string|null */
+	var $max_image_size;
+	/** @var int|string|bool|null */
+	var $text_company_selection;
+	/** @var int|string|bool|null */
+	var $hide_inaccessible_menu_items;
+	/** @var int|string|null */
+	var $login_delay;
+	/** @var int|string|null */
+	var $login_max_attempts;
+	/** @var array<int, string>|null */
+	var $xr_providers;
+	/** @var int|string|null */
+	var $dflt_xr_provider;
+	/** @var int|string|bool|null */
+	var $xr_provider_authoritative;
+	/** @var int|string|bool|null */
+	var $sort_sales_items;
+	/** @var int|string|bool|null */
+	var $clear_trial_balance_opening;
+	/** @var int|string|null */
+	var $max_rows_in_search;
+	/** @var int|string|bool|null */
+	var $use_popup_search;
+	/** @var int|string|null */
+	var $debug;
+	/** @var int|string|bool|null */
+	var $show_sql;
+	/** @var int|string|null */
+	var $go_debug;
+	/** @var int|string|null */
+	var $pdf_debug;
+	/** @var int|string|bool|null */
+	var $sql_trail;
+	/** @var int|string|bool|null */
+	var $select_trail;
+	/** @var string|null */
+	var $build_version;
+	/** @var string|null */
+	var $power_by;
+	/** @var string|null */
+	var $power_url;
+	/** @var array<int, string>|null */
+	var $dateformats;
+	/** @var array<int, string>|null */
+	var $dateseps;
+	/** @var array<int, string>|null */
+	var $thoseps;
+	/** @var array<int, string>|null */
+	var $decseps;
+	/** @var array<int, string>|null */
+	var $pagesizes;
+	/** @var int|string|null */
+	var $pic_height;
+	/** @var string|null */
+	var $UTF8_fontfile;
+	/** @var string|null */
+	var $time_zone;
+
 	/** @var array<string, string|int|float|bool|null>|null */
 	var $prefs;
 
@@ -214,3 +319,14 @@ class sys_prefs extends stdClass
 	}
 }
 
+
+/**
+ * The site wide preferences object created by session.inc. Psalm forgets the type of a global after any function
+ * call, so code reads the preferences through this accessor instead of `global $SysPrefs`.
+ */
+function sysprefs(): sys_prefs
+{
+	global $SysPrefs;
+
+	return $SysPrefs;
+}

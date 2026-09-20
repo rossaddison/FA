@@ -68,7 +68,7 @@ class FrontReport extends Spreadsheet_Excel_Writer_Workbook
 
 	function __construct($title, $filename, $size = 'A4', $fontsize = 9, $orientation = 'P', $margins = NULL, $excelColWidthFactor = 6.5)
 	{
-		global $SysPrefs, $page_security;
+		global $page_security;
 
 		if (!$_SESSION["wa_current_user"]->can_access_page($page_security))
 		{
@@ -106,7 +106,7 @@ class FrontReport extends Spreadsheet_Excel_Writer_Workbook
 		$this->formatTitle->setTopColor('gray');
 
 		$how = user_date_format();
-		$sep = $SysPrefs->dateseps[user_date_sep()];
+		$sep = sysprefs()->dateseps[user_date_sep()];
 		if ($sep == '.')
 			$sep = "\\.";
 		if ($how == 0)

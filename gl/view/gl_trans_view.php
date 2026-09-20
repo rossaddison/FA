@@ -29,9 +29,9 @@ if (!isset($_GET['type_id']) || !isset($_GET['trans_no']))
 
 function display_gl_heading(?array $myrow): void
 {
-	global $systypes_array, $SysPrefs;
+	global $systypes_array;
 	
-	if (!empty($SysPrefs->prefs['company_logo_on_views']))
+	if (!empty(sysprefs()->prefs['company_logo_on_views']))
 		company_logo_on_view();
 	
 	$trans_name = $systypes_array[$_GET['type_id']];

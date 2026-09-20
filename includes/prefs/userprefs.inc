@@ -71,10 +71,10 @@ class user_prefs
 	{
 		if ($user == null) { 
 			// set default values, used before login
-			global $dflt_lang, $SysPrefs;
+			global $dflt_lang;
 
-			$this->date_sep = $SysPrefs->dflt_date_sep;
-			$this->date_format = $SysPrefs->dflt_date_fmt;
+			$this->date_sep = sysprefs()->dflt_date_sep;
+			$this->date_format = sysprefs()->dflt_date_fmt;
 			$this->tho_sep = 0;
 			$this->dec_sep = 0;
 			$this->price_dec = 2;
@@ -220,8 +220,7 @@ class user_prefs
 	/** @return non-falsy-string */
 	function date_display() 
 	{
-		global $SysPrefs;
-		$sep = $SysPrefs->dateseps[$this->date_sep];
+		$sep = sysprefs()->dateseps[$this->date_sep];
 		if ($this->date_format == 0)
 			return "m".$sep."d".$sep."Y";
 		elseif ($this->date_format == 1)

@@ -166,7 +166,7 @@ function work_order_production_gl(string|int|float|bool|null $woid, ?string $sto
 	global $SysPrefs, $path_to_root;
 
 	$memo = "";
-	if ($SysPrefs->loc_notification() == 1)
+	if (sysprefs()->loc_notification() == 1)
 	{
 		include_once($path_to_root . "/sales/includes/cart_class.inc");
 		include_once($path_to_root . "/inventory/includes/inventory_db.inc");
@@ -182,7 +182,7 @@ function work_order_production_gl(string|int|float|bool|null $woid, ?string $sto
 	$total_cost = 0;
 	while ($bom_item = db_fetch($result))
 	{
-		if ($SysPrefs->loc_notification() == 1 && is_inventory_item($bom_item['stock_id']))
+		if (sysprefs()->loc_notification() == 1 && is_inventory_item($bom_item['stock_id']))
 		{
 			$line = new line_details($bom_item['stock_id'], (float)$bom_item["units_req"] * $quantity, 0, 0, 0, 0, $bom_item['description']);
 			$loc = calculate_reorder_level($bom_item["loc_code"], $line, $st_ids, $st_names, $st_num, $st_reorder); 
@@ -207,7 +207,7 @@ function work_order_production_gl(string|int|float|bool|null $woid, ?string $sto
 	$wo = row_or_empty(get_work_order($woid));
     add_gl_trans_std_cost(ST_MANURECEIVE, $rcv_no, $date_, $wo['wip_account'],
         0, 0, $memo, -$total_cost);
-	if ($SysPrefs->loc_notification() == 1 && count($st_ids) > 0)
+	if (sysprefs()->loc_notification() == 1 && count($st_ids) > 0)
 		send_reorder_email($loc, $st_ids, $st_names, $st_num, $st_reorder);
 }
 

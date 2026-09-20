@@ -19,7 +19,6 @@
 function add_gl_trans(string|int|float|bool|null $type, string|int|float|bool|null $trans_id, string|int|float|bool|array|null $date_, string|int|float|bool|null $account, string|int|float|bool|array|null $dimension, string|int|float|bool|array|null $dimension2, string|int|float|bool|null $memo_,
 	string|int|float|bool|null $amount, string|int|float|bool|null $currency=null, string|int|float|bool|null $person_type_id=null, string|int|float|bool|null $person_id=null,	string|int|float|bool|null $err_msg="", string|int|float|bool|null $rate=0): float
 {
-	global $SysPrefs;
 
 	$date = date2sql($date_);
 	if ($currency != null)
@@ -35,7 +34,7 @@ function add_gl_trans(string|int|float|bool|null $type, string|int|float|bool|nu
 		$dimension = 0;
 	if ($dimension2 == null || $dimension2 < 0)
 		$dimension2 = 0;
-	if (isset($SysPrefs->use_audit_trail) && $SysPrefs->use_audit_trail)
+	if (isset(sysprefs()->use_audit_trail) && sysprefs()->use_audit_trail)
 	{
 		if ($memo_ == "" || $memo_ == null)
 			$memo_ = $_SESSION["wa_current_user"]->username;
@@ -112,7 +111,6 @@ function get_gl_transactions(string|array|null $from_date, string|int|float|bool
     string|int|float|bool|array|null $account=null, string|int|array|null $dimension=0, string|int|array|null $dimension2=0, string|array|null $filter_type=null,
         int|float|bool|null $amount_min=null, int|float|bool|null $amount_max=null, string|int|float|bool|null $person_type=null, string|int|float|bool|null $person_id=null, string|array|null $memo='')
 {
-    global $SysPrefs;
 
     $from = date2sql($from_date);
     $to = date2sql($to_date);

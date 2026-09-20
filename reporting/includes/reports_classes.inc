@@ -107,7 +107,7 @@ class BoxReports
 						. "<form method='POST' action='$action' target='_blank'>\n";
 					$st_params .= submit('Rep'.$report->id,  
 						_("Display: ") . access_string($report->name, true),
-						false, '', $SysPrefs->pdf_debug ? false : 'default process popup') . hidden('REP_ID', $report->id, false).'<br><br>';
+						false, '', sysprefs()->pdf_debug ? false : 'default process popup') . hidden('REP_ID', $report->id, false).'<br><br>';
 					$st_params .= $this->getOptions($report->get_controls(), $report->id);
 					$st_params .= "\n<input type=hidden name='Class' value=".$cur_class.">"
 						."\n</form></td></tr></table>\n";
@@ -180,8 +180,7 @@ class BoxReports
 	//
 	function get_ctrl($name, $type)
 	{
-		global $path_to_root, $SysPrefs,
-			$type_shortcuts;
+		global $path_to_root, $type_shortcuts;
 		$day_range = get_company_pref("max_days_in_docs");
 		if (!$day_range)
 			$day_range = 180;
@@ -331,7 +330,7 @@ class BoxReports
 
 				case 'INVOICE':
 					$IV = $type_shortcuts[ST_SALESINVOICE];
-					$ref = ($SysPrefs->print_invoice_no() == 1 ? "trans_no" : "reference");
+					$ref = (sysprefs()->print_invoice_no() == 1 ? "trans_no" : "reference");
 					$sql = "SELECT concat(debtor_trans.trans_no, '-', debtor_trans.type) AS TNO,
 								concat('$IV ', debtor_trans.$ref,' ', debtor.name) as IName
 						FROM ".TB_PREF."debtors_master debtor,"
@@ -344,7 +343,7 @@ class BoxReports
 
 				case 'CREDIT':
 					$CN = $type_shortcuts[ST_CUSTCREDIT];
-					$ref = ($SysPrefs->print_invoice_no() == 1 ? "trans_no" : "reference");
+					$ref = (sysprefs()->print_invoice_no() == 1 ? "trans_no" : "reference");
 					$sql = "SELECT concat(debtor_trans.trans_no, '-', debtor_trans.type) AS TNO,
 								concat('$CN ', debtor_trans.$ref,' ', debtor.name) as IName
 						FROM ".TB_PREF."debtors_master debtor,"
@@ -368,7 +367,7 @@ class BoxReports
 					return combo_input($name, '', $sql, 'TNO', 'IName',array('order'=>false));
 
 				case 'ORDERS':
-					$ref = ($SysPrefs->print_invoice_no() == 1 ? "order_no" : "reference");
+					$ref = (sysprefs()->print_invoice_no() == 1 ? "order_no" : "reference");
 					$sql = "SELECT sorder.order_no, concat(sorder.$ref, '-', debtor.name) as IName
 						FROM ".TB_PREF."debtors_master debtor,"
 							.TB_PREF."sales_orders sorder
@@ -378,7 +377,7 @@ class BoxReports
 					return combo_input($name, '', $sql, 'order_no', 'IName',array('order'=>false));
 
 				case 'QUOTATIONS':
-					$ref = ($SysPrefs->print_invoice_no() == 1 ? "order_no" : "reference");
+					$ref = (sysprefs()->print_invoice_no() == 1 ? "order_no" : "reference");
 					$sql = "SELECT sorder.order_no, concat(sorder.$ref, '-', debtor.name) as IName
 						FROM ".TB_PREF."debtors_master debtor,"
 							.TB_PREF."sales_orders sorder
@@ -388,7 +387,7 @@ class BoxReports
 					return combo_input($name, '', $sql, 'order_no', 'IName',array('order'=>false));
 
 				case 'PO':
-					$ref = ($SysPrefs->print_invoice_no() == 1 ? "order_no" : "reference");
+					$ref = (sysprefs()->print_invoice_no() == 1 ? "order_no" : "reference");
 					$sql = "SELECT po.order_no, concat(po.$ref, '-', supplier.supp_name) as IName
 						FROM ".TB_PREF."suppliers supplier,"
 							.TB_PREF."purch_orders po
@@ -401,7 +400,7 @@ class BoxReports
 					$BP = $type_shortcuts[ST_BANKPAYMENT];
 					$SP = $type_shortcuts[ST_SUPPAYMENT];
 					$CN = $type_shortcuts[ST_SUPPCREDIT];
-					$ref = ($SysPrefs->print_invoice_no() == 1 ? "trans_no" : "reference");
+					$ref = (sysprefs()->print_invoice_no() == 1 ? "trans_no" : "reference");
 					$sql = "SELECT concat(trans.trans_no, '-',trans.type) AS TNO,
 								concat(trans.$ref, IF(trans.type=".ST_BANKPAYMENT.", ' $BP ', IF(trans.type=".ST_SUPPAYMENT.", ' $SP ', 
 								' $CN ')),
@@ -417,7 +416,7 @@ class BoxReports
 				case 'RECEIPT':
 					$BD = $type_shortcuts[ST_BANKDEPOSIT];
 					$CP = $type_shortcuts[ST_CUSTPAYMENT];
-					$ref = ($SysPrefs->print_invoice_no() == 1 ? "trans_no" : "reference");
+					$ref = (sysprefs()->print_invoice_no() == 1 ? "trans_no" : "reference");
 					$sql = "SELECT concat(trans.trans_no, '-', trans.type) AS TNO,
 								concat(trans.$ref, IF(trans.type=".ST_BANKDEPOSIT.", ' $BD ', ' $CP '), debtor.name) as IName
 						FROM ".TB_PREF."debtors_master debtor,"

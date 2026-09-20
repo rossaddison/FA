@@ -14,7 +14,7 @@ $path_to_root = "../..";
 include_once($path_to_root . "/includes/session.inc");
 
 $js = "";
-if ($SysPrefs->use_popup_windows && $SysPrefs->use_popup_search)
+if (sysprefs()->use_popup_windows && sysprefs()->use_popup_search)
 	$js .= get_js_open_window(900, 500);
 
 if (isset($_GET['stock_id']))

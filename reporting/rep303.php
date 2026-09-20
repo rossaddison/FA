@@ -218,7 +218,7 @@ function print_stock_check(): void
 		$short = _('No');
 		$available = _('Available');
 	}
-	$barcodes = !empty($SysPrefs->prefs['barcodes_on_stock']);
+	$barcodes = !empty(sysprefs()->prefs['barcodes_on_stock']);
 	if ((bool)$no_zeros) $nozeros = _('Yes');
 	else $nozeros = _('No');
 	if ((bool)$check)
@@ -320,7 +320,7 @@ function print_stock_check(): void
 		if ((bool)$pictures || $barcodes)
 		{
 			$rep->NewLine();
-			if ($rep->row - $SysPrefs->pic_height < $rep->bottomMargin)
+			if ($rep->row - sysprefs()->pic_height < $rep->bottomMargin)
 				$rep->NewPage();
 			$firstcol = 1;	
 			$adjust = false;
@@ -330,7 +330,7 @@ function print_stock_check(): void
 				$bar_y = $rep->GetY();
 				$barcode = str_pad($trans['stock_id'], 7, '0', STR_PAD_LEFT);
 				$barcode = substr($barcode, 0, 8); // EAN 8 Check digit is auto computed and barcode printed
-				$rep->write1DBarcode($barcode, 'EAN8', $rep->cols[$firstcol++], $bar_y + 22, 22, $SysPrefs->pic_height, 1.2, $style, 'N');
+				$rep->write1DBarcode($barcode, 'EAN8', $rep->cols[$firstcol++], $bar_y + 22, 22, sysprefs()->pic_height, 1.2, $style, 'N');
 			}	
 			if ((bool)$pictures)
 			{
@@ -338,11 +338,11 @@ function print_stock_check(): void
 				$image = company_path() . '/images/' . item_img_name($trans['stock_id']) . '.jpg';
 				if (file_exists($image))
 				{
-					$rep->AddImage($image, $rep->cols[$firstcol], $rep->row - $SysPrefs->pic_height, 0, $SysPrefs->pic_height);
+					$rep->AddImage($image, $rep->cols[$firstcol], $rep->row - sysprefs()->pic_height, 0, sysprefs()->pic_height);
 				}
 			}
 			if ($adjust)
-				$rep->row -= $SysPrefs->pic_height;
+				$rep->row -= sysprefs()->pic_height;
 		}
 	}
 	$rep->Line($rep->row - 4);

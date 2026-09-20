@@ -19,7 +19,7 @@ include($path_to_root . "/reporting/includes/reporting.inc");
 include($path_to_root . "/fixed_assets/includes/fixed_assets_db.inc");
 
 $js = "";
-if ($SysPrefs->use_popup_windows)
+if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 500);
 if (user_use_date_picker())
 	$js .= get_js_date_picker();

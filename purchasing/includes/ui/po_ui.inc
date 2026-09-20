@@ -354,7 +354,7 @@ function display_po_summary(purch_order &$po, bool $is_self=false, bool $editabl
 
 function po_item_controls(purch_order &$order, int|string|null &$rowcounter, string|int|float|bool|null $line_no=-1): void
 {
-   global $Ajax, $SysPrefs;
+   global $Ajax;
 
 	alt_table_row_color($rowcounter);
 	$new = $order->order_no == 0;
@@ -413,7 +413,7 @@ function po_item_controls(purch_order &$order, int|string|null &$rowcounter, str
    		$_POST['qty'] =	number_format2(get_purchase_conversion_factor ($order->supplier_id, $_POST['stock_id']), $dec);
 		$_POST['price'] = price_decimal_format(get_purchase_price ($order->supplier_id, $_POST['stock_id']), $dec2);
 		if ($order->trans_type == ST_PURCHORDER)
-			$_POST['req_del_date'] = add_days(Today(), $SysPrefs->default_receival_required_by());
+			$_POST['req_del_date'] = add_days(Today(), sysprefs()->default_receival_required_by());
 		$qty_rcvd = '';
 	}
 

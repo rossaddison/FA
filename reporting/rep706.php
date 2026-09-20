@@ -314,7 +314,7 @@ function print_balance_sheet(): void
 		$pg->setYTitle(_("Amount"));
 		$pg->setDTitle(number_format2(abs($calc_open + $calc_period)));
 		$pg->setValues(true);
-		$pg->latin_notation = ($SysPrefs->decseps[user_dec_sep()] != ".");
+		$pg->latin_notation = (sysprefs()->decseps[user_dec_sep()] != ".");
 		$filename = company_path(). "/pdf_files/". random_id().".png";
 		$pg->display($filename, true);
 		$w = $pg->width / 1.5;

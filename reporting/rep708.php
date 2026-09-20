@@ -31,7 +31,7 @@ $pdeb = $pcre = $cdeb = $ccre = $tdeb = $tcre = $pbal = $cbal = $tbal = 0;
 
 function display_type (?string $type, ?string $typename, int|string|null &$dec, FrontReport &$rep, string|int|float|bool|array|null $from, string|int|float|bool|array|null $to, string|int|float|bool|array|FrontReport|null $zero, string|int|float|bool|array|null $balances, string|int|float|bool|array|null $dimension, string|int|float|bool|array|null $dimension2): void
 {
-	global $pdeb, $pcre, $cdeb, $ccre, $tdeb, $tcre, $pbal, $cbal, $tbal, $SysPrefs;
+	global $pdeb, $pcre, $cdeb, $ccre, $tdeb, $tcre, $pbal, $cbal, $tbal;
 	
 	$printtitle = 0; //Flag for printing type name	
 	
@@ -57,7 +57,7 @@ function display_type (?string $type, ?string $typename, int|string|null &$dec, 
 		
 		// FA doesn't really clear the closed year, therefore the brought forward balance includes all the transactions from the past, even though the balance is null.
 		// If we want to remove the balanced part for the past years, this option removes the common part from from the prev and tot figures.
-		if (@$SysPrefs->clear_trial_balance_opening)
+		if (@sysprefs()->clear_trial_balance_opening)
 		{
 			$open = row_or_empty(get_balance($account["account_code"], $dimension, $dimension2, $begin,  $begin, false, true));
 			$offset = min($open['debit'], $open['credit']);

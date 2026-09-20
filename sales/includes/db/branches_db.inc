@@ -293,10 +293,9 @@ function get_default_branch(string|int|float|bool|null $customer_id, string|int|
  */
 function  get_branches_search(string|int|float|bool|null $customer, string|array|null $branch)
 {
-	global $SysPrefs;
 
-	if (isset($SysPrefs->max_rows_in_search))
-		$limit = $SysPrefs->max_rows_in_search;
+	if (isset(sysprefs()->max_rows_in_search))
+		$limit = sysprefs()->max_rows_in_search;
 	else
 		$limit = 10;
 

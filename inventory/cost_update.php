@@ -25,7 +25,7 @@ include_once($path_to_root . "/inventory/includes/inventory_db.inc");
 include_once($path_to_root . "/includes/ui/items_cart.inc");
 
 $js = "";
-if ($SysPrefs->use_popup_windows)
+if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 500);
 
 if (isset($_GET['FixedAsset'])) {

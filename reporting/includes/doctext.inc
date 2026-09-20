@@ -14,7 +14,6 @@
 *	Set document type dependent elements of common page layout.
 *
 */
-	global $SysPrefs;
 
 	$Addr1 = array(
 			'title' => _("Charge To"),
@@ -49,7 +48,7 @@
 			$this->title = _("SALES QUOTATION");
 			$this->formData['document_name'] =_("Quotation No.");
 			$this->formData['document_date'] = $this->formData['ord_date'];
-			$this->formData['document_number'] = $SysPrefs->print_invoice_no() == 0 && isset($this->formData['reference'])
+			$this->formData['document_number'] = sysprefs()->print_invoice_no() == 0 && isset($this->formData['reference'])
 				? $this->formData['reference'] : $this->formData['order_no'];
 			$aux_info = array(
 				_("Customer's Reference") => $this->formData["customer_ref"],
@@ -64,7 +63,7 @@
 			$this->title = ($this->params['print_quote'] ? _("QUOTE") : ($this->formData['prepaid'] ? _("PREPAYMENT ORDER") : _("SALES ORDER")));
 			$this->formData['document_name'] =_("Order No.");
 			$this->formData['document_date'] = $this->formData['ord_date'];
-			$this->formData['document_number'] = $SysPrefs->print_invoice_no() == 0 && isset($this->formData['reference'])
+			$this->formData['document_number'] = sysprefs()->print_invoice_no() == 0 && isset($this->formData['reference'])
 				? $this->formData['reference'] : $this->formData['order_no'];
 			$this->formData['document_amount'] = $this->formData['order_no'];
 
@@ -83,7 +82,7 @@
 			if (@$packing_slip)
 				$Payment_Terms = '';
 			$ref = $this->formData['order_'];
-			if ($SysPrefs->print_invoice_no() == 0)
+			if (sysprefs()->print_invoice_no() == 0)
 			{
 				$ref = get_reference(ST_SALESORDER, $this->formData['order_']);
 				if (!$ref)
@@ -120,7 +119,7 @@
 			$Footer[0] = _("Please quote Invoice no. when paying. All amounts stated in"). " - " . $this->formData['curr_code'];
 
 			$deliveries = get_sales_parent_numbers(ST_SALESINVOICE, $this->formData['trans_no']);
-			if ($SysPrefs->print_invoice_no() == 0)
+			if (sysprefs()->print_invoice_no() == 0)
 			{
 				foreach($deliveries as $n => $delivery) {
 					$deliveries[$n] = get_reference(ST_CUSTDELIVERY, $delivery);
@@ -176,7 +175,7 @@
 			$Addr2['name'] = $this->company['coy_name'];
 			//$Addr2['address'] = $this->company['postal_address']; No, don't destroy delivery address!
 			$this->formData['document_date'] = $this->formData['ord_date'];
-			$this->formData['document_number'] = $SysPrefs->print_invoice_no() == 0 && isset($this->formData['reference'])
+			$this->formData['document_number'] = sysprefs()->print_invoice_no() == 0 && isset($this->formData['reference'])
 				? $this->formData['reference'] : $this->formData['order_no'];
 
 			$aux_info = array(
@@ -256,7 +255,7 @@
 		$this->formData['document_date'] = $this->formData['tran_date'];
 
 	if (!isset($this->formData['document_number']))
-		$this->formData['document_number'] = $SysPrefs->print_invoice_no() == 0 && isset($this->formData['reference'])
+		$this->formData['document_number'] = sysprefs()->print_invoice_no() == 0 && isset($this->formData['reference'])
 			? $this->formData['reference'] : @$this->formData['trans_no'];
 
 	// footer generic content

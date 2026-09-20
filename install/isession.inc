@@ -85,6 +85,7 @@ header("Cache-control: private");
 include_once($path_to_root . "/config.default.php");
 
 $_SESSION['SysPrefs'] = new sys_prefs();
+/** @var sys_prefs $SysPrefs */
 $SysPrefs = &$_SESSION['SysPrefs'];
 
 $inst_langs = array(
@@ -111,7 +112,7 @@ $inst_langs = array(
   'zh_CN' => array ( 'name' => 'Chinese Simplifed',	'code' => 'zh_CN',	'encoding' => 'utf-8'),
 );
 
-if ($SysPrefs->go_debug > 0)
+if (sysprefs()->go_debug > 0)
 	$cur_error_level = -1;
 else
 	$cur_error_level = E_USER_WARNING|E_USER_ERROR|E_USER_NOTICE;

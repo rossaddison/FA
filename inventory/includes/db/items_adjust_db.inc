@@ -23,7 +23,7 @@ function add_stock_adjustment(?array $items, string|array|null $location, string
 
 	$adj_id = get_next_trans_no(ST_INVADJUST);
 
-	if ($SysPrefs->loc_notification() == 1)
+	if (sysprefs()->loc_notification() == 1)
 	{
 		include_once($path_to_root . "/inventory/includes/inventory_db.inc");
 		$st_ids = array();
@@ -34,7 +34,7 @@ function add_stock_adjustment(?array $items, string|array|null $location, string
 	foreach ($items as $line_item)
 	{
 
-		if ($SysPrefs->loc_notification() == 1 && $line_item->quantity < 0)
+		if (sysprefs()->loc_notification() == 1 && $line_item->quantity < 0)
 		{
 			$tmp = $line_item->quantity;
 			$line_item->quantity = -$line_item->quantity;	// calculate_reorder_level expect positive qty
@@ -54,7 +54,7 @@ function add_stock_adjustment(?array $items, string|array|null $location, string
 	$args->trans_no = $adj_id;
 	hook_db_postwrite($args, ST_INVADJUST);
 	commit_transaction();
-	if ($SysPrefs->loc_notification() == 1 && count($st_ids) > 0)
+	if (sysprefs()->loc_notification() == 1 && count($st_ids) > 0)
 		send_reorder_email($loc, $st_ids, $st_names, $st_num, $st_reorder);
 
 	return $adj_id;

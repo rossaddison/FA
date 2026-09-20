@@ -703,7 +703,6 @@ function gl_top(?string $today, string|int|null $width='33', ?object &$pg=null):
 
 function gl_week_performance(?string $today, string|int|null $width="33", ?int $weeks=4): void
 {
-	global $SysPrefs;
 	
 	$pg = new chart('bar', 'g3');
 	if (isset($_POST['select_g3']))
@@ -712,7 +711,7 @@ function gl_week_performance(?string $today, string|int|null $width="33", ?int $
 		$weeks = $_POST['per_g3'];
 	$begin = date2sql(begin_fiscalyear());
 	$today1 = date2sql($today);
-	$sep = $SysPrefs->dateseps[user_date_sep()];
+	$sep = sysprefs()->dateseps[user_date_sep()];
 	$sql = "SELECT week_name, sales, costs 
 		FROM(SELECT DATE_FORMAT(tran_date, '%X{$sep}%V') AS week_name, 
 			SUM(IF(c.ctype = 4, amount * -1, 0)) AS sales, 
@@ -743,7 +742,6 @@ function gl_week_performance(?string $today, string|int|null $width="33", ?int $
 
 function gl_month_performance(?string $today, string|int|null $width="33", ?int $months=5): void
 {
-	global $SysPrefs;
 	$pg = new chart('bar', 'g4');
 	if (isset($_POST['select_g4']))
 		$pg->type = $_POST['select_g4'];
@@ -751,7 +749,7 @@ function gl_month_performance(?string $today, string|int|null $width="33", ?int 
 		$months = $_POST['per_g4'];
 	$begin = date2sql(begin_fiscalyear());
 	$today1 = date2sql($today);
-	$sep = $SysPrefs->dateseps[user_date_sep()];
+	$sep = sysprefs()->dateseps[user_date_sep()];
 	$sql = "SELECT month_name, sales, costs 
 		FROM(SELECT DATE_FORMAT(tran_date, '%Y{$sep}%m') AS month_name, 
 			SUM(IF(c.ctype = 4, amount * -1, 0)) AS sales, 
@@ -907,7 +905,7 @@ function supplier_balance(?string $today)
 
 function cash_flow(?string $today): void
 {
-	global $date_system, $SysPrefs;
+	global $date_system;
 	$months = 6;
 	$pg = new chart('spline', 'g5');
 	if (isset($_POST['select_g5']))
@@ -952,7 +950,7 @@ function cash_flow(?string $today): void
 			$total[$i] += $balance[$i];
 		}
 	}
-	$sep = $SysPrefs->dateseps[user_date_sep()];
+	$sep = sysprefs()->dateseps[user_date_sep()];
 	for ($i = 0; $i < $months; $i++)
 	{
 		$y = substr($date[$i], 0, 4);

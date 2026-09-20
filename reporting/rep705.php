@@ -237,9 +237,9 @@ function print_annual_expense_breakdown(): void
 	$yr = $row['yr'];
 	$mo = $row['mo'];
 	$da = 1;
-	if ($SysPrefs->date_system == 1)
+	if (sysprefs()->date_system == 1)
 		list($yr, $mo, $da) = jalali_to_gregorian($yr, $mo, $da);
-	elseif ($SysPrefs->date_system == 2)
+	elseif (sysprefs()->date_system == 2)
 		list($yr, $mo, $da) = islamic_to_gregorian($yr, $mo, $da);
 	$per12 = $tmonths[date('n',mktime(0,0,0,$mo,$da,$yr))];
 	$per11 = $tmonths[date('n',mktime(0,0,0,$mo-1,$da,$yr))];

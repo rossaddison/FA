@@ -47,7 +47,7 @@ function print_sales_quotations(): void
 	$orientation = ((bool)$orientation ? 'L' : 'P');
 	$dec = user_price_dec();
 
-	$pictures = $SysPrefs->print_item_images_on_quote();
+	$pictures = sysprefs()->print_item_images_on_quote();
 	// If you want a larger image, then increase pic_height f.i.
 	// $SysPrefs->pic_height += 25;
 	
@@ -77,7 +77,7 @@ function print_sales_quotations(): void
 		if ($email == 1)
 		{
 			$rep = new FrontReport("", "", user_pagesize(), 9, $orientation);
-			if ($SysPrefs->print_invoice_no() == 1)
+			if (sysprefs()->print_invoice_no() == 1)
 				$rep->filename = "SalesQuotation" . $i . ".pdf";
 			else	
 				$rep->filename = "SalesQuotation" . (string)$myrow['reference'] . ".pdf";
@@ -111,11 +111,11 @@ function print_sales_quotations(): void
 			$rep->TextCol(0, 1,	$myrow2['stk_code'], -2);
 			$oldrow = $rep->row;
 			$rep->TextColLines(1, 2, $myrow2['description'], -2);
-			if (!empty($SysPrefs->prefs['long_description_invoice']) && (bool)($myrow2['long_description'] ?? null))
+			if (!empty(sysprefs()->prefs['long_description_invoice']) && (bool)($myrow2['long_description'] ?? null))
 				$rep->TextColLines(1, 2, $myrow2['long_description'], -2);
 			$newrow = $rep->row;
 			$rep->row = $oldrow;
-			if ($Net != 0.0 || !is_service($myrow2['mb_flag']) || !$SysPrefs->no_zero_lines_amount())
+			if ($Net != 0.0 || !is_service($myrow2['mb_flag']) || !sysprefs()->no_zero_lines_amount())
 			{
 				$rep->TextCol(2, 3,	$DisplayQty, -2);
 				$rep->TextCol(3, 4,	$myrow2['units'], -2);
@@ -130,10 +130,10 @@ function print_sales_quotations(): void
 				$image = company_path(). "/images/" . item_img_name($myrow2['stk_code']) . ".jpg";
 				if (file_exists($image))
 				{
-					if ($rep->row - $SysPrefs->pic_height < $rep->bottomMargin)
+					if ($rep->row - sysprefs()->pic_height < $rep->bottomMargin)
 						$rep->NewPage();
-					$rep->AddImage($image, $rep->cols[1], $rep->row - $SysPrefs->pic_height, 0, $SysPrefs->pic_height);
-					$rep->row -= $SysPrefs->pic_height;
+					$rep->AddImage($image, $rep->cols[1], $rep->row - sysprefs()->pic_height, 0, sysprefs()->pic_height);
+					$rep->row -= sysprefs()->pic_height;
 					$rep->NewLine();
 				}
 			}
@@ -180,7 +180,7 @@ function print_sales_quotations(): void
 
 			if ((bool)$myrow['tax_included'])
 			{
-				if ($SysPrefs->alternative_tax_include_on_docs() == 1)
+				if (sysprefs()->alternative_tax_include_on_docs() == 1)
 				{
 					if ($first)
 					{
@@ -219,7 +219,7 @@ function print_sales_quotations(): void
 		$rep->Font();
 		if ($email == 1)
 		{
-			if ($SysPrefs->print_invoice_no() == 1)
+			if (sysprefs()->print_invoice_no() == 1)
 				$myrow['reference'] = $i;
 			$rep->End($email);
 		}

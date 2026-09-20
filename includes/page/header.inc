@@ -15,7 +15,7 @@
 function help_url(mixed $context=null): string
 {
 
-	global $SysPrefs, $help_context;
+	global $help_context;
 
 	$country = $_SESSION['language']->code;
 	$clean = 0;
@@ -34,14 +34,14 @@ function help_url(mixed $context=null): string
 		$clean = 1;
 	}
 
-	if (@$SysPrefs->old_style_help)
+	if (@sysprefs()->old_style_help)
 		$help_page_url = _($help_page_url);
 
 	if ($clean)
 		$help_page_url = access_string($help_page_url, true);
 
 	return html_specials_encode(
-		$SysPrefs->help_base_url
+		sysprefs()->help_base_url
 		.urlencode(strtr(ucwords($help_page_url), array(' '=>'', '/'=>'', '&'=>'And')))
 		.'&ctxhelp=1&lang='.$country);
 }
@@ -64,7 +64,7 @@ function send_css(string|int|float|bool|null $css = ''): void
 
 function send_scripts(): void
 {
-    global $SysPrefs, $path_to_root, $js_static, $js_path, $js_userlib;
+    global $path_to_root, $js_static, $js_path, $js_userlib;
 
 	$js ='';
 	foreach($js_static as $jsfile)
@@ -72,7 +72,7 @@ function send_scripts(): void
 		$cached_name = basename($jsfile);
 		$fpath = user_js_cache().'/'.$cached_name;
 	    // compress also static files
-	  	if (!file_exists($fpath) || $SysPrefs->go_debug)
+	  	if (!file_exists($fpath) || sysprefs()->go_debug)
 			cache_js_file($fpath, file_get_contents($js_path.$jsfile));
 
 	  	$js .= '<script language="javascript" type="text/javascript" src="'.
@@ -97,7 +97,7 @@ function page_header(string|int|float|bool|null $title, string|int|float|bool|nu
 
 	$theme = user_theme();
 
-	if ($SysPrefs->help_base_url != null && $SysPrefs->use_popup_windows && $js == '')
+	if (sysprefs()->help_base_url != null && sysprefs()->use_popup_windows && $js == '')
 	{
 		if (!function_exists('get_js_open_window'))
 		{

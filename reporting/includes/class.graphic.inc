@@ -193,7 +193,6 @@ class Chart
 
 	function __construct($type = 1, $id = 'id', $width = 0, $height = 0)
 	{
-		global $SysPrefs;
 		$this->encoding = strtoupper($_SESSION['language']->encoding);
 		//$this->encoding = "UTF-8"; // Use alternative if used in FA
 		$this->dir = $_SESSION['language']->dir;
@@ -203,8 +202,8 @@ class Chart
 		$this->path = dirname(__FILE__).'/../fonts/';
 		//$this->path = dirname(__FILE__).'/';
 		// You can use another UTF-8 font and put it in config.php with the name in $UTF8_fontfile 
-		if ($this->encoding == 'UTF-8' && !empty($SysPrefs->UTF8_fontfile))
-			$this->fontfile = $this->path.$SysPrefs->UTF8_fontfile;
+		if ($this->encoding == 'UTF-8' && !empty(sysprefs()->UTF8_fontfile))
+			$this->fontfile = $this->path.sysprefs()->UTF8_fontfile;
 		elseif ($this->dir == 'rtl')
 			$this->fontfile = $this->path.'zarnormal.ttf';
 		else	

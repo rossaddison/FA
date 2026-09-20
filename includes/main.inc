@@ -88,9 +88,8 @@ function add_css_file(string|int|float|bool|null $filename): void
 
 function cache_js_file(?string $fpath, string|bool|null $text): bool 
 {
-	global $SysPrefs;
 
-	if (!$SysPrefs->go_debug) $text = js_compress($text);
+	if (!sysprefs()->go_debug) $text = js_compress($text);
 
     $file = force_open($fpath);
 	if (!$file) return false;

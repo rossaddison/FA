@@ -27,7 +27,6 @@ page(_($help_context = "Closing GL Transactions"), false, false, "", $js);
 //---------------------------------------------------------------------------------------------
 function check_data(): bool
 {
-	global $SysPrefs;
 	
 	if (!is_date(post_scalar('date')) || date1_greater_date2($_POST['date'], Today()))
 	{
@@ -43,7 +42,7 @@ function check_data(): bool
 	}
 	if (date1_greater_date2(sql2date(get_company_pref('gl_closing_date')), $_POST['date']))
 	{
-		if (!$SysPrefs->allow_gl_reopen) {
+		if (!sysprefs()->allow_gl_reopen) {
 			display_error(_("The entered date is earlier than date already selected as closing date."));
 			set_focus('date');
 			return false;

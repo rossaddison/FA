@@ -22,7 +22,7 @@ include_once($path_to_root . "/gl/includes/gl_db.inc");
 
 $js = '';
 set_focus('account');
-if ($SysPrefs->use_popup_windows)
+if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(800, 500);
 if (user_use_date_picker())
 	$js .= get_js_date_picker();

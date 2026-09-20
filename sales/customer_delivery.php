@@ -25,7 +25,7 @@ include_once($path_to_root . "/reporting/includes/reporting.inc");
 include_once($path_to_root . "/taxes/tax_calc.inc");
 
 $js = "";
-if ($SysPrefs->use_popup_windows) {
+if (sysprefs()->use_popup_windows) {
 	$js .= get_js_open_window(900, 500);
 }
 if (user_use_date_picker()) {
@@ -154,7 +154,7 @@ if (isset($_GET['OrderNumber']) && $_GET['OrderNumber'] > 0) {
 
 function check_data(): bool
 {
-	global $Refs, $SysPrefs;
+	global $Refs;
 
 	if (!isset($_POST['DispatchDate']) || !is_date(post_scalar('DispatchDate')))	{
 		display_error(_("The entered date of delivery is invalid."));
@@ -202,7 +202,7 @@ function check_data(): bool
 
 	copy_to_cart();
 
-	if (!$SysPrefs->allow_negative_stock() && ($low_stock = $_SESSION['Items']->check_qoh()))
+	if (!sysprefs()->allow_negative_stock() && ($low_stock = $_SESSION['Items']->check_qoh()))
 	{
 		display_error(_("This document cannot be processed because there is insufficient quantity for items marked."));
 		return false;

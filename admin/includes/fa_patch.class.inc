@@ -117,7 +117,6 @@ class fa_patch {
 	*/
 	function pre_install($company)
 	{
-		global $SysPrefs;
 
 		$this->cur_company = $company;
 		$this->errors = array();
@@ -143,7 +142,7 @@ class fa_patch {
 			return true;	// skip security backup if database content is not changed
 
 		$this->backup = db_backup($this->companies[$this->cur_company], 'no', 'Security backup before upgrade',
-			$SysPrefs->backup_dir($this->cur_company));
+			sysprefs()->backup_dir($this->cur_company));
 
 		if (!$this->backup)
 		  return $this->log_error(_("Security backup failed."));
@@ -291,7 +290,6 @@ class fa_patch {
 */
 function get_site_status(array $connections): array
 {
-		global $SysPrefs;
 
 		$info = array();
 
@@ -307,7 +305,7 @@ function get_site_status(array $connections): array
 			}
 		}
 		set_global_connection();
-		$SysPrefs->refresh();
+		sysprefs()->refresh();
 
 		return $info;
 }

@@ -126,11 +126,10 @@ function tst_gettext(): array
 
 function tst_debug(): array 
 {
-	global $SysPrefs;
 	$test['descr'] = _('Debugging mode');
 	$test['type'] = 0;
-	$test['test'] = $SysPrefs->go_debug ? _("Yes") : _("No");
-	$test['result'] = $SysPrefs->go_debug != 0;
+	$test['test'] = sysprefs()->go_debug ? _("Yes") : _("No");
+	$test['result'] = sysprefs()->go_debug != 0;
 	$test['comments'] = _('To switch debugging on set $go_debug>0 in config.php file');
 
 	return $test;
@@ -138,9 +137,8 @@ function tst_debug(): array
 
 function tst_logging(): array 
 {
-	global $SysPrefs;
 	
-	$error_logfile = $SysPrefs->error_logfile;
+	$error_logfile = sysprefs()->error_logfile;
 	$test['descr'] = _('Error logging');
 	$test['type'] = 2;
 	// if error lgging is on, but log file does not exists try write

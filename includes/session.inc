@@ -178,12 +178,12 @@ function password_reset_success(): void
 /** @return bool */
 function check_faillog()
 {
-	global $SysPrefs, $login_faillog;
+	global $login_faillog;
 
 	$user = $_SESSION["wa_current_user"]->user;
 
 	$_SESSION["wa_current_user"]->login_attempt++;
-	if (@$SysPrefs->login_delay && (@$login_faillog[$user][$_SERVER['REMOTE_ADDR']] >= @$SysPrefs->login_max_attempts) && (time() < $login_faillog[$user]['last'] + $SysPrefs->login_delay))
+	if (@sysprefs()->login_delay && (@$login_faillog[$user][$_SERVER['REMOTE_ADDR']] >= @sysprefs()->login_max_attempts) && (time() < $login_faillog[$user]['last'] + sysprefs()->login_delay))
 		return true;
 
 	return false;
@@ -204,7 +204,7 @@ function cache_invalidate(mixed $filename): void
 */
 function write_login_filelog(mixed $login, mixed $result): void
 {
-	global $login_faillog, $SysPrefs, $path_to_root;
+	global $login_faillog, $path_to_root;
 
 	$user = $_SESSION["wa_current_user"]->user;
 
@@ -215,7 +215,7 @@ function write_login_filelog(mixed $login, mixed $result): void
 
  	if (!$result)
 	{
-		if ($login_faillog[$user][$ip] < @$SysPrefs->login_max_attempts) {
+		if ($login_faillog[$user][$ip] < @sysprefs()->login_max_attempts) {
 
  			$login_faillog[$user][$ip]++;
  		} else {
@@ -244,7 +244,6 @@ function write_login_filelog(mixed $login, mixed $result): void
 
 function check_page_security(mixed $page_security): void
 {
-	global $SysPrefs;
 	
 	$msg = '';
 	
@@ -255,7 +254,7 @@ function check_page_security(mixed $page_security): void
 			 _("Security settings have not been defined for your user account.")
 				. "<br>" . _("Please contact your system administrator.")	
 			: _("Please remove \$security_groups and \$security_headings arrays from config.php file!");
-	} elseif (!$SysPrefs->db_ok && !$_SESSION["wa_current_user"]->can_access('SA_SOFTWAREUPGRADE')) 
+	} elseif (!sysprefs()->db_ok && !$_SESSION["wa_current_user"]->can_access('SA_SOFTWAREUPGRADE')) 
 	{
 		$msg = _('Access to application has been blocked until database upgrade is completed by system administrator.');
 	}
@@ -277,7 +276,7 @@ function check_page_security(mixed $page_security): void
 		end_page(@$_REQUEST['popup']);
 		exit;
 	}
-	if (!$SysPrefs->db_ok 
+	if (!sysprefs()->db_ok 
 		&& !in_array($page_security, array('SA_SOFTWAREUPGRADE', 'SA_OPEN', 'SA_BACKUP')))
 	{
 		display_error(_('System is blocked after source upgrade until database is updated on System/Software Upgrade page'));
@@ -388,18 +387,19 @@ $Session_manager->sessionStart('FA'.md5(dirname(__FILE__)), 0, '/', null, SECURE
 
 $_SESSION['SysPrefs'] = new sys_prefs();
 
+/** @var sys_prefs $SysPrefs */
 $SysPrefs = &$_SESSION['SysPrefs'];
 
 //----------------------------------------------------------------------------------------
 // set to reasonable values if not set in config file (pre-2.3.12 installations)
 
-if ((!isset($SysPrefs->login_delay)) || ($SysPrefs->login_delay < 0))
-    $SysPrefs->login_delay = 10;
+if ((!isset(sysprefs()->login_delay)) || (sysprefs()->login_delay < 0))
+    sysprefs()->login_delay = 10;
 
-if ((!isset($SysPrefs->login_max_attempts)) || ($SysPrefs->login_max_attempts < 0))
-    $SysPrefs->login_max_attempts = 3; 
+if ((!isset(sysprefs()->login_max_attempts)) || (sysprefs()->login_max_attempts < 0))
+    sysprefs()->login_max_attempts = 3; 
 
-if ($SysPrefs->go_debug > 0)
+if (sysprefs()->go_debug > 0)
 	$cur_error_level = -1;
 else
 	$cur_error_level = E_USER_WARNING|E_USER_ERROR|E_USER_NOTICE;
@@ -407,8 +407,8 @@ else
 error_reporting($cur_error_level);
 ini_set("display_errors", "On");
 
-if ($SysPrefs->error_logfile != '') {
-	ini_set("error_log", $SysPrefs->error_logfile);
+if (sysprefs()->error_logfile != '') {
+	ini_set("error_log", sysprefs()->error_logfile);
 	ini_set("ignore_repeated_errors", "On");
 	ini_set("log_errors", "On");
 }
@@ -429,7 +429,7 @@ header("Cache-control: private");
 
 get_text_init();
 
-if ($SysPrefs->login_delay > 0 && file_exists(VARLIB_PATH."/faillog.php"))
+if (sysprefs()->login_delay > 0 && file_exists(VARLIB_PATH."/faillog.php"))
 	include_once(VARLIB_PATH."/faillog.php");
 
 // Page Initialisation
@@ -488,7 +488,7 @@ if (!defined('FA_LOGOUT_PHP_FILE')){
 
 	if (!$_SESSION["wa_current_user"]->logged_in())
 	{
-      if (@$SysPrefs->allow_password_reset && !$SysPrefs->allow_demo_mode
+      if (@sysprefs()->allow_password_reset && !sysprefs()->allow_demo_mode
         && (isset($_GET['reset']) || isset($_POST['email_entry_field']))) {
 		  if (!isset($_POST["email_entry_field"])) {
         include($path_to_root . "/access/password_reset.php");
@@ -569,7 +569,7 @@ if (!defined('FA_LOGOUT_PHP_FILE')){
 		if (db_fixed())
 			db_set_encoding($_SESSION['language']->encoding);
 
-		$SysPrefs->refresh();
+		sysprefs()->refresh();
 	}
 	if (!isset($_SESSION["App"])) {
 		$_SESSION["App"] = new front_accounting();

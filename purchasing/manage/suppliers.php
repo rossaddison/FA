@@ -15,7 +15,7 @@ include($path_to_root . "/includes/db_pager.inc");
 include_once($path_to_root . "/includes/session.inc");
 
 $js = "";
-if ($SysPrefs->use_popup_windows)
+if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 500);
 if (user_use_date_picker())
 	$js .= get_js_date_picker();
@@ -60,7 +60,7 @@ function can_process(): bool
 
 function handle_submit(&$supplier_id): void
 {
-	global $path_to_root, $Ajax, $SysPrefs;
+	global $path_to_root, $Ajax;
 	
 	if (!can_process())
 		return;

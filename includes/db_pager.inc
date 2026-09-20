@@ -120,7 +120,6 @@ class db_pager {
 	/** @return void */
 	function set_sql($sql)
 	{
-		global $SysPrefs;
 
 		if ($sql != $this->sql) {
 		    $this->sql = $sql;
@@ -139,7 +138,7 @@ class db_pager {
 						$this->select = $parts[0];
 						$sql = $parts[1];
 					} else {
-						if ($SysPrefs->go_debug)
+						if (sysprefs()->go_debug)
 							display_error("Invalid sql input for db_pager");
 					}
 
@@ -394,7 +393,6 @@ class db_pager {
 	/** @return bool */
 	function _init() 
 	{
-		global $SysPrefs;
 		
 	    if ($this->ready == false ) {
 			$sql = $this->_sql_gen(true);
@@ -407,7 +405,7 @@ class db_pager {
 	  		$this->max_page = $this->page_len ?
 				ceil($this->rec_count/$this->page_len) : 0;
 		
-			if ($SysPrefs->go_debug) { // FIX - need column name parsing, but for now:
+			if (sysprefs()->go_debug) { // FIX - need column name parsing, but for now:
 				// check if field names are set explicite in col def
 				// for all initially ordered columns
 			    foreach ($this->columns as $col) {

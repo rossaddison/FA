@@ -15,7 +15,7 @@ $path_to_root = "../..";
 include_once($path_to_root . "/includes/db_pager.inc");
 include_once($path_to_root . "/includes/session.inc");
 $js = "";
-if ($SysPrefs->use_popup_windows)
+if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 500);
 if (user_use_date_picker())
 	$js .= get_js_date_picker();
@@ -80,7 +80,7 @@ function can_process(): bool
 
 function handle_submit(&$selected_id): void
 {
-	global $path_to_root, $Ajax, $SysPrefs;
+	global $path_to_root, $Ajax;
 
 	if (!can_process())
 		return;
@@ -109,7 +109,7 @@ function handle_submit(&$selected_id): void
 
 		$selected_id = $_POST['customer_id'] = db_insert_id();
          
-		if (isset($SysPrefs->auto_create_branch) && $SysPrefs->auto_create_branch == 1)
+		if (isset(sysprefs()->auto_create_branch) && sysprefs()->auto_create_branch == 1)
 		{
         	add_branch($selected_id, $_POST['CustName'], $_POST['cust_ref'],
                 $_POST['address'], $_POST['salesman'], $_POST['area'], $_POST['tax_group_id'], '',
@@ -130,7 +130,7 @@ function handle_submit(&$selected_id): void
 
 		display_notification(_("A new customer has been added."));
 
-		if (isset($SysPrefs->auto_create_branch) && $SysPrefs->auto_create_branch == 1)
+		if (isset(sysprefs()->auto_create_branch) && sysprefs()->auto_create_branch == 1)
 			display_notification(_("A default Branch has been automatically created, please check default Branch values by using link below."));
 		
 		$Ajax->activate('_page_body');
@@ -188,7 +188,7 @@ if (isset($_POST['delete']))
 
 function customer_settings(string|int|float|bool|array|null $selected_id): void 
 {
-	global $SysPrefs, $path_to_root, $page_nested;
+	global $path_to_root, $page_nested;
 	
 	if (!(bool)$selected_id) 
 	{
@@ -202,7 +202,7 @@ function customer_settings(string|int|float|bool|array|null $selected_id): void
 			$_POST['payment_terms']  = $_POST['notes']  = '';
 
 			$_POST['discount']  = $_POST['pymt_discount'] = percent_format(0);
-			$_POST['credit_limit']	= price_format($SysPrefs->default_credit_limit());
+			$_POST['credit_limit']	= price_format(sysprefs()->default_credit_limit());
 		}
 	}
 	else 
@@ -251,7 +251,7 @@ function customer_settings(string|int|float|bool|array|null $selected_id): void
 
 	if((bool)$selected_id)
 		record_status_list_row(_("Customer status:"), 'inactive');
-	elseif (isset($SysPrefs->auto_create_branch) && $SysPrefs->auto_create_branch == 1)
+	elseif (isset(sysprefs()->auto_create_branch) && sysprefs()->auto_create_branch == 1)
 	{
 		table_section_title(_("Branch"));
 		text_row(_("Phone:"), 'phone', null, 32, 30);
@@ -291,7 +291,7 @@ function customer_settings(string|int|float|bool|array|null $selected_id): void
 	}
 
 	textarea_row(_("General Notes:"), 'notes', null, 35, 5);
-	if (!(bool)$selected_id && isset($SysPrefs->auto_create_branch) && $SysPrefs->auto_create_branch == 1)
+	if (!(bool)$selected_id && isset(sysprefs()->auto_create_branch) && sysprefs()->auto_create_branch == 1)
 	{
 		table_section_title(_("Branch"));
 		locations_list_row(_("Default Inventory Location:"), 'location');

@@ -18,7 +18,7 @@ include_once($path_to_root . "/purchasing/includes/purchasing_db.inc");
 include_once($path_to_root . "/purchasing/includes/purchasing_ui.inc");
 
 $js = "";
-if ($SysPrefs->use_popup_windows)
+if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 500);
 if (user_use_date_picker())
 	$js .= get_js_date_picker();
@@ -164,7 +164,6 @@ function check_po_changed(): bool
 
 function can_process(): bool
 {
-	global $SysPrefs;
 	
 	if (count($_SESSION['PO']->line_items) <= 0)
 	{
@@ -205,7 +204,7 @@ function can_process(): bool
 	foreach ($_SESSION['PO']->line_items as $order_line)
 	{
 	  	if ($order_line->receive_qty+$order_line->qty_received >
-	  		$order_line->quantity * (1+ ($SysPrefs->over_receive_allowance() / 100)))
+	  		$order_line->quantity * (1+ (sysprefs()->over_receive_allowance() / 100)))
 	  	{
 			$delivery_qty_too_large = 1;
 			break;
@@ -219,7 +218,7 @@ function can_process(): bool
     }
     elseif ($delivery_qty_too_large == 1)
     {
-    	display_error(_("Entered quantities cannot be greater than the quantity entered on the purchase order including the allowed over-receive percentage") . " (" . $SysPrefs->over_receive_allowance() ."%)."
+    	display_error(_("Entered quantities cannot be greater than the quantity entered on the purchase order including the allowed over-receive percentage") . " (" . sysprefs()->over_receive_allowance() ."%)."
     		. "<br>" .
     	 	_("Modify the ordered items on the purchase order if you wish to increase the quantities."));
     	return false;

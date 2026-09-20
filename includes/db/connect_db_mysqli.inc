@@ -40,7 +40,7 @@ function set_global_connection(string|int|float|bool|null $company=-1): mysqli|f
 	///// We are, however, investigating the existing code to be compatible in the future.
 	db_query("SET sql_mode = '".SQL_MODE."'");
 	/////
-	$SysPrefs->refresh();
+	sysprefs()->refresh();
 	return $db;
 }
 
@@ -48,14 +48,14 @@ function set_global_connection(string|int|float|bool|null $company=-1): mysqli|f
 
 function db_query(string $sql, ?string $err_msg=null): mysqli_result|bool
 {
-	global $db, $SysPrefs, $sql_queries, $Ajax,	$db_connections, $db_last_inserted_id;
+	global $db, $sql_queries, $Ajax, $db_connections, $db_last_inserted_id;
 
 	// set current db prefix
 	$comp = isset($_SESSION["wa_current_user"]->cur_con) ? $_SESSION["wa_current_user"]->cur_con : 0;
 	$cur_prefix = (string)@$db_connections[$comp]['tbpref'];
 	$sql = str_replace(TB_PREF, $cur_prefix, $sql);
 
-	if ($SysPrefs->show_sql)
+	if (sysprefs()->show_sql)
 	{
 		$Ajax->activate('footer_debug');
 		$sql_queries .= "<pre>$sql</pre>\n<hr>";
@@ -74,9 +74,9 @@ function db_query(string $sql, ?string $err_msg=null): mysqli_result|bool
 
 	db_profile($sql);
 
-	if($SysPrefs->sql_trail) {
+	if(sysprefs()->sql_trail) {
 		$db_last_inserted_id = mysqli_insert_id($db);	// preserve in case trail insert is done
-		if ($SysPrefs->select_trail || (strstr($sql, 'SELECT') === false)) {
+		if (sysprefs()->select_trail || (strstr($sql, 'SELECT') === false)) {
 			mysqli_query($db, "INSERT INTO ".$cur_prefix."sql_trail
 				(`sql`, `result`, `msg`)
 				VALUES(".db_escape($sql).",".($result ? 1 : 0).",
@@ -84,7 +84,7 @@ function db_query(string $sql, ?string $err_msg=null): mysqli_result|bool
 		}
 	}
 
-	if ($err_msg != null || $SysPrefs->go_debug) {
+	if ($err_msg != null || sysprefs()->go_debug) {
 		$exit = $err_msg != null;
 		if (function_exists('xdebug_call_file'))
 			$err_msg = '<br>At file '.xdebug_call_file().':'.xdebug_call_line().':<br>'.$err_msg;
@@ -202,9 +202,9 @@ function db_error_msg(array $conn): string
 
 function db_insert_id(): int|string
 {
-	global $db_last_inserted_id, $SysPrefs, $db;
+	global $db_last_inserted_id, $db;
 
-	return $SysPrefs->sql_trail ? $db_last_inserted_id : mysqli_insert_id($db);
+	return sysprefs()->sql_trail ? $db_last_inserted_id : mysqli_insert_id($db);
 }
 
 function db_num_affected_rows(): int|string

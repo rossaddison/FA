@@ -14,7 +14,7 @@ $path_to_root = "../..";
 include($path_to_root . "/includes/session.inc");
 
 $js = "";
-if ($SysPrefs->use_popup_windows && $SysPrefs->use_popup_search)
+if (sysprefs()->use_popup_windows && sysprefs()->use_popup_search)
 	$js .= get_js_open_window(900, 500);
 
 page(_($help_context = "Chart of Accounts"), false, false, "", $js);
@@ -66,7 +66,7 @@ if (isset($_POST['add']) || isset($_POST['update']))
 		display_error( _("The account name cannot be empty."));
 		set_focus('account_name');
 	} 
-	elseif (!$SysPrefs->accounts_alpha() && !preg_match("/^[0-9.]+$/",$_POST['account_code'])) // we only allow 0-9 and a dot
+	elseif (!sysprefs()->accounts_alpha() && !preg_match("/^[0-9.]+$/",$_POST['account_code'])) // we only allow 0-9 and a dot
 	{
 	    $input_error = 1;
 	    display_error( _("The account code must be numeric."));
@@ -74,7 +74,7 @@ if (isset($_POST['add']) || isset($_POST['update']))
 	}
 	if ($input_error != 1)
 	{
-		if ($SysPrefs->accounts_alpha() == 2)
+		if (sysprefs()->accounts_alpha() == 2)
 			$_POST['account_code'] = strtoupper($_POST['account_code']);
 
 		if (!isset($_POST['account_tags']))

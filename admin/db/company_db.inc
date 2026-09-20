@@ -32,12 +32,12 @@ function update_company_prefs(string|int|float|bool|array|null $params): bool
 */
 function get_company_pref(?string $prefs = null)
 {
-	global $SysPrefs, $db_version;
+	global $db_version;
 
-	if (!isset($SysPrefs->prefs))	 // just after first login or reset
-		$SysPrefs->refresh();
+	if (!isset(sysprefs()->prefs))	 // just after first login or reset
+		sysprefs()->refresh();
 
-	$all = $SysPrefs->prefs;
+	$all = sysprefs()->prefs;
 
 	if ((bool)$prefs && is_string($prefs))
 		return @$all[$prefs];

@@ -51,7 +51,7 @@ set_page_security( @$_SESSION['Items']->trans_type,
 
 $js = '';
 
-if ($SysPrefs->use_popup_windows) {
+if (sysprefs()->use_popup_windows) {
 	$js .= get_js_open_window(900, 500);
 }
 
@@ -366,7 +366,7 @@ function line_start_focus(): void {
 //--------------------------------------------------------------------------------
 function can_process(): bool {
 
-	global $Refs, $SysPrefs;
+	global $Refs;
 
 	copy_to_cart();
 
@@ -399,7 +399,7 @@ function can_process(): bool {
 		set_focus('AddItem');
 		return false;
 	}
-	if (!$SysPrefs->allow_negative_stock() && ($low_stock = $_SESSION['Items']->check_qoh()))
+	if (!sysprefs()->allow_negative_stock() && ($low_stock = $_SESSION['Items']->check_qoh()))
 	{
 		display_error(_("This document cannot be processed because there is insufficient quantity for items marked."));
 		return false;
@@ -530,7 +530,6 @@ if (isset($_POST['ProcessOrder']) && can_process()) {
 
 function check_item_data(): bool
 {
-	global $SysPrefs;
 	
 	$is_inventory_item = is_inventory_item(get_post('stock_id'));
 	if(!(bool)get_post('stock_id_text', true)) {
@@ -542,7 +541,7 @@ function check_item_data(): bool
 		display_error( _("The item could not be updated because you are attempting to set the quantity ordered to less than 0, or the discount percent to more than 100."));
 		set_focus('qty');
 		return false;
-	} elseif (!check_num('price', 0) && (!$SysPrefs->allow_negative_prices() || $is_inventory_item)) {
+	} elseif (!check_num('price', 0) && (!sysprefs()->allow_negative_prices() || $is_inventory_item)) {
 		display_error( _("Price for inventory item must be entered and can not be less than 0"));
 		set_focus('price');
 		return false;
@@ -660,9 +659,9 @@ function  handle_cancel_order(): void
 
 function create_cart(string|int|array|null $type, string|int|array|null $trans_no): void
 { 
-	global $Refs, $SysPrefs;
+	global $Refs;
 
-	if (!(bool)$SysPrefs->db_ok) // create_cart is called before page() where the check is done
+	if (!(bool)sysprefs()->db_ok) // create_cart is called before page() where the check is done
 		return;
 
 	processing_start();

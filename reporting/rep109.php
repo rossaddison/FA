@@ -113,7 +113,7 @@ function print_sales_orders(): void
 			$rep->TextColLines(1, 2, $myrow2['description'], -2);
 			$newrow = $rep->row;
 			$rep->row = $oldrow;
-			if ($Net != 0.0 || !is_service($myrow2['mb_flag']) || !$SysPrefs->no_zero_lines_amount())
+			if ($Net != 0.0 || !is_service($myrow2['mb_flag']) || !sysprefs()->no_zero_lines_amount())
 			{
 				$rep->TextCol(2, 3,	$DisplayQty, -2);
 				$rep->TextCol(3, 4,	$myrow2['units'], -2);
@@ -165,7 +165,7 @@ function print_sales_orders(): void
 
 			if ((bool)$myrow['tax_included'])
 			{
-				if ($SysPrefs->alternative_tax_include_on_docs() == 1)
+				if (sysprefs()->alternative_tax_include_on_docs() == 1)
 				{
 					if ($first)
 					{

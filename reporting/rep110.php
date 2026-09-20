@@ -123,7 +123,7 @@ function print_deliveries(): void
 				$rep->TextColLines(1, 2, $myrow2['StockDescription'], -2);
 				$newrow = $rep->row;
 				$rep->row = $oldrow;
-				if ($Net != 0.0  || !is_service($myrow2['mb_flag']) || !$SysPrefs->no_zero_lines_amount())
+				if ($Net != 0.0  || !is_service($myrow2['mb_flag']) || !sysprefs()->no_zero_lines_amount())
 				{
 					$rep->TextCol(2, 3,	$DisplayQty, -2);
 					$rep->TextCol(3, 4,	$myrow2['units'], -2);
@@ -171,14 +171,14 @@ function print_deliveries(): void
     					continue;
     				$DisplayTax = number_format2($tax_item['amount'], $dec);
  
- 					if ($SysPrefs->suppress_tax_rates() == 1)
+ 					if (sysprefs()->suppress_tax_rates() == 1)
  		   				$tax_type_name = $tax_item['tax_type_name'];
  		   			else
  		   				$tax_type_name = (string)$tax_item['tax_type_name']." (".(string)$tax_item['rate']."%) ";
 
  					if ((bool)$myrow['tax_included'])
     				{
-   						if ($SysPrefs->alternative_tax_include_on_docs() == 1)
+   						if (sysprefs()->alternative_tax_include_on_docs() == 1)
     					{
     						if ($first)
     						{

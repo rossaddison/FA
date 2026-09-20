@@ -197,7 +197,6 @@ function item_in_foreign_codes(string|int|float|bool|null $stock_id): string
  */
 function get_items_search(string|array|null $description, string|int|float|bool|null $type)
 {
-	global $SysPrefs;
 
 	$sql = "SELECT COUNT(i.item_code) AS kit, i.item_code, i.description, c.description category
 		FROM ".TB_PREF."stock_master s, ".TB_PREF."item_codes i
@@ -233,8 +232,8 @@ function get_items_search(string|array|null $description, string|int|float|bool|
 			break;
 	}
 
-	if (isset($SysPrefs->max_rows_in_search))
-		$limit = $SysPrefs->max_rows_in_search;
+	if (isset(sysprefs()->max_rows_in_search))
+		$limit = sysprefs()->max_rows_in_search;
 	else
 		$limit = 10;
 

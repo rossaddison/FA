@@ -30,9 +30,8 @@ include_once($path_to_root . "/sales/includes/sales_db.inc");
  */
 function get_invoice_range(?string $from, ?string $to, string|bool|array|null $currency=false)
 {
-	global $SysPrefs;
 
-	$ref = ($SysPrefs->print_invoice_no() == 1 ? "trans_no" : "reference");
+	$ref = (sysprefs()->print_invoice_no() == 1 ? "trans_no" : "reference");
 
 	$sql = "SELECT trans.trans_no, trans.reference";
 
@@ -202,14 +201,14 @@ function print_invoices(): void
 				$rep->TextCol($c++, $c,	$myrow2['stock_id'], -2);
 				$oldrow = $rep->row;
 				$rep->TextColLines($c++, $c, $myrow2['StockDescription'], -2);
-				if (!empty($SysPrefs->prefs['long_description_invoice']) && (bool)($myrow2['StockLongDescription'] ?? null))
+				if (!empty(sysprefs()->prefs['long_description_invoice']) && (bool)($myrow2['StockLongDescription'] ?? null))
 				{
 					$c--;
 					$rep->TextColLines($c++, $c, $myrow2['StockLongDescription'], -2);
 				}
 				$newrow = $rep->row;
 				$rep->row = $oldrow;
-				if ($Net != 0.0 || !is_service($myrow2['mb_flag']) || !$SysPrefs->no_zero_lines_amount())
+				if ($Net != 0.0 || !is_service($myrow2['mb_flag']) || !sysprefs()->no_zero_lines_amount())
 				{
 					$rep->TextCol($c++, $c,	$DisplayQty, -2);
 					$rep->TextCol($c++, $c,	$myrow2['units'], -2);
@@ -290,14 +289,14 @@ function print_invoices(): void
     				continue;
     			$DisplayTax = number_format2($sign*(float)$tax_item['amount'], $dec);
 
-    			if ($SysPrefs->suppress_tax_rates() == 1)
+    			if (sysprefs()->suppress_tax_rates() == 1)
     				$tax_type_name = $tax_item['tax_type_name'];
     			else
     				$tax_type_name = (string)$tax_item['tax_type_name']." (".(string)$tax_item['rate']."%) ";
 
     			if ((bool)$myrow['tax_included'])
     			{
-    				if ($SysPrefs->alternative_tax_include_on_docs() == 1)
+    				if (sysprefs()->alternative_tax_include_on_docs() == 1)
     				{
     					if ($first)
     					{

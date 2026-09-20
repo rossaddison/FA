@@ -271,9 +271,8 @@ class hooks {
  	 * class if needed */
 	/** @return list{mixed, 'stockmankobg'}|true */
 	static function  default_get_dispatchable_quantity($line_item, $location, $date, $qoh) {
-    	global $SysPrefs;
 
-		if ($SysPrefs->allow_negative_stock() || ($line_item->qty_dispatched <= $qoh)) {
+		if (sysprefs()->allow_negative_stock() || ($line_item->qty_dispatched <= $qoh)) {
 			return true;
 		}
 		return array($qoh, 'stockmankobg');

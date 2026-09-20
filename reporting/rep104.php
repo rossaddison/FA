@@ -173,10 +173,10 @@ function print_price_listing(): void
 			if (file_exists($image))
 			{
 				$rep->NewLine();
-				if ($rep->row - $SysPrefs->pic_height < $rep->bottomMargin)
+				if ($rep->row - sysprefs()->pic_height < $rep->bottomMargin)
 					$rep->NewPage();
-				$rep->AddImage($image, $rep->cols[1], $rep->row - $SysPrefs->pic_height, 0, $SysPrefs->pic_height);
-				$rep->row -= $SysPrefs->pic_height;
+				$rep->AddImage($image, $rep->cols[1], $rep->row - sysprefs()->pic_height, 0, sysprefs()->pic_height);
+				$rep->row -= sysprefs()->pic_height;
 				$rep->NewLine();
 			}
 		}

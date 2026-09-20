@@ -193,10 +193,9 @@ class Cart
 	/** @return array<int, line_details> */
 	function get_items()
 	{
-		global $SysPrefs;
 
 		$items = $this->line_items;
-		if (@$SysPrefs->sort_sales_items)
+		if (@sysprefs()->sort_sales_items)
 			uasort($items, array($this, '_cmp_lines'));
 
 		return $items;
@@ -287,7 +286,7 @@ class Cart
 	/** @return void */
 	function read($type, $trans_no=0, $prepare_child=false) {
 
-		global $SysPrefs, $Refs;
+		global $Refs;
 
 		if (!is_array($trans_no)) $trans_no = array($trans_no);
 
@@ -353,7 +352,7 @@ class Cart
 					get_invoice_duedate($this->payment, $this->document_date);
 			} else
 				$this->due_date =
-					add_days($this->document_date, $SysPrefs->default_delivery_required_by());
+					add_days($this->document_date, sysprefs()->default_delivery_required_by());
 		}
 		$this->credit = get_current_cust_credit($this->customer_id);
 	}
@@ -364,12 +363,12 @@ class Cart
 	// $policy - 0 or 1:  writeoff/return for IV, back order/cancel for DN
 	function write($policy=0) {
 		
-		global $SysPrefs, $Refs;
+		global $Refs;
 		
 		begin_transaction(); // prevents partial database changes in case of direct delivery/invoice
 		if ($this->reference != 'auto' && $this->trans_no == 0 && !is_new_reference($this->reference, $this->trans_type))
 		{
-			if (!empty($SysPrefs->prefs['ref_no_auto_increase']))
+			if (!empty(sysprefs()->prefs['ref_no_auto_increase']))
 				$this->reference = $Refs->get_next($this->trans_type, null, array('date' => Today()));
 			else	
 			{

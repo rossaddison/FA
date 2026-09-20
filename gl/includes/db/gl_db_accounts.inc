@@ -322,10 +322,9 @@ function is_bank_account(string|int|float|bool|array|null $account_code)
  */
 function get_chart_accounts_search(string|array|null $like, string|int|float|bool|null $skip=false)
 {
-	global $SysPrefs;
 
-	if (isset($SysPrefs->max_rows_in_search))
-		$limit = $SysPrefs->max_rows_in_search;
+	if (isset(sysprefs()->max_rows_in_search))
+		$limit = sysprefs()->max_rows_in_search;
 	else
 		$limit = 10;
 

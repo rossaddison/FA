@@ -143,7 +143,7 @@ function print_document_link(string|int|float|bool|array|null $doc_no, ?string $
 function print_link(?string $link_text, ?int $rep, ?array $pars = array(), ?string $dir = '', 
 	string|bool|null $icon=false, ?string $class='printlink', ?string $id=''): string
 {
-	global $path_to_root, $SysPrefs;
+	global $path_to_root;
 	$url = $dir == '' ?  $path_to_root.'/reporting/prn_redirect.php?' : $dir;
 
 	$id = default_focus($id);
@@ -155,7 +155,7 @@ function print_link(?string $link_text, ?int $rep, ?array $pars = array(), ?stri
 	$parm[] = 'REP_ID='.urlencode($rep);
 	$url .= implode ('&', $parm);
 	if ($class != '')
-		$class = $SysPrefs->pdf_debug ? '' : " class='$class'";
+		$class = sysprefs()->pdf_debug ? '' : " class='$class'";
 	if ($id != '')
 		$id = " id='$id'";
 	$pars = access_string($link_text);

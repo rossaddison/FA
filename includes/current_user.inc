@@ -100,7 +100,7 @@ class current_user
 	/** @return bool */
 	function login($company, $loginname, $password)
 	{
-		global $security_areas, $security_groups, $security_headings, $path_to_root, $dflt_lang, $SysPrefs;
+		global $security_areas, $security_groups, $security_headings, $path_to_root, $dflt_lang;
 
 		$this->set_company($company);
 	    $this->logged = false;
@@ -118,7 +118,7 @@ class current_user
 		if (!isset($Auth_Result))	// if not used: standard method
 			$Auth_Result = get_user_auth($loginname, md5($password));
 
-		if ($SysPrefs->login_delay > 0)
+		if (sysprefs()->login_delay > 0)
 			write_login_filelog($loginname, $Auth_Result);
 
 		if ((bool)$Auth_Result)
@@ -186,7 +186,6 @@ class current_user
 
 	/** @return bool */
 	function reset_password($company, $email) {
-		global $SysPrefs;
 
 		$this->set_company($company);
 		$this->logged = false;
@@ -208,7 +207,7 @@ class current_user
 			else
 				$header = "From: $sender";
 
-			mail($email, _("New password for")." ".$SysPrefs->app_title, $password, $header);
+			mail($email, _("New password for")." ".sysprefs()->app_title, $password, $header);
 
 			return true;
 		}
@@ -310,9 +309,8 @@ class current_user
 	/** @return bool */
 	function hide_inaccessible_menu_items()
 	{
-		global $SysPrefs;
 
-		if (!isset($SysPrefs->hide_inaccessible_menu_items) || $SysPrefs->hide_inaccessible_menu_items == 0)
+		if (!isset(sysprefs()->hide_inaccessible_menu_items) || sysprefs()->hide_inaccessible_menu_items == 0)
 		{
 			return false;
 		}
@@ -332,9 +330,8 @@ class current_user
 	/** @return void */
 	function update_prefs($prefs)
 	{
-		global $SysPrefs;
 
-		if (!$SysPrefs->allow_demo_mode) {
+		if (!sysprefs()->allow_demo_mode) {
 			update_user_prefs($this->user, $prefs);
 		}
 
@@ -358,9 +355,8 @@ function round2(string|int|float|bool|null $number, string|int|float|bool|null $
 */
 function number_format2(string|int|float|bool|null $number, int|string $decimals=0): string
 {
-	global $SysPrefs;
-	$tsep = $SysPrefs->thoseps[user_tho_sep()];
-	$dsep = $SysPrefs->decseps[user_dec_sep()];
+	$tsep = sysprefs()->thoseps[user_tho_sep()];
+	$dsep = sysprefs()->decseps[user_dec_sep()];
 
 	$number = (float)$number;
 	if($decimals==='max')
@@ -453,14 +449,13 @@ function percent_format(string|int|float|bool|null $number): string {
 }
 
 function user_numeric(string|int|float|bool|array|null $input): int|float|false {
-    global $SysPrefs;
 
     $num = trim($input);
-    $sep = $SysPrefs->thoseps[user_tho_sep()];
+    $sep = sysprefs()->thoseps[user_tho_sep()];
     if ($sep!='')
     	$num = str_replace( $sep, '', $num);
 
-    $sep = $SysPrefs->decseps[user_dec_sep()];
+    $sep = sysprefs()->decseps[user_dec_sep()];
     if ($sep!='.')
     	$num = str_replace( $sep, '.', $num);
 
@@ -498,21 +493,18 @@ function user_qty_dec()
 
 function user_price_dec(): int|string
 {
-	global $SysPrefs;
 
 	return isset($_SESSION["wa_current_user"]) ? $_SESSION["wa_current_user"]->prefs->price_dec() : 2;
 }
 
 function user_exrate_dec()
 {
-	global $SysPrefs;
 
 	return isset($_SESSION["wa_current_user"]) ? $_SESSION["wa_current_user"]->prefs->exrate_dec() : 4;
 }
 
 function user_percent_dec()
 {
-	global $SysPrefs;
 
 	return isset($_SESSION["wa_current_user"]) ? $_SESSION["wa_current_user"]->prefs->percent_dec() : 1;
 }
@@ -529,9 +521,8 @@ function user_show_codes()
 
 function user_date_format()
 {
-	global $SysPrefs;
 
-	return isset($_SESSION["wa_current_user"]) ? $_SESSION["wa_current_user"]->prefs->date_format() : $SysPrefs->dflt_date_fmt;
+	return isset($_SESSION["wa_current_user"]) ? $_SESSION["wa_current_user"]->prefs->date_format() : sysprefs()->dflt_date_fmt;
 }
 
 function user_date_display(): void
@@ -561,9 +552,8 @@ function user_date_display(): void
 
 function user_date_sep()
 {
-	global $SysPrefs;
 
-	return isset($_SESSION["wa_current_user"]->prefs->date_sep) ? $_SESSION["wa_current_user"]->prefs->date_sep() : $SysPrefs->dflt_date_sep;
+	return isset($_SESSION["wa_current_user"]->prefs->date_sep) ? $_SESSION["wa_current_user"]->prefs->date_sep() : sysprefs()->dflt_date_sep;
 }
 
 function user_tho_sep()
@@ -657,19 +647,19 @@ function set_user_prefs(int|array|null $prefs): void
 }
 
 function add_user_js_data(): void {
-	global $path_to_root, $SysPrefs;
+	global $path_to_root;
 
-	$ts = $SysPrefs->thoseps[user_tho_sep()];
-	$ds = $SysPrefs->decseps[user_dec_sep()];
+	$ts = sysprefs()->thoseps[user_tho_sep()];
+	$ds = sysprefs()->decseps[user_dec_sep()];
 
     $js = "\n"
 	  . "var user = {\n"
 	  . "theme: '". $path_to_root . '/themes/'. user_theme().'/'."',\n"
 	  . "loadtxt: '"._('Requesting data...')."',\n"
 	  . "date: '".Today()."',\n"	// server date
-	  . "datesys: ".$SysPrefs->date_system.",\n"
+	  . "datesys: ".sysprefs()->date_system.",\n"
 	  . "datefmt: ".user_date_format().",\n"
-	  . "datesep: '".$SysPrefs->dateseps[user_date_sep()]."',\n"
+	  . "datesep: '".sysprefs()->dateseps[user_date_sep()]."',\n"
 	  . "ts: '$ts',\n"
 	  . "ds: '$ds',\n"
 	  . "pdec : " . user_price_dec() . "}\n";
@@ -807,9 +797,9 @@ function flush_dir(string|int|float|bool|null $path, string|int|float|bool|null 
 */
 function company_path(string|int|float|bool|null $comp=null): string
 {
-	global $path_to_root, $SysPrefs;
+	global $path_to_root;
 
-	$comp_path = $SysPrefs->comp_path;
+	$comp_path = sysprefs()->comp_path;
 
 
 	if (!isset($comp))

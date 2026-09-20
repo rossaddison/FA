@@ -21,7 +21,7 @@ include_once($path_to_root . "/includes/data_checks.inc");
 include_once($path_to_root . "/inventory/includes/stock_transfers_ui.inc");
 include_once($path_to_root . "/inventory/includes/inventory_db.inc");
 $js = "";
-if ($SysPrefs->use_popup_windows)
+if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(800, 500);
 if (user_use_date_picker())
 	$js .= get_js_date_picker();
@@ -122,7 +122,7 @@ if (isset($_POST['Process']))
 		set_focus('FromStockLocation');
 		$input_error = 1;
 	}
-	elseif (!$SysPrefs->allow_negative_stock())
+	elseif (!sysprefs()->allow_negative_stock())
 	{
 		$low_stock = $tr->check_qoh($_POST['FromStockLocation'], $_POST['AdjDate'], true);
 
