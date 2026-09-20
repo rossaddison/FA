@@ -87,7 +87,7 @@ function add_work_order_issue(string|int|float|bool|null $woid, string|array|nul
 //--------------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_work_order_issues(string|int|float|bool|null $woid)
 {
@@ -97,7 +97,7 @@ function get_work_order_issues(string|int|float|bool|null $woid)
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_additional_issues(string|int|float|bool|null $woid)
 {
@@ -137,7 +137,7 @@ function get_work_order_issue(string|int|float|bool|null $issue_no)
 //--------------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_work_order_issue_details(string|int|float|bool|null $issue_no)
 {

@@ -34,7 +34,7 @@ function delete_item_price(string|int|float|bool|null $price_id): void
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_prices(string|int|float|bool|array|null $stock_id)
 {

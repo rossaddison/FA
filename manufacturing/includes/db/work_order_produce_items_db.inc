@@ -121,7 +121,7 @@ function get_work_order_produce(string|int|float|bool|null $id)
 //--------------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_work_order_productions(string|int|float|bool|null $woid)
 {

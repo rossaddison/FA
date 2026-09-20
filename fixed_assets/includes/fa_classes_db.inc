@@ -11,7 +11,7 @@
 ***********************************************************************/
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_fixed_asset_classes()
 {

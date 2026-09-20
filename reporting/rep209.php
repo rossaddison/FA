@@ -52,7 +52,7 @@ function get_supp_po(string|array|null $order_no)
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_po_details(string|array|null $order_no)
 {

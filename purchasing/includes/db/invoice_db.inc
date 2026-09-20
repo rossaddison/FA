@@ -410,7 +410,7 @@ function add_supp_invoice(supp_trans &$supp_trans)
 // get all the invoices/credits for a given PO - quite long route to get there !
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_po_invoices_credits(string|int|float|bool|null $po_number)
 {
@@ -649,7 +649,7 @@ function void_supp_invoice(string|int|float|bool|null $type, string|int|float|bo
 
 //----------------------------------------------------------------------------------------
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_gl_account_info(string|array|null $acc)
 {

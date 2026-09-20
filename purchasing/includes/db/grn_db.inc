@@ -262,7 +262,7 @@ function set_grn_item_credited(&$entered_grn, string|int|float|bool|null $suppli
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_grn_items(string|int|float|bool|array|null $grn_batch_id=0, string|int|float|bool|null $supplier_id="", bool $outstanding_only=false,
 	bool $is_invoiced_only=false, string|int|float|bool|array|null $invoice_no=0, string|array|null $begin="", string|array|null $end="")
@@ -402,7 +402,7 @@ function read_grn(string|array|null $grn_batch, purch_order &$order): void
 // get the GRNs (batch info not details) for a given po number
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_po_grns(string|int|float|bool|null $po_number)
 {

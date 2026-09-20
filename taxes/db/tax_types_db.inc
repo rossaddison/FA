@@ -30,7 +30,7 @@ function update_tax_type(string|int|float|bool|null $type_id, string|int|float|b
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_all_tax_types(int|bool|array|null $all=false)
 {
@@ -46,7 +46,7 @@ function get_all_tax_types(int|bool|array|null $all=false)
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_all_tax_types_simple()
 {

@@ -30,7 +30,7 @@ include_once($path_to_root . "/gl/includes/gl_db.inc");
 print_supplier_details_listing();
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_supplier_details_for_report()
 {

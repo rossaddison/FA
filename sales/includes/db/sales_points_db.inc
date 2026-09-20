@@ -31,7 +31,7 @@ function update_sales_point(string|int|float|bool|null $id, string|int|float|boo
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_all_sales_points(int|bool|array|null $all=false)
 {

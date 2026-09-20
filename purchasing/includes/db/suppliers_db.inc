@@ -209,7 +209,7 @@ function get_supplier_currency(string|int|float|bool|array|null $supplier_id)
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_suppliers_search(string|array|null $supplier)
 {

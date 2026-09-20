@@ -10,7 +10,7 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_wo_requirements(string|int|float|bool|array|null $woid)
 {

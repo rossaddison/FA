@@ -67,7 +67,7 @@ function delete_item_category(string|int|float|bool|null $id): void
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_item_categories(int|array|null $show_inactive, bool $fixed_asset=false)
 {

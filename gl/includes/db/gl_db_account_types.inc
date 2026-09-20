@@ -65,7 +65,7 @@ function update_account_type(string|int|float|bool|null $id, string|int|float|bo
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_account_types(int|bool|array|null $all=false, string|int|float|bool|null $class_id=false, string|int|bool|null $parent=false)
 {
@@ -146,7 +146,7 @@ function update_account_class(string|int|float|bool|null $id, string|int|float|b
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_account_classes(int|bool|array|null $all=false, ?int $balance=-1)
 {

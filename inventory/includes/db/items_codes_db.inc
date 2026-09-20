@@ -167,7 +167,7 @@ function update_kit_props(string|array|null $kit_code, string|array|null $name, 
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_where_used(string|int|float|bool|null $item_code)
 {

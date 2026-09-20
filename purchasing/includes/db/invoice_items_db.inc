@@ -39,7 +39,7 @@ function add_supp_invoice_gl_item(string|int|float|bool|null $supp_trans_type, i
 
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_supp_invoice_items(string|int|float|bool|null $supp_trans_type, string|int|float|bool|null $supp_trans_no)
 {

@@ -50,7 +50,7 @@ function delete_shipper(string|int|float|bool|array|null $selected_id): void
 //--------------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_shippers(int|array|null $show_inactive)
 {

@@ -52,7 +52,7 @@ function fetch_items(string|int|array|null $category=0)
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_kits(string|int|array|null $category=0)
 {

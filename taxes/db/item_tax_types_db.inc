@@ -113,7 +113,7 @@ function delete_item_tax_type_exemptions(string|int|float|bool|null $id): void
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_item_tax_type_exemptions(string|int|float|bool|null $id)
 {

@@ -29,7 +29,7 @@ include_once($path_to_root . "/gl/includes/gl_db.inc");
 print_customer_details_listing();
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_customer_details_for_report(string|int|array|null $area=0, string|int|array|null $salesid=0)
 {

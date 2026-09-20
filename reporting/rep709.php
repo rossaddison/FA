@@ -30,7 +30,7 @@ include_once($path_to_root . "/gl/includes/gl_db.inc");
 print_tax_report();
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function getTaxTransactions(string|array|null $from, string|array|null $to)
 {
@@ -67,7 +67,7 @@ function getTaxTransactions(string|array|null $from, string|array|null $to)
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function getTaxTypes()
 {

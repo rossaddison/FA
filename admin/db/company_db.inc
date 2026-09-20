@@ -137,7 +137,7 @@ function get_payment_terms(string|int|float|bool|array|null $selected_id)
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_payment_terms_all(int|array|null $show_inactive)
 {

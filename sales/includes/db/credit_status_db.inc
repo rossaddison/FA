@@ -26,7 +26,7 @@ function update_credit_status(string|int|float|bool|null $status_id, string|int|
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_all_credit_status(int|bool|array|null $all=false)
 {

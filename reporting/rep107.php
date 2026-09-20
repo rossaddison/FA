@@ -27,7 +27,7 @@ include_once($path_to_root . "/sales/includes/sales_db.inc");
 
 //----------------------------------------------------------------------------------------------------
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_invoice_range(?string $from, ?string $to, string|bool|array|null $currency=false)
 {

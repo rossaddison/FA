@@ -52,7 +52,7 @@ function delete_recurrent_invoice(string|int|float|bool|array|null $selected_id)
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_recurrent_invoices(?string $date=null)
 {

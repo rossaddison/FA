@@ -41,7 +41,7 @@ function update_tag(string|int|float|bool|null $id, string|int|float|bool|null $
 //--------------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_tags(string|int|float|bool|null $type, string|int|float|bool|array|null $all=false)
 {
@@ -190,7 +190,7 @@ function delete_tag_associations(?int $type, string|int|float|bool|null $recordi
 //--------------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_records_associated_with_tag(string|int|float|bool|null $id)
 {
@@ -220,7 +220,7 @@ function get_records_associated_with_tag(string|int|float|bool|null $id)
 //--------------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_tags_associated_with_record(?int $type, string|int|float|bool|null $recordid)
 {

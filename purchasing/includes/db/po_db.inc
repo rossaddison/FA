@@ -284,7 +284,7 @@ function read_po(string|int|float|bool|array|null $order_no, purch_order &$order
 //----------------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_po_items(string|int|float|bool|null $order_no)
 {
@@ -300,7 +300,7 @@ function get_po_items(string|int|float|bool|null $order_no)
 //----------------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_short_info(string|array|null $stock_id)
 {

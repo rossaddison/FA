@@ -84,7 +84,7 @@ function get_bank_account(string|int|float|bool|array|null $id)
 //---------------------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_bank_accounts(int|bool|array|null $show_inactive=false)
 {
@@ -209,7 +209,7 @@ function has_quick_entries(?string $type=null): bool
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_quick_entries(string|int|float|bool|null $type = null)
 {
@@ -234,7 +234,7 @@ function get_quick_entry(string|int|float|bool|array|null $selected_id)
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_quick_entry_lines(string|int|float|bool|null $qid)
 {
@@ -273,7 +273,7 @@ function get_quick_entry_line(string|int|float|bool|null $selected_id)
 //---------------------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_max_reconciled(string|array|null $date, string|array|null $bank_account)
 {

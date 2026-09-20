@@ -136,7 +136,7 @@ function get_branch_name(string|int|float|bool|null $branch_id)
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_cust_branches_from_group(?string $group_no)
 {
@@ -289,7 +289,7 @@ function get_default_branch(string|int|float|bool|null $customer_id, string|int|
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function  get_branches_search(string|int|float|bool|null $customer, string|array|null $branch)
 {

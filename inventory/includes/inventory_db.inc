@@ -35,7 +35,7 @@ function item_img_name(string|int|float|bool|array|null $stock_id)
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_stock_movements(string|int|float|bool|null $stock_id, string|int|float|bool|null $StockLocation,	string|int|float|bool|null $BeforeDate, string|int|float|bool|null $AfterDate)
 {

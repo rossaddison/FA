@@ -81,7 +81,7 @@ function update_user_prefs(string|int|float|bool|null $id, mixed $prefs)
 
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_users(int|bool|array|null $all=false)
 {

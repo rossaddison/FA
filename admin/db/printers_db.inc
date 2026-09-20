@@ -30,7 +30,7 @@ function write_printer_def(string|int|float|bool|null $id, string|array|null $na
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_all_printers() 
 {
@@ -114,7 +114,7 @@ function delete_printer_profile(string|int|float|bool|array|null $name)
 // Get all report destinations for given profile.
 //
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_print_profile(string|array|null $name)
 {

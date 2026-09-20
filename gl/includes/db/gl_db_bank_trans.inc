@@ -63,7 +63,7 @@ function exists_bank_trans(string|int|float|bool|array|null $type, string|int|fl
 //----------------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_bank_trans(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no=null, string|int|float|bool|null $person_type_id=null, string|int|float|bool|null $person_id=null)
 {
@@ -95,7 +95,7 @@ function get_bank_trans(string|int|float|bool|null $type, string|int|float|bool|
 //----------------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_bank_trans_for_bank_account(string|int|float|bool|null $bank_account, string|int|float|bool|null $from, string|int|float|bool|null $to)
 {

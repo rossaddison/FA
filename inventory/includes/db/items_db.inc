@@ -193,7 +193,7 @@ function item_in_foreign_codes(string|int|float|bool|null $stock_id): string
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_items_search(string|array|null $description, string|int|float|bool|null $type)
 {

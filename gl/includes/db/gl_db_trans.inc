@@ -105,7 +105,7 @@ function add_gl_balance(string|int|float|bool|null $type, string|int|float|bool|
 //--------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_gl_transactions(string|array|null $from_date, string|int|float|bool|array|null $to_date, ?int $trans_no=0,
     string|int|float|bool|array|null $account=null, string|int|array|null $dimension=0, string|int|array|null $dimension2=0, string|array|null $filter_type=null,
@@ -543,7 +543,7 @@ function clear_trans_tax_details(string|int|float|bool|null $type, string|int|fl
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_tax_summary(string|array|null $from, string|array|null $to, bool $also_zero_purchases=false)
 {

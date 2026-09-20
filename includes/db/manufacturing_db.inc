@@ -212,7 +212,7 @@ function delete_bom(string|int|float|bool|array|null $selected_id): void
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_bom(mixed $item)
 {

@@ -68,7 +68,7 @@ function get_item_location(string|int|float|bool|array|null $item_location)
 //------------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_item_locations(int|array|null $show_inactive, string|int|array|null $fixed_asset = 0)
 {
@@ -90,7 +90,7 @@ function set_reorder_level(string|int|float|bool|array|null $stock_id, ?string $
 //------------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_loc_details(string|int|float|bool|array|null $stock_id, ?int $fixed_asset = 0)
 {

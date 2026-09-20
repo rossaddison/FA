@@ -12,7 +12,7 @@
 //----------------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_customer_trans_details(string|int|float|bool|null $debtor_trans_type, string|int|float|bool|array|null $debtor_trans_no)
 {

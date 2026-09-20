@@ -26,7 +26,7 @@ function update_work_centre(string|int|float|bool|null $type_id, string|int|floa
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_all_work_centres(int|bool|array|null $all=false)
 {

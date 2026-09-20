@@ -22,7 +22,7 @@ function add_wo_costing(string|int|float|bool|null $workorder_id, string|int|flo
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_wo_costing(string|int|float|bool|null $workorder_id)
 {

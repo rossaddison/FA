@@ -65,7 +65,7 @@ function item_unit_used(string|int|float|bool|null $unit): bool {
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_all_item_units(int|bool|array|null $all=false) {
     $sql = "SELECT * FROM ".TB_PREF."item_units";

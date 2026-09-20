@@ -37,7 +37,7 @@ function update_tax_group(string|int|float|bool|null $id, string|int|float|bool|
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_all_tax_groups(int|bool|array|null $all=false)
 {
@@ -94,7 +94,7 @@ function delete_tax_group_items(string|int|float|bool|null $id): void
 //	Call the function without arg to find shipment group taxes.
 //
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_tax_group_rates(string|int|float|bool|null $group_id=null, bool $tax_shipping=false)
 {

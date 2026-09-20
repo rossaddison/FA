@@ -26,7 +26,7 @@ function update_sales_type(string|int|float|bool|null $id, string|int|float|bool
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_all_sales_types(int|bool|array|null $all=false)
 {

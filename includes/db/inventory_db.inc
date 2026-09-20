@@ -468,7 +468,7 @@ function update_stock_move(string|int|float|bool|null $type, string|int|float|bo
 //--------------------------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_stock_moves(?int $type, string|int|float|bool|null $type_no)
 {

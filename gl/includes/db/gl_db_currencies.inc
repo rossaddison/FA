@@ -65,7 +65,7 @@ function get_currency(string|int|float|bool|array|null $curr_code)
 //---------------------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_currencies(int|bool|array|null $all=false)
 {

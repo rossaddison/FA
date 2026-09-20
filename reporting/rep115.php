@@ -59,7 +59,7 @@ function get_open_balance(?string $debtorno, string|array|null $to)
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_transactions(?string $debtorno, string|array|null $from, string|array|null $to)
 {

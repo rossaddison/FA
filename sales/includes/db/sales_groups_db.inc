@@ -29,7 +29,7 @@ function delete_sales_group(string|int|float|bool|array|null $selected_id): void
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_sales_groups(int|array|null $show_inactive)
 {
@@ -80,7 +80,7 @@ function delete_sales_area(string|int|float|bool|array|null $selected_id): void
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_sales_areas(int|array|null $show_inactive)
 {
@@ -148,7 +148,7 @@ function delete_salesman(string|int|float|bool|array|null $selected_id): void
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_salesmen(int|array|null $show_inactive)
 {

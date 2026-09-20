@@ -65,7 +65,7 @@ function getTransactions(string|int|array|null $from, string|array|null $to)
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function getSuppInvDetails(?string $grn_item_id)
 {

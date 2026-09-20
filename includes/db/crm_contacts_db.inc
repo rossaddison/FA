@@ -233,7 +233,7 @@ function delete_crm_category(string|int|float|bool|array|null $selected_id): voi
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_crm_categories(int|array|null $show_inactive)
 {

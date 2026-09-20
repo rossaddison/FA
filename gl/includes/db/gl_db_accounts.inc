@@ -41,7 +41,7 @@ function delete_gl_account(string|int|float|bool|null $code): void
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_gl_accounts(string|array|null $from=null, string|array|null $to=null, ?string $type=null)
 {
@@ -318,7 +318,7 @@ function is_bank_account(string|int|float|bool|array|null $account_code)
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_chart_accounts_search(string|array|null $like, string|int|float|bool|null $skip=false)
 {

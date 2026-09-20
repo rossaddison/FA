@@ -225,7 +225,7 @@ function get_customer_currency(string|int|float|bool|array|null $customer_id=nul
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_customers_search(string|array|null $customer)
 {

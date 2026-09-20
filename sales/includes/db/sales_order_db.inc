@@ -285,7 +285,7 @@ function get_sales_order_header(string|int|float|bool|array|null $order_no, stri
 //----------------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_sales_order_details(string|int|float|bool|array|null $order_no, string|int|float|bool|null $trans_type) {
 	$sql = "SELECT id, stk_code, unit_price,
@@ -449,7 +449,7 @@ function get_customer_to_order(string|int|float|bool|array|null $customer_id) {
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_branch_to_order(string|int|float|bool|null $customer_id, string|int|float|bool|null $branch_id) {
 

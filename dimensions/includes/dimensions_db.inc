@@ -160,7 +160,7 @@ function reopen_dimension(string|int|float|bool|null $id): void
 //--------------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_dimension_balance_all(string|int|float|bool|null $id, string|int|float|bool|null $from, string|int|float|bool|null $to) 
 {

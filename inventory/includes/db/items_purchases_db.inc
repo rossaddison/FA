@@ -49,7 +49,7 @@ function delete_item_purchasing_data(string|int|float|bool|array|null $selected_
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_items_purchasing_data(string|int|float|bool|array|null $stock_id)
 {

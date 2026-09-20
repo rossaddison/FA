@@ -88,7 +88,7 @@ function add_cust_supp_revaluation(?string $ledger_act, string|int|float|bool|nu
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_cust_account_curr_balances(string|array|null $date)
 {
@@ -111,7 +111,7 @@ function get_cust_account_curr_balances(string|array|null $date)
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_supp_account_curr_balances(string|array|null $date)
 {

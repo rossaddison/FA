@@ -33,7 +33,7 @@ function update_fiscalyear(string|int|float|bool|null $id, string|array|null $cl
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_all_fiscalyears()
 {
