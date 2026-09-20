@@ -223,6 +223,9 @@ function get_grn_batch(?string $grn)
 	return db_fetch($result);
 }
 
+/**
+ * @param grn_item $entered_grn
+ */
 function set_grn_item_credited(&$entered_grn, string|int|float|bool|null $supplier, int|float|null $transno, string|int|float|bool|null $date, string|int|float|bool|null $taxfree_line): void
 {
 	$mcost = update_average_material_cost($supplier, $entered_grn->item_code,

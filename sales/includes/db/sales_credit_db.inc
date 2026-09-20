@@ -179,6 +179,9 @@ function write_credit_note(Cart &$credit_note, string|int|float|bool|null $write
 // Insert a stock movement coming back in to show the credit note and
 // 	a reversing stock movement to show the write off
 //
+/**
+ * @param line_details $credit_line
+ */
 function add_credit_movements_item(Cart &$credit_note, &$credit_line,
 	?string $credit_type, string|int|float|bool|null $price, string|int|float|bool|null $credited_invoice=0): void
 {

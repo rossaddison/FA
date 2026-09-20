@@ -12,7 +12,10 @@
 //-----------------------------------------------------------------------------
 //	Add or update Sales Invoice
 //
-/** @return array<array-key, mixed>|null|scalar */
+/**
+ * @param Cart $invoice
+ * @return array<array-key, mixed>|null|scalar
+ */
 function write_sales_invoice(&$invoice)
 {
 	global $Refs;

@@ -599,6 +599,11 @@ function display_grn_items(supp_trans &$supp_trans, ?int $mode=0): int|float
 }
 
 //--------------------------------------------------------------------------------------------------
+/**
+ * @template T of purch_order|supp_trans
+ * @param T $trans
+ * @param-out T $trans
+ */
 function get_duedate_from_terms(&$trans): void
 {
 	$date = get_class($trans) == 'purch_order' ? $trans->orig_order_date : $trans->tran_date;

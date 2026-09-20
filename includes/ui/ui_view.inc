@@ -631,6 +631,9 @@ function display_allocations_to(?int $person_type, string|int|float|bool|null $p
 //	Expands selected quick entry $id into GL posings and adds to cart.
 //		returns calculated amount posted to bank GL account.
 //
+/**
+ * @param items_cart $cart
+ */
 function display_quick_entries(&$cart, string|int|float|bool|array|null $id, int|float|bool|null $base, ?string $type, string|array|null $descr=''): int
 {
 	$bank_amount = 0;

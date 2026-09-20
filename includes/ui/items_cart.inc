@@ -16,6 +16,7 @@ class items_cart
 {
 	/** @var int|string */
 	var $trans_type;
+	/** @var array<int, line_item> */
 	var $line_items;
 	/** @var array<int, gl_item> */
 	var $gl_items;
@@ -511,17 +512,23 @@ class items_cart
 
 class line_item
 {
+	/** @var string */
 	var $stock_id;
+	/** @var string */
 	var $item_description;
+	/** @var string */
 	var $units;
+	/** @var string */
 	var $mb_flag;
 
+	/** @var float|int|string */
 	var $quantity;
 
 	/**
 	 * @var int
 	 */
 	var $price;
+	/** @var float|int|string */
 	var $standard_cost;
 
 	function __construct($stock_id, $qty, $standard_cost=null, $description=null)

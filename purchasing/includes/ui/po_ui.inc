@@ -460,6 +460,9 @@ function po_item_controls(purch_order &$order, int|string|null &$rowcounter, str
 
 //---------------------------------------------------------------------------------------------------
 
+/**
+ * @param purch_order $trans
+ */
 function display_po_footer(&$trans): void
 {
 	global $Ajax;

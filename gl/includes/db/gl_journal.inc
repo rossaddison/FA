@@ -116,7 +116,10 @@ function write_supp_journal(string|int|float|bool|null $trans_type, string|int|f
 //--------------------------------------------------------------------------------
 // Write/update journal entries.
 //
-/** @return false|float|int */
+/**
+ * @param items_cart $cart
+ * @return false|float|int
+ */
 function write_journal_entries(&$cart)
 {
 	global $Refs;
