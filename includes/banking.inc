@@ -20,6 +20,9 @@ function is_company_currency(string|int|float|bool|array|null $currency): bool
 
 //----------------------------------------------------------------------------------
 
+/**
+ * @return string|int|float|bool|null
+ */
 function get_company_currency()
 {
 	return get_company_pref('curr_default');

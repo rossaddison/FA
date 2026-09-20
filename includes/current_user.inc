@@ -424,6 +424,9 @@ function qty_format(string|int|float|bool|null $number, string|int|float|bool|ar
 }
 
 // and get_qty_dec
+/**
+ * @return string|int|float|bool|null
+ */
 function get_qty_dec(?string $stock_id=null)
 {
 	global $path_to_root;
@@ -491,6 +494,9 @@ function user_language()
 	return session_obj('wa_current_user')->prefs->language();
 }
 
+/**
+ * @return string|int|float|bool|null
+ */
 function user_qty_dec()
 {
 	return session_obj('wa_current_user')->prefs->qty_dec();

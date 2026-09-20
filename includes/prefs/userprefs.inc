@@ -68,7 +68,7 @@ class user_prefs
 	var $def_print_orientation; // default print orientation. 0 = Portrait. 1 = Landscape
 
 	/**
-	 * @param bool|array<array-key, mixed>|null $user
+	 * @param array<array-key, string|int|float|bool|null>|bool|null $user
 	 */
 	function __construct($user=null)
 	{

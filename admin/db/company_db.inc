@@ -30,7 +30,10 @@ function update_company_prefs(string|int|float|bool|array|null $params): bool
 	$prefs can be preference name, array of names, or null for all preferences.
 	
 */
-/** @return array<string, null|scalar>|null|scalar */
+/**
+ * @param string|null $prefs
+ * @return ($prefs is null ? array<string, string|int|float|bool|null> : string|int|float|bool|null)
+ */
 function get_company_pref(?string $prefs = null)
 {
 	global $db_version;
@@ -49,6 +52,9 @@ function get_company_pref(?string $prefs = null)
 	return $all;
 }
 
+/**
+ * @return array<string, string|int|float|bool|null>
+ */
 function get_company_prefs()
 {
 	return get_company_pref(null);

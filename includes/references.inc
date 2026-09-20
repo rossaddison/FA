@@ -249,6 +249,9 @@ class references
 	//
 	// Get default reference for new transaction.
 	//
+	/**
+	 * @return string
+	 */
 	function get_next($type, $line=null, $context=null) 
 	{
 
