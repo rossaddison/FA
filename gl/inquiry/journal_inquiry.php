@@ -11,6 +11,7 @@
 ***********************************************************************/
 
 $page_security = 'SA_GLANALYTIC';
+/** @var string $path_to_root */
 $path_to_root="../..";
 
 include($path_to_root . "/includes/db_pager.inc");

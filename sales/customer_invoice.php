@@ -15,6 +15,7 @@
 //	Entry/Modify Batch Sales Invoice against batch of deliveries
 //
 $page_security = 'SA_SALESINVOICE';
+/** @var string $path_to_root */
 $path_to_root = "..";
 include_once($path_to_root . "/sales/includes/cart_class.inc");
 include_once($path_to_root . "/includes/session.inc");

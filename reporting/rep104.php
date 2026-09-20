@@ -16,6 +16,7 @@ $page_security = 'SA_PRICEREP';
 // date_:	2005-05-19
 // Title:	price Listing
 // ----------------------------------------------------------------
+/** @var string $path_to_root */
 $path_to_root="..";
 
 include_once($path_to_root . "/includes/session.inc");

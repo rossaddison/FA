@@ -10,6 +10,7 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 $page_security = 'SA_OPEN';
+/** @var string $path_to_root */
 $path_to_root="..";
 
 if (file_exists($path_to_root.'/config_db.php'))

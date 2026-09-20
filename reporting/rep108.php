@@ -16,6 +16,7 @@ $page_security = 'SA_CUSTSTATREP';
 // date_:	2005-05-19
 // Title:	Print Statements
 // ----------------------------------------------------------------
+/** @var string $path_to_root */
 $path_to_root="..";
 
 include_once($path_to_root . "/includes/session.inc");

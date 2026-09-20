@@ -16,6 +16,7 @@ $page_security = 'SA_SUPPLIERANALYTIC';
 // date_:	2018-12-21
 // Title:	Supplier Trial Balances
 // ----------------------------------------------------------------
+/** @var string $path_to_root */
 $path_to_root="..";
 
 include_once($path_to_root . "/includes/session.inc");

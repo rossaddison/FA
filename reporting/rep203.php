@@ -16,6 +16,7 @@ $page_security = 'SA_SUPPPAYMREP';
 // date_:	2005-05-19
 // Title:	Payment Report
 // ----------------------------------------------------------------
+/** @var string $path_to_root */
 $path_to_root="..";
 
 include_once($path_to_root . "/includes/session.inc");

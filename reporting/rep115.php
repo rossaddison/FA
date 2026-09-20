@@ -17,6 +17,7 @@ $page_security = 'SA_CUSTPAYMREP';
 // date_:    2018-12-20
 // Title:    Customer Trial Balances
 // ----------------------------------------------------------------
+/** @var string $path_to_root */
 $path_to_root="..";
 
 include_once($path_to_root . "/includes/session.inc");

@@ -17,6 +17,7 @@ $page_security = 'SA_BANKREP';
 // Title:	Bank Statements w/Reconcile
 // Desc:	Bank Statement w/ Reconcile like the normal Bank Statement but with reconcile columns
 // ----------------------------------------------------------------
+/** @var string $path_to_root */
 $path_to_root="..";
 
 include_once($path_to_root . "/includes/session.inc");

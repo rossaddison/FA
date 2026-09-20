@@ -16,6 +16,7 @@ $page_security = 'SA_GLREP';
 // date_:	2005-05-19
 // Title:	GL Accounts Transactions
 // ----------------------------------------------------------------
+/** @var string $path_to_root */
 $path_to_root="..";
 
 include_once($path_to_root . "/includes/session.inc");

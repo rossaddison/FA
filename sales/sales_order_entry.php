@@ -17,6 +17,7 @@
 //	Entry Direct Invoice
 //
 
+/** @var string $path_to_root */
 $path_to_root = "..";
 $page_security = 'SA_SALESORDER';
 

@@ -11,6 +11,7 @@
 ***********************************************************************/
 
 $page_security = 'SA_GLCLOSE';
+/** @var string $path_to_root */
 $path_to_root = "../..";
 include_once($path_to_root . "/includes/session.inc");
 

@@ -16,6 +16,7 @@ $page_security = 'SA_ASSETSANALYTIC';
 // date_:	2015-12-01
 // Title:	Fixed Assets Valuation
 // ----------------------------------------------------------------
+/** @var string $path_to_root */
 $path_to_root="..";
 
 include_once($path_to_root . "/includes/session.inc");

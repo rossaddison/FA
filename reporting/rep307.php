@@ -16,6 +16,7 @@ $page_security = 'SA_ITEMSVALREP';
 // date_:	2011-05-24
 // Title:	Stock Movements
 // ----------------------------------------------------------------
+/** @var string $path_to_root */
 $path_to_root="..";
 
 include_once($path_to_root . "/includes/session.inc");

@@ -17,6 +17,7 @@ $page_security = $_POST['PARAM_0'] == $_POST['PARAM_1'] ?
 // date_:	2008-01-14
 // Title:	Print Delivery Notes
 // ----------------------------------------------------------------
+/** @var string $path_to_root */
 $path_to_root="..";
 
 include_once($path_to_root . "/includes/session.inc");

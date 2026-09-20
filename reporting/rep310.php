@@ -16,6 +16,7 @@ $page_security = 'SA_SUPPLIERANALYTIC';
 // date_:	01-12-2017
 // Title:	Inventory Purchasing - Transaction Based
 // ----------------------------------------------------------------
+/** @var string $path_to_root */
 $path_to_root="..";
 
 include_once($path_to_root . "/includes/session.inc");
