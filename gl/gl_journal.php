@@ -211,7 +211,7 @@ if (isset($_POST['Process']))
 		$input_error = 1;
 	}
 
-	if (!is_date($_POST['date_'])) 
+	if (!is_date(post_scalar('date_'))) 
 	{
 		display_error(_("The entered date is invalid."));
 		set_focus('date_');
@@ -223,13 +223,13 @@ if (isset($_POST['Process']))
 		set_focus('date_');
 		$input_error = 1;
 	} 
-	if (!is_date($_POST['event_date'])) 
+	if (!is_date(post_scalar('event_date'))) 
 	{
 		display_error(_("The entered date is invalid."));
 		set_focus('event_date');
 		$input_error = 1;
 	}
-	if (!is_date($_POST['doc_date'])) 
+	if (!is_date(post_scalar('doc_date'))) 
 	{
 		display_error(_("The entered date is invalid."));
 		set_focus('doc_date');
@@ -250,7 +250,7 @@ if (isset($_POST['Process']))
 
 	if (get_post('_tabs_sel') == 'tax')
 	{
-		if (!is_date($_POST['tax_date']))
+		if (!is_date(post_scalar('tax_date')))
 		{
 			display_error(_("The entered date is invalid."));
 			set_focus('tax_date');
@@ -330,7 +330,7 @@ if (isset($_POST['Process']))
         // retain the reconciled status if desired by user
         if (isset($_POST['reconciled'])
             && $_POST['reconciled'] == 1) {
-            $sql = "UPDATE ".TB_PREF."bank_trans SET reconciled=".db_escape($_POST['reconciled_date'])
+            $sql = "UPDATE ".TB_PREF."bank_trans SET reconciled=".db_escape(post_scalar('reconciled_date'))
                 ." WHERE type=" . ST_JOURNAL . " AND trans_no=".db_escape($trans_no);
 
             db_query($sql, "Can't change reconciliation status");

@@ -34,7 +34,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 		display_error(_("The unit of measure code cannot be empty."));
 		set_focus('abbr');
 	}
-	if (strlen(db_escape($_POST['abbr']))>(20+2))
+	if (strlen(db_escape(post_scalar('abbr')))>(20+2))
 	{
 		$input_error = 1;
 		display_error(_("The unit of measure code is too long."));
@@ -48,7 +48,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 	}
 
 	if ($input_error !=1) {
-    	write_item_unit($selected_id, $_POST['abbr'], $_POST['description'], $_POST['decimals'] );
+    	write_item_unit($selected_id, post_scalar('abbr'), post_scalar('description'), post_scalar('decimals') );
 		if($selected_id != '')
 			display_notification(_('Selected unit has been updated'));
 		else
@@ -133,8 +133,8 @@ if ($selected_id != '')
 	hidden('selected_id', $myrow["abbr"]);
 }
 if ($selected_id != '' && item_unit_used($selected_id)) {
-    label_row(_("Unit Abbreviation:"), $_POST['abbr']);
-    hidden('abbr', $_POST['abbr']);
+    label_row(_("Unit Abbreviation:"), post_scalar('abbr'));
+    hidden('abbr', post_scalar('abbr'));
 } else
     text_row(_("Unit Abbreviation:"), 'abbr', null, 20, 20);
 text_row(_("Descriptive Name:"), 'description', null, 40, 40);

@@ -39,7 +39,7 @@ $filter = array(
 	'Encoding' => _('Charset encoding')
 );
 
-$pkg = get_package_info($_GET['id'], null, $filter);
+$pkg = get_package_info(get_scalar('id'), null, $filter);
 
 display_heading(sprintf(_("Content information for package '%s'"), $_GET['id']));
 br();

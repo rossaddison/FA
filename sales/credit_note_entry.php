@@ -167,7 +167,7 @@ function can_process(): bool
 		}
 	}
 
-	if (!is_date($_POST['OrderDate'])) {
+	if (!is_date(post_scalar('OrderDate'))) {
 		display_error(_("The entered date for the credit note is invalid."));
 		set_focus('OrderDate');
 		$input_error = 1;

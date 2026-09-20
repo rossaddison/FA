@@ -76,12 +76,12 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
     	if ($selected_id != -1) 
     	{
-    		update_payment_terms($selected_id, $from_now, $_POST['terms'], $days); 
+    		update_payment_terms($selected_id, $from_now, post_scalar('terms'), $days); 
  			$note = _('Selected payment terms have been updated');
     	} 
     	else 
     	{
-			add_payment_terms($from_now, $_POST['terms'], $days);
+			add_payment_terms($from_now, post_scalar('terms'), $days);
 			$note = _('New payment terms have been added');
     	}
     	//run the sql from either of the above possibilites

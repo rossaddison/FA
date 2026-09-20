@@ -164,7 +164,7 @@ if (list_updated('bank_account')) {
 }
 if (list_updated('bank_date')) {
 	$_POST['reconcile_date'] = 
-		get_post('bank_date')=='' ? Today() : sql2date($_POST['bank_date']);
+		get_post('bank_date')=='' ? Today() : sql2date(post_scalar('bank_date'));
 	update_data();
 }
 if (get_post('_reconcile_date_changed')) {

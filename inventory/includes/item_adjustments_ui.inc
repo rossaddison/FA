@@ -153,8 +153,8 @@ function adjustment_edit_item_controls(items_cart &$order, string|int|float|bool
 			$_POST['std_cost'] = price_decimal_format($order->line_items[$line_no]->standard_cost, $dec2);
 		}
 		$_POST['units'] = $order->line_items[$line_no]->units;
-		hidden('stock_id', $_POST['stock_id']);
-		label_cell($_POST['stock_id']);
+		hidden('stock_id', post_scalar('stock_id'));
+		label_cell(post_scalar('stock_id'));
 		label_cell($order->line_items[$line_no]->item_description, 'nowrap');
 	    $Ajax->activate('items_table');
 	}
@@ -190,7 +190,7 @@ function adjustment_edit_item_controls(items_cart &$order, string|int|float|bool
 
 	if ($order->fixed_asset) {
 		hidden('std_cost');
-		label_cell($_POST['std_cost'], "nowrap align=right ", 'std_cost_view');
+		label_cell(post_scalar('std_cost'), "nowrap align=right ", 'std_cost_view');
 		$price = get_purchase_value($_POST['stock_id']);
 		amount_cell($price, false, '', 'initial_price');
 	} else {
@@ -202,7 +202,7 @@ function adjustment_edit_item_controls(items_cart &$order, string|int|float|bool
 		    amount_cells(null, 'std_cost', null, null, null, $dec2);
 		else {
 		    hidden('std_cost');
-			label_cell($_POST['std_cost'], "nowrap align=right");
+			label_cell(post_scalar('std_cost'), "nowrap align=right");
 		}
 		label_cell("&nbsp;");
 	}

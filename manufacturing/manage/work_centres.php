@@ -40,12 +40,12 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 		
     	if ($selected_id != -1) 
     	{
-    		update_work_centre($selected_id, $_POST['name'], $_POST['description']);
+    		update_work_centre($selected_id, post_scalar('name'), post_scalar('description'));
 			display_notification(_('Selected work center has been updated'));
     	} 
     	else 
     	{
-    		add_work_centre($_POST['name'], $_POST['description']);
+    		add_work_centre(post_scalar('name'), post_scalar('description'));
 			display_notification(_('New work center has been added'));
     	}
 		$Mode = 'RESET';

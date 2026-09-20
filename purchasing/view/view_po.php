@@ -105,7 +105,7 @@ if ($overdue_items)
 
 $k = 0;
 
-$grns_result = get_po_grns($_GET['trans_no']);
+$grns_result = get_po_grns(get_scalar('trans_no'));
 
 if (db_num_rows($grns_result) > 0)
 {
@@ -130,7 +130,7 @@ if (db_num_rows($grns_result) > 0)
     end_table();
 }
 
-$invoice_result = get_po_invoices_credits($_GET['trans_no']);
+$invoice_result = get_po_invoices_credits(get_scalar('trans_no'));
 
 $k = 0;
 

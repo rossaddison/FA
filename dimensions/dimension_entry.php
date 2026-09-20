@@ -123,14 +123,14 @@ function can_process(): bool
 		return false;
 	}
 
-	if (!is_date($_POST['date_']))
+	if (!is_date(post_scalar('date_')))
 	{
 		display_error( _("The date entered is in an invalid format."));
 		set_focus('date_');
 		return false;
 	}
 
-	if (!is_date($_POST['due_date']))
+	if (!is_date(post_scalar('due_date')))
 	{
 		display_error( _("The required by date entered is in an invalid format."));
 		set_focus('due_date');
@@ -152,14 +152,14 @@ if (isset($_POST['ADD_ITEM']) || isset($_POST['UPDATE_ITEM']))
 
 		if ($selected_id == -1) 
 		{
-			$id = add_dimension($_POST['ref'], $_POST['name'], $_POST['type_'], $_POST['date_'], $_POST['due_date'], $_POST['memo_']);
+			$id = add_dimension(post_scalar('ref'), post_scalar('name'), post_scalar('type_'), post_scalar('date_'), post_scalar('due_date'), post_scalar('memo_'));
 			add_tag_associations($id, $_POST['dimension_tags']);
 			meta_forward($_SERVER['PHP_SELF'], "AddedID=$id");
 		} 
 		else 
 		{
 
-			update_dimension($selected_id, $_POST['name'], $_POST['type_'], $_POST['date_'], $_POST['due_date'], $_POST['memo_']);
+			update_dimension($selected_id, post_scalar('name'), post_scalar('type_'), post_scalar('date_'), post_scalar('due_date'), post_scalar('memo_'));
 			update_tag_associations(TAG_DIMENSION, $selected_id, $_POST['dimension_tags']);
 
 			meta_forward($_SERVER['PHP_SELF'], "UpdatedID=$selected_id");
@@ -246,9 +246,9 @@ if ($selected_id != -1)
  	 	$tagids[] = $tag['id'];
  	$_POST['dimension_tags'] = $tagids;	
 
-	hidden('ref', $_POST['ref']);
+	hidden('ref', post_scalar('ref'));
 
-	label_row(_("Dimension Reference:"), $_POST['ref']);
+	label_row(_("Dimension Reference:"), post_scalar('ref'));
 
 	hidden('selected_id', $selected_id);
 } 

@@ -60,7 +60,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
     	if ($bank_id) 
     	{
     		
-    		update_bank_account($bank_id, $_POST['account_code'],
+    		update_bank_account($bank_id, post_scalar('account_code'),
 				$_POST['account_type'], $_POST['bank_account_name'], 
 				$_POST['bank_name'], $_POST['bank_account_number'], 
     			$_POST['bank_address'], $_POST['BankAccountCurrency'],
@@ -71,7 +71,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
     	else 
     	{
     
-    		add_bank_account($_POST['account_code'], $_POST['account_type'], 
+    		add_bank_account(post_scalar('account_code'), $_POST['account_type'], 
 				$_POST['bank_account_name'], $_POST['bank_name'], 
     			$_POST['bank_account_number'], $_POST['bank_address'], 
 				$_POST['BankAccountCurrency'], $_POST['dflt_curr_act'], $_POST['bank_charge_act']);
@@ -199,8 +199,8 @@ function bank_account_settings(string|int|float|bool|array|null $bank_id): void
 	}
 	if ($is_used) 
 	{
-		label_row(_("Bank Account Currency:"), $_POST['BankAccountCurrency']);
-		hidden('BankAccountCurrency', $_POST['BankAccountCurrency']);
+		label_row(_("Bank Account Currency:"), post_scalar('BankAccountCurrency'));
+		hidden('BankAccountCurrency', post_scalar('BankAccountCurrency'));
 	} 
 	else 
 	{
@@ -211,7 +211,7 @@ function bank_account_settings(string|int|float|bool|array|null $bank_id): void
 
 	if($is_used)
 	{
-		label_row(_("Bank Account GL Code:"), $_POST['account_code']);
+		label_row(_("Bank Account GL Code:"), post_scalar('account_code'));
 		hidden('account_code');
 	} else 
 		gl_all_accounts_list_row(_("Bank Account GL Code:"), 'account_code', null);

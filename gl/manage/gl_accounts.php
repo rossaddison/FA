@@ -86,11 +86,11 @@ if (isset($_POST['add']) || isset($_POST['update']))
 			{
 				display_error(_("The account belongs to a bank account and cannot be inactivated."));
 			}
-    		elseif (update_gl_account($_POST['account_code'], $_POST['account_name'], 
-				$_POST['account_type'], $_POST['account_code2'])) {
+    		elseif (update_gl_account(post_scalar('account_code'), post_scalar('account_name'), 
+				post_scalar('account_type'), post_scalar('account_code2'))) {
 				update_record_status($_POST['account_code'], $_POST['inactive'],
 					'chart_master', 'account_code');
-				update_tag_associations(TAG_ACCOUNT, $_POST['account_code'], 
+				update_tag_associations(TAG_ACCOUNT, post_scalar('account_code'), 
 					$_POST['account_tags']);
 				$Ajax->activate('account_code'); // in case of status change
 				display_notification(_("Account data has been updated."));
@@ -98,10 +98,10 @@ if (isset($_POST['add']) || isset($_POST['update']))
 		}
     	else 
 		{
-    		if (add_gl_account($_POST['account_code'], $_POST['account_name'], 
-				$_POST['account_type'], $_POST['account_code2']))
+    		if (add_gl_account(post_scalar('account_code'), post_scalar('account_name'), 
+				post_scalar('account_type'), post_scalar('account_code2')))
 				{
-					add_tag_associations($_POST['account_code'], $_POST['account_tags']);
+					add_tag_associations(post_scalar('account_code'), $_POST['account_tags']);
 					display_notification(_("New account has been added."));
 					$selected_account = $_POST['AccountList'] = $_POST['account_code'];
 				}
@@ -202,7 +202,7 @@ if (db_has_gl_accounts())
 	start_table(TABLESTYLE_NOBORDER);
 	start_row();
 	if ($filter_id)
-		gl_all_accounts_list_cells(null, 'AccountList', null, false, false, _('New account'), true, check_value('show_inactive'), $_POST['id']);
+		gl_all_accounts_list_cells(null, 'AccountList', null, false, false, _('New account'), true, check_value('show_inactive'), post_scalar('id'));
 	else
 		gl_all_accounts_list_cells(null, 'AccountList', null, false, false, _('New account'), true, check_value('show_inactive'));
 	check_cells(_("Show inactive:"), 'show_inactive', null, true);
@@ -234,10 +234,10 @@ if ($selected_account != "")
  	 	$tagids[] = $tag['id'];
  	$_POST['account_tags'] = $tagids;
 
-	hidden('account_code', $_POST['account_code']);
+	hidden('account_code', post_scalar('account_code'));
 	hidden('selected_account', $selected_account);
 		
-	label_row(_("Account Code:"), $_POST['account_code']);
+	label_row(_("Account Code:"), post_scalar('account_code'));
 } 
 else
 {

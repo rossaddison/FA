@@ -92,12 +92,12 @@ end_form();
 
 set_global_stock_item($_POST['stock_id']);
 
-$before_date = date2sql($_POST['BeforeDate']);
-$after_date = date2sql($_POST['AfterDate']);
+$before_date = date2sql(post_scalar('BeforeDate'));
+$after_date = date2sql(post_scalar('AfterDate'));
 $display_location = !$_POST['StockLocation'];
 
-$result = get_stock_movements($_POST['stock_id'], $_POST['StockLocation'],
-	$_POST['BeforeDate'], $_POST['AfterDate']);
+$result = get_stock_movements(post_scalar('stock_id'), post_scalar('StockLocation'),
+	post_scalar('BeforeDate'), post_scalar('AfterDate'));
 
 div_start('doc_tbl');
 start_table(TABLESTYLE);
@@ -118,7 +118,7 @@ start_row("class='inquirybg'");
 $header_span = $display_location ? 6 : 5;
 label_cell("<b>"._("Quantity on hand before") . " " . (string)$_POST['AfterDate']."</b>", "align=center colspan=$header_span");
 label_cell("&nbsp;", "colspan=2");
-$dec = get_qty_dec($_POST['stock_id']);
+$dec = get_qty_dec(post_scalar('stock_id'));
 qty_cell($before_qty, false, $dec);
 end_row();
 

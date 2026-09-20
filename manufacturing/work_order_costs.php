@@ -75,7 +75,7 @@ function can_process(array $wo_details): bool
 		return false;
 	}
 
-	if (!is_date($_POST['date_']))
+	if (!is_date(post_scalar('date_')))
 	{
 		display_error(_("The entered date is invalid."));
 		set_focus('date_');
@@ -105,15 +105,15 @@ if (isset($_POST['process']) && can_process($wo_details) == true)
 	$memo = $_POST['memo'];
 	$ref  = $_POST['ref'];
 
-	add_wo_costs_journal($_POST['selected_id'], input_num('costs'), $_POST['PaymentType'], 
-		$_POST['cr_acc'], $date, $_POST['dim1'], $_POST['dim2'], $memo, $ref);
+	add_wo_costs_journal(post_scalar('selected_id'), input_num('costs'), post_scalar('PaymentType'), 
+		post_scalar('cr_acc'), $date, post_scalar('dim1'), post_scalar('dim2'), $memo, $ref);
 
 	meta_forward($_SERVER['PHP_SELF'], "AddedID=".(string)$_POST['selected_id']);
 }
 
 //-------------------------------------------------------------------------------------
 
-display_wo_details($_POST['selected_id']);
+display_wo_details(post_scalar('selected_id'));
 
 //-------------------------------------------------------------------------------------
 
@@ -122,7 +122,7 @@ if (!isset($_POST['ref']))
 
 start_form();
 
-hidden('selected_id', $_POST['selected_id']);
+hidden('selected_id', post_scalar('selected_id'));
 //hidden('WOReqQuantity', $_POST['WOReqQuantity']);
 
 start_table(TABLESTYLE2);

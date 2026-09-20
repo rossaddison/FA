@@ -95,8 +95,8 @@ function issue_edit_item_controls(items_cart &$order, string|int|float|bool|null
 		$std_cost = $order->line_items[$id]->standard_cost;
 		$_POST['units'] = $order->line_items[$id]->units;
 
-		hidden('stock_id', $_POST['stock_id']);
-		label_cell($_POST['stock_id']);
+		hidden('stock_id', post_scalar('stock_id'));
+		label_cell(post_scalar('stock_id'));
 		label_cell($order->line_items[$id]->item_description);
 	    $Ajax->activate('items_table');
 	}
@@ -120,8 +120,8 @@ function issue_edit_item_controls(items_cart &$order, string|int|float|bool|null
 		$_POST['units'] = $item_info["units"];
 	}
 
-	qty_cells(null, 'qty', $_POST['qty'], null, null, $dec);
-	label_cell($_POST['units'], '', 'units');
+	qty_cells(null, 'qty', post_scalar('qty'), null, null, $dec);
+	label_cell(post_scalar('units'), '', 'units');
 
 	//amount_cells(null, 'std_cost', $_POST['std_cost']);
 	hidden('std_cost', $std_cost);

@@ -112,7 +112,7 @@ function can_process(): bool
 		return false;
 	}
 
-	if (!is_date($_POST['AdjDate'])) 
+	if (!is_date(post_scalar('AdjDate'))) 
 	{
 		display_error(_("The entered date for the adjustment is invalid."));
 		set_focus('AdjDate');

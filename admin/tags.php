@@ -69,12 +69,12 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 	{
     	if ($selected_id != -1) 
     	{
-    		if( $ret = update_tag($selected_id, $_POST['name'], $_POST['description']))
+    		if( $ret = update_tag($selected_id, post_scalar('name'), post_scalar('description')))
 				display_notification(_('Selected tag settings have been updated'));
     	} 
     	else 
     	{
-    		if( $ret = add_tag($_POST['type'], $_POST['name'], $_POST['description']))
+    		if( $ret = add_tag(post_scalar('type'), post_scalar('name'), post_scalar('description')))
 				display_notification(_('New tag has been added'));
     	}
 		if ($ret) $Mode = 'RESET';
@@ -121,7 +121,7 @@ if ($Mode == 'RESET')
 
 //-----------------------------------------------------------------------------------
 
-$result = get_tags($_POST['type'], check_value('show_inactive'));
+$result = get_tags(post_scalar('type'), check_value('show_inactive'));
 
 start_form();
 start_table(TABLESTYLE);

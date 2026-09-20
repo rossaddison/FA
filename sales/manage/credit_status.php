@@ -40,7 +40,7 @@ function can_process(): bool
 if ($Mode=='ADD_ITEM' && can_process()) 
 {
 
-	add_credit_status($_POST['reason_description'], $_POST['DisallowInvoices']);
+	add_credit_status(post_scalar('reason_description'), post_scalar('DisallowInvoices'));
 	display_notification(_('New credit status has been added'));
 	$Mode = 'RESET';
 } 
@@ -50,7 +50,7 @@ if ($Mode=='ADD_ITEM' && can_process())
 if ($Mode=='UPDATE_ITEM' && can_process()) 
 {
 	display_notification(_('Selected credit status has been updated'));
-	update_credit_status($selected_id, $_POST['reason_description'], $_POST['DisallowInvoices']);
+	update_credit_status($selected_id, post_scalar('reason_description'), post_scalar('DisallowInvoices'));
 	$Mode = 'RESET';
 }
 

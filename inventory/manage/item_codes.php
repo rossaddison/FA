@@ -65,13 +65,13 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
      	if ($Mode == 'ADD_ITEM') 
        	{
 			add_item_code($_POST['item_code'], $_POST['stock_id'],
-				$_POST['description'], $_POST['category_id'], $_POST['quantity'], 1); 
+				$_POST['description'], $_POST['category_id'], post_scalar('quantity'), 1); 
 
     		display_notification(_("New item code has been added."));
        	} else
        	{
 			update_item_code($selected_id, $_POST['item_code'], $_POST['stock_id'],
-				$_POST['description'], $_POST['category_id'], $_POST['quantity'], 1); 
+				post_scalar('description'), post_scalar('category_id'), post_scalar('quantity'), 1); 
 
     	  	display_notification(_("Item code has been updated."));
        	}
@@ -123,7 +123,7 @@ if ($result) {
 }
 
 
-$result = get_all_item_codes($_POST['stock_id']);
+$result = get_all_item_codes(post_scalar('stock_id'));
 div_start('code_table');
 	start_table(TABLESTYLE, "width='60%'");
 

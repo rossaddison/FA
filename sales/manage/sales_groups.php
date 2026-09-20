@@ -35,12 +35,12 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 	{
     	if ($selected_id != -1) 
     	{
-    		update_sales_group($selected_id, $_POST['description']);
+    		update_sales_group($selected_id, post_scalar('description'));
 			$note = _('Selected sales group has been updated');
     	} 
     	else 
     	{
-    		add_sales_group($_POST['description']);
+    		add_sales_group(post_scalar('description'));
 			$note = _('New sales group has been added');
     	}
     

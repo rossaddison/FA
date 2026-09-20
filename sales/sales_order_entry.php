@@ -384,7 +384,7 @@ function can_process(): bool {
 		return false;
 	} 
 	
-	if (!is_date($_POST['OrderDate'])) {
+	if (!is_date(post_scalar('OrderDate'))) {
 		display_error(_("The entered date is invalid."));
 		set_focus('OrderDate');
 		return false;
@@ -431,7 +431,7 @@ function can_process(): bool {
 			set_focus('freight_cost');
 			return false;
 		}
-		if (!is_date($_POST['delivery_date'])) {
+		if (!is_date(post_scalar('delivery_date'))) {
 			if ($_SESSION['Items']->trans_type==ST_SALESQUOTE)
 				display_error(_("The Valid date is invalid."));
 			else	

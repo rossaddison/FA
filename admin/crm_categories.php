@@ -132,8 +132,8 @@ if ($selected_id != -1)
 } 
 
 if ($Mode == 'Edit' && $myrow['system']) {
-	label_row(_("Contact Category Type:"), $_POST['type']);
-	label_row(_("Contact Category Subtype:"), $_POST['subtype']);
+	label_row(_("Contact Category Type:"), post_scalar('type'));
+	label_row(_("Contact Category Subtype:"), post_scalar('subtype'));
 } else {
 //	crm_category_type_list_row(_("Contact Category Type:"), 'type', null, _('Other'));
 	text_row_ex(_("Contact Category Type:"), 'type', 30); 

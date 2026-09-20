@@ -308,8 +308,8 @@ function display_company_edit(string|int|float|bool|array|null $selected_id): vo
 		$_POST['def'] = $selected_id == $def_coy;
 		$_POST['dbcreate']  = false;
 		$_POST['collation']  = isset($conn['collation']) ? $conn['collation'] : '';
-		hidden('tbpref', $_POST['tbpref']);
-		hidden('dbpassword', $_POST['dbpassword']);
+		hidden('tbpref', post_scalar('tbpref'));
+		hidden('dbpassword', post_scalar('dbpassword'));
 	}
 	else
 	{
@@ -337,17 +337,17 @@ function display_company_edit(string|int|float|bool|array|null $selected_id): vo
 		text_row_ex(_("Database Password"), 'dbpassword', 30);
 		text_row_ex(_("Database Name"), 'dbname', 30);
 		collations_list_row(_("Database Collation:"), 'collation');
-		yesno_list_row(_("Table Pref"), 'tbpref', 1, $_POST['tbpref'], _("None"), false);
+		yesno_list_row(_("Table Pref"), 'tbpref', 1, post_scalar('tbpref'), _("None"), false);
 		check_row(_("Default Company"), 'def');
 		coa_list_row(_("Database Script"), 'coa');
 		text_row_ex(_("New script Admin Password"), 'admpassword', 20);
 	} else {
-		label_row(_("Host"), $_POST['host']);
-		label_row(_("Port"), $_POST['port']);
-		label_row(_("Database User"), $_POST['dbuser']);
-		label_row(_("Database Name"), $_POST['dbname']);
+		label_row(_("Host"), post_scalar('host'));
+		label_row(_("Port"), post_scalar('port'));
+		label_row(_("Database User"), post_scalar('dbuser'));
+		label_row(_("Database Name"), post_scalar('dbname'));
 		collations_list_row(_("Database Collation:"), 'collation');
-		label_row(_("Table Pref"), $_POST['tbpref']);
+		label_row(_("Table Pref"), post_scalar('tbpref'));
 		if (!get_post('def'))
 			check_row(_("Default Company"), 'def');
 		else

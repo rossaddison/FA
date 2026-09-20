@@ -71,7 +71,7 @@ function handle_new_order(): void
 //-----------------------------------------------------------------------------------------------
 function can_process(): bool
 {
-	if (!is_date($_POST['date_']))
+	if (!is_date(post_scalar('date_')))
 	{
 		display_error(_("The entered date for the issue is invalid."));
 		set_focus('date_');
@@ -105,7 +105,7 @@ if (isset($_POST['Process']) && can_process())
 	// if failed, returns a stockID
 	$failed_data = add_work_order_issue($_SESSION['issue_items']->order_id,
 		$_POST['ref'], $_POST['IssueType'], $_SESSION['issue_items']->line_items,
-		$_POST['Location'], $_POST['WorkCentre'], $_POST['date_'], $_POST['memo_']);
+		$_POST['Location'], $_POST['WorkCentre'], post_scalar('date_'), $_POST['memo_']);
 
 	if ($failed_data != null) 
 	{

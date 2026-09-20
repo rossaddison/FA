@@ -48,14 +48,14 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
     	if ($selected_id != -1) 
     	{
     		/*selected_id could also exist if submit had not been clicked this code would not run in this case cos submit is false of course  see the delete code below*/
-			update_salesman($selected_id, $_POST['salesman_name'], $_POST['salesman_phone'], $_POST['salesman_fax'],
-				$_POST['salesman_email'], input_num('provision'), input_num('break_pt'), input_num('provision2'));
+			update_salesman($selected_id, post_scalar('salesman_name'), post_scalar('salesman_phone'), post_scalar('salesman_fax'),
+				post_scalar('salesman_email'), input_num('provision'), input_num('break_pt'), input_num('provision2'));
     	}
     	else
     	{
     		/*Selected group is null cos no item selected on first time round so must be adding a record must be submitting new entries in the new Sales-person form */
-			add_salesman($_POST['salesman_name'], $_POST['salesman_phone'], $_POST['salesman_fax'],
-				$_POST['salesman_email'], input_num('provision'), input_num('break_pt'), input_num('provision2'));
+			add_salesman(post_scalar('salesman_name'), post_scalar('salesman_phone'), post_scalar('salesman_fax'),
+				post_scalar('salesman_email'), input_num('provision'), input_num('break_pt'), input_num('provision2'));
     	}
 
     	if ($selected_id != -1) 

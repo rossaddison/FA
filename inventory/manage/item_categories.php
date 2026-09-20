@@ -52,22 +52,22 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 	{
     	if ($selected_id != -1) 
     	{
-		    update_item_category($selected_id, $_POST['description'],
-				$_POST['tax_type_id'],	$_POST['sales_account'], 
-				$_POST['cogs_account'], $_POST['inventory_account'], 
-				$_POST['adjustment_account'], $_POST['wip_account'],
-				$_POST['units'], $_POST['mb_flag'],	$_POST['dim1'],	$_POST['dim2'],
+		    update_item_category($selected_id, post_scalar('description'),
+				post_scalar('tax_type_id'),	post_scalar('sales_account'), 
+				post_scalar('cogs_account'), post_scalar('inventory_account'), 
+				post_scalar('adjustment_account'), post_scalar('wip_account'),
+				post_scalar('units'), post_scalar('mb_flag'),	post_scalar('dim1'),	post_scalar('dim2'),
 				check_value('no_sale'), check_value('no_purchase'));
 			display_notification(_('Selected item category has been updated'));
     	} 
     	else 
     	{
-		    add_item_category($_POST['description'],
-				$_POST['tax_type_id'],	$_POST['sales_account'], 
-				$_POST['cogs_account'], $_POST['inventory_account'], 
-				$_POST['adjustment_account'], $_POST['wip_account'], 
-				$_POST['units'], $_POST['mb_flag'],	$_POST['dim1'],	
-				$_POST['dim2'],	check_value('no_sale'), check_value('no_purchase'));
+		    add_item_category(post_scalar('description'),
+				post_scalar('tax_type_id'),	post_scalar('sales_account'), 
+				post_scalar('cogs_account'), post_scalar('inventory_account'), 
+				post_scalar('adjustment_account'), post_scalar('wip_account'), 
+				post_scalar('units'), post_scalar('mb_flag'),	post_scalar('dim1'),	
+				post_scalar('dim2'),	check_value('no_sale'), check_value('no_purchase'));
 			display_notification(_('New item category has been added'));
     	}
 		$Mode = 'RESET';
@@ -227,11 +227,11 @@ check_row(_("Exclude from purchases:"), 'no_purchase');
 
 gl_all_accounts_list_row(_("Sales Account:"), 'sales_account', $_POST['sales_account']);
 
-if (is_service($_POST['mb_flag']))
+if (is_service(post_scalar('mb_flag')))
 {
 	gl_all_accounts_list_row(_("C.O.G.S. Account:"), 'cogs_account', $_POST['cogs_account']);
-	hidden('inventory_account', $_POST['inventory_account']);
-	hidden('adjustment_account', $_POST['adjustment_account']);
+	hidden('inventory_account', post_scalar('inventory_account'));
+	hidden('adjustment_account', post_scalar('adjustment_account'));
 }
 elseif (is_fixed_asset($_POST['mb_flag'])) 
 {
@@ -250,7 +250,7 @@ else
 if (is_manufactured($_POST['mb_flag']))
 	gl_all_accounts_list_row(_("Item Assembly Costs Account:"), 'wip_account', $_POST['wip_account']);
 else
-	hidden('wip_account', $_POST['wip_account']);
+	hidden('wip_account', post_scalar('wip_account'));
 
 $dim = get_company_pref('use_dimension');
 if ($dim >= 1)

@@ -36,7 +36,7 @@ function can_process(): bool
 
 if ($Mode=='ADD_ITEM' && can_process())
 {
-	add_sales_point($_POST['name'], $_POST['location'], $_POST['account'],
+	add_sales_point(post_scalar('name'), post_scalar('location'), post_scalar('account'),
 		check_value('cash'), check_value('credit'));
 	display_notification(_('New point of sale has been added'));
 	$Mode = 'RESET';
@@ -47,8 +47,8 @@ if ($Mode=='ADD_ITEM' && can_process())
 if ($Mode=='UPDATE_ITEM' && can_process())
 {
 
-	update_sales_point($selected_id, $_POST['name'], $_POST['location'],
-		$_POST['account'], check_value('cash'), check_value('credit'));
+	update_sales_point($selected_id, post_scalar('name'), post_scalar('location'),
+		post_scalar('account'), check_value('cash'), check_value('credit'));
 	display_notification(_('Selected point of sale has been updated'));
 	$Mode = 'RESET';
 }

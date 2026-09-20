@@ -81,7 +81,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 		begin_transaction();
     	if ($selected_id != -1)
 		{
-			update_branch($_POST['customer_id'], $_POST['branch_code'], $_POST['br_name'], $_POST['br_ref'],
+			update_branch($_POST['customer_id'], post_scalar('branch_code'), $_POST['br_name'], $_POST['br_ref'],
 				$_POST['br_address'], $_POST['salesman'], $_POST['area'], $_POST['tax_group_id'], $_POST['sales_account'],
 				$_POST['sales_discount_account'], $_POST['receivables_account'], $_POST['payment_discount_account'],
 				$_POST['default_location'], $_POST['br_post_address'], $_POST['group_no'],
@@ -119,20 +119,20 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 elseif ($Mode == 'Delete')
 {
 
-	if (branch_in_foreign_table($_POST['customer_id'], $_POST['branch_code'], 'debtor_trans'))
+	if (branch_in_foreign_table($_POST['customer_id'], post_scalar('branch_code'), 'debtor_trans'))
 	{
 		display_error(_("Cannot delete this branch because customer transactions have been created to this branch."));
 
 	}
 	else
 	{
-		if (branch_in_foreign_table($_POST['customer_id'], $_POST['branch_code'], 'sales_orders'))
+		if (branch_in_foreign_table($_POST['customer_id'], post_scalar('branch_code'), 'sales_orders'))
 		{
 			display_error(_("Cannot delete this branch because sales orders exist for it. Purge old sales orders first."));
 		}
 		else
 		{
-			delete_branch($_POST['customer_id'], $_POST['branch_code']);
+			delete_branch($_POST['customer_id'], post_scalar('branch_code'));
 			display_notification(_('Selected customer branch has been deleted'));
 		}
 	}

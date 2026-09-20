@@ -481,19 +481,19 @@ function sales_order_item_controls(Cart &$order, int|string|null &$rowcounter, s
 	if ($line_no!=-1 && $line_no == $id) // edit old line
 	{
 		$_POST['stock_id'] = $order->line_items[$id]->stock_id;
-		$dec = get_qty_dec($_POST['stock_id']);
+		$dec = get_qty_dec(post_scalar('stock_id'));
 		$_POST['qty'] = number_format2($order->line_items[$id]->qty_dispatched, $dec);
 		$_POST['price'] = price_format($order->line_items[$id]->price);
 		$_POST['Disc'] = percent_format($order->line_items[$id]->discount_percent*100);
 		$units = $order->line_items[$id]->units;
 		$_POST['item_description'] = $order->line_items[$id]->item_description;
-		hidden('stock_id', $_POST['stock_id']);
-		label_cell($_POST['stock_id']);
+		hidden('stock_id', post_scalar('stock_id'));
+		label_cell(post_scalar('stock_id'));
 		if ($order->line_items[$id]->descr_editable)
 			text_cells(null,'item_description', null, 45, 50);
 		else {
-			hidden('item_description', $_POST['item_description']);
-			label_cell($_POST['item_description']);
+			hidden('item_description', post_scalar('item_description'));
+			label_cell(post_scalar('item_description'));
 		}
 	    $Ajax->activate('items_table');
 	}
@@ -533,7 +533,7 @@ function sales_order_item_controls(Cart &$order, int|string|null &$rowcounter, s
 		label_cell(1, '', 'qty');
 		hidden('qty', 1);
 	} else 
-		qty_cells(null, 'qty', $_POST['qty'], null, null, $dec);
+		qty_cells(null, 'qty', post_scalar('qty'), null, null, $dec);
 
 	if ($order->trans_no!=0) {
 		qty_cell($line_no==-1 ? 0 :$order->line_items[$line_no]->qty_done, false, $dec);
@@ -543,7 +543,7 @@ function sales_order_item_controls(Cart &$order, int|string|null &$rowcounter, s
 
 	amount_cells(null, 'price');
 
-	small_amount_cells(null, 'Disc', percent_format($_POST['Disc']), null, null, user_percent_dec());
+	small_amount_cells(null, 'Disc', percent_format(post_scalar('Disc')), null, null, user_percent_dec());
 
 	$line_total = input_num('qty') * input_num('price') * (1 - input_num('Disc') / 100);
 

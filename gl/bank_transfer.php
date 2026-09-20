@@ -169,7 +169,7 @@ function check_valid_entries(string|int|float|bool|array|null $trans_no): bool
 {
 	global $Refs, $systypes_array;
 	
-	if (!is_date($_POST['DatePaid'])) 
+	if (!is_date(post_scalar('DatePaid'))) 
 	{
 		display_error(_("The entered date is invalid."));
 		set_focus('DatePaid');

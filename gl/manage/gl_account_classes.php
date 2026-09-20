@@ -53,12 +53,12 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
     	if ($selected_id != "") 
     	{
-    		if(update_account_class($selected_id, $_POST['name'], $_POST['ctype']))
+    		if(update_account_class($selected_id, post_scalar('name'), post_scalar('ctype')))
 				display_notification(_('Selected account class settings has been updated'));
     	} 
     	else 
     	{
-    		if(add_account_class($_POST['id'], $_POST['name'], $_POST['ctype'])) {
+    		if(add_account_class(post_scalar('id'), post_scalar('name'), post_scalar('ctype'))) {
 				display_notification(_('New account class has been added'));
 				$Mode = 'RESET';
 			}
@@ -153,7 +153,7 @@ if ($selected_id != "")
 		hidden('selected_id', $selected_id);
  	}
 	hidden('id');
-	label_row(_("Class ID:"), $_POST['id']);
+	label_row(_("Class ID:"), post_scalar('id'));
 
 } 
 else 

@@ -29,7 +29,7 @@ function check_data(): bool
 {
 	global $SysPrefs;
 	
-	if (!is_date($_POST['date']) || date1_greater_date2($_POST['date'], Today()))
+	if (!is_date(post_scalar('date')) || date1_greater_date2($_POST['date'], Today()))
 	{
 		display_error( _("The entered date is invalid."));
 		set_focus('date');

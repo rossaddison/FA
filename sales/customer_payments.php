@@ -156,7 +156,7 @@ function can_process()
 		return false;
 	} 
 	
-	if (!isset($_POST['DateBanked']) || !is_date($_POST['DateBanked'])) {
+	if (!isset($_POST['DateBanked']) || !is_date(post_scalar('DateBanked'))) {
 		display_error(_("The entered date is invalid. Please enter a valid date for the payment."));
 		set_focus('DateBanked');
 		return false;
@@ -317,7 +317,7 @@ if ($new)
 	customer_list_row(_("From Customer:"), 'customer_id', null, false, true);
 else {
 	label_cells(_("From Customer:"), $_SESSION['alloc']->person_name, "class='label'");
-	hidden('customer_id', $_POST['customer_id']);
+	hidden('customer_id', post_scalar('customer_id'));
 }
 
 if (db_customer_has_branches($_POST['customer_id'])) {

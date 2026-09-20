@@ -233,7 +233,7 @@ function check_data(): bool
 		return false;
 	}
 
-	$dec = get_qty_dec($_POST['stock_id']);
+	$dec = get_qty_dec(post_scalar('stock_id'));
 	$min = 1 / pow(10, $dec);
     if (!check_num('qty',$min))
     {
@@ -249,7 +249,7 @@ function check_data(): bool
 		set_focus('price');
 	   	return false;	   
     }
-    if ($_SESSION['PO']->trans_type == ST_PURCHORDER && !is_date($_POST['req_del_date'])){
+    if ($_SESSION['PO']->trans_type == ST_PURCHORDER && !is_date(post_scalar('req_del_date'))){
     		display_error(_("The date entered is in an invalid format."));
 		set_focus('req_del_date');
    		return false;    	 
@@ -343,7 +343,7 @@ function can_commit(): bool
 		return false;
 	} 
 
-	if (!is_date($_POST['OrderDate'])) 
+	if (!is_date(post_scalar('OrderDate'))) 
 	{
 		display_error(_("The entered order date is invalid."));
 		set_focus('OrderDate');
@@ -356,7 +356,7 @@ function can_commit(): bool
 		return false;
 	}
 
-	if (($_SESSION['PO']->trans_type==ST_SUPPINVOICE) && !is_date($_POST['due_date'])) 
+	if (($_SESSION['PO']->trans_type==ST_SUPPINVOICE) && !is_date(post_scalar('due_date'))) 
 	{
 		display_error(_("The entered due date is invalid."));
 		set_focus('due_date');

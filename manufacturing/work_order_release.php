@@ -67,7 +67,7 @@ function can_process(array $myrow): bool
 //------------------------------------------------------------------------------------
 if (isset($_POST['release']))
 {
-	release_work_order($selected_id, $_POST['released_date'], $_POST['memo_']);
+	release_work_order($selected_id, post_scalar('released_date'), post_scalar('memo_'));
 
 	display_notification(_("The work order has been released to manufacturing."));
 

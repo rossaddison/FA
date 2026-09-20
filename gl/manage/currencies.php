@@ -198,7 +198,7 @@ function display_currency_edit(string|int|float|bool|array|null $selected_id): v
 		}
 		hidden('Abbreviation');
 		hidden('selected_id', $selected_id);
-		label_row(_("Currency Abbreviation:"), $_POST['Abbreviation']);
+		label_row(_("Currency Abbreviation:"), post_scalar('Abbreviation'));
 	} 
 	else 
 	{ 

@@ -28,7 +28,7 @@ simple_page_mode(false);
 //---------------------------------------------------------------------------------------------
 function check_data(string|int|float|bool|array|null $selected_id): bool
 {
-	if (!is_date($_POST['date_']))
+	if (!is_date(post_scalar('date_')))
 	{
 		display_error( _("The entered date is invalid."));
 		set_focus('date_');
@@ -123,9 +123,9 @@ function display_rate_edit(): void
 		$_POST['BuyRate'] = maxprec_format($myrow["rate_buy"]);
 
 		hidden('selected_id', $selected_id);
-		hidden('date_', $_POST['date_']);
+		hidden('date_', post_scalar('date_'));
 
-		label_row(_("Date to Use From:"), $_POST['date_']);
+		label_row(_("Date to Use From:"), post_scalar('date_'));
 	}
 	else
 	{
@@ -136,7 +136,7 @@ function display_rate_edit(): void
 	if (isset($_POST['get_rate']))
 	{
 		$_POST['BuyRate'] = 
-			maxprec_format(retrieve_exrate($_POST['curr_abrev'], $_POST['date_']));
+			maxprec_format(retrieve_exrate($_POST['curr_abrev'], post_scalar('date_')));
 		$Ajax->activate('BuyRate');
 	}
 	amount_row(_("Exchange Rate:"), 'BuyRate', null, '',

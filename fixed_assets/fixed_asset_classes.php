@@ -39,13 +39,13 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 	{
     	if ($selected_id != -1) 
     	{
-    		update_fixed_asset_class($selected_id, $_POST['parent_id'], $_POST['description'], $_POST['long_description'],
+    		update_fixed_asset_class($selected_id, post_scalar('parent_id'), post_scalar('description'), post_scalar('long_description'),
     			input_num('depreciation_rate'));
 			  display_notification(_('Selected fixed asset class has been updated'));
     	} 
     	else 
     	{
-    		add_fixed_asset_class($_POST['fa_class_id'], $_POST['parent_id'], $_POST['description'], $_POST['long_description'], input_num('depreciation_rate'));
+    		add_fixed_asset_class(post_scalar('fa_class_id'), post_scalar('parent_id'), post_scalar('description'), post_scalar('long_description'), input_num('depreciation_rate'));
 			  display_notification(_('New fixed asset class has been added'));
     	}
 
@@ -125,8 +125,8 @@ if ($selected_id != -1)
 	hidden("selected_id", $selected_id);
 	hidden("fa_class_id");
   hidden('parent_id');
-  label_row(_("Parent class:"), $_POST['parent_id']);
-  label_row(_("Fixed asset class:"), $_POST['fa_class_id']);
+  label_row(_("Parent class:"), post_scalar('parent_id'));
+  label_row(_("Fixed asset class:"), post_scalar('fa_class_id'));
 } 
 else 
 {

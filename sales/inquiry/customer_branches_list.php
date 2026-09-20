@@ -52,7 +52,7 @@ table_header($th);
 
 $k = 0;
 $name = $_GET["client_id"];
-$result = get_branches_search($_GET["customer_id"], get_post("branch"));
+$result = get_branches_search(get_scalar('customer_id'), get_post("branch"));
 while ($myrow = db_fetch_assoc($result))
 {
   	alt_table_row_color($k);

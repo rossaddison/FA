@@ -82,7 +82,7 @@ function display_gl_heading(?array $myrow): void
 	comments_display_row($_GET['type_id'], $_GET['trans_no']);
     end_table(1);
 }
-$result = get_gl_trans($_GET['type_id'], $_GET['trans_no']);
+$result = get_gl_trans(get_scalar('type_id'), get_scalar('trans_no'));
 
 if (db_num_rows($result) == 0)
 {
@@ -158,6 +158,6 @@ if ($heading_shown)
 
 //end of while loop
 
-is_voided_display($_GET['type_id'], $_GET['trans_no'], _("This transaction has been voided."));
+is_voided_display(get_scalar('type_id'), $_GET['trans_no'], _("This transaction has been voided."));
 
-end_page(true, false, false, $_GET['type_id'], $_GET['trans_no']);
+end_page(true, false, false, get_scalar('type_id'), $_GET['trans_no']);

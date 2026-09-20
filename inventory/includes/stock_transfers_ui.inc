@@ -113,8 +113,8 @@ function transfer_edit_item_controls(items_cart &$order, string|int|float|bool|n
 		$_POST['qty'] = qty_format($order->line_items[$id]->quantity, $order->line_items[$id]->stock_id, $dec);
 		$_POST['units'] = $order->line_items[$id]->units;
 
-		hidden('stock_id', $_POST['stock_id']);
-		label_cell($_POST['stock_id']);
+		hidden('stock_id', post_scalar('stock_id'));
+		label_cell(post_scalar('stock_id'));
 		label_cell($order->line_items[$id]->item_description);
 	    $Ajax->activate('items_table');
 	}
@@ -141,9 +141,9 @@ function transfer_edit_item_controls(items_cart &$order, string|int|float|bool|n
 		hidden('qty', 1);
 		qty_cell(1, false, 0);
 	} else
-		small_qty_cells(null, 'qty', $_POST['qty'], null, null, $dec);
+		small_qty_cells(null, 'qty', post_scalar('qty'), null, null, $dec);
 
-	label_cell($_POST['units'], '', 'units');
+	label_cell(post_scalar('units'), '', 'units');
 
 	if ($id != -1)
 	{

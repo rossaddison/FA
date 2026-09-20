@@ -29,13 +29,13 @@ simple_page_mode(true);
 
 function check_data(): bool
 {
-	if (!is_date($_POST['from_date']) || is_date_in_fiscalyears($_POST['from_date']))
+	if (!is_date(post_scalar('from_date')) || is_date_in_fiscalyears($_POST['from_date']))
 	{
 		display_error( _("Invalid BEGIN date in fiscal year."));
 		set_focus('from_date');
 		return false;
 	}
-	if (!is_date($_POST['to_date']) || is_date_in_fiscalyears($_POST['to_date']))
+	if (!is_date(post_scalar('to_date')) || is_date_in_fiscalyears($_POST['to_date']))
 	{
 		display_error( _("Invalid END date in fiscal year."));
 		set_focus('to_date');
@@ -197,8 +197,8 @@ function display_fiscalyear_edit(string|int|float|bool|array|null $selected_id):
 		}
 		hidden('from_date');
 		hidden('to_date');
-		label_row(_("Fiscal Year Begin:"), $_POST['from_date']);
-		label_row(_("Fiscal Year End:"), $_POST['to_date']);
+		label_row(_("Fiscal Year Begin:"), post_scalar('from_date'));
+		label_row(_("Fiscal Year End:"), post_scalar('to_date'));
 	}
 	else
 	{

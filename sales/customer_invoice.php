@@ -149,7 +149,7 @@ if ( (isset($_GET['DeliveryNumber']) && ($_GET['DeliveryNumber'] > 0) )
 
 	if (isset($_GET['AllocationNumber']))
 	{
-		$payments = array(get_cust_allocation($_GET['AllocationNumber']));
+		$payments = array(get_cust_allocation(get_scalar('AllocationNumber')));
 
 		if (!$payments || ($payments[0]['trans_type_to'] != ST_SALESORDER))
 		{
@@ -293,7 +293,7 @@ function check_data(): bool
 
 	$prepaid = $_SESSION['Items']->is_prepaid();
 
-	if (!isset($_POST['InvoiceDate']) || !is_date($_POST['InvoiceDate'])) {
+	if (!isset($_POST['InvoiceDate']) || !is_date(post_scalar('InvoiceDate'))) {
 		display_error(_("The entered invoice date is invalid."));
 		set_focus('InvoiceDate');
 		return false;
@@ -306,7 +306,7 @@ function check_data(): bool
 	}
 
 
-	if (!$prepaid &&(!isset($_POST['due_date']) || !is_date($_POST['due_date'])))	{
+	if (!$prepaid &&(!isset($_POST['due_date']) || !is_date(post_scalar('due_date'))))	{
 		display_error(_("The entered invoice due date is invalid."));
 		set_focus('due_date');
 		return false;
@@ -476,7 +476,7 @@ if ($prepaid)
 } else
 	shippers_list_cells(null, 'ship_via', $_POST['ship_via']);
 
-if (!isset($_POST['InvoiceDate']) || !is_date($_POST['InvoiceDate'])) {
+if (!isset($_POST['InvoiceDate']) || !is_date(post_scalar('InvoiceDate'))) {
 	$_POST['InvoiceDate'] = new_doc_date();
 	if (!is_date_in_fiscalyear($_POST['InvoiceDate'])) {
 		$_POST['InvoiceDate'] = end_fiscalyear();
@@ -486,7 +486,7 @@ if (!isset($_POST['InvoiceDate']) || !is_date($_POST['InvoiceDate'])) {
 date_cells(_("Date"), 'InvoiceDate', '', $_SESSION['Items']->trans_no == 0, 
 	0, 0, 0, "class='tableheader2'", true);
 
-if (!isset($_POST['due_date']) || !is_date($_POST['due_date'])) {
+if (!isset($_POST['due_date']) || !is_date(post_scalar('due_date'))) {
 	$_POST['due_date'] = get_invoice_duedate($_SESSION['Items']->payment, $_POST['InvoiceDate']);
 }
 
@@ -611,7 +611,7 @@ $colspan = $prepaid ? 7:9;
 start_row();
 label_cell(_("Shipping Cost"), "colspan=$colspan align=right");
 if ($prepaid)
-	label_cell($_POST['ChargeFreightCost'], 'align=right');
+	label_cell(post_scalar('ChargeFreightCost'), 'align=right');
 else
 	small_amount_cells(null, 'ChargeFreightCost', null);
 if ($is_batch_invoice) {

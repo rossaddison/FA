@@ -136,13 +136,13 @@ class attachments extends simple_crud {
 		elseif($type_no==ST_BANKACCOUNT) 
 			$id_word = _("Bank Account ID");
 
-		label_row(_($id_word), $_POST['trans_no']);	
+		label_row(_($id_word), post_scalar('trans_no'));	
 		date_row(_("Date"), 'tran_date');
 		text_row_ex(_("Doc Title").':', 'description', 60, 60);
 		if ($this->selected_id)
 			label_row(_("File:"), sprintf(_("%s [%s bytes]"), $row['filename'], $row['filesize']));
 		file_row( ($this->selected_id ? _("File change") : _("Select file")) . ":", 'file_attachment_name', 'file_attachment_name');
-		hidden('type_no', $_GET['type_no']);
+		hidden('type_no', get_scalar('type_no'));
 		end_outer_table(1);	
 		div_end();
 	}
@@ -217,10 +217,10 @@ class attachments extends simple_crud {
 				$sql = "INSERT INTO ".TB_PREF."attachments (trans_no, type_no, `description`, `filename`, unique_name, tran_date, `filesize`, `filetype`) VALUES ("
 					   . db_escape($this->entity) . ","
 					   . db_escape($dat['type_no']) . ","
-					   . db_escape($_POST['description']) . ","
+					   . db_escape(post_scalar('description')) . ","
 					   . db_escape($actual_file_nam) . ","
 					   . db_escape($attachment_file_name) . ","
-					   . db_escape(date2sql($_POST['tran_date'])) . ","
+					   . db_escape(date2sql(post_scalar('tran_date'))) . ","
 					   . db_escape($filesize) . ","
 					   . db_escape($filetype) . ")";
 				if(db_query($sql, 'Could not add Attachment'))
@@ -262,8 +262,8 @@ class attachments extends simple_crud {
 			$sql = "UPDATE ".TB_PREF."attachments SET "
 					. "trans_no = " . db_escape($this->entity) . ","
 					. "type_no = " . db_escape($dat['type_no']) . ","
-					. "`description` = " . db_escape($_POST['description']) . ","
-					. "tran_date = " . db_escape(date2sql($_POST['tran_date']));
+					. "`description` = " . db_escape(post_scalar('description')) . ","
+					. "tran_date = " . db_escape(date2sql(post_scalar('tran_date')));
 			if ($upload_file == 'Yes')
 				$sql .=  ", `filename` = " . db_escape($actual_file_nam) . ","
 					. "`filesize` = " . db_escape($filesize) . ","

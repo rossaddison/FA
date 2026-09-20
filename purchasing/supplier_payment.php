@@ -188,7 +188,7 @@ function check_inputs(): bool
 	}
 
 
-   	if (!is_date($_POST['DatePaid']))
+   	if (!is_date(post_scalar('DatePaid')))
    	{
 		display_error(_("The entered date is invalid."));
 		set_focus('DatePaid');

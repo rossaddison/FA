@@ -56,12 +56,12 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
         
     	if ($selected_id != -1) 
     	{    		
-    		update_item_tax_type($selected_id, $_POST['name'], $_POST['exempt'], $exempt_from);
+    		update_item_tax_type($selected_id, post_scalar('name'), post_scalar('exempt'), $exempt_from);
 			display_notification(_('Selected item tax type has been updated'));
     	} 
     	else 
     	{
-    		add_item_tax_type($_POST['name'], $_POST['exempt'], $exempt_from);
+    		add_item_tax_type(post_scalar('name'), post_scalar('exempt'), $exempt_from);
 			display_notification(_('New item tax type has been added'));
     	}
 		$Mode = 'RESET';

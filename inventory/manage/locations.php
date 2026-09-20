@@ -40,7 +40,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 	//first off validate inputs sensible
 	$_POST['loc_code'] = strtoupper($_POST['loc_code']);
 
-	if ((strlen(db_escape($_POST['loc_code'])) > 7) || empty($_POST['loc_code'])) //check length after conversion
+	if ((strlen(db_escape(post_scalar('loc_code'))) > 7) || empty($_POST['loc_code'])) //check length after conversion
 	{
 		$input_error = 1;
 		display_error( _("The location code must be five characters or less long (including converted special chars)."));
@@ -58,8 +58,8 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
     	if ($selected_id != -1) 
     	{
     
-    		update_item_location($selected_id, $_POST['location_name'], $_POST['delivery_address'],
-				$_POST['phone'], $_POST['phone2'], $_POST['fax'], $_POST['email'], $_POST['contact'], check_value('fixed_asset'));
+    		update_item_location($selected_id, post_scalar('location_name'), post_scalar('delivery_address'),
+				post_scalar('phone'), post_scalar('phone2'), post_scalar('fax'), post_scalar('email'), $_POST['contact'], check_value('fixed_asset'));
 			display_notification(_('Selected location has been updated'));
     	} 
     	else 
@@ -67,8 +67,8 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
     
     	/*selected_id is null cos no item selected on first time round so must be adding a	record must be submitting new entries in the new Location form */
     	
-    		add_item_location($_POST['loc_code'], $_POST['location_name'], $_POST['delivery_address'], 
-				$_POST['phone'], $_POST['phone2'], $_POST['fax'], $_POST['email'], $_POST['contact'], check_value('fixed_asset'));
+    		add_item_location(post_scalar('loc_code'), post_scalar('location_name'), post_scalar('delivery_address'), 
+				post_scalar('phone'), post_scalar('phone2'), post_scalar('fax'), post_scalar('email'), $_POST['contact'], check_value('fixed_asset'));
 			display_notification(_('New location has been added'));
     	}
 		
@@ -199,7 +199,7 @@ if ($selected_id != -1)
 	}
 	hidden("selected_id", $selected_id);
 	hidden("loc_code");
-	label_row(_("Location Code:"), $_POST['loc_code']);
+	label_row(_("Location Code:"), post_scalar('loc_code'));
 } 
 else 
 { //end of if $selected_id only do the else when a new record is being entered

@@ -88,9 +88,9 @@ $_POST['cur_password'] = "";
 $_POST['password'] = "";
 $_POST['passwordConfirm'] = "";
 
-password_row(_("Current Password:"), 'cur_password', $_POST['cur_password']);
-password_row(_("New Password:"), 'password', $_POST['password']);
-password_row(_("Repeat New Password:"), 'passwordConfirm', $_POST['passwordConfirm']);
+password_row(_("Current Password:"), 'cur_password', post_scalar('cur_password'));
+password_row(_("New Password:"), 'password', post_scalar('password'));
+password_row(_("Repeat New Password:"), 'passwordConfirm', post_scalar('passwordConfirm'));
 
 table_section_title(_("Enter your new password in the fields."));
 

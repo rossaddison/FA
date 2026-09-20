@@ -40,7 +40,7 @@ if (isset($_GET['BA']))
 //---------------------------------------------------------------------------------------------
 function check_data(): bool
 {
-	if (!is_date($_POST['date']))
+	if (!is_date(post_scalar('date')))
 	{
 		display_error( _("The entered date is invalid."));
 		set_focus('date');

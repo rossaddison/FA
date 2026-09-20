@@ -61,7 +61,7 @@ end_form();
 if (!isset($_POST['bank_account']))
 	$_POST['bank_account'] = "";
 
-$result = get_bank_trans_for_bank_account($_POST['bank_account'], $_POST['TransAfterDate'], $_POST['TransToDate']);	
+$result = get_bank_trans_for_bank_account(post_scalar('bank_account'), post_scalar('TransAfterDate'), post_scalar('TransToDate'));	
 
 div_start('trans_tbl');
 if (!$page_nested)
@@ -76,7 +76,7 @@ $th = array(_("Type"), _("#"), _("Reference"), _("Date"),
 	_("Debit"), _("Credit"), _("Balance"), _("Person/Item"), _("Memo"), "", "");
 table_header($th);
 
-$bfw = get_balance_before_for_bank_account($_POST['bank_account'], $_POST['TransAfterDate']);
+$bfw = get_balance_before_for_bank_account(post_scalar('bank_account'), post_scalar('TransAfterDate'));
 
 $credit = $debit = 0;
 start_row("class='inquirybg' style='font-weight:bold'");

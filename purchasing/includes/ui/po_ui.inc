@@ -365,7 +365,7 @@ function po_item_controls(purch_order &$order, int|string|null &$rowcounter, str
 	{
 
 		$_POST['stock_id'] = $order->line_items[$id]->stock_id;
-		$dec = get_qty_dec($_POST['stock_id']);
+		$dec = get_qty_dec(post_scalar('stock_id'));
 		$_POST['qty'] = qty_format($order->line_items[$id]->quantity, $_POST['stock_id'], $dec);
 		$_POST['price'] = price_decimal_format($order->line_items[$id]->price, $dec2);
 		if ($order->trans_type == ST_PURCHORDER)
@@ -374,13 +374,13 @@ function po_item_controls(purch_order &$order, int|string|null &$rowcounter, str
 		$_POST['units'] = $order->line_items[$id]->units;
 		$_POST['item_description'] = $order->line_items[$id]->item_description;
 
-		hidden('stock_id', $_POST['stock_id']);
-		label_cell($_POST['stock_id']);
+		hidden('stock_id', post_scalar('stock_id'));
+		label_cell(post_scalar('stock_id'));
 
 		if ($order->line_items[$id]->descr_editable)
 			text_cells(null,'item_description', null, 45, 150);
 		else {
-			hidden('item_description', $_POST['item_description']);
+			hidden('item_description', post_scalar('item_description'));
 			label_cell($order->line_items[$id]->item_description); 
 		}
 
@@ -426,13 +426,13 @@ function po_item_controls(purch_order &$order, int|string|null &$rowcounter, str
 	if (!$new)
 		qty_cell($qty_rcvd, false, $dec);
 
-	label_cell($_POST['units'], '', 'units');
+	label_cell(post_scalar('units'), '', 'units');
 	if ($order->trans_type == ST_PURCHORDER)
 		date_cells(null, 'req_del_date', '', null, 0, 0, 0);
 	if ($qty_rcvd > 0)
 	{
-   		amount_decimal_cell($_POST['price']);
-   		hidden('price', $_POST['price']);
+   		amount_decimal_cell(post_scalar('price'));
+   		hidden('price', post_scalar('price'));
    	}	
    	else	
 		unit_amount_cells(null, 'price');

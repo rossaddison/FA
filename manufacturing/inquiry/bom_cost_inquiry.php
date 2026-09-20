@@ -35,7 +35,7 @@ stock_manufactured_items_list_row(_("Select a manufacturable item:"), 'stock_id'
 end_table();
 br();
 display_heading(_("All Costs Are In:") . " " . get_company_currency());
-display_bom($_POST['stock_id']);
+display_bom(post_scalar('stock_id'));
 
 end_form();
 

@@ -34,9 +34,9 @@ if (isset($_POST['add']) || isset($_POST['delete']))
 	for ($i = 0, $da = $_POST['begin']; date1_greater_date2($_POST['end'], $da); $i++)
 	{
 		if (isset($_POST['add']))
-			add_update_gl_budget_trans($da, $_POST['account'], $_POST['dim1'], $_POST['dim2'], input_num('amount'.$i));
+			add_update_gl_budget_trans($da, post_scalar('account'), post_scalar('dim1'), post_scalar('dim2'), input_num('amount'.$i));
 		else
-			delete_gl_budget_trans($da, $_POST['account'], $_POST['dim1'], $_POST['dim2']);
+			delete_gl_budget_trans($da, post_scalar('account'), post_scalar('dim1'), post_scalar('dim2'));
 		$da = add_months($da, 1);
 	}
 	commit_transaction();
@@ -105,17 +105,17 @@ if (db_has_gl_accounts())
 		start_row();
 		if (get_post('update') == '')
 			$_POST['amount'.$i] = number_format2(get_only_budget_trans_from_to(
-				$date_, $date_, $_POST['account'], $_POST['dim1'], $_POST['dim2']), 0);
+				$date_, $date_, post_scalar('account'), post_scalar('dim1'), post_scalar('dim2')), 0);
 
 		label_cell($date_);
 		amount_cells(null, 'amount'.$i, null, 15, null, 0);
 		if ($showdims)
 		{
-			$d = get_budget_trans_from_to($date_, $date_, $_POST['account'], $_POST['dim1'], $_POST['dim2']);
+			$d = get_budget_trans_from_to($date_, $date_, post_scalar('account'), post_scalar('dim1'), post_scalar('dim2'));
 			label_cell(number_format2($d, 0), "nowrap align=right");
 			$btotal += $d;
 		}
-		$lamount = get_gl_trans_from_to(add_years($date_, -1), add_years(end_month($date_), -1), $_POST['account'], $_POST['dim1'], $_POST['dim2']);
+		$lamount = get_gl_trans_from_to(add_years($date_, -1), add_years(end_month($date_), -1), post_scalar('account'), post_scalar('dim1'), post_scalar('dim2'));
 		$total += input_num('amount'.$i);
 		$ltotal += $lamount;
 		label_cell(number_format2($lamount, 0), "nowrap align=right");

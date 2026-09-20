@@ -108,7 +108,7 @@ if (isset($_GET['OrderNumber']) && $_GET['OrderNumber'] > 0) {
 		display_footer_exit();
 	}
  	// Adjust Shipping Charge based upon previous deliveries TAM
-	adjust_shipping_charge($ord, $_GET['OrderNumber']);
+	adjust_shipping_charge($ord, get_scalar('OrderNumber'));
  
 	$_SESSION['Items'] = $ord;
 	copy_from_cart();
@@ -156,7 +156,7 @@ function check_data(): bool
 {
 	global $Refs, $SysPrefs;
 
-	if (!isset($_POST['DispatchDate']) || !is_date($_POST['DispatchDate']))	{
+	if (!isset($_POST['DispatchDate']) || !is_date(post_scalar('DispatchDate')))	{
 		display_error(_("The entered date of delivery is invalid."));
 		set_focus('DispatchDate');
 		return false;
@@ -168,7 +168,7 @@ function check_data(): bool
 		return false;
 	}
 
-	if (!isset($_POST['due_date']) || !is_date($_POST['due_date']))	{
+	if (!isset($_POST['due_date']) || !is_date(post_scalar('due_date')))	{
 		display_error(_("The entered dead-line for invoice is invalid."));
 		set_focus('due_date');
 		return false;
@@ -359,7 +359,7 @@ label_cell(_("Shipping Company"), "class='tableheader2'");
 shippers_list_cells(null, 'ship_via', $_POST['ship_via']);
 
 // set this up here cuz it's used to calc qoh
-if (!isset($_POST['DispatchDate']) || !is_date($_POST['DispatchDate'])) {
+if (!isset($_POST['DispatchDate']) || !is_date(post_scalar('DispatchDate'))) {
 	$_POST['DispatchDate'] = new_doc_date();
 	if (!is_date_in_fiscalyear($_POST['DispatchDate'])) {
 		$_POST['DispatchDate'] = end_fiscalyear();
@@ -374,7 +374,7 @@ echo "</td><td>";// outer table
 
 start_table(TABLESTYLE, "width='90%'");
 
-if (!isset($_POST['due_date']) || !is_date($_POST['due_date'])) {
+if (!isset($_POST['due_date']) || !is_date(post_scalar('due_date'))) {
 	$_POST['due_date'] = get_invoice_duedate($_SESSION['Items']->payment, $_POST['DispatchDate']);
 }
 customer_credit_row($_SESSION['Items']->customer_id, $_SESSION['Items']->credit, "class='tableheader2'");

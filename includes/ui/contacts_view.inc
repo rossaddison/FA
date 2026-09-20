@@ -118,9 +118,9 @@ class contacts extends simple_crud {
 	}
 
 	function db_update() {
-			return update_crm_person($this->selected_id, $_POST['ref'], $_POST['name'], $_POST['name2'], 
-				$_POST['address'], $_POST['phone'], $_POST['phone2'], $_POST['fax'], $_POST['email'], 
-				$_POST['lang'], $_POST['notes'], $_POST['assgn'], $this->entity, $this->class);
+			return update_crm_person($this->selected_id, post_scalar('ref'), post_scalar('name'), post_scalar('name2'), 
+				post_scalar('address'), post_scalar('phone'), post_scalar('phone2'), post_scalar('fax'), post_scalar('email'), 
+				post_scalar('lang'), post_scalar('notes'), $_POST['assgn'], $this->entity, $this->class);
 	}
 
 	function insert_check() {

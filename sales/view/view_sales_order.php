@@ -269,5 +269,5 @@ end_table();
 
 display_allocations_to(PT_CUSTOMER, $_SESSION['View']->customer_id, $_GET['trans_type'], $_GET['trans_no'], $sub_tot + $tax_total);
 
-end_page(true, false, false, $_GET['trans_type'], $_GET['trans_no']);
+end_page(true, false, false, get_scalar('trans_type'), $_GET['trans_no']);
 

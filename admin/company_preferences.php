@@ -276,7 +276,7 @@ text_row_ex(_("Official Company Number:"), 'coy_no', 25);
 text_row_ex(_("GSTNo:"), 'gst_no', 25);
 currencies_list_row(_("Home Currency:"), 'curr_default', $_POST['curr_default']);
 
-label_row(_("Company Logo:"), $_POST['coy_logo']);
+label_row(_("Company Logo:"), post_scalar('coy_logo'));
 file_row(_("New Company Logo (.jpg)") . ":", 'pic', 'pic');
 check_row(_("Delete Company Logo:"), 'del_coy_logo', $_POST['del_coy_logo']);
 
@@ -287,7 +287,7 @@ check_row(_("Auto Increase of Document References"), 'ref_no_auto_increase', $_P
 check_row(_("Use Dimensions on Recurrent Invoices"), 'dim_on_recurrent_invoice', $_POST['dim_on_recurrent_invoice']);
 check_row(_("Use Long Descriptions on Invoices"), 'long_description_invoice', $_POST['long_description_invoice']);
 check_row(_("Company Logo on Views"), 'company_logo_on_views', $_POST['company_logo_on_views']);
-label_row(_("Database Scheme Version"), $_POST['version_id']);
+label_row(_("Database Scheme Version"), post_scalar('version_id'));
 
 table_section(2);
 
@@ -326,7 +326,7 @@ text_row_ex(_("Max day range in documents"), 'max_days_in_docs', 10, 10, '', nul
 
 end_outer_table(1);
 
-hidden('coy_logo', $_POST['coy_logo']);
+hidden('coy_logo', post_scalar('coy_logo'));
 submit_center('update', _("Update"), true, '',  'default');
 
 end_form(2);

@@ -207,8 +207,8 @@ function supplier_settings(&$supplier_id): void
 	if ($supplier_id && !is_new_supplier($supplier_id) && (key_in_foreign_table($_POST['supplier_id'], 'supp_trans', 'supplier_id') ||
 		key_in_foreign_table($_POST['supplier_id'], 'purch_orders', 'supplier_id'))) 
 	{
-		label_row(_("Supplier's Currency:"), $_POST['curr_code']);
-		hidden('curr_code', $_POST['curr_code']);
+		label_row(_("Supplier's Currency:"), post_scalar('curr_code'));
+		hidden('curr_code', post_scalar('curr_code'));
 	} 
 	else 
 	{

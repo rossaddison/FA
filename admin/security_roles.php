@@ -101,11 +101,11 @@ if (get_post('addupdate'))
 
      	if ($new_role) 
        	{
-			add_security_role($_POST['name'], $_POST['description'], $sections, $areas); 
+			add_security_role(post_scalar('name'), post_scalar('description'), $sections, $areas); 
 			display_notification(_("New security role has been added."));
        	} else
        	{
-			update_security_role($_POST['role'], $_POST['name'], $_POST['description'], 
+			update_security_role(post_scalar('role'), post_scalar('name'), post_scalar('description'), 
 				$sections, $areas); 
 			update_record_status($_POST['role'], get_post('inactive'),
 				'security_roles', 'id');

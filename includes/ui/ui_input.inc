@@ -85,6 +85,30 @@ function simple_page_mode(bool $numeric_id = true): void
 //	Read numeric value from user formatted input
 //
 /**
+ * A posted value that a function taking a scalar can use: the value itself, or null when the field was not posted
+ * or was posted as an array. Reading $_POST['name'] directly raises "Undefined array key" for a missing field and
+ * hands an array to a scalar parameter.
+ *
+ * @return string|int|float|bool|null
+ */
+function post_scalar(string $name): string|int|float|bool|null
+{
+	$value = $_POST[$name] ?? null;
+	return is_array($value) ? null : $value;
+}
+
+/**
+ * The query string counterpart of post_scalar().
+ *
+ * @return string|int|float|bool|null
+ */
+function get_scalar(string $name): string|int|float|bool|null
+{
+	$value = $_GET[$name] ?? null;
+	return is_array($value) ? null : $value;
+}
+
+/**
  * @template T
  * @param T $dflt
  * @return T|int|float|false

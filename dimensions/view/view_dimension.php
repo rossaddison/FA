@@ -92,7 +92,7 @@ end_table();
 hidden('trans_no', $id);
 end_form();
 
-display_dimension_balance($id, $_POST['TransFromDate'], $_POST['TransToDate']);
+display_dimension_balance($id, post_scalar('TransFromDate'), post_scalar('TransToDate'));
 
 br(1);
 

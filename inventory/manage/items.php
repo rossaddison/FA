@@ -50,10 +50,10 @@ function set_edit(string|int|float|bool|array|null $stock_id): void
 {
 	$_POST = array_merge($_POST, get_item($stock_id));
 
-	$_POST['depreciation_rate'] = number_format2($_POST['depreciation_rate'], 1);
-	$_POST['depreciation_factor'] = number_format2($_POST['depreciation_factor'], 1);
-	$_POST['depreciation_start'] = sql2date($_POST['depreciation_start']);
-	$_POST['depreciation_date'] = sql2date($_POST['depreciation_date']);
+	$_POST['depreciation_rate'] = number_format2(post_scalar('depreciation_rate'), 1);
+	$_POST['depreciation_factor'] = number_format2(post_scalar('depreciation_factor'), 1);
+	$_POST['depreciation_start'] = sql2date(post_scalar('depreciation_start'));
+	$_POST['depreciation_date'] = sql2date(post_scalar('depreciation_date'));
 	$_POST['del_image'] = 0;
 }
 
@@ -250,7 +250,7 @@ if (isset($_POST['addupdate']))
     elseif ($_POST['depreciation_rate'] < 0) {
       $_POST['depreciation_rate'] = 0;
     }
-    $move_row = get_fixed_asset_move($_POST['NewStockID'], ST_SUPPRECEIVE);
+    $move_row = get_fixed_asset_move(post_scalar('NewStockID'), ST_SUPPRECEIVE);
     if ($move_row && isset($_POST['depreciation_start']) && strtotime($_POST['depreciation_start']) < strtotime($move_row['tran_date'])) {
       display_warning(_('The depracation cannot start before the fixed asset purchase date'));
     }
@@ -263,13 +263,13 @@ if (isset($_POST['addupdate']))
 		
 		if (!$new_item) 
 		{ /*so its an existing one */
-			update_item($_POST['NewStockID'], $_POST['description'],
-				$_POST['long_description'], $_POST['category_id'], 
-				$_POST['tax_type_id'], get_post('units'),
-				get_post('fixed_asset') ? 'F' : get_post('mb_flag'), $_POST['sales_account'],
-				$_POST['inventory_account'], $_POST['cogs_account'],
-				$_POST['adjustment_account'], $_POST['wip_account'], 
-				$_POST['dimension_id'], $_POST['dimension2_id'],
+			update_item(post_scalar('NewStockID'), post_scalar('description'),
+				post_scalar('long_description'), post_scalar('category_id'), 
+				post_scalar('tax_type_id'), get_post('units'),
+				get_post('fixed_asset') ? 'F' : get_post('mb_flag'), post_scalar('sales_account'),
+				post_scalar('inventory_account'), post_scalar('cogs_account'),
+				post_scalar('adjustment_account'), post_scalar('wip_account'), 
+				post_scalar('dimension_id'), post_scalar('dimension2_id'),
 				check_value('no_sale'), check_value('editable'), check_value('no_purchase'),
 				get_post('depreciation_method'), input_num('depreciation_rate'), input_num('depreciation_factor'), get_post('depreciation_start', null),
 				get_post('fa_class_id'));
@@ -285,12 +285,12 @@ if (isset($_POST['addupdate']))
 		else 
 		{ //it is a NEW part
 
-			add_item($_POST['NewStockID'], $_POST['description'],
-				$_POST['long_description'], $_POST['category_id'], $_POST['tax_type_id'],
-				$_POST['units'], get_post('fixed_asset') ? 'F' : get_post('mb_flag'), $_POST['sales_account'],
-				$_POST['inventory_account'], $_POST['cogs_account'],
-				$_POST['adjustment_account'], $_POST['wip_account'], 
-				$_POST['dimension_id'], $_POST['dimension2_id'],
+			add_item(post_scalar('NewStockID'), post_scalar('description'),
+				post_scalar('long_description'), post_scalar('category_id'), post_scalar('tax_type_id'),
+				post_scalar('units'), get_post('fixed_asset') ? 'F' : get_post('mb_flag'), post_scalar('sales_account'),
+				post_scalar('inventory_account'), post_scalar('cogs_account'),
+				post_scalar('adjustment_account'), post_scalar('wip_account'), 
+				post_scalar('dimension_id'), post_scalar('dimension2_id'),
 				check_value('no_sale'), check_value('editable'), check_value('no_purchase'),
 				get_post('depreciation_method'), input_num('depreciation_rate'), input_num('depreciation_factor'), get_post('depreciation_start', null),
 				get_post('fa_class_id'));
@@ -380,8 +380,8 @@ function item_settings(&$stock_id, bool $new_item): void
 			$_POST['NewStockID'] = $_POST['stock_id'];
 			set_edit($_POST['stock_id']);
 		}
-		label_row(_("Item Code:"),$_POST['NewStockID']);
-		hidden('NewStockID', $_POST['NewStockID']);
+		label_row(_("Item Code:"),post_scalar('NewStockID'));
+		hidden('NewStockID', post_scalar('NewStockID'));
 		set_focus('description');
 	}
 	$fixed_asset = get_post('fixed_asset');
@@ -464,7 +464,7 @@ function item_settings(&$stock_id, bool $new_item): void
 			date_row(_("Depreciation Start").':', 'depreciation_start', null, null, 1 - date('j'));
 		else {
 			hidden('depreciation_start');
-			label_row(_("Depreciation Start").':', $_POST['depreciation_start']);
+			label_row(_("Depreciation Start").':', post_scalar('depreciation_start'));
 			label_row(_("Last Depreciation").':', $_POST['depreciation_date']==$_POST['depreciation_start'] ? _("None") :  $_POST['depreciation_date']);
 		}
 		hidden('depreciation_date');
@@ -503,15 +503,15 @@ function item_settings(&$stock_id, bool $new_item): void
 	else 
 	{
 		gl_all_accounts_list_row(_("C.O.G.S. Account:"), 'cogs_account', $_POST['cogs_account']);
-		hidden('inventory_account', $_POST['inventory_account']);
-		hidden('adjustment_account', $_POST['adjustment_account']);
+		hidden('inventory_account', post_scalar('inventory_account'));
+		hidden('adjustment_account', post_scalar('adjustment_account'));
 	}
 
 
 	if (is_manufactured(get_post('mb_flag')))
 		gl_all_accounts_list_row(_("WIP Account:"), 'wip_account', $_POST['wip_account']);
 	else
-		hidden('wip_account', $_POST['wip_account']);
+		hidden('wip_account', post_scalar('wip_account'));
 
 	table_section_title(_("Other"));
 
@@ -525,9 +525,9 @@ function item_settings(&$stock_id, bool $new_item): void
 		if (!$new_item) {
 			hidden('material_cost');
 			hidden('purchase_cost');
-			label_row(_("Initial Value").":", price_format($_POST['purchase_cost']), "", "align='right'");
+			label_row(_("Initial Value").":", price_format(post_scalar('purchase_cost')), "", "align='right'");
 			label_row(_("Depreciations").":", price_format($_POST['purchase_cost'] - $_POST['material_cost']), "", "align='right'");
-			label_row(_("Current Value").':', price_format($_POST['material_cost']), "", "align='right'");
+			label_row(_("Current Value").':', price_format(post_scalar('material_cost')), "", "align='right'");
 		}
 	}
 	end_outer_table(1);

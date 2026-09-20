@@ -104,7 +104,7 @@ if (isset($_POST['Process']))
 		set_focus('ref');
 		$input_error = 1;
 	} 
-	elseif (!is_date($_POST['AdjDate'])) 
+	elseif (!is_date(post_scalar('AdjDate'))) 
 	{
 		display_error(_("The entered transfer date is invalid."));
 		set_focus('AdjDate');

@@ -86,7 +86,7 @@ function can_process(): bool
 {
 	global $Refs;
 
-	if (!is_date($_POST['CreditDate'])) {
+	if (!is_date(post_scalar('CreditDate'))) {
 		display_error(_("The entered date is invalid."));
 		set_focus('CreditDate');
 		return false;
@@ -313,10 +313,10 @@ function display_credit_items(): void
 
     $inv_items_total = $_SESSION['Items']->get_items_total_dispatch();
 
-    $display_sub_total = price_format($inv_items_total + input_num($_POST['ChargeFreightCost']));
+    $display_sub_total = price_format($inv_items_total + input_num(post_scalar('ChargeFreightCost')));
     label_row(_("Sub-total"), $display_sub_total, "colspan=$colspan align=right", "align=right");
 
-    $taxes = $_SESSION['Items']->get_taxes(input_num($_POST['ChargeFreightCost']));
+    $taxes = $_SESSION['Items']->get_taxes(input_num(post_scalar('ChargeFreightCost')));
 
     $tax_total = display_edit_tax_items($taxes, $colspan, $_SESSION['Items']->tax_included);
 

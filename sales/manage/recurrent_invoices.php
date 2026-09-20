@@ -48,25 +48,25 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 		display_error(_("The invoice description cannot be empty."));
 		set_focus('description');
 	}
-	if (!check_recurrent_invoice_description($_POST['description'], $selected_id))
+	if (!check_recurrent_invoice_description(post_scalar('description'), $selected_id))
 	{
 		$input_error = 1;
 		display_error(_("This recurrent invoice description is already in use."));
 		set_focus('description');
 	}
-	if (!is_date($_POST['begin']))
+	if (!is_date(post_scalar('begin')))
 	{
 		$input_error = 1;
 		display_error(_("The entered date is invalid."));
 		set_focus('begin');
 	}
-	if (!is_date($_POST['end']))
+	if (!is_date(post_scalar('end')))
 	{
 		$input_error = 1;
 		display_error(_("The entered date is invalid."));
 		set_focus('end');
 	}
-	if (isset($_POST['last_sent']) && !is_date($_POST['last_sent'])) {
+	if (isset($_POST['last_sent']) && !is_date(post_scalar('last_sent'))) {
 		$input_error = 1;
 		display_error(_("The entered date is invalid."));
 		set_focus('last_sent');
@@ -82,16 +82,16 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 	{
     	if ($selected_id != -1) 
     	{
-    		update_recurrent_invoice($selected_id, $_POST['description'], $_POST['order_no'], input_num('debtor_no'), 
-    			input_num('group_no'), input_num('days', 0), input_num('monthly', 0), $_POST['begin'], $_POST['end']);
+    		update_recurrent_invoice($selected_id, post_scalar('description'), post_scalar('order_no'), input_num('debtor_no'), 
+    			input_num('group_no'), input_num('days', 0), input_num('monthly', 0), post_scalar('begin'), post_scalar('end'));
     		if (isset($_POST['last_sent']))	
 				update_last_sent_recurrent_invoice($selected_id, $_POST['last_sent']);
 			$note = _('Selected recurrent invoice has been updated');
     	} 
     	else 
     	{
-    		add_recurrent_invoice($_POST['description'], $_POST['order_no'], input_num('debtor_no'), input_num('group_no'),
-    			input_num('days', 0), input_num('monthly', 0), $_POST['begin'], $_POST['end']);
+    		add_recurrent_invoice(post_scalar('description'), post_scalar('order_no'), input_num('debtor_no'), input_num('group_no'),
+    			input_num('days', 0), input_num('monthly', 0), post_scalar('begin'), post_scalar('end'));
 			$note = _('New recurrent invoice has been added');
     	}
     

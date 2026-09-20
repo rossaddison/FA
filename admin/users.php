@@ -67,15 +67,15 @@ if (($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') && check_csrf_token())
 					'print_profile', 'rep_popup' => 0, 'pos')));
 
     		if ($_POST['password'] != "")
-    			update_user_password($selected_id, $_POST['user_id'], md5($_POST['password']));
+    			update_user_password($selected_id, post_scalar('user_id'), md5($_POST['password']));
 
     		display_notification_centered(_("The selected user has been updated."));
     	} 
     	else 
     	{
-    		add_user($_POST['user_id'], $_POST['real_name'], md5($_POST['password']),
-				$_POST['phone'], $_POST['email'], $_POST['role_id'], $_POST['language'],
-				$_POST['print_profile'], check_value('rep_popup'), $_POST['pos']);
+    		add_user(post_scalar('user_id'), post_scalar('real_name'), md5($_POST['password']),
+				post_scalar('phone'), post_scalar('email'), post_scalar('role_id'), post_scalar('language'),
+				post_scalar('print_profile'), check_value('rep_popup'), $_POST['pos']);
 			$id = db_insert_id();
 			// use current user display preferences as start point for new user
 			$prefs = $_SESSION['wa_current_user']->prefs->get_all();
@@ -188,7 +188,7 @@ if ($selected_id != -1)
 	hidden('user_id');
 
 	start_row();
-	label_row(_("User login:"), $_POST['user_id']);
+	label_row(_("User login:"), post_scalar('user_id'));
 } 
 else 
 { //end of if $selected_id only do the else when a new record is being entered
@@ -199,7 +199,7 @@ else
 	$_POST['pos'] = user_pos();
 }
 $_POST['password'] = "";
-password_row(_("Password:"), 'password', $_POST['password']);
+password_row(_("Password:"), 'password', post_scalar('password'));
 
 if ($selected_id != -1) 
 {

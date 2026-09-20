@@ -108,7 +108,7 @@ function check_overdue(array|false|null $row): bool
 
 //figure out the sql required from the inputs available
 $sql = get_sql_for_po_search(get_post('OrdersAfterDate'), get_post('OrdersToDate'), get_post('supplier_id'), get_post('StockLocation'),
-	$_POST['order_number'], get_post('SelectStockFromList'));
+	post_scalar('order_number'), get_post('SelectStockFromList'));
 
 //$result = db_query($sql,"No orders were returned");
 

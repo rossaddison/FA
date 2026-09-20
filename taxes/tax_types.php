@@ -51,8 +51,8 @@ function can_process(): bool
 if ($Mode=='ADD_ITEM' && can_process())
 {
 
-	add_tax_type($_POST['name'], $_POST['sales_gl_code'],
-		$_POST['purchasing_gl_code'], input_num('rate', 0));
+	add_tax_type(post_scalar('name'), post_scalar('sales_gl_code'),
+		post_scalar('purchasing_gl_code'), input_num('rate', 0));
 	display_notification(_('New tax type has been added'));
 	$Mode = 'RESET';
 }
@@ -62,8 +62,8 @@ if ($Mode=='ADD_ITEM' && can_process())
 if ($Mode=='UPDATE_ITEM' && can_process())
 {
 
-	update_tax_type($selected_id, $_POST['name'],
-    	$_POST['sales_gl_code'], $_POST['purchasing_gl_code'], input_num('rate'));
+	update_tax_type($selected_id, post_scalar('name'),
+    	post_scalar('sales_gl_code'), post_scalar('purchasing_gl_code'), input_num('rate'));
 	display_notification(_('Selected tax type has been updated'));
 	$Mode = 'RESET';
 }

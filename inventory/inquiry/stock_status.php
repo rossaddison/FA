@@ -75,7 +75,7 @@ else
 		_("Demand"), _("Available"), _("On Order"));
 }
 table_header($th);
-$dec = get_qty_dec($_POST['stock_id']);
+$dec = get_qty_dec(post_scalar('stock_id'));
 $j = 1;
 $k = 0; //row colour counter
 
@@ -84,15 +84,15 @@ while ($myrow = db_fetch($loc_details))
 
 	alt_table_row_color($k);
 
-	$demand_qty = get_demand_qty($_POST['stock_id'], $myrow["loc_code"]);
-	$demand_qty += get_demand_asm_qty($_POST['stock_id'], $myrow["loc_code"]);
+	$demand_qty = get_demand_qty(post_scalar('stock_id'), $myrow["loc_code"]);
+	$demand_qty += get_demand_asm_qty(post_scalar('stock_id'), $myrow["loc_code"]);
 
 	$qoh = get_qoh_on_date($_POST['stock_id'], $myrow["loc_code"]);
 
 	if ($kitset_or_service == false)
 	{
-		$qoo = get_on_porder_qty($_POST['stock_id'], $myrow["loc_code"]);
-		$qoo += get_on_worder_qty($_POST['stock_id'], $myrow["loc_code"]);
+		$qoo = get_on_porder_qty(post_scalar('stock_id'), $myrow["loc_code"]);
+		$qoo += get_on_worder_qty(post_scalar('stock_id'), $myrow["loc_code"]);
 		label_cell($myrow["location_name"]);
 		qty_cell($qoh, false, $dec);
         qty_cell($myrow["reorder_level"], false, $dec);

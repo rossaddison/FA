@@ -37,7 +37,7 @@ if (!isset($_POST['freq']))
 if (isset($_POST['go']) || isset($_POST['show']))
 {
 	$input_error = 0;
-	if (!is_date($_POST['date_']))
+	if (!is_date(post_scalar('date_')))
 	{
 		display_error(_("The entered date is invalid."));
 		set_focus('date_');
@@ -165,9 +165,9 @@ if (isset($_POST['go']) || isset($_POST['show']))
 					label_cell($date);
 					label_cell($_POST['res_act'] . " " . get_gl_account_name($_POST['res_act']));
 					if ($dim > 0)
-						label_cell(get_dimension_string($_POST['dimension_id'], true));
+						label_cell(get_dimension_string(post_scalar('dimension_id'), true));
 					if ($dim > 1)
-						label_cell(get_dimension_string($_POST['dimension2_id'], true));
+						label_cell(get_dimension_string(post_scalar('dimension2_id'), true));
 					display_debit_or_credit_cells($am0);
 					label_cell($memo);
 				}

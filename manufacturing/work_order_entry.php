@@ -140,7 +140,7 @@ function can_process(): bool
 		return false;
 	}
 
-	if (!is_date($_POST['date_']))
+	if (!is_date(post_scalar('date_')))
 	{
 		display_error( _("The date entered is in an invalid format."));
 		set_focus('date_');
@@ -217,7 +217,7 @@ function can_process(): bool
      }
      else
      {
-    	if (!is_date($_POST['RequDate']))
+    	if (!is_date(post_scalar('RequDate')))
     	{
 			set_focus('RequDate');
     		display_error( _("The date entered is in an invalid format."));
@@ -245,9 +245,9 @@ if (isset($_POST['ADD_ITEM']) && can_process())
 		$_POST['cr_acc'] = "";
 	if (!isset($_POST['cr_lab_acc']))
 		$_POST['cr_lab_acc'] = "";
-	$id = add_work_order($_POST['wo_ref'], $_POST['StockLocation'], input_num('quantity'),
-		$_POST['stock_id'],  $_POST['type'], $_POST['date_'],
-		$_POST['RequDate'], $_POST['memo_'], input_num('Costs'), $_POST['cr_acc'], input_num('Labour'), $_POST['cr_lab_acc']);
+	$id = add_work_order(post_scalar('wo_ref'), post_scalar('StockLocation'), input_num('quantity'),
+		post_scalar('stock_id'),  post_scalar('type'), post_scalar('date_'),
+		post_scalar('RequDate'), post_scalar('memo_'), input_num('Costs'), post_scalar('cr_acc'), input_num('Labour'), post_scalar('cr_lab_acc'));
 
 	new_doc_date($_POST['date_']);
 	meta_forward($_SERVER['PHP_SELF'], "AddedID=$id&type=".(string)$_POST['type']."&date=".(string)$_POST['date_']);
@@ -258,8 +258,8 @@ if (isset($_POST['ADD_ITEM']) && can_process())
 if (isset($_POST['UPDATE_ITEM']) && can_process())
 {
 
-	update_work_order($selected_id, $_POST['StockLocation'], input_num('quantity'),
-		$_POST['stock_id'],  $_POST['date_'], $_POST['RequDate'], $_POST['memo_']);
+	update_work_order($selected_id, post_scalar('StockLocation'), input_num('quantity'),
+		post_scalar('stock_id'),  post_scalar('date_'), post_scalar('RequDate'), post_scalar('memo_'));
 	new_doc_date($_POST['date_']);
 	meta_forward($_SERVER['PHP_SELF'], "UpdatedID=$selected_id");
 }
@@ -285,7 +285,7 @@ if (isset($_POST['delete']))
 	{ //ie not cancelled the delete as a result of above tests
 
 		// delete the actual work order
-		delete_work_order($selected_id, $_POST['stock_id'], $_POST['quantity'], $_POST['date_']);
+		delete_work_order($selected_id, post_scalar('stock_id'), post_scalar('quantity'), post_scalar('date_'));
 		meta_forward($_SERVER['PHP_SELF'], "DeletedID=$selected_id");
 	}
 }
@@ -348,13 +348,13 @@ if (isset($selected_id))
 
 	$_POST['memo_'] = get_comments_string(ST_WORKORDER, $selected_id);
 
-	hidden('wo_ref', $_POST['wo_ref']);
-	hidden('units_issued', $_POST['units_issued']);
-	hidden('released', $_POST['released']);
-	hidden('released_date', $_POST['released_date']);
+	hidden('wo_ref', post_scalar('wo_ref'));
+	hidden('units_issued', post_scalar('units_issued'));
+	hidden('released', post_scalar('released'));
+	hidden('released_date', post_scalar('released_date'));
 	hidden('selected_id',  $selected_id);
 
-	label_row(_("Reference:"), $_POST['wo_ref']);
+	label_row(_("Reference:"), post_scalar('wo_ref'));
 	label_row(_("Type:"), $wo_types_array[$_POST['type']]);
 	hidden('type', $myrow["type"]);
 }
@@ -369,9 +369,9 @@ else
 
 if (get_post('released'))
 {
-	hidden('stock_id', $_POST['stock_id']);
-	hidden('StockLocation', $_POST['StockLocation']);
-	hidden('type', $_POST['type']);
+	hidden('stock_id', post_scalar('stock_id'));
+	hidden('StockLocation', post_scalar('StockLocation'));
+	hidden('type', post_scalar('type'));
 
 	label_row(_("Item:"), $myrow["StockItemName"]);
 	label_row(_("Destination Location:"), $myrow["location_name"]);
@@ -388,14 +388,14 @@ else
 if (!isset($_POST['quantity']))
 	$_POST['quantity'] = qty_format(1, $_POST['stock_id'], $dec);
 else
-	$_POST['quantity'] = qty_format($_POST['quantity'], $_POST['stock_id'], $dec);
+	$_POST['quantity'] = qty_format(post_scalar('quantity'), $_POST['stock_id'], $dec);
 	
 
 if (get_post('type') == WO_ADVANCED)
 {
     qty_row(_("Quantity Required:"), 'quantity', null, null, null, $dec);
     if ($_POST['released'])
-    	label_row(_("Quantity Manufactured:"), number_format($_POST['units_issued'], get_qty_dec($_POST['stock_id'])));
+    	label_row(_("Quantity Manufactured:"), number_format($_POST['units_issued'], get_qty_dec(post_scalar('stock_id'))));
     date_row(_("Date") . ":", 'date_', '', true);
 	date_row(_("Date Required By") . ":", 'RequDate', '', null, $SysPrefs->default_wo_required_by());
 }
@@ -424,7 +424,7 @@ else
 }
 
 if (get_post('released'))
-	label_row(_("Released On:"),$_POST['released_date']);
+	label_row(_("Released On:"),post_scalar('released_date'));
 
 textarea_row(_("Memo:"), 'memo_', null, 40, 5);
 

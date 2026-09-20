@@ -256,7 +256,7 @@ function check_trans(): int
 		set_focus('ref');
 		$input_error = 1;
 	}
-	if (!is_date($_POST['date_']))
+	if (!is_date(post_scalar('date_')))
 	{
 		display_error(_("The entered date for the payment is invalid."));
 		set_focus('date_');

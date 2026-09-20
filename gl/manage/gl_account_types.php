@@ -66,12 +66,12 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
     	if ($selected_id != "") 
     	{
-    		if (update_account_type($_POST['id'], $_POST['name'], $_POST['class_id'], $_POST['parent'], $_POST['old_id']))
+    		if (update_account_type(post_scalar('id'), post_scalar('name'), post_scalar('class_id'), post_scalar('parent'), post_scalar('old_id')))
 				display_notification(_('Selected account type has been updated'));
     	} 
     	else 
     	{
-    		if (add_account_type($_POST['id'], $_POST['name'], $_POST['class_id'], $_POST['parent'])) {
+    		if (add_account_type(post_scalar('id'), post_scalar('name'), post_scalar('class_id'), post_scalar('parent'))) {
 				display_notification(_('New account type has been added'));
 			}
     	}
@@ -124,7 +124,7 @@ if ($Mode == 'RESET')
 //-----------------------------------------------------------------------------------
 $filter_cid = (isset($_POST["cid"]));
 if ($filter_cid)
-	$result = get_account_types(check_value('show_inactive'), $_POST["cid"]);
+	$result = get_account_types(check_value('show_inactive'), post_scalar('cid'));
 else
 	$result = get_account_types(check_value('show_inactive'));
 
@@ -186,7 +186,7 @@ if ($selected_id != "")
  	else
  	{
 		hidden('selected_id', $selected_id);
-		hidden('old_id', $_POST["old_id"]);
+		hidden('old_id', post_scalar('old_id'));
 	}	
 }
 text_row_ex(_("ID:"), 'id', 10);

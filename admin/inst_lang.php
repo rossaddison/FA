@@ -135,7 +135,7 @@ function check_data(): bool
 		display_error(_("Language name, code nor encoding cannot be empty"));
 		return false;
 	}
-	$id = array_search_value($_POST['code'], $installed_languages, 'code');
+	$id = array_search_value(post_scalar('code'), $installed_languages, 'code');
 	if ($id !== null && $installed_languages[$id]['package'] != null) {
 		display_error(_('Standard package for this language is already installed. If you want to install this language manually, uninstall standard language package first.'));
 		return false;

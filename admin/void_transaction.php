@@ -270,7 +270,7 @@ function check_valid_entries(): bool
 		set_focus('trans_no');
 		return false;
 	}
-	if (!is_date($_POST['date_']))
+	if (!is_date(post_scalar('date_')))
 	{
 		display_error(_("The entered date is invalid."));
 		set_focus('date_');

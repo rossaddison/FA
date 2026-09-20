@@ -157,7 +157,7 @@ if ($Mode == 'RESET')
 //--------------------------------------------------------------------------------------------------
 
 if (list_updated('new_stock_id')) {
-	copy_bom_items($_POST['stock_id'], $_POST['new_stock_id']);
+	copy_bom_items(post_scalar('stock_id'), post_scalar('new_stock_id'));
 	$item = get_item($_POST['new_stock_id']);
 	$_POST['stock_id'] = $_POST['new_stock_id'];
 	$Ajax->activate('_page_body');

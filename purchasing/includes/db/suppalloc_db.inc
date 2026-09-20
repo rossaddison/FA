@@ -273,8 +273,8 @@ function get_allocatable_from_supp_transactions(string|int|float|bool|null $supp
 
 function get_sql_for_supplier_allocation_inquiry(): string
 {
- 	$date_after = date2sql($_POST['TransAfterDate']);
- 	$date_to = date2sql($_POST['TransToDate']);
+ 	$date_after = date2sql(post_scalar('TransAfterDate'));
+ 	$date_to = date2sql(post_scalar('TransToDate'));
 
     $sql = "SELECT 
 		trans.type, 
@@ -300,7 +300,7 @@ function get_sql_for_supplier_allocation_inquiry(): string
 		AND ISNULL(v.date_)";
 
    	if ($_POST['supplier_id'] != ALL_TEXT)
-   		$sql .= " AND trans.supplier_id = ".db_escape($_POST['supplier_id']);
+   		$sql .= " AND trans.supplier_id = ".db_escape(post_scalar('supplier_id'));
    	if (isset($_POST['filterType']) && $_POST['filterType'] != ALL_TEXT)
    	{
    		if (($_POST['filterType'] == '1') || ($_POST['filterType'] == '2')) // invoices

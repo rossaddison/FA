@@ -172,7 +172,7 @@ function can_process(): bool
     	return false;
 	}
 
-	if (!is_date($_POST['DefaultReceivedDate']))
+	if (!is_date(post_scalar('DefaultReceivedDate')))
 	{
 		display_error(_("The entered date is invalid."));
 		set_focus('DefaultReceivedDate');

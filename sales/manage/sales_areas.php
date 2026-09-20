@@ -35,12 +35,12 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 	{
     	if ($selected_id != -1) 
     	{
-    		update_sales_area($selected_id, $_POST['description']);
+    		update_sales_area($selected_id, post_scalar('description'));
 			$note = _('Selected sales area has been updated');
     	} 
     	else 
     	{
-    		add_sales_area($_POST['description']);
+    		add_sales_area(post_scalar('description'));
 			$note = _('New sales area has been added');
     	}
     

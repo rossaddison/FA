@@ -43,7 +43,7 @@ function can_process(): bool
 
 if ($Mode=='ADD_ITEM' && can_process())
 {
-	add_sales_type($_POST['sales_type'], check_value('tax_included'),
+	add_sales_type(post_scalar('sales_type'), check_value('tax_included'),
 	    input_num('factor'));
 	display_notification(_('New sales type has been added'));
 	$Mode = 'RESET';
@@ -54,7 +54,7 @@ if ($Mode=='ADD_ITEM' && can_process())
 if ($Mode=='UPDATE_ITEM' && can_process())
 {
 
-	update_sales_type($selected_id, $_POST['sales_type'], check_value('tax_included'),
+	update_sales_type($selected_id, post_scalar('sales_type'), check_value('tax_included'),
 	     input_num('factor'));
 	display_notification(_('Selected sales type has been updated'));
 	$Mode = 'RESET';

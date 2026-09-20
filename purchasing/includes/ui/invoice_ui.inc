@@ -87,7 +87,7 @@ function invoice_header(?supp_trans &$supp_trans): void
 	{
 		$_POST['supplier_id'] = $supp_trans->supplier_id;
 		$supp = $supp_trans->supplier_name." - ".$supp_trans->currency;
-		label_row(_("Supplier:"), $supp.hidden('supplier_id', $_POST['supplier_id'], false));
+		label_row(_("Supplier:"), $supp.hidden('supplier_id', post_scalar('supplier_id'), false));
 	}
 	else
 	{
@@ -99,7 +99,7 @@ function invoice_header(?supp_trans &$supp_trans): void
 		else
 			label_row(_("Supplier:"), $supp_trans->supplier_name
 			.($supp_trans->currency ? ' - '.$supp_trans->currency  : '')
-			.hidden('supplier_id', $_POST['supplier_id'], false));
+			.hidden('supplier_id', post_scalar('supplier_id'), false));
 	}
 	if ($supp_trans->supplier_id != $_POST['supplier_id'])
 	{

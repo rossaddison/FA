@@ -244,8 +244,8 @@ function customer_settings(string|int|float|bool|array|null $selected_id): void
 	} 
 	else 
 	{
-		label_row(_("Customer's Currency:"), $_POST['curr_code']);
-		hidden('curr_code', $_POST['curr_code']);				
+		label_row(_("Customer's Currency:"), post_scalar('curr_code'));
+		hidden('curr_code', post_scalar('curr_code'));				
 	}
 	sales_types_list_row(_("Sales Type/Price List:"), 'sales_type', $_POST['sales_type']);
 

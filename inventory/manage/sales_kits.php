@@ -148,7 +148,7 @@ if ($Mode == 'Delete')
 	// Before removing last component from selected kit check 
 	// if selected kit is not included in any other kit. 
 	// 
-	$other_kits = get_where_used($_POST['item_code']);
+	$other_kits = get_where_used(post_scalar('item_code'));
 	$num_kits = db_num_rows($other_kits);
 
 	$kit = get_item_kit($_POST['item_code']);
