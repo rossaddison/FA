@@ -661,6 +661,7 @@ class selector_crud_view extends simple_crud_view {
 		return $mod;
 	}
 
+	/** @psalm-external-mutation-free */
 	function cancel()
 	{
 		global $Ajax;

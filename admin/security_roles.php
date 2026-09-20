@@ -35,6 +35,7 @@ function comp_areas(string|int|float|bool|array|null $area1, string|int|float|bo
 	return $sec_comp == 0 ? ($area1[2]-$area2[2]) : $sec_comp;
 }
 
+/** @psalm-pure */
 function sort_areas(array $areas): array
 {
 	$old_order = 0;

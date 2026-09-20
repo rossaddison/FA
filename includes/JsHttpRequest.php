@@ -412,6 +412,7 @@ class JsHttpRequest
     /**
      * Decode all %uXXXX entities in string or array (recurrent).
      * String must not contain %XX entities - they are ignored!
+     * @psalm-mutation-free
      */
     function _ucs2EntitiesDecode($data)
     {

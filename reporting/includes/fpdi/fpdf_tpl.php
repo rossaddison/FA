@@ -294,6 +294,7 @@ class FPDF_TPL extends FPDF {
 
     /**
      * Preserve adding Links in Templates ...won't work
+     * @psalm-external-mutation-free
      */
     function Link($x, $y, $w, $h, $link, $spaces=0) {
         if (!is_subclass_of($this, 'TCPDF') && func_num_args() > 5) {
@@ -305,12 +306,14 @@ class FPDF_TPL extends FPDF {
         parent::Link($x, $y, $w, $h, $link, $spaces);
     }
     
+    /** @psalm-external-mutation-free */
     function AddLink() {
         if ($this->_intpl)
             $this->Error('Adding links in templates aren\'t possible!');
         return parent::AddLink();
     }
     
+    /** @psalm-external-mutation-free */
     function SetLink($link, $y=0, $page=-1) {
         if ($this->_intpl)
             $this->Error('Setting links in templates aren\'t possible!');

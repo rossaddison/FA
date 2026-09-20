@@ -277,6 +277,7 @@ class attachments extends simple_crud {
 		}
 	}
 
+	/** @psalm-external-mutation-free */
 	function insert_check() {
 		if (strlen($_POST['description']) == 0) {
 			display_error(_("Description cannot be empty."));

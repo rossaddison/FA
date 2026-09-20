@@ -124,6 +124,7 @@ class contacts extends simple_crud {
 				post_scalar('lang'), post_scalar('notes'), $_POST['assgn'], $this->entity, $this->class);
 	}
 
+	/** @psalm-external-mutation-free */
 	function insert_check() {
 		if (strlen($_POST['name']) == 0) {
 			display_error(_("The contact name cannot be empty."));

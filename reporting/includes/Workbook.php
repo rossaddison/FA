@@ -4368,6 +4368,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @see Spreadsheet_Excel_Writer_Workbook::storeWorkbook()
     * @param array $sheetnames The array of sheetnames from the Workbook this
     *                          worksheet belongs to
+    * @psalm-mutation-free
     */
     function close($sheetnames)
     {
@@ -5040,6 +5041,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param integer $col    The column of the cell we are writing to
     * @param mixed   $token  What we are writing
     * @param mixed   $format The optional format to apply to the cell
+    * @psalm-mutation-free
     */
     function write($row, $col, $token, $format = null)
     {
@@ -5160,6 +5162,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *
     * @access private
     * @param string $data The binary data to append
+     * @psalm-external-mutation-free
     */
     function _append($data)
     {
@@ -5319,6 +5322,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param float   $num    The number to write
     * @param mixed   $format The optional XF format
     * @return integer
+    * @psalm-external-mutation-free
     */
     function writeNumber($row, $col, $num, $format = null)
     {
@@ -5372,6 +5376,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param string  $str    The string to write
     * @param mixed   $format The XF format for the cell
     * @return integer
+    * @psalm-external-mutation-free
     */
     function writeString($row, $col, $str, $format = null)
     {
@@ -5455,6 +5460,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param string  $str    The string to write
     * @param mixed   $format The XF format for the cell
     * @return integer
+    * @psalm-external-mutation-free
     */
     function writeStringBIFF8($row, $col, $str, $format = null)
     {
@@ -5541,6 +5547,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param integer $row    Zero indexed row
     * @param integer $col    Zero indexed column
     * @param string  $note   The note to write
+    * @psalm-external-mutation-free
     */
     function writeNote($row, $col, $note)
     {
@@ -5601,6 +5608,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param integer $row    Zero indexed row
     * @param integer $col    Zero indexed column
     * @param mixed   $format The XF format
+    * @psalm-external-mutation-free
     */
     function writeBlank($row, $col, $format)
     {
@@ -5654,6 +5662,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param string  $formula The formula text string
     * @param mixed   $format  The optional XF format
     * @return integer
+    * @psalm-external-mutation-free
     */
     function writeFormula($row, $col, $formula, $format = null)
     {
@@ -5724,6 +5733,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param string  $string Alternative label
     * @param mixed   $format The cell format
     * @return integer
+    * @psalm-mutation-free
     */
     function writeUrl($row, $col, $url, $string = '', $format = null)
     {
@@ -5747,6 +5757,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param string  $string Alternative label
     * @param mixed   $format The cell format
     * @return integer
+    * @psalm-mutation-free
     */
 
     function _writeUrlRange($row1, $col1, $row2, $col2, $url, $string = '', $format = null)
@@ -5778,6 +5789,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param string  $str    Alternative label
     * @param mixed   $format The cell format
     * @return integer
+    * @psalm-external-mutation-free
     */
     function _writeUrlWeb($row1, $col1, $row2, $col2, $url, $str, $format = null)
     {
@@ -5838,6 +5850,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param string  $str    Alternative label
     * @param mixed   $format The cell format
     * @return integer
+    * @psalm-external-mutation-free
     */
     function _writeUrlInternal($row1, $col1, $row2, $col2, $url, $str, $format = null)
     {
@@ -5904,6 +5917,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param string  $str    Alternative label
     * @param mixed   $format The cell format
     * @return integer
+    * @psalm-external-mutation-free
     */
     function _writeUrlExternal($row1, $col1, $row2, $col2, $url, $str, $format = null)
     {
@@ -6034,6 +6048,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param mixed   $format XF format we are giving to the row
     * @param bool    $hidden The optional hidden attribute
     * @param integer $level  The optional outline level for row, in range [0,7]
+    * @psalm-external-mutation-free
     */
     function setRow($row, $height, $format = null, $hidden = false, $level = 0)
     {
@@ -6115,6 +6130,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * Write BIFF record Window2.
     *
     * @access private
+    * @psalm-external-mutation-free
     */
     function _storeWindow2()
     {
@@ -6255,6 +6271,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @access private
     * @param array $array array containing ($rwFirst,$colFirst,$rwLast,$colLast)
     * @see setSelection()
+    * @psalm-external-mutation-free
     */
     function _storeSelection($array)
     {
@@ -6296,6 +6313,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * Store the MERGEDCELLS record for all ranges of merged cells
     *
     * @access private
+    * @psalm-external-mutation-free
     */
     function _storeMergedCells()
     {
@@ -6384,6 +6402,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     *                     2 => Top row visible
     *                     3 => Leftmost column visible
     *                     4 => Active pane
+    * @psalm-external-mutation-free
     */
     function _storePanes($panes)
     {
@@ -6707,6 +6726,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param integer $first_col First column of the area to merge
     * @param integer $last_row  Last row of the area to merge
     * @param integer $last_col  Last column of the area to merge
+    * @psalm-external-mutation-free
     */
     function mergeCells($first_row, $first_col, $last_row, $last_col)
     {
@@ -7106,6 +7126,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param integer $y1        Distance to top of object
     * @param integer $width     Width of image frame
     * @param integer $height    Height of image frame
+    * @psalm-mutation-free
     */
     function _positionImage($col_start, $row_start, $x1, $y1, $width, $height)
     {
@@ -7226,6 +7247,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * @param integer $dxR  Distance from right of cell
     * @param integer $rwB  Row containing bottom right corner of object
     * @param integer $dyB  Distance from bottom of cell
+    * @psalm-external-mutation-free
     */
     function _storeObjPicture($colL,$dxL,$rwT,$dyT,$colR,$dxR,$rwB,$dyB)
     {
@@ -7385,6 +7407,7 @@ class Spreadsheet_Excel_Writer_Worksheet extends Spreadsheet_Excel_Writer_BIFFwr
     * simplicity we will store all fractions with a numerator of 100.
     *
     * @access private
+    * @psalm-external-mutation-free
     */
     function _storeZoom()
     {
