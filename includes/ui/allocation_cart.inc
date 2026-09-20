@@ -44,6 +44,7 @@ class allocation
 
 	function __construct($type, $trans_no, $person_id = null, $person_type_id=null)
 	{
+		/** @var array<int, allocation_item> */
 		$this->allocs = array();
 		
 		$this->trans_no = $trans_no;
@@ -160,6 +161,7 @@ class allocation
 		for this customer/supplier. First get the transactions that have 
 		outstanding balances ie Total-alloc >0 */
 
+		/** @var array<int, allocation_item> */
 		$this->allocs = array();
 		if ((bool)$this->person_id)
 		{

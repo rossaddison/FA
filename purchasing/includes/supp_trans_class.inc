@@ -102,7 +102,9 @@ class supp_trans
 	{
 		$this->trans_type = $trans_type;
 		$this->trans_no = $trans_no;
+ 		/** @var array<int, grn_item> */
  		$this->grn_items = array();
+ 		/** @var array<int, gl_codes> */
  		$this->gl_codes = array();
 		if ($trans_no) {
 			read_supp_invoice($trans_no, $trans_type, $this);
@@ -181,7 +183,9 @@ class supp_trans
 		unset($this->gl_codes);
 		$this->ov_amount = $this->ov_discount = $this->supplier_id = 0;
 
+		/** @var array<int, grn_item> */
 		$this->grn_items = array();
+		/** @var array<int, gl_codes> */
 		$this->gl_codes = array();
 	}
 

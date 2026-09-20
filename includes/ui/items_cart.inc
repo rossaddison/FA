@@ -262,6 +262,7 @@ class items_cart
 		$this->line_items = array();
 
     	unset($this->gl_items);
+		/** @var array<int, gl_item> */
 		$this->gl_items = array();
 
 	}
