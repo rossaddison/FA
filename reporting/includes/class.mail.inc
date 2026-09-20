@@ -40,6 +40,10 @@ class email
      */
     var $boundary = "";
     var $headers = array();
+
+    /**
+     * @var string
+     */
     var $subject = "";
 
     /**

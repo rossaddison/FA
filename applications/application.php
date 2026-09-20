@@ -21,7 +21,14 @@ define('MENU_SYSTEM', 'menu_system');
 
     class menu_item
 	{
+		/**
+		 * @var null|string
+		 */
 		var $label;
+
+		/**
+		 * @var null|string
+		 */
 		var $link;
 		
 		/**
@@ -38,6 +45,9 @@ define('MENU_SYSTEM', 'menu_system');
 
 	class menu 
 	{
+		/**
+		 * @var null|string
+		 */
 		var $title;
 		var $items;
 		
@@ -85,6 +95,9 @@ define('MENU_SYSTEM', 'menu_system');
 
 	class module 
 	{
+		/**
+		 * @var null|string
+		 */
 		var $name;
 		var $icon;
 		var $lappfunctions;
@@ -129,7 +142,14 @@ define('MENU_SYSTEM', 'menu_system');
 
 	class application 
 	{
+		/**
+		 * @var null|string
+		 */
 		var $id;
+
+		/**
+		 * @var null|string
+		 */
 		var $name;
 		var $help_context;
 		var $modules;

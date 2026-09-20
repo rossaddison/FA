@@ -19,6 +19,10 @@ class contacts extends simple_crud {
 	var $id;
 	var $entity;
 	var $sub_class;
+
+	/**
+	 * @var null|string
+	 */
 	var $class;
 	
 	/**

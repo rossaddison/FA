@@ -13,8 +13,15 @@
 //	Template for simple table editors
 //
 class simple_crud {
+	/**
+	 * @var null|string
+	 */
 	var $name;
 	var $Mode;
+
+	/**
+	 * @var string
+	 */
 	var $selected_id;
 
 	/**
@@ -31,7 +38,15 @@ class simple_crud {
 	 * @var string[]
 	 */
 	var $views;
+
+	/**
+	 * @var array
+	 */
 	var $data = array();
+
+	/**
+	 * @var array|null
+	 */
 	var $fields;
 	var $tool_buttons;
 	var $options;

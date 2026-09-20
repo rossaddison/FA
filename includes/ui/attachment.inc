@@ -18,6 +18,10 @@ class attachments extends simple_crud {
 	var $selected_id;
 	var $entity;
 	var $sub_class;
+
+	/**
+	 * @var null|string
+	 */
 	var $class;
 	
 	/**

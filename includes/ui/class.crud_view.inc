@@ -268,6 +268,10 @@ class simple_crud_view extends user_view {
 	var $name;
 		// object status:
 	var $Mode = 'RESET';
+
+	/**
+	 * @var null|string
+	 */
 	var $selected_id;
 	var $prev_id;
 

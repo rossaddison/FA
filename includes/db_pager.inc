@@ -22,9 +22,24 @@ class db_pager {
 	var $name;
 	var $columns;		// column definitions (head, type, order)
 
+	/**
+	 * @var null|string
+	 */
 	var $marker;		// marker check function
+
+	/**
+	 * @var null|string
+	 */
 	var $marker_txt;	
+
+	/**
+	 * @var null|string
+	 */
 	var $marker_class;
+
+	/**
+	 * @var null|string
+	 */
 	var $notice_class;
 
 	/**
@@ -48,6 +63,10 @@ class db_pager {
 	 * @var float|int
 	 */
 	var $max_page;
+
+	/**
+	 * @var float|int|null
+	 */
 	var $last_page;
 	var $prev_page;
 	var $next_page;

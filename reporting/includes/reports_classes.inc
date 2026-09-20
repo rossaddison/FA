@@ -499,7 +499,14 @@ class BoxReports
 
 class Report
 {
+	/**
+	 * @var int|null
+	 */
 	var $id;
+
+	/**
+	 * @var null|string
+	 */
 	var $name;
 	var $ar_params;
 	var $controls;
