@@ -251,7 +251,7 @@ function copy_to_cart(): void
 	$cart->due_date =  $_POST['due_date'];
 	if (((bool)$cart->pos['cash_sale'] || (bool)$cart->pos['credit_sale']) && isset($_POST['payment'])) {
 		$cart->payment = $_POST['payment'];
-		$cart->payment_terms = get_payment_terms($_POST['payment']);
+		$cart->payment_terms = get_payment_terms(post_scalar('payment'));
 	}
 	if (session_obj('Items')->trans_no == 0)
 		$cart->reference = $_POST['ref'];

@@ -240,7 +240,7 @@ function check_trans(): int
 		set_focus('code_id');
 		$input_error = 1;
 	}
-	if ($trans = check_bank_account_history($amnt_chg, $_POST['bank_account'], $_POST['date_'])) {
+	if ($trans = check_bank_account_history($amnt_chg, post_scalar('bank_account'), $_POST['date_'])) {
 
 		if (isset($trans['trans_no'])) {
 			display_error(sprintf(_("The bank transaction would result in exceed of authorized overdraft limit for transaction: %s #%s on %s."),
@@ -276,7 +276,7 @@ function check_trans(): int
 		set_focus('person_id');
 		$input_error = 1;
 	}
-	if (!db_has_currency_rates(get_bank_account_currency($_POST['bank_account']), $_POST['date_'], true))
+	if (!db_has_currency_rates(get_bank_account_currency(post_scalar('bank_account')), $_POST['date_'], true))
 		$input_error = 1;
 
 	if (isset($_POST['settled_amount']) && in_array(get_post('PayType'), array(PT_SUPPLIER, PT_CUSTOMER)) && (input_num('settled_amount') <= 0)) {

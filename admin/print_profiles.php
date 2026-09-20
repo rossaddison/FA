@@ -103,7 +103,7 @@ if ( get_post('submit'))
 		if ($_POST['profile_id']=='')
 			$_POST['profile_id'] = get_post('name');
 		
-		update_printer_profile($_POST['profile_id'], $prof);
+		update_printer_profile(post_scalar('profile_id'), $prof);
 		if ($selected_id == '') {
 			display_notification_centered(_('New printing profile has been created')); 
 			clear_form($selected_id);

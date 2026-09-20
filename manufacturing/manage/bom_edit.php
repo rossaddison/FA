@@ -100,7 +100,7 @@ function on_submit(string|int|float|bool|null $selected_parent, mixed $selected_
 
 	if ($selected_component != -1)
 	{
-		update_bom($selected_parent, $selected_component, $_POST['workcentre_added'], $_POST['loc_code'],
+		update_bom($selected_parent, $selected_component, post_scalar('workcentre_added'), post_scalar('loc_code'),
 			input_num('quantity'));
 		display_notification(_('Selected component has been updated'));
 		$Mode = 'RESET';
@@ -113,15 +113,15 @@ function on_submit(string|int|float|bool|null $selected_parent, mixed $selected_
 		component form */
 
 		//need to check not recursive bom component of itself!
-		if (!check_for_recursive_bom($selected_parent, $_POST['component']))
+		if (!check_for_recursive_bom($selected_parent, post_scalar('component')))
 		{
 
 			/*Now check to see that the component is not already on the bom */
-			if (!is_component_already_on_bom($_POST['component'], $_POST['workcentre_added'],
-				$_POST['loc_code'], $selected_parent))
+			if (!is_component_already_on_bom(post_scalar('component'), post_scalar('workcentre_added'),
+				post_scalar('loc_code'), $selected_parent))
 			{
-				add_bom($selected_parent, $_POST['component'], $_POST['workcentre_added'],
-					$_POST['loc_code'], input_num('quantity'));
+				add_bom($selected_parent, post_scalar('component'), post_scalar('workcentre_added'),
+					post_scalar('loc_code'), input_num('quantity'));
 				display_notification(_("A new component part has been added to the bill of material for this item."));
 				$Mode = 'RESET';
 			}
@@ -159,7 +159,7 @@ if ($Mode == 'RESET')
 
 if (list_updated('new_stock_id')) {
 	copy_bom_items(post_scalar('stock_id'), post_scalar('new_stock_id'));
-	$item = row_or_empty(get_item($_POST['new_stock_id']));
+	$item = row_or_empty(get_item(post_scalar('new_stock_id')));
 	$_POST['stock_id'] = $_POST['new_stock_id'];
 	ajax()->activate('_page_body');
 	display_notification(_("BOM copied to ") . (string)$item['description']);

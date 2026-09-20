@@ -72,7 +72,7 @@ function round_to_nearest(string|int|float|bool|null $price, string|int|float|bo
 
 }
 
-function get_price (string|int|float|bool|array|null $stock_id, string|int|float|bool|array|null $currency, string|int|float|bool|array|null $sales_type_id, string|int|float|bool|null $factor=null, string|int|float|bool|array|null $date=null)
+function get_price (string|int|float|bool|null $stock_id, string|int|float|bool|null $currency, string|int|float|bool|array|null $sales_type_id, string|int|float|bool|null $factor=null, string|int|float|bool|array|null $date=null)
 {
 	if ($date == null)
 	    $date = new_doc_date();
@@ -338,7 +338,7 @@ function get_sales_child_numbers(?int $trans_type, string|int|float|bool|array|n
 /**
  * @return bool|mysqli_result
  */
-function get_sales_parent_lines(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no, bool $lines=true)
+function get_sales_parent_lines(string|int|float|bool|null $trans_type, string|int|float|bool|null $trans_no, bool $lines=true)
 {
 	$partype = get_parent_type($trans_type);
 

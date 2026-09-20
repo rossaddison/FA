@@ -55,7 +55,7 @@ function write_supp_trans(string|int|float|bool|null $type, ?int $trans_no, stri
 /**
  * @return array<array-key, null|string>|false
  */
-function get_supp_trans(string|int|float|bool|array|null $trans_no, string|int|float|bool|array|null $trans_type=-1, string|int|float|bool|array|null $supplier_id=null)
+function get_supp_trans(string|int|float|bool|null $trans_no, string|int|float|bool|null $trans_type=-1, string|int|float|bool|null $supplier_id=null)
 {
 	$sql = "SELECT trans.*, (trans.ov_amount+trans.ov_gst+trans.ov_discount) AS Total,
 		supplier.supp_name AS supplier_name, supplier.curr_code AS curr_code ";
@@ -162,7 +162,7 @@ function get_supp_payment_before(string|int|float|bool|null $supplier_id, string
 
 //----------------------------------------------------------------------------------------
 
-function exists_supp_trans(string|int|float|bool|array|null $type, string|int|float|bool|array|null $type_no): bool
+function exists_supp_trans(string|int|float|bool|null $type, string|int|float|bool|null $type_no): bool
 {
 	if ($type == ST_SUPPRECEIVE)
 		return exists_grn($type_no);
@@ -219,7 +219,7 @@ function post_void_supp_trans(string|int|float|bool|null $type, string|int|float
 
 //----------------------------------------------------------------------------------------
 
-function get_sql_for_supplier_inquiry(string|array|null $filter, string|array|null $after_date, string|array|null $to_date, string|int|float|bool|array|null $supplier_id=ALL_TEXT): string
+function get_sql_for_supplier_inquiry(string|array|null $filter, string|array|null $after_date, string|array|null $to_date, string|int|float|bool|null $supplier_id=ALL_TEXT): string
 {
     $date_after = date2sql($after_date);
     $date_to = date2sql($to_date);

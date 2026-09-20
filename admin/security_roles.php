@@ -110,7 +110,7 @@ if (get_post('addupdate'))
        	{
 			update_security_role(post_scalar('role'), post_scalar('name'), post_scalar('description'), 
 				$sections, $areas); 
-			update_record_status($_POST['role'], get_post('inactive'),
+			update_record_status(post_scalar('role'), get_post('inactive'),
 				'security_roles', 'id');
 
 	  		display_notification(_("Security role has been updated."));

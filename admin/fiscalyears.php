@@ -78,7 +78,7 @@ function handle_submit()
 			open_year($selected_id);
 		if ($ok)
 		{
-   			update_fiscalyear($selected_id, $_POST['closed']);
+   			update_fiscalyear($selected_id, post_scalar('closed'));
 			display_notification(_('Selected fiscal year has been updated'));
 		}	
 	}
@@ -86,7 +86,7 @@ function handle_submit()
 	{
 		if (!check_data())
 			return false;
-   		add_fiscalyear($_POST['from_date'], $_POST['to_date'], $_POST['closed']);
+   		add_fiscalyear($_POST['from_date'], $_POST['to_date'], post_scalar('closed'));
 		display_notification(_('New fiscal year has been added'));
 	}
 	$Mode = 'RESET';

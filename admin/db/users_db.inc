@@ -14,7 +14,7 @@
  * @return bool|mysqli_result
  */
 function add_user(string|int|float|bool|null $user_id, string|int|float|bool|null $real_name, ?string $password, string|int|float|bool|null $phone, string|int|float|bool|null $email, string|int|float|bool|null $role_id, 
-	string|int|float|bool|null $language, string|int|float|bool|null $profile, int|array|null $rep_popup, mixed $pos)
+	string|int|float|bool|null $language, string|int|float|bool|null $profile, int|null $rep_popup, mixed $pos)
 {
 	$sql = "INSERT INTO ".TB_PREF."users (user_id, real_name, password"
 		.", phone, email, role_id, language, pos, print_profile, rep_popup)
@@ -97,7 +97,7 @@ function get_users(int|bool|array|null $all=false)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_user(string|int|float|bool|array|null $id)
+function get_user(string|int|float|bool|null $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."users WHERE id=".db_escape($id);
 

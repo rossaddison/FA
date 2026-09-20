@@ -41,7 +41,7 @@ function check_data(string|int|float|bool|array|null $selected_id): bool
 		set_focus('BuyRate');
 		return false;
 	}
-	if (!(bool)$selected_id && (bool)get_date_exchange_rate($_POST['curr_abrev'], $_POST['date_']))
+	if (!(bool)$selected_id && (bool)get_date_exchange_rate(post_scalar('curr_abrev'), $_POST['date_']))
 	{
 		display_error( _("The exchange rate for the date is already there."));
 		set_focus('date_');
@@ -62,13 +62,13 @@ function handle_submit()
 	if ($selected_id != "")
 	{
 
-		update_exchange_rate($_POST['curr_abrev'], $_POST['date_'],
+		update_exchange_rate(post_scalar('curr_abrev'), $_POST['date_'],
 		input_num('BuyRate'), input_num('BuyRate'));
 	}
 	else
 	{
 
-		add_exchange_rate($_POST['curr_abrev'], $_POST['date_'],
+		add_exchange_rate(post_scalar('curr_abrev'), $_POST['date_'],
 		    input_num('BuyRate'), input_num('BuyRate'));
 	}
 

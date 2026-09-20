@@ -128,7 +128,7 @@ function prt_link(array|false|null $row)
 
 
 $sql = get_sql_for_search_dimensions($dim, $_POST['FromDate'], $_POST['ToDate'],
-	post_scalar('OrderNumber'), $_POST['type_'], check_value('OpenOnly'), check_value('OverdueOnly'));
+	post_scalar('OrderNumber'), post_scalar('type_'), check_value('OpenOnly'), check_value('OverdueOnly'));
 
 $cols = array(
 	_("#") => array('fun'=>'view_link'), 

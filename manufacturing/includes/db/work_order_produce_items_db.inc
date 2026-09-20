@@ -132,7 +132,7 @@ function get_work_order_productions(string|int|float|bool|null $woid)
 
 //--------------------------------------------------------------------------------------
 
-function exists_work_order_produce(string|int|float|bool|array|null $id): bool
+function exists_work_order_produce(string|int|float|bool|null $id): bool
 {
 	$sql = "SELECT id FROM ".TB_PREF."wo_manufacture WHERE id=".db_escape($id);
 	$result = db_select($sql, "Cannot retreive a wo production");

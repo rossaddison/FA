@@ -12,7 +12,7 @@
 require_once($path_to_root. "/admin/db/attachments_db.inc");
 // ------------------------------------------------------------------------------
 
-function get_supplier_details_to_order(?purch_order &$order, string|array|null $supplier_id): void
+function get_supplier_details_to_order(?purch_order &$order, string|null $supplier_id): void
 {
 	$sql = "SELECT curr_code, supp_name, tax_group_id, supp.tax_included, dimension_id, dimension2_id,
 			supp.credit_limit - Sum((ov_amount + ov_gst + ov_discount)) as cur_credit,
@@ -302,7 +302,7 @@ function get_po_items(string|int|float|bool|null $order_no)
 /**
  * @return mysqli_result
  */
-function get_short_info(string|array|null $stock_id)
+function get_short_info(string|null $stock_id)
 {
 	$sql = "SELECT description, units, mb_flag
 		FROM ".TB_PREF."stock_master WHERE stock_id = ".db_escape($stock_id);
@@ -313,8 +313,8 @@ function get_short_info(string|array|null $stock_id)
 /**
  * @return non-falsy-string
  */
-function get_sql_for_po_search_completed(string|array|null $from, string|array|null $to, string|int|float|bool|array|null $supplier_id=ALL_TEXT, string|int|float|bool|array|null $location=ALL_TEXT,
-	string|array|null $order_number = '', string|array|null $stock_id = '', string|bool|array|null $also_closed=false): string
+function get_sql_for_po_search_completed(string|array|null $from, string|array|null $to, string|int|float|bool|null $supplier_id=ALL_TEXT, string|int|float|bool|null $location=ALL_TEXT,
+	string|array|null $order_number = '', string|null $stock_id = '', string|bool|array|null $also_closed=false): string
 {
 	$sql = "SELECT 
 		porder.order_no, 
@@ -376,7 +376,7 @@ function get_sql_for_po_search_completed(string|array|null $from, string|array|n
 	return $sql;
 }
 
-function get_sql_for_po_search(string|array|null $from, string|array|null $to, string|int|float|bool|array|null $supplier_id=ALL_TEXT, string|int|float|bool|array|null $location=ALL_TEXT, string|int|float|bool|null $order_number='', string|array|null $stock_id=''): string
+function get_sql_for_po_search(string|array|null $from, string|array|null $to, string|int|float|bool|null $supplier_id=ALL_TEXT, string|int|float|bool|null $location=ALL_TEXT, string|int|float|bool|null $order_number='', string|null $stock_id=''): string
 {
 	$sql = "SELECT 
 		porder.order_no, 

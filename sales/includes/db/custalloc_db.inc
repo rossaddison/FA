@@ -50,7 +50,7 @@ function get_cust_allocation(string|int|float|bool|null $trans_id)
 //----------------------------------------------------------------------------------------
 //	Update debtor trans alloc field according to current status of cust_allocations
 //
-function update_debtor_trans_allocation(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $person_id): void
+function update_debtor_trans_allocation(string|int|float|bool|null $trans_type, string|int|float|bool|null $trans_no, string|int|float|bool|null $person_id): void
 {
 	$dec = user_price_dec();
 	$sql = 
@@ -108,7 +108,7 @@ function clear_cust_alloctions(string|int|float|bool|null $type, string|int|floa
 }
 //-------------------------------------------------------------------------------------------------------------
 
-function get_allocatable_from_cust_sql(string|int|float|bool|array|null $customer_id, bool $settled): string
+function get_allocatable_from_cust_sql(string|int|float|bool|null $customer_id, bool $settled): string
 {
 	$sql = "SELECT
 		trans.type,
@@ -142,7 +142,7 @@ function get_allocatable_from_cust_sql(string|int|float|bool|array|null $custome
 	return $sql;
 }
 
-function get_allocatable_sales_orders(string|int|float|bool|null $customer_id = null, string|int|float|bool|array|null $trans_no=null, string|int|float|bool|null $type=null): string
+function get_allocatable_sales_orders(string|int|float|bool|null $customer_id = null, string|int|float|bool|null $trans_no=null, string|int|float|bool|null $type=null): string
 {
 	$sql = "SELECT
 		sorder.trans_type as type,
@@ -189,7 +189,7 @@ function get_allocatable_sales_orders(string|int|float|bool|null $customer_id = 
 /**
  * @return bool|mysqli_result
  */
-function get_allocatable_to_cust_transactions(string|int|float|bool|null $customer_id = null, string|int|float|bool|array|null $trans_no=null, string|int|float|bool|null $type=null)
+function get_allocatable_to_cust_transactions(string|int|float|bool|null $customer_id = null, string|int|float|bool|null $trans_no=null, string|int|float|bool|null $type=null)
 {
 	$sql = "SELECT
 		trans.type,
@@ -253,7 +253,7 @@ function get_allocatable_to_cust_transactions(string|int|float|bool|null $custom
 /**
  * @return bool|mysqli_result
  */
-function get_allocatable_from_cust_transactions(string|int|float|bool|null $customer_id, string|int|float|bool|array|null $trans_no=null, string|int|float|bool|null $type=null)
+function get_allocatable_from_cust_transactions(string|int|float|bool|null $customer_id, string|int|float|bool|null $trans_no=null, string|int|float|bool|null $type=null)
 {
 
 	$sql = "SELECT
@@ -296,7 +296,7 @@ function get_allocatable_from_cust_transactions(string|int|float|bool|null $cust
 	return db_query($sql." ORDER BY trans_no", "Cannot retreive alloc to transactions");
 }
 
-function get_sql_for_customer_allocation_inquiry(string|array|null $from, string|array|null $to, string|array|null $customer, string|array|null $filterType, int|array|null $settled): string
+function get_sql_for_customer_allocation_inquiry(string|array|null $from, string|array|null $to, string|null $customer, string|array|null $filterType, int|array|null $settled): string
 {
   	$data_after = date2sql($from);
   	$date_to = date2sql($to);

@@ -104,7 +104,7 @@ function trans_qty(?string $stock_id, string|array|null $location, string|array|
 
 }
 
-function avg_unit_cost(?string $stock_id, string|array|null $location, string|array|null $to_date)
+function avg_unit_cost(?string $stock_id, string|null $location, string|array|null $to_date)
 {
 	if ($to_date == null)
 		$to_date = Today();
@@ -146,7 +146,7 @@ function avg_unit_cost(?string $stock_id, string|array|null $location, string|ar
 
 //----------------------------------------------------------------------------------------------------
 
-function trans_qty_unit_cost(?string $stock_id, string|array|null $location, string|array|null $from_date, string|array|null $to_date, bool $inward = true)
+function trans_qty_unit_cost(?string $stock_id, string|null $location, string|array|null $from_date, string|array|null $to_date, bool $inward = true)
 {
 	if ($from_date == null)
 		$from_date = Today();

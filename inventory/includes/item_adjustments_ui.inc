@@ -87,7 +87,7 @@ function display_adjustment_items(?string $title, items_cart &$order): void
 			$dec = get_qty_dec($stock_item->stock_id);
     		if (!$order->fixed_asset)
 			{
-				$qoh = get_qoh_on_date($stock_item->stock_id, $_POST['StockLocation']);
+				$qoh = get_qoh_on_date($stock_item->stock_id, post_scalar('StockLocation'));
 				qty_cell($qoh, false, $dec);
 			}
     		qty_cell($stock_item->quantity, false, $dec);
@@ -180,7 +180,7 @@ function adjustment_edit_item_controls(items_cart &$order, string|int|float|bool
 		hidden('qty', -1);
 		qty_cell(1, false, 0);
 	} else {
-		$qoh = get_qoh_on_date(get_post('stock_id'), $_POST['StockLocation']);
+		$qoh = get_qoh_on_date(get_post('stock_id'), post_scalar('StockLocation'));
 		qty_cell($qoh, false, $dec);
 		label_cell( text_input('qty', get_post('qty', '0'), 15, 15, '',  'class="amount active" dec='.$dec), "nowrap align=right");
 	}
@@ -189,7 +189,7 @@ function adjustment_edit_item_controls(items_cart &$order, string|int|float|bool
 	if ($order->fixed_asset) {
 		hidden('std_cost');
 		label_cell(post_scalar('std_cost'), "nowrap align=right ", 'std_cost_view');
-		$price = get_purchase_value($_POST['stock_id']);
+		$price = get_purchase_value(post_scalar('stock_id'));
 		amount_cell($price, false, '', 'initial_price');
 	} else {
 		if (get_post('_qty_changed')) {

@@ -13,7 +13,7 @@ require_once($path_to_root. "/includes/ui/items_cart.inc");
 require_once($path_to_root. "/admin/db/attachments_db.inc");
 
 // fiscal year routines
-function add_fiscalyear(string|array|null $from_date, string|array|null $to_date, string|array|null $closed): void
+function add_fiscalyear(string|array|null $from_date, string|array|null $to_date, string|null $closed): void
 {
 	$from = date2sql($from_date);
 	$to = date2sql($to_date);
@@ -24,7 +24,7 @@ function add_fiscalyear(string|array|null $from_date, string|array|null $to_date
 	db_query($sql, "could not add fiscal year");
 }
 
-function update_fiscalyear(string|int|float|bool|null $id, string|array|null $closed): void
+function update_fiscalyear(string|int|float|bool|null $id, string|null $closed): void
 {
 	$sql = "UPDATE ".TB_PREF."fiscal_year SET closed=".db_escape($closed)."
 		WHERE id=".db_escape($id);

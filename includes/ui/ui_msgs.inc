@@ -56,7 +56,7 @@ function display_note(string|int|float|bool|null $msg, ?int $br=0, ?int $br2=0, 
 		echo "<br>";
 }
 
-function stock_item_heading(string|int|float|bool|array|null $stock_id): void
+function stock_item_heading(string|int|float|bool|null $stock_id): void
 {
 	if ($stock_id != "") 
 	{

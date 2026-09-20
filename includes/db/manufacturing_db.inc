@@ -13,7 +13,7 @@
 /**
  * @return 0|null|string
  */
-function get_demand_qty(string|int|float|bool|null $stock_id, string|int|float|bool|array|null $location)
+function get_demand_qty(string|int|float|bool|null $stock_id, string|int|float|bool|null $location)
 {
 	$sql = "SELECT SUM(line.quantity - line.qty_sent) AS QtyDemand
 			FROM ".TB_PREF."sales_order_details line,
@@ -104,7 +104,7 @@ function stock_demand_manufacture(string|int|float|bool|null $stock_id, string|i
 }
 
 // recursion fixed by Tom Moulton
-function get_demand_asm_qty(string|int|float|bool|null $stock_id, string|int|float|bool|array|null $location) 
+function get_demand_asm_qty(string|int|float|bool|null $stock_id, string|int|float|bool|null $location) 
 {
 	$demand_qty = 0.0;
 	$sql = "SELECT line.stk_code, SUM(line.quantity-line.qty_sent) AS Demmand
@@ -130,7 +130,7 @@ function get_demand_asm_qty(string|int|float|bool|null $stock_id, string|int|flo
 /**
  * @return 0|null|string
  */
-function get_on_porder_qty(string|int|float|bool|null $stock_id, string|array|null $location)
+function get_on_porder_qty(string|int|float|bool|null $stock_id, string|null $location)
 {
 	$sql = "SELECT SUM(line.quantity_ordered - line.quantity_received) AS qoo
 		FROM ".TB_PREF."purch_order_details line 
@@ -156,7 +156,7 @@ function get_on_porder_qty(string|int|float|bool|null $stock_id, string|array|nu
 /**
  * @return float(0)|null|string
  */
-function get_on_worder_qty(string|int|float|bool|null $stock_id, string|array|null $location)
+function get_on_worder_qty(string|int|float|bool|null $stock_id, string|null $location)
 {
  	$qoo = 0.0;
 	$flag = get_mb_flag($stock_id);
@@ -182,7 +182,7 @@ function get_on_worder_qty(string|int|float|bool|null $stock_id, string|array|nu
 
 //--------------------------------------------------------------------------------------
 
-function add_bom(string|int|float|bool|null $selected_parent, string|array|null $component, string|array|null $workcentre_added, string|array|null $loc_code, int|float|bool|null $quantity): void
+function add_bom(string|int|float|bool|null $selected_parent, string|null $component, string|null $workcentre_added, string|null $loc_code, int|float|bool|null $quantity): void
 {
 	$sql = "INSERT INTO ".TB_PREF."bom (parent, component, workcentre_added, loc_code, quantity)
 		VALUES (".db_escape($selected_parent).", ".db_escape($component) . ","
@@ -193,7 +193,7 @@ function add_bom(string|int|float|bool|null $selected_parent, string|array|null 
 }
 //--------------------------------------------------------------------------------------
 
-function update_bom(string|int|float|bool|null $selected_parent, mixed $selected_component, string|array|null $workcentre_added, string|array|null $loc_code, int|float|bool|null $quantity): void
+function update_bom(string|int|float|bool|null $selected_parent, mixed $selected_component, string|null $workcentre_added, string|null $loc_code, int|float|bool|null $quantity): void
 {
 	$sql = "UPDATE ".TB_PREF."bom SET workcentre_added=".db_escape($workcentre_added)
 	 . ",loc_code=".db_escape($loc_code) . ",
@@ -205,7 +205,7 @@ function update_bom(string|int|float|bool|null $selected_parent, mixed $selected
 	db_query($sql,"could not update bom");
 }
 	
-function delete_bom(string|int|float|bool|array|null $selected_id): void
+function delete_bom(string|int|float|bool|null $selected_id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."bom WHERE id=".db_escape($selected_id);
 	db_query($sql,"Could not delete this bom components");
@@ -237,7 +237,7 @@ function get_bom(mixed $item)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_component_from_bom(string|int|float|bool|array|null $selected_id)
+function get_component_from_bom(string|int|float|bool|null $selected_id)
 {
 	$sql = "SELECT bom.*, item.description
 		FROM ".TB_PREF."bom bom,"
@@ -259,7 +259,7 @@ function has_bom(mixed $item): bool
 
 //--------------------------------------------------------------------------------------
 
-function is_component_already_on_bom(string|array|null $component, string|array|null $workcentre_added, string|array|null $loc_code, string|int|float|bool|null $selected_parent): bool
+function is_component_already_on_bom(string|null $component, string|null $workcentre_added, string|null $loc_code, string|int|float|bool|null $selected_parent): bool
 {
 	$sql = "SELECT component
 		FROM ".TB_PREF."bom
@@ -274,7 +274,7 @@ function is_component_already_on_bom(string|array|null $component, string|array|
 
 //--------------------------------------------------------------------------------------
 
-function check_for_recursive_bom(string|int|float|bool|null $ultimate_parent, string|array|null $component_to_check): int
+function check_for_recursive_bom(string|int|float|bool|null $ultimate_parent, string|null $component_to_check): int
 {
 
 	/* returns true ie 1 if the bom contains the parent part as a component

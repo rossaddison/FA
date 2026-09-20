@@ -82,7 +82,7 @@ function add_stock_transfer_item(int|float|null $transfer_id, string|int|float|b
 /**
  * @return array<array-key, null|string>|false
  */
-function get_stock_transfer(string|int|float|bool|array|null $trans_no)
+function get_stock_transfer(string|int|float|bool|null $trans_no)
 {
 	// retrieve common data from any two from/to move records
 	$sql = "SELECT loc_from.*, loc_to.*

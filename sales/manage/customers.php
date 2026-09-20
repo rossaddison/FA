@@ -88,12 +88,12 @@ function handle_submit(&$selected_id): void
 		
 	if ($selected_id) 
 	{
-		update_customer($_POST['customer_id'], $_POST['CustName'], $_POST['cust_ref'], $_POST['address'],
-			$_POST['tax_id'], $_POST['curr_code'], $_POST['dimension_id'], $_POST['dimension2_id'],
-			$_POST['credit_status'], $_POST['payment_terms'], (float)input_num('discount') / 100.0, (float)input_num('pymt_discount') / 100.0,
-			input_num('credit_limit'), $_POST['sales_type'], $_POST['notes']);
+		update_customer(post_scalar('customer_id'), post_scalar('CustName'), post_scalar('cust_ref'), post_scalar('address'),
+			post_scalar('tax_id'), post_scalar('curr_code'), post_scalar('dimension_id'), post_scalar('dimension2_id'),
+			post_scalar('credit_status'), post_scalar('payment_terms'), (float)input_num('discount') / 100.0, (float)input_num('pymt_discount') / 100.0,
+			input_num('credit_limit'), post_scalar('sales_type'), post_scalar('notes'));
 
-		update_record_status($_POST['customer_id'], $_POST['inactive'],
+		update_record_status(post_scalar('customer_id'), $_POST['inactive'],
 			'debtors_master', 'debtor_no');
 
 		ajax()->activate('customer_id'); // in case of status change
@@ -103,24 +103,24 @@ function handle_submit(&$selected_id): void
 	{ 	//it is a new customer
 
 		begin_transaction();
-		add_customer($_POST['CustName'], $_POST['cust_ref'], $_POST['address'],
-			$_POST['tax_id'], $_POST['curr_code'], $_POST['dimension_id'], $_POST['dimension2_id'],
-			$_POST['credit_status'], $_POST['payment_terms'], (float)input_num('discount') / 100.0, (float)input_num('pymt_discount') / 100.0,
-			input_num('credit_limit'), $_POST['sales_type'], $_POST['notes']);
+		add_customer(post_scalar('CustName'), post_scalar('cust_ref'), post_scalar('address'),
+			post_scalar('tax_id'), post_scalar('curr_code'), post_scalar('dimension_id'), post_scalar('dimension2_id'),
+			post_scalar('credit_status'), post_scalar('payment_terms'), (float)input_num('discount') / 100.0, (float)input_num('pymt_discount') / 100.0,
+			input_num('credit_limit'), post_scalar('sales_type'), post_scalar('notes'));
 
 		$selected_id = $_POST['customer_id'] = db_insert_id();
          
 		if (isset(sysprefs()->auto_create_branch) && sysprefs()->auto_create_branch == 1)
 		{
-        	add_branch($selected_id, $_POST['CustName'], $_POST['cust_ref'],
-                $_POST['address'], $_POST['salesman'], $_POST['area'], $_POST['tax_group_id'], '',
+        	add_branch($selected_id, post_scalar('CustName'), post_scalar('cust_ref'),
+                post_scalar('address'), post_scalar('salesman'), post_scalar('area'), post_scalar('tax_group_id'), '',
                 get_company_pref('default_sales_discount_act'), get_company_pref('debtors_act'), get_company_pref('default_prompt_payment_act'),
-                $_POST['location'], $_POST['address'], 0, $_POST['ship_via'], $_POST['notes'], $_POST['bank_account']);
+                post_scalar('location'), post_scalar('address'), 0, post_scalar('ship_via'), post_scalar('notes'), post_scalar('bank_account'));
                 
         	$selected_branch = db_insert_id();
         
-			add_crm_person($_POST['cust_ref'], $_POST['CustName'], '', $_POST['address'], 
-				$_POST['phone'], $_POST['phone2'], $_POST['fax'], $_POST['email'], '', '');
+			add_crm_person(post_scalar('cust_ref'), post_scalar('CustName'), '', post_scalar('address'), 
+				post_scalar('phone'), post_scalar('phone2'), post_scalar('fax'), post_scalar('email'), '', '');
 
 			$pers_id = db_insert_id();
 			add_crm_contact('cust_branch', 'general', $selected_branch, $pers_id);

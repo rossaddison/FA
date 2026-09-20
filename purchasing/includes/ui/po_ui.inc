@@ -113,7 +113,7 @@ function display_po_header(?purch_order &$order): void
 
 	if ($order->supplier_id != get_post('supplier_id',-1)) {
 		$old_supp = $order->supplier_id;
-		get_supplier_details_to_order($order, $_POST['supplier_id']); 
+		get_supplier_details_to_order($order, post_scalar('supplier_id')); 
 	    get_duedate_from_terms($order);
 		$_POST['due_date'] = $order->due_date;
 
@@ -402,13 +402,13 @@ function po_item_controls(purch_order &$order, int|string|null &$rowcounter, str
 		}
 
 		$dec = 0; $_POST['units'] = '';
-    	$item_info = row_or_empty(get_item_edit_info($_POST['stock_id']));
+    	$item_info = row_or_empty(get_item_edit_info(post_scalar('stock_id')));
     	if ($item_info) {
 			$_POST['units'] = $item_info["units"];
 	   		$dec = $item_info["decimals"];
 	   	}
-   		$_POST['qty'] =	number_format2(get_purchase_conversion_factor ($order->supplier_id, $_POST['stock_id']), $dec);
-		$_POST['price'] = price_decimal_format(get_purchase_price ($order->supplier_id, $_POST['stock_id']), $dec2);
+   		$_POST['qty'] =	number_format2(get_purchase_conversion_factor ($order->supplier_id, post_scalar('stock_id')), $dec);
+		$_POST['price'] = price_decimal_format(get_purchase_price ($order->supplier_id, post_scalar('stock_id')), $dec2);
 		if ($order->trans_type == ST_PURCHORDER)
 			$_POST['req_del_date'] = add_days(Today(), sysprefs()->default_receival_required_by());
 		$qty_rcvd = '';

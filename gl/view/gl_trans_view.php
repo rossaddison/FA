@@ -62,12 +62,12 @@ function display_gl_heading(?array $myrow): void
 	label_cell(sql2date($myrow["doc_date"]), "align='center'");
 	if ($journal)
 	{
-		$header = row_or_empty(get_journal($myrow['type'], $_GET['trans_no']));
+		$header = row_or_empty(get_journal($myrow['type'], get_scalar('trans_no')));
 		label_cell($header["doc_date"] == '0000-00-00' ? '-' : sql2date($header["doc_date"]), "align='center'");
 		label_cell($header["event_date"] == '0000-00-00' ? '-' : sql2date($header["event_date"]), "align='center'");
 	} else
-		label_cell(get_counterparty_name($_GET['type_id'],$_GET['trans_no']));
-	label_cell( get_journal_number($myrow['type'], $_GET['trans_no']), "align='center'");
+		label_cell(get_counterparty_name(get_scalar('type_id'),get_scalar('trans_no')));
+	label_cell( get_journal_number($myrow['type'], get_scalar('trans_no')), "align='center'");
 	end_row();
 
 	start_row();

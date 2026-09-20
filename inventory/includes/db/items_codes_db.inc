@@ -13,7 +13,7 @@
 	item_codes table is used to store both multiply foreign codes (aliases) and 
 	sales kits definition.
 */
-function update_item_code(string|int|float|bool|null $id, string|int|float|bool|array|null $item_code, string|int|float|bool|array|null $stock_id, string|int|float|bool|null $description, string|int|float|bool|null $category, string|int|float|bool|null $qty, ?int $foreign=0): void
+function update_item_code(string|int|float|bool|null $id, string|int|float|bool|null $item_code, string|int|float|bool|null $stock_id, string|int|float|bool|null $description, string|int|float|bool|null $category, string|int|float|bool|null $qty, ?int $foreign=0): void
 {
 	$sql = "UPDATE ".TB_PREF."item_codes SET
 	 	item_code = ".db_escape($item_code).",
@@ -33,7 +33,7 @@ function update_item_code(string|int|float|bool|null $id, string|int|float|bool|
 	db_query($sql,"an item code could not be updated");
 }
 
-function add_item_code(string|int|float|bool|array|null $item_code, string|int|float|bool|array|null $stock_id, string|int|float|bool|array|null $description, string|int|float|bool|array|null $category, string|int|float|bool|null $qty, ?int $foreign=0): void
+function add_item_code(string|int|float|bool|null $item_code, string|int|float|bool|null $stock_id, string|int|float|bool|null $description, string|int|float|bool|null $category, string|int|float|bool|null $qty, ?int $foreign=0): void
 {
 	$sql = "INSERT INTO ".TB_PREF."item_codes
 			(item_code, stock_id, description, category_id, quantity, is_foreign) 
@@ -88,7 +88,7 @@ function delete_item_kit(string|int|float|bool|null $item_code): void
 /**
  * @return bool|mysqli_result
  */
-function get_item_kit(string|int|float|bool|array|null $item_code)
+function get_item_kit(string|int|float|bool|null $item_code)
 {
 	$sql="SELECT DISTINCT kit.*, item.units, comp.description as comp_name 
 		FROM "
@@ -110,7 +110,7 @@ function get_item_kit(string|int|float|bool|array|null $item_code)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_item_code_dflts(string|int|float|bool|array|null $stock_id)
+function get_item_code_dflts(string|int|float|bool|null $stock_id)
 {
 	$sql = "SELECT units, decimals, description, category_id
 		FROM ".TB_PREF."stock_master,".TB_PREF."item_units
@@ -150,7 +150,7 @@ function check_item_in_kit(string|int|float|bool|null $old_id, string|array|null
 /**
  * @return array<array-key, null|string>|false
  */
-function get_kit_props(string|int|float|bool|array|null $kit_code)
+function get_kit_props(string|int|float|bool|null $kit_code)
 {
 	$sql = "SELECT description, category_id FROM ".TB_PREF."item_codes "
 		. " WHERE item_code=".db_escape($kit_code);
@@ -158,7 +158,7 @@ function get_kit_props(string|int|float|bool|array|null $kit_code)
 	return db_fetch($res);
 }
 
-function update_kit_props(string|array|null $kit_code, string|array|null $name, string|array|null $category): void
+function update_kit_props(string|null $kit_code, string|null $name, string|null $category): void
 {
 	$sql = "UPDATE ".TB_PREF."item_codes SET description="
 		. db_escape($name).",category_id=".db_escape($category)

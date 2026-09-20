@@ -12,7 +12,7 @@
 /**
  * @return mysqli_result
  */
-function get_wo_requirements(string|int|float|bool|array|null $woid)
+function get_wo_requirements(string|int|float|bool|null $woid)
 {
 	$sql = "SELECT req.*, item.description, item.mb_flag, loc.location_name, 
 			center.name AS WorkCentreDescription,

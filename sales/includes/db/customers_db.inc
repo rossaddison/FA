@@ -11,9 +11,9 @@
 ***********************************************************************/
 require_once($path_to_root. "/admin/db/attachments_db.inc");
 
-function add_customer(string|array|null $CustName, string|array|null $cust_ref, string|array|null $address, string|array|null $tax_id, string|array|null $curr_code,
-	string|array|null $dimension_id, string|array|null $dimension2_id, string|array|null $credit_status, string|array|null $payment_terms, int|float|null $discount, int|float|null $pymt_discount, 
-	int|float|bool|null $credit_limit, string|array|null $sales_type, string|array|null $notes): void
+function add_customer(string|null $CustName, string|null $cust_ref, string|null $address, string|null $tax_id, string|null $curr_code,
+	string|null $dimension_id, string|null $dimension2_id, string|null $credit_status, string|null $payment_terms, int|float|null $discount, int|float|null $pymt_discount, 
+	int|float|bool|null $credit_limit, string|null $sales_type, string|null $notes): void
 {
 	$sql = "INSERT INTO ".TB_PREF."debtors_master (name, debtor_ref, address, tax_id,
 		dimension_id, dimension2_id, curr_code, credit_status, payment_terms, discount, 
@@ -28,9 +28,9 @@ function add_customer(string|array|null $CustName, string|array|null $cust_ref, 
 	db_query($sql,"The customer could not be added");
 }
 
-function update_customer(string|array|null $customer_id, string|array|null $CustName, string|array|null $cust_ref, string|array|null $address, string|array|null $tax_id, string|array|null $curr_code,
-	string|array|null $dimension_id, string|array|null $dimension2_id, string|array|null $credit_status, string|array|null $payment_terms, int|float|null $discount, int|float|null $pymt_discount,
-	int|float|bool|null $credit_limit, string|array|null $sales_type, string|array|null $notes): void
+function update_customer(string|null $customer_id, string|null $CustName, string|null $cust_ref, string|null $address, string|null $tax_id, string|null $curr_code,
+	string|null $dimension_id, string|null $dimension2_id, string|null $credit_status, string|null $payment_terms, int|float|null $discount, int|float|null $pymt_discount,
+	int|float|bool|null $credit_limit, string|null $sales_type, string|null $notes): void
 {
 	$sql = "UPDATE ".TB_PREF."debtors_master SET name=" . db_escape($CustName) . ", 
 		debtor_ref=" . db_escape($cust_ref) . ",
@@ -51,7 +51,7 @@ function update_customer(string|array|null $customer_id, string|array|null $Cust
 	db_query($sql,"The customer could not be updated");
 }
 
-function delete_customer(string|int|float|bool|array|null $customer_id): void
+function delete_customer(string|int|float|bool|null $customer_id): void
 {
 	begin_transaction();
 	delete_entity_contacts('customer', $customer_id);
@@ -68,7 +68,7 @@ function delete_customer(string|int|float|bool|array|null $customer_id): void
 /**
  * @return array<array-key, null|string>|false
  */
-function get_customer_details(string|int|float|bool|array|null $customer_id, string|array|null $to=null, string|bool|array|null $all=true)
+function get_customer_details(string|int|float|bool|null $customer_id, string|array|null $to=null, string|bool|array|null $all=true)
 {
 
 	if ($to == null)
@@ -127,7 +127,7 @@ function get_customer_details(string|int|float|bool|array|null $customer_id, str
 /**
  * @return array<array-key, null|string>|false
  */
-function get_customer(string|int|float|bool|array|null $customer_id)
+function get_customer(string|int|float|bool|null $customer_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."debtors_master WHERE debtor_no=".db_escape($customer_id);
 
@@ -139,7 +139,7 @@ function get_customer(string|int|float|bool|array|null $customer_id)
 /**
  * @return false|null|string
  */
-function get_customer_name(string|int|float|bool|array|null $customer_id)
+function get_customer_name(string|int|float|bool|null $customer_id)
 {
 	$sql = "SELECT name FROM ".TB_PREF."debtors_master WHERE debtor_no=".db_escape($customer_id);
 
@@ -153,7 +153,7 @@ function get_customer_name(string|int|float|bool|array|null $customer_id)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_customer_habit(string|array|null $customer_id)
+function get_customer_habit(string|null $customer_id)
 {
 	$sql = "SELECT debtor.pymt_discount, credit_status.dissallow_invoices
 			FROM ".TB_PREF."debtors_master debtor,"
@@ -211,7 +211,7 @@ function get_customer_by_ref(string|int|float|bool|null $reference)
 
 //----------------------------------------------------------------------------------
 
-function get_customer_currency(string|int|float|bool|array|null $customer_id=null, string|int|float|bool|null $branch_id=null)
+function get_customer_currency(string|int|float|bool|null $customer_id=null, string|int|float|bool|null $branch_id=null)
 {
     $sql = "SELECT curr_code
     	FROM ".TB_PREF."debtors_master cust

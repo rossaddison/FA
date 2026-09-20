@@ -1535,7 +1535,7 @@ function _format_date(array|false|null $row): string
 }
 
 /** @return non-empty-string */
-function bank_reconciliation_list(string|array|null $account, ?string $name, string|int|float|bool|array|null $selected_id=null, bool $submit_on_change=false, string|bool|null $special_option=false)
+function bank_reconciliation_list(string|null $account, ?string $name, string|int|float|bool|array|null $selected_id=null, bool $submit_on_change=false, string|bool|null $special_option=false)
 {
 	$sql = "SELECT reconciled, reconciled FROM ".TB_PREF."bank_trans
 		WHERE bank_act=".db_escape($account)." AND reconciled IS NOT NULL
@@ -2672,7 +2672,7 @@ function refline_list_row(?string $label, ?string $name, ?int $type, string|int|
 //----------------------------------------------------------------------------------------------
 
 /** @return string */
-function subledger_list(string|int|float|bool|null $name, string|int|float|bool|array|null $account, string|int|float|bool|array|null $selected_id=null)
+function subledger_list(string|int|float|bool|null $name, string|int|float|bool|null $account, string|int|float|bool|array|null $selected_id=null)
 {
 
 	$type = is_subledger_account($account);

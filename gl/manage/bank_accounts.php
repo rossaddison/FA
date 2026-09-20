@@ -62,20 +62,20 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
     	{
     		
     		update_bank_account($bank_id, post_scalar('account_code'),
-				$_POST['account_type'], $_POST['bank_account_name'], 
-				$_POST['bank_name'], $_POST['bank_account_number'], 
-    			$_POST['bank_address'], $_POST['BankAccountCurrency'],
-    			$_POST['dflt_curr_act'], $_POST['bank_charge_act']);
+				post_scalar('account_type'), post_scalar('bank_account_name'), 
+				post_scalar('bank_name'), post_scalar('bank_account_number'), 
+    			post_scalar('bank_address'), post_scalar('BankAccountCurrency'),
+    			post_scalar('dflt_curr_act'), post_scalar('bank_charge_act'));
 			ajax()->activate('bank_id'); // in case of status change
 			display_notification(_('Bank account has been updated'));
     	} 
     	else 
     	{
     
-    		add_bank_account(post_scalar('account_code'), $_POST['account_type'], 
-				$_POST['bank_account_name'], $_POST['bank_name'], 
-    			$_POST['bank_account_number'], $_POST['bank_address'], 
-				$_POST['BankAccountCurrency'], $_POST['dflt_curr_act'], $_POST['bank_charge_act']);
+    		add_bank_account(post_scalar('account_code'), post_scalar('account_type'), 
+				post_scalar('bank_account_name'), post_scalar('bank_name'), 
+    			post_scalar('bank_account_number'), post_scalar('bank_address'), 
+				post_scalar('BankAccountCurrency'), post_scalar('dflt_curr_act'), post_scalar('bank_charge_act'));
 			$bank_id = $_POST['bank_id'] = db_insert_id();
 			display_notification(_('New bank account has been added'));
   			ajax()->activate('_page_body');

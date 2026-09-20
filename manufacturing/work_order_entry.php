@@ -208,7 +208,7 @@ function can_process(): bool
         	elseif ($_POST['type'] == WO_UNASSEMBLY)
         	{
         		// if unassembling, check item to unassemble
-                if (check_negative_stock($_POST['stock_id'], -input_num('quantity'), $_POST['StockLocation'], $_POST['date_']))
+                if (check_negative_stock(post_scalar('stock_id'), -input_num('quantity'), post_scalar('StockLocation'), $_POST['date_']))
         		{
         			display_error(_("The selected item cannot be unassembled because there is insufficient stock."));
 					return false;

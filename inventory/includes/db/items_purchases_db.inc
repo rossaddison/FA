@@ -10,8 +10,8 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-function add_item_purchasing_data(string|array|null $supplier_id, string|array|null $stock_id, int|float|bool|null $price,
-	string|array|null $suppliers_uom, int|float|bool|null $conversion_factor, string|array|null $supplier_description): void
+function add_item_purchasing_data(string|null $supplier_id, string|null $stock_id, int|float|bool|null $price,
+	string|null $suppliers_uom, int|float|bool|null $conversion_factor, string|null $supplier_description): void
 {
 	$supp_desc = db_escape($supplier_description);
 	if (strlen($supp_desc) > 50) // to be fixed and removed in 2.5
@@ -26,8 +26,8 @@ function add_item_purchasing_data(string|array|null $supplier_id, string|array|n
 	db_query($sql,"The supplier purchasing details could not be added");
 }
 
-function update_item_purchasing_data(string|int|float|bool|array|null $selected_id, string|array|null $stock_id, int|float|bool|null $price,
-	string|array|null $suppliers_uom, int|float|bool|null $conversion_factor, string|array|null $supplier_description): void
+function update_item_purchasing_data(string|int|float|bool|null $selected_id, string|null $stock_id, int|float|bool|null $price,
+	string|null $suppliers_uom, int|float|bool|null $conversion_factor, string|null $supplier_description): void
 {
 	$supp_desc = db_escape($supplier_description);
 	if (strlen($supp_desc) > 50) // to be fixed and removed in 2.5
@@ -41,7 +41,7 @@ function update_item_purchasing_data(string|int|float|bool|array|null $selected_
 	db_query($sql,"The supplier purchasing details could not be updated");
 }
 
-function delete_item_purchasing_data(string|int|float|bool|array|null $selected_id, string|array|null $stock_id): void
+function delete_item_purchasing_data(string|int|float|bool|null $selected_id, string|null $stock_id): void
 {
 	$sql = "DELETE FROM ".TB_PREF."purch_data WHERE supplier_id=".db_escape($selected_id)."
 		AND stock_id=".db_escape($stock_id);
@@ -51,7 +51,7 @@ function delete_item_purchasing_data(string|int|float|bool|array|null $selected_
 /**
  * @return mysqli_result
  */
-function get_items_purchasing_data(string|int|float|bool|array|null $stock_id)
+function get_items_purchasing_data(string|int|float|bool|null $stock_id)
 {
     $sql = "SELECT pdata.*, supplier.supp_name,	supplier.curr_code
 		FROM ".TB_PREF."purch_data pdata
@@ -64,7 +64,7 @@ function get_items_purchasing_data(string|int|float|bool|array|null $stock_id)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_item_purchasing_data(string|int|float|bool|array|null $selected_id, string|int|float|bool|array|null $stock_id)
+function get_item_purchasing_data(string|int|float|bool|null $selected_id, string|int|float|bool|null $stock_id)
 {
 	$sql = "SELECT pdata.*, supplier.supp_name
 		FROM ".TB_PREF."purch_data pdata

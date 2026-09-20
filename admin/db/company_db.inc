@@ -98,7 +98,7 @@ function add_payment_terms(bool $daysOrFoll, string|int|float|bool|null $terms, 
    	db_query($sql,"The payment term could not be added");
 }
 
-function update_payment_terms(string|int|float|bool|array|null $selected_id, bool $daysOrFoll, string|int|float|bool|null $terms, int|float|bool|null $dayNumber): void
+function update_payment_terms(string|int|float|bool|null $selected_id, bool $daysOrFoll, string|int|float|bool|null $terms, int|float|bool|null $dayNumber): void
 {
 	if ($daysOrFoll) 
 	{
@@ -117,7 +117,7 @@ function update_payment_terms(string|int|float|bool|array|null $selected_id, boo
    	db_query($sql,"The payment term could not be updated");
 }
 
-function delete_payment_terms(string|int|float|bool|array|null $selected_id): void
+function delete_payment_terms(string|int|float|bool|null $selected_id): void
 {
 	$sql="DELETE FROM ".TB_PREF."payment_terms WHERE terms_indicator=".db_escape($selected_id);
 	db_query($sql,"could not delete a payment terms");
@@ -126,7 +126,7 @@ function delete_payment_terms(string|int|float|bool|array|null $selected_id): vo
 /**
  * @return array<array-key, null|string>|false
  */
-function get_payment_terms(string|int|float|bool|array|null $selected_id)
+function get_payment_terms(string|int|float|bool|null $selected_id)
 {
 	$sql = "SELECT *, (t.days_before_due=0) AND (t.day_in_following_month=0) as cash_sale
 	 FROM ".TB_PREF."payment_terms t WHERE terms_indicator=".db_escape($selected_id);
@@ -155,7 +155,7 @@ function get_payment_terms_all(int|array|null $show_inactive)
 /**
  * @return null|string
  */
-function key_in_foreign_table(string|int|float|bool|array|null $id, string|array|null $tables, ?string $stdkey)
+function key_in_foreign_table(string|int|float|bool|null $id, string|array|null $tables, ?string $stdkey)
 {
 
 	if (!is_array($tables))

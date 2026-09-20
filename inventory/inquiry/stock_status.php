@@ -52,7 +52,7 @@ echo "<hr></center>";
 
 set_global_stock_item($_POST['stock_id']);
 
-$mb_flag = get_mb_flag($_POST['stock_id']);
+$mb_flag = get_mb_flag(post_scalar('stock_id'));
 $kitset_or_service = false;
 
 div_start('status_tbl');
@@ -62,7 +62,7 @@ if (is_service($mb_flag))
 	$kitset_or_service = true;
 }
 
-$loc_details = get_loc_details($_POST['stock_id']);
+$loc_details = get_loc_details(post_scalar('stock_id'));
 
 start_table(TABLESTYLE);
 
@@ -88,7 +88,7 @@ while ($myrow = db_fetch($loc_details))
 	$demand_qty = get_demand_qty(post_scalar('stock_id'), $myrow["loc_code"]);
 	$demand_qty += get_demand_asm_qty(post_scalar('stock_id'), $myrow["loc_code"]);
 
-	$qoh = get_qoh_on_date($_POST['stock_id'], $myrow["loc_code"]);
+	$qoh = get_qoh_on_date(post_scalar('stock_id'), $myrow["loc_code"]);
 
 	if ($kitset_or_service == false)
 	{

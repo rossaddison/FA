@@ -350,7 +350,7 @@ function display_order_header(Cart &$order, bool $editable, ?string $date_text):
 		} // changed branch
 		else
 		{
-			$row = row_or_empty(get_customer_to_order($_POST['customer_id']));
+			$row = row_or_empty(get_customer_to_order(post_scalar('customer_id')));
 			if ($row && $row['dissallow_invoices'] == 1)
 				$customer_error = _("The selected customer account is currently on hold. Please contact the credit control personnel to discuss.");
 		}
@@ -403,7 +403,7 @@ function display_order_header(Cart &$order, bool $editable, ?string $date_text):
 		label_row(_("Price List:"), $order->sales_type_name);
 	}
 	if ($order->sales_type != $_POST['sales_type']) {
-		$myrow = row_or_empty(get_sales_type($_POST['sales_type']));
+		$myrow = row_or_empty(get_sales_type(post_scalar('sales_type')));
 		$order->set_sales_type($myrow['id'], $myrow['sales_type'],
 			$myrow['tax_included'], $myrow['factor']);
 		ajax()->activate('sales_type');
@@ -511,7 +511,7 @@ function sales_order_item_controls(Cart &$order, int|string|null &$rowcounter, s
             ajax()->activate('line_total');
         }		
 
-		$item_info = row_or_empty(get_item_edit_info($_POST['stock_id']));
+		$item_info = row_or_empty(get_item_edit_info(post_scalar('stock_id')));
 		$units = ''; $dec = 2;
 		if ($item_info) {
 				$units = $item_info["units"];

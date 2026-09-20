@@ -111,7 +111,7 @@ function issue_edit_item_controls(items_cart &$order, string|int|float|bool|null
 			    ajax()->activate('std_cost');
 		}
 
-    	$item_info = row_or_empty(get_item_edit_info($_POST['stock_id']));
+    	$item_info = row_or_empty(get_item_edit_info(post_scalar('stock_id')));
 
    		$dec = $item_info["decimals"];
    		$_POST['qty'] =	number_format2(0, $dec);

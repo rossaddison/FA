@@ -49,7 +49,7 @@ $_POST['branch_code'] = $selected_id;
 
 if (isset($_GET['SelectedBranch']))
 {
-	$br = row_or_empty(get_branch($_GET['SelectedBranch']));
+	$br = row_or_empty(get_branch(get_scalar('SelectedBranch')));
 	$_POST['customer_id'] = $br['debtor_no'];
 	$selected_id = $_POST['branch_code'] = $br['branch_code'];
 	$Mode = 'Edit';
@@ -82,26 +82,26 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 		begin_transaction();
     	if ($selected_id != -1)
 		{
-			update_branch($_POST['customer_id'], post_scalar('branch_code'), $_POST['br_name'], $_POST['br_ref'],
-				$_POST['br_address'], $_POST['salesman'], $_POST['area'], $_POST['tax_group_id'], $_POST['sales_account'],
-				$_POST['sales_discount_account'], $_POST['receivables_account'], $_POST['payment_discount_account'],
-				$_POST['default_location'], $_POST['br_post_address'], $_POST['group_no'],
-				$_POST['default_ship_via'], $_POST['notes'], $_POST['bank_account']);
+			update_branch(post_scalar('customer_id'), post_scalar('branch_code'), post_scalar('br_name'), post_scalar('br_ref'),
+				post_scalar('br_address'), post_scalar('salesman'), post_scalar('area'), post_scalar('tax_group_id'), post_scalar('sales_account'),
+				post_scalar('sales_discount_account'), post_scalar('receivables_account'), post_scalar('payment_discount_account'),
+				post_scalar('default_location'), post_scalar('br_post_address'), post_scalar('group_no'),
+				post_scalar('default_ship_via'), post_scalar('notes'), post_scalar('bank_account'));
 
 			$note =_('Selected customer branch has been updated');
   		}
 		else
 		{
-			add_branch($_POST['customer_id'], $_POST['br_name'], $_POST['br_ref'],
-				$_POST['br_address'], $_POST['salesman'], $_POST['area'], $_POST['tax_group_id'], $_POST['sales_account'],
-				$_POST['sales_discount_account'], $_POST['receivables_account'], $_POST['payment_discount_account'],
-				$_POST['default_location'], $_POST['br_post_address'], $_POST['group_no'],
-				$_POST['default_ship_via'], $_POST['notes'], $_POST['bank_account']);
+			add_branch(post_scalar('customer_id'), post_scalar('br_name'), post_scalar('br_ref'),
+				post_scalar('br_address'), post_scalar('salesman'), post_scalar('area'), post_scalar('tax_group_id'), post_scalar('sales_account'),
+				post_scalar('sales_discount_account'), post_scalar('receivables_account'), post_scalar('payment_discount_account'),
+				post_scalar('default_location'), post_scalar('br_post_address'), post_scalar('group_no'),
+				post_scalar('default_ship_via'), post_scalar('notes'), post_scalar('bank_account'));
 			$selected_id = db_insert_id();
 
-			add_crm_person($_POST['contact_name'], $_POST['contact_name'], '', $_POST['br_post_address'], 
-				$_POST['phone'], $_POST['phone2'], $_POST['fax'], $_POST['email'], 
-				$_POST['rep_lang'], '');
+			add_crm_person(post_scalar('contact_name'), post_scalar('contact_name'), '', post_scalar('br_post_address'), 
+				post_scalar('phone'), post_scalar('phone2'), post_scalar('fax'), post_scalar('email'), 
+				post_scalar('rep_lang'), '');
 
 			add_crm_contact('cust_branch', 'general', $selected_id, db_insert_id());
 
@@ -120,20 +120,20 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 elseif ($Mode == 'Delete')
 {
 
-	if (branch_in_foreign_table($_POST['customer_id'], post_scalar('branch_code'), 'debtor_trans'))
+	if (branch_in_foreign_table(post_scalar('customer_id'), post_scalar('branch_code'), 'debtor_trans'))
 	{
 		display_error(_("Cannot delete this branch because customer transactions have been created to this branch."));
 
 	}
 	else
 	{
-		if (branch_in_foreign_table($_POST['customer_id'], post_scalar('branch_code'), 'sales_orders'))
+		if (branch_in_foreign_table(post_scalar('customer_id'), post_scalar('branch_code'), 'sales_orders'))
 		{
 			display_error(_("Cannot delete this branch because sales orders exist for it. Purge old sales orders first."));
 		}
 		else
 		{
-			delete_branch($_POST['customer_id'], post_scalar('branch_code'));
+			delete_branch(post_scalar('customer_id'), post_scalar('branch_code'));
 			display_notification(_('Selected customer branch has been deleted'));
 		}
 	}
@@ -180,7 +180,7 @@ function branch_settings(string|int|float|bool|array|null $selected_id, bool $nu
 	{
 	 	if ($Mode == 'Edit' || !isset($_POST['br_name'])) {
 			//editing an existing branch
-			$myrow = row_or_empty(get_cust_branch($_POST['customer_id'], $_POST['branch_code']));
+			$myrow = row_or_empty(get_cust_branch(post_scalar('customer_id'), post_scalar('branch_code')));
 			set_focus('br_name');
 	    	$_POST['branch_code'] = $myrow["branch_code"];
 		    $_POST['br_name']  = $myrow["br_name"];
@@ -204,7 +204,7 @@ function branch_settings(string|int|float|bool|array|null $selected_id, bool $nu
 	}
 	elseif ($Mode != 'ADD_ITEM')
 	{
-		$myrow = row_or_empty(get_default_info_for_branch($_POST['customer_id']));
+		$myrow = row_or_empty(get_default_info_for_branch(post_scalar('customer_id')));
 		if($myrow && !$num_branches) {
 			$_POST['br_name'] = $myrow["name"];
 			$_POST['br_ref'] = $myrow["debtor_ref"];

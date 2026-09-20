@@ -114,14 +114,14 @@ function display_trial_balance(?string $type, ?string $typename): void
 		// If we want to remove the balanced part for the past years, this option removes the common part from from the prev and tot figures.
 		if (@sysprefs()->clear_trial_balance_opening)
 		{
-			$open = row_or_empty(get_balance($account["account_code"], $_POST['Dimension'], $_POST['Dimension2'], $begin,  $begin, false, true));
+			$open = row_or_empty(get_balance($account["account_code"], post_scalar('Dimension'), post_scalar('Dimension2'), $begin,  $begin, false, true));
 			$offset = min($open['debit'], $open['credit']);
 		} else
 			$offset = 0;
 
-		$prev = row_or_empty(get_balance($account["account_code"], $_POST['Dimension'], $_POST['Dimension2'], $begin, $_POST['TransFromDate'], false, false));
-		$curr = row_or_empty(get_balance($account["account_code"], $_POST['Dimension'], $_POST['Dimension2'], $_POST['TransFromDate'], $_POST['TransToDate'], true, true));
-		$tot = row_or_empty(get_balance($account["account_code"], $_POST['Dimension'], $_POST['Dimension2'], $begin, $_POST['TransToDate'], false, true));
+		$prev = row_or_empty(get_balance($account["account_code"], post_scalar('Dimension'), post_scalar('Dimension2'), $begin, $_POST['TransFromDate'], false, false));
+		$curr = row_or_empty(get_balance($account["account_code"], post_scalar('Dimension'), post_scalar('Dimension2'), $_POST['TransFromDate'], $_POST['TransToDate'], true, true));
+		$tot = row_or_empty(get_balance($account["account_code"], post_scalar('Dimension'), post_scalar('Dimension2'), $begin, $_POST['TransToDate'], false, true));
 		if (check_value("NoZero") && !$prev['balance'] && !$curr['balance'] && !$tot['balance'])
 			continue;
 		if (!check_value('GroupTotalOnly'))

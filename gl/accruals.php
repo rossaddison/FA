@@ -155,7 +155,7 @@ if (isset($_POST['go']) || isset($_POST['show']))
 				{
 					alt_table_row_color($k);
 					label_cell($date);
-					label_cell((string)$_POST['acc_act'] . " " . get_gl_account_name($_POST['acc_act']));
+					label_cell((string)$_POST['acc_act'] . " " . get_gl_account_name(post_scalar('acc_act')));
 					if ($dim > 0)
 						label_cell("");
 					if ($dim > 1)
@@ -164,7 +164,7 @@ if (isset($_POST['go']) || isset($_POST['show']))
 					label_cell($memo);
 					alt_table_row_color($k);
 					label_cell($date);
-					label_cell((string)$_POST['res_act'] . " " . get_gl_account_name($_POST['res_act']));
+					label_cell((string)$_POST['res_act'] . " " . get_gl_account_name(post_scalar('res_act')));
 					if ($dim > 0)
 						label_cell(get_dimension_string(post_scalar('dimension_id'), true));
 					if ($dim > 1)

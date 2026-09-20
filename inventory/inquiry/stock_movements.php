@@ -111,7 +111,7 @@ array_push($th, _("Date"), _("Detail"), _("Quantity In"), _("Quantity Out"), _("
 
 table_header($th);
 
-$before_qty = get_qoh_on_date($_POST['stock_id'], $_POST['StockLocation'], add_days($_POST['AfterDate'], -1));
+$before_qty = get_qoh_on_date(post_scalar('stock_id'), post_scalar('StockLocation'), add_days($_POST['AfterDate'], -1));
 
 $after_qty = $before_qty;
 

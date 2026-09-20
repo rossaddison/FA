@@ -14,7 +14,7 @@
 /**
  * @return -1
  */
-function stock_cost_update(string|array|null $stock_id, int|float|bool|null $material_cost, int|float|bool|null $labour_cost, int|float|bool|null $overhead_cost,
+function stock_cost_update(string|null $stock_id, int|float|bool|null $material_cost, int|float|bool|null $labour_cost, int|float|bool|null $overhead_cost,
 	string|bool|null $last_cost, string|array|null $refline, string|array|null $memo_): int
 {
 	$mb_flag = get_mb_flag($stock_id);

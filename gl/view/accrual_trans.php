@@ -43,7 +43,7 @@ if (!isset($_GET['act']) || !isset($_GET['date']))
 	exit;
 }
 
-display_heading($_SESSION['page_title']. " ".get_gl_account_name($_GET['act']));
+display_heading($_SESSION['page_title']. " ".get_gl_account_name(get_scalar('act')));
 
 br();
 

@@ -10,7 +10,7 @@
 	See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-function add_audit_trail(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no, string|int|float|bool|array|null $trans_date, ?string $descr=''): void
+function add_audit_trail(string|int|float|bool|null $trans_type, string|int|float|bool|null $trans_no, string|int|float|bool|array|null $trans_date, ?string $descr=''): void
 {
 	$descr = substr($descr, 0, 60);
 	begin_transaction();
@@ -38,7 +38,7 @@ function add_audit_trail(string|int|float|bool|null $trans_type, string|int|floa
 /**
  * @return bool|mysqli_result
  */
-function get_audit_trail_all(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no)
+function get_audit_trail_all(string|int|float|bool|null $trans_type, string|int|float|bool|null $trans_no)
 {
 	$sql = "SELECT * FROM ".TB_PREF."audit_trail"
 		." WHERE type=".db_escape($trans_type)." AND trans_no="
@@ -47,7 +47,7 @@ function get_audit_trail_all(string|int|float|bool|null $trans_type, string|int|
 	return db_query($sql, "Cannot get all audit info for transaction");
 }
 
-function get_audit_trail_last(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no)
+function get_audit_trail_last(string|int|float|bool|null $trans_type, string|int|float|bool|null $trans_no)
 {
 	$sql = "SELECT * FROM ".TB_PREF."audit_trail"
 		." WHERE type=".db_escape($trans_type).
@@ -114,7 +114,7 @@ function close_transactions(string|array|null $todate): int {
 /**
  * @return 0|false|non-falsy-string
  */
-function get_journal_number(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no): int|false|string {
+function get_journal_number(string|int|float|bool|null $type, string|int|float|bool|null $trans_no): int|false|string {
 
 	$cdate = get_company_pref('gl_closing_date');
 	if (!$cdate)

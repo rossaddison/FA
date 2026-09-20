@@ -66,7 +66,7 @@ if (!isset($_POST['bank_account'])) { // first page call
 	if (isset($_GET['PInvoice'])) {
 		$supp = isset($_POST['supplier_id']) ? $_POST['supplier_id'] : null;
 		//  get date and supplier
-		$inv = get_supp_trans($_GET['PInvoice'], $_GET['trans_type'], $supp);
+		$inv = get_supp_trans(get_scalar('PInvoice'), get_scalar('trans_type'), $supp);
 		if ((bool)$inv) {
 			session_obj('alloc')->person_id = $_POST['supplier_id'] = $inv['supplier_id'];
 			session_obj('alloc')->read();
@@ -152,7 +152,7 @@ function check_inputs(): bool
 	}
 
 	if (isset($_POST['charge']) && input_num('charge') > 0) {
-		$charge_acct = get_bank_charge_account($_POST['bank_account']);
+		$charge_acct = get_bank_charge_account(post_scalar('bank_account'));
 		if (get_gl_account($charge_acct) == false) {
 			display_error(_("The Bank Charge Account has not been set in System and General GL Setup."));
 			set_focus('charge');
@@ -216,7 +216,7 @@ function check_inputs(): bool
 		return false;
 	}
 
-	if (!db_has_currency_rates(get_supplier_currency($_POST['supplier_id']), $_POST['DatePaid'], true))
+	if (!db_has_currency_rates(get_supplier_currency(post_scalar('supplier_id')), $_POST['DatePaid'], true))
 		return false;
 
 	session_obj('alloc')->amount = -input_num('amount');
@@ -315,7 +315,7 @@ start_form();
 	$supplier_currency = session_obj('alloc')->set_person($_POST['supplier_id'], PT_SUPPLIER);
 	if (!$supplier_currency)
 			$supplier_currency = $comp_currency;
-	session_obj('alloc')->currency = $bank_currency = get_bank_account_currency($_POST['bank_account']);
+	session_obj('alloc')->currency = $bank_currency = get_bank_account_currency(post_scalar('bank_account'));
 
 	if ($bank_currency != $supplier_currency) 
 	{
@@ -324,7 +324,7 @@ start_form();
 
 	amount_row(_("Bank Charge:"), 'charge', null, '', $bank_currency);
 
-	$row = row_or_empty(get_supplier($_POST['supplier_id']));
+	$row = row_or_empty(get_supplier(post_scalar('supplier_id')));
 	$_POST['dimension_id'] = @$row['dimension_id'];
 	$_POST['dimension2_id'] = @$row['dimension2_id'];
 	$dim = get_company_pref('use_dimension');

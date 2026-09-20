@@ -29,7 +29,7 @@ include_once($path_to_root . "/sales/includes/sales_db.inc");
 /**
  * @return mysqli_result
  */
-function get_invoice_range(?string $from, ?string $to, string|bool|array|null $currency=false)
+function get_invoice_range(?string $from, ?string $to, string|bool|null $currency=false)
 {
 
 	$ref = (sysprefs()->print_invoice_no() == 1 ? "trans_no" : "reference");

@@ -46,7 +46,7 @@ function add_gl_trans_supplier(string|int|float|bool|null $type, string|int|floa
 
 //----------------------------------------------------------------------------------------
 
-function get_purchase_price(string|int|float|bool|null $supplier_id, string|int|float|bool|array|null $stock_id): float|int
+function get_purchase_price(string|int|float|bool|null $supplier_id, string|int|float|bool|null $stock_id): float|int
 {
 	$sql = "SELECT price, conversion_factor FROM ".TB_PREF."purch_data 
 		WHERE supplier_id = ".db_escape($supplier_id) . " 
@@ -67,7 +67,7 @@ function get_purchase_price(string|int|float|bool|null $supplier_id, string|int|
 /**
  * @return 1|null|string
  */
-function get_purchase_conversion_factor(string|int|float|bool|null $supplier_id, string|int|float|bool|array|null $stock_id)
+function get_purchase_conversion_factor(string|int|float|bool|null $supplier_id, string|int|float|bool|null $stock_id)
 {
 	$sql = "SELECT conversion_factor FROM ".TB_PREF."purch_data 
 		WHERE supplier_id = ".db_escape($supplier_id)." 

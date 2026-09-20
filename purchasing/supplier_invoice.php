@@ -128,7 +128,7 @@ if (isset($_POST['AddGLCodeToTrans'])){
 	ajax()->activate('gl_items');
 	$input_error = false;
 
-	$result = get_gl_account_info($_POST['gl_code']);
+	$result = get_gl_account_info(post_scalar('gl_code'));
 	if (db_num_rows($result) == 0)
 	{
 		display_error(_("The account code entered is not a valid code, this line cannot be added to the transaction."));
@@ -214,7 +214,7 @@ function check_data(): bool
 		return false;
 	}
 
-	if (is_reference_already_there(session_obj('supp_trans')->supplier_id, $_POST['supp_reference'], session_obj('supp_trans')->trans_no))
+	if (is_reference_already_there(session_obj('supp_trans')->supplier_id, post_scalar('supp_reference'), session_obj('supp_trans')->trans_no))
 	{ 	/*Transaction reference already entered */
 		display_error(_("This invoice number has already been entered. It cannot be entered again.") . " (" . (string)$_POST['supp_reference'] . ")");
 		set_focus('supp_reference');

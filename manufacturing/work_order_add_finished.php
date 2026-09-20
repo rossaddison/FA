@@ -58,7 +58,7 @@ if (isset($_GET['AddedID']))
 
 //--------------------------------------------------------------------------------------------------
 
-$wo_details = get_work_order($_POST['selected_id'], true);
+$wo_details = get_work_order(post_scalar('selected_id'), true);
 
 if ($wo_details === false)
 {
@@ -124,7 +124,7 @@ function can_process(array $wo_details): bool
 	if (($_POST['ProductionType'] == 1) && !sysprefs()->allow_negative_stock())
 	{
     	$err = false;
-    	$result = get_wo_requirements($_POST['selected_id']);
+    	$result = get_wo_requirements(post_scalar('selected_id'));
 		while ($row = db_fetch($result))
 		{
 			if ($row['mb_flag'] == 'D') // service, non stock

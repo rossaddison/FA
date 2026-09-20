@@ -153,7 +153,7 @@ if ($Mode == 'Delete')
 	$other_kits = get_where_used(post_scalar('item_code'));
 	$num_kits = db_num_rows($other_kits);
 
-	$kit = get_item_kit($_POST['item_code']);
+	$kit = get_item_kit(post_scalar('item_code'));
 	if ((db_num_rows($kit) == 1) && $num_kits) {
 
 		$msg = _("This item cannot be deleted because it is the last item in the kit used by following kits")
@@ -185,7 +185,7 @@ start_form();
 echo "<center>" . _("Select a sale kit:") . "&nbsp;";
 echo sales_kits_list('item_code', null, _('New kit'), true);
 echo "</center><br>";
-$props = get_kit_props($_POST['item_code']);
+$props = get_kit_props(post_scalar('item_code'));
 
 if (list_updated('item_code')) {
 	if (get_post('item_code') == '')

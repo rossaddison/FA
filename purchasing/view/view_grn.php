@@ -29,7 +29,7 @@ if (!isset($_GET['trans_no']))
 }
 
 $purchase_order = new purch_order;
-read_grn($_GET["trans_no"], $purchase_order);
+read_grn(get_scalar("trans_no"), $purchase_order);
 
 display_heading(_("Purchase Order Delivery") . " #" . (string)$_GET['trans_no']);
 echo "<BR>";

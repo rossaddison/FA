@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_item_location(string|int|float|bool|null $loc_code, string|int|float|bool|null $location_name, string|int|float|bool|null $delivery_address, string|int|float|bool|null $phone, string|int|float|bool|null $phone2, string|int|float|bool|null $fax, string|int|float|bool|null $email, array $contact, int|array|null $fixed_asset = 0): void
+function add_item_location(string|int|float|bool|null $loc_code, string|int|float|bool|null $location_name, string|int|float|bool|null $delivery_address, string|int|float|bool|null $phone, string|int|float|bool|null $phone2, string|int|float|bool|null $fax, string|int|float|bool|null $email, array $contact, int|null $fixed_asset = 0): void
 {
 	$sql = "INSERT INTO ".TB_PREF."locations (loc_code, location_name, delivery_address, phone, phone2, fax, email, contact, fixed_asset)
 		VALUES (".db_escape($loc_code).", ".db_escape($location_name).", ".db_escape($delivery_address).", "
@@ -27,7 +27,7 @@ function add_item_location(string|int|float|bool|null $loc_code, string|int|floa
 
 //------------------------------------------------------------------------------------
 
-function update_item_location(string|int|float|bool|null $loc_code, string|int|float|bool|null $location_name, string|int|float|bool|null $delivery_address, string|int|float|bool|null $phone, string|int|float|bool|null $phone2, string|int|float|bool|null $fax, string|int|float|bool|null $email, array $contact, int|array|null $fixed_asset = 0): void
+function update_item_location(string|int|float|bool|null $loc_code, string|int|float|bool|null $location_name, string|int|float|bool|null $delivery_address, string|int|float|bool|null $phone, string|int|float|bool|null $phone2, string|int|float|bool|null $fax, string|int|float|bool|null $email, array $contact, int|null $fixed_asset = 0): void
 
 {
     $sql = "UPDATE ".TB_PREF."locations SET location_name=".db_escape($location_name).",
@@ -56,7 +56,7 @@ function delete_item_location(string|int|float|bool|null $item_location): void
 /**
  * @return array<array-key, null|string>|false
  */
-function get_item_location(string|int|float|bool|array|null $item_location)
+function get_item_location(string|int|float|bool|null $item_location)
 {
 	$sql="SELECT * FROM ".TB_PREF."locations WHERE loc_code=".db_escape($item_location);
 
@@ -70,7 +70,7 @@ function get_item_location(string|int|float|bool|array|null $item_location)
 /**
  * @return mysqli_result
  */
-function get_item_locations(int|array|null $show_inactive, string|int|array|null $fixed_asset = 0)
+function get_item_locations(int|array|null $show_inactive, string|int|null $fixed_asset = 0)
 {
 	$sql = "SELECT * FROM ".TB_PREF."locations WHERE fixed_asset = ".db_escape($fixed_asset);
 	if (!(bool)$show_inactive) $sql .= " AND !inactive";
@@ -79,7 +79,7 @@ function get_item_locations(int|array|null $show_inactive, string|int|array|null
 
 //------------------------------------------------------------------------------------
 
-function set_reorder_level(string|int|float|bool|array|null $stock_id, ?string $loc_code, int|float|bool|null $reorder_level): void
+function set_reorder_level(string|int|float|bool|null $stock_id, ?string $loc_code, int|float|bool|null $reorder_level): void
 {
 	$sql = "UPDATE ".TB_PREF."loc_stock SET reorder_level = $reorder_level
 		WHERE stock_id = ".db_escape($stock_id)." AND loc_code = ".db_escape($loc_code);
@@ -92,7 +92,7 @@ function set_reorder_level(string|int|float|bool|array|null $stock_id, ?string $
 /**
  * @return mysqli_result
  */
-function get_loc_details(string|int|float|bool|array|null $stock_id, ?int $fixed_asset = 0)
+function get_loc_details(string|int|float|bool|null $stock_id, ?int $fixed_asset = 0)
 {
 	$sql = "SELECT stock.loc_code, stock.location_name, "
 	.db_escape($stock_id)." as stock_id, reorders.reorder_level

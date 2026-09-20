@@ -127,7 +127,7 @@ function change_tpl_flag(string|int|float|bool|null $reconcile_id): bool
 						? ("'".$_POST['bank_date'] ."'") : 'NULL';
 	
 	update_reconciled_values($reconcile_id, $reconcile_value, $_POST['reconcile_date'],
-		input_num('end_balance'), $_POST['bank_account']);
+		input_num('end_balance'), post_scalar('bank_account'));
 		
 	ajax()->activate('reconciled');
 	ajax()->activate('difference');
@@ -147,7 +147,7 @@ function set_tpl_flag(string|int|float|bool|null $reconcile_id): void
 	$reconcile_value =  ("'".$_POST['bank_date'] ."'");
 	
 	update_reconciled_values($reconcile_id, $reconcile_value, $_POST['reconcile_date'],
-		input_num('end_balance'), $_POST['bank_account']);
+		input_num('end_balance'), post_scalar('bank_account'));
 		
 	ajax()->activate('reconciled');
 	ajax()->activate('difference');
@@ -206,7 +206,7 @@ bank_reconciliation_list_cells(_("Bank Statement:"), get_post('bank_account'),
 end_row();
 end_table();
 
-$result = get_max_reconciled(get_post('reconcile_date'), $_POST['bank_account']);
+$result = get_max_reconciled(get_post('reconcile_date'), post_scalar('bank_account'));
 
 if (($row = db_fetch($result)) !== false) {
 	$_POST["reconciled"] = price_format((float)$row["end_balance"]-(float)$row["beg_balance"]);
@@ -218,7 +218,7 @@ if (($row = db_fetch($result)) !== false) {
 		if (get_post('bank_date')) {
 			// if it is the last updated bank statement retrieve ending balance
 
-			$row = row_or_empty(get_ending_reconciled($_POST['bank_account'], $_POST['bank_date']));
+			$row = row_or_empty(get_ending_reconciled(post_scalar('bank_account'), post_scalar('bank_date')));
 			if($row) {
 				$_POST["end_balance"] = price_format($row["ending_reconcile_balance"]);
 			}
@@ -261,7 +261,7 @@ if (!isset($_POST['bank_account']))
 
 $sql = get_sql_for_bank_account_reconcile(get_post('bank_account'), get_post('reconcile_date'));
 
-$act = row_or_empty(get_bank_account($_POST["bank_account"]));
+$act = row_or_empty(get_bank_account(post_scalar("bank_account")));
 display_heading((string)$act['bank_account_name']." - ".(string)$act['bank_curr_code']);
 
 	$cols =

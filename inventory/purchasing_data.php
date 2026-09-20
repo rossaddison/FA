@@ -60,7 +60,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
       	display_error( _("The conversion factor entered was not numeric. The conversion factor is the number by which the price must be divided by to get the unit price in our unit of measure."));
 		set_focus('conversion_factor');
    	}
-   	elseif ($Mode == 'ADD_ITEM' && (bool)get_item_purchasing_data($_POST['supplier_id'], $_POST['stock_id']))
+   	elseif ($Mode == 'ADD_ITEM' && (bool)get_item_purchasing_data(post_scalar('supplier_id'), post_scalar('stock_id')))
    	{
       	$input_error = 1;
       	display_error( _("The purchasing data for this supplier has already been added."));
@@ -70,14 +70,14 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 	{
      	if ($Mode == 'ADD_ITEM') 
        	{
-			add_item_purchasing_data($_POST['supplier_id'], $_POST['stock_id'], input_num('price',0),
-				$_POST['suppliers_uom'], input_num('conversion_factor'), $_POST['supplier_description']);
+			add_item_purchasing_data(post_scalar('supplier_id'), post_scalar('stock_id'), input_num('price',0),
+				post_scalar('suppliers_uom'), input_num('conversion_factor'), post_scalar('supplier_description'));
     		display_notification(_("This supplier purchasing data has been added."));
        	} 
        	else
        	{
-       		update_item_purchasing_data($selected_id, $_POST['stock_id'], input_num('price',0),
-       			$_POST['suppliers_uom'], input_num('conversion_factor'), $_POST['supplier_description']);
+       		update_item_purchasing_data($selected_id, post_scalar('stock_id'), input_num('price',0),
+       			post_scalar('suppliers_uom'), input_num('conversion_factor'), post_scalar('supplier_description'));
     	  	display_notification(_("Supplier purchasing data has been updated."));
        	}
 		$Mode = 'RESET';
@@ -88,7 +88,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 if ($Mode == 'Delete')
 {
-	delete_item_purchasing_data($selected_id, $_POST['stock_id']);
+	delete_item_purchasing_data($selected_id, post_scalar('stock_id'));
 	display_notification(_("The purchasing data item has been sucessfully deleted."));
 	$Mode = 'RESET';
 }
@@ -128,7 +128,7 @@ else
 
 set_global_stock_item($_POST['stock_id']);
 
-$mb_flag = get_mb_flag($_POST['stock_id']);
+$mb_flag = get_mb_flag(post_scalar('stock_id'));
 
 if ($mb_flag == -1)
 {
@@ -138,7 +138,7 @@ if ($mb_flag == -1)
 }
 else
 {
-	$result = get_items_purchasing_data($_POST['stock_id']);
+	$result = get_items_purchasing_data(post_scalar('stock_id'));
   	div_start('price_table');
     if (db_num_rows($result) == 0)
     {
@@ -187,7 +187,7 @@ else
 $dec2 = 6;
 if ($Mode =='Edit')
 {
-	$myrow = row_or_empty(get_item_purchasing_data($selected_id, $_POST['stock_id']));
+	$myrow = row_or_empty(get_item_purchasing_data($selected_id, post_scalar('stock_id')));
 
     $supp_name = $myrow["supp_name"];
     $_POST['price'] = price_decimal_format($myrow["price"], $dec2);

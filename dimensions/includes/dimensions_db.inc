@@ -73,7 +73,7 @@ function delete_dimension(string|int|float|bool|null $id): void
 /**
  * @return array<array-key, null|string>|false
  */
-function get_dimension(string|int|float|bool|array|null $id, bool $allow_null=false)
+function get_dimension(string|int|float|bool|null $id, bool $allow_null=false)
 {
     $sql = "SELECT * FROM ".TB_PREF."dimensions	WHERE id=".db_escape($id);
 
@@ -199,7 +199,7 @@ function get_dimension_balance(string|int|float|bool|null $id, string|array|null
 
 //--------------------------------------------------------------------------------------
 
-function get_sql_for_search_dimensions(string|int|float|bool|null $dim, string|array|null $from, string|array|null $to, string|int|float|bool|null $order='', string|int|array|null $type = -1, int|bool|array|null $open=false, int|bool|array|null $overdue = false): string
+function get_sql_for_search_dimensions(string|int|float|bool|null $dim, string|array|null $from, string|array|null $to, string|int|float|bool|null $order='', string|int|null $type = -1, int|bool|array|null $open=false, int|bool|array|null $overdue = false): string
 {
 	$sql = "SELECT dim.id,
 		dim.reference,

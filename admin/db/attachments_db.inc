@@ -12,7 +12,7 @@
 
 //----------------------------------------------------------------------------------------
 
-function add_attachment(string|bool|array|null $filterType, string|bool|array|null $trans_no, string|bool|array|null $description,
+function add_attachment(string|bool|null $filterType, string|bool|null $trans_no, string|bool|null $description,
 	?string $filename, ?string $unique_name, ?int $filesize, ?string $filetype): void
 {
 	$date = date2sql(Today());
@@ -25,7 +25,7 @@ function add_attachment(string|bool|array|null $filterType, string|bool|array|nu
 }
 //----------------------------------------------------------------------------------------
 
-function update_attachment(string|int|float|bool|array|null $selected_id, string|bool|array|null $filterType, string|bool|array|null $trans_no, string|bool|array|null $description,
+function update_attachment(string|int|float|bool|null $selected_id, string|bool|null $filterType, string|bool|null $trans_no, string|bool|null $description,
 	?string $filename, ?string $unique_name, ?int $filesize, ?string $filetype): void
 {
 	$date = date2sql(Today());
@@ -53,7 +53,7 @@ function delete_attachment(string|int|float|bool|null $id): void
 }
 
 
-function delete_attachments(string|int|float|bool|null $type_no, string|int|float|bool|array|null $trans_no): void
+function delete_attachments(string|int|float|bool|null $type_no, string|int|float|bool|null $trans_no): void
 {
 	$type_no = db_escape($type_no);
 	$trans_no = db_escape($trans_no);
@@ -93,7 +93,7 @@ function get_attachment_string(string|int|float|bool|null $type, string|int|floa
 /**
  * @return bool|mysqli_result
  */
-function get_attached_documents(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no=false)
+function get_attached_documents(string|int|float|bool|null $type, string|int|float|bool|null $trans_no=false)
 {
 	$sql = "SELECT * FROM ".TB_PREF."attachments WHERE type_no=".db_escape($type);
 	if ((bool)$trans_no)
@@ -105,7 +105,7 @@ function get_attached_documents(string|int|float|bool|null $type, string|int|flo
 /**
  * @return array<array-key, null|string>|false
  */
-function get_attachment(string|int|float|bool|array|null $id)
+function get_attachment(string|int|float|bool|null $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."attachments WHERE id=".db_escape($id);
 	$result = db_select($sql, "Could not retrieve attachments");
@@ -126,7 +126,7 @@ function has_attachment(string|int|float|bool|null $type, string|int|float|bool|
 		return $myrow['id'];
 }
 
-function get_sql_for_attached_documents(string|array|null $type, string|int|bool|array|null $id_no): string
+function get_sql_for_attached_documents(string|null $type, string|int|bool|null $id_no): string
 {
     // $_POST['trans_no'] will be used to store the customer_id or supplier_id for them
 	$sql = "SELECT trans_no, description, filename, filesize, filetype, tran_date, id, type_no FROM ".TB_PREF."attachments WHERE type_no=".db_escape($type);

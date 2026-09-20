@@ -142,7 +142,7 @@ function void_customer_payment(string|int|float|bool|null $type, string|int|floa
 /**
  * @return 0|null|string
  */
-function get_cust_bank_charge(?int $type, string|array|null $trans_no)
+function get_cust_bank_charge(?int $type, string|null $trans_no)
 {
 
 	// restore charge amount from amounts in bank currency if possible, otherwise calculate from GL posting with exchange rate used for amount posting

@@ -107,7 +107,7 @@ function invoice_header(?supp_trans &$supp_trans): void
 		// delete all the order items - drastic but necessary because of
 		// change of currency, etc
 		$supp_trans->clear_items();
-		read_supplier_details_to_trans($supp_trans, $_POST['supplier_id']);
+		read_supplier_details_to_trans($supp_trans, post_scalar('supplier_id'));
 		copy_from_trans($supp_trans);
 	}
 

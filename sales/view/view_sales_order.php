@@ -149,7 +149,7 @@ if ($_GET['trans_type'] != ST_SALESQUOTE)
 	$invoices_total = 0.0;
 
 	if (session_obj('View')->prepaid)
-		$result = get_sales_order_invoices($_GET['trans_no']);
+		$result = get_sales_order_invoices(get_scalar('trans_no'));
 	else
 		$result = get_sales_child_documents(ST_CUSTDELIVERY, $dn_numbers);
 

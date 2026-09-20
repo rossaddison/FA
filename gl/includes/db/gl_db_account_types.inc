@@ -94,7 +94,7 @@ function get_account_types(int|bool|array|null $all=false, string|int|float|bool
 /**
  * @return array<array-key, null|string>|false
  */
-function get_account_type(string|int|float|bool|array|null $id)
+function get_account_type(string|int|float|bool|null $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."chart_types WHERE id = ".db_escape($id);
 
@@ -106,7 +106,7 @@ function get_account_type(string|int|float|bool|array|null $id)
 /**
  * @return false|null|string
  */
-function get_account_type_name(string|array|null $id)
+function get_account_type_name(string|null $id)
 {
 	$sql = "SELECT name FROM ".TB_PREF."chart_types WHERE id = ".db_escape($id);
 

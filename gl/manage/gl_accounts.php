@@ -83,13 +83,13 @@ if (isset($_POST['add']) || isset($_POST['update']))
 
     	if ((bool)$selected_account) 
 		{
-			if (get_post('inactive') == 1 && (bool)is_bank_account($_POST['account_code']))
+			if (get_post('inactive') == 1 && (bool)is_bank_account(post_scalar('account_code')))
 			{
 				display_error(_("The account belongs to a bank account and cannot be inactivated."));
 			}
     		elseif (update_gl_account(post_scalar('account_code'), post_scalar('account_name'), 
 				post_scalar('account_type'), post_scalar('account_code2'))) {
-				update_record_status($_POST['account_code'], $_POST['inactive'],
+				update_record_status(post_scalar('account_code'), $_POST['inactive'],
 					'chart_master', 'account_code');
 				update_tag_associations(TAG_ACCOUNT, post_scalar('account_code'), 
 					$_POST['account_tags']);

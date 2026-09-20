@@ -14,7 +14,7 @@ include_once($path_to_root . "/admin/db/attachments_db.inc");
 
 //--------------------------------------------------------------------------------------------------
 
-function read_supplier_details_to_trans(supp_trans &$supp_trans, string|int|float|bool|array|null $supplier_id): void
+function read_supplier_details_to_trans(supp_trans &$supp_trans, string|int|float|bool|null $supplier_id): void
 {
 	$sql = "SELECT supp.supp_name, terms.terms, terms.days_before_due, supp.dimension_id, supp.dimension2_id,
 		terms.day_in_following_month, supp.tax_included,
@@ -434,7 +434,7 @@ function get_po_invoices_credits(string|int|float|bool|null $po_number)
 //
 // Retrieve tax ovverides from tax register.
 //
-function get_tax_overrides(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no): array
+function get_tax_overrides(string|int|float|bool|null $trans_type, string|int|float|bool|null $trans_no): array
 {
 	$tax_overrides = array();
 	$sql = "SELECT amount, tax_type_id as id, rate
@@ -651,13 +651,13 @@ function void_supp_invoice(string|int|float|bool|null $type, string|int|float|bo
 /**
  * @return mysqli_result
  */
-function get_gl_account_info(string|array|null $acc)
+function get_gl_account_info(string|null $acc)
 {
 	$sql = "SELECT account_code, account_name FROM ".TB_PREF."chart_master WHERE account_code=".db_escape($acc);
 	return db_select($sql,"get account information");
 }
 
-function is_reference_already_there(string|int|float|bool|null $supplier_id, string|array|null $supp_reference, string|int|float|bool|null $trans_no=0): bool
+function is_reference_already_there(string|int|float|bool|null $supplier_id, string|null $supp_reference, string|int|float|bool|null $trans_no=0): bool
 {
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."supp_trans WHERE supplier_id="
 		.db_escape($supplier_id) . " AND supp_reference=" 

@@ -102,7 +102,7 @@ if (isset($_GET['NewDelivery']) && is_numeric($_GET['NewDelivery'])) {
 
 page($_SESSION['page_title'], false, false, "", $js);
 
-if (isset($_GET['ModifyOrderNumber']) && (bool)is_prepaid_order_open($_GET['ModifyOrderNumber']))
+if (isset($_GET['ModifyOrderNumber']) && (bool)is_prepaid_order_open(get_scalar('ModifyOrderNumber')))
 {
 	display_error(_("This order cannot be edited because there are invoices or payments related to it, and prepayment terms were used."));
 	end_page(); exit;
@@ -284,7 +284,7 @@ function copy_to_cart(): void
 
 	if (isset($_POST['payment']) && ($cart->payment != $_POST['payment'])) {
 		$cart->payment = $_POST['payment'];
-		$cart->payment_terms = get_payment_terms($_POST['payment']);
+		$cart->payment_terms = get_payment_terms(post_scalar('payment'));
 		$newpayment = true;
 	}
 	if ((bool)$cart->payment_terms['cash_sale']) {

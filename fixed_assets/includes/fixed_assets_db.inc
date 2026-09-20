@@ -10,7 +10,7 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-function process_fixed_asset_depreciation(string|array|null $stock_id, ?array $gl_rows, string|array|null $refline, string|array|null $memo_)
+function process_fixed_asset_depreciation(string|null $stock_id, ?array $gl_rows, string|array|null $refline, string|array|null $memo_)
 {
 
   $row = get_item($stock_id);
@@ -130,7 +130,7 @@ function get_fixed_asset_purchase(string|int|float|bool|null $stock_id)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_fixed_asset_class(string|int|float|bool|array|null $id)
+function get_fixed_asset_class(string|int|float|bool|null $id)
 {
 	$sql="SELECT * FROM ".TB_PREF."stock_fa_class WHERE fa_class_id=".db_escape($id);
 

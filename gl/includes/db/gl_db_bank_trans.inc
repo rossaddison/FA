@@ -15,7 +15,7 @@
 // $amount is in $currency
 // $date_ is display date (non-sql)
 
-function add_bank_trans(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $bank_act, string|int|float|bool|array|null $ref, string|int|float|bool|array|null $date_,
+function add_bank_trans(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $bank_act, string|int|float|bool|null $ref, string|int|float|bool|array|null $date_,
 	string|int|float|bool|null $amount, string|int|float|bool|null $person_type_id, string|int|float|bool|null $person_id, string|int|float|bool|null $currency="", string|int|float|bool|null $err_msg="", ?int $rate=0): void
 {
 	$sqlDate = date2sql($date_);
@@ -49,7 +49,7 @@ function add_bank_trans(string|int|float|bool|null $type, string|int|float|bool|
 
 //----------------------------------------------------------------------------------------
 
-function exists_bank_trans(string|int|float|bool|array|null $type, string|int|float|bool|array|null $type_no): bool
+function exists_bank_trans(string|int|float|bool|null $type, string|int|float|bool|null $type_no): bool
 {
 	$sql = "SELECT trans_no
 		FROM ".TB_PREF."bank_trans
@@ -65,7 +65,7 @@ function exists_bank_trans(string|int|float|bool|array|null $type, string|int|fl
 /**
  * @return mysqli_result
  */
-function get_bank_trans(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no=null, string|int|float|bool|null $person_type_id=null, string|int|float|bool|null $person_id=null)
+function get_bank_trans(string|int|float|bool|null $type, string|int|float|bool|null $trans_no=null, string|int|float|bool|null $person_type_id=null, string|int|float|bool|null $person_id=null)
 {
 	$sql = "SELECT bt.*, act.*,
 		IFNULL(abs(dt.ov_amount), IFNULL(ABS(st.ov_amount), bt.amount)) settled_amount,
@@ -135,7 +135,7 @@ function get_balance_before_for_bank_account(string|int|float|bool|null $bank_ac
 /**
  * @return null|string
  */
-function get_gl_trans_value(string|int|float|bool|null $account, string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no)
+function get_gl_trans_value(string|int|float|bool|null $account, string|int|float|bool|null $type, string|int|float|bool|null $trans_no)
 {
 	$sql = "SELECT SUM(amount)
 		FROM ".TB_PREF."gl_trans
@@ -185,7 +185,7 @@ function void_bank_trans(string|int|float|bool|null $type, string|int|float|bool
 *	$delta_amount - tested change in bank balance at $date.
 * @return array{amount: null|scalar, trans_date?: int|null|string, ...<array-key, null|string>}|null
 **/
-function check_bank_account_history(string|int|float|bool|null $delta_amount, string|array|null $bank_account, string|array|null $date=null, mixed $user=null, int|float|null $balance_offset = 0)
+function check_bank_account_history(string|int|float|bool|null $delta_amount, string|null $bank_account, string|array|null $date=null, mixed $user=null, int|float|null $balance_offset = 0)
 {
 	if ($delta_amount >= 0 && isset($date))
 		 return null;	// amount increase is always safe

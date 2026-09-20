@@ -13,7 +13,7 @@
 /**
  * @return int|null|string
  */
-function add_crm_person(string|int|float|bool|array|null $ref, string|int|float|bool|array|null $name, string|int|float|bool|null $name2, string|int|float|bool|array|null $address, string|int|float|bool|array|null $phone, string|int|float|bool|array|null $phone2, string|int|float|bool|array|null $fax, string|int|float|bool|array|null $email, string|int|float|bool|array|null $lang, string|int|float|bool|null $notes,
+function add_crm_person(string|int|float|bool|null $ref, string|int|float|bool|null $name, string|int|float|bool|null $name2, string|int|float|bool|null $address, string|int|float|bool|null $phone, string|int|float|bool|null $phone2, string|int|float|bool|null $fax, string|int|float|bool|null $email, string|int|float|bool|null $lang, string|int|float|bool|null $notes,
 	?array $cat_ids=null, mixed $entity=null)
 {
 	$sql = "INSERT INTO ".TB_PREF."crm_persons (ref, name, name2, address,
@@ -201,7 +201,7 @@ function delete_entity_contacts(?string $class, mixed $entity): void
 
 //-----------------------------------------------------------------------------------------------
 
-function add_crm_category(string|array|null $type, string|array|null $action, string|array|null $name, string|array|null $description): void
+function add_crm_category(string|null $type, string|null $action, string|null $name, string|null $description): void
 {
 	$sql = "INSERT INTO ".TB_PREF."crm_categories (type, action, name, description)
 		VALUES (".db_escape($type) . ", "
@@ -212,7 +212,7 @@ function add_crm_category(string|array|null $type, string|array|null $action, st
    	db_query($sql,"The insert of the crm category failed");
 }
 
-function update_crm_category(string|int|float|bool|array|null $selected_id, string|array|null $type, string|array|null $action, string|array|null $name, string|array|null $description): void
+function update_crm_category(string|int|float|bool|null $selected_id, string|null $type, string|null $action, string|null $name, string|null $description): void
 {
 	$sql = "UPDATE ".TB_PREF."crm_categories SET ";
 	if ((bool)$type)
@@ -225,7 +225,7 @@ function update_crm_category(string|int|float|bool|array|null $selected_id, stri
    	db_query($sql,"The update of the crm category failed");
 }
 
-function delete_crm_category(string|int|float|bool|array|null $selected_id): void
+function delete_crm_category(string|int|float|bool|null $selected_id): void
 {
 	// preserve system categories
 	$sql="DELETE FROM ".TB_PREF."crm_categories WHERE system=0 AND id=".db_escape($selected_id);
@@ -246,7 +246,7 @@ function get_crm_categories(int|array|null $show_inactive)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_crm_category(string|int|float|bool|array|null $selected_id)
+function get_crm_category(string|int|float|bool|null $selected_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."crm_categories WHERE id=".db_escape($selected_id);
 

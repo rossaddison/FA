@@ -129,8 +129,8 @@ function gl_payment_controls(string|int|float|bool|array|null $trans_no): void
 
 	table_section(2);
 
-	$from_currency = get_bank_account_currency($_POST['FromBankAccount']);
-	$to_currency = get_bank_account_currency($_POST['ToBankAccount']);
+	$from_currency = get_bank_account_currency(post_scalar('FromBankAccount'));
+	$to_currency = get_bank_account_currency(post_scalar('ToBankAccount'));
 	if ($from_currency != "" && $to_currency != "" && $from_currency != $to_currency) 
 	{
 		amount_row(_("Amount:"), 'amount', null, null, $from_currency);
@@ -220,7 +220,7 @@ function check_valid_entries(string|int|float|bool|array|null $trans_no): bool
 		return false;
 		}
 	} else {
-		if (null != ($problemTransaction = check_bank_account_history(-$amnt_tr, $_POST['FromBankAccount'], $_POST['DatePaid']))) {
+		if (null != ($problemTransaction = check_bank_account_history(-$amnt_tr, post_scalar('FromBankAccount'), $_POST['DatePaid']))) {
 			if (!array_key_exists('trans_no', $problemTransaction)) {
 				display_error(sprintf(
 					_("This bank transfer would result in exceeding authorized overdraft limit of the account (%s)"),
@@ -243,7 +243,7 @@ function check_valid_entries(string|int|float|bool|array|null $trans_no): bool
 		set_focus('charge');
 		return false;
 	}
-	if (isset($_POST['charge']) && input_num('charge') > 0 && get_bank_charge_account($_POST['FromBankAccount']) == '') {
+	if (isset($_POST['charge']) && input_num('charge') > 0 && get_bank_charge_account(post_scalar('FromBankAccount')) == '') {
 		display_error(_("The Bank Charge Account has not been set in System and General GL Setup."));
 		set_focus('charge');
 		return false;
@@ -273,10 +273,10 @@ function check_valid_entries(string|int|float|bool|array|null $trans_no): bool
 		return false;
 	}
 
-	if (!db_has_currency_rates(get_bank_account_currency($_POST['FromBankAccount']), $_POST['DatePaid']))
+	if (!db_has_currency_rates(get_bank_account_currency(post_scalar('FromBankAccount')), $_POST['DatePaid']))
 		return false;
 
-	if (!db_has_currency_rates(get_bank_account_currency($_POST['ToBankAccount']), $_POST['DatePaid']))
+	if (!db_has_currency_rates(get_bank_account_currency(post_scalar('ToBankAccount')), $_POST['DatePaid']))
 		return false;
 
     return true;

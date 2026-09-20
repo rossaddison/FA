@@ -53,7 +53,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
    	}
 	elseif($selected_id == -1)
 	{
-		$kit = get_item_kit($_POST['item_code']);
+		$kit = get_item_kit(post_scalar('item_code'));
     	if (db_num_rows($kit)) {
 		  	$input_error = 1;
     	  	display_error( _("This item code is already assigned to stock item or sale kit."));
@@ -65,13 +65,13 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 	{
      	if ($Mode == 'ADD_ITEM') 
        	{
-			add_item_code($_POST['item_code'], $_POST['stock_id'],
-				$_POST['description'], $_POST['category_id'], post_scalar('quantity'), 1); 
+			add_item_code(post_scalar('item_code'), post_scalar('stock_id'),
+				post_scalar('description'), post_scalar('category_id'), post_scalar('quantity'), 1); 
 
     		display_notification(_("New item code has been added."));
        	} else
        	{
-			update_item_code($selected_id, $_POST['item_code'], $_POST['stock_id'],
+			update_item_code($selected_id, post_scalar('item_code'), post_scalar('stock_id'),
 				post_scalar('description'), post_scalar('category_id'), post_scalar('quantity'), 1); 
 
     	  	display_notification(_("Item code has been updated."));
@@ -115,7 +115,7 @@ echo "<hr></center>";
 set_global_stock_item($_POST['stock_id']);
 
 $units = $dec = '';
-$result = get_item_code_dflts($_POST['stock_id']);
+$result = get_item_code_dflts(post_scalar('stock_id'));
 if ((bool)$result) {
 	$dec = $result['decimals'];
 	$units = $result['units'];

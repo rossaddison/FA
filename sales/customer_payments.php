@@ -51,7 +51,7 @@ if (!isset($_POST['bank_account'])) { // first page call
 		//  get date and supplier
 		$type = !isset($_GET['Type']) ? ST_SALESINVOICE : $_GET['Type'];
 		$cust = !isset($_GET['customer_id']) ? null : $_GET['customer_id'];
-		$inv = get_customer_trans($_GET['SInvoice'], $type,  $cust);
+		$inv = get_customer_trans(get_scalar('SInvoice'), $type,  $cust);
 		$dflt_act = row_or_empty(get_default_bank_account($inv['curr_code']));
 		$_POST['bank_account'] = $dflt_act['id'];
 		if ((bool)$inv) {
@@ -183,7 +183,7 @@ function can_process()
 		return false;
 	}
 	if (isset($_POST['charge']) && input_num('charge') > 0) {
-		$charge_acct = get_bank_charge_account($_POST['bank_account']);
+		$charge_acct = get_bank_charge_account(post_scalar('bank_account'));
 		if (get_gl_account($charge_acct) == false) {
 			display_error(_("The Bank Charge Account has not been set in System and General GL Setup."));
 			set_focus('charge');
@@ -215,7 +215,7 @@ function can_process()
 		return false;
 	}
 
-	if (!db_has_currency_rates(get_customer_currency($_POST['customer_id']), $_POST['DateBanked'], true))
+	if (!db_has_currency_rates(get_customer_currency(post_scalar('customer_id')), $_POST['DateBanked'], true))
 		return false;
 
 	session_obj('alloc')->amount = input_num('amount');
@@ -258,7 +258,7 @@ if (get_post('AddPaymentItem') && can_process()) {
 function read_customer_data(): void
 {
 
-	$myrow = row_or_empty(get_customer_habit($_POST['customer_id']));
+	$myrow = row_or_empty(get_customer_habit(post_scalar('customer_id')));
 
 	$_POST['HoldAccount'] = !$myrow ? false : $myrow["dissallow_invoices"];
 	$_POST['pymt_discount'] = !$myrow ? 0 : $myrow["pymt_discount"];
@@ -278,13 +278,13 @@ if (isset($_GET['trans_no']) && $_GET['trans_no'] > 0 )
 	$_POST['trans_no'] = $_GET['trans_no'];
 
 	$new = 0;
-	$myrow = row_or_empty(get_customer_trans($_POST['trans_no'], ST_CUSTPAYMENT));
+	$myrow = row_or_empty(get_customer_trans(post_scalar('trans_no'), ST_CUSTPAYMENT));
 	$_POST['customer_id'] = $myrow["debtor_no"];
 	$_POST['customer_name'] = $myrow["DebtorName"];
 	$_POST['BranchID'] = $myrow["branch_code"];
 	$_POST['bank_account'] = $myrow["bank_act"];
 	$_POST['ref'] =  $myrow["reference"];
-	$charge = get_cust_bank_charge(ST_CUSTPAYMENT, $_POST['trans_no']);
+	$charge = get_cust_bank_charge(ST_CUSTPAYMENT, post_scalar('trans_no'));
 	$_POST['charge'] =  price_format($charge);
 	$_POST['DateBanked'] =  sql2date($myrow['tran_date']);
 	$_POST["amount"] = price_format((float)$myrow['Total'] - (float)$myrow['ov_discount']);
@@ -319,7 +319,7 @@ else {
 	hidden('customer_id', post_scalar('customer_id'));
 }
 
-if (db_customer_has_branches($_POST['customer_id'])) {
+if (db_customer_has_branches(post_scalar('customer_id'))) {
 	customer_branches_list_row(_("Branch:"), $_POST['customer_id'], 'BranchID', null, false, true, true);
 } else {
 	hidden('BranchID', ANY_NUMERIC);
@@ -357,7 +357,7 @@ $comp_currency = get_company_currency();
 $cust_currency = session_obj('alloc')->set_person($_POST['customer_id'], PT_CUSTOMER);
 if (!$cust_currency)
 	$cust_currency = $comp_currency;
-session_obj('alloc')->currency = $bank_currency = get_bank_account_currency($_POST['bank_account']);
+session_obj('alloc')->currency = $bank_currency = get_bank_account_currency(post_scalar('bank_account'));
 
 if ($cust_currency != $bank_currency)
 {
@@ -366,7 +366,7 @@ if ($cust_currency != $bank_currency)
 
 amount_row(_("Bank Charge:"), 'charge', null, '', $bank_currency);
 
-$row = row_or_empty(get_customer($_POST['customer_id']));
+$row = row_or_empty(get_customer(post_scalar('customer_id')));
 $_POST['dimension_id'] = !$row ? 0 : $row['dimension_id'];
 $_POST['dimension2_id'] = !$row ? 0 : $row['dimension2_id'];
 $dim = get_company_pref('use_dimension');

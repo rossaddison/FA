@@ -121,7 +121,7 @@ function check_db_has_tax_groups(?string $msg): void
     }	
 }
 
-function db_customer_has_branches(string|int|float|bool|array|null $customer_id): bool
+function db_customer_has_branches(string|int|float|bool|null $customer_id): bool
 {
 	return check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."cust_branch "
 		."WHERE debtor_no=".db_escape($customer_id));

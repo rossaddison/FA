@@ -43,7 +43,7 @@ function delete_gl_account(string|int|float|bool|null $code): void
 /**
  * @return mysqli_result
  */
-function get_gl_accounts(string|array|null $from=null, string|array|null $to=null, ?string $type=null)
+function get_gl_accounts(string|null $from=null, string|null $to=null, ?string $type=null)
 {
 	$sql = "SELECT coa.*, act_type.name AS AccountTypeName
 		FROM "
@@ -72,7 +72,7 @@ function get_gl_account(string|int|float|bool|null $code)
 	return db_fetch($result);
 }
 
-function is_account_balancesheet(string|int|float|bool|array|null $code): bool
+function is_account_balancesheet(string|int|float|bool|null $code): bool
 {
 	$sql = "SELECT act_class.ctype
 		FROM "
@@ -91,7 +91,7 @@ function is_account_balancesheet(string|int|float|bool|array|null $code): bool
 /**
  * @return null|string
  */
-function get_gl_account_name(string|int|float|bool|array|null $code)
+function get_gl_account_name(string|int|float|bool|null $code)
 {
 	$sql = "SELECT account_name from ".TB_PREF."chart_master WHERE account_code=".db_escape($code);
 
@@ -231,7 +231,7 @@ function gl_account_in_quick_entry_lines(string|int|float|bool|null $acc): bool
 /**
  * @return 0|null|string
  */
-function is_subledger_account(string|int|float|bool|array|null $account)
+function is_subledger_account(string|int|float|bool|null $account)
 {
 	$sql = "SELECT 1 
 		FROM ".TB_PREF."cust_branch
@@ -285,7 +285,7 @@ function get_subaccount_name(?string $code_id, ?string $person_id)
 	return  $row ? $row['ref'] : '';
 }
 
-function gl_account_in_bank_accounts(string|array|null $acc): bool
+function gl_account_in_bank_accounts(string|null $acc): bool
 {
 	$sql= "SELECT COUNT(*) FROM ".TB_PREF."bank_accounts WHERE 
 		account_code=".db_escape($acc);
@@ -306,7 +306,7 @@ function gl_account_in_bank_accounts(string|array|null $acc): bool
 /**
  * @return false|null|string
  */
-function is_bank_account(string|int|float|bool|array|null $account_code)
+function is_bank_account(string|int|float|bool|null $account_code)
 {
 	$sql= "SELECT id FROM ".TB_PREF."bank_accounts WHERE account_code=".db_escape($account_code);
 	$result = db_select($sql, "checking account is bank account");

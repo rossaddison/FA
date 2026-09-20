@@ -16,7 +16,7 @@
 //
 //	Returns table of payments currently allocated to selected transaction.
 //
-function get_payments_for(string|int|float|bool|array|null $trans_no, string|int|float|bool|null $trans_type, string|int|float|bool|null $person_id): array
+function get_payments_for(string|int|float|bool|null $trans_no, string|int|float|bool|null $trans_type, string|int|float|bool|null $person_id): array
 {
 	$allocations = array();
 

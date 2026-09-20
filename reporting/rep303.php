@@ -136,7 +136,7 @@ function barcode_check(?string $code, bool $return_value = false, bool $get_type
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(string|int|array|null $category, string|array|null $location, string|array|null $item_like)
+function getTransactions(string|int|array|null $category, string|array|null $location, string|null $item_like)
 {
 	$sql = "SELECT item.category_id,
 			category.description AS cat_description,

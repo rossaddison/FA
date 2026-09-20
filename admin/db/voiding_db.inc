@@ -137,7 +137,7 @@ function void_transaction(string|int|float|bool|array|null $type, string|int|flo
 /**
  * @return array<array-key, null|string>|false
  */
-function get_voided_entry(string|int|float|bool|array|null $type, string|int|float|bool|array|null $type_no)
+function get_voided_entry(string|int|float|bool|null $type, string|int|float|bool|null $type_no)
 {
 	$sql = "SELECT * FROM ".TB_PREF."voided WHERE type=".db_escape($type)
 		." AND id=".db_escape($type_no);
@@ -149,7 +149,7 @@ function get_voided_entry(string|int|float|bool|array|null $type, string|int|flo
 
 //--------------------------------------------------------------------------------------------------
 
-function add_voided_entry(string|int|float|bool|null $type, string|int|float|bool|null $type_no, string|int|float|bool|null $date_, string|array|null $memo_): void
+function add_voided_entry(string|int|float|bool|null $type, string|int|float|bool|null $type_no, string|int|float|bool|null $date_, string|null $memo_): void
 {
 	$date = date2sql($date_);
 	$sql = "INSERT INTO ".TB_PREF."voided (type, id, date_, memo_)

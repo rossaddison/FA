@@ -37,7 +37,7 @@ function add_journal(string|int|float|bool|null $type, int|float|null $trans_no,
 /**
  * @return bool|mysqli_result
  */
-function update_journal(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $amount, string|int|float|bool|null $tran_date, string|int|float|bool|null $currency, string|int|float|bool|null $reference, string|int|float|bool|null $source_ref='', string|int|float|bool|null $rate=1,
+function update_journal(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $amount, string|int|float|bool|null $tran_date, string|int|float|bool|null $currency, string|int|float|bool|null $reference, string|int|float|bool|null $source_ref='', string|int|float|bool|null $rate=1,
 	 string|int|float|bool|null $event_date='', string|int|float|bool|null $doc_date='')
 {
 	$sql = "UPDATE ".TB_PREF."journal SET "
@@ -57,7 +57,7 @@ function update_journal(string|int|float|bool|null $type, string|int|float|bool|
 /**
  * @return bool|mysqli_result
  */
-function delete_journal(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no)
+function delete_journal(string|int|float|bool|null $type, string|int|float|bool|null $trans_no)
 {
     delete_attachments($type, $trans_no);
 
@@ -70,7 +70,7 @@ function delete_journal(string|int|float|bool|null $type, string|int|float|bool|
 /**
  * @return array<array-key, null|string>|false
  */
-function get_journal(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no)
+function get_journal(string|int|float|bool|null $type, string|int|float|bool|null $trans_no)
 {
 	$sql = "SELECT * FROM ".TB_PREF."journal 
 	   WHERE `type`=".db_escape($type)." AND " ."`trans_no`=".db_escape($trans_no);
@@ -86,7 +86,7 @@ function get_journal(string|int|float|bool|null $type, string|int|float|bool|arr
 /**
  * @return bool|mysqli_result
  */
-function write_cust_journal(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $branch_id, string|int|float|bool|null $date, string|int|float|bool|null $ref, string|int|float|bool|null $amount, string|int|float|bool|null $rate)
+function write_cust_journal(string|int|float|bool|null $trans_type, string|int|float|bool|null $trans_no, string|int|float|bool|null $branch_id, string|int|float|bool|null $date, string|int|float|bool|null $ref, string|int|float|bool|null $amount, string|int|float|bool|null $rate)
 {
 	// we have to select any branch_id for given AR_act - in fact w
 	$sql = "INSERT INTO ".TB_PREF."debtor_trans (trans_no, type, debtor_no, branch_code, tran_date, reference, ov_amount, rate)
@@ -104,7 +104,7 @@ function write_cust_journal(string|int|float|bool|null $trans_type, string|int|f
 /**
  * @return bool|mysqli_result
  */
-function write_supp_journal(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $supp_id, string|int|float|bool|null $date, string|int|float|bool|null $ref, string|int|float|bool|null $amount, string|int|float|bool|null $rate, string|int|float|bool|null $src_ref)
+function write_supp_journal(string|int|float|bool|null $trans_type, string|int|float|bool|null $trans_no, string|int|float|bool|null $supp_id, string|int|float|bool|null $date, string|int|float|bool|null $ref, string|int|float|bool|null $amount, string|int|float|bool|null $rate, string|int|float|bool|null $src_ref)
 {
 	$sql = "INSERT INTO ".TB_PREF."supp_trans (trans_no, type, supplier_id, tran_date, reference, ov_amount, rate, supp_reference)
 		VALUES (".db_escape($trans_no).", ".db_escape($trans_type).", ".db_escape($supp_id).", '".date2sql($date)."',"

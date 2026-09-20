@@ -238,7 +238,7 @@ function voiding_controls()
  		else
  		{
            	if ($_POST['filterType'] == ST_SUPPRECEIVE) { 
-                $result = get_grn_items($_POST['trans_no']);
+                $result = get_grn_items(post_scalar('trans_no'));
                 if (db_num_rows($result) > 0) {
                     while ($myrow = db_fetch($result)) {
                         if (is_inventory_item($myrow["item_code"])) {
@@ -303,7 +303,7 @@ function handle_void_transaction(): void
 {
 	if (check_valid_entries()==true) 
 	{
-		$void_entry = get_voided_entry($_POST['filterType'], $_POST['trans_no']);
+		$void_entry = get_voided_entry(post_scalar('filterType'), post_scalar('trans_no'));
 		if ($void_entry != null) 
 		{
 			display_error(_("The selected transaction has already been voided."), true);

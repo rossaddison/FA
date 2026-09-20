@@ -11,8 +11,8 @@
 ***********************************************************************/
 //---------------------------------------------------------------------------------------------
 
-function update_currency(string|array|null $curr_abrev, string|array|null $symbol, string|array|null $currency, string|array|null $country, 
-	string|array|null $hundreds_name, int|array|null $auto_update): void
+function update_currency(string|null $curr_abrev, string|null $symbol, string|null $currency, string|null $country, 
+	string|null $hundreds_name, int|null $auto_update): void
 {
 	$sql = "UPDATE ".TB_PREF."currencies SET currency=".db_escape($currency)
 		.", curr_symbol=".db_escape($symbol).",	country=".db_escape($country)
@@ -25,8 +25,8 @@ function update_currency(string|array|null $curr_abrev, string|array|null $symbo
 
 //---------------------------------------------------------------------------------------------
 
-function add_currency(string|array|null $curr_abrev, string|array|null $symbol, string|array|null $currency, string|array|null $country, 
-	string|array|null $hundreds_name, int|array|null $auto_update): void
+function add_currency(string|null $curr_abrev, string|null $symbol, string|null $currency, string|null $country, 
+	string|null $hundreds_name, int|null $auto_update): void
 {
 	$sql = "INSERT INTO ".TB_PREF."currencies (curr_abrev, curr_symbol, currency, 
 			country, hundreds_name, auto_update)
@@ -53,7 +53,7 @@ function delete_currency(string|int|float|bool|null $curr_code): void
 /**
  * @return array<array-key, null|string>|false
  */
-function get_currency(string|int|float|bool|array|null $curr_code)
+function get_currency(string|int|float|bool|null $curr_code)
 {
 	$sql = "SELECT * FROM ".TB_PREF."currencies WHERE curr_abrev=".db_escape($curr_code);
 	$result = db_select($sql, "could not get currency $curr_code");

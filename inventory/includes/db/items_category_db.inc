@@ -11,7 +11,7 @@
 ***********************************************************************/
 function add_item_category(string|int|float|bool|null $description, string|int|float|bool|null $tax_type_id, string|int|float|bool|null $sales_account, 
 	string|int|float|bool|null $cogs_account, string|int|float|bool|null $inventory_account, string|int|float|bool|null $adjustment_account, string|int|float|bool|null $wip_account, 
-	string|int|float|bool|null $units, string|int|float|bool|null $mb_flag, string|int|float|bool|null $dim1, string|int|float|bool|null $dim2, int|array|null $no_sale, int|array|null $no_purchase): void
+	string|int|float|bool|null $units, string|int|float|bool|null $mb_flag, string|int|float|bool|null $dim1, string|int|float|bool|null $dim2, int|null $no_sale, int|null $no_purchase): void
 {
 	$sql = "INSERT INTO ".TB_PREF."stock_category (description, dflt_tax_type,
 			dflt_units, dflt_mb_flag, dflt_sales_act, dflt_cogs_act, 
@@ -37,7 +37,7 @@ function add_item_category(string|int|float|bool|null $description, string|int|f
 
 function update_item_category(string|int|float|bool|null $id, string|int|float|bool|null $description, string|int|float|bool|null $tax_type_id, 
 	string|int|float|bool|null $sales_account, string|int|float|bool|null $cogs_account, string|int|float|bool|null $inventory_account, string|int|float|bool|null $adjustment_account, 
-	string|int|float|bool|null $wip_account, string|int|float|bool|null $units, string|int|float|bool|null $mb_flag, string|int|float|bool|null $dim1, string|int|float|bool|null $dim2, int|array|null $no_sale, int|array|null $no_purchase): void
+	string|int|float|bool|null $wip_account, string|int|float|bool|null $units, string|int|float|bool|null $mb_flag, string|int|float|bool|null $dim1, string|int|float|bool|null $dim2, int|null $no_sale, int|null $no_purchase): void
 
 {
 	$sql = "UPDATE ".TB_PREF."stock_category SET "
@@ -88,7 +88,7 @@ function get_item_categories(int|array|null $show_inactive, bool $fixed_asset=fa
 /**
  * @return array<array-key, null|string>|false
  */
-function get_item_category(string|int|float|bool|array|null $id)
+function get_item_category(string|int|float|bool|null $id)
 {
 	$sql="SELECT * FROM ".TB_PREF."stock_category WHERE category_id=".db_escape($id);
 
@@ -100,7 +100,7 @@ function get_item_category(string|int|float|bool|array|null $id)
 /**
  * @return false|null|string
  */
-function get_category_name(string|array|null $id)
+function get_category_name(string|null $id)
 {
 	$sql = "SELECT description FROM ".TB_PREF."stock_category WHERE category_id=".db_escape($id);
 

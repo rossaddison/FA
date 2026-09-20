@@ -12,11 +12,11 @@
 require_once($path_to_root. "/admin/db/attachments_db.inc");
 
 function update_item(string|int|float|bool|null $stock_id, string|int|float|bool|null $description, string|int|float|bool|null $long_description, string|int|float|bool|null $category_id, 
-	string|int|float|bool|null $tax_type_id, string|int|float|bool|array|null $units, string|int|float|bool|array|null $mb_flag, string|int|float|bool|null $sales_account, string|int|float|bool|null $inventory_account, 
+	string|int|float|bool|null $tax_type_id, string|int|float|bool|null $units, string|int|float|bool|null $mb_flag, string|int|float|bool|null $sales_account, string|int|float|bool|null $inventory_account, 
 	string|int|float|bool|null $cogs_account, 	string|int|float|bool|null $adjustment_account, string|int|float|bool|null $wip_account, string|int|float|bool|null $dimension_id, 
-	string|int|float|bool|null $dimension2_id, string|int|float|bool|array|null $no_sale, string|int|float|bool|array|null $editable, string|int|float|bool|array|null $no_purchase,
-	string|int|float|bool|array|null $depreciation_method = 'D', string|int|float|bool|null $depreciation_rate=100, string|int|float|bool|null $depreciation_factor=1,
-	string|int|float|bool|array|null $depreciation_start=null, string|int|float|bool|array|null $fa_class_id=null): void
+	string|int|float|bool|null $dimension2_id, string|int|float|bool|null $no_sale, string|int|float|bool|null $editable, string|int|float|bool|null $no_purchase,
+	string|int|float|bool|null $depreciation_method = 'D', string|int|float|bool|null $depreciation_rate=100, string|int|float|bool|null $depreciation_factor=1,
+	string|int|float|bool|array|null $depreciation_start=null, string|int|float|bool|null $fa_class_id=null): void
 {
 	$sql = "UPDATE ".TB_PREF."stock_master SET long_description=".db_escape($long_description).",
 		description=".db_escape($description).",
@@ -56,11 +56,11 @@ function update_item(string|int|float|bool|null $stock_id, string|int|float|bool
 }
 
 function add_item(string|int|float|bool|null $stock_id, string|int|float|bool|null $description, string|int|float|bool|null $long_description, string|int|float|bool|null $category_id, 
-	string|int|float|bool|null $tax_type_id, string|int|float|bool|null $units, string|int|float|bool|array|null $mb_flag,	string|int|float|bool|null $sales_account, string|int|float|bool|null $inventory_account, 
+	string|int|float|bool|null $tax_type_id, string|int|float|bool|null $units, string|int|float|bool|null $mb_flag,	string|int|float|bool|null $sales_account, string|int|float|bool|null $inventory_account, 
 	string|int|float|bool|null $cogs_account, string|int|float|bool|null $adjustment_account,	string|int|float|bool|null $wip_account, string|int|float|bool|null $dimension_id, 
-	string|int|float|bool|null $dimension2_id, string|int|float|bool|array|null $no_sale, string|int|float|bool|array|null $editable, string|int|float|bool|array|null $no_purchase,
-	string|int|float|bool|array|null $depreciation_method='D', string|int|float|bool|null $depreciation_rate=100,  string|int|float|bool|null $depreciation_factor=1, string|int|float|bool|array|null $depreciation_start=null,
-	string|int|float|bool|array|null $fa_class_id=null): void
+	string|int|float|bool|null $dimension2_id, string|int|float|bool|null $no_sale, string|int|float|bool|null $editable, string|int|float|bool|null $no_purchase,
+	string|int|float|bool|null $depreciation_method='D', string|int|float|bool|null $depreciation_rate=100,  string|int|float|bool|null $depreciation_factor=1, string|int|float|bool|array|null $depreciation_start=null,
+	string|int|float|bool|null $fa_class_id=null): void
 {
 	$sql = "INSERT INTO ".TB_PREF."stock_master (stock_id, description, long_description, category_id,
 		tax_type_id, units, mb_flag, sales_account, inventory_account, cogs_account,
@@ -123,7 +123,7 @@ function delete_item(string|int|float|bool|null $stock_id): void
 /**
  * @return array<string, null|string>|false
  */
-function get_item(string|int|float|bool|array|null $stock_id)
+function get_item(string|int|float|bool|null $stock_id)
 {
 	$sql = "SELECT item.*, taxtype.name AS tax_type_name
 		FROM ".TB_PREF."stock_master item,"
@@ -245,7 +245,7 @@ function get_items_search(string|array|null $description, string|int|float|bool|
 /**
  * @return false|null|string
  */
-function get_item_code_id(string|int|float|bool|array|null $stock_id)
+function get_item_code_id(string|int|float|bool|null $stock_id)
 {
 	$sql = "SELECT ic.id
 		FROM ".TB_PREF."item_codes ic, ".TB_PREF."stock_master sm

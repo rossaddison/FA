@@ -123,7 +123,7 @@ function delete_work_order(string|int|float|bool|null $woid, string|int|float|bo
 /**
  * @return array<array-key, null|string>|false
  */
-function get_work_order(string|int|float|bool|array|null $woid, bool $allow_null=false)
+function get_work_order(string|int|float|bool|null $woid, bool $allow_null=false)
 {
     $sql = "SELECT wo.*,st.description As StockItemName,l.location_name,
     		l.delivery_address,l.email, l.contact, st.inventory_account, st.wip_account
@@ -302,7 +302,7 @@ function void_work_order(string|int|float|bool|null $woid): void
 	commit_transaction();
 }
 
-function get_sql_for_work_orders(?int $outstanding_only, string|array|null $stock_id, string|int|float|bool|array|null $location = ALL_TEXT, string|array|null $order_no='', string|array|null $order_ref = '', int|bool|array|null $overdue = false): string
+function get_sql_for_work_orders(?int $outstanding_only, string|null $stock_id, string|int|float|bool|null $location = ALL_TEXT, string|array|null $order_no='', string|array|null $order_ref = '', int|bool|array|null $overdue = false): string
 {
 	$sql = "SELECT
 		workorder.id,
@@ -364,7 +364,7 @@ function get_sql_for_work_orders(?int $outstanding_only, string|array|null $stoc
 	return $sql;
 }
 
-function get_sql_for_where_used(string|array|null $stock_id): string
+function get_sql_for_where_used(string|null $stock_id): string
 {
 	$sql = "SELECT 
 			bom.parent,

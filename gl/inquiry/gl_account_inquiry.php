@@ -102,7 +102,7 @@ function show_results(): void
 	if (!isset($_POST["account"]))
 		$_POST["account"] = null;
 
-	$act_name = (bool)$_POST["account"] ? get_gl_account_name($_POST["account"]) : "";
+	$act_name = (bool)$_POST["account"] ? get_gl_account_name(post_scalar("account")) : "";
 	$dim = get_company_pref('use_dimension');
 
     /*Now get the transactions  */
@@ -111,7 +111,7 @@ function show_results(): void
     if (!isset($_POST['Dimension2']))
     	$_POST['Dimension2'] = 0;
 	$result = get_gl_transactions($_POST['TransFromDate'], $_POST['TransToDate'], -1,
-    	$_POST["account"], $_POST['Dimension'], $_POST['Dimension2'], null,
+    	post_scalar("account"), post_scalar('Dimension'), post_scalar('Dimension2'), null,
     	input_num('amount_min'), input_num('amount_max'), null, null, $_POST['Memo']);
 
 	$colspan = ($dim == 2 ? "7" : ($dim == 1 ? "6" : "5"));
@@ -148,7 +148,7 @@ function show_results(): void
 	$th = array_merge($first_cols, $account_col, $dim_cols, $remaining_cols);
 			
 	table_header($th);
-	if ($_POST["account"] != null && is_account_balancesheet($_POST["account"]))
+	if ($_POST["account"] != null && is_account_balancesheet(post_scalar("account")))
 		$begin = "";
 	else
 	{
@@ -160,7 +160,7 @@ function show_results(): void
 
 	$bfw = 0;
 	if ($show_balances) {
-	    $bfw = get_gl_balance_from_to($begin, $_POST['TransFromDate'], $_POST["account"], $_POST['Dimension'], $_POST['Dimension2']);
+	    $bfw = get_gl_balance_from_to($begin, $_POST['TransFromDate'], $_POST["account"], post_scalar('Dimension'), post_scalar('Dimension2'));
     	start_row("class='inquirybg'");
     	label_cell("<b>"._("Opening Balance")." - ".(string)$_POST['TransFromDate']."</b>", "colspan=$colspan");
     	display_debit_or_credit_cells($bfw, true);

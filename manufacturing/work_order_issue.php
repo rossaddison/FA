@@ -104,8 +104,8 @@ if (isset($_POST['Process']) && can_process())
 
 	// if failed, returns a stockID
 	$failed_data = add_work_order_issue(session_obj('issue_items')->order_id,
-		$_POST['ref'], $_POST['IssueType'], session_obj('issue_items')->line_items,
-		$_POST['Location'], $_POST['WorkCentre'], post_scalar('date_'), $_POST['memo_']);
+		post_scalar('ref'), $_POST['IssueType'], session_obj('issue_items')->line_items,
+		post_scalar('Location'), post_scalar('WorkCentre'), post_scalar('date_'), $_POST['memo_']);
 
 	if ($failed_data != null) 
 	{

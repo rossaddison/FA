@@ -65,15 +65,15 @@ function handle_submit()
 	if ($selected_id != "") 
 	{
 
-		update_currency($_POST['Abbreviation'], $_POST['Symbol'], $_POST['CurrencyName'], 
-			$_POST['country'], $_POST['hundreds_name'], check_value('auto_update'));
+		update_currency(post_scalar('Abbreviation'), post_scalar('Symbol'), post_scalar('CurrencyName'), 
+			post_scalar('country'), post_scalar('hundreds_name'), check_value('auto_update'));
 		display_notification(_('Selected currency settings has been updated'));
 	} 
 	else 
 	{
 
-		add_currency($_POST['Abbreviation'], $_POST['Symbol'], $_POST['CurrencyName'], 
-			$_POST['country'], $_POST['hundreds_name'], check_value('auto_update'));
+		add_currency(post_scalar('Abbreviation'), post_scalar('Symbol'), post_scalar('CurrencyName'), 
+			post_scalar('country'), post_scalar('hundreds_name'), check_value('auto_update'));
 		display_notification(_('New currency has been added'));
 	}	
 	$Mode = 'RESET';

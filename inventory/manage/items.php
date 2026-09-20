@@ -236,7 +236,7 @@ if (isset($_POST['addupdate']))
 		set_focus('NewStockID');
 
 	}
-	elseif ($new_item && db_num_rows(get_item_kit($_POST['NewStockID'])))
+	elseif ($new_item && db_num_rows(get_item_kit(post_scalar('NewStockID'))))
 	{
 		  	$input_error = 1;
       		display_error( _("This item code is already assigned to stock item or sale kit."));
@@ -274,9 +274,9 @@ if (isset($_POST['addupdate']))
 				get_post('depreciation_method'), input_num('depreciation_rate'), input_num('depreciation_factor'), get_post('depreciation_start', null),
 				get_post('fa_class_id'));
 
-			update_record_status($_POST['NewStockID'], $_POST['inactive'],
+			update_record_status(post_scalar('NewStockID'), $_POST['inactive'],
 				'stock_master', 'stock_id');
-			update_record_status($_POST['NewStockID'], $_POST['inactive'],
+			update_record_status(post_scalar('NewStockID'), $_POST['inactive'],
 				'item_codes', 'item_code');
 			set_focus('stock_id');
 			ajax()->activate('stock_id'); // in case of status change
@@ -394,7 +394,7 @@ function item_settings(&$stock_id, bool $new_item): void
 
 	if ($new_item && (list_updated('category_id') || !isset($_POST['sales_account']))) { // changed category for new item or first page view
 
-		$category_record = row_or_empty(get_item_category($_POST['category_id']));
+		$category_record = row_or_empty(get_item_category(post_scalar('category_id')));
 
 		$_POST['tax_type_id'] = $category_record["dflt_tax_type"];
 		$_POST['units'] = $category_record["dflt_units"];
@@ -437,7 +437,7 @@ function item_settings(&$stock_id, bool $new_item): void
 		array_selector_row(_("Depreciation Method").":", "depreciation_method", null, $depreciation_methods, array('select_submit'=> true));
 
 		if (!isset($_POST['depreciation_rate']) || (list_updated('fa_class_id') || list_updated('depreciation_method'))) {
-			$class_row = row_or_empty(get_fixed_asset_class($_POST['fa_class_id']));
+			$class_row = row_or_empty(get_fixed_asset_class(post_scalar('fa_class_id')));
 			$_POST['depreciation_rate'] = get_post('depreciation_method') == 'N' ? ceil(100.0/(float)$class_row['depreciation_rate'])
 				: $class_row['depreciation_rate'];
 		}

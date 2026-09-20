@@ -57,7 +57,7 @@ function get_all_item_tax_types(int|bool|array|null $also_inactive=false)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_item_tax_type(string|int|float|bool|array|null $id)
+function get_item_tax_type(string|int|float|bool|null $id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."item_tax_types WHERE id=".db_escape($id);
 	

@@ -26,7 +26,7 @@ function get_exchange_rate(string|int|float|bool|null $rate_id)
 /**
  * @return 0|null|string
  */
-function get_date_exchange_rate(string|int|float|bool|array|null $curr_code, string|int|float|bool|array|null $date_)
+function get_date_exchange_rate(string|int|float|bool|null $curr_code, string|int|float|bool|array|null $date_)
 {
 	$date = date2sql($date_);
 	$sql = "SELECT rate_buy
@@ -67,7 +67,7 @@ function get_last_exchange_rate(string|int|float|bool|null $curr_code, string|in
 
 //---------------------------------------------------------------------------------------------
 
-function update_exchange_rate(string|array|null $curr_code, string|array|null $date_, int|float|bool|null $buy_rate, int|float|bool|null $sell_rate): void
+function update_exchange_rate(string|null $curr_code, string|array|null $date_, int|float|bool|null $buy_rate, int|float|bool|null $sell_rate): void
 {
 	if (is_company_currency($curr_code))
 		display_db_error("Exchange rates cannot be set for company currency", "", true);
@@ -82,7 +82,7 @@ function update_exchange_rate(string|array|null $curr_code, string|array|null $d
 
 //---------------------------------------------------------------------------------------------
 
-function add_exchange_rate(string|int|float|bool|array|null $curr_code, string|int|float|bool|array|null $date_, string|int|float|bool|null $buy_rate, string|int|float|bool|null $sell_rate): void
+function add_exchange_rate(string|int|float|bool|null $curr_code, string|int|float|bool|array|null $date_, string|int|float|bool|null $buy_rate, string|int|float|bool|null $sell_rate): void
 {
 	if (is_company_currency($curr_code))
 		display_db_error("Exchange rates cannot be set for company currency", "", true);
@@ -257,7 +257,7 @@ function get_extern_rate(string|int|float|bool|null $curr_b, mixed $provider, st
 
 //-----------------------------------------------------------------------------
 
-function get_sql_for_exchange_rates(string|array|null $curr): string
+function get_sql_for_exchange_rates(string|null $curr): string
 {
 	$sql = "SELECT date_, rate_buy, id
 		FROM ".TB_PREF."exchange_rates "

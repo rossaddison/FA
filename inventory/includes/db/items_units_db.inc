@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function write_item_unit(string|int|float|bool|array|null $selected, string|int|float|bool|null $abbr, string|int|float|bool|null $description, string|int|float|bool|null $decimals): void
+function write_item_unit(string|int|float|bool|null $selected, string|int|float|bool|null $abbr, string|int|float|bool|null $description, string|int|float|bool|null $decimals): void
 {
     if($selected!='')
 		$sql = "UPDATE ".TB_PREF."item_units SET

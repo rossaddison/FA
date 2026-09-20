@@ -13,7 +13,7 @@
 /**
  * @return bool|mysqli_result
  */
-function write_printer_def(string|int|float|bool|null $id, string|array|null $name, string|array|null $descr, string|array|null $queue, string|array|null $host, int|float|bool|null $port, int|float|bool|null $timeout)
+function write_printer_def(string|int|float|bool|null $id, string|null $name, string|null $descr, string|null $queue, string|null $host, int|float|bool|null $port, int|float|bool|null $timeout)
 {
 	if ($id>0)
 		$sql = "UPDATE ".TB_PREF."printers SET description=".db_escape($descr)
@@ -58,7 +58,7 @@ function delete_printer(string|int|float|bool|null $id): void
 //============================================================================
 // printer profiles functions
 //
-function update_printer_profile(string|int|float|bool|array|null $name, ?array $dest): bool
+function update_printer_profile(string|int|float|bool|null $name, ?array $dest): bool
 {
 	foreach( $dest as $rep => $printer) {
 		if ($printer != '' || $rep == '') {
@@ -105,7 +105,7 @@ function get_report_printer(string|int|float|bool|null $profile, string|int|floa
 /**
  * @return bool|mysqli_result
  */
-function delete_printer_profile(string|int|float|bool|array|null $name)
+function delete_printer_profile(string|int|float|bool|null $name)
 {
 	$sql="DELETE FROM ".TB_PREF."print_profiles WHERE profile=".db_escape($name);
 	return db_query($sql,"could not delete printing profile");
@@ -116,7 +116,7 @@ function delete_printer_profile(string|int|float|bool|array|null $name)
 /**
  * @return mysqli_result
  */
-function get_print_profile(string|array|null $name)
+function get_print_profile(string|null $name)
 {
 	$sql = "SELECT	* FROM ".TB_PREF."print_profiles WHERE profile=".db_escape($name);
 	return db_select($sql,"could not get printing profile");

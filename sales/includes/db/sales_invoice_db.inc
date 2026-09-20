@@ -290,7 +290,7 @@ function is_cust_invoice_credited(string|int|float|bool|array|null $trans_no): i
 /**
  * @return false|null|string
  */
-function get_cust_prepayment_invoice_factor(string|int|float|bool|array|null $trans_no)
+function get_cust_prepayment_invoice_factor(string|int|float|bool|null $trans_no)
 {
 	$sql = "SELECT IF(dt.prep_amount>0, dt.prep_amount/so.total ,0) 
 		FROM ".TB_PREF."debtor_trans dt

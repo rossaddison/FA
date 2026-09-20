@@ -226,7 +226,7 @@ function update_sales_order(?object $order): void
 /**
  * @return array<array-key, null|string>|false|null
  */
-function get_sales_order_header(string|int|float|bool|array|null $order_no, string|int|float|bool|null $trans_type)
+function get_sales_order_header(string|int|float|bool|null $order_no, string|int|float|bool|null $trans_type)
 {
 	$sql = "SELECT sorder.*,
 	  cust.name,
@@ -287,7 +287,7 @@ function get_sales_order_header(string|int|float|bool|array|null $order_no, stri
 /**
  * @return mysqli_result
  */
-function get_sales_order_details(string|int|float|bool|array|null $order_no, string|int|float|bool|null $trans_type) {
+function get_sales_order_details(string|int|float|bool|null $order_no, string|int|float|bool|null $trans_type) {
 	$sql = "SELECT id, stk_code, unit_price,
 				line.description,
 				line.quantity,
@@ -417,7 +417,7 @@ function get_invoice_duedate(string|int|float|bool|array|null $terms, string|int
 /**
  * @return array<array-key, null|string>|false
  */
-function get_customer_to_order(string|int|float|bool|array|null $customer_id) {
+function get_customer_to_order(string|int|float|bool|null $customer_id) {
 
 	// Now check to ensure this account is not on hold */
 	$sql = "SELECT cust.name, 
@@ -482,8 +482,8 @@ function get_branch_to_order(string|int|float|bool|null $customer_id, string|int
 /**
  * @return non-falsy-string
  */
-function get_sql_for_sales_orders_view(string|int|array|null $trans_type, string|array|null $trans_no, string|array|null $filter, 
-	string|array|null $stock_item='', string|array|null $from='', string|array|null $to='', string|array|null $ref='', string|int|float|bool|array|null $location=ALL_TEXT, string|int|float|bool|array|null $customer_id=ALL_TEXT, int|array|null $show_voided = 0, string|int|array|null $by_delivery=0, string|int|array|null $no_auto=0): string
+function get_sql_for_sales_orders_view(string|int|null $trans_type, string|array|null $trans_no, string|array|null $filter, 
+	string|null $stock_item='', string|array|null $from='', string|array|null $to='', string|array|null $ref='', string|int|float|bool|null $location=ALL_TEXT, string|int|float|bool|null $customer_id=ALL_TEXT, int|array|null $show_voided = 0, string|int|array|null $by_delivery=0, string|int|array|null $no_auto=0): string
 {
     if ($filter=='OutstandingOnly')
         $order_value = 'Sum(line.unit_price*(line.quantity-line.qty_sent)*(1-line.discount_percent))+freight_cost';
@@ -608,7 +608,7 @@ function update_prepaid_so_line(string|int|float|bool|null $line_id, string|int|
 /**
  * @return bool|mysqli_result
  */
-function get_sales_order_invoices(string|array|null $order_no)
+function get_sales_order_invoices(string|null $order_no)
 {
 	$sql = "SELECT trans_no, dt.type as type, tran_date, reference, prep_amount
 	    FROM ".TB_PREF."debtor_trans dt
@@ -635,7 +635,7 @@ function is_sales_order_started(string|int|float|bool|null $order_no)
 //
 // Mark/unmark sales order as template.
 //
-function sales_order_set_template(string|int|float|bool|null $id, int|bool|array|null $status): void
+function sales_order_set_template(string|int|float|bool|null $id, int|bool|null $status): void
 {
   	$sql = "UPDATE ".TB_PREF."sales_orders SET type = ".db_escape($status)." WHERE order_no=".db_escape($id);
   	db_query($sql, "Can't change sales order type");
@@ -648,7 +648,7 @@ function sales_order_set_template(string|int|float|bool|null $id, int|bool|array
 /**
  * @return null|string
  */
-function is_prepaid_order_open(string|int|float|bool|array|null $order_no)
+function is_prepaid_order_open(string|int|float|bool|null $order_no)
 {
 	$sql = "SELECT count(*)
 		FROM ".TB_PREF."sales_orders o,

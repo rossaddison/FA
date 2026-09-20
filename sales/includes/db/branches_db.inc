@@ -9,10 +9,10 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_branch(string|int|array|null $customer_id, string|array|null $br_name, string|array|null $br_ref, string|array|null $br_address, string|array|null $salesman, string|array|null $area, 
-	string|array|null $tax_group_id, string|array|null $sales_account, string|int|float|bool|array|null $sales_discount_account, string|int|float|bool|array|null $receivables_account, 
-	string|int|float|bool|array|null $payment_discount_account, string|array|null $default_location, string|array|null $br_post_address, string|int|array|null $group_no,
-	string|array|null $default_ship_via, string|array|null $notes, string|array|null $bank_account): void
+function add_branch(string|int|null $customer_id, string|null $br_name, string|null $br_ref, string|null $br_address, string|null $salesman, string|null $area, 
+	string|null $tax_group_id, string|null $sales_account, string|int|float|bool|null $sales_discount_account, string|int|float|bool|null $receivables_account, 
+	string|int|float|bool|null $payment_discount_account, string|null $default_location, string|null $br_post_address, string|int|null $group_no,
+	string|null $default_ship_via, string|null $notes, string|null $bank_account): void
 {
 	$sql = "INSERT INTO ".TB_PREF."cust_branch (debtor_no, br_name, branch_ref, br_address,
 		salesman, area, tax_group_id, sales_account, receivables_account, payment_discount_account, 
@@ -36,10 +36,10 @@ function add_branch(string|int|array|null $customer_id, string|array|null $br_na
 	db_query($sql,"The branch record could not be added");
 }
 
-function update_branch(string|array|null $customer_id, string|int|float|bool|null $branch_code, string|array|null $br_name, string|array|null $br_ref, string|array|null $br_address,
-	string|array|null $salesman, string|array|null $area, string|array|null $tax_group_id, string|array|null $sales_account, string|array|null $sales_discount_account, string|array|null $receivables_account, 
-	string|array|null $payment_discount_account, string|array|null $default_location, string|array|null $br_post_address, string|array|null $group_no,
-	string|array|null $default_ship_via, string|array|null $notes, string|array|null $bank_account): void
+function update_branch(string|null $customer_id, string|int|float|bool|null $branch_code, string|null $br_name, string|null $br_ref, string|null $br_address,
+	string|null $salesman, string|null $area, string|null $tax_group_id, string|null $sales_account, string|null $sales_discount_account, string|null $receivables_account, 
+	string|null $payment_discount_account, string|null $default_location, string|null $br_post_address, string|null $group_no,
+	string|null $default_ship_via, string|null $notes, string|null $bank_account): void
 {
 	$sql = "UPDATE ".TB_PREF."cust_branch SET br_name = " . db_escape($br_name) . ",
 		branch_ref = " . db_escape($br_ref) . ",
@@ -62,7 +62,7 @@ function update_branch(string|array|null $customer_id, string|int|float|bool|nul
 	db_query($sql,"The branch record could not be updated");
 }
 
-function delete_branch(string|array|null $customer_id, string|int|float|bool|null $branch_code): void
+function delete_branch(string|null $customer_id, string|int|float|bool|null $branch_code): void
 {
 	delete_entity_contacts('cust_branch', $branch_code);
 
@@ -70,7 +70,7 @@ function delete_branch(string|array|null $customer_id, string|int|float|bool|nul
 	db_query($sql,"could not delete branch");
 }
 
-function branch_in_foreign_table(string|array|null $customer_id, string|int|float|bool|null $branch_code, ?string $table): bool
+function branch_in_foreign_table(string|null $customer_id, string|int|float|bool|null $branch_code, ?string $table): bool
 {
 	$sql= "SELECT COUNT(*) FROM ".TB_PREF."$table WHERE branch_code=".db_escape($branch_code)
 		." AND debtor_no = ".db_escape($customer_id);
@@ -82,7 +82,7 @@ function branch_in_foreign_table(string|array|null $customer_id, string|int|floa
 /**
  * @return array<array-key, null|string>|false
  */
-function get_branch(string|array|null $branch_id)
+function get_branch(string|null $branch_id)
 {
 	$sql = "SELECT branch.*, salesman.salesman_name 
 		FROM "
@@ -99,7 +99,7 @@ function get_branch(string|array|null $branch_id)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_cust_branch(string|array|null $customer_id, string|array|null $branch_code)
+function get_cust_branch(string|null $customer_id, string|null $branch_code)
 {
 	$sql = "SELECT * FROM ".TB_PREF."cust_branch
 		WHERE branch_code=".db_escape($branch_code)."
@@ -111,7 +111,7 @@ function get_cust_branch(string|array|null $customer_id, string|array|null $bran
 /**
  * @return array<array-key, null|string>|false
  */
-function get_branch_accounts(string|int|float|bool|array|null $branch_id)
+function get_branch_accounts(string|int|float|bool|null $branch_id)
 {
 	$sql = "SELECT receivables_account,sales_account, sales_discount_account, payment_discount_account 
 		FROM ".TB_PREF."cust_branch WHERE branch_code=".db_escape($branch_id);
@@ -149,7 +149,7 @@ function get_cust_branches_from_group(?string $group_no)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_default_info_for_branch(string|array|null $customer_id)
+function get_default_info_for_branch(string|null $customer_id)
 {
 	$sql = "SELECT name, address, debtor_ref
 		FROM ".TB_PREF."debtors_master WHERE debtor_no = ".db_escape($customer_id);
@@ -157,7 +157,7 @@ function get_default_info_for_branch(string|array|null $customer_id)
 	return db_fetch($result);
 }
 
-function get_sql_for_customer_branches(string|array|null $customer_id): string
+function get_sql_for_customer_branches(string|null $customer_id): string
 {
 	$sql = "SELECT "
 		."b.branch_code, "

@@ -39,7 +39,7 @@ function delete_supp_allocation(string|int|float|bool|null $trans_id): void
 /**
  * @return 0|null|string
  */
-function get_supp_trans_allocation_balance(?int $trans_type, string|int|float|bool|array|null $trans_no)
+function get_supp_trans_allocation_balance(?int $trans_type, string|int|float|bool|null $trans_no)
 {
 	$sql = "SELECT (ov_amount+ov_gst-ov_discount-alloc) AS BalToAllocate
 		FROM ".TB_PREF."supp_trans WHERE trans_no="
@@ -53,7 +53,7 @@ function get_supp_trans_allocation_balance(?int $trans_type, string|int|float|bo
 //----------------------------------------------------------------------------------------
 //	Update supplier trans alloc field according to current status of supp_allocations
 //
-function update_supp_trans_allocation(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $person_id): void
+function update_supp_trans_allocation(string|int|float|bool|null $trans_type, string|int|float|bool|null $trans_no, string|int|float|bool|null $person_id): void
 {
 	$dec = user_price_dec();
 	$sql = "UPDATE `".TB_PREF.($trans_type==ST_PURCHORDER ? 'purch_orders' : 'supp_trans')."` trans,
@@ -107,7 +107,7 @@ function clear_supp_alloctions(string|int|float|bool|null $type, string|int|floa
 }
 //-------------------------------------------------------------------------------------------------------------
 
-function get_allocatable_from_supp_sql(string|int|float|bool|array|null $supplier_id, bool $settled): string
+function get_allocatable_from_supp_sql(string|int|float|bool|null $supplier_id, bool $settled): string
 {
 	$sql = "SELECT
 		trans.type,
@@ -137,7 +137,7 @@ function get_allocatable_from_supp_sql(string|int|float|bool|array|null $supplie
 	return $sql;
 }
 
-function get_allocatable_purch_orders(string|int|float|bool|null $supplier_id = null, string|int|float|bool|array|null $trans_no=null, string|int|float|bool|null $type=null): string
+function get_allocatable_purch_orders(string|int|float|bool|null $supplier_id = null, string|int|float|bool|null $trans_no=null, string|int|float|bool|null $type=null): string
 {
 	$due_dates = "SELECT order_no, MIN(delivery_date) as date
 		FROM ".TB_PREF."purch_order_details det
@@ -185,7 +185,7 @@ function get_allocatable_purch_orders(string|int|float|bool|null $supplier_id = 
 /**
  * @return bool|mysqli_result
  */
-function get_allocatable_to_supp_transactions(string|int|float|bool|null $supplier_id=null, string|int|float|bool|array|null $trans_no=null, string|int|float|bool|null $type=null)
+function get_allocatable_to_supp_transactions(string|int|float|bool|null $supplier_id=null, string|int|float|bool|null $trans_no=null, string|int|float|bool|null $type=null)
 {
 	$sql = "SELECT
 		trans.type,
@@ -233,7 +233,7 @@ function get_allocatable_to_supp_transactions(string|int|float|bool|null $suppli
 /**
  * @return bool|mysqli_result
  */
-function get_allocatable_from_supp_transactions(string|int|float|bool|null $supplier_id, string|int|float|bool|array|null $trans_no=null, string|int|float|bool|null $type=null)
+function get_allocatable_from_supp_transactions(string|int|float|bool|null $supplier_id, string|int|float|bool|null $trans_no=null, string|int|float|bool|null $type=null)
 {
 	$sql = "SELECT
 		trans.type,

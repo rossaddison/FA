@@ -11,10 +11,10 @@
 ***********************************************************************/
 require_once($path_to_root. "/admin/db/attachments_db.inc");
 
-function add_supplier(string|array|null $supp_name, string|array|null $supp_ref, string|array|null $address, string|array|null $supp_address, string|array|null $gst_no,
-	string|array|null $website, string|array|null $supp_account_no, string|array|null $bank_account, int|float|bool|null $credit_limit, string|array|null $dimension_id, string|array|null $dimension2_id, 
-	string|array|null $curr_code, string|array|null $payment_terms, string|array|null $payable_account, string|array|null $purchase_account, string|array|null $payment_discount_account, 
-	string|array|null $notes, string|array|null $tax_group_id, int|array|null $tax_included): void
+function add_supplier(string|null $supp_name, string|null $supp_ref, string|null $address, string|null $supp_address, string|null $gst_no,
+	string|null $website, string|null $supp_account_no, string|null $bank_account, int|float|bool|null $credit_limit, string|null $dimension_id, string|null $dimension2_id, 
+	string|null $curr_code, string|null $payment_terms, string|null $payable_account, string|null $purchase_account, string|null $payment_discount_account, 
+	string|null $notes, string|null $tax_group_id, int|null $tax_included): void
 {
 	$sql = "INSERT INTO ".TB_PREF."suppliers (supp_name, supp_ref, address, supp_address, gst_no, website,
 		supp_account_no, bank_account, credit_limit, dimension_id, dimension2_id, curr_code,
@@ -43,10 +43,10 @@ function add_supplier(string|array|null $supp_name, string|array|null $supp_ref,
 	db_query($sql,"The supplier could not be added");
 }
 
-function update_supplier(string|array|null $supplier_id, string|array|null $supp_name, string|array|null $supp_ref, string|array|null $address, string|array|null $supp_address, string|array|null $gst_no, 
-	string|array|null $website, string|array|null $supp_account_no, string|array|null $bank_account, int|float|bool|null $credit_limit, string|array|null $dimension_id, string|array|null $dimension2_id, 
-	string|array|null $curr_code, string|array|null $payment_terms, string|array|null $payable_account, string|array|null $purchase_account, string|array|null $payment_discount_account, 
-	string|array|null $notes, string|array|null $tax_group_id, int|array|null $tax_included): void
+function update_supplier(string|null $supplier_id, string|null $supp_name, string|null $supp_ref, string|null $address, string|null $supp_address, string|null $gst_no, 
+	string|null $website, string|null $supp_account_no, string|null $bank_account, int|float|bool|null $credit_limit, string|null $dimension_id, string|null $dimension2_id, 
+	string|null $curr_code, string|null $payment_terms, string|null $payable_account, string|null $purchase_account, string|null $payment_discount_account, 
+	string|null $notes, string|null $tax_group_id, int|null $tax_included): void
 {
 	$sql = "UPDATE ".TB_PREF."suppliers SET supp_name=".db_escape($supp_name) . ",
 		supp_ref=".db_escape($supp_ref) . ",
@@ -72,7 +72,7 @@ function update_supplier(string|array|null $supplier_id, string|array|null $supp
 	db_query($sql,"The supplier could not be updated");
 }
 
-function delete_supplier(string|array|null $supplier_id): void
+function delete_supplier(string|null $supplier_id): void
 {
 	begin_transaction();
 	delete_entity_contacts('supplier', $supplier_id);
@@ -139,7 +139,7 @@ function get_supplier_details(string|int|float|bool|array|null $supplier_id, str
 /**
  * @return array<array-key, null|string>|false
  */
-function get_supplier(string|int|float|bool|array|null $supplier_id)
+function get_supplier(string|int|float|bool|null $supplier_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."suppliers WHERE supplier_id=".db_escape($supplier_id);
 
@@ -151,7 +151,7 @@ function get_supplier(string|int|float|bool|array|null $supplier_id)
 /**
  * @return false|null|string
  */
-function get_supplier_name(string|int|float|bool|array|null $supplier_id)
+function get_supplier_name(string|int|float|bool|null $supplier_id)
 {
 	$sql = "SELECT supp_name AS name FROM ".TB_PREF."suppliers WHERE supplier_id=".db_escape($supplier_id);
 
@@ -165,7 +165,7 @@ function get_supplier_name(string|int|float|bool|array|null $supplier_id)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_supplier_accounts(string|int|float|bool|array|null $supplier_id)
+function get_supplier_accounts(string|int|float|bool|null $supplier_id)
 {
 	$sql = "SELECT payable_account,purchase_account,payment_discount_account, dimension_id, dimension2_id FROM ".TB_PREF."suppliers WHERE supplier_id=".db_escape($supplier_id);
 
@@ -198,7 +198,7 @@ function is_new_supplier(string|int|float|bool|null $id): bool
 	return !(bool)key_in_foreign_table($id, $tables, 'supplier_id');
 }
 
-function get_supplier_currency(string|int|float|bool|array|null $supplier_id)
+function get_supplier_currency(string|int|float|bool|null $supplier_id)
 {
     $sql = "SELECT curr_code FROM ".TB_PREF."suppliers WHERE supplier_id = ".db_escape($supplier_id);
 

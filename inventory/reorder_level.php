@@ -59,7 +59,7 @@ if (!$page_nested)
 else
 	br(2);
 div_start('show_heading');
-stock_item_heading($_POST['stock_id']);
+stock_item_heading(post_scalar('stock_id'));
 br();
 div_end();
 
@@ -74,7 +74,7 @@ table_header($th);
 $j = 1;
 $k=0; //row colour counter
 
-$result = get_loc_details($_POST['stock_id']);
+$result = get_loc_details(post_scalar('stock_id'));
 
 while ($myrow = db_fetch($result))
 {
@@ -85,11 +85,11 @@ while ($myrow = db_fetch($result))
 	{
 
 		$myrow["reorder_level"] = input_num($myrow["loc_code"]);
-		set_reorder_level($_POST['stock_id'], $myrow["loc_code"], input_num($myrow["loc_code"]));
+		set_reorder_level(post_scalar('stock_id'), $myrow["loc_code"], input_num($myrow["loc_code"]));
 		display_notification(_("Reorder levels has been updated."));
 	}
 
-	$qoh = get_qoh_on_date($_POST['stock_id'], $myrow["loc_code"]);
+	$qoh = get_qoh_on_date(post_scalar('stock_id'), $myrow["loc_code"]);
 
 	label_cell($myrow["location_name"]);
 

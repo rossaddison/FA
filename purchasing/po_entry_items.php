@@ -304,7 +304,7 @@ function handle_add_new_item(): void
 
 		if ($allow_update == true)
 		{
-			$result = get_short_info($_POST['stock_id']);
+			$result = get_short_info(post_scalar('stock_id'));
 
 			if (db_num_rows($result) == 0)
 			{

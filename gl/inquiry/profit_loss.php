@@ -310,13 +310,13 @@ function display_profit_and_loss(string|array|null $compare): void
 		global $levelptr;
 		$levelptr = 0;
 		
-		$accounttype = row_or_empty(get_account_type($_POST["AccGrp"]));
+		$accounttype = row_or_empty(get_account_type(post_scalar("AccGrp")));
 		$classid = $accounttype["class_id"];
 		$class = row_or_empty(get_account_class($classid));
 		$convert = get_class_type_convert($class["ctype"]); 
 		
 		//Print Class Name	
-		table_section_title((string)$_POST["AccGrp"] . " " . get_account_type_name($_POST["AccGrp"]),4);	
+		table_section_title((string)$_POST["AccGrp"] . " " . get_account_type_name(post_scalar("AccGrp")),4);	
 		echo $tableheader;
 		
 		$classtotal = display_type($accounttype["id"], $accounttype["name"], $from, $to, $begin, $end, 

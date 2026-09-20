@@ -57,7 +57,7 @@ function get_customer_trans_version(string|int|float|bool|null $type, string|int
 // $Total, $Tax, $Freight, $discount all in customer's currency
 // date_ is display date (non-sql)
 /** @return array<array-key, mixed>|null|scalar */
-function write_customer_trans(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $debtor_no, string|int|float|bool|array|null $BranchNo,
+function write_customer_trans(string|int|float|bool|null $trans_type, string|int|float|bool|null $trans_no, string|int|float|bool|null $debtor_no, string|int|float|bool|null $BranchNo,
 	string|int|float|bool|null $date_, string|int|float|bool|null $reference, string|int|float|bool|null $Total, int|float|bool|null $discount=0, string|int|float|bool|null $Tax=0, string|int|float|bool|null $Freight=0, string|int|float|bool|null $FreightTax=0,
 	string|int|float|bool|null $sales_type=0, string|int|float|bool|null $order_no=0, string|int|float|bool|null $ship_via=0, string|int|float|bool|null $due_date="",
 	string|int|float|bool|null $AllocAmt=0, ?int $rate=0, string|int|float|bool|null $dimension_id=0, string|int|float|bool|null $dimension2_id=0, string|int|float|bool|null $payment_terms=null, string|int|float|bool|null $tax_included=0, string|int|float|bool|null $prep_amount=0)
@@ -125,7 +125,7 @@ function write_customer_trans(string|int|float|bool|null $trans_type, string|int
 /**
  * @return array<array-key, null|string>|false
  */
-function get_customer_trans(string|int|float|bool|array|null $trans_id, string|int|float|bool|null $trans_type, string|int|float|bool|array|null $customer_id=null)
+function get_customer_trans(string|int|float|bool|null $trans_id, string|int|float|bool|null $trans_type, string|int|float|bool|null $customer_id=null)
 {
 	global $SysPrefs;
 
@@ -225,7 +225,7 @@ function get_customer_trans(string|int|float|bool|array|null $trans_id, string|i
 
 //----------------------------------------------------------------------------------------
 
-function exists_customer_trans(string|int|float|bool|array|null $type, string|int|float|bool|array|null $type_no): bool
+function exists_customer_trans(string|int|float|bool|null $type, string|int|float|bool|null $type_no): bool
 {
 	$sql = "SELECT trans_no FROM ".TB_PREF."debtor_trans WHERE type=".db_escape($type)."
 		AND trans_no=".db_escape($type_no);
@@ -312,7 +312,7 @@ function post_void_customer_trans(string|int|float|bool|null $type, string|int|f
 }
 
 //----------------------------------------------------------------------------------------
-function get_sql_for_customer_inquiry(string|array|null $from, string|array|null $to, string|int|float|bool|array|null $cust_id = ALL_TEXT, string|int|float|bool|array|null $filter = ALL_TEXT, int|array|null $show_voided = 0, string|array|null $ref=''): string
+function get_sql_for_customer_inquiry(string|array|null $from, string|array|null $to, string|int|float|bool|null $cust_id = ALL_TEXT, string|int|float|bool|array|null $filter = ALL_TEXT, int|array|null $show_voided = 0, string|array|null $ref=''): string
 {
     $date_after = date2sql($from);
     $date_to = date2sql($to);
@@ -416,7 +416,7 @@ function get_sql_for_customer_inquiry(string|array|null $from, string|array|null
    	return $sql;
 }
 
-function get_sql_for_sales_deliveries_view(string|array|null $from, string|array|null $to, string|array|null $customer_id, string|array|null $stock_item, string|array|null $location, string|array|null $delivery, string|bool|array|null $outstanding=false): string
+function get_sql_for_sales_deliveries_view(string|array|null $from, string|array|null $to, string|null $customer_id, string|null $stock_item, string|null $location, string|array|null $delivery, string|bool|array|null $outstanding=false): string
 {
 	$sql = "SELECT trans.trans_no,
 			debtor.name,

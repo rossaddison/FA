@@ -16,7 +16,7 @@
 // $amount is in $currency currency
 // if $currency is not set, then defaults to no conversion
 
-function add_gl_trans(string|int|float|bool|null $type, string|int|float|bool|null $trans_id, string|int|float|bool|array|null $date_, string|int|float|bool|null $account, string|int|float|bool|array|null $dimension, string|int|float|bool|array|null $dimension2, string|int|float|bool|null $memo_,
+function add_gl_trans(string|int|float|bool|null $type, string|int|float|bool|null $trans_id, string|int|float|bool|array|null $date_, string|int|float|bool|null $account, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2, string|int|float|bool|null $memo_,
 	string|int|float|bool|null $amount, string|int|float|bool|null $currency=null, string|int|float|bool|null $person_type_id=null, string|int|float|bool|null $person_id=null,	string|int|float|bool|null $err_msg="", string|int|float|bool|null $rate=0): float
 {
 
@@ -108,7 +108,7 @@ function add_gl_balance(string|int|float|bool|null $type, string|int|float|bool|
  * @return mysqli_result
  */
 function get_gl_transactions(string|array|null $from_date, string|int|float|bool|array|null $to_date, ?int $trans_no=0,
-    string|int|float|bool|array|null $account=null, string|int|array|null $dimension=0, string|int|array|null $dimension2=0, string|array|null $filter_type=null,
+    string|int|float|bool|null $account=null, string|int|null $dimension=0, string|int|null $dimension2=0, string|null $filter_type=null,
         int|float|bool|null $amount_min=null, int|float|bool|null $amount_max=null, string|int|float|bool|null $person_type=null, string|int|float|bool|null $person_id=null, string|array|null $memo='')
 {
 
@@ -285,7 +285,7 @@ function get_gl_wo_productions(string|int|float|bool|null $trans_id, bool $all_g
 	return db_query($sql, "The gl transactions could not be retrieved");
 }
 
-function get_gl_balance_from_to(?string $from_date, string|int|float|bool|array|null $to_date, string|array|null $account, string|int|float|bool|array|null $dimension=0, string|int|float|bool|array|null $dimension2=0): float
+function get_gl_balance_from_to(?string $from_date, string|int|float|bool|array|null $to_date, string|array|null $account, string|int|float|bool|null $dimension=0, string|int|float|bool|null $dimension2=0): float
 {
 	$from = date2sql($from_date);
 	$to = date2sql($to_date);
@@ -335,7 +335,7 @@ function get_gl_trans_from_to(string|int|float|bool|null $from_date, string|int|
 /**
  * @return array<array-key, null|string>|false
  */
-function get_balance(?string $account, string|int|float|bool|array|null $dimension, string|int|float|bool|array|null $dimension2, string|int|float|bool|array|null $from, string|int|float|bool|array|null $to, bool $from_incl=true, bool $to_incl=true) 
+function get_balance(?string $account, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2, string|int|float|bool|array|null $from, string|int|float|bool|array|null $to, bool $from_incl=true, bool $to_incl=true) 
 {
 	$from_date = date2sql($from);
 	$to_date = date2sql($to);
@@ -480,7 +480,7 @@ function add_gl_tax_details(string|int|float|bool|null $gl_code, string|int|floa
 //	Store transaction tax details for fiscal purposes with 'freezed' 
 //	actual tax type rate.
 //
-function add_trans_tax_details(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $tax_id, string|int|float|bool|null $rate, string|int|float|bool|null $included,
+function add_trans_tax_details(string|int|float|bool|null $trans_type, string|int|float|bool|null $trans_no, string|int|float|bool|null $tax_id, string|int|float|bool|null $rate, string|int|float|bool|null $included,
 	string|int|float|bool|null $amount, string|int|float|bool|null $net_amount, string|int|float|bool|null $ex_rate, string|int|float|bool|null $tran_date, string|int|float|bool|null $memo, string|int|float|bool|null $reg_type=null): void
 {	
 	// guess tax register if not set
@@ -507,7 +507,7 @@ function add_trans_tax_details(string|int|float|bool|null $trans_type, string|in
 /**
  * @return bool|mysqli_result
  */
-function get_trans_tax_details(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no)
+function get_trans_tax_details(string|int|float|bool|null $trans_type, string|int|float|bool|null $trans_no)
 {
     $sql = "SELECT tax_details.*, tax_type.name AS tax_type_name, tax_type.rate AS rate
         FROM ".TB_PREF."trans_tax_details tax_details INNER JOIN 
@@ -587,7 +587,7 @@ function get_tax_summary(string|array|null $from, string|array|null $to, bool $a
 
 //--------------------------------------------------------------------------------------------------
 
-function exists_gl_trans(string|int|float|bool|array|null $type, string|int|float|bool|array|null $trans_id): bool
+function exists_gl_trans(string|int|float|bool|null $type, string|int|float|bool|null $trans_id): bool
 {
 	$sql = "SELECT type_no FROM ".TB_PREF."gl_trans WHERE type=".db_escape($type)
 		." AND type_no=".db_escape($trans_id);
@@ -598,7 +598,7 @@ function exists_gl_trans(string|int|float|bool|array|null $type, string|int|floa
 
 //--------------------------------------------------------------------------------------------------
 
-function void_gl_trans(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_id, bool $nested=false): void
+function void_gl_trans(string|int|float|bool|null $type, string|int|float|bool|null $trans_id, bool $nested=false): void
 {
 	if (!$nested)
 		begin_transaction();
@@ -631,8 +631,8 @@ function clear_gl_trans(string|int|float|bool|null $type, string|int|float|bool|
 /**
  * @return non-falsy-string
  */
-function get_sql_for_journal_inquiry(string|int|array|null $filter, string|array|null $from, string|array|null $to, string|array|null $ref='', string|array|null $memo='', int|bool|array|null $alsoclosed=false,
-         string|array|null $user_id=null): string
+function get_sql_for_journal_inquiry(string|int|null $filter, string|array|null $from, string|array|null $to, string|array|null $ref='', string|array|null $memo='', int|bool|array|null $alsoclosed=false,
+         string|null $user_id=null): string
 {
     $sql = "SELECT  IFNULL(a.gl_seq,0) as gl_seq,
         gl.tran_date,

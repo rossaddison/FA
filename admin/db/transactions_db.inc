@@ -12,7 +12,7 @@
 
 //--------------------------------------------------------------------------------------
 
-function get_sql_for_view_transactions(string|int|float|bool|array|null $filtertype, string|int|float|bool|array|null $from, string|int|float|bool|array|null $to, &$trans_ref): string
+function get_sql_for_view_transactions(string|int|float|bool|null $filtertype, string|int|float|bool|null $from, string|int|float|bool|null $to, &$trans_ref): string
 {
 	$db_info = get_systype_db_info($filtertype);
 
@@ -67,7 +67,7 @@ function transaction_exists(string|bool|array|null $trans_type, string|bool|arra
 //
 //	Returns counterparty (supplier/customer) name for selected transaction.
 //
-function get_counterparty_name(string|int|float|bool|array|null $trans_type, string|int|float|bool|array|null $trans_no, bool $full=true): string|null
+function get_counterparty_name(string|int|float|bool|null $trans_type, string|int|float|bool|null $trans_no, bool $full=true): string|null
 {
 	switch($trans_type)
 	{

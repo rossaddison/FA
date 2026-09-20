@@ -11,7 +11,7 @@
 ***********************************************************************/
 //--------------------------------------------------------------------------------------
 
-function add_work_order_issue(string|int|float|bool|null $woid, string|array|null $ref, string|array|null $to_work_order, ?array $items, string|array|null $location, string|array|null $workcentre,
+function add_work_order_issue(string|int|float|bool|null $woid, string|null $ref, string|array|null $to_work_order, ?array $items, string|null $location, string|null $workcentre,
 	string|int|float|bool|null $date_, string|array|null $memo_): void
 {
 
@@ -152,7 +152,7 @@ function get_work_order_issue_details(string|int|float|bool|null $issue_no)
 
 //--------------------------------------------------------------------------------------
 
-function exists_work_order_issue(string|int|float|bool|array|null $issue_no): bool
+function exists_work_order_issue(string|int|float|bool|null $issue_no): bool
 {
 	$sql = "SELECT issue_no FROM ".TB_PREF."wo_issues WHERE issue_no=".db_escape($issue_no);
 	$result = db_select($sql, "Cannot retreive a wo issue");

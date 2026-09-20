@@ -62,7 +62,7 @@ function display_bank_header(?items_cart &$order): void
 		case PT_CUSTOMER :
     		customer_list_row(_("Customer:"), 'person_id', null, false, true, false, true);
 
-        	if (db_customer_has_branches($_POST['person_id']))
+        	if (db_customer_has_branches(post_scalar('person_id')))
         	{
         		customer_branches_list_row(_("Branch:"), $_POST['person_id'], 
 					'PersonDetailID', null, false, true, true, true);
@@ -72,7 +72,7 @@ function display_bank_header(?items_cart &$order): void
 				$_POST['PersonDetailID'] = ANY_NUMERIC;
         		hidden('PersonDetailID');
         	}
-        	$trans = get_customer_habit($_POST['person_id']); // take care of customers on hold
+        	$trans = get_customer_habit(post_scalar('person_id')); // take care of customers on hold
         	if (is_array($trans) && $trans['dissallow_invoices'] != 0)
         	{
         		if ($payment)
@@ -103,9 +103,9 @@ function display_bank_header(?items_cart &$order): void
 	if (!(bool)$order->order_id && !get_post('bank_account'))
 	{
 		if ($_POST['PayType'] == PT_CUSTOMER)
-			$_POST['bank_account'] = get_default_customer_bank_account($_POST['person_id']);
+			$_POST['bank_account'] = get_default_customer_bank_account(post_scalar('person_id'));
 		elseif ($_POST['PayType'] == PT_SUPPLIER)	
-			$_POST['bank_account'] = get_default_supplier_bank_account($_POST['person_id']);
+			$_POST['bank_account'] = get_default_supplier_bank_account(post_scalar('person_id'));
 		else
 			unset($_POST['bank_account']);
 	}		
@@ -114,7 +114,7 @@ function display_bank_header(?items_cart &$order): void
     if ($payment)
 		bank_balance_row($_POST['bank_account']);
 
-	$bank_currency = get_bank_account_currency($_POST['bank_account']);
+	$bank_currency = get_bank_account_currency(post_scalar('bank_account'));
 
 	exchange_rate_display(get_company_currency(), $bank_currency, $_POST['date_']);
 
@@ -228,12 +228,12 @@ function gl_edit_item_controls(?items_cart &$order, string|int|float|bool|null $
 		{
 			if ($_POST['PayType'] == PT_CUSTOMER)
 			{
-				$acc = get_branch_accounts($_POST['PersonDetailID']);
+				$acc = get_branch_accounts(post_scalar('PersonDetailID'));
 				$_POST['code_id'] = is_array($acc) ? $acc['receivables_account'] : '';
 			}
 			elseif ($_POST['PayType'] == PT_SUPPLIER)
 			{
-				$acc = get_supplier_accounts($_POST['person_id']);
+				$acc = get_supplier_accounts(post_scalar('person_id'));
 				$_POST['code_id'] = is_array($acc) ? $acc['payable_account'] : '';
 				$_POST['dimension_id'] = is_array($acc) ? $acc['dimension_id'] : '';
 				$_POST['dimension2_id'] = is_array($acc) ? $acc['dimension2_id'] : '';

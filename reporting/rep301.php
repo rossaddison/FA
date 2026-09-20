@@ -49,7 +49,7 @@ function get_domestic_price(?array $myrow, ?string $stock_id)
     return $price;
 }
 
-function getAverageCost(?string $stock_id, string|array|null $location, string|array|null $to_date)
+function getAverageCost(?string $stock_id, string|null $location, string|array|null $to_date)
 {
 	if ($to_date == null)
 		$to_date = Today();

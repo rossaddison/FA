@@ -57,7 +57,7 @@ if (isset($_GET['AddedID']))
 
 //--------------------------------------------------------------------------------------------------
 
-$wo_details = get_work_order($_POST['selected_id'], true);
+$wo_details = get_work_order(post_scalar('selected_id'), true);
 
 if ($wo_details === false)
 {

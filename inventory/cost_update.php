@@ -52,7 +52,7 @@ if (isset($_GET['stock_id']))
 $should_update = false;
 if (isset($_POST['UpdateData']))
 {
-	$old_cost = get_unit_cost($_POST['stock_id']);
+	$old_cost = get_unit_cost(post_scalar('stock_id'));
 
    	$new_cost = (float)input_num('material_cost') + (float)input_num('labour_cost')
 	     + input_num('overhead_cost');
@@ -74,7 +74,7 @@ if (isset($_POST['UpdateData']))
 
    	if ($should_update)
    	{
-		$update_no = stock_cost_update($_POST['stock_id'],
+		$update_no = stock_cost_update(post_scalar('stock_id'),
 		    input_num('material_cost'), input_num('labour_cost'),
 		    input_num('overhead_cost'),	$old_cost, 
         $_POST['refline'], $_POST['memo_']);
@@ -120,7 +120,7 @@ else
 
 set_global_stock_item($_POST['stock_id']);
 
-$myrow = row_or_empty(get_item($_POST['stock_id']));
+$myrow = row_or_empty(get_item(post_scalar('stock_id')));
 
 div_start('cost_table');
 

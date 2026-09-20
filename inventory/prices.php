@@ -82,7 +82,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 		display_error( _("The price entered must be numeric."));
 		set_focus('price');
 	}
-   	elseif ($Mode == 'ADD_ITEM' && (bool)get_stock_price_type_currency($_POST['stock_id'], $_POST['sales_type_id'], $_POST['curr_abrev']))
+   	elseif ($Mode == 'ADD_ITEM' && (bool)get_stock_price_type_currency(post_scalar('stock_id'), post_scalar('sales_type_id'), post_scalar('curr_abrev')))
    	{
       	$input_error = 1;
       	display_error( _("The sales pricing for this item, sales type and currency has already been added."));
@@ -95,16 +95,16 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
     	if ($selected_id != -1) 
 		{
 			//editing an existing price
-			update_item_price($selected_id, $_POST['sales_type_id'],
-			$_POST['curr_abrev'], input_num('price'));
+			update_item_price($selected_id, post_scalar('sales_type_id'),
+			post_scalar('curr_abrev'), input_num('price'));
 
 			$msg = _("This price has been updated.");
 		}
 		else
 		{
 
-			add_item_price($_POST['stock_id'], $_POST['sales_type_id'],
-			    $_POST['curr_abrev'], input_num('price'));
+			add_item_price(post_scalar('stock_id'), post_scalar('sales_type_id'),
+			    post_scalar('curr_abrev'), input_num('price'));
 
 			$msg = _("The new price has been added.");
 		}
@@ -143,7 +143,7 @@ if (list_updated('stock_id') || isset($_POST['_curr_abrev_update']) || isset($_P
 
 //---------------------------------------------------------------------------------------------------
 
-$prices_list = get_prices($_POST['stock_id']);
+$prices_list = get_prices(post_scalar('stock_id'));
 
 div_start('price_table');
 start_table(TABLESTYLE, "width='30%'");
@@ -199,7 +199,7 @@ if (!isset($_POST['price'])) {
 		get_post('curr_abrev'),	get_post('sales_type_id')));
 }
 
-$kit = row_or_empty(get_item_code_dflts($_POST['stock_id']));
+$kit = row_or_empty(get_item_code_dflts(post_scalar('stock_id')));
 $units = $kit ? $kit["units"] : '';
 small_amount_row(_("Price:"), 'price', null, '', _('per') .' '.$units);
 

@@ -68,13 +68,13 @@ function handle_submit(&$supplier_id): void
 	begin_transaction();
 	if ($supplier_id) 
 	{
-		update_supplier($_POST['supplier_id'], $_POST['supp_name'], $_POST['supp_ref'], $_POST['address'],
-			$_POST['supp_address'], $_POST['gst_no'],
-			$_POST['website'], $_POST['supp_account_no'], $_POST['bank_account'], 
-			input_num('credit_limit', 0), $_POST['dimension_id'], $_POST['dimension2_id'], $_POST['curr_code'],
-			$_POST['payment_terms'], $_POST['payable_account'], $_POST['purchase_account'], $_POST['payment_discount_account'],
-			$_POST['notes'], $_POST['tax_group_id'], check_value('tax_included'));
-		update_record_status($_POST['supplier_id'], $_POST['inactive'],
+		update_supplier(post_scalar('supplier_id'), post_scalar('supp_name'), post_scalar('supp_ref'), post_scalar('address'),
+			post_scalar('supp_address'), post_scalar('gst_no'),
+			post_scalar('website'), post_scalar('supp_account_no'), post_scalar('bank_account'), 
+			input_num('credit_limit', 0), post_scalar('dimension_id'), post_scalar('dimension2_id'), post_scalar('curr_code'),
+			post_scalar('payment_terms'), post_scalar('payable_account'), post_scalar('purchase_account'), post_scalar('payment_discount_account'),
+			post_scalar('notes'), post_scalar('tax_group_id'), check_value('tax_included'));
+		update_record_status(post_scalar('supplier_id'), $_POST['inactive'],
 			'suppliers', 'supplier_id');
 
 		ajax()->activate('supplier_id'); // in case of status change
@@ -82,17 +82,17 @@ function handle_submit(&$supplier_id): void
 	} 
 	else 
 	{
-		add_supplier($_POST['supp_name'], $_POST['supp_ref'], $_POST['address'], $_POST['supp_address'],
-			$_POST['gst_no'], $_POST['website'], $_POST['supp_account_no'], $_POST['bank_account'], 
-			input_num('credit_limit',0), $_POST['dimension_id'], $_POST['dimension2_id'],
-			$_POST['curr_code'], $_POST['payment_terms'], $_POST['payable_account'], $_POST['purchase_account'],
-			$_POST['payment_discount_account'], $_POST['notes'], $_POST['tax_group_id'], check_value('tax_included'));
+		add_supplier(post_scalar('supp_name'), post_scalar('supp_ref'), post_scalar('address'), post_scalar('supp_address'),
+			post_scalar('gst_no'), post_scalar('website'), post_scalar('supp_account_no'), post_scalar('bank_account'), 
+			input_num('credit_limit',0), post_scalar('dimension_id'), post_scalar('dimension2_id'),
+			post_scalar('curr_code'), post_scalar('payment_terms'), post_scalar('payable_account'), post_scalar('purchase_account'),
+			post_scalar('payment_discount_account'), post_scalar('notes'), post_scalar('tax_group_id'), check_value('tax_included'));
 
 		$supplier_id = $_POST['supplier_id'] = db_insert_id();
 
-		add_crm_person($_POST['supp_ref'], $_POST['contact'], '', $_POST['address'], 
-			$_POST['phone'], $_POST['phone2'], $_POST['fax'], $_POST['email'], 
-			$_POST['rep_lang'], '');
+		add_crm_person(post_scalar('supp_ref'), post_scalar('contact'), '', post_scalar('address'), 
+			post_scalar('phone'), post_scalar('phone2'), post_scalar('fax'), post_scalar('email'), 
+			post_scalar('rep_lang'), '');
 
 		add_crm_contact('supplier', 'general', $supplier_id, db_insert_id());
 
@@ -115,7 +115,7 @@ if (isset($_POST['delete']) && $_POST['delete'] != "")
 
 	// PREVENT DELETES IF DEPENDENT RECORDS IN 'supp_trans' , purch_orders
 
-	if ((bool)key_in_foreign_table($_POST['supplier_id'], 'supp_trans', 'supplier_id'))
+	if ((bool)key_in_foreign_table(post_scalar('supplier_id'), 'supp_trans', 'supplier_id'))
 	{
 		$cancel_delete = 1;
 		display_error(_("Cannot delete this supplier because there are transactions that refer to this supplier."));
@@ -123,7 +123,7 @@ if (isset($_POST['delete']) && $_POST['delete'] != "")
 	} 
 	else 
 	{
-		if ((bool)key_in_foreign_table($_POST['supplier_id'], 'purch_orders', 'supplier_id'))
+		if ((bool)key_in_foreign_table(post_scalar('supplier_id'), 'purch_orders', 'supplier_id'))
 		{
 			$cancel_delete = 1;
 			display_error(_("Cannot delete the supplier record because purchase orders have been created against this supplier."));
@@ -132,7 +132,7 @@ if (isset($_POST['delete']) && $_POST['delete'] != "")
 	}
 	if ($cancel_delete == 0) 
 	{
-		delete_supplier($_POST['supplier_id']);
+		delete_supplier(post_scalar('supplier_id'));
 
 		unset($_SESSION['supplier_id']);
 		$supplier_id = '';
@@ -153,7 +153,7 @@ function supplier_settings(&$supplier_id): void
 	if ($supplier_id) 
 	{
 		//SupplierID exists - either passed when calling the form or from the form itself
-		$myrow = row_or_empty(get_supplier($_POST['supplier_id']));
+		$myrow = row_or_empty(get_supplier(post_scalar('supplier_id')));
 
 		$_POST['supp_name'] = $myrow["supp_name"];
 		$_POST['supp_ref'] = $myrow["supp_ref"];
@@ -205,8 +205,8 @@ function supplier_settings(&$supplier_id): void
 
 	text_row(_("GSTNo:"), 'gst_no', null, 42, 40);
 	link_row(_("Website:"), 'website', null, 35, 55);
-	if ($supplier_id && !is_new_supplier($supplier_id) && ((bool)key_in_foreign_table($_POST['supplier_id'], 'supp_trans', 'supplier_id') ||
-		(bool)key_in_foreign_table($_POST['supplier_id'], 'purch_orders', 'supplier_id'))) 
+	if ($supplier_id && !is_new_supplier($supplier_id) && ((bool)key_in_foreign_table(post_scalar('supplier_id'), 'supp_trans', 'supplier_id') ||
+		(bool)key_in_foreign_table(post_scalar('supplier_id'), 'purch_orders', 'supplier_id'))) 
 	{
 		label_row(_("Supplier's Currency:"), post_scalar('curr_code'));
 		hidden('curr_code', post_scalar('curr_code'));

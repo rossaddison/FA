@@ -35,7 +35,7 @@ print_po();
 /**
  * @return array<array-key, null|string>|false
  */
-function get_supp_po(string|array|null $order_no)
+function get_supp_po(string|null $order_no)
 {
    	$sql = "SELECT po.*, supplier.supp_name, supplier.supp_account_no,supplier.tax_included,
    		supplier.gst_no AS tax_id,
@@ -54,7 +54,7 @@ function get_supp_po(string|array|null $order_no)
 /**
  * @return mysqli_result
  */
-function get_po_details(string|array|null $order_no)
+function get_po_details(string|null $order_no)
 {
 	$sql = "SELECT poline.*, units, editable
 		FROM ".TB_PREF."purch_order_details poline

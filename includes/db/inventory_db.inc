@@ -12,7 +12,7 @@
 /**
  * @return 0|non-falsy-string
  */
-function get_qoh_on_date(string|int|float|bool|array|null $stock_id, string|int|float|bool|array|null $location=null, string|int|float|bool|array|null $date_=null): int|string
+function get_qoh_on_date(string|int|float|bool|null $stock_id, string|int|float|bool|null $location=null, string|int|float|bool|array|null $date_=null): int|string
 {
     if ($date_ == null)
         $date_ = Today();
@@ -46,7 +46,7 @@ function get_qoh_on_date(string|int|float|bool|array|null $stock_id, string|int|
 * @return array<array-key, null|string>|false|null
 **/
 
-function check_negative_stock(string|int|float|bool|array|null $stock_id, string|int|float|bool|null $delta_qty, string|int|float|bool|array|null $location=null, string|int|float|bool|array|null $date=null)
+function check_negative_stock(string|int|float|bool|null $stock_id, string|int|float|bool|null $delta_qty, string|int|float|bool|null $location=null, string|int|float|bool|array|null $date=null)
 {
 
 	if ($delta_qty >= 0)
@@ -91,7 +91,7 @@ function check_negative_stock(string|int|float|bool|array|null $stock_id, string
 /**
  * @return array<array-key, mixed|null|string>|false
  */
-function get_item_edit_info(string|array|null $stock_id)
+function get_item_edit_info(string|null $stock_id)
 {
 	$sql = "SELECT item.material_cost, item.units, unit.decimals
 		FROM ".TB_PREF."stock_master item,"
@@ -111,7 +111,7 @@ function get_item_edit_info(string|array|null $stock_id)
 /**
  * @return false|null|string
  */
-function get_unit_cost(string|int|float|bool|array|null $stock_id)
+function get_unit_cost(string|int|float|bool|null $stock_id)
 {
 	$sql = "SELECT material_cost
 		FROM ".TB_PREF."stock_master
@@ -142,7 +142,7 @@ function get_purchase_cost(string|int|float|bool|null $stock_id)
 
 //--------------------------------------------------------------------------------------
 
-function is_inventory_item(string|int|float|bool|array|null $stock_id): bool
+function is_inventory_item(string|int|float|bool|null $stock_id): bool
 {
 	$sql = "SELECT stock_id FROM "
 		.TB_PREF."stock_master
@@ -180,7 +180,7 @@ function last_negative_stock_begin_date(string|int|float|bool|null $stock_id, st
 /**
  * @return false|null|string
  */
-function get_already_delivered(string|int|float|bool|null $stock_id, string|int|float|bool|null $location, string|int|float|bool|array|null $trans_no)
+function get_already_delivered(string|int|float|bool|null $stock_id, string|int|float|bool|null $location, string|int|float|bool|null $trans_no)
 {
 	$sql = "SELECT qty
 		FROM ".TB_PREF."stock_moves
@@ -360,7 +360,7 @@ function adjust_deliveries(string|int|float|bool|null $stock_id, string|int|floa
 /**
  * @return array<array-key, null|string>|false
  */
-function get_stock_gl_code(string|int|float|bool|array|null $stock_id)
+function get_stock_gl_code(string|int|float|bool|null $stock_id)
 {
 	/*Gets the GL Codes relevant to the item account  */
 	$sql = "SELECT mb_flag, inventory_account, cogs_account,
@@ -374,7 +374,7 @@ function get_stock_gl_code(string|int|float|bool|array|null $stock_id)
 /**
  * @return false|null|string
  */
-function get_purchase_value(string|int|float|bool|array|null $stock_id)
+function get_purchase_value(string|int|float|bool|null $stock_id)
 {
 	$sql = "SELECT purchase_cost FROM
 		".TB_PREF."stock_master WHERE stock_id = ".db_escape($stock_id);
@@ -439,7 +439,7 @@ function handle_negative_inventory(string|int|float|bool|null $stock_id, string|
 // $std_cost - in HOME currency
 // $price - in transaction currency
 
-function add_stock_move(?int $type, string|int|float|bool|null $stock_id, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $location,
+function add_stock_move(?int $type, string|int|float|bool|null $stock_id, string|int|float|bool|null $trans_no, string|int|float|bool|null $location,
     string|int|float|bool|null $date_, string|int|float|bool|null $reference, string|int|float|bool|null $quantity, string|int|float|bool|null $std_cost, string|int|float|bool|null $price=0): int|string
 {
 	$date = date2sql($date_);
@@ -456,7 +456,7 @@ function add_stock_move(?int $type, string|int|float|bool|null $stock_id, string
 	return db_insert_id();
 }
 
-function update_stock_move(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $stock_id, string|int|float|bool|null $cost): void
+function update_stock_move(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $stock_id, string|int|float|bool|null $cost): void
 {
 	$sql = "UPDATE ".TB_PREF."stock_moves SET standard_cost=".db_escape($cost)
 			." WHERE type=".db_escape($type)
@@ -525,7 +525,7 @@ function void_stock_move(string|int|float|bool|null $type, string|int|float|bool
 /**
  * @return null|string
  */
-function get_location_name(string|int|float|bool|array|null $loc_code)
+function get_location_name(string|int|float|bool|null $loc_code)
 {
 	$sql = "SELECT location_name FROM ".TB_PREF."locations
 		WHERE loc_code=".db_escape($loc_code);
@@ -544,7 +544,7 @@ function get_location_name(string|int|float|bool|array|null $loc_code)
 /**
  * @return -1|null|string
  */
-function get_mb_flag(string|int|float|bool|array|null $stock_id)
+function get_mb_flag(string|int|float|bool|null $stock_id)
 {
 	$sql = "SELECT mb_flag FROM ".TB_PREF."stock_master
 		WHERE stock_id = ".db_escape($stock_id);

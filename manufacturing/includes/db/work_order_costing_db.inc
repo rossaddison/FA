@@ -36,7 +36,7 @@ function get_wo_costing(string|int|float|bool|null $workorder_id)
 	return db_select($sql, "could not get work order costing");
 }
 
-function delete_wo_costing(string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no): void
+function delete_wo_costing(string|int|float|bool|null $trans_type, string|int|float|bool|null $trans_no): void
 {
 	$sql="DELETE FROM ".TB_PREF."wo_costing WHERE trans_type=".db_escape($trans_type)
 		." AND trans_no=".db_escape($trans_no);
@@ -213,7 +213,7 @@ function work_order_production_gl(string|int|float|bool|null $woid, ?string $sto
 /**
  * @return 0|null|string
  */
-function check_wo_costing(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no)
+function check_wo_costing(string|int|float|bool|null $type, string|int|float|bool|null $trans_no)
 {
 	$sql = "SELECT workorder_id FROM ".TB_PREF."wo_costing WHERE trans_type= ".db_escape($type)." AND trans_no=".db_escape($trans_no);
 	$costs = db_select($sql, 'cannot check WO costing');

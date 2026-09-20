@@ -264,7 +264,7 @@ function set_grn_item_credited(&$entered_grn, string|int|float|bool|null $suppli
 /**
  * @return mysqli_result
  */
-function get_grn_items(string|int|float|bool|array|null $grn_batch_id=0, string|int|float|bool|null $supplier_id="", bool $outstanding_only=false,
+function get_grn_items(string|int|float|bool|null $grn_batch_id=0, string|int|float|bool|null $supplier_id="", bool $outstanding_only=false,
 	bool $is_invoiced_only=false, string|int|float|bool|array|null $invoice_no=0, string|array|null $begin="", string|array|null $end="")
 {
     $sql = "SELECT grn.*, grn_item.*, po_item.delivery_date as req_del_date,
@@ -373,7 +373,7 @@ function read_grn_items_to_order(mixed $grn_batch, purch_order &$order): void
 
 // read a grn into an order class
 
-function read_grn(string|array|null $grn_batch, purch_order &$order): void
+function read_grn(string|null $grn_batch, purch_order &$order): void
 {
 	$sql= "SELECT *	FROM ".TB_PREF."grn_batch WHERE id=".db_escape($grn_batch);
 

@@ -83,7 +83,7 @@ if ($Mode == 'ADD_ITEM' || $Mode == 'UPDATE_ITEM')
 	
 	$filename = basename($_FILES['filename']['name']);
 	if (($_POST['filterType'] == ST_ITEM || $_POST['filterType'] == ST_FIXEDASSET) && $Mode == 'ADD_ITEM')
-		$_POST['trans_no'] = get_item_code_id($_POST['trans_no']);
+		$_POST['trans_no'] = get_item_code_id(post_scalar('trans_no'));
 	if (!transaction_exists($_POST['filterType'], $_POST['trans_no']))
 		display_error(_("Selected transaction does not exists."));
 	elseif ($Mode == 'ADD_ITEM' && !in_array(strtoupper(substr($filename, strlen($filename) - 3)), array('JPG','PNG','GIF', 'PDF', 'DOC', 'ODT')))
@@ -134,13 +134,13 @@ if ($Mode == 'ADD_ITEM' || $Mode == 'UPDATE_ITEM')
 
 		if ($Mode == 'ADD_ITEM')
 		{
-			add_attachment($_POST['filterType'], $_POST['trans_no'], $_POST['description'],
+			add_attachment(post_scalar('filterType'), post_scalar('trans_no'), post_scalar('description'),
 				$filename, $unique_name, $filesize, $filetype);
 			display_notification(_("Attachment has been inserted.")); 
 		}
 		else
 		{
-			update_attachment($selected_id, $_POST['filterType'], $_POST['trans_no'], $_POST['description'],
+			update_attachment($selected_id, post_scalar('filterType'), post_scalar('trans_no'), post_scalar('description'),
 				$filename, $unique_name, $filesize, $filetype); 
 			display_notification(_("Attachment has been updated.")); 
 		}

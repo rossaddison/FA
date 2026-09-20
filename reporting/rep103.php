@@ -31,7 +31,7 @@ print_customer_details_listing();
 /**
  * @return mysqli_result
  */
-function get_customer_details_for_report(string|int|array|null $area=0, string|int|array|null $salesid=0)
+function get_customer_details_for_report(string|int|null $area=0, string|int|null $salesid=0)
 {
 	$sql = "SELECT debtor.debtor_no,
 			debtor.name,
@@ -90,7 +90,7 @@ function get_contacts_for_branch(?string $branch): array
 /**
  * @return null|string
  */
-function getTransactions(string|int|array|null $debtorno, string|array|null $branchcode, string|array|null $date)
+function getTransactions(string|int|null $debtorno, string|null $branchcode, string|array|null $date)
 {
 	$date = date2sql($date);
 

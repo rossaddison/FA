@@ -25,7 +25,7 @@ function get_fixed_asset_classes()
 /**
  * @return false|null|string
  */
-function get_fixed_asset_classname(string|array|null $class)
+function get_fixed_asset_classname(string|null $class)
 {
 	$sql="SELECT description FROM ".TB_PREF."stock_fa_class WHERE fa_class_id = ".db_escape($class);
 

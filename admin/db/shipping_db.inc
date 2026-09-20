@@ -26,7 +26,7 @@ function add_shipper(string|int|float|bool|null $shipper_name, array $contact, s
 
 //--------------------------------------------------------------------------------------
 
-function update_shipper(string|int|float|bool|array|null $selected_id, string|int|float|bool|null $shipper_name, array $contact, string|int|float|bool|null $phone, string|int|float|bool|null $phone2, string|int|float|bool|null $address): void
+function update_shipper(string|int|float|bool|null $selected_id, string|int|float|bool|null $shipper_name, array $contact, string|int|float|bool|null $phone, string|int|float|bool|null $phone2, string|int|float|bool|null $address): void
 {
 	$sql = "UPDATE ".TB_PREF."shippers SET shipper_name=" . db_escape($shipper_name). " ,
 		contact =" . db_escape($contact). " ,
@@ -40,7 +40,7 @@ function update_shipper(string|int|float|bool|array|null $selected_id, string|in
 
 //--------------------------------------------------------------------------------------
 
-function delete_shipper(string|int|float|bool|array|null $selected_id): void
+function delete_shipper(string|int|float|bool|null $selected_id): void
 {
 	$sql="DELETE FROM ".TB_PREF."shippers WHERE shipper_id=".db_escape($selected_id);
 	
@@ -66,7 +66,7 @@ function get_shippers(int|array|null $show_inactive)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_shipper(string|int|float|bool|array|null $selected_id)
+function get_shipper(string|int|float|bool|null $selected_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."shippers WHERE shipper_id=".db_escape($selected_id);
 

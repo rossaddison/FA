@@ -16,13 +16,13 @@ function add_sales_group(string|int|float|bool|null $description): void
    	db_query($sql,"The sales group could not be added");
 }
 
-function update_sales_group(string|int|float|bool|array|null $selected_id, string|int|float|bool|null $description): void
+function update_sales_group(string|int|float|bool|null $selected_id, string|int|float|bool|null $description): void
 {
 	$sql = "UPDATE `".TB_PREF."groups` SET description=".db_escape($description)." WHERE id = ".db_escape($selected_id);
    	db_query($sql,"The sales group could not be updated");
 }
 
-function delete_sales_group(string|int|float|bool|array|null $selected_id): void
+function delete_sales_group(string|int|float|bool|null $selected_id): void
 {
 	$sql="DELETE FROM `".TB_PREF."groups` WHERE id=".db_escape($selected_id);
 	db_query($sql,"could not delete sales group");
@@ -42,7 +42,7 @@ function get_sales_groups(int|array|null $show_inactive)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_sales_group(string|int|float|bool|array|null $selected_id)
+function get_sales_group(string|int|float|bool|null $selected_id)
 {
 	$sql = "SELECT * FROM `".TB_PREF."groups` WHERE id=".db_escape($selected_id);
 
@@ -67,13 +67,13 @@ function add_sales_area(string|int|float|bool|null $description): void
    	db_query($sql,"The sales area could not be added");
 }
 
-function update_sales_area(string|int|float|bool|array|null $selected_id, string|int|float|bool|null $description): void
+function update_sales_area(string|int|float|bool|null $selected_id, string|int|float|bool|null $description): void
 {
 	$sql = "UPDATE ".TB_PREF."areas SET description=".db_escape($description)." WHERE area_code = ".db_escape($selected_id);
    	db_query($sql,"The sales area could not be updated");
 }
 
-function delete_sales_area(string|int|float|bool|array|null $selected_id): void
+function delete_sales_area(string|int|float|bool|null $selected_id): void
 {
 	$sql="DELETE FROM ".TB_PREF."areas WHERE area_code=".db_escape($selected_id);
 	db_query($sql,"could not delete sales area");
@@ -92,7 +92,7 @@ function get_sales_areas(int|array|null $show_inactive)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_sales_area(string|int|float|bool|array|null $selected_id)
+function get_sales_area(string|int|float|bool|null $selected_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."areas WHERE area_code=".db_escape($selected_id);
 
@@ -103,7 +103,7 @@ function get_sales_area(string|int|float|bool|array|null $selected_id)
 /**
  * @return false|null|string
  */
-function get_area_name(string|array|null $id)
+function get_area_name(string|null $id)
 {
 	$sql = "SELECT description FROM ".TB_PREF."areas WHERE area_code=".db_escape($id);
 
@@ -127,7 +127,7 @@ function add_salesman(string|int|float|bool|null $salesman_name, string|int|floa
    	db_query($sql,"The insert of the sales person failed");
 }
 
-function update_salesman(string|int|float|bool|array|null $selected_id, string|int|float|bool|null $salesman_name, string|int|float|bool|null $salesman_phone, string|int|float|bool|null $salesman_fax,
+function update_salesman(string|int|float|bool|null $selected_id, string|int|float|bool|null $salesman_name, string|int|float|bool|null $salesman_phone, string|int|float|bool|null $salesman_fax,
 	string|int|float|bool|null $salesman_email, int|float|bool|null $provision, int|float|bool|null $break_pt, int|float|bool|null $provision2): void
 {
 	$sql = "UPDATE ".TB_PREF."salesman SET salesman_name=".db_escape($salesman_name) . ",
@@ -141,7 +141,7 @@ function update_salesman(string|int|float|bool|array|null $selected_id, string|i
    	db_query($sql,"The update of the sales person failed");
 }
 
-function delete_salesman(string|int|float|bool|array|null $selected_id): void
+function delete_salesman(string|int|float|bool|null $selected_id): void
 {
 	$sql="DELETE FROM ".TB_PREF."salesman WHERE salesman_code=".db_escape($selected_id);
 	db_query($sql,"The sales-person could not be deleted");
@@ -160,7 +160,7 @@ function get_salesmen(int|array|null $show_inactive)
 /**
  * @return array<array-key, null|string>|false
  */
-function get_salesman(string|int|float|bool|array|null $selected_id)
+function get_salesman(string|int|float|bool|null $selected_id)
 {
 	$sql = "SELECT *  FROM ".TB_PREF."salesman WHERE salesman_code=".db_escape($selected_id);
 
@@ -171,7 +171,7 @@ function get_salesman(string|int|float|bool|array|null $selected_id)
 /**
  * @return false|null|string
  */
-function get_salesman_name(string|array|null $id)
+function get_salesman_name(string|null $id)
 {
 	$sql = "SELECT salesman_name FROM ".TB_PREF."salesman WHERE salesman_code=".db_escape($id);
 
