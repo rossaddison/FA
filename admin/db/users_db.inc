@@ -154,7 +154,7 @@ function get_user_auth(string|int|float|bool|null $user_id, string|int|float|boo
 	$sql = "SELECT * FROM ".TB_PREF."users WHERE user_id = ".db_escape($user_id)." AND"
 		." password=".db_escape($password);
 
-	return db_num_rows(db_query($sql, "could not get validate user login for $user_id")) != 0;
+	return db_num_rows(db_select($sql, "could not get validate user login for $user_id")) != 0;
 }
 
 //-----------------------------------------------------------------------------------------------

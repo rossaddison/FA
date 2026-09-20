@@ -108,13 +108,13 @@ function get_dimension_string(int|string|null $id, bool $html=false, ?string $sp
 //--------------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_dimensions()
 {
 	$sql = "SELECT * FROM ".TB_PREF."dimensions ORDER BY date_";
 
-	return db_query($sql, "The dimensions could not be retrieved");
+	return db_select($sql, "The dimensions could not be retrieved");
 }
 
 //--------------------------------------------------------------------------------------

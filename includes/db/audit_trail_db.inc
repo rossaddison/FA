@@ -36,7 +36,7 @@ function add_audit_trail(string|int|float|bool|null $trans_type, string|int|floa
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_audit_trail_all(string|int|float|bool|null $trans_type, string|int|float|bool|null $trans_no)
 {
@@ -44,7 +44,7 @@ function get_audit_trail_all(string|int|float|bool|null $trans_type, string|int|
 		." WHERE type=".db_escape($trans_type)." AND trans_no="
 		.db_escape($trans_no);
 
-	return db_query($sql, "Cannot get all audit info for transaction");
+	return db_select($sql, "Cannot get all audit info for transaction");
 }
 
 function get_audit_trail_last(string|int|float|bool|null $trans_type, string|int|float|bool|null $trans_no)

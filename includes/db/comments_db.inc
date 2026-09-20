@@ -12,14 +12,14 @@
 //--------------------------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_comments(string|int|float|bool|null $type, string|int|float|bool|null $type_no)
 {
 	$sql = "SELECT * FROM ".TB_PREF."comments WHERE type="
 		.db_escape($type)." AND id=".db_escape($type_no);
 
-	return db_query($sql, "could not query comments transaction table");
+	return db_select($sql, "could not query comments transaction table");
 }
 
 //--------------------------------------------------------------------------------------------------

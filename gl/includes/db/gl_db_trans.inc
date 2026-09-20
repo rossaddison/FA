@@ -190,7 +190,7 @@ function get_gl_transactions(string|null $from_date, string|int|float|bool|array
 //--------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_gl_trans(string|int|float|bool|null $type, string|int|float|bool|null $trans_id)
 {
@@ -215,13 +215,13 @@ function get_gl_trans(string|int|float|bool|null $type, string|int|float|bool|nu
 		." AND gl.amount <> 0"
 		." ORDER BY tran_date, counter";
 
-	return db_query($sql, "The gl transactions could not be retrieved");
+	return db_select($sql, "The gl transactions could not be retrieved");
 }
 
 //--------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_gl_wo_cost_trans(string|int|float|bool|null $trans_id, ?int $cost_type=-1, bool $all_gl=false)
 {
@@ -239,11 +239,11 @@ function get_gl_wo_cost_trans(string|int|float|bool|null $trans_id, ?int $cost_t
 		$sql .= " AND costing.cost_type=".db_escape($cost_type);
 	$sql .= $all_gl ? " AND amount != 0" : " AND amount < 0";
 
-	return db_query($sql, "The gl transactions could not be retrieved");
+	return db_select($sql, "The gl transactions could not be retrieved");
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_gl_wo_issue_trans(string|int|float|bool|null $trans_id, ?int $person_id=-1, bool $all_gl=false)
 {
@@ -260,11 +260,11 @@ function get_gl_wo_issue_trans(string|int|float|bool|null $trans_id, ?int $perso
 		$sql .= " AND gl.person_id=".db_escape($person_id);
 	$sql .= $all_gl ? " AND amount != 0" : " AND amount < 0";
 	$sql .= " ORDER BY type, type_no";
-	return db_query($sql, "The gl transactions could not be retrieved");
+	return db_select($sql, "The gl transactions could not be retrieved");
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_gl_wo_productions(string|int|float|bool|null $trans_id, bool $all_gl=false)
 {
@@ -282,7 +282,7 @@ function get_gl_wo_productions(string|int|float|bool|null $trans_id, bool $all_g
 		.($all_gl ? " AND amount != 0" : " AND amount < 0")
 		." ORDER BY type, type_no";
 
-	return db_query($sql, "The gl transactions could not be retrieved");
+	return db_select($sql, "The gl transactions could not be retrieved");
 }
 
 function get_gl_balance_from_to(?string $from_date, string|int|float|bool|array|null $to_date, string|array|null $account, string|int|float|bool|null $dimension=0, string|int|float|bool|null $dimension2=0): float
@@ -505,7 +505,7 @@ function add_trans_tax_details(string|int|float|bool|null $trans_type, string|in
 //----------------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_trans_tax_details(string|int|float|bool|null $trans_type, string|int|float|bool|null $trans_no)
 {
@@ -517,7 +517,7 @@ function get_trans_tax_details(string|int|float|bool|null $trans_type, string|in
             AND trans_no = ".db_escape($trans_no)."
             AND (net_amount != 0 OR amount != 0)";
 
-    return db_query($sql, "The transaction tax details could not be retrieved");
+    return db_select($sql, "The transaction tax details could not be retrieved");
 }
 
 //----------------------------------------------------------------------------------------

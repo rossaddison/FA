@@ -44,7 +44,7 @@ function delete_cust_allocation(?string $trans_id)
 function get_cust_allocation(string|int|float|bool|null $trans_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."cust_allocations WHERE id = ".db_escape($trans_id);
-	return db_fetch(db_query($sql), "Cannot retrieve customer allocation $trans_id");
+	return db_fetch(db_select($sql), "Cannot retrieve customer allocation $trans_id");
 }
 
 //----------------------------------------------------------------------------------------

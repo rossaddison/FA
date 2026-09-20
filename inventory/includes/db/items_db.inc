@@ -136,12 +136,12 @@ function get_item(string|int|float|bool|null $stock_id)
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_items(string|int|float|bool|null $fixed_asset = 0)
 {
 	$sql = "SELECT * FROM ".TB_PREF."stock_master WHERE fixed_asset=".db_escape($fixed_asset);
-	return db_query($sql,"items could not be retreived");
+	return db_select($sql,"items could not be retreived");
 }
 
 function item_in_foreign_codes(string|int|float|bool|null $stock_id): string

@@ -43,7 +43,7 @@ function update_item_tax_type(string|int|float|bool|null $id, string|int|float|b
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_all_item_tax_types(int|bool|array|null $also_inactive=false)
 {
@@ -51,7 +51,7 @@ function get_all_item_tax_types(int|bool|array|null $also_inactive=false)
 	if (!(bool)$also_inactive)
 		$sql .= " WHERE !inactive";
 
-	return db_query($sql, "could not get all item tax type");
+	return db_select($sql, "could not get all item tax type");
 } 
 
 /**

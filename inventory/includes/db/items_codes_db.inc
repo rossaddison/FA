@@ -63,7 +63,7 @@ function get_item_code(string|int|float|bool|null $id)
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_all_item_codes(string|int|float|bool|null $stock_id, ?int $foreign=1)
 {
@@ -74,7 +74,7 @@ function get_all_item_codes(string|int|float|bool|null $stock_id, ?int $foreign=
 		AND i.category_id=c.category_id
 		AND i.is_foreign=".db_escape($foreign);
 
-	$result = db_query($sql,"all item codes could not be retrieved");
+	$result = db_select($sql,"all item codes could not be retrieved");
 
 	return $result;
 }
@@ -86,7 +86,7 @@ function delete_item_kit(string|int|float|bool|null $item_code): void
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_item_kit(string|int|float|bool|null $item_code)
 {
@@ -102,7 +102,7 @@ function get_item_kit(string|int|float|bool|null $item_code)
 			kit.stock_id=comp.item_code
 			AND kit.item_code=".db_escape($item_code);
 
-	$result = db_query($sql,"item kit could not be retrieved");
+	$result = db_select($sql,"item kit could not be retrieved");
 
 	return $result;
 }

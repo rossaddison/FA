@@ -30,7 +30,7 @@ include_once($path_to_root . "/includes/ui/ui_view.inc");
 print_audit_trail();
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function getTransactions(string|int|array|null $from, string|array|null $to, string|array|null $type, string|array|null $user)
 {
@@ -53,7 +53,7 @@ function getTransactions(string|int|array|null $from, string|array|null $to, str
 			AND a.stamp <= '$todate'
 		GROUP BY a.trans_no,a.gl_seq,a.stamp
 		ORDER BY a.stamp,a.gl_seq";
-    return db_query($sql,"No transactions were returned");
+    return db_select($sql,"No transactions were returned");
 }
 //----------------------------------------------------------------------------------------------------
 

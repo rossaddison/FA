@@ -983,11 +983,11 @@ function create_comp_dirs(?string $comp_path, ?array $comp_subdirs): void
 //
 function check_table(string|int|float|bool|null $pref, string|int|float|bool|null $table, string|int|float|bool|null $field=null, ?array $properties=null): int
 {
-	$tables = @db_query("SHOW TABLES LIKE '".$pref.$table."'");
+	$tables = @db_select("SHOW TABLES LIKE '".$pref.$table."'");
 	if (!db_num_rows($tables))
 		return 1;		// no such table or error
 
-	$fields = @db_query("SHOW COLUMNS FROM ".$pref.$table);
+	$fields = @db_select("SHOW COLUMNS FROM ".$pref.$table);
 	if (!isset($field)) 
 		return 0;		// table exists
 

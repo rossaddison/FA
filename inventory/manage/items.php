@@ -692,7 +692,7 @@ function generateBarcode(): string {
 
 		// LETS CHECK TO SEE IF THIS NUMBER HAS EVER BEEN USED
 		$query = "SELECT stock_id FROM ".TB_PREF."stock_master WHERE stock_id='" . $tmpBarcodeID . "'";
-		$arr_stock = row_or_empty(db_fetch(db_query($query)));
+		$arr_stock = row_or_empty(db_fetch(db_select($query)));
   
 		if (  !$arr_stock || !$arr_stock['stock_id'] ) {
 			return $tmpBarcodeID;

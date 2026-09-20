@@ -47,7 +47,7 @@ class attachments extends simple_crud {
 		if(isset($_POST['attachmentDownload'])){
 			$keys =  array_keys($_POST['attachmentDownload']);
 			$sql = "SELECT * FROM ".TB_PREF."attachments WHERE id = ".db_escape($keys[0]);
-			$row = db_fetch(db_query($sql), "Cannot retrieve attachment $keys[0]");
+			$row = db_fetch(db_select($sql), "Cannot retrieve attachment $keys[0]");
 
 			
 			if ($row['unique_name'] != ""){
@@ -65,7 +65,7 @@ class attachments extends simple_crud {
 		if(isset($_POST['attachmentView'])){
 			$keys =  array_keys($_POST['attachmentView']);
 			$sql = "SELECT * FROM ".TB_PREF."attachments WHERE id = ".db_escape($keys[0]);
-			$row = db_fetch(db_query($sql), "Cannot retrieve attachment $keys[0]");
+			$row = db_fetch(db_select($sql), "Cannot retrieve attachment $keys[0]");
 			
 			if ($row['unique_name'] != ""){
 
@@ -126,7 +126,7 @@ class attachments extends simple_crud {
 		
 		if($this->selected_id != null && $this->selected_id != "") {
 			$sql = "SELECT * FROM ".TB_PREF."attachments WHERE id = ".db_escape($this->selected_id);
-			$row = row_or_empty(db_fetch(db_query($sql), "Cannot retrieve attachment $this->selected_id"));
+			$row = row_or_empty(db_fetch(db_select($sql), "Cannot retrieve attachment $this->selected_id"));
 			$_POST['tran_date'] = sql2date($row['tran_date']);
 			$_POST['title'] = $row['description'];
 			$_POST['trans_no'] = $row['trans_no'];
@@ -194,7 +194,7 @@ class attachments extends simple_crud {
     function _get_unique_name($selected_id) {
         if ($selected_id != null && $selected_id != "") {
             $sql = "SELECT * FROM ".TB_PREF."attachments WHERE id = ".db_escape($this->selected_id);
-            $row = row_or_empty(db_fetch(db_query($sql), "Cannot retrieve attachment $this->selected_id"));
+            $row = row_or_empty(db_fetch(db_select($sql), "Cannot retrieve attachment $this->selected_id"));
             return $row['unique_name'];
         }
             return null;
@@ -325,7 +325,7 @@ class attachments extends simple_crud {
 	/** @return false */
 	function db_delete() {
 		$sql = "SELECT * FROM ".TB_PREF."attachments WHERE id = ".db_escape($this->selected_id);
-		$row = row_or_empty(db_fetch(db_query($sql), "Cannot retrieve attachment $this->selected_id"));
+		$row = row_or_empty(db_fetch(db_select($sql), "Cannot retrieve attachment $this->selected_id"));
 
 		$dir =  company_path()."/attachments";
 		if ($row['unique_name'] && file_exists($dir."/".$row['unique_name']))

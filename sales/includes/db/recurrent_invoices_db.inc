@@ -133,7 +133,7 @@ function recurrent_invoice_count(string|int|null $id)
 		WHERE rec.debtor_no!=0 AND !ISNULL(debtor.debtor_no) AND rec.id=".db_escape($id);
 
 	$sql = "SELECT count(*) FROM ($sql1 UNION $sql2) a";
-	$result = row_or_empty(db_fetch(db_query($sql, "cannot count recurrent invoices")));
+	$result = row_or_empty(db_fetch(db_select($sql, "cannot count recurrent invoices")));
 
 	return $result[0];
 }

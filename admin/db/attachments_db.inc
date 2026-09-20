@@ -91,7 +91,7 @@ function get_attachment_string(string|int|float|bool|null $type, string|int|floa
 //----------------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_attached_documents(string|int|float|bool|null $type, string|int|float|bool|null $trans_no=false)
 {
@@ -99,7 +99,7 @@ function get_attached_documents(string|int|float|bool|null $type, string|int|flo
 	if ((bool)$trans_no)
 		$sql .= " AND trans_no=".db_escape($trans_no);
 	$sql .= " ORDER BY trans_no";
-	return db_query($sql, "Could not retrieve attachments");
+	return db_select($sql, "Could not retrieve attachments");
 }
 
 /**

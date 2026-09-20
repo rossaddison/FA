@@ -143,7 +143,7 @@ if (isset($_GET['AddedID'])) {
 	$customer_id = $order['debtor_no'];	
 	if ($order['prep_amount'] > 0)
 	{
-		$row = db_fetch(db_query(get_allocatable_sales_orders($customer_id, $order_no, ST_SALESORDER)));
+		$row = db_fetch(db_select(get_allocatable_sales_orders($customer_id, $order_no, ST_SALESORDER)));
 		if ($row === false)
 			submenu_option(_("Receive Customer Payment"), "/sales/customer_payments.php?customer_id=$customer_id");
 	}

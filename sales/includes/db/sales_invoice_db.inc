@@ -296,7 +296,7 @@ function get_cust_prepayment_invoice_factor(string|int|float|bool|null $trans_no
 		FROM ".TB_PREF."debtor_trans dt
 		LEFT JOIN ".TB_PREF."sales_orders so ON so.trans_type=".ST_SALESORDER." AND so.order_no=dt.order_
 		 WHERE dt.type=".ST_SALESINVOICE." AND trans_no=".db_escape($trans_no);
-	$row = db_fetch(db_query($sql, 'cannot retrieve prepaid invoice factor'));
+	$row = db_fetch(db_select($sql, 'cannot retrieve prepaid invoice factor'));
 	return is_array($row) ? $row[0] : false;
 }
 
@@ -316,7 +316,7 @@ function prepaid_invoice_remainder(mixed $order): int|string
 			." AND so.trans_type=".ST_SALESORDER
 			." AND so.payment_terms=pt.terms_indicator";
 			
-	$result = row_or_empty(db_fetch(db_query($sql, "cannot find final invoice value")));
+	$result = row_or_empty(db_fetch(db_select($sql, "cannot find final invoice value")));
 	return $result[0] ? $result[0] : 0;
 }
 

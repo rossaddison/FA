@@ -606,7 +606,7 @@ function update_prepaid_so_line(string|int|float|bool|null $line_id, string|int|
 	Returns array of all issued invoices to sales order $order_no, optinally up to trans_no==$up_to
 */
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_sales_order_invoices(string|null $order_no)
 {
@@ -616,7 +616,7 @@ function get_sales_order_invoices(string|null $order_no)
 		WHERE ISNULL(v.id) AND dt.type=".ST_SALESINVOICE." AND dt.order_=".db_escape($order_no)
 		." ORDER BY dt.tran_date, dt.reference, dt.trans_no";
 
-	return db_query($sql, "cannot retrieve sales invoices for sales order");
+	return db_select($sql, "cannot retrieve sales invoices for sales order");
 }
 
 /**
@@ -627,7 +627,7 @@ function is_sales_order_started(string|int|float|bool|null $order_no)
 	$sql = "SELECT count(*) FROM ".TB_PREF."sales_order_details WHERE order_no=".db_escape($order_no)." AND trans_type=".ST_SALESORDER
 		." AND (invoiced!=0 OR qty_sent!=0)";
 
-	$result = row_or_empty(db_fetch(db_query($sql, "cannot retrieve sales invoices for sales order")));
+	$result = row_or_empty(db_fetch(db_select($sql, "cannot retrieve sales invoices for sales order")));
 	return $result[0];
 }
 
@@ -662,7 +662,7 @@ function is_prepaid_order_open(string|int|float|bool|null $order_no)
 		AND o.trans_type = ".ST_SALESORDER."
 		AND o.order_no = " . db_escape($order_no);
 
-	$result = row_or_empty(db_fetch(db_query($sql, "cannot check prepaid order open")));
+	$result = row_or_empty(db_fetch(db_select($sql, "cannot check prepaid order open")));
 
 	return $result[0];
 }
