@@ -170,7 +170,7 @@ function bank_account_settings(string|int|float|bool|array|null $bank_id): void
 	if ($bank_id) 
 	{
 	  	if ($Mode == 'Edit') {	
-			$myrow = get_bank_account($bank_id) ?: array();
+			$myrow = row_or_empty(get_bank_account($bank_id));
 
 			$_POST['account_code'] = $myrow["account_code"];
 			$_POST['account_type'] = $myrow["account_type"];
@@ -233,7 +233,7 @@ if (!$bank_id)
 }
 else
 {
-	$act = get_bank_account($bank_id) ?: array();
+	$act = row_or_empty(get_bank_account($bank_id));
 	if ($act)
 		display_heading((string)$act['bank_account_name']." - ".(string)$act['bank_curr_code']);
 }

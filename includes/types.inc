@@ -131,7 +131,7 @@ function payment_person_name(string|int|float|bool|null $type, string|int|float|
 		case PT_MISC :
 			return $person_id;
 		case PT_QUICKENTRY :
-			$qe = get_quick_entry($person_id) ?: array();
+			$qe = row_or_empty(get_quick_entry($person_id));
 			return ($full ? $payment_person_types[$type] . " ":"") . (string)$qe["description"];
 		case PT_WORKORDER :
 			global $wo_cost_types;

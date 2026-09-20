@@ -110,7 +110,7 @@ function get_customer_reference (string|int|float|bool|null $order_number)
 
     $result = db_query($sql,"No Transcation were returned");
 
-    $val = db_fetch($result) ?: array();
+    $val = row_or_empty(db_fetch($result));
 
     return $val['customer_ref'];
 }
@@ -226,7 +226,7 @@ function print_customer_balances(): void
         if (!$convert && $currency != $myrow['curr_code']) continue;
 
         $rate = $convert ? get_exchange_rate_from_home_currency($myrow['curr_code'], Today()) : 1;
-        $bal = get_open_balance($myrow['debtor_no'], $from) ?: array();
+        $bal = row_or_empty(get_open_balance($myrow['debtor_no'], $from));
         $init = array();
         $curr_db = $bal ? round2(abs((float)$bal['charges'] * $rate), $dec) : 0; // db
         $curr_cr = $bal ? round2(abs((float)$bal['credits'] * $rate), $dec) : 0; // cr

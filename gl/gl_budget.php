@@ -93,7 +93,7 @@ if (db_has_gl_accounts())
 	table_header($th);
 	$year = $_POST['fyear'];
 	if (get_post('update') == '') {
-		$fyear = get_fiscalyear($year) ?: array();
+		$fyear = row_or_empty(get_fiscalyear($year));
 		$_POST['begin'] = sql2date($fyear['begin']);
 		$_POST['end'] = sql2date($fyear['end']);
 	}

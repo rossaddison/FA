@@ -124,7 +124,7 @@ if ($selected_id != '')
  	if ($Mode == 'Edit') {
 		//editing an existing item category
 
-		$myrow = get_item_unit($selected_id) ?: array();
+		$myrow = row_or_empty(get_item_unit($selected_id));
 
 		$_POST['abbr'] = $myrow["abbr"];
 		$_POST['description']  = $myrow["name"];

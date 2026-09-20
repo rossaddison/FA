@@ -98,7 +98,7 @@ function get_dimension_string(int|string|null $id, bool $html=false, ?string $sp
 	}
 	else
 	{
-		$row = get_dimension($id, true) ?: array();
+		$row = row_or_empty(get_dimension($id, true));
 		$dim = (string)$row['reference'] . $space . (string)$row['name'];
 	}
 
@@ -131,13 +131,13 @@ function dimension_has_payments(string|int|float|bool|null $id): bool
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."gl_trans WHERE dimension_id = ".db_escape($id)
 	 . " OR dimension2_id = ".db_escape($id);
 	$res = db_query($sql, "Transactions could not be calculated");
-	$row = db_fetch_row($res) ?: array();
+	$row = row_or_empty(db_fetch_row($res));
 	return ($row[0] > 0);
 }
 
 function dimension_is_closed(string|array|null $id): bool
 {
-	$result = get_dimension($id) ?: array();
+	$result = row_or_empty(get_dimension($id));
 	return ($result['closed'] == '1');
 }
 
@@ -192,7 +192,7 @@ function get_dimension_balance(string|int|float|bool|null $id, string|array|null
 			AND	tran_date <= '" . date2sql($to) . "' 
 			AND (dimension_id = $id OR dimension2_id = $id)";
 	$res = db_query($sql, "Sum of transactions could not be calculated");
-	$row = db_fetch_row($res) ?: array();
+	$row = row_or_empty(db_fetch_row($res));
 
 	return $row[0];
 }

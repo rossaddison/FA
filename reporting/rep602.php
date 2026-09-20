@@ -39,7 +39,7 @@ function get_bank_balance_to(string|array|null $to, ?string $account)
 	$sql = "SELECT SUM(amount) FROM ".TB_PREF."bank_trans WHERE bank_act=".db_escape($account)."
 	AND trans_date < '$to'";
 	$result = db_query($sql, "The starting balance on hand could not be calculated");
-	$row = db_fetch_row($result) ?: array();
+	$row = row_or_empty(db_fetch_row($result));
 	return $row[0];
 }
 
@@ -87,7 +87,7 @@ function print_bank_transactions_reconcile(): void
 	$headers = array(_('Type'),	_('#'),	_('Reference'), _('Date'), _('Person/Item'),
 		_('Debit'),	_('Credit'), _('Balance'), _('Reco Date'), _('Narration'));
 
-	$account = get_bank_account($acc) ?: array();
+	$account = row_or_empty(get_bank_account($acc));
 	$act = (string)$account['bank_account_name']." - ".(string)$account['bank_curr_code']." - ".(string)$account['bank_account_number'];
    	$params =   array( 	0 => $comments,
 	    1 => array('text' => _('Period'), 'from' => $from, 'to' => $to),

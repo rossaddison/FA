@@ -197,7 +197,7 @@ function invoice_totals(supp_trans &$supp_trans): void
 //--------------------------------------------------------------------------------------------------
 function display_gl_controls(supp_trans &$supp_trans, string|int|float|bool|null $k): void
 {
-	$accs = get_supplier_accounts($supp_trans->supplier_id) ?: array();
+	$accs = row_or_empty(get_supplier_accounts($supp_trans->supplier_id));
     if (!isset($_POST['gl_code']))
 		$_POST['gl_code'] = $accs['purchase_account'] ? 
 			$accs['purchase_account'] : get_company_pref('default_cogs_act');
@@ -251,7 +251,7 @@ function display_gl_items(supp_trans &$supp_trans, string|int|float|bool|items_c
 			echo "<div style='float:right;'>";
 			echo _("Quick Entry:")."&nbsp;"; 
 			echo quick_entries_list('qid', null, QE_SUPPINV, true);
-			$qid = get_quick_entry(get_post('qid')) ?: array();
+			$qid = row_or_empty(get_quick_entry(get_post('qid')));
 			if (list_updated('qid')) {
 				unset($_POST['totamount']); // enable default
 				$Ajax->activate('totamount');
@@ -533,7 +533,7 @@ function display_grn_items(supp_trans &$supp_trans, ?int $mode=0): int|float
     		if ($mode == 1)
     		{
 //				label_cell($entered_grn->id);
- 				$row = get_grn_batch($grn_batch) ?: array();
+ 				$row = row_or_empty(get_grn_batch($grn_batch));
 				label_cell(get_trans_view_str(ST_PURCHORDER, $row["purch_order_no"]), "nowrap align='right'"); // PO
 			}	
 			label_cell($entered_grn->item_code);

@@ -163,7 +163,7 @@ div_end();
 if ($selected_id != '') {
 	if ($Mode =='Edit')
 	{
-		$myrow = get_item_code($selected_id) ?: array();
+		$myrow = row_or_empty(get_item_code($selected_id));
 		$_POST['item_code'] = $myrow["item_code"];
 		$_POST['quantity'] = $myrow["quantity"];
 		$_POST['description'] = $myrow["description"];

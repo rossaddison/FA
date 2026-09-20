@@ -32,7 +32,7 @@ page(_($help_context = "Process Depreciation"), false, false, "", $js);
 //---------------------------------------------------------------------------------------------
 function check_data(): bool
 {
-  $myrow = get_item($_POST['stock_id']) ?: array();
+  $myrow = row_or_empty(get_item($_POST['stock_id']));
 
   if ($_POST['months'] > depreciation_months($myrow['depreciation_date'])) {
     display_error(_("The number of months is greater than the timespan between the depreciation start and the end of the fiscal year."));
@@ -141,7 +141,7 @@ function show_gl_controls(): void {
   end_row();
   end_table();
 
-  $myrow = get_item($_POST['stock_id']) ?: array();
+  $myrow = row_or_empty(get_item($_POST['stock_id']));
 
   if (list_updated('stock_id') || !isset($_POST['months'])) {
     //$_POST['depreciation_start'] = sql2date($myrow['depreciation_start']);

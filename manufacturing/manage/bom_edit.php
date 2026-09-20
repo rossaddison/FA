@@ -158,7 +158,7 @@ if ($Mode == 'RESET')
 
 if (list_updated('new_stock_id')) {
 	copy_bom_items(post_scalar('stock_id'), post_scalar('new_stock_id'));
-	$item = get_item($_POST['new_stock_id']) ?: array();
+	$item = row_or_empty(get_item($_POST['new_stock_id']));
 	$_POST['stock_id'] = $_POST['new_stock_id'];
 	$Ajax->activate('_page_body');
 	display_notification(_("BOM copied to ") . (string)$item['description']);
@@ -200,7 +200,7 @@ start_form();
 	{
  		if ($Mode == 'Edit') {
 			//editing a selected component from the link to the line item
-			$myrow = get_component_from_bom($selected_id) ?: array();
+			$myrow = row_or_empty(get_component_from_bom($selected_id));
 
 			$_POST['loc_code'] = $myrow["loc_code"];
 			$_POST['component'] = $myrow["component"]; // by Tom Moulton

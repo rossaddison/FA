@@ -154,7 +154,7 @@ if ($selected_id != -1)
 	//editing an existing status code
 
  	if ($Mode == 'Edit') {
-    	$group = get_tax_group($selected_id) ?: array();
+    	$group = row_or_empty(get_tax_group($selected_id));
 
     	$_POST['name']  = $group["name"];
 

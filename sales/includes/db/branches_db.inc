@@ -75,7 +75,7 @@ function branch_in_foreign_table(string|array|null $customer_id, string|int|floa
 	$sql= "SELECT COUNT(*) FROM ".TB_PREF."$table WHERE branch_code=".db_escape($branch_code)
 		." AND debtor_no = ".db_escape($customer_id);
 	$result = db_query($sql,"could not query $table");
-	$myrow = db_fetch_row($result) ?: array();
+	$myrow = row_or_empty(db_fetch_row($result));
 	return ($myrow[0] > 0);
 }
 
@@ -131,7 +131,7 @@ function get_branch_name(string|int|float|bool|null $branch_id)
 
 	$result = db_query($sql,"could not retreive name for branch" . $branch_id);
 
-	$myrow = db_fetch_row($result) ?: array();
+	$myrow = row_or_empty(db_fetch_row($result));
 	return $myrow[0];
 }
 

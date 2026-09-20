@@ -234,7 +234,7 @@ function set_delivery_shipping_sum(?array $delivery_notes): void
     
     foreach($delivery_notes as $delivery_num) 
     {
-        $myrow = get_customer_trans($delivery_num, ST_CUSTDELIVERY) ?: array();
+        $myrow = row_or_empty(get_customer_trans($delivery_num, ST_CUSTDELIVERY));
 
         $shipping += $myrow['ov_freight'];
     }
@@ -471,7 +471,7 @@ if (!isset($_POST['ship_via'])) {
 label_cell(_("Shipping Company"), "class='tableheader2'");
 if ($prepaid)
 {
-	$shipper = get_shipper($_SESSION['Items']->ship_via) ?: array();
+	$shipper = row_or_empty(get_shipper($_SESSION['Items']->ship_via));
 	label_cells(null, $shipper['shipper_name']);
 } else
 	shippers_list_cells(null, 'ship_via', $_POST['ship_via']);
@@ -501,7 +501,7 @@ else
 end_row();
 end_table();
 
-$row = get_customer_to_order($_SESSION['Items']->customer_id) ?: array();
+$row = row_or_empty(get_customer_to_order($_SESSION['Items']->customer_id));
 if ($row['dissallow_invoices'] == 1)
 {
 	display_error(_("The selected customer account is currently on hold. Please contact the credit control personnel to discuss."));

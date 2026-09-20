@@ -377,7 +377,7 @@ function credit_sales_invoice_allocate(string|int|float|bool|null $invoice_no, s
 	$sql = "SELECT ov_freight+ov_gst+ov_amount+ov_freight_tax as total, alloc, debtor_no FROM ".TB_PREF."debtor_trans
 		WHERE (`type`=".ST_SALESINVOICE." AND trans_no=".db_escape($invoice_no).")";
 	$result = db_query($sql, "can't retrieve invoice totals");
-	$invoice = db_fetch($result) ?: array();
+	$invoice = row_or_empty(db_fetch($result));
 	$free = (float)$invoice['total'] - (float)$invoice['alloc'];
 
 	if ($free < $amount) {

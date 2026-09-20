@@ -28,9 +28,9 @@ function write_sales_invoice(&$invoice)
 	hook_db_prewrite($invoice, ST_SALESINVOICE);
 	$company_data = get_company_prefs();
 
-	$branch_data = get_branch_accounts($invoice->Branch) ?: array();
+	$branch_data = row_or_empty(get_branch_accounts($invoice->Branch));
 
-	$customer = get_customer($invoice->customer_id) ?: array();
+	$customer = row_or_empty(get_customer($invoice->customer_id));
 
 	add_new_exchange_rate($customer['curr_code'], $date_, $invoice->ex_rate);
 
@@ -126,7 +126,7 @@ function write_sales_invoice(&$invoice)
 				update_parent_line(ST_SALESINVOICE, $invoice_line->src_id, ($invoice_line->qty_dispatched-$invoice_line->qty_old));
 		}
 		if ($invoice_line->qty_dispatched != 0) {
-			$stock_gl_code = get_stock_gl_code($invoice_line->stock_id) ?: array();
+			$stock_gl_code = row_or_empty(get_stock_gl_code($invoice_line->stock_id));
 
 			if ($invoice_line->line_price() != 0) {
 				//Post sales transaction to GL credit sales
@@ -248,7 +248,7 @@ function void_sales_invoice(string|int|float|bool|null $type, string|int|float|b
 		if ($deliveries !== 0) {
 			if ($type == ST_SALESINVOICE && count($deliveries) == 1 && get_reference(ST_CUSTDELIVERY, $deliveries[0]) == "auto")
 			{
-				$trans = get_customer_trans($deliveries[0], ST_CUSTDELIVERY) ?: array();
+				$trans = row_or_empty(get_customer_trans($deliveries[0], ST_CUSTDELIVERY));
 				void_sales_delivery(ST_CUSTDELIVERY, $deliveries[0], false);
 				$date_ = sql2date($trans['tran_date']);
 				add_audit_trail(ST_CUSTDELIVERY, $deliveries[0], $date_, _("Voided."));
@@ -313,7 +313,7 @@ function prepaid_invoice_remainder(mixed $order): int|string
 			." AND so.trans_type=".ST_SALESORDER
 			." AND so.payment_terms=pt.terms_indicator";
 			
-	$result = db_fetch(db_query($sql, "cannot find final invoice value")) ?: array();
+	$result = row_or_empty(db_fetch(db_query($sql, "cannot find final invoice value")));
 	return $result[0] ? $result[0] : 0;
 }
 
@@ -337,7 +337,7 @@ function get_oldest_delivery_date(string|int|float|bool|null $invoice_no)
 				inv.debtor_trans_type=".ST_SALESINVOICE
 				." AND inv.debtor_trans_no=".db_escape($invoice_no);
 	$res = db_query($sql, 'cannot find oldest delivery date');
-	$date = db_fetch($res) ?: array();
+	$date = row_or_empty(db_fetch($res));
 	return $date[0];
 }
 
@@ -357,6 +357,6 @@ function get_oldest_payment_date(string|int|float|bool|null $invoice_no)
 				alloc.trans_type_to=".ST_SALESINVOICE." AND alloc.trans_no_to=".db_escape($invoice_no)
 			." AND alloc.trans_type_from=payment.type AND alloc.trans_no_from=payment.trans_no";
 	$res = db_query($sql, 'cannot find oldest delivery date');
-	$date = db_fetch($res) ?: array();
+	$date = row_or_empty(db_fetch($res));
 	return $date[0];
 }

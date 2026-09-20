@@ -95,7 +95,7 @@ function handle_submit()
 
 function check_can_delete(string|int|float|bool|array|null $selected_id): bool
 {
-	$myrow = get_fiscalyear($selected_id) ?: array();
+	$myrow = row_or_empty(get_fiscalyear($selected_id));
 	// PREVENT DELETES IF DEPENDENT RECORDS IN gl_trans
 	if (check_years_before(sql2date($myrow['begin']), true))
 	{
@@ -189,7 +189,7 @@ function display_fiscalyear_edit(string|int|float|bool|array|null $selected_id):
 	{
 		if($Mode =='Edit')
 		{
-			$myrow = get_fiscalyear($selected_id) ?: array();
+			$myrow = row_or_empty(get_fiscalyear($selected_id));
 
 			$_POST['from_date'] = sql2date($myrow["begin"]);
 			$_POST['to_date']  = sql2date($myrow["end"]);

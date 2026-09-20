@@ -20,7 +20,7 @@ include_once("connect_db_mysqli.inc"); // the mysql_* API was removed in PHP 7
 function db_get_version()
 {
 	$result = db_query("SELECT VERSION()");
-	$row = db_fetch($result) ?: array();
+	$row = row_or_empty(db_fetch($result));
 	return $row[0];
 }
 
@@ -101,7 +101,7 @@ function get_mysql_collation(string|int|float|bool|null $lang=null): string
 function db_fixed(): bool
 {
 	$result = db_query("SELECT value FROM ".TB_PREF."sys_prefs WHERE name='version_id'");
-	$data = db_fetch($result) ?: array();
+	$data = row_or_empty(db_fetch($result));
 	return !db_num_rows($result) // new database is fixed by default 
 		|| ($data[0] > "2.3rc");
 }
@@ -115,7 +115,7 @@ function db_fixed(): bool
 function db_get_default_charset()
 {
 	$result = db_query("SELECT @@character_set_database");
-	$var = db_fetch($result) ?: array();
+	$var = row_or_empty(db_fetch($result));
 	return $var[0];
 }
 
@@ -129,7 +129,7 @@ function db_get_view_schema(string|int|float|bool|null $view)
     $qry = "select view_definition from information_schema.views where table_schema=DATABASE() and table_name='$view'";
     $res = db_query($qry,'Failed to select view schema');
     if ($res && db_num_rows($res) == 1) {
-        $row = db_fetch_assoc($res) ?: array();
+        $row = row_or_empty(db_fetch_assoc($res));
         $schema = $row['view_definition'];
     }
     return $schema;

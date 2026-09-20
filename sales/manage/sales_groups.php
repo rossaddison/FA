@@ -112,7 +112,7 @@ if ($selected_id != -1)
 {
  	if ($Mode == 'Edit') {
 		//editing an existing group
-		$myrow = get_sales_group($selected_id) ?: array();
+		$myrow = row_or_empty(get_sales_group($selected_id));
 
 		$_POST['description']  = $myrow["description"];
 	}

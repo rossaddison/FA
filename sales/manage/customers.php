@@ -207,7 +207,7 @@ function customer_settings(string|int|float|bool|array|null $selected_id): void
 	}
 	else 
 	{
-		$myrow = get_customer($selected_id) ?: array();
+		$myrow = row_or_empty(get_customer($selected_id));
 
 		$_POST['CustName'] = $myrow["name"];
 		$_POST['cust_ref'] = $myrow["debtor_ref"];

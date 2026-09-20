@@ -165,7 +165,7 @@ function item_in_foreign_codes(string|int|float|bool|null $stock_id): string
 
 	foreach($sqls as $sql=>$err) {
 		$result = db_query($sql, "could not query stock usage");
-		$myrow = db_fetch_row($result) ?: array();
+		$myrow = row_or_empty(db_fetch_row($result));
 		if ($myrow[0] > 0) 
 		{
 			$msg = $err; break;
@@ -182,7 +182,7 @@ function item_in_foreign_codes(string|int|float|bool|null $stock_id): string
 				.':<br>';
 
 			while($num_kits--) {
-				$kit = db_fetch($kits) ?: array();
+				$kit = row_or_empty(db_fetch($kits));
 				$msg .= "'".$kit[0]."'";
 				if ($num_kits) $msg .= ',';
 			}

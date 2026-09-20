@@ -51,7 +51,7 @@ function update_material_cost(?string $stock_id, string|int|float|bool|null $qty
 {
 	global $Refs;
 
-	$item = get_item($stock_id) ?: array();
+	$item = row_or_empty(get_item($stock_id));
 	$avg_cost =  $item['material_cost'];
 
 	$qoh = get_qoh_on_date($stock_id, null, $date);
@@ -126,7 +126,7 @@ function add_wo_costs_journal(string|int|float|bool|null $wo_id, int|float|bool|
 
     $journal_id = get_next_trans_no(ST_JOURNAL);
 
-	$wo = get_work_order($wo_id) ?: array();
+	$wo = row_or_empty(get_work_order($wo_id));
 
     if (!$ref) $ref = $Refs->get_next(ST_JOURNAL, null, $date);
 
@@ -145,7 +145,7 @@ function add_wo_costs_journal(string|int|float|bool|null $wo_id, int|float|bool|
 	add_gl_trans_std_cost(ST_JOURNAL, $journal_id, $date, $wo['wip_account'],
 		$dim1, $dim2,  $wo_cost_types[$cost_type], $amount);
 
-	$wo = get_work_order($wo_id) ?: array();
+	$wo = row_or_empty(get_work_order($wo_id));
 	$wip = $wo['wip_account'];
 
 	$Refs->save(ST_JOURNAL, $journal_id, $ref);
@@ -204,7 +204,7 @@ function work_order_production_gl(string|int|float|bool|null $woid, ?string $sto
 			$memo, -$bom_item["ComponentCost"] * (float)$bom_item["units_req"] * $quantity);
 	}
 
-	$wo = get_work_order($woid) ?: array();
+	$wo = row_or_empty(get_work_order($woid));
     add_gl_trans_std_cost(ST_MANURECEIVE, $rcv_no, $date_, $wo['wip_account'],
         0, 0, $memo, -$total_cost);
 	if ($SysPrefs->loc_notification() == 1 && count($st_ids) > 0)
@@ -222,7 +222,7 @@ function check_wo_costing(string|int|float|bool|null $type, string|int|float|boo
 	if (!db_num_rows($costs))
 		return 0;
 
-	$wo = db_fetch($costs) ?: array();
+	$wo = row_or_empty(db_fetch($costs));
 	return $wo['workorder_id'];
 }
 

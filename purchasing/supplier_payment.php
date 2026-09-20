@@ -113,7 +113,7 @@ if (isset($_GET['AddedID'])) {
 
 function get_default_supplier_payment_bank_account(string|int|float|bool|array|null $supplier_id, string|array|null $date)
 {
-	$previous_payment = get_supp_payment_before($supplier_id, date2sql($date)) ?: array();
+	$previous_payment = row_or_empty(get_supp_payment_before($supplier_id, date2sql($date)));
 	if ($previous_payment)
 	{
 		return $previous_payment['bank_id'];
@@ -324,7 +324,7 @@ start_form();
 
 	amount_row(_("Bank Charge:"), 'charge', null, '', $bank_currency);
 
-	$row = get_supplier($_POST['supplier_id']) ?: array();
+	$row = row_or_empty(get_supplier($_POST['supplier_id']));
 	$_POST['dimension_id'] = @$row['dimension_id'];
 	$_POST['dimension2_id'] = @$row['dimension2_id'];
 	$dim = get_company_pref('use_dimension');

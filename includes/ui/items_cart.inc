@@ -168,7 +168,7 @@ class items_cart
         if ($person_id != null && $gl_type)
 		{
 			$this->gl_items[$index]->person_type_id = $gl_type > 0 ? PT_CUSTOMER : PT_SUPPLIER;
-			$data = get_subaccount_data($code_id, $person_id) ?: array();
+			$data = row_or_empty(get_subaccount_data($code_id, $person_id));
 			$this->gl_items[$index]->person_name = $data['name'];
 			$this->gl_items[$index]->branch_id = $data['id'];
 		} else
@@ -290,16 +290,16 @@ class items_cart
 
 				if ($tax_info['person_type'] == PT_CUSTOMER)
 				{
-					$branch = get_default_branch($gl->person_id) ?: array();
+					$branch = row_or_empty(get_default_branch($gl->person_id));
 					$tax_info['tax_group'] = $branch['tax_group_id'];
 				} else {
-					$supplier = get_supplier($gl->person_id) ?: array();
+					$supplier = row_or_empty(get_supplier($gl->person_id));
 					$tax_info['tax_group'] = $supplier['tax_group_id'];
 				}
 				$subledger_sum += $gl->amount;
 			} elseif ($tax_id = is_tax_account($gl->code_id))
 			{
-				$tax_type = get_tax_type($tax_id) ?: array();
+				$tax_type = row_or_empty(get_tax_type($tax_id));
 				if ($gl->code_id == $tax_type['purchasing_gl_code'] && $gl->amount > 0) {
 					if (!isset($tax_info['tax_in'][$tax_id]))
 						$tax_info['tax_in'][$tax_id] = 0;
@@ -549,7 +549,7 @@ class gl_item
         if ($person_id != null  && $gl_type)
 		{
 			$this->person_type_id = $gl_type > 0 ? PT_CUSTOMER : PT_SUPPLIER;
-			$data = get_subaccount_data($code_id, $person_id) ?: array();
+			$data = row_or_empty(get_subaccount_data($code_id, $person_id));
 			$this->person_name = $data['name'];
 			$this->branch_id = $data['id'];
 		}

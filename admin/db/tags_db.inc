@@ -94,7 +94,7 @@ function get_tag_name(string|int|float|bool|null $id)
 
 	$result = db_query($sql, "could not get tag name");
 	
-	$row = db_fetch_row($result) ?: array();
+	$row = row_or_empty(db_fetch_row($result));
 	return $row ? $row[0] : '';
 }
 

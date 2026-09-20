@@ -152,7 +152,7 @@ function supplier_settings(&$supplier_id): void
 	if ($supplier_id) 
 	{
 		//SupplierID exists - either passed when calling the form or from the form itself
-		$myrow = get_supplier($_POST['supplier_id']) ?: array();
+		$myrow = row_or_empty(get_supplier($_POST['supplier_id']));
 
 		$_POST['supp_name'] = $myrow["supp_name"];
 		$_POST['supp_ref'] = $myrow["supp_ref"];

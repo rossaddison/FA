@@ -205,7 +205,7 @@ function is_date_in_fiscalyear(string|int|float|bool|array|null $date, bool $con
 	if (user_check_access('SA_MULTIFISCALYEARS')) // allow all open years for this one
 		return is_date_in_fiscalyears($date2, false);
 
-	$myrow = get_current_fiscalyear() ?: array();
+	$myrow = row_or_empty(get_current_fiscalyear());
 	$begin = sql2date($myrow['begin']);
 	$end = sql2date($myrow['end']);
 	if (date1_greater_date2($begin, $date2) || date1_greater_date2($date2, $end))
@@ -225,7 +225,7 @@ function begin_fiscalyear(): string
 	global $path_to_root;
 	include_once($path_to_root . "/admin/db/fiscalyears_db.inc");
 
-	$myrow = get_current_fiscalyear() ?: array();
+	$myrow = row_or_empty(get_current_fiscalyear());
 	return sql2date($myrow['begin']);
 }
 
@@ -234,7 +234,7 @@ function end_fiscalyear(): string
 	global $path_to_root;
 	include_once($path_to_root . "/admin/db/fiscalyears_db.inc");
 
-	$myrow = get_current_fiscalyear() ?: array();
+	$myrow = row_or_empty(get_current_fiscalyear());
 	return sql2date($myrow['end']);
 }
 

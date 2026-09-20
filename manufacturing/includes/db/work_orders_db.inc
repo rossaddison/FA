@@ -51,7 +51,7 @@ function add_work_order(string|int|float|bool|null $wo_ref, string|int|float|boo
 
 	if ($type != WO_ADVANCED)
 	{
-	 	$stockitem = get_item($stock_id) ?: array();
+	 	$stockitem = row_or_empty(get_item($stock_id));
 		release_work_order($woid, $date_, '');
 		if ($costs != 0)
 			add_wo_costs_journal($woid, $costs, WO_OVERHEAD, $cr_acc, $date_, $stockitem["dimension_id"], $stockitem["dimension2_id"]);
@@ -156,7 +156,7 @@ function work_order_has_productions(string|int|float|bool|null $woid): bool
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."wo_manufacture WHERE workorder_id=".db_escape($woid);
 	$result = db_query($sql, "query work order for productions");
 
-	$myrow = db_fetch_row($result) ?: array();
+	$myrow = row_or_empty(db_fetch_row($result));
 	return ($myrow[0] > 0);
 }
 
@@ -168,7 +168,7 @@ function work_order_has_issues(string|int|float|bool|null $woid): bool
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."wo_issues WHERE workorder_id=".db_escape($woid);
 	$result = db_query($sql, "query work order for issues");
 
-	$myrow = db_fetch_row($result) ?: array();
+	$myrow = row_or_empty(db_fetch_row($result));
 	return ($myrow[0] > 0);
 }
 
@@ -187,7 +187,7 @@ function release_work_order(string|int|float|bool|null $woid, string|int|float|b
 {
 	begin_transaction();
 
-	$myrow = get_work_order($woid) ?: array();
+	$myrow = row_or_empty(get_work_order($woid));
 	$stock_id = $myrow["stock_id"];
 
 	$date = date2sql($releaseDate);
@@ -219,7 +219,7 @@ function work_order_is_closed(?string $woid): bool
 {
 	$sql = "SELECT closed FROM ".TB_PREF."workorders WHERE id = ".db_escape($woid);
 	$result = db_query($sql, "could not query work order");
-	$row = db_fetch_row($result) ?: array();
+	$row = row_or_empty(db_fetch_row($result));
 	return ($row[0] > 0);
 }
 
@@ -268,7 +268,7 @@ function void_work_order(string|int|float|bool|null $woid): void
 	begin_transaction();
 	hook_db_prevoid(ST_WORKORDER, $woid);
 
-	$work_order = get_work_order($woid) ?: array();
+	$work_order = row_or_empty(get_work_order($woid));
 
 	if ($work_order['closed'])
 		reopen_work_order($woid);

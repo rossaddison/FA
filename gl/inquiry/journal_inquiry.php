@@ -92,7 +92,7 @@ function edit_link(array|false|null $row)
 	$ok = true;
 	if ($row['trans_type'] == ST_SALESINVOICE)
 	{
-		$myrow = get_customer_trans($row["trans_no"], $row["trans_type"]) ?: array();
+		$myrow = row_or_empty(get_customer_trans($row["trans_no"], $row["trans_type"]));
 		if ($myrow['alloc'] != $myrow['Total'] || get_voided_entry(ST_SALESINVOICE, $row["trans_no"]) !== false)
 			$ok = false;
 	}

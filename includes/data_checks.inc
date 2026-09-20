@@ -350,7 +350,7 @@ function db_has_fixed_asset_classes(): bool
 
 function db_has_depreciable_fixed_assets(): bool
 {
-	$year = get_current_fiscalyear() ?: array();
+	$year = row_or_empty(get_current_fiscalyear());
 	$begin = date2sql(add_months(sql2date($year['begin']), -1));
 	$end = date2sql(add_months(sql2date($year['end']), -1));
 

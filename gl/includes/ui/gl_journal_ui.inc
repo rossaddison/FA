@@ -57,7 +57,7 @@ function display_order_header(?items_cart &$Order): void
 		quick_entries_list_row(_("Quick Entry").":", 'quick', null, QE_JOURNAL, true);
 
 		start_row();
-		$qid = get_quick_entry(get_post('quick')) ?: array();
+		$qid = row_or_empty(get_quick_entry(get_post('quick')));
 		if (list_updated('quick')) {
 			unset($_POST['totamount']); // enable default
 		$Ajax->activate('totamount');
@@ -82,7 +82,7 @@ function display_order_header(?items_cart &$Order): void
         // Query the user to retain the reconciled status
         if (!$new) {
             $result = get_bank_trans(ST_JOURNAL, $Order->order_id);
-            $row = db_fetch($result) ?: array();
+            $row = row_or_empty(db_fetch($result));
             if ($row
                 && $row['reconciled']) {
                 check_row(_('Reconciled:'), 'reconciled', 1, true);

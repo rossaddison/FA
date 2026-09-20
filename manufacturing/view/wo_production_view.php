@@ -36,7 +36,7 @@ if ($_GET['trans_no'] != "")
 
 function display_wo_production(string|int|float|bool|null $prod_id): void
 {
-    $myrow = get_work_order_produce($prod_id) ?: array();
+    $myrow = row_or_empty(get_work_order_produce($prod_id));
 
 	br(1);
     start_table(TABLESTYLE);

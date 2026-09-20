@@ -171,7 +171,7 @@ if ($selected_id != -1)
 {
   	if ($Mode == 'Edit') {
 		//editing an existing User
-		$myrow = get_user($selected_id) ?: array();
+		$myrow = row_or_empty(get_user($selected_id));
 
 		$_POST['id'] = $myrow["id"];
 		$_POST['user_id'] = $myrow["user_id"];

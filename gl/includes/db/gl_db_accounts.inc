@@ -84,7 +84,7 @@ function is_account_balancesheet(string|int|float|bool|array|null $code): bool
 			AND coa.account_code=".db_escape($code);
 
 	$result = db_query($sql,"could not retreive the account class for $code");
-	$row = db_fetch_row($result) ?: array();
+	$row = row_or_empty(db_fetch_row($result));
 	return $row[0] > 0 && $row[0] < CL_INCOME;
 }
 
@@ -99,7 +99,7 @@ function get_gl_account_name(string|int|float|bool|array|null $code)
 
 	if (db_num_rows($result) == 1)
 	{
-		$row = db_fetch_row($result) ?: array();
+		$row = row_or_empty(db_fetch_row($result));
 		return $row[0];
 	}
 
@@ -130,7 +130,7 @@ function gl_account_in_company_defaults(string|int|float|bool|null $acc): bool
 		OR name='default_wip_act') AND value=".db_escape($acc);
 	$result = db_query($sql,"Couldn't test for default company GL codes");
 
-	$myrow = db_fetch_row($result) ?: array();
+	$myrow = row_or_empty(db_fetch_row($result));
 	return ($myrow[0] > 0); 
 }
 
@@ -146,7 +146,7 @@ function gl_account_in_stock_category(string|int|float|bool|null $acc): bool
 			OR dflt_sales_act=$acc";
 	$result = db_query($sql,"Couldn't test for existing stock category GL codes");
 
-	$myrow = db_fetch_row($result) ?: array();
+	$myrow = row_or_empty(db_fetch_row($result));
 	return ($myrow[0] > 0); 
 }
 
@@ -162,7 +162,7 @@ function gl_account_in_stock_master(string|int|float|bool|null $acc): bool
 			OR sales_account=$acc";
 	$result = db_query($sql,"Couldn't test for existing stock GL codes");
 
-	$myrow = db_fetch_row($result) ?: array();
+	$myrow = row_or_empty(db_fetch_row($result));
 	return ($myrow[0] > 0); 
 }
 
@@ -176,7 +176,7 @@ function gl_account_in_tax_types(string|int|float|bool|null $acc): bool
 			OR purchasing_gl_code=$acc";
 	$result = db_query($sql,"Couldn't test for existing tax GL codes");
 
-	$myrow = db_fetch_row($result) ?: array();
+	$myrow = row_or_empty(db_fetch_row($result));
 	return ($myrow[0] > 0); 
 }
 
@@ -192,7 +192,7 @@ function gl_account_in_cust_branch(string|int|float|bool|null $acc): bool
 			OR payment_discount_account=$acc";
 	$result = db_query($sql,"Couldn't test for existing cust branch GL codes");
 
-	$myrow = db_fetch_row($result) ?: array();
+	$myrow = row_or_empty(db_fetch_row($result));
 	return ($myrow[0] > 0); 
 }
 
@@ -207,7 +207,7 @@ function gl_account_in_suppliers(string|int|float|bool|null $acc): bool
 			OR payable_account=$acc";
 	$result = db_query($sql,"Couldn't test for existing suppliers GL codes");
 
-	$myrow = db_fetch_row($result) ?: array();
+	$myrow = row_or_empty(db_fetch_row($result));
 	return ($myrow[0] > 0); 
 }
 
@@ -221,7 +221,7 @@ function gl_account_in_quick_entry_lines(string|int|float|bool|null $acc): bool
 		WHERE dest_id=$acc AND UPPER(LEFT(action, 1)) <> 'T'";
 	$result = db_query($sql,"Couldn't test for existing Quick Entry Line GL codes");
 
-	$myrow = db_fetch_row($result) ?: array();
+	$myrow = row_or_empty(db_fetch_row($result));
 	return ($myrow[0] > 0); 
 }
 //
@@ -280,7 +280,7 @@ function get_subaccount_name(?string $code_id, ?string $person_id)
 			WHERE payable_account=".db_escape($code_id)." 
 				AND supplier_id=".db_escape($person_id);
 	$result = db_query($sql, 'cannot retrieve counterparty name');
-	$row = db_fetch($result) ?: array();
+	$row = row_or_empty(db_fetch($result));
 
 	return  $row ? $row['ref'] : '';
 }
@@ -291,7 +291,7 @@ function gl_account_in_bank_accounts(string|array|null $acc): bool
 		account_code=".db_escape($acc);
 	$result = db_query($sql,"Couldn't test bank account GL codes");
 
-	$myrow = db_fetch_row($result) ?: array();
+	$myrow = row_or_empty(db_fetch_row($result));
 	return ($myrow[0] > 0); 
 }
 
@@ -311,7 +311,7 @@ function is_bank_account(string|int|float|bool|array|null $account_code)
 	$sql= "SELECT id FROM ".TB_PREF."bank_accounts WHERE account_code=".db_escape($account_code);
 	$result = db_query($sql, "checking account is bank account");
 	if (db_num_rows($result) > 0) {
-		$acct = db_fetch($result) ?: array();
+		$acct = row_or_empty(db_fetch($result));
 		return $acct['id'];
 	} else
 		return false;

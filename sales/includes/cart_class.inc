@@ -225,7 +225,7 @@ class Cart
 		
 		if ($type == ST_CUSTDELIVERY) {
 			$this->order_no = key($this->trans_no);
-			$cust = get_customer($this->customer_id) ?: array();
+			$cust = row_or_empty(get_customer($this->customer_id));
 			$this->dimension_id = $cust['dimension_id'];
 			$this->dimension2_id = $cust['dimension2_id'];
 		}
@@ -328,7 +328,7 @@ class Cart
 						$this->dimension_id = 0;
 					else
 					{
-						$cust = get_customer($this->customer_id) ?: array();
+						$cust = row_or_empty(get_customer($this->customer_id));
 						$this->dimension_id = $cust['dimension_id'];
 					}	
 					if ($dim > 1)
@@ -784,7 +784,7 @@ class line_details
 		$this->id = $id;
 		$this->src_no = $src_no;
 		$this->src_id = $src_id;
-		$item_row = get_item($stock_id) ?: array();
+		$item_row = row_or_empty(get_item($stock_id));
 
 		if (!$item_row) 
 			return;

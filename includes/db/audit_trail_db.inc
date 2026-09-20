@@ -130,7 +130,7 @@ function get_journal_number(string|int|float|bool|null $type, string|int|float|b
 	$res = db_query($sql, "Cannot check transaction");
 	if (db_num_rows($res))
 	{
-		$myrow =db_fetch($res) ?: array();
+		$myrow =row_or_empty(db_fetch($res));
 		return $myrow['gl_seq'] ? $myrow['gl_seq'] : 0;
 	}
 	return "-";

@@ -106,7 +106,7 @@ function check_begin_end_date(string|array|null $date1, string|array|null $date2
 {
 	$sql = "SELECT MAX(end), MIN(begin) FROM ".TB_PREF."fiscal_year";
 	$result = db_query($sql, "could not retrieve last fiscal years");
-	$row = db_fetch_row($result) ?: array();
+	$row = row_or_empty(db_fetch_row($result));
 	if ($row[0] === null)
 		return true;
 	$max = add_days(sql2date($row[0]), 1);
@@ -118,7 +118,7 @@ function next_begin_date(): false|string
 {
 	$sql = "SELECT MAX(end) FROM ".TB_PREF."fiscal_year";
 	$result = db_query($sql, "could not retrieve last fiscal years");
-	$row = db_fetch_row($result) ?: array();
+	$row = row_or_empty(db_fetch_row($result));
 	if ($row[0] === null)
 		return false;
 	return add_days(sql2date($row[0]), 1);
@@ -132,7 +132,7 @@ function check_years_before(string|array|null $date, bool $closed=false): bool
 		$sql .= " AND closed=0";
 
 	$result = db_query($sql, "could not check fiscal years before");
-	$row = db_fetch_row($result) ?: array();
+	$row = row_or_empty(db_fetch_row($result));
 	return ($row[0] > 0);
 }
 
@@ -155,7 +155,7 @@ function close_year(string|int|float|bool|null $year): bool
 
 	begin_transaction();
 
-	$myrow = get_fiscalyear($year) ?: array();
+	$myrow = row_or_empty(get_fiscalyear($year));
 	$to = $myrow['end'];
 	// retrieve total balances from balance sheet accounts
     $sql = "SELECT SUM(amount) FROM ".TB_PREF."gl_trans INNER JOIN ".TB_PREF."chart_master ON account=account_code
@@ -163,7 +163,7 @@ function close_year(string|int|float|bool|null $year): bool
 		WHERE ctype>=".CL_ASSETS." AND ctype <=".CL_EQUITY." AND tran_date <= '$to'";
 	$result = db_query($sql, "The total balance could not be calculated");
 
-	$row = db_fetch_row($result) ?: array();
+	$row = row_or_empty(db_fetch_row($result));
 	$balance = round2($row[0], user_price_dec());
 
 	$to = sql2date($to);
@@ -187,7 +187,7 @@ function close_year(string|int|float|bool|null $year): bool
 
 function open_year(string|int|float|bool|null $year): void
 {
-	$myrow = get_fiscalyear($year) ?: array();
+	$myrow = row_or_empty(get_fiscalyear($year));
 	$from = sql2date($myrow['begin']);
 
 	begin_transaction();
@@ -213,7 +213,7 @@ function delete_this_fiscalyear(string|int|float|bool|array|null $selected_id): 
 	db_backup($db_connections[user_company()], 'Security backup before Fiscal Year Removal');
 	begin_transaction();
 	$ref = _("Open Balance");
-	$myrow = get_fiscalyear($selected_id) ?: array();
+	$myrow = row_or_empty(get_fiscalyear($selected_id));
 	$to = $myrow['end'];
 	$sql = "SELECT order_no, trans_type FROM ".TB_PREF."sales_orders WHERE ord_date <= '$to' AND type <> 1"; // don't take the templates
 	$result = db_query($sql, "Could not retrieve sales orders");
@@ -221,7 +221,7 @@ function delete_this_fiscalyear(string|int|float|bool|array|null $selected_id): 
 	{
 		$sql = "SELECT SUM(qty_sent), SUM(quantity) FROM ".TB_PREF."sales_order_details WHERE order_no = {$row['order_no']} AND trans_type = {$row['trans_type']}";
 		$res = db_query($sql, "Could not retrieve sales order details");
-		$row2 = db_fetch_row($res) ?: array();
+		$row2 = row_or_empty(db_fetch_row($res));
 		if ($row2[0] == $row2[1])
 		{
 			$sql = "DELETE FROM ".TB_PREF."sales_order_details WHERE order_no = {$row['order_no']} AND trans_type = {$row['trans_type']}";
@@ -237,7 +237,7 @@ function delete_this_fiscalyear(string|int|float|bool|array|null $selected_id): 
 	{
 		$sql = "SELECT SUM(quantity_ordered), SUM(quantity_received) FROM ".TB_PREF."purch_order_details WHERE order_no = {$row['order_no']}";
 		$res = db_query($sql, "Could not retrieve purchase order details");
-		$row2 = db_fetch_row($res) ?: array();
+		$row2 = row_or_empty(db_fetch_row($res));
 		if ($row2[0] == $row2[1])
 		{
 			$sql = "DELETE FROM ".TB_PREF."purch_order_details WHERE order_no = {$row['order_no']}";
@@ -399,7 +399,7 @@ function delete_this_fiscalyear(string|int|float|bool|array|null $selected_id): 
 	{
 		$sql = "SELECT count(*) FROM ".TB_PREF."gl_trans WHERE type = {$row['type']} AND type_no = {$row['id']}";
 		$res = db_query($sql, "Could not retrieve gl_trans");
-		$row2 = db_fetch_row($res) ?: array();
+		$row2 = row_or_empty(db_fetch_row($res));
 		if ($row2[0] == 0) // if no link, then delete comments
 		{
 			$sql = "DELETE FROM ".TB_PREF."comments WHERE type = {$row['type']} AND id = {$row['id']}";
@@ -412,7 +412,7 @@ function delete_this_fiscalyear(string|int|float|bool|array|null $selected_id): 
 	{
 		$sql = "SELECT count(*) FROM ".TB_PREF."gl_trans WHERE type = {$row['type']} AND type_no = {$row['id']}";
 		$res = db_query($sql, "Could not retrieve gl_trans");
-		$row2 = db_fetch_row($res) ?: array();
+		$row2 = row_or_empty(db_fetch_row($res));
 		if ($row2[0] == 0) // if no link, then delete refs
 		{
 			$sql = "DELETE FROM ".TB_PREF."refs WHERE type = {$row['type']} AND id = {$row['id']}";

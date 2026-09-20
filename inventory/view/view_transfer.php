@@ -25,7 +25,7 @@ if (isset($_GET["trans_no"]))
 	$trans_no = $_GET["trans_no"];
 }
 
-$trans = get_stock_transfer($trans_no) ?: array();
+$trans = row_or_empty(get_stock_transfer($trans_no));
 
 display_heading($systypes_array[ST_LOCTRANSFER] . " #$trans_no");
 

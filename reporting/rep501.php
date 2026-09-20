@@ -61,7 +61,7 @@ function getYTD(?string $dim)
     $TransResult = db_query($sql,"No transactions were returned");
 	if (db_num_rows($TransResult) == 1)
 	{
-		$DemandRow = db_fetch_row($TransResult) ?: array();
+		$DemandRow = row_or_empty(db_fetch_row($TransResult));
 		$balance = $DemandRow[0];
 	}
 	else

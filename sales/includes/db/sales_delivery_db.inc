@@ -23,7 +23,7 @@ function write_sales_delivery(Cart &$delivery,string|int|float|bool|null $bo_pol
 	$delivery->bo_policy = $bo_policy;
 	hook_db_prewrite($delivery, ST_CUSTDELIVERY);
 
-	$customer = get_customer($delivery->customer_id) ?: array();
+	$customer = row_or_empty(get_customer($delivery->customer_id));
 
 	add_new_exchange_rate($customer['curr_code'], $delivery->document_date, $delivery->ex_rate);
 
@@ -65,7 +65,7 @@ function write_sales_delivery(Cart &$delivery,string|int|float|bool|null $bo_pol
 	// for prepaid delivery repost income from deffered account
 	if ($delivery->is_prepaid())
 	{
-		$branch_data = get_branch_accounts($delivery->Branch) ?: array();
+		$branch_data = row_or_empty(get_branch_accounts($delivery->Branch));
 		$total = 0;
 	}
 	foreach ($delivery->line_items as $line_no => $delivery_line) {
@@ -107,7 +107,7 @@ function write_sales_delivery(Cart &$delivery,string|int|float|bool|null $bo_pol
 				db_query($sql,"The cost details for the fixed asset could not be updated");
 			}
 
-			$stock_gl_code = get_stock_gl_code($delivery_line->stock_id) ?: array();
+			$stock_gl_code = row_or_empty(get_stock_gl_code($delivery_line->stock_id));
 
 			// If there is a Customer Dimension, then override with this,
 			// else take the Item Dimension (if any)

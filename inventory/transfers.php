@@ -51,7 +51,7 @@ if (isset($_GET['AddedID']))
 	display_notification_centered(_("Inventory transfer has been processed"));
 	display_note(get_trans_view_str($trans_type, $trans_no, _("&View this transfer")));
 
-  $itm = db_fetch(get_stock_transfer_items($_GET['AddedID'])) ?: array();
+  $itm = row_or_empty(db_fetch(get_stock_transfer_items($_GET['AddedID'])));
 
   if (is_fixed_asset($itm['mb_flag']))
 	  hyperlink_params($_SERVER['PHP_SELF'], _("Enter &Another Fixed Assets Transfer"), "NewTransfer=1&FixedAsset=1");

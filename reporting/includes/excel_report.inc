@@ -230,7 +230,7 @@ class FrontReport extends Spreadsheet_Excel_Writer_Workbook
 		$cols2 = null, $headers2 = null, $aligns2 = null)
 	{
 		$this->company = get_company_prefs();
-		$year = get_current_fiscalyear() ?: array();
+		$year = row_or_empty(get_current_fiscalyear());
 		if ($year['closed'] == 0)
 			$how = _("Active");
 		else

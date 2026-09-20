@@ -186,7 +186,7 @@ if ($selected_id != -1)
 	//editing an existing Location
 
  	if ($Mode == 'Edit') {
-		$myrow = get_item_location($selected_id) ?: array();
+		$myrow = row_or_empty(get_item_location($selected_id));
 
 		$_POST['loc_code'] = $myrow["loc_code"];
 		$_POST['location_name']  = $myrow["location_name"];

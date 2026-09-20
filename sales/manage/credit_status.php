@@ -134,7 +134,7 @@ if ($selected_id != -1)
  	if ($Mode == 'Edit') {
 		//editing an existing status code
 
-		$myrow = get_credit_status($selected_id) ?: array();
+		$myrow = row_or_empty(get_credit_status($selected_id));
 
 		$_POST['reason_description']  = $myrow["reason_description"];
 		$_POST['DisallowInvoices']  = $myrow["dissallow_invoices"];

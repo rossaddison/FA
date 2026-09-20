@@ -213,7 +213,7 @@ if ($selected_id != -1)
 {
 	if ($Mode == 'Edit') // changed by Joe 2010-11-09
 	{
-		$myrow = get_quick_entry($selected_id) ?: array();
+		$myrow = row_or_empty(get_quick_entry($selected_id));
 
 		$_POST['id']  = $myrow["id"];
 		$_POST['description']  = $myrow["description"];
@@ -314,7 +314,7 @@ if ($selected_id != -1)
 	 	if ($Mode2 == 'BEd') 
 	 	{
 			//editing an existing status code
-			$myrow = get_quick_entry_line($selected_id2) ?: array();
+			$myrow = row_or_empty(get_quick_entry_line($selected_id2));
 
 			$_POST['id']  = $myrow["id"];
 			$_POST['dest_id']  = $myrow["dest_id"];

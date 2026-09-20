@@ -30,7 +30,7 @@ function read_supplier_details_to_trans(supp_trans &$supp_trans, string|int|floa
 
 	$result = db_query($sql, "The supplier record selected: " . $supplier_id . " cannot be retrieved");
 
-	$myrow = db_fetch($result) ?: array();
+	$myrow = row_or_empty(db_fetch($result));
 
     if ($supp_trans->tran_date == "")
     {
@@ -74,7 +74,7 @@ function update_supp_received_items_for_invoice(string|int|float|bool|null $id, 
 		$sql = "SELECT act_price, unit_price FROM ".TB_PREF."purch_order_details WHERE
 			po_detail_item = ".db_escape($po_detail_item);
 		$result = db_query($sql, "The old actual price of the purchase order line could not be retrieved");
-		$row = db_fetch($result) ?: array();
+		$row = row_or_empty(db_fetch($result));
 		$ret = $row['act_price'];
 
 		$unit_price = $row['unit_price']; //Added by Rasmus
@@ -85,7 +85,7 @@ function update_supp_received_items_for_invoice(string|int|float|bool|null $id, 
 			WHERE
 				grn.id = line.grn_batch_id AND line.id=".db_escape($id);
 		$result = db_query($sql, "The old delivery date from the received record cout not be retrieved");
-		$row = db_fetch($result) ?: array();
+		$row = row_or_empty(db_fetch($result));
 		$date = $row['delivery_date'];
 	}
 	else
@@ -131,7 +131,7 @@ function add_supp_invoice(supp_trans &$supp_trans)
 	//$company_currency = get_company_currency();
 	$trans_no = $supp_trans->trans_no;
 	$trans_type = $supp_trans->trans_type;
-	$supplier = get_supplier($supp_trans->supplier_id) ?: array();
+	$supplier = row_or_empty(get_supplier($supp_trans->supplier_id));
     $dim = !empty($supp_trans->dimension) ? $supp_trans->dimension :
         ($supplier['dimension_id'] ? $supplier['dimension_id'] : 0);
     $dim2 = !empty($supp_trans->dimension2) ? $supp_trans->dimension2 :
@@ -276,7 +276,7 @@ function add_supp_invoice(supp_trans &$supp_trans)
 		$line_tax = get_full_price_for_item($entered_grn->item_code,
 			$entered_grn->this_quantity_inv * $entered_grn->chg_price, $supp_trans->tax_group_id, $supp_trans->tax_included) - $taxfree_line;
 
-		$stock_gl_code = get_stock_gl_code($entered_grn->item_code) ?: array();
+		$stock_gl_code = row_or_empty(get_stock_gl_code($entered_grn->item_code));
 
 		$dim = !empty($supp_trans->dimension) ? $supp_trans->dimension :
 			($supplier['dimension_id'] ? $supplier['dimension_id'] : $stock_gl_code['dimension_id']);
@@ -379,7 +379,7 @@ function add_supp_invoice(supp_trans &$supp_trans)
 		if ($invoice_alloc_balance > 0) 
 		{ 	//the invoice is not already fully allocated 
 
-			$trans = get_supp_trans($invoice_id, ST_SUPPCREDIT) ?: array();
+			$trans = row_or_empty(get_supp_trans($invoice_id, ST_SUPPCREDIT));
 			$total = -$trans['Total'];
 
 			$allocate_amount = ($invoice_alloc_balance > $total) ? $total : $invoice_alloc_balance;
@@ -468,7 +468,7 @@ function read_supp_invoice(string|int|float|bool|null $trans_no, string|int|floa
 
 	if (db_num_rows($result) == 1)
 	{
-		$trans_row = db_fetch($result) ?: array();
+		$trans_row = row_or_empty(db_fetch($result));
 
 		$supp_trans->supplier_id = $trans_row["supplier_id"];
 		$supp_trans->supplier_name = $trans_row["supp_name"];
@@ -547,7 +547,7 @@ function void_supp_invoice(string|int|float|bool|null $type, string|int|float|bo
 	begin_transaction();
 
 	hook_db_prevoid($type, $type_no);
-	$trans = get_supp_trans($type_no, $type) ?: array();
+	$trans = row_or_empty(get_supp_trans($type_no, $type));
 
 	void_bank_trans($type, $type_no, true);
 
@@ -575,7 +575,7 @@ function void_supp_invoice(string|int|float|bool|null $type, string|int|float|bo
 				$old_date = sql2date($old[1]);
 				
 				$batch = get_grn_batch_from_item($details_row["grn_item_id"]);	
-				$grn = get_grn_batch($batch) ?: array();
+				$grn = row_or_empty(get_grn_batch($batch));
          		if ($type == ST_SUPPCREDIT) // credit note 2009-06-14 Joe Hunt Must restore the po and grn
          		{	// We must get the corresponding invoice item to check for price chg.
 					$match = get_matching_invoice_item($details_row["stock_id"], $details_row["po_detail_item_id"]);
@@ -621,7 +621,7 @@ function void_supp_invoice(string|int|float|bool|null $type, string|int|float|bo
 						$ref = $Refs->get_next(ST_JOURNAL, null, $date_);
 						add_journal(ST_JOURNAL, $id, (float)$details_row["quantity"] * $diff, $old_date, get_company_currency(), $ref);
 						$stock_id = $details_row["stock_id"];
-						$stock_gl_code = get_stock_gl_code($stock_id) ?: array();
+						$stock_gl_code = row_or_empty(get_stock_gl_code($stock_id));
 						$memo = "Reversing Supplier invoice adjustment for zero inventory of ".$stock_id." Invoice: ".(string)$trans['reference'];
 						//Reverse the inventory effect if $qoh <=0
 						add_gl_trans_std_cost(ST_JOURNAL, $id, $old_date, 
@@ -669,7 +669,7 @@ function is_reference_already_there(string|int|float|bool|null $supplier_id, str
 		$sql .= " AND trans_no!=$trans_no";
 	$result=db_query($sql,"The sql to check for the previous entry of the same invoice failed");
 
-	$myrow = db_fetch_row($result) ?: array();
+	$myrow = row_or_empty(db_fetch_row($result));
 	return $myrow[0] > 0;
 }
 
@@ -677,11 +677,11 @@ function remove_not_invoice_item(string|int|null $id): void
 {
 	begin_transaction();
 
-    $myrow = get_grn_item_detail($id) ?: array();
+    $myrow = row_or_empty(get_grn_item_detail($id));
 
-    $grn = get_grn_batch($myrow['grn_batch_id']) ?: array();
+    $grn = row_or_empty(get_grn_batch($myrow['grn_batch_id']));
 
-    $supp = get_supplier($grn["supplier_id"]) ?: array();
+    $supp = row_or_empty(get_supplier($grn["supplier_id"]));
 
 	$sql = "UPDATE ".TB_PREF."purch_order_details
 		SET quantity_received = qty_invoiced, quantity_ordered = qty_invoiced WHERE po_detail_item = ".(string)$myrow["po_detail_item"];
@@ -706,7 +706,7 @@ function remove_not_invoice_item(string|int|null $id): void
         if (is_inventory_item($myrow['item_code']))
         {
             $total = 0;
-            $stock_gl_code = get_stock_gl_code($myrow['item_code']) ?: array();
+            $stock_gl_code = row_or_empty(get_stock_gl_code($myrow['item_code']));
             $date = sql2date($grn["delivery_date"]);
             $total += add_gl_trans_supplier(ST_SUPPRECEIVE, $myrow['grn_batch_id'], $date, $stock_gl_code["inventory_account"],
                 $stock_gl_code['dimension_id'], $stock_gl_code['dimension2_id'],

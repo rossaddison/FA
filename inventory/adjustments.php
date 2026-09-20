@@ -44,7 +44,7 @@ if (isset($_GET['AddedID']))
 	$trans_type = ST_INVADJUST;
 
   $result = get_stock_adjustment_items($trans_no);
-  $row = db_fetch($result) ?: array();
+  $row = row_or_empty(db_fetch($result));
 
   if (is_fixed_asset($row['mb_flag'])) {
     display_notification_centered(_("Fixed Assets disposal has been processed"));

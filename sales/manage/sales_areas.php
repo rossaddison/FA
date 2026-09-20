@@ -117,7 +117,7 @@ if ($selected_id != -1)
 {
  	if ($Mode == 'Edit') {
 		//editing an existing area
-		$myrow = get_sales_area($selected_id) ?: array();
+		$myrow = row_or_empty(get_sales_area($selected_id));
 
 		$_POST['description']  = $myrow["description"];
 	}

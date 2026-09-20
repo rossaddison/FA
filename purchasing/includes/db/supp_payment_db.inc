@@ -28,7 +28,7 @@ function write_supp_payment(?int $trans_no, string|int|float|bool|array|null $su
 	  void_supp_allocations(ST_SUPPAYMENT, $trans_no, $date_);
 	}
 
-	$bank = get_bank_account($bank_account) ?: array();
+	$bank = row_or_empty(get_bank_account($bank_account));
 
 	if (!$bank_amount) 	// auto 
 	{
@@ -49,7 +49,7 @@ function write_supp_payment(?int $trans_no, string|int|float|bool|array|null $su
 	// Now debit creditors account with payment + discount
 
 	$total = 0;
-    $supplier_accounts = get_supplier_accounts($supplier_id) ?: array();
+    $supplier_accounts = row_or_empty(get_supplier_accounts($supplier_id));
 	$total += add_gl_trans_supplier(ST_SUPPAYMENT, $payment_id, $date_, $supplier_accounts["payable_account"], $dimension, $dimension2,
 		$supp_amount + $supp_discount, $supplier_id, "", $rate);
 

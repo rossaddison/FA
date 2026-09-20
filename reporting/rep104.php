@@ -91,7 +91,7 @@ function print_price_listing(): void
 	$home_curr = get_company_pref('curr_default');
 	if ($currency == ALL_TEXT)
 		$currency = $home_curr;
-	$curr = get_currency($currency) ?: array();
+	$curr = row_or_empty(get_currency($currency));
 	$curr_sel = $currency . " - " . (string)$curr['currency'];
 	if ($category == ALL_NUMERIC)
 		$category = 0;

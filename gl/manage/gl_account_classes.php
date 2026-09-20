@@ -142,7 +142,7 @@ if ($selected_id != "")
 {
  	if ($Mode == 'Edit') {
 		//editing an existing status code
-		$myrow = get_account_class($selected_id) ?: array();
+		$myrow = row_or_empty(get_account_class($selected_id));
 	
 		$_POST['id']  = $myrow["cid"];
 		$_POST['name']  = $myrow["class_name"];

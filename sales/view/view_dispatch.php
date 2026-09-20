@@ -34,11 +34,11 @@ elseif (isset($_POST["trans_no"]))
 
 // 3 different queries to get the information - what a JOKE !!!!
 
-$myrow = get_customer_trans($trans_id, ST_CUSTDELIVERY) ?: array();
+$myrow = row_or_empty(get_customer_trans($trans_id, ST_CUSTDELIVERY));
 
-$branch = get_branch($myrow["branch_code"]) ?: array();
+$branch = row_or_empty(get_branch($myrow["branch_code"]));
 
-$sales_order = get_sales_order_header($myrow["order_"], ST_SALESORDER) ?: array();
+$sales_order = row_or_empty(get_sales_order_header($myrow["order_"], ST_SALESORDER));
 
 display_heading(sprintf(_("DISPATCH NOTE #%d"),$trans_id));
 

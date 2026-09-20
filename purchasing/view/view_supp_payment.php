@@ -26,7 +26,7 @@ if (isset($_GET["trans_no"]))
 	$trans_no = $_GET["trans_no"];
 }
 
-$receipt = get_supp_trans($trans_no, ST_SUPPAYMENT) ?: array();
+$receipt = row_or_empty(get_supp_trans($trans_no, ST_SUPPAYMENT));
 
 $company_currency = get_company_currency();
 

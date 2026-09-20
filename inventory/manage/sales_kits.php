@@ -118,7 +118,7 @@ function update_kit(string|array|null $selected_kit, string|int|float|bool|null 
 		display_notification($msg);
 
 	} else { // update component
-		$props = get_kit_props($selected_kit) ?: array();
+		$props = row_or_empty(get_kit_props($selected_kit));
 		update_item_code($component_id, $selected_kit, get_post('component'),
 			$props['description'], $props['category_id'], input_num('quantity'), 0);
 		display_notification(_("Component of selected kit has been updated."));
@@ -214,7 +214,7 @@ if (get_post('item_code') == '') {
 }
 
 	if ($Mode == 'Edit') {
-		$myrow = get_item_code($selected_id) ?: array();
+		$myrow = row_or_empty(get_item_code($selected_id));
 		$_POST['component'] = $myrow["stock_id"];
 		$_POST['quantity'] = number_format2($myrow["quantity"], get_qty_dec($myrow["stock_id"]));
 	}
@@ -230,7 +230,7 @@ if (get_post('item_code') == '') {
 		text_row(_("Description:"), 'description', null, 50, 200);
 		stock_categories_list_row(_("Category:"), 'category', null);
 	}
-	$res = get_item_edit_info(get_post('component')) ?: array();
+	$res = row_or_empty(get_item_edit_info(get_post('component')));
 	$dec =  $res["decimals"] == '' ? 0 : $res["decimals"];
 	$units = $res["units"] == '' ? _('kits') : $res["units"];
 	if (list_updated('component')) 

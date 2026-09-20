@@ -100,7 +100,7 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 			end_row();
 		}
 		//START Patch#1 : Display  only direct child types
-		$acctype1 = get_account_type($type) ?: array();
+		$acctype1 = row_or_empty(get_account_type($type));
 		$parent1 = $acctype1["parent"];
 		if ($drilldown && $parent1 == $_POST["AccGrp"])
 		//END Patch#2		
@@ -240,9 +240,9 @@ function display_balance_sheet(): void
 		global $levelptr;
 		$levelptr = 0;
 		
-		$accounttype = get_account_type($_POST["AccGrp"]) ?: array();
+		$accounttype = row_or_empty(get_account_type($_POST["AccGrp"]));
 		$classid = $accounttype["class_id"];
-		$class = get_account_class($classid) ?: array();
+		$class = row_or_empty(get_account_class($classid));
 		$convert = get_class_type_convert($class["ctype"]); 
 		
 		//Print Class Name	

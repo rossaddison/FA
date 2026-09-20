@@ -143,7 +143,7 @@ function get_on_porder_qty(string|int|float|bool|null $stock_id, string|array|nu
 
 	if (db_num_rows($qoo_result) == 1)
 	{
-		$qoo_row = db_fetch_row($qoo_result) ?: array();
+		$qoo_row = row_or_empty(db_fetch_row($qoo_result));
 		$qoo =  $qoo_row[0];
 	}
 	else
@@ -173,7 +173,7 @@ function get_on_worder_qty(string|int|float|bool|null $stock_id, string|array|nu
 		$qoo_result = db_query($sql,"could not receive quantity on order for item");
 		if (db_num_rows($qoo_result) == 1)
 		{
-			$qoo_row = db_fetch_row($qoo_result) ?: array();
+			$qoo_row = row_or_empty(db_fetch_row($qoo_result));
 			$qoo = $qoo_row[0];
 		}
 	}

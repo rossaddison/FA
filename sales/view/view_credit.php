@@ -32,9 +32,9 @@ elseif (isset($_POST["trans_no"]))
 	$trans_id = $_POST["trans_no"];
 }
 
-$myrow = get_customer_trans($trans_id, ST_CUSTCREDIT) ?: array();
+$myrow = row_or_empty(get_customer_trans($trans_id, ST_CUSTCREDIT));
 
-$branch = get_branch($myrow["branch_code"]) ?: array();
+$branch = row_or_empty(get_branch($myrow["branch_code"]));
 
 display_heading("<font color=red>" . sprintf(_("CREDIT NOTE #%d"), $trans_id). "</font>");
 echo "<br>";

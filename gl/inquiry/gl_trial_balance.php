@@ -114,14 +114,14 @@ function display_trial_balance(?string $type, ?string $typename): void
 		// If we want to remove the balanced part for the past years, this option removes the common part from from the prev and tot figures.
 		if (@$SysPrefs->clear_trial_balance_opening)
 		{
-			$open = get_balance($account["account_code"], $_POST['Dimension'], $_POST['Dimension2'], $begin,  $begin, false, true) ?: array();
+			$open = row_or_empty(get_balance($account["account_code"], $_POST['Dimension'], $_POST['Dimension2'], $begin,  $begin, false, true));
 			$offset = min($open['debit'], $open['credit']);
 		} else
 			$offset = 0;
 
-		$prev = get_balance($account["account_code"], $_POST['Dimension'], $_POST['Dimension2'], $begin, $_POST['TransFromDate'], false, false) ?: array();
-		$curr = get_balance($account["account_code"], $_POST['Dimension'], $_POST['Dimension2'], $_POST['TransFromDate'], $_POST['TransToDate'], true, true) ?: array();
-		$tot = get_balance($account["account_code"], $_POST['Dimension'], $_POST['Dimension2'], $begin, $_POST['TransToDate'], false, true) ?: array();
+		$prev = row_or_empty(get_balance($account["account_code"], $_POST['Dimension'], $_POST['Dimension2'], $begin, $_POST['TransFromDate'], false, false));
+		$curr = row_or_empty(get_balance($account["account_code"], $_POST['Dimension'], $_POST['Dimension2'], $_POST['TransFromDate'], $_POST['TransToDate'], true, true));
+		$tot = row_or_empty(get_balance($account["account_code"], $_POST['Dimension'], $_POST['Dimension2'], $begin, $_POST['TransToDate'], false, true));
 		if (check_value("NoZero") && !$prev['balance'] && !$curr['balance'] && !$tot['balance'])
 			continue;
 		if (!check_value('GroupTotalOnly'))
@@ -213,7 +213,7 @@ gl_inquiry_controls();
 
 if (isset($_POST['TransFromDate']))
 {
-	$row = get_current_fiscalyear() ?: array();
+	$row = row_or_empty(get_current_fiscalyear());
 	if (date1_greater_date2($_POST['TransFromDate'], sql2date($row['end'])))
 	{
 		display_error(_("The from date cannot be bigger than the fiscal year end."));

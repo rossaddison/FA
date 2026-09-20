@@ -80,7 +80,7 @@ start_form();
 
 start_table(TABLESTYLE);
 
-$myrow = get_user($_SESSION["wa_current_user"]->user) ?: array();
+$myrow = row_or_empty(get_user($_SESSION["wa_current_user"]->user));
 
 label_row(_("User login:"), $myrow['user_id']);
 

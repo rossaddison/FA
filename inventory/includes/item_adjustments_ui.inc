@@ -171,7 +171,7 @@ function adjustment_edit_item_controls(items_cart &$order, string|int|float|bool
 
 	}
 
-   	$item_info = get_item_edit_info(get_post('stock_id')) ?: array();
+   	$item_info = row_or_empty(get_item_edit_info(get_post('stock_id')));
    	if ($item_info) {
 		$dec = $item_info['decimals'];
 		$_POST['std_cost'] = price_decimal_format($item_info["material_cost"], $dec2);

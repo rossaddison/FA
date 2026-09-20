@@ -94,6 +94,19 @@ function db_query(string $sql, ?string $err_msg=null): mysqli_result|bool
 }
 
 /**
+ * A row, or an empty array when the lookup found none: db_fetch() and the get_*() lookups built on it return false when
+ * there is no row, and reading $row['x'] of false is a warning.
+ *
+ * @template T
+ * @param array<array-key, T>|false|null $row
+ * @return array<array-key, T>
+ */
+function row_or_empty(array|false|null $row): array
+{
+	return $row === false || $row === null ? array() : $row;
+}
+
+/**
  * @return list<string|null>|false a row with numeric keys; mysqli returns every column as a string or null
  */
 function db_fetch_row(mysqli_result $result): array|false

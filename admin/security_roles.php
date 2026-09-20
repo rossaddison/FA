@@ -144,7 +144,7 @@ if (!isset($_POST['role']) || get_post('clone') || list_updated('role')) {
 
 	unset($_POST);
 	if ($id) {
-		$row = get_security_role($id) ?: array();
+		$row = row_or_empty(get_security_role($id));
 		$_POST['description'] = $row['description'];
 		$_POST['name'] = $row['role'];
 		$_POST['inactive'] = $row['inactive'];

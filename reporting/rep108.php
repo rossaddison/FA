@@ -167,7 +167,7 @@ function print_statements(): void
 		$nowdue = "1-" . $PastDueDays1 . " " . _("Days");
 		$pastdue1 = $PastDueDays1 + 1 . "-" . $PastDueDays2 . " " . _("Days");
 		$pastdue2 = _("Over") . " " . $PastDueDays2 . " " . _("Days");
-		$CustomerRecord = get_customer_details($myrow['debtor_no'], null, $show_also_allocated) ?: array();
+		$CustomerRecord = row_or_empty(get_customer_details($myrow['debtor_no'], null, $show_also_allocated));
 		$str = array(_("Current"), $nowdue, $pastdue1, $pastdue2, _("Total Balance"));
 		$str2 = array(number_format2(((float)$CustomerRecord["Balance"] - (float)$CustomerRecord["Due"]),$dec),
 			number_format2(((float)$CustomerRecord["Due"]-(float)$CustomerRecord["Overdue1"]),$dec),

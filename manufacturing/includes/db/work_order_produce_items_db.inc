@@ -22,7 +22,7 @@ function work_order_produce(string|int|float|bool|null $woid, string|int|float|b
 	$args->trans_no = 0;
 	hook_db_prewrite($args, ST_MANURECEIVE);
 
-	$product = get_work_order($woid) ?: array();
+	$product = row_or_empty(get_work_order($woid));
 
     $date = date2sql($date_);
 
@@ -145,7 +145,7 @@ function exists_work_order_produce(string|int|float|bool|array|null $id): bool
 
 function check_void_wo_production(string|int|float|bool|null $prod_no)
 {
-	$prod = get_work_order_produce($prod_no) ?: array();
+	$prod = row_or_empty(get_work_order_produce($prod_no));
 	return $prod['closed'] ? $prod['workorder_id'] : 0;
 }
 
@@ -157,11 +157,11 @@ function void_work_order_produce(string|int|float|bool|null $type_no): void
 	hook_db_prevoid(ST_MANURECEIVE, $type_no);
 
 	// Skip processing already voided entry i.e. explicitly voided
-	$void_entry = get_voided_entry(ST_MANURECEIVE, $type_no) ?: array();
+	$void_entry = row_or_empty(get_voided_entry(ST_MANURECEIVE, $type_no));
 	if ($void_entry)
 		return;
 
-	$prod = get_work_order_produce($type_no) ?: array();
+	$prod = row_or_empty(get_work_order_produce($type_no));
 
 	if (work_order_is_closed($prod['workorder_id']))
 		return;

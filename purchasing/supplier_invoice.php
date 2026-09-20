@@ -138,7 +138,7 @@ if (isset($_POST['AddGLCodeToTrans'])){
 	}
 	else
 	{
-		$myrow = db_fetch_row($result) ?: array();
+		$myrow = row_or_empty(db_fetch_row($result));
 		$gl_act_name = $myrow[1];
 		if (!check_num('amount'))
 		{

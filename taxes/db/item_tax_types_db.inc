@@ -124,6 +124,6 @@ function get_item_tax_type_exemptions(string|int|float|bool|null $id)
 
 function item_type_inactive(string|array|null $id)
 {
-	$type = get_item_tax_type($id) ?: array();
+	$type = row_or_empty(get_item_tax_type($id));
 	return @$type['inactive'];
 }

@@ -61,7 +61,7 @@ function stock_item_heading(string|int|float|bool|array|null $stock_id): void
 	if ($stock_id != "") 
 	{
 		$result = db_query("SELECT description, units FROM ".TB_PREF."stock_master WHERE stock_id=".db_escape($stock_id));
-        $myrow = db_fetch_row($result) ?: array();
+        $myrow = row_or_empty(db_fetch_row($result));
         
     	display_heading("$stock_id - $myrow[0]"); 
     	$units = $myrow[1];

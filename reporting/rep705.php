@@ -94,7 +94,7 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 			if (!is_record_in_tags($tags, TAG_ACCOUNT, $account['account_code']))
 				continue;
 		}	
-		$bal = getPeriods($yr, $mo, $account["account_code"], $dimension, $dimension2, $thousands) ?: array();
+		$bal = row_or_empty(getPeriods($yr, $mo, $account["account_code"], $dimension, $dimension2, $thousands));
 		if (!$bal['per01'] && !$bal['per02'] && !$bal['per03'] && !$bal['per04'] &&	!$bal['per05'] && 
 			!$bal['per06'] && !$bal['per07'] && !$bal['per08'] && !$bal['per09'] && !$bal['per10'] && 
 			!$bal['per11'] && !$bal['per12'])
@@ -231,7 +231,7 @@ function print_annual_expense_breakdown(): void
 	// from now
 	$sql = "SELECT begin, end, YEAR(end) AS yr, MONTH(end) AS mo FROM ".TB_PREF."fiscal_year WHERE id=".db_escape($year);
 	$result = db_query($sql, "could not get fiscal year");
-	$row = db_fetch($result) ?: array();
+	$row = row_or_empty(db_fetch($result));
 	
 	$year = sql2date($row['begin'])." - ".sql2date($row['end']);
 	$yr = $row['yr'];

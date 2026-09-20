@@ -184,7 +184,7 @@ function get_account_class_name(?string $id)
 
 	$result = db_query($sql, "could not get account type");
 
-	$row = db_fetch_row($result) ?: array();
+	$row = row_or_empty(db_fetch_row($result));
 	return $row[0];
 }
 

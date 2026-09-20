@@ -146,7 +146,7 @@ if ($selected_id != -1)
  	if ($Mode == 'Edit') {
 		//editing an existing status code
 
-		$myrow = get_tax_type($selected_id) ?: array();
+		$myrow = row_or_empty(get_tax_type($selected_id));
 
 		$_POST['name']  = $myrow["name"];
 		$_POST['rate']  = percent_format($myrow["rate"]);

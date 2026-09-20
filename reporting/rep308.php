@@ -38,7 +38,7 @@ function get_domestic_price(?array $myrow, ?string $stock_id)
         if ($myrow['person_id'] > 0)
         {
             // Do we have foreign currency?
-            $supp = get_supplier($myrow['person_id']) ?: array();
+            $supp = row_or_empty(get_supplier($myrow['person_id']));
             $currency = $supp['curr_code'];
             $ex_rate = $myrow['ex_rate'];
             $price *= $ex_rate;
@@ -97,7 +97,7 @@ function trans_qty(?string $stock_id, string|array|null $location, string|array|
 
 	$result = db_query($sql, "QOH calculation failed");
 
-	$myrow = db_fetch_row($result) ?: array();	
+	$myrow = row_or_empty(db_fetch_row($result));	
 
 	return $myrow[0];
 

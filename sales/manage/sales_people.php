@@ -133,7 +133,7 @@ if ($selected_id != -1)
 {
  	if ($Mode == 'Edit') {
 		//editing an existing Sales-person
-		$myrow = get_salesman($selected_id) ?: array();
+		$myrow = row_or_empty(get_salesman($selected_id));
 
 		$_POST['salesman_name'] = $myrow["salesman_name"];
 		$_POST['salesman_phone'] = $myrow["salesman_phone"];

@@ -39,7 +39,7 @@ function can_process(string|int|float|bool|array|null $selected_id): bool
 		set_focus('name');
 		return false;
 	}
-	$type = get_account_type(trim($_POST['id'])) ?: array();
+	$type = row_or_empty(get_account_type(trim($_POST['id'])));
 	if ($type && ($type['id'] != $selected_id)) 
 	{
 		display_error( _("This account group id is already in use."));
@@ -172,7 +172,7 @@ if ($selected_id != "")
 	if ($Mode == 'Edit') 
 	{
 		//editing an existing status code
-		$myrow = get_account_type($selected_id) ?: array();
+		$myrow = row_or_empty(get_account_type($selected_id));
 	
 		$_POST['id']  = $myrow["id"];
 		$_POST['name']  = $myrow["name"];

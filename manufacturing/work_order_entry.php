@@ -407,8 +407,8 @@ else
 
 	if (!isset($_POST['Labour']) || list_updated('stock_id') || list_updated('type'))
 	{
-		$bank_act = get_default_bank_account() ?: array();
-		$item = get_item(get_post('stock_id')) ?: array();
+		$bank_act = row_or_empty(get_default_bank_account());
+		$item = row_or_empty(get_item(get_post('stock_id')));
 		$_POST['Labour'] = price_format(get_post('type') == WO_ASSEMBLY ? $item['labour_cost'] : 0);
 		$_POST['cr_lab_acc'] = $bank_act['account_code'];
 		$_POST['Costs'] = price_format(get_post('type') == WO_ASSEMBLY ? $item['overhead_cost'] : 0);

@@ -218,7 +218,7 @@ if ($row = db_fetch($result)) {
 		if (get_post('bank_date')) {
 			// if it is the last updated bank statement retrieve ending balance
 
-			$row = get_ending_reconciled($_POST['bank_account'], $_POST['bank_date']) ?: array();
+			$row = row_or_empty(get_ending_reconciled($_POST['bank_account'], $_POST['bank_date']));
 			if($row) {
 				$_POST["end_balance"] = price_format($row["ending_reconcile_balance"]);
 			}
@@ -261,7 +261,7 @@ if (!isset($_POST['bank_account']))
 
 $sql = get_sql_for_bank_account_reconcile(get_post('bank_account'), get_post('reconcile_date'));
 
-$act = get_bank_account($_POST["bank_account"]) ?: array();
+$act = row_or_empty(get_bank_account($_POST["bank_account"]));
 display_heading((string)$act['bank_account_name']." - ".(string)$act['bank_curr_code']);
 
 	$cols =

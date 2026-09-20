@@ -35,7 +35,7 @@ if ($_GET['trans_no'] != "")
 
 function display_wo_issue(string|int|float|bool|null $issue_no): void
 {
-    $myrow = get_work_order_issue($issue_no) ?: array();
+    $myrow = row_or_empty(get_work_order_issue($issue_no));
 
 	br(1);
     start_table(TABLESTYLE);

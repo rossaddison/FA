@@ -239,7 +239,7 @@ function voiding_controls()
                     while ($myrow = db_fetch($result)) {
                         if (is_inventory_item($myrow["item_code"])) {
                             if (check_negative_stock($myrow["item_code"], -$myrow["qty_recd"], null, $_POST['date_'])) {
-                                $stock = get_item($myrow["item_code"]) ?: array();
+                                $stock = row_or_empty(get_item($myrow["item_code"]));
                                 display_error(_("The void cannot be processed because there is an insufficient quantity for item:") .
                                     " " . (string)$stock['stock_id'] . " - " . (string)$stock['description'] . " - " .
                                     _("Quantity On Hand") . " = " . number_format2(get_qoh_on_date($stock['stock_id'], null, 

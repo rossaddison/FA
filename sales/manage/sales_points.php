@@ -115,7 +115,7 @@ if ($selected_id != -1)
 {
 
  	if ($Mode == 'Edit') {
-		$myrow = get_sales_point($selected_id) ?: array();
+		$myrow = row_or_empty(get_sales_point($selected_id));
 
 		$_POST['name']  = $myrow["pos_name"];
 		$_POST['location']  = $myrow["pos_location"];
