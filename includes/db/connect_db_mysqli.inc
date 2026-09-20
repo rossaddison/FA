@@ -111,9 +111,9 @@ function db_select(string $sql, ?string $err_msg=null): mysqli_result
  * A row, or an empty array when the lookup found none: db_fetch() and the get_*() lookups built on it return false when
  * there is no row, and reading $row['x'] of false is a warning.
  *
- * @template T
- * @param array<array-key, T>|false|null $row
- * @return array<array-key, T>
+ * @template T of array<array-key, mixed>
+ * @param T|false|null $row
+ * @return T|array{}
  * @psalm-pure
  */
 function row_or_empty(array|false|null $row): array

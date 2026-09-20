@@ -17,12 +17,18 @@ include_once($path_to_root . "/includes/lang/gettext.inc");
 
 class language 
 {
+	/** @var string */
 	var $name;
+	/** @var string */
 	var $code;			// eg. ar_EG, en_GB
+	/** @var string */
 	var $encoding;		// eg. UTF-8, CP1256, ISO8859-1
+	/** @var string */
 	var	$dir;			// Currently support for Left-to-Right (ltr) and
 						// Right-To-Left (rtl)
+	/** @var string|null */
 	var $version; // lang package version
+	/** @var bool|null */
 	var $is_locale_file;
 	
 	function __construct($name, $code, $encoding, $dir = 'ltr') 
