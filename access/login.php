@@ -43,7 +43,7 @@ function defaultCompany()
 	    	document.getElementsByName('SubmitUser')[0].disabled=0;
 	    	document.getElementById('log_msg').innerHTML='$demo_text'}, 1000*".sysprefs()->login_delay.");</script>";
 	    $demo_text = '<span class="redfg">'._('Too many failed login attempts.<br>Please wait a while or try later.').'</span>';
-	} elseif ($_SESSION["wa_current_user"]->login_attempt > 1) {
+	} elseif (session_obj('wa_current_user')->login_attempt > 1) {
 		$demo_text = '<span class="redfg">'._("Invalid password or username. Please, try again.").'</span>';
 	}
 
@@ -52,11 +52,11 @@ function defaultCompany()
 		$def_coy = 0;
 	$def_theme = "default";
 
-	$login_timeout = $_SESSION["wa_current_user"]->last_act;
+	$login_timeout = session_obj('wa_current_user')->last_act;
 
 	$title = (bool)$login_timeout ? _('Authorization timeout') : sysprefs()->app_title." ".$version." - "._("Login");
-	$encoding = isset($_SESSION['language']->encoding) ? $_SESSION['language']->encoding : "iso-8859-1";
-	$rtl = isset($_SESSION['language']->dir) ? $_SESSION['language']->dir : "ltr";
+	$encoding = isset(session_obj('language')->encoding) ? session_obj('language')->encoding : "iso-8859-1";
+	$rtl = isset(session_obj('language')->dir) ? session_obj('language')->dir : "ltr";
 	$onload = !(bool)$login_timeout ? "onload='defaultCompany()'" : "";
 
 	echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n";
@@ -94,7 +94,7 @@ function defaultCompany()
 	if (!(bool)$login_timeout)
 		table_section_title(_("Version")." $version   Build ".sysprefs()->build_version." - "._("Login"));
 
-	$value = (bool)$login_timeout ? $_SESSION['wa_current_user']->loginname : (sysprefs()->allow_demo_mode ? "demouser":"");
+	$value = (bool)$login_timeout ? session_obj('wa_current_user')->loginname : (sysprefs()->allow_demo_mode ? "demouser":"");
 
 	$allow = SECURE_ONLY !== true ? true : ((bool)($_SERVER['HTTPS'] ?? null) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_NAME'] === "localhost";
 

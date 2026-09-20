@@ -92,7 +92,7 @@ class user_prefs
 		} else {
 			global $path_to_root;
 			$this->language = $user["language"];
-			$_SESSION['language']->set_language($this->language);
+			session_obj('language')->set_language($this->language);
 
 			$this->qty_dec = $user["qty_dec"];
 			$this->price_dec = $user["prices_dec"];

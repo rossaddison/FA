@@ -592,8 +592,8 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
     $out.="# Backup Date and Time: ".date("Y-m-d H:i")."\n";
     $out.="# Built by " . sysprefs()->app_title . " " . $version ."\n";
     $out.="# ".sysprefs()->power_url."\n";
-    $out.="# Company: ". @html_entity_decode($company, ENT_QUOTES, $_SESSION['language']->encoding)."\n";
-    $out.="# User: ".$_SESSION["wa_current_user"]->name."\n\n";
+    $out.="# Company: ". @html_entity_decode($company, ENT_QUOTES, session_obj('language')->encoding)."\n";
+    $out.="# User: ".session_obj('wa_current_user')->name."\n\n";
     $out.="# Compatibility: ".get_company_pref('version_id')."\n\n";
 
 	// write users comment
@@ -610,7 +610,7 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
 	if (db_fixed())
 	{
 		db_set_encoding();
-		if ((bool)($mysql_enc = get_mysql_encoding_name($_SESSION['language']->encoding)))
+		if ((bool)($mysql_enc = get_mysql_encoding_name(session_obj('language')->encoding)))
 			$out .= "\nSET NAMES $mysql_enc;\n";
 	}
     // get auto_increment values and names of all tables

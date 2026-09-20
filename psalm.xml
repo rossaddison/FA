@@ -60,7 +60,7 @@
             <file name="includes/JsHttpRequest.php"/>
             <directory name="reporting/includes/fpdi"/>
             <file name="reporting/includes/excel_report.inc"/><!-- second FrontReport (spreadsheet output); the PDF class is the API the reports are written against -->
-            <directory name="includes/lang"/>
+            <file name="includes/lang/gettext.inc"/><!-- bundled php-gettext; includes/lang/language.inc is FA's own and is analysed -->
         </ignoreFiles>
     </projectFiles>
     <stubs>
@@ -75,5 +75,6 @@
         <file name="reporting/includes/fpdi/pdf_parser.php"/>
         <file name="reporting/includes/fpdi/pdf_context.php"/>
         <file name="includes/JsHttpRequest.php"/>
+        <file name="includes/lang/gettext.inc"/>
     </stubs>
 </psalm>

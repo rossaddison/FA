@@ -35,7 +35,7 @@ function display_languages(): void
 	
 	$th = array(_("Language"), _("Name"), _("Encoding"), _("Right To Left"),
 		_("Installed"), _("Available"), _("Default"), "", "");
-	$currlang = $_SESSION["language"]->code;
+	$currlang = session_obj('language')->code;
 
 	div_start('lang_tbl');
 	start_form();
@@ -245,7 +245,7 @@ function handle_delete(string|int|float|bool|null $id): void
 			
 	if ($lang == $dflt_lang ) { 
 		// on delete set default to current.
-		$dflt_lang = $_SESSION['language']->code;
+		$dflt_lang = session_obj('language')->code;
 	}
 	
 	unset($installed_languages[$id]);

@@ -107,8 +107,8 @@ class current_user
 
 		set_global_connection($company);
 		$lang = &$_SESSION['language'];
-		$lang->set_language($_SESSION['language']->code);
-		db_set_encoding($_SESSION['language']->encoding);
+		$lang->set_language(session_obj('language')->code);
+		db_set_encoding(session_obj('language')->encoding);
 
 		// Use external authentication source if any.
 		// Keep in mind you need to have user data set for $loginname
@@ -127,7 +127,7 @@ class current_user
 			if ($myrow['language'] != $dflt_lang)
 			{	 // refresh language and user data
  				$lang->set_language($myrow['language']);
-				db_set_encoding($_SESSION['language']->encoding);
+				db_set_encoding(session_obj('language')->encoding);
 				$myrow = get_user_by_login($loginname);
 			}
 
@@ -395,7 +395,7 @@ function floatcmp(string|int|float|bool|null $a, string|int|float|bool|null $b):
 //	Current ui mode.
 //
 function fallback_mode(): bool {
-    return $_SESSION["wa_current_user"]->ui_mode==0;
+    return session_obj('wa_current_user')->ui_mode==0;
 }
 
 function price_format(string|int|float|bool|null $number): string {
@@ -444,12 +444,12 @@ function maxprec_format(string|int|float|bool|null $number): string {
 
 function exrate_format(string|int|float|bool|null $number): string {
     return number_format2($number,
-	$_SESSION["wa_current_user"]->prefs->exrate_dec());
+	session_obj('wa_current_user')->prefs->exrate_dec());
 }
 
 function percent_format(string|int|float|bool|null $number): string {
     return number_format2($number,
-	$_SESSION["wa_current_user"]->prefs->percent_dec());
+	session_obj('wa_current_user')->prefs->percent_dec());
 }
 
 function user_numeric(string|int|float|bool|array|null $input): int|float|false {
@@ -477,64 +477,64 @@ function user_company()
 {
 	global $def_coy;
 	
-	return isset($_SESSION["wa_current_user"]) ? $_SESSION["wa_current_user"]->company : $def_coy;
+	return isset($_SESSION["wa_current_user"]) ? session_obj('wa_current_user')->company : $def_coy;
 }
 
 /** @return null|scalar */
 function user_pos()
 {
-	return $_SESSION["wa_current_user"]->pos;
+	return session_obj('wa_current_user')->pos;
 }
 
 function user_language()
 {
-	return $_SESSION["wa_current_user"]->prefs->language();
+	return session_obj('wa_current_user')->prefs->language();
 }
 
 function user_qty_dec()
 {
-	return $_SESSION["wa_current_user"]->prefs->qty_dec();
+	return session_obj('wa_current_user')->prefs->qty_dec();
 }
 
 function user_price_dec(): int|string
 {
 
-	return isset($_SESSION["wa_current_user"]) ? $_SESSION["wa_current_user"]->prefs->price_dec() : 2;
+	return isset($_SESSION["wa_current_user"]) ? session_obj('wa_current_user')->prefs->price_dec() : 2;
 }
 
 function user_exrate_dec()
 {
 
-	return isset($_SESSION["wa_current_user"]) ? $_SESSION["wa_current_user"]->prefs->exrate_dec() : 4;
+	return isset($_SESSION["wa_current_user"]) ? session_obj('wa_current_user')->prefs->exrate_dec() : 4;
 }
 
 function user_percent_dec()
 {
 
-	return isset($_SESSION["wa_current_user"]) ? $_SESSION["wa_current_user"]->prefs->percent_dec() : 1;
+	return isset($_SESSION["wa_current_user"]) ? session_obj('wa_current_user')->prefs->percent_dec() : 1;
 }
 
 function user_show_gl_info()
 {
-	return $_SESSION["wa_current_user"]->prefs->show_gl_info();
+	return session_obj('wa_current_user')->prefs->show_gl_info();
 }
 
 function user_show_codes()
 {
-	return $_SESSION["wa_current_user"]->prefs->show_codes();
+	return session_obj('wa_current_user')->prefs->show_codes();
 }
 
 function user_date_format()
 {
 
-	return isset($_SESSION["wa_current_user"]) ? $_SESSION["wa_current_user"]->prefs->date_format() : sysprefs()->dflt_date_fmt;
+	return isset($_SESSION["wa_current_user"]) ? session_obj('wa_current_user')->prefs->date_format() : sysprefs()->dflt_date_fmt;
 }
 
 function user_date_display(): void
 {
  	$fmt ='m/d/Y';
  	if (isset($_SESSION["wa_current_user"])) {
-  		$fmt = $_SESSION["wa_current_user"]->prefs->date_display();
+  		$fmt = session_obj('wa_current_user')->prefs->date_display();
  	} else {
   		$sep = user_date_sep();
   		$user_date_fmt = user_date_format();
@@ -558,98 +558,98 @@ function user_date_display(): void
 function user_date_sep()
 {
 
-	return isset($_SESSION["wa_current_user"]->prefs->date_sep) ? $_SESSION["wa_current_user"]->prefs->date_sep() : sysprefs()->dflt_date_sep;
+	return isset(session_obj('wa_current_user')->prefs->date_sep) ? session_obj('wa_current_user')->prefs->date_sep() : sysprefs()->dflt_date_sep;
 }
 
 function user_tho_sep()
 {
-	return isset($_SESSION["wa_current_user"]) ? $_SESSION["wa_current_user"]->prefs->tho_sep() : 0;
+	return isset($_SESSION["wa_current_user"]) ? session_obj('wa_current_user')->prefs->tho_sep() : 0;
 }
 
 function user_dec_sep()
 {
-	return isset($_SESSION["wa_current_user"]) ? $_SESSION["wa_current_user"]->prefs->dec_sep() : 0;
+	return isset($_SESSION["wa_current_user"]) ? session_obj('wa_current_user')->prefs->dec_sep() : 0;
 }
 
 function user_theme()
 {
-	return isset($_SESSION["wa_current_user"]) ? $_SESSION["wa_current_user"]->prefs->get_theme() : 'default';
+	return isset($_SESSION["wa_current_user"]) ? session_obj('wa_current_user')->prefs->get_theme() : 'default';
 }
 
 function user_pagesize(): int|string
 {
-	return $_SESSION["wa_current_user"]->prefs->get_pagesize();
+	return session_obj('wa_current_user')->prefs->get_pagesize();
 }
 
 function user_hints()
 {
-	return $_SESSION["wa_current_user"]->prefs->show_hints();
+	return session_obj('wa_current_user')->prefs->show_hints();
 }
 
 function user_print_profile()
 {
-	return $_SESSION["wa_current_user"]->prefs->print_profile();
+	return session_obj('wa_current_user')->prefs->print_profile();
 }
 
 function user_rep_popup()
 {
-	return $_SESSION["wa_current_user"]->prefs->rep_popup();
+	return session_obj('wa_current_user')->prefs->rep_popup();
 }
 
 function user_query_size()
 {
-	return $_SESSION["wa_current_user"]->prefs->query_size();
+	return session_obj('wa_current_user')->prefs->query_size();
 }
 
 function user_graphic_links()
 {
-	return $_SESSION["wa_current_user"]->prefs->graphic_links();
+	return session_obj('wa_current_user')->prefs->graphic_links();
 }
 
 function sticky_doc_date()
 {
-	return $_SESSION["wa_current_user"]->prefs->sticky_date();
+	return session_obj('wa_current_user')->prefs->sticky_date();
 }
 
 function user_startup_tab()
 {
-	return $_SESSION["wa_current_user"]->prefs->start_up_tab();
+	return session_obj('wa_current_user')->prefs->start_up_tab();
 }
 
 function user_transaction_days()
 {
-    return $_SESSION["wa_current_user"]->prefs->transaction_days();
+    return session_obj('wa_current_user')->prefs->transaction_days();
 }
 
 function user_save_report_selections()
 {
-    return $_SESSION["wa_current_user"]->prefs->save_report_selections();
+    return session_obj('wa_current_user')->prefs->save_report_selections();
 }
 
 function user_use_date_picker()
 {
-    return $_SESSION["wa_current_user"]->prefs->use_date_picker();
+    return session_obj('wa_current_user')->prefs->use_date_picker();
 }
 
 function user_def_print_destination()
 {
-    return $_SESSION["wa_current_user"]->prefs->def_print_destination();
+    return session_obj('wa_current_user')->prefs->def_print_destination();
 }
 
 function user_def_print_orientation()
 {
-    return $_SESSION["wa_current_user"]->prefs->def_print_orientation();
+    return session_obj('wa_current_user')->prefs->def_print_orientation();
 }
 
 /** @return bool */
 function user_check_access(string|int|float|bool|null $sec_area)
 {
-	return $_SESSION["wa_current_user"]->can_access($sec_area);
+	return session_obj('wa_current_user')->can_access($sec_area);
 }
 
 function set_user_prefs(int|array|null $prefs): void
 {
-	$_SESSION["wa_current_user"]->update_prefs($prefs);
+	session_obj('wa_current_user')->update_prefs($prefs);
 }
 
 function add_user_js_data(): void {
@@ -678,7 +678,7 @@ function user_js_cache(string|int|float|bool|null $id=null): string
 	global $path_to_root;
 
 	if (!(bool)$id)
-		$id = @$_SESSION['wa_current_user']->user;
+		$id = @session_obj('wa_current_user')->user;
 
 	if (!$id)
 		$id = 0; // before login

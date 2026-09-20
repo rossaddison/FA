@@ -420,7 +420,7 @@ function display_grn_items_for_selection(supp_trans &$supp_trans, string|int|flo
         		submit_cells('grn_item_id'.$n, _("Add"), '', _("Add to Invoice"), true);
         	else	
         		submit_cells('grn_item_id'.$n, _("Add"), '', _("Add to Credit Note"), true);
-    		if (($supp_trans->trans_type == ST_SUPPINVOICE) && $_SESSION["wa_current_user"]->can_access('SA_GRNDELETE')) {	// Added 2008-10-18 by Joe Hunt. Special access rights needed.
+    		if (($supp_trans->trans_type == ST_SUPPINVOICE) && session_obj('wa_current_user')->can_access('SA_GRNDELETE')) {	// Added 2008-10-18 by Joe Hunt. Special access rights needed.
         		submit_cells('void_item_id'.$n, _("Remove"), '', _("WARNING! Be careful with removal. The operation is executed immediately and cannot be undone !!!"), true);
 				submit_js_confirm('void_item_id'.$n,
 					sprintf(_('You are about to remove all yet non-invoiced items from delivery line #%d. This operation also irreversibly changes related order line. Do you want to continue ?'), $n));
@@ -458,7 +458,7 @@ function display_grn_items(supp_trans &$supp_trans, ?int $mode=0): int|float
 		if ($supp_trans->trans_type == ST_SUPPINVOICE)
 		{
 			$heading = _("Items Received Yet to be Invoiced");
-    		if ($_SESSION["wa_current_user"]->can_access('SA_GRNDELETE'))	// Added 2008-10-18 by Joe Hunt. Only admins can remove GRNs
+    		if (session_obj('wa_current_user')->can_access('SA_GRNDELETE'))	// Added 2008-10-18 by Joe Hunt. Only admins can remove GRNs
 				$heading2 = _("WARNING! Be careful with removal. The operation is executed immediately and cannot be undone !!!");
 		}
 		else
@@ -504,7 +504,7 @@ function display_grn_items(supp_trans &$supp_trans, ?int $mode=0): int|float
     		_("Received On"), _("Quantity Received"), _("Quantity Invoiced"),
     		_("Qty Yet To Invoice"), (bool)$supp_trans->tax_included ? _("Price after Tax") : _("Price before Tax"), 
     		_("Total"), "");
-    	if (($supp_trans->trans_type == ST_SUPPINVOICE) && $_SESSION["wa_current_user"]->can_access('SA_GRNDELETE'))	// Added 2008-10-18 by Joe Hunt. Only admins can remove GRNs
+    	if (($supp_trans->trans_type == ST_SUPPINVOICE) && session_obj('wa_current_user')->can_access('SA_GRNDELETE'))	// Added 2008-10-18 by Joe Hunt. Only admins can remove GRNs
     		$th[] = "";
 		if ($supp_trans->trans_type == ST_SUPPCREDIT)
 		{
@@ -551,7 +551,7 @@ function display_grn_items(supp_trans &$supp_trans, ?int $mode=0): int|float
 			if ($mode == 1)
 			{
 				delete_button_cell("Delete" . $entered_grn->id, _("Edit"), _('Edit document line'));
-				if (($supp_trans->trans_type == ST_SUPPINVOICE) && $_SESSION["wa_current_user"]->can_access('SA_GRNDELETE'))	  
+				if (($supp_trans->trans_type == ST_SUPPINVOICE) && session_obj('wa_current_user')->can_access('SA_GRNDELETE'))	  
 					label_cell("");
 			}	
 			end_row();

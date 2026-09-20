@@ -11,7 +11,7 @@
 ***********************************************************************/
 //$colors = array('#008cc9','#4db625','#ef5500','#eef100','#05c6e6', '#5ee66a'); // Current in Use 	 
 $colors = Chart::$palette;
-$align = $_SESSION['language']->dir == 'rtl' ? 'right' : 'left';
+$align = session_obj('language')->dir == 'rtl' ? 'right' : 'left';
 $style = "<style>
 div.square {
 	display: inline-block;
@@ -46,7 +46,7 @@ div.square2 {
 function dashboard(string|int|float|bool|null $sel_app): void
 {
 	global  $style;
-	if (is_object($sel_app) && !$_SESSION["wa_current_user"]->check_application_access($selected_app))
+	if (is_object($sel_app) && !session_obj('wa_current_user')->check_application_access($selected_app))
 		return;
 	echo $style;
 	echo "<script> 

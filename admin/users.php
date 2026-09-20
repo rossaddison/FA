@@ -79,7 +79,7 @@ if (($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') && check_csrf_token())
 				post_scalar('print_profile'), check_value('rep_popup'), $_POST['pos']);
 			$id = db_insert_id();
 			// use current user display preferences as start point for new user
-			$prefs = $_SESSION['wa_current_user']->prefs->get_all();
+			$prefs = session_obj('wa_current_user')->prefs->get_all();
 			
 			update_user_prefs($id, array_merge($prefs, get_post(array('print_profile',
 				'rep_popup' => 0, 'language'))));
@@ -139,7 +139,7 @@ while ($myrow = db_fetch($result))
 		date($time_format, strtotime($myrow["last_visit_date"]));
 
 	/*The security_headings array is defined in config.php */
-	$not_me = strcasecmp($myrow["user_id"], $_SESSION["wa_current_user"]->username);
+	$not_me = strcasecmp($myrow["user_id"], session_obj('wa_current_user')->username);
 
 	label_cell($myrow["user_id"]);
 	label_cell($myrow["real_name"]);

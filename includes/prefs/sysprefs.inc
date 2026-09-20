@@ -390,3 +390,15 @@ function sysprefs(): sys_prefs
 
 	return $SysPrefs;
 }
+
+/**
+ * The objects kept in the session (carts, the language, the user). Psalm forgets the type of a $_SESSION key after any function call, so the
+ * pages read them through this accessor, which states the type of each key.
+ *
+ * @param 'Items'|'PO'|'supp_trans'|'alloc'|'transfer_items'|'issue_items'|'adj_items'|'pay_items'|'journal_items'|'View'|'language'|'wa_current_user' $key
+ * @return ($key is 'Items'|'View' ? Cart : ($key is 'PO' ? purch_order : ($key is 'supp_trans' ? supp_trans : ($key is 'alloc' ? allocation : ($key is 'language' ? language : ($key is 'wa_current_user' ? current_user : items_cart))))))
+ */
+function session_obj(string $key)
+{
+	return $_SESSION[$key];
+}

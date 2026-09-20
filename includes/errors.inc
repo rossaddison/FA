@@ -93,7 +93,7 @@ function error_handler(string|int|float|bool|null $errno, string|int|float|bool|
 				$messages[] = array($errno, $errstr, $file, $line, @$bt);
 		}
 		else if ($errno&~E_NOTICE && $errstr != '') { // log all not displayed messages 
-			$user = @$_SESSION["wa_current_user"]->loginname;
+			$user = @session_obj('wa_current_user')->loginname;
 			$context = isset($SysPrefs) && !$SysPrefs->db_ok ? '[before upgrade]' : '';
 			error_log(user_company() . ":$user:". basename($file) .":$line:$context $errstr");
 		}
@@ -206,7 +206,7 @@ function display_db_error(string|int|float|bool|null $msg, string|array|null $sq
 	
 	if ($SysPrefs->debug == 1) 
 	{
-		$cur_prefix = $db_connections[$_SESSION["wa_current_user"]->cur_con]['tbpref'];
+		$cur_prefix = $db_connections[session_obj('wa_current_user')->cur_con]['tbpref'];
 
 		$str .= "sql that failed was : ".str_replace(TB_PREF, $cur_prefix, $sql_statement)."<br>";
 	}

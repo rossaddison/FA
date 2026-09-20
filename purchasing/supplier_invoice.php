@@ -363,7 +363,7 @@ if ($id5 != -1)
 }
 
 $id2 = -1;
-if ($_SESSION["wa_current_user"]->can_access('SA_GRNDELETE'))
+if (session_obj('wa_current_user')->can_access('SA_GRNDELETE'))
 {
 	$id2 = find_submit('void_item_id');
 	if ($id2 != -1) 

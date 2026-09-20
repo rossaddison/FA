@@ -19,7 +19,7 @@ function add_audit_trail(string|int|float|bool|null $trans_type, string|int|floa
 	$sql = "INSERT INTO ".TB_PREF."audit_trail"
 		. " (type, trans_no, user, gl_date, description, stamp)
 			VALUES(".db_escape($trans_type).", ".db_escape($trans_no).","
-			. $_SESSION["wa_current_user"]->user . ","
+			. session_obj('wa_current_user')->user . ","
 			. "'$date',". db_escape($descr). ", CURRENT_TIMESTAMP)";
 
 	db_query($sql, "Cannot add audit info");

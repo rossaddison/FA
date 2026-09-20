@@ -18,7 +18,7 @@ include_once($path_to_root . "/includes/session.inc");
 
 include($path_to_root .'/access/login.php');
 
-if (get_post('SubmitUser') && $_SESSION['wa_current_user']->logged_in()) {
+if (get_post('SubmitUser') && session_obj('wa_current_user')->logged_in()) {
 	// After successfull login repeat last ajax call.
 	// Login form consists all post variables from last ajax call.
 echo "<script>

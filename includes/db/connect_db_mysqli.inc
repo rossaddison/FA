@@ -25,7 +25,7 @@ function set_global_connection(string|int|float|bool|null $company=-1): mysqli|f
 
 	cancel_transaction(); // cancel all aborted transactions (if any)
 
-	$_SESSION["wa_current_user"]->cur_con = $company;
+	session_obj('wa_current_user')->cur_con = $company;
 
 	$connection = $db_connections[$company];
 
@@ -51,7 +51,7 @@ function db_query(string $sql, ?string $err_msg=null): mysqli_result|bool
 	global $db, $sql_queries, $db_connections, $db_last_inserted_id;
 
 	// set current db prefix
-	$comp = isset($_SESSION["wa_current_user"]->cur_con) ? $_SESSION["wa_current_user"]->cur_con : 0;
+	$comp = isset(session_obj('wa_current_user')->cur_con) ? session_obj('wa_current_user')->cur_con : 0;
 	$cur_prefix = (string)@$db_connections[$comp]['tbpref'];
 	$sql = str_replace(TB_PREF, $cur_prefix, $sql);
 
@@ -179,7 +179,7 @@ function db_escape(string|int|float|bool|null $value = "", ?bool $nullify = fals
 {
 	global $db;
 
-	$value = @html_entity_decode($value, ENT_QUOTES, $_SESSION['language']->encoding=='iso-8859-2' ? 'ISO-8859-1' : $_SESSION['language']->encoding);
+	$value = @html_entity_decode($value, ENT_QUOTES, session_obj('language')->encoding=='iso-8859-2' ? 'ISO-8859-1' : session_obj('language')->encoding);
 	$value = html_specials_encode($value);
 
   	//reset default if second parameter is skipped

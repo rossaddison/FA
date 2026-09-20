@@ -20,7 +20,7 @@ class Ajax extends JsHttpRequest {
 	
     function __construct() 
     {
-	  parent::__construct(@$_SESSION['language']->encoding);
+	  parent::__construct(@session_obj('language')->encoding);
     }
 	//
 	//	This function is used in ctrl routines to activate

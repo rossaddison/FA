@@ -160,7 +160,7 @@ if (isset($_POST['update']) && $_POST['update'] != "")
 				'suppress_tax_rates', 'use_manufacturing', 'use_fixed_assets'))
 		);
 
-		$_SESSION['wa_current_user']->timeout = $_POST['login_tout'];
+		session_obj('wa_current_user')->timeout = $_POST['login_tout'];
 		display_notification_centered(_("Company setup has been updated."));
 		set_focus('coy_name');
 		ajax()->activate('_page_body');

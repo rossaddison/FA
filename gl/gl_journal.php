@@ -120,7 +120,7 @@ function create_cart(string|int|null $type=0, string|int|null $trans_no=0): void
 
 		if ($result) {
 			while ($row = db_fetch($result)) {
-				$curr_amount = $cart->rate ? round((float)$row['amount']/$cart->rate, $_SESSION["wa_current_user"]->prefs->price_dec()) : $row['amount'];
+				$curr_amount = $cart->rate ? round((float)$row['amount']/$cart->rate, session_obj('wa_current_user')->prefs->price_dec()) : $row['amount'];
 				if ((bool)$curr_amount)
 					$cart->add_gl_item($row['account'], $row['dimension_id'], $row['dimension2_id'], 
 						$curr_amount, $row['memo_'], '', $row['person_id']);
@@ -401,7 +401,7 @@ function check_item_data(): bool
    		return false;
 	}
 
-	if (!$_SESSION["wa_current_user"]->can_access('SA_BANKJOURNAL') && (bool)is_bank_account(post_scalar('code_id'))) 
+	if (!session_obj('wa_current_user')->can_access('SA_BANKJOURNAL') && (bool)is_bank_account(post_scalar('code_id'))) 
 	{
 		display_error(_("You cannot make a journal entry for a bank account. Please use one of the banking functions for bank transactions."));
 		set_focus('code_id');

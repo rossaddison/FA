@@ -181,26 +181,14 @@ function password_reset_success(): void
 	die();
 }
 
-/**
- * The cart-like objects kept in the session. Psalm forgets the type of a $_SESSION key after any function call, so the
- * pages read them through this accessor, which states the type of each key.
- *
- * @param 'Items'|'PO'|'supp_trans'|'alloc'|'transfer_items'|'issue_items'|'adj_items'|'pay_items'|'journal_items'|'View' $key
- * @return ($key is 'Items'|'View' ? Cart : ($key is 'PO' ? purch_order : ($key is 'supp_trans' ? supp_trans : ($key is 'alloc' ? allocation : items_cart))))
- */
-function session_obj(string $key)
-{
-	return $_SESSION[$key];
-}
-
 /** @return bool */
 function check_faillog()
 {
 	global $login_faillog;
 
-	$user = $_SESSION["wa_current_user"]->user;
+	$user = session_obj('wa_current_user')->user;
 
-	$_SESSION["wa_current_user"]->login_attempt++;
+	session_obj('wa_current_user')->login_attempt++;
 	if (@sysprefs()->login_delay && (@$login_faillog[$user][$_SERVER['REMOTE_ADDR']] >= @sysprefs()->login_max_attempts) && (time() < $login_faillog[$user]['last'] + sysprefs()->login_delay))
 		return true;
 
@@ -224,7 +212,7 @@ function write_login_filelog(mixed $login, mixed $result): void
 {
 	global $login_faillog, $path_to_root;
 
-	$user = $_SESSION["wa_current_user"]->user;
+	$user = session_obj('wa_current_user')->user;
 
 	$ip = $_SERVER['REMOTE_ADDR'];
 
@@ -265,14 +253,14 @@ function check_page_security(mixed $page_security): void
 	
 	$msg = '';
 	
-	if (!$_SESSION["wa_current_user"]->check_user_access())
+	if (!session_obj('wa_current_user')->check_user_access())
 	{
 		// notification after upgrade from pre-2.2 version
-		$msg = $_SESSION["wa_current_user"]->old_db ?
+		$msg = session_obj('wa_current_user')->old_db ?
 			 _("Security settings have not been defined for your user account.")
 				. "<br>" . _("Please contact your system administrator.")	
 			: _("Please remove \$security_groups and \$security_headings arrays from config.php file!");
-	} elseif (!sysprefs()->db_ok && !$_SESSION["wa_current_user"]->can_access('SA_SOFTWAREUPGRADE')) 
+	} elseif (!sysprefs()->db_ok && !session_obj('wa_current_user')->can_access('SA_SOFTWAREUPGRADE')) 
 	{
 		$msg = _('Access to application has been blocked until database upgrade is completed by system administrator.');
 	}
@@ -284,7 +272,7 @@ function check_page_security(mixed $page_security): void
 		exit;
 	}
 
-	if (!$_SESSION["wa_current_user"]->can_access_page($page_security))
+	if (!session_obj('wa_current_user')->can_access_page($page_security))
 	{
 
 		echo "<center><br><br><br><b>";
@@ -334,8 +322,8 @@ function set_page_security(mixed $value=null, mixed $trans = array(), mixed $gtr
 */
 function html_specials_encode(mixed $str)
 {
-	return htmlspecialchars($str, ENT_QUOTES, $_SESSION['language']->encoding=='iso-8859-2' ?
-		 'ISO-8859-1' : $_SESSION['language']->encoding);
+	return htmlspecialchars($str, ENT_QUOTES, session_obj('language')->encoding=='iso-8859-2' ?
+		 'ISO-8859-1' : session_obj('language')->encoding);
 }
 
 function html_cleanup(&$parms): void
@@ -355,13 +343,13 @@ function html_cleanup(&$parms): void
 function login_timeout(): void
 {
 	// skip timeout on logout page
-	if ($_SESSION["wa_current_user"]->logged) {
-		$tout = $_SESSION["wa_current_user"]->timeout;
-		if ((bool)$tout && (time() > $_SESSION["wa_current_user"]->last_act + $tout))
+	if (session_obj('wa_current_user')->logged) {
+		$tout = session_obj('wa_current_user')->timeout;
+		if ((bool)$tout && (time() > session_obj('wa_current_user')->last_act + $tout))
 		{
-			$_SESSION["wa_current_user"]->logged = false;
+			session_obj('wa_current_user')->logged = false;
 		}
-		$_SESSION["wa_current_user"]->last_act = time();
+		session_obj('wa_current_user')->last_act = time();
 	}
 }
 //============================================================================
@@ -453,7 +441,7 @@ if (sysprefs()->login_delay > 0 && file_exists(VARLIB_PATH."/faillog.php"))
 // Page Initialisation
 if (isset($dflt_lang) && isset($installed_languages))
 {
-	if (!isset($_SESSION['wa_current_user']) || !$_SESSION['wa_current_user']->logged_in()
+	if (!isset($_SESSION['wa_current_user']) || !session_obj('wa_current_user')->logged_in()
 		|| !isset($_SESSION['language']) || !method_exists($_SESSION['language'], 'set_language'))
 	{
 		$l = array_search_value($dflt_lang, $installed_languages,  'code');
@@ -461,7 +449,7 @@ if (isset($dflt_lang) && isset($installed_languages))
 	 	(isset($l['rtl']) && $l['rtl'] === true) ? 'rtl' : 'ltr');
 	}
 
-	$_SESSION['language']->set_language($_SESSION['language']->code);
+	session_obj('language')->set_language(session_obj('language')->code);
 }
 
 include_once($path_to_root . "/includes/access_levels.inc");
@@ -499,12 +487,12 @@ if (!defined('FA_LOGOUT_PHP_FILE')){
 
 	login_timeout();
 
-	if (!(bool)$_SESSION["wa_current_user"]->old_db && file_exists($path_to_root . '/company/'.user_company().'/installed_extensions.php'))
+	if (!(bool)session_obj('wa_current_user')->old_db && file_exists($path_to_root . '/company/'.user_company().'/installed_extensions.php'))
 		include($path_to_root . '/company/'.user_company().'/installed_extensions.php');
 
 	install_hooks();
 
-	if (!$_SESSION["wa_current_user"]->logged_in())
+	if (!session_obj('wa_current_user')->logged_in())
 	{
       if (@sysprefs()->allow_password_reset && !sysprefs()->allow_demo_mode
         && (isset($_GET['reset']) || isset($_POST['email_entry_field']))) {
@@ -523,7 +511,7 @@ if (!defined('FA_LOGOUT_PHP_FILE')){
           }
         }
         $_succeed = isset($db_connections[$_POST["company_login_name"]]) &&
-          $_SESSION["wa_current_user"]->reset_password($_POST["company_login_name"],
+          session_obj('wa_current_user')->reset_password($_POST["company_login_name"],
           $_POST["email_entry_field"]);
         if ($_succeed)
         {
@@ -556,10 +544,10 @@ if (!defined('FA_LOGOUT_PHP_FILE')){
 				}
 			}
 			$succeed = isset($db_connections[$_POST["company_login_name"]]) &&
-				$_SESSION["wa_current_user"]->login($_POST["company_login_name"],
+				session_obj('wa_current_user')->login($_POST["company_login_name"],
 				$_POST["user_name_entry_field"], $_POST["password"]);
 			// select full vs fallback ui mode on login
-			$_SESSION["wa_current_user"]->ui_mode = $_POST['ui_mode'];
+			session_obj('wa_current_user')->ui_mode = $_POST['ui_mode'];
 			if (!$succeed)
 			{
 			// Incorrect password
@@ -578,14 +566,14 @@ if (!defined('FA_LOGOUT_PHP_FILE')){
 				exit();
 			}
 			$lang = &$_SESSION['language'];
-			$lang->set_language($_SESSION['language']->code);
+			$lang->set_language(session_obj('language')->code);
 		}
 	} else
 	{
 		set_global_connection();
 
 		if (db_fixed())
-			db_set_encoding($_SESSION['language']->encoding);
+			db_set_encoding(session_obj('language')->encoding);
 
 		sysprefs()->refresh();
 	}

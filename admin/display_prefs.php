@@ -33,7 +33,7 @@ if (isset($_POST['setprefs']))
 	} else {
 		$_POST['theme'] = clean_file_name($_POST['theme']);
 		$chg_theme = user_theme() != $_POST['theme'];
-		$chg_lang = $_SESSION['language']->code != $_POST['language'];
+		$chg_lang = session_obj('language')->code != $_POST['language'];
 		$chg_date_format = user_date_format() != $_POST['date_format'];
 		$chg_date_sep = user_date_sep() != $_POST['date_sep'];
 
@@ -49,13 +49,13 @@ if (isset($_POST['setprefs']))
 			  'graphic_links', 'sticky_doc_date', 'use_date_picker')));
 
 		if ($chg_lang)
-			$_SESSION['language']->set_language($_POST['language']);
+			session_obj('language')->set_language($_POST['language']);
 			// refresh main menu
 
 		flush_dir(company_path().'/js_cache');	
 
 		if ($chg_theme && sysprefs()->allow_demo_mode)
-			$_SESSION["wa_current_user"]->prefs->theme = $_POST['theme'];
+			session_obj('wa_current_user')->prefs->theme = $_POST['theme'];
 		if ($chg_theme || $chg_lang || $chg_date_format || $chg_date_sep)
 			meta_forward($_SERVER['PHP_SELF']);
 
@@ -101,7 +101,7 @@ possible separators can be added by modifying the array definition by editing th
 check_row(_("Use Date Picker"), 'use_date_picker', user_use_date_picker());
 
 if (!isset($_POST['language']))
-	$_POST['language'] = $_SESSION['language']->code;
+	$_POST['language'] = session_obj('language')->code;
 
 table_section_title(_("Reports"));
 

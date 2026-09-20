@@ -121,7 +121,7 @@ class FrontReport extends Cpdf
 
 		$this->rep_id = $_POST['REP_ID'];	// FIXME
 		
-		if (!$_SESSION["wa_current_user"]->can_access_page($page_security))
+		if (!session_obj('wa_current_user')->can_access_page($page_security))
 		{
 			display_error(_("The security settings on your account do not permit you to print this report"));
 			end_page();
@@ -267,7 +267,7 @@ class FrontReport extends Cpdf
 		$this->scaleLogoWidth = false; // if Logo, scale on width (else height).
 		$this->SetHeaderType('Header'); // default
 
-		parent::__construct($size, $_SESSION['language']->code, $orientation);
+		parent::__construct($size, session_obj('language')->code, $orientation);
 	}
 	
 	/*
@@ -328,7 +328,7 @@ class FrontReport extends Cpdf
 			$how = _("Closed");
 		$this->fiscal_year = sql2date($year['begin']) . " - " . sql2date($year['end']) . "  " . "(" . $how . ")";
 		$this->company = get_company_prefs();
-		$this->user = $_SESSION["wa_current_user"]->name;
+		$this->user = session_obj('wa_current_user')->name;
 		$this->host = $_SERVER['SERVER_NAME'];
 		$this->params = $params;
 		$this->cols = $cols;
@@ -1122,7 +1122,7 @@ class FrontReport extends Cpdf
 							continue;
 						$emailtype = true;
 						$this->SetLang($contact['lang']);
-						$coy_name = @html_entity_decode($this->company['coy_name'], ENT_QUOTES, $_SESSION['language']->encoding=='iso-8859-2' ? 'ISO-8859-1' : $_SESSION['language']->encoding);
+						$coy_name = @html_entity_decode($this->company['coy_name'], ENT_QUOTES, session_obj('language')->encoding=='iso-8859-2' ? 'ISO-8859-1' : session_obj('language')->encoding);
 
 						require_once($path_to_root . "/reporting/includes/class.mail.inc");
     					$mail = new email(str_replace(",", "", $coy_name),

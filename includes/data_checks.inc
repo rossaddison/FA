@@ -648,11 +648,11 @@ function check_deferred_income_act(?string $msg): void
 
 function check_is_editable(string|int|float|bool|array|null $trans_type, string|int|float|bool|null $trans_no, string|int|float|bool|null $msg=null): void
 {
-	if (!$_SESSION['wa_current_user']->can_access('SA_EDITOTHERSTRANS'))
+	if (!session_obj('wa_current_user')->can_access('SA_EDITOTHERSTRANS'))
 	{
 		$audit = get_audit_trail_last($trans_type, $trans_no);
 
-		if ($_SESSION['wa_current_user']->user != $audit['user'])
+		if (session_obj('wa_current_user')->user != $audit['user'])
 		{
 	    	if (!(bool)$msg)
 		    	$msg = '<b>'._("You have no edit access to transactions created by other users.").'</b>';

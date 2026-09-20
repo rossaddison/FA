@@ -109,7 +109,7 @@ function handle_submit(string|int|float|bool|null $selected_id): bool
 		$db_connections[$selected_id]['port'] = $_POST['port'];
 		$db_connections[$selected_id]['dbuser'] = $_POST['dbuser'];
 		$db_connections[$selected_id]['dbpassword'] = html_entity_decode($_POST['dbpassword'], ENT_QUOTES, 
-			$_SESSION['language']->encoding=='iso-8859-2' ? 'ISO-8859-1' : $_SESSION['language']->encoding);
+			session_obj('language')->encoding=='iso-8859-2' ? 'ISO-8859-1' : session_obj('language')->encoding);
 		$db_connections[$selected_id]['dbname'] = $_POST['dbname'];
 		$db_connections[$selected_id]['collation'] = $_POST['collation'];
 		if (is_numeric($_POST['tbpref']))

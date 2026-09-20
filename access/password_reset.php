@@ -26,11 +26,11 @@ function defaultCompany()
 		$def_coy = 0;
 	$def_theme = "default";
 
-	$login_timeout = $_SESSION["wa_current_user"]->last_act;
+	$login_timeout = session_obj('wa_current_user')->last_act;
 
 	$title = sysprefs()->app_title." ".$version." - "._("Password reset");
-	$encoding = isset($_SESSION['language']->encoding) ? $_SESSION['language']->encoding : "iso-8859-1";
-	$rtl = isset($_SESSION['language']->dir) ? $_SESSION['language']->dir : "ltr";
+	$encoding = isset(session_obj('language')->encoding) ? session_obj('language')->encoding : "iso-8859-1";
+	$rtl = isset(session_obj('language')->dir) ? session_obj('language')->dir : "ltr";
 	$onload = !(bool)$login_timeout ? "onload='defaultCompany()'" : "";
 
 	echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n";

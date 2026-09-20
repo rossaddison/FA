@@ -17,7 +17,7 @@ function help_url(mixed $context=null): string
 
 	global $help_context;
 
-	$country = $_SESSION['language']->code;
+	$country = session_obj('language')->code;
 	$clean = 0;
 	
 	if ($context!=null)
@@ -131,13 +131,13 @@ function page_header(string|int|float|bool|null $title, string|int|float|bool|nu
 	if(isset($db_connections))	// skip before installation
 		hook_invoke_all('pre_header', $page_header_args);
 
-	$encoding = $_SESSION['language']->encoding;
+	$encoding = session_obj('language')->encoding;
 
 	if (!headers_sent()){
 		header("Content-type: text/html; charset=$encoding");
 	}
 	echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n";
-	echo "<html dir='" . $_SESSION['language']->dir . "' >\n";
+	echo "<html dir='" . session_obj('language')->dir . "' >\n";
 	echo "<head profile=\"http://www.w3.org/2005/10/profile\"><title>$title</title>";
 	if (strpos($_SERVER['HTTP_USER_AGENT'], 'Trident/7.0; rv:11.0') != -1) // IE 11 doesn't work with input file type in form.
 		echo "<meta http-equiv='X-UA-Compatible' content='IE=10'>\n";

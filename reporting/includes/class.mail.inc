@@ -80,7 +80,7 @@ class email
     function encode($txt)
     {
 
-        $opts = array('input-charset' => $_SESSION['language']->encoding,
+        $opts = array('input-charset' => session_obj('language')->encoding,
             'output-charest' => 'utf-8', // utf-8 works always nowadays
             'line-length'=>  72,
             'linebreak-chars'=>'\n',

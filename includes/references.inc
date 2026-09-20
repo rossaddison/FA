@@ -106,8 +106,8 @@ class references
 		if (is_string($context))
 			$context = array('date' => $context);
 
-		$context['user'] = $_SESSION['wa_current_user']->user;
-		$context['pos'] = $_SESSION['wa_current_user']->pos;
+		$context['user'] = session_obj('wa_current_user')->user;
+		$context['pos'] = session_obj('wa_current_user')->pos;
 		$out = '';
 
 		while(($start = strpos($template, '{')) !==false) {
@@ -304,7 +304,7 @@ class references
 		if (!is_array($context))
 			$context = array('date'=>$context);
 
- 		$context['pos'] = $_SESSION["wa_current_user"]->pos;
+ 		$context['pos'] = session_obj('wa_current_user')->pos;
 
 		if (is_date(@$context['date']))
 		{
@@ -326,7 +326,7 @@ class references
 		$branch = @$context['branch'] ? $context['branch'] : '\d+';
 		$location = @$context['location'] ? $context['location'] : '[a-z0-9]+';
  		$pos = (bool)(@$context['pos']) ? $context['pos'] : '\d+';
-		$user = sprintf("%02d", $_SESSION['wa_current_user']->user);
+		$user = sprintf("%02d", session_obj('wa_current_user')->user);
 
 		$regex = preg_replace(
 			array(

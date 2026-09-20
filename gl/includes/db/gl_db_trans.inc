@@ -37,9 +37,9 @@ function add_gl_trans(string|int|float|bool|null $type, string|int|float|bool|nu
 	if (isset(sysprefs()->use_audit_trail) && sysprefs()->use_audit_trail)
 	{
 		if ($memo_ == "" || $memo_ == null)
-			$memo_ = $_SESSION["wa_current_user"]->username;
+			$memo_ = session_obj('wa_current_user')->username;
 		else
-			$memo_ = $_SESSION["wa_current_user"]->username . " - " . $memo_;
+			$memo_ = session_obj('wa_current_user')->username . " - " . $memo_;
 	}
 	if (!(bool)is_subledger_account($account) || $account==get_company_pref('grn_clearing_act'))
 		$person_id = $person_type_id = null;

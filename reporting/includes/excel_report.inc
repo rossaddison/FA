@@ -78,7 +78,7 @@ class FrontReport extends Spreadsheet_Excel_Writer_Workbook
 	{
 		global $page_security;
 
-		if (!$_SESSION["wa_current_user"]->can_access_page($page_security))
+		if (!session_obj('wa_current_user')->can_access_page($page_security))
 		{
 			display_error(_("The security settings on your account do not permit you to print this report"));
 			end_page();
@@ -93,8 +93,8 @@ class FrontReport extends Spreadsheet_Excel_Writer_Workbook
 		$this->y = 0;
 		$this->currency = '';
 		$this->excelColWidthFactor = $excelColWidthFactor;
-		$rtl = ($_SESSION['language']->dir == 'rtl');
-		$this->code = strtolower($_SESSION['language']->encoding);
+		$rtl = (session_obj('language')->dir == 'rtl');
+		$this->code = strtolower(session_obj('language')->encoding);
 		$this->filename = $filename.".xls";
 		$this->unique_name = random_id().".xls";
 		$this->path = company_path(). '/pdf_files';
@@ -260,7 +260,7 @@ class FrontReport extends Spreadsheet_Excel_Writer_Workbook
 		else
 			$how = _("Closed");
 		$this->fiscal_year = sql2date($year['begin']) . " - " . sql2date($year['end']) . "  " . "(" . $how . ")";
-		$this->user = $_SESSION["wa_current_user"]->name;
+		$this->user = session_obj('wa_current_user')->name;
 		$this->host = $_SERVER['SERVER_NAME'];
 		$this->params = $params;
 		$this->cols = $cols;
@@ -736,7 +736,7 @@ class FrontReport extends Spreadsheet_Excel_Writer_Workbook
 			$this->sheet = $this->addWorksheet();
 			if ($this->code != "iso-8859-1")
 				$this->sheet->setInputEncoding($this->code); // set sheet encoding
-			if ($_SESSION['language']->dir == 'rtl')
+			if (session_obj('language')->dir == 'rtl')
 				$this->sheet->setRTL();
 			for ($i = 0; $i < $this->numcols; $i++)
 				$this->sheet->setColumn($i, $i, $this->px2units($this->cols[$i + 1] - $this->cols[$i]));

@@ -73,7 +73,7 @@ if (get_post('addupdate'))
 		set_focus('name');
    	}
 		// prevent accidental editor lockup by removing SA_SECROLES
-	if (get_post('role') == $_SESSION['wa_current_user']->access) {
+	if (get_post('role') == session_obj('wa_current_user')->access) {
 		if (!isset($_POST['Area'.$security_areas['SA_SECROLES'][0]])
 			|| !isset($_POST['Section'.SS_SETUP])) {
 			display_error(_("Access level edition in Company setup section have to be enabled for your account."));

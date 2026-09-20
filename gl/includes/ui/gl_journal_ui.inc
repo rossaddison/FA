@@ -221,7 +221,7 @@ function gl_edit_item_controls(?items_cart &$order, string|int|float|bool|null $
 			$_POST['LineMemo'] = $item->reference;
 		}
 		hidden('Index', $id);
-		$skip_bank = !$_SESSION["wa_current_user"]->can_access('SA_BANKJOURNAL');
+		$skip_bank = !session_obj('wa_current_user')->can_access('SA_BANKJOURNAL');
 		echo gl_all_accounts_list('code_id', null, $skip_bank, true, _('[Select account]'), true, false, false);
 
 		if ((bool)is_subledger_account(get_post('code_id')))
@@ -238,7 +238,7 @@ function gl_edit_item_controls(?items_cart &$order, string|int|float|bool|null $
 	}
 	else
 	{
-		$skip_bank = !$_SESSION["wa_current_user"]->can_access('SA_BANKJOURNAL');
+		$skip_bank = !session_obj('wa_current_user')->can_access('SA_BANKJOURNAL');
 		echo gl_all_accounts_list('code_id', null, $skip_bank, true, _('[Select account]'), true, false, false);
 		if ((bool)$sub_accounts)
 		{

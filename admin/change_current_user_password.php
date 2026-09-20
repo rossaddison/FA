@@ -24,10 +24,10 @@ include_once($path_to_root . "/admin/db/users_db.inc");
 function can_process(): bool
 {
 
-	$Auth_Result = hook_authenticate($_SESSION["wa_current_user"]->username, $_POST['cur_password']);
+	$Auth_Result = hook_authenticate(session_obj('wa_current_user')->username, $_POST['cur_password']);
 
 	if (!isset($Auth_Result))	// if not used external login: standard method
-		$Auth_Result = get_user_auth($_SESSION["wa_current_user"]->username, md5($_POST['cur_password']));
+		$Auth_Result = get_user_auth(session_obj('wa_current_user')->username, md5($_POST['cur_password']));
 
 	if (!(bool)$Auth_Result)
    	{
@@ -43,7 +43,7 @@ function can_process(): bool
    		return false;
    	}
 
-   	if (strstr($_POST['password'], $_SESSION["wa_current_user"]->username) != false)
+   	if (strstr($_POST['password'], session_obj('wa_current_user')->username) != false)
    	{
    		display_error( _("The password cannot contain the user login."));
 		set_focus('password');
@@ -68,8 +68,8 @@ if (isset($_POST['UPDATE_ITEM']) && check_csrf_token())
 		if (sysprefs()->allow_demo_mode) {
 		    display_warning(_("Password cannot be changed in demo mode."));
 		} else {
-			update_user_password($_SESSION["wa_current_user"]->user, 
-				$_SESSION["wa_current_user"]->username,
+			update_user_password(session_obj('wa_current_user')->user, 
+				session_obj('wa_current_user')->username,
 				md5($_POST['password']));
 		    display_notification(_("Your password has been updated."));
 		}
@@ -81,7 +81,7 @@ start_form();
 
 start_table(TABLESTYLE);
 
-$myrow = row_or_empty(get_user($_SESSION["wa_current_user"]->user));
+$myrow = row_or_empty(get_user(session_obj('wa_current_user')->user));
 
 label_row(_("User login:"), $myrow['user_id']);
 

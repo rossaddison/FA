@@ -57,7 +57,7 @@ class remote_printer {
             
         // Send Control file.
         $server = $_SERVER['SERVER_NAME'];
-        $ctrl = "H".$server."\nP". substr($_SESSION["wa_current_user"]->loginname,0,31) 
+        $ctrl = "H".$server."\nP". substr(session_obj('wa_current_user')->loginname,0,31) 
 			."\nfdfA".$job.$server."\n";
         fwrite($stream, chr(2).strlen($ctrl)." cfA".$job.$server."\n");
         $ack = fread($stream, 1);
