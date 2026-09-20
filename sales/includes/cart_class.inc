@@ -289,7 +289,11 @@ class Cart
 	//-------------------------------------------------------------------------
 	// Reading document into cart
 	//
-	/** @return void */
+	/**
+	 * @param string|int|array<array-key, mixed>|null $type
+	 * @param int|bool|null $prepare_child
+	 * @return void
+	 */
 	function read($type, $trans_no=0, $prepare_child=false) {
 
 
@@ -874,6 +878,17 @@ class line_details
 	var $qty_old = 0;
 
 
+	/**
+	 * @param string|null $stock_id
+	 * @param string|int|float|null $qty
+	 * @param string|int|float|null $prc
+	 * @param string|int|null $qty_done
+	 * @param string|int|null $standard_cost
+	 * @param string|array<array-key, mixed>|null $description
+	 * @param string|int|null $id
+	 * @param string|int|null $src_no
+	 * @param string|int|null $src_id
+	 */
 	function __construct($stock_id, $qty, $prc, $disc_percent,
 		$qty_done, $standard_cost, $description, $id=0, $src_no=0, $src_id=0)
 	{

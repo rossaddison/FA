@@ -504,7 +504,12 @@ class Report
 	var $ar_params;
 	var $controls;
 	
-	/** @psalm-mutation-free */
+	/**
+	 * @param int|null $id
+	 * @param string|null $name
+	 * @param array<array-key, mixed>|null $ar_params
+	 * @psalm-mutation-free
+	 */
 	function __construct($id, $name, $ar_params = null)
 	{
 		$this->id = $id;

@@ -263,7 +263,10 @@ class db_pager {
 	//
 	//	Calculates page numbers for html controls.
 	//
-	/** @return void */
+	/**
+	 * @param string|int|null $to
+	 * @return void
+	 */
 	function set_page($to) 
 	{
 	    switch($to) {

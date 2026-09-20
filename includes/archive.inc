@@ -454,7 +454,10 @@ class tar_file extends archive
 
 class gzip_file extends tar_file
 {
-	/** @psalm-mutation-free */
+	/**
+	 * @param string|null $name
+	 * @psalm-mutation-free
+	 */
 	function __construct($name)
 	{
 		parent::__construct($name);

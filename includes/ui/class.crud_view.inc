@@ -364,6 +364,8 @@ class simple_crud_view extends user_view {
 	}
 
 	/**
+	 * @param string|null $name
+	 * @param string|null $view
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */

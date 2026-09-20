@@ -325,6 +325,11 @@ class po_line_details
 
 	/**
 	 * @param int|null $grn_item_id
+	 * @param int|null $line_no
+	 * @param string|array<array-key, mixed>|null $item_descr
+	 * @param string|null $uom
+	 * @param string|int|null $qty_inv
+	 * @param string|int|null $qty_recd
 	 */
 	function __construct($line_no, $stock_item, $item_descr, $qty, $prc, $uom, $req_del_date, 
 		$qty_inv, $qty_recd, $grn_item_id=0)

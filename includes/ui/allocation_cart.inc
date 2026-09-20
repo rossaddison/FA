@@ -61,6 +61,9 @@ class allocation
 		$this->read($type, $trans_no, $person_id, $person_type_id); // read payment or credit
 	}
 
+	/**
+	 * @param int|null $person_type
+	 */
 	function set_person($person_id, $person_type)
 	{
 		$this->person_id = $person_id;
@@ -71,6 +74,15 @@ class allocation
 	}
 
 	/**
+	 * @param string|null $type
+	 * @param string|null $type_no
+	 * @param string|null $date_
+	 * @param string|null $due_date
+	 * @param string|null $amount
+	 * @param string|float|null $amount_allocated
+	 * @param string|int|null $current_allocated
+	 * @param string|null $ref
+	 * @param string|null $foreign_ref
 	 * @psalm-external-mutation-free
 	 * @return bool
 	 */
@@ -91,6 +103,15 @@ class allocation
 	
 	/**
 	 * @param int|null $index
+	 * @param string|null $type
+	 * @param string|null $type_no
+	 * @param string|null $date_
+	 * @param string|null $due_date
+	 * @param string|null $amount
+	 * @param float|null $amount_allocated
+	 * @param string|null $current_allocated
+	 * @param string|null $ref
+	 * @param string|null $foreign_ref
 	 * @psalm-external-mutation-free
 	 * @return bool
 	 */
@@ -142,7 +163,13 @@ class allocation
 	//
 	// FIXME - read all transactions below twice seems to be suboptimal
 	//
-	/** @return void */
+	/**
+	 * @param string|int|array<array-key, mixed>|null $type
+	 * @param string|int|array<array-key, mixed>|null $trans_no
+	 * @param string|array<array-key, mixed>|null $person_id
+	 * @param int|null $person_type_id
+	 * @return void
+	 */
 	function read($type = null, $trans_no = 0, $person_id=null, $person_type_id=null)
 	{
 		if ($type !== null) {	// otherwise re-read

@@ -101,7 +101,11 @@ class supp_trans
 		$this->read($trans_type, $trans_no);
 	}
 
-	/** @return void */
+	/**
+	 * @param int|null $trans_type
+	 * @param string|int|array<array-key, mixed>|null $trans_no
+	 * @return void
+	 */
 	function read($trans_type, $trans_no)
 	{
 		$this->trans_type = $trans_type;
@@ -326,7 +330,12 @@ all the info to do the necessary entries without looking up ie additional querie
 	/** @var string|int|float|bool|null */
 	var $tax_included;
 
-	/** @psalm-mutation-free */
+	/**
+	 * @param int|float|bool|null $this_quantity_inv
+	 * @param int|bool|null $std_cost_unit
+	 * @param string|int|bool|null $gl_code
+	 * @psalm-mutation-free
+	 */
 	function __construct($id, $po_detail_item, $item_code, $item_description, $qty_recd, 
 		$prev_quantity_inv, $this_quantity_inv, $order_price, $chg_price,
 		$std_cost_unit, $gl_code, $tax_included)

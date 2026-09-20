@@ -40,6 +40,7 @@ class simple_crud {
 	//
 	/**
 	 * @param array<array-key, mixed>|null $fields
+	 * @param string|null $name
 	 * @psalm-mutation-free
 	 */
 	function __construct($name, $fields = null)

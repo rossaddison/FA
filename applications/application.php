@@ -24,7 +24,11 @@ define('MENU_SYSTEM', 'menu_system');
 		var $label;
 		var $link;
 		
-		/** @psalm-mutation-free */
+		/**
+		 * @param string|null $label
+		 * @param string|null $link
+		 * @psalm-mutation-free
+		 */
 		function __construct($label, $link) 
 		{
 			$this->label = $label;
@@ -86,7 +90,10 @@ define('MENU_SYSTEM', 'menu_system');
 		var $lappfunctions;
 		var $rappfunctions;
 		
-		/** @psalm-mutation-free */
+		/**
+		 * @param string|null $name
+		 * @psalm-mutation-free
+		 */
 		function __construct($name,$icon = null) 
 		{
 			$this->name = $name;

@@ -428,6 +428,9 @@ class Chart
 		$this->create_graphic($save);
 	}
 
+	/**
+	 * @param string|null $save
+	 */
 	function create_graphic($save="")
 	{
 		if ($this->stream == 'svg')

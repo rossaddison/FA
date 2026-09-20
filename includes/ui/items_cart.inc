@@ -560,6 +560,9 @@ class line_item
 	/** @var float|int|string */
 	var $standard_cost;
 
+	/**
+	 * @param int|float|bool|null $qty
+	 */
 	function __construct($stock_id, $qty, $standard_cost=null, $description=null)
 	{
 		$item_row = get_item($stock_id);
@@ -615,6 +618,10 @@ class gl_item
 	/** @var string */
 	var $date;
 
+	/**
+	 * @param string|null $act_descr
+	 * @param string|int|array<array-key, mixed>|null $person_id
+	 */
 	function __construct($code_id=null, $dimension_id=0, $dimension2_id=0, $amount=0, $memo='',
 		$act_descr=null, $person_id=null, $date=null)
 	{
