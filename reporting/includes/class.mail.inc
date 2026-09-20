@@ -34,11 +34,27 @@ class email
     var $cc = array();
     var $bcc = array();
     var $attachment = array();
+
+    /**
+     * @var string
+     */
     var $boundary = "";
     var $headers = array();
     var $subject = "";
+
+    /**
+     * @var string
+     */
     var $body = "";
+
+	/**
+	 * @var string
+	 */
 	var $charset = 'ISO-8859-1';
+
+	/**
+	 * @var string
+	 */
 	var $add_params = "";
 	
     function __construct($name, $mail)

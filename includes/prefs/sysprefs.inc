@@ -19,6 +19,10 @@ include_once($path_to_root . "/admin/db/company_db.inc");
 class sys_prefs extends stdClass
 {
 	var $prefs;
+
+	/**
+	 * @var bool|null
+	 */
 	var $db_ok; // check whether database has been upgraded after src update.
 
 	function __construct()

@@ -24,6 +24,10 @@ class fa_patch {
 	var $backup;				// pre-upgrade backup filename
 
 	var $errors = array();
+
+	/**
+	 * @var int
+	 */
 	var	$max_upgrade_time = 300;
 	var $companies = null;
 

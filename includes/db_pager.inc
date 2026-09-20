@@ -26,33 +26,74 @@ class db_pager {
 	var $marker_txt;	
 	var $marker_class;
 	var $notice_class;
+
+	/**
+	 * @var string
+	 */
 	var $width;			// table width (default '95%')
 	var $header_fun;	// additional row between title and body
 	var $header_class;
     var $row_fun;       // Function for row preprocessing
 	var $footer_fun;
 	var $footer_class;
+
+	/**
+	 * @var array
+	 */
 	var $data = array();
 
-	var $curr_page,
-		$max_page,
-	    $last_page, 
-	    $prev_page, 
-	    $next_page,
-	    $first_page;
+	var $curr_page;
+
+	/**
+	 * @var float|int
+	 */
+	var $max_page;
+	var $last_page;
+	var $prev_page;
+	var $next_page;
+
+	/**
+	 * @var int|null
+	 */
+	var $first_page;
 	    
-	var $page_len,
-	    $rec_count;
+	var $page_len;
+	var $rec_count;
 	
-	var $select,
-		$where,
-	    $from,
-		$group,
-		$order;
+	/**
+	 * @var string
+	 */
+	var $select;
+
+	/**
+	 * @var string
+	 */
+	var $where;
+
+	/**
+	 * @var string
+	 */
+	var $from;
+
+	/**
+	 * @var string
+	 */
+	var $group;
+
+	/**
+	 * @var string
+	 */
+	var $order;
 	var	$extra_where = array();
 	
+	/**
+	 * @var bool
+	 */
 	var $ready = false; // this var is false after change in sql before first
 						// and before first query.
+	/**
+	 * @var array|bool
+	 */
 	var $inactive_ctrl = false;
 	var $main_tbl;		// table and key field name for inactive ctrl and edit/delete links
 	var $key;	// key field name

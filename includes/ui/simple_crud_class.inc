@@ -16,8 +16,20 @@ class simple_crud {
 	var $name;
 	var $Mode;
 	var $selected_id;
+
+	/**
+	 * @var string
+	 */
 	var $_none = ''; // selector value when no item is selected
+
+	/**
+	 * @var string[]
+	 */
 	var $pre_handlers; // control buttons and related methods called before view display
+
+	/**
+	 * @var string[]
+	 */
 	var $views;
 	var $data = array();
 	var $fields;

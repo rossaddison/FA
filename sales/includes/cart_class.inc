@@ -24,8 +24,20 @@ include_once($path_to_root . "/taxes/tax_calc.inc");
 class Cart 
 {
 	var $trans_type; // invoice, order, quotation, delivery note ...
+
+	/**
+	 * @var array|int
+	 */
 	var $trans_no = array();// array (num1=>ver1,..) or 0 for new
+
+	/**
+	 * @var int
+	 */
 	var $so_type = 0;		// for sales order: simple=0 template=1
+
+	/**
+	 * @var string
+	 */
 	var $cart_id;		// used to detect multi-tab edition conflits
 	var $line_items;  //array of objects of class line_details
 
@@ -51,9 +63,17 @@ class Cart
 
 	var $cust_ref;
 	var $reference;
+
+	/**
+	 * @var string
+	 */
 	var $Comments;
 	var $Location;
 	var $location_name;
+
+	/**
+	 * @var (int|string)|null
+	 */
 	var $order_no; 		// the original order number
 
 	var $ship_via;
@@ -74,6 +94,9 @@ class Cart
 	var $payment_terms = array('cash_sale' => false, 'days_before_due' => 0); // cached payment terms
 	var $credit;
 	// prepayment mode:
+	/**
+	 * @var false
+	 */
 	var $prepaid=false;	// true for documents issued in prepayment mode
 	var $prep_amount=0;	// prepayment required for SO, invoiced amount for prepaiament invoice
 	var $sum_paid; 		// sum of all allocated prepayments both to order and related invoices
@@ -81,6 +104,9 @@ class Cart
 	var $prepayments = array(); // allocation records for this document
 	var $ex_rate;
 
+	/**
+	 * @var false
+	 */
 	var $fixed_asset = false;
 	var $bo_policy = null;
 
@@ -672,6 +698,9 @@ class line_details
 	var $standard_cost;
 	var $descr_editable;
 
+	/**
+	 * @var true
+	 */
 	var $valid; // validation in constructor
 	/*
 		Line quantity properties in various cart create modes:
@@ -697,6 +726,10 @@ class line_details
 	var $quantity;
 	var $qty_done;
 	var $qty_dispatched;
+
+	/**
+	 * @var int
+	 */
 	var $qty_old = 0;
 
 

@@ -27,13 +27,36 @@ class current_user
 	var $pos;
 	var $access;
 	var $timeout;
+
+	/**
+	 * @var int|null
+	 */
 	var $last_act;
 	var $role_set = false;
+
+	/**
+	 * @var bool|null
+	 */
 	var $old_db;
+
+	/**
+	 * @var bool
+	 */
 	var $logged;
+
+	/**
+	 * @var int
+	 */
 	var $ui_mode = 0;
+
+	/**
+	 * @var int
+	 */
 	var $login_attempt=0;
 	
+	/**
+	 * @var user_prefs
+	 */
 	var $prefs;
 	var $cur_con; // current db connection (can be different from $company for superuser)
 

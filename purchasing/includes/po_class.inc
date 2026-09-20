@@ -26,6 +26,10 @@ class purch_order
 	var $supplier_name;
 	var $orig_order_date;
 	var $due_date;
+
+	/**
+	 * @var int
+	 */
 	var $order_no; /*Only used for modification of existing orders otherwise only established when order committed */
 	var $lines_on_order = 0;
 	var $credit;
@@ -35,16 +39,30 @@ class purch_order
 	var $terms;
 	var $ex_rate;
 	var $cash_account;
-	var $dimension,
-		$dimension2;
+	var $dimension;
+	var $dimension2;
 
 	var $reference;
+
+	/**
+	 * @var array
+	 */
 	var $tax_overrides = array();		// array of taxes manually inserted during sales invoice entry (direct invoice)
 	
+	/**
+	 * @var int
+	 */
 	var $prep_amount = 0; // prepayment required
 	var $alloc; // sum of payments allocated
+
+	/**
+	 * @var array
+	 */
 	var $prepayments = array();
 
+	/**
+	 * @var false
+	 */
 	var $fixed_asset = false;
 
 	function __construct()
@@ -210,9 +228,16 @@ class po_line_details
 
 	var $quantity;		// current/entry quantity of PO line
 	var $qty_inv;	// quantity already invoiced against this line
+
+	/**
+	 * @var int
+	 */
 	var $receive_qty;	// current/entry GRN quantity
 	var $qty_received;	// quantity already received against this line
 
+	/**
+	 * @var int
+	 */
 	var $standard_cost;
 	var $descr_editable;
 

@@ -65,22 +65,42 @@ class Chart
 	var $id;
 	var $labels = array();
 	var $series = array();
+
+	/**
+	 * @var string[]
+	 */
 	static $palette = array('#008cc9','#4db625','#ef5500','#eef100','#05c6e6', '#5ee66a'); // Currently in Use	
 	var $color = array();
 	var $num_series = 0;
 	var $title;
 	var $axis_x;
 	var $axis_y;
+
+	/**
+	 * @var int|numeric
+	 */
 	var $type = 1;
 	var $donut_title = "";
 	var $set_values = true;
+
+	/**
+	 * @var int
+	 */
 	var $angle = 0;
+
+	/**
+	 * @var false
+	 */
 	var $latin_notation;
 	var $width;
 	var $height;
 	var $title_height;
 	var $size = 12;
 	var $tsize = 18;
+
+	/**
+	 * @var int
+	 */
 	var $num_labels;
 	var $sum_total = array();
 	var $higher_value_size = 0;
@@ -89,21 +109,68 @@ class Chart
 	var $max_legend_str;
 	var $legend_box_height;
 	var $stream = 'svg'; // stream = 'svg', 'png', 'jpg' or 'gif'
+
+	/**
+	 * @var SVG|null
+	 */
 	var $svg; // The SVG engine class.
+
+	/**
+	 * @var GdImage|false|null
+	 */
 	var $img; // png image
 
+	/**
+	 * @var int
+	 */
 	var $dec1 = 0;
+
+	/**
+	 * @var int
+	 */
 	var $dec2 = 0;
+
+	/**
+	 * @var string
+	 */
 	var $fontfile = "";
+
+	/**
+	 * @var string
+	 */
 	var $encoding;
 	var $out_dir = "";
 	var $dir = "ltr";
+
+	/**
+	 * @var string
+	 */
 	var $align;
 	var $lang;
+
+	/**
+	 * @var string
+	 */
 	var $font;
+
+	/**
+	 * @var string
+	 */
 	var $path;
+
+	/**
+	 * @var int
+	 */
 	var $bar_width = 0;
+
+	/**
+	 * @var int
+	 */
 	var $space_between_dots	= 0;
+
+	/**
+	 * @var float|int
+	 */
 	var $higher_value = 0;
 	var $higher_value_str = null;
 	var $graphic_area_width	= 0;
@@ -112,6 +179,10 @@ class Chart
 	var $graphic_area_x2 = 0;
 	var $graphic_area_y1 = 0;
 	var $graphic_area_y2 = 0;
+
+	/**
+	 * @var bool
+	 */
 	var $legend_exists = false;
 	var $legend_box_width = 0;
 	var $legend_box_x1 = 0;
@@ -1466,6 +1537,9 @@ class Chart
 
 class SVG
 {
+	/**
+	 * @var string
+	 */
 	var $svg;
 
 	function __construct($width=0, $height=0, $dir='ltr', $lang='en')

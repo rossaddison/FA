@@ -19,6 +19,10 @@ class supp_trans
 
 	var $grn_items; /*array of objects of class grn_item using the id as the pointer */
 	var $gl_codes; /*array of objects of class gl_codes using a counter as the pointer */
+
+	/**
+	 * @var int
+	 */
 	var $supplier_id;
 	var $supplier_name;
 	var $terms;
@@ -38,16 +42,32 @@ class supp_trans
 
 	var $supp_reference;
 	var $reference;
+
+	/**
+	 * @var int
+	 */
 	var $ov_amount;
+
+	/**
+	 * @var int
+	 */
 	var $ov_discount;
 	var $ov_gst;
 	var $gl_codes_counter=0;
+
+	/**
+	 * @var int
+	 */
 	var $credit = 0;
 	var $currency;
+
+	/**
+	 * @var array
+	 */
 	var $tax_overrides = array();		// array of taxes manually inserted during sales invoice entry
 
-	var $dimension,
-		$dimension2;
+	var $dimension;
+	var $dimension2;
 
 	function __construct($trans_type, $trans_no=0)
 	{

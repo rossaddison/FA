@@ -462,6 +462,10 @@ class line_item
 	var $mb_flag;
 
 	var $quantity;
+
+	/**
+	 * @var int
+	 */
 	var $price;
 	var $standard_cost;
 

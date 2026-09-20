@@ -261,12 +261,19 @@ class simple_crud_view extends user_view {
 	var $selected_id;
 	var $prev_id;
 
+	/**
+	 * @var string
+	 */
 	var $_none = ''; // selector value when no item is selected
 	var $pre_handlers; // control buttons and related methods called before view display
 	var $views;
 	var $data = array();
 	var $fields;
 	var $tool_buttons;
+
+	/**
+	 * @var array
+	 */
 	var $options = array(
 		'delete' => true,		// true or message for successfull action.
 		'update' => true,
@@ -275,6 +282,10 @@ class simple_crud_view extends user_view {
 	);
 	var $dec;
 	var $data_set;
+
+	/**
+	 * @var false
+	 */
 	var $display_both = false; //when set to true both list and editor are displayed all the time (eventually set in sub classes)
 	//
 	//

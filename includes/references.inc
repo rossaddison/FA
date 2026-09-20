@@ -72,6 +72,9 @@ $refline_placeholders = array(
 
 class references 
 {
+	/**
+	 * @var reflines_db
+	 */
 	var $reflines;
 	
 	function __construct()
