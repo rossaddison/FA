@@ -62,4 +62,17 @@
             <directory name="includes/lang"/>
         </ignoreFiles>
     </projectFiles>
+    <stubs>
+        <!-- bundled third-party libraries: ignored for analysis, but their classes must be known -->
+        <file name="reporting/includes/Workbook.php"/>
+        <file name="reporting/includes/tcpdf.php"/>
+        <file name="reporting/includes/barcodes.php"/>
+        <file name="reporting/includes/fpdi/fpdf_tpl.php"/>
+        <file name="reporting/includes/fpdi/fpdi.php"/>
+        <file name="reporting/includes/fpdi/fpdi2tcpdf_bridge.php"/>
+        <file name="reporting/includes/fpdi/fpdi_pdf_parser.php"/>
+        <file name="reporting/includes/fpdi/pdf_parser.php"/>
+        <file name="reporting/includes/fpdi/pdf_context.php"/>
+        <file name="includes/JsHttpRequest.php"/>
+    </stubs>
 </psalm>
