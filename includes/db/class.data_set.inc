@@ -21,14 +21,18 @@ $validator_types = array(
 	Generic record set object
 */
 abstract class record_set {
+	/** @var string */
 	var $key;			// unique key fields
 	var $fields;		// other fields
+	/** @var string */
 	var $name;			// table name (without prefix)
 	var $checks = array();		// checks on data before insert/update/delete
 
 	var $selected_id;	// current key
 	var $data;			// current record data
+	/** @var array<string, string> */
 	var $errors = array();
+	/** @var array<int, string> */
 	var $debug = array();
 	var $subset;		// optional where clause for record subset
 

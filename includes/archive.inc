@@ -16,10 +16,15 @@
 
 class archive
 {
+	/** @var array<string, mixed> */
 	var $options = array();
+	/** @var array<int, array<string, mixed>> */
 	var $files = array();
+	/** @var array<int, string> */
 	var $exclude = array();
+	/** @var array<int, string> */
 	var $storeonly = array();
+	/** @var array<int, string> */
 	var $error = array();
 
 	/** @psalm-mutation-free */

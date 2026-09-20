@@ -16,7 +16,9 @@ include_once($path_to_root. '/includes/ui/simple_crud_class.inc');
 */
 class attachments extends simple_crud {
 	var $selected_id;
+	/** @var string|int|null */
 	var $entity;
+	/** @var string|int|null */
 	var $sub_class;
 
 	/**

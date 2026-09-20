@@ -30,15 +30,20 @@
 
 class email
 {
+    /** @var array<int, string> */
     var $to = array();
+    /** @var array<int, string> */
     var $cc = array();
+    /** @var array<int, string> */
     var $bcc = array();
+    /** @var array<string, string> */
     var $attachment = array();
 
     /**
      * @var string
      */
     var $boundary = "";
+    /** @var array<string, string> */
     var $headers = array();
 
     /**

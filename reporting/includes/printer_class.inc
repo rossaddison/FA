@@ -7,9 +7,13 @@
  
 class remote_printer {
 
+    /** @var string */
     var $host;
+    /** @var int|string */
     var $port;
+    /** @var int|string */
     var $timeout;
+	/** @var string */
 	var $queue;
    	//
 	//	Setting connection parameters

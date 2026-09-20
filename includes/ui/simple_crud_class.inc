@@ -17,6 +17,7 @@ class simple_crud {
 	 * @var null|string
 	 */
 	var $name;
+	/** @var string */
 	var $Mode;
 
 	/**
@@ -48,8 +49,10 @@ class simple_crud {
 	 * @var array|null
 	 */
 	var $fields;
+	/** @var array<array-key, mixed> */
 	var $tool_buttons;
 	var $options;
+	/** @var int */
 	var $dec;
 	//
 	//

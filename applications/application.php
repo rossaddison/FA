@@ -49,6 +49,7 @@ define('MENU_SYSTEM', 'menu_system');
 		 * @var null|string
 		 */
 		var $title;
+		/** @var array<int, app_function> */
 		var $items;
 		
 		/**
@@ -78,9 +79,13 @@ define('MENU_SYSTEM', 'menu_system');
 
 	class app_function 
 	{
+		/** @var string */
 		var $label;
+		/** @var string */
 		var $link;
+		/** @var string */
 		var $access;
+        /** @var string */
         var $category;
 		
 		/** @psalm-mutation-free */
@@ -99,8 +104,11 @@ define('MENU_SYSTEM', 'menu_system');
 		 * @var null|string
 		 */
 		var $name;
+		/** @var string|null */
 		var $icon;
+		/** @var array<int, app_function> */
 		var $lappfunctions;
+		/** @var array<int, app_function> */
 		var $rappfunctions;
 		
 		/**
@@ -151,8 +159,11 @@ define('MENU_SYSTEM', 'menu_system');
 		 * @var null|string
 		 */
 		var $name;
+		/** @var string|null */
 		var $help_context;
+		/** @var array<int, module> */
 		var $modules;
+		/** @var bool|int */
 		var $enabled;
 		
 		/**

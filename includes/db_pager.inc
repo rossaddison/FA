@@ -18,8 +18,11 @@
 include_once($path_to_root."/includes/ui/db_pager_view.inc");
 
 class db_pager {
+	/** @var string */
 	var $sql;
+	/** @var string */
 	var $name;
+	/** @var array<int, array<string, mixed>> */
 	var $columns;		// column definitions (head, type, order)
 
 	/**
@@ -47,9 +50,11 @@ class db_pager {
 	 */
 	var $width;			// table width (default '95%')
 	var $header_fun;	// additional row between title and body
+	/** @var string|null */
 	var $header_class;
     var $row_fun;       // Function for row preprocessing
 	var $footer_fun;
+	/** @var string|null */
 	var $footer_class;
 
 	/**
@@ -57,6 +62,7 @@ class db_pager {
 	 */
 	var $data = array();
 
+	/** @var int */
 	var $curr_page;
 
 	/**
@@ -68,7 +74,9 @@ class db_pager {
 	 * @var float|int|null
 	 */
 	var $last_page;
+	/** @var int|null */
 	var $prev_page;
+	/** @var int|null */
 	var $next_page;
 
 	/**
@@ -76,6 +84,7 @@ class db_pager {
 	 */
 	var $first_page;
 	    
+	/** @var int */
 	var $page_len;
 	var $rec_count;
 	
@@ -114,7 +123,9 @@ class db_pager {
 	 * @var array|bool
 	 */
 	var $inactive_ctrl = false;
+	/** @var string|null */
 	var $main_tbl;		// table and key field name for inactive ctrl and edit/delete links
+	/** @var string|null */
 	var $key;	// key field name
 	
 	//  db_pager constructor

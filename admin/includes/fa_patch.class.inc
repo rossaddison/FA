@@ -20,15 +20,18 @@ class fa_patch {
 
 	var $sql;					// basic sql file
 
+	/** @var int|string */
 	var $cur_company;
 	var $backup;				// pre-upgrade backup filename
 
+	/** @var array<int, string> */
 	var $errors = array();
 
 	/**
 	 * @var int
 	 */
 	var	$max_upgrade_time = 300;
+	/** @var array<int, array<string, string>> */
 	var $companies = null;
 
 	function __construct()

@@ -13,7 +13,9 @@ require_once($path_to_root. "/includes/JsHttpRequest.php");
 
 class Ajax extends JsHttpRequest {
 
+	/** @var array<int, array<string, mixed>> */
 	var $aCommands = array();
+	/** @var array<string, bool> */
 	var $triggers = array();
 	
     function __construct() 

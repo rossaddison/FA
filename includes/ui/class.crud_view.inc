@@ -38,10 +38,15 @@ class UI {
 //
 class user_view {
 
+	/** @var array<array-key, mixed>|null */
 	var	$data; 		// data in php format
+	/** @var array<array-key, mixed> */
 	var $fields;	// input fields format descriptions
+	/** @var array<string, string> */
 	var $errors = array();
+	/** @var int */
 	var $dec;
+	/** @var string */
 	var $name;
 
 	/** @psalm-mutation-free */
@@ -265,8 +270,10 @@ class user_view {
 //
 
 class simple_crud_view extends user_view {
+	/** @var string */
 	var $name;
 		// object status:
+	/** @var string */
 	var $Mode = 'RESET';
 
 	/**
@@ -279,10 +286,13 @@ class simple_crud_view extends user_view {
 	 * @var string
 	 */
 	var $_none = ''; // selector value when no item is selected
+	/** @var array<array-key, mixed> */
 	var $pre_handlers; // control buttons and related methods called before view display
+	/** @var array<string, string> */
 	var $views;
 	var $data = array();
 	var $fields;
+	/** @var array<string, array<int, string|null>> */
 	var $tool_buttons;
 
 	/**
@@ -294,7 +304,9 @@ class simple_crud_view extends user_view {
 		'insert' => true,
 		'clone' => true,
 	);
+	/** @var int */
 	var $dec;
+	/** @var record_set */
 	var $data_set;
 
 	/**

@@ -17,7 +17,9 @@ include_once($path_to_root . "/includes/db/crm_contacts_db.inc");
 */
 class contacts extends simple_crud {
 	var $id;
+	/** @var string|int|null */
 	var $entity;
+	/** @var string|int|null */
 	var $sub_class;
 
 	/**

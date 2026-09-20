@@ -22,6 +22,7 @@ define('RC_FIXEDASSETS', 7);
 
 class BoxReports
 {
+	/** @var array<array-key, string> */
 	var $ar_classes; // report class names
 	var $ar_reports;
 	var $ctrl_handlers = array();
