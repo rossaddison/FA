@@ -62,7 +62,9 @@ file for later presentation.
 define('MAXLEN', 27); // we cut after 25 chars + ...
 class Chart
 {
+	/** @var string */
 	var $id;
+	/** @var array<int, string> */
 	var $labels = array();
 	var $series = array();
 
@@ -70,17 +72,24 @@ class Chart
 	 * @var string[]
 	 */
 	static $palette = array('#008cc9','#4db625','#ef5500','#eef100','#05c6e6', '#5ee66a'); // Currently in Use	
+	/** @var array<string, int|string|false> */
 	var $color = array();
+	/** @var int */
 	var $num_series = 0;
+	/** @var string|null */
 	var $title;
+	/** @var string|null */
 	var $axis_x;
+	/** @var string|null */
 	var $axis_y;
 
 	/**
 	 * @var int|numeric
 	 */
 	var $type = 1;
+	/** @var string */
 	var $donut_title = "";
+	/** @var bool */
 	var $set_values = true;
 
 	/**
@@ -92,22 +101,34 @@ class Chart
 	 * @var false
 	 */
 	var $latin_notation;
+	/** @var int|float */
 	var $width;
+	/** @var int|float */
 	var $height;
+	/** @var int|float */
 	var $title_height;
+	/** @var int */
 	var $size = 12;
+	/** @var int */
 	var $tsize = 18;
 
 	/**
 	 * @var int
 	 */
 	var $num_labels;
+	/** @var array<int, int|float> */
 	var $sum_total = array();
+	/** @var int|float */
 	var $higher_value_size = 0;
+	/** @var int|float|string|null */
 	var $max_value;
+	/** @var string */
 	var $max_label;
+	/** @var string */
 	var $max_legend_str;
+	/** @var int|float */
 	var $legend_box_height;
+	/** @var string|null */
 	var $stream = 'svg'; // stream = 'svg', 'png', 'jpg' or 'gif'
 
 	/**
@@ -128,66 +149,91 @@ class Chart
 	/**
 	 * @var int
 	 */
+	/** @var int */
 	var $dec2 = 0;
 
 	/**
 	 * @var string
 	 */
+	/** @var string */
 	var $fontfile = "";
 
 	/**
 	 * @var string
 	 */
+	/** @var string */
 	var $encoding;
+	/** @var string */
 	var $out_dir = "";
+	/** @var string */
 	var $dir = "ltr";
 
 	/**
 	 * @var string
 	 */
+	/** @var string */
 	var $align;
+	/** @var string */
 	var $lang;
 
 	/**
 	 * @var string
 	 */
+	/** @var string */
 	var $font;
 
 	/**
 	 * @var string
 	 */
+	/** @var string */
 	var $path;
 
 	/**
 	 * @var int
 	 */
+	/** @var int|float */
 	var $bar_width = 0;
 
 	/**
 	 * @var int
 	 */
+	/** @var int|float */
 	var $space_between_dots	= 0;
 
 	/**
 	 * @var float|int
 	 */
+	/** @var int|float */
 	var $higher_value = 0;
+	/** @var int|float|string|null */
 	var $higher_value_str = null;
+	/** @var int|float */
 	var $graphic_area_width	= 0;
+	/** @var int|float */
 	var $graphic_area_height = 0;
+	/** @var int|float */
 	var $graphic_area_x1 = 0;
+	/** @var int|float */
 	var $graphic_area_x2 = 0;
+	/** @var int|float */
 	var $graphic_area_y1 = 0;
+	/** @var int|float */
 	var $graphic_area_y2 = 0;
 
 	/**
 	 * @var bool
 	 */
+	/** @var bool */
 	var $legend_exists = false;
+	/** @var int|float */
 	var $legend_box_width = 0;
+	/** @var int|float */
 	var $legend_box_x1 = 0;
+	/** @var int|float */
 	var $legend_box_x2 = 0;
+	/** @var int|float */
 	var $legend_box_y1 = 0;
+	/** @var int|float */
 	var $legend_box_y2 = 0;
 
 
