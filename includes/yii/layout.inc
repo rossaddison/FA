@@ -18,6 +18,8 @@
 
 use Yiisoft\View\WebView;
 
+include_once(__DIR__ . '/assets.inc');
+
 /**
  * True when the Yii page shell is switched on and its dependencies are installed.
  */
@@ -56,12 +58,7 @@ function yii_layout_parts(string $title, string $onload, string $css, bool $with
 
 	$view = yii_view();
 	if ($withAssets) {
-		foreach (css_urls($css) as $url) {
-			$view->registerCssFile($url);
-		}
-		foreach (script_urls() as $url) {
-			$view->registerJsFile($url, WebView::POSITION_HEAD);
-		}
+		yii_register_assets($view, $css);
 	}
 	$marker = '<!--fa-page-content-->';
 	$html = $view->render('layout', array(

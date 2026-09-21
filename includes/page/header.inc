@@ -81,13 +81,13 @@ function send_css(string|int|float|bool|null $css = ''): void
 /**
  * The script files of the page: FA's own (compressed and cached per user) and those added with add_js_ufile().
  *
- * @return list<string>
+ * @return array{static: list<string>, user: list<string>}
  */
-function script_urls(): array
+function script_files(): array
 {
 	global $js_static, $js_path, $js_userlib;
 
-	$urls = array();
+	$static = array();
 	foreach($js_static as $jsfile)
 	{
 		$cached_name = basename($jsfile);
@@ -96,15 +96,24 @@ function script_urls(): array
 	  	if (!file_exists($fpath) || (bool)sysprefs()->go_debug)
 			cache_js_file($fpath, file_get_contents($js_path.$jsfile));
 
-		$urls[] = $fpath;
+		$static[] = $fpath;
 	}
+	$user = array();
 	foreach($js_userlib as $jsfile)
 	{
-		$urls[] = $jsfile;
+		$user[] = $jsfile;
 	}
-	return $urls;
+	return array('static' => $static, 'user' => $user);
 }
 
+/**
+ * @return list<string> every script file of the page, FA's own first
+ */
+function script_urls(): array
+{
+	$files = script_files();
+	return array_merge($files['static'], $files['user']);
+}
 function send_scripts(): void
 {
 	$js ='';

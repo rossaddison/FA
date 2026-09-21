@@ -9,6 +9,8 @@
         "ext-mbstring": "*",
         "ext-mysqli": "*",
         "psr/event-dispatcher": "^1.0",
+        "yiisoft/aliases": "^3.1",
+        "yiisoft/assets": "^5.1",
         "yiisoft/view": "^12.2"
     },
     "require-dev": {
