@@ -1,14 +1,26 @@
 <?php
 /**********************************************************************
     Copyright (C) FrontAccounting, LLC.
-	Released under the terms of the GNU General Public License, GPL, 
-	as published by the Free Software Foundation, either version 3 
+	Released under the terms of the GNU General Public License, GPL,
+	as published by the Free Software Foundation, either version 3
 	of the License, or (at your option) any later version.
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
+/*
+	The markup follows _html_php_conventions.php: everything through Yiisoft\Html\Html (H), one space of indent per
+	nesting level, the same //N on every open and close tag. Text that FA holds as HTML (titles, tab labels, the
+	links menu_link() builds) is echoed as it is; encoding it here would encode it twice.
+*/
+declare(strict_types=1);
+
+use Yiisoft\Html\Html as H;
+
+// the markup below needs yiisoft/html, which composer installs
+require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
+
 	class renderer
 	{
 		function get_icon($category)
@@ -17,9 +29,12 @@
 
 			if ($SysPrefs->show_menu_category_icons)
 				$img = $category == '' ? 'right.gif' : $category.'.png';
-			else	
+			else
 				$img = 'right.gif';
-			return "<img src='$path_to_root/themes/".user_theme()."/images/$img' class='fa-vam' border='0'>&nbsp;&nbsp;";
+			return H::img("$path_to_root/themes/".user_theme()."/images/$img")
+				->class('fa-vam')
+				->addAttributes(['border' => '0'])
+				->render().'&nbsp;&nbsp;';
 		}
 
 		function wa_header()
@@ -32,6 +47,22 @@
 			end_page(false, true);
 		}
 
+		/**
+		 * One icon + label link of the status bar, with the gap FA puts after each.
+		 *
+		 * @param array<string, string> $attributes
+		 */
+		private function status_link(array $attributes, string $image, string $alt, string $label): string
+		{
+			global $path_to_root;
+
+			return H::openTag('a', $attributes)
+				.H::img("$path_to_root/themes/".user_theme()."/images/$image")->class('fa-icon14')->alt($alt)->render()
+				.'&nbsp;&nbsp;'.$label
+				.H::closeTag('a')
+				.'&nbsp;&nbsp;&nbsp;';
+		}
+
 		function menu_header($title, $no_menu, $is_index)
 		{
 			if (yiiLayoutEnabled())
@@ -40,73 +71,112 @@
 				return;
 			}
 			global $path_to_root, $SysPrefs, $db_connections;
-			echo "<table class='callout_main' border='0' cellpadding='0' cellspacing='0'>\n";
-			echo "<tr>\n";
-			echo "<td colspan='2' rowspan='2'>\n";
 
-			echo "<table class='main_page' border='0' cellpadding='0' cellspacing='0'>\n";
-			echo "<tr>\n";
-			echo "<td>\n";
-			echo "<table width='100%' border='0' cellpadding='0' cellspacing='0'>\n";
-			echo "<tr>\n";
-			echo "<td class='quick_menu'>\n"; // tabs
+			// ─── CSS shortcut variables ──────────────────────────────────────────────
+			$calloutMain    = ['class' => 'callout_main', 'border' => '0', 'cellpadding' => '0', 'cellspacing' => '0'];
+			$mainPage       = ['class' => 'main_page', 'border' => '0', 'cellpadding' => '0', 'cellspacing' => '0'];
+			$fullWidth      = ['width' => '100%', 'border' => '0', 'cellpadding' => '0', 'cellspacing' => '0'];
+			$tabsTable      = ['cellpadding' => '0', 'cellspacing' => '0', 'width' => '100%'];
+			$logoutBarRight = ['class' => 'logoutBarRight'];
+			$indicator      = "$path_to_root/themes/".user_theme(). "/images/ajax-loader.gif";
+			$ajaxMark       = ['id' => 'ajaxmark', 'align' => 'center', 'class' => 'fa-hidden', 'alt' => 'ajaxmark'];
 
-			$indicator = "$path_to_root/themes/".user_theme(). "/images/ajax-loader.gif";
+			echo H::openTag('table', $calloutMain); //0
+			 echo H::openTag('tr'); //1
+			  echo H::openTag('td', ['colspan' => '2', 'rowspan' => '2']); //2
+			   echo H::openTag('table', $mainPage); //3
+			    echo H::openTag('tr'); //4
+			     echo H::openTag('td'); //5
+			      echo H::openTag('table', $fullWidth); //6
+			       echo H::openTag('tr'); //7
+			        echo H::openTag('td', ['class' => 'quick_menu']); // tabs //8
 			if (!$no_menu)
 			{
 				$applications = $_SESSION['App']->applications;
 				$local_path_to_root = $path_to_root;
 				$sel_app = $_SESSION['sel_app'];
-				echo "<table cellpadding='0' cellspacing='0' width='100%'><tr><td>";
-				echo "<div class='tabs'>";
+				echo H::openTag('table', $tabsTable); //9
+				 echo H::openTag('tr'); //10
+				  echo H::openTag('td'); //11
+				   echo H::openTag('div', ['class' => 'tabs']); //12
 				foreach($applications as $app)
 				{
-                    if ($_SESSION["wa_current_user"]->check_application_access($app))
-                    {
-                        $acc = access_string($app->name);
-                        echo "<a class='".($sel_app == $app->id ? 'selected' : 'menu_tab')
-                            ."' href='$local_path_to_root/index.php?application=".$app->id
-                            ."'$acc[1]>" .$acc[0] . "</a>";
-                    }
+					if ($_SESSION["wa_current_user"]->check_application_access($app))
+					{
+						$acc = access_string($app->name);
+						$attributes = [
+							'class' => $sel_app == $app->id ? 'selected' : 'menu_tab',
+							'href' => "$local_path_to_root/index.php?application=".$app->id,
+						];
+						// access_string() answers " accesskey='X'"
+						if (preg_match("/accesskey='(.)'/", (string)$acc[1], $key) === 1)
+							$attributes['accesskey'] = $key[1];
+						echo H::openTag('a', $attributes); //13
+						 echo $acc[0];
+						echo H::closeTag('a'); //13
+					}
 				}
-				echo "</div>";
-				echo "</td></tr></table>";
+				   echo H::closeTag('div'); //12
+				  echo H::closeTag('td'); //11
+				 echo H::closeTag('tr'); //10
+				echo H::closeTag('table'); //9
 				// top status bar
-				$rimg = "<img src='$path_to_root/themes/".user_theme()."/images/report.png' class='fa-icon14' alt='"._('Dashboard')."'>&nbsp;&nbsp;";
-				$pimg = "<img src='$local_path_to_root/themes/".user_theme()."/images/preferences.gif' class='fa-icon14' alt='"._('Preferences')."'>&nbsp;&nbsp;";
-				$limg = "<img src='$local_path_to_root/themes/".user_theme()."/images/lock.gif' class='fa-icon14' alt='"._('Change Password')."'>&nbsp;&nbsp;";
-				$img = "<img src='$local_path_to_root/themes/".user_theme()."/images/login.gif' class='fa-icon14' alt='"._('Logout')."'>&nbsp;&nbsp;";
-				$himg = "<img src='$local_path_to_root/themes/".user_theme()."/images/help.gif' class='fa-icon14'' alt='"._('Help')."'>&nbsp;&nbsp;";
-				echo "<table class='logoutBar'>";
-				echo "<tr><td class='headingtext3'>" . $db_connections[user_company()]["name"] . " | " . $_SERVER['SERVER_NAME'] . " | " . $_SESSION["wa_current_user"]->name . "</td>";
-				echo "<td class='logoutBarRight'><img id='ajaxmark' src='$indicator' align='center' class='fa-hidden' alt='ajaxmark'></td>";
-				echo "<td class='logoutBarRight'><a href='$path_to_root/admin/dashboard.php?sel_app=$sel_app'>$rimg" . _("Dashboard") . "</a>&nbsp;&nbsp;&nbsp;\n";
-				
-				echo "<a class='shortcut' href='$path_to_root/admin/display_prefs.php?'>$pimg" . _("Preferences") . "</a>&nbsp;&nbsp;&nbsp;\n";
-				echo "  <a class='shortcut' href='$path_to_root/admin/change_current_user_password.php?selected_id=" . $_SESSION["wa_current_user"]->username . "'>$limg" . _("Change password") . "</a>&nbsp;&nbsp;&nbsp;\n";
-
+				echo H::openTag('table', ['class' => 'logoutBar']); //9
+				 echo H::openTag('tr'); //10
+				  echo H::openTag('td', ['class' => 'headingtext3']); //11
+				   echo $db_connections[user_company()]["name"] . " | " . $_SERVER['SERVER_NAME'] . " | " . $_SESSION["wa_current_user"]->name;
+				  echo H::closeTag('td'); //11
+				  echo H::openTag('td', $logoutBarRight); //11
+				   echo H::img($indicator)->addAttributes($ajaxMark)->render();
+				  echo H::closeTag('td'); //11
+				  echo H::openTag('td', $logoutBarRight); //11
+				   echo $this->status_link(['href' => "$path_to_root/admin/dashboard.php?sel_app=$sel_app"], 'report.png', _('Dashboard'), _("Dashboard"));
+				   echo $this->status_link(['class' => 'shortcut', 'href' => "$path_to_root/admin/display_prefs.php?"], 'preferences.gif', _('Preferences'), _("Preferences"));
+				   echo $this->status_link(['class' => 'shortcut', 'href' => "$path_to_root/admin/change_current_user_password.php?selected_id=" . $_SESSION["wa_current_user"]->username], 'lock.gif', _('Change Password'), _("Change password"));
 				if ($SysPrefs->help_base_url != null)
 				{
-					echo "<a target = '_blank' ".fa_action_attrs('open-window')." href='". help_url()."'>$himg" . _("Help") . "</a>&nbsp;&nbsp;&nbsp;";
+					// help_url() answers an HTML-encoded URL; H encodes it again
+					echo $this->status_link(['target' => '_blank', 'data-fa-action' => 'open-window', 'href' => html_entity_decode(help_url())], 'help.gif', _('Help'), _("Help"));
 				}
-				echo "<a class='shortcut' href='$local_path_to_root/access/logout.php?'>$img" . _("Logout") . "</a>&nbsp;&nbsp;&nbsp;";
-				echo "</td></tr><tr><td colspan=3>";
-				echo "</td></tr></table>";
+				   echo $this->status_link(['class' => 'shortcut', 'href' => "$local_path_to_root/access/logout.php?"], 'login.gif', _('Logout'), _("Logout"));
+				  echo H::closeTag('td'); //11
+				 echo H::closeTag('tr'); //10
+				 echo H::openTag('tr'); //10
+				  echo H::openTag('td', ['colspan' => '3']); //11
+				  echo H::closeTag('td'); //11
+				 echo H::closeTag('tr'); //10
+				echo H::closeTag('table'); //9
 			}
-			echo "</td></tr></table>";
+			        echo H::closeTag('td'); //8
+			       echo H::closeTag('tr'); //7
+			      echo H::closeTag('table'); //6
 
 			if ($no_menu)
 			{	// ajax indicator for installer and popups
-				echo "<center><table class='tablestyle_noborder'>"
-					."<tr><td><img id='ajaxmark' src='$indicator' align='center' class='fa-hidden' alt='ajaxmark'></td></tr>"
-					."</table></center>";
+				echo H::openTag('center'); //6
+				 echo H::openTag('table', ['class' => 'tablestyle_noborder']); //7
+				  echo H::openTag('tr'); //8
+				   echo H::openTag('td'); //9
+				    echo H::img($indicator)->addAttributes($ajaxMark)->render();
+				   echo H::closeTag('td'); //9
+				  echo H::closeTag('tr'); //8
+				 echo H::closeTag('table'); //7
+				echo H::closeTag('center'); //6
 			} elseif ($title && !$is_index)
 			{
-				echo "<center><table id='title'><tr><td width='100%' class='titletext'>$title</td>"
-				."<td align=right>"
-				.(user_hints() ? "<span id='hints'></span>" : '')
-				."</td>"
-				."</tr></table></center>";
+				echo H::openTag('center'); //6
+				 echo H::openTag('table', ['id' => 'title']); //7
+				  echo H::openTag('tr'); //8
+				   echo H::openTag('td', ['width' => '100%', 'class' => 'titletext']); //9
+				    echo $title;
+				   echo H::closeTag('td'); //9
+				   echo H::openTag('td', ['align' => 'right']); //9
+				    if (user_hints())
+				     echo H::tag('span', '', ['id' => 'hints']);
+				   echo H::closeTag('td'); //9
+				  echo H::closeTag('tr'); //8
+				 echo H::closeTag('table'); //7
+				echo H::closeTag('center'); //6
 			}
 		}
 
@@ -121,41 +191,92 @@
 
 			include_once($path_to_root . "/includes/date_functions.inc");
 
-			echo "</td></tr></table>\n"; // 'main_page'
+			// ─── CSS shortcut variables ──────────────────────────────────────────────
+			$footerCell = ['class' => 'footer', 'align' => 'center'];
+			$powerLink  = ['target' => '_blank', 'href' => $SysPrefs->power_url, 'tabindex' => '-1'];
+
+			// the tables menu_header() left open, from the innermost
+			echo H::closeTag('td'); //5
+			echo H::closeTag('tr'); //4
+			echo H::closeTag('table'); //3
 			if ($no_menu == false) // bottom status line
 			{
-				if ($is_index)
-					echo "<table class='bottomBar'>\n";
-				else
-					echo "<table class='bottomBar2'>\n";
-				echo "<tr>";
+				echo H::openTag('table', ['class' => $is_index ? 'bottomBar' : 'bottomBar2']); //3
+				 echo H::openTag('tr'); //4
 				if (isset($_SESSION['wa_current_user'])) {
 					$phelp = implode('; ', $Pagehelp);
-					echo "<td class='bottomBarCell'>" . Today() . " | " . Now() . "</td>\n";
+					  echo H::openTag('td', ['class' => 'bottomBarCell']); //5
+					   echo Today() . " | " . Now();
+					  echo H::closeTag('td'); //5
 					$Ajax->addUpdate(true, 'hotkeyshelp', $phelp);
-					echo "<td id='hotkeyshelp'>".$phelp."</td>";
+					  echo H::openTag('td', ['id' => 'hotkeyshelp']); //5
+					   echo $phelp;
+					  echo H::closeTag('td'); //5
 				}
-				echo "</tr></table>\n";
+				 echo H::closeTag('tr'); //4
+				echo H::closeTag('table'); //3
 			}
-			echo "</td></tr> </table>\n"; // 'callout_main'
+			 echo H::closeTag('td'); //2
+			echo H::closeTag('tr'); //1
+			echo H::closeTag('table'); //0
 			if ($no_menu == false)
 			{
-				echo "<table align='center' id='footer'>\n";
-				echo "<tr>\n";
-				echo "<td align='center' class='footer'><a target='_blank' href='".$SysPrefs->power_url."' tabindex='-1'><font color='#ffffff'>".$SysPrefs->app_title
-					." $version - " . _("Theme:") . " " . user_theme() . " - ".show_users_online()."</font></a></td>\n";
-				echo "</tr>\n";
-				echo "<tr>\n";
-				echo "<td align='center' class='footer'><a target='_blank' href='".$SysPrefs->power_url
-					."' tabindex='-1'><font color='#ffff00'>".$SysPrefs->power_by."</font></a></td>\n";
-				echo "</tr>\n";
+				echo H::openTag('table', ['align' => 'center', 'id' => 'footer']); //0
+				 echo H::openTag('tr'); //1
+				  echo H::openTag('td', $footerCell); //2
+				   echo H::openTag('a', $powerLink); //3
+				    echo H::openTag('font', ['color' => '#ffffff']); //4
+				     echo $SysPrefs->app_title." $version - " . _("Theme:") . " " . user_theme() . " - ".show_users_online();
+				    echo H::closeTag('font'); //4
+				   echo H::closeTag('a'); //3
+				  echo H::closeTag('td'); //2
+				 echo H::closeTag('tr'); //1
+				 echo H::openTag('tr'); //1
+				  echo H::openTag('td', $footerCell); //2
+				   echo H::openTag('a', $powerLink); //3
+				    echo H::openTag('font', ['color' => '#ffff00']); //4
+				     echo $SysPrefs->power_by;
+				    echo H::closeTag('font'); //4
+				   echo H::closeTag('a'); //3
+				  echo H::closeTag('td'); //2
+				 echo H::closeTag('tr'); //1
 				if ($SysPrefs->allow_demo_mode)
 				{
-					echo "<tr>\n";
-					//echo "<td><br><div align='center'><a href='http://sourceforge.net'><img src='http://sourceforge.net/sflogo.php?group_id=89967&amp;type=5' alt='SourceForge.net Logo' width='210' height='62' border='0' align='center' /></a></div></td>\n";
-					echo "</tr>\n";
+					echo H::openTag('tr'); //1
+					echo H::closeTag('tr'); //1
 				}
-				echo "</table><br><br>\n";
+				echo H::closeTag('table'); //0
+				echo H::br();
+				echo H::br();
+			}
+		}
+
+		/**
+		 * The links of one column of a module: an icon and the link (or the greyed label), one per line.
+		 */
+		private function display_functions(array $functions): void
+		{
+			foreach ($functions as $appfunction)
+			{
+				$img = $this->get_icon($appfunction->category);
+				if ($appfunction->label == "")
+				{
+					echo '&nbsp;';
+					echo H::br();
+				}
+				elseif ($_SESSION["wa_current_user"]->can_access_page($appfunction->access))
+				{
+					echo $img.menu_link($appfunction->link, $appfunction->label);
+					echo H::br();
+				}
+				elseif (!$_SESSION["wa_current_user"]->hide_inaccessible_menu_items())
+				{
+					echo $img;
+					echo H::openTag('span', ['class' => 'inactive']); //0
+					 echo access_string($appfunction->label, true);
+					echo H::closeTag('span'); //0
+					echo H::br();
+				}
 			}
 		}
 
@@ -173,62 +294,37 @@
 				return;
 			}
 
-			echo "<table width='100%' cellpadding='0' cellspacing='0'>";
+			$menuGroup = ['class' => 'menu_group'];
+			$menuItems = ['class' => 'menu_group_items'];
+
+			echo H::openTag('table', ['width' => '100%', 'cellpadding' => '0', 'cellspacing' => '0']); //0
 			foreach ($selected_app->modules as $module)
 			{
-        		if (!$_SESSION["wa_current_user"]->check_module_access($module))
-        			continue;
-				// image
-				echo "<tr>";
-				// values
-				echo "<td valign='top' class='menu_group'>";
-				echo "<table border=0 width='100%'>";
-				echo "<tr><td class='menu_group'>";
-				echo $module->name;
-				echo "</td></tr><tr>";
-				echo "<td class='menu_group_items'>";
-
-				foreach ($module->lappfunctions as $appfunction)
-				{
-					$img = $this->get_icon($appfunction->category);
-					if ($appfunction->label == "")
-						echo "&nbsp;<br>";
-					elseif ($_SESSION["wa_current_user"]->can_access_page($appfunction->access)) 
-					{
-							echo $img.menu_link($appfunction->link, $appfunction->label)."<br>\n";
-					}
-					elseif (!$_SESSION["wa_current_user"]->hide_inaccessible_menu_items())
-					{
-							echo $img.'<span class="inactive">'
-								.access_string($appfunction->label, true)
-								."</span><br>\n";
-					}
-				}
-				echo "</td>";
+				if (!$_SESSION["wa_current_user"]->check_module_access($module))
+					continue;
+				 echo H::openTag('tr'); //1
+				  echo H::openTag('td', ['valign' => 'top', 'class' => 'menu_group']); //2
+				   echo H::openTag('table', ['border' => '0', 'width' => '100%']); //3
+				    echo H::openTag('tr'); //4
+				     echo H::openTag('td', $menuGroup); //5
+				      echo $module->name;
+				     echo H::closeTag('td'); //5
+				    echo H::closeTag('tr'); //4
+				    echo H::openTag('tr'); //4
+				     echo H::openTag('td', $menuItems); //5
+				      $this->display_functions($module->lappfunctions);
+				     echo H::closeTag('td'); //5
 				if (sizeof($module->rappfunctions) > 0)
 				{
-					echo "<td width='50%' class='menu_group_items'>";
-					foreach ($module->rappfunctions as $appfunction)
-					{
-						$img = $this->get_icon($appfunction->category);
-						if ($appfunction->label == "")
-							echo "&nbsp;<br>";
-						elseif ($_SESSION["wa_current_user"]->can_access_page($appfunction->access)) 
-						{
-								echo $img.menu_link($appfunction->link, $appfunction->label)."<br>\n";
-						}
-						elseif (!$_SESSION["wa_current_user"]->hide_inaccessible_menu_items())
-						{
-								echo $img.'<span class="inactive">'
-									.access_string($appfunction->label, true)
-									."</span><br>\n";
-						}
-					}
-					echo "</td>";
+					 echo H::openTag('td', ['width' => '50%', 'class' => 'menu_group_items']); //5
+					  $this->display_functions($module->rappfunctions);
+					 echo H::closeTag('td'); //5
 				}
-
-				echo "</tr></table></td></tr>";
+				    echo H::closeTag('tr'); //4
+				   echo H::closeTag('table'); //3
+				  echo H::closeTag('td'); //2
+				 echo H::closeTag('tr'); //1
 			}
-			echo "</table>";
-  		}
+			echo H::closeTag('table'); //0
+		}
 	}
