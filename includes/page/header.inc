@@ -46,46 +46,77 @@ function help_url(mixed $context=null): string
 		.'&ctxhelp=1&lang='.$country);
 }
 
-function send_css(string|int|float|bool|null $css = ''): void
+/**
+ * The style sheets of the page: the theme's, those added with add_css_file(), and an extra one for this page.
+ *
+ * @return list<string>
+ */
+function css_urls(string|int|float|bool|null $css = ''): array
 {
-	global $css_files;
-
 	css_files_ensure_init();
 
+	// after the call: Psalm forgets a global's type across a function call
+	global $css_files;
+
+	$urls = array();
 	foreach ($css_files as $css_file)
 	{
-		echo "<link href='$css_file' rel='stylesheet' type='text/css'> \n";
+		$urls[] = $css_file;
 	}
 	if ((bool)$css)
 	{
-		echo "<link href='$css' rel='stylesheet' type='text/css'> \n";
+		$urls[] = (string)$css;
+	}
+	return $urls;
+}
+
+function send_css(string|int|float|bool|null $css = ''): void
+{
+	foreach (css_urls($css) as $url)
+	{
+		echo "<link href='$url' rel='stylesheet' type='text/css'> \n";
 	}
 }
 
-function send_scripts(): void
+/**
+ * The script files of the page: FA's own (compressed and cached per user) and those added with add_js_ufile().
+ *
+ * @return list<string>
+ */
+function script_urls(): array
 {
-    global $path_to_root, $js_static, $js_path, $js_userlib;
+	global $js_static, $js_path, $js_userlib;
 
-	$js ='';
+	$urls = array();
 	foreach($js_static as $jsfile)
 	{
 		$cached_name = basename($jsfile);
 		$fpath = user_js_cache().'/'.$cached_name;
 	    // compress also static files
-	  	if (!file_exists($fpath) || sysprefs()->go_debug)
+	  	if (!file_exists($fpath) || (bool)sysprefs()->go_debug)
 			cache_js_file($fpath, file_get_contents($js_path.$jsfile));
 
-	  	$js .= '<script language="javascript" type="text/javascript" src="'.
-			$fpath . '"></script>';
+		$urls[] = $fpath;
 	}
 	foreach($js_userlib as $jsfile)
 	{
+		$urls[] = $jsfile;
+	}
+	return $urls;
+}
+
+function send_scripts(): void
+{
+	$js ='';
+	foreach(script_urls() as $url)
+	{
 	  	$js .= '<script language="javascript" type="text/javascript" src="'.
-	    	$jsfile . '"></script>';
+			$url . '"></script>';
 	}
 
     echo $js;
 }
+include_once($path_to_root . "/includes/yii/layout.inc");
 
 function page_header(string|int|float|bool|null $title, string|int|float|bool|null $no_menu=false, string|int|float|bool|null $is_index=false, string|int|float|bool|null $onload="", string|int|float|bool|null $js="", string|int|float|bool|null $css=''): void
 {
@@ -136,23 +167,31 @@ function page_header(string|int|float|bool|null $title, string|int|float|bool|nu
 	if (!headers_sent()){
 		header("Content-type: text/html; charset=$encoding");
 	}
-	echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n";
-	echo "<html dir='" . session_obj('language')->dir . "' >\n";
-	echo "<head profile=\"http://www.w3.org/2005/10/profile\"><title>$title</title>";
-	if (strpos($_SERVER['HTTP_USER_AGENT'], 'Trident/7.0; rv:11.0') != -1) // IE 11 doesn't work with input file type in form.
-		echo "<meta http-equiv='X-UA-Compatible' content='IE=10'>\n";
-	echo "<meta http-equiv='Content-type' content='text/html; charset=$encoding'>";
-	echo "<link href='$path_to_root/themes/default/images/favicon.ico' rel='icon' type='image/x-icon'> \n";
-
-	send_css($css);
-
-	send_scripts();
-
-	echo "</head> \n";
-	if ($onload == "")
-		echo "<body>";
+	if (yii_layout_enabled())
+	{
+		// prototype: the document shell comes from views/layout.php (yiisoft/view)
+		echo yii_layout_parts((string)$title, (string)$onload, (string)$css, true)[0];
+	}
 	else
-		echo "<body onload=\"$onload\">";
+	{
+		echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n";
+		echo "<html dir='" . session_obj('language')->dir . "' >\n";
+		echo "<head profile=\"http://www.w3.org/2005/10/profile\"><title>$title</title>";
+		if (strpos($_SERVER['HTTP_USER_AGENT'], 'Trident/7.0; rv:11.0') != -1) // IE 11 doesn't work with input file type in form.
+			echo "<meta http-equiv='X-UA-Compatible' content='IE=10'>\n";
+		echo "<meta http-equiv='Content-type' content='text/html; charset=$encoding'>";
+		echo "<link href='$path_to_root/themes/default/images/favicon.ico' rel='icon' type='image/x-icon'> \n";
+	
+		send_css($css);
+	
+		send_scripts();
+	
+		echo "</head> \n";
+		if ($onload == "")
+			echo "<body>";
+		else
+			echo "<body onload=\"$onload\">";
+	}
 
 	include_once($path_to_root . "/themes/$theme/renderer.php");
 	$rend = new renderer();

@@ -6,6 +6,11 @@
     </fileExtensions>
     <globals>
         <var name="path_to_root" type="string"/>
+        <var name="js_static" type="array&lt;int, string&gt;"/>
+        <var name="js_userlib" type="array&lt;int, string&gt;"/>
+        <var name="js_lib" type="array&lt;int, string&gt;"/>
+        <var name="css_files" type="array&lt;int, string&gt;"/>
+        <var name="js_path" type="string"/>
         <var name="SysPrefs" type="sys_prefs"/>
         <var name="Ajax" type="Ajax"/>
         <var name="Refs" type="references"/>
@@ -32,6 +37,7 @@
         <directory name="fixed_assets"/>
         <directory name="gl"/>
         <directory name="includes"/>
+        <directory name="views"/>
         <directory name="install"/>
         <directory name="inventory"/>
         <directory name="manufacturing"/>

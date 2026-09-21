@@ -208,4 +208,7 @@ if (!isset($path_to_root) || isset($_GET['path_to_root']) || isset($_POST['path_
 	$max_rows_in_search = 10 is used for maximum rows in search
 */
 	$use_popup_search = true;
+
+	// Prototype: render the page shell (doctype, head, assets) with yiisoft/view. Needs "composer install".
+	$use_yii_layout = 0;
 	$max_rows_in_search = 10;

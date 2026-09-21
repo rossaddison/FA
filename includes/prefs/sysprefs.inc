@@ -88,6 +88,8 @@ class sys_prefs extends stdClass
 	var $max_rows_in_search;
 	/** @var int|string|bool|null */
 	var $use_popup_search;
+	/** @var int|string|bool|null */
+	var $use_yii_layout;
 	/** @var int|string|null */
 	var $debug;
 	/** @var int|string|bool|null */
