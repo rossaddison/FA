@@ -34,6 +34,11 @@
 
 		function menu_header($title, $no_menu, $is_index)
 		{
+			if (yii_layout_enabled())
+			{	// prototype: the header comes from views/theme/default/menu_header.php
+				echo yii_menu_header((string)$title, (bool)$no_menu, (bool)$is_index);
+				return;
+			}
 			global $path_to_root, $SysPrefs, $db_connections;
 			echo "<table class='callout_main' border='0' cellpadding='0' cellspacing='0'>\n";
 			echo "<tr>\n";
@@ -107,6 +112,11 @@
 
 		function menu_footer($no_menu, $is_index)
 		{
+			if (yii_layout_enabled())
+			{	// prototype: the footer comes from views/theme/default/menu_footer.php
+				echo yii_menu_footer((bool)$no_menu, (bool)$is_index);
+				return;
+			}
 			global $version, $path_to_root, $Pagehelp, $Ajax, $SysPrefs;
 
 			include_once($path_to_root . "/includes/date_functions.inc");

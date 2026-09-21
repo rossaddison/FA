@@ -11,6 +11,8 @@
         <var name="js_lib" type="array&lt;int, string&gt;"/>
         <var name="css_files" type="array&lt;int, string&gt;"/>
         <var name="js_path" type="string"/>
+        <var name="Pagehelp" type="array&lt;int, string&gt;"/>
+        <var name="version" type="string"/>
         <var name="SysPrefs" type="sys_prefs"/>
         <var name="Ajax" type="Ajax"/>
         <var name="Refs" type="references"/>

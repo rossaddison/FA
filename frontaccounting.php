@@ -26,6 +26,7 @@ if (!isset($path_to_root) || isset($_GET['path_to_root']) || isset($_POST['path_
 	{
 		var $user;
 		var $settings;
+		/** @var array<string, application> */
 		var $applications;
 		var $selected_application;
 		var $renderer = null;
