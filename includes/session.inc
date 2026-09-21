@@ -396,6 +396,9 @@ $_SESSION['SysPrefs'] = new sys_prefs();
 /** @var sys_prefs $SysPrefs */
 $SysPrefs = &$_SESSION['SysPrefs'];
 
+include_once(__DIR__ . "/security_headers.inc");
+send_security_headers();
+
 //----------------------------------------------------------------------------------------
 // set to reasonable values if not set in config file (pre-2.3.12 installations)
 

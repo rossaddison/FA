@@ -90,6 +90,12 @@ class sys_prefs extends stdClass
 	var $use_popup_search;
 	/** @var int|string|bool|null */
 	var $use_yii_layout;
+	/** @var int|string|bool|null */
+	var $security_headers;
+	/** @var string|null */
+	var $content_security_policy;
+	/** @var int|string|bool|null */
+	var $csp_report_only;
 	/** @var int|string|null */
 	var $debug;
 	/** @var int|string|bool|null */

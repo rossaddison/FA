@@ -211,4 +211,11 @@ if (!isset($path_to_root) || isset($_GET['path_to_root']) || isset($_POST['path_
 
 	// Prototype: render the page shell (doctype, head, assets) with yiisoft/view. Needs "composer install".
 	$use_yii_layout = 0;
+
+	// Security response headers (X-Content-Type-Options, Referrer-Policy, X-Frame-Options, and the policy below).
+	$security_headers = 0;
+	// A Content-Security-Policy, e.g. "default-src 'self'; script-src 'self'". Empty sends none.
+	$content_security_policy = '';
+	// 1 sends it as Content-Security-Policy-Report-Only: browsers report violations but block nothing.
+	$csp_report_only = 1;
 	$max_rows_in_search = 10;
