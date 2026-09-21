@@ -14,7 +14,7 @@
 	include_once($path_to_root . "/includes/ui.inc");
 	include_once($path_to_root . "/includes/page/header.inc");
 
-	$js = "<script language='JavaScript' type='text/javascript'>
+	$js = "<script".csp_nonce_attr()." language='JavaScript' type='text/javascript'>
 function defaultCompany()
 {
 	document.forms[0].company_login_name.options[".user_company()."].selected = true;
@@ -39,7 +39,7 @@ function defaultCompany()
 	{
 		$blocked = true;
 
-	    $js .= "<script>setTimeout(function() {
+	    $js .= "<script".csp_nonce_attr().">setTimeout(function() {
 	    	document.getElementsByName('SubmitUser')[0].disabled=0;
 	    	document.getElementById('log_msg').innerHTML='$demo_text'}, 1000*".sysprefs()->login_delay.");</script>";
 	    $demo_text = '<span class="redfg">'._('Too many failed login attempts.<br>Please wait a while or try later.').'</span>';
@@ -150,7 +150,7 @@ function defaultCompany()
 	end_form(1);
 	ajax()->addScript(true, "if (document.forms.length) document.forms[0].password.focus();");
 
-    echo "<script language='JavaScript' type='text/javascript'>
+    echo "<script".csp_nonce_attr()." language='JavaScript' type='text/javascript'>
     //<![CDATA[
             <!--
             document.forms[0].user_name_entry_field.select();

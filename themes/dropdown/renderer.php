@@ -198,7 +198,7 @@
 			echo "</div>\n"; // fa-body
 			if (!$no_menu)
 			{
-   				echo "<script type='text/javascript'>if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
+   				echo "<script".csp_nonce_attr()." type='text/javascript'>if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
    				       {document.getElementById('cssmenu').style.position = 'fixed';}</script>\n";
 				echo "<div class='fa-footer'>\n";
 				if (isset($_SESSION['wa_current_user']))

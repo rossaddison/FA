@@ -1491,7 +1491,7 @@ window.addEventListener('click', function(e) {
   }
 });
 
-document.write(\"<iframe id='CCIframe' src='javascript:false;' frameBorder='0' scrolling='no'></iframe>\");
+document.write(\"<iframe id='CCIframe' src='about:blank' frameBorder='0' scrolling='no'></iframe>\");
 document.write(\"<div id='CC'></div>\");";
 
      cache_js_file($fpath, $js);
@@ -1503,7 +1503,7 @@ document.write(\"<div id='CC'></div>\");";
 
 function alert(string|int|float|bool|null $msg): void
 {
-	echo "\n<script type=\"text/javascript\">\n"
+	echo "\n<script".csp_nonce_attr()." type=\"text/javascript\">\n"
 		. "<!--\n"
 		. "alert('$msg');\n"
 		. "-->\n"

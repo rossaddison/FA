@@ -1893,12 +1893,11 @@ class SVG
 	}
 	/**
 	 * @param string|null $s
-	 * @psalm-external-mutation-free
 	 * @return void
 	 */
 	function style($s='')
 	{
-		$this->svg .= "<defs><style type=\"text/css\"><![CDATA[ $s ]]></style></defs>\n";
+		$this->svg .= "<defs><style".csp_nonce_attr()." type=\"text/css\"><![CDATA[ $s ]]></style></defs>\n";
 	}
 	/**
 	 * @psalm-external-mutation-free

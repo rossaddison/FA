@@ -75,6 +75,7 @@ include_once($path_to_root . "/includes/lang/language.inc");
 include_once($path_to_root . "/includes/ajax.inc");
 include_once($path_to_root . "/includes/ui/ui_msgs.inc");
 include_once($path_to_root . "/includes/prefs/sysprefs.inc");
+include_once(__DIR__ . "/../includes/security_headers.inc");
 
 session_name('FAinstall');
 session_start();

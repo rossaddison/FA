@@ -23,14 +23,14 @@ function page_footer(string|int|float|bool|null $no_menu=false, bool $is_index=f
 	$edits = "editors = ".ajax()->php2js($Editors).";";
 	ajax()->addScript('editors', $edits);
 
-	echo "<script type='text/javascript'>
+	echo "<script".csp_nonce_attr()." type='text/javascript'>
 		_focus = '" . get_post('_focus') . "';
 		_validate = " . ajax()->php2js($Validate).";
 		var $edits
 	</script>";
 
    	add_user_js_data();
-	echo "\n<script type=\"text/javascript\"><!--\n";
+	echo "\n<script".csp_nonce_attr()." type=\"text/javascript\"><!--\n";
 
 	foreach($js_lib as $text)
 	  	echo $text;

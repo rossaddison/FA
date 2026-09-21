@@ -14,7 +14,7 @@
 	include_once($path_to_root . "/includes/ui.inc");
 	include_once($path_to_root . "/includes/page/header.inc");
 
-	$js = "<script language='JavaScript' type='text/javascript'>
+	$js = "<script".csp_nonce_attr()." language='JavaScript' type='text/javascript'>
 function defaultCompany()
 {
 	document.forms[0].company_login_name.options[".user_company()."].selected = true;
@@ -84,7 +84,7 @@ function defaultCompany()
 	end_form(1);
 	ajax()->addScript(true, "document.forms[0].password.focus();");
 
-    echo "<script language='JavaScript' type='text/javascript'>
+    echo "<script".csp_nonce_attr()." language='JavaScript' type='text/javascript'>
     //<![CDATA[
             <!--
             document.forms[0].email_entry_field.select();

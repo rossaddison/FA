@@ -23,7 +23,7 @@ include_once($path_to_root . "/includes/ui.inc");
 
 include_once($path_to_root . "/gl/includes/gl_db.inc");
 
-$js ="\n<script type='text/javascript'>\n"
+$js ="\n<script".csp_nonce_attr()." type='text/javascript'>\n"
 		. "<!--\n"
 		. " function WindowClose(amount_, date__)\n"
 		. "{\n"

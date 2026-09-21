@@ -12,7 +12,7 @@
 //$colors = array('#008cc9','#4db625','#ef5500','#eef100','#05c6e6', '#5ee66a'); // Current in Use 	 
 $colors = Chart::$palette;
 $align = session_obj('language')->dir == 'rtl' ? 'right' : 'left';
-$style = "<style>
+$style = "<style".csp_nonce_attr().">
 div.square {
 	display: inline-block;
 	width: 200px;
@@ -49,7 +49,7 @@ function dashboard(string|int|float|bool|null $sel_app): void
 	if (is_object($sel_app) && !session_obj('wa_current_user')->check_application_access($selected_app))
 		return;
 	echo $style;
-	echo "<script> 
+	echo "<script".csp_nonce_attr()."> 
 	function chart_update(el, id)
 	{
 		var xhr = XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
