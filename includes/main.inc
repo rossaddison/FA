@@ -26,7 +26,7 @@ $page_nested = -1;
 // static js files path
 $js_path = $path_to_root.'/js/';
 // standard external js scripts included in all files
-$js_static = array('JsHttpRequest.js', 'behaviour.js', 'utils.js', 'inserts.js');
+$js_static = array('JsHttpRequest.js', 'behaviour.js', 'utils.js', 'inserts.js', 'csp_actions.js');
 // additional js source included in header
 $js_lib = $js_userlib = array();
 

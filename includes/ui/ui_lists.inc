@@ -361,8 +361,7 @@ $opts = array(		// default options
   		if ($link !=="") {
     		$theme = user_theme();
     		$img = '<img src="'.$path_to_root.'/themes/'.$theme.'/images/'.ICON_VIEW.
-    			'" style="vertical-align:middle;width:12px;height:12px;border:0;" onclick="javascript:lookupWindow(&quot;'.
-    			$link.'&quot;, &quot;&quot;);" title="' . $img_title . '" style="cursor:pointer;" />';
+    			'" style="vertical-align:middle;width:12px;height:12px;border:0;" '.fa_action_attrs('lookup-window', array($link, '')).' title="' . $img_title . '" style="cursor:pointer;" />';
   		}
 	}
 
@@ -515,7 +514,7 @@ function add_edit_combo(?string $type): string
 	$theme_path = $path_to_root . '/themes/' . user_theme();
 
 	$key = $popup_editors[$type][1];
-	$onclick = "onclick=\"javascript:callEditor($key); return false;\"";
+	$onclick = fa_action_attrs('call-editor', array($key));
 	$img = "<img width='12' height='12' border='0' alt='Add/Edit' title='Add/Edit' src='$theme_path/images/".ICON_EDIT."'>";
 	return "<a target = '_blank' href='#' $onclick tabindex='-1'>$img</a>"; 
 }

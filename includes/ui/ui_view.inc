@@ -404,9 +404,9 @@ function view_stock_status(string|int|float|bool|null $stock_id, string|int|floa
 {
 	global $path_to_root;
 	if ((bool)$description)
-		$preview_str = "<a target='_blank' href='$path_to_root/inventory/inquiry/stock_status.php?stock_id=$stock_id&popup=1' onclick=\"javascript:openWindow(this.href,this.target); return false;\" >". (user_show_codes()?$stock_id . " - ":"") . $description."</a>";
+		$preview_str = "<a target='_blank' href='$path_to_root/inventory/inquiry/stock_status.php?stock_id=$stock_id&popup=1'".fa_action_attrs('open-window')." >". (user_show_codes()?$stock_id . " - ":"") . $description."</a>";
 	else
-		$preview_str = "<a target='_blank' href='$path_to_root/inventory/inquiry/stock_status.php?stock_id=$stock_id&popup=1' onclick=\"javascript:openWindow(this.href,this.target); return false;\" >$stock_id</a>";
+		$preview_str = "<a target='_blank' href='$path_to_root/inventory/inquiry/stock_status.php?stock_id=$stock_id&popup=1'".fa_action_attrs('open-window')." >$stock_id</a>";
 	if($echo)
 		echo $preview_str;
 	return $preview_str;
@@ -1302,9 +1302,9 @@ function CC() {
     var css_class = null; //CSS class for each day
     var table = \"<table cellspacing='0' cellpadding='0' border='0'>\";
     table += \"<tr class='header'>\";
-    table += \"  <td colspan='2' class='previous'><a href='javascript:changeCCMonth(-1);'>&lt;</a><br><a href='javascript:changeCCYear(-1);'>&laquo;</a></td>\";
+    table += \"  <td colspan='2' class='previous'><a href='#' data-fa-action='cc-month' data-fa-args='[-1]'>&lt;</a><br><a href='#' data-fa-action='cc-year' data-fa-args='[-1]'>&laquo;</a></td>\";
     table += \"  <td colspan='4' class='title'>\" + months[currentMonth-1] + \"<br>\" + currentYear + \"</td>\";
-    table += \"  <td colspan='2' class='next'><a href='javascript:changeCCMonth(1);'>&gt;</a><br><a href='javascript:changeCCYear(1);'>&raquo;</a></td>\";
+    table += \"  <td colspan='2' class='next'><a href='#' data-fa-action='cc-month' data-fa-args='[1]'>&gt;</a><br><a href='#' data-fa-action='cc-year' data-fa-args='[1]'>&raquo;</a></td>\";
     table += \"</tr>\";
     table += \"<tr>\";
     table += \"<th class='weekno'>\"+wno+\"</th>\";
@@ -1344,7 +1344,7 @@ function CC() {
           } else {
             css_class = 'weekday';
           }
-          table += \"<td><a class='\"+css_class+\"' href=\\\"javascript:setCCDate(\"+currentYear+\",\"+currentMonth+\",\"+dayOfMonth+\")\\\">\"+dayOfMonth+\"</a></td>\";
+          table += \"<td><a class='\"+css_class+\"' href='#' data-fa-action='cc-date' data-fa-args='[\"+currentYear+\",\"+currentMonth+\",\"+dayOfMonth+\"]'>\"+dayOfMonth+\"</a></td>\";
           dayOfMonth++;
         } else {
           table += \"<td class='empty'>&nbsp;</td>\";
@@ -1352,7 +1352,7 @@ function CC() {
       }
       table += \"</tr>\";
     }
-    table += \"<tr class='header'><th colspan='8' style='padding: 3px;text-align:center;'><a href='javascript:hideCC();'>$back</a></td></tr>\";
+    table += \"<tr class='header'><th colspan='8' style='padding: 3px;text-align:center;'><a href='#' data-fa-action='cc-hide'>$back</a></td></tr>\";
     table += \"</table>\";
     return table;
   }

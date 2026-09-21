@@ -245,7 +245,7 @@ class BoxReports
 					{
 						$calc_image = (file_exists("$path_to_root/themes/".user_theme()."/images/cal.gif")) ? 
 							"$path_to_root/themes/".user_theme()."/images/cal.gif" : "$path_to_root/themes/default/images/cal.gif";
-						$st .= "<a href=\"javascript:date_picker(document.forms[0].$name);\">"
+						$st .= "<a href='#'".fa_action_attrs('date-picker-form', array($name)).">"
 						. "	<img src='$calc_image' style='vertical-align:middle;padding-bottom:4px;width:16px;height:16px;border:0;' alt='"._('Click Here to Pick up the date')."'></a>\n";
 					}	
 					return $st;

@@ -53,7 +53,7 @@ function defaultCompany()
 	start_table(false, "class='login'");
 	start_row();
 	echo "<td align='center' colspan=2>";
-	echo "<a target='_blank' href='".sysprefs()->power_url."'><img src='$path_to_root/themes/$def_theme/images/logo_frontaccounting.png' alt='FrontAccounting' height='50' onload='fixPNG(this)' border='0' ></a>";
+	echo "<a target='_blank' href='".sysprefs()->power_url."'><img src='$path_to_root/themes/$def_theme/images/logo_frontaccounting.png' alt='FrontAccounting' height='50' border='0' ></a>";
 	echo "</td>\n";
 	end_row();
 
@@ -78,8 +78,7 @@ function defaultCompany()
     label_cell("Please enter your e-mail", "colspan=2 align='center' id='log_msg'");
     end_row();
 	end_table(1);
-	echo "<center><input type='submit' value='&nbsp;&nbsp;"._("Send password -->")."&nbsp;&nbsp;' name='SubmitReset'
-		 onclick='set_fullmode();'></center>\n";
+	echo "<center><input type='submit' value='&nbsp;&nbsp;"._("Send password -->")."&nbsp;&nbsp;' name='SubmitReset'".fa_action_attrs('set-fullmode')."></center>\n";
 
 	end_form(1);
 	ajax()->addFocusElement(true, 'password');

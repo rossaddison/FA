@@ -397,8 +397,7 @@ function checkbox(string|int|float|bool|null $label, string|int|float|bool|null 
 		$str .= $label . "  ";
 	if ($submit_on_change !== false) {
 		if ($submit_on_change === true)
-			$submit_on_change = 
-				"JsHttpRequest.request(\"_{$name}_update\", this.form);";
+			$submit_on_change = 'update';
 	}
 	if ($value === null)
 		$value = get_post($name,0);
@@ -406,7 +405,7 @@ function checkbox(string|int|float|bool|null $label, string|int|float|bool|null 
 	$str .= "<input"
 	    .($value == 1 ? ' checked':'')
 	    ." type='checkbox' name='$name' value='1'"
-	    .((bool)$submit_on_change ? " onclick='$submit_on_change'" : '')
+	    .($submit_on_change === 'update' ? fa_action_attrs('submit-update', array($name)) : ((bool)$submit_on_change ? " onclick='$submit_on_change'" : ''))
 	    .((bool)$title ? " title='$title'" : '')
 	    ." >\n";
 
@@ -442,12 +441,8 @@ function radio(?string $label, ?string $name, string|int|float|bool|null $value,
 	if (!isset($selected))
 		$selected = get_post($name) === (string)$value;
 
-	if ($submit_on_change === true)
-		$submit_on_change = 
-			"JsHttpRequest.request(\"_{$name}_update\", this.form);";
-
 	return "<input type='radio' name=$name value='$value' ".($selected ? "checked":'')
-	    .((bool)$submit_on_change ? " onclick='$submit_on_change'" : '')
+	    .((bool)$submit_on_change ? fa_action_attrs('submit-update', array($name)) : '')
 		.">".((bool)$label ? $label : '');
 }
 
@@ -684,7 +679,7 @@ function date_cells(?string $label, string|int|float|bool|null $name, ?string $t
 	{
 		$calc_image = (file_exists("$path_to_root/themes/".user_theme()."/images/cal.gif")) ? 
 			"$path_to_root/themes/".user_theme()."/images/cal.gif" : "$path_to_root/themes/default/images/cal.gif";
-		$post_label = "<a tabindex='-1' href=\"javascript:date_picker(document.getElementsByName('$name')[0]);\">"
+		$post_label = "<a tabindex='-1' href='#'".fa_action_attrs('date-picker', array($name)).">"
 		. "	<img src='$calc_image' style='vertical-align:middle;padding-bottom:4px;width:16px;height:16px;border:0;' alt='"._('Click Here to Pick up the date')."'></a>\n";
 	}	
 	else
@@ -1009,7 +1004,7 @@ function customer_credit_row(string|int|float|bool|array|null $customer, string|
 	label_row( _("Current Credit:"),
 		"<a target='_blank' " . ($credit<0 ? 'class="redfg"' : '')
 		."href='$path_to_root/sales/inquiry/customer_inquiry.php?customer_id=".$customer."'"
-		." onclick=\"javascript:openWindow(this.href,this.target); return false;\" >"
+		."".fa_action_attrs('open-window')." >"
 		. price_format($credit)
 		."</a>", $parms);
 }
@@ -1021,7 +1016,7 @@ function supplier_credit_row(string|int|float|bool|null $supplier, string|int|fl
 	label_row( _("Current Credit:"),
 		"<a target='_blank' " . ($credit<0 ? 'class="redfg"' : '')
 		."href='$path_to_root/purchasing/inquiry/supplier_inquiry.php?supplier_id=".$supplier."'"
-		." onclick=\"javascript:openWindow(this.href,this.target); return false;\" >"
+		."".fa_action_attrs('open-window')." >"
 		. price_format($credit)
 		."</a>", $parms);
 }
@@ -1035,13 +1030,23 @@ function bank_balance_row(string|int|float|bool|null $bank_acc, ?string $parms='
 	label_row( _("Bank Balance:"),
 		"<a target='_blank' " . ($bal<0 ? 'class="redfg"' : '')
 		."href='$path_to_root/gl/inquiry/bank_inquiry.php?bank_account=".$bank_acc."'"
-		." onclick=\"javascript:openWindow(this.href,this.target); return false;\" >&nbsp;"
+		."".fa_action_attrs('open-window')." >&nbsp;"
 		. price_format($bal)
 		."</a>", $parms);
 }
 
 function ahref(?string $label, ?string $href, ?string $target="", ?string $onclick=""): void {
   echo "<a href='$href' target='$target' onclick='$onclick'>$label</a>";
+}
+
+/**
+ * A cell holding a link that runs an action from js/csp_actions.js (see fa_action_attrs()), for the pop-up lists that
+ * used to use ahref_cell() with a javascript: URL and an onclick.
+ *
+ * @param array<int, mixed> $args
+ */
+function action_link_cell(?string $label, string $action, array $args = array()): void {
+  echo "<td align='center'>&nbsp;&nbsp;<a href='#'" . fa_action_attrs($action, $args) . ">$label</a>&nbsp;&nbsp;</td>";
 }
 
 function ahref_cell(?string $label, ?string $href, ?string $target="", ?string $onclick=""): void {

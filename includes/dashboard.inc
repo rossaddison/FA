@@ -119,7 +119,7 @@ function display_title(?string $title, string|int|float|bool|null $id=false, str
 		if ((bool)($per ?? null))
 		{
 			$sel1 = array(3 => "3", 4 => "4", 5 => "5", 6 => "6", 7 => "7", 8=> "8");
-			echo "<select id='per_$id' name='per_$id' style='border:1px solid #bbb;color:#555;' onchange='chart_update(this, \"$id\");'>";
+			echo "<select id='per_$id' name='per_$id' style='border:1px solid #bbb;color:#555;'".fa_action_attrs('chart-update', array($id), 'change').">";
 			foreach ($sel1 as $i => $s)
 			{
 				echo "<option value='$i'";
@@ -132,7 +132,7 @@ function display_title(?string $title, string|int|float|bool|null $id=false, str
 		else
 		{
 			$sel = array(1 => _("Vertical bars"), 2 => _("Horizontal bars"), 3 => _("Dots"), 4 => _("Lines"), 5 => _("Pie"), 6 => _("Donut"), 7 => _("Half Donut"), 8 => _("Splines"), 9 => _("Tables"));
-			echo "<select id='select_$id' name='select_$id' style='border:1px solid #bbb;color:#555;' onchange='chart_update(this, \"$id\");'>";
+			echo "<select id='select_$id' name='select_$id' style='border:1px solid #bbb;color:#555;'".fa_action_attrs('chart-update', array($id), 'change').">";
 			foreach ($sel as $i => $s)
 			{
 				echo "<option value='$i'";

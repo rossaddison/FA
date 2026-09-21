@@ -180,6 +180,23 @@ function meta_forward(string|int|float|bool|null $forward_to, ?string $params=""
 // with underlined hotkey letter and access property string.
 //
 /** @psalm-pure */
+/**
+ * The attributes that stand in for an inline onclick/onchange. js/csp_actions.js runs the named action, so the page
+ * needs no inline event attributes or javascript: URLs (a Content-Security-Policy without 'unsafe-inline' blocks them).
+ *
+ * @param string $action a name from fa_actions in js/csp_actions.js
+ * @param array<int, mixed> $args data for the action (JSON, never code)
+ * @param string $event 'action' (click) or 'change'
+ */
+function fa_action_attrs(string $action, array $args = array(), string $event = 'action'): string
+{
+	$attrs = " data-fa-$event='" . $action . "'";
+	if ($args !== array()) {
+		$attrs .= " data-fa-args='" . htmlspecialchars((string)json_encode($args, JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES) . "'";
+	}
+	return $attrs;
+}
+
 function access_string(string|int|float|bool|null $label, string|int|float|bool|null $clean=false): array|string
 {
 	$access = '';
@@ -216,9 +233,9 @@ function hyperlink_back(string|int|float|bool|null $center=true, string|int|floa
 	start_row();
 	if ((bool)$no_menu)
 	{
-		echo "<td align=center><a href='javascript:window.print();'>"._("Print")."</a></td>\n";
+		echo "<td align=center><a href='#'".fa_action_attrs('print').">"._("Print")."</a></td>\n";
 	}	
-	echo "<td align=center><a href='javascript:goBack(".((bool)$final ? '-2' : '').");'>".((bool)$no_menu ? _("Close") : _("Back"))."</a></td>\n";
+	echo "<td align=center><a href='#'".fa_action_attrs('back', (bool)$final ? array(-2) : array()).">".((bool)$no_menu ? _("Close") : _("Back"))."</a></td>\n";
 	end_row();
 	end_table();
 	if ((bool)$center)
@@ -262,7 +279,7 @@ function viewer_link(string|int|float|bool|null $label, ?string $url='', ?string
 		$pars = access_string($label);
 		if (user_graphic_links() && (bool)$icon)
 			$pars[0] = set_icon($icon, $pars[0]);
-		$preview_str = "<a target='_blank' $class $id href='$path_to_root/$url' onclick=\"javascript:openWindow(this.href,this.target); return false;\"$pars[1]>$pars[0]</a>";
+		$preview_str = "<a target='_blank' $class $id href='$path_to_root/$url'".fa_action_attrs('open-window')."$pars[1]>$pars[0]</a>";
 	}
 	else
 		$preview_str = $label;

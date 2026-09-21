@@ -63,10 +63,10 @@ while ($myrow = db_fetch_assoc($result)) {
 	$value = $myrow['supplier_id'];
 	if ($mode != 0) {
 		$text = $myrow['supp_name'];
-  		ahref_cell(_("Select"), 'javascript:void(0)', '', 'setComboItem(window.opener.document, "'.$name.'",  "'.$value.'", "'.$text.'")');
+  		action_link_cell(_("Select"), 'set-combo', array($name, $value, $text));
 	}
 	else {
-  		ahref_cell(_("Select"), 'javascript:void(0)', '', 'selectComboItem(window.opener.document, "'.$name.'", "'.$value.'")');
+  		action_link_cell(_("Select"), 'select-combo', array($name, $value));
 	}
   	label_cell($myrow["supp_name"]);
   	label_cell($myrow["supp_ref"]);

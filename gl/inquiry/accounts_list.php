@@ -62,7 +62,7 @@ $result = get_chart_accounts_search(get_post("description"), $skip);
 while ($myrow = db_fetch_assoc($result)) {
 	alt_table_row_color($k);
 	$value = $myrow['account_code'];
-	ahref_cell(_("Select"), 'javascript:void(0)', '', 'selectComboItem(window.opener.document, "'.$name.'", "'.$value.'")');
+	action_link_cell(_("Select"), 'select-combo', array($name, $value));
   	label_cell($myrow["account_code"]);
 	label_cell($myrow["account_name"]);
   	label_cell($myrow["name"]);

@@ -82,7 +82,7 @@ function get_attachment_string(string|int|float|bool|null $type, string|int|floa
     {
         if (strlen($str_return))
             $str_return = $str_return . " \n";    
-        $str_return .= _("Attached File:")." <a target='_blank' href='$path_to_root/admin/attachments.php?vw=".(string)$attachment["id"]."' onclick='javascript:openWindow(this.href, this.target);return false;'> ".
+        $str_return .= _("Attached File:")." <a target='_blank' href='$path_to_root/admin/attachments.php?vw=".(string)$attachment["id"]."'".fa_action_attrs('open-window')."> ".
         	(string)$attachment["id"] . " " . (string)$attachment["description"]. " - ". (string)$attachment["filename"]."</a><br>";
     }
     return $str_return . "<br>";

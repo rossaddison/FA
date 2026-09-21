@@ -87,7 +87,7 @@
 
 				if ($SysPrefs->help_base_url != null)
 				{
-					echo "<a target = '_blank' onclick=" .'"'."javascript:openWindow(this.href,this.target); return false;".'" '. "href='". help_url()."'>$himg" . _("Help") . "</a>&nbsp;&nbsp;&nbsp;";
+					echo "<a target = '_blank' ".fa_action_attrs('open-window')." href='". help_url()."'>$himg" . _("Help") . "</a>&nbsp;&nbsp;&nbsp;";
 				}
 				echo "<a class='shortcut' href='$local_path_to_root/access/logout.php?'>$img" . _("Logout") . "</a>&nbsp;&nbsp;&nbsp;";
 				echo "</td></tr><tr><td colspan=3>";

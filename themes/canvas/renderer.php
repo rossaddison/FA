@@ -48,7 +48,7 @@
 				echo "  <li><a class='shortcut' href='$path_to_root/admin/display_prefs.php?'>$pimg" . _("Preferences") . "</a></li>\n";
 				echo "  <li><a class='shortcut' href='$path_to_root/admin/change_current_user_password.php?selected_id=" . $_SESSION["wa_current_user"]->username . "'>$limg" . _("Change password") . "</a></li>\n";
 				if ($SysPrefs->help_base_url != null)
-					echo "  <li><a target = '_blank' onclick=" .'"'."javascript:openWindow(this.href,this.target); return false;".'" '. "href='". 
+					echo "  <li><a target = '_blank' ".fa_action_attrs('open-window')." href='". 
 						help_url()."'>$himg" . _("Help") . "</a></li>";
 				echo "  <li><a class='shortcut' href='$path_to_root/access/logout.php?'>$img" . _("Logout") . "</a></li>";
 				echo "</ul>\n";

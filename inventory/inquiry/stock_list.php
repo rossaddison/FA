@@ -64,10 +64,10 @@ while ($myrow = db_fetch_assoc($result))
 	$value = $myrow['item_code'];
 	if ($mode != 0) {
 		$text = $myrow['description'];
-  		ahref_cell(_("Select"), 'javascript:void(0)', '', 'setComboItem(window.opener.document, "'.$name.'",  "'.$value.'", "'.$text.'")');
+  		action_link_cell(_("Select"), 'set-combo', array($name, $value, $text));
 	}
 	else {
-  		ahref_cell(_("Select"), 'javascript:void(0)', '', 'selectComboItem(window.opener.document, "'.$name.'", "'.$value.'")');
+  		action_link_cell(_("Select"), 'select-combo', array($name, $value));
 	}
   	label_cell($myrow["item_code"]);
 	label_cell($myrow["description"]);

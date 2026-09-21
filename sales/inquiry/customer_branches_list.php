@@ -58,7 +58,7 @@ while ($myrow = db_fetch_assoc($result))
 {
   	alt_table_row_color($k);
 	$value = $myrow['branch_code'];
-	ahref_cell(_("Select"), 'javascript:void(0)', '', 'selectComboItem(window.opener.document, "'.$name.'", "'.$value.'")');
+	action_link_cell(_("Select"), 'select-combo', array($name, $value));
   	label_cell($myrow["branch_ref"]);
   	label_cell($myrow["br_name"]);
   	label_cell($myrow["contact_name"]);

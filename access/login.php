@@ -85,7 +85,7 @@ function defaultCompany()
 	start_row();
 	echo "<td align='center' colspan=2>";
 	if (!(bool)$login_timeout) { // FA logo
-    	echo "<a target='_blank' href='".sysprefs()->power_url."'><img src='$path_to_root/themes/$def_theme/images/logo_frontaccounting.png' alt='FrontAccounting' height='50' onload='fixPNG(this)' border='0' ></a>";
+    	echo "<a target='_blank' href='".sysprefs()->power_url."'><img src='$path_to_root/themes/$def_theme/images/logo_frontaccounting.png' alt='FrontAccounting' height='50' border='0' ></a>";
 	} else { 
 		echo "<font size=5>"._('Authorization timeout')."</font>";
 	} 
@@ -135,7 +135,7 @@ function defaultCompany()
 	echo "<input type='hidden' id=ui_mode name='ui_mode' value='".!fallback_mode()."' >\n";
 	if ($allow) {
 		echo "<center><input type='submit' value='&nbsp;&nbsp;"._("Login -->")."&nbsp;&nbsp;' name='SubmitUser'"
-			." onclick='".(in_ajax() ? 'retry();': 'set_fullmode();')."'".(isset($blocked) ? " disabled" : '')." ></center>\n";
+			."".fa_action_attrs(in_ajax() ? 'retry' : 'set-fullmode')."".(isset($blocked) ? " disabled" : '')." ></center>\n";
 	}		
 	foreach($_SESSION['timeout']['post'] as $p => $val) {
 		// add all request variables to be resend together with login data

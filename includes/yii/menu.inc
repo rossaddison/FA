@@ -79,7 +79,7 @@ function yiiMenuHeader(string $title, bool $noMenu, bool $isIndex): string
 			// help_url() answers an HTML-encoded URL; the template encodes it again
 			$links[] = yiiMenuLink(array(
 				'target' => '_blank',
-				'onclick' => 'javascript:openWindow(this.href,this.target); return false;',
+				'data-fa-action' => 'open-window',
 				'href' => html_entity_decode(help_url()),
 			), 'help.gif', $icon, _('Help'), _('Help'));
 		}
