@@ -305,13 +305,12 @@ function submit_return(?string $name, string|int|float|bool|null $value, string|
 }
 
 function submit_js_confirm(?string $name, ?string $msg, bool $set = true): void {
-	$js = "_validate.$name=".($set ? "function(){ return confirm('"
-				. strtr($msg, array("\n"=>'\\n')) . "');};"
-				: 'null;');
 	if (in_ajax()) {
-		ajax()->addScript(true, $js);
+		ajax()->addState(true, 'confirm', $set ? (string)$msg : null, $name);
 	} else
-		add_js_source($js);
+		add_js_source("_validate.$name=".($set ? "function(){ return confirm('"
+				. strtr((string)$msg, array("\n"=>'\\n')) . "');};"
+				: 'null;'));
 }
 //-----------------------------------------------------------------------------------
 

@@ -21,7 +21,7 @@ function page_footer(string|int|float|bool|null $no_menu=false, bool $is_index=f
 	$rend->menu_footer($no_menu, $is_index);
 
 	$edits = "editors = ".ajax()->php2js($Editors).";";
-	ajax()->addScript('editors', $edits);
+	ajax()->addState('editors', 'editors', $Editors);
 
 	echo "<script".csp_nonce_attr()." type='text/javascript'>
 		_focus = '" . get_post('_focus') . "';

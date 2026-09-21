@@ -8,6 +8,20 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
+// Sets the page state the server asks for with an 'st' ajax command (Ajax::addState()). It replaces the scripts the
+// server used to send, which had to be evaluated. Values may arrive as strings (php2js quotes every scalar).
+function set_page_state(key, name, value) {
+	if (key == 'editors') {
+		editors = value;
+	} else if (key == 'processing') {
+		_validate._processing = value;
+	} else if (key == 'modified') {
+		_validate._modified = (value == 1) ? 1 : 0;
+	} else if (key == 'confirm') {
+		_validate[name] = value === null ? null : function() { return confirm(value); };
+	}
+}
+
 function set_mark(img) {
 	var box = document.getElementById('ajaxmark');
 	if(box) {
@@ -105,7 +119,7 @@ JsHttpRequest._request = function(trigger, form, tout, retry) {
 			// seek element by id if there is no elemnt with given name
 			  objElement = document.getElementsByName(id)[0] || document.getElementById(id);
     		  if(cmd=='as') {
-				  eval("objElement.setAttribute('"+property+"','"+data+"');");
+				  objElement.setAttribute(property, data);
 			  } else if(cmd=='up') {
 //				if(!objElement) alert('No element "'+id+'"');
 				if(objElement) {
@@ -118,8 +132,16 @@ JsHttpRequest._request = function(trigger, form, tout, retry) {
 				  objElement.disabled = data;
 			  } else if(cmd=='fc') { // set focus
 				  _focus = data;
-			  } else if(cmd=='js') {	// evaluate js code
-				__isGecko ? eval(data) : setTimeout(function(){eval(data);}, 200); // timeout required by IE7/8
+			  } else if(cmd=='st') {	// page state the server sets: no code is sent, so no eval is needed
+				  set_page_state(id, property, data);
+			  } else if(cmd=='fe') {	// focus an element now
+				  if (objElement && objElement.focus) objElement.focus();
+			  } else if(cmd=='js') {	// evaluate js code (still supported for extensions; needs a policy that allows eval)
+				try {
+					__isGecko ? eval(data) : setTimeout(function(){eval(data);}, 200); // timeout required by IE7/8
+				} catch (e) {
+					errors = errors+'<br>Ajax script blocked or failed: '+e;
+				}
 			  } else if(cmd=='rd') {	// client-side redirection
 				  window.location = data;
 			  } else if(cmd=='pu') {	// pop-up

@@ -680,20 +680,18 @@ function page_processing(bool $msg = false): void
 	if ($msg === true)
 		$msg = _("Entered data has not been saved yet.\nDo you want to abandon changes?");
 
-	$js = "_validate._processing=" . (
-		(bool)$msg ? '\''.strtr($msg, array("\n"=>'\\n')) . '\';' : 'null;');
 	if (in_ajax()) {
-		ajax()->addScript(true, $js);
+		ajax()->addState(true, 'processing', (bool)$msg ? $msg : null);
 	} else
-		add_js_source($js);
+		add_js_source("_validate._processing=" . (
+			(bool)$msg ? '\''.strtr((string)$msg, array("\n"=>'\\n')) . '\';' : 'null;'));
 }
 
 function page_modified(string|int|float|bool|null $status = true): void
 {
 
-	$js = "_validate._modified=" . ((bool)$status ? 1:0).';';
 	if (in_ajax()) {
-		ajax()->addScript(true, $js);
+		ajax()->addState(true, 'modified', (bool)$status ? 1 : 0);
 	} else
-		add_js_source($js);
+		add_js_source("_validate._modified=" . ((bool)$status ? 1:0).';');
 }

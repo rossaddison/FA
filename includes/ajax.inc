@@ -60,6 +60,39 @@ class Ajax extends JsHttpRequest {
 	// Adds an executable Javascript code.
 	//
 	/**
+	 * Sets page state on the client without sending code: 'editors' (the list of editors), 'processing' (the message
+	 * shown when leaving a modified page, or null), 'modified' (0 or 1) or 'confirm' (a confirmation message for the
+	 * validator called $name, or null). js/utils.js set_page_state() applies it.
+	 *
+	 * @param bool|string $trigger
+	 * @param string $key
+	 * @param mixed $value
+	 * @param string|null $name
+	 * @return static
+	 */
+	function addState($trigger, $key, $value, $name = null)
+	{
+		$this->_addCommand($trigger, array('n'=>'st', 't'=>$key, 'p'=>$name), $value);
+		return $this;
+	}
+	//
+	// Focus an element now (by name or id).
+	//
+	/**
+	 * @param bool|string $trigger
+	 * @param string $sTarget
+	 * @return static
+	 */
+	function addFocusElement($trigger, $sTarget)
+	{
+		$this->_addCommand($trigger, array('n'=>'fe', 't'=>$sTarget), null);
+		return $this;
+	}
+	//
+	// Adds an executable Javascript code. Kept for extensions; it only works with a Content-Security-Policy that allows
+	// eval, so FA itself uses addState() and addFocusElement().
+	//
+	/**
 	 * @param string|bool|null $trigger
 	 * @param string|null $sJS
 	 * @return static
@@ -158,7 +191,7 @@ class Ajax extends JsHttpRequest {
 			elseif($com['n'] == 'up' && $com['t'] == '_page_body') {
 			  	$cmds = array($com);
 			  	foreach( $this->aCommands as $k=> $cmd) {
-				  	if ($cmd['n'] == 'fc' || $cmd['n'] == 'js') {	// save focus
+				  	if ($cmd['n'] == 'fc' || $cmd['n'] == 'js' || $cmd['n'] == 'st' || $cmd['n'] == 'fe') {	// save focus and page state
 						$cmds[] = $cmd; //break;
 			  		}
 				}

@@ -511,9 +511,12 @@ JsHttpRequest.LOADERS.xml = { loader: function(req) {
             if (!req.status) return;
             try {
                  // Damned Opera returned empty responseText when Status is not 200.
-                 var rtext = req.responseText || '{ js: null, text: null }';
-                // Prepare generator function & catch syntax errors on this stage.
-                eval('JsHttpRequest._tmp = function(id) { var d = ' + rtext + '; d.id = id; JsHttpRequest.dataReady(d); }');
+                 var rtext = req.responseText || '{ "js": null, "text": null }';
+                // The answer is JSON (includes/JsHttpRequest.php writes it with json_encode() or php2js()): parse it
+                // instead of evaluating it, so the page does not need a Content-Security-Policy with unsafe-eval.
+                // A syntax error is caught here, as before.
+                var d = JSON.parse(rtext);
+                JsHttpRequest._tmp = function(id) { d.id = id; JsHttpRequest.dataReady(d); };
             } catch (e) {
                 // Note that FF 2.0 does not throw any error from onreadystatechange handler.
                 return req._error('js_invalid', req.responseText)

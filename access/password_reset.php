@@ -82,7 +82,7 @@ function defaultCompany()
 		 onclick='set_fullmode();'></center>\n";
 
 	end_form(1);
-	ajax()->addScript(true, "document.forms[0].password.focus();");
+	ajax()->addFocusElement(true, 'password');
 
     echo "<script".csp_nonce_attr()." language='JavaScript' type='text/javascript'>
     //<![CDATA[
