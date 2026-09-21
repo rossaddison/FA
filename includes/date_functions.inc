@@ -155,9 +155,9 @@ function is_date(?string $date_): int
 function Today(): string 
 {
 
-	$year = date("Y");
-	$month = date("n");
-	$day = date("j");
+	$year = (int)date("Y");
+	$month = (int)date("n");
+	$day = (int)date("j");
 	if (sysprefs()->date_system == 1)
 		list($year, $month, $day) = gregorian_to_jalali($year, $month, $day);
 	elseif (sysprefs()->date_system == 2)	
@@ -344,6 +344,8 @@ function sql2date(string|int|float|bool|null $date_): string
 	//for MySQL dates are in the format YYYY-mm-dd
 	if ($date_ == null)
 		return "";
+	$date_ = (string)$date_;
+	$year = $month = $day = null;
 	if ((bool)strpos($date_, "/")) 
 	{ // In MySQL it could be either / or -
 		list($year, $month, $day) = explode("/", $date_);
@@ -373,11 +375,14 @@ function date2sql(?string $date_): string|int
 /* takes a date in a the format specified in $DefaultDateFormat
 and converts to a yyyy/mm/dd format */
 
-	$how = user_date_format();
-	$sep = sysprefs()->dateseps[user_date_sep()];
+	$how = (int)user_date_format();
+	$seps = sysprefs()->dateseps ?? array();
+	$sep = $seps[(int)user_date_sep()] ?? '/';
+	if ($sep === '')
+		$sep = '/';
 
-	$date_ = trim($date_);
-	if ($date_ == null || strlen($date_) == 0)
+	$date_ = trim((string)$date_);
+	if ($date_ == null)
 		return "";
 
     $year = $month = $day = 0;
@@ -391,10 +396,10 @@ and converts to a yyyy/mm/dd format */
 
 	if ($how > 2)
 	{
-		global $tmonths;
-		$month = array_search($month, $tmonths);
+		$found = array_search($month, $tmonths);
+		$month = $found === false ? 0 : $found;
 	}
-	if ((float)$year+(float)$day+$month) {
+	if ((float)$year+(float)$day+(float)$month) {
 		//to modify assumption in 2030
 		if (sysprefs()->date_system == 0 || sysprefs()->date_system == 3)
 		{
@@ -416,7 +421,7 @@ and converts to a yyyy/mm/dd format */
 		elseif (sysprefs()->date_system == 2)
 			list($year, $month, $day) = islamic_to_gregorian($year, $month, $day); 
 	}
-	return sprintf("%04d-%02d-%02d", $year, $month, $day);
+	return sprintf("%04d-%02d-%02d", (int)$year, (int)$month, (int)$day);
 }// end of function
 
 /**
@@ -540,6 +545,7 @@ function div(string|int|float|bool|null $a, ?int $b): int
    Released under GNU General Public License */
 
 /** @psalm-pure */
+/** @return array{0: int|float, 1: int|float, 2: int|float} */
 function gregorian_to_jalali (string|int|float|bool|null $g_y, string|int|float|bool|null $g_m, string|int|float|bool|null $g_d): array
 {
     $g_days_in_month = array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
@@ -581,6 +587,7 @@ function gregorian_to_jalali (string|int|float|bool|null $g_y, string|int|float|
 }
 
 /** @psalm-pure */
+/** @return array{0: int|float, 1: int|float, 2: int|float} */
 function jalali_to_gregorian(string|int|float|bool|null $j_y, string|int|float|bool|null $j_m, string|int|float|bool|null $j_d): array
 {
     $g_days_in_month = array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
@@ -636,6 +643,7 @@ function jalali_to_gregorian(string|int|float|bool|null $j_y, string|int|float|b
 /* Based on Hidri Date Script 
    Released under GNU General Public License */
 /** @psalm-pure */
+/** @return array{0: int|float, 1: int|float, 2: int|float} */
 function gregorian_to_islamic(string|int|float|bool|null $g_y, string|int|float|bool|null $g_m, string|int|float|bool|null $g_d): array
 {
 	$y = $g_y;   
@@ -667,6 +675,7 @@ function gregorian_to_islamic(string|int|float|bool|null $g_y, string|int|float|
 }
 
 /** @psalm-pure */
+/** @return array{0: int|float, 1: int|float, 2: int|float} */
 function islamic_to_gregorian(string|int|float|bool|null $i_y, string|int|float|bool|null $i_m, string|int|float|bool|null $i_d): array
 {
 	$y = $i_y;   

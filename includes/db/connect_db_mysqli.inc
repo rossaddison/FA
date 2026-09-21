@@ -127,6 +127,7 @@ function row_or_empty(array|false|null $row): array
  */
 function db_fetch_row(mysqli_result $result): array|false
 {
+	/** @var list<string|null>|false|null $ret every column is a string or null: FA does not set MYSQLI_OPT_INT_AND_FLOAT_NATIVE */
 	$ret = mysqli_fetch_row($result);
 	return ($ret === null ? false : $ret);
 }
@@ -137,6 +138,7 @@ function db_fetch_row(mysqli_result $result): array|false
  */
 function db_fetch_assoc(mysqli_result $result): array|false
 {
+	/** @var array<string, string|null>|false|null $ret every column is a string or null: FA does not set MYSQLI_OPT_INT_AND_FLOAT_NATIVE */
 	$ret = mysqli_fetch_assoc($result);
 	return ($ret === null ? false : $ret);
 }
@@ -147,6 +149,7 @@ function db_fetch_assoc(mysqli_result $result): array|false
  */
 function db_fetch(mysqli_result $result): array|false
 {
+	/** @var array<array-key, string|null>|false|null $ret every column is a string or null: FA does not set MYSQLI_OPT_INT_AND_FLOAT_NATIVE */
 	$ret = mysqli_fetch_array($result);
 	return ($ret === null ? false : $ret);
 }

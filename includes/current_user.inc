@@ -505,7 +505,11 @@ function user_qty_dec()
 function user_price_dec(): int|string
 {
 
-	return isset($_SESSION["wa_current_user"]) ? session_obj('wa_current_user')->prefs->price_dec() : 2;
+	if (!isset($_SESSION["wa_current_user"])) {
+		return 2;
+	}
+	$dec = session_obj('wa_current_user')->prefs->price_dec();
+	return is_int($dec) || is_string($dec) ? $dec : (int)($dec ?? 2);
 }
 
 function user_exrate_dec()

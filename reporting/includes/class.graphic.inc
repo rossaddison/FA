@@ -1964,6 +1964,7 @@ function utf8_strlen(string|int|float|bool|null $str): int|false
 /** @psalm-pure */
 function utf8_chr(?int $uni): string 
 {
+	$uni ??= 0;
 	$r = "";
 	# ASCII range (including control chars)
 	if ( ($uni >= 0) && ($uni <= 0x007f) ) 

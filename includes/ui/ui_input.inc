@@ -115,7 +115,7 @@ function get_scalar(string $name): string|int|float|bool|null
  */
 function input_num(?string $postname=null, int|float|string|null $dflt=0)
 {
-	if (!isset($_POST[$postname]) || $_POST[$postname] == "")
+	if ($postname === null || !isset($_POST[$postname]) || $_POST[$postname] == "")
 	  	return $dflt;
 
     return user_numeric($_POST[$postname]);

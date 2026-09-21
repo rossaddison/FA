@@ -82,7 +82,7 @@ function end_form(?int $breaks=0): void
 	if ((bool)$breaks)
 		br($breaks);
 	hidden('_focus');
-	hidden('_modified', get_post('_modified', 0));
+	hidden('_modified', post_scalar('_modified') ?? 0);
 	hidden('_confirmed'); // helper for final form confirmation
 	hidden('_token', $_SESSION['csrf_token']);
 

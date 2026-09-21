@@ -400,5 +400,7 @@ function sysprefs(): sys_prefs
  */
 function session_obj(string $key)
 {
-	return $_SESSION[$key];
+	/** @var Cart|purch_order|supp_trans|allocation|items_cart|language|current_user $object */
+	$object = $_SESSION[$key];
+	return $object;
 }
