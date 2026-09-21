@@ -1,0 +1,41 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  php:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          coverage: none
+          tools: composer:v2
+      - name: Syntax check every .php and .inc file
+        run: |
+          status=0
+          while IFS= read -r -d '' f; do
+            out=$(php -l "$f" 2>&1) || { echo "$out"; status=1; }
+          done < <(find . -type f \( -name '*.php' -o -name '*.inc' \) -not -path './vendor/*' -not -path './company/*/js_cache/*' -print0)
+          exit $status
+      - run: composer install --no-interaction --no-progress --prefer-dist
+      - name: Psalm level 1, no findings beyond the recorded count
+        run: |
+          vendor/bin/psalm --no-cache --threads=4 --no-progress --output-format=compact > psalm.out || true
+          found=$(sed 's/\x1b\[[0-9;]*m//g' psalm.out | grep -oE '^[0-9]+ errors? found' | grep -oE '^[0-9]+' || echo 0)
+          allowed=$(tr -d '[:space:]' < .github/psalm-error-count)
+          echo "Psalm findings: $found (recorded: $allowed)"
+          if [ "$found" -gt "$allowed" ]; then
+            echo "::error::Psalm reports $found findings, more than the recorded $allowed."
+            sed 's/\x1b\[[0-9;]*m//g' psalm.out | grep '^ERROR' | head -50
+            exit 1
+          fi
+          if [ "$found" -lt "$allowed" ]; then
+            echo "::notice::Findings dropped to $found; lower .github/psalm-error-count to lock it in."
+          fi
