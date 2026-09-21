@@ -149,7 +149,9 @@ function fmt_errors(string|int|float|bool|null $center=false): string {
 			$content .= ($cnt ? '<hr>' : '').$str;
 		}
 		$class = $msg_class[$type];
-    	$content = "<div class='$class'>$content</div>";
+    	$content = (function_exists('yiiLayoutEnabled') && yiiLayoutEnabled())
+			? yiiAlert($class, $content)
+			: "<div class='$class'>$content</div>";
   	} elseif ($path_to_root=='.')
 		return '';
   	return $content;

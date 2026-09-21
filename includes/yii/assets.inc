@@ -58,6 +58,8 @@ function yiiAssetManager(string $extraCss): AssetManager
 	// (after the calls above: Psalm forgets a global's type across a call)
 	global $path_to_root;
 	$css[] = preg_replace('#^\./#', '', $path_to_root . '/views/assets/html5.css') ?? '';
+	// the alert rules of Bootstrap, for the system messages (includes/yii/alert.inc)
+	$css[] = preg_replace('#^\./#', '', $path_to_root . '/css/fa-alerts.css') ?? '';
 	$userJs = array_map(fn(string $url): string => preg_replace('#^\./#', '', $url) ?? $url, $scripts['user']);
 
 	$bundles = array(

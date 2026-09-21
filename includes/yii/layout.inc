@@ -20,6 +20,7 @@ use Yiisoft\View\WebView;
 
 include_once(__DIR__ . '/assets.inc');
 include_once(__DIR__ . '/menu.inc');
+include_once(__DIR__ . '/alert.inc');
 
 /**
  * True when the Yii page shell is switched on and its dependencies are installed.

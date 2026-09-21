@@ -1,0 +1,23 @@
+/*
+	The alert rules of Bootstrap 5.3 (MIT, https://getbootstrap.com), which is all yiisoft/bootstrap5's Alert widget
+	needs. FA's system messages use them in the Yii page shell (includes/yii/alert.inc). Bootstrap's reboot is left
+	out on purpose: it would restyle FA's table layout. .fa-alert keeps the centred, ten-pixel-margin box the
+	classic err_msg, warn_msg and note_msg boxes have.
+*/
+.alert {
+	--fa-alert-color: inherit;
+	--fa-alert-bg: transparent;
+	--fa-alert-border-color: transparent;
+	position: relative;
+	padding: 0.5rem 1rem;
+	margin-bottom: 1rem;
+	color: var(--fa-alert-color);
+	background-color: var(--fa-alert-bg);
+	border: 1px solid var(--fa-alert-border-color);
+	border-radius: 0.375rem;
+}
+.alert-success { --fa-alert-color: #0a3622; --fa-alert-bg: #d1e7dd; --fa-alert-border-color: #a3cfbb; }
+.alert-warning { --fa-alert-color: #664d03; --fa-alert-bg: #fff3cd; --fa-alert-border-color: #ffe69c; }
+.alert-danger  { --fa-alert-color: #58151c; --fa-alert-bg: #f8d7da; --fa-alert-border-color: #f1aeb5; }
+.alert hr { color: inherit; opacity: 0.25; }
+.fa-alert { margin: 10px; text-align: center; }
