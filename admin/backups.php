@@ -96,7 +96,7 @@ function get_backup_file_combo(): string
 		if (preg_match("/.sql(.zip|.gz)?$/", $file))
     		$opt_files .= "<option value='$file'>$file</option>";
 
-	$selector = "<select name='backups' size=2 style='height:160px;min-width:230px'>$opt_files</select>";
+	$selector = "<select name='backups' size=2 class='fa-box-160'>$opt_files</select>";
 
 	ajax()->addUpdate('backups', "_backups_sel", $selector);
 	$selector = "<span id='_backups_sel'>".$selector."</span>\n";
@@ -199,8 +199,8 @@ table_section(2);
 table_section_title(_("Backup scripts maintenance"));
 
 	start_row();
-	echo "<td style='padding-left:20px' align='left'>".get_backup_file_combo()."</td>";
-	echo "<td style='padding-left:20px' valign='top'>";
+	echo "<td class='fa-pl20' align='left'>".get_backup_file_combo()."</td>";
+	echo "<td class='fa-pl20' valign='top'>";
 	start_table();
 	submit_row('view',_("View Backup"), false, '', '', false);
 	submit_row('download',_("Download Backup"), false, '', '', 'download');
@@ -214,13 +214,13 @@ table_section_title(_("Backup scripts maintenance"));
 	echo "</td>";
 	end_row();
 start_row();
-	echo "<td style='padding-left:20px'  cspan=2>"
+	echo "<td class='fa-pl20'  cspan=2>"
 	. radio(_('Update security settings'), 'protect', 0) . '<br>'
 	. radio(_('Protect security settings'), 'protect', 1, true) . "</td>";
 end_row();
 start_row();
-	echo "<td style='padding-left:20px' align='left'><input name='uploadfile' type='file'></td>";
-	submit_cells('upload',_("Upload file"),"style='padding-left:20px'", '', true);
+	echo "<td class='fa-pl20' align='left'><input name='uploadfile' type='file'></td>";
+	submit_cells('upload',_("Upload file"),"class='fa-pl20'", '', true);
 end_row();
 end_outer_table();
 

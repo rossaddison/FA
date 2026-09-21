@@ -445,7 +445,7 @@ function display_system_tests(bool $install = false): bool
 		$color = ($result['result'] ? 'green': 
 			($result['type']==3 ? 'red' :
 			 ($result['type']==2 ? 'orange' : 'green')));
-		label_cell("<span style='color:$color'>".
+		label_cell("<span class='fa-$color'>".
 			($result['result'] ? _('Ok') : '<b>'.$comm.'</b>').'</span>');
 		end_row();
 		$ret = $ret && (($result['result']!=0) || ($result['type'] < 3));

@@ -103,7 +103,7 @@ function display_trial_balance(?string $type, ?string $typename): void
 		{
 			if (!check_value('GroupTotalOnly'))
 			{
-				start_row("class='inquirybg' style='font-weight:bold'");
+				start_row("class='inquirybg fa-bold'");
 				label_cell(_("Group")." - ".$type ." - ".$typename, "colspan=8");
 				end_row();
 			}
@@ -173,7 +173,7 @@ function display_trial_balance(?string $type, ?string $typename): void
 		//Print Type Title if has sub types and not previously printed
 		if (!$printtitle)
 		{
-			start_row("class='inquirybg' style='font-weight:bold'");
+			start_row("class='inquirybg fa-bold'");
 			label_cell(_("Group")." - ".$type ." - ".$typename, "colspan=8");
 			end_row();
 			$printtitle = 1;
@@ -182,7 +182,7 @@ function display_trial_balance(?string $type, ?string $typename): void
 		display_trial_balance($accounttype["id"], (string)$accounttype["name"].' ('.$typename.')');
 	}
 
-	start_row("class='inquirybg' style='font-weight:bold'");
+	start_row("class='inquirybg fa-bold'");
 	if (!check_value('GroupTotalOnly'))
 		label_cell(_("Total") ." - ".$typename, "colspan=2");
 	else
@@ -249,7 +249,7 @@ echo $tableheader;
 $classresult = get_account_classes(false);
 while ($class = db_fetch($classresult))
 {
-	start_row("class='inquirybg' style='font-weight:bold'");
+	start_row("class='inquirybg fa-bold'");
 	label_cell(_("Class")." - ".(string)$class['cid'] ." - ".(string)$class['class_name'], "colspan=8");
 	end_row();
 
@@ -263,7 +263,7 @@ while ($class = db_fetch($classresult))
 
 if (!check_value('Balance'))
 {
-	start_row("class='inquirybg' style='font-weight:bold'");
+	start_row("class='inquirybg fa-bold'");
 	label_cell(_("Total") ." - ".(string)$_POST['TransToDate'], "colspan=2");
 	amount_cell($pdeb);
 	amount_cell($pcre);
@@ -273,7 +273,7 @@ if (!check_value('Balance'))
 	amount_cell($tcre);
 	end_row();
 }
-start_row("class='inquirybg' style='font-weight:bold'");
+start_row("class='inquirybg fa-bold'");
 label_cell(_("Ending Balance") ." - ".(string)$_POST['TransToDate'], "colspan=2");
 display_debit_or_credit_cells($pbal);
 display_debit_or_credit_cells($cbal);

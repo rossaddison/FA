@@ -341,7 +341,7 @@ function exchange_rate_display(string|int|float|bool|null $from_currency, string
 	    else
 	    	$ctrl = "<span id=\"_ex_rate\">$rate</span>";
 
-		label_row(_("Exchange Rate:"), $span = "<span style='vertical-align:top;' id='_ex_rate_span'>$ctrl $from_currency = 1 $to_currency</span>" );
+		label_row(_("Exchange Rate:"), $span = "<span class='fa-vat' id='_ex_rate_span'>$ctrl $from_currency = 1 $to_currency</span>" );
 
 	  	ajax()->addUpdate('_ex_rate_span', '_ex_rate_span', $span);
 	}
@@ -1352,7 +1352,7 @@ function CC() {
       }
       table += \"</tr>\";
     }
-    table += \"<tr class='header'><th colspan='8' style='padding: 3px;text-align:center;'><a href='#' data-fa-action='cc-hide'>$back</a></td></tr>\";
+    table += \"<tr class='header'><th colspan='8' class='fa-cc-back'><a href='#' data-fa-action='cc-hide'>$back</a></td></tr>\";
     table += \"</table>\";
     return table;
   }
@@ -1695,5 +1695,5 @@ function company_logo_on_view(): void
 	}
 	else
 		$text = sysprefs()->prefs['coy_name'];
-	display_note($text, 0, $nl, "style='font-size:16px;font-weight:600'");
+	display_note($text, 0, $nl, "class='fa-note-big'");
 }

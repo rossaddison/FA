@@ -91,18 +91,17 @@ class BoxReports
 			$acc = access_string($name);
 			$st_classes .= "<a href='"
 				.$_SERVER['PHP_SELF']."?Class=$class_id'"
-				." style='font-weight:". ($cur_class == $class_id ? 'bold' : 'normal')."'"
-				." class='repclass_link' id='".'class'.$class_id."'"
+				
+				." class='repclass_link ". ($cur_class == $class_id ? 'fa-bold' : 'fa-normal')."' id='".'class'.$class_id."'"
 				."$acc[1]>$acc[0]</a> <br>";
 
-			$style = $class_id==$cur_class ? '' : "style='display:none'";
-			$st_reports .= "<table class='repclass' id='TAB_" . $class_id ."' $style cellpadding='0' cellspacing='0' border='0' width='100%'><tr><td><b>" . _("Reports For Class: ") . "&nbsp;$name</b></td></tr>\n";
+			$hide = $class_id==$cur_class ? '' : ' fa-none';
+			$st_reports .= "<table class='repclass$hide' id='TAB_" . $class_id ."' cellpadding='0' cellspacing='0' border='0' width='100%'><tr><td><b>" . _("Reports For Class: ") . "&nbsp;$name</b></td></tr>\n";
 			foreach($this->ar_reports[$class_id] as $rep_id => $report)
 			{
 				$acc = access_string($report->name);
-				$st_reports .= "<tr><td><a class='repopts_link'"
+				$st_reports .= "<tr><td><a class='repopts_link ". (@$_REQUEST['REP_ID'] == $report->id ? 'fa-bold' : 'fa-normal')."'"
 					." href='".$_SERVER['PHP_SELF']."?Class=$class_id&REP_ID=$report->id'"
-					." style='font-weight:". (@$_REQUEST['REP_ID'] == $report->id ? 'bold' : 'normal')."'"
 					." id='".$id = default_focus()."'"
 					."$acc[1]>$acc[0]</a><tr><td>\n";
 
@@ -131,9 +130,9 @@ class BoxReports
 		$st_params = "<div id='rep_form'>".
 			"$st_params</div>";
 		
-		$st = "<table align='center' width='80%' style='border:1px solid #cccccc;'><tr valign='top'>";
+		$st = "<table align='center' width='80%' class='fa-box-border'><tr valign='top'>";
 		$st .= "<td width='30%'>$st_classes</td>";
-		$st .= "<td width='35%' style='border-left:1px solid #cccccc;border-right:1px solid #cccccc;padding-left:3px;'>$st_reports</td>";
+		$st .= "<td width='35%' class='fa-col-mid'>$st_reports</td>";
 		$st .= "<td width='35%'>$st_params</td>";
 		$st .= "</tr></table><br>";
 
@@ -246,7 +245,7 @@ class BoxReports
 						$calc_image = (file_exists("$path_to_root/themes/".user_theme()."/images/cal.gif")) ? 
 							"$path_to_root/themes/".user_theme()."/images/cal.gif" : "$path_to_root/themes/default/images/cal.gif";
 						$st .= "<a href='#'".fa_action_attrs('date-picker-form', array($name)).">"
-						. "	<img src='$calc_image' style='vertical-align:middle;padding-bottom:4px;width:16px;height:16px;border:0;' alt='"._('Click Here to Pick up the date')."'></a>\n";
+						. "	<img src='$calc_image' class='fa-icon16' alt='"._('Click Here to Pick up the date')."'></a>\n";
 					}	
 					return $st;
 					break;

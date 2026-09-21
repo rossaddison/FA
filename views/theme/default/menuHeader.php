@@ -24,7 +24,7 @@ use Yiisoft\View\WebView;
  * @var bool $hints whether the "hints" area is shown
  * @var list<array{attributes: array<string, string>, label: string}> $tabs
  * @var string $status company | server | user
- * @var list<array{attributes: array<string, string>, icon: string, iconStyle: string, alt: string, label: string}> $links
+ * @var list<array{attributes: array<string, string>, icon: string, iconClass: string, alt: string, label: string}> $links
  */
 
 // ─── CSS shortcut variables ──────────────────────────────────────────────────
@@ -35,7 +35,7 @@ $tabsTable      = ['cellpadding' => '0', 'cellspacing' => '0', 'width' => '100%'
 $quickMenu      = ['class' => 'quick_menu'];
 $logoutBar      = ['class' => 'logoutBar'];
 $logoutBarRight = ['class' => 'logoutBarRight'];
-$ajaxMark       = ['id' => 'ajaxmark', 'align' => 'center', 'style' => 'visibility:hidden;'];
+$ajaxMark       = ['id' => 'ajaxmark', 'align' => 'center', 'class' => 'fa-hidden'];
 $gap            = '&nbsp;&nbsp;&nbsp;';
 $iconGap        = '&nbsp;&nbsp;';
 
@@ -75,7 +75,7 @@ echo H::openTag('table', $calloutMain); //0
             foreach ($links as $link) {
             echo H::openTag('a', $link['attributes']); //12
              echo H::img($images . '/' . $link['icon'], $link['alt'])
-              ->addAttributes(['style' => $link['iconStyle']]);
+              ->addAttributes(['class' => $link['iconClass']]);
              echo $iconGap . $link['label'];
             echo H::closeTag('a'); //12
             echo $gap;

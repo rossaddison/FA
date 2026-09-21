@@ -39,10 +39,10 @@
 			{
 				$applications = $_SESSION['App']->applications;
 				$local_path_to_root = $path_to_root;
-				$img = "<img src='$path_to_root/themes/".user_theme()."/images/login.gif' style='width:14px;height:14px;border:0;vertical-align:middle;padding-bottom:3px;' alt='"._('Logout')."'>&nbsp;&nbsp;";
-				$pimg = "<img src='$local_path_to_root/themes/".user_theme()."/images/preferences.gif' style='width:14px;height:14px;border:0;vertical-align:middle;padding-bottom:3px;' alt='"._('Preferences')."'>&nbsp;&nbsp;";
-				$limg = "<img src='$local_path_to_root/themes/".user_theme()."/images/lock.gif' style='width:14px;height:14px;border:0;vertical-align:middle;padding-bottom:3px;' alt='"._('Change Password')."'>&nbsp;&nbsp;";
-				$himg = "<img src='$path_to_root/themes/".user_theme()."/images/help.gif' style='width:14px;height:14px;border:0;vertical-align:middle;padding-bottom:3px;' alt='"._('Help')."'>&nbsp;&nbsp;";
+				$img = "<img src='$path_to_root/themes/".user_theme()."/images/login.gif' class='fa-icon14-pb3' alt='"._('Logout')."'>&nbsp;&nbsp;";
+				$pimg = "<img src='$local_path_to_root/themes/".user_theme()."/images/preferences.gif' class='fa-icon14-pb3' alt='"._('Preferences')."'>&nbsp;&nbsp;";
+				$limg = "<img src='$local_path_to_root/themes/".user_theme()."/images/lock.gif' class='fa-icon14-pb3' alt='"._('Change Password')."'>&nbsp;&nbsp;";
+				$himg = "<img src='$path_to_root/themes/".user_theme()."/images/help.gif' class='fa-icon14-pb3' alt='"._('Help')."'>&nbsp;&nbsp;";
 				echo "<div id='header'>\n";
 				echo "<ul>\n";
 				echo "  <li><a class='shortcut' href='$path_to_root/admin/display_prefs.php?'>$pimg" . _("Preferences") . "</a></li>\n";
@@ -53,7 +53,7 @@
 				echo "  <li><a class='shortcut' href='$path_to_root/access/logout.php?'>$img" . _("Logout") . "</a></li>";
 				echo "</ul>\n";
 				$indicator = "$path_to_root/themes/".user_theme(). "/images/ajax-loader.gif";
-				echo "<h1>$SysPrefs->power_by $version<span style='padding-left:300px;'><img id='ajaxmark' src='$indicator' align='center' style='visibility:hidden;'></span></h1>\n";
+				echo "<h1>$SysPrefs->power_by $version<span class='fa-pl300'><img id='ajaxmark' src='$indicator' align='center' class='fa-hidden'></span></h1>\n";
 				echo "</div>\n"; // header
 				echo "<div class='fa-menu'>";
 				echo "<ul>\n";
@@ -212,7 +212,7 @@
 				echo $module->name;
 				echo "</td></tr><tr>";
 				echo "<td width='50%' class='menu_group_items'>";
-				$img = "<img src='$path_to_root/themes/".user_theme()."/images/".$imgs2[$i]."' style='width:14px;height:14px;border:0;vertical-align:middle;padding-bottom:3px;'>&nbsp;&nbsp;";
+				$img = "<img src='$path_to_root/themes/".user_theme()."/images/".$imgs2[$i]."' class='fa-icon14-pb3'>&nbsp;&nbsp;";
 				if ($_SESSION["language"]->dir == "rtl")
 					$class = "right";
 				else

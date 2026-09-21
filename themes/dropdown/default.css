@@ -914,3 +914,7 @@ div.note_msg {
 	#CC table { font-size: 10pt; }
 	#CC .previous, #CC .next { font-size: 1.4em; }
 }
+
+/* the combo buttons: the images used to be inline styles (see css/fa-inline.css) */
+input.combo_submit { border: 0; background: url(images/locate.png) no-repeat; }
+input.combo_select { border: 0; background: url(images/button_ok.png) no-repeat; }

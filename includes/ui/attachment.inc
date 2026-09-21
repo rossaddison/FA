@@ -104,7 +104,7 @@ class attachments extends simple_crud {
 				label_cell($de['filetype']);
 				label_cell(sql2date($de['tran_date']));
 				edit_button_cell("{$this->name}Edit[{$de['id']}]", _("Edit"));
-				label_cell('<a target="_blank" class="viewlink" href="'.$path_to_root.'/admin/attachments.php?vw='.(string)$de['id'].'"'.fa_action_attrs('open-window').' accesskey="V"><img src="'.$path_to_root.'/themes/default/images/view.gif" style="vertical-align:middle;width:12px;height:12px;border:0;"></a>', 'style="text-align: center;" ');
+				label_cell('<a target="_blank" class="viewlink" href="'.$path_to_root.'/admin/attachments.php?vw='.(string)$de['id'].'"'.fa_action_attrs('open-window').' accesskey="V"><img src="'.$path_to_root.'/themes/default/images/view.gif" class="fa-icon12"></a>', 'class="fa-center" ');
 				button_cell("{$this->name}Download[{$de['id']}]", _("Download"), false, ICON_DOWN);
 				
 				delete_button_cell("{$this->name}Delete[{$de['id']}]", _("Delete"));

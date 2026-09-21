@@ -95,7 +95,7 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 	{
 		if ((bool)$drilldown && $type == $_POST["AccGrp"])
 		{		
-			start_row("class='inquirybg' style='font-weight:bold'");
+			start_row("class='inquirybg fa-bold'");
 			label_cell(_('Total') . " " . $typename);
 			amount_cell(((float)$acctstotal + (float)$typestotal) * $convert);
 			end_row();
@@ -199,7 +199,7 @@ function display_balance_sheet(): void
 			}				
 
 			//Print Class Summary
-			start_row("class='inquirybg' style='font-weight:bold'");
+			start_row("class='inquirybg fa-bold'");
 			label_cell(_('Total') . " " . (string)$class["class_name"]);
 			amount_cell($classclose * $convert);
 			end_row();		
@@ -225,12 +225,12 @@ function display_balance_sheet(): void
 				. $from."&TransToDate=".$to . "&Dimension=" . $dimension . "&Dimension2=" . $dimension2
 			."&Compare=0'>"._('Calculated Return')."</a>";		
 		
-		start_row("class='inquirybg' style='font-weight:bold'");
+		start_row("class='inquirybg fa-bold'");
 		label_cell($url);
 		amount_cell($calculateclose);
 		end_row();		
 		
-		start_row("class='inquirybg' style='font-weight:bold'");
+		start_row("class='inquirybg fa-bold'");
 		label_cell(_('Total') . " " . _('Liabilities') . _(' and ') . _('Equities'));
 		amount_cell((float)$lclose * (float)$lconvert + (float)$equityclose * (float)$econvert + $calculateclose);
 		end_row();

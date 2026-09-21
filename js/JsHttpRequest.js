@@ -704,7 +704,15 @@ JsHttpRequest.LOADERS.form = { loader: function(req) {
         s.style.visibility = 'hidden';
         s.innerHTML = 
             (form? '' : '<form' + (th.method == 'POST'? ' enctype="multipart/form-data" method="post"' : '') + '></form>') + // stupid IE, MUST use innerHTML assignment :-(
-            '<iframe name="' + ifname + '" id="' + ifname + '" style="width:0px; height:0px; overflow:hidden; border:none"></iframe>'
+            '<iframe name="' + ifname + '" id="' + ifname + '"></iframe>';
+        // the frame's size is set here, not in a style attribute, which a Content-Security-Policy may block
+        var ifr = s.getElementsByTagName('iframe')[0];
+        if (ifr) {
+            ifr.style.width = '0px';
+            ifr.style.height = '0px';
+            ifr.style.overflow = 'hidden';
+            ifr.style.border = 'none';
+        }
         if (!form) {
             form = th.span.firstChild;
         }

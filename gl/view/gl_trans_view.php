@@ -144,7 +144,7 @@ while ($myrow = db_fetch($result))
 
 if ($heading_shown)
 {
-    start_row("class='inquirybg' style='font-weight:bold'");
+    start_row("class='inquirybg fa-bold'");
     label_cell(_("Total"), "colspan=3");
     if ($dim >= 1)
         label_cell('');

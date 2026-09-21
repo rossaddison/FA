@@ -179,10 +179,10 @@ function invoice_totals(supp_trans &$supp_trans): void
 	start_row();
 	if ($supp_trans->trans_type == ST_SUPPINVOICE)
     	label_cells(_("Invoice Total:"), 
-    		$display_total, "colspan=$colspan width=80% align=right style='font-weight:bold;'", "width=10% align=right style='font-weight:bold;'");
+    		$display_total, "colspan=$colspan width=80% align=right class='fa-bold'", "width=10% align=right class='fa-bold'");
     else
 		label_cells(_("Credit Note Total"),
-			$display_total, "colspan=$colspan width=80% align=right style='font-weight:bold;color:red;'", "width=10% nowrap align=right style='font-weight:bold;color:red;'");
+			$display_total, "colspan=$colspan width=80% align=right class='fa-bold-red'", "width=10% nowrap align=right class='fa-bold-red'");
 	submit_cells('update', _("Update"), "width=10% colspan=2 align='right'", _("Refresh"), true);
 	end_row();
     end_table(1);
@@ -247,7 +247,7 @@ function display_gl_items(supp_trans &$supp_trans, string|int|float|bool|items_c
 		$qes = has_quick_entries(QE_SUPPINV);
 		if ($qes !== false)
 		{
-			echo "<div style='float:right;'>";
+			echo "<div class='fa-right'>";
 			echo _("Quick Entry:")."&nbsp;"; 
 			echo quick_entries_list('qid', null, QE_SUPPINV, true);
 			$qid = row_or_empty(get_quick_entry(get_post('qid')));
@@ -450,7 +450,7 @@ function display_grn_items(supp_trans &$supp_trans, ?int $mode=0): int|float
     if (($mode == 2  || $mode == 3) && count($supp_trans->grn_items) == 0)
     	return 0;
 
-	start_outer_table("style='border:1px solid #cccccc;' width='95%'");
+	start_outer_table("class='fa-box-border' width='95%'");
 
 	$heading2 = "";
 	if ($mode == 1)

@@ -171,8 +171,8 @@ function display_db_pager(object &$pager): bool {
 		$inact = @$pager->inactive_ctrl==true 
 			? ' '.checkbox(null, 'show_inactive', null, true). _("Show also Inactive") : '';
 	 if($pager->rec_count) {
-		echo "<td colspan=$colspan class='navibar' style='border:none;padding:3px;'>";
-		echo "<div style='float:right;'>";
+		echo "<td colspan=$colspan class='navibar fa-plain'>";
+		echo "<div class='fa-right'>";
 		$but_pref = $pager->name.'_page_';
 	    start_table();
 		start_row();

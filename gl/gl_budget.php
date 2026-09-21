@@ -125,7 +125,7 @@ if (db_has_gl_accounts())
 	}
 	start_row();
 	label_cell("<b>"._("Total")."</b>");
-	label_cell(number_format2($total, 0), 'align=right style="font-weight:bold"', 'Total');
+	label_cell(number_format2($total, 0), 'align=right class="fa-bold"', 'Total');
 	if ($showdims)
 		label_cell("<b>".number_format2($btotal, 0)."</b>", "nowrap align=right");
 	label_cell("<b>".number_format2($ltotal, 0)."</b>", "nowrap align=right");

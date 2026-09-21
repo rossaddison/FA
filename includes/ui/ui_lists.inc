@@ -13,11 +13,10 @@ include_once($path_to_root . "/includes/banking.inc");
 include_once($path_to_root . "/includes/types.inc");
 include_once($path_to_root . "/includes/current_user.inc");
 
-define('SEARCH_BUTTON', "<input %s type='submit' class='combo_submit' style='border:0;background:url($path_to_root/themes/"
-	."%s/images/locate.png) no-repeat;%s' aspect='fallback' name='%s' value=' ' title='"._("Set filter")."'> ");
+// the button's image comes from the theme's stylesheet (input.combo_submit); %s after the class is ' fa-none' when JavaScript replaces it
+define('SEARCH_BUTTON', "<input %s type='submit' class='combo_submit%s' aspect='fallback' name='%s' value=' ' title='"._("Set filter")."'> ");
 
-define('SELECT_BUTTON', "<input %s type='submit' class='combo_select' style='border:0;background:url($path_to_root/themes/"
-	."%s/images/button_ok.png) no-repeat;%s' aspect='fallback' name='%s' value=' ' title='"._("Select")."'> ");
+define('SELECT_BUTTON', "<input %s type='submit' class='combo_select%s' aspect='fallback' name='%s' value=' ' title='"._("Select")."'> ");
 
 //----------------------------------------------------------------------------
 //	Universal sql combo generator
@@ -277,8 +276,8 @@ $opts = array(		// default options
 	 // if selectable or editable list is used - add select button
 	if ($select_submit != false || (bool)$search_button) {
 	// button class selects form reload/ajax selector update
-		$selector .= sprintf(SELECT_BUTTON, $disabled, user_theme(),
-			(fallback_mode() ? '' : 'display:none;'),
+		$selector .= sprintf(SELECT_BUTTON, $disabled,
+			(fallback_mode() ? '' : ' fa-none'),
 			 '_'.$name.'_update')."\n";
 	}
 // ------ make combo ----------
@@ -286,13 +285,12 @@ $opts = array(		// default options
 	if ($search_box != false) {
 		$edit_entry = "<input $disabled type='text' name='$search_box' id='$search_box' size='".
 			(string)$opts['size']."' maxlength='".(string)$opts['max'].
-			"' value='$txt' class='$class' rel='$name' autocomplete='off' title='"
+			"' value='$txt' class='$class".(!fallback_mode() && !$by_id ? ' fa-none' : '')."' rel='$name' autocomplete='off' title='"
 			.(string)$opts['box_hint']."'"
-			.(!fallback_mode() && !$by_id ? " style=display:none;":'')
 			.">\n";
 		if ($search_submit != false || (bool)$opts['editable']) {
-			$edit_entry .= sprintf(SEARCH_BUTTON, $disabled, user_theme(),
-				(fallback_mode() ? '' : 'display:none;'),
+			$edit_entry .= sprintf(SEARCH_BUTTON, $disabled,
+				(fallback_mode() ? '' : ' fa-none'),
 				(bool)$search_submit ? $search_submit : "_{$name}_button")."\n";
 		}
 	}
@@ -361,7 +359,7 @@ $opts = array(		// default options
   		if ($link !=="") {
     		$theme = user_theme();
     		$img = '<img src="'.$path_to_root.'/themes/'.$theme.'/images/'.ICON_VIEW.
-    			'" style="vertical-align:middle;width:12px;height:12px;border:0;" '.fa_action_attrs('lookup-window', array($link, '')).' title="' . $img_title . '" style="cursor:pointer;" />';
+    			'" '.fa_action_attrs('lookup-window', array($link, '')).' title="' . $img_title . '" class="fa-pointer fa-icon12" />';
   		}
 	}
 
@@ -469,8 +467,8 @@ $opts = array(		// default options
 	$selector = "<span id='_{$name}_sel'>".$selector."</span>\n";
 
 	if ($select_submit != false) { // if submit on change is used - add select button
-		$selector .= sprintf(SELECT_BUTTON, $disabled, user_theme(),
-			(fallback_mode() ? '' : 'display:none;'),
+		$selector .= sprintf(SELECT_BUTTON, $disabled,
+			(fallback_mode() ? '' : ' fa-none'),
 			 '_'.$name.'_update')."\n";
 	}
 	default_focus($name);

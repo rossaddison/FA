@@ -117,7 +117,7 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|n
 	{
 		if ((bool)$drilldown && $type == $_POST["AccGrp"])
 		{		
-			start_row("class='inquirybg' style='font-weight:bold'");
+			start_row("class='inquirybg fa-bold'");
 			label_cell(_('Total') . " " . $typename);
 			amount_cell(($code_per_balance + $per_balance_total) * $convert);
 			amount_cell(($code_acc_balance + $acc_balance_total) * $convert);
@@ -285,7 +285,7 @@ function display_profit_and_loss(string|array|null $compare): void
 			
 			//Print Class Summary
 			
-			start_row("class='inquirybg' style='font-weight:bold'");
+			start_row("class='inquirybg fa-bold'");
 			label_cell(_('Total') . " " . (string)$class["class_name"]);
 			amount_cell($class_per_total * $convert);
 			amount_cell($class_acc_total * $convert);
@@ -296,7 +296,7 @@ function display_profit_and_loss(string|array|null $compare): void
 			$salesacc += $class_acc_total;
 		}
 		
-		start_row("class='inquirybg' style='font-weight:bold'");
+		start_row("class='inquirybg fa-bold'");
 		label_cell(_('Calculated Return'));
 		amount_cell((float)$salesper *(float)(-1));
 		amount_cell((float)$salesacc * (float)(-1));

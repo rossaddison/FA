@@ -21,12 +21,12 @@
  * One of the links in the status bar, in the form the template loops over.
  *
  * @param array<string, string> $attributes the attributes of the <a>
- * @return array{attributes: array<string, string>, icon: string, iconStyle: string, alt: string, label: string}
+ * @return array{attributes: array<string, string>, icon: string, iconClass: string, alt: string, label: string}
  * @psalm-pure
  */
-function yiiMenuLink(array $attributes, string $icon, string $iconStyle, string $alt, string $label): array
+function yiiMenuLink(array $attributes, string $icon, string $iconClass, string $alt, string $label): array
 {
-	return array('attributes' => $attributes, 'icon' => $icon, 'iconStyle' => $iconStyle, 'alt' => $alt, 'label' => $label);
+	return array('attributes' => $attributes, 'icon' => $icon, 'iconClass' => $iconClass, 'alt' => $alt, 'label' => $label);
 }
 
 /**
@@ -54,7 +54,7 @@ function yiiMenuHeader(string $title, bool $noMenu, bool $isIndex): string
 		$app = $_SESSION['App'];
 		$user = session_obj('wa_current_user');
 		$selected = (string)$_SESSION['sel_app'];
-		$icon = 'width:14px;height:14px;border:0;vertical-align:middle;';
+		$icon = 'fa-icon14'; // css/fa-inline.css
 		$tabs = array();
 		foreach ($app->applications as $application) {
 			if ($user->check_application_access($application)) {
@@ -72,7 +72,7 @@ function yiiMenuHeader(string $title, bool $noMenu, bool $isIndex): string
 		}
 		$links = array(
 			yiiMenuLink(array('href' => $path_to_root . '/admin/dashboard.php?sel_app=' . $selected), 'report.png', $icon, _('Dashboard'), _('Dashboard')),
-			yiiMenuLink(array('class' => 'shortcut', 'href' => $path_to_root . '/admin/display_prefs.php?'), 'preferences.gif', 'width:14px;height:14px; border:0;vertical-align:middle;', _('Preferences'), _('Preferences')),
+			yiiMenuLink(array('class' => 'shortcut', 'href' => $path_to_root . '/admin/display_prefs.php?'), 'preferences.gif', $icon, _('Preferences'), _('Preferences')),
 			yiiMenuLink(array('class' => 'shortcut', 'href' => $path_to_root . '/admin/change_current_user_password.php?selected_id=' . $user->username), 'lock.gif', $icon, _('Change Password'), _('Change password')),
 		);
 		if (sysprefs()->help_base_url != null) {

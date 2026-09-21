@@ -96,7 +96,7 @@ function display_title(?string $title, string|int|float|bool|null $id=false, str
 	{
 		/*
 		global $Ajax;
-		echo "<span style='margin-left:10px;text-align:right;'>";
+		echo "<span class='fa-ml10-r'>";
 		$options = array('select_submit' => true ); 
 		if (!empty($per))
 		{
@@ -115,11 +115,11 @@ function display_title(?string $title, string|int|float|bool|null $id=false, str
 			$Ajax->activate($id);
 		echo "</span>";
 		*/
-		echo "<span style='margin-left:10px;text-align:right;'>";
+		echo "<span class='fa-ml10-r'>";
 		if ((bool)($per ?? null))
 		{
 			$sel1 = array(3 => "3", 4 => "4", 5 => "5", 6 => "6", 7 => "7", 8=> "8");
-			echo "<select id='per_$id' name='per_$id' style='border:1px solid #bbb;color:#555;'".fa_action_attrs('chart-update', array($id), 'change').">";
+			echo "<select id='per_$id' name='per_$id' class='fa-box-muted'".fa_action_attrs('chart-update', array($id), 'change').">";
 			foreach ($sel1 as $i => $s)
 			{
 				echo "<option value='$i'";
@@ -132,7 +132,7 @@ function display_title(?string $title, string|int|float|bool|null $id=false, str
 		else
 		{
 			$sel = array(1 => _("Vertical bars"), 2 => _("Horizontal bars"), 3 => _("Dots"), 4 => _("Lines"), 5 => _("Pie"), 6 => _("Donut"), 7 => _("Half Donut"), 8 => _("Splines"), 9 => _("Tables"));
-			echo "<select id='select_$id' name='select_$id' style='border:1px solid #bbb;color:#555;'".fa_action_attrs('chart-update', array($id), 'change').">";
+			echo "<select id='select_$id' name='select_$id' class='fa-box-muted'".fa_action_attrs('chart-update', array($id), 'change').">";
 			foreach ($sel as $i => $s)
 			{
 				echo "<option value='$i'";
@@ -151,13 +151,13 @@ function display_title(?string $title, string|int|float|bool|null $id=false, str
 
 function table(string|int|float|bool|null $width='100%', string|int|float|bool|null $twidth=false): void
 {
-	$tstyle = ($twidth != false) ? "style='width:$twidth;'" : "";
+	$tstyle = ($twidth != false) ? "width='$twidth'" : "";
 	echo "<table width='$width'><tr valign=top><td align='center' $tstyle>";
 }
 
 function td(string|bool|null $width=false): void
 {
-	$style = ($width != false) ? "style='width:$width;'" : "";
+	$style = ($width != false) ? "width='$width'" : "";
 	echo "</td><td align='center' $style>\n";
 }	
 
@@ -682,12 +682,12 @@ function gl_top(?string $today, string|int|null $width='33', ?object &$pg=null):
 			}	
 		}	
 		label_row($myrow['class_name'], number_format2($myrow['total'], user_price_dec()), 
-			"class='label' style='font-weight:bold;'", "style='font-weight:bold;' align=right");
+			"class='label fa-bold'", "class='fa-bold' align=right");
 	}
 	$calculated = _("Calculated Return");
 	label_row("&nbsp;", "");
 	label_row($calculated, number_format2($total, user_price_dec()), 
-		"class='label' style='font-weight:bold;'", "style='font-weight:bold;' align=right");
+		"class='label fa-bold'", "class='fa-bold' align=right");
 	if ($pg != null)
 	{
 		$names[] = $calculated; 

@@ -19,7 +19,7 @@
 				$img = $category == '' ? 'right.gif' : $category.'.png';
 			else	
 				$img = 'right.gif';
-			return "<img src='$path_to_root/themes/".user_theme()."/images/$img' style='vertical-align:middle;' border='0'>&nbsp;&nbsp;";
+			return "<img src='$path_to_root/themes/".user_theme()."/images/$img' class='fa-vam' border='0'>&nbsp;&nbsp;";
 		}
 
 		function wa_header()
@@ -72,14 +72,14 @@
 				echo "</div>";
 				echo "</td></tr></table>";
 				// top status bar
-				$rimg = "<img src='$path_to_root/themes/".user_theme()."/images/report.png' style='width:14px;height:14px;border:0;vertical-align:middle;' alt='"._('Dashboard')."'>&nbsp;&nbsp;";
-				$pimg = "<img src='$local_path_to_root/themes/".user_theme()."/images/preferences.gif' style='width:14px;height:14px; border:0;vertical-align:middle;' alt='"._('Preferences')."'>&nbsp;&nbsp;";
-				$limg = "<img src='$local_path_to_root/themes/".user_theme()."/images/lock.gif' style='width:14px;height:14px;border:0;vertical-align:middle;' alt='"._('Change Password')."'>&nbsp;&nbsp;";
-				$img = "<img src='$local_path_to_root/themes/".user_theme()."/images/login.gif' style='width:14px;height:14px;border:0;vertical-align:middle;' alt='"._('Logout')."'>&nbsp;&nbsp;";
-				$himg = "<img src='$local_path_to_root/themes/".user_theme()."/images/help.gif' style='width:14px;height:14px;border:0;vertical-align:middle;'' alt='"._('Help')."'>&nbsp;&nbsp;";
+				$rimg = "<img src='$path_to_root/themes/".user_theme()."/images/report.png' class='fa-icon14' alt='"._('Dashboard')."'>&nbsp;&nbsp;";
+				$pimg = "<img src='$local_path_to_root/themes/".user_theme()."/images/preferences.gif' class='fa-icon14' alt='"._('Preferences')."'>&nbsp;&nbsp;";
+				$limg = "<img src='$local_path_to_root/themes/".user_theme()."/images/lock.gif' class='fa-icon14' alt='"._('Change Password')."'>&nbsp;&nbsp;";
+				$img = "<img src='$local_path_to_root/themes/".user_theme()."/images/login.gif' class='fa-icon14' alt='"._('Logout')."'>&nbsp;&nbsp;";
+				$himg = "<img src='$local_path_to_root/themes/".user_theme()."/images/help.gif' class='fa-icon14'' alt='"._('Help')."'>&nbsp;&nbsp;";
 				echo "<table class='logoutBar'>";
 				echo "<tr><td class='headingtext3'>" . $db_connections[user_company()]["name"] . " | " . $_SERVER['SERVER_NAME'] . " | " . $_SESSION["wa_current_user"]->name . "</td>";
-				echo "<td class='logoutBarRight'><img id='ajaxmark' src='$indicator' align='center' style='visibility:hidden;' alt='ajaxmark'></td>";
+				echo "<td class='logoutBarRight'><img id='ajaxmark' src='$indicator' align='center' class='fa-hidden' alt='ajaxmark'></td>";
 				echo "<td class='logoutBarRight'><a href='$path_to_root/admin/dashboard.php?sel_app=$sel_app'>$rimg" . _("Dashboard") . "</a>&nbsp;&nbsp;&nbsp;\n";
 				
 				echo "<a class='shortcut' href='$path_to_root/admin/display_prefs.php?'>$pimg" . _("Preferences") . "</a>&nbsp;&nbsp;&nbsp;\n";
@@ -98,7 +98,7 @@
 			if ($no_menu)
 			{	// ajax indicator for installer and popups
 				echo "<center><table class='tablestyle_noborder'>"
-					."<tr><td><img id='ajaxmark' src='$indicator' align='center' style='visibility:hidden;' alt='ajaxmark'></td></tr>"
+					."<tr><td><img id='ajaxmark' src='$indicator' align='center' class='fa-hidden' alt='ajaxmark'></td></tr>"
 					."</table></center>";
 			} elseif ($title && !$is_index)
 			{

@@ -170,8 +170,10 @@ function submit(string|int|float|bool|null $name, string|int|float|bool|null $va
 	global $path_to_root;
 
 	$aspect='';
+	$hide = '';
 	if ($atype === null) {
-		$aspect = fallback_mode() ? " aspect='fallback'" : " style='display:none;'";
+		$aspect = fallback_mode() ? " aspect='fallback'" : '';
+		$hide = fallback_mode() ? '' : ' fa-none';
 
 	} elseif (!is_bool($atype)) { // necessary: switch uses '=='
 
@@ -198,7 +200,7 @@ function submit(string|int|float|bool|null $name, string|int|float|bool|null $va
 		}
 	}
 	$submit_str = "<button class=\""
-	    .((bool)$atype ? 'ajaxsubmit' : 'inputsubmit')
+	    .((bool)$atype ? 'ajaxsubmit' : 'inputsubmit') . $hide
 		."\" type=\"submit\""
 		.$aspect
 	    ." name=\"$name\"  id=\"$name\" value=\"$value\""
@@ -319,7 +321,7 @@ function set_icon(string|int|float|bool|null $icon, string|int|float|bool|null $
 	global $path_to_root;
 	if (basename($icon) === $icon) // standard icons does not contain path separator
 		$icon = "$path_to_root/themes/".user_theme()."/images/$icon";
-	return "<img src='$icon' style='vertical-align:middle;width:12px;height:12px;border:0;'".((bool)$title ? " title='$title'" : "")." >\n";	
+	return "<img src='$icon' class='fa-icon12'".((bool)$title ? " title='$title'" : "")." >\n";	
 }
 
 function button(string|int|float|bool|null $name, string|int|float|bool|null $value, string|int|float|bool|null $title=false, string|int|float|bool|null $icon=false,  string|int|float|bool|null $aspect=''): string
@@ -680,7 +682,7 @@ function date_cells(?string $label, string|int|float|bool|null $name, ?string $t
 		$calc_image = (file_exists("$path_to_root/themes/".user_theme()."/images/cal.gif")) ? 
 			"$path_to_root/themes/".user_theme()."/images/cal.gif" : "$path_to_root/themes/default/images/cal.gif";
 		$post_label = "<a tabindex='-1' href='#'".fa_action_attrs('date-picker', array($name)).">"
-		. "	<img src='$calc_image' style='vertical-align:middle;padding-bottom:4px;width:16px;height:16px;border:0;' alt='"._('Click Here to Pick up the date')."'></a>\n";
+		. "	<img src='$calc_image' class='fa-icon16' alt='"._('Click Here to Pick up the date')."'></a>\n";
 	}	
 	else
 		$post_label = "";
@@ -694,7 +696,7 @@ function date_cells(?string $label, string|int|float|bool|null $name, ?string $t
 
 	$aspect = (bool)$check ? 'aspect="cdate"' : '';
 	if ((bool)$check && (get_post($name) != Today()))
-		$aspect .= ' style="color:#FF0000"';
+		$class .= ' fa-red';
 
 	default_focus($name);
 	$size = (user_date_format()>3)?11:10; 
@@ -979,9 +981,9 @@ function inactive_control_cell(string|int|float|bool|null $id, string|int|float|
 //
 function inactive_control_row(array $th): void {
 	echo  "<tr><td colspan=".(count($th)).">"
-		."<div style='float:left;'>"
+		."<div class='fa-left'>"
 		. checkbox(null, 'show_inactive', null, true). _("Show also Inactive")
-		."</div><div style='float:right;'>"
+		."</div><div class='fa-right'>"
 		. submit('Update', _('Update'), false, '', null)
 		."</div></td></tr>";
 }

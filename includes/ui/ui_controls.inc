@@ -140,7 +140,7 @@ function table_section(string|int|float|bool|null $number=1, string|bool|null $w
 		echo "</table>\n";
 		output_hidden();
 		$width = ((bool)$width ? "width='$width'" : "");
-		echo "</td><td style='border-left:1px solid #cccccc;' $width>\n"; // outer table
+		echo "</td><td class='fa-border-l' $width>\n"; // outer table
 	}
 	echo "<table class='tablestyle_inner'>\n";
 }	
@@ -417,7 +417,7 @@ function div_start(string|int|float|bool|null $id='', ?string $trigger=null, boo
 
 	if ($non_ajax) { // div for non-ajax elements
    		array_push($ajax_divs, array($id, null));
-   		echo "<div style='display:none' class='js_only' ".($id !='' ? "id='$id'" : '').">";
+   		echo "<div class='js_only fa-none' ".($id !='' ? "id='$id'" : '').">";
 	} else { // ajax ready div
    		array_push($ajax_divs, array($id, $trigger===null ? $id : $trigger));
    		echo "<div ". ($id !='' ? "id='$id'" : '').">";

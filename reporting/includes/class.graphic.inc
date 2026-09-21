@@ -1107,7 +1107,7 @@ class Chart
 				// Display center text
 				if ($this->type == 6)
 					$cy += 5.0;
-				$this->svg->text($cx, $cy, $this->donut_title, $this->size, $this->color[0], "style=\"font-size:18px;font-weight:bold;\"", "middle");
+				$this->svg->text($cx, $cy, $this->donut_title, '18px', $this->color[0], "font-weight=\"bold\"", "middle");
 			}
 		}
 		else
@@ -1163,18 +1163,18 @@ class Chart
 	function draw_table()
 	{
 		$cs = $this->num_labels + 1;
-		$html = "<table cellspacing='0' //style='width:{$this->width}px;font-family:{$this->font};font-size:12px;background:inherit;'>\n";
+		$html = "<table cellspacing='0' width='{$this->width}' class='fa-chart-table'>\n";
 		if (!empty($this->title))
-			$html .= "<tr><th colspan=$cs style='text-align:center;'><h3>$this->title</th><tr>\n";
-		$html .= "<tr><th style='border-bottom:1px solid #444'>#</th>"; 
+			$html .= "<tr><th colspan=$cs class='fa-center'><h3>$this->title</th><tr>\n";
+		$html .= "<tr><th class='fa-th-line'>#</th>"; 
 		for ($i = 0; $i < $this->num_labels; $i++)
-			$html .= "<th style='text-align:right;border-bottom:1px solid #444'>{$this->labels[$i]}</th>";
+			$html .= "<th class='fa-th-line fa-text-right'>{$this->labels[$i]}</th>";
 		$html .= "</tr>\n";
 		for ($j = 0; $j < $this->num_series; $j++)
 		{
-			$html .= "<tr><td style=''>{$this->series[$j]['label']}</td>";
+			$html .= "<tr><td>{$this->series[$j]['label']}</td>";
 			for ($i = 0; $i < $this->num_labels; $i++)
-				$html .= "<td style='text-align:right;'>".number_format($this->series[$j]['data'][$i], 0)."</td>";
+				$html .= "<td class='fa-text-right'>".number_format($this->series[$j]['data'][$i], 0)."</td>";
 			$html .= "</tr>\n";
 		}
 		$html .= "</table>\n";
