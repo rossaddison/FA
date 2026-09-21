@@ -54,6 +54,10 @@ function yiiAssetManager(string $extraCss): AssetManager
 
 	// the bundles' base URL is '.', so a leading './' would be doubled
 	$css = array_map(fn(string $url): string => preg_replace('#^\./#', '', $url) ?? $url, cssUrls($extraCss));
+	// the layout is HTML5 (standards mode): a small style sheet keeps the pages the height they had before
+	// (after the calls above: Psalm forgets a global's type across a call)
+	global $path_to_root;
+	$css[] = preg_replace('#^\./#', '', $path_to_root . '/views/assets/html5.css') ?? '';
 	$userJs = array_map(fn(string $url): string => preg_replace('#^\./#', '', $url) ?? $url, $scripts['user']);
 
 	$bundles = array(

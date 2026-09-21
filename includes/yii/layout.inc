@@ -58,6 +58,7 @@ function yiiLayoutParts(string $title, string $onload, string $css, bool $withAs
 	global $path_to_root;
 
 	$view = yiiView();
+	$code = session_obj('language')->code;
 	if ($withAssets) {
 		yiiRegisterAssets($view, $css);
 	}
@@ -66,6 +67,7 @@ function yiiLayoutParts(string $title, string $onload, string $css, bool $withAs
 		'title' => $title,
 		'encoding' => session_obj('language')->encoding,
 		'dir' => session_obj('language')->dir,
+		'lang' => $code == 'C' ? 'en' : str_replace('_', '-', $code),
 		'favicon' => $path_to_root . '/themes/default/images/favicon.ico',
 		'onload' => $onload,
 		'content' => $marker,

@@ -1,0 +1,8 @@
+/*
+	Loaded with the Yii page shell, which is HTML5 (<!DOCTYPE html>, standards mode). FA's pages were built for the
+	almost-standards mode that HTML 4.01 Transitional gave them, where an image in a table cell does not leave room
+	for the text descender under it. Aligning images to the middle of the line gives them back that height.
+*/
+img {
+	vertical-align: middle;
+}
