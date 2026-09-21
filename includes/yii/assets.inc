@@ -31,7 +31,7 @@ use Yiisoft\View\WebView;
  * @param list<string> $css files inside $basePath
  * @param list<string> $js files inside $basePath
  */
-function yii_asset_bundle(string $basePath, string $baseUrl, array $css, array $js): AssetBundle
+function yiiAssetBundle(string $basePath, string $baseUrl, array $css, array $js): AssetBundle
 {
 	$bundle = new AssetBundle();
 	$bundle->basePath = (string)realpath($basePath);
@@ -46,20 +46,20 @@ function yii_asset_bundle(string $basePath, string $baseUrl, array $css, array $
  *
  * @param string $extraCss an extra style sheet for this page
  */
-function yii_asset_manager(string $extraCss): AssetManager
+function yiiAssetManager(string $extraCss): AssetManager
 {
-	// FA's own scripts are compressed and cached per user; script_files() makes sure the cache is current.
-	$scripts = script_files();
+	// FA's own scripts are compressed and cached per user; scriptFiles() makes sure the cache is current.
+	$scripts = scriptFiles();
 	$cacheDir = user_js_cache();
 
 	// the bundles' base URL is '.', so a leading './' would be doubled
-	$css = array_map(fn(string $url): string => preg_replace('#^\./#', '', $url) ?? $url, css_urls($extraCss));
+	$css = array_map(fn(string $url): string => preg_replace('#^\./#', '', $url) ?? $url, cssUrls($extraCss));
 	$userJs = array_map(fn(string $url): string => preg_replace('#^\./#', '', $url) ?? $url, $scripts['user']);
 
 	$bundles = array(
-		'fa.core-scripts' => yii_asset_bundle($cacheDir, $cacheDir, array(), array_map('basename', $scripts['static'])),
-		'fa.styles' => yii_asset_bundle('.', '.', $css, array()),
-		'fa.extension-scripts' => yii_asset_bundle('.', '.', array(), $userJs),
+		'fa.core-scripts' => yiiAssetBundle($cacheDir, $cacheDir, array(), array_map('basename', $scripts['static'])),
+		'fa.styles' => yiiAssetBundle('.', '.', $css, array()),
+		'fa.extension-scripts' => yiiAssetBundle('.', '.', array(), $userJs),
 	);
 
 	$aliases = new Aliases();
@@ -73,9 +73,9 @@ function yii_asset_manager(string $extraCss): AssetManager
 /**
  * Puts the page's style sheets and scripts on the view.
  */
-function yii_register_assets(WebView $view, string $extraCss): void
+function yiiRegisterAssets(WebView $view, string $extraCss): void
 {
-	$manager = yii_asset_manager($extraCss);
+	$manager = yiiAssetManager($extraCss);
 	$view->addCssFiles($manager->getCssFiles());
 	$view->addJsFiles($manager->getJsFiles());
 }

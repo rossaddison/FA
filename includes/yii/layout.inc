@@ -24,7 +24,7 @@ include_once(__DIR__ . '/menu.inc');
 /**
  * True when the Yii page shell is switched on and its dependencies are installed.
  */
-function yii_layout_enabled(): bool
+function yiiLayoutEnabled(): bool
 {
 	return (bool)sysprefs()->use_yii_layout && is_file(dirname(__DIR__, 2) . '/vendor/autoload.php');
 }
@@ -32,7 +32,7 @@ function yii_layout_enabled(): bool
 /**
  * The one view of the request. Its state (registered CSS and scripts) is cleared each time a layout is rendered.
  */
-function yii_view(): WebView
+function yiiView(): WebView
 {
 	/** @var WebView|null $view */
 	static $view = null;
@@ -53,13 +53,13 @@ function yii_view(): WebView
  * @param bool $withAssets false for the closing half, which must not register the head assets a second time
  * @return array{0: string, 1: string} the markup before the body, and the markup after it
  */
-function yii_layout_parts(string $title, string $onload, string $css, bool $withAssets): array
+function yiiLayoutParts(string $title, string $onload, string $css, bool $withAssets): array
 {
 	global $path_to_root;
 
-	$view = yii_view();
+	$view = yiiView();
 	if ($withAssets) {
-		yii_register_assets($view, $css);
+		yiiRegisterAssets($view, $css);
 	}
 	$marker = '<!--fa-page-content-->';
 	$html = $view->render('layout', array(

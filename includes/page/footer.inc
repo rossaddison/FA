@@ -41,8 +41,8 @@ function page_footer(string|int|float|bool|null $no_menu=false, bool $is_index=f
 		 echo "<div class='note_msg'>$sql_queries</div>";
 		div_end();
 	}
-	if (yii_layout_enabled())
-		echo yii_layout_parts('', '', '', false)[1]; // prototype: the closing half of views/layout.php
+	if (yiiLayoutEnabled())
+		echo yiiLayoutParts('', '', '', false)[1]; // prototype: the closing half of views/layout.php
 	else
 		echo "</body></html>\n";
 }

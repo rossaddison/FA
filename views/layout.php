@@ -2,15 +2,17 @@
 
 declare(strict_types=1);
 
-use Yiisoft\Html\Html;
+use Yiisoft\Html\Html as H;
 use Yiisoft\View\WebView;
 
 /**
- * The document skeleton of a FrontAccounting page, rendered by yiisoft/view when $use_yii_layout is on.
+ * The document skeleton of a FrontAccounting page, rendered by yiisoft/view when $use_yii_layout is on. It follows
+ * _html_php_conventions.php: everything through Yiisoft\Html\Html, one space of indent per nesting level, the same
+ * //N on every open and close tag. The doctype is the one piece of markup that library has no helper for.
  *
  * FA streams its output, so the page body is not available when the head is sent. The layout is rendered with a marker
  * where the body goes; includes/yii/layout.inc sends what comes before the marker at page() and what comes after it at
- * end_page(). The markup matches what page_header() and page_footer() echo (HTML 4.01 Transitional, as today), so the
+ * end_page(). The markup matches what page_header() and page_footer() echo (HTML 4.01 Transitional, as before), so the
  * themes and the JavaScript see the same document. CSS and script files are registered on the view and rendered by
  * $this->head() and $this->endBody().
  *
@@ -24,16 +26,28 @@ use Yiisoft\View\WebView;
  */
 
 $this->beginPage();
-?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html dir="<?= Html::encode($dir) ?>" >
-<head profile="http://www.w3.org/2005/10/profile"><title><?= $title ?></title><meta http-equiv='X-UA-Compatible' content='IE=10'>
-<meta http-equiv='Content-type' content='text/html; charset=<?= Html::encode($encoding) ?>'><link href='<?= Html::encode($favicon) ?>' rel='icon' type='image/x-icon'>
-<?php $this->head() ?>
-</head>
-<?= $onload === '' ? '<body>' : '<body onload="' . $onload . '">' ?>
-<?php $this->beginBody() ?>
-<?= $content ?>
-<?php $this->endBody() ?>
-</body></html>
-<?php $this->endPage() ?>
+echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">' . "\n";
+echo H::openTag('html', ['dir' => $dir]); //0
+ echo H::openTag('head', ['profile' => 'http://www.w3.org/2005/10/profile']); //1
+  echo H::tag('title', $title)
+   ->encode(false); //2
+  echo H::meta()
+   ->httpEquiv('X-UA-Compatible')
+   ->content('IE=10'); //2
+  echo H::meta()
+   ->httpEquiv('Content-type')
+   ->content('text/html; charset=' . $encoding); //2
+  echo H::link()
+   ->rel('icon')
+   ->type('image/x-icon')
+   ->href($favicon); //2
+  $this->head();
+ echo H::closeTag('head'); //1
+ $bodyAttributes = $onload === '' ? [] : ['onload' => $onload];
+ echo H::openTag('body', $bodyAttributes); //1
+  $this->beginBody();
+  echo $content;
+  $this->endBody();
+ echo H::closeTag('body'); //1
+echo H::closeTag('html'); //0
+$this->endPage();

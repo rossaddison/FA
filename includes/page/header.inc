@@ -51,7 +51,7 @@ function help_url(mixed $context=null): string
  *
  * @return list<string>
  */
-function css_urls(string|int|float|bool|null $css = ''): array
+function cssUrls(string|int|float|bool|null $css = ''): array
 {
 	css_files_ensure_init();
 
@@ -72,7 +72,7 @@ function css_urls(string|int|float|bool|null $css = ''): array
 
 function send_css(string|int|float|bool|null $css = ''): void
 {
-	foreach (css_urls($css) as $url)
+	foreach (cssUrls($css) as $url)
 	{
 		echo "<link href='$url' rel='stylesheet' type='text/css'> \n";
 	}
@@ -83,7 +83,7 @@ function send_css(string|int|float|bool|null $css = ''): void
  *
  * @return array{static: list<string>, user: list<string>}
  */
-function script_files(): array
+function scriptFiles(): array
 {
 	global $js_static, $js_path, $js_userlib;
 
@@ -109,15 +109,15 @@ function script_files(): array
 /**
  * @return list<string> every script file of the page, FA's own first
  */
-function script_urls(): array
+function scriptUrls(): array
 {
-	$files = script_files();
+	$files = scriptFiles();
 	return array_merge($files['static'], $files['user']);
 }
 function send_scripts(): void
 {
 	$js ='';
-	foreach(script_urls() as $url)
+	foreach(scriptUrls() as $url)
 	{
 	  	$js .= '<script language="javascript" type="text/javascript" src="'.
 			$url . '"></script>';
@@ -176,10 +176,10 @@ function page_header(string|int|float|bool|null $title, string|int|float|bool|nu
 	if (!headers_sent()){
 		header("Content-type: text/html; charset=$encoding");
 	}
-	if (yii_layout_enabled())
+	if (yiiLayoutEnabled())
 	{
 		// prototype: the document shell comes from views/layout.php (yiisoft/view)
-		echo yii_layout_parts((string)$title, (string)$onload, (string)$css, true)[0];
+		echo yiiLayoutParts((string)$title, (string)$onload, (string)$css, true)[0];
 	}
 	else
 	{

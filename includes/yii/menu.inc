@@ -13,70 +13,88 @@
 	Prototype: the default theme's page header and footer (tab bar, status bar, title, bottom line) as view templates.
 
 	themes/default/renderer.php calls these when the Yii page shell is on. They collect what the old echo code read
-	from globals and the session, and hand it to views/theme/default/menu_header.php and menu_footer.php.
+	from globals and the session, and hand it to views/theme/default/menuHeader.php and menuFooter.php.
+	The templates follow _html_php_conventions.php: everything through Yiisoft\Html\Html, one space of indent per level.
 */
 
 /**
- * @return string the header markup
+ * One of the links in the status bar, in the form the template loops over.
+ *
+ * @param array<string, string> $attributes the attributes of the <a>
+ * @return array{attributes: array<string, string>, icon: string, iconStyle: string, alt: string, label: string}
+ * @psalm-pure
  */
-function yii_menu_header(string $title, bool $noMenu, bool $isIndex): string
+function yiiMenuLink(array $attributes, string $icon, string $iconStyle, string $alt, string $label): array
+{
+	return array('attributes' => $attributes, 'icon' => $icon, 'iconStyle' => $iconStyle, 'alt' => $alt, 'label' => $label);
+}
+
+/**
+ * The header markup: the tab bar, the status bar and the page title. It leaves the page's wrapping table open; the
+ * footer closes it.
+ */
+function yiiMenuHeader(string $title, bool $noMenu, bool $isIndex): string
 {
 	global $path_to_root, $db_connections;
 
 	$images = $path_to_root . '/themes/' . (string)user_theme() . '/images';
 	$data = array(
 		'noMenu' => $noMenu,
-		'isIndex' => $isIndex,
-		'title' => $title,
 		'showTitle' => (bool)$title && !$isIndex,
-		'root' => $path_to_root,
-		'images' => $images,
+		'title' => $title,
 		'indicator' => $images . '/ajax-loader.gif',
+		'images' => $images,
 		'hints' => (bool)user_hints(),
 		'tabs' => array(),
-		'selectedApp' => '',
 		'status' => '',
-		'username' => '',
-		'helpUrl' => null,
-		't' => array(
-			'dashboard' => _('Dashboard'),
-			'preferences' => _('Preferences'),
-			'changePassword' => _('Change password'),
-			'changePasswordAlt' => _('Change Password'),
-			'help' => _('Help'),
-			'logout' => _('Logout'),
-		),
+		'links' => array(),
 	);
 	if (!$noMenu) {
 		/** @var front_accounting $app */
 		$app = $_SESSION['App'];
 		$user = session_obj('wa_current_user');
 		$selected = (string)$_SESSION['sel_app'];
+		$icon = 'width:14px;height:14px;border:0;vertical-align:middle;';
 		$tabs = array();
 		foreach ($app->applications as $application) {
 			if ($user->check_application_access($application)) {
 				$access = access_string($application->name);
-				$tabs[] = array(
+				$attributes = array(
 					'class' => $selected == $application->id ? 'selected' : 'menu_tab',
 					'href' => $path_to_root . '/index.php?application=' . (string)$application->id,
-					'access' => (string)$access[1],
-					'label' => (string)$access[0],
 				);
+				// access_string() answers " accesskey='X'"
+				if (preg_match("/accesskey='(.)'/", (string)$access[1], $key) === 1) {
+					$attributes['accesskey'] = $key[1];
+				}
+				$tabs[] = array('attributes' => $attributes, 'label' => (string)$access[0]);
 			}
 		}
+		$links = array(
+			yiiMenuLink(array('href' => $path_to_root . '/admin/dashboard.php?sel_app=' . $selected), 'report.png', $icon, _('Dashboard'), _('Dashboard')),
+			yiiMenuLink(array('class' => 'shortcut', 'href' => $path_to_root . '/admin/display_prefs.php?'), 'preferences.gif', 'width:14px;height:14px; border:0;vertical-align:middle;', _('Preferences'), _('Preferences')),
+			yiiMenuLink(array('class' => 'shortcut', 'href' => $path_to_root . '/admin/change_current_user_password.php?selected_id=' . $user->username), 'lock.gif', $icon, _('Change Password'), _('Change password')),
+		);
+		if (sysprefs()->help_base_url != null) {
+			// help_url() answers an HTML-encoded URL; the template encodes it again
+			$links[] = yiiMenuLink(array(
+				'target' => '_blank',
+				'onclick' => 'javascript:openWindow(this.href,this.target); return false;',
+				'href' => html_entity_decode(help_url()),
+			), 'help.gif', $icon, _('Help'), _('Help'));
+		}
+		$links[] = yiiMenuLink(array('class' => 'shortcut', 'href' => $path_to_root . '/access/logout.php?'), 'login.gif', $icon, _('Logout'), _('Logout'));
 		$data['tabs'] = $tabs;
-		$data['selectedApp'] = $selected;
+		$data['links'] = $links;
 		$data['status'] = $db_connections[(int)user_company()]['name'] . ' | ' . ($_SERVER['SERVER_NAME'] ?? '') . ' | ' . $user->name;
-		$data['username'] = $user->username;
-		$data['helpUrl'] = sysprefs()->help_base_url != null ? help_url() : null;
 	}
-	return yii_view()->render('theme/default/menu_header', $data);
+	return yiiView()->render('theme/default/menuHeader', $data);
 }
 
 /**
- * @return string the footer markup
+ * The footer markup: it closes the wrapping table the header left open, then the bottom status line and the footer block.
  */
-function yii_menu_footer(bool $noMenu, bool $isIndex): string
+function yiiMenuFooter(bool $noMenu, bool $isIndex): string
 {
 	global $version, $Pagehelp;
 
@@ -90,7 +108,7 @@ function yii_menu_footer(bool $noMenu, bool $isIndex): string
 		$now = Today() . ' | ' . Now();
 		ajax()->addUpdate(true, 'hotkeyshelp', $pageHelp);
 	}
-	return yii_view()->render('theme/default/menu_footer', array(
+	return yiiView()->render('theme/default/menuFooter', array(
 		'noMenu' => $noMenu,
 		'isIndex' => $isIndex,
 		'loggedIn' => $loggedIn,

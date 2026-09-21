@@ -34,9 +34,9 @@
 
 		function menu_header($title, $no_menu, $is_index)
 		{
-			if (yii_layout_enabled())
-			{	// prototype: the header comes from views/theme/default/menu_header.php
-				echo yii_menu_header((string)$title, (bool)$no_menu, (bool)$is_index);
+			if (yiiLayoutEnabled())
+			{	// prototype: the header comes from views/theme/default/menuHeader.php
+				echo yiiMenuHeader((string)$title, (bool)$no_menu, (bool)$is_index);
 				return;
 			}
 			global $path_to_root, $SysPrefs, $db_connections;
@@ -112,9 +112,9 @@
 
 		function menu_footer($no_menu, $is_index)
 		{
-			if (yii_layout_enabled())
-			{	// prototype: the footer comes from views/theme/default/menu_footer.php
-				echo yii_menu_footer((bool)$no_menu, (bool)$is_index);
+			if (yiiLayoutEnabled())
+			{	// prototype: the footer comes from views/theme/default/menuFooter.php
+				echo yiiMenuFooter((bool)$no_menu, (bool)$is_index);
 				return;
 			}
 			global $version, $path_to_root, $Pagehelp, $Ajax, $SysPrefs;
