@@ -484,7 +484,7 @@ function array_selector_row(?string $label, ?string $name, string|int|float|bool
 }
 
 //----------------------------------------------------------------------------------------------
-function _format_add_curr(array|false|null $row, string|int|float|bool|null $pname=false): string
+function _format_add_curr(array $row, string|int|float|bool|null $pname=false): string
 {
 	static $company_currency;
 
@@ -760,7 +760,7 @@ function fiscalyears_list(string|int|float|bool|null $name, string|int|float|boo
 		) );
 }
 
-function _format_fiscalyears(array|false|null $row): string
+function _format_fiscalyears(array $row): string
 {
 	return sql2date($row[1]) . "&nbsp;-&nbsp;" . sql2date($row[2])
 	. "&nbsp;&nbsp;" . ((bool)$row[3] ? _('Closed') : _('Active'));
@@ -861,7 +861,7 @@ function stock_items_list(string|int|float|bool|null $name, string|int|float|boo
 	return $ret;
 }
 
-function _format_stock_items(array|false|null $row): string
+function _format_stock_items(array $row): string
 {
 	return (user_show_codes() ?  ($row[0] . "&nbsp;-&nbsp;") : "") . $row[1];
 }
@@ -1389,7 +1389,7 @@ function sales_groups_list_row(?string $label, ?string $name, string|int|float|b
 //------------------------------------------------------------------------------------
 
 /** @psalm-pure */
-function _format_template_items(array|false|null $row): string
+function _format_template_items(array $row): string
 {
 	return ($row[0] . "&nbsp;- &nbsp;" . _("Amount") . "&nbsp;".$row[1]);
 }
@@ -1531,7 +1531,7 @@ function sales_types_list_row(?string $label, ?string $name, string|int|float|bo
 
 //-----------------------------------------------------------------------------------------------
 
-function _format_date(array|false|null $row): string
+function _format_date(array $row): string
 {
 	return sql2date($row['reconciled']);
 }
@@ -1882,7 +1882,7 @@ function gl_all_accounts_list(string|int|float|bool|null $name, string|int|float
 }
 
 /** @psalm-pure */
-function _format_account(array|false|null $row): string
+function _format_account(array $row): string
 {
 	return $row[0] .  "&nbsp;&nbsp;&nbsp;&nbsp;" . $row[1];
 }
@@ -2518,7 +2518,7 @@ function extset_list(?string $name, string|int|float|bool|null $value=null, bool
 }
 
 /** @return non-empty-string */
-function crm_category_types_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|array|null $filter=array(), bool $submit_on_change=true)
+function crm_category_types_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, array $filter=array(), bool $submit_on_change=true)
 {
 
 	$sql = "SELECT id, name, type, inactive FROM ".TB_PREF."crm_categories";
@@ -2547,7 +2547,7 @@ function crm_category_types_list(string|int|float|bool|null $name, string|int|fl
 	 	));
 }
 
-function crm_category_types_list_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null|array $filter=array(), bool $submit_on_change=true): void
+function crm_category_types_list_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, array $filter=array(), bool $submit_on_change=true): void
 {
 	echo "<tr><td class='label'>$label</td><td>";
 	echo crm_category_types_list($name, $selected_id, $filter, $submit_on_change);
