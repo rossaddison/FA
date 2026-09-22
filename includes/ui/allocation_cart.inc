@@ -261,7 +261,7 @@ class allocation
 				if ($allocatable > 0) {
 					if ($amount >= $allocatable) {
 						$alloc_item->current_allocated = $allocatable;
-						$amount -= (float)$allocatable;
+						$amount -= $allocatable;
 					} else {
 						$alloc_item->current_allocated += (float)$amount;
 						break;
@@ -439,7 +439,7 @@ function show_allocatable(bool $show_totals): void {
     	    }
 	        else
         		$font1 = $font2 = "";
-			$left_to_allocate = price_format((float)$amount - (float)$total_allocated);
+			$left_to_allocate = price_format((float)$amount - $total_allocated);
 	        label_row(_("Left to Allocate"), $font1 . $left_to_allocate . $font2, 
 				"colspan=8 align=right", "nowrap align=right id='left_to_allocate'",
 				 3);
@@ -506,7 +506,7 @@ function check_allocations(): bool
 
 	$amount = abs(session_obj('alloc')->amount);
 
-	if ((float)$total_allocated - ((float)((float)$amount + (float)input_num('discount')))  > sysprefs()->allocation_settled_allowance())
+	if ($total_allocated - (((float)$amount + (float)input_num('discount')))  > sysprefs()->allocation_settled_allowance())
 	{
 		display_error(_("These allocations cannot be processed because the amount allocated is more than the total amount left to allocate."));
 		return false;

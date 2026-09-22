@@ -55,7 +55,7 @@ function copy_to_trans(?supp_trans &$supp_trans): void
 	{
 		foreach ( $supp_trans->grn_items as $grn)
 		{
-			$supp_trans->ov_amount += (float)round2(($grn->this_quantity_inv * $grn->chg_price),
+			$supp_trans->ov_amount += round2(($grn->this_quantity_inv * $grn->chg_price),
 			  user_price_dec());
 		}
 	}
@@ -556,7 +556,7 @@ function display_grn_items(supp_trans &$supp_trans, ?int $mode=0): int|float
 			}	
 			end_row();
 
-    		$total_grn_value += (float)round2($entered_grn->chg_price * abs($entered_grn->this_quantity_inv),
+    		$total_grn_value += round2($entered_grn->chg_price * abs($entered_grn->this_quantity_inv),
 			   user_price_dec());
 
     		$i++;

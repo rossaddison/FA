@@ -141,8 +141,8 @@ function print_salesman_list(): void
 			$rep->TextCol(6, 7,	number_format2($myrow['provision2'], user_percent_dec()) ." %");
 			$rep->NewLine(2);
 			$salesman = $myrow['salesman_code'];
-			$total += (float)$subtotal;
-			$provtotal += (float)$subprov;
+			$total += $subtotal;
+			$provtotal += $subprov;
 			$subtotal = 0.0;
 			$subprov = 0.0;
 		}
@@ -151,10 +151,10 @@ function print_salesman_list(): void
 		if ($myrow['provision2'] == 0)
 			$prov = (float)$myrow['provision'] * (float)$amt / 100.0;
 		else {
-			$amt1 = min($amt, max(0, (float)$myrow['break_pt']-(float)$subtotal));
+			$amt1 = min($amt, max(0, (float)$myrow['break_pt']-$subtotal));
 			$amt2 = (float)$amt - (float)$amt1;
 
-			$prov = (float)$amt1*(float)$myrow['provision']/100.0 + (float)$amt2*(float)$myrow['provision2']/100.0;
+			$prov = (float)$amt1*(float)$myrow['provision']/100.0 + $amt2*(float)$myrow['provision2']/100.0;
 		}
 		if (!(bool)$summary)
 		{
@@ -168,7 +168,7 @@ function print_salesman_list(): void
 			$rep->NewLine();
 		}
 		$subtotal += (float)$amt;
-		$subprov += (float)$prov;
+		$subprov += $prov;
 	}
 	if ($salesman != 0)
 	{
@@ -179,8 +179,8 @@ function print_salesman_list(): void
 		$rep->AmountCol(6, 7, $subprov, $dec);
 		$rep->Line($rep->row  - 4.0);
 		$rep->NewLine(2);
-		$total += (float)$subtotal;
-		$provtotal += (float)$subprov;
+		$total += $subtotal;
+		$provtotal += $subprov;
 	}
 	$rep->fontSize += 2;
 	$rep->TextCol(0, 3, _('Grand Total'));

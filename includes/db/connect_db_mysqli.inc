@@ -52,7 +52,7 @@ function db_query(string $sql, ?string $err_msg=null): mysqli_result|bool
 
 	// set current db prefix
 	$comp = isset(session_obj('wa_current_user')->cur_con) ? session_obj('wa_current_user')->cur_con : 0;
-	$cur_prefix = (string)@$db_connections[$comp]['tbpref'];
+	$cur_prefix = @$db_connections[$comp]['tbpref'];
 	$sql = str_replace(TB_PREF, $cur_prefix, $sql);
 
 	if (sysprefs()->show_sql)

@@ -50,7 +50,7 @@ function write_supp_payment(?int $trans_no, string|int|float|bool|null $supplier
 
 	$total = 0.0;
     $supplier_accounts = row_or_empty(get_supplier_accounts($supplier_id));
-	$total += (float)add_gl_trans_supplier(ST_SUPPAYMENT, $payment_id, $date_, $supplier_accounts["payable_account"], $dimension, $dimension2,
+	$total += add_gl_trans_supplier(ST_SUPPAYMENT, $payment_id, $date_, $supplier_accounts["payable_account"], $dimension, $dimension2,
 		$supp_amount + $supp_discount, $supplier_id, "", $rate);
 
 	// Now credit discount received account with discounts

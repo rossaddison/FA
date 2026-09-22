@@ -265,7 +265,7 @@ class purch_order
 			$items[] = $ln_itm->stock_id;
 			$value = round((float)$ln_itm->quantity * (float)$ln_itm->price, $dec);
 			$prices[] =$value;
-			$total += (float)$value;
+			$total += $value;
 		}
 
 		if (!(bool)$this->tax_included ) {
@@ -273,7 +273,7 @@ class purch_order
 			$this->tax_included,  $this->tax_group_array);
 
 			foreach($taxes as $tax)
-				$total += (float)round($tax['Value'], $dec);
+				$total += round($tax['Value'], $dec);
 		}
 		return $total;
 	}

@@ -65,9 +65,9 @@ function round_to_nearest(string|int|float|bool|null $price, string|int|float|bo
 	else
 		$mod = ($round_to % $pow);
 	if ($mod != 0)
-		$price = (float)ceil($price) - (float)(((float)($pow - $round_to)) / (float)$pow);
+		$price = ceil($price) - (((float)($pow - $round_to)) / (float)$pow);
 	else	
-    	$price = (float)ceil($price * ($pow / $round_to)) / ((float)($pow / $round_to));
+    	$price = ceil($price * ($pow / $round_to)) / ((float)($pow / $round_to));
     return $price;
 
 }
@@ -124,7 +124,7 @@ function get_price (string|int|float|bool|null $stock_id, string|int|float|bool|
 	{
 		$price = get_calculated_price($stock_id, $add_pct);
 		if ($currency != $home_curr)
-			$price /= (float)$rate;
+			$price /= $rate;
 		if ($factor != 0)
 			$price *= $factor;
 	}	

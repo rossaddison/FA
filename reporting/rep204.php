@@ -134,8 +134,8 @@ function print_outstanding_GRN(): void
 		$rep->AmountCol(5, 6, $QtyOstg, $dec2);
 		$rep->AmountCol(6, 7, $GRNs['act_price'], $dec);
 		$rep->AmountCol(7, 8, $Value, $dec);
-		$Tot_Val += (float)$Value;
-		$SuppTot_Val += (float)$Value;
+		$Tot_Val += $Value;
+		$SuppTot_Val += $Value;
 
 		$rep->NewLine(0, 1);
 	}

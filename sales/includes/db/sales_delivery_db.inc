@@ -38,13 +38,13 @@ function write_sales_delivery(Cart &$delivery,string|int|float|bool|null $bo_pol
 
 	foreach ($taxes as $taxitem) {
 		$taxitem['Value'] =  round2($taxitem['Value'], user_price_dec());
-		$tax_total +=  (float)$taxitem['Value'];
+		$tax_total +=  $taxitem['Value'];
 	}
 	/* Insert/update the debtor_trans */
 	$delivery_no = write_customer_trans(ST_CUSTDELIVERY, $trans_no, $delivery->customer_id,
 		$delivery->Branch, $delivery->document_date, $delivery->reference,
 		$delivery_items_total, 0,
-		$delivery->tax_included ? 0 : (float)$tax_total-(float)$freight_tax,
+		$delivery->tax_included ? 0 : $tax_total-$freight_tax,
 		$delivery->freight_cost,
 		$delivery->tax_included ? 0 : $freight_tax,
 		$delivery->sales_type, $delivery->order_no,

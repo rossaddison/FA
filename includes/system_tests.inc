@@ -265,9 +265,9 @@ function tst_langs(mixed $install): array
 		if ($lang['code'] == 'C') continue; // no translation (English)
 		$langs[] = $lang['code'];
 
-		$file = $path_to_root.'/lang/'.(string)$lang['code'].'/LC_MESSAGES/'.(string)$lang['code'];
+		$file = $path_to_root.'/lang/'.$lang['code'].'/LC_MESSAGES/'.$lang['code'];
 		if (@$lang['version'])
-			$file .= '-'.(string)$lang['version'];
+			$file .= '-'.$lang['version'];
 		$file .= function_exists('gettext') ? '.mo' : '.po';
 
 		if (!is_file($file)) {
@@ -277,7 +277,7 @@ function tst_langs(mixed $install): array
 		if (!$GetText->check_support($lang['code'], $lang['encoding']))
 		{
 			$test['result'] = false;
-			$test['comments'][] = sprintf(_('Missing system locale: %s'), (string)$lang['code'].".".(string)$lang['encoding']);
+			$test['comments'][] = sprintf(_('Missing system locale: %s'), $lang['code'].".".$lang['encoding']);
 		};
 	}
 

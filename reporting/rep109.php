@@ -102,7 +102,7 @@ function print_sales_orders(): void
 			   user_price_dec());
 			$prices[] = $Net;
 			$items[] = $myrow2['stk_code'];
-			$SubTotal += (float)$Net;
+			$SubTotal += $Net;
 			$DisplayPrice = number_format2($myrow2["unit_price"],$dec);
 			$DisplayQty = number_format2($myrow2["quantity"],get_qty_dec($myrow2['stk_code']));
 			$DisplayNet = number_format2($Net,$dec);
@@ -147,7 +147,7 @@ function print_sales_orders(): void
 			$rep->TextCol(6, 7,	$DisplayFreight, -2);
 			$rep->NewLine();
 		}	
-		$DisplayTotal = number_format2((float)$myrow["freight_cost"] + (float)$SubTotal, $dec);
+		$DisplayTotal = number_format2((float)$myrow["freight_cost"] + $SubTotal, $dec);
 		if ($myrow['tax_included'] == 0) {
 			$rep->TextCol(3, 6, _("TOTAL ORDER EX VAT"), - 2);
 			$rep->TextCol(6, 7,	$DisplayTotal, -2);

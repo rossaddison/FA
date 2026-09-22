@@ -107,9 +107,9 @@ function print_credits(): void
 			if ($myrow2["quantity"] == 0)
 				continue;
 
-			$Net = round2((float)$sign * ((float)((1.0 - (float)$myrow2["discount_percent"]) * (float)$myrow2["unit_price"] * (float)$myrow2["quantity"])),
+			$Net = round2((float)$sign * (((1.0 - (float)$myrow2["discount_percent"]) * (float)$myrow2["unit_price"] * (float)$myrow2["quantity"])),
 			   user_price_dec());
-			$SubTotal += (float)$Net;
+			$SubTotal += $Net;
 			$DisplayPrice = number_format2($myrow2["unit_price"],$dec);
 			$DisplayQty = number_format2((float)$sign*(float)$myrow2["quantity"],get_qty_dec($myrow2['stock_id']));
 			$DisplayNet = number_format2($Net,$dec);
@@ -192,7 +192,7 @@ function print_credits(): void
 			$rep->NewLine();
 		}
 		$rep->NewLine();
-		$DisplayTotal = number_format2((float)$sign*((float)((float)$myrow["ov_freight"] + (float)$myrow["ov_gst"] +
+		$DisplayTotal = number_format2((float)$sign*(((float)$myrow["ov_freight"] + (float)$myrow["ov_gst"] +
 			(float)$myrow["ov_amount"]+(float)$myrow["ov_freight_tax"])),$dec);
 		$rep->Font('bold');
 		$rep->TextCol(3, 6, _("TOTAL CREDIT"), - 2);

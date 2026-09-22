@@ -112,7 +112,7 @@ function print_deliveries(): void
 
 				$Net = round2(((1.0 - (float)$myrow2["discount_percent"]) * (float)$myrow2["unit_price"] * (float)$myrow2["quantity"]),
 				   user_price_dec());
-				$SubTotal += (float)$Net;
+				$SubTotal += $Net;
 	    		$DisplayPrice = number_format2($myrow2["unit_price"],$dec);
 	    		$DisplayQty = number_format2($myrow2["quantity"],get_qty_dec($myrow2['stock_id']));
 	    		$DisplayNet = number_format2($Net,$dec);

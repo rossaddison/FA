@@ -327,7 +327,7 @@ class data_set extends record_set {
 			$order_by = (array)$order_by;
 			foreach($order_by as $i => $fld)
 				$order_by[$i] = '`'.$fld.'`';
-			$sql .= " ORDER BY ".implode(',', (array)$order_by);
+			$sql .= " ORDER BY ".implode(',', $order_by);
 		}
 		$result = db_query($sql);
 		if ($result==false)

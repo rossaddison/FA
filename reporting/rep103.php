@@ -185,9 +185,9 @@ function print_customer_details_listing(): void
 		if ($more != '' || $less != '')
 		{
 			$turnover = getTransactions($myrow['debtor_no'], $myrow['branch_code'], $from);
-			if ($more != 0.0 && $turnover <= (float)$more)
+			if ($more != 0.0 && $turnover <= $more)
 				$printcustomer = false;
-			if ($less != 0.0 && $turnover >= (float)$less)
+			if ($less != 0.0 && $turnover >= $less)
 				$printcustomer = false;
 		}
 		if ($printcustomer)

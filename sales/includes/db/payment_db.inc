@@ -60,7 +60,7 @@ function write_customer_payment(string|int|float|bool|null $trans_no, string|int
 	$total = 0.0;
 
 	/* Bank account entry first */
-	$total += (float)add_gl_trans(ST_CUSTPAYMENT, $payment_no, $date_,
+	$total += add_gl_trans(ST_CUSTPAYMENT, $payment_no, $date_,
 		$bank_gl_account, $dim1, $dim2, '', ($bank_amount - $charge),  $bank['bank_curr_code'], PT_CUSTOMER, $customer_id);
 
 	if ($branch_id != ANY_NUMERIC) {

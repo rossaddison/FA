@@ -57,7 +57,7 @@ function barcode_check(?string $code, bool $return_value = false, bool $get_type
 	$skip_coupon_codes = true;
 
 	//Trims parsed string to remove unwanted whitespace or characters
-	$code = (string)trim($code); 
+	$code = trim($code); 
 	if (preg_match('/[^0-9]/', $code))
 		return false;
 
@@ -85,7 +85,7 @@ function barcode_check(?string $code, bool $return_value = false, bool $get_type
 			if ($get_type)
 				return 'EAN';
 			else
-				return (string)substr($code, ($return_value ? -14 : -13));
+				return substr($code, ($return_value ? -14 : -13));
 		}
 		elseif (substr($code, 6, 1) == 0 && substr($code, 0, 10) == 0)
 		{
@@ -93,7 +93,7 @@ function barcode_check(?string $code, bool $return_value = false, bool $get_type
 			if ($get_type)
 				return 'EAN-8';
 			else
-				return (string)substr($code, ($return_value ? -14 : -8));
+				return substr($code, ($return_value ? -14 : -8));
 		}
 		elseif (substr($code, 5, 1) <= 0)
 		{
@@ -109,7 +109,7 @@ function barcode_check(?string $code, bool $return_value = false, bool $get_type
 			{
 				if ($skip_coupon_codes && substr($code, 6, 1) == 5)
 					return false;
-				return (string)substr($code, ($return_value ? -14 : -12));
+				return substr($code, ($return_value ? -14 : -12));
 			}
 		}
 		elseif (substr($code, 0, 6) == 0)
@@ -118,7 +118,7 @@ function barcode_check(?string $code, bool $return_value = false, bool $get_type
 			if ($get_type)
 				return 'GTIN-14';
 			else
-				return (string)substr($code, -14);
+				return substr($code, -14);
 		}
 		else
 		{
@@ -126,7 +126,7 @@ function barcode_check(?string $code, bool $return_value = false, bool $get_type
 			if ($get_type)
 				return 'EAN';
 			else
-				return (string)substr($code,($return_value ? -14 : -13));
+				return substr($code,($return_value ? -14 : -13));
 		}
 	}
 	else

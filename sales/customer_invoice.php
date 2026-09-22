@@ -578,7 +578,7 @@ foreach (session_obj('Items')->line_items as $line=>$ln_itm) {
 			$dn_line_cnt = $dspans[0];
 			$dspans = array_slice($dspans, 1);
 			label_cell($ln_itm->src_no, "rowspan=$dn_line_cnt class='oddrow'");
-			label_cell("<a href='" . (string)$_SERVER['PHP_SELF'] . "?RemoveDN=".
+			label_cell("<a href='" . $_SERVER['PHP_SELF'] . "?RemoveDN=".
 				$ln_itm->src_no."'>" . _("Remove") . "</a>", "rowspan=$dn_line_cnt class='oddrow'");
 		}
 		$dn_line_cnt--;

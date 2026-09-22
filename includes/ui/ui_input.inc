@@ -444,7 +444,7 @@ function radio(?string $label, ?string $name, string|int|float|bool|null $value,
 		$selected = get_post($name) === (string)$value;
 
 	return "<input type='radio' name=$name value='$value' ".($selected ? "checked":'')
-	    .((bool)$submit_on_change ? fa_action_attrs('submit-update', array($name)) : '')
+	    .($submit_on_change ? fa_action_attrs('submit-update', array($name)) : '')
 		.">".((bool)$label ? $label : '');
 }
 

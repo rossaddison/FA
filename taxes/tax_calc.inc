@@ -50,7 +50,7 @@ function get_tax_free_price_for_item(string|int|float|bool|null $stock_id, strin
 	$tax = 0.0;
 	foreach ($tax_array as $taxitem)
 	{
-		$tax += (float)round($price*(float)$taxitem['rate']/(100+$tax_multiplier), user_price_dec());
+		$tax += round($price*(float)$taxitem['rate']/(100+$tax_multiplier), user_price_dec());
 	}
 	return $price-$tax;
 }
@@ -171,7 +171,7 @@ function get_tax_for_items(array $items, array $prices, string|int|float|bool|nu
 		$item_taxes = get_taxes_for_item($items[$i], $ret_tax_array);
 		if ($item_taxes == null || $fully_exempt) 
 		{
-			  $ret_tax_array['exempt']['Value'] += (float)round2(0, $dec);
+			  $ret_tax_array['exempt']['Value'] += round2(0, $dec);
 			  $ret_tax_array['exempt']['Net'] += $prices[$i];
 		}
 		else
@@ -186,10 +186,10 @@ function get_tax_for_items(array $items, array $prices, string|int|float|bool|nu
 				if ($item_tax['rate'] !== null) {
 					$index = $item_tax['tax_type_id'];
 					if ($tax_included == 1) {
-					  	$ret_tax_array[$index]['Value'] += (float)round2($prices[$i]*$item_tax['rate']/(100.0+$tax_multiplier), $dec);
-					  	$ret_tax_array[$index]['Net'] += (float)round2($prices[$i]*100.0/(100.0+$tax_multiplier), $dec);
+					  	$ret_tax_array[$index]['Value'] += round2($prices[$i]*$item_tax['rate']/(100.0+$tax_multiplier), $dec);
+					  	$ret_tax_array[$index]['Net'] += round2($prices[$i]*100.0/(100.0+$tax_multiplier), $dec);
 					} else {
-					  	$ret_tax_array[$index]['Value'] += (float)round2($prices[$i] * $item_tax['rate'] / 100.0, $dec);
+					  	$ret_tax_array[$index]['Value'] += round2($prices[$i] * $item_tax['rate'] / 100.0, $dec);
 					  	$ret_tax_array[$index]['Net'] += $prices[$i];
 					}
 				}
@@ -219,10 +219,10 @@ function get_tax_for_items(array $items, array $prices, string|int|float|bool|nu
 				$index = $item_tax['tax_type_id'];
 				if ($item_tax['rate'] !== null && $ret_tax_array[$index]['rate'] !== null) {
 					if($tax_included==1) {
-					   	$ret_tax_array[$index]['Value'] += (float)round2($shipping_cost*(float)$item_tax['rate']/(100.0+$tax_rate), $dec);
+					   	$ret_tax_array[$index]['Value'] += round2($shipping_cost*(float)$item_tax['rate']/(100.0+$tax_rate), $dec);
 					   	$ret_tax_array[$index]['Net'] += $shipping_net;
 					} else {
-						$ret_tax_array[$index]['Value'] += (float)round2($shipping_cost * (float)$item_tax['rate'] / 100.0, $dec);
+						$ret_tax_array[$index]['Value'] += round2($shipping_cost * (float)$item_tax['rate'] / 100.0, $dec);
 					   	$ret_tax_array[$index]['Net'] += $shipping_cost;
 					}
 				}

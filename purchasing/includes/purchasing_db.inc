@@ -210,7 +210,7 @@ function add_direct_supp_trans(?object $cart)
 		$inv->add_grn_to_trans($line->grn_item_id, $line->po_detail_rec, $line->stock_id,
 			$line->item_description, $line->receive_qty, 0, $line->receive_qty,
 			$line->price, $line->price, true, get_unit_cost($line->stock_id), '');
-		$total += (float)round2(($line->receive_qty * $line->price), user_price_dec());
+		$total += round2(($line->receive_qty * $line->price), user_price_dec());
 	}
 	$inv->tax_overrides = $cart->tax_overrides;
 	if (!(bool)$inv->tax_included) {

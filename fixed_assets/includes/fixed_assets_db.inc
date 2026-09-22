@@ -32,7 +32,7 @@ function process_fixed_asset_depreciation(string|null $stock_id, ?array $gl_rows
 
   $value_of_change = 0.0;
   foreach ($gl_rows as $row) {
-    $value_of_change += (float)round2($row['value'], user_price_dec());
+    $value_of_change += round2($row['value'], user_price_dec());
 
     $cart->add_gl_item($stock_gl_code["adjustment_account"],
         $stock_gl_code["dimension_id"], $stock_gl_code["dimension2_id"], -$row['value'],

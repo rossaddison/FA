@@ -68,7 +68,7 @@ function defaultCompany()
     if (!@sysprefs()->text_company_selection) {
         echo "<tr><td>"._("Company")."</td><td><select name='company_login_name'>\n";
         for ($i = 0; $i < count($db_connections); $i++)
-            echo "<option value=$i ".($i==$coy ? 'selected':'') .">" . (string)$db_connections[$i]["name"] . "</option>";
+            echo "<option value=$i ".($i==$coy ? 'selected':'') .">" . $db_connections[$i]["name"] . "</option>";
         echo "</select>\n";
         echo "</td></tr>";
     } else {

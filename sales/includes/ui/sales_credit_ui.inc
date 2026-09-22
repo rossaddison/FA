@@ -200,7 +200,7 @@ function display_credit_items(?string $title, Cart &$order): void
 	    credit_edit_item_controls($order, $k, $line_no);
 	}
 
-	$subtotal += (float)$line_total;
+	$subtotal += $line_total;
     }
 
     if ($id==-1)
@@ -222,7 +222,7 @@ function display_credit_items(?string $title, Cart &$order): void
 
     $tax_total = display_edit_tax_items($taxes, $colspan, $order->tax_included, 2);
 
-    $display_total = price_format(((float)$subtotal + (float)$_POST['ChargeFreightCost'] + $tax_total));
+    $display_total = price_format(($subtotal + (float)$_POST['ChargeFreightCost'] + $tax_total));
 
     label_row(_("Credit Note Total"), $display_total, "colspan=$colspan align=right","class='amount'", 2);
 
@@ -279,7 +279,7 @@ function credit_edit_item_controls(Cart &$order, string|int|float|bool|null $row
 	amount_cells(null, 'price');
 	small_amount_cells(null, 'Disc', percent_format(post_scalar('Disc')), null, null, user_percent_dec());
 
-	amount_cell((float)input_num('qty') * (float)input_num('price') * (1.0 - (float)((float)input_num('Disc')/100.0)), false, '', 'line_total');
+	amount_cell((float)input_num('qty') * (float)input_num('price') * (1.0 - ((float)input_num('Disc')/100.0)), false, '', 'line_total');
 
 	if ($id!=-1)
 	{

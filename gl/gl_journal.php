@@ -149,7 +149,7 @@ function create_cart(string|int|null $type=0, string|int|null $trans_no=0): void
                 if (!(bool)is_tax_account($gl->code_id) && !(bool)is_subledger_account($gl->code_id))
 					$net_sum += (float)$gl->amount;
 
-			$ex_net = (float)abs($net_sum) - (float)array_sum($tax_info['net_amount']);
+			$ex_net = abs($net_sum) - (float)array_sum($tax_info['net_amount']);
 			if ($ex_net > 0)
 				$tax_info['net_amount_ex'] = $ex_net;
 		}

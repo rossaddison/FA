@@ -73,10 +73,10 @@ if (isset($_POST['go']) || isset($_POST['show']))
 			$date  = end_month($date_); // avoid skip on shorter months
 		}
 		
-		$lastdate = ($freq == 1 ? add_days($date_, 7.0*(float)$per) :
-			($freq == 2 ? add_days($date_, 14.0*(float)$per) :
+		$lastdate = ($freq == 1 ? add_days($date_, 7.0*$per) :
+			($freq == 2 ? add_days($date_, 14.0*$per) :
 			($freq == 3 ? end_month(add_months($date_, $per)) : 
-			end_month(add_months($date_, 3.0*(float)$per)))));
+			end_month(add_months($date_, 3.0*$per)))));
 		if (!is_date_in_fiscalyears($lastdate, false))
 		{
 			display_error(_("Some of the period dates are outside the fiscal year or are closed for further data entry. Create a new fiscal year first!"));
@@ -87,8 +87,8 @@ if (isset($_POST['go']) || isset($_POST['show']))
 		{
 			$amount = input_num('amount');
 			$am = round2((float)$amount / (float)$periods, user_price_dec());
-			if ((float)$am * (float)$periods != $amount)
-				$am0 = (float)$am + (float)$amount - (float)$am * (float)$periods;
+			if ($am * (float)$periods != $amount)
+				$am0 = $am + (float)$amount - $am * (float)$periods;
 			else
 				$am0 = $am;
 			if (get_post('memo_') != "")
@@ -160,7 +160,7 @@ if (isset($_POST['go']) || isset($_POST['show']))
 						label_cell("");
 					if ($dim > 1)
 						label_cell("");
-					display_debit_or_credit_cells((float)$am0 * (float)(-1));
+					display_debit_or_credit_cells($am0 * (float)(-1));
 					label_cell($memo);
 					alt_table_row_color($k);
 					label_cell($date);

@@ -122,9 +122,9 @@ function print_supplier_details_listing(): void
 		if ($more != '' || $less != '')
 		{
 			$turnover = getTransactions($myrow['supplier_id'], $from);
-			if ($more != 0.0 && $turnover <= (float)$more)
+			if ($more != 0.0 && $turnover <= $more)
 				$printsupplier = false;
-			if ($less != 0.0 && $turnover >= (float)$less)
+			if ($less != 0.0 && $turnover >= $less)
 				$printsupplier = false;
 		}
 		if ($printsupplier)

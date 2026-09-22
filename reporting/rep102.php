@@ -176,9 +176,9 @@ function print_aged_customer_analysis(): void
 		$rep->TextCol(0, 2, (string)$myrow["name"].($myrow['inactive']==1 ? " ("._("Inactive").")" : ""));
 		if ($convert) $rep->TextCol(2, 3,	$myrow['curr_code']);
 		$rep->fontSize -= 2;
-		$total[0] += ((float)((float)$custrec["Balance"] - (float)$custrec["Due"]));
-		$total[1] += ((float)((float)$custrec["Due"]-(float)$custrec["Overdue1"]));
-		$total[2] += ((float)((float)$custrec["Overdue1"]-(float)$custrec["Overdue2"]));
+		$total[0] += (((float)$custrec["Balance"] - (float)$custrec["Due"]));
+		$total[1] += (((float)$custrec["Due"]-(float)$custrec["Overdue1"]));
+		$total[2] += (((float)$custrec["Overdue1"]-(float)$custrec["Overdue2"]));
 		$total[3] += $custrec["Overdue2"];
 		$total[4] += $custrec["Balance"];
 		for ($i = 0; $i < count($str); $i++)

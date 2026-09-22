@@ -271,7 +271,7 @@ class supp_trans
 			$tax_group = null;
 
 		foreach ($this->grn_items as $ln_itm)
-    		$total += (float)round(($ln_itm->this_quantity_inv * $ln_itm->taxfree_charge_price($tax_group_id, $tax_group)),
+    		$total += round(($ln_itm->this_quantity_inv * $ln_itm->taxfree_charge_price($tax_group_id, $tax_group)),
 			 user_price_dec());
 
    		foreach ($this->gl_codes as $gl_line)
@@ -290,7 +290,7 @@ class supp_trans
 		$total = 0.0;
 
 		foreach ($this->grn_items as $ln_itm)
-			$total += (float)round($ln_itm->this_quantity_inv * $ln_itm->chg_price, user_price_dec());
+			$total += round($ln_itm->this_quantity_inv * $ln_itm->chg_price, user_price_dec());
 
 		foreach ($this->gl_codes as $gl_line)
 		{

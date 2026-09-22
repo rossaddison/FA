@@ -77,7 +77,7 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
             end_row();
         }
         
-        $acctstotal += (float)$net_balance;
+        $acctstotal += $net_balance;
     }	
 	
 	$levelptr = 1;
@@ -91,13 +91,13 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 	}
 
 	//Display Type Summary if total is != 0  
-	if (((float)$acctstotal + (float)$typestotal) != 0)
+	if (($acctstotal + (float)$typestotal) != 0)
 	{
 		if ((bool)$drilldown && $type == $_POST["AccGrp"])
 		{		
 			start_row("class='inquirybg fa-bold'");
 			label_cell(_('Total') . " " . $typename);
-			amount_cell(((float)$acctstotal + (float)$typestotal) * $convert);
+			amount_cell(($acctstotal + (float)$typestotal) * $convert);
 			end_row();
 		}
 		//START Patch#1 : Display  only direct child types
@@ -112,11 +112,11 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 				
 			alt_table_row_color($k);
 			label_cell($url);
-			amount_cell(((float)$acctstotal + (float)$typestotal) * $convert);
+			amount_cell(($acctstotal + (float)$typestotal) * $convert);
 			end_row();
 		}
 	}
-	return ((float)$acctstotal + (float)$typestotal);
+	return ($acctstotal + (float)$typestotal);
 }	
 	
 function inquiry_controls(): void

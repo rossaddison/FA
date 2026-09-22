@@ -87,7 +87,7 @@ function display_po_receive_items(): void
     		}
 
     		$line_total = ((float)$ln_itm->receive_qty * (float)$ln_itm->price);
-    		$total += (float)$line_total;
+    		$total += $line_total;
 
 			label_cell($ln_itm->stock_id);
 			if ($qty_outstanding > 0)
@@ -120,7 +120,7 @@ function display_po_receive_items(): void
 	
 	$tax_total = display_edit_tax_items($taxes, $colspan, session_obj('PO')->tax_included);
 
-	$display_total = price_format(((float)$total + (float)input_num('freight_cost') + $tax_total));
+	$display_total = price_format(($total + (float)input_num('freight_cost') + $tax_total));
 
 	start_row();
 	label_cells(_("Amount Total"), $display_total, "colspan=$colspan align='right'","align='right'");

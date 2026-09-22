@@ -165,7 +165,7 @@ function print_grn_valuation(): void
 				$amt = round2((float)$inv['inv_qty'] * (float)$inv['inv_price'], $dec);
 				$rep->AmountCol(8, 9, $amt, $dec);
 				$rep->NewLine();
-				$total += (float)$amt;
+				$total += $amt;
 				$qtotal += $inv['inv_qty'];
 				$grandtotal += $amt;
 			}
@@ -181,8 +181,8 @@ function print_grn_valuation(): void
 			$rep->AmountCol(7, 8, $trans['unit_price'], $dec);
 			$amt = round2(((float)$trans['qty_recd'] - (float)$trans['quantity_inv']) * (float)$trans['unit_price'], $dec);
 			$rep->AmountCol(8, 9, $amt, $dec);
-			$total += (float)$amt;
-			$qtotal += (float)((float)$trans['qty_recd'] - (float)$trans['quantity_inv']);
+			$total += $amt;
+			$qtotal += ((float)$trans['qty_recd'] - (float)$trans['quantity_inv']);
 			$grandtotal += $amt;
 		}
 		else

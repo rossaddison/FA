@@ -204,7 +204,7 @@ function display_order_summary(?string $title, Cart &$order, bool $editable_item
 			sales_order_item_controls($order, $k,  $line_no);
 		}
 
-		$total += (float)$line_total;
+		$total += $line_total;
 	}
 
 	if ($id==-1 && $editable_items)
@@ -218,12 +218,12 @@ function display_order_summary(?string $title, Cart &$order, bool $editable_item
 	small_amount_cells(null, 'freight_cost', price_format(get_post('freight_cost',0)));
 	label_cell('', 'colspan=2');
 	end_row();
-	$display_sub_total = price_format((float)$total + (float)input_num('freight_cost'));
+	$display_sub_total = price_format($total + (float)input_num('freight_cost'));
 	label_row(_("Sub-total"), $display_sub_total, "colspan=$colspan align=right","align=right", 2);
 	$taxes = $order->get_taxes(input_num('freight_cost'));
 	$tax_total = display_edit_tax_items($taxes, $colspan, $order->tax_included, 2);
 
-	$display_total = price_format(((float)$total + (float)input_num('freight_cost') + $tax_total));
+	$display_total = price_format(($total + (float)input_num('freight_cost') + $tax_total));
 
 	start_row();
 	label_cells(_("Amount Total"), $display_total, "colspan=$colspan align=right","align=right");
@@ -542,7 +542,7 @@ function sales_order_item_controls(Cart &$order, int|string|null &$rowcounter, s
 
 	small_amount_cells(null, 'Disc', percent_format(post_scalar('Disc')), null, null, user_percent_dec());
 
-	$line_total = (float)input_num('qty') * (float)input_num('price') * (1.0 - (float)((float)input_num('Disc') / 100.0));
+	$line_total = (float)input_num('qty') * (float)input_num('price') * (1.0 - ((float)input_num('Disc') / 100.0));
 
 	amount_cell($line_total, false, '','line_total');
 

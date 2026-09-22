@@ -450,7 +450,7 @@ function customer_top(?string $today, ?int $limit=10, string|int|null $width='33
 	$sales = 0.0;
 	while ($myrow = db_fetch($result))
 	{
-		$sales += (float)round($myrow['total']);
+		$sales += round($myrow['total']);
 		alt_table_row_color($k);
 		$name = (string)$myrow["debtor_no"]." ".htmlspecialchars_decode($myrow["name"]);
 		label_cell($name);
@@ -568,7 +568,7 @@ function stock_top(?string $today, ?int $limit=10, string|int|null $width='33', 
 		if ($type == 0)
 		{
 			$cost += $myrow['costs'];
-			$res += ((float)((float)$myrow['total'] - (float)$myrow['costs']));
+			$res += (((float)$myrow['total'] - (float)$myrow['costs']));
 		}
 		alt_table_row_color($k);
 		$name = $myrow["description"];
@@ -674,7 +674,7 @@ function gl_top(?string $today, string|int|null $width='33', ?object &$pg=null):
 	{
 		if ($myrow['ctype'] > 3)
 		{
-			$total += (float)round($myrow['total']);
+			$total += round($myrow['total']);
 			if ($pg != null)
 			{
 				$names[] = $myrow['class_name']; 

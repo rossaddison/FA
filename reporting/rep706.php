@@ -73,8 +73,8 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 
 		$rep->NewLine();
 
-		$code_open_balance += (float)$prev_balance;
-		$code_period_balance += (float)$curr_balance;
+		$code_open_balance += $prev_balance;
+		$code_period_balance += $curr_balance;
 	}
 		
 	//Get Account groups/types under this group/type

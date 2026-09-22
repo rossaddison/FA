@@ -80,7 +80,7 @@ foreach ($purchase_order->line_items as $stock_item)
 	qty_cell($stock_item->qty_inv, false, $dec);
 	end_row();
 
-	$total += (float)$line_total;
+	$total += $line_total;
 }
 
 $display_sub_tot = number_format2($total,user_price_dec());

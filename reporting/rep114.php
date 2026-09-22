@@ -128,7 +128,7 @@ function print_sales_summary_report(): void
 				$rep->TextCol(1, 2,	$tax_id);
 				$rep->AmountCol(2, 3, $total, $dec);
 				$rep->AmountCol(3, 4, $tax, $dec);
-				$totalnet += (float)$total;
+				$totalnet += $total;
 				$totaltax += (float)$tax;
 				$total = $tax = 0;
 				$rep->NewLine();
@@ -158,7 +158,7 @@ function print_sales_summary_report(): void
 		$rep->TextCol(1, 2,	$tax_id);
 		$rep->AmountCol(2, 3, $total, $dec);
 		$rep->AmountCol(3, 4, $tax, $dec);
-		$totalnet += (float)$total;
+		$totalnet += $total;
 		$totaltax += (float)$tax;
 		$rep->NewLine();
 	}

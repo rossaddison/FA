@@ -701,7 +701,7 @@ function page_processing(bool $msg = false): void
 		ajax()->addState(true, 'processing', (bool)$msg ? $msg : null);
 	} else
 		add_js_source("_validate._processing=" . (
-			(bool)$msg ? '\''.strtr((string)$msg, array("\n"=>'\\n')) . '\';' : 'null;'));
+			(bool)$msg ? '\''.strtr($msg, array("\n"=>'\\n')) . '\';' : 'null;'));
 }
 
 function page_modified(string|int|float|bool|null $status = true): void

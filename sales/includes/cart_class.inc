@@ -585,7 +585,7 @@ class Cart
 
 		foreach ($this->line_items as $ln_itm) {
 			$price = $ln_itm->line_price();
-			$total += (float)round($ln_itm->quantity * $price * (1.0 - $ln_itm->discount_percent), 
+			$total += round($ln_itm->quantity * $price * (1.0 - $ln_itm->discount_percent), 
 			   user_price_dec());
 		}
 		return $total;
@@ -598,7 +598,7 @@ class Cart
 
 		foreach ($this->line_items as $ln_itm) {
 			$price = $ln_itm->line_price();
-			$total += (float)round(($ln_itm->qty_dispatched * $price * (1.0 - $ln_itm->discount_percent)), 
+			$total += round(($ln_itm->qty_dispatched * $price * (1.0 - $ln_itm->discount_percent)), 
 			   user_price_dec());
 		}
 		return $total;
@@ -684,7 +684,7 @@ class Cart
 		if ($this->tax_included==0)
 			return $this->freight_cost;
 		else
-			return ((float)$this->freight_cost - (float)$this->get_shipping_tax());
+			return ((float)$this->freight_cost - $this->get_shipping_tax());
 	}
 
 	/** @return float */
@@ -717,7 +717,7 @@ class Cart
 		if (!(bool)$this->tax_included ) {
 			$taxes = $this->get_taxes();
 			foreach($taxes as $tax)
-				$total += (float)round($tax['Value'], $dec);
+				$total += round($tax['Value'], $dec);
 		}
 
 		return $total;

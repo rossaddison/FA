@@ -96,12 +96,12 @@ function display_type (?string $type, ?string $typename, int|string|null &$dec, 
 			$rep->AmountCol(5, 6, $curr['credit'], $dec);
 			$rep->AmountCol(6, 7, (float)$tot['debit']-(float)$offset, $dec);
 			$rep->AmountCol(7, 8, (float)$tot['credit']-(float)$offset, $dec);
-			$pdeb += (float)((float)$prev['debit']-(float)$offset);
-			$pcre += (float)((float)$prev['credit']-(float)$offset);
+			$pdeb += ((float)$prev['debit']-(float)$offset);
+			$pcre += ((float)$prev['credit']-(float)$offset);
 			$cdeb += $curr['debit'];
 			$ccre += $curr['credit'];
-			$tdeb += (float)((float)$tot['debit']-(float)$offset);
-			$tcre += (float)((float)$tot['credit']-(float)$offset);
+			$tdeb += ((float)$tot['debit']-(float)$offset);
+			$tcre += ((float)$tot['credit']-(float)$offset);
 		}	
 
 		$pbal += $prev['balance'];

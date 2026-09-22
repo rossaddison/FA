@@ -259,7 +259,7 @@ function display_po_items(purch_order &$order, bool $editable=true): void
 		{
 			po_item_controls($order, $k, $line_no);
 		}
-		$total += (float)$line_total;
+		$total += $line_total;
     }
 
 	if ($id==-1 && $editable)
@@ -277,7 +277,7 @@ function display_po_items(purch_order &$order, bool $editable=true): void
 	
 	$tax_total = display_edit_tax_items($taxes, $colspan, $order->tax_included, 2, $order->trans_type==ST_SUPPINVOICE);
 
-	$display_total = price_format(((float)$total + (float)input_num('freight_cost') + $tax_total));
+	$display_total = price_format(($total + (float)input_num('freight_cost') + $tax_total));
 
 	start_row();
 	label_cells(_("Amount Total"), $display_total, "colspan=$colspan align='right'","align='right'");

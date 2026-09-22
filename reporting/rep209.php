@@ -143,7 +143,7 @@ function print_po(): void
 			$Net = round2(((float)$myrow2["unit_price"] * (float)$myrow2["quantity_ordered"]), user_price_dec());
 			$prices[] = $Net;
 			$items[] = $myrow2['item_code'];
-			$SubTotal += (float)$Net;
+			$SubTotal += $Net;
 			$dec2 = 0;
 			$DisplayPrice = price_decimal_format($myrow2["unit_price"],$dec2);
 			$DisplayQty = number_format2($myrow2["quantity_ordered"],get_qty_dec($myrow2['item_code']));

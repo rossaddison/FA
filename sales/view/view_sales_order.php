@@ -124,7 +124,7 @@ if ($_GET['trans_type'] != ST_SALESQUOTE)
 			alt_table_row_color($k);
 			$dn_numbers[] = $del_row["trans_no"];
 			$this_total = (float)$del_row["ov_freight"]+ (float)$del_row["ov_amount"] + (float)$del_row["ov_freight_tax"]  + (float)$del_row["ov_gst"] ;
-			$delivery_total += (float)$this_total;
+			$delivery_total += $this_total;
 
 			label_cell(get_customer_trans_view_str($del_row["type"], $del_row["trans_no"]));
 			label_cell($del_row["reference"]);
@@ -162,7 +162,7 @@ if ($_GET['trans_type'] != ST_SALESQUOTE)
 
 			$this_total = session_obj('View')->prepaid ? $inv_row["prep_amount"] : 
 				(float)$inv_row["ov_freight"] + (float)$inv_row["ov_freight_tax"]  + (float)$inv_row["ov_gst"] + (float)$inv_row["ov_amount"];
-			$invoices_total += (float)$this_total;
+			$invoices_total += $this_total;
 
 			$inv_numbers[] = $inv_row["trans_no"];
 			label_cell(get_customer_trans_view_str($inv_row["type"], $inv_row["trans_no"]));
@@ -193,7 +193,7 @@ if ($_GET['trans_type'] != ST_SALESQUOTE)
 			alt_table_row_color($k);
 
 			$this_total = (float)$credits_row["ov_freight"] + (float)$credits_row["ov_freight_tax"]  + (float)$credits_row["ov_gst"] + (float)$credits_row["ov_amount"];
-			$credits_total += (float)$this_total;
+			$credits_total += $this_total;
 
 			label_cell(get_customer_trans_view_str($credits_row["type"], $credits_row["trans_no"]));
 			label_cell($credits_row["reference"]);
@@ -260,7 +260,7 @@ $taxes = session_obj('View')->get_taxes();
 
 $tax_total = display_edit_tax_items($taxes, 6, session_obj('View')->tax_included,2);
 
-$display_total = price_format((float)$sub_tot + (float)$tax_total);
+$display_total = price_format($sub_tot + (float)$tax_total);
 
 start_row();
 label_cells(_("Amount Total"), $display_total, "colspan=6 align='right'","align='right'");
@@ -268,7 +268,7 @@ label_cell('', "colspan=2");
 end_row();
 end_table();
 
-display_allocations_to(PT_CUSTOMER, session_obj('View')->customer_id, get_scalar('trans_type'), get_scalar('trans_no'), (float)$sub_tot + (float)$tax_total);
+display_allocations_to(PT_CUSTOMER, session_obj('View')->customer_id, get_scalar('trans_type'), get_scalar('trans_no'), $sub_tot + (float)$tax_total);
 
 end_page(true, false, false, get_scalar('trans_type'), get_scalar('trans_no'));
 

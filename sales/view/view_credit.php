@@ -102,7 +102,7 @@ if (db_num_rows($result) > 0)
 
 		$value = round2(((1.0 - (float)$myrow2["discount_percent"]) * (float)$myrow2["unit_price"] * (float)$myrow2["quantity"]),
 		   user_price_dec());
-		$sub_total += (float)$value;
+		$sub_total += $value;
 
 		if ($myrow2["discount_percent"] == 0)
 		{

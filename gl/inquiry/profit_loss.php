@@ -96,7 +96,7 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|n
 			end_row();
 		}
 			
-		$code_per_balance += (float)$per_balance;
+		$code_per_balance += $per_balance;
 		$code_acc_balance += (float)$acc_balance;
 	}
 

@@ -385,7 +385,7 @@ class items_cart
 					// we can have both input and output tax postings in some cases like intra-EU trade.
 					// so just calculate net_amount from the higher in/out tax
 					$tax_info['net_amount'][$tax_id]
-						= (float)$sign*(float)round2(max(abs(@$tax_info['tax_in'][$tax_id]), abs(@$tax_info['tax_out'][$tax_id]))/$tax_type['rate']*100.0, user_price_dec())/$factor;
+						= (float)$sign*round2(max(abs(@$tax_info['tax_in'][$tax_id]), abs(@$tax_info['tax_out'][$tax_id]))/$tax_type['rate']*100.0, user_price_dec())/$factor;
 
 				}
 			} else
@@ -397,7 +397,7 @@ class items_cart
 
 		if (count_array(@$tax_info['net_amount']))	// guess exempt sales/purchase if any tax has been found
 		{
-			$ex_net = (float)abs($net_sum) - (float)(@array_sum($tax_info['net_amount']));
+			$ex_net = abs($net_sum) - (@array_sum($tax_info['net_amount']));
 			if ($ex_net != 0)
 				$tax_info['net_amount_ex'] = $ex_net;
 		}
@@ -461,7 +461,7 @@ class items_cart
 			if (!isset($gl->date))
 				$gl->date = $this->tran_date;
 
-			$total_gl += (float)add_gl_trans($this->trans_type, $this->order_id, $gl->date, $gl->code_id, $gl->dimension_id, $gl->dimension2_id, 
+			$total_gl += add_gl_trans($this->trans_type, $this->order_id, $gl->date, $gl->code_id, $gl->dimension_id, $gl->dimension2_id, 
 				$gl->reference,	$gl->amount, $this->currency, $gl->person_type_id, $gl->person_id, "", $this->rate);
 
 			// post to first found bank account using given gl acount code.
@@ -478,9 +478,9 @@ class items_cart
 				// collect per counterparty amounts (in case more than one posting was done to the account),
 				// do not post exchange variations to AR/AP (journal in not customer/supplier currency)
 	    		if ($gl->person_type_id==PT_SUPPLIER && (get_supplier_currency($gl->person_id) == $this->currency || $this->currency != $home_currency))
-	   				$supp_trans[$gl->person_id] = (float)(@$supp_trans[$gl->person_id]) + (float)$gl->amount;
+	   				$supp_trans[$gl->person_id] = (@$supp_trans[$gl->person_id]) + (float)$gl->amount;
     			elseif ($gl->person_type_id==PT_CUSTOMER && (get_customer_currency(null, $gl->branch_id) == $this->currency || $this->currency != $home_currency))
-	   				$cust_trans[$gl->branch_id] = (float)(@$cust_trans[$gl->branch_id]) + (float)$gl->amount;
+	   				$cust_trans[$gl->branch_id] = (@$cust_trans[$gl->branch_id]) + (float)$gl->amount;
     		}
 
 		}

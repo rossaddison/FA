@@ -223,7 +223,7 @@ function print_tax_report(): void
 		$rep->AmountCol(3, 4, $sum['in'], $dec);
 		$rep->AmountCol(4, 5, $sum['taxin'], $dec); 
 		$rep->AmountCol(5, 6, (float)$sum['taxout']+(float)$sum['taxin'], $dec);
-		$taxtotal += (float)((float)$sum['taxout']+(float)$sum['taxin']);
+		$taxtotal += ((float)$sum['taxout']+(float)$sum['taxin']);
 		$rep->NewLine();
 	}
 
