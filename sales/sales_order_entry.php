@@ -100,7 +100,7 @@ if (isset($_GET['NewDelivery']) && is_numeric($_GET['NewDelivery'])) {
 	create_cart(ST_SALESQUOTE, get_scalar('NewQuoteToSalesOrder'));
 }
 
-page($_SESSION['page_title'], false, false, "", $js);
+page($_SESSION['page_title'] ?? _("Sales Order Entry"), false, false, "", $js);
 
 if (isset($_GET['ModifyOrderNumber']) && (bool)is_prepaid_order_open(get_scalar('ModifyOrderNumber')))
 {
@@ -111,6 +111,15 @@ if (isset($_GET['ModifyOrderNumber']))
 	check_is_editable(ST_SALESORDER, get_scalar('ModifyOrderNumber'));
 elseif (isset($_GET['ModifyQuotationNumber']))
 	check_is_editable(ST_SALESQUOTE, get_scalar('ModifyQuotationNumber'));
+
+if (!isset($_SESSION['Items']))
+{
+	// reached without any of the New*/Modify* requests above, and nothing already in the
+	// session from an earlier request on this page (the normal form post-back relies on that
+	// instead) -- there is nothing to enter or edit
+	display_error(_("This page can only be opened to enter a new sales order, quotation or direct delivery/invoice, or to modify an existing one."));
+	end_page(); exit;
+}
 
 //-----------------------------------------------------------------------------
 
@@ -273,6 +282,7 @@ if (isset($_GET['AddedID'])) {
 function copy_to_cart(): void
 {
 	$cart = &$_SESSION['Items'];
+	/** @var Cart $cart */
 
 	$cart->reference = get_post('ref');
 
@@ -327,6 +337,7 @@ function copy_to_cart(): void
 function copy_from_cart(): void
 {
 	$cart = &$_SESSION['Items'];
+	/** @var Cart $cart */
 	$_POST['ref'] = $cart->reference;
 	$_POST['Comments'] = $cart->Comments;
 
