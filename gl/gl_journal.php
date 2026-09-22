@@ -95,6 +95,15 @@ elseif (isset($_GET['ModifyGL']))
 	create_cart(get_scalar('trans_type'), get_scalar('trans_no'));
 }
 
+if (!isset($_SESSION['journal_items']))
+{
+	// reached without NewJournal or ModifyGL, and nothing already in the session from an
+	// earlier request on this page (the normal form post-back relies on that instead) --
+	// there is nothing to enter or edit
+	display_error(_("This page can only be opened to enter a new journal entry, or to modify an existing one."));
+	display_footer_exit();
+}
+
 function create_cart(string|int|null $type=0, string|int|null $trans_no=0): void
 {
 
@@ -504,9 +513,12 @@ if (isset($_POST['UpdateItem']))
 if (isset($_POST['CancelItemChanges']))
 	line_start_focus();
 
+$journal_items = &$_SESSION['journal_items'];
+/** @var items_cart $journal_items */
+
 if (isset($_POST['go']))
 {
-	display_quick_entries($_SESSION['journal_items'], post_scalar('quick'), input_num('totamount'), QE_JOURNAL, get_post('aux_info'));
+	display_quick_entries($journal_items, post_scalar('quick'), input_num('totamount'), QE_JOURNAL, get_post('aux_info'));
 	$_POST['totamount'] = price_format(0); ajax()->activate('totamount');
 	line_start_focus();
 }
@@ -520,7 +532,7 @@ if (list_updated('tax_category'))
 
 start_form();
 
-display_order_header($_SESSION['journal_items']);
+display_order_header($journal_items);
 
 tabbed_content_start('tabs', array(
 		'gl' => array(_('&GL postings'), true),
@@ -533,7 +545,7 @@ tabbed_content_start('tabs', array(
 			start_table(TABLESTYLE2, "width='90%'", 10);
 			start_row();
 			echo "<td>";
-			display_gl_items(_("Rows"), $_SESSION['journal_items']);
+			display_gl_items(_("Rows"), $journal_items);
 			gl_options_controls();
 			echo "</td>";
 			end_row();

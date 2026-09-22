@@ -14,7 +14,7 @@ include_once(dirname(__DIR__, 3) . "/includes/ui/items_cart.inc");
 
 //--------------------------------------------------------------------------------
 
-function display_order_header(?items_cart &$Order): void
+function display_order_header(items_cart &$Order): void
 {
 
 	$qes = has_quick_entries(QE_JOURNAL);
@@ -94,7 +94,7 @@ function display_order_header(?items_cart &$Order): void
 //---------------------------------------------------------------------------------
 
 /** @return void */
-function display_gl_items(string|int|float|bool|supp_trans|null $title, ?items_cart &$order): void
+function display_gl_items(string|int|float|bool|supp_trans|null $title, items_cart &$order): void
 {
 	global $path_to_root;
 
@@ -189,7 +189,7 @@ function display_gl_items(string|int|float|bool|supp_trans|null $title, ?items_c
 
 //---------------------------------------------------------------------------------
 
-function gl_edit_item_controls(?items_cart &$order, string|int|float|bool|null $dim, array|string|null $sub_accounts, string|int|float|bool|null $Index=null): void
+function gl_edit_item_controls(items_cart &$order, string|int|float|bool|null $dim, array|string|null $sub_accounts, string|int|float|bool|null $Index=null): void
 {
 	start_row();
 
