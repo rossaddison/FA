@@ -166,6 +166,7 @@ function check_quantities(): int
 function copy_to_cart(): void
 {
 	$cart = &$_SESSION['Items'];
+	/** @var Cart $cart */
 	$cart->ship_via = $_POST['ShipperID'];
 	$cart->freight_cost = input_num('ChargeFreightCost');
 	$cart->document_date =  $_POST['CreditDate'];
@@ -179,6 +180,7 @@ function copy_to_cart(): void
 function copy_from_cart(): void
 {
 	$cart = &$_SESSION['Items'];
+	/** @var Cart $cart */
 	$_POST['ShipperID'] = $cart->ship_via;
 	$_POST['ChargeFreightCost'] = price_format($cart->freight_cost);
 	$_POST['CreditDate']= $cart->document_date;

@@ -201,7 +201,7 @@ function add_credit_movements_item(Cart &$credit_note, &$credit_line,
 //----------------------------------------------------------------------------------------
 
 /** @return float */
-function add_gl_trans_credit_costs(?object $order, ?object $order_line, string|int|float|bool|null $credit_no, string|int|float|bool|null $date_,
+function add_gl_trans_credit_costs(Cart $order, line_details $order_line, string|int|float|bool|null $credit_no, string|int|float|bool|null $date_,
 	?string $credit_type, string|int|float|bool|null $write_off_gl_code, &$branch_data)
 {
 	$stock_gl_codes = row_or_empty(get_stock_gl_code($order_line->stock_id));
