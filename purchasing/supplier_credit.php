@@ -65,7 +65,16 @@ if (isset($_GET['New']))
 		$_SESSION['supp_trans'] = new supp_trans(ST_SUPPCREDIT);
 	}
 }
-page($_SESSION['page_title'], false, false, "", $js);
+page($_SESSION['page_title'] ?? _("Supplier Credit Note"), false, false, "", $js);
+
+if (!isset($_SESSION['supp_trans']))
+{
+	// reached with neither ModifyCredit nor New, and nothing already in the session from an
+	// earlier request on this page (the normal form post-back relies on that instead) --
+	// there is nothing to enter or edit
+	display_error(_("This page can only be opened to enter a new supplier credit note or to modify an existing one."));
+	display_footer_exit();
+}
 
 check_db_has_suppliers(_("There are no suppliers defined in the system."));
 
@@ -240,7 +249,9 @@ function check_data(): bool
 
 function handle_commit_credit_note(): void
 {
-	copy_to_trans($_SESSION['supp_trans']);
+	/** @var supp_trans $trans */
+	$trans = $_SESSION['supp_trans'];
+	copy_to_trans($trans);
 
 	if (!check_data())
 		return;
@@ -351,8 +362,10 @@ if (isset($_POST['go']))
 
 start_form();
 
-invoice_header($_SESSION['supp_trans']);
-if ($_POST['supplier_id']=='') 
+/** @var supp_trans $trans */
+$trans = $_SESSION['supp_trans'];
+invoice_header($trans);
+if ($_POST['supplier_id']=='')
 	display_error('No supplier found for entered search text');
 else {
 	display_grn_items($_SESSION['supp_trans'], 1);

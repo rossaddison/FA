@@ -46,7 +46,7 @@ if (isset($_GET['New']))
 	$_SESSION['supp_trans'] = new supp_trans(ST_SUPPINVOICE, $_GET['ModifyInvoice']);
 }
 
-page($_SESSION['page_title'], false, false, "", $js);
+page($_SESSION['page_title'] ?? _("Supplier Invoice Entry"), false, false, "", $js);
 
 if (isset($_GET['ModifyInvoice']))
 	check_is_editable(ST_SUPPINVOICE, get_scalar('ModifyInvoice'));
@@ -91,6 +91,15 @@ if (isset($_GET['New']))
 	$_SESSION['supp_trans'] = new supp_trans(ST_SUPPINVOICE);
 } else if(isset($_GET['ModifyInvoice'])) {
 	$_SESSION['supp_trans'] = new supp_trans(ST_SUPPINVOICE, $_GET['ModifyInvoice']);
+}
+
+if (!isset($_SESSION['supp_trans']))
+{
+	// reached with neither New nor ModifyInvoice, and nothing already in the session from an
+	// earlier request on this page (the normal form post-back relies on that instead) --
+	// there is nothing to enter or edit
+	display_error(_("This page can only be opened to enter a new supplier invoice or to modify an existing one."));
+	display_footer_exit();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -228,7 +237,9 @@ function check_data(): bool
 
 function handle_commit_invoice(): void
 {
-	copy_to_trans($_SESSION['supp_trans']);
+	/** @var supp_trans $trans */
+	$trans = $_SESSION['supp_trans'];
+	copy_to_trans($trans);
 
 	if (!check_data())
 		return;
@@ -384,7 +395,9 @@ if (isset($_POST['go']))
 
 start_form();
 
-invoice_header($_SESSION['supp_trans']);
+/** @var supp_trans $trans */
+$trans = $_SESSION['supp_trans'];
+invoice_header($trans);
 
 if ($_POST['supplier_id']=='') 
 		display_error(_("There is no supplier selected."));

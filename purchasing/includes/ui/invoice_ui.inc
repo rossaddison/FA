@@ -11,7 +11,7 @@
 ***********************************************************************/
 //--------------------------------------------------------------------------------------------------
 
-function copy_from_trans(?supp_trans &$supp_trans): void
+function copy_from_trans(supp_trans &$supp_trans): void
 {
 	$_POST['Comments'] = $supp_trans->Comments;
 	$_POST['tran_date'] = $supp_trans->tran_date;
@@ -30,7 +30,7 @@ function copy_from_trans(?supp_trans &$supp_trans): void
 
 //--------------------------------------------------------------------------------------------------
 
-function copy_to_trans(?supp_trans &$supp_trans): void
+function copy_to_trans(supp_trans &$supp_trans): void
 {
 	$supp_trans->Comments = $_POST['Comments'];
 	$supp_trans->tran_date = $_POST['tran_date'];
@@ -71,7 +71,7 @@ function copy_to_trans(?supp_trans &$supp_trans): void
 
 //--------------------------------------------------------------------------------------------------
 
-function invoice_header(?supp_trans &$supp_trans): void
+function invoice_header(supp_trans &$supp_trans): void
 {
 	
 	// if vars have been lost, recopy
