@@ -16,6 +16,7 @@ include_once(dirname(__DIR__, 3) . "/purchasing/includes/purchasing_db.inc");
 function copy_from_cart(): void
 {
 	$cart = &$_SESSION['PO'];
+	/** @var purch_order $cart */
 
 	$_POST['supplier_id'] = $cart->supplier_id;
 	$_POST['OrderDate'] = $cart->orig_order_date;
@@ -38,8 +39,9 @@ function copy_from_cart(): void
 function copy_to_cart(): void
 {
 	$cart = &$_SESSION['PO'];
+	/** @var purch_order $cart */
 
-	$cart->supplier_id = $_POST['supplier_id'];	
+	$cart->supplier_id = $_POST['supplier_id'];
 	$cart->orig_order_date = $_POST['OrderDate'];
 	if ($cart->trans_type == ST_SUPPINVOICE)
 	{
@@ -90,7 +92,7 @@ function create_new_po(?int $trans_type, string|int|null $trans_no): void
 
 //---------------------------------------------------------------------------------------------------
 
-function display_po_header(?purch_order &$order): void
+function display_po_header(purch_order &$order): void
 {
 
 	$editable = ($order->order_no == 0);

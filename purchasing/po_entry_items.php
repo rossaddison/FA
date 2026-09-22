@@ -63,10 +63,19 @@ if (isset($_GET['ModifyOrderNumber']) && is_numeric($_GET['ModifyOrderNumber']))
 		$_SESSION['page_title'] = _($help_context = "Direct Purchase Invoice Entry");
 }
 
-page($_SESSION['page_title'], false, false, "", $js);
+page($_SESSION['page_title'] ?? _("Purchase Order Entry"), false, false, "", $js);
 
 if (isset($_GET['ModifyOrderNumber']))
 	check_is_editable(ST_PURCHORDER, get_scalar('ModifyOrderNumber'));
+
+if (!isset($_SESSION['PO']))
+{
+	// reached without any of the New*/ModifyOrderNumber requests above, and nothing already in
+	// the session from an earlier request on this page (the normal form post-back relies on
+	// that instead) -- there is nothing to enter or edit
+	display_error(_("This page can only be opened to enter a new purchase order, GRN or direct invoice, or to modify an existing order."));
+	end_page(); exit;
+}
 
 //---------------------------------------------------------------------------------------------------
 
@@ -416,6 +425,7 @@ function can_commit(): bool
 function handle_commit_order(): void
 {
 	$cart = &$_SESSION['PO'];
+	/** @var purch_order $cart */
 
 	if (can_commit()) {
 
@@ -473,7 +483,9 @@ if (isset($_POST['CancelUpdate']) || isset($_POST['UpdateLine'])) {
 
 start_form();
 
-display_po_header($_SESSION['PO']);
+$order = &$_SESSION['PO'];
+/** @var purch_order $order */
+display_po_header($order);
 echo "<br>";
 
 display_po_items($_SESSION['PO']);

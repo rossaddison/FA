@@ -256,6 +256,7 @@ function process_receive_po(): void
 	}
 	
 	$grn = &$_SESSION['PO'];
+	/** @var purch_order $grn */
 	$grn->orig_order_date = $_POST['DefaultReceivedDate'];
 	$grn->reference = $_POST['ref'];
 	$grn->Location = $_POST['Location'];
