@@ -98,6 +98,7 @@ function can_process(): bool
 {
 
 	$adj = &$_SESSION['adj_items'];
+	/** @var items_cart $adj */
 
 	if (count($adj->line_items) == 0)	{
 		display_error(_("You must enter at least one non empty item line."));

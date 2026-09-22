@@ -300,14 +300,15 @@ if (isset($_POST['Process']) && !check_trans())
 {
 	begin_transaction();
 
-	$_SESSION['pay_items'] = &$_SESSION['pay_items'];
-	$new = session_obj('pay_items')->order_id == 0;
+	$pay_items = &$_SESSION['pay_items'];
+	/** @var items_cart $pay_items */
+	$new = $pay_items->order_id == 0;
 
 	add_new_exchange_rate(get_bank_account_currency(get_post('bank_account')), get_post('date_'), input_num('_ex_rate'));
 
 	$trans = row_or_empty(write_bank_transaction(
-		session_obj('pay_items')->trans_type, session_obj('pay_items')->order_id, post_scalar('bank_account'),
-		$_SESSION['pay_items'], post_scalar('date_'),
+		$pay_items->trans_type, $pay_items->order_id, post_scalar('bank_account'),
+		$pay_items, post_scalar('date_'),
 		post_scalar('PayType'), post_scalar('person_id'), get_post('PersonDetailID'),
 		post_scalar('ref'), post_scalar('memo_'), true, input_num('settled_amount', null)));
 

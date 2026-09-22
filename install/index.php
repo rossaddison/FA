@@ -232,11 +232,13 @@ elseif (isset($_POST['db_test'])) {
 		set_focus('dbname');
 	}
 	else {
+		/** @var language $lang */
+		$lang = $_SESSION['language'];
 		$_SESSION['inst_set'] = array_merge($_SESSION['inst_set'], array(
 			'host' => $_POST['host'],
 			'port' => $_POST['port'],
 			'dbuser' => $_POST['dbuser'],
-			'dbpassword' => @html_entity_decode($_POST['dbpassword'], ENT_QUOTES, $_SESSION['language']->encoding=='iso-8859-2' ? 'ISO-8859-1' : $_SESSION['language']->encoding),
+			'dbpassword' => @html_entity_decode($_POST['dbpassword'], ENT_QUOTES, $lang->encoding=='iso-8859-2' ? 'ISO-8859-1' : $lang->encoding),
 			'dbname' => $_POST['dbname'],
 			'tbpref' => $_POST['tbpref'] ? '0_' : '',
 			'sel_langs' => check_value('sel_langs'),

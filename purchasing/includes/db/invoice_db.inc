@@ -717,7 +717,7 @@ function remove_not_invoice_item(string|int|null $id): void
     commit_transaction();
 }
 
-function find_src_invoices(?object $cart): array
+function find_src_invoices(supp_trans $cart): array
 {
 	$invoices = $po_ids = array();
 	foreach($cart->grn_items as $item)

@@ -92,6 +92,7 @@ if (isset($_POST['Process']))
 {
 
 	$tr = &$_SESSION['transfer_items'];
+	/** @var items_cart $tr */
 	$input_error = 0;
 
 	if (count($tr->line_items) == 0)	{

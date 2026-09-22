@@ -46,8 +46,9 @@ class language
 		return "lang/" . $this->code;
 	}
 
-	function get_current_language_dir() 
+	function get_current_language_dir()
 	{
+		/** @var language $lang */
 		$lang = $_SESSION['language'];
 		return "lang/" . $lang->code;
 	}

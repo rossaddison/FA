@@ -387,7 +387,7 @@ function update_bank_transfer(
 /**
  * @return false|list{mixed, mixed}
  */
-function write_bank_transaction(string|int|float|bool|null $trans_type, string|int|float|bool|null $trans_no, string|null $from_account, ?object $items, string|null $date_,
+function write_bank_transaction(string|int|float|bool|null $trans_type, string|int|float|bool|null $trans_no, string|null $from_account, items_cart $items, string|null $date_,
 	string|null $person_type_id, string|null $person_id, string|null $person_detail_id,	string|null $ref, string|null $memo_, bool $use_transaction=true, int|float|bool|null $settled_amount=null): false|array
 {
 

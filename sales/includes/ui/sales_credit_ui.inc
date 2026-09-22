@@ -302,7 +302,7 @@ function credit_edit_item_controls(Cart &$order, string|int|float|bool|null $row
 
 //---------------------------------------------------------------------------------
 
-function credit_options_controls(?object $credit): void
+function credit_options_controls(Cart $credit): void
 {
 	br();
 
