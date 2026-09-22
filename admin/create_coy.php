@@ -12,12 +12,12 @@
 $page_security = 'SA_CREATECOMPANY';
 /** @var string $path_to_root */
 $path_to_root="..";
-include_once($path_to_root . "/includes/session.inc");
+include_once(dirname(__DIR__) . "/includes/session.inc");
 
-include_once($path_to_root . "/includes/date_functions.inc");
-include_once($path_to_root . "/admin/db/company_db.inc");
-include_once($path_to_root . "/admin/db/maintenance_db.inc");
-include_once($path_to_root . "/includes/ui.inc");
+include_once(dirname(__DIR__) . "/includes/date_functions.inc");
+include_once(dirname(__DIR__) . "/admin/db/company_db.inc");
+include_once(dirname(__DIR__) . "/admin/db/maintenance_db.inc");
+include_once(dirname(__DIR__) . "/includes/ui.inc");
 
 page(_($help_context = "Create/Update Company"));
 

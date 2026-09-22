@@ -12,16 +12,16 @@
 $page_security = 'SA_SUPPTRANSVIEW';
 /** @var string $path_to_root */
 $path_to_root = "../..";
-include($path_to_root . "/purchasing/includes/po_class.inc");
+include(dirname(__DIR__, 2) . "/purchasing/includes/po_class.inc");
 
-include($path_to_root . "/includes/session.inc");
+include(dirname(__DIR__, 2) . "/includes/session.inc");
 
 $js = "";
 if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 500);
 page(_($help_context = "View Purchase Order Delivery"), true, false, "", $js);
 
-include($path_to_root . "/purchasing/includes/purchasing_ui.inc");
+include(dirname(__DIR__, 2) . "/purchasing/includes/purchasing_ui.inc");
 
 if (!isset($_GET['trans_no']))
 {

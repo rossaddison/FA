@@ -12,14 +12,14 @@
 $page_security = 'SA_SUPPLIERPAYMNT';
 /** @var string $path_to_root */
 $path_to_root = "..";
-include_once($path_to_root . "/includes/ui/allocation_cart.inc");
-include_once($path_to_root . "/includes/session.inc");
-include_once($path_to_root . "/includes/date_functions.inc");
-include_once($path_to_root . "/includes/ui.inc");
-include_once($path_to_root . "/includes/banking.inc");
-include_once($path_to_root . "/includes/data_checks.inc");
-include_once($path_to_root . "/purchasing/includes/purchasing_db.inc");
-include_once($path_to_root . "/reporting/includes/reporting.inc");
+include_once(dirname(__DIR__) . "/includes/ui/allocation_cart.inc");
+include_once(dirname(__DIR__) . "/includes/session.inc");
+include_once(dirname(__DIR__) . "/includes/date_functions.inc");
+include_once(dirname(__DIR__) . "/includes/ui.inc");
+include_once(dirname(__DIR__) . "/includes/banking.inc");
+include_once(dirname(__DIR__) . "/includes/data_checks.inc");
+include_once(dirname(__DIR__) . "/purchasing/includes/purchasing_db.inc");
+include_once(dirname(__DIR__) . "/reporting/includes/reporting.inc");
 
 $js = "";
 if (sysprefs()->use_popup_windows)

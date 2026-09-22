@@ -12,7 +12,7 @@
 $page_security = 'SA_ITEMSSTATVIEW';
 /** @var string $path_to_root */
 $path_to_root = "../..";
-include_once($path_to_root . "/includes/session.inc");
+include_once(dirname(__DIR__, 2) . "/includes/session.inc");
 
 $js = "";
 if (sysprefs()->use_popup_windows && sysprefs()->use_popup_search)
@@ -23,12 +23,12 @@ if (isset($_GET['stock_id']))
 
 page(_($help_context = "Inventory Item Status"), isset($_GET['stock_id']), false, "", $js);
 
-include_once($path_to_root . "/includes/date_functions.inc");
-include_once($path_to_root . "/includes/ui.inc");
-include_once($path_to_root . "/includes/data_checks.inc");
+include_once(dirname(__DIR__, 2) . "/includes/date_functions.inc");
+include_once(dirname(__DIR__, 2) . "/includes/ui.inc");
+include_once(dirname(__DIR__, 2) . "/includes/data_checks.inc");
 
-include_once($path_to_root . "/inventory/includes/inventory_db.inc");
-include_once($path_to_root . "/includes/db/manufacturing_db.inc");
+include_once(dirname(__DIR__, 2) . "/inventory/includes/inventory_db.inc");
+include_once(dirname(__DIR__, 2) . "/includes/db/manufacturing_db.inc");
 
 if (list_updated('stock_id')) 
 	ajax()->activate('status_tbl');

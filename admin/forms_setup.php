@@ -13,10 +13,10 @@ $page_security = 'SA_FORMSETUP';
 /** @var string $path_to_root */
 $path_to_root="..";
 
-include_once($path_to_root . "/includes/session.inc");
+include_once(dirname(__DIR__) . "/includes/session.inc");
 include_once('../includes/ui/class.reflines_crud.inc');
 
-include_once($path_to_root . "/includes/ui.inc");
+include_once(dirname(__DIR__) . "/includes/ui.inc");
 
 page(_($help_context = "Transaction References"));
 

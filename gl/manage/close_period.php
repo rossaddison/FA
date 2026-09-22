@@ -13,12 +13,12 @@
 $page_security = 'SA_GLCLOSE';
 /** @var string $path_to_root */
 $path_to_root = "../..";
-include_once($path_to_root . "/includes/session.inc");
+include_once(dirname(__DIR__, 2) . "/includes/session.inc");
 
-include_once($path_to_root . "/includes/date_functions.inc");
-include_once($path_to_root . "/includes/ui.inc");
-include_once($path_to_root . "/includes/banking.inc");
-include_once($path_to_root . "/admin/db/fiscalyears_db.inc");
+include_once(dirname(__DIR__, 2) . "/includes/date_functions.inc");
+include_once(dirname(__DIR__, 2) . "/includes/ui.inc");
+include_once(dirname(__DIR__, 2) . "/includes/banking.inc");
+include_once(dirname(__DIR__, 2) . "/admin/db/fiscalyears_db.inc");
 
 $js = "";
 if (user_use_date_picker())

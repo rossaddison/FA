@@ -17,9 +17,9 @@
 $page_security = "SA_ITEM";
 /** @var string $path_to_root */
 $path_to_root = "../..";
-include_once($path_to_root . "/includes/session.inc");
-include_once($path_to_root . "/includes/ui.inc");
-include_once($path_to_root . "/inventory/includes/db/items_db.inc");
+include_once(dirname(__DIR__, 2) . "/includes/session.inc");
+include_once(dirname(__DIR__, 2) . "/includes/ui.inc");
+include_once(dirname(__DIR__, 2) . "/inventory/includes/db/items_db.inc");
 
 $mode = get_company_pref('no_item_list');
 if ($mode != 0)

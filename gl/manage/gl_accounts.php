@@ -12,7 +12,7 @@
 $page_security = 'SA_GLACCOUNT';
 /** @var string $path_to_root */
 $path_to_root = "../..";
-include($path_to_root . "/includes/session.inc");
+include(dirname(__DIR__, 2) . "/includes/session.inc");
 
 $js = "";
 if (sysprefs()->use_popup_windows && sysprefs()->use_popup_search)
@@ -20,10 +20,10 @@ if (sysprefs()->use_popup_windows && sysprefs()->use_popup_search)
 
 page(_($help_context = "Chart of Accounts"), false, false, "", $js);
 
-include($path_to_root . "/includes/ui.inc");
-include($path_to_root . "/gl/includes/gl_db.inc");
-include_once($path_to_root . "/admin/db/tags_db.inc");
-include_once($path_to_root . "/includes/data_checks.inc");
+include(dirname(__DIR__, 2) . "/includes/ui.inc");
+include(dirname(__DIR__, 2) . "/gl/includes/gl_db.inc");
+include_once(dirname(__DIR__, 2) . "/admin/db/tags_db.inc");
+include_once(dirname(__DIR__, 2) . "/includes/data_checks.inc");
 
 check_db_has_gl_account_groups(_("There are no account groups defined. Please define at least one account group before entering accounts."));
 

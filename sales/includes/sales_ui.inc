@@ -9,10 +9,10 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-include_once($path_to_root . "/includes/date_functions.inc");
+include_once(dirname(__DIR__, 2) . "/includes/date_functions.inc");
 
-include_once($path_to_root . "/includes/ui.inc");
-include_once($path_to_root . "/includes/banking.inc");
+include_once(dirname(__DIR__, 2) . "/includes/ui.inc");
+include_once(dirname(__DIR__, 2) . "/includes/banking.inc");
 
 //----------------------------------------------------------------------------
 // helper functions for script execution control

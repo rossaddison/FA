@@ -223,7 +223,7 @@ function hyperlink_back(string|int|float|bool|null $center=true, string|int|floa
 	$id = 0;	
 	if ((bool)$no_menu && $trans_no != 0)
 	{
-		include_once($path_to_root."/admin/db/attachments_db.inc");
+		include_once(dirname(__DIR__, 2) . "/admin/db/attachments_db.inc");
 		$id = has_attachment($type_no, $trans_no);
 		$attach = get_attachment_string($type_no, $trans_no);
     	echo $attach;

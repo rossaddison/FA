@@ -20,10 +20,10 @@ $page_security = 'SA_BANKREP';
 /** @var string $path_to_root */
 $path_to_root="..";
 
-include_once($path_to_root . "/includes/session.inc");
-include_once($path_to_root . "/includes/date_functions.inc");
-include_once($path_to_root . "/includes/data_checks.inc");
-include_once($path_to_root . "/gl/includes/gl_db.inc");
+include_once(dirname(__DIR__) . "/includes/session.inc");
+include_once(dirname(__DIR__) . "/includes/date_functions.inc");
+include_once(dirname(__DIR__) . "/includes/data_checks.inc");
+include_once(dirname(__DIR__) . "/gl/includes/gl_db.inc");
 
 //----------------------------------------------------------------------------------------------------
 
@@ -74,9 +74,9 @@ function print_bank_transactions_reconcile(): void
 	$comments = $_POST['PARAM_3'];
 	$destination = $_POST['PARAM_4'];
 	if ((bool)$destination)
-		include_once($path_to_root . "/reporting/includes/excel_report.inc");
+		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
-		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
+		include_once(dirname(__DIR__) . "/reporting/includes/pdf_report.inc");
 
 	$rep = new FrontReport(_('Bank Statement w/Reconcile'), "BankStatementReconcile", user_pagesize(), 9, "L");
 	$dec = user_price_dec();

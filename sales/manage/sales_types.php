@@ -12,12 +12,12 @@
 $page_security = 'SA_SALESTYPES';
 /** @var string $path_to_root */
 $path_to_root = "../..";
-include_once($path_to_root . "/includes/session.inc");
+include_once(dirname(__DIR__, 2) . "/includes/session.inc");
 
 page(_($help_context = "Sales Types"));
 
-include_once($path_to_root . "/includes/ui.inc");
-include_once($path_to_root . "/sales/includes/db/sales_types_db.inc");
+include_once(dirname(__DIR__, 2) . "/includes/ui.inc");
+include_once(dirname(__DIR__, 2) . "/sales/includes/db/sales_types_db.inc");
 
 simple_page_mode(true);
 //----------------------------------------------------------------------------------------------------

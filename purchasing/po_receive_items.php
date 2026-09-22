@@ -12,11 +12,11 @@
 $page_security = 'SA_GRN';
 /** @var string $path_to_root */
 $path_to_root = "..";
-include_once($path_to_root . "/purchasing/includes/po_class.inc");
+include_once(dirname(__DIR__) . "/purchasing/includes/po_class.inc");
 
-include_once($path_to_root . "/includes/session.inc");
-include_once($path_to_root . "/purchasing/includes/purchasing_db.inc");
-include_once($path_to_root . "/purchasing/includes/purchasing_ui.inc");
+include_once(dirname(__DIR__) . "/includes/session.inc");
+include_once(dirname(__DIR__) . "/purchasing/includes/purchasing_db.inc");
+include_once(dirname(__DIR__) . "/purchasing/includes/purchasing_ui.inc");
 
 $js = "";
 if (sysprefs()->use_popup_windows)

@@ -125,7 +125,7 @@ function send_scripts(): void
 
     echo $js;
 }
-include_once($path_to_root . "/includes/yii/layout.inc");
+include_once(dirname(__DIR__, 2) . "/includes/yii/layout.inc");
 
 function page_header(string|int|float|bool|null $title, string|int|float|bool|null $no_menu=false, string|int|float|bool|null $is_index=false, string|int|float|bool|null $onload="", string|int|float|bool|null $js="", string|int|float|bool|null $css=''): void
 {
@@ -141,7 +141,7 @@ function page_header(string|int|float|bool|null $title, string|int|float|bool|nu
 	{
 		if (!function_exists('get_js_open_window'))
 		{
-			include_once($path_to_root.'/includes/ui/ui_view.inc');
+			include_once(dirname(__DIR__, 2) . '/includes/ui/ui_view.inc');
 		}
 		add_js_source(get_js_open_window(900, 500));
 	}

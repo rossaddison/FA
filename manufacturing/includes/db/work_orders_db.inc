@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-require_once($path_to_root. "/admin/db/attachments_db.inc");
+require_once(dirname(__DIR__, 3) . "/admin/db/attachments_db.inc");
 
 /*
 	Common entry procedure for all work order types

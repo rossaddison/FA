@@ -13,8 +13,8 @@ $page_security = 'SA_CUSTOMER';
 /** @var string $path_to_root */
 $path_to_root="../..";
 
-include($path_to_root . "/includes/db_pager.inc");
-include($path_to_root . "/includes/session.inc");
+include(dirname(__DIR__, 2) . "/includes/db_pager.inc");
+include(dirname(__DIR__, 2) . "/includes/session.inc");
 
 $js = "";
 if (sysprefs()->use_popup_windows && sysprefs()->use_popup_search)
@@ -22,8 +22,8 @@ if (sysprefs()->use_popup_windows && sysprefs()->use_popup_search)
 
 page(_($help_context = "Customer Branches"), @$_REQUEST['popup'], false, "", $js);
 
-include($path_to_root . "/includes/ui.inc");
-include($path_to_root . "/includes/ui/contacts_view.inc");
+include(dirname(__DIR__, 2) . "/includes/ui.inc");
+include(dirname(__DIR__, 2) . "/includes/ui/contacts_view.inc");
 
 //-----------------------------------------------------------------------------------------------
 

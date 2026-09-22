@@ -13,11 +13,11 @@ $page_security = 'SA_SALESALLOC';
 /** @var string $path_to_root */
 $path_to_root = "../..";
 
-include($path_to_root . "/includes/ui/allocation_cart.inc");
-include_once($path_to_root . "/includes/session.inc");
-include_once($path_to_root . "/includes/data_checks.inc");
-include_once($path_to_root . "/sales/includes/sales_ui.inc");
-include_once($path_to_root . "/sales/includes/sales_db.inc");
+include(dirname(__DIR__, 2) . "/includes/ui/allocation_cart.inc");
+include_once(dirname(__DIR__, 2) . "/includes/session.inc");
+include_once(dirname(__DIR__, 2) . "/includes/data_checks.inc");
+include_once(dirname(__DIR__, 2) . "/sales/includes/sales_ui.inc");
+include_once(dirname(__DIR__, 2) . "/sales/includes/sales_db.inc");
 //include_once($path_to_root . "/sales/includes/ui/cust_alloc_ui.inc");
 
 $js = "";

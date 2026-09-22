@@ -12,12 +12,12 @@
 $page_security = 'SA_MANUFTRANSVIEW';
 /** @var string $path_to_root */
 $path_to_root = "..";
-include($path_to_root . "/includes/db_pager.inc");
-include_once($path_to_root . "/includes/session.inc");
+include(dirname(__DIR__) . "/includes/db_pager.inc");
+include_once(dirname(__DIR__) . "/includes/session.inc");
 
-include_once($path_to_root . "/includes/date_functions.inc");
-include_once($path_to_root . "/manufacturing/includes/manufacturing_ui.inc");
-include_once($path_to_root . "/reporting/includes/reporting.inc");
+include_once(dirname(__DIR__) . "/includes/date_functions.inc");
+include_once(dirname(__DIR__) . "/manufacturing/includes/manufacturing_ui.inc");
+include_once(dirname(__DIR__) . "/reporting/includes/reporting.inc");
 
 $js = "";
 if (sysprefs()->use_popup_windows)

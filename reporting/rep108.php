@@ -19,11 +19,11 @@ $page_security = 'SA_CUSTSTATREP';
 /** @var string $path_to_root */
 $path_to_root="..";
 
-include_once($path_to_root . "/includes/session.inc");
-include_once($path_to_root . "/includes/date_functions.inc");
-include_once($path_to_root . "/includes/data_checks.inc");
-include_once($path_to_root . "/sales/includes/sales_db.inc");
-include_once($path_to_root . "/includes/db/crm_contacts_db.inc");
+include_once(dirname(__DIR__) . "/includes/session.inc");
+include_once(dirname(__DIR__) . "/includes/date_functions.inc");
+include_once(dirname(__DIR__) . "/includes/data_checks.inc");
+include_once(dirname(__DIR__) . "/sales/includes/sales_db.inc");
+include_once(dirname(__DIR__) . "/includes/db/crm_contacts_db.inc");
 
 //----------------------------------------------------------------------------------------------------
 
@@ -70,7 +70,7 @@ function print_statements(): void
 {
 	global $path_to_root, $systypes_array;
 
-	include_once($path_to_root . "/reporting/includes/pdf_report.inc");
+	include_once(dirname(__DIR__) . "/reporting/includes/pdf_report.inc");
 
 	$customer = $_POST['PARAM_0'];
 	$currency = $_POST['PARAM_1'];

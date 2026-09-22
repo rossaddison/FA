@@ -189,7 +189,7 @@ function new_doc_date(string|int|float|bool|array|null $date=null): string
 function is_date_in_fiscalyear(string|int|float|bool|null $date, bool $convert=false): int|bool
 {
 	global $path_to_root;
-	include_once($path_to_root . "/admin/db/fiscalyears_db.inc");
+	include_once(dirname(__DIR__) . "/admin/db/fiscalyears_db.inc");
 
 	if ($convert)
 		$date2 = sql2date($date);
@@ -220,7 +220,7 @@ function is_date_closed(string|int|float|bool|array|null $date): bool
 function begin_fiscalyear(): string
 {
 	global $path_to_root;
-	include_once($path_to_root . "/admin/db/fiscalyears_db.inc");
+	include_once(dirname(__DIR__) . "/admin/db/fiscalyears_db.inc");
 
 	$myrow = row_or_empty(get_current_fiscalyear());
 	return sql2date($myrow['begin']);
@@ -229,7 +229,7 @@ function begin_fiscalyear(): string
 function end_fiscalyear(): string
 {
 	global $path_to_root;
-	include_once($path_to_root . "/admin/db/fiscalyears_db.inc");
+	include_once(dirname(__DIR__) . "/admin/db/fiscalyears_db.inc");
 
 	$myrow = row_or_empty(get_current_fiscalyear());
 	return sql2date($myrow['end']);

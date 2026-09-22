@@ -18,8 +18,8 @@ iii) a credit note
 iv)  a delivery note
 */
 
-include_once($path_to_root . "/inventory/includes/inventory_db.inc");
-include_once($path_to_root . "/taxes/tax_calc.inc");
+include_once(dirname(__DIR__, 2) . "/inventory/includes/inventory_db.inc");
+include_once(dirname(__DIR__, 2) . "/taxes/tax_calc.inc");
 
 class Cart 
 {

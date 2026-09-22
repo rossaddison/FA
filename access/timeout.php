@@ -14,9 +14,9 @@
 */
 $path_to_root = '..';
 $page_security = 'SA_OPEN';
-include_once($path_to_root . "/includes/session.inc");
+include_once(dirname(__DIR__) . "/includes/session.inc");
 
-include($path_to_root .'/access/login.php');
+include(dirname(__DIR__) . '/access/login.php');
 
 if (get_post('SubmitUser') && session_obj('wa_current_user')->logged_in()) {
 	// After successfull login repeat last ajax call.

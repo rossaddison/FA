@@ -13,9 +13,9 @@ $page_security = 'SA_BACKUP';
 
 /** @var string $path_to_root */
 $path_to_root="..";
-include_once($path_to_root . "/includes/session.inc");
-include_once($path_to_root . "/includes/ui.inc");
-include_once($path_to_root . "/admin/db/maintenance_db.inc");
+include_once(dirname(__DIR__) . "/includes/session.inc");
+include_once(dirname(__DIR__) . "/includes/ui.inc");
+include_once(dirname(__DIR__) . "/admin/db/maintenance_db.inc");
 
 if (get_post('view')) {
 	if (!get_post('backups')) {

@@ -12,14 +12,14 @@
 $page_security = 'SA_FISCALYEARS';
 /** @var string $path_to_root */
 $path_to_root = "..";
-include_once($path_to_root . "/includes/session.inc");
+include_once(dirname(__DIR__) . "/includes/session.inc");
 
-include_once($path_to_root . "/includes/date_functions.inc");
-include_once($path_to_root . "/admin/db/company_db.inc");
-include_once($path_to_root . "/admin/db/fiscalyears_db.inc");
-include_once($path_to_root . "/includes/ui.inc");
-include_once($path_to_root . "/sales/includes/db/cust_trans_db.inc");
-include_once($path_to_root . "/admin/db/maintenance_db.inc");
+include_once(dirname(__DIR__) . "/includes/date_functions.inc");
+include_once(dirname(__DIR__) . "/admin/db/company_db.inc");
+include_once(dirname(__DIR__) . "/admin/db/fiscalyears_db.inc");
+include_once(dirname(__DIR__) . "/includes/ui.inc");
+include_once(dirname(__DIR__) . "/sales/includes/db/cust_trans_db.inc");
+include_once(dirname(__DIR__) . "/admin/db/maintenance_db.inc");
 $js = "";
 if (user_use_date_picker())
 	$js .= get_js_date_picker();

@@ -12,8 +12,8 @@
 $page_security = 'SA_ITEM';
 /** @var string $path_to_root */
 $path_to_root = "../..";
-include($path_to_root . "/includes/session.inc");
-include($path_to_root . "/reporting/includes/tcpdf.php");
+include(dirname(__DIR__, 2) . "/includes/session.inc");
+include(dirname(__DIR__, 2) . "/reporting/includes/tcpdf.php");
 
 $js = "";
 if (sysprefs()->use_popup_windows)
@@ -36,13 +36,13 @@ else {
 
 page($_SESSION['page_title'], @$_REQUEST['popup'], false, "", $js);
 
-include_once($path_to_root . "/includes/date_functions.inc");
-include_once($path_to_root . "/includes/ui.inc");
-include_once($path_to_root . "/includes/data_checks.inc");
-include_once($path_to_root . "/includes/ui/attachment.inc");
+include_once(dirname(__DIR__, 2) . "/includes/date_functions.inc");
+include_once(dirname(__DIR__, 2) . "/includes/ui.inc");
+include_once(dirname(__DIR__, 2) . "/includes/data_checks.inc");
+include_once(dirname(__DIR__, 2) . "/includes/ui/attachment.inc");
 
-include_once($path_to_root . "/inventory/includes/inventory_db.inc");
-include_once($path_to_root . "/fixed_assets/includes/fixed_assets_db.inc");
+include_once(dirname(__DIR__, 2) . "/inventory/includes/inventory_db.inc");
+include_once(dirname(__DIR__, 2) . "/fixed_assets/includes/fixed_assets_db.inc");
 
 $user_comp = user_company();
 $new_item = get_post('stock_id')=='' || get_post('cancel') || get_post('clone'); 
@@ -611,34 +611,34 @@ tabbed_content_start('tabs', $tabs);
 		case 'sales_pricing':
 			$_GET['stock_id'] = $stock_id;
 			$_GET['page_level'] = 1;
-			include_once($path_to_root."/inventory/prices.php");
+			include_once(dirname(__DIR__, 2) . "/inventory/prices.php");
 			break;
 		case 'purchase_pricing':
 			$_GET['stock_id'] = $stock_id;
 			$_GET['page_level'] = 1;
-			include_once($path_to_root."/inventory/purchasing_data.php");
+			include_once(dirname(__DIR__, 2) . "/inventory/purchasing_data.php");
 			break;
 		case 'standard_cost':
 			$_GET['stock_id'] = $stock_id;
 			$_GET['page_level'] = 1;
-			include_once($path_to_root."/inventory/cost_update.php");
+			include_once(dirname(__DIR__, 2) . "/inventory/cost_update.php");
 			break;
 		case 'reorder_level':
 			if (!is_inventory_item($stock_id))
 				break;
 			$_GET['page_level'] = 1;
 			$_GET['stock_id'] = $stock_id;
-			include_once($path_to_root."/inventory/reorder_level.php");
+			include_once(dirname(__DIR__, 2) . "/inventory/reorder_level.php");
 			break;
 		case 'movement':
 			if (!is_inventory_item($stock_id))
 				break;
 			$_GET['stock_id'] = $stock_id;
-			include_once($path_to_root."/inventory/inquiry/stock_movements.php");
+			include_once(dirname(__DIR__, 2) . "/inventory/inquiry/stock_movements.php");
 			break;
 		case 'status':
 			$_GET['stock_id'] = $stock_id;
-			include_once($path_to_root."/inventory/inquiry/stock_status.php");
+			include_once(dirname(__DIR__, 2) . "/inventory/inquiry/stock_status.php");
 			break;
 		case 'attachments':
 			$id = get_item_code_id($stock_id);

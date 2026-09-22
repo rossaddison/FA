@@ -9,10 +9,10 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-include_once($path_to_root . "/sales/includes/sales_db.inc");
-include_once($path_to_root . "/purchasing/includes/purchasing_db.inc");
-include_once($path_to_root . "/inventory/includes/inventory_db.inc");
-include_once($path_to_root . "/manufacturing/includes/manufacturing_db.inc");
+include_once(dirname(__DIR__, 2) . "/sales/includes/sales_db.inc");
+include_once(dirname(__DIR__, 2) . "/purchasing/includes/purchasing_db.inc");
+include_once(dirname(__DIR__, 2) . "/inventory/includes/inventory_db.inc");
+include_once(dirname(__DIR__, 2) . "/manufacturing/includes/manufacturing_db.inc");
 
 function void_transaction(string|int|float|bool|null $type, string|int|float|bool|null $type_no, string|int|float|bool|null $date_, string|null $memo_): string|false
 {

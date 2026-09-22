@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-require_once($path_to_root. "/includes/JsHttpRequest.php");
+require_once(dirname(__DIR__) . "/includes/JsHttpRequest.php");
 
 class Ajax extends JsHttpRequest {
 

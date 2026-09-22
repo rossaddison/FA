@@ -13,11 +13,11 @@ $page_security = 'SA_TAXRATES';
 /** @var string $path_to_root */
 $path_to_root = "..";
 
-include($path_to_root . "/includes/session.inc");
+include(dirname(__DIR__) . "/includes/session.inc");
 page(_($help_context = "Tax Types"));
 
-include_once($path_to_root . "/includes/ui.inc");
-include_once($path_to_root . "/taxes/db/tax_types_db.inc");
+include_once(dirname(__DIR__) . "/includes/ui.inc");
+include_once(dirname(__DIR__) . "/taxes/db/tax_types_db.inc");
 
 simple_page_mode(true);
 //-----------------------------------------------------------------------------------

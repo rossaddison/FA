@@ -16,10 +16,10 @@ if (@$_GET['page_level'] == 1)
 else	
 	$path_to_root = "..";
 
-include_once($path_to_root . "/includes/session.inc");
-include_once($path_to_root . "/includes/date_functions.inc");
-include_once($path_to_root . "/includes/ui.inc");
-include_once($path_to_root . "/includes/data_checks.inc");
+include_once(dirname(__DIR__) . "/includes/session.inc");
+include_once(dirname(__DIR__) . "/includes/date_functions.inc");
+include_once(dirname(__DIR__) . "/includes/ui.inc");
+include_once(dirname(__DIR__) . "/includes/data_checks.inc");
 
 $js = "";
 if (sysprefs()->use_popup_windows && sysprefs()->use_popup_search)

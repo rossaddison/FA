@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-require_once($path_to_root. "/admin/db/attachments_db.inc");
+require_once(dirname(__DIR__, 3) . "/admin/db/attachments_db.inc");
 
 function update_item(string|int|float|bool|null $stock_id, string|int|float|bool|null $description, string|int|float|bool|null $long_description, string|int|float|bool|null $category_id, 
 	string|int|float|bool|null $tax_type_id, string|int|float|bool|null $units, string|int|float|bool|null $mb_flag, string|int|float|bool|null $sales_account, string|int|float|bool|null $inventory_account, 

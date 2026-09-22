@@ -12,11 +12,11 @@
 $page_security = 'SA_PAYTERMS';
 /** @var string $path_to_root */
 $path_to_root="..";
-include($path_to_root . "/includes/session.inc");
+include(dirname(__DIR__) . "/includes/session.inc");
 
 page(_($help_context = "Payment Terms"));
 
-include($path_to_root . "/includes/ui.inc");
+include(dirname(__DIR__) . "/includes/ui.inc");
 
 simple_page_mode(true);
 

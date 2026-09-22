@@ -66,15 +66,15 @@ if (!isset($path_to_root))
 if (isset($_GET['path_to_root']) || isset($_POST['path_to_root']))
 	die("Restricted access");
 
-include_once($path_to_root . "/includes/errors.inc");
+include_once(dirname(__DIR__) . "/includes/errors.inc");
 // collect all error msgs
 set_error_handler('error_handler' /*, errtypes */);
 
-include_once($path_to_root . "/includes/current_user.inc");
-include_once($path_to_root . "/includes/lang/language.inc");
-include_once($path_to_root . "/includes/ajax.inc");
-include_once($path_to_root . "/includes/ui/ui_msgs.inc");
-include_once($path_to_root . "/includes/prefs/sysprefs.inc");
+include_once(dirname(__DIR__) . "/includes/current_user.inc");
+include_once(dirname(__DIR__) . "/includes/lang/language.inc");
+include_once(dirname(__DIR__) . "/includes/ajax.inc");
+include_once(dirname(__DIR__) . "/includes/ui/ui_msgs.inc");
+include_once(dirname(__DIR__) . "/includes/prefs/sysprefs.inc");
 include_once(__DIR__ . "/../includes/security_headers.inc");
 
 session_name('FAinstall');
@@ -83,7 +83,7 @@ session_start();
 // this is to fix the "back-do-you-want-to-refresh" issue - thanx PHPFreaks
 header("Cache-control: private");
 
-include_once($path_to_root . "/config.default.php");
+include_once(dirname(__DIR__) . "/config.default.php");
 
 $_SESSION['SysPrefs'] = new sys_prefs();
 /** @var sys_prefs $SysPrefs */
@@ -143,8 +143,8 @@ if (!isset($installed_languages))
 $_SESSION['language']->set_language($_SESSION['language']->code);
 $GetText->add_domain( $_SESSION['language']->code, $path_to_root."/install/lang");
 
-include_once($path_to_root . "/version.php");
-include_once($path_to_root . "/includes/main.inc");
+include_once(dirname(__DIR__) . "/version.php");
+include_once(dirname(__DIR__) . "/includes/main.inc");
 
 // js/php validation rules container
 $Validate = array();

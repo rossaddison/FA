@@ -13,12 +13,12 @@ $page_security = 'SA_SOFTWAREUPGRADE';
 /** @var string $path_to_root */
 $path_to_root="..";
 
-include($path_to_root . "/includes/session.inc");
+include(dirname(__DIR__) . "/includes/session.inc");
 
 page(_($help_context = "System Diagnostics"));
 
-include($path_to_root . "/includes/ui.inc");
-include($path_to_root . "/includes/system_tests.inc");
+include(dirname(__DIR__) . "/includes/ui.inc");
+include(dirname(__DIR__) . "/includes/system_tests.inc");
 //-------------------------------------------------------------------------------------------------
 
 display_system_tests();

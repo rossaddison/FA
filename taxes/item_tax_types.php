@@ -13,14 +13,14 @@ $page_security = 'SA_ITEMTAXTYPE';
 /** @var string $path_to_root */
 $path_to_root = "..";
 
-include($path_to_root . "/includes/session.inc");
+include(dirname(__DIR__) . "/includes/session.inc");
 
 page(_($help_context = "Item Tax Types")); 
 
-include_once($path_to_root . "/taxes/db/item_tax_types_db.inc");
-include_once($path_to_root . "/taxes/db/tax_types_db.inc");
+include_once(dirname(__DIR__) . "/taxes/db/item_tax_types_db.inc");
+include_once(dirname(__DIR__) . "/taxes/db/tax_types_db.inc");
 
-include($path_to_root . "/includes/ui.inc");
+include(dirname(__DIR__) . "/includes/ui.inc");
 
 simple_page_mode(true);
 //-----------------------------------------------------------------------------------

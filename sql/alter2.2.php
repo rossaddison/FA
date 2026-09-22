@@ -122,7 +122,7 @@ class fa2_2 extends fa_patch  {
 function convert_roles($pref) 
 {
 		global $security_groups, $security_headings, $security_areas, $path_to_root;
-		include_once($path_to_root."/includes/access_levels.inc");
+		include_once(dirname(__DIR__) . "/includes/access_levels.inc");
 
 	$trans_sec = array(
 		1 => array('SA_CHGPASSWD', 'SA_SETUPDISPLAY', 'SA_BANKTRANSVIEW',
@@ -223,7 +223,7 @@ function fix_extensions() {
 	}
 	
 	$exts = array();
-	include($path_to_root.'/installed_extensions.php');
+	include(dirname(__DIR__) . '/installed_extensions.php');
 	foreach($installed_extensions as $ext) {
 		$ext['filename'] = $ext['app_file']; unset($ext['app_file']);
 		$ext['tab'] = $ext['name'];

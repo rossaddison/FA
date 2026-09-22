@@ -333,7 +333,7 @@ class renderer
  function menu_footer($no_menu, $is_index)
  {
   global $path_to_root, $SysPrefs, $version, $db_connections;
-  include_once($path_to_root . "/includes/date_functions.inc");
+  include_once(dirname(__DIR__, 2) . "/includes/date_functions.inc");
 
   $date = ['class' => 'date'];
 

@@ -13,8 +13,8 @@ $page_security = 'SA_CUSTOMER';
 /** @var string $path_to_root */
 $path_to_root = "../..";
 
-include_once($path_to_root . "/includes/db_pager.inc");
-include_once($path_to_root . "/includes/session.inc");
+include_once(dirname(__DIR__, 2) . "/includes/db_pager.inc");
+include_once(dirname(__DIR__, 2) . "/includes/session.inc");
 $js = "";
 if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 500);
@@ -23,11 +23,11 @@ if (user_use_date_picker())
 	
 page(_($help_context = "Customers"), @$_REQUEST['popup'], false, "", $js); 
 
-include_once($path_to_root . "/includes/date_functions.inc");
-include_once($path_to_root . "/includes/banking.inc");
-include_once($path_to_root . "/includes/ui.inc");
-include_once($path_to_root . "/includes/ui/contacts_view.inc");
-include_once($path_to_root . "/includes/ui/attachment.inc");
+include_once(dirname(__DIR__, 2) . "/includes/date_functions.inc");
+include_once(dirname(__DIR__, 2) . "/includes/banking.inc");
+include_once(dirname(__DIR__, 2) . "/includes/ui.inc");
+include_once(dirname(__DIR__, 2) . "/includes/ui/contacts_view.inc");
+include_once(dirname(__DIR__, 2) . "/includes/ui/attachment.inc");
 
 if (isset($_GET['debtor_no'])) 
 {
@@ -368,11 +368,11 @@ tabbed_content_start('tabs', array(
 			break;
 		case 'transactions':
 			$_GET['customer_id'] = $selected_id;
-			include_once($path_to_root."/sales/inquiry/customer_inquiry.php");
+			include_once(dirname(__DIR__, 2) . "/sales/inquiry/customer_inquiry.php");
 			break;
 		case 'orders':
 			$_GET['customer_id'] = $selected_id;
-			include_once($path_to_root."/sales/inquiry/sales_orders_view.php");
+			include_once(dirname(__DIR__, 2) . "/sales/inquiry/sales_orders_view.php");
 			break;
 		case 'attachments':
 			$_GET['trans_no'] = $selected_id;

@@ -9,18 +9,18 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-include_once($path_to_root . "/includes/db/connect_db.inc");
+include_once(dirname(__DIR__) . "/includes/db/connect_db.inc");
 
-include_once($path_to_root . "/admin/db/transactions_db.inc");
-include_once($path_to_root . "/includes/types.inc");
-include_once($path_to_root . "/includes/references.inc");
-include_once($path_to_root . "/includes/db/comments_db.inc");
-include_once($path_to_root . "/includes/db/sql_functions.inc");
-include_once($path_to_root . "/includes/db/audit_trail_db.inc");
+include_once(dirname(__DIR__) . "/admin/db/transactions_db.inc");
+include_once(dirname(__DIR__) . "/includes/types.inc");
+include_once(dirname(__DIR__) . "/includes/references.inc");
+include_once(dirname(__DIR__) . "/includes/db/comments_db.inc");
+include_once(dirname(__DIR__) . "/includes/db/sql_functions.inc");
+include_once(dirname(__DIR__) . "/includes/db/audit_trail_db.inc");
 
-include_once($path_to_root . "/admin/db/users_db.inc");
-include_once($path_to_root . "/includes/ui/ui_view.inc");
-include_once($path_to_root . "/includes/ui/ui_controls.inc");
+include_once(dirname(__DIR__) . "/admin/db/users_db.inc");
+include_once(dirname(__DIR__) . "/includes/ui/ui_view.inc");
+include_once(dirname(__DIR__) . "/includes/ui/ui_controls.inc");
 
 $page_nested = -1;
 // static js files path
@@ -39,7 +39,7 @@ function page(string $title, ?bool $no_menu=false, bool $is_index=false, string 
 
    	$hide_menu = $no_menu;
 
-   	include_once($path_to_root . "/includes/page/header.inc");
+   	include_once(dirname(__DIR__) . "/includes/page/header.inc");
 
    	page_header($title, $no_menu, $is_index, $onload, $js, $css);
 	check_page_security($page_security);
@@ -64,7 +64,7 @@ function end_page(bool|int|null $no_menu=false, bool $is_index=false, bool $fina
 		hyperlink_back(true, $no_menu, $type_no, $trans_no, $final_screen);
 	div_end();	// end of _page_body section
 
-	include_once($path_to_root . "/includes/page/footer.inc");
+	include_once(dirname(__DIR__) . "/includes/page/footer.inc");
 	page_footer($no_menu, $is_index);
 }
 

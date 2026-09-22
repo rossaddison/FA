@@ -11,10 +11,10 @@
 ***********************************************************************/
 	$path_to_root = "..";
 
-	include_once($path_to_root . "/includes/session.inc");
-	include_once($path_to_root . "/includes/ui.inc");
-	include_once($path_to_root . "/includes/data_checks.inc");
-	include_once($path_to_root . "/reporting/includes/class.graphic.inc");
+	include_once(dirname(__DIR__) . "/includes/session.inc");
+	include_once(dirname(__DIR__) . "/includes/ui.inc");
+	include_once(dirname(__DIR__) . "/includes/data_checks.inc");
+	include_once(dirname(__DIR__) . "/reporting/includes/class.graphic.inc");
 	if (file_exists("$path_to_root/themes/".user_theme()."/dashboard.inc"))
 		include_once("$path_to_root/themes/".user_theme()."/dashboard.inc"); // yse theme dashboard.inc
 	else

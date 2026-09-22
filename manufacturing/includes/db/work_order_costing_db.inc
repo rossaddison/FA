@@ -167,8 +167,8 @@ function work_order_production_gl(string|int|float|bool|null $woid, ?string $sto
 	$memo = "";
 	if (sysprefs()->loc_notification() == 1)
 	{
-		include_once($path_to_root . "/sales/includes/cart_class.inc");
-		include_once($path_to_root . "/inventory/includes/inventory_db.inc");
+		include_once(dirname(__DIR__, 3) . "/sales/includes/cart_class.inc");
+		include_once(dirname(__DIR__, 3) . "/inventory/includes/inventory_db.inc");
 		$st_ids = array();
 		$st_names = array();
 		$st_num = array();

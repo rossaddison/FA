@@ -12,15 +12,15 @@
 $path_to_root="..";
 $page_security = 'SA_ATTACHDOCUMENT';
 
-include_once($path_to_root . "/includes/db_pager.inc");
-include_once($path_to_root . "/includes/session.inc");
+include_once(dirname(__DIR__) . "/includes/db_pager.inc");
+include_once(dirname(__DIR__) . "/includes/session.inc");
 
-include_once($path_to_root . "/includes/date_functions.inc");
-include_once($path_to_root . "/includes/ui.inc");
-include_once($path_to_root . "/includes/data_checks.inc");
-include_once($path_to_root . "/admin/db/attachments_db.inc");
-include_once($path_to_root . "/admin/db/transactions_db.inc");
-include_once($path_to_root . "/inventory/includes/db/items_db.inc");
+include_once(dirname(__DIR__) . "/includes/date_functions.inc");
+include_once(dirname(__DIR__) . "/includes/ui.inc");
+include_once(dirname(__DIR__) . "/includes/data_checks.inc");
+include_once(dirname(__DIR__) . "/admin/db/attachments_db.inc");
+include_once(dirname(__DIR__) . "/admin/db/transactions_db.inc");
+include_once(dirname(__DIR__) . "/inventory/includes/db/items_db.inc");
 
 if (isset($_GET['vw']))
 	$view_id = $_GET['vw'];

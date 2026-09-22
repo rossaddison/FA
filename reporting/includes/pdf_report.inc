@@ -20,12 +20,12 @@
 */
 include_once(dirname(__FILE__)."/class.pdf.inc");
 include_once(dirname(__FILE__)."/printer_class.inc");
-include_once($path_to_root . "/reporting/includes/reporting.inc");
-include_once($path_to_root . "/admin/db/company_db.inc");
-include_once($path_to_root . "/admin/db/fiscalyears_db.inc");
-include_once($path_to_root . "/admin/db/printers_db.inc");
-include_once($path_to_root . "/includes/ui/ui_globals.inc");
-include_once($path_to_root . "/config.php");
+include_once(dirname(__DIR__, 2) . "/reporting/includes/reporting.inc");
+include_once(dirname(__DIR__, 2) . "/admin/db/company_db.inc");
+include_once(dirname(__DIR__, 2) . "/admin/db/fiscalyears_db.inc");
+include_once(dirname(__DIR__, 2) . "/admin/db/printers_db.inc");
+include_once(dirname(__DIR__, 2) . "/includes/ui/ui_globals.inc");
+include_once(dirname(__DIR__, 2) . "/config.php");
 
 class FrontReport extends Cpdf
 {
@@ -1124,7 +1124,7 @@ class FrontReport extends Cpdf
 						$this->SetLang($contact['lang']);
 						$coy_name = @html_entity_decode($this->company['coy_name'], ENT_QUOTES, session_obj('language')->encoding=='iso-8859-2' ? 'ISO-8859-1' : session_obj('language')->encoding);
 
-						require_once($path_to_root . "/reporting/includes/class.mail.inc");
+						require_once(dirname(__DIR__, 2) . "/reporting/includes/class.mail.inc");
     					$mail = new email(str_replace(",", "", $coy_name),
     						$this->company['email']);
 						$mail->charset = $this->encoding;

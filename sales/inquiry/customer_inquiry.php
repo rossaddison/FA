@@ -12,12 +12,12 @@
 $page_security = 'SA_SALESTRANSVIEW';
 /** @var string $path_to_root */
 $path_to_root = "../..";
-include_once($path_to_root . "/includes/db_pager.inc");
-include_once($path_to_root . "/includes/session.inc");
+include_once(dirname(__DIR__, 2) . "/includes/db_pager.inc");
+include_once(dirname(__DIR__, 2) . "/includes/session.inc");
 
-include_once($path_to_root . "/sales/includes/sales_ui.inc");
-include_once($path_to_root . "/sales/includes/sales_db.inc");
-include_once($path_to_root . "/reporting/includes/reporting.inc");
+include_once(dirname(__DIR__, 2) . "/sales/includes/sales_ui.inc");
+include_once(dirname(__DIR__, 2) . "/sales/includes/sales_db.inc");
+include_once(dirname(__DIR__, 2) . "/reporting/includes/reporting.inc");
 
 $js = "";
 if (sysprefs()->use_popup_windows)

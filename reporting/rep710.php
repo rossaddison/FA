@@ -19,11 +19,11 @@ $page_security = 'SA_GLANALYTIC';
 /** @var string $path_to_root */
 $path_to_root="..";
 
-include_once($path_to_root . "/includes/session.inc");
-include_once($path_to_root . "/includes/date_functions.inc");
-include_once($path_to_root . "/includes/data_checks.inc");
-include_once($path_to_root . "/gl/includes/gl_db.inc");
-include_once($path_to_root . "/includes/ui/ui_view.inc");
+include_once(dirname(__DIR__) . "/includes/session.inc");
+include_once(dirname(__DIR__) . "/includes/date_functions.inc");
+include_once(dirname(__DIR__) . "/includes/data_checks.inc");
+include_once(dirname(__DIR__) . "/gl/includes/gl_db.inc");
+include_once(dirname(__DIR__) . "/includes/ui/ui_view.inc");
 
 //----------------------------------------------------------------------------------------------------
 
@@ -69,9 +69,9 @@ function print_audit_trail(): void
 	$orientation = $_POST['PARAM_5'];
 	$destination = $_POST['PARAM_6'];
 	if ((bool)$destination)
-		include_once($path_to_root . "/reporting/includes/excel_report.inc");
+		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
-		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
+		include_once(dirname(__DIR__) . "/reporting/includes/pdf_report.inc");
 
 	$orientation = ((bool)$orientation ? 'L' : 'P');
     $dec = user_price_dec();

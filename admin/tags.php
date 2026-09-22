@@ -10,10 +10,10 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 $path_to_root = "..";
-include($path_to_root . "/includes/session.inc");
-include_once($path_to_root . "/includes/types.inc"); // For tag constants
-include_once($path_to_root . "/admin/db/tags_db.inc");
-include($path_to_root . "/includes/ui.inc");
+include(dirname(__DIR__) . "/includes/session.inc");
+include_once(dirname(__DIR__) . "/includes/types.inc"); // For tag constants
+include_once(dirname(__DIR__) . "/admin/db/tags_db.inc");
+include(dirname(__DIR__) . "/includes/ui.inc");
 
 // Set up page security based on what type of tags we're working with
 if (@$_GET['type'] == "account" || get_post('type') == TAG_ACCOUNT) {

@@ -12,11 +12,11 @@
 $page_security = 'SA_EXCHANGERATE';
 /** @var string $path_to_root */
 $path_to_root = "../..";
-include_once($path_to_root . "/includes/session.inc");
+include_once(dirname(__DIR__, 2) . "/includes/session.inc");
 
-include_once($path_to_root . "/includes/date_functions.inc");
-include_once($path_to_root . "/includes/ui.inc");
-include_once($path_to_root . "/includes/banking.inc");
+include_once(dirname(__DIR__, 2) . "/includes/date_functions.inc");
+include_once(dirname(__DIR__, 2) . "/includes/ui.inc");
+include_once(dirname(__DIR__, 2) . "/includes/banking.inc");
 
 $js = "";
 if (user_use_date_picker())

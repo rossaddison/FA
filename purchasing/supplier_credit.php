@@ -13,14 +13,14 @@ $page_security = 'SA_SUPPLIERCREDIT';
 /** @var string $path_to_root */
 $path_to_root = "..";
 
-include_once($path_to_root . "/purchasing/includes/supp_trans_class.inc");
+include_once(dirname(__DIR__) . "/purchasing/includes/supp_trans_class.inc");
 
-include_once($path_to_root . "/includes/session.inc");
+include_once(dirname(__DIR__) . "/includes/session.inc");
 
-include_once($path_to_root . "/includes/data_checks.inc");
+include_once(dirname(__DIR__) . "/includes/data_checks.inc");
 
-include_once($path_to_root . "/purchasing/includes/purchasing_db.inc");
-include_once($path_to_root . "/purchasing/includes/purchasing_ui.inc");
+include_once(dirname(__DIR__) . "/purchasing/includes/purchasing_db.inc");
+include_once(dirname(__DIR__) . "/purchasing/includes/purchasing_ui.inc");
 $js = "";
 if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 500);

@@ -12,14 +12,14 @@
 $page_security = 'SA_DIMENSION';
 /** @var string $path_to_root */
 $path_to_root = "..";
-include_once($path_to_root . "/includes/session.inc");
+include_once(dirname(__DIR__) . "/includes/session.inc");
 
-include_once($path_to_root . "/includes/date_functions.inc");
-include_once($path_to_root . "/includes/data_checks.inc");
+include_once(dirname(__DIR__) . "/includes/date_functions.inc");
+include_once(dirname(__DIR__) . "/includes/data_checks.inc");
 
-include_once($path_to_root . "/admin/db/tags_db.inc");
-include_once($path_to_root . "/dimensions/includes/dimensions_db.inc");
-include_once($path_to_root . "/dimensions/includes/dimensions_ui.inc");
+include_once(dirname(__DIR__) . "/admin/db/tags_db.inc");
+include_once(dirname(__DIR__) . "/dimensions/includes/dimensions_db.inc");
+include_once(dirname(__DIR__) . "/dimensions/includes/dimensions_ui.inc");
 
 $js = "";
 if (user_use_date_picker())

@@ -12,12 +12,12 @@
 $page_security = 'SA_PRINTERS';
 /** @var string $path_to_root */
 $path_to_root="..";
-include($path_to_root . "/includes/session.inc");
+include(dirname(__DIR__) . "/includes/session.inc");
 
 page(_($help_context = "Printer Locations"));
 
-include($path_to_root . "/admin/db/printers_db.inc");
-include($path_to_root . "/includes/ui.inc");
+include(dirname(__DIR__) . "/admin/db/printers_db.inc");
+include(dirname(__DIR__) . "/includes/ui.inc");
 
 simple_page_mode(true);
 //-------------------------------------------------------------------------------------------

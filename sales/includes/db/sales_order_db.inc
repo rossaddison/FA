@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-require_once($path_to_root. "/admin/db/attachments_db.inc");
+require_once(dirname(__DIR__, 3) . "/admin/db/attachments_db.inc");
 //----------------------------------------------------------------------------------------
 /** @return float|int */
 function add_sales_order(Cart &$order)
@@ -49,7 +49,7 @@ function add_sales_order(Cart &$order)
 
 	if (sysprefs()->loc_notification() == 1)
 	{
-		include_once($path_to_root . "/inventory/includes/inventory_db.inc");
+		include_once(dirname(__DIR__, 3) . "/inventory/includes/inventory_db.inc");
 		$st_ids = array();
 		$st_names = array();
 		$st_num = array();
@@ -172,7 +172,7 @@ function update_sales_order(?object $order): void
 
 	if (sysprefs()->loc_notification() == 1)
 	{
-		include_once($path_to_root . "/inventory/includes/inventory_db.inc");
+		include_once(dirname(__DIR__, 3) . "/inventory/includes/inventory_db.inc");
 		$st_ids = array();
 		$st_names = array();
 		$st_num = array();

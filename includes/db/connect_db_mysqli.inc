@@ -18,7 +18,7 @@ function set_global_connection(string|int|float|bool|null $company=-1): mysqli|f
 {
 	global $db, $path_to_root, $db_connections, $SysPrefs;
 
-	include ($path_to_root . "/config_db.php");
+	include (dirname(__DIR__, 2) . "/config_db.php");
 
 	if ($company == -1) 
 		$company = user_company();

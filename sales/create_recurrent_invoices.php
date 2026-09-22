@@ -12,11 +12,11 @@
 $page_security = 'SA_SALESINVOICE';
 /** @var string $path_to_root */
 $path_to_root = "..";
-include_once($path_to_root . "/sales/includes/cart_class.inc");
-include_once($path_to_root . "/includes/session.inc");
-include_once($path_to_root . "/sales/includes/ui/sales_order_ui.inc");
-include_once($path_to_root . "/includes/ui.inc");
-include_once($path_to_root . "/reporting/includes/reporting.inc");
+include_once(dirname(__DIR__) . "/sales/includes/cart_class.inc");
+include_once(dirname(__DIR__) . "/includes/session.inc");
+include_once(dirname(__DIR__) . "/sales/includes/ui/sales_order_ui.inc");
+include_once(dirname(__DIR__) . "/includes/ui.inc");
+include_once(dirname(__DIR__) . "/reporting/includes/reporting.inc");
 
 $js = "";
 if (sysprefs()->use_popup_windows)

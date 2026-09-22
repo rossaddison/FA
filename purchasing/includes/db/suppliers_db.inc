@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-require_once($path_to_root. "/admin/db/attachments_db.inc");
+require_once(dirname(__DIR__, 3) . "/admin/db/attachments_db.inc");
 
 function add_supplier(string|null $supp_name, string|null $supp_ref, string|null $address, string|null $supp_address, string|null $gst_no,
 	string|null $website, string|null $supp_account_no, string|null $bank_account, int|float|bool|null $credit_limit, string|null $dimension_id, string|null $dimension2_id, 

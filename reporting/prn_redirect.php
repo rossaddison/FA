@@ -16,7 +16,7 @@
 $path_to_root = "..";
 global $page_security;
 $page_security = 'SA_OPEN';	// this level is later overriden in rep file
-include_once($path_to_root . "/includes/session.inc");
+include_once(dirname(__DIR__) . "/includes/session.inc");
 
 // the report id becomes part of a cookie name, so only a number is accepted
 if (user_save_report_selections() > 0 && isset($_POST['REP_ID']) && is_string($_POST['REP_ID']) && ctype_digit($_POST['REP_ID'])) {	// save parameters from Report Center

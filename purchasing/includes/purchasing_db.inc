@@ -9,22 +9,22 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-include_once($path_to_root . "/purchasing/includes/supp_trans_class.inc");
+include_once(dirname(__DIR__, 2) . "/purchasing/includes/supp_trans_class.inc");
 
-include_once($path_to_root . "/includes/banking.inc");
-include_once($path_to_root . "/includes/inventory.inc");
+include_once(dirname(__DIR__, 2) . "/includes/banking.inc");
+include_once(dirname(__DIR__, 2) . "/includes/inventory.inc");
 
-include_once($path_to_root . "/includes/date_functions.inc");
+include_once(dirname(__DIR__, 2) . "/includes/date_functions.inc");
 
-include_once($path_to_root . "/includes/db/allocations_db.inc");
+include_once(dirname(__DIR__, 2) . "/includes/db/allocations_db.inc");
 
-include_once($path_to_root . "/purchasing/includes/db/supp_trans_db.inc");
-include_once($path_to_root . "/purchasing/includes/db/po_db.inc");
-include_once($path_to_root . "/purchasing/includes/db/grn_db.inc");
-include_once($path_to_root . "/purchasing/includes/db/invoice_db.inc");
-include_once($path_to_root . "/purchasing/includes/db/suppalloc_db.inc");
-include_once($path_to_root . "/purchasing/includes/db/supp_payment_db.inc");
-include_once($path_to_root . "/purchasing/includes/db/suppliers_db.inc");
+include_once(dirname(__DIR__, 2) . "/purchasing/includes/db/supp_trans_db.inc");
+include_once(dirname(__DIR__, 2) . "/purchasing/includes/db/po_db.inc");
+include_once(dirname(__DIR__, 2) . "/purchasing/includes/db/grn_db.inc");
+include_once(dirname(__DIR__, 2) . "/purchasing/includes/db/invoice_db.inc");
+include_once(dirname(__DIR__, 2) . "/purchasing/includes/db/suppalloc_db.inc");
+include_once(dirname(__DIR__, 2) . "/purchasing/includes/db/supp_payment_db.inc");
+include_once(dirname(__DIR__, 2) . "/purchasing/includes/db/suppliers_db.inc");
 
 //-------------------------------------------------------------------------------------------------------------
 

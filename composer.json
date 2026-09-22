@@ -21,6 +21,7 @@
         "sort-packages": true
     },
     "scripts": {
-        "psalm": "psalm --no-cache"
+        "psalm": "psalm",
+        "psalm:fresh": "psalm --no-cache"
     }
 }

@@ -9,9 +9,9 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-include_once($path_to_root . "/includes/banking.inc");
-include_once($path_to_root . "/includes/types.inc");
-include_once($path_to_root . "/includes/current_user.inc");
+include_once(dirname(__DIR__, 2) . "/includes/banking.inc");
+include_once(dirname(__DIR__, 2) . "/includes/types.inc");
+include_once(dirname(__DIR__, 2) . "/includes/current_user.inc");
 
 // the button's image comes from the theme's stylesheet (input.combo_submit); %s after the class is ' fa-none' when JavaScript replaces it
 define('SEARCH_BUTTON', "<input %s type='submit' class='combo_submit%s' aspect='fallback' name='%s' value=' ' title='"._("Set filter")."'> ");
@@ -2462,7 +2462,7 @@ function tag_list(string|int|float|bool|null $name, string|int|float|bool|null $
 {
 	// Get tags
 	global $path_to_root;
-	include_once($path_to_root . "/admin/db/tags_db.inc");
+	include_once(dirname(__DIR__, 2) . "/admin/db/tags_db.inc");
 	$results = get_tags($type, $all);
 
 	while ($tag = db_fetch($results))

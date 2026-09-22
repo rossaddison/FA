@@ -12,12 +12,12 @@
 $page_security = 'SA_SOFTWAREUPGRADE';
 /** @var string $path_to_root */
 $path_to_root = "../..";
-include_once($path_to_root . "/includes/session.inc");
-include_once($path_to_root . "/includes/packages.inc");
+include_once(dirname(__DIR__, 2) . "/includes/session.inc");
+include_once(dirname(__DIR__, 2) . "/includes/packages.inc");
 
 page(_($help_context = "Log View"), true);
 
-include_once($path_to_root . "/includes/ui.inc");
+include_once(dirname(__DIR__, 2) . "/includes/ui.inc");
 
 // the id becomes part of a file path, so only a company number is accepted
 if (!isset($_GET['id']) || !is_string($_GET['id']) || !ctype_digit($_GET['id']))

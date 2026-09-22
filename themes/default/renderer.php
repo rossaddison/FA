@@ -286,7 +286,7 @@ class renderer
   }
   global $version, $path_to_root, $Pagehelp, $Ajax, $SysPrefs;
 
-  include_once($path_to_root . "/includes/date_functions.inc");
+  include_once(dirname(__DIR__, 2) . "/includes/date_functions.inc");
 
   // --- CSS shortcut variables ---------------------------------------
   $footerCell = ['class' => 'footer', 'align' => 'center'];

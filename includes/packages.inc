@@ -9,9 +9,9 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-include_once($path_to_root. "/includes/archive.inc");
-include_once($path_to_root. "/includes/remote_url.inc");
-include_once($path_to_root. "/includes/hooks.inc");
+include_once(dirname(__DIR__) . "/includes/archive.inc");
+include_once(dirname(__DIR__) . "/includes/remote_url.inc");
+include_once(dirname(__DIR__) . "/includes/hooks.inc");
 
 define('PKG_CACHE_PATH', $path_to_root.'/modules/_cache');
 define('PUBKEY_PATH', $path_to_root);

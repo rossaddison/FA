@@ -12,15 +12,15 @@
 $page_security = 'SA_SECROLES';
 /** @var string $path_to_root */
 $path_to_root = "..";
-include_once($path_to_root . "/includes/session.inc");
+include_once(dirname(__DIR__) . "/includes/session.inc");
 
 add_access_extensions();
 
 page(_($help_context = "Access setup"));
 
-include_once($path_to_root . "/includes/ui.inc");
-include_once($path_to_root . "/includes/access_levels.inc");
-include_once($path_to_root . "/admin/db/security_db.inc");
+include_once(dirname(__DIR__) . "/includes/ui.inc");
+include_once(dirname(__DIR__) . "/includes/access_levels.inc");
+include_once(dirname(__DIR__) . "/admin/db/security_db.inc");
 
 $new_role = get_post('role')=='' || get_post('cancel') || get_post('clone'); 
 //--------------------------------------------------------------------------------------------------

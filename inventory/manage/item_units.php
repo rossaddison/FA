@@ -12,13 +12,13 @@
 $page_security = 'SA_UOM';
 /** @var string $path_to_root */
 $path_to_root = "../..";
-include($path_to_root . "/includes/session.inc");
+include(dirname(__DIR__, 2) . "/includes/session.inc");
 
 page(_($help_context = "Units of Measure"));
 
-include_once($path_to_root . "/includes/ui.inc");
+include_once(dirname(__DIR__, 2) . "/includes/ui.inc");
 
-include_once($path_to_root . "/inventory/includes/db/items_units_db.inc");
+include_once(dirname(__DIR__, 2) . "/inventory/includes/db/items_units_db.inc");
 
 simple_page_mode(false);
 //----------------------------------------------------------------------------------

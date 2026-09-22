@@ -12,13 +12,13 @@
 $page_security = 'SA_CRSTATUS';
 /** @var string $path_to_root */
 $path_to_root = "../..";
-include($path_to_root . "/includes/session.inc");
+include(dirname(__DIR__, 2) . "/includes/session.inc");
 
 page(_($help_context = "Credit Status")); 
 
-include($path_to_root . "/sales/includes/db/credit_status_db.inc");
+include(dirname(__DIR__, 2) . "/sales/includes/db/credit_status_db.inc");
 
-include($path_to_root . "/includes/ui.inc");
+include(dirname(__DIR__, 2) . "/includes/ui.inc");
 
 simple_page_mode(true);
 //-----------------------------------------------------------------------------------

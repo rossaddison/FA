@@ -12,8 +12,8 @@
 $page_security = 'SA_SUPPLIER';
 /** @var string $path_to_root */
 $path_to_root = "../..";
-include($path_to_root . "/includes/db_pager.inc");
-include_once($path_to_root . "/includes/session.inc");
+include(dirname(__DIR__, 2) . "/includes/db_pager.inc");
+include_once(dirname(__DIR__, 2) . "/includes/session.inc");
 
 $js = "";
 if (sysprefs()->use_popup_windows)
@@ -23,9 +23,9 @@ if (user_use_date_picker())
 
 page(_($help_context = "Suppliers"), @$_REQUEST['popup'], false, "", $js);
 
-include_once($path_to_root . "/includes/ui.inc");
-include_once($path_to_root . "/includes/ui/contacts_view.inc");
-include_once($path_to_root . "/includes/ui/attachment.inc");
+include_once(dirname(__DIR__, 2) . "/includes/ui.inc");
+include_once(dirname(__DIR__, 2) . "/includes/ui/contacts_view.inc");
+include_once(dirname(__DIR__, 2) . "/includes/ui/attachment.inc");
 
 check_db_has_tax_groups(_("There are no tax groups defined in the system. At least one tax group is required before proceeding."));
 
@@ -337,11 +337,11 @@ tabbed_content_start('tabs', array(
 			break;
 		case 'transactions':
 			$_GET['supplier_id'] = $supplier_id;
-			include_once($path_to_root."/purchasing/inquiry/supplier_inquiry.php");
+			include_once(dirname(__DIR__, 2) . "/purchasing/inquiry/supplier_inquiry.php");
 			break;
 		case 'orders':
 			$_GET['supplier_id'] = $supplier_id;
-			include_once($path_to_root."/purchasing/inquiry/po_search_completed.php");
+			include_once(dirname(__DIR__, 2) . "/purchasing/inquiry/po_search_completed.php");
 			break;
 		case 'attachments':
 			$_GET['trans_no'] = $supplier_id;

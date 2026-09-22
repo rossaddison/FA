@@ -19,11 +19,11 @@ $page_security = 'SA_SALESBULKREP';
 /** @var string $path_to_root */
 $path_to_root="..";
 
-include_once($path_to_root . "/includes/session.inc");
-include_once($path_to_root . "/includes/date_functions.inc");
-include_once($path_to_root . "/includes/data_checks.inc");
-include_once($path_to_root . "/sales/includes/sales_db.inc");
-include_once($path_to_root . "/inventory/includes/db/items_category_db.inc");
+include_once(dirname(__DIR__) . "/includes/session.inc");
+include_once(dirname(__DIR__) . "/includes/date_functions.inc");
+include_once(dirname(__DIR__) . "/includes/data_checks.inc");
+include_once(dirname(__DIR__) . "/sales/includes/sales_db.inc");
+include_once(dirname(__DIR__) . "/inventory/includes/db/items_category_db.inc");
 
 //----------------------------------------------------------------------------------------------------
 
@@ -87,9 +87,9 @@ function print_order_status_list(): void
 	$orientation = $_POST['PARAM_6'];
 	$destination = $_POST['PARAM_7'];
 	if ((bool)$destination)
-		include_once($path_to_root . "/reporting/includes/excel_report.inc");
+		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
-		include_once($path_to_root . "/reporting/includes/pdf_report.inc");
+		include_once(dirname(__DIR__) . "/reporting/includes/pdf_report.inc");
 	$orientation = ((bool)$orientation ? 'L' : 'P');
 
 	if ($category == ALL_NUMERIC)

@@ -12,16 +12,16 @@
 $page_security = 'SA_BUDGETENTRY';
 /** @var string $path_to_root */
 $path_to_root = "..";
-include_once($path_to_root . "/includes/session.inc");
+include_once(dirname(__DIR__) . "/includes/session.inc");
 
 add_js_file('budget.js');
 
 page(_($help_context = "Budget Entry"));
 
-include_once($path_to_root . "/includes/ui.inc");
-include_once($path_to_root . "/gl/includes/gl_db.inc");
-include_once($path_to_root . "/includes/data_checks.inc");
-include_once($path_to_root . "/admin/db/fiscalyears_db.inc");
+include_once(dirname(__DIR__) . "/includes/ui.inc");
+include_once(dirname(__DIR__) . "/gl/includes/gl_db.inc");
+include_once(dirname(__DIR__) . "/includes/data_checks.inc");
+include_once(dirname(__DIR__) . "/admin/db/fiscalyears_db.inc");
 
 
 check_db_has_gl_account_groups(_("There are no account groups defined. Please define at least one account group before entering accounts."));

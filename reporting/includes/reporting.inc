@@ -19,7 +19,7 @@ function print_document_link(string|int|float|bool|array|null $doc_no, ?string $
 	string|bool|null $icon=false, ?string $class='printlink', ?string $id='', ?int $email=0, ?int $extra=0)
 {
 	global $path_to_root;
-	include_once($path_to_root . "/includes/types.inc");
+	include_once(dirname(__DIR__, 2) . "/includes/types.inc");
 
 	$url = $path_to_root.'/reporting/prn_redirect.php?';
 	$def_orientation = (user_def_print_orientation() == 1 ? 1 : 0);

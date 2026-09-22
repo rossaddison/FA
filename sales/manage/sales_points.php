@@ -12,12 +12,12 @@
 $page_security = 'SA_POSSETUP';
 /** @var string $path_to_root */
 $path_to_root = "../..";
-include_once($path_to_root . "/includes/session.inc");
+include_once(dirname(__DIR__, 2) . "/includes/session.inc");
 
 page(_($help_context = "POS settings"));
 
-include_once($path_to_root . "/includes/ui.inc");
-include_once($path_to_root . "/sales/includes/db/sales_points_db.inc");
+include_once(dirname(__DIR__, 2) . "/includes/ui.inc");
+include_once(dirname(__DIR__, 2) . "/sales/includes/db/sales_points_db.inc");
 
 simple_page_mode(true);
 //----------------------------------------------------------------------------------------------------

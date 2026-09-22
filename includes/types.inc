@@ -90,10 +90,10 @@ define('BT_CHEQUE', 1);
 define('BT_CREDIT', 2);
 define('BT_CASH', 3);
 
-include_once($path_to_root . "/manufacturing/includes/manufacturing_db.inc");
-include_once($path_to_root . "/purchasing/includes/purchasing_db.inc");
-include_once($path_to_root . "/sales/includes/sales_db.inc");
-include_once($path_to_root . "/dimensions/includes/dimensions_db.inc");
+include_once(dirname(__DIR__) . "/manufacturing/includes/manufacturing_db.inc");
+include_once(dirname(__DIR__) . "/purchasing/includes/purchasing_db.inc");
+include_once(dirname(__DIR__) . "/sales/includes/sales_db.inc");
+include_once(dirname(__DIR__) . "/dimensions/includes/dimensions_db.inc");
 //----------------------------------------------------------------------------------
 //	Payment types
 //
@@ -249,7 +249,7 @@ define('BO_COMPANY', 1);
 define('BO_CUSTBRANCH', 2);
 define('BO_SUPPLIER', 3);
 
-include_once($path_to_root . '/includes/sysnames.inc');
+include_once(dirname(__DIR__) . '/includes/sysnames.inc');
 
 // tax register type
 define('TR_OUTPUT', 0); // sales

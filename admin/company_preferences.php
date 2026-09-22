@@ -12,15 +12,15 @@
 $page_security = 'SA_SETUPCOMPANY';
 /** @var string $path_to_root */
 $path_to_root = "..";
-include($path_to_root . "/includes/session.inc");
+include(dirname(__DIR__) . "/includes/session.inc");
 
 page(_($help_context = "Company Setup"));
 
-include_once($path_to_root . "/includes/date_functions.inc");
-include_once($path_to_root . "/includes/ui.inc");
+include_once(dirname(__DIR__) . "/includes/date_functions.inc");
+include_once(dirname(__DIR__) . "/includes/ui.inc");
 
-include_once($path_to_root . "/admin/db/company_db.inc");
-include_once($path_to_root . "/reporting/includes/tcpdf.php");
+include_once(dirname(__DIR__) . "/admin/db/company_db.inc");
+include_once(dirname(__DIR__) . "/reporting/includes/tcpdf.php");
 //-------------------------------------------------------------------------------------------------
 
 if (isset($_POST['update']) && $_POST['update'] != "")

@@ -15,7 +15,7 @@
 //  any form.
 //
 //	View definition you will find in the following file:
-include_once($path_to_root."/includes/ui/db_pager_view.inc");
+include_once(dirname(__DIR__) . "/includes/ui/db_pager_view.inc");
 
 class db_pager {
 	/** @var string */

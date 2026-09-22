@@ -25,9 +25,17 @@ jobs:
           done < <(find . -type f \( -name '*.php' -o -name '*.inc' \) -not -path './vendor/*' -not -path './company/*/js_cache/*' -print0)
           exit $status
       - run: composer install --no-interaction --no-progress --prefer-dist
+      - name: Cache Psalm's own analysis cache (keyed loosely; Psalm invalidates per file)
+        uses: actions/cache@v4
+        with:
+          path: .psalm-cache
+          key: psalm-${{ github.ref_name }}-${{ github.sha }}
+          restore-keys: |
+            psalm-${{ github.ref_name }}-
+            psalm-
       - name: Psalm level 1, no findings beyond the recorded count
         run: |
-          vendor/bin/psalm --no-cache --threads=4 --no-progress --output-format=compact > psalm.out || true
+          vendor/bin/psalm --threads=4 --no-progress --output-format=compact > psalm.out || true
           found=$(sed 's/\x1b\[[0-9;]*m//g' psalm.out | grep -oE '^[0-9]+ errors? found' | grep -oE '^[0-9]+' || echo 0)
           allowed=$(tr -d '[:space:]' < .github/psalm-error-count)
           echo "Psalm findings: $found (recorded: $allowed)"

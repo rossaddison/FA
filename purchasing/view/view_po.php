@@ -12,10 +12,10 @@
 $page_security = 'SA_SUPPTRANSVIEW';
 /** @var string $path_to_root */
 $path_to_root = "../..";
-include($path_to_root . "/purchasing/includes/po_class.inc");
+include(dirname(__DIR__, 2) . "/purchasing/includes/po_class.inc");
 
-include($path_to_root . "/includes/session.inc");
-include($path_to_root . "/purchasing/includes/purchasing_ui.inc");
+include(dirname(__DIR__, 2) . "/includes/session.inc");
+include(dirname(__DIR__, 2) . "/purchasing/includes/purchasing_ui.inc");
 
 $js = "";
 if (sysprefs()->use_popup_windows)

@@ -13,13 +13,13 @@ $page_security = 'SA_WORKORDERENTRY';
 /** @var string $path_to_root */
 $path_to_root = "..";
 
-include_once($path_to_root . "/includes/session.inc");
+include_once(dirname(__DIR__) . "/includes/session.inc");
 
-include_once($path_to_root . "/includes/date_functions.inc");
-include_once($path_to_root . "/includes/data_checks.inc");
+include_once(dirname(__DIR__) . "/includes/date_functions.inc");
+include_once(dirname(__DIR__) . "/includes/data_checks.inc");
 
-include_once($path_to_root . "/manufacturing/includes/manufacturing_db.inc");
-include_once($path_to_root . "/manufacturing/includes/manufacturing_ui.inc");
+include_once(dirname(__DIR__) . "/manufacturing/includes/manufacturing_db.inc");
+include_once(dirname(__DIR__) . "/manufacturing/includes/manufacturing_ui.inc");
 
 $js = "";
 if (sysprefs()->use_popup_windows)
@@ -57,7 +57,7 @@ if (isset($_GET['AddedID']))
 
 	if ($_GET['type'] != WO_ADVANCED)
 	{
-		include_once($path_to_root . "/reporting/includes/reporting.inc");
+		include_once(dirname(__DIR__) . "/reporting/includes/reporting.inc");
 
 		submenu_print(_("&Print This Work Order"), ST_WORKORDER, $id, 'prtopt');
 		submenu_print(_("&Email This Work Order"), ST_WORKORDER, $id, null, 1);

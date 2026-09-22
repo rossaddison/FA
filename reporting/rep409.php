@@ -16,10 +16,10 @@ $page_security = $_POST['PARAM_0'] == $_POST['PARAM_1'] ?
 /** @var string $path_to_root */
 $path_to_root="..";
 
-include_once($path_to_root . "/includes/session.inc");
-include_once($path_to_root . "/includes/date_functions.inc");
-include_once($path_to_root . "/includes/data_checks.inc");
-include_once($path_to_root . "/manufacturing/includes/manufacturing_db.inc");
+include_once(dirname(__DIR__) . "/includes/session.inc");
+include_once(dirname(__DIR__) . "/includes/date_functions.inc");
+include_once(dirname(__DIR__) . "/includes/data_checks.inc");
+include_once(dirname(__DIR__) . "/manufacturing/includes/manufacturing_db.inc");
 
 //----------------------------------------------------------------------------------------------------
 
@@ -31,7 +31,7 @@ function print_workorders(): void
 {
 	global $path_to_root, $dflt_lang;
 
-	include_once($path_to_root . "/reporting/includes/pdf_report.inc");
+	include_once(dirname(__DIR__) . "/reporting/includes/pdf_report.inc");
 
 	$from = $_POST['PARAM_0'];
 	$to = $_POST['PARAM_1'];

@@ -362,21 +362,21 @@ if (!isset($path_to_root))
 if (isset($_GET['path_to_root']) || isset($_POST['path_to_root']))
 	die("Restricted access");
 
-include_once($path_to_root . "/includes/errors.inc");
+include_once(dirname(__DIR__) . "/includes/errors.inc");
 // colect all error msgs
 set_error_handler('error_handler' /*, errtypes */);
 set_exception_handler('exception_handler');
 
-include_once($path_to_root . "/includes/current_user.inc");
-include_once($path_to_root . "/frontaccounting.php");
-include_once($path_to_root . "/admin/db/security_db.inc");
-include_once($path_to_root . "/includes/lang/language.inc");
-include_once($path_to_root . "/config_db.php");
-include_once($path_to_root . "/includes/ajax.inc");
-include_once($path_to_root . "/includes/ui/ui_msgs.inc");
-include_once($path_to_root . "/includes/prefs/sysprefs.inc");
+include_once(dirname(__DIR__) . "/includes/current_user.inc");
+include_once(dirname(__DIR__) . "/frontaccounting.php");
+include_once(dirname(__DIR__) . "/admin/db/security_db.inc");
+include_once(dirname(__DIR__) . "/includes/lang/language.inc");
+include_once(dirname(__DIR__) . "/config_db.php");
+include_once(dirname(__DIR__) . "/includes/ajax.inc");
+include_once(dirname(__DIR__) . "/includes/ui/ui_msgs.inc");
+include_once(dirname(__DIR__) . "/includes/prefs/sysprefs.inc");
 
-include_once($path_to_root . "/includes/hooks.inc");
+include_once(dirname(__DIR__) . "/includes/hooks.inc");
 //
 // include all extensions hook files.
 //
@@ -455,10 +455,10 @@ if (isset($dflt_lang) && isset($installed_languages))
 	session_obj('language')->set_language(session_obj('language')->code);
 }
 
-include_once($path_to_root . "/includes/access_levels.inc");
-include_once($path_to_root . "/version.php");
-include_once($path_to_root . "/includes/main.inc");
-include_once($path_to_root . "/includes/app_entries.inc");
+include_once(dirname(__DIR__) . "/includes/access_levels.inc");
+include_once(dirname(__DIR__) . "/version.php");
+include_once(dirname(__DIR__) . "/includes/main.inc");
+include_once(dirname(__DIR__) . "/includes/app_entries.inc");
 
 // Ajax communication object
 $Ajax = new Ajax();
@@ -500,7 +500,7 @@ if (!defined('FA_LOGOUT_PHP_FILE')){
       if (@sysprefs()->allow_password_reset && !sysprefs()->allow_demo_mode
         && (isset($_GET['reset']) || isset($_POST['email_entry_field']))) {
 		  if (!isset($_POST["email_entry_field"])) {
-        include($path_to_root . "/access/password_reset.php");
+        include(dirname(__DIR__) . "/access/password_reset.php");
         exit();
       }
       else {
@@ -534,7 +534,7 @@ if (!defined('FA_LOGOUT_PHP_FILE')){
 		if (in_ajax())
 			ajax()->popup($path_to_root ."/access/timeout.php");
 		else
-			include($path_to_root . "/access/login.php");
+			include(dirname(__DIR__) . "/access/login.php");
 			exit;
 		} else {
 			if (isset($_POST["company_login_nickname"]) && !isset($_POST["company_login_name"])) {
@@ -555,7 +555,7 @@ if (!defined('FA_LOGOUT_PHP_FILE')){
 			{
 			// Incorrect password
 				if (isset($_SESSION['timeout'])) {
-					include($path_to_root . "/access/login.php");
+					include(dirname(__DIR__) . "/access/login.php");
 					exit;
 				} else
 					login_fail();

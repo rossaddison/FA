@@ -12,12 +12,12 @@
 $page_security = 'SA_ASSETSANALYTIC';
 /** @var string $path_to_root */
 $path_to_root = "../..";
-include($path_to_root . "/includes/db_pager.inc");
-include($path_to_root . "/includes/session.inc");
+include(dirname(__DIR__, 2) . "/includes/db_pager.inc");
+include(dirname(__DIR__, 2) . "/includes/session.inc");
 
-include($path_to_root . "/purchasing/includes/purchasing_ui.inc");
-include($path_to_root . "/reporting/includes/reporting.inc");
-include($path_to_root . "/fixed_assets/includes/fixed_assets_db.inc");
+include(dirname(__DIR__, 2) . "/purchasing/includes/purchasing_ui.inc");
+include(dirname(__DIR__, 2) . "/reporting/includes/reporting.inc");
+include(dirname(__DIR__, 2) . "/fixed_assets/includes/fixed_assets_db.inc");
 
 $js = "";
 if (sysprefs()->use_popup_windows)

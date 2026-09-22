@@ -12,7 +12,7 @@
 $page_security = 'SA_ITEMCATEGORY';
 /** @var string $path_to_root */
 $path_to_root = "../..";
-include($path_to_root . "/includes/session.inc");
+include(dirname(__DIR__, 2) . "/includes/session.inc");
 
 if (isset($_GET['FixedAsset'])) {
   $page_security = 'SA_ASSETCATEGORY';
@@ -29,9 +29,9 @@ if (sysprefs()->use_popup_windows && sysprefs()->use_popup_search)
 
 page(_($help_context), false, false, "", $js);
 
-include_once($path_to_root . "/includes/ui.inc");
+include_once(dirname(__DIR__, 2) . "/includes/ui.inc");
 
-include_once($path_to_root . "/inventory/includes/inventory_db.inc");
+include_once(dirname(__DIR__, 2) . "/inventory/includes/inventory_db.inc");
 
 simple_page_mode(true);
 //----------------------------------------------------------------------------------

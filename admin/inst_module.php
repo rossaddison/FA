@@ -12,18 +12,18 @@
 $page_security = 'SA_CREATEMODULES';
 /** @var string $path_to_root */
 $path_to_root="..";
-include_once($path_to_root . "/includes/session.inc");
-include_once($path_to_root."/includes/packages.inc");
+include_once(dirname(__DIR__) . "/includes/session.inc");
+include_once(dirname(__DIR__) . "/includes/packages.inc");
 
 if (sysprefs()->use_popup_windows) {
 	$js = get_js_open_window(900, 500);
 }
 page(_($help_context = "Install/Activate extensions"), false, false, "", $js);
 
-include_once($path_to_root . "/includes/date_functions.inc");
-include_once($path_to_root . "/admin/db/company_db.inc");
-include_once($path_to_root . "/admin/db/maintenance_db.inc");
-include_once($path_to_root . "/includes/ui.inc");
+include_once(dirname(__DIR__) . "/includes/date_functions.inc");
+include_once(dirname(__DIR__) . "/admin/db/company_db.inc");
+include_once(dirname(__DIR__) . "/admin/db/maintenance_db.inc");
+include_once(dirname(__DIR__) . "/includes/ui.inc");
 
 simple_page_mode(true);
 

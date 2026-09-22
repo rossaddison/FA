@@ -68,7 +68,7 @@ class BoxReports
 		global $path_to_root, $SysPrefs, $Ajax;
 
 		if (find_submit('Rep') != -1) {
-			include($path_to_root.'/reporting/prn_redirect.php');
+			include(dirname(__DIR__, 2) . '/reporting/prn_redirect.php');
 			return;
 		}
 

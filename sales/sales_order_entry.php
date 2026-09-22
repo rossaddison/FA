@@ -21,13 +21,13 @@
 $path_to_root = "..";
 $page_security = 'SA_SALESORDER';
 
-include_once($path_to_root . "/sales/includes/cart_class.inc");
-include_once($path_to_root . "/includes/session.inc");
-include_once($path_to_root . "/sales/includes/sales_ui.inc");
-include_once($path_to_root . "/sales/includes/ui/sales_order_ui.inc");
-include_once($path_to_root . "/sales/includes/sales_db.inc");
-include_once($path_to_root . "/sales/includes/db/sales_types_db.inc");
-include_once($path_to_root . "/reporting/includes/reporting.inc");
+include_once(dirname(__DIR__) . "/sales/includes/cart_class.inc");
+include_once(dirname(__DIR__) . "/includes/session.inc");
+include_once(dirname(__DIR__) . "/sales/includes/sales_ui.inc");
+include_once(dirname(__DIR__) . "/sales/includes/ui/sales_order_ui.inc");
+include_once(dirname(__DIR__) . "/sales/includes/sales_db.inc");
+include_once(dirname(__DIR__) . "/sales/includes/db/sales_types_db.inc");
+include_once(dirname(__DIR__) . "/reporting/includes/reporting.inc");
 
 set_page_security( @session_obj('Items')->trans_type,
 	array(	ST_SALESORDER=>'SA_SALESORDER',

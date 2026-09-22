@@ -12,9 +12,9 @@
 $page_security = 'SA_SRECURRENT';
 /** @var string $path_to_root */
 $path_to_root = "../..";
-include($path_to_root . "/includes/session.inc");
-include($path_to_root . "/includes/ui.inc");
-include_once($path_to_root . "/sales/includes/sales_db.inc");
+include(dirname(__DIR__, 2) . "/includes/session.inc");
+include(dirname(__DIR__, 2) . "/includes/ui.inc");
+include_once(dirname(__DIR__, 2) . "/sales/includes/sales_db.inc");
 
 $js = "";
 if (sysprefs()->use_popup_windows)

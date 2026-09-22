@@ -12,13 +12,13 @@
 $page_security = 'SA_GLACCOUNTGROUP';
 /** @var string $path_to_root */
 $path_to_root = "../..";
-include($path_to_root . "/includes/session.inc");
+include(dirname(__DIR__, 2) . "/includes/session.inc");
 
 page(_($help_context = "GL Account Groups"));
 
-include($path_to_root . "/gl/includes/gl_db.inc");
+include(dirname(__DIR__, 2) . "/gl/includes/gl_db.inc");
 
-include($path_to_root . "/includes/ui.inc");
+include(dirname(__DIR__, 2) . "/includes/ui.inc");
 
 if (isset($_GET["cid"]))
 	$_POST["cid"] = $_GET["cid"];	

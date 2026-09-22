@@ -98,7 +98,7 @@ class Cpdf extends FPDI {
 		else
 			$GetText->add_domain($lang['code'], $path_to_root . "/lang", @$lang['version']);
 		// re-read translated sys names.
-		include($path_to_root.'/includes/sysnames.inc');
+		include(dirname(__DIR__, 2) . '/includes/sysnames.inc');
 
 		$l = array('a_meta_charset' => strtoupper($lang['encoding']), 
 			'a_meta_dir' => @$lang['rtl'] ? 'rtl' : 'ltr',

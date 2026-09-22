@@ -27,7 +27,7 @@ function add_stock_transfer(mixed $Items, string|null $location_from, string|nul
 
 	if (sysprefs()->loc_notification() == 1)
 	{
-		include_once($path_to_root . "/inventory/includes/inventory_db.inc");
+		include_once(dirname(__DIR__, 3) . "/inventory/includes/inventory_db.inc");
 		$st_ids = array();
 		$st_names = array();
 		$st_num = array();

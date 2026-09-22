@@ -13,15 +13,15 @@ $page_security = 'SA_TAXGROUPS';
 /** @var string $path_to_root */
 $path_to_root = "..";
 
-include($path_to_root . "/includes/session.inc");
+include(dirname(__DIR__) . "/includes/session.inc");
 
 page(_($help_context = "Tax Groups"));
 
-include_once($path_to_root . "/includes/data_checks.inc");
-include_once($path_to_root . "/includes/ui.inc");
+include_once(dirname(__DIR__) . "/includes/data_checks.inc");
+include_once(dirname(__DIR__) . "/includes/ui.inc");
 
-include_once($path_to_root . "/taxes/db/tax_groups_db.inc");
-include_once($path_to_root . "/taxes/db/tax_types_db.inc");
+include_once(dirname(__DIR__) . "/taxes/db/tax_groups_db.inc");
+include_once(dirname(__DIR__) . "/taxes/db/tax_types_db.inc");
 
 simple_page_mode(true);
 	
