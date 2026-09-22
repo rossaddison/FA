@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<psalm errorLevel="1" allFunctionsGlobal="true" allConstantsGlobal="true" phpVersion="8.5" findUnusedBaselineEntry="false" findUnusedCode="false" threads="8" cacheDirectory=".psalm-cache">
+<psalm errorLevel="1" allFunctionsGlobal="true" allConstantsGlobal="true" phpVersion="8.5" findUnusedBaselineEntry="false" findUnusedCode="false" threads="8" cacheDirectory=".psalm-cache" respectIncludeOnce="true" ignoreIncludeSideEffects="true">
     <fileExtensions>
         <extension name=".php"/>
         <extension name=".inc"/>
