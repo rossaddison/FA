@@ -214,6 +214,7 @@ function check_data(): bool
 function copy_to_cart(): void
 {
 	$cart = &$_SESSION['Items'];
+	/** @var Cart $cart */
 	$cart->ship_via = $_POST['ship_via'];
 	$cart->freight_cost = input_num('ChargeFreightCost');
 	$cart->document_date = $_POST['DispatchDate'];
@@ -231,6 +232,7 @@ function copy_to_cart(): void
 function copy_from_cart(): void
 {
 	$cart = &$_SESSION['Items'];
+	/** @var Cart $cart */
 	$_POST['ship_via'] = $cart->ship_via;
 	$_POST['ChargeFreightCost'] = price_format($cart->freight_cost);
 	$_POST['DispatchDate'] = $cart->document_date;
@@ -282,6 +284,7 @@ function check_quantities(): int
 
 if (isset($_POST['process_delivery']) && check_data()) {
 	$dn = &$_SESSION['Items'];
+	/** @var Cart $dn */
 
 	if ((bool)$_POST['bo_policy']) {
 		$bo_policy = 0;
