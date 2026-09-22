@@ -48,6 +48,7 @@ function edit_allocations_for_transaction(string|int|float|bool|null $type, stri
 
 	start_form();
 
+	/** @var allocation $cart */
 	$cart = $_SESSION['alloc'];
 
     display_heading(_("Allocation of") . " " . $systypes_array[$cart->type] . " # " . $cart->trans_no);

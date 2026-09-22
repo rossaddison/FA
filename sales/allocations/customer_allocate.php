@@ -46,8 +46,9 @@ function edit_allocations_for_transaction(string|int|float|bool|null $type, stri
 {
 	global $systypes_array;
 
+	/** @var allocation $cart */
 	$cart = $_SESSION['alloc'];
-	
+
 	if ($cart->type == ST_JOURNAL && $cart->bank_amount < 0)
 	{
 		$cart->bank_amount = -$cart->bank_amount;

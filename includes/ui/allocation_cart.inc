@@ -385,6 +385,7 @@ function show_allocatable(bool $show_totals): void {
 	
     $k = $total_allocated = 0.0;
 
+	/** @var allocation $cart */
 	$cart = $_SESSION['alloc'];
 	$supp_ref = in_array($cart->type, array(ST_SUPPCREDIT, ST_SUPPAYMENT, ST_BANKPAYMENT));
 
