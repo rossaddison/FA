@@ -246,6 +246,7 @@ function set_delivery_shipping_sum(?array $delivery_notes): void
 function copy_to_cart(): void
 {
 	$cart = &$_SESSION['Items'];
+	/** @var Cart $cart */
 	$cart->due_date = $cart->document_date =  $_POST['InvoiceDate'];
 	$cart->Comments = $_POST['Comments'];
 	$cart->due_date =  $_POST['due_date'];
@@ -271,6 +272,7 @@ function copy_to_cart(): void
 function copy_from_cart(): void
 {
 	$cart = &$_SESSION['Items'];
+	/** @var Cart $cart */
  	$_POST['Comments']= $cart->Comments;
 	$_POST['InvoiceDate']= $cart->document_date;
  	$_POST['ref'] = $cart->reference;
@@ -378,7 +380,7 @@ if (isset($_POST['process_invoice']) && check_data()) {
 }
 
 if(list_updated('payment')) {
-	$order = &$_SESSION['Items']; 
+	$order = &$_SESSION['Items'];
 	copy_to_cart();
 	$order->payment = get_post('payment');
 	$order->payment_terms = get_payment_terms($order->payment);
