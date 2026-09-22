@@ -93,6 +93,7 @@ function line_start_focus(): void {
 function copy_to_cn(): void
 {
 	$cart = &$_SESSION['Items'];
+	/** @var Cart $cart */
 	$cart->Comments = $_POST['CreditText'];
 	$cart->document_date = $_POST['OrderDate'];
 	$cart->freight_cost = input_num('ChargeFreightCost');
@@ -110,6 +111,7 @@ function copy_to_cn(): void
 function copy_from_cn(): void
 {
 	$cart = &$_SESSION['Items'];
+	/** @var Cart $cart */
 	$_POST['CreditText'] = $cart->Comments;
 	$_POST['OrderDate'] = $cart->document_date;
 	$_POST['ChargeFreightCost'] = price_format($cart->freight_cost);
