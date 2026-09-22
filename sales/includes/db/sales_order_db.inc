@@ -120,14 +120,18 @@ function update_sales_order_version(mixed $order): void
 
 //----------------------------------------------------------------------------------------
 
-function update_sales_order(?object $order): void
+function update_sales_order(Cart $order): void
 {
 	global $SysPrefs, $path_to_root, $Refs;
 
 	$del_date = date2sql($order->due_date);
 	$ord_date = date2sql($order->document_date);
-	$order_no =  key($order->trans_no);
-	$version= current($order->trans_no);
+	// this is the update (not insert) path -- the caller only reaches it once $order->trans_no
+	// is no longer the "0 for new" sentinel, so it is the array (num=>version) form here
+	/** @var array<int, int> $trans_no */
+	$trans_no = $order->trans_no;
+	$order_no = key($trans_no);
+	$version = current($trans_no);
 	$total = $order->get_trans_total();
 
 	begin_transaction();
@@ -670,7 +674,7 @@ function is_prepaid_order_open(string|int|float|bool|null $order_no)
 /**
  * @return false|null|string
  */
-function last_sales_order_detail(?object $order, ?string $field)
+function last_sales_order_detail(Cart $order, ?string $field)
 {
         $sql = "SELECT $field
             FROM ".TB_PREF."sales_order_details d
