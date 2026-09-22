@@ -209,23 +209,23 @@ function trans_view(array $trans)
 	return get_trans_view_str($trans["type_no"], $trans["trans_no"]);
 }
 
-function edit_link(array|false|null $row): string
+function edit_link(array $row): string
 {
   	return button('Edit'.(string)$row["id"], _("Edit"), _("Edit"), ICON_EDIT);
 }
 
 /** @return string */
-function view_link(array|false|null $row): string
+function view_link(array $row): string
 {
   	return button('view'.(string)$row["id"], _("View"), _("View"), ICON_VIEW);
 }
 
-function download_link(array|false|null $row): string
+function download_link(array $row): string
 {
   	return button('download'.(string)$row["id"], _("Download"), _("Download"), ICON_DOWN);
 }
 
-function delete_link(array|false|null $row): string
+function delete_link(array $row): string
 {
   	return button('Delete'.(string)$row["id"], _("Delete"), _("Delete"), ICON_DELETE);
 }

@@ -68,7 +68,7 @@ function display_supplier_summary(bool|array|null $supplier_record): void
 }
 //------------------------------------------------------------------------------------------------
 /** @return string */
-function systype_name(string|int|float|bool|array|null $dummy, string|int|float|bool|null $type)
+function systype_name(string|int|float|bool|array $dummy, string|int|float|bool|null $type)
 {
 	global $systypes_array;
 	return $systypes_array[$type];
@@ -79,19 +79,19 @@ function trans_view(array $trans)
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
 
-function due_date(array|false|null $row)
+function due_date(array $row)
 {
 	return ($row["type"]== ST_SUPPINVOICE) || ($row["type"]== ST_SUPPCREDIT) ? $row["due_date"] : '';
 }
 
-function gl_view(array|false|null $row)
+function gl_view(array $row)
 {
 	if ($row['type'] == ST_SUPPRECEIVE && (bool)get_voided_entry(ST_SUPPRECEIVE, $row['trans_no']))
 		return set_icon(ICON_REMOVE, _("Voided."));
 	return get_gl_view_str($row["type"], $row["trans_no"]);
 }
 
-function credit_link(array|false|null $row): string
+function credit_link(array $row): string
 {
 	global $page_nested;
 
@@ -104,26 +104,26 @@ function credit_link(array|false|null $row): string
 			: '';
 }
 
-function fmt_amount(array|false|null $row): string
+function fmt_amount(array $row): string
 {
 	$value = $row["TotalAmount"];
 	return price_format($value);
 }
 
 /** @return non-empty-string|null */
-function prt_link(array|false|null $row)
+function prt_link(array $row)
 {
   	if ($row['type'] == ST_SUPPAYMENT || $row['type'] == ST_BANKPAYMENT || $row['type'] == ST_SUPPCREDIT) 
  		return print_document_link((string)$row['trans_no']."-".(string)$row['type'], _("Print Remittance"), true, ST_SUPPAYMENT, ICON_PRINT);
 }
 
-function check_overdue(array|false|null $row): bool
+function check_overdue(array $row): bool
 {
 	return $row['OverDue'] == 1
 		&& ((float)abs($row["TotalAmount"]) - (float)$row["Allocated"] != 0);
 }
 
-function edit_link(array|false|null $row)
+function edit_link(array $row)
 {
 	global $page_nested;
 

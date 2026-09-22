@@ -56,13 +56,13 @@ set_global_customer($_POST['customer_id']);
 end_row();
 end_table();
 //------------------------------------------------------------------------------------------------
-function check_overdue(array|false|null $row): bool
+function check_overdue(array $row): bool
 {
 	return ($row['OverDue'] == 1 
 		&& ((float)abs($row["TotalAmount"]) - (float)$row["Allocated"] != 0));
 }
 
-function order_link(array|false|null $row)
+function order_link(array $row)
 {
 	return $row['order_']>0 ?
 		get_customer_trans_view_str(ST_SALESORDER, $row['order_'])
@@ -70,7 +70,7 @@ function order_link(array|false|null $row)
 }
 
 /** @return string */
-function systype_name(string|int|float|bool|array|null $dummy, string|int|float|bool|null $type)
+function systype_name(string|int|float|bool|array $dummy, string|int|float|bool|null $type)
 {
 	global $systypes_array;
 
@@ -82,13 +82,13 @@ function view_link(array $trans)
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
 
-function due_date(array|false|null $row)
+function due_date(array $row)
 {
 	return $row["type"] == ST_SALESINVOICE ? $row["due_date"] : '';
 }
 
 /** @psalm-pure */
-function fmt_balance(array|false|null $row)
+function fmt_balance(array $row)
 {
 	return ($row["type"] == ST_JOURNAL && $row["TotalAmount"] < 0 ? -$row["TotalAmount"] : $row["TotalAmount"]) - (float)$row["Allocated"];
 }
@@ -96,7 +96,7 @@ function fmt_balance(array|false|null $row)
 /**
  * @return null|string
  */
-function alloc_link(array|false|null $row)
+function alloc_link(array $row)
 {
 	$link = 
 	pager_link(_("Allocation"),
@@ -127,7 +127,7 @@ function alloc_link(array|false|null $row)
 
 }
 
-function fmt_debit(array|false|null $row): string
+function fmt_debit(array $row): string
 {
 	$value =
 	    $row['type']==ST_CUSTCREDIT || $row['type']==ST_CUSTPAYMENT || $row['type']==ST_BANKDEPOSIT ?
@@ -136,7 +136,7 @@ function fmt_debit(array|false|null $row): string
 
 }
 
-function fmt_credit(array|false|null $row): string
+function fmt_credit(array $row): string
 {
 	$value =
 	    !($row['type']==ST_CUSTCREDIT || $row['type']==ST_CUSTPAYMENT || $row['type']==ST_BANKDEPOSIT) ?

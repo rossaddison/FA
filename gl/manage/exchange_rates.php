@@ -90,12 +90,12 @@ function handle_delete(): void
 }
 
 //---------------------------------------------------------------------------------------------
-function edit_link(array|false|null $row): string 
+function edit_link(array $row): string 
 {
   return button('Edit'.(string)$row["id"], _("Edit"), true, ICON_EDIT);
 }
 
-function del_link(array|false|null $row): string 
+function del_link(array $row): string 
 {
   return button('Delete'.(string)$row["id"], _("Delete"), true, ICON_DELETE);
 }

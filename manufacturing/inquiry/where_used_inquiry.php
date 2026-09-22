@@ -32,7 +32,7 @@ echo "<hr></center>";
 
 set_global_stock_item($_POST['stock_id']);
 //-----------------------------------------------------------------------------
-function select_link(array|false|null $row): string
+function select_link(array $row): string
 {
 	return  pager_link( (string)$row["parent"]. " - " . (string)$row["description"],
     		"/manufacturing/manage/bom_edit.php?stock_id=" . (string)$row["parent"]);

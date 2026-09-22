@@ -62,14 +62,14 @@ set_global_supplier($_POST['supplier_id']);
 end_row();
 end_table();
 //------------------------------------------------------------------------------------------------
-function check_overdue(array|false|null $row): bool
+function check_overdue(array $row): bool
 {
 	return ($row['TotalAmount']>$row['Allocated']) && 
 		$row['OverDue'] == 1;
 }
 
 /** @return string */
-function systype_name(string|int|float|bool|array|null $dummy, string|int|float|bool|null $type)
+function systype_name(string|int|float|bool|array $dummy, string|int|float|bool|null $type)
 {
 	global $systypes_array;
 	
@@ -81,14 +81,14 @@ function view_link(array $trans)
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
 
-function due_date(array|false|null $row)
+function due_date(array $row)
 {
 	return (($row["type"] == ST_SUPPINVOICE) || ($row["type"]== ST_SUPPCREDIT))
 		? $row["due_date"] : "";
 }
 
 /** @return float */
-function fmt_balance(array|false|null $row)
+function fmt_balance(array $row)
 {
 	$value = ($row["type"] == ST_BANKPAYMENT || $row["type"] == ST_SUPPCREDIT || $row["type"] == ST_SUPPAYMENT)	? (float)(-$row["TotalAmount"]) - (float)$row["Allocated"]
 		: ($row["type"] == ST_JOURNAL ? (float)abs($row["TotalAmount"]) - (float)$row["Allocated"] :
@@ -99,7 +99,7 @@ function fmt_balance(array|false|null $row)
 /**
  * @return null|string
  */
-function alloc_link(array|false|null $row)
+function alloc_link(array $row)
 {
 	$link = 
 	pager_link(_("Allocations"),
@@ -121,14 +121,14 @@ function alloc_link(array|false|null $row)
 
 }
 
-function fmt_debit(array|false|null $row): string
+function fmt_debit(array $row): string
 {
 	$value = -$row["TotalAmount"];
 	return $value>=0 ? price_format($value) : '';
 
 }
 
-function fmt_credit(array|false|null $row): string
+function fmt_credit(array $row): string
 {
 	$value = $row["TotalAmount"];
 	return $value>0 ? price_format($value) : '';

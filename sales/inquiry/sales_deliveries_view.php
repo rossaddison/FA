@@ -131,7 +131,7 @@ function trans_view(array $trans, string|int|float|bool|array|null $trans_no)
 }
 
 /** @psalm-pure */
-function batch_checkbox(array|false|null $row): string
+function batch_checkbox(array $row): string
 {
 	$name = "Sel_" .(string)$row['trans_no'];
 	return (bool)$row['Done'] ? '' :
@@ -141,26 +141,26 @@ function batch_checkbox(array|false|null $row): string
 	 .(string)$row['branch_code']."'>\n";
 }
 
-function edit_link(array|false|null $row)
+function edit_link(array $row)
 {
 	return $row["Outstanding"]==0 ? '' :
 		trans_editor_link(ST_CUSTDELIVERY, $row['trans_no']);
 }
 
 /** @return non-empty-string|null */
-function prt_link(array|false|null $row)
+function prt_link(array $row)
 {
 	return print_document_link($row['trans_no'], _("Print"), true, ST_CUSTDELIVERY, ICON_PRINT);
 }
 
-function invoice_link(array|false|null $row): string
+function invoice_link(array $row): string
 {
 	return $row["Outstanding"]==0 ? '' :
 		pager_link(_('Invoice'), "/sales/customer_invoice.php?DeliveryNumber=" 
 			.(string)$row['trans_no'], ICON_DOC);
 }
 
-function check_overdue(array|false|null $row): bool
+function check_overdue(array $row): bool
 {
    	return date1_greater_date2(Today(), sql2date($row["due_date"])) && 
 			$row["Outstanding"]!=0;

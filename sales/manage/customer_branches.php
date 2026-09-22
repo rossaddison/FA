@@ -156,15 +156,15 @@ function branch_email(array|false|null $row): string {
 	return	'<a href = "mailto:'.(string)$row["email"].'">'.(string)$row["email"].'</a>';
 }
 
-function edit_link(array|false|null $row): string {
+function edit_link(array $row): string {
 	return button("Edit".(string)$row["branch_code"],_("Edit"), '', ICON_EDIT);
 }
 
-function del_link(array|false|null $row): string {
+function del_link(array $row): string {
 	return button("Delete".(string)$row["branch_code"],_("Delete"), '', ICON_DELETE);
 }
 
-function select_link(array|false|null $row): string {
+function select_link(array $row): string {
 	return button("Select".(string)$row["branch_code"], $row["branch_code"], '', ICON_ADD, 'selector');
 }
 

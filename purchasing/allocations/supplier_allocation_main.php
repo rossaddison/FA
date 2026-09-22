@@ -55,7 +55,7 @@ start_form();
 
 //--------------------------------------------------------------------------------
 /** @return string */
-function systype_name(string|int|float|bool|array|null $dummy, string|int|float|bool|null $type)
+function systype_name(string|int|float|bool|array $dummy, string|int|float|bool|null $type)
 {
 	global $systypes_array;
 
@@ -67,24 +67,24 @@ function trans_view(array $trans)
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
 
-function alloc_link(array|false|null $row): string
+function alloc_link(array $row): string
 {
 	return pager_link(_("Allocate"),
 		"/purchasing/allocations/supplier_allocate.php?trans_no="
  			.(string)$row["trans_no"] . "&trans_type=" . (string)$row["type"]. "&supplier_id=" . (string)$row["supplier_id"], ICON_ALLOC);
 }
 
-function amount_left(array|false|null $row): string
+function amount_left(array $row): string
 {
  	return price_format($row['type'] == ST_JOURNAL ?  (float)abs($row["Total"])-(float)$row["alloc"] : (float)(-$row["Total"])-(float)$row["alloc"]);
 }
 
-function amount_total(array|false|null $row): string
+function amount_total(array $row): string
 {
 	return price_format(-$row["Total"]);
 }
 
-function check_settled(array|false|null $row): bool
+function check_settled(array $row): bool
 {
 	return $row['settled'] == 1;
 }

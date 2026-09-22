@@ -79,7 +79,7 @@ page($_SESSION['page_title'], false, false, "", $js);
 //---------------------------------------------------------------------------------------------
 //	Query format functions
 //
-function check_overdue(array|false|null $row): bool|int
+function check_overdue(array $row): bool|int
 {
 	global $trans_type;
 	if ($trans_type == ST_SALESQUOTE)
@@ -91,20 +91,20 @@ function check_overdue(array|false|null $row): bool|int
 }
 
 /** @return null|string */
-function view_link(string|int|float|bool|array|null $dummy, string|int|float|bool|null $order_no)
+function view_link(string|int|float|bool|array $dummy, string|int|float|bool|null $order_no)
 {
 	global $trans_type;
 	return  get_customer_trans_view_str($trans_type, $order_no);
 }
 
 /** @return non-empty-string|null */
-function prt_link(array|false|null $row)
+function prt_link(array $row)
 {
 	global $trans_type;
 	return print_document_link($row['order_no'], _("Print"), true, $trans_type, ICON_PRINT);
 }
 
-function edit_link(array|false|null $row) 
+function edit_link(array $row) 
 {
 	global $page_nested;
 
@@ -114,7 +114,7 @@ function edit_link(array|false|null $row)
 	return $page_nested ? '' : trans_editor_link($row['trans_type'], $row['order_no']);
 }
 
-function dispatch_link(array|false|null $row): string
+function dispatch_link(array $row): string
 {
 	global $trans_type, $page_nested;
 
@@ -134,7 +134,7 @@ function dispatch_link(array|false|null $row): string
 			"/sales/sales_order_entry.php?OrderNumber=" .(string)$row['order_no'], ICON_DOC);
 }
 
-function invoice_link(array|false|null $row): string
+function invoice_link(array $row): string
 {
 	global $trans_type;
 	if ($trans_type == ST_SALESORDER)
@@ -144,19 +144,19 @@ function invoice_link(array|false|null $row): string
 		return '';
 }
 
-function delivery_link(array|false|null $row): string
+function delivery_link(array $row): string
 {
   return pager_link( _("Delivery"),
 	"/sales/sales_order_entry.php?NewDelivery=" .(string)$row['order_no'], ICON_DOC);
 }
 
-function order_link(array|false|null $row): string
+function order_link(array $row): string
 {
   return pager_link( _("Sales Order"),
 	"/sales/sales_order_entry.php?NewQuoteToSalesOrder=" .(string)$row['order_no'], ICON_DOC);
 }
 
-function tmpl_checkbox(array|false|null $row): string
+function tmpl_checkbox(array $row): string
 {
 	global $trans_type, $page_nested;
 
@@ -175,7 +175,7 @@ function tmpl_checkbox(array|false|null $row): string
 	. hidden('last['.(string)$row['order_no'].']', $value, false);
 }
 
-function unallocated_prepayments(array|false|null $row): string
+function unallocated_prepayments(array $row): string
 {
 
     if ($row['ord_payments'] > 0) {
@@ -190,7 +190,7 @@ function unallocated_prepayments(array|false|null $row): string
         return '';
 }
 
-function invoice_prep_link(array|false|null $row): string
+function invoice_prep_link(array $row): string
 {
 	// invoicing should be available only for partially allocated orders
 	return 

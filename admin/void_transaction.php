@@ -117,7 +117,7 @@ function view_link(array $trans)
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
 
-function select_link(array|false|null $row): string
+function select_link(array $row): string
 {
 	if (!isset($row['type']))
 		$row['type'] = $_POST['filterType'];
@@ -126,7 +126,7 @@ function select_link(array|false|null $row): string
   	return button('Edit'.(string)$row["trans_no"], _("Select"), _("Select"), ICON_EDIT);
 }
 
-function gl_view(array|false|null $row)
+function gl_view(array $row)
 {
 	if (!isset($row['type']))
 		$row['type'] = $_POST['filterType'];
@@ -134,19 +134,19 @@ function gl_view(array|false|null $row)
 }
 
 /** @psalm-pure */
-function date_view(array|false|null $row)
+function date_view(array $row)
 {
 	return $row['trans_date'];
 }
 
 /** @psalm-pure */
-function ref_view(array|false|null $row)
+function ref_view(array $row)
 {
 	return $row['ref'];
 }
 
 /** @return bool */
-function is_selected(array|false|null $row) // Function added by faisal
+function is_selected(array $row) // Function added by faisal
 {
 	global $selected_id;
 	return $row['trans_no'] == $selected_id ? true : false;

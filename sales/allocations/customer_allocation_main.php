@@ -53,7 +53,7 @@ if (isset($_POST['customer_id']))
 
 //--------------------------------------------------------------------------------
 /** @return string */
-function systype_name(string|int|float|bool|array|null $dummy, string|int|float|bool|null $type)
+function systype_name(string|int|float|bool|array $dummy, string|int|float|bool|null $type)
 {
 	global $systypes_array;
 
@@ -65,25 +65,25 @@ function trans_view(array $trans)
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
 
-function alloc_link(array|false|null $row): string
+function alloc_link(array $row): string
 {
 	return pager_link(_("Allocate"),
 		"/sales/allocations/customer_allocate.php?trans_no="
 			.(string)$row["trans_no"] . "&trans_type=" . (string)$row["type"]. "&debtor_no=" . (string)$row["debtor_no"], ICON_ALLOC);
 }
 
-function amount_total(array|false|null $row): string
+function amount_total(array $row): string
 {
 	return price_format($row['type'] == ST_JOURNAL && $row["Total"] < 0 ? -$row["Total"] : $row["Total"]);
 }
 
-function amount_left(array|false|null $row): string
+function amount_left(array $row): string
 {
 	return price_format(($row['type'] == ST_JOURNAL && $row["Total"] < 0 ? -$row["Total"] : $row["Total"])-(float)$row["alloc"]);
 }
 
 /** @psalm-pure */
-function check_settled(array|false|null $row): bool
+function check_settled(array $row): bool
 {
 	return $row['settled'] == 1;
 }

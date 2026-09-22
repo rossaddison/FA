@@ -46,7 +46,7 @@ function check_date(): bool {
 //	This function can be used directly in table pager 
 //	if we would like to change page layout.
 //
-function rec_checkbox(array|false|null $row): string
+function rec_checkbox(array $row): string
 {
 	$name = "rec_" .(string)$row['id'];
 	$hidden = 'last['.(string)$row['id'].']';
@@ -58,7 +58,7 @@ function rec_checkbox(array|false|null $row): string
 }
 
 /** @return string */
-function systype_name(string|int|float|bool|array|null $dummy, string|int|float|bool|null $type)
+function systype_name(string|int|float|bool|array $dummy, string|int|float|bool|null $type)
 {
 	global $systypes_array;
 	
@@ -70,18 +70,18 @@ function trans_view(array $trans)
 	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
 
-function gl_view(array|false|null $row)
+function gl_view(array $row)
 {
 	return get_gl_view_str($row["type"], $row["trans_no"]);
 }
 
-function fmt_debit(array|false|null $row): string
+function fmt_debit(array $row): string
 {
 	$value = $row["amount"];
 	return $value>=0 ? price_format($value) : '';
 }
 
-function fmt_credit(array|false|null $row): string
+function fmt_credit(array $row): string
 {
 	$value = -$row["amount"];
 	return $value>0 ? price_format($value) : '';
@@ -96,7 +96,7 @@ function fmt_person(array $trans)
 }
 
 /** @psalm-pure */
-function fmt_memo(array|false|null $row)
+function fmt_memo(array $row)
 {
 	$value = $row["memo_"];
 	return $value;

@@ -51,7 +51,7 @@ if(get_post('RefreshInquiry'))
 	ajax()->activate('totals_tbl');
 }
 
-function gl_view(array|false|null $row)
+function gl_view(array $row)
 {
   	$row = get_fixed_asset_move($row['stock_id'], ST_JOURNAL);
 
@@ -85,20 +85,20 @@ function fa_prepare_row(array|false|null $row) {
 }
 
 /** @return null|scalar */
-function fa_link(array|false|null $row)
+function fa_link(array $row)
 {
   	$url = "inventory/manage/items.php?FixedAsset=1&stock_id=".(string)$row['stock_id'];
 
   	return viewer_link($row['stock_id'], $url);
 }
 
-function depr_method_title(array|false|null $row) {
+function depr_method_title(array $row) {
   	global $depreciation_methods;
   	return $depreciation_methods[$row['depreciation_method']];
 }
 
 /** @psalm-pure */
-function depr_par(array|false|null $row): string {
+function depr_par(array $row): string {
 	if ($row['depreciation_method'] == 'D')
 		return (float)$row['depreciation_rate']*(float)$row['depreciation_factor'].'%';
 	elseif ($row['depreciation_method'] == 'N')
@@ -109,7 +109,7 @@ function depr_par(array|false|null $row): string {
 }
 
 /** @psalm-pure */
-function status_title(array|false|null $row): string {
+function status_title(array $row): string {
 
    	if ((bool)$row['inactive'] || ($row['disposal_date'] !== NULL))
 		return _("Disposed"); // disposed or saled
@@ -120,7 +120,7 @@ function status_title(array|false|null $row): string {
 
 }
 
-function purchase_link(array|false|null $row)
+function purchase_link(array $row)
 {
 
   	if ($row['purchase_date'] === NULL)
@@ -129,7 +129,7 @@ function purchase_link(array|false|null $row)
   	return get_supplier_trans_view_str(ST_SUPPINVOICE, $row["purchase_no"], sql2date($row["purchase_date"]));
 }
 
-function disposal_link(array|false|null $row)
+function disposal_link(array $row)
 {
   	if ($row['disposal_date'] === NULL)
     	return "";
@@ -144,17 +144,17 @@ function disposal_link(array|false|null $row)
   	}
 }
 
-function amount_link(array|false|null $row): string
+function amount_link(array $row): string
 {
     return price_format($row['purchase_cost']);
 }
 
-function depr_link(array|false|null $row): string
+function depr_link(array $row): string
 {
     return price_format((float)$row['purchase_cost'] - (float)$row['material_cost']);
 }
 
-function balance_link(array|false|null $row): string
+function balance_link(array $row): string
 {
     return price_format($row['material_cost']);
 }

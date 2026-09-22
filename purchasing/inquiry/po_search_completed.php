@@ -31,7 +31,7 @@ function trans_view(array $trans)
 	return get_trans_view_str(ST_PURCHORDER, $trans["order_no"]);
 }
 
-function edit_link(array|false|null $row) 
+function edit_link(array $row) 
 {
 	global $page_nested;
 
@@ -39,7 +39,7 @@ function edit_link(array|false|null $row)
 		trans_editor_link(ST_PURCHORDER, $row["order_no"]);
 }
 
-function receive_link(array|false|null $row): string 
+function receive_link(array $row): string 
 {
 	global $page_nested;
 	
@@ -49,7 +49,7 @@ function receive_link(array|false|null $row): string
 }
 
 /** @return non-empty-string|null */
-function prt_link(array|false|null $row)
+function prt_link(array $row)
 {
 	return print_document_link($row['order_no'], _("Print"), true, ST_PURCHORDER, ICON_PRINT);
 }

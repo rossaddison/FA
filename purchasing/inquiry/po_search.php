@@ -85,24 +85,24 @@ function trans_view(array $trans)
 	return get_trans_view_str(ST_PURCHORDER, $trans["order_no"]);
 }
 
-function edit_link(array|false|null $row) 
+function edit_link(array $row) 
 {
 	return trans_editor_link(ST_PURCHORDER, $row["order_no"]);
 }
 
 /** @return non-empty-string|null */
-function prt_link(array|false|null $row)
+function prt_link(array $row)
 {
 	return print_document_link($row['order_no'], _("Print"), true, ST_PURCHORDER, ICON_PRINT);
 }
 
-function receive_link(array|false|null $row): string 
+function receive_link(array $row): string 
 {
   return pager_link( _("Receive"),
 	"/purchasing/po_receive_items.php?PONumber=" . (string)$row["order_no"], ICON_RECEIVE);
 }
 
-function check_overdue(array|false|null $row): bool
+function check_overdue(array $row): bool
 {
 	return $row['OverDue']==1;
 }
