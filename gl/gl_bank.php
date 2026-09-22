@@ -43,13 +43,22 @@ if (isset($_GET['NewPayment'])) {
 	$_SESSION['page_title'] = _($help_context = "Modify Bank Deposit Entry")." #".(string)$_GET['trans_no'];
 	create_cart(ST_BANKDEPOSIT, get_scalar('trans_no'));
 }
-page($_SESSION['page_title'], false, false, '', $js);
+page($_SESSION['page_title'] ?? _("Bank Account Entry"), false, false, '', $js);
 
 //-----------------------------------------------------------------------------------------------
 check_db_has_bank_accounts(_("There are no bank accounts defined in the system."));
 
 if (isset($_GET['ModifyDeposit']) || isset($_GET['ModifyPayment']))
 	check_is_editable(session_obj('pay_items')->trans_type, session_obj('pay_items')->order_id);
+
+if (!isset($_SESSION['pay_items']))
+{
+	// reached without any of the New*/Modify* requests above, and nothing already in the
+	// session from an earlier request on this page (the normal form post-back relies on that
+	// instead) -- there is nothing to enter or edit
+	display_error(_("This page can only be opened to enter a new bank payment or deposit, or to modify an existing one."));
+	end_page(); exit;
+}
 
 //----------------------------------------------------------------------------------------
 if (list_updated('PersonDetailID')) {
@@ -398,14 +407,17 @@ if (isset($_POST['go']))
 
 start_form();
 
-display_bank_header($_SESSION['pay_items']);
+$pay_items = &$_SESSION['pay_items'];
+/** @var items_cart $pay_items */
+
+display_bank_header($pay_items);
 
 start_table(TABLESTYLE2, "width='90%'", 10);
 start_row();
 echo "<td>";
 display_gl_items(session_obj('pay_items')->trans_type==ST_BANKPAYMENT ?
-	_("Payment Items"):_("Deposit Items"), $_SESSION['pay_items']);
-gl_options_controls($_SESSION['pay_items']);
+	_("Payment Items"):_("Deposit Items"), $pay_items);
+gl_options_controls($pay_items);
 echo "</td>";
 end_row();
 end_table(1);

@@ -9,7 +9,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function display_bank_header(?items_cart &$order): void
+function display_bank_header(items_cart &$order): void
 {
 	$payment = $order->trans_type == ST_BANKPAYMENT;
 
@@ -131,7 +131,7 @@ function display_bank_header(?items_cart &$order): void
 //---------------------------------------------------------------------------------
 
 /** @return void */
-function display_gl_items(string|int|float|bool|supp_trans|null $title, ?items_cart &$order): void
+function display_gl_items(string|int|float|bool|supp_trans|null $title, items_cart &$order): void
 {
 	global $path_to_root;
 
@@ -200,7 +200,7 @@ function display_gl_items(string|int|float|bool|supp_trans|null $title, ?items_c
 
 //---------------------------------------------------------------------------------
 
-function gl_edit_item_controls(?items_cart &$order, string|int|float|bool|null $dim, string|int|float|bool|null $Index=null): void
+function gl_edit_item_controls(items_cart &$order, string|int|float|bool|null $dim, string|int|float|bool|null $Index=null): void
 {
 	$payment = $order->trans_type == ST_BANKPAYMENT;
 
@@ -279,7 +279,7 @@ function gl_edit_item_controls(?items_cart &$order, string|int|float|bool|null $
 
 //---------------------------------------------------------------------------------
 
-function gl_options_controls(?object $order): void
+function gl_options_controls(items_cart $order): void
 {
 	div_start('footer');
 	echo "<br><table align='center'>";
