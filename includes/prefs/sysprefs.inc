@@ -131,8 +131,8 @@ class sys_prefs extends stdClass
 	/** @var string|null */
 	var $time_zone;
 
-	/** @var array<string, string|int|float|bool|null>|null */
-	var $prefs;
+	/** @var array<string, string|int|float|bool|null> */
+	var $prefs = array();
 
 	/**
 	 * @var bool|null
