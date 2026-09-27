@@ -8,7 +8,7 @@ cleanup has turned up.
 
 ## Snapshot
 
-Full project scan, 2026-09-27: **10,393** Psalm errors (errorLevel=1).
+Full project scan, 2026-09-27: **10,373** Psalm errors (errorLevel=1).
 
 Progress is tracked by the overall project total, not per-file counts — see
 "Known noise" below for why per-file counts are unstable and misleading here.

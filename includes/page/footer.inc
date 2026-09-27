@@ -24,7 +24,7 @@ function page_footer(string|int|float|bool|null $no_menu=false, bool $is_index=f
 	ajax()->addState('editors', 'editors', $Editors);
 
 	echo "<script".csp_nonce_attr()." type='text/javascript'>
-		_focus = '" . get_post('_focus') . "';
+		_focus = ".json_encode(get_post('_focus'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP).";
 		_validate = " . ajax()->php2js($Validate).";
 		var $edits
 	</script>";

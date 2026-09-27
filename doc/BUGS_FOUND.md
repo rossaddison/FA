@@ -4,6 +4,40 @@ Running log of real defects — not Psalm noise — turned up while working
 through the categories described in [PSALM_MIGRATION.md](PSALM_MIGRATION.md).
 Most severe first within each section.
 
+## Cross-site scripting (XSS)
+
+Found by chasing Psalm's `TaintedHtml`/`TaintedTextWithQuotes` findings to
+their source.
+
+- **`includes/page/footer.inc` — `page_footer()`.** `get_post('_focus')` (a
+  raw, completely unsanitized `$_POST` read) was echoed directly inside a
+  single-quoted JavaScript string literal in a `<script>` block —
+  `_focus = '" . get_post('_focus') . "';` — with no escaping at all.
+  `page_footer()` runs on essentially every page in the application, so any
+  request carrying a crafted `_focus` POST value (e.g.
+  `x'; alert(document.cookie); var y='`) could break out of the string
+  literal and execute arbitrary JavaScript in the victim's session — a
+  site-wide reflected XSS. Fixed by replacing the manual quoting with
+  `json_encode(get_post('_focus'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP)`,
+  which produces a safely-escaped JS string literal (and is also hardened
+  against breaking out of the surrounding `<script>` tag). Confirmed
+  `_focus` is only ever read back as a plain identifier string
+  (`js/inserts.js`'s `save_focus()`/`js/utils.js`), so this is a pure
+  security fix with no behavior change for legitimate values.
+
+- **`includes/date_functions.inc` — `__date()`.** The shared low-level date
+  formatter (used by `sql2date()` and effectively every date-display path in
+  the app) cast `$month`/`$day` to `(int)` before formatting but never cast
+  `$year` — `sql2date()` builds `$year`/`$month`/`$day` via
+  `explode("-"/"/", $date_)` on its input with no validation, so an
+  unvalidated `$year` fragment could carry through raw. Reachable with
+  attacker-controlled input via `gl/bank_account_reconcile.php:167`'s
+  `sql2date(post_scalar('bank_date'))` (no `date2sql()` round-trip first),
+  making this a real reflected-XSS/output-corruption vector wherever a date
+  built this way is later echoed. Fixed by adding `$year = (int)$year;`
+  alongside the existing month/day casts in `__date()` — protects every
+  caller project-wide, not just this one call site.
+
 ## SQL injection
 
 Found by chasing Psalm's `TaintedSql` findings to their source. `db_escape()`

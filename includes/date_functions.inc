@@ -25,6 +25,7 @@ function __date(string|int|float|bool|null $year, string|int|float|bool|null $mo
 	
 	$how = user_date_format();
 	$sep = sysprefs()->dateseps[user_date_sep()];
+	$year = (int)$year;
 	$day = (int)$day;
 	$month = (int)$month;
 	if ($how < 3)
