@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 //==========================================================================================
 //
 // Settings in this file can be automatically updated at any time during software update.

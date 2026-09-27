@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**********************************************************************
     Copyright (C) FrontAccounting Team.
 	Released under the terms of the GNU General Public License, GPL, 

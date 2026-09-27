@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /*
  * remote_printer class.
  * All needed filters should be set for the printer in printercap file.

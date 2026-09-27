@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /*--------------------------------------------------
  | TAR/GZIP/BZIP2/ZIP ARCHIVE CLASSES 2.1
  | By Devin Doucette

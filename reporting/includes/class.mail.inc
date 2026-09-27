@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /*
     Name:           eMail
     Description:    Simple sending eMail in text and HTML with CC, BCC and attachment

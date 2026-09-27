@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /*
 
 $pg = new Chart('bar'); // Width and Height is set automatically4
