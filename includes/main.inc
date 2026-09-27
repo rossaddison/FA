@@ -434,7 +434,7 @@ function generate_password(): string
 */
 function random_id(string|int|float|bool|null $strength = 128): string
 {
-	$n = ceil($strength/8);
+	$n = (int) ceil($strength/8);
 
 	if (function_exists('openssl_random_pseudo_bytes'))
 		$bin = openssl_random_pseudo_bytes($n, $cstrong); 	// openssl on php 5.3 and up

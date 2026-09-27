@@ -42,7 +42,7 @@ function page_footer(string|int|float|bool|null $no_menu=false, bool $is_index=f
 		 echo "<div class='note_msg'>$sql_queries</div>";
 		div_end();
 	}
-	if (yiiLayoutEnabled())
+	if (function_exists('yiiLayoutEnabled') && yiiLayoutEnabled())
 		echo yiiLayoutParts('', '', '', false)[1]; // prototype: the closing half of views/layout.php
 	else
 		echo "</body></html>\n";

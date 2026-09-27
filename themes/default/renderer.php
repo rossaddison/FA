@@ -279,7 +279,7 @@ class renderer
 
  function menu_footer($no_menu, $is_index)
  {
-  if (yiiLayoutEnabled()) {
+  if (function_exists('yiiLayoutEnabled') && yiiLayoutEnabled()) {
    // prototype: the footer comes from views/theme/default/menuFooter.php
    echo yiiMenuFooter((bool)$no_menu, (bool)$is_index);
    return;

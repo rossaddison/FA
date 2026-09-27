@@ -59,7 +59,7 @@ if (!isset($path_to_root) || isset($_GET['path_to_root']) || isset($_POST['path_
 		function display(): void
 		{
 			global $path_to_root;
-			
+
 			include_once($path_to_root . "/themes/".user_theme()."/renderer.php");
 
 			$this->init();
