@@ -187,7 +187,7 @@ function add_bom(string|int|float|bool|null $selected_parent, string|null $compo
 	$sql = "INSERT INTO ".TB_PREF."bom (parent, component, workcentre_added, loc_code, quantity)
 		VALUES (".db_escape($selected_parent).", ".db_escape($component) . ","
 		.db_escape($workcentre_added) . ", ".db_escape($loc_code) . ", "
-		. $quantity . ")";
+		. (float)$quantity . ")";
 
 	db_query($sql,"check failed");
 }
@@ -197,7 +197,7 @@ function update_bom(string|int|float|bool|null $selected_parent, mixed $selected
 {
 	$sql = "UPDATE ".TB_PREF."bom SET workcentre_added=".db_escape($workcentre_added)
 	 . ",loc_code=".db_escape($loc_code) . ",
-		quantity= " . $quantity . "
+		quantity= " . (float)$quantity . "
 		WHERE parent=".db_escape($selected_parent) . "
 		AND id=".db_escape($selected_component);
 	check_db_error("Could not update this bom component", $sql);

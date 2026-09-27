@@ -28,6 +28,7 @@ function output_html(string|int|float|bool|null $text): string
 
 //-----------------------------------------------------------------------------
 
+/** @psalm-taint-escape html */
 function html_specials_encode(string|int|float|bool|null $str): string
 {
 	/** @var language $lang */

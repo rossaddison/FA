@@ -291,7 +291,7 @@ function get_gl_balance_from_to(?string $from_date, string|int|float|bool|array|
 	$to = date2sql($to_date);
 
     $sql = "SELECT SUM(amount) FROM ".TB_PREF."gl_trans
-		WHERE account='$account'";
+		WHERE account=".db_escape($account);
 	if ($from_date != "")
 		$sql .= "  AND tran_date > '$from'";
 	if ($to_date != "")
@@ -315,7 +315,7 @@ function get_gl_trans_from_to(string|int|float|bool|null $from_date, string|int|
 	$to = date2sql($to_date);
 
     $sql = "SELECT SUM(amount) FROM ".TB_PREF."gl_trans
-		WHERE account='$account'";
+		WHERE account=".db_escape($account);
 	if ($from_date != "")
 		$sql .= " AND tran_date >= '$from'";
 	if ($to_date != "")

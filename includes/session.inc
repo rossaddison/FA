@@ -323,6 +323,7 @@ function set_page_security(mixed $value=null, mixed $trans = array(), mixed $gtr
 	ISO-8859-1, so fix is easy. If any other unsupported encoding is used,
 	add workaround here.
 */
+/** @psalm-taint-escape html */
 function html_specials_encode(string|int|float|bool|null $str): string
 {
 	return htmlspecialchars((string) $str, ENT_QUOTES, session_obj('language')->encoding=='iso-8859-2' ?

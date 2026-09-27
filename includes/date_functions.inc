@@ -369,6 +369,7 @@ function sql2date(string|int|float|bool|null $date_): string
 } // end function sql2date
 
 
+/** @psalm-taint-escape sql */
 function date2sql(?string $date_): string|int
 {
 	global $tmonths;

@@ -13,7 +13,7 @@ function add_tax_type(string|int|float|bool|null $name, string|int|float|bool|nu
 {
 	$sql = "INSERT INTO ".TB_PREF."tax_types (name, sales_gl_code, purchasing_gl_code, rate)
 		VALUES (".db_escape($name).", ".db_escape($sales_gl_code)
-		.", ".db_escape($purchasing_gl_code).", $rate)";
+		.", ".db_escape($purchasing_gl_code).", ".(float)$rate.")";
 
 	db_query($sql, "could not add tax type");
 }
@@ -23,7 +23,7 @@ function update_tax_type(string|int|float|bool|null $type_id, string|int|float|b
 	$sql = "UPDATE ".TB_PREF."tax_types SET name=".db_escape($name).",
 		sales_gl_code=".db_escape($sales_gl_code).",
 		purchasing_gl_code=".db_escape($purchasing_gl_code).",
-		rate=$rate
+		rate=".(float)$rate."
 		WHERE id=".db_escape($type_id);
 
 	db_query($sql, "could not update tax type");

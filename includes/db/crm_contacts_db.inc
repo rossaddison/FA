@@ -170,11 +170,8 @@ function update_person_contacts(string|int|float|bool|null $id, array $cat_ids, 
 
 	$ret = db_query($sql, "Can't delete person contacts");
 
-	foreach($cat_ids as $n => $cid)
-		$cat_ids[$n] = db_escape($cid);
-
 	if($ret && count($cat_ids)) {
-		array_walk($cat_ids,'db_escape');
+		$cat_ids = array_map('db_escape', $cat_ids);
 		$sql = "INSERT INTO ".TB_PREF."crm_contacts (person_id,type,action,entity_id)
 			SELECT ".db_escape($id).",t.type, t.action,".db_escape($entity_id, true)."
 			FROM ".TB_PREF."crm_categories t WHERE t.id=".implode(' OR t.id=', $cat_ids);

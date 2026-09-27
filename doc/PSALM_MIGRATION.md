@@ -8,7 +8,7 @@ cleanup has turned up.
 
 ## Snapshot
 
-Full project scan, 2026-09-27: **10,397** Psalm errors (errorLevel=1).
+Full project scan, 2026-09-27: **10,393** Psalm errors (errorLevel=1).
 
 Progress is tracked by the overall project total, not per-file counts — see
 "Known noise" below for why per-file counts are unstable and misleading here.
@@ -77,6 +77,35 @@ header.inc` / `includes/page/footer.inc` load a `renderer` class via
 the class even though it exists identically in every shipped theme. Left
 unfixed — fixing it would mean restructuring the dynamic theme-loading system
 or adding a synthetic Psalm stub, out of proportion to the value.
+
+**Missing `@psalm-taint-escape` annotations on real sanitizers.** Psalm's
+taint analysis only knows a function neutralizes a given taint type
+(`sql`, `html`, `file`, ...) if it's annotated `@psalm-taint-escape <type>`.
+Several of this codebase's actual sanitizers were missing it —
+`db_escape()` (genuinely calls `mysqli_real_escape_string()`),
+`clean_file_name()` (strips to `[a-zA-Z0-9.\-_]` only), `html_specials_encode()`
+(both copies — genuinely calls `htmlspecialchars()`), and `date2sql()`
+(always returns a hardcoded safe literal or
+`sprintf("%04d-%02d-%02d", (int)..., (int)..., (int)...)`, never raw input).
+Without the annotation, Psalm treats every value that ever passed through
+these functions as still tainted, which is most of `TaintedHtml`'s and a good
+chunk of `TaintedSql`'s volume. All four are now annotated; see
+[BUGS_FOUND.md](BUGS_FOUND.md) for the real SQL-injection bugs this exercise
+actually turned up along the way.
+
+**`TaintedFile`/`TaintedSSRF` via a database round-trip.** A large share of
+these two categories (`file_get_contents(company_path()."/attachments/".
+$row['unique_name'])`-style patterns in `admin/attachments.php`,
+`includes/ui/attachment.inc`, `includes/ui/ui_view.inc`) trace back through a
+`db_select()`/`db_fetch()` call to a `$_GET`/`$_POST` value used only as a
+`db_escape()`-guarded numeric lookup key — the actual file path comes from a
+column that's always server-generated (`uniqid()` at upload time, never
+attacker-supplied). Psalm's taint model treats all data read back from the
+database as still tainted by design (a stored-injection chain is a real risk
+class in general), so this is expected, not something to blanket-annotate
+away — doing so would risk masking a genuine future stored-injection bug.
+Spot-checked each occurrence's SQL for a missing `db_escape()` instead of
+trying to silence the category.
 
 ## Established idioms
 

@@ -709,7 +709,7 @@ function gl_week_performance(?string $today, string|int|null $width="33", ?int $
 	if (isset($_POST['select_g3']))
 		$pg->type = $_POST['select_g3'];
 	if (isset($_POST['per_g3']))
-		$weeks = $_POST['per_g3'];
+		$weeks = (int) $_POST['per_g3'];
 	$begin = date2sql(begin_fiscalyear());
 	$today1 = date2sql($today);
 	$sep = sysprefs()->dateseps[user_date_sep()];
@@ -747,7 +747,7 @@ function gl_month_performance(?string $today, string|int|null $width="33", ?int 
 	if (isset($_POST['select_g4']))
 		$pg->type = $_POST['select_g4'];
 	if (isset($_POST['per_g4']))
-		$months = $_POST['per_g4'];
+		$months = (int) $_POST['per_g4'];
 	$begin = date2sql(begin_fiscalyear());
 	$today1 = date2sql($today);
 	$sep = sysprefs()->dateseps[user_date_sep()];
@@ -912,7 +912,7 @@ function cash_flow(?string $today): void
 	if (isset($_POST['select_g5']))
 		$pg->type = $_POST['select_g5'];
 	if (isset($_POST['per_g5']))
-		$months = $_POST['per_g5'];
+		$months = (int) $_POST['per_g5'];
 	if (!(bool)is_date_in_fiscalyear($today))
 		$today = end_fiscalyear();
 	$today1 = begin_month($today);

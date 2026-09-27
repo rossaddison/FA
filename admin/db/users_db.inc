@@ -69,10 +69,13 @@ function update_user(string|int|float|bool|null $id, string|int|float|bool|null 
 function update_user_prefs(string|int|float|bool|null $id, mixed $prefs)
 {
 	$sql = "UPDATE ".TB_PREF."users SET ";
+	$sets = array();
 	foreach($prefs as $name => $value) {
-		$prefs[$name] = $name.'='. db_escape($value);
+		if (!is_string($name) || !preg_match('/^[a-z_][a-z0-9_]*$/i', $name))
+			continue; // column name must be a safe identifier, never attacker-controlled data
+		$sets[] = $name.'='. db_escape($value);
 	}
-	$sql .= implode(',', $prefs) . " WHERE id=".db_escape($id);
+	$sql .= implode(',', $sets) . " WHERE id=".db_escape($id);
 
 	return db_query($sql, "could not update user display prefs for $id");
 }

@@ -4,6 +4,83 @@ Running log of real defects — not Psalm noise — turned up while working
 through the categories described in [PSALM_MIGRATION.md](PSALM_MIGRATION.md).
 Most severe first within each section.
 
+## SQL injection
+
+Found by chasing Psalm's `TaintedSql` findings to their source. `db_escape()`
+is the codebase's real SQL-escaping wrapper (it genuinely calls
+`mysqli_real_escape_string()`), so every case below is a call site that skipped
+it, not a flaw in the escaping function itself.
+
+- **`includes/dashboard.inc` — `gl_week_performance()` / `gl_month_performance()`.**
+  `$weeks`/`$months` were read straight from `$_POST['per_g3']` /
+  `$_POST['per_g4']` and interpolated into a `LIMIT 0, $weeks` clause with no
+  escaping or casting — a direct, unauthenticated-from-the-query's-own-page-
+  perspective SQL injection on the dashboard. Fixed by casting both to `(int)`
+  at the point of assignment (matching the functions' own declared parameter
+  types). `cash_flow()`'s sibling `$_POST['per_g5']` didn't reach SQL directly
+  but fed `array_fill()`/loop bounds unguarded; cast defensively too.
+
+- **`gl/includes/db/gl_db_trans.inc` — `get_gl_balance_from_to()` /
+  `get_gl_trans_from_to()`.** Both interpolated `$account` into
+  `WHERE account='$account'` with no `db_escape()`, while their sibling
+  `get_balance()` two functions down correctly escapes the same field —
+  a clear one-off oversight. Fixed both to `db_escape($account)`.
+
+- **`inventory/includes/db/items_db.inc`.** `$parent = $_GET['parent'];` used
+  raw, unescaped, in `AND i.stock_id <> '$parent'`. Fixed with `db_escape()`.
+
+- **`purchasing/includes/db/suppliers_db.inc` — `get_supplier_details()`.**
+  `$supplier_id` (sourced from `get_post('supplier_id')` at its one call site)
+  interpolated raw into `AND supp.supplier_id = $supplier_id`. Fixed with
+  `db_escape()`.
+
+- **`sales/includes/db/sales_delivery_db.inc` — `adjust_shipping_charge()`.**
+  Both `$trans_no` and `$delivery->customer_id` (the latter traceable back to
+  `$_POST['customer_id']` via `Cart::set_customer()`) were concatenated raw
+  into a `WHERE order_ = $trans_no ... AND debtor_no = $delivery->customer_id`
+  clause. Both are meant to be numeric ids; fixed with `(int)` casts.
+
+- **`includes/db/crm_contacts_db.inc` — `update_person_contacts()`, caught and
+  fixed in the same pass (see "Process note" below).** `$cat_ids` was meant to
+  be escaped via `array_walk($cat_ids, 'db_escape')` before being
+  `implode()`'d into `WHERE t.id=... OR t.id=...`. `array_walk()` only mutates
+  its array argument when the callback takes its value by reference —
+  `db_escape()` doesn't, so this call was silently a no-op and `$cat_ids` went
+  into the query completely unescaped. Fixed by replacing it with
+  `$cat_ids = array_map('db_escape', $cat_ids);`, which does use the
+  callback's return values.
+
+- **Defensive casts for numeric SQL fields typed `int|float|bool|null`,
+  concatenated raw** (not directly exploitable — PHP's own type system blocks
+  string injection through these parameters — but `bool`/`null` stringify to
+  `""`/`"1"`, which produces malformed SQL): `includes/db/manufacturing_db.inc`
+  (`add_bom()`, `update_bom()` — `quantity`), `sales/includes/db/sales_groups_db.inc`
+  (`add_salesman()`, `update_salesman()` — `provision`/`break_pt`/`provision2`),
+  `taxes/db/tax_types_db.inc` (`add_tax_type()`, `update_tax_type()` — `rate`),
+  `gl/includes/db/gl_db_bank_accounts.inc` (`update_reconciled_values()` —
+  `end_balance`). All fixed with `(float)` casts.
+
+- **`admin/db/users_db.inc` — `update_user_prefs()`.** Builds
+  `"$name=".db_escape($value)` from a caller-supplied array without
+  validating `$name` (the SQL column name) at all. Every current call site
+  only ever passes a hardcoded literal key list, so this isn't exploitable
+  today, but the function itself trusts its caller completely. Hardened with
+  a `preg_match('/^[a-z_][a-z0-9_]*$/i', $name)` identifier whitelist,
+  skipping any key that doesn't match.
+
+**Process note:** `db_escape()`, `clean_file_name()`, `html_specials_encode()`
+(both copies — `includes/session.inc` and `install/isession.inc`), and
+`date2sql()` were also missing `@psalm-taint-escape` annotations despite
+being genuine, correctly-implemented sanitizers — `date2sql()` in particular
+always returns either a hardcoded safe literal or
+`sprintf("%04d-%02d-%02d", (int)$y, (int)$m, (int)$d)`, so it can never carry
+SQL metacharacters through. Annotating these four closed off a large amount of
+latent taint-tracking noise (Psalm was treating their output as still
+"tainted" purely because it couldn't see inside `mysqli_real_escape_string()`/
+`htmlspecialchars()`), and is what let the whole-program taint scan surface
+the real bugs above one at a time as each previously-reported path was
+resolved.
+
 ## Live crashes
 
 - **`reporting/includes/reports_classes.inc` — `add_custom_reports()`.**

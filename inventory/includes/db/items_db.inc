@@ -222,7 +222,7 @@ function get_items_search(string|array|null $description, string|int|float|bool|
 			break;
 		case "component":
 			$parent = $_GET['parent'];
-			$sql .= " AND  i.item_code=i.stock_id AND i.stock_id <> '$parent' AND mb_flag <> 'F' ";
+			$sql .= " AND  i.item_code=i.stock_id AND i.stock_id <> ".db_escape($parent)." AND mb_flag <> 'F' ";
 			break;
 		case "kits":
 			$sql .= " AND !i.is_foreign AND i.item_code!=i.stock_id AND mb_flag <> 'F'";

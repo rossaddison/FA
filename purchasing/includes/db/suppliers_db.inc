@@ -122,7 +122,7 @@ function get_supplier_details(string|int|float|bool|array|null $supplier_id, str
 
 		WHERE
 			 supp.payment_terms = ".TB_PREF."payment_terms.terms_indicator
-			 AND supp.supplier_id = $supplier_id ";
+			 AND supp.supplier_id = ".db_escape($supplier_id)." ";
 	if (!(bool)$all)
 		$sql .= "AND $value <> 0 ";  
 	$sql .= "GROUP BY

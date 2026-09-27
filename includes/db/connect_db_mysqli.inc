@@ -178,6 +178,7 @@ function db_num_fields(mysqli_result $result): int
 	return mysqli_num_fields($result);
 }
 
+/** @psalm-taint-escape sql */
 function db_escape(string|int|float|bool|null $value = "", ?bool $nullify = false): string
 {
 	global $db;
