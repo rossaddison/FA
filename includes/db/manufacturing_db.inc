@@ -57,6 +57,7 @@ function load_stock_levels(string|int|float|bool|null $location): array
 function stock_demand_manufacture(string|int|float|bool|null $stock_id, string|int|float|bool|null $qty, string|int|float|bool|null $demand_id, string|int|float|bool|null $location, string|int|float|bool|null $level=0): float
 {
 	global $bom_list, $qoh_stock;
+	/** @var array<array-key, mixed>|null $qoh_stock */
 
 	$demand = 0.0;
 	if ($level > 10) {

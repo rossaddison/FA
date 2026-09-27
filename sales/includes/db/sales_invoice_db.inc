@@ -248,21 +248,19 @@ function void_sales_invoice(string|int|float|bool|null $type, string|int|float|b
 	{
 		$deliveries = get_sales_parent_numbers($type, $type_no);
 
-		if ($deliveries !== 0) {
-			if ($type == ST_SALESINVOICE && count($deliveries) == 1 && get_reference(ST_CUSTDELIVERY, $deliveries[0]) == "auto")
-			{
-				$trans = row_or_empty(get_customer_trans($deliveries[0], ST_CUSTDELIVERY));
-				void_sales_delivery(ST_CUSTDELIVERY, $deliveries[0], false);
-				$date_ = sql2date($trans['tran_date']);
-				add_audit_trail(ST_CUSTDELIVERY, $deliveries[0], $date_, _("Voided."));
-				add_voided_entry(ST_CUSTDELIVERY, $deliveries[0], $date_, "");
-			}
-			else
-			{
-				$srcdetails = get_sales_parent_lines($type, $type_no);
-				while ($row = db_fetch($srcdetails)) {
-					update_parent_line($type, $row['id'], -$row['qty_done']);
-				}
+		if ($type == ST_SALESINVOICE && count($deliveries) == 1 && get_reference(ST_CUSTDELIVERY, $deliveries[0]) == "auto")
+		{
+			$trans = row_or_empty(get_customer_trans($deliveries[0], ST_CUSTDELIVERY));
+			void_sales_delivery(ST_CUSTDELIVERY, $deliveries[0], false);
+			$date_ = sql2date($trans['tran_date']);
+			add_audit_trail(ST_CUSTDELIVERY, $deliveries[0], $date_, _("Voided."));
+			add_voided_entry(ST_CUSTDELIVERY, $deliveries[0], $date_, "");
+		}
+		else
+		{
+			$srcdetails = get_sales_parent_lines($type, $type_no);
+			while ($row = db_fetch($srcdetails)) {
+				update_parent_line($type, $row['id'], -$row['qty_done']);
 			}
 		}
 	}

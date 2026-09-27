@@ -8,7 +8,7 @@ cleanup has turned up.
 
 ## Snapshot
 
-Full project scan, 2026-09-27: **10,257** Psalm errors (errorLevel=1).
+Full project scan, 2026-09-27: **10,254** Psalm errors (errorLevel=1).
 
 Progress is tracked by the overall project total, not per-file counts — see
 "Known noise" below for why per-file counts are unstable and misleading here.
@@ -72,9 +72,13 @@ noise down to a simple offset-cast issue in ~15+ files. The same pattern
 applies to a global that's mutated by reference across many function calls
 over a request's lifetime (`includes/db/sql_functions.inc`'s
 `$transaction_level`, incremented/decremented by `begin_transaction()`/
-`commit_transaction()` for nested-transaction reference counting) — Psalm
-narrows it to a literal `0`/`-1` at points where the real runtime value is a
-general `int`; same `@var int` fix.
+`commit_transaction()` for nested-transaction reference counting;
+`includes/ui/ui_controls.inc`'s `$ajax_divs`, pushed/popped across
+`div_start()`/`div_end()`; `includes/db/manufacturing_db.inc`'s
+`$qoh_stock`, lazy-loaded once and memoized across recursive calls to
+`stock_demand_manufacture()`) — Psalm narrows it to a literal `0`/`-1`/`null`
+at points where the real runtime value is a general `int`/array; same
+`@var` fix.
 
 **`psalm.xml`'s `<globals>` type declarations can themselves be wrong.**
 `installed_languages` was declared `array<int, array<string, string>>`, but
