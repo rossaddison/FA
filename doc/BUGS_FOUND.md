@@ -6,6 +6,25 @@ Most severe first within each section.
 
 ## Live crashes
 
+- **`inventory/includes/inventory_db.inc` — `item_img_name()`.** Parameter
+  type included `array`, but the function's first operation, `strtr()`,
+  cannot accept an array — passing one would crash immediately with a
+  `TypeError`. No real caller passes anything but a `stock_id` scalar (a
+  plain database column value). Narrowed the parameter type to drop the
+  unreachable `array` case, which also narrowed the return type — that in
+  turn cleared "concatenating with possibly array" noise at every call site
+  (`rep104.php`, `rep111.php`, `rep303.php`, `inventory/manage/items.php`).
+
+- **`reporting/rep302.php` — `getPeriods()`.** Built five month-boundary
+  dates via `mktime(0,0,0, date('m')-N, 1, date('Y'))` — `date('m')` and
+  `date('Y')` return strings, but `mktime()`'s month/year parameters are
+  typed `int|null`. Worked only through weak-typing coercion; with the
+  `declare(strict_types=1)` rollout (see PSALM_MIGRATION.md) this exact
+  pattern becomes a fatal `TypeError` instead of a silent coercion. Cast
+  both explicitly. Also guarded `getTransactions()`'s two `db_escape()`
+  calls, whose `$category`/`$location` parameters are typed to allow
+  `array` (`db_escape()` doesn't accept one).
+
 - **`includes/packages.inc` — `get_languages_list()`, `get_extensions_list()`,
   `get_themes_list()`, `get_charts_list()`.** Found via Psalm's
   `NullableReturnStatement`. All four are declared with a native,

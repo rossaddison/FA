@@ -8,7 +8,32 @@ cleanup has turned up.
 
 ## Snapshot
 
-Full project scan, 2026-09-27: **10,254** Psalm errors (errorLevel=1).
+Full project scan, 2026-09-27: **10,187** Psalm errors (errorLevel=1).
+
+## `declare(strict_types=1)` rollout
+
+Every first-party `.php`/`.inc` file (the same set covered by `psalm.xml`'s
+`<projectFiles>`, 433 files) got `declare(strict_types=1);` inserted as the
+first statement, by explicit request — done as a deliberate blanket,
+fix-forward change rather than an incremental one. This codebase relies on
+PHP's weak-typing coercion throughout — the pervasive
+`string|int|float|bool|null` parameter unions exist specifically because
+callers pass mismatched-but-coercible scalars today (e.g. `date('m')`, which
+returns a zero-padded numeric *string*, passed straight into `mktime()`'s
+`int|null` month parameter in `rep302.php`'s `getPeriods()`, discovered and
+fixed as part of this rollout). Enabling strict_types per-file makes that
+exact class of call throw a fatal `TypeError` at runtime instead of silently
+coercing.
+
+Verified before pushing: `php -l` clean and no BOM introduced across all 433
+files, plus a live smoke test of 10 representative authenticated pages
+(dashboard, GL journal, sales/purchase invoice entry, reports menu,
+inventory/GL inquiries) with no fatal errors. That only exercises page
+*loads*, not deeper form-submission or report-generation paths — those are
+where the real risk lives, and where breakage is expected to keep surfacing.
+The fix pattern established by the `rep302.php` case: cast the actual value
+explicitly at the point it flows into the strictly-typed parameter, never
+revert the `declare(strict_types=1)` line itself.
 
 Progress is tracked by the overall project total, not per-file counts — see
 "Known noise" below for why per-file counts are unstable and misleading here.
