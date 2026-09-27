@@ -8,7 +8,7 @@ cleanup has turned up.
 
 ## Snapshot
 
-Full project scan, 2026-09-27: **10,373** Psalm errors (errorLevel=1).
+Full project scan, 2026-09-27: **10,360** Psalm errors (errorLevel=1).
 
 Progress is tracked by the overall project total, not per-file counts — see
 "Known noise" below for why per-file counts are unstable and misleading here.
@@ -68,7 +68,22 @@ unconditional use of a project-wide config array (`$systypes_array`,
 `/** @var array<int, string> $systypes_array */` assertion immediately after
 the `global` statement — this alone has been the single highest-yield "lever"
 fix in the whole cleanup, collapsing large cascades of `MixedArrayAccess`
-noise down to a simple offset-cast issue in ~15+ files.
+noise down to a simple offset-cast issue in ~15+ files. The same pattern
+applies to a global that's mutated by reference across many function calls
+over a request's lifetime (`includes/db/sql_functions.inc`'s
+`$transaction_level`, incremented/decremented by `begin_transaction()`/
+`commit_transaction()` for nested-transaction reference counting) — Psalm
+narrows it to a literal `0`/`-1` at points where the real runtime value is a
+general `int`; same `@var int` fix.
+
+**`psalm.xml`'s `<globals>` type declarations can themselves be wrong.**
+`installed_languages` was declared `array<int, array<string, string>>`, but
+the real `rtl` key is a genuine `bool` everywhere it's set
+(`install/isession.inc`, `admin/inst_lang.php`'s `(bool)$_POST['rtl']`,
+`includes/packages.inc`). This made every `$lang['rtl'] === true` check
+across the codebase look like a permanent-false `DocblockTypeContradiction` —
+the application code was correct; the global's declared type was too narrow.
+Widened to `array<int, array<string, string|bool>>`.
 
 **Dynamically-loaded theme classes.** `frontaccounting.php` / `includes/page/
 header.inc` / `includes/page/footer.inc` load a `renderer` class via

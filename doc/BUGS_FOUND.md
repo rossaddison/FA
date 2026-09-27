@@ -4,6 +4,37 @@ Running log of real defects — not Psalm noise — turned up while working
 through the categories described in [PSALM_MIGRATION.md](PSALM_MIGRATION.md).
 Most severe first within each section.
 
+## Data-loss-adjacent: missing audit trail / dead success link
+
+- **`inventory/includes/db/items_trans_db.inc` — `stock_cost_update()`.**
+  Found via Psalm's `NoValue` ("all possible types for this argument were
+  invalidated") on both this function and its caller. `$update_no` was
+  initialized to `-1` and then never reassigned anywhere in the function
+  body — the line that was clearly meant to capture the new GL transaction
+  id, `add_audit_trail(ST_COSTUPDATE, $update_no, $date_)`, was gated behind
+  `if ($update_no != -1)`, which was therefore always false and never ran.
+  Net effect: cost updates that actually changed the GL (a real
+  `$value_of_change`) never got an audit trail entry, and the caller's
+  "View the GL Journal Entries for this Cost Update" link never appeared
+  since it also checked `$update_no > 0`. Fixed by capturing
+  `write_journal_entries($cart)`'s return value into `$update_no` — which
+  also made the function's own `add_audit_trail()` call redundant, since
+  `write_journal_entries()` already records the audit trail for the
+  transaction it creates, so that redundant call was removed rather than
+  reactivated (avoids inserting a duplicate audit_trail row).
+
+- **`manufacturing/work_order_issue.php`.** Found via Psalm's
+  `DocblockTypeContradiction` on a dead `if ($failed_data != null)` branch.
+  `add_work_order_issue()` (`manufacturing/includes/db/work_order_issues_db.inc`)
+  is declared `: void` and never returns anything — but its caller still had
+  `$failed_data = add_work_order_issue(...); if ($failed_data != null) {
+  display_error(...— insufficient quantity for a component...); }`, preceded
+  by a stale `// if failed, returns a stockID` comment. This validation
+  path was permanently dead (`$failed_data` is always `null`). The real
+  protection already happens earlier via `can_process()`'s `check_qoh()`
+  pre-check, so this was cleaned up as dead/misleading code rather than
+  reactivated — removed the unreachable branch and the stale comment.
+
 ## Cross-site scripting (XSS)
 
 Found by chasing Psalm's `TaintedHtml`/`TaintedTextWithQuotes` findings to

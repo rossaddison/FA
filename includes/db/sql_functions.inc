@@ -20,6 +20,7 @@ $transaction_level = 0;
 function begin_transaction(): void
 {
 	global $transaction_level;
+	/** @var int $transaction_level */
 
 	if (!$transaction_level) {
 		db_query("BEGIN", "could not start a transaction");
@@ -30,6 +31,7 @@ function begin_transaction(): void
 function commit_transaction(): void
 {
 	global $transaction_level;
+	/** @var int $transaction_level */
 
 	$transaction_level--;
 

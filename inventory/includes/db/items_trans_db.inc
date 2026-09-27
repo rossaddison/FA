@@ -71,12 +71,11 @@ function stock_cost_update(string|null $stock_id, int|float|bool|null $material_
 				$stock_gl_code["dimension_id"], $stock_gl_code["dimension2_id"], -$value_of_change);
 			$cart->add_gl_item($stock_gl_code["inventory_account"], $stock_gl_code["dimension_id"], $stock_gl_code["dimension2_id"], $value_of_change);
 
-			write_journal_entries($cart);
+			// write_journal_entries() records its own audit trail entry for the new transaction
+			$update_no = (int) write_journal_entries($cart);
 		}
    	}
 
-	if ($update_no != -1)
-		add_audit_trail(ST_COSTUPDATE, $update_no, $date_);
 	commit_transaction();
 
 	return $update_no;

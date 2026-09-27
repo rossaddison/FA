@@ -102,21 +102,12 @@ function can_process(): bool
 if (isset($_POST['Process']) && can_process())
 {
 
-	// if failed, returns a stockID
-	$failed_data = add_work_order_issue(session_obj('issue_items')->order_id,
+	// insufficient-quantity validation happens above via can_process()'s check_qoh()
+	add_work_order_issue(session_obj('issue_items')->order_id,
 		post_scalar('ref'), $_POST['IssueType'], session_obj('issue_items')->line_items,
 		post_scalar('Location'), post_scalar('WorkCentre'), post_scalar('date_'), post_scalar('memo_'));
 
-	if ($failed_data != null) 
-	{
-		display_error(_("The process cannot be completed because there is an insufficient total quantity for a component.") . "<br>"
-		. _("Component is :"). $failed_data[0] . "<br>"
-		. _("From location :"). $failed_data[1] . "<br>");
-	} 
-	else 
-	{
-		meta_forward($_SERVER['PHP_SELF'], "AddedID=".session_obj('issue_items')->order_id);
-	}
+	meta_forward($_SERVER['PHP_SELF'], "AddedID=".(string)session_obj('issue_items')->order_id);
 
 } /*end of process credit note */
 

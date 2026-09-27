@@ -415,6 +415,7 @@ $ajax_divs = array();
 function div_start(string|int|float|bool|null $id='', ?string $trigger=null, bool $non_ajax=false): void
 {
     global $ajax_divs;
+    /** @var array<int, array{0: mixed, 1: mixed}> $ajax_divs */
 
 	if ($non_ajax) { // div for non-ajax elements
    		array_push($ajax_divs, array($id, null));
@@ -429,6 +430,7 @@ function div_start(string|int|float|bool|null $id='', ?string $trigger=null, boo
 function div_end(): void
 {
     global $ajax_divs;
+    /** @var array<int, array{0: mixed, 1: mixed}> $ajax_divs */
 
 	output_hidden();
     if (count($ajax_divs))
