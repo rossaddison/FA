@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**********************************************************************
     Copyright (C) FrontAccounting, LLC.
 	Released under the terms of the GNU General Public License, GPL, 
@@ -25,12 +26,12 @@ include_once(dirname(__DIR__, 2) . "/inventory/includes/db/items_transfer_db.inc
 include_once(dirname(__DIR__, 2) . "/inventory/includes/db/items_units_db.inc");
 
 /**
- * @return array<array-key, mixed>|null|string
+ * @return null|string
  * @psalm-pure
  */
-function item_img_name(string|int|float|bool|array|null $stock_id)
+function item_img_name(string|int|float|bool|null $stock_id)
 {
-	$stock_id = strtr($stock_id, "><\\/:|*?", '________');
+	$stock_id = strtr((string) $stock_id, "><\\/:|*?", '________');
 	return clean_file_name($stock_id);
 }
 

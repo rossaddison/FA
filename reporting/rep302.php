@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**********************************************************************
     Copyright (C) FrontAccounting, LLC.
 	Released under the terms of the GNU General Public License, GPL, 
@@ -47,9 +48,9 @@ function getTransactions(string|int|array|null $category, string|array|null $loc
 		WHERE item.category_id=category.category_id
 		AND (item.mb_flag='B' OR item.mb_flag='M')";
 	if ($category != 0)
-		$sql .= " AND item.category_id = ".db_escape($category);
+		$sql .= " AND item.category_id = ".db_escape(is_array($category) ? 0 : $category);
 	if ($location != 'all')
-		$sql .= " AND IF(move.stock_id IS NULL, '1=1',move.loc_code = ".db_escape($location).")";
+		$sql .= " AND IF(move.stock_id IS NULL, '1=1',move.loc_code = ".db_escape(is_array($location) ? '' : $location).")";
 	$sql .= " GROUP BY item.category_id,
 		category.description,
 		item.stock_id,
@@ -67,11 +68,11 @@ function getTransactions(string|int|array|null $category, string|array|null $loc
 function getPeriods(string|int|float|bool|null $stockid, string|int|float|bool|null $location)
 {
 	$date5 = date('Y-m-d');
-	$date4 = date('Y-m-d',mktime(0,0,0,date('m'),1,date('Y')));
-	$date3 = date('Y-m-d',mktime(0,0,0,date('m')-1,1,date('Y')));
-	$date2 = date('Y-m-d',mktime(0,0,0,date('m')-2,1,date('Y')));
-	$date1 = date('Y-m-d',mktime(0,0,0,date('m')-3,1,date('Y')));
-	$date0 = date('Y-m-d',mktime(0,0,0,date('m')-4,1,date('Y')));
+	$date4 = date('Y-m-d',mktime(0,0,0,(int) date('m'),1,(int) date('Y')));
+	$date3 = date('Y-m-d',mktime(0,0,0,(int) date('m')-1,1,(int) date('Y')));
+	$date2 = date('Y-m-d',mktime(0,0,0,(int) date('m')-2,1,(int) date('Y')));
+	$date1 = date('Y-m-d',mktime(0,0,0,(int) date('m')-3,1,(int) date('Y')));
+	$date0 = date('Y-m-d',mktime(0,0,0,(int) date('m')-4,1,(int) date('Y')));
 
 	$sql = "SELECT SUM(CASE WHEN tran_date >= '$date0' AND tran_date < '$date1' THEN -qty ELSE 0 END) AS prd0,
 		   		SUM(CASE WHEN tran_date >= '$date1' AND tran_date < '$date2' THEN -qty ELSE 0 END) AS prd1,
