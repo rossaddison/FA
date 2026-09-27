@@ -319,7 +319,7 @@ function add_access_extensions(): void
 	}
 }
 
-function check_edit_access(string|int|float|bool|null $name)
+function check_edit_access(string|int|float|bool|null $name): bool
 {
 	global $input_security;
 

@@ -95,8 +95,7 @@ class reflines_db extends data_set {
 		return db_num_rows($res);
 	}
 
-	/** @return bool */
-	function delete_check($ref_id)
+	function delete_check($ref_id): bool
 	{
 		$rec = $this->get($ref_id);
 		if ($rec['default'])
@@ -121,7 +120,7 @@ class reflines_db extends data_set {
 		if (!parent::insert($data))
 			return false;
 		if (@$data['default'])
-			return $this->_set_as_default(db_insert_id(), $data['trans_type']);
+			return (bool) $this->_set_as_default(db_insert_id(), $data['trans_type']);
 		return true;
 	}
 
@@ -130,7 +129,7 @@ class reflines_db extends data_set {
 		if (!parent::update($key, $data))
 			return false;
 		if (@$data['default'])
-			return $this->_set_as_default($key , $data['trans_type']);
+			return (bool) $this->_set_as_default($key , $data['trans_type']);
 		return true;
 	}
 

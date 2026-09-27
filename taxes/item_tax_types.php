@@ -30,7 +30,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 	$input_error = 0;
 
-	if (strlen($_POST['name']) == 0) 
+	if (strlen((string) $_POST['name']) == 0)
 	{
 		$input_error = 1;
 		display_error(_("The item tax type description cannot be empty."));
@@ -55,8 +55,10 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
         	}
         }  
         
-    	if ($selected_id != -1) 
-    	{    		
+    	/** @var int|string $selected_id */
+    	$selected_id = $selected_id;
+    	if ($selected_id != -1)
+    	{
     		update_item_tax_type($selected_id, post_scalar('name'), post_scalar('exempt'), $exempt_from);
 			display_notification(_('Selected item tax type has been updated'));
     	} 
@@ -71,7 +73,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 //-----------------------------------------------------------------------------------
 
-function can_delete(string|int|float|bool|array|null $selected_id): bool
+function can_delete(int|string $selected_id): bool
 {
 	if ((bool)key_in_foreign_table($selected_id, 'stock_master', 'tax_type_id'))
 	{
@@ -93,6 +95,8 @@ function can_delete(string|int|float|bool|array|null $selected_id): bool
 if ($Mode == 'Delete')
 {
 
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	if (can_delete($selected_id))
 	{
 		delete_item_tax_type($selected_id);
@@ -148,7 +152,9 @@ end_table(1);
 
 start_table(TABLESTYLE2);
 
-if ($selected_id != -1) 
+/** @var int|string $selected_id */
+$selected_id = $selected_id;
+if ($selected_id != -1)
 {
 	if ($Mode == 'Edit') {
    		$myrow = row_or_empty(get_item_tax_type($selected_id));
@@ -168,8 +174,10 @@ if ($selected_id != -1)
    		}	
 	}
 
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	hidden('selected_id', $selected_id);
-} 
+}
 
 text_row_ex(_("Description:"), 'name', 50);
 

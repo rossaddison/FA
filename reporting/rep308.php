@@ -31,18 +31,25 @@ include_once(dirname(__DIR__) . "/inventory/includes/inventory_db.inc");
 
 inventory_movements();
 
+/** @return string|int|float|null */
 function get_domestic_price(?array $myrow, ?string $stock_id)
 {
+    if ($myrow === null)
+        return null;
+
     if ($myrow['type'] == ST_SUPPRECEIVE || $myrow['type'] == ST_SUPPCREDIT)
      {
+        /** @var string|int|float|null $price */
         $price = $myrow['price'];
-        if ($myrow['person_id'] > 0)
+        $person_id = is_scalar($myrow['person_id']) ? $myrow['person_id'] : null;
+        if ((float) $person_id > 0)
         {
             // Do we have foreign currency?
-            $supp = row_or_empty(get_supplier($myrow['person_id']));
+            $supp = row_or_empty(get_supplier($person_id));
             $currency = $supp['curr_code'];
+            /** @var string|int|float|null $ex_rate */
             $ex_rate = $myrow['ex_rate'];
-            $price *= $ex_rate;
+            $price = (float) $price * (float) $ex_rate;
         }
     }
     else
@@ -104,6 +111,7 @@ function trans_qty(?string $stock_id, string|null $location, string|null $from_d
 
 }
 
+/** @return float|int */
 function avg_unit_cost(?string $stock_id, string|null $location, string|null $to_date)
 {
 	if ($to_date == null)
@@ -128,24 +136,25 @@ function avg_unit_cost(?string $stock_id, string|null $location, string|null $to
 
 	$result = db_query($sql, "No standard cost transactions were returned");
 
-    if ($result == false)
+    if (!($result instanceof mysqli_result))
     	return 0;
 
-	$qty = $tot_cost = 0;
+	$qty = $tot_cost = 0.0;
 	while ($row=db_fetch($result))
 	{
-		$qty += $row['qty'];	
+		$qty += (float) $row['qty'];
 		$price = get_domestic_price($row, $stock_id);
-        $tran_cost = $price * (float)$row['qty'];
+        $tran_cost = (float) $price * (float)$row['qty'];
         $tot_cost += $tran_cost;
 	}
-	if ($qty == 0)
+	if ($qty == 0.0)
 		return 0;
 	return $tot_cost / $qty;
 }
 
 //----------------------------------------------------------------------------------------------------
 
+/** @return float|int */
 function trans_qty_unit_cost(?string $stock_id, string|null $location, string|null $from_date, string|null $to_date, bool $inward = true)
 {
 	if ($from_date == null)
@@ -178,19 +187,19 @@ function trans_qty_unit_cost(?string $stock_id, string|null $location, string|nu
 	$sql .= " ORDER BY tran_date";
 	
 	$result = db_query($sql, "No standard cost transactions were returned");
-    
-    if ($result == false)
+
+    if (!($result instanceof mysqli_result))
     	return 0;
-	
-	$qty = $tot_cost = 0;
+
+	$qty = $tot_cost = 0.0;
 	while ($row=db_fetch($result))
 	{
-        $qty += $row['qty'];
-        $price = get_domestic_price($row, $stock_id); 
-        $tran_cost = (float)$row['qty'] * $price;
+        $qty += (float) $row['qty'];
+        $price = get_domestic_price($row, $stock_id);
+        $tran_cost = (float)$row['qty'] * (float) $price;
         $tot_cost += $tran_cost;
-	}	
-	if ($qty == 0)
+	}
+	if ($qty == 0.0)
 		return 0;
 	return $tot_cost / $qty;
 }
@@ -201,13 +210,13 @@ function inventory_movements(): void
 {
     global $path_to_root;
 
-    $from_date = $_POST['PARAM_0'];
-    $to_date = $_POST['PARAM_1'];
-    $category = $_POST['PARAM_2'];
-	$location = $_POST['PARAM_3'];
-    $comments = $_POST['PARAM_4'];
-	$orientation = $_POST['PARAM_5'];
-	$destination = $_POST['PARAM_6'];
+    $from_date = (string) post_scalar('PARAM_0');
+    $to_date = (string) post_scalar('PARAM_1');
+    $category = post_scalar('PARAM_2');
+	$location = (string) post_scalar('PARAM_3');
+    $comments = post_scalar('PARAM_4');
+	$orientation = post_scalar('PARAM_5');
+	$destination = post_scalar('PARAM_6');
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
@@ -219,7 +228,7 @@ function inventory_movements(): void
 	if ($category == 0)
 		$cat = _('All');
 	else
-		$cat = get_category_name($category);
+		$cat = get_category_name((string) $category);
 
 	if ($location == '')
 		$loc = _('All');
@@ -246,7 +255,7 @@ function inventory_movements(): void
     $rep->Info($params, $cols, $headers2, $aligns, $cols, $headers, $aligns);
     $rep->NewPage();
 
-	$totval_open = $totval_in = $totval_out = $totval_close = 0; 
+	$totval_open = $totval_in = $totval_out = $totval_close = 0.0;
 	$result = fetch_items($category);
 
 	$dec = user_price_dec();
@@ -273,11 +282,11 @@ function inventory_movements(): void
 			continue;
 		$rep->NewLine();
 		$rep->TextCol(0, 1,	$myrow['stock_id']);
-		$rep->TextCol(1, 2, substr($myrow['name'], 0, 24) . ' ');
+		$rep->TextCol(1, 2, substr((string) $myrow['name'], 0, 24) . ' ');
 		$rep->TextCol(2, 3, $myrow['units']);
 		$rep->AmountCol(3, 4, $qoh_start, get_qty_dec($myrow['stock_id']));
 		$rep->AmountCol(4, 5, $openCost, $dec);
-		$openCost *= $qoh_start;
+		$openCost = (float) $openCost * (float) $qoh_start;
 		$totval_open += $openCost;
 		$rep->AmountCol(5, 6, $openCost);
 		
@@ -285,7 +294,7 @@ function inventory_movements(): void
 			$rep->AmountCol(6, 7, $inward, get_qty_dec($myrow['stock_id']));
 			$unitCost_in = trans_qty_unit_cost($myrow['stock_id'], $location, $from_date, $to_date);
 			$rep->AmountCol(7, 8, $unitCost_in,$dec);
-			$unitCost_in *= $inward;
+			$unitCost_in = (float) $unitCost_in * (float) $inward;
 			$totval_in += $unitCost_in;
 			$rep->AmountCol(8, 9, $unitCost_in);
 		}
@@ -294,14 +303,14 @@ function inventory_movements(): void
 			$rep->AmountCol(9, 10, $outward, get_qty_dec($myrow['stock_id']));
 			$unitCost_out =	trans_qty_unit_cost($myrow['stock_id'], $location, $from_date, $to_date, false);
 			$rep->AmountCol(10, 11, $unitCost_out,$dec);
-			$unitCost_out *= $outward;
+			$unitCost_out = (float) $unitCost_out * (float) $outward;
 			$totval_out += $unitCost_out;
 			$rep->AmountCol(11, 12, $unitCost_out);
 		}
 		
 		$rep->AmountCol(12, 13, $qoh_end, get_qty_dec($myrow['stock_id']));
 		$rep->AmountCol(13, 14, $unitCost,$dec);
-		$unitCost *= $qoh_end;
+		$unitCost = (float) $unitCost * (float) $qoh_end;
 		$totval_close += $unitCost;
 		$rep->AmountCol(14, 15, $unitCost);
 		

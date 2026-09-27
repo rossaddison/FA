@@ -163,18 +163,10 @@ class attachments extends simple_crud {
 	/** @return void */
 	function _bottom_controls()	{
 		$title=false;
-		$async='both';
+		$async='default';
+		$cancel='cancel';
 		$base=$this->name;
 
-		$cancel = $async;
-
-		if ($async === 'both') {
-			$async = 'default'; $cancel = 'cancel';
-		} 
-		else if ($async === 'default')
-			$cancel = true;
-		else if ($async === 'cancel')
-			$async = true;
 		echo "<center>";
 
 		if ($this->Mode == '' || $this->Mode == 'RESET')
@@ -191,6 +183,7 @@ class attachments extends simple_crud {
 		echo "</center>";
 	}
 
+    /** @return null|string */
     function _get_unique_name($selected_id) {
         if ($selected_id != null && $selected_id != "") {
             $sql = "SELECT * FROM ".TB_PREF."attachments WHERE id = ".db_escape($this->selected_id);
@@ -203,8 +196,6 @@ class attachments extends simple_crud {
 	/** @return void */
 	function db_insert() {
 		$dat = $this->data;
-		if(!isset($max_image_size))
-			$max_image_size = 5000;
 
 		if (isset($_FILES['file_attachment_name']) && $_FILES['file_attachment_name']['name'] <> '') {
 
@@ -218,6 +209,8 @@ class attachments extends simple_crud {
 			if (!in_array($ftype, array('JPG','PNG','GIF', 'PDF', 'DOC', 'ODT')))
 			{
 				display_error(_('Only graphics,pdf,doc and odt files are supported.'));
+			} elseif ($_FILES['file_attachment_name']['size'] > (sysprefs()->max_image_size * 1024)) {
+				display_error(_('The file size is over the maximum allowed. The maximum size allowed in KB is') . ' ' . sysprefs()->max_image_size);
 			} else {
 
 				$attachment_file_name = uniqid();
@@ -248,22 +241,22 @@ class attachments extends simple_crud {
 	/** @return void */
 	function db_update() {
 		$dat = $this->data;
-		if(!isset($max_image_size))
-			$max_image_size = 5000;
 
 		$upload_file = "";
 		if (isset($_FILES['file_attachment_name']) && $_FILES['file_attachment_name']['name'] != '') {
 			$result = $_FILES['file_attachment_name']['error'];
-			$upload_file = 'Yes'; 
+			$upload_file = 'Yes';
 			$attach_dir = company_path().'/attachments' ;
 			if (!file_exists($attach_dir)){
 				mkdir($attach_dir);
 			}
-			
+
 			$ftype = strtoupper(substr($_FILES['file_attachment_name']['name'], -3));
 			if (!in_array($ftype, array('JPG','PNG','GIF', 'PDF', 'DOC', 'ODT')))
 			{
 				display_error(_('Only graphics,pdf,doc and odt files are supported.'));
+			} elseif ($_FILES['file_attachment_name']['size'] > (sysprefs()->max_image_size * 1024)) {
+				display_error(_('The file size is over the maximum allowed. The maximum size allowed in KB is') . ' ' . sysprefs()->max_image_size);
 			} else {
 				$filesize = $_FILES['file_attachment_name']['size'];
 				$filetype = $_FILES['file_attachment_name']['type'];

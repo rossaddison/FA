@@ -90,13 +90,14 @@ function getTaxInfo(string|int|float|bool|null $id)
 function print_tax_report(): void
 {
 	global $path_to_root, $systypes_array;
+	/** @var array<int, string> $systypes_array */
 
-	$from = $_POST['PARAM_0'];
-	$to = $_POST['PARAM_1'];
-	$summaryOnly = $_POST['PARAM_2'];
-	$comments = $_POST['PARAM_3'];
-	$orientation = $_POST['PARAM_4'];
-	$destination = $_POST['PARAM_5'];
+	$from = (string) post_scalar('PARAM_0');
+	$to = (string) post_scalar('PARAM_1');
+	$summaryOnly = post_scalar('PARAM_2');
+	$comments = post_scalar('PARAM_3');
+	$orientation = post_scalar('PARAM_4');
+	$destination = post_scalar('PARAM_5');
 
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
@@ -114,9 +115,11 @@ function print_tax_report(): void
 
 	$res = getTaxTypes();
 
-	$taxes[0] = array('in'=>0, 'out'=>0, 'taxin'=>0, 'taxout'=>0);
+	/** @var array<int, array{in: float, out: float, taxin: float, taxout: float}> $taxes */
+	$taxes = array();
+	$taxes[0] = array('in'=>0.0, 'out'=>0.0, 'taxin'=>0.0, 'taxout'=>0.0);
 	while ($tax=db_fetch($res))
-		$taxes[$tax['id']] = array('in'=>0, 'out'=>0, 'taxin'=>0, 'taxout'=>0);
+		$taxes[(int) $tax['id']] = array('in'=>0.0, 'out'=>0.0, 'taxin'=>0.0, 'taxout'=>0.0);
 
 	$params =   array( 	0 => $comments,
 						1 => array('text' => _('Period'), 'from' => $from, 'to' => $to),
@@ -145,13 +148,13 @@ function print_tax_report(): void
 	{
 		if (in_array($trans['trans_type'], array(ST_CUSTCREDIT,ST_SUPPINVOICE)) ||
 			($trans['trans_type'] == ST_JOURNAL && $trans['reg_type'] == TR_INPUT)) {
-			$trans['net_amount'] *= -1;
-			$trans['amount'] *= -1;
+			$trans['net_amount'] = (float) $trans['net_amount'] * -1.0;
+			$trans['amount'] = (float) $trans['amount'] * -1.0;
 		}
 
 		if (!(bool)$summaryOnly)
 		{
-			$rep->TextCol(0, 1, $systypes_array[$trans['trans_type']]);
+			$rep->TextCol(0, 1, $systypes_array[(int) $trans['trans_type']]);
 			if ($trans['memo'] == '')
 				$trans['memo'] = get_reference($trans['trans_type'], $trans['trans_no']);
 			$rep->TextCol(1, 2,	$trans['memo']);
@@ -173,7 +176,7 @@ function print_tax_report(): void
 				$rep->NewPage();
 			}
 		}
-		$tax_type = $trans['tax_type_id'];
+		$tax_type = (int) $trans['tax_type_id'];
 		if ($trans['trans_type']==ST_JOURNAL && $trans['reg_type']==TR_INPUT) {
 			$taxes[$tax_type]['taxin'] += (float)$trans['amount'];
 			$taxes[$tax_type]['in'] += (float)$trans['net_amount'];
@@ -222,8 +225,8 @@ function print_tax_report(): void
 		$rep->AmountCol(2, 3, $sum['taxout'], $dec);
 		$rep->AmountCol(3, 4, $sum['in'], $dec);
 		$rep->AmountCol(4, 5, $sum['taxin'], $dec); 
-		$rep->AmountCol(5, 6, (float)$sum['taxout']+(float)$sum['taxin'], $dec);
-		$taxtotal += ((float)$sum['taxout']+(float)$sum['taxin']);
+		$rep->AmountCol(5, 6, $sum['taxout']+$sum['taxin'], $dec);
+		$taxtotal += ($sum['taxout']+$sum['taxin']);
 		$rep->NewLine();
 	}
 

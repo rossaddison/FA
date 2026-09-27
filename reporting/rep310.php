@@ -102,15 +102,15 @@ function print_inventory_purchase(): void
 {
     global $path_to_root;
 
-	$from = $_POST['PARAM_0'];
-	$to = $_POST['PARAM_1'];
-    $category = $_POST['PARAM_2'];
-    $location = $_POST['PARAM_3'];
-    $fromsupp = $_POST['PARAM_4'];
-    $item = $_POST['PARAM_5'];
-	$comments = $_POST['PARAM_6'];
-	$orientation = $_POST['PARAM_7'];
-	$destination = $_POST['PARAM_8'];
+	$from = (string) post_scalar('PARAM_0');
+	$to = (string) post_scalar('PARAM_1');
+    $category = post_scalar('PARAM_2');
+    $location = post_scalar('PARAM_3');
+    $fromsupp = post_scalar('PARAM_4');
+    $item = post_scalar('PARAM_5');
+	$comments = post_scalar('PARAM_6');
+	$orientation = post_scalar('PARAM_7');
+	$destination = post_scalar('PARAM_8');
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
@@ -124,7 +124,7 @@ function print_inventory_purchase(): void
 	if ($category == 0)
 		$cat = _('All');
 	else
-		$cat = get_category_name($category);
+		$cat = get_category_name((string) $category);
 
 	if ($location == '')
 		$loc = _('All');
@@ -166,7 +166,7 @@ function print_inventory_purchase(): void
     $rep->Info($params, $cols, $headers, $aligns);
     $rep->NewPage();
 
-	$res = getTransactions($category, $location, $fromsupp, $item, $from, $to);
+	$res = getTransactions((string) $category, (string) $location, (string) $fromsupp, (string) $item, $from, $to);
 
 	//($total = $total_supp = $grandtotal = 0.0); //left if someone needs them for own needs
 	//($total_qty = 0.0);
@@ -182,10 +182,10 @@ function print_inventory_purchase(): void
 		$stock_id = $trans['stock_id'];
 		$stock_description = $trans['description'];
 		$curr = get_supplier_currency($trans['supplier_id']);
-		$rate = get_exchange_rate_from_home_currency($curr, sql2date($trans['tran_date']));
-		$trans['price'] *= $rate;
+		$rate = (float) get_exchange_rate_from_home_currency($curr, sql2date($trans['tran_date']));
+		$trans['price'] = (float) $trans['price'] * $rate;
 		//$rep->NewLine();
-		$trans['supp_reference'] = get_supp_inv_reference($trans['supplier_id'], $trans['stock_id'], $trans['tran_date']);
+		$trans['supp_reference'] = get_supp_inv_reference((string) $trans['supplier_id'], (string) $trans['stock_id'], (string) $trans['tran_date']);
 
 		if ($fromsupp == ALL_TEXT)
 		{
@@ -204,7 +204,7 @@ function print_inventory_purchase(): void
 		}	
 		$rep->AmountCol(5, 6, $trans['qty'], get_qty_dec($trans['stock_id']));
 		$rep->AmountCol(6, 7, $trans['price'], $dec);
-		$amt = (float)$trans['qty'] * (float)$trans['price'];
+		$amt = (float)$trans['qty'] * $trans['price'];
 		$rep->TextCol(7, 8, get_location_name($trans['loc_code']));
 		$rep->NewLine();
 

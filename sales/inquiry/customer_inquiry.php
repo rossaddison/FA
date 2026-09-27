@@ -55,6 +55,7 @@ function due_date(array $row)
 	return	$row["type"] == ST_SALESINVOICE	? $row["due_date"] : '';
 }
 
+/** @return null|scalar */
 function gl_view(array $row)
 {
 	return get_gl_view_str($row["type"], $row["trans_no"]);
@@ -87,7 +88,7 @@ function credit_link(array $row)
 	}	
 }
 
-function edit_link(array $row)
+function edit_link(array $row): string
 {
 	global $page_nested;
 

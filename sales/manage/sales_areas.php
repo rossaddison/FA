@@ -20,12 +20,12 @@ include(dirname(__DIR__, 2) . "/includes/ui.inc");
 
 simple_page_mode(true);
 
-if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') 
+if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 {
 
 	$input_error = 0;
 
-	if (strlen($_POST['description']) == 0) 
+	if (strlen((string) $_POST['description']) == 0)
 	{
 		$input_error = 1;
 		display_error(_("The area description cannot be empty."));
@@ -34,7 +34,9 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 	if ($input_error != 1)
 	{
-    	if ($selected_id != -1) 
+    	/** @var int|string $selected_id */
+    	$selected_id = $selected_id;
+    	if ($selected_id != -1)
     	{
     		update_sales_area($selected_id, post_scalar('description'));
 			$note = _('Selected sales area has been updated');
@@ -56,7 +58,8 @@ if ($Mode == 'Delete')
 	$cancel_delete = 0;
 
 	// PREVENT DELETES IF DEPENDENT RECORDS IN 'debtors_master'
-
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	if ((bool)key_in_foreign_table($selected_id, 'cust_branch', 'area'))
 	{
 		$cancel_delete = 1;
@@ -118,10 +121,14 @@ if ($selected_id != -1)
 {
  	if ($Mode == 'Edit') {
 		//editing an existing area
+		/** @var int|string $selected_id */
+		$selected_id = $selected_id;
 		$myrow = row_or_empty(get_sales_area($selected_id));
 
 		$_POST['description']  = $myrow["description"];
 	}
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	hidden("selected_id", $selected_id);
 } 
 

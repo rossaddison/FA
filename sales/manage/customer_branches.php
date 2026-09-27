@@ -20,7 +20,7 @@ $js = "";
 if (sysprefs()->use_popup_windows && sysprefs()->use_popup_search)
 	$js .= get_js_open_window(900, 500);
 
-page(_($help_context = "Customer Branches"), @$_REQUEST['popup'], false, "", $js);
+page(_($help_context = "Customer Branches"), (bool) @$_REQUEST['popup'], false, "", $js);
 
 include(dirname(__DIR__, 2) . "/includes/ui.inc");
 include(dirname(__DIR__, 2) . "/includes/ui/contacts_view.inc");
@@ -42,14 +42,16 @@ simple_page_mode(true);
 
 if (isset($_GET['debtor_no']))
 {
-	$_POST['customer_id'] = strtoupper($_GET['debtor_no']);
+	$_POST['customer_id'] = strtoupper((string) $_GET['debtor_no']);
 }
 
+/** @var int|string $selected_id */
+$selected_id = $selected_id;
 $_POST['branch_code'] = $selected_id;
 
 if (isset($_GET['SelectedBranch']))
 {
-	$br = row_or_empty(get_branch(get_scalar('SelectedBranch')));
+	$br = row_or_empty(get_branch((string) get_scalar('SelectedBranch')));
 	$_POST['customer_id'] = $br['debtor_no'];
 	$selected_id = $_POST['branch_code'] = $br['branch_code'];
 	$Mode = 'Edit';
@@ -62,14 +64,14 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 	//initialise no input errors assumed initially before we test
 	$input_error = 0;
 
-	if (strlen($_POST['br_name']) == 0)
+	if (strlen((string) $_POST['br_name']) == 0)
 	{
 		$input_error = 1;
 		display_error(_("The Branch name cannot be empty."));
 		set_focus('br_name');
 	}
 
-	if (strlen($_POST['br_ref']) == 0)
+	if (strlen((string) $_POST['br_ref']) == 0)
 	{
 		$input_error = 1;
 		display_error(_("The Branch short name cannot be empty."));
@@ -82,21 +84,21 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 		begin_transaction();
     	if ($selected_id != -1)
 		{
-			update_branch(post_scalar('customer_id'), post_scalar('branch_code'), post_scalar('br_name'), post_scalar('br_ref'),
-				post_scalar('br_address'), post_scalar('salesman'), post_scalar('area'), post_scalar('tax_group_id'), post_scalar('sales_account'),
-				post_scalar('sales_discount_account'), post_scalar('receivables_account'), post_scalar('payment_discount_account'),
-				post_scalar('default_location'), post_scalar('br_post_address'), post_scalar('group_no'),
-				post_scalar('default_ship_via'), post_scalar('notes'), post_scalar('bank_account'));
+			update_branch((string) post_scalar('customer_id'), post_scalar('branch_code'), (string) post_scalar('br_name'), (string) post_scalar('br_ref'),
+				(string) post_scalar('br_address'), (string) post_scalar('salesman'), (string) post_scalar('area'), (string) post_scalar('tax_group_id'), (string) post_scalar('sales_account'),
+				(string) post_scalar('sales_discount_account'), (string) post_scalar('receivables_account'), (string) post_scalar('payment_discount_account'),
+				(string) post_scalar('default_location'), (string) post_scalar('br_post_address'), (string) post_scalar('group_no'),
+				(string) post_scalar('default_ship_via'), (string) post_scalar('notes'), (string) post_scalar('bank_account'));
 
 			$note =_('Selected customer branch has been updated');
   		}
 		else
 		{
-			add_branch(post_scalar('customer_id'), post_scalar('br_name'), post_scalar('br_ref'),
-				post_scalar('br_address'), post_scalar('salesman'), post_scalar('area'), post_scalar('tax_group_id'), post_scalar('sales_account'),
+			add_branch((string) post_scalar('customer_id'), (string) post_scalar('br_name'), (string) post_scalar('br_ref'),
+				(string) post_scalar('br_address'), (string) post_scalar('salesman'), (string) post_scalar('area'), (string) post_scalar('tax_group_id'), (string) post_scalar('sales_account'),
 				post_scalar('sales_discount_account'), post_scalar('receivables_account'), post_scalar('payment_discount_account'),
-				post_scalar('default_location'), post_scalar('br_post_address'), post_scalar('group_no'),
-				post_scalar('default_ship_via'), post_scalar('notes'), post_scalar('bank_account'));
+				(string) post_scalar('default_location'), (string) post_scalar('br_post_address'), (string) post_scalar('group_no'),
+				(string) post_scalar('default_ship_via'), (string) post_scalar('notes'), (string) post_scalar('bank_account'));
 			$selected_id = db_insert_id();
 
 			add_crm_person(post_scalar('contact_name'), post_scalar('contact_name'), '', post_scalar('br_post_address'), 
@@ -112,7 +114,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 		display_notification($note);
 
 		if ((bool)(@$_REQUEST['popup'])) {
-			set_focus("Select".($_POST['branch_code'] == -1 ? $selected_id: $_POST['branch_code']));
+			set_focus("Select".(string) ($_POST['branch_code'] == -1 ? $selected_id: $_POST['branch_code']));
 		}
 	}
 
@@ -120,20 +122,20 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 elseif ($Mode == 'Delete')
 {
 
-	if (branch_in_foreign_table(post_scalar('customer_id'), post_scalar('branch_code'), 'debtor_trans'))
+	if (branch_in_foreign_table((string) post_scalar('customer_id'), post_scalar('branch_code'), 'debtor_trans'))
 	{
 		display_error(_("Cannot delete this branch because customer transactions have been created to this branch."));
 
 	}
 	else
 	{
-		if (branch_in_foreign_table(post_scalar('customer_id'), post_scalar('branch_code'), 'sales_orders'))
+		if (branch_in_foreign_table((string) post_scalar('customer_id'), post_scalar('branch_code'), 'sales_orders'))
 		{
 			display_error(_("Cannot delete this branch because sales orders exist for it. Purge old sales orders first."));
 		}
 		else
 		{
-			delete_branch(post_scalar('customer_id'), post_scalar('branch_code'));
+			delete_branch((string) post_scalar('customer_id'), post_scalar('branch_code'));
 			display_notification(_('Selected customer branch has been deleted'));
 		}
 	}
@@ -143,7 +145,7 @@ elseif ($Mode == 'Delete')
 if ($Mode == 'RESET' || get_post('_customer_id_update'))
 {
 	$selected_id = -1;
-	$cust_id = $_POST['customer_id'];
+	$cust_id = post_scalar('customer_id');
 	$inact = get_post('show_inactive');
 	unset($_POST);
 	$_POST['show_inactive'] = $inact;
@@ -152,7 +154,7 @@ if ($Mode == 'RESET' || get_post('_customer_id_update'))
 }
 
 /** @psalm-pure */
-function branch_email(array|false|null $row): string {
+function branch_email(array $row): string {
 	return	'<a href = "mailto:'.(string)$row["email"].'">'.(string)$row["email"].'</a>';
 }
 
@@ -165,7 +167,7 @@ function del_link(array $row): string {
 }
 
 function select_link(array $row): string {
-	return button("Select".(string)$row["branch_code"], $row["branch_code"], '', ICON_ADD, 'selector');
+	return button("Select".(string)$row["branch_code"], (string) $row["branch_code"], '', ICON_ADD, 'selector');
 }
 
 function branch_settings(string|int|float|bool|array|null $selected_id, bool $num_branches): void {
@@ -180,7 +182,7 @@ function branch_settings(string|int|float|bool|array|null $selected_id, bool $nu
 	{
 	 	if ($Mode == 'Edit' || !isset($_POST['br_name'])) {
 			//editing an existing branch
-			$myrow = row_or_empty(get_cust_branch(post_scalar('customer_id'), post_scalar('branch_code')));
+			$myrow = row_or_empty(get_cust_branch((string) post_scalar('customer_id'), (string) post_scalar('branch_code')));
 			set_focus('br_name');
 	    	$_POST['branch_code'] = $myrow["branch_code"];
 		    $_POST['br_name']  = $myrow["br_name"];
@@ -204,7 +206,7 @@ function branch_settings(string|int|float|bool|array|null $selected_id, bool $nu
 	}
 	elseif ($Mode != 'ADD_ITEM')
 	{
-		$myrow = row_or_empty(get_default_info_for_branch(post_scalar('customer_id')));
+		$myrow = row_or_empty(get_default_info_for_branch((string) post_scalar('customer_id')));
 		if($myrow && !$num_branches) {
 			$_POST['br_name'] = $myrow["name"];
 			$_POST['br_ref'] = $myrow["debtor_ref"];
@@ -225,7 +227,7 @@ function branch_settings(string|int|float|bool|array|null $selected_id, bool $nu
 		}
 
 	}
-	hidden('popup', @$_REQUEST['popup']);
+	hidden('popup', (string) @$_REQUEST['popup']);
 
 	table_section_title(_("Name and Contact"));
 	text_row(_("Branch Name:"), 'br_name', null, 50, 60);
@@ -273,9 +275,9 @@ echo "<center>" . _("Select a customer: ") . "&nbsp;&nbsp;";
 echo customer_list('customer_id', null, false, true);
 echo "</center><br>";
 
-$num_branches = db_customer_has_branches(get_post('customer_id'));
+$num_branches = db_customer_has_branches((string) get_post('customer_id'));
 
-$sql = get_sql_for_customer_branches(get_post('customer_id'));
+$sql = get_sql_for_customer_branches((string) get_post('customer_id'));
 
 //------------------------------------------------------------------------------------------------
 if ($num_branches)
@@ -314,10 +316,12 @@ tabbed_content_start('tabs', array(
 //		'orders' => array('S&ales orders', $selected_id!=-1) // not implemented
 	));
 	
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	switch (get_post('_tabs_sel')) {
 		default:
 		case 'settings':
-			branch_settings($selected_id, $num_branches); 
+			branch_settings($selected_id, $num_branches);
 			break;
 		case 'contacts':
 			$contacts = new contacts('contacts', $selected_id, 'cust_branch');
@@ -326,6 +330,8 @@ tabbed_content_start('tabs', array(
 		case 'orders':
 	};
 	hidden('branch_code');
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	hidden('selected_id', $selected_id);
 br();
 tabbed_content_end();
@@ -333,5 +339,5 @@ tabbed_content_end();
 
 end_form();
 
-end_page(@$_REQUEST['popup']);
+end_page((bool) @$_REQUEST['popup']);
 

@@ -55,14 +55,15 @@ function getTransactions(string|int|array|null $supplier, string|null $date)
 function print_payment_report(): void
 {
 	global $path_to_root, $systypes_array;
+	/** @var array<int, string> $systypes_array */
 
-	$to = $_POST['PARAM_0'];
-	$fromsupp = $_POST['PARAM_1'];
-	$currency = $_POST['PARAM_2'];
-	$no_zeros = $_POST['PARAM_3'];
-	$comments = $_POST['PARAM_4'];
-	$orientation = $_POST['PARAM_5'];
-	$destination = $_POST['PARAM_6'];
+	$to = (string) post_scalar('PARAM_0');
+	$fromsupp = post_scalar('PARAM_1');
+	$currency = post_scalar('PARAM_2');
+	$no_zeros = post_scalar('PARAM_3');
+	$comments = post_scalar('PARAM_4');
+	$orientation = post_scalar('PARAM_5');
+	$destination = post_scalar('PARAM_6');
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
@@ -72,7 +73,7 @@ function print_payment_report(): void
 	if ($fromsupp == ALL_TEXT)
 		$from = _('All');
 	else
-		$from = get_supplier_name($fromsupp);
+		$from = get_supplier_name((string) $fromsupp);
 
     	$dec = user_price_dec();
 
@@ -109,7 +110,8 @@ function print_payment_report(): void
     $rep->NewPage();
 
 	$total = array();
-	$grandtotal = array(0,0);
+	/** @var array{0: float, 1: float} $grandtotal */
+	$grandtotal = array(0.0,0.0);
 
 	$sql = "SELECT supplier_id, supp_name AS name, curr_code, s.inactive, pt.terms FROM ".TB_PREF."suppliers s, ".TB_PREF."payment_terms pt
 		WHERE ";
@@ -124,6 +126,8 @@ function print_payment_report(): void
 		if (!$convert && $currency != $myrow['curr_code']) continue;
 
 		$res = getTransactions($myrow['supplier_id'], $to);
+		if (!($res instanceof mysqli_result))
+			continue;
 		if ((bool)$no_zeros && db_num_rows($res)==0) continue;
 
 		$rep->fontSize += 2;
@@ -140,21 +144,22 @@ function print_payment_report(): void
 		{
 			if ((bool)$no_zeros && $trans['TranTotal'] == 0 && $trans['Balance'] == 0) continue;
 
-			if ($convert) $rate = $trans['rate'];
+			if ($convert) $rate = (float) $trans['rate'];
 			else $rate = 1.0;
 
 			$rep->NewLine(1, 2);
-			$rep->TextCol(0, 1, $systypes_array[$trans['type']]);
+			$rep->TextCol(0, 1, $systypes_array[(int) $trans['type']]);
 			$rep->TextCol(1, 2,	$trans['supp_reference']);
 			if ($trans['type'] == ST_SUPPINVOICE)
 				$rep->DateCol(2, 3,	$trans['due_date'], true);
-			else	
+			else
 				$rep->DateCol(2, 3,	$trans['tran_date'], true);
 			if ($trans['type'] != ST_SUPPINVOICE)
 			{
-				$trans['TranTotal'] = -$trans['TranTotal'];
-				$trans['Balance'] = -$trans['Balance'];
+				$trans['TranTotal'] = -(float) $trans['TranTotal'];
+				$trans['Balance'] = -(float) $trans['Balance'];
 			}
+			$item = array(0.0, 0.0);
 			$item[0] = (float)$trans['TranTotal'] * $rate;
 			$rep->AmountCol(6, 7, $item[0], $dec);
 			$item[1] = (float)$trans['Balance'] * $rate;

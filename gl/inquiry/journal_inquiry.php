@@ -66,11 +66,13 @@ function journal_pos(array $row)
 	return (bool)$row['gl_seq'] ? $row['gl_seq'] : '-';
 }
 
+/** @return string */
 function systype_name(string|int|float|bool|array $dummy, string|int|float|bool|null $type)
 {
 	global $systypes_array;
+	/** @var array<int, string> $systypes_array */
 	
-	return $systypes_array[$type];
+	return $systypes_array[(int) $type];
 }
 
 function person_link(array $row) 
@@ -88,7 +90,7 @@ function gl_link(array $row)
 	return get_gl_view_str($row["trans_type"], $row["trans_no"]);
 }
 
-function edit_link(array $row)
+function edit_link(array $row): string
 {
 
 	$ok = true;

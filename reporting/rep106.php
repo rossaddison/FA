@@ -120,7 +120,7 @@ function print_salesman_list(): void
 
 	while ($myrow=db_fetch($result))
 	{
-		$rep->NewLine(0, 2, false, $salesman);
+		$rep->NewLine(0, 2, false);
 		if ($salesman != $myrow['salesman_code'])
 		{
 			if ($salesman != 0)

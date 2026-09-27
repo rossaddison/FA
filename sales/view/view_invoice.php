@@ -24,13 +24,14 @@ if (sysprefs()->use_popup_windows)
 page(_($help_context = "View Sales Invoice"), true, false, "", $js);
 
 
+$trans_id = null;
 if (isset($_GET["trans_no"]))
 {
-	$trans_id = $_GET["trans_no"];
+	$trans_id = (string) get_scalar('trans_no');
 }
 elseif (isset($_POST["trans_no"]))
 {
-	$trans_id = $_POST["trans_no"];
+	$trans_id = (string) post_scalar('trans_no');
 }
 
 // 3 different queries to get the information - what a JOKE !!!!
@@ -46,7 +47,7 @@ if (!empty(sysprefs()->prefs['company_logo_on_views']))
 	company_logo_on_view();
 
 display_heading(sprintf($myrow['prep_amount'] > 0 ? (
-	$paym['days_before_due']>=0 ? _("FINAL INVOICE #%d") : _("PREPAYMENT INVOICE #%d")) : _("SALES INVOICE #%d"),$trans_id));
+	$paym['days_before_due']>=0 ? _("FINAL INVOICE #%d") : _("PREPAYMENT INVOICE #%d")) : _("SALES INVOICE #%d"),(string) $trans_id));
 
 echo "<br>";
 start_table(TABLESTYLE2, "width='95%'");
@@ -57,7 +58,7 @@ start_table(TABLESTYLE, "width='100%'");
 $th = array(_("Charge To"));
 table_header($th);
 
-label_row(null, (string)$myrow["DebtorName"] . "<br>" . nl2br($myrow["address"]), "nowrap");
+label_row(null, (string)$myrow["DebtorName"] . "<br>" . nl2br((string)$myrow["address"]), "nowrap");
 
 end_table();
 
@@ -71,7 +72,7 @@ start_table(TABLESTYLE, "width='100%'");
 $th = array(_("Charge Branch"));
 table_header($th);
 
-label_row(null, (string)$branch["br_name"] . "<br>" . nl2br($branch["br_address"]), "nowrap");
+label_row(null, (string)$branch["br_name"] . "<br>" . nl2br((string)$branch["br_address"]), "nowrap");
 end_table();
 
 echo "</td><td>"; // outer table
@@ -142,7 +143,7 @@ if (db_num_rows($result) > 0)
 
 	    label_cell($myrow2["stock_id"]);
 		label_cell($myrow2["StockDescription"]);
-        qty_cell($myrow2["quantity"], false, get_qty_dec($myrow2["stock_id"]));
+        qty_cell($myrow2["quantity"], false, (int) get_qty_dec($myrow2["stock_id"]));
         label_cell($myrow2["units"], "align=right");
         amount_cell($myrow2["unit_price"]);
         label_cell($display_discount, "nowrap align=right");
@@ -183,5 +184,5 @@ if (!$voided)
 	display_allocations_to(PT_CUSTOMER, $myrow['debtor_no'], ST_SALESINVOICE, $trans_id, $myrow['Total']);
 }
 
-end_page(true, false, false, ST_SALESINVOICE, $trans_id);
+end_page(true, false, false, ST_SALESINVOICE, (string) $trans_id);
 

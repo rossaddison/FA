@@ -57,15 +57,16 @@ function get_remittance(string|int|null $type, ?string $trans_no)
 function print_remittances(): void
 {
 	global $path_to_root, $systypes_array;
+	/** @var array<int, string> $systypes_array */
 
 	include_once(dirname(__DIR__) . "/reporting/includes/pdf_report.inc");
 
-	$from = $_POST['PARAM_0'];
-	$to = $_POST['PARAM_1'];
-	$currency = $_POST['PARAM_2'];
-	$email = $_POST['PARAM_3'];
-	$comments = $_POST['PARAM_4'];
-	$orientation = $_POST['PARAM_5'];
+	$from = (string) post_scalar('PARAM_0');
+	$to = (string) post_scalar('PARAM_1');
+	$currency = post_scalar('PARAM_2');
+	$email = post_scalar('PARAM_3');
+	$comments = post_scalar('PARAM_4');
+	$orientation = post_scalar('PARAM_5');
 
 	if (!(bool)$from || !(bool)$to) return;
 
@@ -74,8 +75,8 @@ function print_remittances(): void
 
  	$fno = explode("-", $from);
 	$tno = explode("-", $to);
-	$from = min($fno[0], $tno[0]);
-	$to = max($fno[0], $tno[0]);
+	$from = (int) min($fno[0], $tno[0]);
+	$to = (int) max($fno[0], $tno[0]);
 
 	$cols = array(4, 85, 150, 225, 275, 360, 450, 515);
 
@@ -100,7 +101,7 @@ function print_remittances(): void
 			$types = array(ST_BANKPAYMENT, ST_SUPPAYMENT, ST_SUPPCREDIT);
 		foreach ($types as $j)
 		{
-			$myrow = get_remittance($j, $i);
+			$myrow = get_remittance($j, (string) $i);
 			if (!(bool)$myrow)
 				continue;
 			if ($currency != ALL_TEXT && $myrow['curr_code'] != $currency) {
@@ -134,7 +135,7 @@ function print_remittances(): void
 
 			while ($myrow2=db_fetch($result))
 			{
-				$rep->TextCol(0, 1,	$systypes_array[$myrow2['type']], -2);
+				$rep->TextCol(0, 1,	$systypes_array[(int) $myrow2['type']], -2);
 				$rep->TextCol(1, 2,	$myrow2['supp_reference'], -2);
 				$rep->TextCol(2, 3,	sql2date($myrow2['tran_date']), -2);
 				$rep->TextCol(3, 4,	sql2date($myrow2['due_date']), -2);

@@ -20,13 +20,17 @@ include_once(dirname(__DIR__) . "/includes/ui.inc");
 include_once(dirname(__DIR__) . "/taxes/db/tax_types_db.inc");
 
 simple_page_mode(true);
+/** @var int|string $selected_id */
+$selected_id = $selected_id;
 //-----------------------------------------------------------------------------------
 
 function can_process(): bool
 {
 	global $selected_id;
-	
-	if (strlen($_POST['name']) == 0)
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
+
+	if (strlen((string) $_POST['name']) == 0)
 	{
 		display_error(_("The tax type name cannot be empty."));
 		set_focus('name');
@@ -39,7 +43,7 @@ function can_process(): bool
 		return false;
 	}
 
-	if (!is_tax_gl_unique(get_post('sales_gl_code'), get_post('purchasing_gl_code'), $selected_id)) {
+	if (!is_tax_gl_unique((string) get_post('sales_gl_code'), (string) get_post('purchasing_gl_code'), $selected_id)) {
 		display_error( _("Selected GL Accounts cannot be used by another tax type."));
 		set_focus('sales_gl_code');
 		return false;
@@ -63,6 +67,8 @@ if ($Mode=='ADD_ITEM' && can_process())
 if ($Mode=='UPDATE_ITEM' && can_process())
 {
 
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	update_tax_type($selected_id, post_scalar('name'),
     	post_scalar('sales_gl_code'), post_scalar('purchasing_gl_code'), input_num('rate'));
 	display_notification(_('Selected tax type has been updated'));
@@ -71,7 +77,7 @@ if ($Mode=='UPDATE_ITEM' && can_process())
 
 //-----------------------------------------------------------------------------------
 
-function can_delete(string|int|float|bool|array|null $selected_id): bool
+function can_delete(int|string $selected_id): bool
 {
 	if ((bool)key_in_foreign_table($selected_id, 'tax_group_items', 'tax_type_id'))
 	{
@@ -89,6 +95,8 @@ function can_delete(string|int|float|bool|array|null $selected_id): bool
 if ($Mode == 'Delete')
 {
 
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	if (can_delete($selected_id))
 	{
 		delete_tax_type($selected_id);
@@ -142,7 +150,9 @@ end_table(1);
 
 start_table(TABLESTYLE2);
 
-if ($selected_id != -1) 
+/** @var int|string $selected_id */
+$selected_id = $selected_id;
+if ($selected_id != -1)
 {
  	if ($Mode == 'Edit') {
 		//editing an existing status code

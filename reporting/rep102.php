@@ -34,7 +34,7 @@ print_aged_customer_analysis();
 function get_invoices(?string $customer_id, string|null $to, string|bool|array|null $all=true)
 {
 	$todate = date2sql($to);
-	$PastDueDays1 = get_company_pref('past_due_days');
+	$PastDueDays1 = (int) get_company_pref('past_due_days');
 	$PastDueDays2 = 2 * $PastDueDays1;
 
 	$sign = "IF(`type` IN(".implode(',',  array(ST_CUSTCREDIT,ST_CUSTPAYMENT,ST_BANKDEPOSIT))."), -1, 1)";
@@ -55,7 +55,7 @@ function get_invoices(?string $customer_id, string|null $to, string|bool|array|n
 		WHERE type <> ".ST_CUSTDELIVERY."
 			AND debtor_no = ".db_escape($customer_id)." 
 			AND tran_date <= '$todate'
-			AND ABS($value) > " . FLOAT_COMP_DELTA;
+			AND ABS($value) > " . (string) FLOAT_COMP_DELTA;
 
 	$sql .= "ORDER BY tran_date";
 
@@ -67,17 +67,20 @@ function get_invoices(?string $customer_id, string|null $to, string|bool|array|n
 function print_aged_customer_analysis(): void
 {
     global $path_to_root, $systypes_array, $SysPrefs;
+    /** @var array<int, string> $systypes_array */
 
-    $to = $_POST['PARAM_0'];
-    $fromcust = $_POST['PARAM_1'];
-    $currency = $_POST['PARAM_2'];
-    $show_all = $_POST['PARAM_3'];
-	$summaryOnly = $_POST['PARAM_4'];
-    $no_zeros = $_POST['PARAM_5'];
-    $graphics = $_POST['PARAM_6'];
-    $comments = $_POST['PARAM_7'];
-	$orientation = $_POST['PARAM_8'];
-	$destination = $_POST['PARAM_9'];
+    $to = (string) post_scalar('PARAM_0');
+    $fromcust = post_scalar('PARAM_1');
+    $currency = post_scalar('PARAM_2');
+    $show_all = post_scalar('PARAM_3');
+	$summaryOnly = post_scalar('PARAM_4');
+    $no_zeros = post_scalar('PARAM_5');
+    $graphics = post_scalar('PARAM_6');
+    $comments = post_scalar('PARAM_7');
+	$orientation = post_scalar('PARAM_8');
+	$destination = post_scalar('PARAM_9');
+	if (is_int($show_all) || is_float($show_all))
+		$show_all = (string) $show_all;
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
@@ -87,7 +90,7 @@ function print_aged_customer_analysis(): void
 	if ((bool)$graphics)
 	{
 		include_once(dirname(__DIR__) . "/reporting/includes/class.graphic.inc");
-		$pg = new chart($graphics);
+		$pg = new Chart(is_bool($graphics) ? null : (is_float($graphics) ? (int) $graphics : $graphics));
 	}
 
 	if ($fromcust == ALL_TEXT)
@@ -113,10 +116,10 @@ function print_aged_customer_analysis(): void
 	if ((bool)$show_all) $show = _('Yes');
 	else $show = _('No');
 
-	$PastDueDays1 = get_company_pref('past_due_days');
+	$PastDueDays1 = (int) get_company_pref('past_due_days');
 	$PastDueDays2 = 2 * $PastDueDays1;
 	$nowdue = "1-" . $PastDueDays1 . " " . _('Days');
-	$pastdue1 = $PastDueDays1 + 1 . "-" . $PastDueDays2 . " " . _('Days');
+	$pastdue1 = ($PastDueDays1 + 1) . "-" . $PastDueDays2 . " " . _('Days');
 	$pastdue2 = _('Over') . " " . $PastDueDays2 . " " . _('Days');
 
 	$cols = array(0, 100, 130, 190,	250, 320, 385, 450,	515);
@@ -143,7 +146,7 @@ function print_aged_customer_analysis(): void
     $rep->Info($params, $cols, $headers, $aligns);
     $rep->NewPage();
 
-	$total = array(0,0,0,0, 0);
+	$total = array(0.0,0.0,0.0,0.0,0.0);
 
 	$sql = "SELECT debtor_no, name, curr_code, inactive FROM ".TB_PREF."debtors_master";
 	if ($fromcust != ALL_TEXT)
@@ -156,18 +159,19 @@ function print_aged_customer_analysis(): void
 		if (!$convert && $currency != $myrow['curr_code'])
 			continue;
 
-		if ($convert) $rate = get_exchange_rate_from_home_currency($myrow['curr_code'], $to);
+		if ($convert) $rate = (float) get_exchange_rate_from_home_currency($myrow['curr_code'], $to);
 		else $rate = 1.0;
 		$custrec = row_or_empty(get_customer_details($myrow['debtor_no'], $to, $show_all));
 		if (!$custrec)
 			continue;
-		$custrec['Balance'] *= $rate;
-		$custrec['Due'] *= $rate;
-		$custrec['Overdue1'] *= $rate;
-		$custrec['Overdue2'] *= $rate;
-		$str = array((float)$custrec["Balance"] - (float)$custrec["Due"],
-			(float)$custrec["Due"]-(float)$custrec["Overdue1"],
-			(float)$custrec["Overdue1"]-(float)$custrec["Overdue2"],
+		$custrec['Balance'] = (float) $custrec['Balance'] * $rate;
+		$custrec['Due'] = (float) $custrec['Due'] * $rate;
+		$custrec['Overdue1'] = (float) $custrec['Overdue1'] * $rate;
+		$custrec['Overdue2'] = (float) $custrec['Overdue2'] * $rate;
+		/** @var array{0: float, 1: float, 2: float, 3: float, 4: float} $str */
+		$str = array($custrec["Balance"] - $custrec["Due"],
+			$custrec["Due"]-$custrec["Overdue1"],
+			$custrec["Overdue1"]-$custrec["Overdue2"],
 			$custrec["Overdue2"],
 			$custrec["Balance"]);
 		if ((bool)$no_zeros && floatcmp(array_sum($str), 0) == 0) continue;
@@ -176,35 +180,38 @@ function print_aged_customer_analysis(): void
 		$rep->TextCol(0, 2, (string)$myrow["name"].($myrow['inactive']==1 ? " ("._("Inactive").")" : ""));
 		if ($convert) $rep->TextCol(2, 3,	$myrow['curr_code']);
 		$rep->fontSize -= 2;
-		$total[0] += (((float)$custrec["Balance"] - (float)$custrec["Due"]));
-		$total[1] += (((float)$custrec["Due"]-(float)$custrec["Overdue1"]));
-		$total[2] += (((float)$custrec["Overdue1"]-(float)$custrec["Overdue2"]));
+		$total[0] += ($custrec["Balance"] - $custrec["Due"]);
+		$total[1] += ($custrec["Due"]-$custrec["Overdue1"]);
+		$total[2] += ($custrec["Overdue1"]-$custrec["Overdue2"]);
 		$total[3] += $custrec["Overdue2"];
 		$total[4] += $custrec["Balance"];
-		for ($i = 0; $i < count($str); $i++)
+		for ($i = 0; $i < 5; $i++)
 			$rep->AmountCol($i + 3, $i + 4, $str[$i], $dec);
 		$rep->NewLine(1, 2);
 		if (!(bool)$summaryOnly)
 		{
 			$res = get_invoices($myrow['debtor_no'], $to, $show_all);
+			if (!($res instanceof mysqli_result))
+				continue;
     		if (db_num_rows($res)==0)
 				continue;
     		$rep->Line($rep->row + 4.0);
 			while ($trans=db_fetch($res))
 			{
 				$rep->NewLine(1, 2);
-        		$rep->TextCol(0, 1, $systypes_array[$trans['type']], -2);
+        		$rep->TextCol(0, 1, $systypes_array[(int) $trans['type']], -2);
 				$rep->TextCol(1, 2,	$trans['reference'], -2);
 				$rep->DateCol(2, 3, $trans['tran_date'], true, -2);
 
 				foreach ($trans as $i => $value)
 					$trans[$i] = (float)$trans[$i] * $rate;
+				/** @var array{0: float, 1: float, 2: float, 3: float, 4: float} $str */
 				$str = array((float)$trans["Balance"] - (float)$trans["Due"],
 					(float)$trans["Due"]-(float)$trans["Overdue1"],
 					(float)$trans["Overdue1"]-(float)$trans["Overdue2"],
-					$trans["Overdue2"],
-					$trans["Balance"]);
-				for ($i = 0; $i < count($str); $i++)
+					(float) $trans["Overdue2"],
+					(float) $trans["Balance"]);
+				for ($i = 0; $i < 5; $i++)
 					$rep->AmountCol($i + 3, $i + 4, $str[$i], $dec);
 			}
 			$rep->Line($rep->row - 8.0);
@@ -220,10 +227,10 @@ function print_aged_customer_analysis(): void
 	$rep->TextCol(0, 3, _('Grand Total'));
 	$rep->fontSize -= 2;
 	$serie = array();
-	for ($i = 0; $i < count($total); $i++)
+	for ($i = 0; $i < 5; $i++)
 	{
 		$rep->AmountCol($i + 3, $i + 4, $total[$i], $dec);
-		if ((bool)$graphics && $i < count($total) - 1)
+		if ((bool)$graphics && $i < 4)
 		{
 			$serie[] = abs($total[$i]);
 		}

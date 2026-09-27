@@ -297,6 +297,7 @@ class Cpdf extends FPDI {
 		parent::Output($fname, 'I');
 	}
 
+	/** @return list{mixed|string, string} */
 	function calcTextWrap($txt, $width, $spacebreak=false)
 	{
 		$ret = "";

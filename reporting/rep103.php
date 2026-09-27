@@ -113,14 +113,14 @@ function print_customer_details_listing(): void
 {
     global $path_to_root;
 
-    $from = $_POST['PARAM_0'];
-    $area = $_POST['PARAM_1'];
-    $folk = $_POST['PARAM_2'];
-    $more = $_POST['PARAM_3'];
-    $less = $_POST['PARAM_4'];
-    $comments = $_POST['PARAM_5'];
-	$orientation = $_POST['PARAM_6'];
-	$destination = $_POST['PARAM_7'];
+    $from = post_scalar('PARAM_0');
+    $area = post_scalar('PARAM_1');
+    $folk = post_scalar('PARAM_2');
+    $more = post_scalar('PARAM_3');
+    $less = post_scalar('PARAM_4');
+    $comments = post_scalar('PARAM_5');
+	$orientation = post_scalar('PARAM_6');
+	$destination = post_scalar('PARAM_7');
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
@@ -137,11 +137,11 @@ function print_customer_details_listing(): void
 	if ($area == 0)
 		$sarea = _('All Areas');
 	else
-		$sarea = get_area_name($area);
+		$sarea = get_area_name((string) $area);
 	if ($folk == 0)
 		$salesfolk = _('All Sales Folk');
 	else
-		$salesfolk = get_salesman_name($folk);
+		$salesfolk = get_salesman_name((string) $folk);
 	if ($more != '')
 		$morestr = _('Greater than ') . number_format2($more, $dec);
 	else
@@ -151,8 +151,8 @@ function print_customer_details_listing(): void
 	else
 		$lessstr = '';
 
-	$more = (float)$more;
-	$less = (float)$less;
+	$more = (float) $more;
+	$less = (float) $less;
 
 	$cols = array(0, 150, 300, 425, 550);
 
@@ -175,16 +175,17 @@ function print_customer_details_listing(): void
     $rep->Info($params, $cols, $headers, $aligns);
     $rep->NewPage();
 
-	$result = get_customer_details_for_report($area, $folk);
+	$result = get_customer_details_for_report((string) $area, (string) $folk);
 
 	$carea = '';
 	$sman = '';
+	$turnover = 0.0;
 	while ($myrow=db_fetch($result))
 	{
 		$printcustomer = true;
 		if ($more != '' || $less != '')
 		{
-			$turnover = getTransactions($myrow['debtor_no'], $myrow['branch_code'], $from);
+			$turnover = (float) getTransactions($myrow['debtor_no'], (string) $myrow['branch_code'], (string) $from);
 			if ($more != 0.0 && $turnover <= $more)
 				$printcustomer = false;
 			if ($less != 0.0 && $turnover >= $less)

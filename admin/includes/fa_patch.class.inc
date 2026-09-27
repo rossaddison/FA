@@ -27,8 +27,10 @@ class fa_patch {
 	/** @var int|string */
 	var $cur_company;
 	var $backup;				// pre-upgrade backup filename
+	/** @var string|false */
+	var $save_log;				// ini_set('error_log', ...) previous value, restored after upgrade
 
-	/** @var array<int, string> */
+	/** @var array<int, string|bool|null> */
 	var $errors = array();
 
 	/**

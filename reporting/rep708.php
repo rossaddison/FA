@@ -26,7 +26,7 @@ include_once(dirname(__DIR__) . "/includes/date_functions.inc");
 include_once(dirname(__DIR__) . "/includes/data_checks.inc");
 include_once(dirname(__DIR__) . "/gl/includes/gl_db.inc");
 
-$pdeb = $pcre = $cdeb = $ccre = $tdeb = $tcre = $pbal = $cbal = $tbal = 0;
+$pdeb = $pcre = $cdeb = $ccre = $tdeb = $tcre = $pbal = $cbal = $tbal = 0.0;
 
 //----------------------------------------------------------------------------------------------------
 
@@ -49,7 +49,7 @@ function display_type (?string $type, ?string $typename, int|string|null &$dec, 
 		if (!$printtitle)
 		{	
 			$rep->row -= 4.0;
-			$rep->TextCol(0, 8, _("Group")." - ".$type ." - ".$typename);	
+			$rep->TextCol(0, 8, _("Group")." - ".(string) $type ." - ".(string) $typename);
 			$printtitle = 1;
 			$rep->row -= 4.0;
 			$rep->Line($rep->row);
@@ -60,14 +60,14 @@ function display_type (?string $type, ?string $typename, int|string|null &$dec, 
 		// If we want to remove the balanced part for the past years, this option removes the common part from from the prev and tot figures.
 		if (@sysprefs()->clear_trial_balance_opening)
 		{
-			$open = row_or_empty(get_balance($account["account_code"], $dimension, $dimension2, $begin,  $begin, false, true));
+			$open = row_or_empty(get_balance((string) $account["account_code"], is_array($dimension) ? null : $dimension, $dimension2, $begin,  $begin, false, true));
 			$offset = min($open['debit'], $open['credit']);
 		} else
 			$offset = 0;
 
-		$prev = row_or_empty(get_balance($account["account_code"], $dimension, $dimension2, $begin, $from, false, false));
-		$curr = row_or_empty(get_balance($account["account_code"], $dimension, $dimension2, $from, $to, true, true));
-		$tot = row_or_empty(get_balance($account["account_code"], $dimension, $dimension2, $begin, $to, false, true));
+		$prev = row_or_empty(get_balance((string) $account["account_code"], is_array($dimension) ? null : $dimension, $dimension2, $begin, $from, false, false));
+		$curr = row_or_empty(get_balance((string) $account["account_code"], is_array($dimension) ? null : $dimension, $dimension2, $from, $to, true, true));
+		$tot = row_or_empty(get_balance((string) $account["account_code"], is_array($dimension) ? null : $dimension, $dimension2, $begin, $to, false, true));
 
 		if ($zero == 0 && !$prev['balance'] && !$curr['balance'] && !$tot['balance'])
 			continue;
@@ -78,15 +78,15 @@ function display_type (?string $type, ?string $typename, int|string|null &$dec, 
 			if ($prev['balance'] >= 0.0)
 				$rep->AmountCol(2, 3, $prev['balance'], $dec);
 			else
-				$rep->AmountCol(3, 4, abs($prev['balance']), $dec);
+				$rep->AmountCol(3, 4, abs((float) $prev['balance']), $dec);
 			if ($curr['balance'] >= 0.0)
 				$rep->AmountCol(4, 5, $curr['balance'], $dec);
 			else
-				$rep->AmountCol(5, 6, abs($curr['balance']), $dec);
+				$rep->AmountCol(5, 6, abs((float) $curr['balance']), $dec);
 			if ($tot['balance'] >= 0.0)
 				$rep->AmountCol(6, 7, $tot['balance'], $dec);
 			else
-				$rep->AmountCol(7, 8, abs($tot['balance']), $dec);
+				$rep->AmountCol(7, 8, abs((float) $tot['balance']), $dec);
 		}
 		else
 		{
@@ -98,15 +98,15 @@ function display_type (?string $type, ?string $typename, int|string|null &$dec, 
 			$rep->AmountCol(7, 8, (float)$tot['credit']-(float)$offset, $dec);
 			$pdeb += ((float)$prev['debit']-(float)$offset);
 			$pcre += ((float)$prev['credit']-(float)$offset);
-			$cdeb += $curr['debit'];
-			$ccre += $curr['credit'];
+			$cdeb += (float) $curr['debit'];
+			$ccre += (float) $curr['credit'];
 			$tdeb += ((float)$tot['debit']-(float)$offset);
 			$tcre += ((float)$tot['credit']-(float)$offset);
 		}	
 
-		$pbal += $prev['balance'];
-		$cbal += $curr['balance'];
-		$tbal += $tot['balance'];
+		$pbal += (float) $prev['balance'];
+		$cbal += (float) $curr['balance'];
+		$tbal += (float) $tot['balance'];
 		$rep->NewLine();
 
 		if ($rep->row < $rep->bottomMargin + $rep->lineHeight)
@@ -124,7 +124,7 @@ function display_type (?string $type, ?string $typename, int|string|null &$dec, 
 		if (!$printtitle)
 		{
 			$rep->row -= 4.0;
-			$rep->TextCol(0, 8, _("Group")." - ".$type ." - ".$typename);	
+			$rep->TextCol(0, 8, _("Group")." - ".(string) $type ." - ".(string) $typename);
 			$printtitle = 1;
 			$rep->row -= 4.0;
 			$rep->Line($rep->row);
@@ -144,34 +144,45 @@ function print_trial_balance(): void
 {
 	global $path_to_root;
 	global $pdeb, $pcre, $cdeb, $ccre, $tdeb, $tcre, $pbal, $cbal, $tbal;
+	/**
+	 * @var float $pdeb
+	 * @var float $pcre
+	 * @var float $cdeb
+	 * @var float $ccre
+	 * @var float $tdeb
+	 * @var float $tcre
+	 * @var float $pbal
+	 * @var float $cbal
+	 * @var float $tbal
+	 */
 
 	$dim = get_company_pref('use_dimension');
 	$dimension = $dimension2 = 0;
 
-	$from = $_POST['PARAM_0'];
-	$to = $_POST['PARAM_1'];
-	$zero = $_POST['PARAM_2'];
-	$balances = $_POST['PARAM_3'];
+	$from = post_scalar('PARAM_0');
+	$to = post_scalar('PARAM_1');
+	$zero = post_scalar('PARAM_2');
+	$balances = post_scalar('PARAM_3');
 	if ($dim == 2)
 	{
-		$dimension = $_POST['PARAM_4'];
-		$dimension2 = $_POST['PARAM_5'];
-		$comments = $_POST['PARAM_6'];
-		$orientation = $_POST['PARAM_7'];
-		$destination = $_POST['PARAM_8'];
+		$dimension = post_scalar('PARAM_4');
+		$dimension2 = post_scalar('PARAM_5');
+		$comments = post_scalar('PARAM_6');
+		$orientation = post_scalar('PARAM_7');
+		$destination = post_scalar('PARAM_8');
 	}
 	else if ($dim == 1)
 	{
-		$dimension = $_POST['PARAM_4'];
-		$comments = $_POST['PARAM_5'];
-		$orientation = $_POST['PARAM_6'];
-		$destination = $_POST['PARAM_7'];
+		$dimension = post_scalar('PARAM_4');
+		$comments = post_scalar('PARAM_5');
+		$orientation = post_scalar('PARAM_6');
+		$destination = post_scalar('PARAM_7');
 	}
 	else
 	{
-		$comments = $_POST['PARAM_4'];
-		$orientation = $_POST['PARAM_5'];
-		$destination = $_POST['PARAM_6'];
+		$comments = post_scalar('PARAM_4');
+		$orientation = post_scalar('PARAM_5');
+		$destination = post_scalar('PARAM_6');
 	}
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
@@ -200,16 +211,16 @@ function print_trial_balance(): void
     	$params =   array( 	0 => $comments,
     				    1 => array('text' => _('Period'),'from' => $from, 'to' => $to),
                     	2 => array('text' => _('Dimension')." 1",
-                            'from' => get_dimension_string($dimension), 'to' => ''),
+                            'from' => get_dimension_string((int) $dimension), 'to' => ''),
                     	3 => array('text' => _('Dimension')." 2",
-                            'from' => get_dimension_string($dimension2), 'to' => ''));
+                            'from' => get_dimension_string((int) $dimension2), 'to' => ''));
     }
     elseif ($dim == 1)
     {
     	$params =   array( 	0 => $comments,
     				    1 => array('text' => _('Period'),'from' => $from, 'to' => $to),
                     	2 => array('text' => _('Dimension'),
-                            'from' => get_dimension_string($dimension), 'to' => ''));
+                            'from' => get_dimension_string((int) $dimension), 'to' => ''));
     }
     else
     {

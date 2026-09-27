@@ -62,6 +62,7 @@ function check_overdue(array $row): bool
 		&& ((float)abs($row["TotalAmount"]) - (float)$row["Allocated"] != 0));
 }
 
+/** @return null|string */
 function order_link(array $row)
 {
 	return $row['order_']>0 ?

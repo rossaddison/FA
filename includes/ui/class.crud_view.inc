@@ -12,22 +12,6 @@
 
 include_once $path_to_root.'/includes/db/class.data_set.inc';
 
-class UI {
-	var $ui_mode;
-
-	// formatters
-	/** @psalm-pure */
-	function text($value, $name='', $opts=array())
-	{
-		$text = array('label', 'size'=>"", 'max'=>"", 'title'=>false,	'labparams'=>"", 'post_label'=>"", 'inparams'=>"");
-		$opts = array_merge($text, $opts);
-
-		if (!$name)
-			return $value;
-
-		call_user_func_array('text_cells', $opts);
-	}
-}
 /*
 	TODO: for php5:
 	. use __construct in base class to avoid need for implicit call to parent constructor.
@@ -41,11 +25,11 @@ class user_view {
 	/** @var array<array-key, mixed>|null */
 	var	$data; 		// data in php format
 	/** @var array<array-key, mixed> */
-	var $fields;	// input fields format descriptions
+	var $fields = array();	// input fields format descriptions
 	/** @var array<string, string> */
 	var $errors = array();
 	/** @var int */
-	var $dec;
+	var $dec = 0;
 	/** @var string */
 	var $name;
 
@@ -287,13 +271,13 @@ class simple_crud_view extends user_view {
 	 */
 	var $_none = ''; // selector value when no item is selected
 	/** @var array<array-key, mixed> */
-	var $pre_handlers; // control buttons and related methods called before view display
+	var $pre_handlers = array(); // control buttons and related methods called before view display
 	/** @var array<string, string> */
-	var $views;
+	var $views = array();
 	var $data = array();
 	var $fields;
 	/** @var array<string, array<int, string|null>> */
-	var $tool_buttons;
+	var $tool_buttons = array();
 
 	/**
 	 * @var array
@@ -305,12 +289,12 @@ class simple_crud_view extends user_view {
 		'clone' => true,
 	);
 	/** @var int */
-	var $dec;
+	var $dec = 0;
 	/** @var record_set */
 	var $data_set;
 
 	/**
-	 * @var false
+	 * @var bool
 	 */
 	var $display_both = false; //when set to true both list and editor are displayed all the time (eventually set in sub classes)
 	//
@@ -689,176 +673,3 @@ class simple_crud_view extends user_view {
 	}
 };
 
-class selector_crud_view extends simple_crud_view {
-
-	/** @psalm-mutation-free */
-	function __construct($name, $data_set = null, $options=array())
-	{
-		$this->display_both = true;
-		parent::__construct($name, $data_set, $options);
-	}
-
-	function _check_mode()
-	{
-
-		// list controls lookup
-		$prev_mode = $this->Mode;
-		$mod = '';
-
-		$list = $this->name.'_id';
-		$this->prev_id = $this->selected_id;
-		$this->selected_id = get_post($list);
-		if (list_updated($list)) {
-			ajax()->activate($this->name);
-			ajax()->activate($this->name.'_controls');
-			$mod = $this->selected_id == $this->_none ? 'RESET' : 'Edit';
-		} else {
-			$mod = simple_crud_view::_check_mode();
-		}
-
-		if ($mod != $prev_mode) {
-			ajax()->activate($this->name.'_controls');
-		}
-		if (get_post('_show_inactive_update'))
-		{
-			ajax()->activate($this->name.'_id');
-		}
-
-		$_POST[$list] = $this->selected_id;
-		return $mod;
-	}
-
-	/**
-	 * @psalm-external-mutation-free
-	 * @return void
-	 */
-	function cancel()
-	{
-
-		$_POST[$this->name.'_id'] = $this->selected_id = $this->_none;
-		ajax()->activate($this->name.'_id');
-	}
-}
-
-//
-//	Template for line table editors
-//
-
-class table_crud_view extends simple_crud_view {
-
-	var $title;
-
-	/** @psalm-mutation-free */
-	function __construct($name, &$data_set = null, $options=array())
-	{
-		$this->display_both = true;
-		parent::__construct($name, $data_set, $options);
-	}
-	/**
-	*
-	*	Returns selector string from data or current selected_id
-	*
-	* @psalm-mutation-free
-	* @return null|string
-	**/
-	function curr_id($data=null)
-	{
-		if ($data)
-			return $data ? implode('_', array_intersect_key($data, array_fill_keys($this->key, true))) : null; // php 5.2.0
-		else
-			return $this->selected_id;
-	}
-	/**
-	*
-	*	Show single line from record table
-	*
-	* @psalm-mutation-free
-	* @return void
-	**/
-	function show_record_row($line_no, $record=array())
-	{
-/* TBD
-		$id = $this->curr_id($record); // extract key
-
-		$view = array();
-		$this->set_output($line, $view);
-
-		$editables = array();
-		if ($this->options['edit'] && $this->Mode=='Edit' && $this->selected_id==$id)
-		{
-			$editables = $this->data_set->edit_status($key);
-		}
-		$ctrls = $this->get_field_views($record, $editables);
-		alt_table_row_color($k);
-		foreach($ctrls as $key => $fld)
-		{
-			echo '<td>';
-			echo $ctrls[$key];
-			echo '</td>';
-		}
-
-		if ($this->options['edit']) {
-			echo '<td>';
-			$this->tool_button($this->selected_id==$id ? 'UPDATE' : 'Edit', $id);
-			echo '</td>';
-		}
-		if ($this->options['delete']$this->selected_id==$id) {
-			echo '<td>';
-			$this->tool_button( ? 'Cancel' : 'Delete', $id);
-			echo '</td>';
-		}
-		end_row();
-
-		if ($this->options['insert'])
-		{
-			alt_table_row_color($k);
-			$this->new_line($line_no, $line);
-			end_row();
-		}
-*/
-	}
-	/**
-	 * @psalm-mutation-free
-	 * @return void
-	 */
-	function show_list_headers()
-	{
-	}
-	//
-	//	Main function - display current CRUD table content
-	//
-	/** @return void */
-	function show($Mode=null)
-	{
-		if (!isset($Mode))
-			$Mode = $this->_check_mode(true);
-		div_start($this->name.'_div');
-
-		if (array_key_exists($Mode, $this->pre_handlers))
-		{
-			$fun = $this->pre_handlers[$Mode];
-			if (is_array($fun))
-			{
-				if (is_object($fun[0]))
-					$fun[0]->$fun[1]($Mode);
-			} else
-			$this->$fun($Mode);
-		}
-
-		if ($this->title)
-			display_heading($this->title);
-
-		start_table(TABLESTYLE, "width=95%");
-		$this->show_list_headers();
-
-		foreach($this->data_set->get_all() as $line_no => $line) {
-			$this->show_record_row($line_no, $line);
-		}
-		$this->show_record_row();
-
-		end_table();
-		hidden($this->name.'Mode'.'['.$this->selected_id.']', $this->Mode);
-		div_end();
-	}
-
-};

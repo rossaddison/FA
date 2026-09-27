@@ -29,18 +29,25 @@ include_once(dirname(__DIR__) . "/inventory/includes/db/items_category_db.inc");
 
 print_inventory_valuation_report();
 
+/** @return string|int|float|null */
 function get_domestic_price(?array $myrow, ?string $stock_id)
 {
+    if ($myrow === null)
+        return null;
+
     if ($myrow['type'] == ST_SUPPRECEIVE || $myrow['type'] == ST_SUPPCREDIT)
      {
+        /** @var string|int|float|null $price */
         $price = $myrow['price'];
-        if ($myrow['person_id'] > 0)
+        $person_id = is_scalar($myrow['person_id']) ? $myrow['person_id'] : null;
+        if ((float) $person_id > 0)
         {
             // Do we have foreign currency?
-            $supp = row_or_empty(get_supplier($myrow['person_id']));
+            $supp = row_or_empty(get_supplier($person_id));
             $currency = $supp['curr_code'];
+            /** @var string|int|float|null $ex_rate */
             $ex_rate = $myrow['ex_rate'];
-            $price *= $ex_rate;
+            $price = (float) $price * (float) $ex_rate;
         }
     }
     else
@@ -49,6 +56,7 @@ function get_domestic_price(?array $myrow, ?string $stock_id)
     return $price;
 }
 
+/** @return float|int */
 function getAverageCost(?string $stock_id, string|null $location, string|null $to_date)
 {
 	if ($to_date == null)
@@ -73,17 +81,17 @@ function getAverageCost(?string $stock_id, string|null $location, string|null $t
 
 	$result = db_query($sql, "No standard cost transactions were returned");
     
-    if ($result == false)
+    if (!($result instanceof mysqli_result))
     	return 0;
-	$qty = $tot_cost = 0;
+	$qty = $tot_cost = 0.0;
 	while ($row=db_fetch($result))
 	{
-		$qty += $row['qty'];	
+		$qty += (float) $row['qty'];
 		$price = get_domestic_price($row, $stock_id);
-        $tran_cost = (float)$row['qty'] * $price;
+        $tran_cost = (float)$row['qty'] * (float) $price;
         $tot_cost += $tran_cost;
 	}
-	if ($qty == 0)
+	if ($qty == 0.0)
 		return 0;
 	return $tot_cost / $qty;
 }
@@ -139,13 +147,13 @@ function print_inventory_valuation_report(): void
 {
     global $path_to_root, $SysPrefs;
 
-	$date = $_POST['PARAM_0'];
-    $category = $_POST['PARAM_1'];
-    $location = $_POST['PARAM_2'];
-    $detail = $_POST['PARAM_3'];
-    $comments = $_POST['PARAM_4'];
-	$orientation = $_POST['PARAM_5'];
-	$destination = $_POST['PARAM_6'];
+	$date = (string) post_scalar('PARAM_0');
+    $category = post_scalar('PARAM_1');
+    $location = post_scalar('PARAM_2');
+    $detail = post_scalar('PARAM_3');
+    $comments = post_scalar('PARAM_4');
+	$orientation = post_scalar('PARAM_5');
+	$destination = post_scalar('PARAM_6');
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
@@ -159,7 +167,7 @@ function print_inventory_valuation_report(): void
 	if ($category == 0)
 		$cat = _('All');
 	else
-		$cat = get_category_name($category);
+		$cat = get_category_name((string) $category);
 
 	if ($location == ALL_TEXT)
 		$location = 'all';
@@ -186,7 +194,7 @@ function print_inventory_valuation_report(): void
     $rep->Info($params, $cols, $headers, $aligns);
     $rep->NewPage();
 
-	$res = getTransactions($category, $location, $date);
+	$res = getTransactions((string) $category, (string) $location, $date);
 	$total = $grandtotal = 0.0;
 	$catt = '';
 	while ($trans=db_fetch($res))
@@ -217,13 +225,13 @@ function print_inventory_valuation_report(): void
 		}
 		if (isset(sysprefs()->use_costed_values) && sysprefs()->use_costed_values==1)
 		{
-			$UnitCost = getAverageCost($trans['stock_id'], $location, $date);
+			$UnitCost = getAverageCost($trans['stock_id'], (string) $location, $date);
 			$ItemTotal = (float)$trans['QtyOnHand'] * $UnitCost;
 		}	
 		else
 		{
-			$UnitCost = $trans['UnitCost'];
-			$ItemTotal = $trans['ItemTotal'];
+			$UnitCost = (float) $trans['UnitCost'];
+			$ItemTotal = (float) $trans['ItemTotal'];
 		}	
 		if ($detail)
 		{

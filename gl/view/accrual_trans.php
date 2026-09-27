@@ -14,7 +14,7 @@ $page_security = 'SA_ACCRUALS';
 $path_to_root = "../..";
 include_once(dirname(__DIR__, 2) . "/includes/session.inc");
 
-$_SESSION['page_title'] = _($help_context = _("Search General Ledger Transactions for account: ").(string)$_GET['act']);
+$_SESSION['page_title'] = _($help_context = _("Search General Ledger Transactions for account: ").(string) get_scalar('act'));
 
 page($_SESSION['page_title'], true);
 
@@ -43,12 +43,12 @@ if (!isset($_GET['act']) || !isset($_GET['date']))
 	exit;
 }
 
-display_heading($_SESSION['page_title']. " ".get_gl_account_name(get_scalar('act')));
+display_heading($_SESSION['page_title']. " ".(string) get_gl_account_name(get_scalar('act')));
 
 br();
 
 start_table(TABLESTYLE);
-$dim = get_company_pref('use_dimension');
+$dim = (int) get_company_pref('use_dimension');
 
 $first_cols = array(_("Type"), "#", _("Date"));
 if ($dim == 2)
@@ -63,8 +63,8 @@ $remaining_cols = array(_("Person/Item"), _("Debit"), _("Credit"), _("Memo"));
 $th = array_merge($first_cols, $dim_cols, $remaining_cols);
 
 table_header($th);
-$end = $_GET['date'];
-$account = $_GET['act'];
+$end = get_scalar('date');
+$account = get_scalar('act');
 $begin = add_days($end, -user_transaction_days());
 
 $result = get_gl_transactions($begin, $end, -1,	$account, 0, 0, null);
@@ -76,7 +76,7 @@ while ($myrow = db_fetch($result))
 
 	$trandate = sql2date($myrow["tran_date"]);
 
-	label_cell($systypes_array[$myrow["type"]]);
+	label_cell($systypes_array[(int) $myrow["type"]]);
 	$amount = price_format($myrow["amount"]);
 	$str = "<a href='#'".fa_action_attrs('window-close', array($amount, $trandate))." >".(string)$myrow['type_no']."</a>";
 	label_cell($str);
@@ -86,7 +86,9 @@ while ($myrow = db_fetch($result))
 		label_cell(get_dimension_string($myrow['dimension_id'], true));
 	if ($dim > 1)
 		label_cell(get_dimension_string($myrow['dimension2_id'], true));
-	label_cell(payment_person_name($myrow["person_type_id"],$myrow["person_id"]));
+	/** @var string|int|float|bool|null $person_name */
+	$person_name = payment_person_name($myrow["person_type_id"],$myrow["person_id"]);
+	label_cell($person_name);
 	display_debit_or_credit_cells($myrow["amount"]);
 	label_cell($myrow['memo_']);
 	end_row();

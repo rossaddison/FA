@@ -91,7 +91,7 @@ function check_overdue(array $row): bool|int
 }
 
 /** @return null|string */
-function view_link(string|int|float|bool|array $dummy, string|int|float|bool|null $order_no)
+function view_link(string|int|float|bool|array $dummy, string|int|float|bool|null $order_no): ?string
 {
 	global $trans_type;
 	return  get_customer_trans_view_str($trans_type, $order_no);
@@ -104,7 +104,7 @@ function prt_link(array $row)
 	return print_document_link($row['order_no'], _("Print"), true, $trans_type, ICON_PRINT);
 }
 
-function edit_link(array $row) 
+function edit_link(array $row): string
 {
 	global $page_nested;
 

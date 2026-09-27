@@ -36,18 +36,18 @@ if (!isset($path_to_root) || isset($_GET['path_to_root']) || isset($_POST['path_
 		 */
 		var $menu;
 
-		function add_application($app)
-		{	
+		function add_application($app): void
+		{
 			if ($app->enabled) // skip inactive modules
 				$this->applications[$app->id] = $app;
 		}
-		function get_application($id)
+		function get_application($id): ?application
 		{
 			 if (isset($this->applications[$id]))
 				return $this->applications[$id];
 			 return null;
 		}
-		function get_selected_application()
+		function get_selected_application(): ?application
 		{
 			if (isset($this->selected_application))
 				 return $this->applications[$this->selected_application];
@@ -55,7 +55,7 @@ if (!isset($path_to_root) || isset($_GET['path_to_root']) || isset($_POST['path_
 				return $application;
 			return null;
 		}
-		function display()
+		function display(): void
 		{
 			global $path_to_root;
 			
@@ -70,7 +70,7 @@ if (!isset($path_to_root) || isset($_GET['path_to_root']) || isset($_POST['path_
 			$rend->wa_footer();
 			$this->renderer =& $rend;
 		}
-		function init()
+		function init(): void
 		{
 			global $SysPrefs;
 

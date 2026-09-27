@@ -35,7 +35,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 	//initialise no input errors assumed initially before we test
 	$input_error = 0;
 
-	if (strlen($_POST['name']) == 0) 
+	if (strlen((string) $_POST['name']) == 0)
 	{
 		$input_error = 1;
 		display_error(_("The tax group name cannot be empty."));
@@ -50,15 +50,20 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 		while (($id = find_submit('tax_type_id'))!=-1)
 		{
+			$id = (string) $id;
 			if (check_value('tax_type_id'.$id) != 0)
 			{
        			$taxes[] = $id;
-				$tax_shippings[] = check_value('tax_shipping'.$id);
+				/** @var int $tax_shipping_checked */
+				$tax_shipping_checked = check_value('tax_shipping'.$id);
+				$tax_shippings[] = $tax_shipping_checked;
 			}	
 			unset($_POST['tax_type_id' . $id]);
 			unset($_POST['tax_shipping' . $id]);
 		}
-    	if ($selected_id != -1) 
+    	/** @var int|string $selected_id */
+    	$selected_id = $selected_id;
+    	if ($selected_id != -1)
     	{
 	   		update_tax_group($selected_id, post_scalar('name'), $taxes, $tax_shippings);
 			display_notification(_('Selected tax group has been updated'));
@@ -75,7 +80,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 //-----------------------------------------------------------------------------------
 
-function can_delete(string|int|float|bool|array|null $selected_id): bool
+function can_delete(int|string $selected_id): bool
 {
 	if ($selected_id == -1)
 		return false;
@@ -101,6 +106,8 @@ function can_delete(string|int|float|bool|array|null $selected_id): bool
 if ($Mode == 'Delete')
 {
 
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	if (can_delete($selected_id))
 	{
 		delete_tax_group($selected_id);
@@ -150,7 +157,9 @@ end_table(1);
 
 start_table(TABLESTYLE2);
 
-if ($selected_id != -1) 
+/** @var int|string $selected_id */
+$selected_id = $selected_id;
+if ($selected_id != -1)
 {
 	//editing an existing status code
 
@@ -160,6 +169,8 @@ if ($selected_id != -1)
     	$_POST['name']  = $group["name"];
 
 	}
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	hidden('selected_id', $selected_id);
 
 }
@@ -169,6 +180,8 @@ end_table();
 
 display_note(_("Select the taxes that are included in this group."), 1, 1);
 
+/** @var int|string $selected_id */
+$selected_id = $selected_id;
 $items = get_tax_group_rates($selected_id!=-1 ? $selected_id : null);
 
 start_table(TABLESTYLE2);

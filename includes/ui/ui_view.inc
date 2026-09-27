@@ -230,7 +230,8 @@ function get_package_view_str(string|int|float|bool|null $pkg, string|int|float|
 
 //--------------------------------------------------------------------------------------
 
-function get_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $label="", bool $icon=false, 
+/** @return non-empty-scalar|null */
+function get_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $label="", bool $icon=false,
 	?string $class='', string|int|float|bool|null $id='')
 {
 	$view_str = get_customer_trans_view_str($type, $trans_no, $label, $icon, $class, $id);
@@ -639,7 +640,7 @@ function display_allocations_to(?int $person_type, string|int|float|bool|null $p
 //		returns calculated amount posted to bank GL account.
 //
 /**
- * @param items_cart $cart
+ * @param items_cart|supp_trans $cart
  */
 function display_quick_entries(&$cart, string|int|float|bool|null $id, int|float|bool|null $base, ?string $type, string|array|null $descr=''): int
 {
@@ -658,7 +659,8 @@ function display_quick_entries(&$cart, string|int|float|bool|null $id, int|float
 			$cart->clear_items();
 
 		// as for now tax_group is passed only in QE_SUPPINV
-		$qe_lines = quickentry_calculate($base, $id, @$cart->tax_group_id, $cart->tran_date);
+		$tax_group_id = $cart instanceof supp_trans ? $cart->tax_group_id : null;
+		$qe_lines = quickentry_calculate($base, $id, $tax_group_id, $cart->tran_date);
 
 		if ($qe_lines === 0)
 		{
@@ -676,11 +678,11 @@ function display_quick_entries(&$cart, string|int|float|bool|null $id, int|float
 			if ($type != QE_SUPPINV)
 				$cart->add_gl_item($qe_line['code'], $qe_line['dim1'],
 					$qe_line['dim2'], $qe_line['amount'], $qe_line['descr']);
-			else 
+			else if ($cart instanceof supp_trans)
 			{
 				$acc_name = get_gl_account_name($qe_line['code']);
-				$cart->add_gl_codes_to_trans($qe_line['code'], 
-					$acc_name, $qe_line['dim1'], 
+				$cart->add_gl_codes_to_trans($qe_line['code'],
+					$acc_name, $qe_line['dim1'],
 					$qe_line['dim2'], $qe_line['amount'], $qe_line['descr']);
 			}
 		}

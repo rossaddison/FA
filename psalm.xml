@@ -1,22 +1,25 @@
 <?xml version="1.0"?>
-<psalm errorLevel="1" allFunctionsGlobal="true" allConstantsGlobal="true" phpVersion="8.5" findUnusedBaselineEntry="false" findUnusedCode="false" threads="8" cacheDirectory=".psalm-cache" respectIncludeOnce="true" ignoreIncludeSideEffects="true">
+<psalm errorLevel="1" allFunctionsGlobal="true"
+     allConstantsGlobal="true"
+     phpVersion="8.5"
+     findUnusedBaselineEntry="false"
+     findUnusedCode="false"
+     threads="8"
+     respectIncludeOnce="true"
+     ignoreIncludeSideEffects="true">
     <fileExtensions>
         <extension name=".php"/>
         <extension name=".inc"/>
     </fileExtensions>
     <globals>
         <var name="path_to_root" type="string"/>
-        <var name="js_static" type="array&lt;int, string&gt;"/>
-        <var name="js_userlib" type="array&lt;int, string&gt;"/>
-        <var name="js_lib" type="array&lt;int, string&gt;"/>
-        <var name="css_files" type="array&lt;int, string&gt;"/>
-        <var name="js_path" type="string"/>
-        <var name="Pagehelp" type="array&lt;int, string&gt;"/>
-        <var name="version" type="string"/>
         <var name="SysPrefs" type="sys_prefs"/>
         <var name="Ajax" type="Ajax"/>
         <var name="Refs" type="references"/>
         <var name="systypes_array" type="array&lt;int, string&gt;"/>
+        <var name="bank_transfer_types" type="array&lt;int, string&gt;"/>
+        <var name="type_shortcuts" type="array&lt;int, string&gt;"/>
+        <var name="messages" type="array&lt;int, array&lt;array-key, mixed&gt;&gt;"/>
         <var name="db" type="mysqli"/>
         <var name="_POST" type="array&lt;string, string|int|float|bool|null|array&lt;array-key, string|int|float|bool|null|array&lt;array-key, string|int|float|bool|null&gt;&gt;&gt;"/>
         <var name="selected_id" type="string|int|float|bool|array&lt;array-key, mixed&gt;|null"/>
@@ -83,6 +86,5 @@
         <file name="reporting/includes/fpdi/pdf_parser.php"/>
         <file name="reporting/includes/fpdi/pdf_context.php"/>
         <file name="includes/JsHttpRequest.php"/>
-        <file name="includes/lang/gettext.inc"/>
     </stubs>
 </psalm>

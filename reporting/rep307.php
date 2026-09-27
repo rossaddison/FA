@@ -91,13 +91,13 @@ function inventory_movements(): void
 {
     global $path_to_root;
 
-    $from_date = $_POST['PARAM_0'];
-    $to_date = $_POST['PARAM_1'];
-    $category = $_POST['PARAM_2'];
-	$location = $_POST['PARAM_3'];
-    $comments = $_POST['PARAM_4'];
-	$orientation = $_POST['PARAM_5'];
-	$destination = $_POST['PARAM_6'];
+    $from_date = (string) post_scalar('PARAM_0');
+    $to_date = (string) post_scalar('PARAM_1');
+    $category = post_scalar('PARAM_2');
+	$location = post_scalar('PARAM_3');
+    $comments = post_scalar('PARAM_4');
+	$orientation = post_scalar('PARAM_5');
+	$destination = post_scalar('PARAM_6');
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
@@ -109,7 +109,7 @@ function inventory_movements(): void
 	if ($category == 0)
 		$cat = _('All');
 	else
-		$cat = get_category_name($category);
+		$cat = get_category_name((string) $category);
 
 	if ($location == '')
 		$loc = _('All');
@@ -135,7 +135,7 @@ function inventory_movements(): void
     $rep->Info($params, $cols, $headers, $aligns);
     $rep->NewPage();
 
-	$result = fetch_items($category);
+	$result = fetch_items((string) $category);
 
 	$catgor = '';
 	while ($myrow=db_fetch($result))
@@ -154,13 +154,13 @@ function inventory_movements(): void
 		$rep->TextCol(0, 1,	$myrow['stock_id']);
 		$rep->TextCol(1, 2, $myrow['name']);
 		$rep->TextCol(2, 3, $myrow['units']);
-		$qoh_start= $inward = $outward = $qoh_end = 0; 
-		
-		$qoh_start += get_qoh_on_date($myrow['stock_id'], $location, add_days($from_date, -1));
-		$qoh_end += get_qoh_on_date($myrow['stock_id'], $location, $to_date);
-		
-		$inward += trans_qty($myrow['stock_id'], $location, $from_date, $to_date);
-		$outward += trans_qty($myrow['stock_id'], $location, $from_date, $to_date, false);
+		$qoh_start= $inward = $outward = $qoh_end = 0.0;
+
+		$qoh_start += (float) get_qoh_on_date($myrow['stock_id'], (string) $location, add_days($from_date, -1));
+		$qoh_end += (float) get_qoh_on_date($myrow['stock_id'], (string) $location, $to_date);
+
+		$inward += (float) trans_qty($myrow['stock_id'], (string) $location, $from_date, $to_date);
+		$outward += (float) trans_qty($myrow['stock_id'], (string) $location, $from_date, $to_date, false);
 
 		$stock_qty_dec = get_qty_dec($myrow['stock_id']);
 		$rep->AmountCol(3, 4, $qoh_start, $stock_qty_dec);

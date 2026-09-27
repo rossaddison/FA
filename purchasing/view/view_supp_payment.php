@@ -22,14 +22,15 @@ if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 500);
 page(_($help_context = "View Payment to Supplier"), true, false, "", $js);
 
+$trans_no = null;
 if (isset($_GET["trans_no"]))
 {
-	$trans_no = $_GET["trans_no"];
+	$trans_no = (string) get_scalar('trans_no');
 }
 
 $receipt = row_or_empty(get_supp_trans($trans_no, ST_SUPPAYMENT));
 
-$company_currency = get_company_currency();
+$company_currency = (string) get_company_currency();
 
 $show_currencies = false;
 $show_both_amounts = false;
@@ -63,12 +64,12 @@ if ($show_currencies)
 	label_cells(_("Payment Currency"), $receipt['bank_curr_code'], "class='tableheader2'");
 label_cells(_("Amount"), number_format2(-$receipt['bank_amount'], user_price_dec()), "class='tableheader2'");
 if ($receipt['ov_discount'] != 0)
-	label_cells(_("Discount"), number_format2(-$receipt['ov_discount']*(float)$receipt['rate'], user_price_dec()), "class='tableheader2'");
+	label_cells(_("Discount"), number_format2(-(float)$receipt['ov_discount']*(float)$receipt['rate'], user_price_dec()), "class='tableheader2'");
 else
-	label_cells(_("Payment Type"), $bank_transfer_types[$receipt['BankTransType']], "class='tableheader2'");
+	label_cells(_("Payment Type"), $bank_transfer_types[(int) $receipt['BankTransType']], "class='tableheader2'");
 end_row();
 start_row();
-if ($show_currencies) 
+if ($show_currencies)
 {
 	label_cells(_("Supplier's Currency"), $receipt['curr_code'], "class='tableheader2'");
 }
@@ -79,7 +80,7 @@ end_row();
 if ($receipt['ov_discount'] != 0)
 {
 	start_row();
-	label_cells(_("Payment Type"), $bank_transfer_types[$receipt['BankTransType']], "class='tableheader2'");
+	label_cells(_("Payment Type"), $bank_transfer_types[(int) $receipt['BankTransType']], "class='tableheader2'");
 	end_row();
 }
 comments_display_row(ST_SUPPAYMENT, $trans_no);
@@ -94,4 +95,4 @@ if (!$voided)
 	display_allocations_from(PT_SUPPLIER, $receipt['supplier_id'], ST_SUPPAYMENT, $trans_no, -$receipt['Total']);
 }
 
-end_page(true, false, false, ST_SUPPAYMENT, $trans_no);
+end_page(true, false, false, ST_SUPPAYMENT, (string) $trans_no);

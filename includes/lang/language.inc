@@ -31,29 +31,29 @@ class language
 	/** @var bool|null */
 	var $is_locale_file;
 	
-	function __construct($name, $code, $encoding, $dir = 'ltr') 
+	function __construct(string|int|float|bool|null $name, string|int|float|bool|null $code, string|int|float|bool|null $encoding, string $dir = 'ltr')
 	{
 		global $dflt_lang;
-		
-		$this->name = $name;
-		$this->code = $code ? $code : ($dflt_lang ? $dflt_lang : 'C');
-		$this->encoding = $encoding;
+
+		$this->name = (string) $name;
+		$this->code = (string) ($code ? $code : ($dflt_lang ? $dflt_lang : 'C'));
+		$this->encoding = (string) $encoding;
 		$this->dir = $dir;
 	}
 
-	function get_language_dir() 
+	function get_language_dir(): string
 	{
 		return "lang/" . $this->code;
 	}
 
-	function get_current_language_dir()
+	function get_current_language_dir(): string
 	{
 		/** @var language $lang */
 		$lang = $_SESSION['language'];
 		return "lang/" . $lang->code;
 	}
 
-	function set_language($code) 
+	function set_language(string|int|float|bool|null $code): void
 	{
 	    global $path_to_root, $installed_languages, $GetText;
 

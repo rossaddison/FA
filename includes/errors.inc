@@ -15,12 +15,12 @@ $before_box = ''; // temporary container for output html data before error box
 #
 #   Wrapper for trigger_error
 #
-function fa_trigger_error(string|int|float|bool|null $msg, string|int|float|bool|null $error_level=E_USER_NOTICE): void
+function fa_trigger_error(string|int|float|bool|null $msg, int $error_level=E_USER_NOTICE): void
 {
     if ($error_level==E_USER_ERROR) {
-          error_handler(E_USER_ERROR, $msg, __FILE__, __LINE__); //  E_USER_ERROR is deprecated as trigger_error arg since php 8.4
+          error_handler(E_USER_ERROR, (string) $msg, __FILE__, __LINE__); //  E_USER_ERROR is deprecated as trigger_error arg since php 8.4
     } else
-        trigger_error($msg, $error_level);
+        trigger_error((string) $msg, $error_level);
 }
 
 function get_backtrace(bool $html = false, ?int $skip=0): string
@@ -67,7 +67,7 @@ function get_backtrace(bool $html = false, ?int $skip=0): string
 //    Error handler - collects all php/user messages for
 //    display in message box.
 
-function error_handler(string|int|float|bool|null $errno, string|int|float|bool|null $errstr, string|int|float|bool|null $file, string|int|float|bool|null $line): bool {
+function error_handler(int $errno, string $errstr, string $file = '', int $line = 0): bool {
     global $messages, $SysPrefs, $cur_error_level;
 
 	// skip well known warnings we don't care about.
@@ -134,9 +134,8 @@ function fmt_errors(string|int|float|bool|null $center=false): string {
 					$type = E_USER_WARNING; // user warnings 
 					$content = ''; 			// clean notices when we have errors
 				} else  {
-					$type = E_USER_ERROR; 	// php or user errors 
-					if($type == E_USER_WARNING)
-						$content = ''; 			// clean other messages
+					$type = E_USER_ERROR; 	// php or user errors
+					$content = ''; 			// clean other messages
 				}
 			}
 
@@ -210,7 +209,7 @@ function display_db_error(string|int|float|bool|null $msg, string|array|null $sq
 	{
 		$cur_prefix = $db_connections[session_obj('wa_current_user')->cur_con]['tbpref'];
 
-		$str .= "sql that failed was : ".str_replace(TB_PREF, $cur_prefix, $sql_statement)."<br>";
+		$str .= "sql that failed was : ".str_replace(TB_PREF, $cur_prefix, (string) $sql_statement)."<br>";
 	}
 	
 	$str .= "<br><br>";

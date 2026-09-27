@@ -416,7 +416,7 @@ display_bank_header($pay_items);
 start_table(TABLESTYLE2, "width='90%'", 10);
 start_row();
 echo "<td>";
-display_gl_items(session_obj('pay_items')->trans_type==ST_BANKPAYMENT ?
+display_gl_bank_items(session_obj('pay_items')->trans_type==ST_BANKPAYMENT ?
 	_("Payment Items"):_("Deposit Items"), $pay_items);
 gl_options_controls($pay_items);
 echo "</td>";

@@ -27,12 +27,13 @@ include_once(dirname(__DIR__) . "/admin/db/tags_db.inc");
 
 //----------------------------------------------------------------------------------------------------
 
-function display_type (?string $type, ?string $typename, string|int|float|bool|array|null $from, string|int|float|bool|array|FrontReport|null $to, string|int|float|bool|array|null $convert, int|string|null &$dec, FrontReport &$rep, string|int|float|bool|null $dimension, string|int|float|bool|array|null $dimension2, mixed $tags, object &$pg, mixed $graphics, array &$labels, array &$serie1, array &$serie2)
+function display_type (?string $type, ?string $typename, string|int|float|bool|array|null $from, string|int|float|bool|array|FrontReport|null $to, string|int|float|bool|array|null $convert, int|string|null &$dec, FrontReport &$rep, string|int|float|bool|null $dimension, string|int|float|bool|array|null $dimension2, mixed $tags, object &$pg, mixed $graphics, array &$labels, array &$serie1, array &$serie2): array
 {
+	$convert_f = is_array($convert) ? 0.0 : (float) $convert;
 	$code_open_balance = 0.0;
 	$code_period_balance = 0.0;
-	$open_balance_total = 0;
-	$period_balance_total = 0;
+	$open_balance_total = 0.0;
+	$period_balance_total = 0.0;
 	$totals_arr = array();
 
 	$printtitle = 0; //Flag for printing type name	
@@ -67,9 +68,9 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 		$rep->TextCol(0, 1,	$account['account_code']);
 		$rep->TextCol(1, 2,	$account['account_name']);
 
-		$rep->AmountCol(2, 3, $prev_balance * $convert, $dec);
-		$rep->AmountCol(3, 4, $curr_balance * $convert, $dec);
-		$rep->AmountCol(4, 5, ($prev_balance + $curr_balance) * $convert, $dec);
+		$rep->AmountCol(2, 3, $prev_balance * $convert_f, $dec);
+		$rep->AmountCol(3, 4, $curr_balance * $convert_f, $dec);
+		$rep->AmountCol(4, 5, ($prev_balance + $curr_balance) * $convert_f, $dec);
 
 		$rep->NewLine();
 
@@ -105,14 +106,14 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 		$rep->Line($rep->row);
 		$rep->NewLine();
 		$rep->TextCol(0, 2,	_('Total') . " " . $typename);
-		$rep->AmountCol(2, 3, ($code_open_balance + $open_balance_total) * $convert, $dec);
-		$rep->AmountCol(3, 4, ($code_period_balance + $period_balance_total) * $convert, $dec);
-		$rep->AmountCol(4, 5, ($code_open_balance + $open_balance_total + $code_period_balance + $period_balance_total) * $convert, $dec);		
+		$rep->AmountCol(2, 3, ($code_open_balance + $open_balance_total) * $convert_f, $dec);
+		$rep->AmountCol(3, 4, ($code_period_balance + $period_balance_total) * $convert_f, $dec);
+		$rep->AmountCol(4, 5, ($code_open_balance + $open_balance_total + $code_period_balance + $period_balance_total) * $convert_f, $dec);
 		if ($graphics)
 		{
 			$labels[] = $typename;
-			$serie1[] = abs(($code_period_balance + $period_balance_total) * $convert);
-			$serie2[] = abs(($code_open_balance + $open_balance_total + $code_period_balance + $period_balance_total) * $convert);
+			$serie1[] = abs(($code_period_balance + $period_balance_total) * $convert_f);
+			$serie2[] = abs(($code_open_balance + $open_balance_total + $code_period_balance + $period_balance_total) * $convert_f);
 		}
 		$rep->NewLine();
 	}
@@ -133,37 +134,42 @@ function print_balance_sheet(): void
 	$dim = get_company_pref('use_dimension');
 	$dimension = $dimension2 = 0;
 
-	$from = $_POST['PARAM_0'];
-	$to = $_POST['PARAM_1'];
+	$from = post_scalar('PARAM_0');
+	$to = post_scalar('PARAM_1');
 	if ($dim == 2)
 	{
-		$dimension = $_POST['PARAM_2'];
-		$dimension2 = $_POST['PARAM_3'];
+		$dimension = post_scalar('PARAM_2');
+		$dimension2 = post_scalar('PARAM_3');
 		$tags = (isset($_POST['PARAM_4']) ? $_POST['PARAM_4'] : -1);
-		$decimals = $_POST['PARAM_5'];
-		$graphics = $_POST['PARAM_6'];
-		$comments = $_POST['PARAM_7'];
-		$orientation = $_POST['PARAM_8'];
-		$destination = $_POST['PARAM_9'];
+		$decimals = post_scalar('PARAM_5');
+		$graphics = post_scalar('PARAM_6');
+		$comments = post_scalar('PARAM_7');
+		$orientation = post_scalar('PARAM_8');
+		$destination = post_scalar('PARAM_9');
 	}
 	elseif ($dim == 1)
 	{
-		$dimension = $_POST['PARAM_2'];
+		$dimension = post_scalar('PARAM_2');
 		$tags = (isset($_POST['PARAM_3']) ? $_POST['PARAM_3'] : -1);
-		$decimals = $_POST['PARAM_4'];
-		$graphics = $_POST['PARAM_5'];
-		$comments = $_POST['PARAM_6'];
-		$orientation = $_POST['PARAM_7'];
-		$destination = $_POST['PARAM_8'];
+		$decimals = post_scalar('PARAM_4');
+		$graphics = post_scalar('PARAM_5');
+		$comments = post_scalar('PARAM_6');
+		$orientation = post_scalar('PARAM_7');
+		$destination = post_scalar('PARAM_8');
 	}
 	else
 	{
 		$tags = (isset($_POST['PARAM_2']) ? $_POST['PARAM_2'] : -1);
-		$decimals = $_POST['PARAM_3'];
-		$graphics = $_POST['PARAM_4'];
-		$comments = $_POST['PARAM_5'];
-		$orientation = $_POST['PARAM_6'];
-		$destination = $_POST['PARAM_7'];
+		$decimals = post_scalar('PARAM_3');
+		$graphics = post_scalar('PARAM_4');
+		$comments = post_scalar('PARAM_5');
+		$orientation = post_scalar('PARAM_6');
+		$destination = post_scalar('PARAM_7');
+	}
+	if (!is_array($tags))
+	{
+		if (is_bool($tags) || is_float($tags))
+			$tags = (string) $tags;
 	}
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
@@ -177,7 +183,7 @@ function print_balance_sheet(): void
 	if ((bool)$graphics)
 	{
 		include_once(dirname(__DIR__) . "/reporting/includes/class.graphic.inc");
-		$pg = new Chart($graphics);
+		$pg = new Chart(is_bool($graphics) ? null : (is_float($graphics) ? (int) $graphics : $graphics));
 	}
 	if (!(bool)$decimals)
 		$dec = 0;
@@ -197,9 +203,9 @@ function print_balance_sheet(): void
     	$params =   array( 	0 => $comments,
     				    1 => array('text' => _('Period'),'from' => $from, 'to' => $to),
                     	2 => array('text' => _('Dimension')." 1",
-                            'from' => get_dimension_string($dimension), 'to' => ''),
+                            'from' => get_dimension_string((int) $dimension), 'to' => ''),
                     	3 => array('text' => _('Dimension')." 2",
-                            'from' => get_dimension_string($dimension2), 'to' => ''),
+                            'from' => get_dimension_string((int) $dimension2), 'to' => ''),
                         4 => array('text' => _('Tags'), 'from' => get_tag_names($tags), 'to' => ''));
     }
     elseif ($dim == 1)
@@ -207,7 +213,7 @@ function print_balance_sheet(): void
     	$params =   array( 	0 => $comments,
     				    1 => array('text' => _('Period'),'from' => $from, 'to' => $to),
                     	2 => array('text' => _('Dimension'),
-                            'from' => get_dimension_string($dimension), 'to' => ''),
+                            'from' => get_dimension_string((int) $dimension), 'to' => ''),
                         3 => array('text' => _('Tags'), 'from' => get_tag_names($tags), 'to' => ''));
     }
     else
@@ -232,9 +238,9 @@ function print_balance_sheet(): void
 	$classresult = get_account_classes(false, 1);
 	while ($class = db_fetch($classresult))
 	{
-		$class_open_total = 0;
-		$class_period_total = 0;
-		$convert = get_class_type_convert($class["ctype"]); 		
+		$class_open_total = 0.0;
+		$class_period_total = 0.0;
+		$convert = get_class_type_convert((string) $class["ctype"]);
 		
 		//Print Class Name	
 		$rep->Font('bold');
@@ -318,7 +324,7 @@ function print_balance_sheet(): void
 		$pg->setValues(true);
 		$pg->latin_notation = (sysprefs()->decseps[user_dec_sep()] != ".");
 		$filename = company_path(). "/pdf_files/". random_id().".png";
-		$pg->display($filename, true);
+		$pg->display($filename);
 		$w = (float)$pg->width / 1.5;
 		$h = (float)$pg->height / 1.5;
 		$x = ($rep->pageWidth - $w) / 2.0;

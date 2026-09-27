@@ -28,17 +28,19 @@ include_once(dirname(__DIR__) . "/gl/includes/gl_db.inc");
 
 function display_type (?string $type, ?string $typename, int|string|null &$dec, FrontReport &$rep, string|int|float|bool|array|null $showbalance, string|int|float|bool|array|null $level): void
 {
-	$printtitle = 0; //Flag for printing type name	
+	$printtitle = 0; //Flag for printing type name
+	$prefix = '';
+	$balance = null;
 
 	//Get Accounts directly under this group/type
-	$result = get_gl_accounts(null, null, $type);	
+	$result = get_gl_accounts(null, null, $type);
 	while ($account=db_fetch($result))
 	{
-		//Print Type Title if it has atleast one non-zero account	
+		//Print Type Title if it has atleast one non-zero account
 		if (!$printtitle)
 		{
 			$prefix = '';
-			for ($sp=1; $sp<=$level; $sp++)
+			for ($sp=1; $sp<=(is_array($level) ? 0 : (int) $level); $sp++)
 			{
 				$prefix .= '         ';
 			}
@@ -58,7 +60,7 @@ function display_type (?string $type, ?string $typename, int|string|null &$dec, 
 			$balance = get_gl_trans_from_to($begin, ToDay(), $account["account_code"], 0);
 		}
 		$rep->TextCol(0, 1,	$account['account_code']);
-		$rep->TextCol(1, 2,	$prefix.$account['account_name']);
+		$rep->TextCol(1, 2,	$prefix.(string) $account['account_name']);
 		$rep->TextCol(2, 3,	$account['account_code2']);
 		if ($showbalance == 1)	
 			$rep->AmountCol(3, 4, $balance, $dec);
@@ -95,10 +97,10 @@ function print_Chart_of_Accounts(): void
 {
 	global $path_to_root;
 
-	$showbalance = $_POST['PARAM_0'];
-	$comments = $_POST['PARAM_1'];
-	$orientation = $_POST['PARAM_2'];
-	$destination = $_POST['PARAM_3'];
+	$showbalance = post_scalar('PARAM_0');
+	$comments = post_scalar('PARAM_1');
+	$orientation = post_scalar('PARAM_2');
+	$destination = post_scalar('PARAM_3');
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
@@ -122,6 +124,7 @@ function print_Chart_of_Accounts(): void
 	$rep->Info($params, $cols, $headers, $aligns);
 	$rep->NewPage();
 
+	$dec = user_price_dec();
 	$classresult = get_account_classes(false);
 	while ($class = db_fetch($classresult))
 	{

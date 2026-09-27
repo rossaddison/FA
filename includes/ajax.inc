@@ -27,7 +27,7 @@ class Ajax extends JsHttpRequest {
 	//	update of ajaxified html element selected by given name/id.
 	//
 	/** @return void */
-	function activate($trigname) {
+	function activate(string $trigname) {
 	  if (in_ajax()) {
 		$this->triggers[$trigname] = true;
 	  }
@@ -106,7 +106,10 @@ class Ajax extends JsHttpRequest {
 	// Assign target attribute with data.
 	//
 	/**
+	 * @param bool|string $trigger
+	 * @param string|null $sTarget
 	 * @param string|null $sAttribute
+	 * @param mixed $sData
 	 * @return static
 	 */
 	function addAssign($trigger, $sTarget,$sAttribute,$sData)
@@ -117,7 +120,12 @@ class Ajax extends JsHttpRequest {
 	//
 	// Updates input element or label with data.
 	//
-	/** @return static */
+	/**
+	 * @param bool|string $trigger
+	 * @param string|null $sTarget
+	 * @param mixed $sData
+	 * @return static
+	 */
 	function addUpdate($trigger, $sTarget, $sData)
 	{
 		$this->_addCommand($trigger, array('n'=>'up','t'=>$sTarget),$sData);
@@ -140,7 +148,12 @@ class Ajax extends JsHttpRequest {
 	//
 	// Set state of element to enabled.
 	//
-	/** @return static */
+	/**
+	 * @param bool $trigger
+	 * @param string|null $sTarget
+	 * @param bool $sData
+	 * @return static
+	 */
 	function addEnable($trigger, $sTarget, $sData=true)
 	{
 		$this->_addCommand($trigger, array('n'=>'di','t'=>$sTarget), !$sData);
@@ -163,7 +176,9 @@ class Ajax extends JsHttpRequest {
 	// Internal procedure adding command to response.
 	//
 	/**
+	 * @param bool|string|null $trigger
 	 * @param array<array-key, mixed>|null $aAttributes
+	 * @param mixed $mData
 	 * @return void
 	 */
 	function _addCommand($trigger, $aAttributes, $mData)
@@ -211,10 +226,10 @@ function in_ajax() {
 // Returns absolute path of relative $url. To be used in ajax calls
 // for proper redirection from any referer page.
 //
-/** @return null|scalar */
-function absolute_url(string|int|float|bool|null $url) 
+function absolute_url(string|int|float|bool|null $url): string
 {
-   return strpos($url, '..')===0 ? dirname($_SERVER['PHP_SELF']).'/'.$url : $url;
+   $url = (string) $url;
+   return strpos($url, '..')===0 ? dirname((string) $_SERVER['PHP_SELF']).'/'.$url : $url;
 }
 
 /**

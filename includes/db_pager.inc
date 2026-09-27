@@ -19,11 +19,11 @@ include_once(dirname(__DIR__) . "/includes/ui/db_pager_view.inc");
 
 class db_pager {
 	/** @var string */
-	var $sql;
+	var $sql = '';
 	/** @var string */
 	var $name;
 	/** @var array<int, array<string, mixed>> */
-	var $columns;		// column definitions (head, type, order)
+	var $columns = array();		// column definitions (head, type, order)
 
 	/**
 	 * @var null|string
@@ -66,12 +66,12 @@ class db_pager {
 	var $data = array();
 
 	/** @var int */
-	var $curr_page;
+	var $curr_page = 0;
 
 	/**
 	 * @var float|int
 	 */
-	var $max_page;
+	var $max_page = 0;
 
 	/**
 	 * @var float|int|null
@@ -90,32 +90,32 @@ class db_pager {
 	/** @var int */
 	var $page_len;
 	/** @var int|string */
-	var $rec_count;
-	
-	/**
-	 * @var string
-	 */
-	var $select;
+	var $rec_count = 0;
 
 	/**
 	 * @var string
 	 */
-	var $where;
+	var $select = '';
 
 	/**
 	 * @var string
 	 */
-	var $from;
+	var $where = '';
 
 	/**
 	 * @var string
 	 */
-	var $group;
+	var $from = '';
 
 	/**
 	 * @var string
 	 */
-	var $order;
+	var $group = '';
+
+	/**
+	 * @var string
+	 */
+	var $order = '';
 	/** @var array<int, string> */
 	var	$extra_where = array();
 	
@@ -168,7 +168,7 @@ class db_pager {
 				}
 				else {
 					// parse the query
-					$parts = preg_split('/\sFROM\s/si', $sql, 2);
+					$parts = preg_split('/\sFROM\s/si', $sql, 2) ?: array();
 					if (count($parts) == 2) {
 						$this->select = $parts[0];
 						$sql = $parts[1];
@@ -177,17 +177,17 @@ class db_pager {
 							display_error("Invalid sql input for db_pager");
 					}
 
-					$parts = preg_split('/\sWHERE(?!.*WHERE.*)\s/si', $sql, 2); // last occurence
+					$parts = preg_split('/\sWHERE(?!.*WHERE.*)\s/si', $sql, 2) ?: array(); // last occurence
 					if(count($parts) == 2) {
 						$this->from = $parts[0];
 						$sql = $parts[1];
 
-						$parts = preg_split('/\sORDER\s*BY\s/si', $sql, 2);
+						$parts = preg_split('/\sORDER\s*BY\s/si', $sql, 2) ?: array();
 						if(count($parts) == 2) {
 							$sql = $parts[0];
 							$this->order = $parts[1];
 						}
-						$parts = preg_split('/\sGROUP\s*BY\s/si', $sql, 2);
+						$parts = preg_split('/\sGROUP\s*BY\s/si', $sql, 2) ?: array();
 						if(count($parts) == 2) {
 							$sql = $parts[0];
 							$this->group = $parts[1];
@@ -238,7 +238,7 @@ class db_pager {
 	 * @param string|int|null $col
 	 * @return true
 	 */
-	function sort_table($col) 
+	function sort_table(int $col)
 	{
 
 			$max_priority = 0;
@@ -323,9 +323,9 @@ class db_pager {
 	  	$max = $this->max_page;
 	  	if ($page > $max) 
 	    	$page = $max;
-	  	$this->curr_page = $page;
-	  	$this->next_page = ($page < $max) ? $page+1.0 : null;
-	  	$this->prev_page = ($page > 1) ? ($page-1.0) : null;
+	  	$this->curr_page = (int) $page;
+	  	$this->next_page = ($page < $max) ? (int) $page+1 : null;
+	  	$this->prev_page = ($page > 1) ? (int) $page-1 : null;
 	  	$this->last_page = ($page < $max) ? $max : null;
 	  	$this->first_page = ($page != 1) ? 1: null;
 	}
@@ -484,8 +484,8 @@ class db_pager {
 			if ($page == 'prev' && !$this->prev_page ||
 				$page == 'first' && !(bool)$this->first_page)
 					set_focus($this->name.'_page_next');
-		} elseif ($sort != -1) {
-			$this->sort_table($sort);
+		} elseif ($sort != -1 && $sort !== null) {
+			$this->sort_table((int) $sort);
 		} else
 			$this->query();
 	}
@@ -604,8 +604,10 @@ class db_pager {
 /** @return db_pager */
 function &new_db_pager($name, $sql, $coldef, $table = null, $key = null, $page_len = 0)  {
 
-    if (isset($_SESSION[$name]) &&
-		 ($_SERVER['REQUEST_METHOD'] == 'GET' || $_SESSION[$name]->sql != $sql)) {
+    /** @var db_pager|null $existing_pager */
+    $existing_pager = $_SESSION[$name] ?? null;
+    if (isset($existing_pager) &&
+		 ($_SERVER['REQUEST_METHOD'] == 'GET' || $existing_pager->sql != $sql)) {
 		unset($_SESSION[$name]); // kill pager if sql has changed
 	}
 	if (!isset($_SESSION[$name])) {
@@ -615,7 +617,8 @@ function &new_db_pager($name, $sql, $coldef, $table = null, $key = null, $page_l
 		$_SESSION[$name]->set_sql($sql);
 		$_SESSION[$name]->set_columns($coldef);
 	}
-	
+
+	/** @var db_pager */
 	return  $_SESSION[$name];
 
 }

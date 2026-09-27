@@ -34,35 +34,38 @@ print_GL_transactions();
 function print_GL_transactions(): void
 {
 	global $path_to_root, $systypes_array;
+	/** @var array<int, string> $systypes_array */
 
 	$dim = get_company_pref('use_dimension');
 	$dimension = $dimension2 = 0;
 
-	$from = $_POST['PARAM_0'];
-	$to = $_POST['PARAM_1'];
-	$fromacc = $_POST['PARAM_2'];
-	$toacc = $_POST['PARAM_3'];
+	$from = (string) post_scalar('PARAM_0');
+	$to = (string) post_scalar('PARAM_1');
+	$fromacc = post_scalar('PARAM_2');
+	$toacc = post_scalar('PARAM_3');
 	if ($dim == 2)
 	{
-		$dimension = $_POST['PARAM_4'];
-		$dimension2 = $_POST['PARAM_5'];
-		$comments = $_POST['PARAM_6'];
-		$orientation = $_POST['PARAM_7'];
-		$destination = $_POST['PARAM_8'];
+		$dimension = post_scalar('PARAM_4');
+		$dimension2 = post_scalar('PARAM_5');
+		$comments = post_scalar('PARAM_6');
+		$orientation = post_scalar('PARAM_7');
+		$destination = post_scalar('PARAM_8');
 	}
 	elseif ($dim == 1)
 	{
-		$dimension = $_POST['PARAM_4'];
-		$comments = $_POST['PARAM_5'];
-		$orientation = $_POST['PARAM_6'];
-		$destination = $_POST['PARAM_7'];
+		$dimension = post_scalar('PARAM_4');
+		$comments = post_scalar('PARAM_5');
+		$orientation = post_scalar('PARAM_6');
+		$destination = post_scalar('PARAM_7');
 	}
 	else
 	{
-		$comments = $_POST['PARAM_4'];
-		$orientation = $_POST['PARAM_5'];
-		$destination = $_POST['PARAM_6'];
+		$comments = post_scalar('PARAM_4');
+		$orientation = post_scalar('PARAM_5');
+		$destination = post_scalar('PARAM_6');
 	}
+	$dimension = (int) $dimension;
+	$dimension2 = (int) $dimension2;
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
@@ -129,7 +132,7 @@ function print_GL_transactions(): void
 	$rep->Info($params, $cols, $headers, $aligns);
 	$rep->NewPage();
 
-	$accounts = get_gl_accounts($fromacc, $toacc);
+	$accounts = get_gl_accounts((string) $fromacc, (string) $toacc);
 
 	while ($account=db_fetch($accounts))
 	{
@@ -162,17 +165,17 @@ function print_GL_transactions(): void
 		{
 			while ($myrow=db_fetch($trans))
 			{
-				$total += $myrow['amount'];
+				$total += (float) $myrow['amount'];
 
-				$rep->TextCol(0, 1, $systypes_array[$myrow["type"]], -2);
+				$rep->TextCol(0, 1, $systypes_array[(int) $myrow["type"]], -2);
 				$reference = get_reference($myrow["type"], $myrow["type_no"]);
 				$rep->TextCol(1, 2, $reference);
 				$rep->TextCol(2, 3,	$myrow['type_no'], -2);
 				$rep->DateCol(3, 4,	$myrow["tran_date"], true);
 				if ($dim >= 1)
-					$rep->TextCol(4, 5,	get_dimension_string($myrow['dimension_id']));
+					$rep->TextCol(4, 5,	get_dimension_string((int) $myrow['dimension_id']));
 				if ($dim > 1)
-					$rep->TextCol(5, 6,	get_dimension_string($myrow['dimension2_id']));
+					$rep->TextCol(5, 6,	get_dimension_string((int) $myrow['dimension2_id']));
 				$txt = payment_person_name($myrow["person_type_id"],$myrow["person_id"], false);
 				$memo = $myrow['memo_'];
 				if ($txt != "")
@@ -184,9 +187,9 @@ function print_GL_transactions(): void
 					$txt = $memo;
 				$rep->TextCol(6, 7,	$txt, -2);
 				if ($myrow['amount'] > 0.0)
-					$rep->AmountCol(7, 8, abs($myrow['amount']), $dec);
+					$rep->AmountCol(7, 8, abs((float) $myrow['amount']), $dec);
 				else
-					$rep->AmountCol(8, 9, abs($myrow['amount']), $dec);
+					$rep->AmountCol(8, 9, abs((float) $myrow['amount']), $dec);
 				$rep->TextCol(9, 10, number_format2($total, $dec));
 				$rep->NewLine();
 				if ($rep->row < $rep->bottomMargin + $rep->lineHeight)

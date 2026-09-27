@@ -396,18 +396,17 @@ function close_sales_order(string|int|float|bool|null $order_no): void
 
 //---------------------------------------------------------------------------------------------------------------
 
-/** @return array<array-key, mixed>|null|scalar */
-function get_invoice_duedate(string|int|float|bool|null $terms, string|int|float|bool|null $invdate)
+function get_invoice_duedate(string|int|float|bool|null $terms, string|int|float|bool|null $invdate): string
 {
 	if (!is_date($invdate))
 	{
 		return new_doc_date();
 	}
-	
+
 	$myrow = row_or_empty(get_payment_terms($terms));
-	
+
 	if (!$myrow)
-		return $invdate;
+		return (string) $invdate;
 
 	if ($myrow['day_in_following_month'] > 0)
 		$duedate = add_days(end_month($invdate), $myrow['day_in_following_month']);
@@ -415,7 +414,7 @@ function get_invoice_duedate(string|int|float|bool|null $terms, string|int|float
 		$duedate = add_days($invdate, $myrow['days_before_due']);
 	else
 		$duedate = $invdate;
-	return $duedate;
+	return (string) $duedate;
 }
 
 /**
@@ -609,10 +608,7 @@ function update_prepaid_so_line(string|int|float|bool|null $line_id, string|int|
 /*
 	Returns array of all issued invoices to sales order $order_no, optinally up to trans_no==$up_to
 */
-/**
- * @return mysqli_result
- */
-function get_sales_order_invoices(string|null $order_no)
+function get_sales_order_invoices(string|null $order_no): mysqli_result
 {
 	$sql = "SELECT trans_no, dt.type as type, tran_date, reference, prep_amount
 	    FROM ".TB_PREF."debtor_trans dt

@@ -25,7 +25,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 	$input_error = 0;
 
-	if (strlen($_POST['description']) == 0) 
+	if (strlen((string) $_POST['description']) == 0)
 	{
 		$input_error = 1;
 		display_error(_("The sales group description cannot be empty."));
@@ -34,7 +34,9 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 	if ($input_error != 1)
 	{
-    	if ($selected_id != -1) 
+    	/** @var int|string $selected_id */
+    	$selected_id = $selected_id;
+    	if ($selected_id != -1)
     	{
     		update_sales_group($selected_id, post_scalar('description'));
 			$note = _('Selected sales group has been updated');
@@ -56,7 +58,8 @@ if ($Mode == 'Delete')
 	$cancel_delete = 0;
 
 	// PREVENT DELETES IF DEPENDENT RECORDS IN 'debtors_master'
-
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	if ((bool)key_in_foreign_table($selected_id, 'cust_branch', 'group_no'))
 	{
 		$cancel_delete = 1;
@@ -109,17 +112,21 @@ end_table(1);
 
 start_table(TABLESTYLE2);
 
-if ($selected_id != -1) 
+if ($selected_id != -1)
 {
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
  	if ($Mode == 'Edit') {
 		//editing an existing group
 		$myrow = row_or_empty(get_sales_group($selected_id));
 
 		$_POST['description']  = $myrow["description"];
+		label_row(_("ID"), $myrow["id"]);
 	}
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	hidden("selected_id", $selected_id);
-	label_row(_("ID"), $myrow["id"]);
-} 
+}
 
 text_row_ex(_("Group Name:"), 'description', 30); 
 

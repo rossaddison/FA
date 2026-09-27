@@ -28,15 +28,16 @@ if (!isset($_GET['type_id']) || !isset($_GET['trans_no']))
 	end_page();
 }
 
-function display_gl_heading(?array $myrow): void
+function display_gl_heading(array $myrow): void
 {
 	global $systypes_array;
-	
+
 	if (!empty(sysprefs()->prefs['company_logo_on_views']))
 		company_logo_on_view();
-	
-	$trans_name = $systypes_array[$_GET['type_id']];
+
+	$trans_name = $systypes_array[(int) get_scalar('type_id')];
 	$journal = $_GET['type_id'] == ST_JOURNAL;
+	$header = array();
 
     start_table(TABLESTYLE, "width='95%'");
     $th = array(_("General Ledger Transaction Details"), _("Reference"),
@@ -54,24 +55,24 @@ function display_gl_heading(?array $myrow): void
     table_header($th);	
     start_row();	
     label_cell("$trans_name #" . (string)$_GET['trans_no']);
-    label_cell($myrow["reference"], "align='center'");
+    label_cell((string) $myrow["reference"], "align='center'");
 	if($myrow['supp_reference'])
 	{
-	label_cell($myrow["supp_reference"], "align='center'");
+	label_cell((string) $myrow["supp_reference"], "align='center'");
 	}
-	label_cell(sql2date($myrow["doc_date"]), "align='center'");
+	label_cell(sql2date((string) $myrow["doc_date"]), "align='center'");
 	if ($journal)
 	{
-		$header = row_or_empty(get_journal($myrow['type'], get_scalar('trans_no')));
+		$header = row_or_empty(get_journal((string) $myrow['type'], get_scalar('trans_no')));
 		label_cell($header["doc_date"] == '0000-00-00' ? '-' : sql2date($header["doc_date"]), "align='center'");
 		label_cell($header["event_date"] == '0000-00-00' ? '-' : sql2date($header["event_date"]), "align='center'");
 	} else
 		label_cell(get_counterparty_name(get_scalar('type_id'),get_scalar('trans_no')));
-	label_cell( get_journal_number($myrow['type'], get_scalar('trans_no')), "align='center'");
+	label_cell( get_journal_number((string) $myrow['type'], get_scalar('trans_no')), "align='center'");
 	end_row();
 
 	start_row();
-	label_cells(_('Entered By'), $myrow["real_name"], "class='tableheader2'", "colspan=" .
+	label_cells(_('Entered By'), (string) $myrow["real_name"], "class='tableheader2'", "colspan=" .
 		 ($journal ? ($header['rate']==1 ? '3':'1'):'6'));
 	if ($journal)
 	{
@@ -80,14 +81,14 @@ function display_gl_heading(?array $myrow): void
 		label_cells(_('Source document'), $header["source_ref"], "class='tableheader2'");
 	}
 	end_row();
-	comments_display_row(get_scalar('type_id'), get_scalar('trans_no'));
+	comments_display_row((string) get_scalar('type_id'), get_scalar('trans_no'));
     end_table(1);
 }
 $result = get_gl_trans(get_scalar('type_id'), get_scalar('trans_no'));
 
 if (db_num_rows($result) == 0)
 {
-    echo "<p><center>" . _("No general ledger transactions have been created for") . " " .$systypes_array[$_GET['type_id']]." " . _("number") . " " . (string)$_GET['trans_no'] . "</center></p><br><br>";
+    echo "<p><center>" . _("No general ledger transactions have been created for") . " " .$systypes_array[(int) get_scalar('type_id')]." " . _("number") . " " . \Yiisoft\Html\Html::encode((string)$_GET['trans_no']) . "</center></p><br><br>";
 	end_page(true);
 	exit;
 }
@@ -108,7 +109,7 @@ else
 $k = 0; //row colour counter
 $heading_shown = false;
 
-$credit = $debit = 0;
+$credit = $debit = 0.0;
 while ($myrow = db_fetch($result)) 
 {
 	if ($myrow['amount'] == 0) continue;
@@ -123,7 +124,7 @@ while ($myrow = db_fetch($result))
 	alt_table_row_color($k);
 
 	$counterpartyname = get_subaccount_name($myrow["account"], $myrow["person_id"]);
-	$counterparty_id = (bool)$counterpartyname ? sprintf(' %05d', $myrow["person_id"]) : '';
+	$counterparty_id = (bool)$counterpartyname ? sprintf(' %05d', (int) $myrow["person_id"]) : '';
 
     label_cell(sql2date($myrow['tran_date']));
     label_cell((string)$myrow['account'].$counterparty_id);
@@ -136,10 +137,10 @@ while ($myrow = db_fetch($result))
 	display_debit_or_credit_cells($myrow['amount']);
 	label_cell($myrow['memo_']);
 	end_row();
-    if ($myrow['amount'] > 0 ) 
-    	$debit += $myrow['amount'];
-    else 
-    	$credit += $myrow['amount'];
+    if ($myrow['amount'] > 0 )
+    	$debit += (float) $myrow['amount'];
+    else
+    	$credit += (float) $myrow['amount'];
 }
 
 if ($heading_shown)
@@ -161,4 +162,4 @@ if ($heading_shown)
 
 is_voided_display(get_scalar('type_id'), get_scalar('trans_no'), _("This transaction has been voided."));
 
-end_page(true, false, false, get_scalar('type_id'), get_scalar('trans_no'));
+end_page(true, false, false, (string) get_scalar('type_id'), (string) get_scalar('trans_no'));

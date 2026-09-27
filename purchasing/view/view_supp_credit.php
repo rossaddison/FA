@@ -23,20 +23,21 @@ if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 500);
 page(_($help_context = "View Supplier Credit Note"), true, false, "", $js);
 
+$trans_no = null;
 if (isset($_GET["trans_no"]))
 {
-	$trans_no = $_GET["trans_no"];
+	$trans_no = (string) get_scalar('trans_no');
 }
 elseif (isset($_POST["trans_no"]))
 {
-	$trans_no = $_POST["trans_no"];
+	$trans_no = (string) post_scalar('trans_no');
 }
 
 $supp_trans = new supp_trans(ST_SUPPCREDIT);
 
 read_supp_invoice($trans_no, ST_SUPPCREDIT, $supp_trans);
 
-display_heading("<font color=red>" . _("SUPPLIER CREDIT NOTE") . " # " . $trans_no . "</font>");
+display_heading("<font color=red>" . _("SUPPLIER CREDIT NOTE") . " # " . (string) $trans_no . "</font>");
 echo "<br>";
 start_table(TABLESTYLE, "width='95%'");
 start_row();
@@ -76,5 +77,5 @@ if (!$voided)
 	display_allocations_from(PT_SUPPLIER, $supp_trans->supplier_id, ST_SUPPCREDIT, $trans_no, -((float)$supp_trans->ov_amount + (float)$supp_trans->ov_gst));
 }
 
-end_page(true, false, false, ST_SUPPCREDIT, $trans_no);
+end_page(true, false, false, ST_SUPPCREDIT, (string) $trans_no);
 

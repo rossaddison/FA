@@ -31,7 +31,7 @@ function trans_view(array $trans)
 	return get_trans_view_str(ST_PURCHORDER, $trans["order_no"]);
 }
 
-function edit_link(array $row) 
+function edit_link(array $row): string
 {
 	global $page_nested;
 

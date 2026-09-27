@@ -1,6 +1,12 @@
 ![FrontAccounting ERP](./themes/default/images/logo_frontaccounting.jpg  "FrontAccounting ERP")
 ===================
 
+## PHP 8.5 / Psalm Migration Status
+
+This branch (`chore/php-8.5-minimum`) is undergoing a file-by-file Psalm static-analysis cleanup as part of raising the minimum PHP version to 8.5. Full project scan, 2026-09-27: **10,397** Psalm errors, down from an initial 13,353.
+
+See [doc/PSALM_MIGRATION.md](doc/PSALM_MIGRATION.md) for the methodology, the error-category breakdown, and the established idioms/known-noise patterns, and [doc/BUGS_FOUND.md](doc/BUGS_FOUND.md) for the running list of genuine bugs (including a couple of live crashes and a broken access-control check) the cleanup has turned up so far.
+
 FrontAccounting ERP is open source, web-based accounting software for small and medium enterprises.
 It supports double entry accounting providing both low level journal entry and user friendly, document based 
 interface for everyday business activity with automatic GL postings generation. This is multicurrency,

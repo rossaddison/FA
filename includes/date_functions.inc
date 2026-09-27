@@ -524,10 +524,11 @@ provided that both dates are after 1970. Also only works for dates up to the yea
 	}
 }
 
+/** @return array{0: int|string, 1: int|string, 2: int|string} */
 function explode_date_to_dmy(string|int|float|bool|null $date_): array
 {
 	$date = date2sql($date_);
-	if ($date == "") 
+	if ($date == "")
 	{
 		return array(0,0,0);
 	}

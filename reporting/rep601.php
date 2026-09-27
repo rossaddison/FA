@@ -62,14 +62,15 @@ function get_bank_transactions(string|null $from, string|null $to, ?string $acco
 function print_bank_transactions(): void
 {
 	global $path_to_root, $systypes_array;
+	/** @var array<int, string> $systypes_array */
 
-	$acc = $_POST['PARAM_0'];
-	$from = $_POST['PARAM_1'];
-	$to = $_POST['PARAM_2'];
-	$zero = $_POST['PARAM_3'];
-	$comments = $_POST['PARAM_4'];
-	$orientation = $_POST['PARAM_5'];
-	$destination = $_POST['PARAM_6'];
+	$acc = post_scalar('PARAM_0');
+	$from = (string) post_scalar('PARAM_1');
+	$to = (string) post_scalar('PARAM_2');
+	$zero = post_scalar('PARAM_3');
+	$comments = post_scalar('PARAM_4');
+	$orientation = post_scalar('PARAM_5');
+	$destination = post_scalar('PARAM_6');
 
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
@@ -106,9 +107,9 @@ function print_bank_transactions(): void
 		$rep->NewPage();
 
 
-		$prev_balance = get_bank_balance_to($from, $account["id"]);
+		$prev_balance = (float) get_bank_balance_to($from, (string) $account["id"]);
 
-		$trans = get_bank_transactions($from, $to, $account['id']);
+		$trans = get_bank_transactions($from, $to, (string) $account['id']);
 
 		$rows = db_num_rows($trans);
 		if ($prev_balance != 0.0 || $rows != 0)
@@ -133,9 +134,9 @@ function print_bank_transactions(): void
 				{
 					if ($zero == 0 && $myrow['amount'] == 0.0)
 						continue;
-					$total += $myrow['amount'];
+					$total += (float) $myrow['amount'];
 
-					$rep->TextCol(0, 1, $systypes_array[$myrow["type"]]);
+					$rep->TextCol(0, 1, $systypes_array[(int) $myrow["type"]]);
 					$rep->TextCol(1, 2,	$myrow['trans_no']);
 					$rep->TextCol(2, 3,	$myrow['ref']);
 					$rep->DateCol(3, 4,	$myrow["trans_date"], true);

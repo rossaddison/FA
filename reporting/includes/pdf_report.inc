@@ -294,7 +294,7 @@ class FrontReport extends Cpdf
 	 * @param string|null $style
 	 * @param string|null $fontname
 	 */
-	function Font($style = '', $fontname = '')
+	function Font($style = '', $fontname = ''): void
 	{
 		$this->selectFont($fontname, $style);
 	}
@@ -313,7 +313,7 @@ class FrontReport extends Cpdf
 	 */
 	function Info($params, $cols, $headers, $aligns,
 		$cols2 = null, $headers2 = null, $aligns2 = null,
-		$companylogoenable = false, $footerenable = false, $footertext = '')
+		$companylogoenable = false, $footerenable = false, $footertext = ''): void
 	{
 		global $version;
 
@@ -355,9 +355,9 @@ class FrontReport extends Cpdf
 	//
 	//	Header for listings
 	//
-	function Header()
+	function Header(): void
 	{
-		
+
 		$companyCol = $this->endLine - 150;
 		$titleCol = $this->leftMargin + 100;
 
@@ -490,13 +490,13 @@ class FrontReport extends Cpdf
 	/**
 	 * @param string|null $name
 	 */
-	function SetHeaderType($name) {
+	function SetHeaderType($name): void {
 		$this->headerTmpl = $name;
 	}
 	/*
 		Header for sales/purchase documents
 	*/
-	function Header2()
+	function Header2(): void
 	{
 		global $dflt_lang; // FIXME should be passed as params
 
@@ -517,7 +517,7 @@ class FrontReport extends Cpdf
 	}
 
 	// Alternate header style which also supports a simple footer
-	function Header3()
+	function Header3(): void
 	{
 		// Turn off cell padding for the main report header, restoring the current setting later
 		$oldcMargin = $this->cMargin;
@@ -738,7 +738,7 @@ class FrontReport extends Cpdf
 	 * @param int $output_format Format of the output string.  Possible values are:<ul><li>0: Month (word) Day (numeric), 4-digit Year - Example: January 1, 2000 (default)</li><li>1: Month 4-digit Year - Example: January 2000</li><li>2: Month Abbreviation 4-digit Year - Example: Jan 2000</li></ul>
 	 * @access public
 	 */
-	function DatePrettyPrint($date, $input_format = 0, $output_format = 0)
+	function DatePrettyPrint($date, $input_format = 0, $output_format = 0): ?string
 	{
 		if ($date != '')
 		{
@@ -760,7 +760,7 @@ class FrontReport extends Cpdf
 	/**
 	 * @param string|null $logo
 	 */
-	function AddImage($logo, $x, $y, $w, $h)
+	function AddImage($logo, $x, $y, $w, $h): void
 	{
 		if (strpos($logo, ".png") || strpos($logo, ".PNG"))
 			$this->addPngFromFile($logo, $x, $y, $w, $h);
@@ -793,11 +793,22 @@ class FrontReport extends Cpdf
 
 	// Set desired cell padding (aka "cell margin")
 	// Seems to be just left and right margins...
-	function SetCellPadding($pad)
+	function SetCellPadding($pad): void
 	{
 		parent::SetCellPadding($pad);
 	}
 	
+	/**
+	 * @param int|float $c
+	 * @param string|int|float|bool|null $txt
+	 * @param int|float $n
+	 * @param int|float $corr
+	 * @param int|float $r
+	 * @param string|null $align
+	 * @param int|null $border
+	 * @param int|null $fill
+	 * @param int|null $stretch
+	 */
 	function Text($c, $txt, $n=0, $corr=0, $r=0, $align='left', $border=0, $fill=0, $link=NULL, $stretch=1)
 	{
 		if ($n == 0)
@@ -807,7 +818,7 @@ class FrontReport extends Cpdf
 	}
 
 	/**
-	 * @param string|null $str
+	 * @param string|int|float|bool|null $str
 	 * @param string|null $align
 	 * @param int|null $border
 	 * @param int|null $fill
@@ -816,7 +827,7 @@ class FrontReport extends Cpdf
 	 */
 	function TextWrap($xpos, $ypos, $len, $str, $align = 'left', $border = 0, $fill = 0, $link = NULL, $stretch = 1, $spacebreak=false)
 	{
-		$str = ($str != NULL ? strtr($str, array("\r"=>'')) : "");
+		$str = ($str !== NULL ? strtr((string) $str, array("\r"=>'')) : "");
 
 		if ($this->fontSize != $this->oldFontSize)
 		{
@@ -829,6 +840,7 @@ class FrontReport extends Cpdf
 	/**
 	 * @param int|null $c
 	 * @param int|null $n
+	 * @param string|int|float|bool|null $txt
 	 * @param int|null $corr
 	 * @param int|null $r
 	 * @param int|null $border
@@ -839,10 +851,11 @@ class FrontReport extends Cpdf
 	{
 		return $this->TextWrap($this->cols[$c], $this->row - $r, $this->cols[$n] - $this->cols[$c] + $corr, $txt, $this->aligns[$c], $border, $fill, $link, $stretch);
 	}
-	
+
 	/**
 	 * @param int|null $c
 	 * @param int|null $n
+	 * @param string|int|float|bool|null $txt
 	 * @param int|null $corr
 	 * @param int|null $r
 	 * @param int|null $border
@@ -852,23 +865,37 @@ class FrontReport extends Cpdf
 	 */
 	function AmountCol($c, $n, $txt, $dec=0, $corr=0, $r=0, $border=0, $fill=0, $link=NULL, $stretch=1, $color_red=false)
 	{
-		if ($color_red && $txt < 0)
+		if ($color_red && (float) $txt < 0)
 			$this->SetTextColor(255, 0, 0);
 		$ret = $this->TextCol($c, $n, number_format2($txt, $dec), $corr, $r, $border, $fill, $link, $stretch);
-		if ($color_red && $txt < 0)
+		if ($color_red && (float) $txt < 0)
 			$this->SetTextColor(0, 0, 0);
-		return $ret;	
+		return $ret;
 	}
 
+	/**
+	 * @param int|null $c
+	 * @param int|null $n
+	 * @param string|int|float|bool|null $txt
+	 * @param int|null $dec
+	 * @param int|null $corr
+	 * @param int|null $r
+	 * @param int|null $border
+	 * @param int|null $fill
+	 * @param int|null $stretch
+	 * @param bool $color_red
+	 * @param string|null $amount_locale
+	 * @param string|null $amount_format
+	 */
 	function AmountCol2($c, $n, $txt, $dec=0, $corr=0, $r=0, $border=0, $fill=0, $link=NULL, $stretch=1, $color_red=false, $amount_locale = 'en_US.UTF-8', $amount_format = '%(!.2n')
 	{
 		setlocale(LC_MONETARY, $amount_locale);
-		if ($color_red && $txt < 0)
+		if ($color_red && (float) $txt < 0)
 			$this->SetTextColor(255, 0, 0);
 		$ret = $this->TextCol($c, $n, price_format($txt), $corr, $r, $border, $fill, $link, $stretch);
-		if ($color_red && $txt < 0)
+		if ($color_red && (float) $txt < 0)
 			$this->SetTextColor(0, 0, 0);
-		return $ret;	
+		return $ret;
 	}
 	
 	/**
@@ -889,6 +916,16 @@ class FrontReport extends Cpdf
 		return $this->TextCol($c, $n, $txt, $corr, $r, $border, $fill, $link, $stretch);
 	}
 
+	/**
+	 * @param int|null $c
+	 * @param int|null $n
+	 * @param string|int|float|bool|null $txt
+	 * @param int|null $corr
+	 * @param int|null $r
+	 * @param int|null $border
+	 * @param int|null $fill
+	 * @param int|null $stretch
+	 */
 	function TextCol2($c, $n, $txt, $corr=0, $r=0, $border=0, $fill=0, $link=NULL, $stretch=1)
 	{
 		return $this->TextWrap($this->cols2[$c], $this->row - $r, $this->cols2[$n] - $this->cols2[$c] + $corr, $txt, $this->aligns2[$c], $border, $fill, $link, $stretch);
@@ -904,13 +941,13 @@ class FrontReport extends Cpdf
 	 * @param int|null $fill
 	 * @param int|null $stretch
 	 */
-	function TextColLines($c, $n, $txt, $corr=0, $r=0, $border=0, $fill=0, $link=NULL, $stretch=0)
+	function TextColLines($c, $n, $txt, $corr=0, $r=0, $border=0, $fill=0, $link=NULL, $stretch=0): void
 	{
 		$this->row -= $r;
 		$this->TextWrapLines($this->cols[$c], $this->cols[$n] - $this->cols[$c] + $corr, $txt, $this->aligns[$c], $border, $fill, $link, $stretch, true);
 	}
 
-	function TextWrapLines($c, $width, $txt, $align='left', $border=0, $fill=0, $link=NULL, $stretch=0, $spacebreak=true)
+	function TextWrapLines($c, $width, $txt, $align='left', $border=0, $fill=0, $link=NULL, $stretch=0, $spacebreak=true): void
 	{
 		$str = ($txt != NULL ? explode("\n", $txt) : array());
 
@@ -951,7 +988,7 @@ class FrontReport extends Cpdf
 	 * phase (integer) - a modifier on the dash pattern which is used to shift the point at which the pattern starts.
 	 * color (array) - draw color.  Format: array(GREY), or array(R,G,B) or array(C,M,Y,K).
 	 */
-	function SetLineStyle($style)
+	function SetLineStyle($style): void
 	{
 		parent::SetLineStyle($style);
 	}
@@ -959,12 +996,12 @@ class FrontReport extends Cpdf
 	/**
 	 * Sets the line drawing width.
 	 */
-	function SetLineWidth($width)
+	function SetLineWidth($width): void
 	{
 		parent::SetLineWidth($width);
 	}
 	
-	function LineTo($from, $row, $to, $row2)
+	function LineTo($from, $row, $to, $row2): void
 	{
 		parent::line($from, $row, $to, $row2);
 	}
@@ -972,7 +1009,7 @@ class FrontReport extends Cpdf
 	/**
 	 * @param int|null $height
 	 */
-	function Line($row, $height = 0, $dummy1=null, $dummy2=null, $dummy3=null)
+	function Line($row, $height = 0, $dummy1=null, $dummy2=null, $dummy3=null): void
 	{
 		$oldLineWidth = $this->GetLineWidth();
 		$this->SetLineWidth($height + 1);
@@ -991,7 +1028,7 @@ class FrontReport extends Cpdf
 	* @access public
 	* @see SetLineWidth(), SetDrawColor(), SetLineStyle()
 	*/
-	function UnderlineCell($c, $r = 0, $type = 1, $linewidth = 0, $style = array())
+	function UnderlineCell($c, $r = 0, $type = 1, $linewidth = 0, $style = array()): void
 	{
 		// If line width was specified, save current setting so we can reset it
 		if ($linewidth != 0)
@@ -1025,7 +1062,7 @@ class FrontReport extends Cpdf
 	 * @param int|null $np
 	 * @param bool|null $h
 	 */
-	function NewLine($l=1, $np=0, $h = NULL)
+	function NewLine($l=1, $np=0, $h = NULL): void
 	{
 		// If the line height wasn't specified, use the current setting
 		if ($h == NULL)
@@ -1039,7 +1076,7 @@ class FrontReport extends Cpdf
 			$this->NewPage();
 	}
 
-	function NewPage() 
+	function NewPage(): void
 	{
 		if ($this->pageNumber==0)
 		{
@@ -1073,7 +1110,7 @@ class FrontReport extends Cpdf
 	/**
 	 * @param string|null $subject
 	 */
-	function End($email=0, $subject='')
+	function End($email=0, $subject=''): void
 	{
 		global $SysPrefs, $path_to_root;
 

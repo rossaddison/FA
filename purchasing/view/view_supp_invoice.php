@@ -24,13 +24,14 @@ if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 500);
 page(_($help_context = "View Supplier Invoice"), true, false, "", $js);
 
+$trans_no = null;
 if (isset($_GET["trans_no"]))
 {
-	$trans_no = $_GET["trans_no"];
-} 
+	$trans_no = (string) get_scalar('trans_no');
+}
 elseif (isset($_POST["trans_no"]))
 {
-	$trans_no = $_POST["trans_no"];
+	$trans_no = (string) post_scalar('trans_no');
 }
 
 $supp_trans = new supp_trans(ST_SUPPINVOICE);
@@ -42,7 +43,7 @@ $supplier_curr_code = get_supplier_currency($supp_trans->supplier_id);
 if (!empty(sysprefs()->prefs['company_logo_on_views']))
 	company_logo_on_view();
 
-display_heading(_("SUPPLIER INVOICE") . " # " . $trans_no);
+display_heading(_("SUPPLIER INVOICE") . " # " . (string) $trans_no);
 echo "<br>";
 
 start_table(TABLESTYLE, "width='95%'");
@@ -74,7 +75,7 @@ display_supp_trans_tax_details($tax_items, 1);
 
 $display_total = number_format2((float)$supp_trans->ov_amount + (float)$supp_trans->ov_gst,user_price_dec());
 
-label_row(_("TOTAL INVOICE").' ('.$supplier_curr_code.')', $display_total, "colspan=1 align=right", "nowrap align=right");
+label_row(_("TOTAL INVOICE").' ('.(string)$supplier_curr_code.')', $display_total, "colspan=1 align=right", "nowrap align=right");
 
 end_table(1);
 
@@ -86,5 +87,5 @@ if (!$voided)
 		((float)$supp_trans->ov_amount + (float)$supp_trans->ov_gst));
 }
 
-end_page(true, false, false, ST_SUPPINVOICE, $trans_no);
+end_page(true, false, false, ST_SUPPINVOICE, (string) $trans_no);
 

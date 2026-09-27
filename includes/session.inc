@@ -11,7 +11,9 @@
 ***********************************************************************/
 define('VARLIB_PATH', $path_to_root.'/tmp');
 define('VARLOG_PATH', $path_to_root.'/tmp');
-define('SECURE_ONLY', true); // if you really need also http (unsecure) access allowed, you can set this to NULL
+define('SECURE_ONLY', false); // if you really need also http (unsecure) access allowed, you can set this to NULL
+
+require_once dirname(__DIR__) . '/vendor/autoload.php'; // composer packages (e.g. yiisoft/html) used unconditionally, not just by the optional Yii layout
 
 class SessionManager
 {
@@ -19,6 +21,7 @@ class SessionManager
    	 * @param string|null $name
    	 * @param int|null $limit
    	 * @param string|null $path
+   	 * @param string|null $domain
    	 * @param bool|null $secure
    	 * @return void
    	 */
@@ -116,7 +119,7 @@ class SessionManager
 	}
 }
 
-function output_html(mixed $text)
+function output_html(mixed $text): string
 {
 	global $before_box, $messages;
 	// Fatal errors are not send to error_handler,
@@ -320,13 +323,13 @@ function set_page_security(mixed $value=null, mixed $trans = array(), mixed $gtr
 	ISO-8859-1, so fix is easy. If any other unsupported encoding is used,
 	add workaround here.
 */
-function html_specials_encode(mixed $str)
+function html_specials_encode(string|int|float|bool|null $str): string
 {
-	return htmlspecialchars($str, ENT_QUOTES, session_obj('language')->encoding=='iso-8859-2' ?
+	return htmlspecialchars((string) $str, ENT_QUOTES, session_obj('language')->encoding=='iso-8859-2' ?
 		 'ISO-8859-1' : session_obj('language')->encoding);
 }
 
-function html_cleanup(&$parms): void
+function html_cleanup(array &$parms): void
 {
 	foreach($parms as $name => $value) {
 		if (is_array($value))
@@ -344,8 +347,8 @@ function login_timeout(): void
 {
 	// skip timeout on logout page
 	if (session_obj('wa_current_user')->logged) {
-		$tout = session_obj('wa_current_user')->timeout;
-		if ((bool)$tout && (time() > session_obj('wa_current_user')->last_act + $tout))
+		$tout = (int) session_obj('wa_current_user')->timeout;
+		if ($tout && (time() > session_obj('wa_current_user')->last_act + $tout))
 		{
 			session_obj('wa_current_user')->logged = false;
 		}

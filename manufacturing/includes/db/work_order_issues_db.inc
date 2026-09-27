@@ -162,6 +162,7 @@ function exists_work_order_issue(string|int|float|bool|null $issue_no): bool
 
 //--------------------------------------------------------------------------------------
 
+/** @return 0|null|string */
 function check_void_wo_issue(string|int|float|bool|null $issue_no)
 {
 	$issue = row_or_empty(get_work_order_issue($issue_no));

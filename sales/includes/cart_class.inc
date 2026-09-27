@@ -23,7 +23,7 @@ include_once(dirname(__DIR__, 2) . "/taxes/tax_calc.inc");
 
 class Cart 
 {
-	/** @var int|string */
+	/** @var int|string|null */
 	var $trans_type; // invoice, order, quotation, delivery note ...
 
 	/**
@@ -32,7 +32,7 @@ class Cart
 	var $trans_no = array();// array (num1=>ver1,..) or 0 for new
 
 	/**
-	 * @var int
+	 * @var int|string|null
 	 */
 	var $so_type = 0;		// for sales order: simple=0 template=1
 
@@ -54,32 +54,32 @@ class Cart
 	var $due_date;
 	/** @var string|int|float|bool|null */
 	var $sales_type; // set to the customer's sales type
-	/** @var string */
+	/** @var string|null */
 	var $sales_type_name; // set to customer's sales type name
 	/** @var string|int|float|bool|null */
 	var $tax_included;
 
-	/** @var string */
+	/** @var string|null */
 	var $customer_currency; // set to the customer's currency
-	/** @var float|int|string */
+	/** @var float|int|string|null */
 	var $default_discount; // set to the customer's discount %
-	/** @var string */
+	/** @var string|null */
 	var $customer_name;
 	/** @var string|int|float|bool|null */
 	var $customer_id;
 	/** @var string|int|float|bool|null */
 	var $Branch;
-	/** @var string */
+	/** @var string|null */
 	var $email;
 
-	/** @var string */
+	/** @var string|null */
 	var $deliver_to;
-	/** @var string */
+	/** @var string|null */
 	var $delivery_address;
-	/** @var string */
+	/** @var string|null */
 	var $phone;
 
-	/** @var string */
+	/** @var string|null */
 	var $cust_ref;
 	/** @var string */
 	var $reference;
@@ -88,9 +88,9 @@ class Cart
 	 * @var string
 	 */
 	var $Comments;
-	/** @var string */
+	/** @var string|null */
 	var $Location;
-	/** @var string */
+	/** @var string|null */
 	var $location_name;
 
 	/**
@@ -112,7 +112,7 @@ class Cart
 	/** @var float|int|string|null */
 	var $price_factor;	 // ditto for price calculations
 
-	/** @var array<string, string|null>|null */
+	/** @var array<array-key, string|null>|null */
 	var	$pos;			// user assigned POS
 	/** @var string|int|float|bool|null */
 	var $cash_account;
@@ -120,19 +120,19 @@ class Cart
 	var $account_name;
 	/** @var string|int|float|bool|null */
 	var $cash_discount;	// not used as of FA 2.1
-	/** @var int|string */
+	/** @var int|string|null */
 	var $dimension_id;
-	/** @var int|string */
+	/** @var int|string|null */
 	var $dimension2_id;
 	/** @var string|int|float|bool|null */
 	var $payment;
-	/** @var array<string, string|int|float|bool|null> */
+	/** @var array<array-key, string|int|float|bool|null> */
 	var $payment_terms = array('cash_sale' => false, 'days_before_due' => 0); // cached payment terms
 	/** @var float|int|string|null */
 	var $credit;
 	// prepayment mode:
 	/**
-	 * @var false
+	 * @var bool|int|string|null
 	 */
 	var $prepaid=false;	// true for documents issued in prepayment mode
 	/** @var float|int|string */
@@ -146,10 +146,7 @@ class Cart
 	/** @var float|int|string|null */
 	var $ex_rate;
 
-	/**
-	 * @var false
-	 */
-	var $fixed_asset = false;
+	var bool $fixed_asset = false;
 	/** @var int|string|null */
 	var $bo_policy = null;
 
@@ -162,6 +159,7 @@ class Cart
 	//
 	/**
 	 * @param string|int|array<array-key, mixed>|null $type
+	 * @param int|array<array-key, mixed>|null $trans_no
 	 * @param int|bool|null $prepare_child
 	 */
 	function __construct($type, $trans_no=0, $prepare_child=false) {
@@ -174,7 +172,7 @@ class Cart
 			$this->trans_type = ST_SALESORDER;
 		$this->dimension_id = 0;
 		$this->dimension2_id = 0;
-		$this->pos = get_sales_point(user_pos());
+		$this->pos = row_or_empty(get_sales_point(user_pos()));
 		$this->read($type, $trans_no, $prepare_child);
 		$this->cart_id = uniqid('');
 	}
@@ -183,6 +181,8 @@ class Cart
 		Optional sorting items by stock_id.
 	*/
 	/**
+	 * @param line_details $a
+	 * @param line_details $b
 	 * @psalm-pure
 	 * @return int<-1, 1>
 	 */
@@ -207,7 +207,10 @@ class Cart
 	//
 	//	Prepare cart to new child document entry, just after initial parent doc read.
 	//
-	/** @return void */
+	/**
+	 * @param bool|int|string|null $type
+	 * @return void
+	 */
 	function prepare_child($type)
 	{
 
@@ -232,7 +235,7 @@ class Cart
 		unset($line);
 		
 		if ($type == ST_CUSTDELIVERY) {
-			$this->order_no = key($this->trans_no);
+			$this->order_no = key((array) $this->trans_no);
 			$cust = row_or_empty(get_customer($this->customer_id));
 			$this->dimension_id = $cust['dimension_id'];
 			$this->dimension2_id = $cust['dimension2_id'];
@@ -250,6 +253,7 @@ class Cart
 	//
 	/**
 	 * @param bool|array<array-key, mixed>|null $sodata
+	 * @param string|int|float|bool|null $src_no
 	 * @return void
 	 */
 	function set_parent_constraints($sodata, $src_no) {
@@ -273,8 +277,8 @@ class Cart
 				if ($this->trans_type == ST_SALESINVOICE)
 					$line->src_no = $srcline['debtor_trans_no'];
 				$line->qty_old = $line->qty_dispatched = $line->quantity;
-				$line->quantity += (float)((float)$srcline['quantity'] - 
-					($src_type==ST_SALESORDER ? $srcline['qty_sent'] : $srcline['qty_done'])); // add free qty on src doc
+				$line->quantity = (float) $line->quantity + ((float)$srcline['quantity'] -
+					(float) ($src_type==ST_SALESORDER ? $srcline['qty_sent'] : $srcline['qty_done'])); // add free qty on src doc
 				$line_no++;
 			}
 		}
@@ -291,6 +295,7 @@ class Cart
 	//
 	/**
 	 * @param string|int|array<array-key, mixed>|null $type
+	 * @param int|array<array-key, mixed>|null $trans_no
 	 * @param int|bool|null $prepare_child
 	 * @return void
 	 */
@@ -370,6 +375,10 @@ class Cart
 	// Writing new/modified sales document to database.
 	// Makes parent documents for direct delivery/invoice by recurent call.
 	// $policy - 0 or 1:  writeoff/return for IV, back order/cancel for DN
+	/**
+	 * @param int $policy
+	 * @return int|string|null
+	 */
 	function write($policy=0) {
 		
 		
@@ -384,7 +393,7 @@ class Cart
 				return -1;
 			}
 		}
-		if (count($this->src_docs) == 0 && ($this->trans_type == ST_SALESINVOICE || $this->trans_type == ST_CUSTDELIVERY) && !$this->is_prepaid()) {
+		if (count((array) $this->src_docs) == 0 && ($this->trans_type == ST_SALESINVOICE || $this->trans_type == ST_CUSTDELIVERY) && !$this->is_prepaid()) {
 			// this is direct document - first add parent
 			$ref = $this->reference;
 			$date = $this->document_date;
@@ -407,9 +416,10 @@ class Cart
 		$this->reference = @html_entity_decode($this->reference, ENT_QUOTES);
 		$this->Comments = @html_entity_decode($this->Comments, ENT_QUOTES);
 		foreach($this->line_items as $lineno => $line) {
-			$this->line_items[$lineno]->stock_id = @html_entity_decode($line->stock_id, ENT_QUOTES);
-			$this->line_items[$lineno]->item_description = @html_entity_decode($line->item_description, ENT_QUOTES);
+			$this->line_items[$lineno]->stock_id = @html_entity_decode((string) $line->stock_id, ENT_QUOTES);
+			$this->line_items[$lineno]->item_description = @html_entity_decode((string) $line->item_description, ENT_QUOTES);
 		}
+		$ret = null;
 		switch($this->trans_type) {
 			case ST_SALESINVOICE:
 				$ret = write_sales_invoice($this); break;
@@ -422,7 +432,7 @@ class Cart
 				if ($this->trans_no==0)	// new document
 					$ret = add_sales_order($this);
 				else
-					$ret = update_sales_order($this);
+					update_sales_order($this);
 		}
 
 		commit_transaction();
@@ -430,7 +440,15 @@ class Cart
 		return $ret;
 	}
 
-	/** @return void */
+	/**
+	 * @param string|int|float|bool|null $customer_id
+	 * @param string|null $customer_name
+	 * @param string|null $currency
+	 * @param float|int|string|null $discount
+	 * @param string|int|float|bool|null $payment
+	 * @param string|int|float|bool|null $cdiscount
+	 * @return void
+	 */
 	function set_customer($customer_id, $customer_name, $currency, $discount, $payment, $cdiscount=0)
 	{
 		$this->customer_name = $customer_name;
@@ -438,7 +456,7 @@ class Cart
 		$this->default_discount = $discount;
 		$this->customer_currency = $currency;
 		$this->payment = $payment;
-		$this->payment_terms = get_payment_terms($payment);
+		$this->payment_terms = row_or_empty(get_payment_terms($payment));
 		$this->cash_discount = $cdiscount;
 
 		if ((bool)$this->payment_terms['cash_sale']) {
@@ -448,7 +466,14 @@ class Cart
 		$this->credit = get_current_cust_credit($customer_id);
 	}
 
-	/** @return void */
+	/**
+	 * @param string|int|float|bool|null $branch_id
+	 * @param string|int|float|bool|null $tax_group_id
+	 * @param string|null $tax_group_name
+	 * @param string|null $phone
+	 * @param string|null $email
+	 * @return void
+	 */
 	function set_branch($branch_id, $tax_group_id, $tax_group_name, $phone='', $email='')
 	{
 		$this->Branch = $branch_id;
@@ -459,6 +484,10 @@ class Cart
 	}
 
 	/**
+	 * @param string|int|float|bool|null $sales_type
+	 * @param string|null $sales_name
+	 * @param string|int|float|bool|null $tax_included
+	 * @param float|int|string|null $factor
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -471,6 +500,8 @@ class Cart
 	}
 
 	/**
+	 * @param string|null $id
+	 * @param string|null $name
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -481,6 +512,10 @@ class Cart
 	}
 
 	/**
+	 * @param string|int|float|bool|null $shipper
+	 * @param string|null $destination
+	 * @param string|null $address
+	 * @param float|int|string|null $freight_cost
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -494,10 +529,10 @@ class Cart
 	}
 
 	/**
-	 * @param int|null $line_no
 	 * @param string|null $stock_id
 	 * @param string|int|float|null $qty
 	 * @param string|float|null $price
+	 * @param string|int|float|null $disc
 	 * @param string|int|null $qty_done
 	 * @param string|int|null $standard_cost
 	 * @param string|array<array-key, mixed>|null $description
@@ -506,7 +541,7 @@ class Cart
 	 * @param int|null $src_id
 	 * @return 0|1
 	 */
-	function add_to_cart($line_no, $stock_id, $qty, $price, $disc, $qty_done=0, $standard_cost=0, $description=null, $id=0, $src_no=0,
+	function add_to_cart(int $line_no, $stock_id, $qty, $price, $disc, $qty_done=0, $standard_cost=0, $description=null, $id=0, $src_no=0,
 		$src_id=0)
 	{
 		$line = new line_details($stock_id, $qty, $price, $disc,
@@ -521,9 +556,11 @@ class Cart
 	}
 
 	/**
+	 * @param int $line_no
 	 * @param int|float|bool|null $qty
 	 * @param int|float|bool|null $price
 	 * @param int|float|null $disc
+	 * @param string|null $description
 	 * @return void
 	 */
 	function update_cart_item($line_no, $qty, $price, $disc, $description="")
@@ -536,7 +573,11 @@ class Cart
 		$this->line_items[$line_no]->discount_percent = $disc;
 	}
 
-	/** @return void */
+	/**
+	 * @param int $line_no
+	 * @param float|int|string $qty
+	 * @return void
+	 */
 	function update_add_cart_item_qty($line_no, $qty)
 	{
 		$this->line_items[$line_no]->quantity += $qty;
@@ -549,7 +590,7 @@ class Cart
 	 */
 	function remove_from_cart($line_no)
 	{
-		array_splice($this->line_items, $line_no, 1);
+		array_splice($this->line_items, (int) $line_no, 1);
 	}
 
 	/**
@@ -584,9 +625,9 @@ class Cart
 		$total = 0.0;
 
 		foreach ($this->line_items as $ln_itm) {
-			$price = $ln_itm->line_price();
-			$total += round($ln_itm->quantity * $price * (1.0 - $ln_itm->discount_percent), 
-			   user_price_dec());
+			$price = (float) $ln_itm->line_price();
+			$total += round((float) $ln_itm->quantity * $price * (1.0 - (float) $ln_itm->discount_percent),
+			   (int) user_price_dec());
 		}
 		return $total;
 	}
@@ -597,9 +638,9 @@ class Cart
 		$total = 0.0;
 
 		foreach ($this->line_items as $ln_itm) {
-			$price = $ln_itm->line_price();
-			$total += round(($ln_itm->qty_dispatched * $price * (1.0 - $ln_itm->discount_percent)), 
-			   user_price_dec());
+			$price = (float) $ln_itm->line_price();
+			$total += round(((float) $ln_itm->qty_dispatched * $price * (1.0 - (float) $ln_itm->discount_percent)),
+			   (int) user_price_dec());
 		}
 		return $total;
 	}
@@ -650,7 +691,8 @@ class Cart
 		return 0;
 	}
 
-	function get_taxes($shipping_cost=null)
+	/** @param float|int|string|null $shipping_cost */
+	function get_taxes($shipping_cost=null): array
 	{
 		$items = array();
 		$prices = array();
@@ -659,9 +701,9 @@ class Cart
 
 		foreach ($this->line_items as $ln_itm) {
 			$items[] = $ln_itm->stock_id;
-			$prices[] = round(((
-				$this->trans_type==ST_SALESORDER ? 	$ln_itm->quantity : $ln_itm->qty_dispatched) *
-				$ln_itm->line_price()* (1.0 - (float)$ln_itm->discount_percent)),  user_price_dec());
+			$prices[] = round(((float)(
+				$this->trans_type==ST_SALESORDER ? 	$ln_itm->quantity : $ln_itm->qty_dispatched)) *
+				(float) $ln_itm->line_price()* (1.0 - (float)$ln_itm->discount_percent),  (int) user_price_dec());
 		}
 
 		$taxes = get_tax_for_items($items, $prices, $shipping_cost,
@@ -669,7 +711,7 @@ class Cart
 
     // Adjustment for swiss franken, we always have 5 rappen = 1/20 franken
     if ($this->customer_currency == 'CHF') {
-			$val = $taxes['1']['Value'];
+			$val = (float) $taxes['1']['Value'];
 			$val1 = (floatval((intval(round(($val*20),0)))/20));
 			$taxes['1']['Value'] = $val1;
 		} 
@@ -702,9 +744,9 @@ class Cart
 			}
 		}
 		if((bool)$this->tax_included)
-			return round((float)$this->freight_cost*(float)$tax_rate/($tax_rate+100),  user_price_dec());
+			return round((float)$this->freight_cost*(float)$tax_rate/($tax_rate+100),  (int) user_price_dec());
 		else
-			return round((float)$this->freight_cost*(float)$tax_rate/100.0,  user_price_dec());
+			return round((float)$this->freight_cost*(float)$tax_rate/100.0,  (int) user_price_dec());
 	}
 	/*
 		Returns transaction value including all taxes
@@ -713,11 +755,11 @@ class Cart
 	function get_trans_total() {
 		
 		$total = (float)$this->get_items_total() + (float)$this->freight_cost;
-		$dec = user_price_dec();
+		$dec = (int) user_price_dec();
 		if (!(bool)$this->tax_included ) {
 			$taxes = $this->get_taxes();
 			foreach($taxes as $tax)
-				$total += round($tax['Value'], $dec);
+				$total += round((float) $tax['Value'], $dec);
 		}
 
 		return $total;
@@ -727,7 +769,11 @@ class Cart
 		Checks cart quantities on document_date.
 		Returns array of stock_ids which stock quantities would go negative on some day.
 	*/
-	/** @return list<array-key> */
+	/**
+	 * @param string|null $date
+	 * @param string|null $location
+	 * @return list<array-key>
+	 */
 	function check_qoh($date=null, $location=null)
 	{
 		$low_stock = array();
@@ -742,16 +788,16 @@ class Cart
 			if (has_stock_holding($line_item->mb_flag))
 			{
 				if (!$this->trans_no) // new delivery
-					$qtys[$line_item->stock_id]['qty'] = $line_item->qty_dispatched + @$qtys[$line_item->stock_id]['qty'];
+					$qtys[$line_item->stock_id]['qty'] = (float) $line_item->qty_dispatched + (float) @$qtys[$line_item->stock_id]['qty'];
 				else	// DN modification: check change in quantity
-					$qtys[$line_item->stock_id]['qty'] = ((float)$line_item->qty_dispatched-(float)$line_item->qty_old) + @$qtys[$line_item->stock_id]['qty'];
+					$qtys[$line_item->stock_id]['qty'] = ((float)$line_item->qty_dispatched-(float)$line_item->qty_old) + (float) @$qtys[$line_item->stock_id]['qty'];
 				$qtys[$line_item->stock_id]['line'] = $line_no;
 			}
 		}
 
 		foreach($qtys as $stock_id => $sum)
 		{
-			if (check_negative_stock($stock_id, -$sum['qty'], $location ? $location : $this->Location, $date ? $date : $this->document_date))
+			if (check_negative_stock($stock_id, -(float)$sum['qty'], $location ? $location : $this->Location, $date ? $date : $this->document_date))
 				$low_stock[] = $stock_id;
 		}
 
@@ -761,10 +807,10 @@ class Cart
 	/*
 		Returns true for documents issued in prepayment cycle.
 	*/
-	/** @return false */
+	/** @return bool|int|string|null */
 	function is_prepaid()
 	{
-		return $this->prepaid; 
+		return $this->prepaid;
 	}
 	/*
 		Order is ready for delivery in prepament mode.
@@ -786,7 +832,7 @@ class Cart
 	{
 		if ($this->trans_no==0)
 			return false;
-		$order_no = array_keys($this->trans_no);
+		$order_no = array_keys((array) $this->trans_no);
 
 		return  is_sales_order_started(reset($order_no));
 	}
@@ -816,28 +862,28 @@ class line_details
 {
 	/** @var string|int|float|bool|null */
 	var $id;
-	/** @var string */
+	/** @var string|null */
 	var $stock_id;
-	/** @var string */
+	/** @var string|null */
 	var $item_description;
-	/** @var string */
+	/** @var string|null */
 	var $units;
-	/** @var string */
+	/** @var string|null */
 	var $mb_flag;
 	/** @var string|int|float|bool|null */
 	var $tax_type;
-	/** @var string */
+	/** @var string|null */
 	var $tax_type_name;
 	/** @var string|int|float|bool|null */
 	var $src_no;	// number of src doc for this line
 	/** @var string|int|float|bool|null */
 	var $src_id;
-	/** @var float|int|string */
+	/** @var float|int|string|null */
 	var $price;
-	/** @var float|int|string */
+	/** @var float|int|string|null */
 	var $discount_percent;
-	
-	/** @var float|int|string */
+
+	/** @var float|int|string|null */
 	var $standard_cost;
 	/** @var string|int|float|bool|null */
 	var $descr_editable;
@@ -867,11 +913,11 @@ class line_details
 		$qty_dispatched - quantity currently selected to process
 		$qty_old - 0; not used
 	*/
-	/** @var float|int|string */
+	/** @var float|int|string|null */
 	var $quantity;
-	/** @var float|int|string */
+	/** @var float|int|string|null */
 	var $qty_done;
-	/** @var float|int|string */
+	/** @var float|int|string|null */
 	var $qty_dispatched;
 
 	/**
@@ -884,6 +930,7 @@ class line_details
 	 * @param string|null $stock_id
 	 * @param string|int|float|null $qty
 	 * @param string|int|float|null $prc
+	 * @param string|int|float|null $disc_percent
 	 * @param string|int|null $qty_done
 	 * @param string|int|null $standard_cost
 	 * @param string|array<array-key, mixed>|null $description
@@ -926,7 +973,7 @@ class line_details
 	// get unit price as stated on document
 	/**
 	 * @psalm-mutation-free
-	 * @return float|int|string
+	 * @return float|int|string|null
 	 */
 	function line_price()
 	{

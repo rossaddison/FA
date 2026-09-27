@@ -426,14 +426,14 @@ function check_cells(string|int|float|bool|null $label, string|int|float|bool|nu
 	if ($label != null)
 		echo "<td>$label</td>\n";
 	echo "<td $params>";
-	echo check(null, $name, $value, $submit_on_change, $title);
+	check(null, $name, $value, $submit_on_change, $title);
 	echo "</td>";
 }
 
 function check_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $value=null, bool $submit_on_change=false, string|bool|null $title=false): void
 {
 	echo "<tr><td class='label'>$label</td>";
-	echo check_cells(NULL, $name, $value, $submit_on_change, $title);
+	check_cells(NULL, $name, $value, $submit_on_change, $title);
 	echo "</tr>\n";
 }
 
@@ -490,9 +490,9 @@ function amount_cell(string|int|float|bool|null $label, ?bool $bold=false, strin
 function unit_amount_cell(string|int|float|bool|null $label, string|int|float|bool|null $bold=false, string|int|float|bool|null $params="", string|int|float|bool|null $id=null): void
 {
 	if ((bool)$bold)
-		label_cell("<b>".unit_price_format($label)."</b>", "nowrap align=right ".$params, $id);
+		label_cell("<b>".price_format($label)."</b>", "nowrap align=right ".$params, $id);
 	else
-		label_cell(unit_price_format($label), "nowrap align=right ".$params, $id);
+		label_cell(price_format($label), "nowrap align=right ".$params, $id);
 }
 
 
@@ -535,10 +535,11 @@ function label_row(string|int|float|bool|null $label, string|int|float|bool|null
 	echo "</tr>\n";
 }
 
-function text_input(string|int|float|bool|null $name, string|int|float|bool|array|null $value=null, string|int|float|bool|null $size='', string|int|float|bool|null $max='', string|int|float|bool|null $title='', string|int|float|bool|null $params=''): string
+function text_input(string|int|float|bool|null $name, string|int|float|bool|null $value=null, string|int|float|bool|null $size='', string|int|float|bool|null $max='', string|int|float|bool|null $title='', string|int|float|bool|null $params=''): string
 {
 	if ($value === null)
 		$value = get_post($name);
+	$value = (string) $value;
 
 	return "<input $params type=\"text\" name=\"$name\" size=\"$size\" maxlength=\"$max\" value=\"$value\""
 	    .((bool)$title ? " title='$title'" : '')
@@ -941,6 +942,7 @@ function textarea_cells(string|int|float|bool|null $label, string|int|float|bool
 		echo "<td $params>$label</td>\n";
 	if ($value == null)
 		$value = (!isset($_POST[$name]) ? "" : $_POST[$name]);
+	$value = (string) $value;
 	echo "<td><textarea name='$name' cols='$cols' rows='$rows'"
 	.((bool)$title ? " title='$title'" : '')
 	.((bool)$max ? " maxlength=$max" : '')

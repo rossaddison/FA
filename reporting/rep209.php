@@ -70,15 +70,17 @@ function print_po(): void
 
 	include_once(dirname(__DIR__) . "/reporting/includes/pdf_report.inc");
 
-	$from = $_POST['PARAM_0'];
-	$to = $_POST['PARAM_1'];
-	$currency = $_POST['PARAM_2'];
-	$email = $_POST['PARAM_3'];
-	$comments = $_POST['PARAM_4'];
-	$orientation = $_POST['PARAM_5'];
+	$from = post_scalar('PARAM_0');
+	$to = post_scalar('PARAM_1');
+	$currency = post_scalar('PARAM_2');
+	$email = post_scalar('PARAM_3');
+	$comments = post_scalar('PARAM_4');
+	$orientation = post_scalar('PARAM_5');
 
 	if (!(bool)$from || !(bool)$to) return;
 
+	$from = (int) $from;
+	$to = (int) $to;
 	$orientation = ((bool)$orientation ? 'L' : 'P');
 	$dec = user_price_dec();
 
@@ -99,11 +101,13 @@ function print_po(): void
 
 	for ($i = $from; $i <= $to; $i++)
 	{
-		$myrow = get_supp_po($i);
+		$myrow = get_supp_po((string) $i);
+		if ($myrow === false)
+			continue;
 		if ($currency != ALL_TEXT && $myrow['curr_code'] != $currency) {
 			continue;
 		}
-		$baccount = get_default_bank_account($myrow['curr_code']);
+		$baccount = row_or_empty(get_default_bank_account($myrow['curr_code']));
 		$params['bankaccount'] = $baccount['id'];
 
 		if ($email == 1)
@@ -121,7 +125,7 @@ function print_po(): void
 		$rep->SetHeaderType('Header2');
 		$rep->NewPage();
 
-		$result = get_po_details($i);
+		$result = get_po_details((string) $i);
 		$SubTotal = 0.0;
 		$items = $prices = array();
 		while ($myrow2=db_fetch($result))
@@ -142,7 +146,7 @@ function print_po(): void
 			}
 			$Net = round2(((float)$myrow2["unit_price"] * (float)$myrow2["quantity_ordered"]), user_price_dec());
 			$prices[] = $Net;
-			$items[] = $myrow2['item_code'];
+			$items[] = (string) $myrow2['item_code'];
 			$SubTotal += $Net;
 			$dec2 = 0;
 			$DisplayPrice = price_decimal_format($myrow2["unit_price"],$dec2);
@@ -185,7 +189,7 @@ function print_po(): void
 				continue;
 			$DisplayTax = number_format2($tax_item['Value'], $dec);
 
-			$tax_type_name = $tax_item['tax_type_name'];
+			$tax_type_name = (string) ($tax_item['tax_type_name'] ?? '');
 
 			if ((bool)$myrow['tax_included'])
 			{

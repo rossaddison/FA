@@ -21,7 +21,7 @@ if (sysprefs()->use_popup_windows)
 if (user_use_date_picker())
 	$js .= get_js_date_picker();
 	
-page(_($help_context = "Customers"), @$_REQUEST['popup'], false, "", $js); 
+page(_($help_context = "Customers"), (bool) @$_REQUEST['popup'], false, "", $js);
 
 include_once(dirname(__DIR__, 2) . "/includes/date_functions.inc");
 include_once(dirname(__DIR__, 2) . "/includes/banking.inc");
@@ -39,14 +39,14 @@ $selected_id = get_post('customer_id','');
 
 function can_process(): bool
 {
-	if (strlen($_POST['CustName']) == 0) 
+	if (strlen((string) $_POST['CustName']) == 0)
 	{
 		display_error(_("The customer name cannot be empty."));
 		set_focus('CustName');
 		return false;
-	} 
+	}
 
-	if (strlen($_POST['cust_ref']) == 0) 
+	if (strlen((string) $_POST['cust_ref']) == 0)
 	{
 		display_error(_("The customer short name cannot be empty."));
 		set_focus('cust_ref');
@@ -79,19 +79,19 @@ function can_process(): bool
 
 //--------------------------------------------------------------------------------------------
 
-function handle_submit(&$selected_id): void
+function handle_submit(string|int|float|bool|null &$selected_id): void
 {
 	global $path_to_root;
 
 	if (!can_process())
 		return;
-		
-	if ($selected_id) 
+
+	if ($selected_id)
 	{
-		update_customer(post_scalar('customer_id'), post_scalar('CustName'), post_scalar('cust_ref'), post_scalar('address'),
-			post_scalar('tax_id'), post_scalar('curr_code'), post_scalar('dimension_id'), post_scalar('dimension2_id'),
-			post_scalar('credit_status'), post_scalar('payment_terms'), (float)input_num('discount') / 100.0, (float)input_num('pymt_discount') / 100.0,
-			input_num('credit_limit'), post_scalar('sales_type'), post_scalar('notes'));
+		update_customer((string) post_scalar('customer_id'), (string) post_scalar('CustName'), (string) post_scalar('cust_ref'), (string) post_scalar('address'),
+			(string) post_scalar('tax_id'), (string) post_scalar('curr_code'), (string) post_scalar('dimension_id'), (string) post_scalar('dimension2_id'),
+			(string) post_scalar('credit_status'), (string) post_scalar('payment_terms'), (float)input_num('discount') / 100.0, (float)input_num('pymt_discount') / 100.0,
+			input_num('credit_limit'), (string) post_scalar('sales_type'), (string) post_scalar('notes'));
 
 		update_record_status(post_scalar('customer_id'), $_POST['inactive'],
 			'debtors_master', 'debtor_no');
@@ -103,19 +103,21 @@ function handle_submit(&$selected_id): void
 	{ 	//it is a new customer
 
 		begin_transaction();
-		add_customer(post_scalar('CustName'), post_scalar('cust_ref'), post_scalar('address'),
-			post_scalar('tax_id'), post_scalar('curr_code'), post_scalar('dimension_id'), post_scalar('dimension2_id'),
-			post_scalar('credit_status'), post_scalar('payment_terms'), (float)input_num('discount') / 100.0, (float)input_num('pymt_discount') / 100.0,
-			input_num('credit_limit'), post_scalar('sales_type'), post_scalar('notes'));
+		add_customer((string) post_scalar('CustName'), (string) post_scalar('cust_ref'), (string) post_scalar('address'),
+			(string) post_scalar('tax_id'), (string) post_scalar('curr_code'), (string) post_scalar('dimension_id'), (string) post_scalar('dimension2_id'),
+			(string) post_scalar('credit_status'), (string) post_scalar('payment_terms'), (float)input_num('discount') / 100.0, (float)input_num('pymt_discount') / 100.0,
+			input_num('credit_limit'), (string) post_scalar('sales_type'), (string) post_scalar('notes'));
 
 		$selected_id = $_POST['customer_id'] = db_insert_id();
-         
+
 		if (isset(sysprefs()->auto_create_branch) && sysprefs()->auto_create_branch == 1)
 		{
-        	add_branch($selected_id, post_scalar('CustName'), post_scalar('cust_ref'),
-                post_scalar('address'), post_scalar('salesman'), post_scalar('area'), post_scalar('tax_group_id'), '',
+			/** @var string $selected_id */
+			$selected_id = $selected_id;
+        	add_branch($selected_id, (string) post_scalar('CustName'), (string) post_scalar('cust_ref'),
+                (string) post_scalar('address'), (string) post_scalar('salesman'), (string) post_scalar('area'), (string) post_scalar('tax_group_id'), '',
                 get_company_pref('default_sales_discount_act'), get_company_pref('debtors_act'), get_company_pref('default_prompt_payment_act'),
-                post_scalar('location'), post_scalar('address'), 0, post_scalar('ship_via'), post_scalar('notes'), post_scalar('bank_account'));
+                (string) post_scalar('location'), (string) post_scalar('address'), 0, (string) post_scalar('ship_via'), (string) post_scalar('notes'), (string) post_scalar('bank_account'));
                 
         	$selected_branch = db_insert_id();
         
@@ -139,8 +141,10 @@ function handle_submit(&$selected_id): void
 }
 //--------------------------------------------------------------------------------------------
 
-if (isset($_POST['submit'])) 
+if (isset($_POST['submit']))
 {
+	/** @var string $selected_id */
+	$selected_id = $selected_id;
 	handle_submit($selected_id);
 }
 //-------------------------------------------------------------------------------------------- 
@@ -151,21 +155,26 @@ if (isset($_POST['delete']))
 	$cancel_delete = 0;
 
 	// PREVENT DELETES IF DEPENDENT RECORDS IN 'debtor_trans'
-
+	/** @var string $selected_id */
+	$selected_id = $selected_id;
 	if ((bool)key_in_foreign_table($selected_id, 'debtor_trans', 'debtor_no'))
 	{
 		$cancel_delete = 1;
 		display_error(_("This customer cannot be deleted because there are transactions that refer to it."));
-	} 
-	else 
+	}
+	else
 	{
+		/** @var string $selected_id */
+		$selected_id = $selected_id;
 		if ((bool)key_in_foreign_table($selected_id, 'sales_orders', 'debtor_no'))
 		{
 			$cancel_delete = 1;
 			display_error(_("Cannot delete the customer record because orders have been created against it."));
-		} 
-		else 
+		}
+		else
 		{
+			/** @var string $selected_id */
+			$selected_id = $selected_id;
 			if ((bool)key_in_foreign_table($selected_id, 'cust_branch', 'debtor_no'))
 			{
 				$cancel_delete = 1;
@@ -174,10 +183,11 @@ if (isset($_POST['delete']))
 			}
 		}
 	}
-	
-	if ($cancel_delete == 0) 
+
+	if ($cancel_delete == 0)
 	{ 	//ie not cancelled the delete as a result of above tests
-	
+		/** @var string $selected_id */
+		$selected_id = $selected_id;
 		delete_customer($selected_id);
 
 		display_notification(_("Selected customer has been deleted."));
@@ -239,16 +249,16 @@ function customer_settings(string|int|float|bool|null $selected_id): void
 
 
 	if (!(bool)$selected_id || is_new_customer($selected_id) || (!(bool)key_in_foreign_table($selected_id, 'debtor_trans', 'debtor_no') &&
-		!(bool)key_in_foreign_table($selected_id, 'sales_orders', 'debtor_no'))) 
+		!(bool)key_in_foreign_table($selected_id, 'sales_orders', 'debtor_no')))
 	{
-		currencies_list_row(_("Customer's Currency:"), 'curr_code', $_POST['curr_code']);
-	} 
-	else 
+		currencies_list_row(_("Customer's Currency:"), 'curr_code', post_scalar('curr_code'));
+	}
+	else
 	{
 		label_row(_("Customer's Currency:"), post_scalar('curr_code'));
-		hidden('curr_code', post_scalar('curr_code'));				
+		hidden('curr_code', post_scalar('curr_code'));
 	}
-	sales_types_list_row(_("Sales Type/Price List:"), 'sales_type', $_POST['sales_type']);
+	sales_types_list_row(_("Sales Type/Price List:"), 'sales_type', post_scalar('sales_type'));
 
 	if((bool)$selected_id)
 		record_status_list_row(_("Customer status:"), 'inactive');
@@ -266,17 +276,17 @@ function customer_settings(string|int|float|bool|null $selected_id): void
 
 	table_section_title(_("Sales"));
 
-	percent_row(_("Discount Percent:"), 'discount', $_POST['discount']);
-	percent_row(_("Prompt Payment Discount Percent:"), 'pymt_discount', $_POST['pymt_discount']);
+	percent_row(_("Discount Percent:"), 'discount', (string) post_scalar('discount'));
+	percent_row(_("Prompt Payment Discount Percent:"), 'pymt_discount', (string) post_scalar('pymt_discount'));
 	amount_row(_("Credit Limit:"), 'credit_limit', post_scalar('credit_limit'));
 
-	payment_terms_list_row(_("Payment Terms:"), 'payment_terms', $_POST['payment_terms']);
-	credit_status_list_row(_("Credit Status:"), 'credit_status', $_POST['credit_status']); 
+	payment_terms_list_row(_("Payment Terms:"), 'payment_terms', (string) post_scalar('payment_terms'));
+	credit_status_list_row(_("Credit Status:"), 'credit_status', (string) post_scalar('credit_status'));
 	$dim = get_company_pref('use_dimension');
 	if ($dim >= 1)
-		dimensions_list_row(_("Dimension")." 1:", 'dimension_id', $_POST['dimension_id'], true, " ", false, 1);
+		dimensions_list_row(_("Dimension")." 1:", 'dimension_id', post_scalar('dimension_id'), true, " ", false, 1);
 	if ($dim > 1)
-		dimensions_list_row(_("Dimension")." 2:", 'dimension2_id', $_POST['dimension2_id'], true, " ", false, 2);
+		dimensions_list_row(_("Dimension")." 2:", 'dimension2_id', post_scalar('dimension2_id'), true, " ", false, 2);
 	if ($dim < 1)
 		hidden('dimension_id', 0);
 	if ($dim < 2)
@@ -285,9 +295,11 @@ function customer_settings(string|int|float|bool|null $selected_id): void
 	if ((bool)$selected_id)  {
 		start_row();
 		echo '<td class="label">'._('Customer branches').':</td>';
+		/** @var string $path_to_root */
+		$path_to_root = $path_to_root;
 	  	hyperlink_params_td($path_to_root . "/sales/manage/customer_branches.php",
-			'<b>'. ($page_nested ?  _("Select or &Add") : _("&Add or Edit ")).'</b>', 
-			"debtor_no=".$selected_id.($page_nested ? '&popup=1':''));
+			'<b>'. ($page_nested ?  _("Select or &Add") : _("&Add or Edit ")).'</b>',
+			"debtor_no=".(string) $selected_id.($page_nested ? '&popup=1':''));
 		end_row();
 	}
 
@@ -357,10 +369,12 @@ tabbed_content_start('tabs', array(
 		'attachments' => array(_('Attachments'), (user_check_access('SA_ATTACHDOCUMENT') ? $selected_id : null)),
 	));
 	
+	/** @var string $selected_id */
+	$selected_id = $selected_id;
 	switch (get_post('_tabs_sel')) {
 		default:
 		case 'settings':
-			customer_settings($selected_id); 
+			customer_settings($selected_id);
 			break;
 		case 'contacts':
 			$contacts = new contacts('contacts', $selected_id, 'customer');
@@ -384,5 +398,5 @@ br();
 tabbed_content_end();
 
 end_form();
-end_page(@$_REQUEST['popup']);
+end_page((bool) @$_REQUEST['popup']);
 

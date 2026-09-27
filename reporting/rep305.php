@@ -96,11 +96,11 @@ function print_grn_valuation(): void
 {
     global $path_to_root;
 
-	$from = $_POST['PARAM_0'];
-	$to = $_POST['PARAM_1'];
-	$comments = $_POST['PARAM_2'];
-	$orientation = $_POST['PARAM_3'];
-	$destination = $_POST['PARAM_4'];
+	$from = (string) post_scalar('PARAM_0');
+	$to = (string) post_scalar('PARAM_1');
+	$comments = post_scalar('PARAM_2');
+	$orientation = post_scalar('PARAM_3');
+	$destination = post_scalar('PARAM_4');
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
@@ -154,19 +154,19 @@ function print_grn_valuation(): void
 
 		if ((bool)$trans['quantity_inv'])
 		{
-			$suppinv = getSuppInvDetails($trans['grn_item_id']);
+			$suppinv = getSuppInvDetails((string) $trans['grn_item_id']);
 			while ($inv=db_fetch($suppinv))
-			{	
-				$inv['inv_price'] *= $inv['rate'];
+			{
+				$inv['inv_price'] = (float) $inv['inv_price'] * (float) $inv['rate'];
 				$rep->TextCol(4, 5, $inv['inv_no']);
 				$rep->AmountCol(5, 6, $inv['inv_qty'], $qdec);
 				$rep->AmountCol(6, 7, $inv['inv_price'], $dec);
 				$rep->AmountCol(7, 8, $trans['std_cost_unit'], $dec);
-				$amt = round2((float)$inv['inv_qty'] * (float)$inv['inv_price'], $dec);
+				$amt = round2((float)$inv['inv_qty'] * $inv['inv_price'], $dec);
 				$rep->AmountCol(8, 9, $amt, $dec);
 				$rep->NewLine();
 				$total += $amt;
-				$qtotal += $inv['inv_qty'];
+				$qtotal += (float) $inv['inv_qty'];
 				$grandtotal += $amt;
 			}
 		}
@@ -174,12 +174,12 @@ function print_grn_valuation(): void
 		if ((float)$trans['qty_recd'] - (float)$trans['quantity_inv'] !=0 )
 		{
 			$curr = get_supplier_currency($trans['supplier_id']);
-			$rate = get_exchange_rate_from_home_currency($curr, sql2date($trans['delivery_date']));
-			$trans['unit_price'] *= $rate;
+			$rate = (float) get_exchange_rate_from_home_currency($curr, sql2date($trans['delivery_date']));
+			$trans['unit_price'] = (float) $trans['unit_price'] * $rate;
 			$rep->TextCol(4, 5, "--");
 			$rep->AmountCol(5, 6, (float)$trans['qty_recd'] - (float)$trans['quantity_inv'], $qdec);
 			$rep->AmountCol(7, 8, $trans['unit_price'], $dec);
-			$amt = round2(((float)$trans['qty_recd'] - (float)$trans['quantity_inv']) * (float)$trans['unit_price'], $dec);
+			$amt = round2(((float)$trans['qty_recd'] - (float)$trans['quantity_inv']) * $trans['unit_price'], $dec);
 			$rep->AmountCol(8, 9, $amt, $dec);
 			$total += $amt;
 			$qtotal += ((float)$trans['qty_recd'] - (float)$trans['quantity_inv']);

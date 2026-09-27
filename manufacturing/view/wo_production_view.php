@@ -28,9 +28,10 @@ include_once(dirname(__DIR__, 2) . "/manufacturing/includes/manufacturing_ui.inc
 
 //-------------------------------------------------------------------------------------------------
 
-if ($_GET['trans_no'] != "")
+$wo_production = null;
+if (get_scalar('trans_no') != "")
 {
-	$wo_production = $_GET['trans_no'];
+	$wo_production = get_scalar('trans_no');
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -50,7 +51,7 @@ function display_wo_production(string|int|float|bool|null $prod_id): void
 	label_cell($myrow["reference"]);
 	label_cell(get_trans_view_str(ST_WORKORDER,$myrow["workorder_id"]));
 	label_cell((string)$myrow["stock_id"] . " - " . (string)$myrow["StockDescription"]);
-	qty_cell($myrow["quantity"], false, get_qty_dec($myrow["stock_id"]));
+	qty_cell($myrow["quantity"], false, (int) get_qty_dec($myrow["stock_id"]));
 	label_cell(sql2date($myrow["date_"]));
 	end_row();
 
@@ -63,7 +64,7 @@ function display_wo_production(string|int|float|bool|null $prod_id): void
 
 //-------------------------------------------------------------------------------------------------
 
-display_heading($systypes_array[ST_MANURECEIVE] . " # " . $wo_production);
+display_heading($systypes_array[ST_MANURECEIVE] . " # " . (string) $wo_production);
 
 display_wo_production($wo_production);
 
@@ -71,5 +72,5 @@ display_wo_production($wo_production);
 
 br(2);
 
-end_page(true, false, false, ST_MANURECEIVE, $wo_production);
+end_page(true, false, false, ST_MANURECEIVE, (string) $wo_production);
 

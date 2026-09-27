@@ -73,10 +73,11 @@ function getTransactions(string|int|array|null $items, string|array|null $open_o
 function print_gl_rows(FrontReport &$rep, string|bool|mysqli_result|null $result, ?string $title): void
 {
 	global $systypes_array;
+	/** @var array<int, string> $systypes_array */
 
    	$dec = user_price_dec();
 
-    if (db_num_rows($result))
+    if ($result instanceof mysqli_result && db_num_rows($result))
     {
 		$rep->Line($rep->row -= 4.0);
 		$rep->NewLine();
@@ -86,7 +87,7 @@ function print_gl_rows(FrontReport &$rep, string|bool|mysqli_result|null $result
 		$rep->Line($rep->row -= 4.0);
 		while($myrow = db_fetch($result)) {
 			$rep->NewLine();
-			$rep->TextCol(0, 2, $systypes_array[$myrow['type']] . ' ' . (string)$myrow['type_no'], -2);
+			$rep->TextCol(0, 2, $systypes_array[(int) $myrow['type']] . ' ' . (string)$myrow['type_no'], -2);
 			$rep->TextCol(2, 3, sql2date($myrow["tran_date"]), -2);
 			$rep->TextCol(3, 4, $myrow['account'], -2);
 			$rep->TextCol(4, 5, $myrow['account_name'], -2);
@@ -104,14 +105,15 @@ function print_gl_rows(FrontReport &$rep, string|bool|mysqli_result|null $result
 function print_work_order_listing(): void
 {
     global $path_to_root, $wo_types_array;
+    /** @var array<int, string> $wo_types_array */
 
-    $item = $_POST['PARAM_0'];
-    $location = $_POST['PARAM_1'];
-    $open_only = $_POST['PARAM_2'];
-    $show_gl = $_POST['PARAM_3'];
-	$comments = $_POST['PARAM_4'];
-	$orientation = $_POST['PARAM_5'];
-	$destination = $_POST['PARAM_6'];
+    $item = post_scalar('PARAM_0');
+    $location = post_scalar('PARAM_1');
+    $open_only = post_scalar('PARAM_2');
+    $show_gl = post_scalar('PARAM_3');
+	$comments = post_scalar('PARAM_4');
+	$orientation = post_scalar('PARAM_5');
+	$destination = post_scalar('PARAM_6');
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
@@ -170,10 +172,10 @@ function print_work_order_listing(): void
     	$rep->Info($params, $cols, $headers, $aligns);
     $rep->NewPage();
 
-	$res = getTransactions($item, $open_only, $location);
+	$res = getTransactions((string) $item, (string) $open_only, (string) $location);
 	while ($trans=db_fetch($res))
 	{
-		$rep->TextCol(0, 1, $wo_types_array[$trans['type']]);
+		$rep->TextCol(0, 1, $wo_types_array[(int) $trans['type']]);
 		$rep->TextCol(1, 2, $trans['id'], -1);
 		$rep->TextCol(2, 3, $trans['wo_ref'], -1);
 		$rep->TextCol(3, 4, $trans['location_name'], -1);

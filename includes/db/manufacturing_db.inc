@@ -54,7 +54,7 @@ function load_stock_levels(string|int|float|bool|null $location): array
 }
 
 // recursion fixed. Max 10 recursion levels.
-function stock_demand_manufacture(string|int|float|bool|null $stock_id, string|int|float|bool|null $qty, string|int|float|bool|null $demand_id, string|int|float|bool|null $location, string|int|float|bool|null $level=0) 
+function stock_demand_manufacture(string|int|float|bool|null $stock_id, string|int|float|bool|null $qty, string|int|float|bool|null $demand_id, string|int|float|bool|null $location, string|int|float|bool|null $level=0): float
 {
 	global $bom_list, $qoh_stock;
 
@@ -104,7 +104,7 @@ function stock_demand_manufacture(string|int|float|bool|null $stock_id, string|i
 }
 
 // recursion fixed by Tom Moulton
-function get_demand_asm_qty(string|int|float|bool|null $stock_id, string|int|float|bool|null $location) 
+function get_demand_asm_qty(string|int|float|bool|null $stock_id, string|int|float|bool|null $location): float
 {
 	$demand_qty = 0.0;
 	$sql = "SELECT line.stk_code, SUM(line.quantity-line.qty_sent) AS Demmand
@@ -156,7 +156,7 @@ function get_on_porder_qty(string|int|float|bool|null $stock_id, string|null $lo
 /**
  * @return float(0)|null|string
  */
-function get_on_worder_qty(string|int|float|bool|null $stock_id, string|null $location)
+function get_on_worder_qty(string|int|float|bool|null $stock_id, string|null $location): float|null|string
 {
  	$qoo = 0.0;
 	$flag = get_mb_flag($stock_id);

@@ -23,12 +23,12 @@ class supp_trans
 	var $gl_codes; /*array of objects of class gl_codes using a counter as the pointer */
 
 	/**
-	 * @var int
+	 * @var string|int|float|bool|null
 	 */
 	var $supplier_id;
 	/** @var string */
 	var $supplier_name;
-	/** @var string|int|float|bool|null */
+	/** @var array{description?: mixed, days_before_due?: mixed, day_in_following_month?: mixed}|string|int|float|bool|null */
 	var $terms;
 	/** @var float|int|string|null */
 	var $ex_rate;
@@ -60,12 +60,12 @@ class supp_trans
 	var $reference;
 
 	/**
-	 * @var int
+	 * @var float|int|string|null
 	 */
 	var $ov_amount;
 
 	/**
-	 * @var int
+	 * @var float|int|string|null
 	 */
 	var $ov_discount;
 	/** @var float|int|string */
@@ -74,7 +74,7 @@ class supp_trans
 	var $gl_codes_counter=0;
 
 	/**
-	 * @var int
+	 * @var int|string|null
 	 */
 	var $credit = 0;
 	/** @var string */
@@ -210,7 +210,7 @@ class supp_trans
      * @param int|null $shipping_cost
      * @param bool $gl_codes
      */
-    function get_taxes($tax_group_id=null, $shipping_cost=0, $gl_codes=true)
+    function get_taxes($tax_group_id=null, $shipping_cost=0, $gl_codes=true): array
     {
     	$items = array();
     	$prices = array();

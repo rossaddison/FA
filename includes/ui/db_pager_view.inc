@@ -21,7 +21,7 @@ function pager_link(?string $link_text, ?string $url, string|bool|null $icon=fal
 	return "<a href='$href'>" . $link_text . "</a>";
 }
 
-function navi_button(?string $name, string|int|float|bool|null $value, string|int|float|bool|null $enabled=true, string|bool|null $icon = false): string {
+function navi_button(?string $name, string|int|float|bool|null $value, string|int|float|bool|null $enabled=true, ?string $icon = null): string {
 	global $path_to_root;
   	return "<button ". ((bool)$enabled ? '':'disabled')
   		." class=\"navibutton\" type=\"submit\""
@@ -178,10 +178,10 @@ function display_db_pager(object &$pager): bool {
 		start_row();
 		if (@$pager->inactive_ctrl) 
 				submit('Update', _('Update'), true, '', null); // inactive update
-		echo navi_button_cell($but_pref.'first', _('First'), $pager->first_page, 'right');
-		echo navi_button_cell($but_pref.'prev', _('Prev'), $pager->prev_page,'right');
-		echo navi_button_cell($but_pref.'next', _('Next'), $pager->next_page,'right');
-		echo navi_button_cell($but_pref.'last', _('Last'), $pager->last_page, 'right');
+		navi_button_cell($but_pref.'first', _('First'), $pager->first_page, 'right');
+		navi_button_cell($but_pref.'prev', _('Prev'), $pager->prev_page,'right');
+		navi_button_cell($but_pref.'next', _('Next'), $pager->next_page,'right');
+		navi_button_cell($but_pref.'last', _('Last'), $pager->last_page, 'right');
 		end_row(); 
 		end_table();
 		echo "</div>";

@@ -17,6 +17,8 @@ include_once(dirname(__DIR__, 2) . "/includes/db/crm_contacts_db.inc");
 */
 class contacts extends simple_crud {
 	var $id;
+	/** @var array<array-key, mixed>|false */
+	var $data = array();
 	/** @var string|int|null */
 	var $entity;
 	/** @var string|int|null */
@@ -29,7 +31,9 @@ class contacts extends simple_crud {
 	
 	/**
 	 * @param string|null $name
+	 * @param string|int|null $id
 	 * @param string|null $class
+	 * @param string|int|null $subclass
 	 * @psalm-mutation-free
 	 */
 	function __construct($name, $id, $class, $subclass=null) {
@@ -125,7 +129,7 @@ class contacts extends simple_crud {
 
 	/** @return int|null|string */
 	function db_insert() {
-			$dat = $this->data;
+			$dat = (array) $this->data;
 			return add_crm_person($dat['ref'], $dat['name'], $dat['name2'], $dat['address'],
 				$dat['phone'], $dat['phone2'], $dat['fax'], $dat['email'], $dat['lang'],
 				$dat['notes'], $dat['contacts'], $this->entity);
@@ -142,12 +146,12 @@ class contacts extends simple_crud {
 	 * @return bool
 	 */
 	function insert_check() {
-		if (strlen($_POST['name']) == 0) {
+		if (strlen((string) $_POST['name']) == 0) {
 			display_error(_("The contact name cannot be empty."));
 			set_focus('name');
 			return false;
 		}
-		if (strlen($_POST['ref']) == 0) {
+		if (strlen((string) $_POST['ref']) == 0) {
 			display_error(_("Contact reference cannot be empty."));
 			set_focus('ref');
 			return false;

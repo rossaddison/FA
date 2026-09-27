@@ -28,8 +28,10 @@ check_db_has_template_orders(_("There is no template order in database.
 	You have to create at least one sales order marked as template to be able to define recurrent invoices."));
 
 simple_page_mode(true);
+/** @var int|string $selected_id */
+$selected_id = $selected_id;
 
-if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') 
+if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 {
 
 	$input_error = 0;
@@ -43,31 +45,33 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 			display_error(_("There are no tax groups defined in the system. At least one tax group is required before proceeding."));
 		set_focus('debtor_no');
 	}
-	if (strlen($_POST['description']) == 0) 
+	if (strlen((string) $_POST['description']) == 0)
 	{
 		$input_error = 1;
 		display_error(_("The invoice description cannot be empty."));
 		set_focus('description');
 	}
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	if (!check_recurrent_invoice_description(post_scalar('description'), $selected_id))
 	{
 		$input_error = 1;
 		display_error(_("This recurrent invoice description is already in use."));
 		set_focus('description');
 	}
-	if (!is_date(post_scalar('begin')))
+	if (!is_date((string) post_scalar('begin')))
 	{
 		$input_error = 1;
 		display_error(_("The entered date is invalid."));
 		set_focus('begin');
 	}
-	if (!is_date(post_scalar('end')))
+	if (!is_date((string) post_scalar('end')))
 	{
 		$input_error = 1;
 		display_error(_("The entered date is invalid."));
 		set_focus('end');
 	}
-	if (isset($_POST['last_sent']) && !is_date(post_scalar('last_sent'))) {
+	if (isset($_POST['last_sent']) && !is_date((string) post_scalar('last_sent'))) {
 		$input_error = 1;
 		display_error(_("The entered date is invalid."));
 		set_focus('last_sent');
@@ -103,15 +107,11 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 if ($Mode == 'Delete')
 {
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
+	delete_recurrent_invoice($selected_id);
 
-	$cancel_delete = 0;
-
-	if ($cancel_delete == 0) 
-	{
-		delete_recurrent_invoice($selected_id);
-
-		display_notification(_('Selected recurrent invoice has been deleted'));
-	} //end if Delete area
+	display_notification(_('Selected recurrent invoice has been deleted'));
 	$Mode = 'RESET';
 } 
 
@@ -169,8 +169,10 @@ start_form();
 
 start_table(TABLESTYLE2);
 
-if ($selected_id != -1) 
+if ($selected_id != -1)
 {
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
  	if ($Mode == 'Edit') {
 		//editing an existing area
 		$myrow = row_or_empty(get_recurrent_invoice($selected_id));
@@ -184,7 +186,9 @@ if ($selected_id != -1)
 		$_POST['begin']  = sql2date($myrow["begin"]);
 		$_POST['end']  = sql2date($myrow["end"]);
 		$_POST['last_sent']  = ($myrow['last_sent']=="0000-00-00"?"":sql2date($myrow["last_sent"]));
-	} 
+	}
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	hidden("selected_id", $selected_id);
 }
 

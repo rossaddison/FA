@@ -28,19 +28,20 @@ include_once(dirname(__DIR__, 2) . "/dimensions/includes/dimensions_ui.inc");
 
 //-------------------------------------------------------------------------------------------------
 
+$id = null;
 if (isset($_GET['trans_no']) && $_GET['trans_no'] != "")
 {
-	$id = $_GET['trans_no'];
+	$id = get_scalar('trans_no');
 }
 
 if (isset($_POST['Show']))
 {
-	$id = $_POST['trans_no'];
+	$id = post_scalar('trans_no');
 	ajax()->activate('_page_body');
 }
 
 
-display_heading($systypes_array[ST_DIMENSION] . " # " . $id);
+display_heading($systypes_array[ST_DIMENSION] . " # " . (string) $id);
 
 br(1);
 $myrow = get_dimension($id, true);
@@ -97,5 +98,5 @@ display_dimension_balance($id, post_scalar('TransFromDate'), post_scalar('TransT
 
 br(1);
 
-end_page(true, false, false, ST_DIMENSION, $id);
+end_page(true, false, false, ST_DIMENSION, (string) $id);
 

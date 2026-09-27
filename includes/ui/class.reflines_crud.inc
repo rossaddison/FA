@@ -82,8 +82,11 @@ class fa_reflines extends simple_crud_view {
 
 		$selected_id = $this->selected_id;
 
+		/** @var reflines_db $data_set */
+		$data_set = $this->data_set;
+
 		// new or never used
-		$fresh = $selected_id == $this->_none || !$this->data_set->is_used(get_post($this->name.'prefix'), get_post($this->name.'trans_type'));
+		$fresh = $selected_id == $this->_none || !$data_set->is_used(get_post($this->name.'prefix'), get_post($this->name.'trans_type'));
 
 		start_table(TABLESTYLE2);
 

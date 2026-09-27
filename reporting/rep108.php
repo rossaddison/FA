@@ -69,15 +69,16 @@ function getTransactions(string|int|null $debtorno, string|array|null $show_also
 function print_statements(): void
 {
 	global $path_to_root, $systypes_array;
+	/** @var array<int, string> $systypes_array */
 
 	include_once(dirname(__DIR__) . "/reporting/includes/pdf_report.inc");
 
-	$customer = $_POST['PARAM_0'];
-	$currency = $_POST['PARAM_1'];
-	$show_also_allocated = $_POST['PARAM_2'];
-	$email = $_POST['PARAM_3'];
-	$comments = $_POST['PARAM_4'];
-	$orientation = $_POST['PARAM_5'];
+	$customer = post_scalar('PARAM_0');
+	$currency = post_scalar('PARAM_1');
+	$show_also_allocated = post_scalar('PARAM_2');
+	$email = post_scalar('PARAM_3');
+	$comments = post_scalar('PARAM_4');
+	$orientation = post_scalar('PARAM_5');
 
 	$orientation = ((bool)$orientation ? 'L' : 'P');
 	$dec = user_price_dec();
@@ -113,8 +114,10 @@ function print_statements(): void
 
 		$myrow['order_'] = "";
 
-		$TransResult = getTransactions($myrow['debtor_no'], $show_also_allocated);
-		$baccount = get_default_bank_account($myrow['curr_code']);
+		$TransResult = getTransactions($myrow['debtor_no'], (string) $show_also_allocated);
+		if (!($TransResult instanceof mysqli_result))
+			continue;
+		$baccount = row_or_empty(get_default_bank_account($myrow['curr_code']));
 		$params['bankaccount'] = $baccount['id'];
 		if (db_num_rows($TransResult) == 0)
 			continue;
@@ -145,11 +148,11 @@ function print_statements(): void
 		$rep->NewLine(2);
 		while ($myrow2=db_fetch($TransResult))
 		{
-			$DisplayTotal = number_format2(Abs($myrow2["TotalAmount"]),$dec);
+			$DisplayTotal = number_format2(Abs((float) $myrow2["TotalAmount"]),$dec);
 			$DisplayAlloc = number_format2($myrow2["Allocated"],$dec);
-			$DisplayNet = number_format2((float)Abs($myrow2["TotalAmount"]) - (float)$myrow2["Allocated"],$dec);
+			$DisplayNet = number_format2(Abs((float) $myrow2["TotalAmount"]) - (float)$myrow2["Allocated"],$dec);
 
-			$rep->TextCol(0, 1, $systypes_array[$myrow2['type']], -2);
+			$rep->TextCol(0, 1, $systypes_array[(int) $myrow2['type']], -2);
 			$rep->TextCol(1, 2,	$myrow2['reference'], -2);
 			$rep->TextCol(2, 3,	sql2date($myrow2['tran_date']), -2);
 			$rep->TextCol(3, 4,	$myrow2['customer_ref'], -2);
@@ -169,7 +172,7 @@ function print_statements(): void
 		$nowdue = "1-" . $PastDueDays1 . " " . _("Days");
 		$pastdue1 = $PastDueDays1 + 1 . "-" . $PastDueDays2 . " " . _("Days");
 		$pastdue2 = _("Over") . " " . $PastDueDays2 . " " . _("Days");
-		$CustomerRecord = row_or_empty(get_customer_details($myrow['debtor_no'], null, $show_also_allocated));
+		$CustomerRecord = row_or_empty(get_customer_details($myrow['debtor_no'], null, (string) $show_also_allocated));
 		$str = array(_("Current"), $nowdue, $pastdue1, $pastdue2, _("Total Balance"));
 		$str2 = array(number_format2(((float)$CustomerRecord["Balance"] - (float)$CustomerRecord["Due"]),$dec),
 			number_format2(((float)$CustomerRecord["Due"]-(float)$CustomerRecord["Overdue1"]),$dec),
@@ -187,7 +190,7 @@ function print_statements(): void
 		if ($email == 1)
 		{
             if (($CustomerRecord["Balance"]) != ((float)$CustomerRecord["Balance"] - (float)$CustomerRecord["Due"]))
-                $rep->End($email, _("Statement") . " " . _("as of") . " " . sql2date($date) . " " . _("from") . " " . htmlspecialchars_decode(get_company_pref('coy_name')));
+                $rep->End($email, _("Statement") . " " . _("as of") . " " . sql2date((string) $myrow['tran_date']) . " " . _("from") . " " . htmlspecialchars_decode((string) get_company_pref('coy_name')));
             else
                 display_notification(sprintf(_("Customer %s has no overdue debits. No e-mail is sent."), $myrow["DebtorName"]));       
         }

@@ -21,9 +21,10 @@ include_once(dirname(__DIR__, 2) . "/includes/date_functions.inc");
 include_once(dirname(__DIR__, 2) . "/includes/ui.inc");
 include_once(dirname(__DIR__, 2) . "/gl/includes/gl_db.inc");
 
+$trans_no = null;
 if (isset($_GET["trans_no"])){
 
-	$trans_no = $_GET["trans_no"];
+	$trans_no = (string) $_GET["trans_no"];
 }
 
 $result = get_bank_trans(ST_BANKTRANSFER, $trans_no);
@@ -31,8 +32,8 @@ $result = get_bank_trans(ST_BANKTRANSFER, $trans_no);
 if (db_num_rows($result) != 2)
 	display_db_error("Bank transfer does not contain two records");
 
-$trans1 = db_fetch($result);
-$trans2 = db_fetch($result);
+$trans1 = row_or_empty(db_fetch($result));
+$trans2 = row_or_empty(db_fetch($result));
 
 if ($trans1["amount"] < 0) 
 {
@@ -85,7 +86,7 @@ if ($show_both_amounts)
 end_row();
 start_row();
 label_cells(_("Date"), sql2date($from_trans['trans_date']), "class='tableheader2'");
-label_cells(_("Transfer Type"), $bank_transfer_types[$from_trans['account_type']],
+label_cells(_("Transfer Type"), $bank_transfer_types[(int) $from_trans['account_type']],
 	 "class='tableheader2'");
 label_cells(_("Reference"), $from_trans['ref'], "class='tableheader2'");
 end_row();
@@ -95,4 +96,4 @@ end_table(1);
 
 is_voided_display(ST_BANKTRANSFER, $trans_no, _("This transfer has been voided."));
 
-end_page(true, false, false, ST_BANKTRANSFER, $trans_no);
+end_page(true, false, false, ST_BANKTRANSFER, (string) $trans_no);

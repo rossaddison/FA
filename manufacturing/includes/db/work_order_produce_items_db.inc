@@ -142,6 +142,7 @@ function exists_work_order_produce(string|int|float|bool|null $id): bool
 
 //--------------------------------------------------------------------------------------
 
+/** @return 0|null|string */
 function check_void_wo_production(string|int|float|bool|null $prod_no)
 {
 	$prod = row_or_empty(get_work_order_produce($prod_no));

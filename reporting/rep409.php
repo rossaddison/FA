@@ -33,19 +33,19 @@ function print_workorders(): void
 
 	include_once(dirname(__DIR__) . "/reporting/includes/pdf_report.inc");
 
-	$from = $_POST['PARAM_0'];
-	$to = $_POST['PARAM_1'];
-	$email = $_POST['PARAM_2'];
-	$comments = $_POST['PARAM_3'];
-	$orientation = $_POST['PARAM_4'];
+	$from = (string) post_scalar('PARAM_0');
+	$to = (string) post_scalar('PARAM_1');
+	$email = post_scalar('PARAM_2');
+	$comments = post_scalar('PARAM_3');
+	$orientation = post_scalar('PARAM_4');
 
 	if (!(bool)$from || !(bool)$to) return;
 
 	$orientation = ((bool)$orientation ? 'L' : 'P');
 	$fno = explode("-", $from);
 	$tno = explode("-", $to);
-	$from = min($fno[0], $tno[0]);
-	$to = max($fno[0], $tno[0]);
+	$from = (int) min($fno[0], $tno[0]);
+	$to = (int) max($fno[0], $tno[0]);
 
 	$cols = array(4, 60, 190, 255, 320, 385, 450, 515);
 

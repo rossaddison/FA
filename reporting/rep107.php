@@ -78,14 +78,14 @@ function print_invoices(): void
 
 	include_once(dirname(__DIR__) . "/reporting/includes/pdf_report.inc");
 
-	$from = $_POST['PARAM_0'];
-	$to = $_POST['PARAM_1'];
-	$currency = $_POST['PARAM_2'];
-	$email = $_POST['PARAM_3'];
-	$pay_service = $_POST['PARAM_4'];
-	$comments = $_POST['PARAM_5'];
-	$customer = $_POST['PARAM_6'];
-	$orientation = $_POST['PARAM_7'];
+	$from = (string) post_scalar('PARAM_0');
+	$to = (string) post_scalar('PARAM_1');
+	$currency = post_scalar('PARAM_2');
+	$email = post_scalar('PARAM_3');
+	$pay_service = (string) post_scalar('PARAM_4');
+	$comments = post_scalar('PARAM_5');
+	$customer = post_scalar('PARAM_6');
+	$orientation = post_scalar('PARAM_7');
 
 	if (!(bool)$from || !(bool)$to) return;
 
@@ -94,8 +94,8 @@ function print_invoices(): void
 
  	$fno = explode("-", $from);
 	$tno = explode("-", $to);
-	$from = min($fno[0], $tno[0]);
-	$to = max($fno[0], $tno[0]);
+	$from = (int) min($fno[0], $tno[0]);
+	$to = (int) max($fno[0], $tno[0]);
 
 	//-------------code-Descr-Qty--uom--tax--prc--Disc-Tot--//
 	$cols = array(4, 60, 225, 300, 325, 385, 450, 515);
@@ -115,9 +115,9 @@ function print_invoices(): void
 
 	$range = Array();
 	if ($currency == ALL_TEXT)
-		$range = get_invoice_range($from, $to);
+		$range = get_invoice_range((string) $from, (string) $to);
 	else
-		$range = get_invoice_range($from, $to, $currency);
+		$range = get_invoice_range((string) $from, (string) $to, (string) $currency);
 
 	while($row = db_fetch($range))
 	{
@@ -125,6 +125,8 @@ function print_invoices(): void
 				continue;
 			$sign = 1;
 			$myrow = get_customer_trans($row['trans_no'], ST_SALESINVOICE);
+			if ($myrow === false)
+				continue;
 
 			if ((bool)$customer && $myrow['debtor_no'] != $customer) {
 				continue;
@@ -135,14 +137,14 @@ function print_invoices(): void
 
 			if (substr($pay_service, 0, 4) === 'XRPL') {
 // Override: use XUMM XRP bank account for display
-   			 	$baccount = get_bank_account_by_name('XUMM XRP');
+   			 	$baccount = row_or_empty(get_bank_account_by_name('XUMM XRP'));
 			} else {
 // Default logic
-				$baccount = get_default_bank_account($myrow['curr_code']);
+				$baccount = row_or_empty(get_default_bank_account($myrow['curr_code']));
 			}
 			$params['bankaccount'] = $baccount['id'];
 
-			$branch = get_branch($myrow["branch_code"]);
+			$branch = row_or_empty(get_branch((string) $myrow["branch_code"]));
 			$sales_order = get_sales_order_header($myrow["order_"], ST_SALESORDER);
 			if ($email == 1)
 			{
@@ -292,7 +294,7 @@ function print_invoices(): void
     			$DisplayTax = number_format2((float)$sign*(float)$tax_item['amount'], $dec);
 
     			if (sysprefs()->suppress_tax_rates() == 1)
-    				$tax_type_name = $tax_item['tax_type_name'];
+    				$tax_type_name = (string) $tax_item['tax_type_name'];
     			else
     				$tax_type_name = (string)$tax_item['tax_type_name']." (".(string)$tax_item['rate']."%) ";
 

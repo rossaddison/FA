@@ -92,12 +92,13 @@ function getPeriods(string|int|float|bool|null $stockid, string|int|float|bool|n
 function print_inventory_planning(): void
 {
     global $path_to_root, $tmonths;
+    /** @var array<int, string> $tmonths */
 
-    $category = $_POST['PARAM_0'];
-    $location = $_POST['PARAM_1'];
-    $comments = $_POST['PARAM_2'];
-	$orientation = $_POST['PARAM_3'];
-	$destination = $_POST['PARAM_4'];
+    $category = post_scalar('PARAM_0');
+    $location = post_scalar('PARAM_1');
+    $comments = post_scalar('PARAM_2');
+	$orientation = post_scalar('PARAM_3');
+	$destination = post_scalar('PARAM_4');
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
@@ -109,7 +110,7 @@ function print_inventory_planning(): void
 	if ($category == 0)
 		$cat = _('All');
 	else
-		$cat = get_category_name($category);
+		$cat = get_category_name((string) $category);
 
 	if ($location == ALL_TEXT)
 		$location = 'all';
@@ -120,11 +121,11 @@ function print_inventory_planning(): void
 
 	$cols = array(0, 50, 150, 180, 210, 240, 270, 300, 330, 390, 435, 480, 525);
 
-	$per0 = $tmonths[date('n',mktime(0,0,0,date('m'),1,date('Y')))];
-	$per1 = $tmonths[date('n',mktime(0,0,0,date('m')-1,1,date('Y')))];
-	$per2 = $tmonths[date('n',mktime(0,0,0,date('m')-2,1,date('Y')))];
-	$per3 = $tmonths[date('n',mktime(0,0,0,date('m')-3,1,date('Y')))];
-	$per4 = $tmonths[date('n',mktime(0,0,0,date('m')-4,1,date('Y')))];
+	$per0 = $tmonths[(int) date('n',mktime(0,0,0,(int) date('m'),1,(int) date('Y')))];
+	$per1 = $tmonths[(int) date('n',mktime(0,0,0,(int) date('m')-1,1,(int) date('Y')))];
+	$per2 = $tmonths[(int) date('n',mktime(0,0,0,(int) date('m')-2,1,(int) date('Y')))];
+	$per3 = $tmonths[(int) date('n',mktime(0,0,0,(int) date('m')-3,1,(int) date('Y')))];
+	$per4 = $tmonths[(int) date('n',mktime(0,0,0,(int) date('m')-4,1,(int) date('Y')))];
 	$headers = array(_('Category'), '', $per4, $per3, $per2, $per1, $per0, _('3*M'),
 		_('QOH'), _('Cust Ord'), _('Supp Ord'), _('Sugg Ord'));
 
@@ -143,7 +144,7 @@ function print_inventory_planning(): void
     $rep->Info($params, $cols, $headers, $aligns);
     $rep->NewPage();
 
-	$res = getTransactions($category, $location);
+	$res = getTransactions((string) $category, (string) $location);
 	$catt = '';
 	while ($trans=db_fetch($res))
 	{
@@ -162,11 +163,11 @@ function print_inventory_planning(): void
 		if ($location == 'all')
 			$loc_code = "";
 		else
-			$loc_code = $location;
-		$custqty = get_demand_qty($trans['stock_id'], $loc_code);
+			$loc_code = (string) $location;
+		$custqty = (float) get_demand_qty($trans['stock_id'], $loc_code);
 		$custqty += get_demand_asm_qty($trans['stock_id'], $loc_code);
-		$suppqty = get_on_porder_qty($trans['stock_id'], $loc_code);
-		$suppqty += get_on_worder_qty($trans['stock_id'], $loc_code);
+		$suppqty = (float) get_on_porder_qty($trans['stock_id'], $loc_code);
+		$suppqty += (float) get_on_worder_qty($trans['stock_id'], $loc_code);
 		$period = row_or_empty(getPeriods($trans['stock_id'], $trans['loc_code']));
 		$rep->NewLine();
 		$dec = get_qty_dec($trans['stock_id']);
@@ -178,8 +179,8 @@ function print_inventory_planning(): void
 		$rep->AmountCol(5, 6, $period['prd3'], $dec);
 		$rep->AmountCol(6, 7, $period['prd4'], $dec);
 		
-		$MaxMthSales = Max($period['prd0'], $period['prd1'], $period['prd2'], $period['prd3']);
-		$IdealStockHolding = $MaxMthSales * 3;
+		$MaxMthSales = max((float) $period['prd0'], (float) $period['prd1'], (float) $period['prd2'], (float) $period['prd3']);
+		$IdealStockHolding = $MaxMthSales * 3.0;
 		$rep->AmountCol(7, 8, $IdealStockHolding, $dec);
 
 		$rep->AmountCol(8, 9, $trans['qty_on_hand'], $dec);

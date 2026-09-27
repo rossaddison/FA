@@ -34,7 +34,7 @@ if ($view_id != -1)
 		if(in_ajax()) {
 			ajax()->popup((string)$_SERVER['PHP_SELF'].'?vw='.$view_id);
 		} else {
-			$type = ($row['filetype']) ? $row['filetype'] : 'application/octet-stream';	
+			$type = str_replace(["\r", "\n"], '', ($row['filetype']) ? $row['filetype'] : 'application/octet-stream');
     		header("Content-type: ".$type);
     		header('Content-Length: '.(string)$row['filesize']);
  			header("Content-Disposition: inline");
@@ -56,10 +56,10 @@ if ($download_id != -1)
 		if(in_ajax()) {
 			ajax()->redirect((string)$_SERVER['PHP_SELF'].'?dl='.$download_id);
 		} else {
-			$type = ($row['filetype']) ? $row['filetype'] : 'application/octet-stream';	
+			$type = str_replace(["\r", "\n"], '', ($row['filetype']) ? $row['filetype'] : 'application/octet-stream');
     		header("Content-type: ".$type);
 	    	header('Content-Length: '.(string)$row['filesize']);
-    		header('Content-Disposition: attachment; filename="'.(string)$row['filename'].'"');
+    		header('Content-Disposition: attachment; filename="'.str_replace(["\r", "\n", '"'], '', (string)$row['filename']).'"');
     		echo file_get_contents(company_path()."/attachments/".(string)$row['unique_name']);
 	    	exit();
 		}

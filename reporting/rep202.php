@@ -36,7 +36,7 @@ print_aged_supplier_analysis();
 function get_invoices(?string $supplier_id, string|null $to, string|bool|array|null $all=true)
 {
 	$todate = date2sql($to);
-	$PastDueDays1 = get_company_pref('past_due_days');
+	$PastDueDays1 = (int) get_company_pref('past_due_days');
 	$PastDueDays2 = 2 * $PastDueDays1;
 
 	// Revomed allocated from sql
@@ -61,7 +61,7 @@ function get_invoices(?string $supplier_id, string|null $to, string|bool|array|n
 	   	WHERE supplier.supplier_id = trans.supplier_id
 			AND trans.supplier_id = ".db_escape($supplier_id)."
 			AND trans.tran_date <= '$todate'
-			AND ABS(trans.ov_amount + trans.ov_gst + trans.ov_discount) > ".FLOAT_COMP_DELTA;
+			AND ABS(trans.ov_amount + trans.ov_gst + trans.ov_discount) > ".(string) FLOAT_COMP_DELTA;
 	if (!(bool)$all)
 		$sql .= "AND $value <> 0 ";
 	$sql .= " ORDER BY trans.tran_date";
@@ -75,17 +75,20 @@ function get_invoices(?string $supplier_id, string|null $to, string|bool|array|n
 function print_aged_supplier_analysis(): void
 {
     global $path_to_root, $systypes_array, $SysPrefs;
+    /** @var array<int, string> $systypes_array */
 
-    $to = $_POST['PARAM_0'];
-    $fromsupp = $_POST['PARAM_1'];
-    $currency = $_POST['PARAM_2'];
-   	$show_all = $_POST['PARAM_3'];
-	$summaryOnly = $_POST['PARAM_4'];
-    $no_zeros = $_POST['PARAM_5'];
-    $graphics = $_POST['PARAM_6'];
-    $comments = $_POST['PARAM_7'];
-	$orientation = $_POST['PARAM_8'];
-	$destination = $_POST['PARAM_9'];
+    $to = (string) post_scalar('PARAM_0');
+    $fromsupp = post_scalar('PARAM_1');
+    $currency = post_scalar('PARAM_2');
+   	$show_all = post_scalar('PARAM_3');
+	$summaryOnly = post_scalar('PARAM_4');
+    $no_zeros = post_scalar('PARAM_5');
+    $graphics = post_scalar('PARAM_6');
+    $comments = post_scalar('PARAM_7');
+	$orientation = post_scalar('PARAM_8');
+	$destination = post_scalar('PARAM_9');
+	if (is_int($show_all) || is_float($show_all))
+		$show_all = (string) $show_all;
 
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
@@ -93,11 +96,11 @@ function print_aged_supplier_analysis(): void
 		include_once(dirname(__DIR__) . "/reporting/includes/pdf_report.inc");
 	$orientation = ((bool)$orientation ? 'L' : 'P');
 	/** @var Chart $pg */
+	$serie = array();
 	if ((bool)$graphics)
 	{
 		include_once(dirname(__DIR__) . "/reporting/includes/class.graphic.inc");
-		$pg = new chart($graphics);
-		$serie = array();
+		$pg = new Chart(is_bool($graphics) ? null : (is_float($graphics) ? (int) $graphics : $graphics));
 	}
 
 	if ($fromsupp == ALL_TEXT)
@@ -123,10 +126,10 @@ function print_aged_supplier_analysis(): void
 	if ((bool)$show_all) $show = _('Yes');
 	else $show = _('No');
 
-	$PastDueDays1 = get_company_pref('past_due_days');
+	$PastDueDays1 = (int) get_company_pref('past_due_days');
 	$PastDueDays2 = 2 * $PastDueDays1;
 	$nowdue = "1-" . $PastDueDays1 . " " . _('Days');
-	$pastdue1 = $PastDueDays1 + 1 . "-" . $PastDueDays2 . " " . _('Days');
+	$pastdue1 = ($PastDueDays1 + 1) . "-" . $PastDueDays2 . " " . _('Days');
 	$pastdue2 = _('Over') . " " . $PastDueDays2 . " " . _('Days');
 
 	$cols = array(0, 100, 130, 190,	250, 320, 385, 450,	515);
@@ -156,11 +159,11 @@ function print_aged_supplier_analysis(): void
 
 	$total = array();
 	$total[0] = $total[1] = $total[2] = $total[3] = $total[4] = 0.0;
-	$PastDueDays1 = get_company_pref('past_due_days');
+	$PastDueDays1 = (int) get_company_pref('past_due_days');
 	$PastDueDays2 = 2 * $PastDueDays1;
 
 	$nowdue = "1-" . $PastDueDays1 . " " . _('Days');
-	$pastdue1 = $PastDueDays1 + 1 . "-" . $PastDueDays2 . " " . _('Days');
+	$pastdue1 = ($PastDueDays1 + 1) . "-" . $PastDueDays2 . " " . _('Days');
 	$pastdue2 = _('Over') . " " . $PastDueDays2 . " " . _('Days');
 
 	$sql = "SELECT supplier_id, supp_name AS name, curr_code, inactive FROM ".TB_PREF."suppliers";
@@ -173,20 +176,21 @@ function print_aged_supplier_analysis(): void
 	{
 		if (!$convert && $currency != $myrow['curr_code']) continue;
 
-		if ($convert) $rate = get_exchange_rate_from_home_currency($myrow['curr_code'], $to);
+		if ($convert) $rate = (float) get_exchange_rate_from_home_currency($myrow['curr_code'], $to);
 		else $rate = 1.0;
 
 		$supprec = row_or_empty(get_supplier_details($myrow['supplier_id'], $to, $show_all));
 		if (!$supprec)
 			continue;
-		$supprec['Balance'] *= $rate;
-		$supprec['Due'] *= $rate;
-		$supprec['Overdue1'] *= $rate;
-		$supprec['Overdue2'] *= $rate;
+		$supprec['Balance'] = (float) $supprec['Balance'] * $rate;
+		$supprec['Due'] = (float) $supprec['Due'] * $rate;
+		$supprec['Overdue1'] = (float) $supprec['Overdue1'] * $rate;
+		$supprec['Overdue2'] = (float) $supprec['Overdue2'] * $rate;
 
-		$str = array((float)$supprec["Balance"] - (float)$supprec["Due"],
-			(float)$supprec["Due"]-(float)$supprec["Overdue1"],
-			(float)$supprec["Overdue1"]-(float)$supprec["Overdue2"],
+		/** @var array{0: float, 1: float, 2: float, 3: float, 4: float} $str */
+		$str = array($supprec["Balance"] - $supprec["Due"],
+			$supprec["Due"]-$supprec["Overdue1"],
+			$supprec["Overdue1"]-$supprec["Overdue2"],
 			$supprec["Overdue2"],
 			$supprec["Balance"]);
 
@@ -196,34 +200,37 @@ function print_aged_supplier_analysis(): void
 		$rep->TextCol(0, 2,	(string)$myrow['name'].($myrow['inactive']==1 ? " ("._("Inactive").")" : ""));
 		if ($convert) $rep->TextCol(2, 3,	$myrow['curr_code']);
 		$rep->fontSize -= 2;
-		$total[0] += ((float)$supprec["Balance"] - (float)$supprec["Due"]);
-		$total[1] += ((float)$supprec["Due"]-(float)$supprec["Overdue1"]);
-		$total[2] += ((float)$supprec["Overdue1"]-(float)$supprec["Overdue2"]);
+		$total[0] += ($supprec["Balance"] - $supprec["Due"]);
+		$total[1] += ($supprec["Due"]-$supprec["Overdue1"]);
+		$total[2] += ($supprec["Overdue1"]-$supprec["Overdue2"]);
 		$total[3] += $supprec["Overdue2"];
 		$total[4] += $supprec["Balance"];
-		for ($i = 0; $i < count($str); $i++)
+		for ($i = 0; $i < 5; $i++)
 			$rep->AmountCol($i + 3, $i + 4, $str[$i], $dec);
 		$rep->NewLine(1, 2);
 		if (!(bool)$summaryOnly)
 		{
 			$res = get_invoices($myrow['supplier_id'], $to, $show_all);
+			if (!($res instanceof mysqli_result))
+				continue;
     		if (db_num_rows($res)==0)
 				continue;
     		$rep->Line($rep->row + 4.0);
 			while ($trans=db_fetch($res))
 			{
 				$rep->NewLine(1, 2);
-        		$rep->TextCol(0, 1, $systypes_array[$trans['type']], -2);
+        		$rep->TextCol(0, 1, $systypes_array[(int) $trans['type']], -2);
 				$rep->TextCol(1, 2,	$trans['reference'], -2);
 				$rep->TextCol(2, 3,	sql2date($trans['tran_date']), -2);
 				foreach ($trans as $i => $value)
 					$trans[$i] = (float)$trans[$i] * $rate;
+				/** @var array{0: float, 1: float, 2: float, 3: float, 4: float} $str */
 				$str = array((float)$trans["Balance"] - (float)$trans["Due"],
 					(float)$trans["Due"]-(float)$trans["Overdue1"],
 					(float)$trans["Overdue1"]-(float)$trans["Overdue2"],
-					$trans["Overdue2"],
-					$trans["Balance"]);
-				for ($i = 0; $i < count($str); $i++)
+					(float) $trans["Overdue2"],
+					(float) $trans["Balance"]);
+				for ($i = 0; $i < 5; $i++)
 					$rep->AmountCol($i + 3, $i + 4, $str[$i], $dec);
 			}
 			$rep->Line($rep->row - 8.0);
@@ -238,10 +245,10 @@ function print_aged_supplier_analysis(): void
 	$rep->fontSize += 2;
 	$rep->TextCol(0, 3,	_('Grand Total'));
 	$rep->fontSize -= 2;
-	for ($i = 0; $i < count($total); $i++)
+	for ($i = 0; $i < 5; $i++)
 	{
 		$rep->AmountCol($i + 3, $i + 4, $total[$i], $dec);
-		if ((bool)$graphics && $i < count($total) - 1)
+		if ((bool)$graphics && $i < 4)
 		{
 			$serie[$i] = abs($total[$i]);
 		}
@@ -260,7 +267,7 @@ function print_aged_supplier_analysis(): void
 		$pg->setValues(true);
 		$pg->latin_notation = (sysprefs()->decseps[user_dec_sep()] != ".");
 		$filename = company_path(). "/pdf_files/". random_id().".png";
-		$pg->display($filename, true);
+		$pg->display($filename);
 		$w = (float)$pg->width / 1.5;
 		$h = (float)$pg->height / 1.5;
 		$x = ($rep->pageWidth - $w) / 2.0;

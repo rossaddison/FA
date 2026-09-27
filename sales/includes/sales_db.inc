@@ -379,7 +379,7 @@ function get_sales_parent_numbers(string|int|float|bool|null $trans_type, string
 /**
  * @return bool|mysqli_result
  */
-function get_sales_child_documents(?int $trans_type, string|array|null $trans_no)
+function get_sales_child_documents(?int $trans_type, string|array|null $trans_no): mysqli_result|false
 {
 	// FIXME -  credit notes retrieved here should be those linked to invoices containing 
 	// at least one line from related invoice

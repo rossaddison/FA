@@ -27,12 +27,12 @@ if (sysprefs()->use_popup_windows)
 if ($_GET['trans_type'] == ST_SALESQUOTE)
 {
 	page(_($help_context = "View Sales Quotation"), true, false, "", $js);
-	display_heading(sprintf(_("Sales Quotation #%d"),$_GET['trans_no']));
-}	
+	display_heading(sprintf(_("Sales Quotation #%d"),(string) $_GET['trans_no']));
+}
 else
 {
 	page(_($help_context = "View Sales Order"), true, false, "", $js);
-	display_heading(sprintf(_("Sales Order #%d"),$_GET['trans_no']));
+	display_heading(sprintf(_("Sales Order #%d"),(string) $_GET['trans_no']));
 }
 
 if (isset($_SESSION['View']))
@@ -117,6 +117,8 @@ if ($_GET['trans_type'] != ST_SALESQUOTE)
 
 	if ($result = get_sales_child_documents(ST_SALESORDER, $_GET['trans_no'])) {
 
+		/** @var mysqli_result $result */
+		$result = $result;
 		$k = 0;
 		while ($del_row = db_fetch($result))
 		{
@@ -148,19 +150,21 @@ if ($_GET['trans_type'] != ST_SALESQUOTE)
 	$inv_numbers = array();
 	$invoices_total = 0.0;
 
-	if (session_obj('View')->prepaid)
-		$result = get_sales_order_invoices(get_scalar('trans_no'));
+	if ((bool)session_obj('View')->prepaid)
+		$result = get_sales_order_invoices((string) get_scalar('trans_no'));
 	else
 		$result = get_sales_child_documents(ST_CUSTDELIVERY, $dn_numbers);
 
 	if ($result) {
+		/** @var mysqli_result $result */
+		$result = $result;
 		$k = 0;
 
 		while ($inv_row = db_fetch($result))
 		{
 			alt_table_row_color($k);
 
-			$this_total = session_obj('View')->prepaid ? $inv_row["prep_amount"] : 
+			$this_total = (bool)session_obj('View')->prepaid ? (float)$inv_row["prep_amount"] :
 				(float)$inv_row["ov_freight"] + (float)$inv_row["ov_freight_tax"]  + (float)$inv_row["ov_gst"] + (float)$inv_row["ov_amount"];
 			$invoices_total += $this_total;
 
@@ -185,6 +189,8 @@ if ($_GET['trans_type'] != ST_SALESQUOTE)
 	$credits_total = 0.0;
 
 	if ($result = get_sales_child_documents(ST_SALESINVOICE, $inv_numbers)) {
+		/** @var mysqli_result $result */
+		$result = $result;
 		$k = 0;
 
 		while ($credits_row = db_fetch($result))
@@ -234,7 +240,7 @@ foreach (session_obj('View')->line_items as $stock_item) {
 
 	label_cell($stock_item->stock_id);
 	label_cell($stock_item->item_description);
-	$dec = get_qty_dec($stock_item->stock_id);
+	$dec = (int) get_qty_dec($stock_item->stock_id);
 	qty_cell($stock_item->quantity, false, $dec);
 	label_cell($stock_item->units);
 	amount_cell($stock_item->price);
@@ -268,7 +274,7 @@ label_cell('', "colspan=2");
 end_row();
 end_table();
 
-display_allocations_to(PT_CUSTOMER, session_obj('View')->customer_id, get_scalar('trans_type'), get_scalar('trans_no'), $sub_tot + (float)$tax_total);
+display_allocations_to(PT_CUSTOMER, session_obj('View')->customer_id, (string) get_scalar('trans_type'), (string) get_scalar('trans_no'), $sub_tot + (float)$tax_total);
 
-end_page(true, false, false, get_scalar('trans_type'), get_scalar('trans_no'));
+end_page(true, false, false, (string) get_scalar('trans_type'), (string) get_scalar('trans_no'));
 

@@ -22,9 +22,11 @@ define('RC_FIXEDASSETS', 7);
 
 class BoxReports
 {
-	/** @var array<array-key, string> */
+	/** @var array<array-key, string|null> */
 	var $ar_classes; // report class names
-	var $ar_reports;
+	/** @var array<int, array<int, Report>> */
+	var $ar_reports = array();
+	/** @var array<int, callable> */
 	var $ctrl_handlers = array();
 
 	/** @psalm-mutation-free */
@@ -62,7 +64,10 @@ class BoxReports
 		$this->ar_reports[$class][$id] = new Report($id, $rep_name, $params);
 	}
 
-	/** @return non-falsy-string|null */
+	/**
+	 * @param int|null $class
+	 * @return non-falsy-string|null
+	 */
 	function getDisplay($class=null)
 	{
 		global $path_to_root, $SysPrefs, $Ajax;
@@ -79,9 +84,9 @@ class BoxReports
 		$st_classes = "<b>" . _("Report Classes:") . "</b><br>";
 
 		if (isset($_GET['Class']))
-			set_focus('class'.(string)$_GET['Class']);
+			set_focus('class'.(string) get_scalar('Class'));
 
-		$cur_class = $_REQUEST['Class'];
+		$cur_class = isset($_REQUEST['Class']) && !is_array($_REQUEST['Class']) ? $_REQUEST['Class'] : null;
 
 		foreach($this->ar_classes as $class_id => $name)
 		{
@@ -90,7 +95,7 @@ class BoxReports
 
 			$acc = access_string($name);
 			$st_classes .= "<a href='"
-				.$_SERVER['PHP_SELF']."?Class=$class_id'"
+				.($_SERVER['PHP_SELF'] ?? '')."?Class=$class_id'"
 				
 				." class='repclass_link ". ($cur_class == $class_id ? 'fa-bold' : 'fa-normal')."' id='".'class'.$class_id."'"
 				."$acc[1]>$acc[0]</a> <br>";
@@ -139,7 +144,11 @@ class BoxReports
 		return $st;
 	}
 
-	/** @return string */
+	/**
+	 * @param array<array-key, mixed>|null $controls
+	 * @param int $id
+	 * @return string
+	 */
 	function getOptions($controls, $id = 0)
 	{
 		$st = '';
@@ -178,6 +187,7 @@ class BoxReports
 	//	Register additional control handler
 	// $handle - name of global function f($name, $type) returning html code for control
 	/**
+	 * @param callable $handler
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -189,8 +199,9 @@ class BoxReports
 	//
 	/**
 	 * @param string|null $name
+	 * @param string|null $type
 	 */
-	function get_ctrl($name, $type)
+	function get_ctrl($name, $type): string
 	{
 		global $path_to_root, $type_shortcuts;
 		$day_range = get_company_pref("max_days_in_docs");
@@ -254,7 +265,7 @@ class BoxReports
 					return yesno_list($name);
 
 				case 'PAYMENT_LINK':
-					return payment_services($name, null);
+					return payment_services($name);
 
 				case 'DESTINATION':
 					$sel = array(_("PDF/Printer"), "Excel");
@@ -509,9 +520,11 @@ class Report
 	 * @var null|string
 	 */
 	var $name;
+	/** @var array<array-key, mixed>|null */
 	var $ar_params;
+	/** @var array<array-key, mixed>|null */
 	var $controls;
-	
+
 	/**
 	 * @param int|null $id
 	 * @param string|null $name
@@ -524,8 +537,9 @@ class Report
 		$this->name = $name;
 		if ($ar_params) $this->set_controls($ar_params);
 	}
-	
+
 	/**
+	 * @param array<array-key, mixed>|null $ar_params
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -533,7 +547,10 @@ class Report
 		$this->controls = $ar_params;
 	}
 	
-	/** @psalm-mutation-free */
+	/**
+	 * @psalm-mutation-free
+	 * @return array<array-key, mixed>|null
+	 */
 	function get_controls() {
 		return $this->controls;
 	}
@@ -562,7 +579,7 @@ function gl_systypes_list(string|int|float|bool|null $name, string|int|float|boo
 /*
 	Add extension/custom reports to report manager.
 */
-function add_custom_reports(array &$reports): void
+function add_custom_reports(BoxReports &$reports): void
 {
 	global $installed_extensions, $path_to_root;
 	

@@ -37,12 +37,12 @@ function print_deliveries(): void
 
 	include_once(dirname(__DIR__) . "/reporting/includes/pdf_report.inc");
 
-	$from = $_POST['PARAM_0'];
-	$to = $_POST['PARAM_1'];
-	$email = $_POST['PARAM_2'];
-	$packing_slip = $_POST['PARAM_3'];
-	$comments = $_POST['PARAM_4'];
-	$orientation = $_POST['PARAM_5'];
+	$from = (string) post_scalar('PARAM_0');
+	$to = (string) post_scalar('PARAM_1');
+	$email = post_scalar('PARAM_2');
+	$packing_slip = post_scalar('PARAM_3');
+	$comments = post_scalar('PARAM_4');
+	$orientation = post_scalar('PARAM_5');
 
 	if (!(bool)$from || !(bool)$to) return;
 
@@ -51,8 +51,8 @@ function print_deliveries(): void
 
 	$fno = explode("-", $from);
 	$tno = explode("-", $to);
-	$from = min($fno[0], $tno[0]);
-	$to = max($fno[0], $tno[0]);
+	$from = (int) min($fno[0], $tno[0]);
+	$to = (int) max($fno[0], $tno[0]);
 
 	$cols = array(4, 60, 225, 300, 325, 385, 450, 515);
 
@@ -78,7 +78,9 @@ function print_deliveries(): void
 			if (!exists_customer_trans(ST_CUSTDELIVERY, $i))
 				continue;
 			$myrow = get_customer_trans($i, ST_CUSTDELIVERY);
-			$branch = get_branch($myrow["branch_code"]);
+			if ($myrow === false)
+				continue;
+			$branch = row_or_empty(get_branch((string) $myrow["branch_code"]));
 			$sales_order = get_sales_order_header($myrow["order_"], ST_SALESORDER); // ?
 			if ($email == 1)
 			{
@@ -94,7 +96,7 @@ function print_deliveries(): void
 					$rep->filename = "Packing_slip" . (string)$myrow['reference'] . ".pdf";
 				}
 			}
-			$rep->currency = ($cur == null ? "USD" : $cur);
+			$rep->currency = ($cur == null ? "USD" : (string) $cur);
 			$rep->Font();
 			$rep->Info($params, $cols, null, $aligns);
 
@@ -174,7 +176,7 @@ function print_deliveries(): void
     				$DisplayTax = number_format2($tax_item['amount'], $dec);
  
  					if (sysprefs()->suppress_tax_rates() == 1)
- 		   				$tax_type_name = $tax_item['tax_type_name'];
+ 		   				$tax_type_name = (string) $tax_item['tax_type_name'];
  		   			else
  		   				$tax_type_name = (string)$tax_item['tax_type_name']." (".(string)$tax_item['rate']."%) ";
 

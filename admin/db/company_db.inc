@@ -70,6 +70,7 @@ function set_company_pref(?string $pref, ?string $category, ?string $type, ?int 
 	return db_query($sql, "cannot set company pref");
 }
 
+/** @return null|scalar */
 function get_base_sales_type()
 {
 	return get_company_pref('base_sales');

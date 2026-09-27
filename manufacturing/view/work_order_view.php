@@ -27,12 +27,12 @@ page(_($help_context = "View Work Order"), true, false, "", $js);
 
 //-------------------------------------------------------------------------------------------------
 $woid = 0;
-if ($_GET['trans_no'] != "")
+if (get_scalar('trans_no') != "")
 {
-	$woid = $_GET['trans_no'];
+	$woid = get_scalar('trans_no');
 }
 
-display_heading($systypes_array[ST_WORKORDER] . " # " . $woid);
+display_heading($systypes_array[ST_WORKORDER] . " # " . (string) $woid);
 
 br(1);
 $myrow = row_or_empty(get_work_order($woid));
@@ -81,5 +81,5 @@ echo "<br></center>";
 
 is_voided_display(ST_WORKORDER, $woid, _("This work order has been voided."));
 
-end_page(true, false, false, ST_WORKORDER, $woid);
+end_page(true, false, false, ST_WORKORDER, (string) $woid);
 

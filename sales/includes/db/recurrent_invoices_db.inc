@@ -10,7 +10,7 @@
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-function add_recurrent_invoice(string|int|float|bool|null $description, string|int|float|bool|null $order_no, int|float|bool|null $debtor_no, int|float|bool|null $group_no, int|float|bool|null $days, int|float|bool|null $monthly,
+function add_recurrent_invoice(string|int|float|bool|null $description, string|int|float|bool|null $order_no, int|float|bool|null $debtor_no, int|float|bool|null $group_no, int|float|bool $days, int|float|bool $monthly,
 	string|int|float|bool|null $begin, string|int|float|bool|null $end): void
 {
 	$sql = "INSERT INTO ".TB_PREF."recurrent_invoices (description, order_no, debtor_no,
@@ -21,7 +21,7 @@ function add_recurrent_invoice(string|int|float|bool|null $description, string|i
    	db_query($sql,"The recurrent invoice could not be added");
 }
 
-function update_recurrent_invoice(string|int|float|bool|null $selected_id, string|int|float|bool|null $description, string|int|float|bool|null $order_no, int|float|bool|null $debtor_no, int|float|bool|null $group_no, int|float|bool|null $days, int|float|bool|null $monthly,
+function update_recurrent_invoice(string|int|float|bool|null $selected_id, string|int|float|bool|null $description, string|int|float|bool|null $order_no, int|float|bool|null $debtor_no, int|float|bool|null $group_no, int|float|bool $days, int|float|bool $monthly,
 	string|int|float|bool|null $begin, string|int|float|bool|null $end): void
 {
 	$sql = "UPDATE ".TB_PREF."recurrent_invoices SET 

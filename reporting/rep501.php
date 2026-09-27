@@ -44,13 +44,9 @@ function getTransactions(string|int|array|null $from, string|array|null $to)
     return db_query($sql,"No transactions were returned");
 }
 
-/**
- * @return float(0)|null|string
- */
-function getYTD(?string $dim)
+function getYTD(?string $dim): float|null|string
 {
-	$date = Today();
-	$date = begin_fiscalyear($date);
+	$date = begin_fiscalyear();
 	$date = date2sql($date);
 	
 	$sql = "SELECT SUM(amount) AS Balance
@@ -77,12 +73,12 @@ function print_dimension_summary(): void
 {
     global $path_to_root;
 
-    $fromdim = $_POST['PARAM_0'];
-    $todim = $_POST['PARAM_1'];
-    $showbal = $_POST['PARAM_2'];
-    $comments = $_POST['PARAM_3'];
-	$orientation = $_POST['PARAM_4'];
-	$destination = $_POST['PARAM_5'];
+    $fromdim = post_scalar('PARAM_0');
+    $todim = post_scalar('PARAM_1');
+    $showbal = post_scalar('PARAM_2');
+    $comments = post_scalar('PARAM_3');
+	$orientation = post_scalar('PARAM_4');
+	$destination = post_scalar('PARAM_5');
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
@@ -96,7 +92,7 @@ function print_dimension_summary(): void
 	$aligns = array('left',	'left', 'left',	'left', 'left', 'left', 'right');
 
     $params =   array( 	0 => $comments,
-    				    1 => array('text' => _('Dimension'), 'from' => get_dimension_string($fromdim), 'to' => get_dimension_string($todim)));
+    				    1 => array('text' => _('Dimension'), 'from' => get_dimension_string((string) $fromdim), 'to' => get_dimension_string((string) $todim)));
 
     $rep = new FrontReport(_('Dimension Summary'), "DimensionSummary", user_pagesize(), 9, $orientation);
     if ($orientation == 'L')
@@ -106,7 +102,9 @@ function print_dimension_summary(): void
     $rep->Info($params, $cols, $headers, $aligns);
     $rep->NewPage();
 
-	$res = getTransactions($fromdim, $todim);
+	$res = getTransactions((string) $fromdim, (string) $todim);
+	if (!($res instanceof mysqli_result))
+		return;
 	while ($trans=db_fetch($res))
 	{
 		$rep->TextCol(0, 1, $trans['reference']);
@@ -121,7 +119,7 @@ function print_dimension_summary(): void
 		$rep->TextCol(5, 6, $str);
 		if ((bool)$showbal)
 		{
-			$balance = getYTD($trans['id']);
+			$balance = getYTD((string) $trans['id']);
 			$rep->AmountCol(6, 7, $balance, 0);
 		}	
 		$rep->NewLine(1, 2);

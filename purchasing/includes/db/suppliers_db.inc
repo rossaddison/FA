@@ -199,6 +199,7 @@ function is_new_supplier(string|int|float|bool|null $id): bool
 	return !(bool)key_in_foreign_table($id, $tables, 'supplier_id');
 }
 
+/** @return null|scalar */
 function get_supplier_currency(string|int|float|bool|null $supplier_id)
 {
     $sql = "SELECT curr_code FROM ".TB_PREF."suppliers WHERE supplier_id = ".db_escape($supplier_id);

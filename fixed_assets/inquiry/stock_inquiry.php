@@ -51,6 +51,7 @@ if(get_post('RefreshInquiry'))
 	ajax()->activate('totals_tbl');
 }
 
+/** @return null|scalar */
 function gl_view(array $row)
 {
   	$row = get_fixed_asset_move($row['stock_id'], ST_JOURNAL);
@@ -92,6 +93,7 @@ function fa_link(array $row)
   	return viewer_link($row['stock_id'], $url);
 }
 
+/** @return string|null */
 function depr_method_title(array $row) {
   	global $depreciation_methods;
   	return $depreciation_methods[$row['depreciation_method']];
@@ -120,6 +122,7 @@ function status_title(array $row): string {
 
 }
 
+/** @return null|scalar */
 function purchase_link(array $row)
 {
 
@@ -129,6 +132,7 @@ function purchase_link(array $row)
   	return get_supplier_trans_view_str(ST_SUPPINVOICE, $row["purchase_no"], sql2date($row["purchase_date"]));
 }
 
+/** @return null|scalar */
 function disposal_link(array $row)
 {
   	if ($row['disposal_date'] === NULL)

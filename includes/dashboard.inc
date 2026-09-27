@@ -46,7 +46,8 @@ div.square2 {
 function dashboard(string|int|float|bool|null $sel_app): void
 {
 	global  $style;
-	if (is_object($sel_app) && !session_obj('wa_current_user')->check_application_access($selected_app))
+	$waapp = isset($_SESSION['App']) ? $_SESSION['App']->get_application((string) $sel_app) : null;
+	if ($waapp !== null && !session_obj('wa_current_user')->check_application_access($waapp))
 		return;
 	echo $style;
 	echo "<script".csp_nonce_attr()."> 

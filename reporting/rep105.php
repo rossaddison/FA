@@ -141,7 +141,7 @@ function print_order_status_list(): void
 	$result = GetSalesOrders($from, $to, $category, $location, $backorder);
 	while ($myrow=db_fetch($result))
 	{
-		$rep->NewLine(0, 2, false, $orderno);
+		$rep->NewLine(0, 2, false);
 		if ($orderno != $myrow['order_no'])
 		{
 			if ($orderno != 0)

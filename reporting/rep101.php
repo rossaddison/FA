@@ -103,16 +103,17 @@ function get_transactions(?string $debtorno, string|null $from, string|null $to)
 function print_customer_balances(): void
 {
     	global $path_to_root, $systypes_array;
+    	/** @var array<int, string> $systypes_array */
 
-    	$from = $_POST['PARAM_0'];
-    	$to = $_POST['PARAM_1'];
-    	$fromcust = $_POST['PARAM_2'];
-    	$show_balance = $_POST['PARAM_3'];
-    	$currency = $_POST['PARAM_4'];
-    	$no_zeros = $_POST['PARAM_5'];
-    	$comments = $_POST['PARAM_6'];
-	$orientation = $_POST['PARAM_7'];
-	$destination = $_POST['PARAM_8'];
+    	$from = (string) post_scalar('PARAM_0');
+    	$to = (string) post_scalar('PARAM_1');
+    	$fromcust = post_scalar('PARAM_2');
+    	$show_balance = post_scalar('PARAM_3');
+    	$currency = post_scalar('PARAM_4');
+    	$no_zeros = post_scalar('PARAM_5');
+    	$comments = post_scalar('PARAM_6');
+	$orientation = post_scalar('PARAM_7');
+	$destination = post_scalar('PARAM_8');
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
@@ -162,7 +163,8 @@ function print_customer_balances(): void
     $rep->Info($params, $cols, $headers, $aligns);
     $rep->NewPage();
 
-	$grandtotal = array(0,0,0,0);
+	/** @var array{0: float, 1: float, 2: float, 3: float} $grandtotal */
+	$grandtotal = array(0.0,0.0,0.0,0.0);
 
 	$sql = "SELECT debtor_no, name, curr_code, inactive FROM ".TB_PREF."debtors_master ";
 	if ($fromcust != ALL_TEXT)
@@ -175,22 +177,24 @@ function print_customer_balances(): void
 		if (!$convert && $currency != $myrow['curr_code']) continue;
 		
 		$accumulate = 0.0;
-		$rate = $convert ? get_exchange_rate_from_home_currency($myrow['curr_code'], Today()) : 1;
+		$rate = $convert ? (float) get_exchange_rate_from_home_currency($myrow['curr_code'], Today()) : 1.0;
 		$bal = get_open_balance($myrow['debtor_no'], $from);
 		$init = array();
 
-		$init[0] = round2(($bal != false ? abs($bal['charges']) : 0)*$rate, $dec);
-		$init[1] = round2(($bal != false ? abs($bal['credits']) : 0)*$rate, $dec);
-		$init[2] = round2(($bal != false ? $bal['Allocated'] : 0)*$rate, $dec);
+		$init[0] = round2(($bal != false ? abs((float) $bal['charges']) : 0.0)*$rate, $dec);
+		$init[1] = round2(($bal != false ? abs((float) $bal['credits']) : 0.0)*$rate, $dec);
+		$init[2] = round2(($bal != false ? (float) $bal['Allocated'] : 0.0)*$rate, $dec);
 		if ((bool)$show_balance)
 		{
 			$init[3] = $init[0] - $init[1];
 			$accumulate += $init[3];
-		}	
-		else	
-			$init[3] = round2(($bal != false ? $bal['OutStanding'] : 0)*$rate, $dec);
+		}
+		else
+			$init[3] = round2(($bal != false ? (float) $bal['OutStanding'] : 0.0)*$rate, $dec);
 
 		$res = get_transactions($myrow['debtor_no'], $from, $to);
+		if (!($res instanceof mysqli_result))
+			continue;
 		if ((bool)$no_zeros && db_num_rows($res) == 0) continue;
 
 		$rep->fontSize += 2;
@@ -203,7 +207,8 @@ function print_customer_balances(): void
 		$rep->AmountCol(5, 6, $init[1], $dec);
 		$rep->AmountCol(6, 7, $init[2], $dec);
 		$rep->AmountCol(7, 8, $init[3], $dec);
-		$total = array(0,0,0,0);
+		/** @var array{0: float, 1: float, 2: float, 3: float} $total */
+		$total = array(0.0,0.0,0.0,0.0);
 		for ($i = 0; $i < 4; $i++)
 		{
 			$total[$i] += $init[$i];
@@ -221,31 +226,31 @@ function print_customer_balances(): void
                 if ((bool)$show_balance) {
                     if ($trans['TotalAmount'] == 0) continue;
                 } else {
-                    if (floatcmp(abs($trans['TotalAmount']), $trans['Allocated']) == 0) continue;
+                    if (floatcmp(abs((float) $trans['TotalAmount']), (float) $trans['Allocated']) == 0) continue;
                 }
             }
 			$rep->NewLine(1, 2);
-			$rep->TextCol(0, 1, $systypes_array[$trans['type']]);
+			$rep->TextCol(0, 1, $systypes_array[(int) $trans['type']]);
 			$rep->TextCol(1, 2,	$trans['reference']);
 			$rep->DateCol(2, 3,	$trans['tran_date'], true);
 			if ($trans['type'] == ST_SALESINVOICE)
 				$rep->DateCol(3, 4,	$trans['due_date'], true);
-			$item[0] = $item[1] = 0.0;
+			$item = array(0.0, 0.0, 0.0, 0.0);
 			if ($trans['type'] == ST_CUSTCREDIT || $trans['type'] == ST_CUSTPAYMENT || $trans['type'] == ST_BANKDEPOSIT)
-				$trans['TotalAmount'] *= -1;
+				$trans['TotalAmount'] = (float) $trans['TotalAmount'] * -1.0;
 			if ($trans['TotalAmount'] > 0.0)
 			{
-				$item[0] = round2((float)$trans['TotalAmount'] * (float)$rate, $dec);
+				$item[0] = round2((float)$trans['TotalAmount'] * $rate, $dec);
 				$rep->AmountCol(4, 5, $item[0], $dec);
 				$accumulate += $item[0];
-				$item[2] = round2((float)$trans['Allocated'] * (float)$rate, $dec);
+				$item[2] = round2((float)$trans['Allocated'] * $rate, $dec);
 			}
 			else
 			{
-				$item[1] = round2(abs($trans['TotalAmount']) * $rate, $dec);
+				$item[1] = round2(abs((float) $trans['TotalAmount']) * $rate, $dec);
 				$rep->AmountCol(5, 6, $item[1], $dec);
 				$accumulate -= $item[1];
-				$item[2] = round2((float)$trans['Allocated'] * (float)$rate, $dec) * (float)(-1);
+				$item[2] = round2((float)$trans['Allocated'] * $rate, $dec) * -1.0;
 			}
 			$rep->AmountCol(6, 7, $item[2], $dec);
 			if (($trans['type'] == ST_JOURNAL && $item[0]) || $trans['type'] == ST_SALESINVOICE || $trans['type'] == ST_BANKPAYMENT)
@@ -262,7 +267,7 @@ function print_customer_balances(): void
 				$grandtotal[$i] += $item[$i];
 			}
 			if ((bool)$show_balance)
-				$total[3] = (float)$total[0] - (float)$total[1];
+				$total[3] = $total[0] - $total[1];
 		}
 		$rep->Line($rep->row - 8.0);
 		$rep->NewLine(2);
@@ -276,7 +281,7 @@ function print_customer_balances(): void
 	$rep->TextCol(0, 3, _('Grand Total'));
 	$rep->fontSize -= 2;
 	if ((bool)$show_balance)
-		$grandtotal[3] = (float)$grandtotal[0] - (float)$grandtotal[1];
+		$grandtotal[3] = $grandtotal[0] - $grandtotal[1];
 	for ($i = 0; $i < 4; $i++)
 		$rep->AmountCol($i + 4, $i + 5, $grandtotal[$i], $dec);
 	$rep->Line($rep->row  - 4.0);

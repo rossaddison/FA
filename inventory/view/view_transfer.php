@@ -21,14 +21,15 @@ include_once(dirname(__DIR__, 2) . "/includes/date_functions.inc");
 include_once(dirname(__DIR__, 2) . "/includes/ui.inc");
 include_once(dirname(__DIR__, 2) . "/gl/includes/gl_db.inc");
 
+$trans_no = null;
 if (isset($_GET["trans_no"]))
 {
-	$trans_no = $_GET["trans_no"];
+	$trans_no = (string) get_scalar('trans_no');
 }
 
 $trans = row_or_empty(get_stock_transfer($trans_no));
 
-display_heading($systypes_array[ST_LOCTRANSFER] . " #$trans_no");
+display_heading($systypes_array[ST_LOCTRANSFER] . " #" . (string) $trans_no);
 
 echo "<br>";
 start_table(TABLESTYLE2, "width='90%'");
@@ -60,7 +61,7 @@ while ($item = db_fetch($transfer_items))
 
         label_cell($item['stock_id']);
         label_cell($item['description']);
-        qty_cell($item['qty'], false, get_qty_dec($item['stock_id']));
+        qty_cell($item['qty'], false, (int) get_qty_dec($item['stock_id']));
         label_cell($item['units']);
         end_row();
 	}
@@ -70,4 +71,4 @@ end_table(1);
 
 is_voided_display(ST_LOCTRANSFER, $trans_no, _("This transfer has been voided."));
 
-end_page(true, false, false, ST_LOCTRANSFER, $trans_no);
+end_page(true, false, false, ST_LOCTRANSFER, (string) $trans_no);

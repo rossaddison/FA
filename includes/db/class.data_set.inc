@@ -189,17 +189,17 @@ abstract class record_set {
 	}
 
 
-	function delete_check($key)
+	function delete_check($key): bool
 	{
 		return $this->_validate($key, null);
 	}
 
-	function insert_check($data)
+	function insert_check($data): bool
 	{
 		return $this->_validate(null, $data);
 	}
 
-	function update_check($key, $data)
+	function update_check($key, $data): bool
 	{
 		// Note: this does not allow change of key
 		return $this->_validate( $key, $data);
@@ -211,6 +211,7 @@ abstract class record_set {
 	//
 	//	Generic read record routine
 	//
+	/** @return mixed */
 	function get($key=null)
 	{
 		$defaults = array();
@@ -229,6 +230,7 @@ abstract class record_set {
 	//
 	//	Generic list record routine
 	//
+	/** @return mixed */
 	abstract function get_all();
 	//
 	//	Generic update record routine
@@ -282,6 +284,7 @@ class data_set extends record_set {
 	//
 	//	Generic read record routine
 	//
+	/** @return array<array-key, mixed>|false|null */
 	function get($key=null)
 	{
 		if ($key===null)
@@ -372,7 +375,7 @@ class data_set extends record_set {
 		if ($result===false)
 			return $this->error("cannot update record in ".$this->name);
 
-		return $result;
+		return (bool) $result;
 	}
 	//
 	//	Generic delete record routine
@@ -400,7 +403,7 @@ class data_set extends record_set {
 		if (!$result)
 			return $this->error(_("Cannot update record in ").$this->name);
 
-		return $result;
+		return (bool) $result;
 	}
 	//
 	//	Insert record
@@ -425,122 +428,8 @@ class data_set extends record_set {
 		if (!$result)
 			return $this->error(_("Cannot insert record into ").$this->name);
 
-		return $result;
+		return (bool) $result;
 	}
 
-}
-
-/**
-*
-*	Data set as array of arrays/objects
-*
-*  TODO: default to: fields = ReflectionClass->getProperties
-**/
-class array_set extends record_set {
-
-	var $array = array();
-
-	var $object_class;	// name of record object class or null for arrays
-
-	/** @psalm-mutation-free */
-	function __construct($name, $fields, $key=null, &$arr=array(), $class = null)
-	{
-		$this->array = &$arr;
-		$this->object_class = $class;
-		parent::__construct($name, $fields, $key);
-	}
-
-	//===========================================================================
-	//	Database functions placeholders
-
-	//
-	//
-	//
-	function get($key=null)
-	{
-		if ($key===null)
-			return parent::get();
-
-		return @$this->array[$key];
-	}
-	//
-	//	Generic list record routine
-	//
-	/** @psalm-mutation-free */
-	function get_all()
-	{
-		return $this->array;
-	}
-
-	function _set_record($data, $record = null)
-	{
-		if (!isset($record)) {
-			if ($this->object_class) {
-				$record = new $this->object_class;
-			}
-			else
-				$record = array();
-		}
-		foreach(array_merge($this->fields, (array)$this->key) as $n => $fld)
-		{
-			if (!is_numeric($n))
-				$fld = $n;
-			if (array_key_exists($fld, $data))
-			{
-				if ($this->object_class)
-					$record->$fld = $data[$fld];
-				else
-					$record[$fld] = $data[$fld];
-				$updates = true;
-			}
-		}
-		return $updates ? $record : null;
-	}
-	//
-	//	Generic update record routine
-	//
-	function update($key, $data)
-	{
-		if (parent::update($key, $data) === false)
-			return false;
-
-		$record = $this->_set_record($data, $this->array[$key]);
-		if (!$record)
-			return $this->error(_("Empty update data for array ").$this->name);
-
-		$this->array[$key] = $record;
-
-		return true;
-	}
-	//
-	//	Delete record
-	//
-	/** @return bool */
-	function delete($key)
-	{
-		if (!parent::delete($key))
-			return false;
-
-		unset($this->array[$key]);
-
-		return true;
-	}
-	//
-	//	Insert record
-	//
-	function insert($data)
-	{
-		if (parent::insert($data) === false)
-			return false;
-
-		$record = $this->_set_record($data);
-		if (!$record)
-			return $this->error(_("Empty data for array ").$this->name);
-
-		$this->array[] = $record;
-
-		$ret = array_keys($this->array);
-		return end($ret);
-	}
 }
 

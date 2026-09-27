@@ -125,7 +125,7 @@ end_table(1);
 //---------------------------------------------------------------------------------------------
 
 /** @return null|string */
-function trans_view(array $trans, string|int|float|bool|array|null $trans_no)
+function trans_view(array $trans, string|int|float|bool|array|null $trans_no): ?string
 {
 	return get_customer_trans_view_str(ST_CUSTDELIVERY, $trans['trans_no']);
 }
@@ -141,7 +141,7 @@ function batch_checkbox(array $row): string
 	 .(string)$row['branch_code']."'>\n";
 }
 
-function edit_link(array $row)
+function edit_link(array $row): string
 {
 	return $row["Outstanding"]==0 ? '' :
 		trans_editor_link(ST_CUSTDELIVERY, $row['trans_no']);

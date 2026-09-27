@@ -78,11 +78,10 @@ class items_cart
 	// --------------- line item functions
 
 	/**
-	 * @param int|null $line_no
 	 * @param int|float|bool|null $qty
 	 * @return bool
 	 */
-	function add_to_cart($line_no, $stock_id, $qty, $standard_cost, $description=null)
+	function add_to_cart(int $line_no, $stock_id, $qty, $standard_cost, $description=null)
 	{
 
 		if (isset($stock_id) && $stock_id != "" && isset($qty))
@@ -338,6 +337,7 @@ class items_cart
 			'tax_in', 'tax_out' - tax amounts array indexed by tax type id
 			'tax_reg' - tax register used
 	*/
+	/** @return array<array-key, mixed> */
 	function collect_tax_info()
 	{
 		$tax_info = array();

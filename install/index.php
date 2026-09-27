@@ -304,7 +304,7 @@ elseif(get_post('install_coas'))
 	else {
 
 		$_SESSION['inst_set'] = array_merge($_SESSION['inst_set'], array(
-			'coa' => $_POST['coa'],
+			'coa' => clean_file_name($_POST['coa']),
 			'pass' => $_POST['pass'],
 			'name' => $_POST['name'],
 			'admin' => $_POST['admin'],

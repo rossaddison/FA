@@ -71,12 +71,12 @@ function print_sales_summary_report(): void
 {
 	global $path_to_root;
 	
-	$from = $_POST['PARAM_0'];
-	$to = $_POST['PARAM_1'];
-	$tax_id = $_POST['PARAM_2'];
-	$comments = $_POST['PARAM_3'];
-	$orientation = $_POST['PARAM_4'];
-	$destination = $_POST['PARAM_5'];
+	$from = post_scalar('PARAM_0');
+	$to = post_scalar('PARAM_1');
+	$tax_id = post_scalar('PARAM_2');
+	$comments = post_scalar('PARAM_3');
+	$orientation = post_scalar('PARAM_4');
+	$destination = post_scalar('PARAM_5');
 	if ($tax_id == 0)
 		$tid = _('No');
 	else
@@ -110,7 +110,7 @@ function print_sales_summary_report(): void
 	
 	$totalnet = 0.0;
 	$totaltax = 0.0;
-	$transactions = getTaxTransactions($from, $to, $tax_id);
+	$transactions = getTaxTransactions((string) $from, (string) $to, (string) $tax_id);
 
 	$rep->TextCol(0, 4, _('Balances in Home Currency'));
 	$rep->NewLine(2);
@@ -129,8 +129,8 @@ function print_sales_summary_report(): void
 				$rep->AmountCol(2, 3, $total, $dec);
 				$rep->AmountCol(3, 4, $tax, $dec);
 				$totalnet += $total;
-				$totaltax += (float)$tax;
-				$total = $tax = 0;
+				$totaltax += $tax;
+				$total = $tax = 0.0;
 				$rep->NewLine();
 
 				if ($rep->row < $rep->bottomMargin + $rep->lineHeight)
@@ -143,14 +143,14 @@ function print_sales_summary_report(): void
 			$custname = $trans['cust_name'];
 			$tax_id = $trans['tax_id'];
 		}	
-		$taxes = getTaxes($trans['type'], $trans['trans_no']);
+		$taxes = getTaxes((string) $trans['type'], (string) $trans['trans_no']);
 		if ($taxes != null)
 		{
 			if ((bool)$taxes['included_in_price'])
-				$trans['total'] -= $taxes['tax'];
-			$tax += $taxes['tax'];
-		}	
-		$total += (float)$trans['total']; 
+				$trans['total'] = (float) $trans['total'] - (float) $taxes['tax'];
+			$tax += (float) $taxes['tax'];
+		}
+		$total += (float)$trans['total'];
 	}
 	if ($custno != 0)
 	{
@@ -159,7 +159,7 @@ function print_sales_summary_report(): void
 		$rep->AmountCol(2, 3, $total, $dec);
 		$rep->AmountCol(3, 4, $tax, $dec);
 		$totalnet += $total;
-		$totaltax += (float)$tax;
+		$totaltax += $tax;
 		$rep->NewLine();
 	}
 	$rep->Font('bold');

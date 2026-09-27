@@ -36,6 +36,8 @@ print_annual_expense_breakdown();
  */
 function getPeriods(string|int|float|bool|null $yr, string|int|float|bool|null $mo, ?string $account, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2, string|int|float|bool|null $thousands)
 {
+	$yr = (int) $yr;
+	$mo = (int) $mo;
 	$date13 = date('Y-m-d',mktime(0,0,0,$mo+1,1,$yr));
 	$date12 = date('Y-m-d',mktime(0,0,0,$mo,1,$yr));
 	$date11 = date('Y-m-d',mktime(0,0,0,$mo-1,1,$yr));
@@ -77,14 +79,15 @@ function getPeriods(string|int|float|bool|null $yr, string|int|float|bool|null $
 
 //----------------------------------------------------------------------------------------------------
 
-function display_type (?string $type, ?string $typename, string|int|float|bool|null $yr, string|int|float|bool|array|FrontReport|null $mo, string|int|float|bool|array|null $convert, int|string|null &$dec, FrontReport &$rep, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2, 
-								mixed $tags, string|int|float|bool|FrontReport|null $thousands)
+function display_type (?string $type, ?string $typename, string|int|float|bool|null $yr, string|int|float|bool|array|FrontReport|null $mo, string|int|float|bool|array|null $convert, int|string|null &$dec, FrontReport &$rep, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2,
+								mixed $tags, string|int|float|bool|FrontReport|null $thousands): array
 {
-	$ctotal = array(1 => 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-	$total = array(1 => 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+	$ctotal = array(1 => 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0);
+	$total = array(1 => 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0);
 	$totals_arr = array();
+	$convert_f = is_array($convert) ? 0.0 : (float) $convert;
 
-	$printtitle = 0; //Flag for printing type name	
+	$printtitle = 0; //Flag for printing type name
 
 	//Get Accounts directly under this group/type
 	$result = get_gl_accounts(null, null, $type);	
@@ -112,15 +115,15 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|n
 			$rep->NewLine();
 		}			
 
-		$balance = array(1 => $bal['per01'], $bal['per02'], $bal['per03'], $bal['per04'],
-			$bal['per05'], $bal['per06'], $bal['per07'], $bal['per08'],
-			$bal['per09'], $bal['per10'], $bal['per11'], $bal['per12'], $bal['pertotal']);
-		$rep->TextCol(0, 1,	$account['account_code']);
-		$rep->TextCol(1, 2,	$account['account_name']);
+		$balance = array(1 => (float) $bal['per01'], (float) $bal['per02'], (float) $bal['per03'], (float) $bal['per04'],
+			(float) $bal['per05'], (float) $bal['per06'], (float) $bal['per07'], (float) $bal['per08'],
+			(float) $bal['per09'], (float) $bal['per10'], (float) $bal['per11'], (float) $bal['per12'], (float) $bal['pertotal']);
+		$rep->TextCol(0, 1,	(string) $account['account_code']);
+		$rep->TextCol(1, 2,	(string) $account['account_name']);
 
 		for ($i = 1; $i <= 13; $i++)
 		{
-			$rep->AmountCol($i + 1, $i + 2, $balance[$i] * $convert, $dec);
+			$rep->AmountCol($i + 1, $i + 2, $balance[$i] * $convert_f, $dec);
 			$ctotal[$i] += $balance[$i];
 		}
 
@@ -158,11 +161,11 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|n
 		$rep->NewLine();
 		$rep->TextCol(0, 2,	_('Total') . " " . $typename);
 		for ($i = 1; $i <= 13; $i++)
-			$rep->AmountCol($i + 1, $i + 2, ($total[$i] + $ctotal[$i]) * $convert, $dec);
+			$rep->AmountCol($i + 1, $i + 2, ($total[$i] + $ctotal[$i]) * $convert_f, $dec);
 		$rep->NewLine();
 	}
 	for ($i = 1; $i <= 13; $i++)
-		$totals_arr[$i] = $total[$i] + $ctotal[$i];	
+		$totals_arr[$i] = $total[$i] + $ctotal[$i];
 	return $totals_arr;
 }
 
@@ -171,6 +174,7 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|n
 function print_annual_expense_breakdown(): void
 {
 	global $path_to_root, $SysPrefs, $tmonths;
+	/** @var array<int, string> $tmonths */
 
 	$dim = get_company_pref('use_dimension');
 	$dimension = $dimension2 = 0;
@@ -178,34 +182,37 @@ function print_annual_expense_breakdown(): void
 
 	if ($dim == 2)
 	{
-		$year = $_POST['PARAM_0'];
-		$dimension = $_POST['PARAM_1'];
-		$dimension2 = $_POST['PARAM_2'];
+		$year = post_scalar('PARAM_0');
+		$dimension = post_scalar('PARAM_1');
+		$dimension2 = post_scalar('PARAM_2');
+		/** @var string|int|array<array-key, mixed>|null $tags */
 		$tags = (isset($_POST['PARAM_3']) ? $_POST['PARAM_3'] : -1);
-		$comments = $_POST['PARAM_4'];
-		$orientation = $_POST['PARAM_5'];
-		$thousands = $_POST['PARAM_6'];
-		$destination = $_POST['PARAM_7'];
+		$comments = post_scalar('PARAM_4');
+		$orientation = post_scalar('PARAM_5');
+		$thousands = post_scalar('PARAM_6');
+		$destination = post_scalar('PARAM_7');
 	}
 	elseif ($dim == 1)
 	{
-		$year = $_POST['PARAM_0'];
-		$dimension = $_POST['PARAM_1'];
-		$tags = (isset($_POST['PARAM_2']) ? $_POST['PARAM_2'] : -1);
-		$comments = $_POST['PARAM_3'];
-		$orientation = $_POST['PARAM_4'];
-		$thousands = $_POST['PARAM_5'];
-		$destination = $_POST['PARAM_6'];
+		$year = post_scalar('PARAM_0');
+		$dimension = post_scalar('PARAM_1');
+		$tags = (isset($_POST['PARAM_2']) ? post_scalar('PARAM_2') : -1);
+		$comments = post_scalar('PARAM_3');
+		$orientation = post_scalar('PARAM_4');
+		$thousands = post_scalar('PARAM_5');
+		$destination = post_scalar('PARAM_6');
 	}
 	else
 	{
-		$year = $_POST['PARAM_0'];
-		$tags = (isset($_POST['PARAM_1']) ? $_POST['PARAM_1'] : -1);
-		$comments = $_POST['PARAM_2'];
-		$orientation = $_POST['PARAM_3'];
-		$thousands = $_POST['PARAM_4'];
-		$destination = $_POST['PARAM_5'];
+		$year = post_scalar('PARAM_0');
+		$tags = (isset($_POST['PARAM_1']) ? post_scalar('PARAM_1') : -1);
+		$comments = post_scalar('PARAM_2');
+		$orientation = post_scalar('PARAM_3');
+		$thousands = post_scalar('PARAM_4');
+		$destination = post_scalar('PARAM_5');
 	}
+	if (is_bool($tags) || is_float($tags))
+		$tags = (string) $tags;
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
@@ -235,25 +242,28 @@ function print_annual_expense_breakdown(): void
 	$row = row_or_empty(db_fetch($result));
 	
 	$year = sql2date($row['begin'])." - ".sql2date($row['end']);
-	$yr = $row['yr'];
-	$mo = $row['mo'];
+	$yr = (int) $row['yr'];
+	$mo = (int) $row['mo'];
 	$da = 1;
 	if (sysprefs()->date_system == 1)
 		list($yr, $mo, $da) = jalali_to_gregorian($yr, $mo, $da);
 	elseif (sysprefs()->date_system == 2)
 		list($yr, $mo, $da) = islamic_to_gregorian($yr, $mo, $da);
-	$per12 = $tmonths[date('n',mktime(0,0,0,$mo,$da,$yr))];
-	$per11 = $tmonths[date('n',mktime(0,0,0,$mo-1,$da,$yr))];
-	$per10 = $tmonths[date('n',mktime(0,0,0,$mo-2,$da,$yr))];
-	$per09 = $tmonths[date('n',mktime(0,0,0,$mo-3,$da,$yr))];
-	$per08 = $tmonths[date('n',mktime(0,0,0,$mo-4,$da,$yr))];
-	$per07 = $tmonths[date('n',mktime(0,0,0,$mo-5,$da,$yr))];
-	$per06 = $tmonths[date('n',mktime(0,0,0,$mo-6,$da,$yr))];
-	$per05 = $tmonths[date('n',mktime(0,0,0,$mo-7,$da,$yr))];
-	$per04 = $tmonths[date('n',mktime(0,0,0,$mo-8,$da,$yr))];
-	$per03 = $tmonths[date('n',mktime(0,0,0,$mo-9,$da,$yr))];
-	$per02 = $tmonths[date('n',mktime(0,0,0,$mo-10,$da,$yr))];
-	$per01 = $tmonths[date('n',mktime(0,0,0,$mo-11,$da,$yr))];
+	$yr = (int) $yr;
+	$mo = (int) $mo;
+	$da = (int) $da;
+	$per12 = $tmonths[(int) date('n',mktime(0,0,0,$mo,$da,$yr))];
+	$per11 = $tmonths[(int) date('n',mktime(0,0,0,$mo-1,$da,$yr))];
+	$per10 = $tmonths[(int) date('n',mktime(0,0,0,$mo-2,$da,$yr))];
+	$per09 = $tmonths[(int) date('n',mktime(0,0,0,$mo-3,$da,$yr))];
+	$per08 = $tmonths[(int) date('n',mktime(0,0,0,$mo-4,$da,$yr))];
+	$per07 = $tmonths[(int) date('n',mktime(0,0,0,$mo-5,$da,$yr))];
+	$per06 = $tmonths[(int) date('n',mktime(0,0,0,$mo-6,$da,$yr))];
+	$per05 = $tmonths[(int) date('n',mktime(0,0,0,$mo-7,$da,$yr))];
+	$per04 = $tmonths[(int) date('n',mktime(0,0,0,$mo-8,$da,$yr))];
+	$per03 = $tmonths[(int) date('n',mktime(0,0,0,$mo-9,$da,$yr))];
+	$per02 = $tmonths[(int) date('n',mktime(0,0,0,$mo-10,$da,$yr))];
+	$per01 = $tmonths[(int) date('n',mktime(0,0,0,$mo-11,$da,$yr))];
 
 	$headers = array(_('Account'), _('Account Name'), $per01, $per02, $per03, $per04,
 		$per05, $per06, $per07, $per08, $per09, $per10, $per11, $per12, _('Total'));
@@ -267,9 +277,9 @@ function print_annual_expense_breakdown(): void
                     	1 => array('text' => _("Year"),
                     		'from' => $year, 'to' => ''),
                     	2 => array('text' => _("Dimension")." 1",
-                    		'from' => get_dimension_string($dimension), 'to' => ''),
+                    		'from' => get_dimension_string((int) $dimension), 'to' => ''),
                     	3 => array('text' => _("Dimension")." 2",
-                    		'from' => get_dimension_string($dimension2), 'to' => ''),
+                    		'from' => get_dimension_string((int) $dimension2), 'to' => ''),
                     	4 => array('text' => _('Tags'), 'from' => get_tag_names($tags), 'to' => ''),	
                     	5 => array('text' => _('Info'), 'from' => $amts_thousands, 'to' => ''));
     }
@@ -279,7 +289,7 @@ function print_annual_expense_breakdown(): void
                     	1 => array('text' => _("Year"),
                     		'from' => $year, 'to' => ''),
                     	2 => array('text' => _('Dimension'),
-                    		'from' => get_dimension_string($dimension), 'to' => ''),
+                    		'from' => get_dimension_string((int) $dimension), 'to' => ''),
                     	3 => array('text' => _('Tags'), 'from' => get_tag_names($tags), 'to' => ''),	
                     	4 => array('text' => _('Info'), 'from' => $amts_thousands, 'to' => ''));
     }
@@ -307,13 +317,13 @@ function print_annual_expense_breakdown(): void
 	$rep->Info($params, $cols, $headers, $aligns);
 	$rep->NewPage();
 
-	$sales = Array(1 => 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-	
+	$sales = Array(1 => 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0);
+
 	$classresult = get_account_classes(false, 0);
 	while ($class = db_fetch($classresult))
 	{
-		$ctotal = Array(1 => 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-		$convert = get_class_type_convert($class["ctype"]); 		
+		$ctotal = Array(1 => 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0);
+		$convert = get_class_type_convert((string) $class["ctype"]);
 		
 		//Print Class Name	
 		$rep->Font('bold');
@@ -339,7 +349,7 @@ function print_annual_expense_breakdown(): void
 		$rep->TextCol(0, 2,	_('Total') . " " . (string)$class["class_name"]);
 		for ($i = 1; $i <= 13; $i++)
 		{
-			$rep->AmountCol($i + 1, $i + 2, $ctotal[$i] * $convert, $dec);
+			$rep->AmountCol($i + 1, $i + 2, $ctotal[$i] * (float) $convert, $dec);
 			$sales[$i] += $ctotal[$i];
 		}
 		$rep->Font();
@@ -348,7 +358,7 @@ function print_annual_expense_breakdown(): void
 	$rep->Font('bold');	
 	$rep->TextCol(0, 2,	_("Calculated Return"));
 	for ($i = 1; $i <= 13; $i++)
-		$rep->AmountCol($i + 1, $i + 2, $sales[$i] * -1, $dec);
+		$rep->AmountCol($i + 1, $i + 2, $sales[$i] * -1.0, $dec);
 	$rep->Font();
 	$rep->NewLine();
 	$rep->Line($rep->row);

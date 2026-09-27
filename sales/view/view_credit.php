@@ -24,20 +24,21 @@ if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 500);
 page(_($help_context = "View Credit Note"), true, false, "", $js);
 
+$trans_id = null;
 if (isset($_GET["trans_no"]))
 {
-	$trans_id = $_GET["trans_no"];
+	$trans_id = (string) $_GET["trans_no"];
 }
 elseif (isset($_POST["trans_no"]))
 {
-	$trans_id = $_POST["trans_no"];
+	$trans_id = (string) $_POST["trans_no"];
 }
 
 $myrow = row_or_empty(get_customer_trans($trans_id, ST_CUSTCREDIT));
 
 $branch = row_or_empty(get_branch($myrow["branch_code"]));
 
-display_heading("<font color=red>" . sprintf(_("CREDIT NOTE #%d"), $trans_id). "</font>");
+display_heading("<font color=red>" . sprintf(_("CREDIT NOTE #%d"), (string) $trans_id). "</font>");
 echo "<br>";
 
 start_table(TABLESTYLE2, "width='95%'");
@@ -48,7 +49,7 @@ start_table(TABLESTYLE, "width='100%'");
 $th = array(_("Customer"));
 table_header($th);
 
-label_row(null, (string)$myrow["DebtorName"] . "<br>" . nl2br($myrow["address"]), "nowrap");
+label_row(null, (string)$myrow["DebtorName"] . "<br>" . nl2br((string)$myrow["address"]), "nowrap");
 
 end_table();
 /*end of the small table showing charge to account details */
@@ -59,7 +60,7 @@ start_table(TABLESTYLE, "width='100%'");
 $th = array(_("Branch"));
 table_header($th);
 
-label_row(null, (string)$branch["br_name"] . "<br>" . nl2br($branch["br_address"]), "nowrap");
+label_row(null, (string)$branch["br_name"] . "<br>" . nl2br((string)$branch["br_address"]), "nowrap");
 end_table();
 
 echo "</td><td>"; // outer table
@@ -115,7 +116,7 @@ if (db_num_rows($result) > 0)
 
 		label_cell($myrow2["stock_id"]);
 		label_cell($myrow2["StockDescription"]);
-		qty_cell($myrow2["quantity"], false, get_qty_dec($myrow2["stock_id"]));
+		qty_cell($myrow2["quantity"], false, (int) get_qty_dec($myrow2["stock_id"]));
 		label_cell($myrow2["units"], "align=right");
 		amount_cell($myrow2["unit_price"]);
 		label_cell($display_discount, "align=right");
@@ -156,5 +157,5 @@ if (!$voided)
 
 /* end of check to see that there was an invoice record to print */
 
-end_page(true, false, false, ST_CUSTCREDIT, $trans_id);
+end_page(true, false, false, ST_CUSTCREDIT, (string) $trans_id);
 

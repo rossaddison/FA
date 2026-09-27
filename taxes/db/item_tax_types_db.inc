@@ -9,7 +9,8 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_item_tax_type(string|int|float|bool|null $name, string|int|float|bool|null $exempt, ?array $exempt_from): void
+/** @param array<int, string|int|float|bool|null> $exempt_from */
+function add_item_tax_type(string|int|float|bool|null $name, string|int|float|bool|null $exempt, array $exempt_from): void
 {
 	begin_transaction();
 	
@@ -26,7 +27,8 @@ function add_item_tax_type(string|int|float|bool|null $name, string|int|float|bo
 	commit_transaction();
 }
 
-function update_item_tax_type(string|int|float|bool|null $id, string|int|float|bool|null $name, string|int|float|bool|null $exempt, ?array $exempt_from): void
+/** @param array<int, string|int|float|bool|null> $exempt_from */
+function update_item_tax_type(string|int|float|bool|null $id, string|int|float|bool|null $name, string|int|float|bool|null $exempt, array $exempt_from): void
 {
 	begin_transaction();
 	
@@ -95,9 +97,10 @@ function delete_item_tax_type(string|int|float|bool|null $id): void
 	commit_transaction();	
 }
 
-function add_item_tax_type_exemptions(string|int|float|bool|null $id, ?array $exemptions): void
+/** @param array<int, string|int|float|bool|null> $exemptions */
+function add_item_tax_type_exemptions(string|int|float|bool|null $id, array $exemptions): void
 {
-	for ($i = 0; $i < count($exemptions); $i++) 
+	for ($i = 0; $i < count($exemptions); $i++)
 	{
 		$sql = "INSERT INTO ".TB_PREF."item_tax_type_exemptions (item_tax_type_id, tax_type_id)
 			VALUES (".db_escape($id).",  ".db_escape($exemptions[$i]).")";

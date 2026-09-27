@@ -84,6 +84,7 @@ function due_date(array $row)
 	return ($row["type"]== ST_SUPPINVOICE) || ($row["type"]== ST_SUPPCREDIT) ? $row["due_date"] : '';
 }
 
+/** @return null|scalar */
 function gl_view(array $row)
 {
 	if ($row['type'] == ST_SUPPRECEIVE && (bool)get_voided_entry(ST_SUPPRECEIVE, $row['trans_no']))
@@ -123,7 +124,7 @@ function check_overdue(array $row): bool
 		&& ((float)abs($row["TotalAmount"]) - (float)$row["Allocated"] != 0);
 }
 
-function edit_link(array $row)
+function edit_link(array $row): string
 {
 	global $page_nested;
 

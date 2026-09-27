@@ -40,9 +40,10 @@ $filter = array(
 	'Encoding' => _('Charset encoding')
 );
 
-$pkg = get_package_info(get_scalar('id'), null, $filter);
+/** @var array<string, string|int|float|bool|array<int, string>|null> $pkg */
+$pkg = get_package_info(get_scalar('id'), null, $filter) ?? array();
 
-display_heading(sprintf(_("Content information for package '%s'"), $_GET['id']));
+display_heading(sprintf(_("Content information for package '%s'"), (string) get_scalar('id')));
 br();
 start_table(TABLESTYLE2, "width='80%'");
 $th = array(_("Property"), _("Value"));

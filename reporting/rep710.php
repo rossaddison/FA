@@ -60,14 +60,15 @@ function getTransactions(string|int|array|null $from, string|array|null $to, str
 function print_audit_trail(): void
 {
     global $path_to_root, $systypes_array;
+    /** @var array<int, string> $systypes_array */
 
-    $from = $_POST['PARAM_0'];
-    $to = $_POST['PARAM_1'];
-    $systype = $_POST['PARAM_2'];
-    $user = $_POST['PARAM_3'];
-    $comments = $_POST['PARAM_4'];
-	$orientation = $_POST['PARAM_5'];
-	$destination = $_POST['PARAM_6'];
+    $from = post_scalar('PARAM_0');
+    $to = post_scalar('PARAM_1');
+    $systype = post_scalar('PARAM_2');
+    $user = post_scalar('PARAM_3');
+    $comments = post_scalar('PARAM_4');
+	$orientation = post_scalar('PARAM_5');
+	$destination = post_scalar('PARAM_6');
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
@@ -83,11 +84,11 @@ function print_audit_trail(): void
 
     $aligns = array('left', 'left', 'left', 'left', 'left', 'left', 'left', 'right');
 
-	$usr = row_or_empty(get_user($user));
+	$usr = row_or_empty(get_user((string) $user));
 	$user_id = isset($usr['user_id']) ? $usr['user_id'] : "";
     $params =   array( 	0 => $comments,
     				    1 => array('text' => _('Period'), 'from' => $from,'to' => $to),
-                    	2 => array('text' => _('Type'), 'from' => ($systype != -1 ? $systypes_array[$systype] : _('All')), 'to' => ''),
+                    	2 => array('text' => _('Type'), 'from' => ($systype != -1 ? $systypes_array[(int) $systype] : _('All')), 'to' => ''),
                     	3 => array('text' => _('User'), 'from' => ($user != -1 ? $user_id : _('All')), 'to' => ''));
 
     $rep = new FrontReport(_('Audit Trail'), "AuditTrail", user_pagesize(), 9, $orientation);
@@ -98,19 +99,19 @@ function print_audit_trail(): void
     $rep->Info($params, $cols, $headers, $aligns);
     $rep->NewPage();
 
-    $trans = getTransactions($from, $to, $systype, $user);
+    $trans = getTransactions((string) $from, (string) $to, (string) $systype, (string) $user);
 
-	$tot_amount = 0;
+	$tot_amount = 0.0;
     while ($myrow=db_fetch($trans))
     {
-        $rep->TextCol(0, 1, sql2date(date("Y-m-d", $myrow['unix_stamp'])));
+        $rep->TextCol(0, 1, sql2date(date("Y-m-d", (int) $myrow['unix_stamp'])));
         if (user_date_format() == 0)
-        	$rep->TextCol(1, 2, date("h:i:s a", $myrow['unix_stamp']));
-        else	
-        	$rep->TextCol(1, 2, date("H:i:s", $myrow['unix_stamp']));
+        	$rep->TextCol(1, 2, date("h:i:s a", (int) $myrow['unix_stamp']));
+        else
+        	$rep->TextCol(1, 2, date("H:i:s", (int) $myrow['unix_stamp']));
         $rep->TextCol(2, 3, $myrow['user_id']);
         $rep->TextCol(3, 4, sql2date($myrow['gl_date']));
-        $rep->TextCol(4, 5, $systypes_array[$myrow['type']]);
+        $rep->TextCol(4, 5, $systypes_array[(int) $myrow['type']]);
         $rep->TextCol(5, 6, $myrow['trans_no']);
         if ($myrow['gl_seq'] == null)
         	$action = _('Changed');
@@ -120,7 +121,7 @@ function print_audit_trail(): void
         if ($myrow['amount'] != null) {
         	$rep->AmountCol(7, 8, $myrow['amount'], $dec);
 			if ($systype != -1)
-				$tot_amount += $myrow['amount'];
+				$tot_amount += (float) $myrow['amount'];
 		}
         $rep->NewLine(1, 2);
     }

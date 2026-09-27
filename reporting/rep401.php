@@ -59,11 +59,11 @@ function print_bill_of_material(): void
 {
     global $path_to_root;
 
-    $frompart = $_POST['PARAM_0'];
-    $topart = $_POST['PARAM_1'];
-    $comments = $_POST['PARAM_2'];
-	$orientation = $_POST['PARAM_3'];
-	$destination = $_POST['PARAM_4'];
+    $frompart = post_scalar('PARAM_0');
+    $topart = post_scalar('PARAM_1');
+    $comments = post_scalar('PARAM_2');
+	$orientation = post_scalar('PARAM_3');
+	$destination = post_scalar('PARAM_4');
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
@@ -87,7 +87,7 @@ function print_bill_of_material(): void
     $rep->Info($params, $cols, $headers, $aligns);
     $rep->NewPage();
 
-	$res = getTransactions($frompart, $topart);
+	$res = getTransactions((string) $frompart, (string) $topart);
 	$parent = '';
 	while ($trans=db_fetch($res))
 	{

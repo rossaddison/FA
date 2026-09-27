@@ -85,14 +85,14 @@ function print_supplier_balances(): void
 {
     global $path_to_root, $systypes_array;
 
-    $from = $_POST['PARAM_0'];
-    $to = $_POST['PARAM_1'];
-    $fromsupp = $_POST['PARAM_2'];
-    $currency = $_POST['PARAM_3'];
-    $no_zeros = $_POST['PARAM_4'];
-    $comments = $_POST['PARAM_5'];
-    $orientation = $_POST['PARAM_6'];
-    $destination = $_POST['PARAM_7'];
+    $from = (string) post_scalar('PARAM_0');
+    $to = (string) post_scalar('PARAM_1');
+    $fromsupp = post_scalar('PARAM_2');
+    $currency = post_scalar('PARAM_3');
+    $no_zeros = post_scalar('PARAM_4');
+    $comments = post_scalar('PARAM_5');
+    $orientation = post_scalar('PARAM_6');
+    $destination = post_scalar('PARAM_7');
     if ((bool)$destination)
         include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
     else
@@ -138,7 +138,8 @@ function print_supplier_balances(): void
     $rep->NewPage();
 
     $total = array();
-    $grandtotal = array(0,0,0,0);
+    /** @var array{0: float, 1: float, 2: float, 3: float} $grandtotal */
+    $grandtotal = array(0.0,0.0,0.0,0.0);
 
     $sql = "SELECT supplier_id, supp_name AS name, curr_code, inactive FROM ".TB_PREF."suppliers";
     if ($fromsupp != ALL_TEXT)
@@ -152,19 +153,22 @@ function print_supplier_balances(): void
         if (!$convert && $currency != $myrow['curr_code'])
             continue;
         $accumulate = 0.0;
-        $rate = $convert ? get_exchange_rate_from_home_currency($myrow['curr_code'], Today()) : 1;
+        $rate = $convert ? (float) get_exchange_rate_from_home_currency($myrow['curr_code'], Today()) : 1.0;
         $bal = get_open_balance($myrow['supplier_id'], $from);
 		$init = array();
-        $init[0] = round2(($bal != false ? abs($bal['charges']) : 0)*$rate, $dec);
-        $init[1] = round2(($bal != false ? abs($bal['credits']) : 0)*$rate, $dec);
-        $init[2] = round2(($bal != false ? $bal['Allocated'] : 0)*$rate, $dec);
+        $init[0] = round2(($bal != false ? abs((float) $bal['charges']) : 0.0)*$rate, $dec);
+        $init[1] = round2(($bal != false ? abs((float) $bal['credits']) : 0.0)*$rate, $dec);
+        $init[2] = round2(($bal != false ? (float) $bal['Allocated'] : 0.0)*$rate, $dec);
 
         $init[3] = $init[1] - $init[0];
         $accumulate += $init[3];
 
         $res = getTransactions($myrow['supplier_id'], $from, $to);
+        if (!($res instanceof mysqli_result))
+            continue;
 
-        $total = array(0,0,0,0);
+        /** @var array{0: float, 1: float, 2: float, 3: float} $total */
+        $total = array(0.0,0.0,0.0,0.0);
         for ($i = 0; $i < 4; $i++)
         {
             $total[$i] += $init[$i];
@@ -185,10 +189,10 @@ function print_supplier_balances(): void
         while ($trans=db_fetch($res))
         {
             //if ($no_zeros && floatcmp(abs($trans['TotalAmount']), $trans['Allocated']) == 0) continue;
-            $item[0] = $item[1] = 0.0;
+            $item = array(0.0, 0.0, 0.0, 0.0);
             if ($trans['TotalAmount'] > 0.0)
             {
-                $item[0] = round2(abs($trans['TotalAmount']) * $rate, $dec);
+                $item[0] = round2(abs((float) $trans['TotalAmount']) * $rate, $dec);
                 $curr_cr += $item[0];
                 $tot_cur_cr += $item[0];
 
@@ -196,12 +200,12 @@ function print_supplier_balances(): void
             }
             else
             {
-                $item[1] = round2(abs($trans['TotalAmount']) * $rate, $dec);
+                $item[1] = round2(abs((float) $trans['TotalAmount']) * $rate, $dec);
                 $curr_db += $item[1];
                 $tot_cur_db += $item[1];
                 $accumulate += $item[1];
             }
-            $item[2] = round2((float)$trans['Allocated'] * (float)$rate, $dec);
+            $item[2] = round2((float)$trans['Allocated'] * $rate, $dec);
             if ($trans['TotalAmount'] > 0.0)
                 $item[3] = $item[2] - $item[0];
             else
@@ -212,11 +216,11 @@ function print_supplier_balances(): void
                 $total[$i] += $item[$i];
                 $grandtotal[$i] += $item[$i];
             }
-            $total[3] = (float)$total[1] - (float)$total[0];
+            $total[3] = $total[1] - $total[0];
         }
 		if ((bool)$no_zeros && $total[3] == 0.0 && $curr_db == 0.0 && $curr_cr == 0.0) continue;
         $rep->TextCol(0, 2, (string)$myrow['name'].($myrow['inactive']==1 ? " ("._("Inactive").")" : ""));
-        $rep->AmountCol(3, 4, (float)$total[3] + $curr_cr - $curr_db, $dec);
+        $rep->AmountCol(3, 4, $total[3] + $curr_cr - $curr_db, $dec);
         $rep->AmountCol(4, 5, $curr_db, $dec);
         $rep->AmountCol(5, 6, $curr_cr, $dec);
         $rep->AmountCol(7, 8, $total[3], $dec);

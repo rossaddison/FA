@@ -36,15 +36,17 @@ function print_sales_quotations(): void
 
 	include_once(dirname(__DIR__) . "/reporting/includes/pdf_report.inc");
 
-	$from = $_POST['PARAM_0'];
-	$to = $_POST['PARAM_1'];
-	$currency = $_POST['PARAM_2'];
-	$email = $_POST['PARAM_3'];
-	$comments = $_POST['PARAM_4'];
-	$orientation = $_POST['PARAM_5'];
+	$from = post_scalar('PARAM_0');
+	$to = post_scalar('PARAM_1');
+	$currency = post_scalar('PARAM_2');
+	$email = post_scalar('PARAM_3');
+	$comments = post_scalar('PARAM_4');
+	$orientation = post_scalar('PARAM_5');
 
 	if (!(bool)$from || !(bool)$to) return;
 
+	$from = (int) $from;
+	$to = (int) $to;
 	$orientation = ((bool)$orientation ? 'L' : 'P');
 	$dec = user_price_dec();
 
@@ -70,12 +72,14 @@ function print_sales_quotations(): void
 	for ($i = $from; $i <= $to; $i++)
 	{
 		$myrow = get_sales_order_header($i, ST_SALESQUOTE);
+		if ($myrow === false || $myrow === null)
+			continue;
 		if ($currency != ALL_TEXT && $myrow['curr_code'] != $currency) {
 			continue;
 		}
-		$baccount = get_default_bank_account($myrow['curr_code']);
+		$baccount = row_or_empty(get_default_bank_account($myrow['curr_code']));
 		$params['bankaccount'] = $baccount['id'];
-		$branch = get_branch($myrow["branch_code"]);
+		$branch = row_or_empty(get_branch((string) $myrow["branch_code"]));
 		if ($email == 1)
 		{
 			$rep = new FrontReport("", "", user_pagesize(), 9, $orientation);
@@ -101,7 +105,7 @@ function print_sales_quotations(): void
 			$Net = round2(((1.0 - (float)$myrow2["discount_percent"]) * (float)$myrow2["unit_price"] * (float)$myrow2["quantity"]),
 			   user_price_dec());
 			$prices[] = $Net;
-			$items[] = $myrow2['stk_code'];
+			$items[] = (string) $myrow2['stk_code'];
 			$SubTotal += $Net;
 			$DisplayPrice = number_format2($myrow2["unit_price"],$dec);
 			$DisplayQty = number_format2($myrow2["quantity"],get_qty_dec($myrow2['stk_code']));
@@ -169,7 +173,7 @@ function print_sales_quotations(): void
 			$rep->NewLine();
 		}
 
-		$tax_items = get_tax_for_items($items, $prices, $myrow["freight_cost"],
+		$tax_items = get_tax_for_items($items, $prices, (float) $myrow["freight_cost"],
 		  $myrow['tax_group_id'], $myrow['tax_included'],  null);
 		$first = true;
 		foreach($tax_items as $tax_item)
@@ -178,7 +182,7 @@ function print_sales_quotations(): void
 				continue;
 			$DisplayTax = number_format2($tax_item['Value'], $dec);
 
-			$tax_type_name = $tax_item['tax_type_name'];
+			$tax_type_name = (string) ($tax_item['tax_type_name'] ?? '');
 
 			if ((bool)$myrow['tax_included'])
 			{

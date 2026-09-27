@@ -34,13 +34,14 @@ print_list_of_journal_entries();
 function print_list_of_journal_entries(): void
 {
     global $path_to_root, $systypes_array;
+    /** @var array<int, string> $systypes_array */
 
-    $from = $_POST['PARAM_0'];
-    $to = $_POST['PARAM_1'];
-    $systype = $_POST['PARAM_2'];
-    $comments = $_POST['PARAM_3'];
-	$orientation = $_POST['PARAM_4'];
-	$destination = $_POST['PARAM_5'];
+    $from = (string) post_scalar('PARAM_0');
+    $to = (string) post_scalar('PARAM_1');
+    $systype = post_scalar('PARAM_2');
+    $comments = post_scalar('PARAM_3');
+	$orientation = post_scalar('PARAM_4');
+	$destination = post_scalar('PARAM_5');
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
@@ -59,7 +60,7 @@ function print_list_of_journal_entries(): void
     $params =   array( 	0 => $comments,
     				    1 => array('text' => _('Period'), 'from' => $from,'to' => $to),
                     	2 => array('text' => _('Type'), 'from' => 
-						$systype == -1 ? _('All') : $systypes_array[$systype],
+						$systype == -1 ? _('All') : $systypes_array[(int) $systype],
                             'to' => ''));
 
     $rep = new FrontReport(_('List of Journal Entries'), "JournalEntries", user_pagesize(), 9, $orientation);
@@ -73,7 +74,7 @@ function print_list_of_journal_entries(): void
     if ($systype == -1)
         $systype = null;
 
-    $trans = get_gl_transactions($from, $to, -1, null, 0, 0, $systype);
+    $trans = get_gl_transactions($from, $to, -1, null, 0, 0, $systype === null ? null : (string) $systype);
 
     $typeno = $type = 0;
     $debit = $credit = 0.0;
@@ -88,15 +89,15 @@ function print_list_of_journal_entries(): void
                 $rep->NewLine();
             	$rep->AmountCol(4, 5, $debit, $dec);
             	$rep->AmountCol(5, 6, abs($credit), $dec);
-            	$totdeb += (float)$debit;
-            	$totcre += (float)$credit;
+            	$totdeb += $debit;
+            	$totcre += $credit;
             	$debit = $credit = 0.0;
 				$rep->Line($rep->row -= 4.0);
                 $rep->NewLine();
             }
             $typeno = $myrow['type_no'];
             $type = $myrow['type'];
-            $TransName = $systypes_array[$myrow['type']];
+            $TransName = $systypes_array[(int) $myrow['type']];
             $rep->TextCol(0, 1, $TransName . " # " . (string)$myrow['type_no']);
             $rep->TextCol(1, 2, get_reference($myrow['type'], $myrow['type_no']));
             $rep->DateCol(2, 3, $myrow['tran_date'], true);
@@ -108,20 +109,20 @@ function print_list_of_journal_entries(): void
         $rep->TextCol(1, 2, $myrow['account_name']);
         $coms =  get_subaccount_name($myrow["account"], $myrow["person_id"]);
         $rep->TextCol(3, 6, $coms);
-        $dim_str = get_dimension_string($myrow['dimension_id']);
-        $dim_str2 = get_dimension_string($myrow['dimension2_id']);
+        $dim_str = get_dimension_string((int) $myrow['dimension_id']);
+        $dim_str2 = get_dimension_string((int) $myrow['dimension2_id']);
         if ($dim_str2 != "")
         	$dim_str .= "/".$dim_str2;
         $rep->TextCol(2, 3, $dim_str);
         $rep->TextCol(3, 4, $myrow['memo_']);
         if ($myrow['amount'] > 0.0) {
-        	$debit += $myrow['amount'];
-            $rep->AmountCol(4, 5, abs($myrow['amount']), $dec);
-        }    
+        	$debit += (float) $myrow['amount'];
+            $rep->AmountCol(4, 5, abs((float) $myrow['amount']), $dec);
+        }
         else {
-        	$credit += $myrow['amount'];
-            $rep->AmountCol(5, 6, abs($myrow['amount']), $dec);
-        }    
+        	$credit += (float) $myrow['amount'];
+            $rep->AmountCol(5, 6, abs((float) $myrow['amount']), $dec);
+        }
         $rep->NewLine(1, 2);
     }
 	if ($typeno != 0)
@@ -130,8 +131,8 @@ function print_list_of_journal_entries(): void
 		$rep->NewLine();
 		$rep->AmountCol(4, 5, $debit, $dec);
 		$rep->AmountCol(5, 6, abs($credit), $dec);
-		$totdeb += (float)$debit;
-		$totcre += (float)$credit;
+		$totdeb += $debit;
+		$totcre += $credit;
 		$rep->Line($rep->row -= 4.0);
 		$rep->NewLine();
         $rep->TextCol(0, 4, _("Total"));

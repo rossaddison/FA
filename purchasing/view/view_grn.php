@@ -29,9 +29,9 @@ if (!isset($_GET['trans_no']))
 }
 
 $purchase_order = new purch_order;
-read_grn(get_scalar("trans_no"), $purchase_order);
+read_grn((string) get_scalar("trans_no"), $purchase_order);
 
-display_heading(_("Purchase Order Delivery") . " #" . (string)$_GET['trans_no']);
+display_heading(_("Purchase Order Delivery") . " #" . (string) get_scalar('trans_no'));
 echo "<BR>";
 display_grn_summary($purchase_order);
 
@@ -66,7 +66,7 @@ foreach ($purchase_order->line_items as $stock_item)
 	label_cell($stock_item->stock_id);
 	label_cell($stock_item->item_description);
 	label_cell($stock_item->req_del_date, "nowrap align=right");
-	$dec = get_qty_dec($stock_item->stock_id);
+	$dec = (int) get_qty_dec($stock_item->stock_id);
 	qty_cell($stock_item->qty_received, false, $dec);
 	label_cell($stock_item->units);
 	amount_decimal_cell($stock_item->price);
@@ -99,5 +99,5 @@ if ($overdue_items)
 
 is_voided_display(ST_SUPPRECEIVE, get_scalar('trans_no'), _("This delivery has been voided."));
 
-end_page(true, false, false, ST_SUPPRECEIVE, get_scalar('trans_no'));
+end_page(true, false, false, ST_SUPPRECEIVE, (string) get_scalar('trans_no'));
 

@@ -20,11 +20,13 @@ include_once(dirname(__DIR__, 2) . "/includes/ui.inc");
 include_once(dirname(__DIR__, 2) . "/sales/includes/db/sales_types_db.inc");
 
 simple_page_mode(true);
+/** @var int|string $selected_id */
+$selected_id = $selected_id;
 //----------------------------------------------------------------------------------------------------
 
 function can_process(): bool
 {
-	if (strlen($_POST['sales_type']) == 0)
+	if (strlen((string) $_POST['sales_type']) == 0)
 	{
 		display_error(_("The sales type description cannot be empty."));
 		set_focus('sales_type');
@@ -44,7 +46,9 @@ function can_process(): bool
 
 if ($Mode=='ADD_ITEM' && can_process())
 {
-	add_sales_type(post_scalar('sales_type'), check_value('tax_included'),
+	/** @var int $tax_included */
+	$tax_included = check_value('tax_included');
+	add_sales_type(post_scalar('sales_type'), $tax_included,
 	    input_num('factor'));
 	display_notification(_('New sales type has been added'));
 	$Mode = 'RESET';
@@ -54,8 +58,11 @@ if ($Mode=='ADD_ITEM' && can_process())
 
 if ($Mode=='UPDATE_ITEM' && can_process())
 {
-
-	update_sales_type($selected_id, post_scalar('sales_type'), check_value('tax_included'),
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
+	/** @var int $tax_included */
+	$tax_included = check_value('tax_included');
+	update_sales_type($selected_id, post_scalar('sales_type'), $tax_included,
 	     input_num('factor'));
 	display_notification(_('Selected sales type has been updated'));
 	$Mode = 'RESET';
@@ -66,7 +73,8 @@ if ($Mode=='UPDATE_ITEM' && can_process())
 if ($Mode == 'Delete')
 {
 	// PREVENT DELETES IF DEPENDENT RECORDS IN 'debtor_trans'
-	
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	if ((bool)key_in_foreign_table($selected_id, 'debtor_trans', 'tpe'))
 	{
 		display_error(_("Cannot delete this sale type because customer transactions have been created using this sales type."));
@@ -141,12 +149,16 @@ if ($selected_id != -1)
 {
 
  	if ($Mode == 'Edit') {
+		/** @var int|string $selected_id */
+		$selected_id = $selected_id;
 		$myrow = row_or_empty(get_sales_type($selected_id));
 
 		$_POST['sales_type']  = $myrow["sales_type"];
 		$_POST['tax_included']  = $myrow["tax_included"];
 		$_POST['factor']  = number_format2($myrow["factor"],4);
 	}
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	hidden('selected_id', $selected_id);
 } else {
 		$_POST['factor']  = number_format2(1,4);

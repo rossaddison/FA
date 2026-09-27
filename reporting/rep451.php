@@ -50,13 +50,13 @@ function print_fixed_assets_valuation_report(): void
 {
     global $path_to_root, $SysPrefs;
 
-	$date = $_POST['PARAM_0'];
-    $class = $_POST['PARAM_1'];
-    $location = $_POST['PARAM_2'];
-    $detail = $_POST['PARAM_3'];
-    $comments = $_POST['PARAM_4'];
-	$orientation = $_POST['PARAM_5'];
-	$destination = $_POST['PARAM_6'];
+	$date = (string) post_scalar('PARAM_0');
+    $class = post_scalar('PARAM_1');
+    $location = post_scalar('PARAM_2');
+    $detail = post_scalar('PARAM_3');
+    $comments = post_scalar('PARAM_4');
+	$orientation = post_scalar('PARAM_5');
+	$destination = post_scalar('PARAM_6');
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
@@ -70,7 +70,7 @@ function print_fixed_assets_valuation_report(): void
 	if ($class== 0)
 		$cln = _('All');
 	else
-		$cln = get_fixed_asset_classname($class);
+		$cln = get_fixed_asset_classname((string) $class);
 
 	if ($location == ALL_TEXT)
 		$location = 'all';
@@ -139,7 +139,7 @@ function print_fixed_assets_valuation_report(): void
 		}
 		$UnitCost = $trans['purchase_cost'];
 		$Depreciation = (float)$trans['purchase_cost'] - (float)$trans['material_cost'];
-		$Balance = $trans['material_cost'];
+		$Balance = (float) $trans['material_cost'];
 		if ($detail)
 		{
 			$rep->NewLine();

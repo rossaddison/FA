@@ -26,23 +26,25 @@ if (user_use_date_picker())
 
 page(_($help_context = "Create and Print Recurrent Invoices"), false, false, "", $js);
 
-function create_recurrent_invoices(?string $customer_id, ?string $branch_id, ?string $order_no, ?string $tmpl_no, string|array|null $date, string|array|null $from, string|array|null $to, string|array|null $memo)
+function create_recurrent_invoices(?string $customer_id, ?string $branch_id, ?string $order_no, ?string $tmpl_no, string $date, string $from, string $to, string $memo): int
 {
 
 	update_last_sent_recurrent_invoice($tmpl_no, $to);
 
 	$doc = new Cart(ST_SALESORDER, array($order_no));
-	
+
 	if (!empty(sysprefs()->prefs['dim_on_recurrent_invoice']))
 		$doc->trans_type = ST_SALESINVOICE;
-	
+
 	get_customer_details_to_order($doc, $customer_id, $branch_id);
 
 	$doc->trans_type = ST_SALESORDER;
 	$doc->trans_no = 0;
 	$doc->document_date = $date;
 
-	$doc->due_date = get_invoice_duedate($doc->payment, $doc->document_date);
+	/** @var string $due_date */
+	$due_date = get_invoice_duedate($doc->payment, $doc->document_date);
+	$doc->due_date = $due_date;
 
 	$doc->reference = refs()->get_next($doc->trans_type, null, array('customer' => $customer_id, 'branch' => $branch_id,
 		'date' => $date));
@@ -61,12 +63,13 @@ function create_recurrent_invoices(?string $customer_id, ?string $branch_id, ?st
 	$cart->trans_type = ST_SALESINVOICE;
 	$cart->reference = refs()->get_next($cart->trans_type);
 	$cart->payment_terms['cash_sale'] = false; // no way to register cash payment with recurrent invoice at once
-	$invno = $cart->write(1);
+	$invno = (int) $cart->write(1);
 
 	return $invno;
 }
 
-function calculate_from(bool|array|null $myrow): string
+/** @param array{begin: string, last_sent: string, ...<array-key, mixed>} $myrow */
+function calculate_from(array $myrow): string
 {
 	if ($myrow["last_sent"] == '0000-00-00')
 		$from = sql2date($myrow["begin"]);
@@ -75,7 +78,8 @@ function calculate_from(bool|array|null $myrow): string
 	return $from;
 }
 
-function calculate_next(?array $myrow): string
+/** @param array{begin: string, last_sent: string, monthly: int, days: int, ...<array-key, mixed>} $myrow */
+function calculate_next(array $myrow): string
 {
 	if ($myrow["last_sent"] == '0000-00-00')
 		$next = sql2date($myrow["begin"]);
@@ -91,7 +95,7 @@ if ($id != -1 && is_date_closed($_POST['trans_date']))
 {
 	display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 	set_focus('trans_date');
-	$_POST['create'.$id] = 1;	//re-display current page
+	$_POST['create'. (string) $id] = 1;	//re-display current page
 	$id = -1;
 }
 
@@ -110,11 +114,16 @@ if ($id != -1)
 	*/
 
 	ajax()->activate('_page_body');
+	/** @var string $from */
 	$from = get_post('from');
+	/** @var string $to */
 	$to = get_post('to');
+	/** @var string $memo */
 	$memo = get_post('memo');
+	/** @var string $date */
 	$date = $_POST['trans_date'];
-	$myrow = get_recurrent_invoice($id);
+	/** @var array{debtor_no: string, group_no: string, order_no: string, id: string} $myrow */
+	$myrow = (array) get_recurrent_invoice($id);
 
 	$invs = array();
 	if ((bool)recurrent_invoice_ready($id, $date))
@@ -144,10 +153,10 @@ if ($id != -1)
 	}
 	else 
 		$min = $max = 0;
-	display_notification(sprintf(_("%s recurrent invoice(s) created, # %s - # %s."), count($invs), $min, $max));
+	display_notification(sprintf(_("%s recurrent invoice(s) created, # %s - # %s."), count($invs),  $min, $max));
 	if (count($invs) > 0)
 	{
-		$ar = array('PARAM_0' => $min."-".ST_SALESINVOICE,	'PARAM_1' => $max."-".ST_SALESINVOICE, 'PARAM_2' => "",
+		$ar = array('PARAM_0' =>  (string) $min."-".ST_SALESINVOICE, 'PARAM_1' => (string) $max."-".ST_SALESINVOICE, 'PARAM_2' => "",
 			'PARAM_3' => 0,	'PARAM_4' => 0,	'PARAM_5' => "", 'PARAM_6' => "", 'PARAM_7' => user_def_print_orientation());
 		display_note(print_link(sprintf(_("&Print Recurrent Invoices # %s - # %s"), $min, $max), 107, $ar), 0, 1);
 		$ar['PARAM_3'] = 1; // email
@@ -161,7 +170,8 @@ if ($id != -1)
 {
 	ajax()->activate('_page_body');
 	$date = Today();
-	$myrow = get_recurrent_invoice($id);
+	/** @var array{begin: string, last_sent: string, monthly: int, days: int, order_no: string, description: string} $myrow */
+	$myrow = (array) get_recurrent_invoice($id);
 	$from = calculate_from($myrow);
 	$to = add_months($from, $myrow['monthly']);
 	$to = add_days($to, $myrow['days']);
@@ -175,7 +185,7 @@ if ($id != -1)
 	elseif (!check_sales_order_type($myrow['order_no']))
 		display_error(_("Recurrent invoices cannot be generated because selected sales order template uses prepayment sales terms. Change payment terms and try again."));
 	else {
-		$count = recurrent_invoice_count($id);
+		$count = (int) recurrent_invoice_count($id);
 
 		$_POST['trans_date'] = $to;
 		start_form();
@@ -192,9 +202,9 @@ if ($id != -1)
 		hidden('from', $from, true);
 		hidden('to', $to, true);
 		br();
-		submit_center_first('confirmed'.$id, _('Create'), _('Create recurrent invoices'), false, ICON_OK);
+		submit_center_first('confirmed'. (string) $id, _('Create'), _('Create recurrent invoices'), false, ICON_OK);
 		submit_center_last('cancel', _('Cancel'), _('Return to recurrent invoices'), false, ICON_ESCAPE);
-		submit_js_confirm("do_create".$id, sprintf(_("You are about to issue %s invoices.\n Do you want to continue?"), $count));
+		submit_js_confirm("do_create". (string) $id, sprintf(_("You are about to issue %s invoices.\n Do you want to continue?"), $count));
 		end_form();
 
 		display_footer_exit();
@@ -210,9 +220,10 @@ $th = array(_("Description"), _("Template No"),_("Customer"),_("Branch")."/"._("
 table_header($th);
 $k = 0;
 $due = false;
-while ($myrow = db_fetch($result)) 
+while ($myrow = db_fetch($result))
 {
-	if ((bool)$myrow['overdue'])
+	/** @var array{description: string, order_no: string, debtor_no: string, group_no: string, days: int, monthly: int, begin: string, end: string, last_sent: string, overdue: bool, id: string} $myrow */
+	if ($myrow['overdue'])
 	{
 		start_row("class='overduebg'");
 		$due = true;
@@ -238,12 +249,12 @@ while ($myrow = db_fetch($result))
 	label_cell(sql2date($myrow['begin']),  "align='center'");
 	label_cell(sql2date($myrow['end']),	 "align='center'");
 	label_cell(calculate_next($myrow),	"align='center'");
-	if ((bool)$myrow['overdue'])
+	if ($myrow['overdue'])
 	{
 		$count = recurrent_invoice_count($myrow['id']);
 		if ((bool)$count)
 		{
-			button_cell("create".(string)$myrow["id"], sprintf(_("Create %s Invoice(s)"), $count), "", ICON_DOC, 'process');
+			button_cell("create".$myrow["id"], sprintf(_("Create %s Invoice(s)"), $count), "", ICON_DOC, 'process');
 		} else {
 			label_cell('');
 		}

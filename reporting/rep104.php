@@ -73,14 +73,14 @@ function print_price_listing(): void
 {
     global $path_to_root, $SysPrefs;
 
-    $currency = $_POST['PARAM_0'];
-    $category = $_POST['PARAM_1'];
-    $salestype = $_POST['PARAM_2'];
-    $pictures = $_POST['PARAM_3'];
-    $showGP = $_POST['PARAM_4'];
-    $comments = $_POST['PARAM_5'];
-	$orientation = $_POST['PARAM_6'];
-	$destination = $_POST['PARAM_7'];
+    $currency = post_scalar('PARAM_0');
+    $category = post_scalar('PARAM_1');
+    $salestype = post_scalar('PARAM_2');
+    $pictures = post_scalar('PARAM_3');
+    $showGP = post_scalar('PARAM_4');
+    $comments = post_scalar('PARAM_5');
+	$orientation = post_scalar('PARAM_6');
+	$destination = post_scalar('PARAM_7');
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
@@ -93,7 +93,7 @@ function print_price_listing(): void
 	if ($currency == ALL_TEXT)
 		$currency = $home_curr;
 	$curr = row_or_empty(get_currency($currency));
-	$curr_sel = $currency . " - " . (string)$curr['currency'];
+	$curr_sel = (string) $currency . " - " . (string)$curr['currency'];
 	if ($category == ALL_NUMERIC)
 		$category = 0;
 	if ($salestype == ALL_NUMERIC)
@@ -101,11 +101,11 @@ function print_price_listing(): void
 	if ($category == 0)
 		$cat = _('All');
 	else
-		$cat = get_category_name($category);
+		$cat = get_category_name((string) $category);
 	if ($salestype == 0)
 		$stype = _('All');
 	else
-		$stype = get_sales_type_name($salestype);
+		$stype = get_sales_type_name((string) $salestype);
 	if ($showGP == 0)
 		$GP = _('No');
 	else
@@ -136,7 +136,7 @@ function print_price_listing(): void
     $rep->Info($params, $cols, $headers, $aligns);
     $rep->NewPage();
 
-	$result = fetch_items($category);
+	$result = fetch_items((string) $category);
 
 	$catgor = '';
 	$_POST['sales_type_id'] = $salestype;
@@ -186,7 +186,7 @@ function print_price_listing(): void
 	}
 	$rep->Line($rep->row  - 4.0);
 
-	$result = get_kits($category);
+	$result = get_kits((string) $category);
 
 	$catgor = '';
 	while ($myrow=db_fetch($result))

@@ -196,6 +196,9 @@ function get_sql_for_customer_branches(string|null $customer_id): string
 	$default - return only single record selected with defaults order defined in $defs array,
 	 otherways get all $action contacts
 */
+/**
+ * @return array<array-key, string|null>|list<array<array-key, string|null>>|null
+ */
 function get_branch_contacts(string|int|float|bool|null $branch_code, ?string $action=null, string|int|float|bool|null $customer_id=null, bool $default = true)
 {
 	$defs = array('cust_branch.'.$action, 

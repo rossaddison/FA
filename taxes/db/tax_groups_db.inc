@@ -9,7 +9,11 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_tax_group(string|int|float|bool|null $name, ?array $taxes, ?array $tax_shippings): void
+/**
+ * @param array<int, string|int|float|bool|null> $taxes
+ * @param array<int, string|int|float|bool|null> $tax_shippings
+ */
+function add_tax_group(string|int|float|bool|null $name, array $taxes, array $tax_shippings): void
 {
 	begin_transaction();
 
@@ -23,7 +27,11 @@ function add_tax_group(string|int|float|bool|null $name, ?array $taxes, ?array $
 	commit_transaction();	
 }
 
-function update_tax_group(string|int|float|bool|null $id, string|int|float|bool|null $name, ?array $taxes, ?array $tax_shippings): void
+/**
+ * @param array<int, string|int|float|bool|null> $taxes
+ * @param array<int, string|int|float|bool|null> $tax_shippings
+ */
+function update_tax_group(string|int|float|bool|null $id, string|int|float|bool|null $name, array $taxes, array $tax_shippings): void
 {
 	begin_transaction();	
 
@@ -72,12 +80,16 @@ function delete_tax_group(string|int|float|bool|null $id): void
 	commit_transaction();
 }
 
-function add_tax_group_items(string|int|float|bool|null $id, ?array $items, ?array $tax_shippings): void
+/**
+ * @param array<int, string|int|float|bool|null> $items
+ * @param array<int, string|int|float|bool|null> $tax_shippings
+ */
+function add_tax_group_items(string|int|float|bool|null $id, array $items, array $tax_shippings): void
 {
-	for ($i=0; $i < count($items); $i++) 
+	for ($i=0; $i < count($items); $i++)
 	{
 		$sql = "INSERT INTO ".TB_PREF."tax_group_items (tax_group_id, tax_type_id, tax_shipping)
-			VALUES (".db_escape($id).",  ".db_escape($items[$i]).", " . $tax_shippings[$i] .")";
+			VALUES (".db_escape($id).",  ".db_escape($items[$i]).", " . (string) $tax_shippings[$i] .")";
 		db_query($sql, "could not add item tax group item");					
 	}		
 }
@@ -126,10 +138,10 @@ function get_tax_group_items_as_array(string|int|float|bool|null $id): array
 	while ($tax_group_item = db_fetch($tax_group_items)) 
 	{
 		$tax_group_item['Value'] = 0;
-		$ret_tax_array[$tax_group_item['tax_type_id']] = $tax_group_item;
+		$ret_tax_array[(string) $tax_group_item['tax_type_id']] = $tax_group_item;
 
 	}
-	
+
 	return $ret_tax_array;
 }
 
@@ -142,8 +154,8 @@ function get_shipping_tax_as_array(string|int|float|bool|null $id=null): array
 	while ($tax_group_item = db_fetch($tax_group_items)) 
 	{
 		$tax_group_item['Value'] = 0;
-		$ret_tax_array[$tax_group_item['tax_type_id']] = $tax_group_item;
+		$ret_tax_array[(string) $tax_group_item['tax_type_id']] = $tax_group_item;
 	}
-	
+
 	return $ret_tax_array;
 }

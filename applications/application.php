@@ -49,7 +49,7 @@ define('MENU_SYSTEM', 'menu_system');
 		 * @var null|string
 		 */
 		var $title;
-		/** @var array<int, app_function> */
+		/** @var array<int, menu_item> */
 		var $items;
 		
 		/**

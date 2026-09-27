@@ -27,9 +27,10 @@ include_once(dirname(__DIR__, 2) . "/manufacturing/includes/manufacturing_ui.inc
 
 //-------------------------------------------------------------------------------------------------
 
-if ($_GET['trans_no'] != "")
+$wo_issue_no = null;
+if (get_scalar('trans_no') != "")
 {
-	$wo_issue_no = $_GET['trans_no'];
+	$wo_issue_no = get_scalar('trans_no');
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -89,7 +90,7 @@ function display_wo_issue_details(string|int|float|bool|null $issue_no): void
 			alt_table_row_color($k);
 
         	label_cell((string)$myrow["stock_id"]  . " - " . (string)$myrow["description"]);
-            qty_cell($myrow["qty_issued"], false, get_qty_dec($myrow["stock_id"]));
+            qty_cell($myrow["qty_issued"], false, (int) get_qty_dec($myrow["stock_id"]));
 			label_cell($myrow["units"]);
 			amount_cell($myrow["unit_cost"]);
 			end_row();
@@ -108,7 +109,7 @@ function display_wo_issue_details(string|int|float|bool|null $issue_no): void
 
 //-------------------------------------------------------------------------------------------------
 
-display_heading($systypes_array[ST_MANUISSUE] . " # " . $wo_issue_no);
+display_heading($systypes_array[ST_MANUISSUE] . " # " . (string) $wo_issue_no);
 
 display_wo_issue($wo_issue_no);
 
@@ -120,5 +121,5 @@ display_wo_issue_details($wo_issue_no);
 
 echo "<br>";
 
-end_page(true, false, false, ST_MANUISSUE, $wo_issue_no);
+end_page(true, false, false, ST_MANUISSUE, (string) $wo_issue_no);
 

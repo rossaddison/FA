@@ -67,12 +67,13 @@ function get_bank_transactions(string|null $from, string|null $to, ?string $acco
 function print_bank_transactions_reconcile(): void
 {
 	global $path_to_root, $systypes_array;
+	/** @var array<int, string> $systypes_array */
 
-	$acc = $_POST['PARAM_0'];
-	$from = $_POST['PARAM_1'];
-	$to = $_POST['PARAM_2'];
-	$comments = $_POST['PARAM_3'];
-	$destination = $_POST['PARAM_4'];
+	$acc = post_scalar('PARAM_0');
+	$from = (string) post_scalar('PARAM_1');
+	$to = (string) post_scalar('PARAM_2');
+	$comments = post_scalar('PARAM_3');
+	$destination = post_scalar('PARAM_4');
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
@@ -99,9 +100,9 @@ function print_bank_transactions_reconcile(): void
 	$rep->NewPage();
 
 
-	$prev_balance = get_bank_balance_to($from, $account["id"]);
+	$prev_balance = (float) get_bank_balance_to($from, (string) $account["id"]);
 
-	$trans = get_bank_transactions($from, $to, $account['id']);
+	$trans = get_bank_transactions($from, $to, (string) $account['id']);
 
 	$rows = db_num_rows($trans);
 	if ($prev_balance != 0.0 || $rows != 0)
@@ -124,9 +125,9 @@ function print_bank_transactions_reconcile(): void
 			
 			while ($myrow=db_fetch($trans))
 			{
-				$total += $myrow['amount'];
+				$total += (float) $myrow['amount'];
 
-				$rep->TextCol(0, 1, $systypes_array[$myrow["type"]]);
+				$rep->TextCol(0, 1, $systypes_array[(int) $myrow["type"]]);
 				$rep->TextCol(1, 2,	$myrow['trans_no']);
 				$rep->TextCol(2, 3,	$myrow['ref']);
 				$rep->DateCol(3, 4,	$myrow["trans_date"], true);
@@ -192,11 +193,13 @@ function print_bank_transactions_reconcile(): void
 		//display_notification($sql);
 		$t_result = db_select($sql,"Cannot retrieve reconciliation data");
 
+		$books_total = 0.0;
+		$reconciled = 0.0;
 		if (($t_row = db_fetch($t_result)) !== false) {
-			$books_total = $t_row['books_total'];
-			$reconciled = $t_row['reconciled'];
-		}			
-		$difference = $books_total - $reconciled;		
+			$books_total = (float) $t_row['books_total'];
+			$reconciled = (float) $t_row['reconciled'];
+		}
+		$difference = $books_total - $reconciled;
 		
 		// Bank Balance (by Reco)
 		$rep->Font('bold');

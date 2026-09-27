@@ -30,8 +30,11 @@ class hooks {
 	// $updates - table of filename => array(table, field, property)
 	// $check_only - don't update database, check table/field/property existence only
 	//
-	/** @return float|int|true */
-	function update_databases($comp, $updates, $check_only=false)
+	/**
+	 * @param array<string, array<int, string>> $updates
+	 * @return float|int|true
+	 */
+	function update_databases(int $comp, array $updates, bool $check_only=false)
 	{
 		global $db_connections, $path_to_root;
 	
@@ -319,7 +322,7 @@ function install_hooks(string|int|float|bool|null $lang_code=null): void
 	Non active hooks are not included in $Hooks array, so we can use special function to 
 	activate.
 */
-function activate_hooks(string|int|float|bool|null $ext, string|int|float|bool|array|null $comp, bool $on=true)
+function activate_hooks(string|int|float|bool|null $ext, string|int|float|bool|array|null $comp, bool $on=true): mixed
 {
 	global $Hooks;
 
@@ -331,9 +334,7 @@ function activate_hooks(string|int|float|bool|null $ext, string|int|float|bool|a
 		else
 			return true; // extension does not have hooks file
 	}
-	if (!$hooks)
-		return false;
-	elseif ($on)
+	if ($on)
 		return $hooks->activate_extension($comp, false);
 	else
 		return $hooks->deactivate_extension($comp, false);
@@ -346,7 +347,7 @@ function activate_hooks(string|int|float|bool|null $ext, string|int|float|bool|a
  * @param T $data
  * @param-out T $data
  */
-function hook_invoke(string|int|float|bool|null $ext, string|int|float|bool|null $method, mixed &$data, ?array $opts=null)
+function hook_invoke(string|int|float|bool|null $ext, string|int|float|bool|null $method, mixed &$data, ?array $opts=null): mixed
 {
 
 	global $Hooks;
@@ -398,7 +399,7 @@ function hook_invoke_all(string|int|float|bool|null $method, mixed &$data, array
  * @param T $data
  * @param-out T $data
  */
-function hook_invoke_first(?string $method, mixed &$data, ?array $opts=null)
+function hook_invoke_first(?string $method, mixed &$data, ?array $opts=null): mixed
 {
 
 	global $Hooks;
@@ -424,7 +425,7 @@ function hook_invoke_first(?string $method, mixed &$data, ?array $opts=null)
  * @param T $data
  * @param-out T $data
  */
-function hook_invoke_last(?string $method, mixed &$data, array|string|null $opts=null)
+function hook_invoke_last(?string $method, mixed &$data, array|string|null $opts=null): mixed
 {
 
 	global $Hooks;
@@ -509,7 +510,7 @@ function hook_db_prevoid(string|int|float|bool|null $type, string|int|float|bool
 //
 //	Alternative exchange rates feeds.
 //
-function hook_retrieve_exrate(string|int|float|bool|null $currency, string|int|float|bool|null $date)
+function hook_retrieve_exrate(string|int|float|bool|null $currency, string|int|float|bool|null $date): mixed
 {
 	return hook_invoke_last('retrieve_exrate', $currency, $date);
 }
@@ -526,7 +527,7 @@ function hook_tax_report_done(): array
 //
 //	Amount in words displayed on various documents (especially sales invoice)
 //
-function hook_price_in_words(string|int|float|bool|null $amount, mixed $document)
+function hook_price_in_words(string|int|float|bool|null $amount, mixed $document): mixed
 {
 	return hook_invoke_last('price_in_words', $amount, $document);
 }
@@ -535,7 +536,7 @@ function hook_price_in_words(string|int|float|bool|null $amount, mixed $document
 //	If fa_session_manager class is defined in any installed extension, this class provides session handling
 //	for application, otherwise standard php session handling is used.
 //
-function hook_session_start(string|array|null $company)
+function hook_session_start(string|array|null $company): mixed
 {
 	if (class_exists('fa_session_manager')) {
 		global $SessionManager;
@@ -548,7 +549,7 @@ function hook_session_start(string|array|null $company)
 //	Third party authentication modules.
 //	Returns true after successfull authentication, false otherwise, null if no login hook is defined.
 //
-function hook_authenticate(string|int|float|bool|null $login, string|int|float|bool|array|null $password)
+function hook_authenticate(string|int|float|bool|null $login, string|int|float|bool|array|null $password): mixed
 {
 	return hook_invoke_last('authenticate', $login, $password);
 }
@@ -564,7 +565,7 @@ function hook_authenticate(string|int|float|bool|null $login, string|int|float|b
 	 * more than one in  the cart.
 	 * If 'skip' is returned, the line will be skipped and not displayed
 	 */
-function hook_get_dispatchable_quantity(mixed $line_item, string|int|float|bool|array|null $location, string|int|float|bool|array|null $date, string|int|float|bool|null $qoh) {
+function hook_get_dispatchable_quantity(mixed $line_item, string|int|float|bool|array|null $location, string|int|float|bool|array|null $date, string|int|float|bool|null $qoh): mixed {
 		$result =  hook_invoke_first('get_dispatchable_quantity', $line_item, array($location, $date, $qoh));
 		return $result !== null ? $result : hooks::default_get_dispatchable_quantity($line_item, $location, $date, $qoh);
 }

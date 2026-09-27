@@ -41,7 +41,7 @@ class current_user
 	 * @var int|null
 	 */
 	var $last_act;
-	/** @var bool */
+	/** @var bool|array<array-key, mixed> */
 	var $role_set = false;
 
 	/**
@@ -145,10 +145,11 @@ class current_user
 						exit;
 					}
 	        	    $this->access = $myrow["full_access"];
-	        	    if (in_array(20, $security_groups[$this->access]))
+	        	    if (in_array(20, $security_groups[$this->access])) {
 						// temporary access for admin users
+						$this->role_set = array();
 						$this->role_set[] = $security_areas['SA_SOFTWAREUPGRADE'][0];
-					else {
+					} else {
 						echo "<center><br><br><font size='5' color='red'><b>";
 						echo _('System is available for site admin only until full database upgrade');
 						echo "</b></font><br><br></center>";
@@ -242,7 +243,7 @@ class current_user
 		$code = $security_areas[$sec_area][0];
 
 		// only first registered company has site admin privileges
-		return $code && in_array($code, $this->role_set)
+		return $code && is_array($this->role_set) && in_array($code, $this->role_set)
 			&& ($this->company == 0 || (($code&~0xff) != SS_SADMIN));
 	}
 
@@ -348,6 +349,7 @@ class current_user
 /** @psalm-pure */
 function round2(string|int|float|bool|null $number, string|int|float|bool|null $decimals=0): float
 {
+	$number = (float)$number;
 	$delta = ($number < 0 ? -.0000000001 : .0000000001);
 	return round($number+$delta, $decimals);
 }
@@ -388,6 +390,8 @@ define('FLOAT_COMP_DELTA', 0.004);
 /** @psalm-pure */
 function floatcmp(string|int|float|bool|null $a, string|int|float|bool|null $b): int
 {
+    $a = (float)$a;
+    $b = (float)$b;
     return $a - $b > FLOAT_COMP_DELTA ? 1 : ($b - $a > FLOAT_COMP_DELTA ? -1 : 0);
 }
 
@@ -410,7 +414,7 @@ function price_decimal_format(string|int|float|bool|null $number, int|string|nul
 	if ($pos !== false)
 	{
 		$len = strlen(substr($str, $pos + 1));
-		if ($len > $dec && $len < ini_get('precision')-3)
+		if ($len > $dec && $len < (int)ini_get('precision')-3)
 			$dec = $len;
 	}
 	return number_format2($number, $dec);
@@ -418,24 +422,22 @@ function price_decimal_format(string|int|float|bool|null $number, int|string|nul
 
 // 2008-06-15. Added extra parameter $stock_id and reference for $dec
 //--------------------------------------------------------------------
-function qty_format(string|int|float|bool|null $number, string|int|float|bool|array|null $stock_id, int|string|null &$dec): string {
+function qty_format(string|int|float|bool|null $number, string|int|float|bool|null $stock_id, int|string|null &$dec): string {
 	$dec = get_qty_dec($stock_id);
     return number_format2($number, $dec);
 }
 
 // and get_qty_dec
-/**
- * @return string|int|float|bool|null
- */
-function get_qty_dec(?string $stock_id=null)
+function get_qty_dec(?string $stock_id=null): int|string
 {
 	global $path_to_root;
 	include_once(dirname(__DIR__) . "/inventory/includes/db/items_units_db.inc");
+	$dec = null;
 	if ($stock_id != null)
 		$dec = get_unit_dec($stock_id);
 	if ($stock_id == null || $dec == -1 || $dec == null)
 		$dec = user_qty_dec();
-	return $dec;
+	return is_int($dec) || is_string($dec) ? $dec : (int)($dec ?? 0);
 }
 //-------------------------------------------------------------------
 //
@@ -446,16 +448,14 @@ function maxprec_format(string|int|float|bool|null $number): string {
 }
 
 function exrate_format(string|int|float|bool|null $number): string {
-    return number_format2($number,
-	session_obj('wa_current_user')->prefs->exrate_dec());
+    return number_format2($number, user_exrate_dec());
 }
 
 function percent_format(string|int|float|bool|null $number): string {
-    return number_format2($number,
-	session_obj('wa_current_user')->prefs->percent_dec());
+    return number_format2($number, user_percent_dec());
 }
 
-function user_numeric(string|int|float|bool|array|null $input): int|float|false {
+function user_numeric(string|int|float|bool|null $input): int|float|false {
 
     $num = trim($input);
     $sep = sysprefs()->thoseps[user_tho_sep()];
@@ -489,17 +489,19 @@ function user_pos()
 	return session_obj('wa_current_user')->pos;
 }
 
+/** @return string */
 function user_language()
 {
 	return session_obj('wa_current_user')->prefs->language();
 }
 
-/**
- * @return string|int|float|bool|null
- */
-function user_qty_dec()
+function user_qty_dec(): int|string
 {
-	return session_obj('wa_current_user')->prefs->qty_dec();
+	if (!isset($_SESSION["wa_current_user"])) {
+		return 2;
+	}
+	$dec = session_obj('wa_current_user')->prefs->qty_dec();
+	return is_int($dec) || is_string($dec) ? $dec : (int)($dec ?? 2);
 }
 
 function user_price_dec(): int|string
@@ -512,28 +514,37 @@ function user_price_dec(): int|string
 	return is_int($dec) || is_string($dec) ? $dec : (int)($dec ?? 2);
 }
 
-function user_exrate_dec()
+function user_exrate_dec(): int|string
 {
-
-	return isset($_SESSION["wa_current_user"]) ? session_obj('wa_current_user')->prefs->exrate_dec() : 4;
+	if (!isset($_SESSION["wa_current_user"])) {
+		return 4;
+	}
+	$dec = session_obj('wa_current_user')->prefs->exrate_dec();
+	return is_int($dec) || is_string($dec) ? $dec : (int)($dec ?? 4);
 }
 
-function user_percent_dec()
+function user_percent_dec(): int|string
 {
-
-	return isset($_SESSION["wa_current_user"]) ? session_obj('wa_current_user')->prefs->percent_dec() : 1;
+	if (!isset($_SESSION["wa_current_user"])) {
+		return 1;
+	}
+	$dec = session_obj('wa_current_user')->prefs->percent_dec();
+	return is_int($dec) || is_string($dec) ? $dec : (int)($dec ?? 1);
 }
 
+/** @return null|scalar */
 function user_show_gl_info()
 {
 	return session_obj('wa_current_user')->prefs->show_gl_info();
 }
 
+/** @return null|scalar */
 function user_show_codes()
 {
 	return session_obj('wa_current_user')->prefs->show_codes();
 }
 
+/** @return null|scalar */
 function user_date_format()
 {
 
@@ -565,22 +576,30 @@ function user_date_display(): void
   	}
 }
 
+/** @return null|scalar */
 function user_date_sep()
 {
 
 	return isset(session_obj('wa_current_user')->prefs->date_sep) ? session_obj('wa_current_user')->prefs->date_sep() : sysprefs()->dflt_date_sep;
 }
 
-function user_tho_sep()
+function user_tho_sep(): int
 {
-	return isset($_SESSION["wa_current_user"]) ? session_obj('wa_current_user')->prefs->tho_sep() : 0;
+	if (!isset($_SESSION["wa_current_user"])) {
+		return 0;
+	}
+	return (int) session_obj('wa_current_user')->prefs->tho_sep();
 }
 
-function user_dec_sep()
+function user_dec_sep(): int
 {
-	return isset($_SESSION["wa_current_user"]) ? session_obj('wa_current_user')->prefs->dec_sep() : 0;
+	if (!isset($_SESSION["wa_current_user"])) {
+		return 0;
+	}
+	return (int) session_obj('wa_current_user')->prefs->dec_sep();
 }
 
+/** @return string */
 function user_theme()
 {
 	return isset($_SESSION["wa_current_user"]) ? session_obj('wa_current_user')->prefs->get_theme() : 'default';
@@ -591,61 +610,73 @@ function user_pagesize(): int|string
 	return session_obj('wa_current_user')->prefs->get_pagesize();
 }
 
+/** @return null|scalar */
 function user_hints()
 {
 	return session_obj('wa_current_user')->prefs->show_hints();
 }
 
+/** @return null|scalar */
 function user_print_profile()
 {
 	return session_obj('wa_current_user')->prefs->print_profile();
 }
 
+/** @return null|scalar */
 function user_rep_popup()
 {
 	return session_obj('wa_current_user')->prefs->rep_popup();
 }
 
+/** @return null|scalar */
 function user_query_size()
 {
 	return session_obj('wa_current_user')->prefs->query_size();
 }
 
+/** @return null|scalar */
 function user_graphic_links()
 {
 	return session_obj('wa_current_user')->prefs->graphic_links();
 }
 
+/** @return null|scalar */
 function sticky_doc_date()
 {
 	return session_obj('wa_current_user')->prefs->sticky_date();
 }
 
+/** @return string */
 function user_startup_tab()
 {
 	return session_obj('wa_current_user')->prefs->start_up_tab();
 }
 
+/** @return null|scalar */
 function user_transaction_days()
 {
     return session_obj('wa_current_user')->prefs->transaction_days();
 }
 
+/** @return null|scalar */
 function user_save_report_selections()
 {
     return session_obj('wa_current_user')->prefs->save_report_selections();
 }
 
+/** @return null|scalar */
 function user_use_date_picker()
 {
     return session_obj('wa_current_user')->prefs->use_date_picker();
 }
 
+/** @return null|scalar */
 function user_def_print_destination()
 {
     return session_obj('wa_current_user')->prefs->def_print_destination();
 }
 
+/** @return null|scalar */
 function user_def_print_orientation()
 {
     return session_obj('wa_current_user')->prefs->def_print_orientation();
@@ -697,6 +728,7 @@ function user_js_cache(string|int|float|bool|null $id=null): string
 
 //--------------------------------------------------------------------------
 
+/** @return string|int|float|bool */
 function session_timeout()
 {
 	$tout = @get_company_pref('login_tout'); // mask warning for db ver. 2.2
@@ -741,6 +773,11 @@ function array_append(array &$array, ?array $elements): void
 //	returns $needle found or null.
 //
 /** @psalm-pure */
+/**
+ * @template T
+ * @param array<array-key, T>|null $haystack
+ * @return T|null
+ */
 function array_search_value(string|int|float|bool|null $needle, ?array $haystack, string|int|null $valuekey=null)
 {
 	if (is_array($haystack)) {
@@ -790,7 +827,7 @@ function recalculate_cols(array &$cols): void
 		$cols[$key] = intval($col * $factor); 
 }
 
-function flush_dir(string|int|float|bool|null $path, string|int|float|bool|null $wipe = false): void 
+function flush_dir(string $path, string|int|float|bool|null $wipe = false): void
 {
 	if (!file_exists($path))
 		return;
@@ -826,9 +863,8 @@ function company_path(string|int|float|bool|null $comp=null): string
 			. '/'.$comp;
 }
 
-/** @psalm-pure */
 function is_admin_company(): bool
 {
-	return $this->company == 0;
+	return user_company() == 0;
 }
 

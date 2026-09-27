@@ -121,16 +121,16 @@ function print_customer_balances(): void
 {
     global $path_to_root, $systypes_array;
 
-    $from = $_POST['PARAM_0'];
-    $to = $_POST['PARAM_1'];
-    $fromcust = $_POST['PARAM_2'];
-    $area = $_POST['PARAM_3']; //added by Faisal to filter by area
-    $folk = $_POST['PARAM_4'];  // added by Faisal to filter by sales person
-    $currency = $_POST['PARAM_5'];
-    $no_zeros = $_POST['PARAM_6'];
-    $comments = $_POST['PARAM_7'];
-    $orientation = $_POST['PARAM_8'];
-    $destination = $_POST['PARAM_9'];
+    $from = (string) post_scalar('PARAM_0');
+    $to = (string) post_scalar('PARAM_1');
+    $fromcust = post_scalar('PARAM_2');
+    $area = post_scalar('PARAM_3'); //added by Faisal to filter by area
+    $folk = post_scalar('PARAM_4');  // added by Faisal to filter by sales person
+    $currency = post_scalar('PARAM_5');
+    $no_zeros = post_scalar('PARAM_6');
+    $comments = post_scalar('PARAM_7');
+    $orientation = post_scalar('PARAM_8');
+    $destination = post_scalar('PARAM_9');
     if ((bool)$destination)
         include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
     else
@@ -149,14 +149,14 @@ function print_customer_balances(): void
     if ($area == 0)
         $sarea = _('All Areas');
     else
-        $sarea = get_area_name($area);
+        $sarea = get_area_name((string) $area);
 
     if ($folk == ALL_NUMERIC)
         $folk = 0;
     if ($folk == 0)
         $salesfolk = _('All Sales Man');
      else
-        $salesfolk = get_salesman_name($folk);
+        $salesfolk = get_salesman_name((string) $folk);
 
     if ($currency == ALL_TEXT)
     {
@@ -221,16 +221,16 @@ function print_customer_balances(): void
 
     $result = db_select($sql, "The customers could not be retrieved");
 
-	$tot_cur_cr = $tot_cur_db = $tot_open = $tot_bal = 0;
+	$tot_cur_cr = $tot_cur_db = $tot_open = $tot_bal = 0.0;
     while ($myrow = db_fetch($result))
     {
         if (!$convert && $currency != $myrow['curr_code']) continue;
 
-        $rate = $convert ? get_exchange_rate_from_home_currency($myrow['curr_code'], Today()) : 1;
+        $rate = $convert ? (float) get_exchange_rate_from_home_currency($myrow['curr_code'], Today()) : 1.0;
         $bal = row_or_empty(get_open_balance($myrow['debtor_no'], $from));
         $init = array();
-        $curr_db = $bal ? round2(abs((float)$bal['charges'] * (float)$rate), $dec) : 0; // db
-        $curr_cr = $bal ? round2(abs((float)$bal['credits'] * (float)$rate), $dec) : 0; // cr
+        $curr_db = $bal ? round2(abs((float)$bal['charges'] * $rate), $dec) : 0; // db
+        $curr_cr = $bal ? round2(abs((float)$bal['credits'] * $rate), $dec) : 0; // cr
 //        $curr_alloc = $bal ? round2($bal['Allocated'] * $rate, $dec) : 0;    // allocated
         $curr_open = (float)$curr_db-(float)$curr_cr;                        // balance
         $tot_open += $curr_open;
@@ -274,7 +274,7 @@ function print_customer_balances(): void
     $rep->TextCol(0, 3, _('Grand Total'));
     $rep->fontSize -= 2;
 
-    $tot_bal = (float)$tot_open+(float)$tot_cur_db-$tot_cur_cr;
+    $tot_bal = $tot_open+$tot_cur_db-$tot_cur_cr;
 
     $rep->AmountCol(3, 4, $tot_open, $dec);
     $rep->AmountCol(4, 5, $tot_cur_db, $dec);

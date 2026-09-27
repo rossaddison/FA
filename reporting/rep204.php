@@ -67,10 +67,10 @@ function print_outstanding_GRN(): void
 {
     global $path_to_root;
 
-    $fromsupp = $_POST['PARAM_0'];
-    $comments = $_POST['PARAM_1'];
-	$orientation = $_POST['PARAM_2'];
-	$destination = $_POST['PARAM_3'];
+    $fromsupp = post_scalar('PARAM_0');
+    $comments = post_scalar('PARAM_1');
+	$orientation = post_scalar('PARAM_2');
+	$destination = post_scalar('PARAM_3');
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
@@ -104,7 +104,7 @@ function print_outstanding_GRN(): void
 	$Tot_Val=0.0;
 	$Supplier = '';
 	$SuppTot_Val=0.0;
-	$res = getTransactions($fromsupp);
+	$res = getTransactions((string) $fromsupp);
 
 	While ($GRNs = db_fetch($res))
 	{

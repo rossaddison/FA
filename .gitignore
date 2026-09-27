@@ -22,3 +22,4 @@ config_db.php
 vendor/
 composer.lock
 .psalm-cache/
+/nbproject/private/

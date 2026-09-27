@@ -104,6 +104,11 @@ define('PT_SUPPLIER', 3);
 define('PT_QUICKENTRY', 4);
 define('PT_DIMESION', 5);
 
+//----------------------------------------------------------------------------------
+//	VAT categories
+//
+define('VC_PARTIAL', 1);
+
 function payment_person_currency(string|int|float|bool|null $type, string|int|float|bool|null $person_id)  {
 	switch ($type)
 	{

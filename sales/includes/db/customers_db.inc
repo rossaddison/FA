@@ -211,6 +211,7 @@ function get_customer_by_ref(string|int|float|bool|null $reference)
 
 //----------------------------------------------------------------------------------
 
+/** @return null|scalar */
 function get_customer_currency(string|int|float|bool|null $customer_id=null, string|int|float|bool|null $branch_id=null)
 {
     $sql = "SELECT curr_code

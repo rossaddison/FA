@@ -26,6 +26,8 @@ class archive
 	var $storeonly = array();
 	/** @var array<int, string> */
 	var $error = array();
+	/** @var resource|string */
+	var $archive = '';
 
 	/** @psalm-mutation-free */
 	function __construct($name)
@@ -45,6 +47,24 @@ class archive
 			'type' => "",
 			'comment' => ""
 		);
+	}
+
+	/**
+	 * Overridden by tar_file; base class is never used standalone.
+	 * @return 0|1
+	 */
+	function create_tar()
+	{
+		return 0;
+	}
+
+	/**
+	 * Overridden by package (via gzip_file); base class is never used standalone.
+	 * @return 0|1
+	 */
+	function create_pkg()
+	{
+		return 0;
 	}
 
 	/**
@@ -111,7 +131,8 @@ class archive
 
 		if ($this->options['inmemory'] == 0)
 		{
-			fclose($this->archive);
+			$fp = $this->archive;
+			fclose($fp);
 			unlink((string)$this->options['name'] . ".tmp");
 		}
 	}

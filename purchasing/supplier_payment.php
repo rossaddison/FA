@@ -112,6 +112,7 @@ if (isset($_GET['AddedID'])) {
 
 //----------------------------------------------------------------------------------------
 
+/** @return null|string */
 function get_default_supplier_payment_bank_account(string|int|float|bool|null $supplier_id, string|null $date)
 {
 	$previous_payment = row_or_empty(get_supp_payment_before($supplier_id, date2sql($date)));

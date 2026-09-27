@@ -398,11 +398,17 @@ function find_custom_file(?string $rep): string|null
 	return null;
 }
 /*
-	
+
 	Protect against directory traversal.
 	Changes all not POSIX compatible chars to underscore.
 */
-/** @psalm-pure */
+/**
+ * @psalm-pure
+ * @psalm-taint-escape file
+ * @psalm-taint-escape html
+ * @psalm-taint-escape has_quotes
+ * @psalm-taint-escape sql
+ */
 function clean_file_name(string|int|float|bool|array|null $filename): array|string|null {
     $filename = str_replace(chr(0), '', $filename);
     return preg_replace('/[^a-zA-Z0-9.\-_]/', '_', $filename);

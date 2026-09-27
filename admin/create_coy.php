@@ -24,6 +24,9 @@ page(_($help_context = "Create/Update Company"));
 $comp_subdirs = array('images', 'pdf_files', 'backup','js_cache', 'reporting', 'attachments');
 
 simple_page_mode(true);
+// $selected_id is an index into $db_connections (or -1 for "new"); company_path() concatenates
+// it into a filesystem path with no sanitization, so it must never be anything but a safe integer.
+$selected_id = (int) $selected_id;
 /*
 	FIXME: tb_pref_counter should track prefix per database.
 */
@@ -130,7 +133,7 @@ function handle_submit(string|int|float|bool|null $selected_id): bool
 		} else {
 			if (strncmp(db_get_version(), "5.6", 3) >= 0) 
 				db_query("SET sql_mode = ''");
-			if (!(bool)db_import($path_to_root.'/sql/'.get_post('coa'), $conn, $selected_id)) {
+			if (!(bool)db_import($path_to_root.'/sql/'.clean_file_name(get_post('coa')), $conn, $selected_id)) {
 				display_error(_('Cannot create new company due to bugs in sql file.'));
 				$error = true;
 			} 
@@ -338,7 +341,7 @@ function display_company_edit(string|int|float|bool|null $selected_id): void
 		text_row_ex(_("Database Password"), 'dbpassword', 30);
 		text_row_ex(_("Database Name"), 'dbname', 30);
 		collations_list_row(_("Database Collation:"), 'collation');
-		yesno_list_row(_("Table Pref"), 'tbpref', 1, post_scalar('tbpref'), _("None"), false);
+		yesno_list_row(_("Table Pref"), 'tbpref', 1, _("Yes"), _("None"), false);
 		check_row(_("Default Company"), 'def');
 		coa_list_row(_("Database Script"), 'coa');
 		text_row_ex(_("New script Admin Password"), 'admpassword', 20);

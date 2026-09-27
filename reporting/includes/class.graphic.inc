@@ -60,20 +60,20 @@ file for later presentation.
 	Joe Hunt
 */
 define('MAXLEN', 27); // we cut after 25 chars + ...
-class Chart
+final class Chart
 {
 	/** @var string */
 	var $id;
 	/** @var array<int, string> */
 	var $labels = array();
-	/** @var array<int, array<string, mixed>> */
+	/** @var array<int, array{label: string, data: array<int, int|float>, type: int|string|bool|null, fill: bool}> */
 	var $series = array();
 
 	/**
 	 * @var string[]
 	 */
 	static $palette = array('#008cc9','#4db625','#ef5500','#eef100','#05c6e6', '#5ee66a'); // Currently in Use	
-	/** @var array<string, int|string|false> */
+	/** @var array<array-key, int|string|false|array<int, int|string|false>> */
 	var $color = array();
 	/** @var int */
 	var $num_series = 0;
@@ -99,7 +99,7 @@ class Chart
 	var $angle = 0;
 
 	/**
-	 * @var false
+	 * @var bool
 	 */
 	var $latin_notation;
 	/** @var int|float */
@@ -107,7 +107,7 @@ class Chart
 	/** @var int|float */
 	var $height;
 	/** @var int|float */
-	var $title_height;
+	var $title_height = 0;
 	/** @var int */
 	var $size = 12;
 	/** @var int */
@@ -126,9 +126,9 @@ class Chart
 	/** @var string */
 	var $max_label;
 	/** @var string */
-	var $max_legend_str;
+	var $max_legend_str = '';
 	/** @var int|float */
-	var $legend_box_height;
+	var $legend_box_height = 0;
 	/** @var string|null */
 	var $stream = 'svg'; // stream = 'svg', 'png', 'jpg' or 'gif'
 
@@ -239,9 +239,10 @@ class Chart
 
 
 	/**
-	 * @param string|null $id
-	 * @param int|null $width
-	 * @param int|null $height
+	 * @param string|int|null $type
+	 * @param string $id
+	 * @param int $width
+	 * @param int $height
 	 */
 	function __construct($type = 1, $id = 'id', $width = 0, $height = 0)
 	{
@@ -296,6 +297,7 @@ class Chart
 	}
 
 	/**
+	 * @param string $dir
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -303,8 +305,9 @@ class Chart
 	{
 		$this->dir = $dir;
 	}
-	
+
 	/**
+	 * @param string $lang
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -340,6 +343,7 @@ class Chart
 
 	/**
 	 * @param string|null $label
+	 * @param array<int, int|float>|null $data
 	 * @param string|bool|null $type
 	 * @param bool $fill
 	 * @psalm-external-mutation-free
@@ -378,6 +382,7 @@ class Chart
 	}
 
 	/**
+	 * @param string|null $title
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -387,7 +392,7 @@ class Chart
 	}
 
 	/**
-	 * @param string|null $dtitle
+	 * @param string $dtitle
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -407,6 +412,7 @@ class Chart
 	}
 
 	/**
+	 * @param string $dir
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -428,18 +434,18 @@ class Chart
 	function display($save="")
 	{
 		$this->encoding = strtoupper(session_obj('language')->encoding);
-		$this->title_height			= (!empty($this->title)) ? $this->tsize + 15 : 0;
-		$this->bar_width			= ($this->type == 1) ? 20 : 15;
-		$this->space_between_dots	= 40;
-		$this->higher_value			= 0;
+		$this->title_height			= (!empty($this->title)) ? (float) $this->tsize + 15.0 : 0.0;
+		$this->bar_width			= ($this->type == 1) ? 20.0 : 15.0;
+		$this->space_between_dots	= 40.0;
+		$this->higher_value			= 0.0;
 		$this->higher_value_str		= 0;
-		$this->graphic_area_width	= 0;
-		$this->graphic_area_height	= 0;
-		$this->graphic_area_x1		= 30;
-		$this->graphic_area_y1		= 30 + $this->title_height;
+		$this->graphic_area_width	= 0.0;
+		$this->graphic_area_height	= 0.0;
+		$this->graphic_area_x1		= 30.0;
+		$this->graphic_area_y1		= 30.0 + $this->title_height;
 		$this->num_labels			= count($this->labels);
 		$this->max_legend_str		= "";
-		$this->legend_box_height  += ((14.0 * $this->num_labels));
+		$this->legend_box_height  += (14.0 * (float) $this->num_labels);
 		for ($i = 0; $i < $this->num_labels; $i++)
 		{
 			if (strlen($this->labels[$i]) > MAXLEN)
@@ -449,7 +455,7 @@ class Chart
 		}
 		for ($j = 0; $j < $this->num_series; $j++)
 		{
-			$this->sum_total[$j] = 0;
+			$this->sum_total[$j] = 0.0;
 			if (strlen($this->series[$j]['label']) > strlen($this->max_legend_str))
 				$this->max_legend_str = $this->series[$j]['label'];
 			for ($i = 0; $i < $this->num_labels; $i++)
@@ -459,7 +465,7 @@ class Chart
 				$this->sum_total[$j] += $this->series[$j]['data'][$i];
 			}
 		}
-		$this->max_value = number_format(round($this->max_value, 1), 1, ".", "");
+		$this->max_value = number_format(round((float) $this->max_value, 1), 1, ".", "");
 		if ($this->num_series)
 			$this->legend_exists = true;
 		if ($this->type == 8 && $this->num_labels < 4)
@@ -489,27 +495,45 @@ class Chart
 		}
 		else
 		{
-			$this->img = imagecreatetruecolor($this->width, $this->height);
+			$this->img = imagecreatetruecolor((int) $this->width, (int) $this->height);
 			$this->load_color_palette($this->type);
+			/** @var GdImage $img */
+			$img = $this->img;
+			/** @var int|string|false $c_background */
+			$c_background = $this->color['background'];
 			// Fill background
-			imagefill($this->img, 0, 0, $this->color['background']);
+			imagefill($img, 0, 0, (int) $c_background);
 		}
+		// re-asserted unconditionally so Psalm sees $img/$svg as always-defined below;
+		// each is only ever read inside the branch matching how it was set above
+		/** @var GdImage $img */
+		$img = $this->img;
+		/** @var SVG $svg */
+		$svg = $this->svg;
+		/** @var int|string|false $c_title */
+		$c_title = $this->color['title'];
+		/** @var int|string|false $c_axis_values */
+		$c_axis_values = $this->color['axis_values'];
+		/** @var int|string|false $c_axis_line */
+		$c_axis_line = $this->color['axis_line'];
+		/** @var int|string|false $c_bg_lines */
+		$c_bg_lines = $this->color['bg_lines'];
 		// Draw title
 		if (!empty($this->title))
 		{
 			if ($this->stream == 'svg')
 			{
 				$center = (float)$this->width / 2.0;
-				$this->svg->text($center, 20, $this->title, $this->tsize, $this->color['title'], false, "middle");
+				$svg->text($center, 20, $this->title, $this->tsize, $c_title, false, "middle");
 			}
 			else
 			{
-				$center = ((float)$this->width / 2.0) - ($this->string_width($this->title, $this->tsize) / 2);
-				$this->_imagestring($this->img, $this->tsize, $center, 10, $this->title, $this->color['title']);
+				$center = ((float)$this->width / 2.0) - ((float) $this->string_width($this->title, $this->tsize) / 2.0);
+				$this->_imagestring($img, $this->tsize, $center, 10, $this->title, $c_title);
 			}
 		}
 		// Draw axis and background lines for "vertical bars", "dots", "lines" and "splines"
-		if (preg_match("/^(1|3|4|8)$/", $this->type))
+		if (preg_match("/^(1|3|4|8)$/", (string) $this->type))
 		{
 			if ($this->legend_exists == true)
 			{
@@ -517,16 +541,16 @@ class Chart
 			}
 			$higher_value_y	   = (float)$this->graphic_area_y1 + ((0.1 * (float)$this->graphic_area_height));
 			$this->higher_value_size = 0.9 * (float)$this->graphic_area_height;
-			$less  = 7 * strlen($this->higher_value_str);
+			$less  = 7 * strlen((string) $this->higher_value_str);
 			if ($this->stream == 'svg')
 			{
-				$this->svg->line($this->graphic_area_x1, $higher_value_y, $this->graphic_area_x2, $higher_value_y, $this->color['bg_lines']);
-				$this->svg->text((float)$this->graphic_area_x1-(float)$less-7.0, $higher_value_y, $this->higher_value_str, $this->size, $this->color['axis_values'], false, $this->align);
+				$svg->line($this->graphic_area_x1, $higher_value_y, $this->graphic_area_x2, $higher_value_y, $c_bg_lines);
+				$svg->text((float)$this->graphic_area_x1-(float)$less-7.0, $higher_value_y, $this->higher_value_str, $this->size, $c_axis_values, false, $this->align);
 			}
 			else
 			{
-				imageline($this->img, $this->graphic_area_x1, $higher_value_y, $this->graphic_area_x2, $higher_value_y, $this->color['bg_lines']);
-				$this->_imagestring($this->img, $this->size, ((float)$this->graphic_area_x1-(float)$less-7.0), ($higher_value_y-7.0), $this->higher_value_str, $this->color['axis_values']);
+				imageline($img, (int) round($this->graphic_area_x1), (int) round($higher_value_y), (int) round($this->graphic_area_x2), (int) round($higher_value_y), (int) $c_bg_lines);
+				$this->_imagestring($img, $this->size, ((float)$this->graphic_area_x1-(float)$less-7.0), ($higher_value_y-7.0), $this->higher_value_str, $c_axis_values);
 			}
 			for ($i = 1; $i < 10; $i++)
 			{
@@ -536,45 +560,45 @@ class Chart
 				$x2 = round($this->graphic_area_x2);
 				$y2 = $y1;
 				if ($this->stream == 'svg')
-					$this->svg->line($x1, $y1, $x2, $y2, $this->color['bg_lines']);
+					$svg->line($x1, $y1, $x2, $y2, $c_bg_lines);
 				else
-					imageline($this->img, $x1, $y1, $x2, $y2, $this->color['bg_lines']);
-				if ($i % 2 == 0) 
+					imageline($img, (int) $x1, (int) $y1, (int) $x2, (int) $y2, (int) $c_bg_lines);
+				if ($i % 2 == 0)
 				{
 					$value = $this->number_formated((float)$this->higher_value * (float)$i / 10.0, $this->dec1);
-					$len1 = strlen($this->higher_value_str);
+					$len1 = strlen((string) $this->higher_value_str);
 					$len2 = strlen($value);
 					if ($len2 < $len1)
 						$len2 += ($len1-$len2-1);
 					$less = 7 * $len2;
 					if ($this->stream == 'svg')
-						$this->svg->text($x1-(float)$less-7.0, ($y1), $value, $this->size, $this->color['axis_values'], false, $this->align);
+						$svg->text($x1-(float)$less-7.0, ($y1), $value, $this->size, $c_axis_values, false, $this->align);
 					else
-						$this->_imagestring($this->img, $this->size, ($x1-(float)$less-7.0), ($y2-7.0), $value, $this->color['axis_values']);
+						$this->_imagestring($img, $this->size, ($x1-(float)$less-7.0), ($y2-7.0), $value, $c_axis_values);
 				}
 			}
 			// Axis X
 			if ($this->stream == 'svg')
 			{
-				$this->svg->text((float)$this->graphic_area_x2+10.0, (float)$this->graphic_area_y2+10.0, $this->axis_x, $this->size, $this->color['title'], false, $this->align);
-				$this->svg->line($this->graphic_area_x1, $this->graphic_area_y2, $this->graphic_area_x2, $this->graphic_area_y2, $this->color['axis_line']);
+				$svg->text((float)$this->graphic_area_x2+10.0, (float)$this->graphic_area_y2+10.0, $this->axis_x, $this->size, $c_title, false, $this->align);
+				$svg->line($this->graphic_area_x1, $this->graphic_area_y2, $this->graphic_area_x2, $this->graphic_area_y2, $c_axis_line);
 			}
 			else
 			{
-				$this->_imagestring($this->img, $this->size, (float)$this->graphic_area_x2+20.0, (float)$this->graphic_area_y2+3.0, $this->axis_x, $this->color['title']);
-				imageline($this->img, $this->graphic_area_x1, $this->graphic_area_y2, $this->graphic_area_x2, $this->graphic_area_y2, $this->color['axis_line']);
+				$this->_imagestring($img, $this->size, (float)$this->graphic_area_x2+20.0, (float)$this->graphic_area_y2+3.0, $this->axis_x, $c_title);
+				imageline($img, (int) round($this->graphic_area_x1), (int) round($this->graphic_area_y2), (int) round($this->graphic_area_x2), (int) round($this->graphic_area_y2), (int) $c_axis_line);
 			}
 			// Axis Y
 			if ($this->stream == 'svg')
 			{
-				$lex = $this->dir == 'rtl' ? 35 : 25; 
-				$this->svg->text($lex, (float)$this->graphic_area_y1-10.0, $this->axis_y, $this->size, $this->color['title'], false, $this->align);
-				$this->svg->line($this->graphic_area_x1, $this->graphic_area_y1, $this->graphic_area_x1, $this->graphic_area_y2, $this->color['axis_line']); 
+				$lex = $this->dir == 'rtl' ? 35 : 25;
+				$svg->text($lex, (float)$this->graphic_area_y1-10.0, $this->axis_y, $this->size, $c_title, false, $this->align);
+				$svg->line($this->graphic_area_x1, $this->graphic_area_y1, $this->graphic_area_x1, $this->graphic_area_y2, $c_axis_line);
 			}
 			else
 			{
-				$this->_imagestring($this->img, $this->size, 10, (float)$this->graphic_area_y1-20.0, $this->axis_y, $this->color['title']);
-				imageline($this->img, $this->graphic_area_x1, $this->graphic_area_y1, $this->graphic_area_x1, $this->graphic_area_y2, $this->color['axis_line']);
+				$this->_imagestring($img, $this->size, 10, (float)$this->graphic_area_y1-20.0, $this->axis_y, $c_title);
+				imageline($img, (int) round($this->graphic_area_x1), (int) round($this->graphic_area_y1), (int) round($this->graphic_area_x1), (int) round($this->graphic_area_y2), (int) $c_axis_line);
 			}
 		}
 		// Draw axis and background lines for "horizontal bars"
@@ -587,62 +611,62 @@ class Chart
 			$this->higher_value_size = 0.9 * (float)$this->graphic_area_width;
 			if ($this->stream == 'svg')
 			{
-				$this->svg->line(((float)$this->graphic_area_x1+$this->higher_value_size), $this->graphic_area_y1, ((float)$this->graphic_area_x1+$this->higher_value_size), $this->graphic_area_y2, $this->color['bg_lines']);
-				$this->svg->text((((float)$this->graphic_area_x1+$this->higher_value_size) - ($this->string_width($this->higher_value, $this->size)/2)), ((float)$this->graphic_area_y2 + 20.0), $this->higher_value_str, $this->size, $this->color['axis_values'], false, $this->align);
+				$svg->line(((float)$this->graphic_area_x1+$this->higher_value_size), $this->graphic_area_y1, ((float)$this->graphic_area_x1+$this->higher_value_size), $this->graphic_area_y2, $c_bg_lines);
+				$svg->text((((float)$this->graphic_area_x1+$this->higher_value_size) - ((float) $this->string_width($this->higher_value, $this->size)/2.0)), ((float)$this->graphic_area_y2 + 20.0), $this->higher_value_str, $this->size, $c_axis_values, false, $this->align);
 			}
 			else
 			{
-				imageline($this->img, ((float)$this->graphic_area_x1+$this->higher_value_size), $this->graphic_area_y1, ((float)$this->graphic_area_x1+$this->higher_value_size), $this->graphic_area_y2, $this->color['bg_lines']);
-				$this->_imagestring($this->img, $this->size, (((float)$this->graphic_area_x1+$this->higher_value_size) - ($this->string_width($this->higher_value, $this->size)/2)), ((float)$this->graphic_area_y2+2.0), $this->higher_value_str, $this->color['axis_values']);
+				imageline($img, (int) round((float)$this->graphic_area_x1+$this->higher_value_size), (int) round($this->graphic_area_y1), (int) round((float)$this->graphic_area_x1+$this->higher_value_size), (int) round($this->graphic_area_y2), (int) $c_bg_lines);
+				$this->_imagestring($img, $this->size, (((float)$this->graphic_area_x1+$this->higher_value_size) - ((float) $this->string_width($this->higher_value, $this->size)/2.0)), ((float)$this->graphic_area_y2+2.0), $this->higher_value_str, $c_axis_values);
 			}
 			for ($i = 1, $alt = 15; $i < 10; $i++)
 			{
-				$dec_x = number_format(round((float)$i * (($this->higher_value_size	 / 10.0)), 1), 1, ".", "");
+				$dec_x = (float) number_format(round((float)$i * (($this->higher_value_size	 / 10.0)), 1), 1, ".", "");
 				if ($this->stream == 'svg')
-					$this->svg->line(($this->graphic_area_x1+$dec_x), $this->graphic_area_y1, ($this->graphic_area_x1+$dec_x), $this->color['bg_lines']);
+					$svg->line(((float)$this->graphic_area_x1+$dec_x), $this->graphic_area_y1, ((float)$this->graphic_area_x1+$dec_x), $this->graphic_area_y2, $c_bg_lines);
 				else
-					imageline($this->img, ($this->graphic_area_x1+$dec_x), $this->graphic_area_y1, ($this->graphic_area_x1+$dec_x), $this->graphic_area_y2, $this->color['bg_lines']);
-				if ($i % 2 == 0) 
+					imageline($img, (int) round((float)$this->graphic_area_x1+$dec_x), (int) round($this->graphic_area_y1), (int) round((float)$this->graphic_area_x1+$dec_x), (int) round($this->graphic_area_y2), (int) $c_bg_lines);
+				if ($i % 2 == 0)
 				{
-					$alt   = (strlen($this->max_value) > 4 && $alt != 15) ? 15 : 2;
+					$alt   = (strlen((string) $this->max_value) > 4 && $alt != 15) ? 15 : 2;
 					$value = $this->number_formated((float)$this->higher_value * (float)$i / 10.0, $this->dec1);
 					if ($this->stream == 'svg')
-						$this->svg->text((($this->graphic_area_x1+$dec_x) - ($this->string_width($this->higher_value, $this->size)/2)), ((float)$this->graphic_area_y2+(float)$alt+18.0), $value, $this->size, $this->color['axis_values'], false, $this->align);
+						$svg->text(((float)$this->graphic_area_x1+$dec_x - ((float) $this->string_width($this->higher_value, $this->size)/2.0)), ((float)$this->graphic_area_y2+(float)$alt+18.0), $value, $this->size, $c_axis_values, false, $this->align);
 					else
-						$this->_imagestring($this->img, $this->size, (($this->graphic_area_x1+$dec_x) - ($this->string_width($this->higher_value, $this->size)/2)), ($this->graphic_area_y2), $value, $this->color['axis_values'], $alt);
+						$this->_imagestring($img, $this->size, ((float)$this->graphic_area_x1+$dec_x - ((float) $this->string_width($this->higher_value, $this->size)/2.0)), ($this->graphic_area_y2), $value, $c_axis_values, $alt);
 				}
 			}
 			// Axis X
 			if ($this->stream == 'svg')
 			{
-				$this->svg->text((float)$this->graphic_area_x2+10.0, ((float)$this->graphic_area_y2+10.0), $this->axis_y, $this->size, $this->color['title'], false, $this->align);
-				$this->svg->line($this->graphic_area_x1, $this->graphic_area_y2, $this->graphic_area_x2, $this->graphic_area_y2, $this->color['axis_line']);
+				$svg->text((float)$this->graphic_area_x2+10.0, ((float)$this->graphic_area_y2+10.0), $this->axis_y, $this->size, $c_title, false, $this->align);
+				$svg->line($this->graphic_area_x1, $this->graphic_area_y2, $this->graphic_area_x2, $this->graphic_area_y2, $c_axis_line);
 			}
 			else
 			{
-				$this->_imagestring($this->img, $this->size, ((float)$this->graphic_area_x2+10.0), ((float)$this->graphic_area_y2+3.0), $this->axis_y, $this->color['title']);
-				imageline($this->img, $this->graphic_area_x1, $this->graphic_area_y2, $this->graphic_area_x2, $this->graphic_area_y2, $this->color['axis_line']);
+				$this->_imagestring($img, $this->size, ((float)$this->graphic_area_x2+10.0), ((float)$this->graphic_area_y2+3.0), $this->axis_y, $c_title);
+				imageline($img, (int) round($this->graphic_area_x1), (int) round($this->graphic_area_y2), (int) round($this->graphic_area_x2), (int) round($this->graphic_area_y2), (int) $c_axis_line);
 			}
 			// Axis Y
 			if ($this->stream == 'svg')
 			{
-				$lex = ($this->string_width($this->max_label, $this->size)) / 2;
-				$this->svg->text($lex, ((float)$this->graphic_area_y1-10.0), $this->axis_x, $this->size, $this->color['title'], false, $this->align);
-				$this->svg->line($this->graphic_area_x1, $this->graphic_area_y1, $this->graphic_area_x1, $this->graphic_area_y2, $this->color['axis_line']);
+				$lex = (float) ($this->string_width($this->max_label, $this->size)) / 2.0;
+				$svg->text($lex, ((float)$this->graphic_area_y1-10.0), $this->axis_x, $this->size, $c_title, false, $this->align);
+				$svg->line($this->graphic_area_x1, $this->graphic_area_y1, $this->graphic_area_x1, $this->graphic_area_y2, $c_axis_line);
 			}
 			else
 			{
-				$this->_imagestring($this->img, $this->size, 20, ((float)$this->graphic_area_y1-20.0), $this->axis_x, $this->color['title']);
-				imageline($this->img, $this->graphic_area_x1, $this->graphic_area_y1, $this->graphic_area_x1, $this->graphic_area_y2, $this->color['axis_line']);
+				$this->_imagestring($img, $this->size, 20, ((float)$this->graphic_area_y1-20.0), $this->axis_x, $c_title);
+				imageline($img, (int) round($this->graphic_area_x1), (int) round($this->graphic_area_y1), (int) round($this->graphic_area_x1), (int) round($this->graphic_area_y2), (int) $c_axis_line);
 			}
 		}
-		else if (preg_match("/^(5|6|7)$/", $this->type))
+		else if (preg_match("/^(5|6|7)$/", (string) $this->type))
 		{
 			// Draw legend box for "pie", "donut" or "half donut"
 			$this->draw_legend();
 		}
 		$average_width = (float)$this->graphic_area_width / (float)$this->num_labels;
-		$biggest_width = $this->string_width($this->max_label, $this->size) + 10;
+		$biggest_width = (float) $this->string_width($this->max_label, $this->size) + 10.0;
 		if ($biggest_width > $average_width)
 			$this->angle = -20;
 		else
@@ -664,7 +688,7 @@ class Chart
 		/**
 		* Draw graphic: DOTS. LINE or SPLINE
 		*/
-		else if (preg_match("/^(3|4|8)$/", $this->type))
+		else if (preg_match("/^(3|4|8)$/", (string) $this->type))
 		{
 			$this->draw_lines();
 			if ($this->stream != 'svg' && $this->type == 8)
@@ -673,15 +697,15 @@ class Chart
 		/**
 		* Draw graphic: PIE, DONUT or HALF DONUT
 		*/
-		else if (preg_match("/^(5|6|7)$/", $this->type))
+		else if (preg_match("/^(5|6|7)$/", (string) $this->type))
 		{
 			// Draw PIE, DONUT OR HALF DONUT
 			$this->draw_pie();
 		}
 		if ($this->stream == 'svg')
 		{
-			$this->svg->close();
-			return $this->svg->draw();
+			$svg->close();
+			return $svg->draw();
 			//$this->out_dir =	company_path(). '/pdf_files/';
 			//$filename = $this->out_dir.uniqid().".svg";
 			//$this->svg->save($filename);
@@ -689,39 +713,53 @@ class Chart
 		}
 		else
 		{
-			$filename = $this->out_dir.uniqid().".".$this->stream;
+			$filename = $this->out_dir.uniqid().".".(string) $this->stream;
 			if ($this->stream == 'png')
-				imagepng($this->img, $save != "" ? $save : $filename);
+				imagepng($img, $save != "" ? $save : $filename);
 			elseif ($this->stream == 'jpg')
-				imagejpeg($this->img, $save != "" ? $save : $filename);
-			elseif ($this->stream == 'gif')	
-				imagegif($this->img, $save != "" ? $save : $filename);
+				imagejpeg($img, $save != "" ? $save : $filename);
+			elseif ($this->stream == 'gif')
+				imagegif($img, $save != "" ? $save : $filename);
 			echo "<img src='$filename' border='0' alt='$this->title'>";
 			/*
 			header('Content-type: image/png');
 			imagepng($this->img, NULL, 5);
 			*/
-			imagedestroy($this->img);
+			imagedestroy($img);
 		}
 	}
 
 	/** @return void */
 	function draw_vertical_bars()
 	{
+		/** @var GdImage $img */
+		$img = $this->img;
+		/** @var SVG $svg */
+		$svg = $this->svg;
 		$x	 = (float)$this->graphic_area_x1 + 10.0;
 		$oldx = $oldy = 0;
 		$p = array();
+		/** @var array<int, int|float> $sp */
+		$sp = array();
 		foreach ($this->labels as $i => $parameter)
 		{
 			for ($j = 0; $j < $this->num_series; $j++)
 			{
-				$size = round($this->series[$j]['data'][$i] * $this->higher_value_size / $this->higher_value);
+				$size = round((float) $this->series[$j]['data'][$i] * (float) $this->higher_value_size / (float) $this->higher_value);
 				$x1	  = $x;
 				$y1	  = (((float)$this->graphic_area_y2 - $size)) + 1.0;
 				$x2	  = $this->bar_width;
 				$y2	  = $this->graphic_area_y2;
 				if ($this->series[$j]['type'] == 8 && $this->num_labels < 4)
 					$this->series[$j]['type'] = 4;
+				/** @var int|string|false $c_line */
+				$c_line = $this->color['line'][$j] ?? false;
+				/** @var int|string|false $c_line_light */
+				$c_line_light = $this->color['line_light'][$j] ?? false;
+				/** @var int|string|false $c_bars */
+				$c_bars = $this->color['bars'][$j] ?? false;
+				/** @var int|string|false $c_axis_values */
+				$c_axis_values = $this->color['axis_values'];
 				if ($this->stream == 'svg')
 				{
 					if ($this->series[$j]['type'] == 4 || $this->series[$j]['type'] == 8) // line
@@ -734,20 +772,21 @@ class Chart
 							$xx = (float)$this->graphic_area_x1 + $dx;
 							foreach($this->series[$j]['data'] as $i => $v)
 							{
-								$size  = round($this->series[$j]['data'][$i] * $this->higher_value_size / $this->higher_value);
+								$size  = round((float) $this->series[$j]['data'][$i] * (float) $this->higher_value_size / (float) $this->higher_value);
 								$y = (float)$this->graphic_area_y2 - $size;
 								$p[$i][0] = $xx;
 								$p[$i][1] = $y;
 								$xx += $dx;
 							}
-							$path = "M ".$p[0][0].",".$p[0][1];
+							$path = "M ".(string)$p[0][0].",".(string)$p[0][1];
+							$ix = 0;
 							foreach ($p as $ix => $y)
 							{
-								$this->svg->circle($p[$ix][0], $p[$ix][1], 2.5, $this->color['line'][$j], 2, $this->color['line'][$j], "class=\"tips\"", (string)$this->series[$j]['label'].": ".number_format($this->series[$j]['data'][$ix], 2)); 
+								$svg->circle($p[$ix][0], $p[$ix][1], 2.5, $c_line, 2, $c_line, "class=\"tips\"", $this->series[$j]['label'].": ".number_format((float) $this->series[$j]['data'][$ix], 2));
 								if ($ix != 0)
 								{
 									if ($this->series[$j]['type'] == 4) // normal line
-										$path .= " L".$p[$ix][0].",".$p[$ix][1];
+										$path .= " L".(string)$p[$ix][0].",".(string)$p[$ix][1];
 									elseif ($this->series[$j]['type'] == 8) // spline
 										$path .= $this->_splineCommand($p[$ix], $ix, $p);
 								}
@@ -755,15 +794,15 @@ class Chart
 							if ($this->series[$j]['fill'] == true)
 							{
 								$fpath = $path;
-								$fpath .= " L ".($p[$ix][0]+1.0).",".((float)$this->graphic_area_y2-2.0)." L ".$p[0][0].",".((float)$this->graphic_area_y2-2.0)." L ".$p[0][0].",".$p[0][1];
-								$this->svg->path($fpath, $this->color['line_light'][$j], 1, $this->color['line_light'][$j]);
+								$fpath .= " L ".(string)($p[$ix][0]+1.0).",".(string)((float)$this->graphic_area_y2-2.0)." L ".(string)$p[0][0].",".(string)((float)$this->graphic_area_y2-2.0)." L ".(string)$p[0][0].",".(string)$p[0][1];
+								$svg->path($fpath, $c_line_light, 1, $c_line_light);
 							}
-							$this->svg->path($path, $this->color['line'][$j], 3, "none");
+							$svg->path($path, $c_line, 3, "none");
 						}
 					}
 					else
 					{
-						$this->svg->rect( $x1, $y1, $x2, (float)$y2-$y1, $this->color['bars'][$j], 1, $this->color['bars'][$j], "class=\"tips\"", (string)$this->series[$j]['label'].": ".number_format($this->series[$j]['data'][$i], 2));
+						$svg->rect( $x1, $y1, $x2, (float)$y2-$y1, $c_bars, 1, $c_bars, "class=\"tips\"", $this->series[$j]['label'].": ".number_format((float) $this->series[$j]['data'][$i], 2));
 						$x += ((float)$this->bar_width + 5.0);
 					}
 				}
@@ -775,14 +814,14 @@ class Chart
 							$this->load_color_palette($this->series[$j]['type']);
 						if ($i > 0)
 						{
-							$this->_imageline($this->img, $oldx, $oldy, $x1, $y1, $this->color['line'][$j], 3);
+							$this->_imageline($img, $oldx, $oldy, $x1, $y1, $c_line, 3);
 							if ($this->series[$j]['fill'] == true)
 							{
-								$pt = array($oldx, (float)$oldy+3.0, $x1, $y1 + 3.0, $x1, (float)$this->graphic_area_y2-2.0,	$oldx, (float)$this->graphic_area_y2-2.0, $oldx, (float)$oldy+4.0);
-								imagefilledpolygon($this->img, $pt, 5, $this->color['line_light'][$j]);
+								$pt = array((float)$oldx, (float)$oldy+3.0, $x1, $y1 + 3.0, $x1, (float)$this->graphic_area_y2-2.0,	(float)$oldx, (float)$this->graphic_area_y2-2.0, (float)$oldx, (float)$oldy+4.0);
+								imagefilledpolygon($img, array_map('intval', array_map('round', $pt)), (int) $c_line_light);
 							}
 						}
-						imagefilledrectangle($this->img, $x1-2.0, $y1-2.0, $x1+2.0, $y1+2.0, $this->color['line'][$j]);
+						imagefilledrectangle($img, (int) round($x1-2.0), (int) round($y1-2.0), (int) round($x1+2.0), (int) round($y1+2.0), (int) $c_line);
 						$oldx = $x1;
 						$oldy = $y1;
 						$x += 5.0;
@@ -791,19 +830,19 @@ class Chart
 					{
 						if (!isset($this->color['line'][0]))
 							$this->load_color_palette($this->series[$j]['type']);
-						imagefilledrectangle($this->img, $x1-2.0, $y1-2.0, $x1+2.0, $y1+2.0, $this->color['line'][$j]);
-						$p[$x1] = (float)$this->graphic_area_y2 - $size;
+						imagefilledrectangle($img, (int) round($x1-2.0), (int) round($y1-2.0), (int) round($x1+2.0), (int) round($y1+2.0), (int) $c_line);
+						$sp[(int) $x1] = (float)$this->graphic_area_y2 - $size;
 						if ($i == $this->num_labels - 1)
 						{
-							$r = $this->imageSpline($p);
+							$r = $this->imageSpline($sp);
 							if ($r == false)
 								break;
-							while (list ($xx, $yy) = each($r)) 
+							foreach ($r as $xx => $yy)
 							{
-								imagefilledellipse($this->img, round($xx), round($yy)+1.0, 3, 3, $this->color['line'][$j]);
+								imagefilledellipse($img, (int) round($xx), (int) round($yy)+1, 3, 3, (int) $c_line);
 								if ($this->series[$j]['fill'] == true)
 								{
-									$this->_imageline($this->img, round($xx), round($yy+4), round($xx), (float)$this->graphic_area_y2-2.0, $this->color['line_light'][$j], 3);
+									$this->_imageline($img, round($xx), round($yy+4.0), round($xx), (float)$this->graphic_area_y2-2.0, $c_line_light, 3);
 								}
 							}
 						}
@@ -812,10 +851,10 @@ class Chart
 					else
 					{
 						$xx2 = (float)$x2 + $x1;
-						imageline($this->img, ($x1+1.0), ($y1-1.0), $xx2, ($y1-1.0), $this->color['bars'][$j]);
-						imageline($this->img, ($xx2+1.0), ($y1-1.0), ($xx2+1.0), $y2, $this->color['bars'][$j]);
-						imageline($this->img, ($xx2+2.0), ($y1-1.0), ($xx2+2.0), $y2, $this->color['bars'][$j]);
-						imagefilledrectangle($this->img, $x1, $y1, $xx2, $y2, $this->color['bars'][$j]);
+						imageline($img, (int) round($x1+1.0), (int) round($y1-1.0), (int) round($xx2), (int) round($y1-1.0), (int) $c_bars);
+						imageline($img, (int) round($xx2+1.0), (int) round($y1-1.0), (int) round($xx2+1.0), (int) round((float) $y2), (int) $c_bars);
+						imageline($img, (int) round($xx2+2.0), (int) round($y1-1.0), (int) round($xx2+2.0), (int) round((float) $y2), (int) $c_bars);
+						imagefilledrectangle($img, (int) round($x1), (int) round($y1), (int) round($xx2), (int) round((float) $y2), (int) $c_bars);
 						$x += ((float)$this->bar_width + 5.0);
 					}
 				}
@@ -825,11 +864,11 @@ class Chart
 					{
 						$lex = $this->angle == 0 ? $x1 + 40.0 : $x1+20.0;
 						$al = $this->dir == 'rtl' ? "start" : "end";
-						$this->svg->text($lex, ((float)$y2+15.0), $parameter, $this->size, $this->color['axis_values'], false, $al, $this->angle);
+						$svg->text($lex, ((float)$y2+15.0), $parameter, $this->size, $c_axis_values, false, $al, $this->angle);
 					}
 					else
 					{
-						$this->_imagestring($this->img, $this->size, $x1, ((float)$y2+2.0), $parameter, $this->color['axis_values'], 0, $this->angle);
+						$this->_imagestring($img, $this->size, $x1, ((float)$y2+2.0), $parameter, $c_axis_values, 0, $this->angle);
 					}
 				}
 			}
@@ -840,41 +879,50 @@ class Chart
 	/** @return void */
 	function draw_horizontal_bars()
 	{
+		/** @var GdImage $img */
+		$img = $this->img;
+		/** @var SVG $svg */
+		$svg = $this->svg;
 		$y = 10.0;
 		$label_len = $this->string_width($this->max_label, $this->size);
+		$y1 = $y2 = 0.0;
+		/** @var int|string|false $c_axis_values */
+		$c_axis_values = $this->color['axis_values'];
 		foreach ($this->labels as $i => $parameter)
 		{
 			for ($j = 0; $j < $this->num_series; $j++)
 			{
-				$size = round($this->series[$j]['data'][$i] / $this->higher_value * $this->higher_value_size);
+				/** @var int|string|false $c_bars */
+				$c_bars = $this->color['bars'][$j] ?? false;
+				$size = round((float) $this->series[$j]['data'][$i] / (float) $this->higher_value * (float) $this->higher_value_size);
 				$x1	  = (float)$this->graphic_area_x1 + 1.0;
 				$y1	  = (float)$this->graphic_area_y1 + $y;
 				$x2	  = $x1 + $size;
 				$y2	  = $y1 + (float)$this->bar_width;
 				if ($this->stream == 'svg')
 				{
-					$this->svg->rect($x1, $y1, $x2-$x1, $y2-$y1, $this->color['bars'][$j], 1, $this->color['bars'][$j], "class=\"tips\"", (string)$this->series[$j]['label'].": ".number_format($this->series[$j]['data'][$i], 2));
-					$this->svg->text(($x2+10.0), ($y1+12.0), $this->number_formated($this->series[$j]['data'][$i], $this->dec2), $this->size, $this->color['bars'][$j], false, $this->align);
-					$y	 += ($this->bar_width + 1.0);
+					$svg->rect($x1, $y1, $x2-$x1, $y2-$y1, $c_bars, 1, $c_bars, "class=\"tips\"", $this->series[$j]['label'].": ".number_format((float) $this->series[$j]['data'][$i], 2));
+					$svg->text(($x2+10.0), ($y1+12.0), $this->number_formated($this->series[$j]['data'][$i], $this->dec2), $this->size, $c_bars, false, $this->align);
+					$y	 += ((float)$this->bar_width + 1.0);
 				}
 				else
 				{
-					$this->_imageline($this->img, ($x1), ($y2+1.0), $x2, ($y2+1.0), $this->color['bars'][$j], 3);
-					imagefilledrectangle($this->img, $x1, $y1, $x2, $y2, $this->color['bars'][$j]);
-					$this->_imagestring($this->img, $this->size, ($x2+7.0), ($y1+2.0), $this->number_formated($this->series[$j]['data'][$i], $this->dec2), $this->color['bars'][$j]);
-					$y	 += ($this->bar_width + 4.0);
+					$this->_imageline($img, ($x1), ($y2+1.0), $x2, ($y2+1.0), $c_bars, 3);
+					imagefilledrectangle($img, (int) round($x1), (int) round($y1), (int) round($x2), (int) round($y2), (int) $c_bars);
+					$this->_imagestring($img, $this->size, ($x2+7.0), ($y1+2.0), $this->number_formated($this->series[$j]['data'][$i], $this->dec2), $c_bars);
+					$y	 += ((float)$this->bar_width + 4.0);
 				}
 			}
 			if ($this->stream == 'svg')
 			{
 				$lex = $this->dir == 'rtl' ? $label_len : 20;
-				$this->svg->text($lex, ($y2-5), $parameter, $this->size, $this->color['axis_values'], false, "start");
+				$svg->text($lex, ($y2-5.0), $parameter, $this->size, $c_axis_values, false, "start");
 				$y += 8.0;
 			}
 			else
 			{
 				$lex = $this->dir == 'rtl' ? $label_len+10 : 20;
-				$this->_imagestring($this->img, $this->size, $lex, ($y1-5), $parameter, $this->color['axis_values'], 0, 0, $this->align);
+				$this->_imagestring($img, $this->size, $lex, ($y1-5.0), $parameter, $c_axis_values, 0, 0, $this->align);
 				$y	 += 10.0;
 			}
 		}
@@ -883,8 +931,18 @@ class Chart
 	/** @return void */
 	function draw_lines()
 	{
+		/** @var GdImage $img */
+		$img = $this->img;
+		/** @var SVG $svg */
+		$svg = $this->svg;
 		for ($j = 0; $j < $this->num_series; $j++)
 		{
+			/** @var int|string|false $c_line */
+			$c_line = $this->color['line'][$j] ?? false;
+			/** @var int|string|false $c_line_light */
+			$c_line_light = $this->color['line_light'][$j] ?? false;
+			/** @var int|string|false $c_axis_values */
+			$c_axis_values = $this->color['axis_values'];
 			$x = (float)$this->graphic_area_x1+1.0;
 			$oldx = $oldy = 0;
 			if ($this->type == 8 && $this->num_labels < 4)
@@ -894,7 +952,7 @@ class Chart
 				$p = array();
 				foreach ($this->labels as $i => $parameter)
 				{
-					$size  = round($this->series[$j]['data'][$i] * $this->higher_value_size / $this->higher_value);
+					$size  = round((float) $this->series[$j]['data'][$i] * (float) $this->higher_value_size / (float) $this->higher_value);
 					$y = (float)$this->graphic_area_y2 - $size;
 					$p[$i][0] = $x;
 					$p[$i][1] = $y;
@@ -902,18 +960,19 @@ class Chart
 					{
 						$lex = $this->angle == 0 ? $x + 30.0 : $x+10.0;
 						$al = $this->dir == 'rtl' ? "start" : "end";
-						$this->svg->text($lex, ((float)$this->graphic_area_y2+15.0), $parameter, $this->size, $this->color['axis_values'], false, $al, $this->angle);
+						$svg->text($lex, ((float)$this->graphic_area_y2+15.0), $parameter, $this->size, $c_axis_values, false, $al, $this->angle);
 					}
 					$x += (float)$this->space_between_dots;
 				}
-				$path = "M ".$p[0][0].",".$p[0][1];
+				$path = "M ".(string)$p[0][0].",".(string)$p[0][1];
+				$i = 0;
 				foreach ($p as $i => $y)
 				{
-					$this->svg->circle($p[$i][0], $p[$i][1], 2.5, $this->color['line'][$j], 3, $this->color['line'][$j], "class=\"tips\"", (string)$this->series[$j]['label'].": ".number_format($this->series[$j]['data'][$i], 2)); 
+					$svg->circle($p[$i][0], $p[$i][1], 2.5, $c_line, 3, $c_line, "class=\"tips\"", $this->series[$j]['label'].": ".number_format((float) $this->series[$j]['data'][$i], 2));
 					if ($i != 0)
 					{
 						if ($this->type == 4) // normal line
-							$path .= " L".$p[$i][0].",".$p[$i][1];
+							$path .= " L".(string)$p[$i][0].",".(string)$p[$i][1];
 						elseif ($this->type == 8) // spline
 							$path .= $this->_splineCommand($p[$i], $i, $p);
 					}
@@ -921,33 +980,33 @@ class Chart
 				if ($this->series[$j]['fill'] == true)
 				{
 					$fpath = $path;
-					$fpath .= " L ".($p[$i][0]+1.0).",".((float)$this->graphic_area_y2-1.0)." L ".$p[0][0].",".((float)$this->graphic_area_y2-1.0)." L ".$p[0][0].",".$p[0][1];
-					$this->svg->path($fpath, $this->color['line_light'][$j], 1, $this->color['line_light'][$j]);
+					$fpath .= " L ".(string)($p[$i][0]+1.0).",".(string)((float)$this->graphic_area_y2-1.0)." L ".(string)$p[0][0].",".(string)((float)$this->graphic_area_y2-1.0)." L ".(string)$p[0][0].",".(string)$p[0][1];
+					$svg->path($fpath, $c_line_light, 1, $c_line_light);
 				}
-				$this->svg->path($path, $this->color['line'][$j], 3, "none");
+				$svg->path($path, $c_line, 3, "none");
 				$x += (float)$this->space_between_dots;
 			}
 			else
 			{
 				foreach ($this->labels as $i => $parameter)
 				{
-					$size  = round($this->series[$j]['data'][$i] * $this->higher_value_size / $this->higher_value);
+					$size  = round((float) $this->series[$j]['data'][$i] * (float) $this->higher_value_size / (float) $this->higher_value);
 					$y = (float)$this->graphic_area_y2 - $size;
-					
+
 					if ($this->type == 4 && $i > 0) // lINES
 					{
-						$this->_imageline($this->img, $oldx, $oldy, $x, $y, $this->color['line'][$j], 3);
+						$this->_imageline($img, $oldx, $oldy, $x, $y, $c_line, 3);
 						if ($this->series[$j]['fill'] == true)
 						{
-							$pt = array($oldx, (float)$oldy+3.0, $x, $y + 3.0, $x, (float)$this->graphic_area_y2-2.0,	$oldx, (float)$this->graphic_area_y2-2.0, $oldx, (float)$oldy+4.0);
-							imagefilledpolygon($this->img, $pt, 5, $this->color['line_light'][$j]);
+							$pt = array((float)$oldx, (float)$oldy+3.0, $x, $y + 3.0, $x, (float)$this->graphic_area_y2-2.0,	(float)$oldx, (float)$this->graphic_area_y2-2.0, (float)$oldx, (float)$oldy+4.0);
+							imagefilledpolygon($img, array_map('intval', array_map('round', $pt)), (int) $c_line_light);
 						}
 					}
-					imagefilledrectangle($this->img, $x-2.0, $y-2.0, $x+2.0, $y+2.0, $this->color['line'][$j]);
+					imagefilledrectangle($img, (int) round($x-2.0), (int) round($y-2.0), (int) round($x+2.0), (int) round($y+2.0), (int) $c_line);
 					$oldx = $x;
 					$oldy = $y;
 					if ($j == 0)
-						$this->_imagestring($this->img, $this->size, $oldx, ((float)$this->graphic_area_y2+2.0), $parameter, $this->color['axis_values'], 0, $this->angle);
+						$this->_imagestring($img, $this->size, $oldx, ((float)$this->graphic_area_y2+2.0), $parameter, $c_axis_values, 0, $this->angle);
 					$x += (float)$this->space_between_dots;
 				}
 			}
@@ -957,63 +1016,76 @@ class Chart
 	/** @return void */
 	function draw_splines()
 	{
+		/** @var GdImage $img */
+		$img = $this->img;
 		for ($j = 0; $j < $this->num_series; $j++)
 		{
+			/** @var int|string|false $c_line */
+			$c_line = $this->color['line'][$j] ?? false;
+			/** @var int|string|false $c_line_light */
+			$c_line_light = $this->color['line_light'][$j] ?? false;
 			$n = (float)$this->graphic_area_x1+1.0;
+			/** @var array<int, int|float> $p */
+			$p = array();
 			foreach ($this->labels as $i => $parameter)
 			{
-				$size  = round($this->series[$j]['data'][$i] * $this->higher_value_size / $this->higher_value);
+				$size  = round((float) $this->series[$j]['data'][$i] * (float) $this->higher_value_size / (float) $this->higher_value);
 				$y = (float)$this->graphic_area_y2 - $size;
-				$p[$n] = $y;
+				$p[(int) $n] = $y;
 				$n += (float)$this->space_between_dots;
 			}
 			$r = $this->imageSpline($p);
-			reset($r);
-			$oldx = key($r);
-			$oldy = current($r);
-			foreach ($r as $x => $y) 
+			if ($r === false)
+				continue;
+			foreach ($r as $x => $y)
 			{
-				imagefilledellipse($this->img, round($x), round($y)+1.0, 3, 3, $this->color['line'][$j]);
+				imagefilledellipse($img, (int) round($x), (int) round($y)+1, 3, 3, (int) $c_line);
 
 				if ($this->series[$j]['fill'] == true)
 				{
-					$this->_imageline($this->img, round($x), round($y+4), round($x), (float)$this->graphic_area_y2-2.0, $this->color['line_light'][$j], 1);
+					$this->_imageline($img, round($x), round($y+4.0), round($x), (float)$this->graphic_area_y2-2.0, $c_line_light, 1);
 				}
 			}
 		}
 	}
 
 	/**
+	 * @param array<int, int|float> $p
 	 * @param int|null $step
 	 * @param int|null $minx
 	 * @param int|null $maxx
-	 * @return array<array-key, mixed>|false
+	 * @return array<int, float>|false
 	 */
 	function imageSpline($p, $step = 1, $minx = -1, $maxx = -1)
 	{
 		$splines = array();
 		if (count($p) < 4)
 			return false;
-		$cx = $cy = $p1 = array();
+		/** @var array<int, float> $cx */
+		$cx = array();
+		/** @var array<int, float> $cy */
+		$cy = array();
+		$p1 = array();
 		ksort($p);
 		foreach ($p as $x => $y)
 		{
-			$cx[] = $x;
-			$cy[] = $y;
+			$cx[] = (float) $x;
+			$cy[] = (float) $y;
 		}
-		if ($minx == -1)
-			$minx = min($cx);
-		if ($maxx == -1)
-			$maxx = max($cx);
+		$minx = ($minx == -1) ? min($cx) : (float) $minx;
+		$maxx = ($maxx == -1) ? max($cx) : (float) $maxx;
 		$n = count($cx);
-		for ($i = 0; $i < $n; ++$i) 
+		for ($i = 0; $i < $n; ++$i)
 		{
 			$splines[$i]['x'] = $cx[$i];
 			$splines[$i]['a'] = $cy[$i];
 		}
-		$splines[0]['c'] = $splines[$n - 1]['c'] = 0;
-		$alpha[0] = $beta[0] = 0;
-		for ($i = 1; $i < $n - 1; ++$i) 
+		$splines[0]['c'] = $splines[$n - 1]['c'] = 0.0;
+		/** @var array<int, float> $alpha */
+		$alpha = array(0 => 0.0);
+		/** @var array<int, float> $beta */
+		$beta = array(0 => 0.0);
+		for ($i = 1; $i < $n - 1; ++$i)
 		{
 			$h_i = $cx[$i] - $cx[$i - 1];
 			$h_i1 = $cx[$i + 1] - $cx[$i];
@@ -1025,15 +1097,15 @@ class Chart
 			$alpha[$i] = - $B / $z;
 			$beta[$i] = ($F - $A * $beta[$i - 1]) / $z;
 		}
-		for ($i = $n - 2; $i > 0; --$i) 
-			$splines[$i]['c'] = (float)$alpha[$i] * (float)$splines[$i + 1.0]['c'] + $beta[$i];
-		for ($i = $n - 1; $i > 0; --$i) 
+		for ($i = $n - 2; $i > 0; --$i)
+			$splines[$i]['c'] = $alpha[$i] * (float)$splines[$i + 1]['c'] + $beta[$i];
+		for ($i = $n - 1; $i > 0; --$i)
 		{
 			$h_i = $cx[$i] - $cx[$i - 1];
 			$splines[$i]['d'] = ((float)$splines[$i]['c'] - (float)$splines[$i - 1]['c']) / $h_i;
 			$splines[$i]['b'] = $h_i * (2.0 * (float)$splines[$i]['c'] + (float)$splines[$i - 1]['c']) / 6.0 + ($cy[$i] - $cy[$i - 1]) / $h_i;
 		}
-		for ($x = $minx; $x <= $maxx; $x += $step) 
+		for ($x = $minx; $x <= $maxx; $x += (float) $step)
 		{
 			$n = count($splines);
 			if ($x <= $splines[0]['x'])	 {
@@ -1046,17 +1118,17 @@ class Chart
 					$j = $n - 1;
 					while ((float)$i + 1.0 < $j) {
 						$k = (float)$i + ((((float)$j - (float)$i)) / 2.0);
-						if ($x <= $splines[round($k)]['x']) {
+						if ($x <= $splines[(int) round($k)]['x']) {
 							$j = $k;
 						} else {
 							$i = $k;
 						}
 					}
-					$s = $splines[round($j)];
+					$s = $splines[(int) round($j)];
 				}
 			}
-			$dx = ($x - $s['x']);
-			$p1[$x] = (float)$s['a'] + ((float)$s['b'] + ((float)$s['c'] / 2.0 + (float)$s['d'] * $dx / 6.0) * $dx) * $dx;
+			$dx = ($x - (float) $s['x']);
+			$p1[(int) $x] = (float)$s['a'] + ((float)$s['b'] + ((float)$s['c'] / 2.0 + (float)$s['d'] * $dx / 6.0) * $dx) * $dx;
 		}
 		return $p1;
 	}
@@ -1064,6 +1136,10 @@ class Chart
 	/** @return void */
 	function draw_pie()
 	{
+		/** @var GdImage $img */
+		$img = $this->img;
+		/** @var SVG $svg */
+		$svg = $this->svg;
 		$n = count(self::$palette);
 		if ($this->stream == 'svg')
 		{
@@ -1076,30 +1152,34 @@ class Chart
 			$r = $cx * 0.7;
 			$rc = $this->type == 5 ? 0.01 : $r - 25.0;
 			$d = $this->type == 7 ? 180 : 360; // half donut or all
-			$area = (float)$d / (float)$this->sum_total[0]; 
+			$area = (float)$d / (float)$this->sum_total[0];
 			$start = $this->type == 7 ? 180 : 90;
 			$rad = pi() / 180.;
 			$out='';
 			$gap=0.01;
-			$ang1=0;	  // start angle
+			$ang1=0.0;	  // start angle
+			/** @var array<int, float> $pct */
+			$pct = array();
 			foreach ($this->labels as $i => $num)
 			{
 				$n = count(self::$palette);
-				$pct[$i] = round($this->series[0]['data'][$i] / $this->sum_total[0] * 100, 1);
-				$dang = $this->series[0]['data'][$i] * $area;		// delta angle
+				/** @var int|string|false $c_slice */
+				$c_slice = $this->color[$i % $n] ?? false;
+				$pct[$i] = round((float) $this->series[0]['data'][$i] / (float) $this->sum_total[0] * 100.0, 1);
+				$dang = (float) $this->series[0]['data'][$i] * $area;		// delta angle
 				$laf  = $dang > 180 ? 1 : 0; // Large Arc Flag
 				$ang2 = $ang1 + $dang;		// second angle
-				$a = ($ang1 - $start) * $rad + asin($gap / $rc); 
+				$a = ($ang1 - (float) $start) * $rad + asin($gap / $rc);
 				$p1 = sprintf('%0.2f,%0.2f', $cx + ($rc * cos($a)), $cy + ($rc * sin($a)));
-				$a = ($ang1 - $start) * $rad + asin($gap / $r); 
+				$a = ($ang1 - (float) $start) * $rad + asin($gap / $r);
 				$p2 = sprintf('%0.2f,%0.2f', $cx + ($r * cos($a)), $cy + ($r * sin($a)));
-				$a = ($ang2 - $start) * $rad - asin($gap / $r); 
+				$a = ($ang2 - (float) $start) * $rad - asin($gap / $r);
 				$p3 = sprintf('%0.2f,%0.2f', $cx + ($r * cos($a)), $cy + ($r * sin($a)));
-				$a = ($ang2 - $start) * $rad - asin($gap / $rc); 
+				$a = ($ang2 - (float) $start) * $rad - asin($gap / $rc);
 				$p4 = sprintf('%0.2f,%0.2f', $cx + ($rc * cos($a)), $cy + ($rc * sin($a)));
-				$a = ($ang1 - $start) * $rad + asin($gap / $rc); 
+				$a = ($ang1 - (float) $start) * $rad + asin($gap / $rc);
 				$p5 = sprintf('%0.2f,%0.2f', $cx + ($rc * cos($a)), $cy + ($rc * sin($a)));
-				$this->svg->path("M$p1 L$p2 A$r,$r 0 $laf,1 $p3 L$p4 A$rc,$rc 0 $laf,0 $p5", $this->color[$i % $n], 0, $this->color[$i % $n], "class=\"tips\"", "$num: ".number_format($pct[$i], 1)."&#x25;");
+				$svg->path("M$p1 L$p2 A$r,$r 0 $laf,1 $p3 L$p4 A$rc,$rc 0 $laf,0 $p5", $c_slice, 0, $c_slice, "class=\"tips\"", "$num: ".number_format($pct[$i], 1)."&#x25;");
 				$ang1=$ang2;
 			}
 			if (!empty($this->donut_title) && $this->type != 5)
@@ -1107,7 +1187,9 @@ class Chart
 				// Display center text
 				if ($this->type == 6)
 					$cy += 5.0;
-				$this->svg->text($cx, $cy, $this->donut_title, '18px', $this->color[0], "font-weight=\"bold\"", "middle");
+				/** @var int|string|false $c_slice0 */
+				$c_slice0 = $this->color[0] ?? false;
+				$svg->text($cx, $cy, $this->donut_title, '18px', $c_slice0, "font-weight=\"bold\"", "middle");
 			}
 		}
 		else
@@ -1121,7 +1203,7 @@ class Chart
 					$this->sum_total[0] = 1;
 				if ($this->series[0]['data'][$i] < 0)
 					$this->series[0]['data'][$i] = 0;
-				$size	 = $this->series[0]['data'][$i] * $degrees / $this->sum_total[0];
+				$size	 = (float) $this->series[0]['data'][$i] * (float) $degrees / (float) $this->sum_total[0];
 				$size = round($size, 0);
 				$sizes[] = $size;
 				$start	+= $size;
@@ -1130,30 +1212,38 @@ class Chart
 			$center_y = (((float)$this->graphic_area_y1 + (float)$this->graphic_area_y2)) / 2.0;
 			$width	  = $this->graphic_area_width;
 			$height	  = $this->graphic_area_height;
-			$start = $this->type == 7 ? 180 : 270;
+			$start = $this->type == 7 ? 180.0 : 270.0;
+			/** @var int|string|false $c_background */
+			$c_background = $this->color['background'];
+			/** @var int|string|false $c_bg_legend */
+			$c_bg_legend = $this->color['bg_legend'];
 			// Draw pieces
 			foreach ($sizes as $i => $size)
 			{
 				$j = $i % $n;
 				$color = 'arc_' . $j;
+				/** @var int|string|false $c_arc */
+				$c_arc = $this->color[$color] ?? false;
 				if ($size >= 1)
-					imagefilledarc($this->img, $center_x, $center_y, $width, $height, $start, ((float)$start+$size), $this->color[$color], IMG_ARC_PIE);
+					imagefilledarc($img, (int) round($center_x), (int) round($center_y), (int) round((float) $width), (int) round((float) $height), (int) round($start), (int) round($start+$size), (int) $c_arc, IMG_ARC_PIE);
 				$start += $size;
 			}
 			if ($this->type != 5) // DONUTS
 			{
 				// 85 pixels width hole
-				$start = $this->type == 7 ? 180 : 0; 
-				imagefilledarc($this->img, $center_x, $center_y, 85, 85, $start, 360, $this->color['background'], IMG_ARC_PIE);
-				imagearc($this->img, $center_x, $center_y, 85, 85, $start, 360, $this->color['bg_legend']);
-				imagearc($this->img, $center_x, $center_y, ((float)$width+1.0), ((float)$height+1.0), $start, 360, $this->color['bg_legend']);
+				$start = $this->type == 7 ? 180.0 : 0.0;
+				imagefilledarc($img, (int) round($center_x), (int) round($center_y), 85, 85, (int) round($start), 360, (int) $c_background, IMG_ARC_PIE);
+				imagearc($img, (int) round($center_x), (int) round($center_y), 85, 85, (int) round($start), 360, (int) $c_bg_legend);
+				imagearc($img, (int) round($center_x), (int) round($center_y), (int) round((float)$width+1.0), (int) round((float)$height+1.0), (int) round($start), 360, (int) $c_bg_legend);
 				if (!empty($this->donut_title))
 				{
-					$plen = $this->string_width($this->donut_title, $this->size);
-					$x1 = $center_x - $plen / 2 - 6;
-					$co = $this->type == 7 ? 20 : 10; // HALF or ALL
-					$this->_imagestring($this->img, $this->size + 4, $x1, $center_y - (float)$co, $this->donut_title, $this->color['arc_0'], 2, 0);	
-					$this->_imagestring($this->img, $this->size + 4, $x1+1, $center_y - (float)$co, $this->donut_title, $this->color['arc_0'], 2, 0);	
+					$plen = (float) $this->string_width($this->donut_title, $this->size);
+					$x1 = $center_x - $plen / 2.0 - 6.0;
+					$co = $this->type == 7 ? 20.0 : 10.0; // HALF or ALL
+					/** @var int|string|false $c_arc0 */
+					$c_arc0 = $this->color['arc_0'] ?? false;
+					$this->_imagestring($img, $this->size + 4, $x1, $center_y - $co, $this->donut_title, $c_arc0, 2, 0);
+					$this->_imagestring($img, $this->size + 4, $x1+1.0, $center_y - $co, $this->donut_title, $c_arc0, 2, 0);
 				}
 			}
 		}
@@ -1184,44 +1274,49 @@ class Chart
 	/** @return void */
 	function calculate_width()
 	{
-		$this->legend_box_width = ($this->legend_exists == true) ? ($this->string_width($this->max_legend_str, $this->size) + 70) : 0;
+		// all arithmetic done on local floats to avoid int|float strict-operand
+		// ambiguity on the underlying properties; written back at the end
+		$garea_x1 = (float) $this->graphic_area_x1;
+		$garea_width = (float) $this->graphic_area_width;
+		$width = (float) $this->width;
+		$legend_w = ($this->legend_exists == true) ? ((float) $this->string_width($this->max_legend_str, $this->size) + 70.0) : 0.0;
 		switch ($this->type)
 		{
 			// Vertical bars or Table
 			case 1:
 			case 9:
-				$this->graphic_area_x1	 += $this->string_width($this->higher_value_str, $this->size);
-				if (!empty($this->width)) 
-					$this->graphic_area_width = $this->width - $this->graphic_area_x1 - 30 - $this->legend_box_width;
+				$garea_x1 += (float) $this->string_width($this->higher_value_str, $this->size);
+				if (!empty($width))
+					$garea_width = $width - $garea_x1 - 30.0 - $legend_w;
 				else
 				{
-					$gap_series = 10;
-					$gap_labels = 5;
+					$gap_series = 10.0;
+					$gap_labels = 5.0;
 					$serie_width = 0.0;
 					for ($j = 0; $j < $this->num_series; $j++)
 					{
 						if ($this->series[$j]['type'] != 4 && $this->series[$j]['type'] != 8)
 							$serie_width += (float)$this->bar_width;
-						$serie_width += (float)$gap_labels;
+						$serie_width += $gap_labels;
 					}
-					$serie_width += (float)$gap_series;
-					$this->graphic_area_width = $serie_width * (float)$this->num_labels;
-					$this->width += $this->graphic_area_width;
-					$this->width += $this->graphic_area_x1;
-					$this->width += $this->legend_box_width;
+					$serie_width += $gap_series;
+					$garea_width = $serie_width * (float)$this->num_labels;
+					$width += $garea_width;
+					$width += $garea_x1;
+					$width += $legend_w;
 				}
 				break;
 			// Horizontal bars
 			case 2:
-				$this->graphic_area_x1 += $this->string_width($this->max_label, $this->size);
-				if (!empty($this->width))
-					$this->graphic_area_width = $this->width - $this->graphic_area_x1 - 30 - $this->legend_box_width;
+				$garea_x1 += (float) $this->string_width($this->max_label, $this->size);
+				if (!empty($width))
+					$garea_width = $width - $garea_x1 - 30.0 - $legend_w;
 				else
 				{
-					$this->graphic_area_width = ($this->string_width($this->higher_value_str, $this->size) > 50) ? (5 * ($this->string_width($this->higher_value_str, $this->size)) * 0.85) : 200;
-					$this->width += $this->graphic_area_x1;
-					$this->width += $this->graphic_area_width;
-					$this->width += $this->legend_box_width;
+					$garea_width = ($this->string_width($this->higher_value_str, $this->size) > 50) ? (5.0 * ((float) $this->string_width($this->higher_value_str, $this->size)) * 0.85) : 200.0;
+					$width += $garea_x1;
+					$width += $garea_width;
+					$width += $legend_w;
 				}
 				break;
 			// Dots
@@ -1230,15 +1325,15 @@ class Chart
 			case 4:
 			// Splines
 			case 8:
-				$this->graphic_area_x1	 += $this->string_width(($this->higher_value_str), $this->size);
-				if (!empty($this->width))
-					$this->graphic_area_width = $this->width - $this->graphic_area_x1 - 30 - $this->legend_box_width;
+				$garea_x1 += (float) $this->string_width(($this->higher_value_str), $this->size);
+				if (!empty($width))
+					$garea_width = $width - $garea_x1 - 30.0 - $legend_w;
 				else
 				{
-					$this->graphic_area_width = (float)$this->space_between_dots * (($this->num_labels - 1.0)) + 5.0;
-					$this->width += $this->graphic_area_width;
-					$this->width += $this->graphic_area_x1 + 30;
-					$this->width += $this->legend_box_width;
+					$garea_width = (float)$this->space_between_dots * (((float) $this->num_labels - 1.0)) + 5.0;
+					$width += $garea_width;
+					$width += $garea_x1 + 30.0;
+					$width += $legend_w;
 				}
 				break;
 			// Pie
@@ -1247,23 +1342,30 @@ class Chart
 			case 6:
 			// Half Donut
 			case 7:
-				$this->legend_box_width	  += 60;
-				if (!empty($this->width))
-					$this->graphic_area_width = (float)$this->width - (float)$this->graphic_area_x1 - 30.0 - $this->legend_box_width;
+				$legend_w += 60.0;
+				if (!empty($width))
+					$garea_width = $width - $garea_x1 - 30.0 - $legend_w;
 				else
 				{
-					$this->graphic_area_width = 150;
-					$this->width += ($this->graphic_area_x1 +20.0);
-					$this->width += $this->legend_box_width;
-					$this->width += $this->graphic_area_width;
-					$this->width += 90;
+					$garea_width = 150.0;
+					$width += ($garea_x1 + 20.0);
+					$width += $legend_w;
+					$width += $garea_width;
+					$width += 90.0;
 				}
 				break;
 		}
-		$this->graphic_area_width = max($this->graphic_area_width, $this->string_width($this->title, $this->size));
-		$this->graphic_area_x2 = $this->graphic_area_x1 + $this->graphic_area_width;
-		$this->legend_box_x1   = $this->graphic_area_x2 + 20;
-		$this->legend_box_x2   = $this->legend_box_x1 + $this->legend_box_width;
+		$garea_width = max($garea_width, (float) $this->string_width($this->title, $this->size));
+		$garea_x2 = $garea_x1 + $garea_width;
+		$legend_x1 = $garea_x2 + 20.0;
+		$legend_x2 = $legend_x1 + $legend_w;
+		$this->graphic_area_x1 = $garea_x1;
+		$this->graphic_area_width = $garea_width;
+		$this->graphic_area_x2 = $garea_x2;
+		$this->legend_box_width = $legend_w;
+		$this->legend_box_x1 = $legend_x1;
+		$this->legend_box_x2 = $legend_x2;
+		$this->width = $width;
 	}
 
 	/**
@@ -1272,29 +1374,33 @@ class Chart
 	 */
 	function calculate_height()
 	{
+		// all arithmetic done on local floats to avoid int|float strict-operand
+		// ambiguity on the underlying properties; written back at the end
+		$height = (float) $this->height;
+		$garea_height = (float) $this->graphic_area_height;
 		switch ($this->type)
 		{
 			// Vertical bars
 			case 1:
-				if (!empty($this->height))
-					$this->graphic_area_height = (float)$this->height - (float)$this->title_height;
+				if (!empty($height))
+					$garea_height = $height - (float)$this->title_height;
 				else
 				{
-					$this->graphic_area_height = 150;
-					$this->height += 65;
+					$garea_height = 150.0;
+					$height += 65.0;
 				}
 				break;
 		   // Horizontal bars
 			case 2:
-				if (!empty($this->height))
-					$this->graphic_area_height = (float)$this->height - (float)$this->title_height;
+				if (!empty($height))
+					$garea_height = $height - (float)$this->title_height;
 				else
 				{
-					$gap_labels = 12;
+					$gap_labels = 12.0;
 					if ($this->stream != 'svg')
-						$gap_labels += 6;
-					$this->graphic_area_height = (float)$this->num_series * (float)$this->bar_width * $this->num_labels + $this->num_labels * $gap_labels;
-					$this->height += 65;
+						$gap_labels += 6.0;
+					$garea_height = (float)$this->num_series * (float)$this->bar_width * (float) $this->num_labels + (float) $this->num_labels * $gap_labels;
+					$height += 65.0;
 				}
 				break;
 			// Dots
@@ -1303,12 +1409,12 @@ class Chart
 			case 4:
 			// Spines
 			case 8:
-				if (!empty($this->height))
-					$this->graphic_area_height = (float)$this->height - (float)$this->title_height;
+				if (!empty($height))
+					$garea_height = $height - (float)$this->title_height;
 				else
 				{
-					$this->graphic_area_height = 150;
-					$this->height += 65;
+					$garea_height = 150.0;
+					$height += 65.0;
 				}
 				break;
 			// Pie
@@ -1317,157 +1423,192 @@ class Chart
 			case 6:
 			// Half Donut
 			case 7:
-				if (!empty($this->height))
-					$this->graphic_area_height = (float)$this->height - (float)$this->title_height;
+				if (!empty($height))
+					$garea_height = $height - (float)$this->title_height;
 				else
 				{
-					$this->graphic_area_height = 150;
-					$this->height += 65;
+					$garea_height = 150.0;
+					$height += 65.0;
 				}
 				break;
 		}
 		//if ($this->type == 7) // Half Donut;
-		$this->graphic_area_y1 -= 10.0;
-		$this->legend_box_y1   = $this->graphic_area_y1;
-		$this->height += ($this->graphic_area_height + 40.0);
-		$this->graphic_area_y2 = $this->graphic_area_y1 + (float)$this->graphic_area_height;
-		$this->legend_box_y2   = $this->legend_box_y1 + (float)$this->legend_box_height;
+		$garea_y1 = (float) $this->graphic_area_y1 - 10.0;
+		$legend_y1 = $garea_y1;
+		$height += ($garea_height + 40.0);
+		$garea_y2 = $garea_y1 + $garea_height;
+		$legend_y2 = $legend_y1 + (float)$this->legend_box_height;
+		$this->height = $height;
+		$this->graphic_area_height = $garea_height;
+		$this->graphic_area_y1 = $garea_y1;
+		$this->graphic_area_y2 = $garea_y2;
+		$this->legend_box_y1 = $legend_y1;
+		$this->legend_box_y2 = $legend_y2;
 	}
 
 	/** @return void */
 	function draw_legend()
 	{
+		/** @var GdImage $img */
+		$img = $this->img;
+		/** @var SVG $svg */
+		$svg = $this->svg;
+		/** @var int|string|false $c_bg_legend */
+		$c_bg_legend = $this->color['bg_legend'];
+		/** @var int|string|false $c_title */
+		$c_title = $this->color['title'];
+		/** @var int|string|false $c_axis_values */
+		$c_axis_values = $this->color['axis_values'];
+		/** @var int|string|false $c_bg_lines */
+		$c_bg_lines = $this->color['bg_lines'];
 		$x1 = $this->legend_box_x1;
 		$y1 = $this->legend_box_y1;
 		$x2 = $this->legend_box_x2;
 		$y2 = $this->legend_box_y2;
 		if ($this->stream == 'svg')
-			$this->svg->rect($x1, $y1, $x2, $y2, $this->color['bg_legend']);
+			$svg->rect($x1, $y1, $x2, $y2, $c_bg_legend);
 		else
-			imagefilledrectangle($this->img, $x1, $y1, $x2, $y2, $this->color['bg_legend']);
+			imagefilledrectangle($img, (int) round((float) $x1), (int) round((float) $y1), (int) round((float) $x2), (int) round((float) $y2), (int) $c_bg_legend);
 		$x = (float)$x1 + 10.0;
-		$y = $y1;
+		$y = (float) $y1;
 		// Draw legend values for VERTICAL BARS, HORIZONTAL BARS, DOTS, LINES AND SPLINES
-		if (preg_match("/^(1|2|3|4|8)$/", $this->type))
+		if (preg_match("/^(1|2|3|4|8)$/", (string) $this->type))
 		{
 			for ($j = 0; $j < $this->num_series; $j++)
 			{
-				$color = (preg_match("/^(1|2)$/", $this->type)) ? $this->color['bars'][$j]	 : $this->color['line'][$j];
-				$len = $this->string_width($this->max_legend_str, $this->size)-20;
+				/** @var int|string|false $color */
+				$color = (preg_match("/^(1|2)$/", (string) $this->type)) ? ($this->color['bars'][$j] ?? false) : ($this->color['line'][$j] ?? false);
+				$len = (float) $this->string_width($this->max_legend_str, $this->size)-20.0;
 				if ($this->stream == 'svg')
 				{
-					$lex = $this->dir == 'rtl' ? $x1+$len : (float)$x1-5.0;
-					$this->svg->circle($lex, (float)$y-5.0, 6, "#fff", 1, $color);
+					$lex = $this->dir == 'rtl' ? (float)$x1+$len : (float)$x1-5.0;
+					$svg->circle($lex, $y-5.0, 6, "#fff", 1, $color);
 					//$this->svg->rect($lex, $y-10, 10, 10, "#fff", 1, $color);
-					$lex = $this->dir == 'rtl' ? $x1+$len-15 : $x-5.0; 
-					$this->svg->text($lex, ((float)$y-2.0), $this->series[$j]['label'], $this->size, $this->color['axis_values'], false, "start");
+					$lex = $this->dir == 'rtl' ? (float)$x1+$len-15.0 : $x-5.0;
+					$svg->text($lex, ($y-2.0), $this->series[$j]['label'], $this->size, $c_axis_values, false, "start");
 				}
 				else
 				{
-					$lex = $this->dir == 'rtl' ? $x1+$len+20 : $x-10.0;
-					imagefilledrectangle($this->img, $lex, $y, ($lex+10), ((float)$y+10.0), $color);
-					imagerectangle($this->img, $lex, $y, ($lex+10), ((float)$y+10.0), $this->color['title']);
-					$lex = $this->dir == 'rtl' ? $x1+$len+20 : $x+10.0;
-					$this->_imagestring($this->img, $this->size, $lex, ((float)$y-2.0), $this->series[$j]['label'], $this->color['axis_values'], 0, 0, $this->align);
+					$lex = $this->dir == 'rtl' ? (float)$x1+$len+20.0 : $x-10.0;
+					imagefilledrectangle($img, (int) round($lex), (int) round($y), (int) round($lex+10.0), (int) round($y+10.0), (int) $color);
+					imagerectangle($img, (int) round($lex), (int) round($y), (int) round($lex+10.0), (int) round($y+10.0), (int) $c_title);
+					$lex = $this->dir == 'rtl' ? (float)$x1+$len+20.0 : $x+10.0;
+					$this->_imagestring($img, $this->size, $lex, ($y-2.0), $this->series[$j]['label'], $c_axis_values, 0, 0, $this->align);
 				}
 				$y += 20.0;
 			}
 		}
 		// Draw legend values for PIE, DONUT or HALF DONUT
-		else if (preg_match("/^(5|6|7)$/", $this->type))
+		else if (preg_match("/^(5|6|7)$/", (string) $this->type))
 		{
 			$n = count(self::$palette);
 			if ($this->sum_total[0] == 0)
 				return;
-			$label_len = $this->string_width($this->max_label, $this->size);
+			$label_len = (float) $this->string_width($this->max_label, $this->size);
 			//$value_len = $this->string_width($this->max_value, $this->size);
-			$value_len = $this->string_width(number_format($this->max_value), $this->size);
+			$value_len = (float) $this->string_width(number_format((float) $this->max_value), $this->size);
 			$total_len = $label_len + $value_len;
 			$total_len = max($total_len, (float)$x2-(float)$x1);
 			if (!empty($this->axis_x)) // Only first serie [0]
 			{
 				if ($this->stream == 'svg')
-					$this->svg->text(((((float)$x1+(float)$x1+$total_len)/2) - (strlen($this->axis_x)*7/2)), $y, $this->axis_x." (".(string)$this->series[0]['label'].")", $this->size, $this->color['title'], false, $this->align);
+					$svg->text(((((float)$x1+(float)$x1+$total_len)/2.0) - ((float) strlen($this->axis_x)*7.0/2.0)), $y, $this->axis_x." (".$this->series[0]['label'].")", $this->size, $c_title, false, $this->align);
 				else
-					$this->_imagestring($this->img, $this->size, (((float)$x1+(float)$x1+$total_len)/2 - strlen($this->axis_x)*7/2)+30, $y, 
-					$this->axis_x."-".(string)$this->series[0]['label'], $this->color['title']);
+					$this->_imagestring($img, $this->size, (((float)$x1+(float)$x1+$total_len)/2.0 - (float) strlen($this->axis_x)*7.0/2.0)+30.0, $y,
+					$this->axis_x."-".$this->series[0]['label'], $c_title);
 				$y += 25.0;
 			}
 			foreach ($this->labels as $i => $parameter)
 			{
 				if ($this->set_values)
-					$text = number_format($this->series[0]['data'][$i]);
+					$text = number_format((float) $this->series[0]['data'][$i]);
 				else
-					$text = number_format($this->series[0]['data'][$i] * 100 / $this->sum_total[0], 2) . ' %';
+					$text = number_format((float) $this->series[0]['data'][$i] * 100.0 / (float) $this->sum_total[0], 2) . ' %';
 				if ($this->stream == 'svg')
 				{
 					$j = $i % $n;
-					$lex = $this->dir == 'rtl' ? $x1+$total_len-25 : $x1;
-					$this->svg->circle($lex, (float)$y-5.0, 6, "#fff", 1, $this->color[$j]);
+					/** @var int|string|false $c_slice */
+					$c_slice = $this->color[$j] ?? false;
+					$lex = $this->dir == 'rtl' ? (float)$x1+$total_len-25.0 : (float) $x1;
+					$svg->circle($lex, $y-5.0, 6, "#fff", 1, $c_slice);
 					// $this->svg->rect($lex-5, $y-10, 10, 10, "#fff", 1, $this->color[$j]);
 					// Display label text
-					$lex = $this->dir == 'rtl' ? $x1+$total_len-40 : (float)$x1+15.0;
-					$this->svg->text($lex, ((float)$y-2.0), $parameter, $this->size, $this->color['axis_values'], false, "start");	
-					$lex = $this->dir == 'rtl' ? $x1+$value_len-25 : $x1+$total_len;
+					$lex = $this->dir == 'rtl' ? (float)$x1+$total_len-40.0 : (float)$x1+15.0;
+					$svg->text($lex, ($y-2.0), $parameter, $this->size, $c_axis_values, false, "start");
+					$lex = $this->dir == 'rtl' ? (float)$x1+$value_len-25.0 : (float)$x1+$total_len;
 					$al = $this->dir == 'rtl' ? "start" : "end";
-					$this->svg->text($lex, ((float)$y-2.0), $text, $this->size, $this->color['axis_values'], false, $al);
-					$lex2 = $this->dir == 'rtl' ? $x1+$total_len-25 : $x1+$total_len;
-					$this->svg->line($x1, (float)$y+1.0, $lex2, (float)$y+1.0, $this->color['bg_lines']);
+					$svg->text($lex, ($y-2.0), $text, $this->size, $c_axis_values, false, $al);
+					$lex2 = $this->dir == 'rtl' ? (float)$x1+$total_len-25.0 : (float)$x1+$total_len;
+					$svg->line($x1, $y+1.0, $lex2, $y+1.0, $c_bg_lines);
 				}
 				else
 				{
 					$j = $i % $n;
 					$color = 'arc_' . $j;
-					$width = $this->string_width($text, $this->size);
-					imageline($this->img, (float)$x1+15.0, ((float)$y+11.0), (float)$x2+20.0, ((float)$y+11.0), $this->color['bg_lines']);
+					/** @var int|string|false $c_arc */
+					$c_arc = $this->color[$color] ?? false;
+					$width = (float) $this->string_width($text, $this->size);
+					imageline($img, (int) round((float)$x1+15.0), (int) round($y+11.0), (int) round((float)$x2+20.0), (int) round($y+11.0), (int) $c_bg_lines);
 					$lex = $this->dir == 'rtl' ? (float)$x2+20.0 : $x;
-					imagefilledrectangle($this->img, $lex, $y, ($lex+10.0), ((float)$y+10.0), $this->color[$color]);
-					imagerectangle($this->img, $lex, $y, ($lex+10.0), ((float)$y+10.0), $this->color['title']);
+					imagefilledrectangle($img, (int) round($lex), (int) round($y), (int) round($lex+10.0), (int) round($y+10.0), (int) $c_arc);
+					imagerectangle($img, (int) round($lex), (int) round($y), (int) round($lex+10.0), (int) round($y+10.0), (int) $c_title);
 					$lex = $this->dir == 'rtl' ? (float)$x2+5.0 : $x+15.0;
-					$this->_imagestring($this->img, $this->size, $lex, ((float)$y-2.0), $parameter, $this->color['axis_values'], 0, 0, $this->align);
+					$this->_imagestring($img, $this->size, $lex, ($y-2.0), $parameter, $c_axis_values, 0, 0, $this->align);
 					//$lex = $this->dir == 'rtl' ? $x+10 : $x2-$width;
-					$lex = $this->dir == 'rtl' ? $x1+$value_len : $x2-$width;
+					$lex = $this->dir == 'rtl' ? (float)$x1+$value_len : (float)$x2-$width;
 					$al = $this->dir == 'rtl' ? "end" : $this->align;
-					$this->_imagestring($this->img, $this->size, $lex, ((float)$y-2.0), $text, $this->color['axis_values'], 0, 0, $al);
+					$this->_imagestring($img, $this->size, $lex, ($y-2.0), $text, $c_axis_values, 0, 0, $al);
 				}
 				$y += 18.0;
 			}
 		}
 	}
 
-	function string_width($string, $size) 
+	/**
+	 * @param string|int|float|null $string
+	 * @param int $size
+	 * @return int
+	 */
+	function string_width($string, $size)
 	{
 		if ($string == NULL)
 			return $size;
-		$p = imageftbbox($size, 0, $this->fontfile, $string);
-		return $p[4] - $p[0];
+		$p = imageftbbox($size, 0, $this->fontfile, (string) $string);
+		if ($p === false)
+			return $size;
+		return (int) $p[4] - (int) $p[0];
 	}
 
 	/**
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
-	function calculate_higher_value() 
+	function calculate_higher_value()
 	{
-		$digits	  = strlen(round($this->max_value));
+		$digits	  = strlen((string) round((float) $this->max_value));
 		$interval = pow(10, ($digits-1));
-		$this->higher_value = round(((float)$this->max_value - ((float)(round($this->max_value) % $interval)) + $interval), 1);
+		$this->higher_value = round(((float)$this->max_value - ((float)((int) round((float) $this->max_value) % $interval)) + (float) $interval), 1);
 		$this->higher_value_str = $this->number_formated($this->higher_value, $this->dec1);
 	}
 
 	/**
+	 * @param int|float|string|null $number
 	 * @param int|null $dec_size
 	 * @psalm-mutation-free
 	 * @return string
 	 */
 	function number_formated($number, $dec_size = 1)
 	{
-		if ($this->latin_notation == true) 
-			return number_format(round($number, $dec_size), $dec_size, ",", ".");
-		return number_format(round($number, $dec_size), $dec_size, ".", ",");
+		$dec_size = $dec_size ?? 1;
+		if ($this->latin_notation == true)
+			return number_format(round((float) $number, $dec_size), $dec_size, ",", ".");
+		return number_format(round((float) $number, $dec_size), $dec_size, ".", ",");
 	}
 
-	/** @return void */
+	/**
+	 * @param int|float|string|null $type
+	 * @return void
+	 */
 	function load_color_palette($type)
 	{
 		// The usual color palette. Change if you like. Must be 6 colors.
@@ -1482,63 +1623,83 @@ class Chart
 			$this->color['bg_legend']	= sprintf("#%02x%02x%02x", 255, 255, 255);
 			$this->color['shadow']		= sprintf("#%02x%02x%02x", 255, 255, 255);
 
-			if (preg_match("/^(1|2)$/", $type)) // Vertical Bar or Horizontal bar
+			if (preg_match("/^(1|2)$/", (string) $type)) // Vertical Bar or Horizontal bar
 			{
+				/** @var array<int, int|string|false> $bars */
+				$bars = array();
 				for ($j = 0; $j < $this->num_series; $j++)
 				{
-					$this->color['bars'][$j] = $color[$j];
+					$bars[$j] = $color[$j];
 				}
+				$this->color['bars'] = $bars;
 			}
-			elseif (preg_match("/^(3|4|8)$/", $type)) // Dots, Lines or Splines
+			elseif (preg_match("/^(3|4|8)$/", (string) $type)) // Dots, Lines or Splines
 			{
+				/** @var array<int, int|string|false> $lines */
+				$lines = array();
+				/** @var array<int, int|string|false> $lines_light */
+				$lines_light = array();
 				for ($j = 0; $j < $this->num_series; $j++)
 				{
-					$this->color['line'][$j] = $color[$j];
-					$this->color['line_light'][$j] = $this->colorLuminate($color[$j], 0.8);
+					$lines[$j] = $color[$j];
+					$lines_light[$j] = $this->colorLuminate($color[$j], 0.8);
 				}
+				$this->color['line'] = $lines;
+				$this->color['line_light'] = $lines_light;
 			}
-			elseif (preg_match("/^(5|6|7)$/", $type)) // Pie, Donut or Half Donut
+			elseif (preg_match("/^(5|6|7)$/", (string) $type)) // Pie, Donut or Half Donut
 			{
 				$n = count($color);
-				for ($j = 0; $j < $n; $j++) 
+				for ($j = 0; $j < $n; $j++)
 					$this->color[$j] = $color[$j];
 			}
 		}
 		else
 		{
-			$this->color['title']		= imagecolorallocate($this->img,  40,  70,	130);
-			$this->color['background']	= imagecolorallocate($this->img, 255, 255, 255);
-			$this->color['axis_values'] = imagecolorallocate($this->img,  50,  50,	50);
-			$this->color['axis_line']	= imagecolorallocate($this->img, 100, 100, 100);
-			$this->color['bg_lines']	= imagecolorallocate($this->img, 220, 220, 220);
-			$this->color['bg_legend']	= imagecolorallocate($this->img, 255, 255, 255);
-			$this->color['shadow']		= imagecolorallocate($this->img, 255, 255, 255);
+			/** @var GdImage $img */
+			$img = $this->img;
+			$this->color['title']		= imagecolorallocate($img,  40,  70,	130);
+			$this->color['background']	= imagecolorallocate($img, 255, 255, 255);
+			$this->color['axis_values'] = imagecolorallocate($img,  50,  50,	50);
+			$this->color['axis_line']	= imagecolorallocate($img, 100, 100, 100);
+			$this->color['bg_lines']	= imagecolorallocate($img, 220, 220, 220);
+			$this->color['bg_legend']	= imagecolorallocate($img, 255, 255, 255);
+			$this->color['shadow']		= imagecolorallocate($img, 255, 255, 255);
 
-			if (preg_match("/^(1|2)$/", $type)) // Vertical Bar or Horizontal bar
+			if (preg_match("/^(1|2)$/", (string) $type)) // Vertical Bar or Horizontal bar
 			{
+				/** @var array<int, int|string|false> $bars */
+				$bars = array();
 				for ($j = 0; $j < $this->num_series; $j++)
 				{
 					$c = $this->hex2rgb($color[$j]);
-					$this->color['bars'][$j] = imagecolorallocate($this->img, $c[0], $c[1], $c[2]);
+					$bars[$j] = imagecolorallocate($img, (int) $c[0], (int) $c[1], (int) $c[2]);
 				}
+				$this->color['bars'] = $bars;
 			}
-			else if (preg_match("/^(3|4|8)$/", $type)) // Dots, Lines or Splines
+			else if (preg_match("/^(3|4|8)$/", (string) $type)) // Dots, Lines or Splines
 			{
+				/** @var array<int, int|string|false> $lines */
+				$lines = array();
+				/** @var array<int, int|string|false> $lines_light */
+				$lines_light = array();
 				for ($j = 0; $j < $this->num_series; $j++)
 				{
 					$c = $this->hex2rgb($color[$j]);
-					$this->color['line'][$j] = imagecolorallocate($this->img, $c[0], $c[1], $c[2]);
+					$lines[$j] = imagecolorallocate($img, (int) $c[0], (int) $c[1], (int) $c[2]);
 					$c = $this->hex2rgb($this->colorLuminate($color[$j], 0.8)); // lighten for Areas
-					$this->color['line_light'][$j] = imagecolorallocate($this->img, $c[0], $c[1], $c[2]);
+					$lines_light[$j] = imagecolorallocate($img, (int) $c[0], (int) $c[1], (int) $c[2]);
 				}
+				$this->color['line'] = $lines;
+				$this->color['line_light'] = $lines_light;
 			}
-			else if (preg_match("/^(5|6|7)$/", $type)) // Pie, Donut or Half Donut
+			else if (preg_match("/^(5|6|7)$/", (string) $type)) // Pie, Donut or Half Donut
 			{
-				$n = count($color); 
-				for ($j = 0; $j < $n; $j++) 
+				$n = count($color);
+				for ($j = 0; $j < $n; $j++)
 				{
 					$c = $this->hex2rgb($color[$j]);
-					$this->color["arc_{$j}"] = imagecolorallocate($this->img, $c[0], $c[1], $c[2]);
+					$this->color["arc_{$j}"] = imagecolorallocate($img, (int) $c[0], (int) $c[1], (int) $c[2]);
 				}
 			}
 		}
@@ -1551,51 +1712,65 @@ class Chart
 	 */
 	function colorLuminate($hex, $percent) // Color lightner, minus is darker
 	{
-		$hex = ltrim($hex, '#');
+		$percent = $percent ?? 0.0;
+		$hex = ltrim($hex ?? '', '#');
 		if (strlen($hex) == 3) {
 			$hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
 		}
 		$hex = array_map('hexdec', str_split($hex, 2));
 		foreach ($hex as &$color) {
 			$limit = $percent < 0 ? $color : 255 - $color;
-			$value = ceil((float)$limit * (float)$percent);
-			$color = str_pad(dechex((float)$color + $value), 2, '0', STR_PAD_LEFT);
+			$value = ceil((float)$limit * $percent);
+			$color = str_pad(dechex((int) ((float)$color + $value)), 2, '0', STR_PAD_LEFT);
 		}
 		return '#' . implode($hex);
 	}
 	
 	/**
 	 * @param bool|GdImage|null $image
+	 * @param int|float $x1
+	 * @param int|float $y1
+	 * @param int|float $x2
+	 * @param int|float $y2
+	 * @param int|string|false|null $color
 	 * @param int|null $thick
 	 * @return bool
 	 */
 	function _imageline($image, $x1, $y1, $x2, $y2, $color, $thick = 1)
 	{
-		if ($thick == 1) 
-			return imageline($image, $x1, $y1, $x2, $y2, $color);
+		if (!($image instanceof GdImage))
+			return false;
+		$col = (int) $color;
+		if ($thick == 1)
+			return imageline($image, (int) round((float) $x1), (int) round((float) $y1), (int) round((float) $x2), (int) round((float) $y2), $col);
 		$t = (float)$thick / 2.0 - 0.5;
 		if ($x1 == $x2 || $y1 == $y2)
-			return imagefilledrectangle($image, round(min($x1, $x2) - $t), round(min($y1, $y2) - $t), round(max($x1, $x2) + $t), round(max($y1, $y2) + $t), $color);
-		$k = ($y2 - $y1) / ($x2 - $x1); //y = kx + q
-		$a = $t / sqrt(1.0 + (float)pow($k, 2));
+			return imagefilledrectangle($image, (int) round(min((float) $x1, (float) $x2) - $t), (int) round(min((float) $y1, (float) $y2) - $t), (int) round(max((float) $x1, (float) $x2) + $t), (int) round(max((float) $y1, (float) $y2) + $t), $col);
+		$k = ((float) $y2 - (float) $y1) / ((float) $x2 - (float) $x1); //y = kx + q
+		$a = $t / sqrt(1.0 + pow($k, 2));
 		$points = array(
-			round($x1 - (1+$k)*$a), round($y1 + (1-$k)*$a),
-			round($x1 - (1-$k)*$a), round($y1 - (1+$k)*$a),
-			round($x2 + (1+$k)*$a), round($y2 - (1-$k)*$a),
-			round($x2 + (1-$k)*$a), round($y2 + (1+$k)*$a),
+			(int) round((float) $x1 - (1.0+$k)*$a), (int) round((float) $y1 + (1.0-$k)*$a),
+			(int) round((float) $x1 - (1.0-$k)*$a), (int) round((float) $y1 - (1.0+$k)*$a),
+			(int) round((float) $x2 + (1.0+$k)*$a), (int) round((float) $y2 - (1.0-$k)*$a),
+			(int) round((float) $x2 + (1.0-$k)*$a), (int) round((float) $y2 + (1.0+$k)*$a),
 		);
 		if (PHP_MAJOR_VERSION >= 8) { // num_points is deprecated
-			imagefilledpolygon($image, $points, $color);
-			return imagepolygon($image, $points, $color);
+			imagefilledpolygon($image, $points, $col);
+			return imagepolygon($image, $points, $col);
 		}
 		else {
-			imagefilledpolygon($image, $points, 4, $color);
-			return imagepolygon($image, $points, 4, $color);
+			imagefilledpolygon($image, $points, 4, $col);
+			return imagepolygon($image, $points, 4, $col);
 		}
 	}
 
 	/**
 	 * @param bool|GdImage|null $img
+	 * @param int $size
+	 * @param int|float $x
+	 * @param int|float $y
+	 * @param string|int|float|null $string
+	 * @param int|string|false|null $col
 	 * @param int|null $alt
 	 * @param int|null $angle
 	 * @param string|bool|null $align
@@ -1603,20 +1778,25 @@ class Chart
 	 */
 	function _imagestring($img, $size, $x, $y, $string, $col, $alt=0, $angle=0, $align=false)
 	{
+		if (!($img instanceof GdImage))
+			return;
+		$string = (string) $string;
+		$angle = $angle ?? 0;
 		if ($align == 'end')
 		{
-			$p = imagettfbbox($size, $angle, $this->fontfile, $string); 
-			$x -= $p[2];
+			$p = imagettfbbox($size, $angle, $this->fontfile, $string);
+			if ($p !== false)
+				$x = (float) $x - (float) $p[2];
 		}
-			
-		if ($this->encoding != 'UTF-8') 
+
+		if ($this->encoding != 'UTF-8')
 		{
 			if (function_exists('iconv'))
-				$string = iconv($this->encoding, 'UTF-8', $string);
+				$string = (string) iconv($this->encoding, 'UTF-8', $string);
 			else
-				$string = mb_convert_encoding($string, 'UTF-8', $this->encoding);
+				$string = (string) mb_convert_encoding($string, 'UTF-8', $this->encoding);
 		}
-		
+
 		// Handling ev. RTL languages
 		if ($alt)
 		{
@@ -1626,21 +1806,22 @@ class Chart
 				$alt_len = 12;
 			if (strlen($string) > $alt_len)
 				$string = substr($string, 0, $alt_len);
-		}		
+		}
 		if ($this->encoding == 'UTF-8')
 		{
 			if ((bool)is_arabic($string))
 				$string = arabic($string);
-			elseif ((bool)is_hebrew($string))
-				$string = hebrew($string);
+			// NOTE: is_hebrew() exists but the corresponding hebrew() transform
+			// function is not defined anywhere in this codebase; calling it here
+			// would fatal-error, so Hebrew text is left untransformed for now.
 		}
-		$y += $size + 3;	
+		$y = (float) $y + (float) $size + 3.0;
 		if ($this->encoding == 'UTF-8' && (bool)is_arabic($string))
 		{
 			$size += 2;
 			$string = str_replace(" ", "  ", $string);
-		}	
-		imagettftext($img, $size, $angle, round($x), $y  + $alt, $col, $this->fontfile, $string);
+		}
+		imagettftext($img, $size, $angle, (int) round((float) $x), (int) round($y + (float) $alt), (int) $col, $this->fontfile, $string);
 	}
 
 	/**
@@ -1650,42 +1831,55 @@ class Chart
 	 */
 	function hex2rgb($hex)
 	{
-		list($r, $g, $b) = sscanf($hex, "#%02x%02x%02x");
+		$parts = sscanf($hex ?? '', "#%02x%02x%02x");
+		$r = $parts[0] ?? 0;
+		$g = $parts[1] ?? 0;
+		$b = $parts[2] ?? 0;
 		return array($r, $g, $b);
 	}
 
 	/**
+	 * @param array<int, int|float>|false $curr
+	 * @param array<int, int|float>|false $prev
+	 * @param array<int, int|float>|false $next
 	 * @param bool $reverse
-	 * @return list{mixed, mixed}
+	 * @return list{float, float}
 	 */
 	function _controlPoint($curr, $prev, $next, $reverse = false)
 	{
 		$p = $prev ? $prev : $curr;
 		$n = $next ? $next : $curr;
+		if ($p === false || $n === false || $curr === false)
+			return array(0.0, 0.0);
 		$smooth = 0.2;
-		$lenx = $n[0] - $p[0];
-		$leny = $n[1] - $p[1];
-		$len = sqrt((float)pow($lenx, 2) + (float)pow($leny, 2));
+		$lenx = (float) $n[0] - (float) $p[0];
+		$leny = (float) $n[1] - (float) $p[1];
+		$len = sqrt(pow($lenx, 2) + pow($leny, 2));
 		$angle = atan2($leny, $lenx);
 		$len *= $smooth;
 		$angle += ((float)($reverse ? pi() : 0));
-		$x = $curr[0] + cos($angle) * $len;
-		$y = $curr[1] + sin($angle) * $len;
+		$x = (float) $curr[0] + cos($angle) * $len;
+		$y = (float) $curr[1] + sin($angle) * $len;
 		return array($x, $y);
 	}
 
 	/**
+	 * @param array<int, int|float> $p
+	 * @param int $i
 	 * @param array<array-key, mixed>|null $a
 	 * @return non-falsy-string
 	 */
 	function _splineCommand($p, $i, $a)
 	{
+		/** @var array<int, int|float>|false $c */
 		$c = isset($a[$i - 1]) ? $a[$i - 1] : false;
+		/** @var array<int, int|float>|false $d */
 		$d = isset($a[$i - 2]) ? $a[$i - 2] : false;
+		/** @var array<int, int|float>|false $e */
 		$e = isset($a[$i + 1]) ? $a[$i + 1] : false;
 		$cps = $this->_controlPoint($c, $d, $p);
 		$cpe = $this->_controlPoint($p, $c, $e, true);
-		return " C".round($cps[0],1).",".round($cps[1],1)." ".round($cpe[0],1).",".round($cpe[1], 1)." $p[0],$p[1]";
+		return " C".(string) round($cps[0],1).",".(string) round($cps[1],1)." ".(string) round($cpe[0],1).",".(string) round($cpe[1], 1)." $p[0],$p[1]";
 	}
 
 	/** @return void */
@@ -1697,6 +1891,8 @@ class Chart
 				if (!is_file($dir.'/'.$file) || $file == 'index.php') continue;
 				// then check to see if this one is too old
 				$ftime = filemtime($dir.'/'.$file);
+				if ($ftime === false)
+					continue;
 				// seems 3 min is enough for any report download, isn't it?
 				if (time()-$ftime > 180){
 					unlink($dir.'/'.$file);
@@ -1707,22 +1903,32 @@ class Chart
 	}
 }
 
-class SVG
+final class SVG
 {
 	/**
 	 * @var string
 	 */
 	var $svg;
 
-	/** @psalm-mutation-free */
+	/**
+	 * @param int|float $width
+	 * @param int|float $height
+	 * @param string|null $dir
+	 * @param string|null $lang
+	 * @psalm-mutation-free
+	 */
 	function __construct($width=0, $height=0, $dir='ltr', $lang='en')
 	{
 		$this->svg = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" direction=\"$dir\" xml:lang=\"$lang\" width=\"$width\" height=\"$height\" viewPort=\"0 0 $width $height\"";
 		$this->svg .= ">\n";
 	}
 	/**
+	 * @param int|float $x
+	 * @param int|float $y
 	 * @param int|float|null $r
+	 * @param int|string|bool|null $bcolor
 	 * @param int|null $line_width
+	 * @param int|string|bool|null $color
 	 * @param string|bool|null $style
 	 * @param string|bool|null $tooltip
 	 * @psalm-external-mutation-free
@@ -1746,7 +1952,13 @@ class SVG
 			$this->svg .= " />\n";
 	}
 	/**
+	 * @param int|float $x1
+	 * @param int|float $y1
+	 * @param int|float $x2
+	 * @param int|float $y2
+	 * @param int|string|bool|null $bcolor
 	 * @param int|null $line_width
+	 * @param int|string|bool|null $color
 	 * @param string|bool|null $style
 	 * @param string|bool|null $tooltip
 	 * @psalm-external-mutation-free
@@ -1770,10 +1982,15 @@ class SVG
 			$this->svg .= " />\n";
 	}
 	/**
+	 * @param int|float $x1
+	 * @param int|float $y1
+	 * @param int|float $x2
+	 * @param int|float $y2
+	 * @param int|string|bool|null $bcolor
 	 * @param int|null $line_width
-	 * @param bool $color
-	 * @param bool $style
-	 * @param bool $tooltip
+	 * @param int|string|bool $color
+	 * @param string|bool $style
+	 * @param string|bool $tooltip
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -1795,6 +2012,12 @@ class SVG
 			$this->svg .= " />\n";
 	}
 	/**
+	 * @param string|int|float|null $p
+	 * @param int|string|bool|null $bcolor
+	 * @param int|null $line_width
+	 * @param int|string|bool|null $color
+	 * @param string|bool|null $style
+	 * @param string|bool|null $tooltip
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -1816,6 +2039,12 @@ class SVG
 			$this->svg .= " />\n";
 	}
 	/**
+	 * @param string|int|float|null $p
+	 * @param int|string|bool|null $bcolor
+	 * @param int|null $line_width
+	 * @param int|string|bool|null $color
+	 * @param string|bool|null $style
+	 * @param string|bool|null $tooltip
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -1838,7 +2067,9 @@ class SVG
 	}
 	/**
 	 * @param string|null $d
+	 * @param int|string|bool|null $bcolor
 	 * @param int|null $line_width
+	 * @param int|string|bool|null $color
 	 * @param string|bool|null $style
 	 * @param string|bool|null $tooltip
 	 * @psalm-external-mutation-free
@@ -1862,13 +2093,18 @@ class SVG
 			$this->svg .= " />\n";
 	}
 	/**
+	 * @param int|float $x
+	 * @param int|float $y
+	 * @param string|int|float|null $text
+	 * @param int|string|bool|null $size
+	 * @param int|string|bool|null $color
 	 * @param string|bool|null $style
 	 * @param string|bool|null $align
 	 * @param int|bool|null $angle
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
-	function text($x, $y, $text, $size=false, $color=false, $style=false, $align=false, $angle=false) // align start, middle, end. 
+	function text($x, $y, $text, $size=false, $color=false, $style=false, $align=false, $angle=false) // align start, middle, end.
 	{
 		$this->svg .= "<text x=\"$x\" y=\"$y\"";
 		if (!empty($color))
@@ -1884,15 +2120,17 @@ class SVG
 		$this->svg .= ">$text</text>\n";
 	}
 	/**
+	 * @param string|null $s
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
 	function other($s)
 	{
-		$this->svg .= $s;
+		$this->svg .= (string) $s;
 	}
 	/**
 	 * @param string|null $s
+	 * @psalm-external-mutation-free
 	 * @return void
 	 */
 	function style($s='')
@@ -1900,6 +2138,7 @@ class SVG
 		$this->svg .= "<defs><style".csp_nonce_attr()." type=\"text/css\"><![CDATA[ $s ]]></style></defs>\n";
 	}
 	/**
+	 * @param string|null $p
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -1930,7 +2169,10 @@ class SVG
 		echo $this->svg;
 		return true;
 	}
-	/** @return void */
+	/**
+	 * @param string $fileName
+	 * @return void
+	 */
 	function save($fileName)
 	{
 		file_put_contents($fileName, $this->svg);
@@ -1945,19 +2187,19 @@ class SVG
 /** @psalm-pure */
 function is_arabic(string|int|float|bool|null $text): int|false
 {
-	return preg_match('/\p{Arabic}/u', $text);
-} 
+	return preg_match('/\p{Arabic}/u', (string) $text);
+}
 
 /** @psalm-pure */
 function is_hebrew(string|int|float|bool|null $text): int|false
 {
-	return preg_match('/\p{Hebrew}/u', $text);
-} 
+	return preg_match('/\p{Hebrew}/u', (string) $text);
+}
 
 /** @psalm-pure */
-function utf8_strlen(string|int|float|bool|null $str): int|false 
+function utf8_strlen(string|int|float|bool|null $str): int|false
 {
-	return preg_match_all('/[\x00-\x7F\xC0-\xFD]/', $str, $dummy);
+	return preg_match_all('/[\x00-\x7F\xC0-\xFD]/', (string) $str, $dummy);
 }
 
 /** @psalm-pure */
@@ -1999,6 +2241,7 @@ function utf8_chr(?int $uni): string
 /** @psalm-pure */
 function arabic(string|int|float|bool|null $str,string|int|float|bool|null $z="",string|int|float|bool|null $method='normal'): string
 {
+$str = (string) $str;
 $p_chars = array (
 	utf8_chr(0x0622) => array (utf8_chr(0xfe82), utf8_chr(0xfe82), utf8_chr(0x0622)),
 	utf8_chr(0x0627) => array (utf8_chr(0xfe8e), utf8_chr(0xfe8e), utf8_chr(0x0627)),
@@ -2097,23 +2340,23 @@ $ignorelist = array (utf8_chr(0x0000), utf8_chr(0x064c), utf8_chr(0x064d), utf8_
 		{
 			if (array_key_exists($str1,$p_chars))
 			{
-				if (!(bool)$str_back || $str_back==" " || !array_key_exists($str_back,$p_chars))
+				if (!(bool)$str_back || $str_back==" " || !array_key_exists((string) $str_back, $p_chars))
 				{
-					if (!array_key_exists($str_back, $p_chars) && !array_key_exists($str_next, $p_chars)) 
+					if (!array_key_exists((string) $str_back, $p_chars) && !array_key_exists((string) $str_next, $p_chars)) 
 						$output = $str1.$output;
 					else 
 						$output = $p_chars[$str1][2].$output;
 					continue;
 				}
-				elseif (array_key_exists($str_next, $p_chars) && array_key_exists($str_back, $p_chars))
+				elseif (array_key_exists((string) $str_next, $p_chars) && array_key_exists((string) $str_back, $p_chars))
 				{
-					if (in_array($str_back, $mp_chars) && array_key_exists($str_next, $p_chars))
+					if (in_array($str_back, $mp_chars) && array_key_exists((string) $str_next, $p_chars))
 						$output = $p_chars[$str1][2].$output;
 					else
 						$output = $p_chars[$str1][1].$output;
 					continue;
 				}
-				elseif (array_key_exists($str_back, $p_chars) && !array_key_exists($str_next, $p_chars))
+				elseif (array_key_exists((string) $str_back, $p_chars) && !array_key_exists((string) $str_next, $p_chars))
 				{
 					if (in_array($str_back, $mp_chars))
 						$output = $str1.$output;
@@ -2191,9 +2434,9 @@ $ignorelist = array (utf8_chr(0x0000), utf8_chr(0x064c), utf8_chr(0x064d), utf8_
 			else
 			{
 				if (($str1 == utf8_chr(0x060c)) || ($str1 == utf8_chr(0x061f)) || ($str1 == utf8_chr(0x0621)) || 
-					(array_key_exists($str_next, $p_chars) && array_key_exists($str_back, $p_chars)) || 
-					($str1 == " " && array_key_exists($str_back, $p_chars)) || ($str1 == " " && 
-					array_key_exists($str_next, $p_chars)))
+					(array_key_exists((string) $str_next, $p_chars) && array_key_exists((string) $str_back, $p_chars)) || 
+					($str1 == " " && array_key_exists((string) $str_back, $p_chars)) || ($str1 == " " && 
+					array_key_exists((string) $str_next, $p_chars)))
 				{
 					if ($e_output)
 					{
@@ -2205,7 +2448,7 @@ $ignorelist = array (utf8_chr(0x0000), utf8_chr(0x064c), utf8_chr(0x064d), utf8_
 				else
 				{
 					$e_output .= $str1;
-					if (array_key_exists($str_next, $p_chars) || $str_next == "")
+					if (array_key_exists((string) $str_next, $p_chars) || $str_next == "")
 					{
 						$output = $e_output.$output;
 						$e_output = "";
@@ -2228,6 +2471,8 @@ if (!function_exists('dump'))
 	{
 		$req_dump = print_r($str, true);
 		$fp = fopen('dump.log', 'a');
+		if ($fp === false)
+			return;
 		date_default_timezone_set("Europe/Amsterdam");
 		$msg = "[" . date('Y-m-d / H:i:s') . "] - $req_dump\n";
 		fwrite($fp, $msg);

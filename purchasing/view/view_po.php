@@ -31,7 +31,7 @@ if (!isset($_GET['trans_no']))
 if (!empty(sysprefs()->prefs['company_logo_on_views']))
 	company_logo_on_view();
 
-display_heading(_("Purchase Order") . " #" . (string)$_GET['trans_no']);
+display_heading(_("Purchase Order") . " #" . (string) get_scalar('trans_no'));
 
 $purchase_order = new purch_order;
 
@@ -49,7 +49,8 @@ start_table(TABLESTYLE, "width='100%'");
 $th = array(_("Item Code"), _("Item Description"), _("Quantity"), _("Unit"), _("Price"),
 	_("Requested By"), _("Line Total"), _("Quantity Received"), _("Quantity Invoiced"));
 table_header($th);
-$total = $k = 0;
+$total = 0.0;
+$k = 0;
 $overdue_items = false;
 foreach ($purchase_order->line_items as $stock_item)
 {
@@ -70,7 +71,7 @@ foreach ($purchase_order->line_items as $stock_item)
 
 	label_cell($stock_item->stock_id);
 	label_cell($stock_item->item_description);
-	$dec = get_qty_dec($stock_item->stock_id);
+	$dec = (int) get_qty_dec($stock_item->stock_id);
 	qty_cell($stock_item->quantity, false, $dec);
 	label_cell($stock_item->units);
 	amount_decimal_cell($stock_item->price);
@@ -90,7 +91,7 @@ label_row(_("Sub Total"), $display_sub_tot,
 $taxes = $purchase_order->get_taxes();
 $tax_total = display_edit_tax_items($taxes, 6, $purchase_order->tax_included,2);
 
-$display_total = price_format(((float)$total + (float)$tax_total));
+$display_total = price_format($total + (float)$tax_total);
 
 start_row();
 label_cells(_("Amount Total"), $display_total, "colspan=6 align='right'","align='right'");
@@ -162,9 +163,9 @@ echo "</td></tr>";
 
 end_table(1); // outer table
 
-display_allocations_to(PT_SUPPLIER, $purchase_order->supplier_id, ST_PURCHORDER, $purchase_order->order_no, (float)$total + (float)$tax_total);
+display_allocations_to(PT_SUPPLIER, $purchase_order->supplier_id, ST_PURCHORDER, $purchase_order->order_no, $total + (float)$tax_total);
 
 //----------------------------------------------------------------------------------------------------
 
-end_page(true, false, false, ST_PURCHORDER, get_scalar('trans_no'));
+end_page(true, false, false, ST_PURCHORDER, (string) get_scalar('trans_no'));
 

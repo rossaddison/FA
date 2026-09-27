@@ -16,128 +16,84 @@ include_once(dirname(__DIR__, 2) . "/admin/db/company_db.inc");
 	Object is created only with site wide preffernces.
 	After user login refresh method have to be called to re-initialize company specific settings.
 */
-class sys_prefs extends stdClass
+final class sys_prefs extends stdClass
 {
-	/** @var string|null */
-	var $error_logfile;
-	/** @var string|null */
-	var $app_title;
-	/** @var int|string|bool|null */
-	var $no_check_edit_conflicts;
-	/** @var int|string|bool|null */
-	var $use_icon_for_editkey;
-	/** @var int|string|bool|null */
-	var $auto_create_branch;
-	/** @var int|string|bool|null */
-	var $use_popup_windows;
-	/** @var int|string|bool|null */
-	var $use_audit_trail;
-	/** @var int|string|bool|null */
-	var $use_oldstyle_convert;
-	/** @var int|string|bool|null */
-	var $show_users_online;
-	/** @var int|string|bool|null */
-	var $old_style_help;
-	/** @var string|null */
-	var $help_base_url;
-	/** @var string|null */
-	var $comp_path;
-	/** @var int|string|null */
-	var $date_system;
-	/** @var int|string|bool|null */
-	var $allow_gl_reopen;
-	/** @var int|string|null */
-	var $dflt_date_fmt;
-	/** @var int|string|null */
-	var $dflt_date_sep;
-	/** @var int|string|bool|null */
-	var $check_qty_charged_vs_del_qty;
-	/** @var int|string|bool|null */
-	var $check_price_charged_vs_order_price;
-	/** @var float|int|string|null */
-	var $config_allocation_settled_allowance;
-	/** @var int|string|bool|null */
-	var $use_costed_values;
-	/** @var int|string|bool|null */
-	var $show_menu_category_icons;
-	/** @var int|string|bool|null */
-	var $allow_demo_mode;
-	/** @var int|string|bool|null */
-	var $allow_password_reset;
-	/** @var int|string|null */
-	var $max_image_size;
-	/** @var int|string|bool|null */
-	var $text_company_selection;
-	/** @var int|string|bool|null */
-	var $hide_inaccessible_menu_items;
-	/** @var int|string|null */
-	var $login_delay;
-	/** @var int|string|null */
-	var $login_max_attempts;
-	/** @var array<int, string>|null */
-	var $xr_providers;
-	/** @var int|string|null */
-	var $dflt_xr_provider;
-	/** @var int|string|bool|null */
-	var $xr_provider_authoritative;
-	/** @var int|string|bool|null */
-	var $sort_sales_items;
-	/** @var int|string|bool|null */
-	var $clear_trial_balance_opening;
-	/** @var int|string|null */
-	var $max_rows_in_search;
-	/** @var int|string|bool|null */
-	var $use_popup_search;
-	/** @var int|string|bool|null */
-	var $use_yii_layout;
-	/** @var int|string|bool|null */
-	var $security_headers;
-	/** @var string|null */
-	var $content_security_policy;
-	/** @var int|string|bool|null */
-	var $csp_report_only;
-	/** @var int|string|null */
-	var $debug;
-	/** @var int|string|bool|null */
-	var $show_sql;
-	/** @var int|string|null */
-	var $go_debug;
-	/** @var int|string|null */
-	var $pdf_debug;
-	/** @var int|string|bool|null */
-	var $sql_trail;
-	/** @var int|string|bool|null */
-	var $select_trail;
-	/** @var string|null */
-	var $build_version;
-	/** @var string|null */
-	var $power_by;
-	/** @var string|null */
-	var $power_url;
-	/** @var array<int, string>|null */
-	var $dateformats;
-	/** @var array<int, string>|null */
-	var $dateseps;
-	/** @var array<int, string>|null */
-	var $thoseps;
-	/** @var array<int, string>|null */
-	var $decseps;
-	/** @var array<int, string>|null */
-	var $pagesizes;
-	/** @var int|string|null */
-	var $pic_height;
-	/** @var string|null */
-	var $UTF8_fontfile;
-	/** @var string|null */
-	var $time_zone;
+	public string $error_logfile = '';
+	public string $app_title = 'FrontAccounting';
+	public int $no_check_edit_conflicts = 0;
+	public int $use_icon_for_editkey = 0;
+	public int $auto_create_branch = 1;
+	public int $use_popup_windows = 1;
+	public int $use_audit_trail = 0;
+	public int $use_oldstyle_convert = 0;
+	public int $show_users_online = 0;
+	public int $old_style_help = 0;
+	public ?string $help_base_url = 'http://frontaccounting.com/fawiki/index.php?n=Help.';
+	public string $comp_path = '';
+	public int $date_system = 0;
+	public int $allow_gl_reopen = 0;
+	public int $dflt_date_fmt = 0;
+	public int $dflt_date_sep = 0;
+	public bool $check_qty_charged_vs_del_qty = true;
+	public bool $check_price_charged_vs_order_price = true;
+	public float $config_allocation_settled_allowance = 0.005;
+	public int $use_costed_values = 1;
+	public int $show_menu_category_icons = 1;
+	public bool $allow_demo_mode = false;
+	public bool $allow_password_reset = false;
+	public int $max_image_size = 500;
+	public bool $text_company_selection = false;
+	public int $hide_inaccessible_menu_items = 0;
+	public int $login_delay = 30;
+	public int $login_max_attempts = 10;
+	/** @var array<int, string> */
+	public array $xr_providers = ["ECB", "EXCHANGE-RATES.ORG", "GOOGLE", "YAHOO", "BLOOMBERG"];
+	public int $dflt_xr_provider = 0;
+	public bool $xr_provider_authoritative = false;
+	public bool $sort_sales_items = false;
+	public bool $clear_trial_balance_opening = false;
+	public int $max_rows_in_search = 10;
+	public bool $use_popup_search = true;
+	public int $use_yii_layout = 0;
+	public int $security_headers = 0;
+	public string $content_security_policy = '';
+	public int|bool $csp_report_only = 1;
+	public int $debug = 1;
+	public int $show_sql = 0;
+	public int $go_debug = 0;
+	public int $pdf_debug = 0;
+	public int|bool $sql_trail = 0;
+	public int $select_trail = 0;
+	public string $build_version = '';
+	public string $power_by = 'FrontAccounting';
+	public string $power_url = 'http://frontaccounting.com';
+	/** @var array<int, string> */
+	public array $dateformats = ["MMDDYYYY", "DDMMYYYY", "YYYYMMDD", "MmmDDYYYY", "DDMmmYYYY", "YYYYMmmDD"];
+	/** @var array<int, string> */
+	public array $dateseps = ["/", ".", "-", " "];
+	/** @var array<int, string> */
+	public array $thoseps = [",", ".", " "];
+	/** @var array<int, string> */
+	public array $decseps = [".", ","];
+	/** @var array<int, string> */
+	public array $pagesizes = ["Letter", "A4"];
+	public int $pic_height = 50;
+	public string $UTF8_fontfile = '';
+	public string $time_zone = '';
+	/* Optional backup path override; %s stands for the company number. Not set in config.default.php. */
+	public ?string $backup_path = null;
+	/* Optional application version override; falls back to $src_version. Not set in config.default.php. */
+	public ?string $version = null;
+	/**
+	 * Optional package-repository auth override, only set by admins who add it to config.php.
+	 * @var array{scheme?: string, login?: string, pass?: string, host?: string, path?: string, branch?: string}|null
+	 */
+	public ?array $repo_auth = null;
 
 	/** @var array<string, string|int|float|bool|null> */
-	var $prefs = array();
+	public array $prefs = array();
 
-	/**
-	 * @var bool|null
-	 */
-	var $db_ok; // check whether database has been upgraded after src update.
+	public ?bool $db_ok = null; // check whether database has been upgraded after src update.
 
 	function __construct()
 	{
@@ -151,16 +107,13 @@ class sys_prefs extends stdClass
 		foreach(get_defined_vars() as $name => $value)
 			$this->$name = $value;
 
-		if (!property_exists($this, 'time_zone') or !$this->time_zone)
-			$this->time_zone = ini_get('date.timezone');
+		if (!$this->time_zone)
+			$this->time_zone = (string) ini_get('date.timezone');
 
-		if (!(bool)$this->time_zone)
+		if (!$this->time_zone)
 			$this->time_zone = 'Europe/Berlin';
-			
-		if (!isset($this->use_popup_search))
-			$this->use_popup_search = false;
 
-   	    ini_set('date.timezone', $this->time_zone);
+		ini_set('date.timezone', $this->time_zone);
 	}
 
 	/*

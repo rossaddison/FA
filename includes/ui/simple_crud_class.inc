@@ -18,7 +18,7 @@ class simple_crud {
 	 */
 	var $name;
 	/** @var string */
-	var $Mode;
+	var $Mode = '';
 
 	/**
 	 * @var string
@@ -41,7 +41,7 @@ class simple_crud {
 	var $views;
 
 	/**
-	 * @var array
+	 * @var array<array-key, mixed>|object
 	 */
 	var $data = array();
 
@@ -50,10 +50,10 @@ class simple_crud {
 	 */
 	var $fields;
 	/** @var array<array-key, mixed> */
-	var $tool_buttons;
+	var $tool_buttons = array();
 	var $options;
 	/** @var int */
-	var $dec;
+	var $dec = 0;
 	//
 	//
 	/**
@@ -98,7 +98,7 @@ class simple_crud {
 	/*
 		Input/output formatters - convert values between php/user domains.
 	*/
-	function _format_input($value, $fmt)
+	function _format_input($value, $fmt): mixed
 	{
 		switch($fmt) {
 			case 'stock':
@@ -117,7 +117,7 @@ class simple_crud {
 		}
 	}
 	
-	function _format_output($value, $fmt)
+	function _format_output($value, $fmt): mixed
 	{
 		switch($fmt) {
 			case 'price':
@@ -137,7 +137,7 @@ class simple_crud {
 		}
 	}
 
-	function _check_mode()
+	function _check_mode(): mixed
 	{
 
 		// list controls lookup
@@ -145,7 +145,8 @@ class simple_crud {
 			if (isset($_POST[$this->name.$m])) {
 				unset($_POST['_focus']); // focus on first form entry
 				ajax()->activate($this->name.'_div');
-				$val = is_array($_POST[$this->name.$m]) ? key($_POST[$this->name.$m]) : null;
+				$post_val = $_POST[$this->name.$m];
+				$val = is_array($post_val) ? key($post_val) : null;
 				$this->selected_id = $val!==null ? @quoted_printable_decode($val) : $this->_none;
 				return $m;
 			}
@@ -248,18 +249,10 @@ class simple_crud {
 		$clone = $this->selected_id != $this->_none;
 
 		$title=false;
-		$async='both';
+		$async='default';
+		$cancel='cancel';
 		$base=$this->name;
 
-		$cancel = $async;
-
-		if ($async === 'both') {
-			$async = 'default'; $cancel = 'cancel';
-		} 
-		elseif ($async === 'default')
-			$cancel = true;
-		elseif ($async === 'cancel')
-			$async = true;
 		echo "<center>";
 
 		if ($this->Mode == '' || $this->Mode == 'RESET')

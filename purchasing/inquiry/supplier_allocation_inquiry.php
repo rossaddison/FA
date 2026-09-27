@@ -87,8 +87,7 @@ function due_date(array $row)
 		? $row["due_date"] : "";
 }
 
-/** @return float */
-function fmt_balance(array $row)
+function fmt_balance(array $row): float
 {
 	$value = ($row["type"] == ST_BANKPAYMENT || $row["type"] == ST_SUPPCREDIT || $row["type"] == ST_SUPPAYMENT)	? (float)(-$row["TotalAmount"]) - (float)$row["Allocated"]
 		: ($row["type"] == ST_JOURNAL ? (float)abs($row["TotalAmount"]) - (float)$row["Allocated"] :

@@ -604,7 +604,12 @@ function display_grn_items(supp_trans &$supp_trans, ?int $mode=0): int|float
  */
 function get_duedate_from_terms(&$trans): void
 {
-	$date = get_class($trans) == 'purch_order' ? $trans->orig_order_date : $trans->tran_date;
+	if ($trans instanceof purch_order) {
+		$date = $trans->orig_order_date;
+	} else {
+		/** @var supp_trans $trans */
+		$date = $trans->tran_date;
+	}
 
 	if (!is_date($date))
 	{

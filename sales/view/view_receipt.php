@@ -24,9 +24,10 @@ if (sysprefs()->use_popup_windows)
 
 page(_($help_context = "View Customer Payment"), true, false, "", $js);
 
+$trans_id = null;
 if (isset($_GET["trans_no"]))
 {
-	$trans_id = $_GET["trans_no"];
+	$trans_id = (string) $_GET["trans_no"];
 }
 
 $receipt = row_or_empty(get_customer_trans($trans_id, ST_CUSTPAYMENT));
@@ -34,7 +35,7 @@ $receipt = row_or_empty(get_customer_trans($trans_id, ST_CUSTPAYMENT));
 if (!empty(sysprefs()->prefs['company_logo_on_views']))
 	company_logo_on_view();
 
-display_heading(sprintf(_("Customer Payment #%d"),$trans_id));
+display_heading(sprintf(_("Customer Payment #%d"),(string) $trans_id));
 
 echo "<br>";
 start_table(TABLESTYLE, "width='80%'");
@@ -51,7 +52,7 @@ end_row();
 start_row();
 label_cells(_("Into Bank Account"), (string)$receipt['bank_account_name'].' ['.(string)$receipt['bank_curr_code'].']', "class='tableheader2'");
 label_cells(_("Bank Amount"), price_format($receipt['bank_amount']), "class='tableheader2'");
-label_cells(_("Payment Type"), $bank_transfer_types[$receipt['BankTransType']], "class='tableheader2'");
+label_cells(_("Payment Type"), $bank_transfer_types[(int) $receipt['BankTransType']], "class='tableheader2'");
 end_row();
 comments_display_row(ST_CUSTPAYMENT, $trans_id);
 
@@ -64,4 +65,4 @@ if (!$voided)
 	display_allocations_from(PT_CUSTOMER, $receipt['debtor_no'], ST_CUSTPAYMENT, $trans_id, $receipt['Total']);
 }
 
-end_page(true, false, false, ST_CUSTPAYMENT, $trans_id);
+end_page(true, false, false, ST_CUSTPAYMENT, (string) $trans_id);

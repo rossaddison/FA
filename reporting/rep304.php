@@ -90,15 +90,15 @@ function print_inventory_sales(): void
 {
     global $path_to_root;
 
-	$from = $_POST['PARAM_0'];
-	$to = $_POST['PARAM_1'];
-    $category = $_POST['PARAM_2'];
-    $location = $_POST['PARAM_3'];
-    $fromcust = $_POST['PARAM_4'];
-	$show_service = $_POST['PARAM_5'];
-	$comments = $_POST['PARAM_6'];
-	$orientation = $_POST['PARAM_7'];
-	$destination = $_POST['PARAM_8'];
+	$from = (string) post_scalar('PARAM_0');
+	$to = (string) post_scalar('PARAM_1');
+    $category = post_scalar('PARAM_2');
+    $location = post_scalar('PARAM_3');
+    $fromcust = post_scalar('PARAM_4');
+	$show_service = post_scalar('PARAM_5');
+	$comments = post_scalar('PARAM_6');
+	$orientation = post_scalar('PARAM_7');
+	$destination = post_scalar('PARAM_8');
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
@@ -112,7 +112,7 @@ function print_inventory_sales(): void
 	if ($category == 0)
 		$cat = _('All');
 	else
-		$cat = get_category_name($category);
+		$cat = get_category_name((string) $category);
 
 	if ($location == '')
 		$loc = _('All');
@@ -149,7 +149,7 @@ function print_inventory_sales(): void
     $rep->Info($params, $cols, $headers, $aligns);
     $rep->NewPage();
 
-	$res = getTransactions($category, $location, $fromcust, $from, $to, $show_service);
+	$res = getTransactions((string) $category, (string) $location, (string) $fromcust, $from, $to, (string) $show_service);
 	$total = $grandtotal = 0.0;
 	$total1 = $grandtotal1 = 0.0;
 	$total2 = $grandtotal2 = 0.0;
@@ -177,9 +177,9 @@ function print_inventory_sales(): void
 		}
 
 		$curr = get_customer_currency($trans['debtor_no']);
-		$rate = get_exchange_rate_from_home_currency($curr, sql2date($trans['tran_date']));
-		$trans['amt'] *= $rate;
-		$cb = (float)$trans['amt'] - (float)$trans['cost'];
+		$rate = (float) get_exchange_rate_from_home_currency($curr, sql2date($trans['tran_date']));
+		$trans['amt'] = (float) $trans['amt'] * $rate;
+		$cb = $trans['amt'] - (float)$trans['cost'];
 		$rep->NewLine();
 		$rep->fontSize -= 2;
 		$rep->TextCol(0, 1, $trans['stock_id']);
@@ -199,10 +199,10 @@ function print_inventory_sales(): void
 		$rep->AmountCol(6, 7, $cb, $dec);
 		$rep->fontSize += 2;
 		$total += $trans['amt'];
-		$total1 += $trans['cost'];
+		$total1 += (float) $trans['cost'];
 		$total2 += $cb;
 		$grandtotal += $trans['amt'];
-		$grandtotal1 += $trans['cost'];
+		$grandtotal1 += (float) $trans['cost'];
 		$grandtotal2 += $cb;
 	}
 	$rep->NewLine(2, 3);

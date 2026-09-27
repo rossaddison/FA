@@ -225,7 +225,7 @@ class purch_order
 	 * @param int|float|bool|null $shipping_cost
 	 * @param bool $receival
 	 */
-	function get_taxes($shipping_cost=null, $receival=false)
+	function get_taxes($shipping_cost=null, $receival=false): array
 	{
 		$items = array();
 		$prices = array();

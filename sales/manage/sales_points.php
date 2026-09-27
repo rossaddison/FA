@@ -20,11 +20,13 @@ include_once(dirname(__DIR__, 2) . "/includes/ui.inc");
 include_once(dirname(__DIR__, 2) . "/sales/includes/db/sales_points_db.inc");
 
 simple_page_mode(true);
+/** @var int|string $selected_id */
+$selected_id = $selected_id;
 //----------------------------------------------------------------------------------------------------
 
 function can_process(): bool
 {
-	if (strlen($_POST['name']) == 0)
+	if (strlen((string) $_POST['name']) == 0)
 	{
 		display_error(_("The POS name cannot be empty."));
 		set_focus('pos_name');
@@ -47,7 +49,8 @@ if ($Mode=='ADD_ITEM' && can_process())
 
 if ($Mode=='UPDATE_ITEM' && can_process())
 {
-
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	update_sales_point($selected_id, post_scalar('name'), post_scalar('location'),
 		post_scalar('account'), check_value('cash'), check_value('credit'));
 	display_notification(_('Selected point of sale has been updated'));
@@ -58,6 +61,8 @@ if ($Mode=='UPDATE_ITEM' && can_process())
 
 if ($Mode == 'Delete')
 {
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	if ((bool)key_in_foreign_table($selected_id, 'users', 'pos'))
 	{
 		display_error(_("Cannot delete this POS because it is used in users setup."));
@@ -114,7 +119,8 @@ start_table(TABLESTYLE2);
 
 if ($selected_id != -1)
 {
-
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
  	if ($Mode == 'Edit') {
 		$myrow = row_or_empty(get_sales_point($selected_id));
 
@@ -124,13 +130,19 @@ if ($selected_id != -1)
 		if ($myrow["credit_sale"]) $_POST['credit_sale']  = 1;
 		if ($myrow["cash_sale"]) $_POST['cash_sale'] = 1;
 	}
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	hidden('selected_id', $selected_id);
-} 
+}
 
 text_row_ex(_("Point of Sale Name").':', 'name', 20, 30);
 if($cash) {
-	check_row(_('Allowed credit sale terms selection:'), 'credit', check_value('credit_sale'));
-	check_row(_('Allowed cash sale terms selection:'), 'cash',  check_value('cash_sale'));
+	/** @var int $credit_sale_checked */
+	$credit_sale_checked = check_value('credit_sale');
+	/** @var int $cash_sale_checked */
+	$cash_sale_checked = check_value('cash_sale');
+	check_row(_('Allowed credit sale terms selection:'), 'credit', $credit_sale_checked);
+	check_row(_('Allowed cash sale terms selection:'), 'cash',  $cash_sale_checked);
 	cash_accounts_list_row(_("Default cash account").':', 'account');
 } else {
 	hidden('credit', 1);

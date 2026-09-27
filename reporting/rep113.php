@@ -37,13 +37,13 @@ function print_credits(): void
 	
 	include_once(dirname(__DIR__) . "/reporting/includes/pdf_report.inc");
 
-	$from = $_POST['PARAM_0'];
-	$to = $_POST['PARAM_1'];
-	$currency = $_POST['PARAM_2'];
-	$email = $_POST['PARAM_3'];
-	$paylink = $_POST['PARAM_4'];
-	$comments = $_POST['PARAM_5'];
-	$orientation = $_POST['PARAM_6'];
+	$from = (string) post_scalar('PARAM_0');
+	$to = (string) post_scalar('PARAM_1');
+	$currency = post_scalar('PARAM_2');
+	$email = post_scalar('PARAM_3');
+	$paylink = post_scalar('PARAM_4');
+	$comments = post_scalar('PARAM_5');
+	$orientation = post_scalar('PARAM_6');
 
 	if (!(bool)$from || !(bool)$to) return;
 
@@ -52,8 +52,8 @@ function print_credits(): void
 
  	$fno = explode("-", $from);
 	$tno = explode("-", $to);
-	$from = min($fno[0], $tno[0]);
-	$to = max($fno[0], $tno[0]);
+	$from = (int) min($fno[0], $tno[0]);
+	$to = (int) max($fno[0], $tno[0]);
 
 	$cols = array(4, 60, 225, 300, 325, 385, 450, 515);
 
@@ -76,13 +76,15 @@ function print_credits(): void
 			continue;
 		$sign = -1;
 		$myrow = get_customer_trans($i, ST_CUSTCREDIT);
+		if ($myrow === false)
+			continue;
 		if ($currency != ALL_TEXT && $myrow['curr_code'] != $currency) {
 			continue;
 		}
-		$baccount = get_default_bank_account($myrow['curr_code']);
+		$baccount = row_or_empty(get_default_bank_account($myrow['curr_code']));
 		$params['bankaccount'] = $baccount['id'];
 
-		$branch = get_branch($myrow["branch_code"]);
+		$branch = row_or_empty(get_branch((string) $myrow["branch_code"]));
 		$branch['disable_branch'] = $paylink; // helper
 		$sales_order = null;
 		if ($email == 1)
@@ -163,7 +165,7 @@ function print_credits(): void
 			$DisplayTax = number_format2((float)$sign*(float)$tax_item['amount'], $dec);
 
 			if (sysprefs()->suppress_tax_rates() == 1)
-				$tax_type_name = $tax_item['tax_type_name'];
+				$tax_type_name = (string) $tax_item['tax_type_name'];
 			else
 				$tax_type_name = (string)$tax_item['tax_type_name']." (".(string)$tax_item['rate']."%) ";
 

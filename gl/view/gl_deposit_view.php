@@ -22,9 +22,10 @@ include_once(dirname(__DIR__, 2) . "/includes/ui.inc");
 
 include_once(dirname(__DIR__, 2) . "/gl/includes/gl_db.inc");
 
+$trans_no = null;
 if (isset($_GET["trans_no"]))
 {
-	$trans_no = $_GET["trans_no"];
+	$trans_no = (string) get_scalar('trans_no');
 }
 
 // get the pay-to bank payment info
@@ -35,7 +36,7 @@ if (db_num_rows($result) != 1)
 
 $to_trans = row_or_empty(db_fetch($result));
 
-$company_currency = get_company_currency();
+$company_currency = (string) get_company_currency();
 
 $show_currencies = false;
 
@@ -78,7 +79,7 @@ if ($show_currencies)
 	label_cells(_("Settle currency"), $to_trans['settle_curr'], "class='tableheader2'");
 	label_cells(_("Settled amount"),  number_format2($to_trans['settled_amount'], user_price_dec()), "class='tableheader2'");
 }
-label_cells(_("Deposit Type"), $bank_transfer_types[$to_trans['account_type']], "class='tableheader2'");
+label_cells(_("Deposit Type"), $bank_transfer_types[(int) $to_trans['account_type']], "class='tableheader2'");
 end_row();
 start_row();
 label_cells(_("Reference"), $to_trans['ref'], "class='tableheader2'", "colspan=$colspan2");
@@ -103,7 +104,7 @@ else
 		display_heading2(_("Item Amounts are Shown in:") . " " . $company_currency);
 
     start_table(TABLESTYLE, "width='80%'");
-    $dim = get_company_pref('use_dimension');
+    $dim = (int) get_company_pref('use_dimension');
     if ($dim == 2)
         $th = array(_("Account Code"), _("Account Description"), _("Dimension")." 1", _("Dimension")." 2",
             _("Amount"), _("Memo"));
@@ -116,7 +117,7 @@ else
     table_header($th);
 
     $k = 0; //row colour counter
-	$total_amount = 0;
+	$total_amount = 0.0;
 
     while ($item = db_fetch($items))
     {
@@ -134,7 +135,7 @@ else
             amount_cell(-$item["amount"]);
     		label_cell($item["memo_"]);
     		end_row();
-    		$total_amount += $item["amount"];
+    		$total_amount += (float) $item["amount"];
 		}
 	}
 
@@ -145,4 +146,4 @@ else
 	display_allocations_from($to_trans['person_type_id'], $to_trans['person_id'], 2, $trans_no, $to_trans['settled_amount']);
 }
 
-end_page(true, false, false, ST_BANKDEPOSIT, $trans_no);
+end_page(true, false, false, ST_BANKDEPOSIT, (string) $trans_no);

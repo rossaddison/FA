@@ -68,11 +68,11 @@ class user_prefs
 	var $def_print_orientation; // default print orientation. 0 = Portrait. 1 = Landscape
 
 	/**
-	 * @param array<array-key, string|int|float|bool|null>|bool|null $user
+	 * @param array<array-key, string|int|float|bool|null>|false|null $user
 	 */
 	function __construct($user=null)
 	{
-		if ($user == null) { 
+		if ($user == null) {
 			// set default values, used before login
 			global $dflt_lang;
 
@@ -88,10 +88,11 @@ class user_prefs
 			$this->use_date_picker = 1;
 			$this->def_print_destination = 0;
 			$this->def_print_orientation = 0;
+			$this->startup_tab = "orders";
 
 		} else {
 			global $path_to_root;
-			$this->language = $user["language"];
+			$this->language = (string) $user["language"];
 			session_obj('language')->set_language($this->language);
 
 			$this->qty_dec = $user["qty_dec"];
@@ -105,7 +106,7 @@ class user_prefs
 			$this->date_sep = $user["date_sep"];
 			$this->tho_sep = $user["tho_sep"];
 			$this->dec_sep = $user["dec_sep"];
-			$this->theme = $user["theme"];
+			$this->theme = (string) $user["theme"];
 			$this->pagesize = $user["page_size"];
 			$this->show_hints = $user["show_hints"];
 			$this->print_profile = $user["print_profile"];
@@ -115,7 +116,7 @@ class user_prefs
 			if (isset($user["sticky_doc_date"]))
 			{
 				$this->sticky_date = $user["sticky_doc_date"];
-				$this->startup_tab = $user['startup_tab'];
+				$this->startup_tab = (string) $user['startup_tab'];
 			}
 			else
 			{
@@ -413,7 +414,7 @@ class user_prefs
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
-	function set_dec($price_dec, $qty_dec, $exrate_dec, $percent_dec, $showgl, $showcodes) 
+	function set_dec(string|int|float|bool|null $price_dec, string|int|float|bool|null $qty_dec, string|int|float|bool|null $exrate_dec, string|int|float|bool|null $percent_dec, string|int|float|bool|null $showgl, string|int|float|bool|null $showcodes): void
 	{
 		$this->price_dec = $price_dec;
 		$this->qty_dec = $qty_dec;
@@ -427,7 +428,7 @@ class user_prefs
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
-	function set_format($date_format, $date_sep, $tho_sep, $dec_sep, $theme, $pagesize) 
+	function set_format(string|int|float|bool|null $date_format, string|int|float|bool|null $date_sep, string|int|float|bool|null $tho_sep, string|int|float|bool|null $dec_sep, string $theme, string|int|float|bool|null $pagesize): void
 	{
 		$this->date_format = $date_format;
 		$this->date_sep = $date_sep;

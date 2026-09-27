@@ -25,6 +25,7 @@ include_once(dirname(__DIR__) . "/includes/data_checks.inc");
 include_once(dirname(__DIR__) . "/gl/includes/gl_db.inc");
 include_once(dirname(__DIR__) . "/inventory/includes/inventory_db.inc");
 include_once(dirname(__DIR__) . "/includes/db/manufacturing_db.inc");
+include_once(dirname(__DIR__) . "/reporting/includes/barcodes.php");
 
 //----------------------------------------------------------------------------------------------------
 
@@ -57,13 +58,10 @@ function barcode_check(?string $code, bool $return_value = false, bool $get_type
 	$skip_coupon_codes = true;
 
 	//Trims parsed string to remove unwanted whitespace or characters
-	$code = trim($code); 
+	$code = trim((string) $code);
 	if (preg_match('/[^0-9]/', $code))
 		return false;
 
-	if (!is_string($code))
-		$code = strval($code);
-	$code = trim($code);	
 	$length = strlen($code);
 	if(($length > 11 && $length <= 14) || $length == 8)
 	{	
@@ -75,9 +73,9 @@ function barcode_check(?string $code, bool $return_value = false, bool $get_type
 		
 		$calc = 0.0;
 		for ($i = 0; $i < (strlen($code) - 1); $i++)
-			$calc += ((float)($i % 2 ? $code[$i] * 1 :  $code[$i] * 3));
+			$calc += (float) ($i % 2 ? (int) $code[$i] * 1 : (int) $code[$i] * 3);
 
-		if (substr(10 - (substr($calc, -1)), -1) != substr($code, -1))
+		if (substr((string) (10 - (int) substr((string) $calc, -1)), -1) != substr($code, -1))
 			return false;
 		elseif (substr($code, 5, 1) > 2)
 		{
@@ -179,16 +177,16 @@ function print_stock_check(): void
 {
     global $path_to_root, $SysPrefs;
 
-   	$category = $_POST['PARAM_0'];
-   	$location = $_POST['PARAM_1'];
-   	$pictures = $_POST['PARAM_2'];
-   	$check    = $_POST['PARAM_3'];
-   	$shortage = $_POST['PARAM_4'];
-   	$no_zeros = $_POST['PARAM_5'];
-   	$like     = $_POST['PARAM_6']; 
-   	$comments = $_POST['PARAM_7'];
-	$orientation = $_POST['PARAM_8'];
-	$destination = $_POST['PARAM_9'];
+   	$category = post_scalar('PARAM_0');
+   	$location = post_scalar('PARAM_1');
+   	$pictures = post_scalar('PARAM_2');
+   	$check    = post_scalar('PARAM_3');
+   	$shortage = post_scalar('PARAM_4');
+   	$no_zeros = post_scalar('PARAM_5');
+   	$like     = (string) post_scalar('PARAM_6');
+   	$comments = post_scalar('PARAM_7');
+	$orientation = post_scalar('PARAM_8');
+	$destination = post_scalar('PARAM_9');
 
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
@@ -201,7 +199,7 @@ function print_stock_check(): void
 	if ($category == 0)
 		$cat = _('All');
 	else
-		$cat = get_category_name($category);
+		$cat = get_category_name((string) $category);
 
 	if ($location == ALL_TEXT)
 		$location = 'all';
@@ -220,6 +218,8 @@ function print_stock_check(): void
 		$available = _('Available');
 	}
 	$barcodes = !empty(sysprefs()->prefs['barcodes_on_stock']);
+	/** @var array{position: string, stretch: bool, fitwidth: bool, cellfitalign: string, border: bool, padding: int, fgcolor: array<int, int>, bgcolor: bool, text: bool, font: string, fontsize: int, stretchtext: int} $style */
+	$style = array();
 	if ((bool)$no_zeros) $nozeros = _('Yes');
 	else $nozeros = _('No');
 	if ((bool)$check)
@@ -271,21 +271,23 @@ function print_stock_check(): void
     $rep->Info($params, $cols, $headers, $aligns);
     $rep->NewPage();
 
-	$res = getTransactions($category, $location, $like);
+	$res = getTransactions((string) $category, (string) $location, $like);
+	if (!($res instanceof mysqli_result))
+		return;
 	$catt = '';
 	while ($trans=db_fetch($res))
 	{
 		if ($location == 'all')
 			$loc_code = "";
 		else
-			$loc_code = $location;
-		$demandqty = get_demand_qty($trans['stock_id'], $loc_code);
+			$loc_code = (string) $location;
+		$demandqty = (float) get_demand_qty($trans['stock_id'], $loc_code);
 		$demandqty += get_demand_asm_qty($trans['stock_id'], $loc_code);
-		$onorder = get_on_porder_qty($trans['stock_id'], $loc_code);
-		$onorder += get_on_worder_qty($trans['stock_id'], $loc_code);
-		if ((bool)$no_zeros && $trans['QtyOnHand'] == 0 && $demandqty == 0 && $onorder == 0)
+		$onorder = (float) get_on_porder_qty($trans['stock_id'], $loc_code);
+		$onorder += (float) get_on_worder_qty($trans['stock_id'], $loc_code);
+		if ((bool)$no_zeros && $trans['QtyOnHand'] == 0 && $demandqty == 0.0 && $onorder == 0.0)
 			continue;
-		if ((bool)$shortage && (float)$trans['QtyOnHand'] - $demandqty >= 0)
+		if ((bool)$shortage && (float)$trans['QtyOnHand'] - $demandqty >= 0.0)
 			continue;
 		if ($catt != $trans['cat_description'])
 		{
@@ -325,14 +327,31 @@ function print_stock_check(): void
 				$rep->NewPage();
 			$firstcol = 1;	
 			$adjust = false;
-			if ($barcodes && (bool)barcode_check($trans['stock_id']))
+			if ($barcodes && (bool)barcode_check((string) $trans['stock_id']))
 			{
 				$adjust = true;
-				$bar_y = $rep->GetY();
-				$barcode = str_pad($trans['stock_id'], 7, '0', STR_PAD_LEFT);
+				$barcode = str_pad((string) $trans['stock_id'], 7, '0', STR_PAD_LEFT);
 				$barcode = substr($barcode, 0, 8); // EAN 8 Check digit is auto computed and barcode printed
-				$rep->write1DBarcode($barcode, 'EAN8', $rep->cols[$firstcol++], $bar_y + 22, 22, sysprefs()->pic_height, 1.2, $style, 'N');
-			}	
+				$barcodeobj = new TCPDFBarcode($barcode, 'EAN8');
+				$arrcode = $barcodeobj->getBarcodeArray();
+				if ($arrcode !== false)
+				{
+					// draw each bar as a filled rectangle; TCPDFBarcode's own write1DBarcode()
+					// isn't usable here since it belongs to a different, unused PDF base class
+					$xres = 1.2;
+					$bar_h = (float) sysprefs()->pic_height;
+					$bar_y = $rep->row - $bar_h;
+					$xpos = (float) $rep->cols[$firstcol] + (float) $style['padding'];
+					foreach ($arrcode['bcode'] as $v)
+					{
+						$bw = (float) $v['w'] * $xres;
+						if ($v['t'])
+							$rep->rectangle($xpos, $bar_y, $bw, $bar_h, 'F', null, $style['fgcolor']);
+						$xpos += $bw;
+					}
+				}
+				$firstcol++;
+			}
 			if ((bool)$pictures)
 			{
 				$adjust = true;

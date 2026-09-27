@@ -69,12 +69,12 @@ function print_supplier_details_listing(): void
 {
     global $path_to_root;
 
-    $from = $_POST['PARAM_0'];
-    $more = $_POST['PARAM_1'];
-    $less = $_POST['PARAM_2'];
-    $comments = $_POST['PARAM_3'];
-	$orientation = $_POST['PARAM_4'];
-	$destination = $_POST['PARAM_5'];
+    $from = post_scalar('PARAM_0');
+    $more = post_scalar('PARAM_1');
+    $less = post_scalar('PARAM_2');
+    $comments = post_scalar('PARAM_3');
+	$orientation = post_scalar('PARAM_4');
+	$destination = post_scalar('PARAM_5');
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
@@ -116,12 +116,13 @@ function print_supplier_details_listing(): void
 
 	$result = get_supplier_details_for_report();
 
+	$turnover = 0.0;
 	while ($myrow=db_fetch($result))
 	{
 		$printsupplier = true;
 		if ($more != '' || $less != '')
 		{
-			$turnover = getTransactions($myrow['supplier_id'], $from);
+			$turnover = (float) getTransactions($myrow['supplier_id'], (string) $from);
 			if ($more != 0.0 && $turnover <= $more)
 				$printsupplier = false;
 			if ($less != 0.0 && $turnover >= $less)

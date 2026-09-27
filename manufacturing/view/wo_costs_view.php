@@ -28,13 +28,14 @@ include_once(dirname(__DIR__, 2) . "/manufacturing/includes/manufacturing_ui.inc
 
 //-------------------------------------------------------------------------------------------------
 
-if ($_GET['trans_no'] != "")
+$wo_id = null;
+if (get_scalar('trans_no') != "")
 {
-	$wo_id = $_GET['trans_no'];
+	$wo_id = get_scalar('trans_no');
 }
 
 //-------------------------------------------------------------------------------------------------
-function print_gl_rows(mysqli_result|FrontReport $result, string|bool|mysqli_result|null $title): void
+function print_gl_rows(mysqli_result $result, ?string $title): void
 {
 	global $systypes_array;
 
@@ -44,7 +45,7 @@ function print_gl_rows(mysqli_result|FrontReport $result, string|bool|mysqli_res
 		while($myrow = db_fetch($result)) {
 			start_row();
 			label_cell(sql2date($myrow["tran_date"]));
-			label_cell(get_trans_view_str($myrow['type'],$myrow["type_no"], $systypes_array[$myrow['type']]. ' '.(string)$myrow['type_no']));
+			label_cell(get_trans_view_str($myrow['type'],$myrow["type_no"], $systypes_array[(int) $myrow['type']]. ' '.(string)$myrow['type_no']));
 		    label_cell($myrow['account']);
 			label_cell($myrow['account_name']);
 			display_debit_or_credit_cells($myrow['amount']);
@@ -78,7 +79,7 @@ function display_wo_costs(string|int|float|bool|null $prod_id): void
 }
 
 //-------------------------------------------------------------------------------------------------
-display_heading(sprintf(_("Production Costs for Work Order # %d"), $wo_id));
+display_heading(sprintf(_("Production Costs for Work Order # %d"), (int) $wo_id));
 
 display_wo_details($wo_id, true);
 
@@ -88,5 +89,5 @@ display_wo_costs($wo_id);
 
 br(2);
 
-end_page(true, false, false, ST_WORKORDER, $wo_id);
+end_page(true, false, false, ST_WORKORDER, (string) $wo_id);
 

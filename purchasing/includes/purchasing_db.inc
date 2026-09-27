@@ -158,6 +158,7 @@ function get_po_prepayments(supp_trans $supp_trans): array
 //
 //	Add Purchase Order, GRN or Purchase Invoice with parent auto documents (if any)
 //
+/** @return array<array-key, mixed>|null|scalar */
 function add_direct_supp_trans(purch_order $cart)
 {
 	global $type_shortcuts;

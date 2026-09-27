@@ -9,6 +9,8 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
+use Yiisoft\Html\Html;
+
 include_once(dirname(__DIR__, 2) . "/includes/banking.inc");
 include_once(dirname(__DIR__, 2) . "/includes/types.inc");
 include_once(dirname(__DIR__, 2) . "/includes/current_user.inc");
@@ -17,6 +19,48 @@ include_once(dirname(__DIR__, 2) . "/includes/current_user.inc");
 define('SEARCH_BUTTON', "<input %s type='submit' class='combo_submit%s' aspect='fallback' name='%s' value=' ' title='"._("Set filter")."'> ");
 
 define('SELECT_BUTTON', "<input %s type='submit' class='combo_select%s' aspect='fallback' name='%s' value=' ' title='"._("Select")."'> ");
+
+/**
+ * The current session's output charset (e.g. 'iso-8859-1' for the base 'C'/English
+ * language, matching the Content-type/meta charset header.inc sends for the page).
+ * Html::encode()/encodeAttribute() default to assuming UTF-8 input; passing this as
+ * their $encoding argument keeps them consistent with what the page actually ships,
+ * so non-ASCII bytes (like nbsp() below) don't get corrupted into U+FFFD substitutions.
+ */
+function output_encoding(): string
+{
+	static $encoding = null;
+	if ($encoding === null)
+		$encoding = (isset($_SESSION['language']) ? session_obj('language')->encoding : null) ?: 'iso-8859-1';
+	return $encoding;
+}
+
+/**
+ * Non-breaking space, encoded for the current session's output charset.
+ * Dropdown option text goes through Html::encode(), which escapes '&', so we can't
+ * use the "&nbsp;" entity (it would render as literal text). A raw Unicode char works,
+ * but must be re-encoded: the base install's language ('C'/English) declares
+ * iso-8859-1, not UTF-8, so emitting UTF-8 bytes directly renders as mojibake.
+ */
+function nbsp(): string
+{
+	static $nbsp = null;
+	if ($nbsp === null)
+	{
+		$encoding = output_encoding();
+		$converted = false;
+		if ($encoding)
+		{
+			try {
+				$converted = @mb_convert_encoding("\u{a0}", $encoding, 'UTF-8');
+			} catch (\ValueError $e) {
+				$converted = false;
+			}
+		}
+		$nbsp = $converted !== false && $converted !== '' ? $converted : "\u{a0}";
+	}
+	return $nbsp;
+}
 
 //----------------------------------------------------------------------------
 //	Universal sql combo generator
@@ -218,10 +262,10 @@ $opts = array(		// default options
 			if ($opts['category'] !== false && $cat != $lastcat){
 				if ($lastcat!==null)
 					$selector .= "</optgroup>";
-				$selector .= "<optgroup label='".$cat."'>\n";
+				$selector .= "<optgroup label='".Html::encodeAttribute($cat, false, output_encoding())."'>\n";
 				$lastcat = $cat;
 			}
-			$selector .= "<option $sel $optclass value='$value'>$descr</option>\n";
+			$selector .= "<option $sel $optclass value='".Html::encodeAttribute($value, false, output_encoding())."'>".Html::encode($descr, false, output_encoding())."</option>\n";
 		}
 		if ($lastcat!==null)
 			$selector .= "</optgroup>";
@@ -234,7 +278,7 @@ $opts = array(		// default options
 		$first_opt = $spec_option;
 		$sel = $found===false ? 'selected' : '';
 		$optclass = @$contact_row['inactive'] ? "class='inactive'" : '';
-		$selector = "<option $sel value='$first_id'>$first_opt</option>\n"
+		$selector = "<option $sel value='".Html::encodeAttribute($first_id, false, output_encoding())."'>".Html::encode((string) $first_opt, false, output_encoding())."</option>\n"
 			. $selector;
 	}
 
@@ -257,9 +301,9 @@ $opts = array(		// default options
 	if ($by_id && ($search_box != false || (bool)$opts['editable']) ) {
 		// on first display show selector list
 		if (isset($_POST[$search_box]) && (bool)$opts['editable'] && (bool)$edit) {
-			$selector = "<input type='hidden' name='$name' value='".$_POST[$name]."'>"
+			$selector = "<input type='hidden' name='$name' value='".Html::encodeAttribute($_POST[$name], false, output_encoding())."'>"
 			."<input type='text' $disabled name='{$name}_text' id='{$name}_text' size='".
-				(string)$opts['editable']."' maxlength='".(string)$opts['max']."' $rel value='$edit'>\n";
+				(string)$opts['editable']."' maxlength='".(string)$opts['max']."' $rel value='".Html::encodeAttribute($edit, false, output_encoding())."'>\n";
 				set_focus($name.'_text'); // prevent lost focus
 		} else if (get_post((bool)$search_submit ? $search_submit : "_{$name}_button"))
 			set_focus($name); // prevent lost focus
@@ -285,7 +329,7 @@ $opts = array(		// default options
 	if ($search_box != false) {
 		$edit_entry = "<input $disabled type='text' name='$search_box' id='$search_box' size='".
 			(string)$opts['size']."' maxlength='".(string)$opts['max'].
-			"' value='$txt' class='$class".(!fallback_mode() && !$by_id ? ' fa-none' : '')."' rel='$name' autocomplete='off' title='"
+			"' value='".Html::encodeAttribute($txt, false, output_encoding())."' class='$class".(!fallback_mode() && !$by_id ? ' fa-none' : '')."' rel='$name' autocomplete='off' title='"
 			.(string)$opts['box_hint']."'"
 			.">\n";
 		if ($search_submit != false || (bool)$opts['editable']) {
@@ -437,7 +481,7 @@ $opts = array(		// default options
 			$first_id = $value;
 			$first_opt = $descr;
 		}
-		$selector .= "<option $sel value='$value'>$descr</option>\n";
+		$selector .= "<option $sel value='".Html::encodeAttribute($value, false, output_encoding())."'>".Html::encode($descr, false, output_encoding())."</option>\n";
 	}
 
 	if ($first_id!==false) {
@@ -448,7 +492,7 @@ $opts = array(		// default options
 		$first_id = $spec_id;
 		$first_opt = $spec_option;
 		$sel = $found===false ? 'selected' : '';
-		$selector = "<option $sel value='$spec_id'>$spec_option</option>\n"
+		$selector = "<option $sel value='".Html::encodeAttribute($spec_id, false, output_encoding())."'>".Html::encode((string) $spec_option, false, output_encoding())."</option>\n"
 			. $selector;
 	}
 
@@ -494,12 +538,12 @@ function _format_add_curr(array $row, string|int|float|bool|null $pname=false): 
 	}
 	if (!(bool)$pname)
 	{
-		return $row[1] . ($row[2] == $company_currency ? '' : ("&nbsp;-&nbsp;" . $row[2]));
-	}		
+		return $row[1] . ($row[2] == $company_currency ? '' : (nbsp() . "-" . nbsp() . $row[2]));
+	}
 	else
 	{
-		return $row[1] . "&nbsp;-&nbsp;" . $row[2] . ($row[3] == $company_currency ? '' : ("&nbsp;-&nbsp;" . $row[3]));
-	}		
+		return $row[1] . nbsp() . "-" . nbsp() . $row[2] . ($row[3] == $company_currency ? '' : (nbsp() . "-" . nbsp() . $row[3]));
+	}
 }
 
 function add_edit_combo(?string $type): string
@@ -762,8 +806,8 @@ function fiscalyears_list(string|int|float|bool|null $name, string|int|float|boo
 
 function _format_fiscalyears(array $row): string
 {
-	return sql2date($row[1]) . "&nbsp;-&nbsp;" . sql2date($row[2])
-	. "&nbsp;&nbsp;" . ((bool)$row[3] ? _('Closed') : _('Active'));
+	return sql2date($row[1]) . nbsp() . "-" . nbsp() . sql2date($row[2])
+	. str_repeat(nbsp(), 2) . ((bool)$row[3] ? _('Closed') : _('Active'));
 }
 
 function fiscalyears_list_cells(string|int|float|bool|null $label, ?string $name, string|int|float|bool|array|null $selected_id=null): void
@@ -863,7 +907,7 @@ function stock_items_list(string|int|float|bool|null $name, string|int|float|boo
 
 function _format_stock_items(array $row): string
 {
-	return (user_show_codes() ?  ($row[0] . "&nbsp;-&nbsp;") : "") . $row[1];
+	return (user_show_codes() ?  ($row[0] . nbsp() . "-" . nbsp()) : "") . $row[1];
 }
 
 function stock_items_list_cells(string|int|float|bool|null $label, ?string $name, string|int|float|bool|array|null $selected_id=null, string|bool|null $all_option=false, 
@@ -1391,7 +1435,7 @@ function sales_groups_list_row(?string $label, ?string $name, string|int|float|b
 /** @psalm-pure */
 function _format_template_items(array $row): string
 {
-	return ($row[0] . "&nbsp;- &nbsp;" . _("Amount") . "&nbsp;".$row[1]);
+	return ($row[0] . nbsp() . "- " . nbsp() . _("Amount") . nbsp().$row[1]);
 }
 
 /** @return non-empty-string */
@@ -1795,7 +1839,6 @@ function fixed_asset_classes_list(string|int|float|bool|null $name, string|int|f
 			'search_box' => true,
 			'search' => array("c.fa_class_id"),
 		    'search_submit' => false,
-		    'spec_id' => '',
 		    'size' => 3,
 		    'max' => 3,
 			'category' => 'class',
@@ -1884,7 +1927,7 @@ function gl_all_accounts_list(string|int|float|bool|null $name, string|int|float
 /** @psalm-pure */
 function _format_account(array $row): string
 {
-	return $row[0] .  "&nbsp;&nbsp;&nbsp;&nbsp;" . $row[1];
+	return $row[0] . str_repeat(nbsp(), 4) . $row[1];
 }
 
 function gl_all_accounts_list_cells(?string $label, ?string $name, string|int|float|bool|array|null $selected_id=null, 
@@ -2316,7 +2359,7 @@ function printers_list(?string $name, string|int|float|bool|array|null $selected
 		$result = db_select($sql, 'cannot get all printers');
 		$printers = array();
 		while($myrow=db_fetch($result)) {
-			$printers[$myrow['id']] = (string)$myrow['name'].'&nbsp;-&nbsp;'.(string)$myrow['description'];
+			$printers[$myrow['id']] = (string)$myrow['name'].nbsp().'-'.nbsp().(string)$myrow['description'];
 		}
 	}
 	return array_selector($name, $selected_id, $printers, 
@@ -2712,7 +2755,7 @@ function subledger_list_cells(string|int|float|bool|null $label, ?string $name, 
 	echo "</td>\n";
 }
 
-function subledger_list_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $all_option = false, 
+function subledger_list_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|null $account, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $all_option = false,
 	string|int|float|bool|null $submit_on_change=false, string|int|float|bool|null $show_inactive=false, string|int|float|bool|null $editkey = false): void
 {
 	echo "<tr><td class='label'>$label</td><td nowrap>";

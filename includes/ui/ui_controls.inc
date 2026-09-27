@@ -125,7 +125,7 @@ function end_table(int|bool $breaks=0): void
 		br($breaks);
 }
 
-function start_outer_table(string|int|float|bool|null $class=false, ?string $extra="", string|int|null $padding='2', ?string $spacing='0', bool $br=false): void
+function start_outer_table(int|string|bool $class=false, ?string $extra="", string|int|null $padding='2', ?string $spacing='0', bool $br=false): void
 {
 	if ($br)
 		br();
@@ -145,7 +145,7 @@ function table_section(string|int|float|bool|null $number=1, string|bool|null $w
 	echo "<table class='tablestyle_inner'>\n";
 }	
 
-function end_outer_table(string|int|float|bool|null $breaks=0, bool $close_table=true): void
+function end_outer_table(int|bool $breaks=0, bool $close_table=true): void
 {
 	if ($close_table)
 	{
@@ -201,8 +201,9 @@ function access_string(string|int|float|bool|null $label, string|int|float|bool|
 {
 	$access = '';
 	$slices = array();
+	$label = (string) $label;
 
-	if (preg_match('/(.*)&([a-zA-Z0-9])(.*)/', $label, $slices))	
+	if (preg_match('/(.*)&([a-zA-Z0-9])(.*)/', $label, $slices))
 	{
 		$label = (bool)$clean ? $slices[1].$slices[2].$slices[3] :
 			$slices[1].'<u>'.$slices[2].'</u>'.$slices[3];
@@ -454,7 +455,7 @@ function tabbed_content_start(?string $name, ?array $tabs, ?string $dft=''): voi
 
 	$sel = find_submit($name.'_', false);
 	if($sel==null)
-		$sel = get_post($selname, (string)($dft==='' ? key($tabs) : $dft));
+		$sel = (string) get_post($selname, (string)($dft==='' ? key($tabs) : $dft));
 
 	if ($sel!==@$_POST[$selname])
 		ajax()->activate($name);
@@ -586,6 +587,7 @@ function context_call(string|int|float|bool|null $call, string|array|null $ctx='
 	Restores context after external page call and
 	returns array of data passed by external page.
 */
+/** @return array<array-key, mixed>|false */
 function context_restore()
 {
 	if ( count($_SESSION['Context'])) {
@@ -664,7 +666,7 @@ function editor_return(array $vars, mixed $restore_fun=''): void {
  * @return 0|array<array-key, mixed>|string
  */
 function confirm_dialog(string|int|float|bool|null $submit, string|int|float|bool|null $msg): int|array|string {
-	if (find_post($submit)) {
+	if (get_post($submit)) {
 		display_warning($msg);
 		br();
 		submit_center_first('DialogConfirm', _("Proceed"), '', true);

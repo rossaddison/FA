@@ -77,12 +77,12 @@ function print_inventory_sales(): void
 {
     global $path_to_root;
 
-	$from = $_POST['PARAM_0'];
-	$to = $_POST['PARAM_1'];
-    $category = $_POST['PARAM_2'];
-	$comments = $_POST['PARAM_3'];
-	$orientation = $_POST['PARAM_4'];
-	$destination = $_POST['PARAM_5'];
+	$from = (string) post_scalar('PARAM_0');
+	$to = (string) post_scalar('PARAM_1');
+    $category = post_scalar('PARAM_2');
+	$comments = post_scalar('PARAM_3');
+	$orientation = post_scalar('PARAM_4');
+	$destination = post_scalar('PARAM_5');
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
@@ -96,7 +96,7 @@ function print_inventory_sales(): void
 	if ($category == 0)
 		$cat = _('All');
 	else
-		$cat = get_category_name($category);
+		$cat = get_category_name((string) $category);
 
 	$cols = array(0, 100, 260, 300, 350, 425, 430, 515);
 
@@ -116,7 +116,7 @@ function print_inventory_sales(): void
     $rep->Info($params, $cols, $headers, $aligns);
     $rep->NewPage();
 
-	$res = getTransactions($category, $from, $to);
+	$res = getTransactions((string) $category, $from, $to);
 	$total = $grandtotal = 0.0;
 	$catt = '';
 	while ($trans=db_fetch($res))

@@ -545,7 +545,7 @@ tabbed_content_start('tabs', array(
 			start_table(TABLESTYLE2, "width='90%'", 10);
 			start_row();
 			echo "<td>";
-			display_gl_items(_("Rows"), $journal_items);
+			display_gl_journal_items(_("Rows"), $journal_items);
 			gl_options_controls();
 			echo "</td>";
 			end_row();

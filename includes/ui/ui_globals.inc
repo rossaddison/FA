@@ -16,7 +16,7 @@ function set_global_supplier(string|int|float|bool|array|null $supplier_id): voi
 	$_SESSION['wa_global_supplier_id'] = $supplier_id; 
 }
 
-function get_global_supplier(bool $return_all=true) 
+function get_global_supplier(bool $return_all=true): string|int|float|bool|array|null
 {
 	if (!isset($_SESSION['wa_global_supplier_id']) || 
 		($return_all == false && $_SESSION['wa_global_supplier_id'] == ALL_TEXT))
@@ -29,7 +29,7 @@ function set_global_stock_item(string|int|float|bool|array|null $stock_id): void
 	$_SESSION['wa_global_stock_id'] = $stock_id; 
 }
 
-function get_global_stock_item(string|int|float|bool|null $return_all=true) 
+function get_global_stock_item(string|int|float|bool|null $return_all=true): string|int|float|bool|array|null
 {
 	if (!isset($_SESSION['wa_global_stock_id']) || 
 		($return_all == false && $_SESSION['wa_global_stock_id'] == ALL_TEXT))
@@ -42,7 +42,7 @@ function set_global_customer(string|int|float|bool|array|null $customer_id): voi
 	$_SESSION['wa_global_customer_id'] = $customer_id; 
 }
 
-function get_global_customer(bool $return_all=true) 
+function get_global_customer(bool $return_all=true): string|int|float|bool|array|null
 {
 	if (!isset($_SESSION['wa_global_customer_id']) || 
 		($return_all == false && $_SESSION['wa_global_customer_id'] == ALL_TEXT))
@@ -55,7 +55,7 @@ function set_global_curr_code(string|array|null $curr_code): void
 	$_SESSION['wa_global_curr_code'] = $curr_code;
 }
 
-function get_global_curr_code() 
+function get_global_curr_code(): string|array|null
 {
 	if (!isset($_SESSION['wa_global_curr_code']))
 		return "";

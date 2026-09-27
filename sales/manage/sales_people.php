@@ -27,7 +27,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 	//initialise no input errors assumed initially before we test
 	$input_error = 0;
 
-	if (strlen($_POST['salesman_name']) == 0)
+	if (strlen((string) $_POST['salesman_name']) == 0)
 	{
 		$input_error = 1;
 		display_error(_("The sales person name cannot be empty."));
@@ -46,7 +46,9 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 	}
 	if ($input_error != 1)
 	{
-    	if ($selected_id != -1) 
+    	/** @var int|string $selected_id */
+    	$selected_id = $selected_id;
+    	if ($selected_id != -1)
     	{
     		/*selected_id could also exist if submit had not been clicked this code would not run in this case cos submit is false of course  see the delete code below*/
 			update_salesman($selected_id, post_scalar('salesman_name'), post_scalar('salesman_phone'), post_scalar('salesman_fax'),
@@ -71,7 +73,8 @@ if ($Mode == 'Delete')
 	//the link to delete a selected record was clicked instead of the submit button
 
 	// PREVENT DELETES IF DEPENDENT RECORDS IN 'debtors_master'
-
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	if ((bool)key_in_foreign_table($selected_id, 'cust_branch', 'salesman'))
 	{
 		display_error(_("Cannot delete this sales-person because branches are set up referring to this sales-person - first alter the branches concerned."));
@@ -130,8 +133,10 @@ echo '<br>';
 //------------------------------------------------------------------------------------------------
 
 $_POST['salesman_email'] = "";
-if ($selected_id != -1) 
+if ($selected_id != -1)
 {
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
  	if ($Mode == 'Edit') {
 		//editing an existing Sales-person
 		$myrow = row_or_empty(get_salesman($selected_id));
@@ -144,6 +149,8 @@ if ($selected_id != -1)
 		$_POST['break_pt'] = price_format($myrow["break_pt"]);
 		$_POST['provision2'] = percent_format($myrow["provision2"]);
 	}
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	hidden('selected_id', $selected_id);
 } elseif ($Mode != 'ADD_ITEM') {
 	$_POST['provision'] = percent_format(0);

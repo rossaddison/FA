@@ -21,18 +21,19 @@ include_once(dirname(__DIR__, 2) . "/includes/date_functions.inc");
 include_once(dirname(__DIR__, 2) . "/includes/ui.inc");
 include_once(dirname(__DIR__, 2) . "/inventory/includes/inventory_db.inc");
 
+$trans_no = null;
 if (isset($_GET["trans_no"]))
 {
-	$trans_no = $_GET["trans_no"];
+	$trans_no = (string) get_scalar('trans_no');
 }
 
-display_heading($systypes_array[ST_INVADJUST] . " #$trans_no");
+display_heading($systypes_array[ST_INVADJUST] . " #" . (string) $trans_no);
 
 br(1);
 $adjustment_items = get_stock_adjustment_items($trans_no);
 $k = 0;
 $header_shown = false;
-while ($adjustment = db_fetch($adjustment_items))
+while ($adjustment_items instanceof mysqli_result && ($adjustment = db_fetch($adjustment_items)))
 {
 
 	if (!$header_shown)
@@ -61,7 +62,7 @@ while ($adjustment = db_fetch($adjustment_items))
 
     label_cell($adjustment['stock_id']);
     label_cell($adjustment['description']);
-    qty_cell($adjustment['qty'], false, get_qty_dec($adjustment['stock_id']));
+    qty_cell($adjustment['qty'], false, (int) get_qty_dec($adjustment['stock_id']));
     label_cell($adjustment['units']);
     amount_decimal_cell($adjustment['standard_cost']);
     end_row();
@@ -71,4 +72,4 @@ end_table(1);
 
 is_voided_display(ST_INVADJUST, $trans_no, _("This adjustment has been voided."));
 
-end_page(true, false, false, ST_INVADJUST, $trans_no);
+end_page(true, false, false, ST_INVADJUST, (string) $trans_no);
