@@ -8,7 +8,7 @@ cleanup has turned up.
 
 ## Snapshot
 
-Full project scan, 2026-09-27: **10,187** Psalm errors (errorLevel=1).
+Full project scan, 2026-09-27: **10,158** Psalm errors (errorLevel=1).
 
 ## `declare(strict_types=1)` rollout
 

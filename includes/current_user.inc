@@ -352,7 +352,7 @@ function round2(string|int|float|bool|null $number, string|int|float|bool|null $
 {
 	$number = (float)$number;
 	$delta = ($number < 0 ? -.0000000001 : .0000000001);
-	return round($number+$delta, $decimals);
+	return round($number+$delta, (int) $decimals);
 }
 
 /*

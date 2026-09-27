@@ -156,7 +156,7 @@ $opts = array(		// default options
 	if(!is_array($selected_id))
 		$selected_id = array((string)$selected_id); // code is generalized for multiple selection support
 
-	$txt = get_post($search_box);
+	$txt = is_string($search_box) ? get_post($search_box) : '';
 	$rel = '';
 	$limit = '';
 	if (isset($_POST['_'.$name.'_update'])) { // select list or search box change
@@ -236,7 +236,7 @@ $opts = array(		// default options
 			$descr = $opts['format']==null ?  $contact_row[1] :
 				call_user_func($opts['format'], $contact_row, $pname);
 			$sel = '';
- 		 	if (get_post($search_button) && ($txt == $value)) {
+ 		 	if (is_string($search_button) && get_post($search_button) && ($txt == $value)) {
  		 		$selected_id[] = $value;
  		 	}
 

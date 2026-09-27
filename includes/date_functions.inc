@@ -283,7 +283,7 @@ function end_month(string|int|float|bool|null $date): string
 function add_days(string|int|float|bool|null $date, string|int|float|bool|null $days): string // accepts negative values as well
 {
     list($day, $month, $year) = explode_date_to_dmy($date);
-   	$timet = mktime(0,0,0, $month, $day + $days, $year);
+   	$timet = mktime(0,0,0, $month, (int) ($day + $days), $year);
     if (sysprefs()->date_system == 1 || sysprefs()->date_system == 2)
     {
     	if (sysprefs()->date_system == 1)
@@ -303,10 +303,10 @@ function add_months(string|int|float|bool|null $date, string|int|float|bool|null
     list($day, $month, $year) = explode_date_to_dmy($date);
 
 	$months += $year*12+$month;
-	$month = ($months-1)%12+1;
-	$year = ($months-$month)/12;
+	$month = (int) (($months-1)%12+1);
+	$year = (int) (($months-$month)/12);
 
-   	$timet = mktime(0,0,0, $month, min($day, days_in_month($month, $year)), $year);
+   	$timet = mktime(0,0,0, $month, (int) min($day, days_in_month($month, $year)), $year);
 
     if (sysprefs()->date_system == 1 || sysprefs()->date_system == 2)
     {
@@ -325,7 +325,7 @@ function add_years(string|int|float|bool|null $date, string|int|float|bool|null 
 {
 
     list($day, $month, $year) = explode_date_to_dmy($date);
-   	$timet = Mktime(0,0,0, $month, $day, $year + $years);
+   	$timet = Mktime(0,0,0, $month, $day, (int) ($year + $years));
     if (sysprefs()->date_system == 1 || sysprefs()->date_system == 2)
     {
     	if (sysprefs()->date_system == 1)
@@ -536,7 +536,7 @@ function explode_date_to_dmy(string|int|float|bool|null $date_): array
 		return array(0,0,0);
 	}
 	list($year, $month, $day) = explode("-", $date);
-	return array($day, $month, $year);
+	return array((int) $day, (int) $month, (int) $year);
 }
 
 /** @psalm-pure */

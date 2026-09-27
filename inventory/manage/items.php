@@ -26,12 +26,12 @@ if (isset($_GET['FixedAsset'])) {
   $page_security = 'SA_ASSET';
   $_SESSION['page_title'] = _($help_context = "Fixed Assets");
   $_POST['mb_flag'] = 'F';
-  $_POST['fixed_asset']  = 1;
+  $_POST['fixed_asset']  = true;
 }
 else {
   $_SESSION['page_title'] = _($help_context = "Items");
 	if (!get_post('fixed_asset'))
-		$_POST['fixed_asset']  = 0;
+		$_POST['fixed_asset']  = false;
 }
 
 

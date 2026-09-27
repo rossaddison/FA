@@ -4,6 +4,81 @@ Running log of real defects — not Psalm noise — turned up while working
 through the categories described in [PSALM_MIGRATION.md](PSALM_MIGRATION.md).
 Most severe first within each section.
 
+## strict_types fallout: live crashes found via real login/page testing
+
+Unlike the rest of this document, these weren't found by Psalm — the
+`declare(strict_types=1)` rollout (see PSALM_MIGRATION.md) surfaced them the
+moment a real browser session hit them: login itself was completely broken,
+then each fix revealed the next one in the chain. Same underlying cause
+throughout — a value that was already loosely one type (a numeric string, a
+`float` from `ceil()`/`round()`-family functions, a `0`/`1` sentinel used as
+a stand-in for a boolean) reaching a native, strictly-typed parameter.
+
+- **`includes/main.inc` — `random_id()`.** `$n = ceil($strength/8);` then
+  passed straight to `openssl_random_pseudo_bytes()`'s `int $length`
+  parameter — `ceil()` always returns `float`. This runs on effectively
+  every request (session/CSRF id generation), so this alone made the whole
+  app unusable. Cast to `(int)`.
+
+- **`includes/page/footer.inc` and `themes/default/renderer.php` —
+  `page_footer()` / `menu_footer()`.** Both call `yiiLayoutEnabled()`
+  unconditionally, but that function only becomes defined once
+  `includes/page/header.inc` has run (it does the `include_once` for
+  `includes/yii/layout.inc`). The normal `page()` flow guarantees that
+  ordering, but the *error handler's own* attempt to render a graceful
+  error page (triggered by the `random_id()` crash above, which happens
+  before `page()` ever runs) calls `end_page()` directly and hit this gap —
+  masking the real error behind a second "Call to undefined function"
+  crash. Guarded both call sites with `function_exists()` first, matching
+  the identical guard `includes/errors.inc` already uses for this exact
+  scenario.
+
+- **`includes/db/connect_db_mysqli.inc` — `set_global_connection()`.**
+  `$connection["port"]` (a string from `config_db.php`) passed straight into
+  `mysqli_connect()`'s `?int $port` parameter. Cast to `(int)`.
+
+- **`includes/ui/ui_lists.inc` — `combo_input()`.** `$search_box` and
+  `$search_button` are legitimately `false` (a "no search box configured"
+  sentinel) most of the time, but were passed straight to `get_post()`,
+  whose `$name` parameter only accepts `string|array`. Hit on the majority
+  of list/combo-heavy pages (customers, suppliers, bank accounts, GL account
+  types, stock inquiries, ...). Guarded both call sites with `is_string()`.
+
+- **`includes/dashboard.inc`.** Ten separate `round($myrow['total'])` /
+  `round($myrow['costs'])` / `round($myrow['sales'])` / `round($row['Balance'])`
+  -style calls across the topten/chart widgets — numeric values read back
+  from `db_fetch()` come back as strings, and `round()`'s first parameter is
+  `int|float`. Cast each to `(float)`.
+
+- **`includes/current_user.inc` — `round2()`.** `$decimals` is typed
+  `string|int|float|bool|null` (matching the broad `user_*_dec()` family
+  that feeds it) but was passed straight to `round()`'s `int $precision`
+  parameter. `round2()` is the core formatting primitive behind
+  `number_format2()`, so this affected essentially every currency/quantity
+  display. Cast to `(int)`.
+
+- **`includes/date_functions.inc` — `add_days()` / `add_months()` /
+  `add_years()`.** All three build a Unix timestamp via `mktime()` from
+  `explode_date_to_dmy()`'s day/month/year, then do further arithmetic on
+  the pieces (`$day + $days`, `($months-1)%12+1`, `$year + $years`) before
+  passing them back into `mktime()` — `mktime()`'s month/day/year parameters
+  are all `?int`. Fixed at the source: `explode_date_to_dmy()` now returns
+  `(int)`-cast day/month/year, and the follow-on arithmetic at each call
+  site is explicitly cast too.
+
+- **`inventory/manage/items.php`.** `$_POST['fixed_asset']` was set to the
+  literal integers `1`/`0` as an ad hoc boolean flag, then passed to
+  `stock_categories_list_row()`'s `$fixed_asset` parameter, typed
+  `string|bool|null` (no `int`). Changed the sentinels to `true`/`false`,
+  which match the parameter's own declared type and every existing
+  truthy-check call site.
+
+- **`admin/attachments.php`.** `get_post('filterType')` /
+  `get_post('trans_no')` passed straight to `display_rows()`, typed
+  `string|null` for both — `get_post()`'s generic return type allows
+  `array`. Guarded with `is_array($x) ? null : (string) $x` at the call
+  site.
+
 ## Live crashes
 
 - **`inventory/includes/inventory_db.inc` — `item_img_name()`.** Parameter

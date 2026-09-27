@@ -264,8 +264,9 @@ start_form(true);
 viewing_controls();
 
 $type = get_post('filterType');
+$trans_no = get_post('trans_no');
 
-display_rows($type, get_post('trans_no'));
+display_rows(is_array($type) ? null : (string) $type, is_array($trans_no) ? null : (string) $trans_no);
 
 br(2);
 

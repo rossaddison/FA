@@ -452,7 +452,7 @@ function customer_top(?string $today, ?int $limit=10, string|int|null $width='33
 	$sales = 0.0;
 	while ($myrow = db_fetch($result))
 	{
-		$sales += round($myrow['total']);
+		$sales += round((float) $myrow['total']);
 		alt_table_row_color($k);
 		$name = (string)$myrow["debtor_no"]." ".htmlspecialchars_decode($myrow["name"]);
 		label_cell($name);
@@ -460,7 +460,7 @@ function customer_top(?string $today, ?int $limit=10, string|int|null $width='33
 		if ($pg != null)
 		{
 			$names[] = $name;
-			$totals[] = round($myrow['total']);
+			$totals[] = round((float) $myrow['total']);
 		}	
 		end_row();
 	}
@@ -502,7 +502,7 @@ function supplier_top(?string $today, ?int $limit=10, string|int|null $width='33
 		if ($pg != null)
 		{
 			$names[] = $name;
-			$totals[] = round($myrow['total']);
+			$totals[] = round((float) $myrow['total']);
 		}	
 		end_row();
 	}
@@ -585,10 +585,10 @@ function stock_top(?string $today, ?int $limit=10, string|int|null $width='33', 
 		if ($pg != NULL)
 		{
 			$names[] = $name;
-			$totals[] = round($myrow['total']);	
+			$totals[] = round((float) $myrow['total']);	
 			if ($type == 0)
 			{
-				$costs[] = round($myrow['costs']);
+				$costs[] = round((float) $myrow['costs']);
 				$results[] = round((float)$myrow['total'] - (float)$myrow['costs']);
 			}
 		}	
@@ -676,7 +676,7 @@ function gl_top(?string $today, string|int|null $width='33', ?object &$pg=null):
 	{
 		if ($myrow['ctype'] > 3)
 		{
-			$total += round($myrow['total']);
+			$total += round((float) $myrow['total']);
 			if ($pg != null)
 			{
 				$names[] = $myrow['class_name']; 
@@ -731,8 +731,8 @@ function gl_week_performance(?string $today, string|int|null $width="33", ?int $
 	while ($myrow = db_fetch($result))
 	{
 		$week_names[] = $myrow['week_name']; 
-		$sales[] = round($myrow['sales']);
-		$costs[] = round($myrow['costs']);
+		$sales[] = round((float) $myrow['sales']);
+		$costs[] = round((float) $myrow['costs']);
 		$results[] = round((float)$myrow['sales'] - (float)$myrow['costs']);
 	}	
 	$pg->setLabels($week_names);
@@ -769,8 +769,8 @@ function gl_month_performance(?string $today, string|int|null $width="33", ?int 
 	while ($myrow = db_fetch($result))
 	{
 		$month_names[] = $myrow['month_name']; 
-		$sales[] = round($myrow['sales']);
-		$costs[] = round($myrow['costs']);
+		$sales[] = round((float) $myrow['sales']);
+		$costs[] = round((float) $myrow['costs']);
 		$results[] = round((float)$myrow['sales'] - (float)$myrow['costs']);
 	}	
 	$pg->setLabels($month_names);
@@ -818,8 +818,8 @@ function customer_aging(?string $today, string|int|null $width="33"): float
 	$past2a = $past2 + 1;
 	$names = array(_('Current'),"1-$past1", "$past1a-$past2", "$past2+");
 	$balances = array(round((float)$row['Balance']-(float)$row['Due']), round((float)$row['Due'] - (float)$row['Overdue1']), 
-		round((float)$row['Overdue1'] - (float)$row['Overdue2']), round($row['Overdue2']));
-	$total = round($row['Balance']);
+		round((float)$row['Overdue1'] - (float)$row['Overdue2']), round((float)$row['Overdue2']));
+	$total = round((float)$row['Balance']);
 	$pg->setLabels($names);
 	$pg->addSerie(_('Balances'), $balances);
 	source_graphic($today, $title, _('Days'), $pg);
@@ -877,8 +877,8 @@ function supplier_aging(?string $today, string|int|null $width="33"): float
 	$past2a = $past2 + 1;
 	$names = array(_('Current'),"1-$past1", "$past1a-$past2", "$past2+");
 	$balances = array(round((float)$row['Balance']-(float)$row['Due']), round((float)$row['Due'] - (float)$row['Overdue1']), 
-		round((float)$row['Overdue1'] - (float)$row['Overdue2']), round($row['Overdue2']));
-	$total = round($row['Balance']);
+		round((float)$row['Overdue1'] - (float)$row['Overdue2']), round((float)$row['Overdue2']));
+	$total = round((float)$row['Balance']);
 	$pg->setLabels($names);
 	$pg->addSerie(_('Balances'), $balances);
 	source_graphic($today, $title, _('Days'), $pg);
