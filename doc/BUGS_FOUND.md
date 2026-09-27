@@ -4,6 +4,43 @@ Running log of real defects — not Psalm noise — turned up while working
 through the categories described in [PSALM_MIGRATION.md](PSALM_MIGRATION.md).
 Most severe first within each section.
 
+## Live crashes
+
+- **`includes/packages.inc` — `get_languages_list()`, `get_extensions_list()`,
+  `get_themes_list()`, `get_charts_list()`.** Found via Psalm's
+  `NullableReturnStatement`. All four are declared with a native,
+  non-nullable `: array` return type and assign their result straight from
+  `get_pkg_or_list()`, which is declared `array|null` and genuinely returns
+  `null` on several realistic failure paths (the extension repository can't
+  be reached, the local cache file can't be downloaded/deleted, or
+  `openssl_verify` isn't available on the server). Any of those conditions
+  would have thrown a fatal `TypeError` ("Return value must be of type
+  array, null returned") instead of the admin's "install/manage
+  languages/extensions/themes/charts" page rendering an empty or
+  error-flagged list. Fixed by falling back to `?? array()` at the point
+  each function reads `get_pkg_or_list()`'s result (also needed before the
+  end of each function, since several go on to index into the array before
+  returning it).
+
+- **`reporting/includes/reports_classes.inc` — `add_custom_reports()`.**
+  Type-hinted `add_custom_reports(array &$reports)`, but its only call site
+  (`reporting/reports_main.php`, the main Reports menu page) passes a
+  `BoxReports` object, not an array. Passing an object where PHP enforces a
+  strict `array` parameter throws a fatal `TypeError` — this crashed the
+  Reports menu on every load. Fixed the type hint to `BoxReports &$reports`.
+
+- **`reporting/rep303.php` (Stock Check Sheet) — barcode printing.** The
+  "Print Barcode on stock check sheet" company preference (a genuine,
+  settable option) triggered calls to `$rep->GetY()` and
+  `$rep->write1DBarcode(...)`, neither of which exist anywhere on
+  `FrontReport`'s actual class chain — those methods only exist on
+  `reporting/includes/tcpdf.php`, a bundled, otherwise-unused alternate PDF
+  library. Any install with that preference enabled hit "call to undefined
+  method". Fixed by implementing real bar rendering using
+  `reporting/includes/barcodes.php`'s `TCPDFBarcode` class (a standalone bar-
+  array generator) and `FrontReport::rectangle()` (the same primitive already
+  used for picture placement elsewhere in the codebase).
+
 ## Data-loss-adjacent: missing audit trail / dead success link
 
 - **`inventory/includes/db/items_trans_db.inc` — `stock_cost_update()`.**
@@ -146,27 +183,6 @@ latent taint-tracking noise (Psalm was treating their output as still
 the real bugs above one at a time as each previously-reported path was
 resolved.
 
-## Live crashes
-
-- **`reporting/includes/reports_classes.inc` — `add_custom_reports()`.**
-  Type-hinted `add_custom_reports(array &$reports)`, but its only call site
-  (`reporting/reports_main.php`, the main Reports menu page) passes a
-  `BoxReports` object, not an array. Passing an object where PHP enforces a
-  strict `array` parameter throws a fatal `TypeError` — this crashed the
-  Reports menu on every load. Fixed the type hint to `BoxReports &$reports`.
-
-- **`reporting/rep303.php` (Stock Check Sheet) — barcode printing.** The
-  "Print Barcode on stock check sheet" company preference (a genuine,
-  settable option) triggered calls to `$rep->GetY()` and
-  `$rep->write1DBarcode(...)`, neither of which exist anywhere on
-  `FrontReport`'s actual class chain — those methods only exist on
-  `reporting/includes/tcpdf.php`, a bundled, otherwise-unused alternate PDF
-  library. Any install with that preference enabled hit "call to undefined
-  method". Fixed by implementing real bar rendering using
-  `reporting/includes/barcodes.php`'s `TCPDFBarcode` class (a standalone bar-
-  array generator) and `FrontReport::rectangle()` (the same primitive already
-  used for picture placement elsewhere in the codebase).
-
 ## Broken access control
 
 - **`includes/dashboard.inc` — `dashboard()`.** The per-app dashboard access
@@ -269,6 +285,19 @@ resolved.
   `get_sales_order_header()` / `get_supp_po()` as an array unconditionally,
   even though each function's own docblock documents a `false`/`null` return
   on a lookup miss. Added `if ($myrow === false) continue;` guards.
+
+- **`includes/references.inc` — `references::get_next()`.** Declared
+  `@return string`, but both lookup paths (`$this->reflines->get($line)`,
+  and `db_fetch()` on a filtered query when no `$line` is given) can
+  genuinely return `false`/`null`/an empty array if the requested refline
+  doesn't exist or a transaction type has no configured default refline —
+  neither path was guarded, so `$refline['pattern']` would silently read as
+  `null` and get returned (or fed into `_parse_next()`) instead of a real
+  document-reference pattern. Currently only reachable via an incompletely
+  configured install (custom transaction type added without a matching
+  refline), not shipped seed data. Fixed by wrapping with `row_or_empty()`
+  and returning `''` when no pattern is found, satisfying the declared
+  non-nullable `string` return.
 
 ## Missing feature (implemented, not just guarded)
 

@@ -469,7 +469,7 @@ function get_languages_list(): array
 				'RTLDir' => 'rtl',
 				'Description' => 'Descr',
 				'InstallPath' => 'path'
-			));
+			)) ?? array();
 
 	// add/update languages already installed
 	// 
@@ -517,7 +517,7 @@ function get_extensions_list(?string $type = null): array
 				'Encoding' => 'encoding',
 //				'AccessExtensions' => 'acc_file',
 				'InstallPath' => 'path'
-			));
+			)) ?? array();
 
 	// lookup for local extensions
 	$path = $path_to_root.'/modules/';
@@ -567,7 +567,7 @@ function get_themes_list(): array
 				'Version' => 'available',
 				'Name' => 'name',
 				'Description' => 'Descr'
-			));
+			)) ?? array();
 
 	// add/update extensions already installed
 	// 
@@ -600,7 +600,7 @@ function get_charts_list(): array
 				'InstallPath' => 'path',
 				'Encoding' => 'encoding',
 				'SqlScript' => 'sql'
-			));
+			)) ?? array();
 
 	// add/update default charts
 	// 

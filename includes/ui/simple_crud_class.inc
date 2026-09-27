@@ -362,7 +362,7 @@ class simple_crud {
 	//
 	//	Read record from db for edition
 	//
-	/** @return array<never, never> */
+	/** @return array<array-key, mixed>|false */
 	function db_read() {
 		display_notification(__FUNCTION__. ' is not defined...');
 		return array();
@@ -378,14 +378,14 @@ class simple_crud {
 	//
 	//	Delete record
 	//
-	/** @return void */
+	/** @return void|bool|mysqli_result */
 	function db_delete() {
 		display_notification(__FUNCTION__. ' is not defined...');
 	}
 	//
 	//	Insert record
 	//
-	/** @return void */
+	/** @return void|int|string|null */
 	function db_insert()
 	{
 		display_notification(__FUNCTION__. ' is not defined...');
@@ -411,7 +411,7 @@ class simple_crud {
 
 	/**
 	 * @psalm-pure
-	 * @return true
+	 * @return bool
 	 */
 	function insert_check() {
 		return true;

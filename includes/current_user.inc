@@ -607,7 +607,8 @@ function user_theme()
 
 function user_pagesize(): int|string
 {
-	return session_obj('wa_current_user')->prefs->get_pagesize();
+	$pagesize = session_obj('wa_current_user')->prefs->get_pagesize();
+	return is_int($pagesize) || is_string($pagesize) ? $pagesize : (int)($pagesize ?? 0);
 }
 
 /** @return null|scalar */

@@ -261,9 +261,12 @@ class references
 			$refs = $this->reflines->get_all("trans_type=".db_escape($type)." AND `default`");
 			$refline = db_fetch($refs);
 		}
+		$refline = row_or_empty($refline);
+		if (!isset($refline['pattern']))
+			return '';
 
 		if ($this->_legacy_line($refline))
-			return $refline['pattern'];
+			return (string) $refline['pattern'];
 
 		return $this->_parse_next($type, (string)$refline['prefix'].(string)$refline['pattern'], $context);
 	}

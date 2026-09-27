@@ -8,7 +8,7 @@ cleanup has turned up.
 
 ## Snapshot
 
-Full project scan, 2026-09-27: **10,297** Psalm errors (errorLevel=1).
+Full project scan, 2026-09-27: **10,257** Psalm errors (errorLevel=1).
 
 Progress is tracked by the overall project total, not per-file counts — see
 "Known noise" below for why per-file counts are unstable and misleading here.
@@ -101,6 +101,25 @@ run: total Psalm errors dropped by 63, `InvalidReturnStatement`/
 `InvalidReturnType` by only 7 of those) — the extra type noise was quietly
 inflating `Mixed*`-family findings everywhere invoice/credit-note/delivery
 numbers get used afterward (reports, GL views, etc.).
+
+**Template-method base classes with narrower placeholder return types than
+their overrides.** `simple_crud` (`includes/ui/simple_crud_class.inc`) and
+`simple_crud_view` (`includes/ui/class.crud_view.inc`) declare stub methods
+like `db_insert()`, `db_update()`, `db_read()`, `db_delete()`,
+`insert_check()`, `list_view()` meant to be overridden by every concrete
+subclass — the base implementations just call
+`display_notification(__FUNCTION__.' is not defined...')` and are never
+meant to run. Their placeholder return types (`void`, `true`, `array<never,
+never>`) were narrower than what the real overrides in `attachments`/
+`contacts`/`fa_reflines` actually return (`bool|mysqli_result`, `bool`,
+`array<array-key, mixed>|false`, etc.), which is an LSP violation Psalm
+correctly flags as `ImplementedReturnTypeMismatch`. Fixed by widening the
+base declarations to a union covering every current override (e.g.
+`void|bool|mysqli_result`) rather than narrowing the overrides — the base
+stub's "return nothing meaningful" behavior is a true subtype of that
+union. Same category as `archive`'s `create_tar()`/`create_pkg()` stubs
+(see BUGS_FOUND.md) but for return types instead of missing methods
+entirely.
 
 **Dynamically-loaded theme classes.** `frontaccounting.php` / `includes/page/
 header.inc` / `includes/page/footer.inc` load a `renderer` class via

@@ -658,7 +658,7 @@ class simple_crud_view extends user_view {
 	//	Show database content in pager/table
 	//	parameter $Mode contains new mode on change, or '' otherwise
 	//
-	/** @return void */
+	/** @return void|bool */
 	function list_view($Mode) {
 		display_notification(__FUNCTION__. ' is not defined...');
 	}
