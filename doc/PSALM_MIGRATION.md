@@ -8,7 +8,7 @@ cleanup has turned up.
 
 ## Snapshot
 
-Full project scan, 2026-09-27: **10,360** Psalm errors (errorLevel=1).
+Full project scan, 2026-09-27: **10,297** Psalm errors (errorLevel=1).
 
 Progress is tracked by the overall project total, not per-file counts — see
 "Known noise" below for why per-file counts are unstable and misleading here.
@@ -84,6 +84,23 @@ the real `rtl` key is a genuine `bool` everywhere it's set
 across the codebase look like a permanent-false `DocblockTypeContradiction` —
 the application code was correct; the global's declared type was too narrow.
 Widened to `array<int, array<string, string|bool>>`.
+
+**Overly-broad legacy `@return` docblocks that were never actually reachable.**
+`write_customer_trans()` (`sales/includes/db/cust_trans_db.inc`) was declared
+`@return array<array-key, mixed>|null|scalar`, but its only return statement
+is `return $trans_no;`, where `$trans_no` is either the incoming
+`string|int|float|bool|null` parameter unchanged or the result of
+`get_next_trans_no()` (`float|int`) — never an array. The bogus `array<...>`
+half of the union then propagated through every caller that returns its
+result directly (`write_sales_invoice()`, `write_credit_note()`,
+`write_sales_delivery()`, and in turn `Cart::write()`), each independently
+declared with the same over-broad `array<array-key, mixed>|null|scalar`.
+Narrowing just the one root function's docblock and its three direct callers
+resolved a disproportionately large number of downstream findings (a single
+run: total Psalm errors dropped by 63, `InvalidReturnStatement`/
+`InvalidReturnType` by only 7 of those) — the extra type noise was quietly
+inflating `Mixed*`-family findings everywhere invoice/credit-note/delivery
+numbers get used afterward (reports, GL views, etc.).
 
 **Dynamically-loaded theme classes.** `frontaccounting.php` / `includes/page/
 header.inc` / `includes/page/footer.inc` load a `renderer` class via

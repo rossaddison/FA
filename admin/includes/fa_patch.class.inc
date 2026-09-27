@@ -47,8 +47,6 @@ class fa_patch {
 		include $path_to_root."/config_db.php";
 
 		$this->companies = $db_connections;
-
-		return $this->companies;
 	}
 
 	/*

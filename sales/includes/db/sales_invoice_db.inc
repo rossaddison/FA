@@ -14,7 +14,7 @@
 //
 /**
  * @param Cart $invoice
- * @return array<array-key, mixed>|null|scalar
+ * @return string|int|float|bool|null
  */
 function write_sales_invoice(&$invoice)
 {

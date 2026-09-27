@@ -3,7 +3,7 @@
 
 ## PHP 8.5 / Psalm Migration Status
 
-This branch (`chore/php-8.5-minimum`) is undergoing a file-by-file Psalm static-analysis cleanup as part of raising the minimum PHP version to 8.5. Full project scan, 2026-09-27: **10,360** Psalm errors, down from an initial 13,353.
+This branch (`chore/php-8.5-minimum`) is undergoing a file-by-file Psalm static-analysis cleanup as part of raising the minimum PHP version to 8.5. Full project scan, 2026-09-27: **10,297** Psalm errors, down from an initial 13,353.
 
 See [doc/PSALM_MIGRATION.md](doc/PSALM_MIGRATION.md) for the methodology, the error-category breakdown, and the established idioms/known-noise patterns, and [doc/BUGS_FOUND.md](doc/BUGS_FOUND.md) for the running list of genuine bugs (including a site-wide XSS, several SQL injection fixes, a couple of live crashes, and a broken access-control check) the cleanup has turned up so far.
 

@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------------
 // insert/update sales delivery
 //
-/** @return array<array-key, mixed>|null|scalar */
+/** @return string|int|float|bool|null */
 function write_sales_delivery(Cart &$delivery,string|int|float|bool|null $bo_policy)
 {
 

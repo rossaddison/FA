@@ -135,8 +135,9 @@ class contacts extends simple_crud {
 				$dat['notes'], $dat['contacts'], $this->entity);
 	}
 
+	/** @return null|scalar */
 	function db_update() {
-			return update_crm_person($this->selected_id, post_scalar('ref'), post_scalar('name'), post_scalar('name2'), 
+			return update_crm_person($this->selected_id, post_scalar('ref'), post_scalar('name'), post_scalar('name2'),
 				post_scalar('address'), post_scalar('phone'), post_scalar('phone2'), post_scalar('fax'), post_scalar('email'), 
 				post_scalar('lang'), post_scalar('notes'), $_POST['assgn'], $this->entity, $this->class);
 	}

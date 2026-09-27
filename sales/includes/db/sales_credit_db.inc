@@ -13,7 +13,7 @@
 // if ($writeoff_acc==0) return goods into $cart->Location
 // if src_docs!=0 => credit invoice else credit note
 //
-/** @return array<array-key, mixed>|null|scalar */
+/** @return bool|string|int|float|null */
 function write_credit_note(Cart &$credit_note, string|int|float|bool|null $write_off_acc)
 {
 
