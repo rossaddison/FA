@@ -43,7 +43,7 @@ simple_page_mode(true);
 
 if (isset($_GET['debtor_no']))
 {
-	$_POST['customer_id'] = strtoupper((string) $_GET['debtor_no']);
+	$_POST['customer_id'] = strtoupper((string) get_scalar('debtor_no'));
 }
 
 /** @var int|string $selected_id */
@@ -230,7 +230,8 @@ function branch_settings(string|int|float|bool|array|null $selected_id, bool $nu
 		}
 
 	}
-	hidden('popup', (string) @$_REQUEST['popup']);
+	$popup_val = @$_REQUEST['popup'];
+	hidden('popup', is_array($popup_val) ? '' : $popup_val);
 
 	table_section_title(_("Name and Contact"));
 	text_row(_("Branch Name:"), 'br_name', null, 50, 60);
@@ -278,9 +279,9 @@ echo "<center>" . _("Select a customer: ") . "&nbsp;&nbsp;";
 echo customer_list('customer_id', null, false, true);
 echo "</center><br>";
 
-$num_branches = db_customer_has_branches((string) get_post('customer_id'));
+$num_branches = db_customer_has_branches((string) post_scalar('customer_id'));
 
-$sql = get_sql_for_customer_branches((string) get_post('customer_id'));
+$sql = get_sql_for_customer_branches((string) post_scalar('customer_id'));
 
 //------------------------------------------------------------------------------------------------
 if ($num_branches)
