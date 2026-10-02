@@ -141,6 +141,20 @@ a stand-in for a boolean) reaching a native, strictly-typed parameter.
   `$value !== null &&` before the `isset()` check, per the deprecation
   notice's own suggestion.
 
+- **`sales/inquiry/sales_orders_view.php`.** `$_POST['order_view_mode'] =
+  false;` used as an ad hoc "no filter selected" sentinel (same bug class as
+  the `fixed_asset` sentinel in `inventory/manage/items.php` above), then fed
+  via `get_post('order_view_mode')` into `get_sql_for_sales_orders_view()`'s
+  `$filter` parameter, typed `string|array|null` — no `bool`. Hit on
+  `sales_orders_view.php?type=30` (the plain "Search All Sales Orders" case,
+  where none of the `$_GET['OutstandingOnly']`/`InvoiceTemplates`/etc.
+  branches match). Changed the sentinel to `''`, which behaves identically in
+  every existing `==` comparison against it elsewhere in the file. Checked
+  the sibling `sales_deliveries_view.php`'s equivalent `$_POST['OutstandingOnly']
+  = false;` — that one's target parameter (`get_sql_for_sales_deliveries_view()`'s
+  `$outstanding`) is typed `string|bool|array|null`, so `bool` is valid there
+  and no fix was needed.
+
 ## Live crashes
 
 - **`inventory/includes/inventory_db.inc` — `item_img_name()`.** Parameter

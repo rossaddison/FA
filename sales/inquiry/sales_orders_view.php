@@ -61,7 +61,7 @@ if ($trans_type == ST_SALESORDER)
 	}
 	elseif (!isset($_POST['order_view_mode']))
 	{
-		$_POST['order_view_mode'] = false;
+		$_POST['order_view_mode'] = '';
 		$_SESSION['page_title'] = _($help_context = "Search All Sales Orders");
 	}
 }
