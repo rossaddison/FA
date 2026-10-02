@@ -194,6 +194,13 @@ a stand-in for a boolean) reaching a native, strictly-typed parameter.
   every `print_profiles.php` load. Passed the `$repdir` handle from the
   matching `opendir($path)` call explicitly.
 
+- **`includes/remote_url.inc` — `url_get_contents()`.** Default port fell
+  back to the string `'80'` while the `isset($parsedUrl['port'])` branch
+  used `parse_url()`'s int port — passed straight to `fsockopen()`'s native
+  `int $port` parameter. Hit on `admin/inst_lang.php` (checks a remote URL
+  for available language packs). Changed the default to the int `80` and
+  cast the parsed-URL branch to `(int)` for consistency.
+
 ## Live crashes
 
 - **`inventory/includes/inventory_db.inc` — `item_img_name()`.** Parameter

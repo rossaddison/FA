@@ -37,10 +37,10 @@ function url_get_contents(?string $url, ?int $timeout=10): string|false|null
 	}
 
 	if (isset($parsedUrl['port'])) {
-		$port = $parsedUrl['port'];
+		$port = (int) $parsedUrl['port'];
 	} else {
 		// most sites use port 80
-		$port = '80';
+		$port = 80;
 	}
 
 	$response = '';
