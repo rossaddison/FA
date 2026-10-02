@@ -43,10 +43,10 @@ function write_sales_invoice(&$invoice)
 	$freight_tax = $invoice->get_shipping_tax();
 
 	if (!$invoice->is_prepaid())
-		update_customer_trans_version(get_parent_type(ST_SALESINVOICE), $invoice->src_docs);
+		update_customer_trans_version(get_parent_type(ST_SALESINVOICE), is_array($invoice->src_docs) ? $invoice->src_docs : array());
     elseif (count($invoice->prepayments)) {	// partial invoice
 		$last_payment = end($invoice->prepayments);
-		$gl_date = sql2date($last_payment['tran_date']);
+		$gl_date = sql2date((string) $last_payment['tran_date']);
 	} else {	// final invoice
 		$gl_date = $invoice->document_date;
 	}
@@ -68,9 +68,10 @@ function write_sales_invoice(&$invoice)
 	}
 
 	/* Insert/update the debtor_trans */
+	// Cart::$order_no is always a single int|string|null (never an array -
+	// confirmed via every assignment site project-wide), so the historical
+	// is_array()/[0] extraction here was dead code
 	$sales_order = $invoice->order_no;
-	if (is_array($sales_order))
-			$sales_order = $sales_order[0]; // assume all crucial SO data are same for every delivery
 
 	if ((bool)$trans_no) {
 		$allocs = get_payments_for($trans_no, ST_SALESINVOICE, $invoice->customer_id);
@@ -84,9 +85,9 @@ function write_sales_invoice(&$invoice)
 	{
 		$allocs = $invoice->prepayments;
 		// values posted are reduced by prepaid_factor
-		$prepaid_factor = $invoice->prep_amount/$invoice->get_trans_total();
+		$prepaid_factor = (float)$invoice->prep_amount/$invoice->get_trans_total();
 	} else {
-		$prepaid_factor = 1;
+		$prepaid_factor = 1.0;
 	}
 	 // write_customer_trans have to be called after optional void_cust_allocations above
 	$invoice_no = write_customer_trans(ST_SALESINVOICE, $trans_no, $invoice->customer_id,
@@ -97,7 +98,7 @@ function write_sales_invoice(&$invoice)
 		$invoice->dimension2_id, $invoice->payment, $invoice->tax_included, $invoice->prep_amount); 
 
 	if ($trans_no == 0) {
-		$invoice->trans_no = array($invoice_no=>0);
+		$invoice->trans_no = array((int) $invoice_no=>0);
 	} else
 		move_trans_attachments(ST_SALESINVOICE, $trans_no, $invoice_no);
 
@@ -105,19 +106,26 @@ function write_sales_invoice(&$invoice)
 	// for prepayments use deferred income account if set
 	$sales_account = $invoice->is_prepaid() ? get_company_pref('deferred_income_act') : 0;
 
+	/**
+	 * @var array<array-key, array{Net?: null|scalar, Value?: null|scalar,
+	 *     included_in_price?: null|scalar, purchasing_gl_code?: null|scalar,
+	 *     rate: null|scalar, sales_gl_code?: null|scalar, tax_type_id: array-key,
+	 *     tax_type_name?: null|scalar, ...<array-key, null|scalar>}>|null
+	 */
+	$tax_group_array = $invoice->tax_group_array;
 	foreach ($invoice->line_items as $line_no => $invoice_line) {
 		$qty = $invoice_line->qty_dispatched;
-		$line_taxfree_price = get_tax_free_price_for_item($invoice_line->stock_id,
-			(float)$invoice_line->price * (float)$qty, 0, $invoice->tax_included,
-			$invoice->tax_group_array);
+		$line_taxfree_price = get_tax_free_price_for_item((string) $invoice_line->stock_id,
+			(float)$invoice_line->price * (float)$qty, 0, (int) $invoice->tax_included,
+			$tax_group_array);
 
-		$line_tax = get_full_price_for_item($invoice_line->stock_id,
-			(float)$invoice_line->price * (float)$qty, 0, $invoice->tax_included,
-			$invoice->tax_group_array) - $line_taxfree_price;
+		$line_tax = get_full_price_for_item((string) $invoice_line->stock_id,
+			(float)$invoice_line->price * (float)$qty, 0, (int) $invoice->tax_included,
+			$tax_group_array) - (float)$line_taxfree_price;
 
 		write_customer_trans_detail_item(ST_SALESINVOICE, $invoice_no, $invoice_line->stock_id,
 			$invoice_line->item_description, $invoice_line->qty_dispatched,
-			$invoice_line->line_price(), $qty ? (float)$line_tax/(float)$qty : 0, $invoice_line->discount_percent,
+			$invoice_line->line_price(), $qty ? $line_tax/(float)$qty : 0, $invoice_line->discount_percent,
 			$invoice_line->standard_cost, $invoice_line->src_id,
 			(bool)$trans_no ? $invoice_line->id : 0);
 
@@ -146,14 +154,14 @@ function write_sales_invoice(&$invoice)
 				$dim2 = ($invoice->dimension2_id != $customer['dimension2_id'] ? $invoice->dimension2_id : 
 					($customer['dimension2_id'] != 0 ? $customer["dimension2_id"] : $stock_gl_code["dimension2_id"]));
 				$total += add_gl_trans_customer(ST_SALESINVOICE, $invoice_no, $date_, $sales_account, $dim, $dim2,
-					-$line_taxfree_price*$prepaid_factor,
+					-(float)$line_taxfree_price*$prepaid_factor,
 					$invoice->customer_id, "The sales price GL posting could not be inserted");
 
 				if ($invoice_line->discount_percent != 0) {
 
 					$total += add_gl_trans_customer(ST_SALESINVOICE, $invoice_no, $date_,
 						$branch_data["sales_discount_account"], $dim, $dim2,
-						($line_taxfree_price * $invoice_line->discount_percent)*$prepaid_factor,
+						((float)$line_taxfree_price * (float)$invoice_line->discount_percent)*$prepaid_factor,
 						$invoice->customer_id, "The sales discount GL posting could not be inserted");
 				} /*end of if discount !=0 */
 			}
@@ -162,14 +170,14 @@ function write_sales_invoice(&$invoice)
 
 	if (((float)$items_total + (float)$charge_shipping) != 0) {
 		$total += add_gl_trans_customer(ST_SALESINVOICE, $invoice_no, $date_, $branch_data["receivables_account"], $invoice->dimension_id, $invoice->dimension2_id,
-			($items_total + $charge_shipping + $items_added_tax + $freight_added_tax)*$prepaid_factor,
+			((float)$items_total + (float)$charge_shipping + (float)$items_added_tax + (float)$freight_added_tax)*$prepaid_factor,
 			$invoice->customer_id, "The total debtor GL posting could not be inserted");
 	}
-	$to_allocate = ((float)$items_total + (float)$charge_shipping + $items_added_tax + $freight_added_tax);
+	$to_allocate = ((float)$items_total + (float)$charge_shipping + (float)$items_added_tax + (float)$freight_added_tax);
 
 	if ($charge_shipping != 0) {
 		$total += add_gl_trans_customer(ST_SALESINVOICE, $invoice_no, $date_, $company_data["freight_act"], $invoice->dimension_id, $invoice->dimension2_id,
-			-$invoice->get_tax_free_shipping()*$prepaid_factor, $invoice->customer_id,
+			-(float)$invoice->get_tax_free_shipping()*$prepaid_factor, $invoice->customer_id,
 			"The freight GL posting could not be inserted");
 	}
 	// post all taxes
@@ -177,11 +185,11 @@ function write_sales_invoice(&$invoice)
 		if ($taxitem['Net'] != 0) {
 			$ex_rate = get_exchange_rate_from_home_currency(get_customer_currency($invoice->customer_id), $date_);
 			add_trans_tax_details(ST_SALESINVOICE, $invoice_no, $taxitem['tax_type_id'],
-				$taxitem['rate'], $invoice->tax_included, (float)$prepaid_factor*(float)$taxitem['Value'],
+				$taxitem['rate'], $invoice->tax_included, $prepaid_factor*(float)$taxitem['Value'],
 				 $taxitem['Net'], $ex_rate, $date_, $invoice->reference, TR_OUTPUT);
 			if (isset($taxitem['sales_gl_code']) && !empty($taxitem['sales_gl_code']) && $taxitem['Value'] != 0)
 				$total += add_gl_trans_customer(ST_SALESINVOICE, $invoice_no, $date_, $taxitem['sales_gl_code'], $invoice->dimension_id, $invoice->dimension2_id,
-					(-$taxitem['Value'])*$prepaid_factor, $invoice->customer_id,
+					(-(float)$taxitem['Value'])*$prepaid_factor, $invoice->customer_id,
 					"A tax GL posting could not be inserted");
 		}
 	}
@@ -192,20 +200,21 @@ function write_sales_invoice(&$invoice)
 	add_comments(ST_SALESINVOICE, $invoice_no, $date_, $invoice->Comments);
 
 	if ($trans_no == 0) {
-		refs()->save(ST_SALESINVOICE, $invoice_no, $invoice->reference, null, $invoice->fixed_asset);
-		if ($invoice->payment_terms['cash_sale'] && $invoice->pos['pos_account']) {
-			$amount = (float)$items_total + (float)$items_added_tax + $invoice->freight_cost 
-				+ $freight_added_tax;
+		refs()->save(ST_SALESINVOICE, $invoice_no, $invoice->reference, null);
+		$pos = $invoice->pos;
+		if ($invoice->payment_terms['cash_sale'] && $pos && $pos['pos_account']) {
+			$amount = (float)$items_total + (float)$items_added_tax + (float)$invoice->freight_cost
+				+ (float)$freight_added_tax;
 			if ($amount != 0) {
 				// to use debtors.pmt_discount on cash sale:
-				// extend invoice entry page with final amount after discount 
+				// extend invoice entry page with final amount after discount
 				// and change line below.
 				$discount = 0; // $invoice->cash_discount*$amount;
-				$payment_info = (string)$invoice->pos['pos_name'].' #'.$invoice_no;
+				$payment_info = (string)$pos['pos_name'].' #'.(string)$invoice_no;
 				if (!empty($invoice->payment_info))
-					$payment_info .= ' ' . $invoice->payment_info;
-				$pmtno = write_customer_payment(0, $invoice->customer_id, 
-					$invoice->Branch, $invoice->pos['pos_account'], $date_,
+					$payment_info .= ' ' . (string) $invoice->payment_info;
+				$pmtno = write_customer_payment(0, $invoice->customer_id,
+					$invoice->Branch, $pos['pos_account'], $date_,
 					refs()->get_next(ST_CUSTPAYMENT, null, array('customer' => $invoice->customer_id,
 						'branch' => $invoice->Branch, 'date' => $date_)),
 					$amount-(float)$discount, $discount, $payment_info,
@@ -260,7 +269,7 @@ function void_sales_invoice(string|int|float|bool|null $type, string|int|float|b
 		else
 		{
 			$srcdetails = get_sales_parent_lines($type, $type_no);
-			while ($row = db_fetch($srcdetails)) {
+			while ($srcdetails instanceof mysqli_result && ($row = db_fetch($srcdetails))) {
 				update_parent_line($type, $row['id'], -$row['qty_done']);
 			}
 		}
@@ -283,7 +292,8 @@ function void_sales_invoice(string|int|float|bool|null $type, string|int|float|b
 
 function is_cust_invoice_credited(string|int|float|bool|array|null $trans_no): int|string
 {
-	return db_num_rows(get_sales_child_lines(ST_SALESINVOICE, $trans_no));
+	$lines = get_sales_child_lines(ST_SALESINVOICE, $trans_no);
+	return $lines instanceof mysqli_result ? db_num_rows($lines) : 0;
 }
 
 /**
@@ -311,7 +321,7 @@ function prepaid_invoice_remainder(mixed $order): int|string
 		.TB_PREF."sales_orders so
 			LEFT JOIN ".TB_PREF."payment_terms pt ON so.payment_terms=pt.terms_indicator AND pt.days_before_due = -1
 			LEFT JOIN ".TB_PREF."debtor_trans inv ON inv.type=".ST_SALESINVOICE ." AND inv.order_=so.order_no
-		WHERE  so.order_no=".db_escape($order)
+		WHERE  so.order_no=".db_escape(is_array($order) ? null : (string) $order)
 			." AND so.trans_type=".ST_SALESORDER
 			." AND so.payment_terms=pt.terms_indicator";
 			

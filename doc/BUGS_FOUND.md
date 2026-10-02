@@ -496,6 +496,18 @@ resolved.
   earlier, differently-conditioned row. Fixed with defensive initialization
   before the loop.
 
+- **`sales/includes/db/sales_invoice_db.inc` — `write_sales_invoice()`.**
+  Called `refs()->save($type, $id, $reference, $line, $invoice->fixed_asset)`
+  — `references::save()` only takes 4 parameters, so the 5th argument was
+  silently dropped by PHP on every new invoice (fixed_asset reference data
+  was never actually passed to `save()`, which doesn't use it anyway — it
+  was dead from the signature's side). Psalm's `TooManyArguments` caught it.
+  A near-identical call in `sales/includes/db/sales_order_db.inc` had already
+  been fixed the same way in a prior session, with the broken call left
+  commented out directly above the fix (dated 29/9/26) as a breadcrumb — this
+  file's identical copy was missed at the time. Fixed by dropping the extra
+  argument, matching the existing precedent.
+
 ## Encoding / output bugs
 
 - **`includes/ui/ui_lists.inc` — mojibake, two distinct causes.**
