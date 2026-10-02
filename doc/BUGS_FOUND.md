@@ -496,6 +496,17 @@ resolved.
   earlier, differently-conditioned row. Fixed with defensive initialization
   before the loop.
 
+- **`sales/includes/db/custalloc_db.inc` — `get_cust_allocation()`.** Called
+  `db_fetch(db_select($sql), "Cannot retrieve customer allocation $trans_id")`
+  — the error-message argument belongs to `db_select()` (its own second
+  parameter), but was attached to `db_fetch()` instead, which only takes one
+  argument (PHP silently ignores the extra one). If `db_select()` ever failed
+  here, it would die with no custom context instead of the intended message.
+  Psalm's `TooManyArguments` on the `db_fetch()` call caught it. Fixed by
+  moving the message to `db_select()`'s own argument list, matching every
+  other call site in this file (e.g. `delete_cust_allocation()` just above
+  it).
+
 - **`sales/includes/db/sales_invoice_db.inc` — `write_sales_invoice()`.**
   Called `refs()->save($type, $id, $reference, $line, $invoice->fixed_asset)`
   — `references::save()` only takes 4 parameters, so the 5th argument was

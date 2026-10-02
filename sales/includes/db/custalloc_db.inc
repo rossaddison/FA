@@ -15,7 +15,7 @@ declare(strict_types=1);
 function add_cust_allocation(string|int|float|bool|null $amount, string|int|float|bool|null $trans_type_from, string|int|float|bool|null $trans_no_from,
 	string|int|float|bool|null $trans_type_to, string|int|float|bool|null $trans_no_to, string|int|float|bool|null $person_id, string|int|float|bool|null $date_): void
 {
-	$date = date2sql($date_);
+	$date = date2sql($date_ === null ? null : (string) $date_);
 	$sql = "INSERT INTO ".TB_PREF."cust_allocations (
 		amt, date_alloc,
 		trans_type_from, trans_no_from, trans_no_to, trans_type_to, person_id)
@@ -45,7 +45,7 @@ function delete_cust_allocation(?string $trans_id)
 function get_cust_allocation(string|int|float|bool|null $trans_id)
 {
 	$sql = "SELECT * FROM ".TB_PREF."cust_allocations WHERE id = ".db_escape($trans_id);
-	return db_fetch(db_select($sql), "Cannot retrieve customer allocation $trans_id");
+	return db_fetch(db_select($sql, "Cannot retrieve customer allocation $trans_id"));
 }
 
 //----------------------------------------------------------------------------------------
@@ -389,7 +389,7 @@ function credit_sales_invoice_allocate(string|int|float|bool|null $invoice_no, s
 		$result = db_select($sql, "can't retrieve invoice allocations");
 
 		while(($free < $amount) && ($alloc = db_fetch($result))) {
-			$unalloc = min($alloc['amt'], $amount-$free);
+			$unalloc = min($alloc['amt'], (float)$amount-$free);
 
 			delete_cust_allocation($alloc['id']);
 			if ($unalloc < $alloc['amt'])
