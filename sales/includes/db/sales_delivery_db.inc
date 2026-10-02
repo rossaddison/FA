@@ -21,7 +21,7 @@ function write_sales_delivery(Cart &$delivery,string|int|float|bool|null $bo_pol
 	if (is_array($trans_no)) $trans_no = key($trans_no);
 
 	begin_transaction();
-	$delivery->bo_policy = $bo_policy;
+	$delivery->bo_policy = (is_float($bo_policy) || is_bool($bo_policy)) ? (int) $bo_policy : $bo_policy;
 	hook_db_prewrite($delivery, ST_CUSTDELIVERY);
 
 	$customer = row_or_empty(get_customer($delivery->customer_id));
@@ -32,7 +32,9 @@ function write_sales_delivery(Cart &$delivery,string|int|float|bool|null $bo_pol
 	$freight_tax = $delivery->get_shipping_tax();
 
 // mark sales order for concurrency conflicts check
-	update_sales_order_version($delivery->src_docs);
+	/** @var array<int, int>|int $src_docs */
+	$src_docs = $delivery->src_docs;
+	update_sales_order_version($src_docs);
 
 	$tax_total = 0.0;
 	$taxes = $delivery->get_taxes(); // all taxes with freight_tax
@@ -53,7 +55,7 @@ function write_sales_delivery(Cart &$delivery,string|int|float|bool|null $bo_pol
 		$delivery->dimension2_id, $delivery->payment, $delivery->tax_included, $delivery->prep_amount);
 
 	if ($trans_no == 0) {
-		$delivery->trans_no = array($delivery_no=>0);
+		$delivery->trans_no = array((int) $delivery_no=>0);
 	} else {
 		move_trans_attachments(ST_CUSTDELIVERY, $trans_no, $delivery_no);
 		void_gl_trans(ST_CUSTDELIVERY, $delivery_no, true);
@@ -64,28 +66,36 @@ function write_sales_delivery(Cart &$delivery,string|int|float|bool|null $bo_pol
 
 
 	// for prepaid delivery repost income from deffered account
+	$branch_data = array();
+	$total = 0.0;
 	if ($delivery->is_prepaid())
 	{
 		$branch_data = row_or_empty(get_branch_accounts($delivery->Branch));
-		$total = 0;
 	}
+	/**
+	 * @var array<array-key, array{Net?: null|scalar, Value?: null|scalar,
+	 *     included_in_price?: null|scalar, purchasing_gl_code?: null|scalar,
+	 *     rate: null|scalar, sales_gl_code?: null|scalar, tax_type_id: array-key,
+	 *     tax_type_name?: null|scalar, ...<array-key, null|scalar>}>|null
+	 */
+	$tax_group_array = $delivery->tax_group_array;
 	foreach ($delivery->line_items as $line_no => $delivery_line) {
 
 		$qty = $delivery_line->qty_dispatched;
 		$line_price = $delivery_line->line_price();
-		$line_taxfree_price = get_tax_free_price_for_item($delivery_line->stock_id,
-			(float)$delivery_line->price*(float)$qty, 0, $delivery->tax_included,
-			$delivery->tax_group_array);
+		$line_taxfree_price = get_tax_free_price_for_item((string) $delivery_line->stock_id,
+			(float)$delivery_line->price*(float)$qty, 0, (int) $delivery->tax_included,
+			$tax_group_array);
 
-		$line_tax = get_full_price_for_item($delivery_line->stock_id,
-				(float)$delivery_line->price * (float)$qty, 0, $delivery->tax_included, $delivery->tax_group_array) - $line_taxfree_price;
+		$line_tax = get_full_price_for_item((string) $delivery_line->stock_id,
+				(float)$delivery_line->price * (float)$qty, 0, (int) $delivery->tax_included, $tax_group_array) - (float)$line_taxfree_price;
 
-		$delivery_line->standard_cost = get_unit_cost($delivery_line->stock_id);
+		$delivery_line->standard_cost = (string) get_unit_cost($delivery_line->stock_id);
 
 		/* add delivery details for all lines */
 		write_customer_trans_detail_item(ST_CUSTDELIVERY, $delivery_no, $delivery_line->stock_id,
 			$delivery_line->item_description, $delivery_line->qty_dispatched,
-			$delivery_line->line_price(), $qty ? (float)$line_tax/(float)$qty : 0,
+			$delivery_line->line_price(), $qty ? $line_tax/(float)$qty : 0,
 			$delivery_line->discount_percent, $delivery_line->standard_cost, $delivery_line->src_id,
 			(bool)$trans_no ? $delivery_line->id : 0);
 
@@ -98,7 +108,7 @@ function write_sales_delivery(Cart &$delivery,string|int|float|bool|null $bo_pol
 			add_stock_move(ST_CUSTDELIVERY, $delivery_line->stock_id, $delivery_no,
 				$delivery->Location, $delivery->document_date, $delivery->reference,
 				-$delivery_line->qty_dispatched, $delivery_line->standard_cost,
-				 $line_price*(1.0-(float)$delivery_line->discount_percent));
+				 (float)$line_price*(1.0-(float)$delivery_line->discount_percent));
 
 			$mb_flag = get_mb_flag($delivery_line->stock_id);
 
@@ -118,18 +128,18 @@ function write_sales_delivery(Cart &$delivery,string|int|float|bool|null $bo_pol
 				($customer['dimension2_id'] != 0 ? $customer["dimension2_id"] : $stock_gl_code["dimension2_id"]));
 			if ($delivery->is_prepaid())
 			{
-				$sales_account = ($branch_data['sales_account'] != "" ? $branch_data['sales_account'] : $stock_gl_code['sales_account']);
+				$sales_account = (string) ($branch_data['sales_account'] != "" ? $branch_data['sales_account'] : $stock_gl_code['sales_account']);
 
 				$total += add_gl_trans_customer(ST_CUSTDELIVERY, $delivery_no, $delivery->document_date, $sales_account, $dim, $dim2,
-					-$line_taxfree_price, $delivery->customer_id, "The sales price GL posting could not be inserted");
+					-(float)$line_taxfree_price, $delivery->customer_id, "The sales price GL posting could not be inserted");
 			}
 			/* insert gl_trans to credit stock and debit cost of sales at standard cost*/
 			
 			if (is_inventory_item($delivery_line->stock_id)) {
 				// Fixed Assets
 				if ($delivery->fixed_asset) {
-				    $fa_purchase_cost = get_purchase_cost($delivery_line->stock_id);
-					$fa_depreciation = $fa_purchase_cost - $delivery_line->standard_cost;
+				    $fa_purchase_cost = (float) get_purchase_cost($delivery_line->stock_id);
+					$fa_depreciation = $fa_purchase_cost - (float)$delivery_line->standard_cost;
 					/*first remove depreciation*/
 					add_gl_trans_std_cost(ST_CUSTDELIVERY, $delivery_no,
 						$delivery->document_date, $stock_gl_code["adjustment_account"], $dim, $dim2, "",
@@ -154,7 +164,7 @@ function write_sales_delivery(Cart &$delivery,string|int|float|bool|null $bo_pol
 					/*first the cost of sales entry*/
 					add_gl_trans_std_cost(ST_CUSTDELIVERY, $delivery_no,
 						$delivery->document_date, $stock_gl_code["cogs_account"], $dim, $dim2, "",
-						$delivery_line->standard_cost * $delivery_line->qty_dispatched,
+						(float)$delivery_line->standard_cost * (float)$delivery_line->qty_dispatched,
 						PT_CUSTOMER, $delivery->customer_id,
 						"The cost of sales GL posting could not be inserted");
 
