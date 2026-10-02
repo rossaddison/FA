@@ -17,8 +17,8 @@ function add_recurrent_invoice(string|int|float|bool|null $description, string|i
 	$sql = "INSERT INTO ".TB_PREF."recurrent_invoices (description, order_no, debtor_no,
 		group_no, days, monthly, begin, end, last_sent) VALUES (".db_escape($description) . ", "
 		.db_escape($order_no).", ".db_escape($debtor_no).", "
-		.db_escape($group_no).", ".$days.", ".$monthly.", '"
-		.date2sql($begin)."', '".date2sql($end)."', '0000-00-00')";
+		.db_escape($group_no).", ". (string) $days.", ". (string) $monthly.", '"
+		.date2sql($begin === null ? null : (string) $begin)."', '".date2sql($end === null ? null : (string) $end)."', '0000-00-00')";
    	db_query($sql,"The recurrent invoice could not be added");
 }
 
@@ -30,17 +30,17 @@ function update_recurrent_invoice(string|int|float|bool|null $selected_id, strin
 		order_no=".db_escape($order_no).", 
 		debtor_no=".db_escape($debtor_no).", 
 		group_no=".db_escape($group_no).", 
-		days=".$days.", 
-		monthly=".$monthly.", 
-		begin='".date2sql($begin)."', 
-		end='".date2sql($end)."' 
+		days=". (string) $days.", 
+		monthly=". (string) $monthly.", 
+		begin='".date2sql($begin === null ? null : (string) $begin)."',
+		end='".date2sql($end === null ? null : (string) $end)."'
 		WHERE id = ".db_escape($selected_id);
    	db_query($sql,"The recurrent invoice could not be updated");
 }
 
 function update_last_sent_recurrent_invoice(string|int|float|bool|null $id, string|int|float|bool|array|null $date): void
 {
-	$date = date2sql($date);
+	$date = date2sql(is_array($date) ? null : (string) $date);
 	$sql = "UPDATE ".TB_PREF."recurrent_invoices SET last_sent='$date' WHERE id=".db_escape($id);
 
    	db_query($sql,"The recurrent invoice could not be updated");
@@ -168,7 +168,7 @@ function check_recurrent_invoice_prices(string|int|null $id): int
 		while($line = db_fetch($details))
 			if ($curr['curr_code'] != $template['curr_code'] && !get_price($line['stk_code'], $curr['curr_code'], $template['sales_type_id']))
 			{
-				display_error(sprintf(_("Unknown %s price for '%s' in pricelist '%s'"), $curr['curr_code'], $line['stk_code'], $template['sales_type']));
+				display_error(sprintf(_("Unknown %s price for '%s' in pricelist '%s'"), (string) $curr['curr_code'], (string) $line['stk_code'], (string) $template['sales_type']));
 				$errors++;
 			}
 	}
