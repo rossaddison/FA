@@ -130,6 +130,9 @@ function get_tax_group_rates(string|int|float|bool|null $group_id=null, bool $ta
 	return db_select($sql, "cannot get tax types as array");
 }
 
+/**
+ * @return array<string, array<array-key, mixed>>
+ */
 function get_tax_group_items_as_array(string|int|float|bool|null $id): array
 {
 	$ret_tax_array = array();
@@ -146,6 +149,9 @@ function get_tax_group_items_as_array(string|int|float|bool|null $id): array
 	return $ret_tax_array;
 }
 
+/**
+ * @return array<string, array<array-key, mixed>>
+ */
 function get_shipping_tax_as_array(string|int|float|bool|null $id=null): array
 {
 	$ret_tax_array = array();
