@@ -101,10 +101,10 @@ function calculate_reorder_level(string|int|float|bool|null $location, line_item
 
 /**
  * @param array<array-key, mixed>|false|null $loc
- * @param list<string|null> $st_ids
- * @param list<string|null> $st_names
- * @param list<float> $st_num
- * @param list<string|null> $st_reorder
+ * @param array<array-key, mixed> $st_ids
+ * @param array<array-key, mixed> $st_names
+ * @param array<array-key, mixed> $st_num
+ * @param array<array-key, mixed> $st_reorder
  * @return int<0, max>
  */
 function send_reorder_email(array|bool|null $loc, array $st_ids, array $st_names, array $st_num, array $st_reorder)
