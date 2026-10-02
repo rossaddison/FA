@@ -49,7 +49,7 @@ function write_customer_payment(string|int|float|bool|null $trans_no, string|int
 			$rate = get_exchange_rate_from_to(get_customer_currency($customer_id),
 				$bank['bank_curr_code'], $date_ );
 
-		$bank_amount = $amount/$rate;
+		$bank_amount = (float)$amount/(float)$rate;
 	}
 
 	// do not use $rate here: global rate stored in exrate table is always used
@@ -62,7 +62,7 @@ function write_customer_payment(string|int|float|bool|null $trans_no, string|int
 
 	/* Bank account entry first */
 	$total += add_gl_trans(ST_CUSTPAYMENT, $payment_no, $date_,
-		$bank_gl_account, $dim1, $dim2, '', ($bank_amount - $charge),  $bank['bank_curr_code'], PT_CUSTOMER, $customer_id);
+		$bank_gl_account, $dim1, $dim2, '', ((float)$bank_amount - (float)$charge),  $bank['bank_curr_code'], PT_CUSTOMER, $customer_id);
 
 	if ($branch_id != ANY_NUMERIC) {
 
@@ -76,10 +76,10 @@ function write_customer_payment(string|int|float|bool|null $trans_no, string|int
 		$discount_account = $company_record["default_prompt_payment_act"];
 	}
 
-	if (($discount + $amount) != 0)	{
+	if (((float)$discount + (float)$amount) != 0)	{
 	/* Now Credit Debtors account with receipts + discounts */
 	$total += add_gl_trans_customer(ST_CUSTPAYMENT, $payment_no, $date_,
-		$debtors_account, $dim1, $dim2, -($discount + $amount), $customer_id,
+		$debtors_account, $dim1, $dim2, -((float)$discount + (float)$amount), $customer_id,
 		"Cannot insert a GL transaction for the debtors account credit");
 	}
 	if ($discount != 0)	{
