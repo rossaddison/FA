@@ -40,7 +40,7 @@ function write_credit_note(Cart &$credit_note, string|int|float|bool|null $write
 	hook_db_prewrite($credit_note, ST_CUSTCREDIT);
 
 	$company_data = get_company_prefs();
-	$branch_data = get_branch_accounts($credit_note->Branch);
+	$branch_data = row_or_empty(get_branch_accounts($credit_note->Branch));
 
 	add_new_exchange_rate(get_customer_currency($credit_note->customer_id), $credit_date, $credit_note->ex_rate);
 
@@ -65,7 +65,7 @@ function write_credit_note(Cart &$credit_note, string|int|float|bool|null $write
 	// If the Customer Branch AR Account is set to a Bank Account,
 	// the transaction will be settled at once.
 	if ((bool)is_bank_account($branch_data['receivables_account']))
-		$alloc = (float)$credit_note_total + (float)$items_added_tax + $credit_note->freight_cost + $freight_added_tax;
+		$alloc = (float)$credit_note_total + (float)$items_added_tax + (float)$credit_note->freight_cost + (float)$freight_added_tax;
 	else
 		$alloc = 0;
 
@@ -83,7 +83,7 @@ function write_credit_note(Cart &$credit_note, string|int|float|bool|null $write
 		$credit_note->payment, $credit_note->tax_included); 
 
 	if ($trans_no==0) {
-		$credit_note->trans_no = array($credit_no=>0);
+		$credit_note->trans_no = array((int) $credit_no=>0);
 	} else {
 		delete_comments(ST_CUSTCREDIT, $credit_no);
 		void_cust_allocations(ST_CUSTCREDIT, $credit_no, $credit_date);
@@ -92,16 +92,23 @@ function write_credit_note(Cart &$credit_note, string|int|float|bool|null $write
 		void_trans_tax_details(ST_CUSTCREDIT, $credit_no);
 	}
 	if ((bool)$credit_invoice) {
-		update_customer_trans_version(get_parent_type(ST_CUSTCREDIT), $credit_note->src_docs );
+		update_customer_trans_version(get_parent_type(ST_CUSTCREDIT), is_array($credit_note->src_docs) ? $credit_note->src_docs : array());
 
-		$total = (float)$credit_note_total + (float)$credit_note->freight_cost + $items_added_tax 
-			+ $freight_added_tax;
+		$total = (float)$credit_note_total + (float)$credit_note->freight_cost + (float)$items_added_tax
+			+ (float)$freight_added_tax;
 
 		if (!credit_sales_invoice_allocate($credit_invoice, $credit_no, $total, $credit_date))
 			return false;
 	}
 
-	$total = 0;
+	$total = 0.0;
+	/**
+	 * @var array<array-key, array{Net?: null|scalar, Value?: null|scalar,
+	 *     included_in_price?: null|scalar, purchasing_gl_code?: null|scalar,
+	 *     rate: null|scalar, sales_gl_code?: null|scalar, tax_type_id: array-key,
+	 *     tax_type_name?: null|scalar, ...<array-key, null|scalar>}>|null
+	 */
+	$tax_group_array = $credit_note->tax_group_array;
 	foreach ($credit_note->line_items as $credit_line) {
 
 		if ((bool)$credit_invoice && $credit_line->qty_dispatched!=$credit_line->qty_old ) {
@@ -109,14 +116,14 @@ function write_credit_note(Cart &$credit_note, string|int|float|bool|null $write
 					-(float)$credit_line->qty_old));
 		}
 
-		$line_taxfree_price = get_tax_free_price_for_item($credit_line->stock_id, $credit_line->price,
-		  0, $credit_note->tax_included, $credit_note->tax_group_array);
+		$line_taxfree_price = get_tax_free_price_for_item((string) $credit_line->stock_id, (float) $credit_line->price,
+		  0, (int) $credit_note->tax_included, $tax_group_array);
 
-		$line_tax = get_full_price_for_item($credit_line->stock_id, $credit_line->price,
-		  0, $credit_note->tax_included, $credit_note->tax_group_array) - $line_taxfree_price;
+		$line_tax = get_full_price_for_item((string) $credit_line->stock_id, (float) $credit_line->price,
+		  0, (int) $credit_note->tax_included, $tax_group_array) - (float)$line_taxfree_price;
 
-		$credit_line->standard_cost = get_unit_cost($credit_line->stock_id); 
-		
+		$credit_line->standard_cost = (string) get_unit_cost($credit_line->stock_id);
+
 		write_customer_trans_detail_item(ST_CUSTCREDIT, $credit_no, $credit_line->stock_id,
 			$credit_line->item_description, $credit_line->qty_dispatched,
 			$credit_line->line_price(), $line_tax, $credit_line->discount_percent,
@@ -124,7 +131,7 @@ function write_credit_note(Cart &$credit_note, string|int|float|bool|null $write
 
 		if ($credit_type == 'Return')
 			add_credit_movements_item($credit_note, $credit_line,
-				$credit_type, ((float)($line_taxfree_price+$line_tax))*((1.0-(float)$credit_line->discount_percent)), $credit_invoice);
+				$credit_type, ((float)$line_taxfree_price+(float)$line_tax)*((1.0-(float)$credit_line->discount_percent)), $credit_invoice);
 
 		$total += add_gl_trans_credit_costs($credit_note, $credit_line, $credit_no,
 		    $credit_date, $credit_type, $write_off_acc, $branch_data);
@@ -135,14 +142,14 @@ function write_credit_note(Cart &$credit_note, string|int|float|bool|null $write
 
 	if (((float)$credit_note_total + (float)$credit_note->freight_cost) != 0) {
 
-		$total += add_gl_trans_customer(ST_CUSTCREDIT, $credit_no, $credit_date, $branch_data["receivables_account"], $credit_note->dimension_id, $credit_note->dimension2_id,
-			-((float)$credit_note_total + (float)$credit_note->freight_cost + $items_added_tax + $freight_added_tax),
+		$total += add_gl_trans_customer(ST_CUSTCREDIT, $credit_no, $credit_date, (string) $branch_data["receivables_account"], $credit_note->dimension_id, $credit_note->dimension2_id,
+			-((float)$credit_note_total + (float)$credit_note->freight_cost + (float)$items_added_tax + (float)$freight_added_tax),
 			$credit_note->customer_id,
 			"The total debtor GL posting for the credit note could not be inserted");
 	}
 
 	if ($credit_note->freight_cost != 0) {
-		$total += add_gl_trans_customer(ST_CUSTCREDIT, $credit_no, $credit_date, $company_data["freight_act"], $credit_note->dimension_id, $credit_note->dimension2_id,
+		$total += add_gl_trans_customer(ST_CUSTCREDIT, $credit_no, $credit_date, (string) $company_data["freight_act"], $credit_note->dimension_id, $credit_note->dimension2_id,
 			$credit_note->get_tax_free_shipping(), $credit_note->customer_id,
 			"The freight GL posting for this credit note could not be inserted");
 	}
@@ -157,7 +164,7 @@ function write_credit_note(Cart &$credit_note, string|int|float|bool|null $write
 				$credit_note->document_date, $credit_note->reference, TR_OUTPUT);
             // sales_gl_code is not set for taxexempt
             if (isset($taxitem['sales_gl_code']))
-				$total += add_gl_trans_customer(ST_CUSTCREDIT, $credit_no, $credit_date, $taxitem['sales_gl_code'], $credit_note->dimension_id, $credit_note->dimension2_id,
+				$total += add_gl_trans_customer(ST_CUSTCREDIT, $credit_no, $credit_date, (string) $taxitem['sales_gl_code'], $credit_note->dimension_id, $credit_note->dimension2_id,
 				$taxitem['Value'], $credit_note->customer_id,
 				"A tax GL posting for this credit note could not be inserted");
 		}
@@ -190,11 +197,11 @@ function add_credit_movements_item(Cart &$credit_note, &$credit_line,
     $curr_std_cost = get_unit_cost($credit_line->stock_id);
 
 	$reference = _("Return");
-	if ((bool)$credited_invoice) 
-		$reference .= ' '._("Ex Inv:").' ' . $credited_invoice;
+	if ((bool)$credited_invoice)
+		$reference .= ' '._("Ex Inv:").' ' . (string) $credited_invoice;
 
     add_stock_move(ST_CUSTCREDIT,  $credit_line->stock_id,
-	    key($credit_note->trans_no), $credit_note->Location,
+	    (is_array($credit_note->trans_no) ? key($credit_note->trans_no) : $credit_note->trans_no), $credit_note->Location,
    		$credit_note->document_date, $reference, $credit_line->qty_dispatched,
         $curr_std_cost, $price);
 }
@@ -203,7 +210,7 @@ function add_credit_movements_item(Cart &$credit_note, &$credit_line,
 
 /** @return float */
 function add_gl_trans_credit_costs(Cart $order, line_details $order_line, string|int|float|bool|null $credit_no, string|int|float|bool|null $date_,
-	?string $credit_type, string|int|float|bool|null $write_off_gl_code, &$branch_data)
+	?string $credit_type, string|int|float|bool|null $write_off_gl_code, array &$branch_data)
 {
 	$stock_gl_codes = row_or_empty(get_stock_gl_code($order_line->stock_id));
 	$customer = row_or_empty(get_customer($order->customer_id));
@@ -216,13 +223,13 @@ function add_gl_trans_credit_costs(Cart $order, line_details $order_line, string
 
 	$total = 0.0;
 	/* insert gl_trans to credit stock and debit cost of sales at standard cost*/
-	$unit_cost = get_unit_cost($order_line->stock_id);
+	$unit_cost = (float) get_unit_cost($order_line->stock_id);
 
 	if ($stock_gl_codes['mb_flag'] != 'D' && $unit_cost != 0) {
 		/*first the cost of sales entry*/
 
 		$total += (float)add_gl_trans_std_cost(ST_CUSTCREDIT, $credit_no, $date_, $stock_gl_codes["cogs_account"],
-			$dim, $dim2, "", -($unit_cost * $order_line->qty_dispatched),
+			$dim, $dim2, "", -($unit_cost * (float)$order_line->qty_dispatched),
 			PT_CUSTOMER, $order->customer_id,
 			"The cost of sales GL posting could not be inserted");
 
@@ -235,7 +242,7 @@ function add_gl_trans_credit_costs(Cart $order, line_details $order_line, string
 		}
 
 		$total += (float)add_gl_trans_std_cost(ST_CUSTCREDIT, $credit_no, $date_, $stock_entry_account, $dim, $dim2,
-			"", ($unit_cost * $order_line->qty_dispatched),
+			"", ($unit_cost * (float)$order_line->qty_dispatched),
 			PT_CUSTOMER, $order->customer_id,
 			"The stock side (or write off) of the cost of sales GL posting could not be inserted");
 
@@ -243,12 +250,19 @@ function add_gl_trans_credit_costs(Cart $order, line_details $order_line, string
 
 	if ($order_line->line_price() != 0) {
 
+		/**
+		 * @var array<array-key, array{Net?: null|scalar, Value?: null|scalar,
+		 *     included_in_price?: null|scalar, purchasing_gl_code?: null|scalar,
+		 *     rate: null|scalar, sales_gl_code?: null|scalar, tax_type_id: array-key,
+		 *     tax_type_name?: null|scalar, ...<array-key, null|scalar>}>|null
+		 */
+		$tax_group_array = $order->tax_group_array;
 		$line_taxfree_price =
-		get_tax_free_price_for_item($order_line->stock_id, $order_line->price,
-		  0, $order->tax_included, $order->tax_group_array);
+		get_tax_free_price_for_item((string) $order_line->stock_id, (float) $order_line->price,
+		  0, (int) $order->tax_included, $tax_group_array);
 
-		$line_tax = get_full_price_for_item($order_line->stock_id, $order_line->price,
-		  0, $order->tax_included, $order->tax_group_array) - $line_taxfree_price;
+		$line_tax = get_full_price_for_item((string) $order_line->stock_id, (float) $order_line->price,
+		  0, (int) $order->tax_included, $tax_group_array) - (float)$line_taxfree_price;
 
 
 		//Post sales transaction to GL credit sales
@@ -256,17 +270,17 @@ function add_gl_trans_credit_costs(Cart $order, line_details $order_line, string
 		// If there is a Branch Sales Account, then override with this,
 		// else take the Item Sales Account
 		if ($branch_data['sales_account'] != "")
-			$sales_account = $branch_data['sales_account'];
+			$sales_account = (string) $branch_data['sales_account'];
 		else
-			$sales_account = $stock_gl_codes['sales_account'];
+			$sales_account = (string) $stock_gl_codes['sales_account'];
 		$total += add_gl_trans_customer(ST_CUSTCREDIT, $credit_no, $date_, $sales_account, $dim, $dim2,
-			($line_taxfree_price * $order_line->qty_dispatched), $order->customer_id,
+			((float)$line_taxfree_price * (float)$order_line->qty_dispatched), $order->customer_id,
 			"The credit note GL posting could not be inserted");
 
 		if ($order_line->discount_percent != 0) {
 
-			$total += add_gl_trans_customer(ST_CUSTCREDIT, $credit_no, $date_, $branch_data["sales_discount_account"],
-				$dim, $dim2, -($line_taxfree_price * $order_line->qty_dispatched * $order_line->discount_percent),
+			$total += add_gl_trans_customer(ST_CUSTCREDIT, $credit_no, $date_, (string) $branch_data["sales_discount_account"],
+				$dim, $dim2, -((float)$line_taxfree_price * (float)$order_line->qty_dispatched * (float)$order_line->discount_percent),
 				$order->customer_id,
 				"The credit note discount GL posting could not be inserted");
 
