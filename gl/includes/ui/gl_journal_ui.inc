@@ -164,14 +164,15 @@ function display_gl_journal_items(string|int|float|bool|supp_trans|null $title, 
 				_('Remove line from journal'));
     		end_row();
 		} 
-		else 
+		else
 		{
-			gl_edit_item_controls($order, $dim, $item->person_id, $line);
+			$person_id = $item->person_id;
+			gl_edit_item_controls($order, $dim, is_array($person_id) || is_string($person_id) || $person_id === null ? $person_id : (string) $person_id, $line);
 		}
 	}
 
 	if ($id == -1)
-		gl_edit_item_controls($order, $dim, $sub_type);
+		gl_edit_item_controls($order, $dim, $sub_type === 0 ? null : $sub_type);
 
 	if ($order->count_gl_items()) 
 	{

@@ -173,6 +173,21 @@ a stand-in for a boolean) reaching a native, strictly-typed parameter.
   and would also hit the allocate/supplier_allocate pages that share this
   include. Cast each to `(float)`.
 
+- **`gl/includes/ui/gl_journal_ui.inc` — `gl_edit_item_controls()`.** Two
+  call sites pass a value typed broader than the function's own
+  `array|string|null $sub_accounts` parameter: `is_subledger_account()`
+  can return the literal int `0` (passed via `$sub_type` for a new line),
+  and `$item->person_id` is `string|int|float|bool|null` (passed for an
+  existing line being edited). The parameter is only ever read as
+  `(bool)$sub_accounts` inside the function, so both are behavior-preserving
+  fixes at the call site rather than a signature change: `gl_edit_item_controls`
+  collides with a different 3-parameter function of the same name in
+  `gl/includes/ui/gl_bank_ui.inc` (the documented name-collision class),
+  so per policy the signature itself is off-limits. Hit on
+  `gl/gl_journal.php?NewJournal=Yes` for the `$sub_type` case; the
+  `$item->person_id` case is the same bug on the "edit an existing journal
+  line" path, not yet triggered by testing but fixed alongside it.
+
 ## Live crashes
 
 - **`inventory/includes/inventory_db.inc` — `item_img_name()`.** Parameter
