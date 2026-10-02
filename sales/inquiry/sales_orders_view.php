@@ -31,7 +31,7 @@ set_page_security( @$_POST['order_view_mode'],
 );
 
 if (get_post('type'))
-	$trans_type = $_POST['type'];
+	$trans_type = post_scalar('type');
 elseif (isset($_GET['type']) && $_GET['type'] == ST_SALESQUOTE)
 	$trans_type = ST_SALESQUOTE;
 else
@@ -74,9 +74,11 @@ else
 $js = "";
 if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 600);
-if (user_use_date_picker())
+if ((bool) user_use_date_picker())
 	$js .= get_js_date_picker();
-page($_SESSION['page_title'], false, false, "", $js);
+/** @var string $page_title */
+$page_title = $_SESSION['page_title'] ?? '';
+page($page_title, false, false, "", $js);
 //---------------------------------------------------------------------------------------------
 //	Query format functions
 //
@@ -84,10 +86,10 @@ function check_overdue(array $row): bool|int
 {
 	global $trans_type;
 	if ($trans_type == ST_SALESQUOTE)
-		return (date1_greater_date2(Today(), sql2date($row['delivery_date'])));
+		return (date1_greater_date2(Today(), sql2date((string) $row['delivery_date'])));
 	else
 		return ($row['type'] == 0
-			&& date1_greater_date2(Today(), sql2date($row['delivery_date']))
+			&& date1_greater_date2(Today(), sql2date((string) $row['delivery_date']))
 			&& ($row['TotDelivered'] < $row['TotQuantity']));
 }
 
@@ -102,17 +104,17 @@ function view_link(string|int|float|bool|array $dummy, string|int|float|bool|nul
 function prt_link(array $row)
 {
 	global $trans_type;
-	return print_document_link($row['order_no'], _("Print"), true, $trans_type, ICON_PRINT);
+	return print_document_link((string) $row['order_no'], _("Print"), true, $trans_type, ICON_PRINT);
 }
 
 function edit_link(array $row): string
 {
 	global $page_nested;
 
-	if ((bool)is_prepaid_order_open($row['order_no']))
+	if ((bool)is_prepaid_order_open((string) $row['order_no']))
 		return '';
 
-	return $page_nested ? '' : trans_editor_link($row['trans_type'], $row['order_no']);
+	return $page_nested ? '' : trans_editor_link((string) $row['trans_type'], (string) $row['order_no']);
 }
 
 function dispatch_link(array $row): string
@@ -161,7 +163,7 @@ function tmpl_checkbox(array $row): string
 {
 	global $trans_type, $page_nested;
 
-	if ($trans_type == ST_SALESQUOTE || !check_sales_order_type($row['order_no']))
+	if ($trans_type == ST_SALESQUOTE || !check_sales_order_type((string) $row['order_no']))
 		return '';
 
 	if ($page_nested)
@@ -173,15 +175,16 @@ function tmpl_checkbox(array $row): string
 
  return checkbox(null, $name, $value, true,
  	_('Set this order as a template for direct deliveries/invoices'))
-	. hidden('last['.(string)$row['order_no'].']', $value, false);
+	. (string) hidden('last['.(string)$row['order_no'].']', $value, false);
 }
 
 function unallocated_prepayments(array $row): string
 {
 
     if ($row['ord_payments'] > 0) {
-        $pmts = get_payments_for($row['order_no'], $row['trans_type'], $row['debtor_no']);
+        $pmts = get_payments_for((string) $row['order_no'], (string) $row['trans_type'], (string) $row['debtor_no']);
 
+        $list = array();
         foreach($pmts as $pmt)
         {
             $list[] = get_trans_view_str($pmt['trans_type_from'], $pmt['trans_no_from'], get_reference($pmt['trans_type_from'], $pmt['trans_no_from']));
@@ -203,14 +206,18 @@ function invoice_prep_link(array $row): string
 $id = find_submit('_chgtpl');
 if ($id != -1)
 {
-	sales_order_set_template($id, check_value('chgtpl'.$id));
+	$chgtpl = check_value('chgtpl'.(string)$id);
+	sales_order_set_template($id, is_array($chgtpl) ? 0 : $chgtpl);
 	ajax()->activate('orders_tbl');
 }
 
-if (isset($_POST['Update']) && isset($_POST['last'])) {
+if (isset($_POST['Update']) && isset($_POST['last']) && is_array($_POST['last'])) {
 	foreach($_POST['last'] as $id => $value)
-		if ($value != check_value('chgtpl'.$id))
-			sales_order_set_template($id, !check_value('chgtpl'.$id));
+	{
+		$chgtpl = check_value('chgtpl'.(string)$id);
+		if ($value != $chgtpl)
+			sales_order_set_template($id, !(bool)(is_array($chgtpl) ? false : $chgtpl));
+	}
 }
 
 $show_dates = !in_array($_POST['order_view_mode'], array('OutstandingOnly', 'InvoiceTemplates', 'DeliveryTemplates'));
@@ -276,8 +283,12 @@ end_table(1);
 //---------------------------------------------------------------------------------------------
 //	Orders inquiry table
 //
-$sql = get_sql_for_sales_orders_view($trans_type, get_post('OrderNumber'), get_post('order_view_mode'),
-	get_post('SelectStockFromList'), get_post('OrdersAfterDate'), get_post('OrdersToDate'), get_post('OrderReference'), get_post('StockLocation'), get_post('customer_id'), check_value('show_voided'),
+$stock_item = post_scalar('SelectStockFromList');
+$orders_after = post_scalar('OrdersAfterDate');
+$orders_to = post_scalar('OrdersToDate');
+$sql = get_sql_for_sales_orders_view(is_int($trans_type) ? $trans_type : (string) $trans_type, get_post('OrderNumber'), get_post('order_view_mode'),
+	$stock_item === null ? null : (string) $stock_item, $orders_after === null ? null : (string) $orders_after, $orders_to === null ? null : (string) $orders_to,
+	get_post('OrderReference'), post_scalar('StockLocation'), post_scalar('customer_id'), check_value('show_voided'),
 	get_post('by_delivery'), get_post('no_auto'));
 
 if ($trans_type == ST_SALESORDER)
