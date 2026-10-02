@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<ruleset name="FrontAccounting Line Length Check">
+    <description>Enforce 85-character line length limit on the new namespaced (src/) code.</description>
+
+    <!-- Only the namespaced PSR-4 code under src/ is covered so far - see
+         the comment in .php-cs-fixer.php for why the legacy procedural
+         codebase isn't included here. -->
+    <file>./src</file>
+
+    <!-- Use only the Generic.Files.LineLength rule -->
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="85"/>
+            <property name="absoluteLineLimit" value="85"/>
+        </properties>
+    </rule>
+
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+</ruleset>
