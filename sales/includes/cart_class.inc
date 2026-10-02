@@ -66,9 +66,9 @@ class Cart
 	var $default_discount; // set to the customer's discount %
 	/** @var string|null */
 	var $customer_name;
-	/** @var string|int|float|bool|null */
+	/** @var string|int|bool|null */
 	var $customer_id;
-	/** @var string|int|float|bool|null */
+	/** @var string|int|bool|null */
 	var $Branch;
 	/** @var string|null */
 	var $email;
@@ -101,10 +101,10 @@ class Cart
 
 	/** @var string|int|float|bool|null */
 	var $ship_via;
-	/** @var float|int|string */
+	/** @var float|int */
 	var $freight_cost = 0;
 
-	/** @var string|int|float|bool|null */
+	/** @var string|int|bool|null */
 	var $tax_group_id;
 	/** @var string */
 	var $tax_group_name;
@@ -117,9 +117,9 @@ class Cart
 	var	$pos;			// user assigned POS
 	/** @var string|int|float|bool|null */
 	var $cash_account;
-	/** @var string|int|float|bool|null */
+	/** @var string|int|bool|null */
 	var $account_name;
-	/** @var string|int|float|bool|null */
+	/** @var int|float|bool|null */
 	var $cash_discount;	// not used as of FA 2.1
 	/** @var int|string|null */
 	var $dimension_id;
@@ -160,7 +160,7 @@ class Cart
 	//
 	/**
 	 * @param string|int|array<array-key, mixed>|null $type
-	 * @param int|array<array-key, mixed>|null $trans_no
+	 * @param string|int|array<array-key, mixed>|null $trans_no
 	 * @param int|bool|null $prepare_child
 	 */
 	function __construct($type, $trans_no=0, $prepare_child=false) {
@@ -828,14 +828,19 @@ class Cart
 	/*
 		Check whether order has been already invoiced/send or not.
 	*/
-	/** @return false|null|string */
-	function is_started()
+	
+        function is_started() : bool
 	{
 		if ($this->trans_no==0)
-			return false;
+		    return false;
 		$order_no = array_keys((array) $this->trans_no);
-
-		return  is_sales_order_started(reset($order_no));
+                
+                /**
+                 * @see sales\includes\db\sales_order_db.inc
+                 * function is_sales_order_started() : int
+                 */
+                
+		return  (bool) is_sales_order_started(reset($order_no));
 	}
 
 	/*

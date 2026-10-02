@@ -42,20 +42,20 @@ function copy_to_cart(): void
 	$cart = &$_SESSION['PO'];
 	/** @var purch_order $cart */
 
-	$cart->supplier_id = $_POST['supplier_id'];
-	$cart->orig_order_date = $_POST['OrderDate'];
+	$cart->supplier_id = get_post('supplier_id');
+	$cart->orig_order_date = get_post('OrderDate');
 	if ($cart->trans_type == ST_SUPPINVOICE)
 	{
-		$cart->due_date = $_POST['due_date'];
+		$cart->due_date = get_post('due_date');
 		$cart->cash_account = get_post('cash_account');
 	}
-	$cart->reference = $_POST['ref'];
-	$cart->supp_ref = $_POST['supp_ref'];
-	$cart->Comments = $_POST['Comments'];	
-	$cart->Location = $_POST['StkLocation'];
-	$cart->delivery_address = $_POST['delivery_address'];
-   	$cart->dimension = @$_POST['dimension'];
-	$cart->dimension2 =  @$_POST['dimension2'];
+	$cart->reference = get_post('ref');
+	$cart->supp_ref = get_post('supp_ref');
+	$cart->Comments = get_post('Comments');
+	$cart->Location = get_post('StkLocation');
+	$cart->delivery_address = get_post('delivery_address');
+   	$cart->dimension = @get_post('dimension');
+	$cart->dimension2 =  @get_post('dimension2');
 	$cart->prep_amount = input_num('prep_amount', 0);
 	$cart->ex_rate = input_num('_ex_rate', null);
 

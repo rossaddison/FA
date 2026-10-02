@@ -28,12 +28,12 @@ page(_($help_context = "View Customer Payment"), true, false, "", $js);
 $trans_id = null;
 if (isset($_GET["trans_no"]))
 {
-	$trans_id = (string) $_GET["trans_no"];
+	$trans_id = get_scalar("trans_no");
 }
 
 $receipt = row_or_empty(get_customer_trans($trans_id, ST_CUSTPAYMENT));
 
-if (!empty(sysprefs()->prefs['company_logo_on_views']))
+if ((bool)sysprefs()->prefs['company_logo_on_views'])
 	company_logo_on_view();
 
 display_heading(sprintf(_("Customer Payment #%d"),(string) $trans_id));

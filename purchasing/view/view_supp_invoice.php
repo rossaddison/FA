@@ -41,7 +41,7 @@ read_supp_invoice($trans_no, ST_SUPPINVOICE, $supp_trans);
 
 $supplier_curr_code = get_supplier_currency($supp_trans->supplier_id);
 
-if (!empty(sysprefs()->prefs['company_logo_on_views']))
+if ((bool)sysprefs()->prefs['company_logo_on_views'])
 	company_logo_on_view();
 
 display_heading(_("SUPPLIER INVOICE") . " # " . (string) $trans_no);

@@ -20,7 +20,7 @@ include_once(dirname(__DIR__, 2) . "/sales/includes/sales_db.inc");
 $js = "";
 if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 600);
-if (user_use_date_picker())
+if (user_use_date_picker() == 1)
 	$js .= get_js_date_picker();
 
 page(_($help_context = "Recurrent Invoices"), false, false, "", $js);
@@ -32,6 +32,7 @@ simple_page_mode(true);
 /** @var int|string $selected_id */
 $selected_id = $selected_id;
 
+$description = get_post('description');
 if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 {
 
@@ -46,7 +47,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 			display_error(_("There are no tax groups defined in the system. At least one tax group is required before proceeding."));
 		set_focus('debtor_no');
 	}
-	if (strlen((string) $_POST['description']) == 0)
+	if (is_array($description) || ($description === ''))
 	{
 		$input_error = 1;
 		display_error(_("The invoice description cannot be empty."));
@@ -77,7 +78,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 		display_error(_("The entered date is invalid."));
 		set_focus('last_sent');
 	}
-	if (!$_POST['days'] && !$_POST['monthly'])
+	if ((get_post('days') < 1) && (get_post('monthly')))
 	{
 		$input_error = 1;
 		display_error(_("No recurence interval has been entered."));

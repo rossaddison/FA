@@ -30,8 +30,8 @@ function can_process(): bool
 	global $selected_id;
 	/** @var int|string $selected_id */
 	$selected_id = $selected_id;
-
-	if (strlen((string) $_POST['name']) == 0)
+        $name = get_post('name');
+	if (is_string($name) && strlen($name) == 0)
 	{
 		display_error(_("The tax type name cannot be empty."));
 		set_focus('name');
@@ -44,7 +44,7 @@ function can_process(): bool
 		return false;
 	}
 
-	if (!is_tax_gl_unique((string) get_post('sales_gl_code'), (string) get_post('purchasing_gl_code'), $selected_id)) {
+	if (!is_tax_gl_unique(get_post('sales_gl_code'), get_post('purchasing_gl_code'), $selected_id)) {
 		display_error( _("Selected GL Accounts cannot be used by another tax type."));
 		set_focus('sales_gl_code');
 		return false;

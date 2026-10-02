@@ -123,8 +123,8 @@ function add_salesman(string|int|float|bool|null $salesman_name, string|int|floa
 		  .db_escape($salesman_phone) . ", "
 		  .db_escape($salesman_fax) . ", "
 		  .db_escape($salesman_email) . ", ".
-		(float)$provision.", ".(float)$break_pt.", "
-		.(float)$provision2.")";
+		(string)(float) ($provision ?? 0).", ". (string)(float) ($break_pt ?? 0).", "
+		.(string) (float)($provision2 ?? 0) .")";
    	db_query($sql,"The insert of the sales person failed");
 }
 
@@ -135,9 +135,9 @@ function update_salesman(string|int|float|bool|null $selected_id, string|int|flo
 		salesman_phone=".db_escape($salesman_phone) . ",
 		salesman_fax=".db_escape($salesman_fax) . ",
 		salesman_email=".db_escape($salesman_email) . ",
-		provision=".(float)$provision.",
-		break_pt=".(float)$break_pt.",
-		provision2=".(float)$provision2."
+		provision=".(string) (float)$provision.",
+		break_pt=". (string) (float)$break_pt.",
+		provision2=". (string) (float)$provision2."
 		WHERE salesman_code = ".db_escape($selected_id);
    	db_query($sql,"The update of the sales person failed");
 }
@@ -181,6 +181,3 @@ function get_salesman_name(string|null $id)
 	$row = db_fetch_row($result);
 	return is_array($row) ? $row[0] : false;
 }
-
-
-

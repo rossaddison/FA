@@ -13,7 +13,13 @@ declare(strict_types=1);
 include_once(dirname(__DIR__, 3) . "/sales/includes/cart_class.inc");
 
 //--------------------------------------------------------------------------------
-function add_to_order(Cart &$order, string|null $new_item, string|int|float|bool|null $new_item_qty, string|int|float|bool|array|null $price, string|int|float|bool|null $discount, string|array|null $description=''): void
+function add_to_order(
+    Cart &$order,
+    string|null $new_item,
+    string|int|float|bool|null $new_item_qty,
+    string|int|float|bool|array|null $price,
+    string|int|float|bool|null $discount,
+    string|array|null $description=''): void
 {
 	$new_item_qty = (float) $new_item_qty;
 	/** @var float $price */
@@ -243,7 +249,7 @@ function display_order_summary(?string $title, Cart &$order, bool $editable_item
 
 // ------------------------------------------------------------------------------
 
-function display_order_header(Cart &$order, bool $editable, ?string $date_text): string
+function display_sales_order_header(Cart &$order, bool $editable, ?string $date_text): string
 {
 
 	start_outer_table(TABLESTYLE2, "width='80%'");

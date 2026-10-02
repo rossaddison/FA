@@ -33,7 +33,7 @@ function display_gl_heading(array $myrow): void
 {
 	global $systypes_array;
 
-	if (!empty(sysprefs()->prefs['company_logo_on_views']))
+	if ((bool)sysprefs()->prefs['company_logo_on_views'])
 		company_logo_on_view();
 
 	$trans_name = $systypes_array[(int) get_scalar('type_id')];

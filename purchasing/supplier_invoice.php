@@ -263,45 +263,45 @@ if (isset($_POST['PostInvoice']))
 function check_item_data(string|int|null $n): bool
 {
 
-	if (!check_num('this_quantity_inv'.$n, 0) || input_num('this_quantity_inv'.$n)==0)
+	if (!check_num('this_quantity_inv'.(string) $n, 0) || input_num('this_quantity_inv'.(string) $n)==0)
 	{
 		display_error( _("The quantity to invoice must be numeric and greater than zero."));
-		set_focus('this_quantity_inv'.$n);
+		set_focus('this_quantity_inv'.(string) $n);
 		return false;
 	}
 
-	if (!check_num('ChgPrice'.$n))
+	if (!check_num('ChgPrice'.(string) $n))
 	{
 		display_error( _("The price is not numeric."));
-		set_focus('ChgPrice'.$n);
+		set_focus('ChgPrice'.(string) $n);
 		return false;
 	}
 
 	$margin = sysprefs()->over_charge_allowance();
 	if (sysprefs()->check_price_charged_vs_order_price == True)
 	{
-		if ($_POST['order_price'.$n]!=input_num('ChgPrice'.$n)) {
-		     if ($_POST['order_price'.$n]==0 ||
-				input_num('ChgPrice'.$n)/$_POST['order_price'.$n] >
+		if ($_POST['order_price'.(string) $n]!=input_num('ChgPrice'.(string) $n)) {
+		     if ($_POST['order_price'.(string) $n]==0 ||
+				input_num('ChgPrice'.(string) $n)/$_POST['order_price'.(string) $n] >
 			    (1 + ($margin/ 100)))
 		    {
 			display_error(_("The price being invoiced is more than the purchase order price by more than the allowed over-charge percentage. The system is set up to prohibit this. See the system administrator to modify the set up parameters if necessary.") .
-			_("The over-charge percentage allowance is :") . $margin . "%");
-			set_focus('ChgPrice'.$n);
+			_("The over-charge percentage allowance is :") . (string) $margin . "%");
+			set_focus('ChgPrice'.(string) $n);
 			return false;
 		    }
 		}
 	}
 
-	if (sysprefs()->check_qty_charged_vs_del_qty == true && ($_POST['qty_recd'.$n] != $_POST['prev_quantity_inv'.$n])
-		&& (bool)($_POST['prev_quantity_inv'.$n] ?? null))
+	if (sysprefs()->check_qty_charged_vs_del_qty == true && ($_POST['qty_recd'.(string) $n] != $_POST['prev_quantity_inv'.(string) $n])
+		&& (bool)($_POST['prev_quantity_inv'.(string) $n] ?? null))
 	{
-		if ((float)input_num('this_quantity_inv'.$n) / ((float)($_POST['qty_recd'.$n] - $_POST['prev_quantity_inv'.$n])) >
+		if ((float)input_num('this_quantity_inv'.(string) $n) / ((float)($_POST['qty_recd'.(string) $n] - $_POST['prev_quantity_inv'.(string) $n])) >
 			(1+ ($margin / 100)))
 		{
 			display_error( _("The quantity being invoiced is more than the outstanding quantity by more than the allowed over-charge percentage. The system is set up to prohibit this. See the system administrator to modify the set up parameters if necessary.")
-			. _("The over-charge percentage allowance is :") . $margin . "%");
-			set_focus('this_quantity_inv'.$n);
+			. _("The over-charge percentage allowance is :") . (string) $margin . "%");
+			set_focus('this_quantity_inv'.(string) $n);
 			return false;
 		}
 	}
@@ -313,10 +313,10 @@ function commit_item_data(string|int|null $n): void
 {
 	if (check_item_data($n))
 	{
-		session_obj('supp_trans')->add_grn_to_trans($n, $_POST['po_detail_item'.$n],
-			$_POST['item_code'.$n], $_POST['item_description'.$n], $_POST['qty_recd'.$n],
-			$_POST['prev_quantity_inv'.$n], input_num('this_quantity_inv'.$n),
-			$_POST['order_price'.$n], input_num('ChgPrice'.$n));
+		session_obj('supp_trans')->add_grn_to_trans((string) $n, $_POST['po_detail_item'.(string) $n],
+			$_POST['item_code'.(string) $n], $_POST['item_description'.(string) $n], $_POST['qty_recd'.(string) $n],
+			$_POST['prev_quantity_inv'.(string) $n], input_num('this_quantity_inv'.(string) $n),
+			$_POST['order_price'.(string) $n], input_num('ChgPrice'.(string) $n));
 		reset_tax_input();
 	}
 }

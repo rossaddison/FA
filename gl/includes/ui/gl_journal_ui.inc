@@ -15,7 +15,7 @@ include_once(dirname(__DIR__, 3) . "/includes/ui/items_cart.inc");
 
 //--------------------------------------------------------------------------------
 
-function display_order_header(items_cart &$Order): void
+function display_general_journal_order_header(items_cart &$Order): void
 {
 
 	$qes = has_quick_entries(QE_JOURNAL);

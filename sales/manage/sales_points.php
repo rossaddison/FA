@@ -13,12 +13,11 @@ declare(strict_types=1);
 $page_security = 'SA_POSSETUP';
 /** @var string $path_to_root */
 $path_to_root = "../..";
-include_once(dirname(__DIR__, 2) . "/includes/session.inc");
+include(dirname(__DIR__, 2) . "/includes/session.inc");
+include(dirname(__DIR__, 2) . "/includes/ui.inc");
+include_once(dirname(__DIR__, 2) . "/sales/includes/db/sales_points_db.inc");
 
 page(_($help_context = "POS settings"));
-
-include_once(dirname(__DIR__, 2) . "/includes/ui.inc");
-include_once(dirname(__DIR__, 2) . "/sales/includes/db/sales_points_db.inc");
 
 simple_page_mode(true);
 /** @var int|string $selected_id */
@@ -27,35 +26,45 @@ $selected_id = $selected_id;
 
 function can_process(): bool
 {
-	if (strlen((string) $_POST['name']) == 0)
-	{
-		display_error(_("The POS name cannot be empty."));
-		set_focus('pos_name');
-		return false;
-	}
-	return true;
+    $pointsName = get_post('name');
+    if (!is_string($pointsName) || $pointsName === '')
+    {
+        display_error(_("The POS name cannot be empty."));
+        set_focus('pos_name');
+        return false;
+    }
+    return true;
 }
 
 //----------------------------------------------------------------------------------------------------
 
-if ($Mode=='ADD_ITEM' && can_process())
+$checkValueCash = check_value('cash');
+$checkValueCredit = check_value('credit');
+
+if ($Mode=='ADD_ITEM'
+    && can_process()
+    && is_int($checkValueCash)
+    && is_int($checkValueCredit))
 {
 	add_sales_point(post_scalar('name'), post_scalar('location'), post_scalar('account'),
-		check_value('cash'), check_value('credit'));
+		$checkValueCash, $checkValueCredit);
 	display_notification(_('New point of sale has been added'));
 	$Mode = 'RESET';
 }
 
 //----------------------------------------------------------------------------------------------------
 
-if ($Mode=='UPDATE_ITEM' && can_process())
+if ($Mode=='UPDATE_ITEM'
+    && can_process()
+    && is_int($checkValueCash)
+    && is_int($checkValueCredit))
 {
-	/** @var int|string $selected_id */
-	$selected_id = $selected_id;
-	update_sales_point($selected_id, post_scalar('name'), post_scalar('location'),
-		post_scalar('account'), check_value('cash'), check_value('credit'));
-	display_notification(_('Selected point of sale has been updated'));
-	$Mode = 'RESET';
+    /** @var int|string $selected_id */
+    $selected_id = $selected_id;
+    update_sales_point($selected_id, post_scalar('name'), post_scalar('location'),
+        post_scalar('account'), $checkValueCash, $checkValueCredit);
+    display_notification(_('Selected point of sale has been updated'));
+    $Mode = 'RESET';
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -128,8 +137,12 @@ if ($selected_id != -1)
 		$_POST['name']  = $myrow["pos_name"];
 		$_POST['location']  = $myrow["pos_location"];
 		$_POST['account']  = $myrow["pos_account"];
-		if ($myrow["credit_sale"]) $_POST['credit_sale']  = 1;
-		if ($myrow["cash_sale"]) $_POST['cash_sale'] = 1;
+		if (strlen((string) $myrow["credit_sale"]) > 0) {
+                    $_POST['credit_sale']  = 1;
+                } 
+		if (strlen((string )$myrow["cash_sale"]) > 0) {
+                    $_POST['cash_sale'] = 1;
+                }
 	}
 	/** @var int|string $selected_id */
 	$selected_id = $selected_id;

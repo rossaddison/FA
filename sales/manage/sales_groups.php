@@ -14,23 +14,22 @@ $page_security = 'SA_SALESGROUP';
 /** @var string $path_to_root */
 $path_to_root = "../..";
 include(dirname(__DIR__, 2) . "/includes/session.inc");
+include(dirname(__DIR__, 2) . "/includes/ui.inc");
 
 page(_($help_context = "Sales Groups"));
 
-include(dirname(__DIR__, 2) . "/includes/ui.inc");
-
 simple_page_mode(true);
 
+$description = get_post('description');
 if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') 
 {
-
 	$input_error = 0;
 
-	if (strlen((string) $_POST['description']) == 0)
+	if (!is_string($description) || $description === '')
 	{
-		$input_error = 1;
-		display_error(_("The sales group description cannot be empty."));
-		set_focus('description');
+            $input_error = 1;
+            display_error(_("The sales group description cannot be empty."));
+            set_focus('description');
 	}
 
 	if ($input_error != 1)

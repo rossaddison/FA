@@ -314,8 +314,8 @@ function  get_branches_search(string|int|float|bool|null $customer, string|array
 			ON c.entity_id=b.branch_code AND c.type='cust_branch' AND c.action='general'
 		LEFT JOIN ".TB_PREF."crm_persons p ON c.person_id=p.id
 		WHERE b.debtor_no = ".db_escape($customer)."
-			AND b.br_name LIKE " . db_escape("%" . $branch. "%") . "
-		ORDER BY b.br_name LIMIT 0,".(int)($limit);
+			AND b.br_name LIKE " . db_escape("%" . ($branch ?? '') .  "%") . "
+		ORDER BY b.br_name LIMIT 0,". ($limit);
 
 	return db_select($sql, "Failed in retreiving branches list.");
 }

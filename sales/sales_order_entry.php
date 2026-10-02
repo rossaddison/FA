@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**********************************************************************
     Copyright (C) FrontAccounting, LLC.
@@ -22,13 +23,13 @@ declare(strict_types=1);
 $path_to_root = "..";
 $page_security = 'SA_SALESORDER';
 
-include_once(dirname(__DIR__) . "/sales/includes/cart_class.inc");
-include_once(dirname(__DIR__) . "/includes/session.inc");
-include_once(dirname(__DIR__) . "/sales/includes/sales_ui.inc");
-include_once(dirname(__DIR__) . "/sales/includes/ui/sales_order_ui.inc");
-include_once(dirname(__DIR__) . "/sales/includes/sales_db.inc");
-include_once(dirname(__DIR__) . "/sales/includes/db/sales_types_db.inc");
+include(dirname(__DIR__) . "/includes/session.inc");
 include_once(dirname(__DIR__) . "/reporting/includes/reporting.inc");
+include_once(dirname(__DIR__) . "/sales/includes/cart_class.inc");
+include_once(dirname(__DIR__) . "/sales/includes/sales_db.inc");
+include_once(dirname(__DIR__) . "/sales/includes/sales_ui.inc");
+include_once(dirname(__DIR__) . "/sales/includes/db/sales_types_db.inc");
+include_once(dirname(__DIR__) . "/sales/includes/ui/sales_order_ui.inc");
 
 set_page_security( @session_obj('Items')->trans_type,
 	array(	ST_SALESORDER=>'SA_SALESORDER',
@@ -57,7 +58,7 @@ if (sysprefs()->use_popup_windows) {
 	$js .= get_js_open_window(900, 500);
 }
 
-if (user_use_date_picker()) {
+if (user_use_date_picker() == 1) {
 	$js .= get_js_date_picker();
 }
 
@@ -78,15 +79,17 @@ if (isset($_GET['NewDelivery']) && is_numeric($_GET['NewDelivery'])) {
 
 } elseif (isset($_GET['ModifyOrderNumber']) && is_numeric($_GET['ModifyOrderNumber'])) {
 
+	$modify_order_number = (int) get_scalar('ModifyOrderNumber');
 	$help_context = 'Modifying Sales Order';
-	$_SESSION['page_title'] = sprintf( _("Modifying Sales Order # %d"), $_GET['ModifyOrderNumber']);
-	create_cart(ST_SALESORDER, (string) get_scalar('ModifyOrderNumber'));
+	$_SESSION['page_title'] = sprintf(_("Modifying Sales Order # %d"), $modify_order_number);
+	create_cart(ST_SALESORDER, (string) $modify_order_number);
 
 } elseif (isset($_GET['ModifyQuotationNumber']) && is_numeric($_GET['ModifyQuotationNumber'])) {
 
+	$modify_quotation_number = (int) get_scalar('ModifyQuotationNumber');
 	$help_context = 'Modifying Sales Quotation';
-	$_SESSION['page_title'] = sprintf( _("Modifying Sales Quotation # %d"), $_GET['ModifyQuotationNumber']);
-	create_cart(ST_SALESQUOTE, (string) get_scalar('ModifyQuotationNumber'));
+	$_SESSION['page_title'] = sprintf(_("Modifying Sales Quotation # %d"), $modify_quotation_number);
+	create_cart(ST_SALESQUOTE, (string) $modify_quotation_number);
 
 } elseif (isset($_GET['NewOrder'])) {
 
@@ -126,13 +129,14 @@ if (!isset($_SESSION['Items']))
 
 if (list_updated('branch_id')) {
 	// when branch is selected via external editor also customer can change
-	$br = row_or_empty(get_branch((string) get_post('branch_id')));
+	$branch_id = post_scalar('branch_id');
+        $br = row_or_empty(get_branch((string) $branch_id));    
 	$_POST['customer_id'] = $br['debtor_no'];
 	ajax()->activate('customer_id');
 }
 
 if (isset($_GET['AddedID'])) {
-	$order_no = (string) $_GET['AddedID'];
+	$order_no = (string) get_scalar('AddedID');
 
 	display_notification_centered(sprintf( _("Order # %d has been entered."),$order_no));
 
@@ -162,7 +166,7 @@ if (isset($_GET['AddedID'])) {
 	display_footer_exit();
 
 } elseif (isset($_GET['UpdatedID'])) {
-	$order_no = (string) $_GET['UpdatedID'];
+	$order_no = (string) get_scalar('UpdatedID');
 
 	display_notification_centered(sprintf( _("Order # %d has been updated."),$order_no));
 
@@ -181,7 +185,7 @@ if (isset($_GET['AddedID'])) {
 	display_footer_exit();
 
 } elseif (isset($_GET['AddedQU'])) {
-	$order_no = (string) $_GET['AddedQU'];
+	$order_no = (string) get_scalar('AddedQU');
 	display_notification_centered(sprintf( _("Quotation # %d has been entered."),$order_no));
 
 	submenu_view(_("&View This Quotation"), ST_SALESQUOTE, $order_no);
@@ -200,7 +204,7 @@ if (isset($_GET['AddedID'])) {
 	display_footer_exit();
 
 } elseif (isset($_GET['UpdatedQU'])) {
-	$order_no = (string) $_GET['UpdatedQU'];
+	$order_no = (string) get_scalar('UpdatedQU');
 
 	display_notification_centered(sprintf( _("Quotation # %d has been updated."),$order_no));
 
@@ -218,7 +222,7 @@ if (isset($_GET['AddedID'])) {
 
 	display_footer_exit();
 } elseif (isset($_GET['AddedDN'])) {
-	$delivery = (string) $_GET['AddedDN'];
+	$delivery = (string) get_scalar('AddedDN');
 
 	display_notification_centered(sprintf(_("Delivery # %d has been entered."),$delivery));
 
@@ -247,7 +251,7 @@ if (isset($_GET['AddedID'])) {
 	display_footer_exit();
 
 } elseif (isset($_GET['AddedDI'])) {
-	$invoice = (string) $_GET['AddedDI'];
+	$invoice = (string) get_scalar('AddedDI');
 
 	display_notification_centered(sprintf(_("Invoice # %d has been entered."), $invoice));
 
@@ -285,20 +289,39 @@ if (isset($_GET['AddedID'])) {
 
 function copy_to_cart(): void
 {
-	$cart = &$_SESSION['Items'];
+	if (!isset($_SESSION['Items'])) {
+            return;
+        }
+
+        $cart = &$_SESSION['Items'];
 	/** @var Cart $cart */
 
-	$cart->reference = (string) get_post('ref');
+	$reference = get_post('ref');
 
-	$cart->Comments = (string) $_POST['Comments'];
+        if (!is_string($reference)) {
+            $reference = '';
+        }
 
-	$cart->document_date = (string) $_POST['OrderDate'];
+        $cart->reference = $reference;
+
+	$cart->Comments = (string) post_scalar('Comments');
+
+	$cart->document_date = (string) post_scalar('OrderDate');
 
 	$newpayment = false;
 
-	if (isset($_POST['payment']) && ($cart->payment != $_POST['payment'])) {
-		$cart->payment = (string) $_POST['payment'];
-		$cart->payment_terms = get_payment_terms(post_scalar('payment')) ?: array('cash_sale' => false, 'days_before_due' => 0);
+	if (isset($_POST['payment']) && ($cart->payment != post_scalar('payment'))) {
+		$cart->payment = (string) post_scalar('payment');
+                
+                $paymentTerms = get_payment_terms(post_scalar('payment'));
+
+                $cart->payment_terms = $paymentTerms !== false
+                    ? $paymentTerms
+                    : array(
+                        'cash_sale' => false,
+                        'days_before_due' => 0
+                    );
+                
 		$newpayment = true;
 	}
 	if ((bool)$cart->payment_terms['cash_sale']) {
@@ -310,28 +333,28 @@ function copy_to_cart(): void
 			$cart->prep_amount = 0;
 		}
 	} else {
-		$cart->due_date = (string) $_POST['delivery_date'];
-		$cart->cust_ref = (string) $_POST['cust_ref'];
-		$cart->deliver_to = (string) $_POST['deliver_to'];
-		$cart->delivery_address = (string) $_POST['delivery_address'];
-		$cart->phone = (string) $_POST['phone'];
-		$cart->ship_via = (string) $_POST['ship_via'];
+		$cart->due_date = (string) post_scalar('delivery_date');
+		$cart->cust_ref = (string) post_scalar('cust_ref');
+		$cart->deliver_to = (string) post_scalar('deliver_to');
+		$cart->delivery_address = (string) post_scalar('delivery_address');
+		$cart->phone = (string) post_scalar('phone');
+		$cart->ship_via = (string) post_scalar('ship_via');
 		if (!(bool)$cart->trans_no || ($cart->trans_type == ST_SALESORDER && !$cart->is_started()))
 			$cart->prep_amount = (float) input_num('prep_amount', 0);
 	}
-	$cart->Location = (string) $_POST['Location'];
+	$cart->Location = (string) post_scalar('Location');
 	$cart->freight_cost = (float) input_num('freight_cost');
 	if (isset($_POST['email']))
-		$cart->email = (string) $_POST['email'];
+		$cart->email = (string) post_scalar('email');
 	else
 		$cart->email = '';
-	$cart->customer_id	= (string) $_POST['customer_id'];
-	$cart->Branch = (string) $_POST['branch_id'];
-	$cart->sales_type = (string) $_POST['sales_type'];
+	$cart->customer_id	= (string) post_scalar('customer_id');
+	$cart->Branch = (string) post_scalar('branch_id');
+	$cart->sales_type = (string) post_scalar('sales_type');
 
 	if ($cart->trans_type!=ST_SALESORDER && $cart->trans_type!=ST_SALESQUOTE) { // 2008-11-12 Joe Hunt
-		$cart->dimension_id = (string) $_POST['dimension_id'];
-		$cart->dimension2_id = (string) $_POST['dimension2_id'];
+		$cart->dimension_id = (string) post_scalar('dimension_id');
+		$cart->dimension2_id = (string) post_scalar('dimension2_id');
 	}
 	$ex_rate = input_num('_ex_rate', null);
 	$cart->ex_rate = $ex_rate === false ? null : $ex_rate;
@@ -341,8 +364,19 @@ function copy_to_cart(): void
 
 function copy_from_cart(): void
 {
-	$cart = &$_SESSION['Items'];
+	/**
+         * Previously: $cart = &session_obj('Items');
+         * The & is not needed because session_obj('Items') returns a Cart object,
+         * and PHP objects are assigned by reference to the same
+         * underlying object. Therefore, assigning it with
+         * $cart = session_obj('Items'); still allows changes to $cart to
+         * modify the object stored in the session. The & would create a
+         * variable reference, which is unnecessary here and prevents Psalm
+         * from analysing the statement correctly.
+         */
+        $cart = session_obj('Items');
 	/** @var Cart $cart */
+        
 	$_POST['ref'] = $cart->reference;
 	$_POST['Comments'] = $cart->Comments;
 
@@ -414,7 +448,7 @@ function can_process(): bool {
 		set_focus('AddItem');
 		return false;
 	}
-	if (!sysprefs()->allow_negative_stock() && ($low_stock = session_obj('Items')->check_qoh()))
+	if (sysprefs()->allow_negative_stock() != 1 && (session_obj('Items')->check_qoh()))
 	{
 		display_error(_("This document cannot be processed because there is insufficient quantity for items marked."));
 		return false;
@@ -426,19 +460,19 @@ function can_process(): bool {
 			set_focus('prep_amount');
 			return false;
 		}
-		if (strlen((string) $_POST['deliver_to']) <= 1) {
+		if (strlen((string) post_scalar('deliver_to')) <= 1) {
 			display_error(_("You must enter the person or company to whom delivery should be made to."));
 			set_focus('deliver_to');
 			return false;
 		}
 
-		if (session_obj('Items')->trans_type != ST_SALESQUOTE && strlen((string) $_POST['delivery_address']) <= 1) {
-			display_error( _("You should enter the street address in the box provided. Orders cannot be accepted without a valid street address."));
+		if (session_obj('Items')->trans_type != ST_SALESQUOTE && strlen((string) post_scalar('delivery_address')) <= 1) {
+			display_error(_("You should enter the street address in the box provided. Orders cannot be accepted without a valid street address."));
 			set_focus('delivery_address');
 			return false;
 		}
 
-		if ($_POST['freight_cost'] == "")
+		if (post_scalar('freight_cost') == "")
 			$_POST['freight_cost'] = price_format(0);
 
 		if (!check_num('freight_cost',0)) {
@@ -454,7 +488,7 @@ function can_process(): bool {
 			set_focus('delivery_date');
 			return false;
 		}
-		if (date1_greater_date2($_POST['OrderDate'], $_POST['delivery_date'])) {
+		if (date1_greater_date2(post_scalar('OrderDate'), post_scalar('delivery_date'))) {
 			if (session_obj('Items')->trans_type==ST_SALESQUOTE)
 				display_error(_("The requested valid date is before the date of the quotation."));
 			else	
@@ -471,7 +505,7 @@ function can_process(): bool {
 			return false;
 		}	
 	}	
-	if (!refs()->is_valid($_POST['ref'], session_obj('Items')->trans_type)) {
+	if (!refs()->is_valid(post_scalar('ref'), session_obj('Items')->trans_type)) {
 		display_error(_("You must enter a reference."));
 		set_focus('ref');
 		return false;
@@ -538,16 +572,21 @@ if (isset($_POST['ProcessOrder']) && can_process()) {
 		} else {
 			meta_forward($_SERVER['PHP_SELF'] ?? '', "AddedDN=$trans_no&Type=$so_type");
 		}
-	}	
+	}
 }
 
 //--------------------------------------------------------------------------------
 
 function check_item_data(): bool
 {
-	
-	$is_inventory_item = is_inventory_item((string) get_post('stock_id'));
-	if(!(bool)get_post('stock_id_text', true)) {
+	$stockId = get_post('stock_id');
+        
+        if (!is_string($stockId)) {
+            return false;
+        }
+        
+        $is_inventory_item = is_inventory_item($stockId);
+	if(!(bool) get_post('stock_id_text', true)) {
 		display_error( _("Item description cannot be empty."));
 		set_focus('stock_id_edit');
 		return false;
@@ -556,7 +595,7 @@ function check_item_data(): bool
 		display_error( _("The item could not be updated because you are attempting to set the quantity ordered to less than 0, or the discount percent to more than 100."));
 		set_focus('qty');
 		return false;
-	} elseif (!check_num('price', 0) && (!sysprefs()->allow_negative_prices() || $is_inventory_item)) {
+	} elseif (!check_num('price', 0) && ((sysprefs()->allow_negative_prices() != 1) || $is_inventory_item)) {
 		display_error( _("Price for inventory item must be entered and can not be less than 0"));
 		set_focus('price');
 		return false;
@@ -567,8 +606,7 @@ function check_item_data(): bool
 		display_error(_("You attempting to make the quantity ordered a quantity less than has already been delivered. The quantity delivered cannot be modified retrospectively."));
 		return false;
 	}
-
-	$cost_home = get_unit_cost((string) get_post('stock_id')); // Added 2011-03-27 Joe Hunt
+	$cost_home = get_unit_cost($stockId); // Added 2011-03-27 Joe Hunt
 	$cost = (float) $cost_home / (float) get_exchange_rate_from_home_currency(session_obj('Items')->customer_currency, session_obj('Items')->document_date);
 	if (input_num('price') < $cost)
 	{
@@ -579,11 +617,11 @@ function check_item_data(): bool
 			$std_cost = number_format2($cost_home, $dec);
 		else
 		{
-			$price = $curr . " " . $price;
-			$std_cost = $curr . " " . number_format2($cost, $dec);
+			$price = ($curr ?? '') . " " . $price;
+			$std_cost = ($curr ?? '') . " " . number_format2($cost, $dec);
 		}
 		display_warning(sprintf(_("Price %s is below Standard Cost %s"), $price, $std_cost));
-	}	
+	}
 	return true;
 }
 
@@ -591,10 +629,15 @@ function check_item_data(): bool
 
 function handle_update_item(): void
 {
-	if ($_POST['UpdateItem'] != '' && check_item_data()) {
-		session_obj('Items')->update_cart_item($_POST['LineNo'],
+	if (post_scalar('UpdateItem') != '' && check_item_data()) {
+		$item_description = post_scalar('item_description');
+		if ($item_description !== null && !is_string($item_description)) {
+			$item_description = (string) $item_description;
+		}
+
+		session_obj('Items')->update_cart_item((int) post_scalar('LineNo'),
 		 input_num('qty'), input_num('price'),
-		 (float)input_num('Disc') / 100.0, $_POST['item_description'] );
+		 (float)input_num('Disc') / 100.0, $item_description );
 	}
 	page_modified();
   line_start_focus();
@@ -618,13 +661,19 @@ function handle_new_item(): void
 {
 
 	if (!check_item_data()) {
-			return;
+	    return;
 	}
-	$cart = &$_SESSION['Items'];
+	$cart = session_obj('Items');
 	/** @var Cart $cart */
-	add_to_order($cart, (string) get_post('stock_id'), input_num('qty'),
-		input_num('price'), (float)input_num('Disc') / 100.0, get_post('stock_id_text'));
-
+        
+        $stockId = get_post('stock_id');
+        if (!is_array($stockId)) {
+	    add_to_order($cart, $stockId, input_num('qty'),
+ 	        input_num('price'),
+                (float)input_num('Disc') / 100.0,
+                get_post('stock_id_text')
+            );
+        }
 	unset($_POST['_stock_id_edit'], $_POST['stock_id']);
 	page_modified();
 	line_start_focus();
@@ -686,20 +735,25 @@ function create_cart(string|int|array|null $type, string|int|array|null $trans_n
 
 	if (isset($_GET['NewQuoteToSalesOrder']))
 	{
-		$trans_no = (string) $_GET['NewQuoteToSalesOrder'];
+		$trans_no = (string) get_scalar('NewQuoteToSalesOrder');
 		$doc = new Cart(ST_SALESQUOTE, $trans_no, true);
 		$doc->Comments = _("Sales Quotation") . " # " . $trans_no;
 		$_SESSION['Items'] = $doc;
-	}	
-	elseif($type != ST_SALESORDER && $type != ST_SALESQUOTE && $trans_no != 0) { // this is template
+	}
+        elseif($type != ST_SALESORDER
+                && $type != ST_SALESQUOTE
+                && $trans_no != 0
+                && !is_array($type)) { // this is template
 
 		$doc = new Cart(ST_SALESORDER, array($trans_no));
-		$doc->trans_type = (string) $type;
+		$doc->trans_type = $type;
 		$doc->trans_no = 0;
 		$doc->document_date = new_doc_date();
-		if ($type == ST_SALESINVOICE) {
+                $salesPoint = get_sales_point(user_pos());
+		if ($type == ST_SALESINVOICE
+                        && ($salesPoint !== false)) {
 			$doc->due_date = get_invoice_duedate($doc->payment, $doc->document_date);
-			$doc->pos = get_sales_point(user_pos());
+			$doc->pos = $salesPoint;
 		} else
 			$doc->due_date = $doc->document_date;
 		$doc->reference = refs()->get_next($doc->trans_type, null, array('date' => Today()));
@@ -774,7 +828,8 @@ start_form();
 hidden('cart_id');
 $cart = &$_SESSION['Items'];
 /** @var Cart $cart */
-$customer_error = display_order_header($cart, !session_obj('Items')->is_started(), $idate);
+
+$customer_error = display_sales_order_header($cart, session_obj('Items')->is_started() != 1, $idate);
 
 if ($customer_error == "") {
 	start_table(TABLESTYLE, "width='80%'", 10);
@@ -787,7 +842,6 @@ if ($customer_error == "") {
 	end_table(1);
 
 	if (session_obj('Items')->trans_no == 0) {
-
 		submit_center_first('ProcessOrder', $porder,
 		    _('Check entered data and save document'), 'default');
 		submit_center_last('CancelOrder', $cancelorder,

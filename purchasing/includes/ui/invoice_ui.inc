@@ -33,16 +33,28 @@ function copy_from_trans(supp_trans &$supp_trans): void
 
 function copy_to_trans(supp_trans &$supp_trans): void
 {
-	$supp_trans->Comments = $_POST['Comments'];
-	$supp_trans->tran_date = $_POST['tran_date'];
-	$supp_trans->due_date = $_POST['due_date'];
-	$supp_trans->supp_reference = $_POST['supp_reference'];
-	$supp_trans->reference = $_POST['reference'];
-   	$supp_trans->dimension = @$_POST['dimension'];
-	$supp_trans->dimension2 =  @$_POST['dimension2'];
-
+	$supp_trans->Comments = is_string(get_post('Comments'))
+                ? get_post('Comments')
+                : (string) get_post('Comments');
+	$supp_trans->tran_date = is_string(get_post('tran_date'))
+                ? get_post('tran_date')
+                : (string) get_post('tran_date');
+	$supp_trans->due_date = is_string(get_post('due_date'))
+                ? get_post('due_date')
+                : (string) get_post('due_date');
+	$supp_trans->supp_reference = is_string(get_post('supp_reference'))
+                ? get_post('supp_reference')
+                : (string) get_post('supp_reference');
+	$supp_trans->reference = is_string(get_post('reference'))
+                ? get_post('reference')
+                : (string) get_post('reference');
+   	$supp_trans->dimension = is_string(get_post('dimension'))
+                ? get_post('dimension')
+                : (string) get_post('dimension');
+	$supp_trans->dimension2 =  is_string(@get_post('dimension2'))
+                ? @get_post('dimension2')
+                : (string) @get_post('dimension2');
 	$supp_trans->ex_rate = input_num('_ex_rate', null);
-
 	$supp_trans->ov_amount = $supp_trans->ov_discount = 0; /* for starters */
     if (isset($_POST['mantax'])) {
 		foreach($_POST['mantax'] as $id => $tax) {
@@ -209,10 +221,13 @@ function display_gl_controls(supp_trans &$supp_trans, string|int|float|bool|null
 	if ($dim > 1)
 		dimensions_list_cells(null, 'dimension2_id', null, true, " ", false, 2);
 	amount_cells(null, 'amount');
-	if ($dim < 1)	
-		text_cells_ex(null, 'memo_', 35, 50, null, null, null, hidden('dimension_id', 0, false).hidden('dimension2_id', 0, false));
+	if ($dim < 1)
+		text_cells_ex(null, 'memo_', 35, 50, null, null, null,
+                    (string) hidden('dimension_id', 0, false) . 
+                    (string) hidden('dimension2_id', 0, false));
 	elseif ($dim < 2)	
-		text_cells_ex(null, 'memo_', 35, 50, null, null, null, hidden('dimension2_id', 0, false));
+		text_cells_ex(null, 'memo_', 35, 50, null, null, null,
+                    (string) hidden('dimension2_id', 0, false));
 	else	
 		text_cells_ex(null, 'memo_', 35, 50, null, null, null);
 	submit_cells('AddGLCodeToTrans', _("Add"), "",
@@ -387,12 +402,12 @@ function display_grn_items_for_selection(supp_trans &$supp_trans, string|int|flo
 
 			$n = $myrow["id"];
 			label_cell(get_trans_view_str(ST_SUPPRECEIVE, $myrow["grn_batch_id"]), "nowrap align='right'");
-		   	hidden('qty_recd'.$n, $myrow["qty_recd"]);
-           	hidden('item_code'.$n, $myrow["item_code"]);
-           	hidden('item_description'.$n, $myrow["description"]);
-           	hidden('prev_quantity_inv'.$n, $myrow['quantity_inv']);
-           	hidden('order_price'.$n, $myrow['unit_price']);
-           	hidden('po_detail_item'.$n, $myrow['po_detail_item']);
+		   	hidden('qty_recd'.(string) $n, $myrow["qty_recd"]);
+           	hidden('item_code'.(string) $n, $myrow["item_code"]);
+           	hidden('item_description'.(string) $n, $myrow["description"]);
+           	hidden('prev_quantity_inv'.(string) $n, $myrow['quantity_inv']);
+           	hidden('order_price'.(string) $n, $myrow['unit_price']);
+           	hidden('po_detail_item'.(string) $n, $myrow['po_detail_item']);
         	label_cell(get_trans_view_str(ST_PURCHORDER, $myrow["purch_order_no"]), "nowrap align='right'");
             label_cell($myrow["item_code"]);
             label_cell($myrow["description"]);
@@ -401,29 +416,29 @@ function display_grn_items_for_selection(supp_trans &$supp_trans, string|int|flo
             qty_cell($myrow["qty_recd"], false, $dec);
             qty_cell($myrow["quantity_inv"], false, $dec);
             if ($supp_trans->trans_type == ST_SUPPINVOICE)
-            	qty_cells(null, 'this_quantity_inv'.$n, number_format2((float)$myrow["qty_recd"] - (float)$myrow["quantity_inv"], $dec), 
+            	qty_cells(null, 'this_quantity_inv'.(string) $n, number_format2((float)$myrow["qty_recd"] - (float)$myrow["quantity_inv"], $dec), 
             		null, null, $dec);
             else
-            	qty_cells(null, 'This_QuantityCredited'.$n, number_format2(max($myrow["quantity_inv"], 0), $dec), 
+            	qty_cells(null, 'This_QuantityCredited'.(string) $n, number_format2(max($myrow["quantity_inv"], 0), $dec), 
             		null, null, $dec);
             $dec2 = 0;
             if ($supp_trans->trans_type == ST_SUPPINVOICE)
             {
-            	amount_cells(null, 'ChgPrice'.$n, price_decimal_format($myrow["unit_price"], $dec2), null, null, $dec2);
+            	amount_cells(null, 'ChgPrice'.(string) $n, price_decimal_format($myrow["unit_price"], $dec2), null, null, $dec2);
             	amount_cell(round2((float)$myrow["unit_price"] * ((float)$myrow["qty_recd"] - (float)$myrow["quantity_inv"]), user_price_dec()));
             }
             else
             {
-            	amount_cells(null, 'ChgPrice'.$n, price_decimal_format($myrow["act_price"], $dec2), null, null, $dec2);
+            	amount_cells(null, 'ChgPrice'.(string) $n, price_decimal_format($myrow["act_price"], $dec2), null, null, $dec2);
             	amount_cell(round2((float)$myrow["act_price"] * (float)max($myrow['quantity_inv'], 0), user_price_dec()));
             }	
             if ($supp_trans->trans_type == ST_SUPPINVOICE)
-        		submit_cells('grn_item_id'.$n, _("Add"), '', _("Add to Invoice"), true);
+        		submit_cells('grn_item_id'.(string) $n, _("Add"), '', _("Add to Invoice"), true);
         	else	
-        		submit_cells('grn_item_id'.$n, _("Add"), '', _("Add to Credit Note"), true);
+        		submit_cells('grn_item_id'.(string) $n, _("Add"), '', _("Add to Credit Note"), true);
     		if (($supp_trans->trans_type == ST_SUPPINVOICE) && session_obj('wa_current_user')->can_access('SA_GRNDELETE')) {	// Added 2008-10-18 by Joe Hunt. Special access rights needed.
-        		submit_cells('void_item_id'.$n, _("Remove"), '', _("WARNING! Be careful with removal. The operation is executed immediately and cannot be undone !!!"), true);
-				submit_js_confirm('void_item_id'.$n,
+        		submit_cells('void_item_id'.(string) $n, _("Remove"), '', _("WARNING! Be careful with removal. The operation is executed immediately and cannot be undone !!!"), true);
+				submit_js_confirm('void_item_id'.(string) $n,
 					sprintf(_('You are about to remove all yet non-invoiced items from delivery line #%d. This operation also irreversibly changes related order line. Do you want to continue ?'), $n));
 			}
 			end_row();

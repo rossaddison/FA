@@ -533,7 +533,7 @@ if (list_updated('tax_category'))
 
 start_form();
 
-display_order_header($journal_items);
+display_general_journal_order_header($journal_items);
 
 tabbed_content_start('tabs', array(
 		'gl' => array(_('&GL postings'), true),

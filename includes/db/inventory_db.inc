@@ -112,7 +112,7 @@ function get_item_edit_info(string|null $stock_id)
 /**
  * @return false|null|string
  */
-function get_unit_cost(string|int|float|bool|null $stock_id)
+function get_unit_cost(string|int|bool|null $stock_id)
 {
 	$sql = "SELECT material_cost
 		FROM ".TB_PREF."stock_master

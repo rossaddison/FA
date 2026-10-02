@@ -47,30 +47,52 @@ function add_gl_trans_customer(?int $type, string|int|float|bool|null $type_no, 
 
 //----------------------------------------------------------------------------------------
 
-function get_calculated_price(string|int|float|bool|null $stock_id, string|int|float|bool|null $add_pct): int|float
-{
-	$avg = get_unit_cost($stock_id);
-	if ($avg == 0)
-		return 0;
-	return round2($avg * (1.0 + (float)($add_pct / 100)), user_price_dec());
+function get_calculated_price(
+    string|int|float|bool|null $stock_id,
+    string|int|float|bool|null $add_pct
+): int|float {
+    $avg = (float) get_unit_cost($stock_id);
+    if ((float) $avg === 0.0) {
+        return 0;
+    }
+
+    $add_pct = (float) $add_pct;
+
+    return round2(
+        $avg * (1.0 + ($add_pct / 100.0)),
+        user_price_dec()
+    );
 }
 
 /** @return 0|float */
-function round_to_nearest(string|int|float|bool|null $price, string|int|float|bool|null $round_to)
-{
-	if ($price == 0)
-		return 0;
-	$pow = pow(10, user_price_dec());
-	if ($pow >= $round_to)
-		$mod = ($pow % $round_to);
-	else
-		$mod = ($round_to % $pow);
-	if ($mod != 0)
-		$price = ceil($price) - (((float)($pow - $round_to)) / (float)$pow);
-	else	
-    	$price = ceil($price * ($pow / $round_to)) / ((float)($pow / $round_to));
-    return $price;
+function round_to_nearest(
+    string|int|float|bool|null $price,
+    string|int|float|bool|null $round_to
+): float|int {
+    $price = (float) $price;
+    $roundTo = (float) ($round_to ?? 0);
 
+    if ($price === 0.0) {
+        return 0;
+    }
+
+    $pow = pow(10, user_price_dec());
+
+    if ($pow >= $roundTo) {
+        $mod = fmod($pow, $roundTo);
+    } else {
+        $mod = fmod($roundTo, $pow);
+    }
+
+    if ($mod !== 0.0) {
+        $price = ceil($price)
+            - (($pow - $roundTo) / $pow);
+    } else {
+        $price = ceil($price * ($pow / $roundTo))
+            / ($pow / $roundTo);
+    }
+
+    return $price;
 }
 
 /** @return 0|float */
@@ -237,7 +259,7 @@ function read_sales_trans(string|int|float|bool|null $doc_type, string|int|float
 		$cart->trans_no = $trans_no;
 	} else {
 		// read header data from first document
-		$myrow = get_customer_trans($trans_no[0],$doc_type);
+		$myrow = (array) get_customer_trans($trans_no[0],$doc_type);
         $debtor_no = $myrow['debtor_no'];
 		if (count_array($trans_no)>1)
 			$cart->trans_no = get_customer_trans_version($doc_type, $trans_no);

@@ -88,7 +88,7 @@ function dashboard(string|int|float|bool|null $sel_app): void
 		display_all();
 }
 
-function display_title(?string $title, string|int|float|bool|null $id=false, string|int|float|bool|null $type = false, ?string $per = '', string|int|bool|array|null $num = false): void
+function display_title(?string $title, int|bool|null $id=false, string|int|float|bool|null $type = false, ?string $per = '', string|int|bool|array|null $num = false): void
 {
 	br();
 	start_form();

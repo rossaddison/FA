@@ -44,7 +44,7 @@ if(isset($_GET['NewCredit'])) {
 	$help_context = "Modifying Customer Credit Note";
 }
 
-page($_SESSION['page_title'],false, false, "", $js);
+page((string) ($_SESSION['page_title'] ?? ''),false, false, "", $js);
 
 //-----------------------------------------------------------------------------
 

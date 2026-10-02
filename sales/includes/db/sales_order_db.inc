@@ -62,7 +62,7 @@ function add_sales_order(Cart &$order)
 			$loc = calculate_reorder_level($order->Location, $line, $st_ids, $st_names, $st_num, $st_reorder); 
 
 		$sql = "INSERT INTO ".TB_PREF."sales_order_details (order_no, trans_type, stk_code, description, unit_price, quantity, discount_percent) VALUES (";
-		$sql .= $order_no . ",".$order->trans_type .
+		$sql .= (string) $order_no . ",". (string) $order->trans_type .
 				",".db_escape($line->stock_id).", "
 				.db_escape($line->item_description).", $line->price,
 				$line->quantity,
@@ -75,7 +75,8 @@ function add_sales_order(Cart &$order)
 	} /* inserted line items into sales order details */
 
 	add_audit_trail($order->trans_type, $order_no, $order->document_date);
-	refs()->save($order->trans_type, $order_no, $order->reference, null, $order->fixed_asset);
+	// bugfix 29/9/26 refs()->save($order->trans_type, $order_no, $order->reference, null, $order->fixed_asset);
+        refs()->save($order->trans_type, $order_no, $order->reference, null);
 
 	hook_db_postwrite($order, $order->trans_type);
 	commit_transaction();
@@ -621,14 +622,24 @@ function get_sales_order_invoices(string|null $order_no): mysqli_result
 }
 
 /**
- * @return null|string
+ * The is_sales_order_started() function runs a SQL COUNT(*) query to determine
+ * how many detail lines belonging to a particular sales order have either been
+ * invoiced or had a quantity sent. The result of db_fetch() is an array
+ * containing the single value returned by COUNT(*), so $result[0] contains
+ * that count. The function therefore returns an integer: 0 if no lines have
+ * been started, or a positive number representing the number of matching
+ * sales-order detail lines.
+ *
+ * @return int
  */
-function is_sales_order_started(string|int|float|bool|null $order_no)
+function is_sales_order_started(string|int|float|bool|null $order_no) : int
 {
-	$sql = "SELECT count(*) FROM ".TB_PREF."sales_order_details WHERE order_no=".db_escape($order_no)." AND trans_type=".ST_SALESORDER
-		." AND (invoiced!=0 OR qty_sent!=0)";
+    $sql = "SELECT count(*) FROM ".TB_PREF."sales_order_details WHERE order_no=".
+            db_escape($order_no)." AND trans_type=".ST_SALESORDER
+	    ." AND (invoiced!=0 OR qty_sent!=0)";
 
-	$result = row_or_empty(db_fetch(db_select($sql, "cannot retrieve sales invoices for sales order")));
+	$result = row_or_empty(db_fetch(db_select($sql,
+            "cannot retrieve sales invoices for sales order")));
 	return $result[0];
 }
 

@@ -28,12 +28,12 @@ if (sysprefs()->use_popup_windows)
 if ($_GET['trans_type'] == ST_SALESQUOTE)
 {
 	page(_($help_context = "View Sales Quotation"), true, false, "", $js);
-	display_heading(sprintf(_("Sales Quotation #%d"),(string) $_GET['trans_no']));
+	display_heading(sprintf(_("Sales Quotation #%d"),(string) get_scalar('trans_no')));
 }
 else
 {
 	page(_($help_context = "View Sales Order"), true, false, "", $js);
-	display_heading(sprintf(_("Sales Order #%d"),(string) $_GET['trans_no']));
+	display_heading(sprintf(_("Sales Order #%d"),(string) get_scalar('trans_no')));
 }
 
 if (isset($_SESSION['View']))
@@ -45,7 +45,7 @@ $_SESSION['View'] = new Cart($_GET['trans_type'], $_GET['trans_no']);
 
 start_table(TABLESTYLE2, "width='95%'", 5);
 
-if ($_GET['trans_type'] != ST_SALESQUOTE)
+if (get_post('trans_type') != ST_SALESQUOTE)
 {
 	echo "<tr valign=top><td>";
 	display_heading2(_("Order Information"));
@@ -93,11 +93,13 @@ end_row();
 } else
 	label_row(_("Payment Terms"), session_obj('View')->payment_terms['terms'], "class='tableheader2'", "colspan=3");
 
-label_row(_("Delivery Address"), nl2br(session_obj('View')->delivery_address),
+label_row(_("Delivery Address"), nl2br(session_obj('View')->delivery_address ?? ''),
 	"class='tableheader2'", "colspan=3");
 label_row(_("Reference"), session_obj('View')->reference, "class='tableheader2'", "colspan=3");
 label_row(_("Telephone"), session_obj('View')->phone, "class='tableheader2'", "colspan=3");
-label_row(_("E-mail"), "<a href='mailto:" . session_obj('View')->email . "'>" . session_obj('View')->email . "</a>",
+label_row(_("E-mail"), "<a href='mailto:" .
+        (session_obj('View')->email ?? '') . "'>" .
+         (session_obj('View')->email ?? '') . "</a>",
 	"class='tableheader2'", "colspan=3");
 label_row(_("Comments"), !empty(session_obj('View')->Comments) ? nl2br(session_obj('View')->Comments) : "", "class='tableheader2'", "colspan=3");
 end_table();

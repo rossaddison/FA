@@ -29,7 +29,7 @@ if (!isset($_GET['trans_no']))
 	die ("<br>" . _("This page must be called with a purchase order number to review."));
 }
 
-if (!empty(sysprefs()->prefs['company_logo_on_views']))
+if ((bool)sysprefs()->prefs['company_logo_on_views'])
 	company_logo_on_view();
 
 display_heading(_("Purchase Order") . " #" . (string) get_scalar('trans_no'));

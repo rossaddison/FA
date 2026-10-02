@@ -28,11 +28,11 @@ page(_($help_context = "View Sales Dispatch"), true, false, "", $js);
 $trans_id = null;
 if (isset($_GET["trans_no"]))
 {
-	$trans_id = (string) $_GET["trans_no"];
+	$trans_id = get_scalar('trans_no');
 }
 elseif (isset($_POST["trans_no"]))
 {
-	$trans_id = (string) $_POST["trans_no"];
+	$trans_id = post_scalar('trans_no');
 }
 
 // 3 different queries to get the information - what a JOKE !!!!

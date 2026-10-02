@@ -46,7 +46,7 @@ if ($to_trans['bank_curr_code'] != $to_trans['settle_curr'])
 	$show_currencies = true;
 }
 
-if (!empty(sysprefs()->prefs['company_logo_on_views']))
+if ((bool)sysprefs()->prefs['company_logo_on_views'])
 	company_logo_on_view();
 
 echo "<center>";

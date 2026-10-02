@@ -23,8 +23,8 @@ function add_customer(string|null $CustName, string|null $cust_ref, string|null 
 		.db_escape($address) . ", " . db_escape($tax_id) . ","
 		.db_escape($dimension_id) . ", " 
 		.db_escape($dimension2_id) . ", ".db_escape($curr_code) . ", 
-		" . db_escape($credit_status) . ", ".db_escape($payment_terms) . ", " . $discount . ", 
-		" . $pymt_discount . ", " . $credit_limit 
+		" . db_escape($credit_status) . ", ".db_escape($payment_terms) . ", " . ($discount ?? 0) . ", 
+		" . ($pymt_discount ?? 0) . ", " . ($credit_limit ?? 0)
 		 .", ".db_escape($sales_type).", ".db_escape($notes) . ")";
 	db_query($sql,"The customer could not be added");
 }
@@ -42,9 +42,9 @@ function update_customer(string|null $customer_id, string|null $CustName, string
 		dimension2_id=".db_escape($dimension2_id) . ", 
 		credit_status=".db_escape($credit_status) . ", 
 		payment_terms=".db_escape($payment_terms) . ", 
-		discount=" . $discount . ", 
-		pymt_discount=" . $pymt_discount . ", 
-		credit_limit=" . $credit_limit . ", 
+		discount=" . (string) ($discount ?? 0) . ", 
+		pymt_discount=" . (string) ($pymt_discount ?? 0) . ", 
+		credit_limit=" . (string) ($credit_limit ?? 0). ", 
 		sales_type = ".db_escape($sales_type) . ", 
 		notes=".db_escape($notes) ."
 		WHERE debtor_no = ".db_escape($customer_id);
@@ -77,7 +77,7 @@ function get_customer_details(string|int|float|bool|null $customer_id, string|nu
 	else
 		$todate = date2sql($to);
 	$past1 = get_company_pref('past_due_days');
-	$past2 = 2 * $past1;
+	$past2 = (2 * ($past1 ?? 0));
 
 	$sign = "IF(trans.type IN(".implode(',',  array(ST_CUSTCREDIT,ST_CUSTPAYMENT,ST_BANKDEPOSIT))."), -1, 1)";
 	$value = "$sign*(IF(trans.prep_amount, trans.prep_amount,
@@ -104,8 +104,12 @@ function get_customer_details(string|int|float|bool|null $customer_id, string|nu
 	if ((bool)$customer_id)
 		$sql .= " AND debtor.debtor_no = ".db_escape($customer_id);
 
-	if (!(bool)$all)
-		$sql .= " AND ABS(IF(trans.prep_amount, trans.prep_amount, ABS(trans.ov_amount) + trans.ov_gst + trans.ov_freight + trans.ov_freight_tax + trans.ov_discount) - trans.alloc) > ".FLOAT_COMP_DELTA;
+	if (!(bool)$all) {
+	    $sql .= " AND ABS(IF(trans.prep_amount," .
+            " trans.prep_amount, ABS(trans.ov_amount) + trans.ov_gst" .
+            " + trans.ov_freight + trans.ov_freight_tax + trans.ov_discount)" .
+            " - trans.alloc) > ". (string) FLOAT_COMP_DELTA;
+        }
 
 	$sql .= " GROUP BY
 				debtor.name,
@@ -229,7 +233,7 @@ function get_customer_currency(string|int|float|bool|null $customer_id=null, str
 /**
  * @return mysqli_result
  */
-function get_customers_search(string|array|null $customer)
+function get_customers_search(string|array|null $customer = '')
 {
 
 	if (isset(sysprefs()->max_rows_in_search))

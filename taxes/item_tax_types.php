@@ -26,19 +26,19 @@ include(dirname(__DIR__) . "/includes/ui.inc");
 simple_page_mode(true);
 //-----------------------------------------------------------------------------------
 
-if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') 
+if (($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') && (is_string($_POST['name'])))
 {
 
 	$input_error = 0;
 
-	if (strlen((string) $_POST['name']) == 0)
+	if (strlen($_POST['name']) == 0)
 	{
 		$input_error = 1;
 		display_error(_("The item tax type description cannot be empty."));
 		set_focus('name');
 	}
 
-	if ($input_error != 1) 
+	if ($input_error != 1)
 	{
 		
 		// create an array of the exemptions

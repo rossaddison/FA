@@ -44,7 +44,7 @@ $branch = row_or_empty(get_branch($myrow["branch_code"]));
 
 $sales_order = row_or_empty(get_sales_order_header($myrow["order_"], ST_SALESORDER));
 
-if (!empty(sysprefs()->prefs['company_logo_on_views']))
+if ((bool)sysprefs()->prefs['company_logo_on_views'])
 	company_logo_on_view();
 
 display_heading(sprintf($myrow['prep_amount'] > 0 ? (
@@ -173,8 +173,8 @@ $display_total = price_format((float)$myrow["ov_freight"]+(float)$myrow["ov_gst"
 
 label_row(_("TOTAL INVOICE"), $display_total, "colspan=6 align=right",
 	"nowrap align=right");
-if ($myrow['prep_amount'])
-	label_row(_("PREPAYMENT AMOUNT INVOICED"), '<b>'.price_format($myrow['prep_amount']).'</b>', "colspan=6 align=right",
+if (strlen((string) $myrow['prep_amount']) > 0)
+    label_row(_("PREPAYMENT AMOUNT INVOICED"), '<b>'.price_format($myrow['prep_amount']).'</b>', "colspan=6 align=right",
 		"nowrap align=right");
 end_table(1);
 

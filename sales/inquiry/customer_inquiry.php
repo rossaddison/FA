@@ -144,15 +144,15 @@ function display_customer_summary(bool|array|null $customer_record): void
     	echo "<center><font color=red size=4><b>" . _("CUSTOMER ACCOUNT IS ON HOLD") . "</font></b></center>";
     }
 
-	$nowdue = "1-" . $past1 . " " . _('Days');
-	$pastdue1 = $past1 + 1 . "-" . $past2 . " " . _('Days');
-	$pastdue2 = _('Over') . " " . $past2 . " " . _('Days');
+	$nowdue = "1-" . (string) $past1 . " " . _('Days');
+	$pastdue1 = (string) ($past1 + 1) . "-" . (string) $past2 . " " . _('Days');
+	$pastdue2 = _('Over') . " " . (string) $past2 . " " . _('Days');
 
     start_table(TABLESTYLE, "width='80%'");
     $th = array(_("Currency"), _("Terms"), _("Current"), $nowdue,
     	$pastdue1, $pastdue2, _("Total Balance"));
     table_header($th);
-    if ($customer_record != false)
+    if ($customer_record != false && is_array($customer_record))
     {
 		start_row();
 	    label_cell($customer_record["curr_code"]);

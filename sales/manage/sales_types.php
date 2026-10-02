@@ -27,8 +27,11 @@ $selected_id = $selected_id;
 
 function can_process(): bool
 {
-	if (strlen((string) $_POST['sales_type']) == 0)
-	{
+	
+        $salesType = get_post('sales_type');
+
+        if (!is_string($salesType) || $salesType === '')
+        {
 		display_error(_("The sales type description cannot be empty."));
 		set_focus('sales_type');
 		return false;

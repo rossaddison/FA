@@ -10,25 +10,31 @@ declare(strict_types=1);
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_sales_point(string|int|float|bool|null $name, string|int|float|bool|null $location, string|int|float|bool|null $account, int|array|null $cash, int|array|null $credit): void
+function add_sales_point(string|int|float|bool|null $name, string|int|float|bool|null $location, string|int|float|bool|null $account, int|null $cash, int|null $credit): void
 {
 	$sql = "INSERT INTO ".TB_PREF."sales_pos (pos_name, pos_location, pos_account, cash_sale, credit_sale) VALUES (".db_escape($name)
 			. ",".db_escape($location).",".db_escape($account)
-			. ",$cash,$credit)";
+			. "," . ($cash ?? 0) .  "," . ($credit ?? 0) . ")";
 	db_query($sql, "could not add point of sale");
 }
 
-function update_sales_point(string|int|float|bool|null $id, string|int|float|bool|null $name, string|int|float|bool|null $location, string|int|float|bool|null $account, int|array|null $cash, int|array|null $credit): void
+function update_sales_point(
+    string|int|float|bool|null $id,
+    string|int|float|bool|null $name,
+    string|int|float|bool|null $location,
+    string|int|float|bool|null $account,
+    int|null $cash,
+    int|null $credit): void
 {
 
 	$sql = "UPDATE ".TB_PREF."sales_pos SET pos_name=".db_escape($name)
 				.",pos_location=".db_escape($location)
 				.",pos_account=".db_escape($account)
-				.",cash_sale =$cash"
-				.",credit_sale =$credit"
+				.",cash_sale =". (string) ($cash ?? 0) . '"'
+				.",credit_sale =". (string) ($credit ?? 0) . '"'
 		 		." WHERE id = ".db_escape($id);
 	
-	db_query($sql, "could not update sales type");			
+	db_query($sql, "could not update sales type");
 }
 
 /**

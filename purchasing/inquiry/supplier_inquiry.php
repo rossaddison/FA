@@ -43,9 +43,9 @@ function display_supplier_summary(bool|array|null $supplier_record): void
 {
 	$past1 = get_company_pref('past_due_days');
 	$past2 = 2 * $past1;
-	$nowdue = "1-" . $past1 . " " . _('Days');
-	$pastdue1 = $past1 + 1 . "-" . $past2 . " " . _('Days');
-	$pastdue2 = _('Over') . " " . $past2 . " " . _('Days');
+	$nowdue = "1-" . (string) $past1 . " " . _('Days');
+	$pastdue1 = (string) ($past1 + 1) . "-" . (string) $past2 . " " . _('Days');
+	$pastdue2 = _('Over') . " " . (string) $past2 . " " . _('Days');
 	
 
     start_table(TABLESTYLE, "width='80%'");
@@ -58,11 +58,11 @@ function display_supplier_summary(bool|array|null $supplier_record): void
 	    start_row();
 		label_cell($supplier_record["curr_code"]);
 	    label_cell($supplier_record["terms"]);
-	    amount_cell((float)$supplier_record["Balance"] - (float)$supplier_record["Due"]);
-	    amount_cell((float)$supplier_record["Due"] - (float)$supplier_record["Overdue1"]);
-	    amount_cell((float)$supplier_record["Overdue1"] - (float)$supplier_record["Overdue2"]);
-	    amount_cell($supplier_record["Overdue2"]);
-	    amount_cell($supplier_record["Balance"]);
+	    amount_cell((float)($supplier_record["Balance"]) - (float)($supplier_record["Due"]));
+	    amount_cell((float)($supplier_record["Due"]) - (float)($supplier_record["Overdue1"]));
+	    amount_cell((float)($supplier_record["Overdue1"]) - (float)($supplier_record["Overdue2"]));
+	    amount_cell((float)$supplier_record["Overdue2"]);
+	    amount_cell((float)$supplier_record["Balance"]);
 	    end_row();
 	}
     end_table(1);

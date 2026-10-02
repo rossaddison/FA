@@ -14,21 +14,22 @@ $page_security = 'SA_SALESMAN';
 /** @var string $path_to_root */
 $path_to_root = "../..";
 include(dirname(__DIR__, 2) . "/includes/session.inc");
+include(dirname(__DIR__, 2) . "/includes/ui.inc");
 
 page(_($help_context = "Sales Persons"));
 
-include(dirname(__DIR__, 2) . "/includes/ui.inc");
+
 
 simple_page_mode(true);
 //------------------------------------------------------------------------------------------------
 
+$salesmanName = get_post('salesman_name');
 if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') 
 {
-
 	//initialise no input errors assumed initially before we test
 	$input_error = 0;
 
-	if (strlen((string) $_POST['salesman_name']) == 0)
+	if (!is_string($salesmanName) || $salesmanName === '')
 	{
 		$input_error = 1;
 		display_error(_("The sales person name cannot be empty."));
@@ -112,7 +113,7 @@ while ($myrow = db_fetch($result))
 
 	alt_table_row_color($k);
 
-    label_cell($myrow["salesman_name"]);
+        label_cell($myrow["salesman_name"]);
    	label_cell($myrow["salesman_phone"]);
    	label_cell($myrow["salesman_fax"]);
 	email_cell($myrow["salesman_email"]);

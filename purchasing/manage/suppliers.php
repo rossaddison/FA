@@ -231,16 +231,17 @@ function supplier_settings(&$supplier_id): void
 		check_row(_("Prices contain tax included:"), 'tax_included');
 	else {
 		hidden('tax_included');
-		label_row(_("Prices contain tax included:"), (bool)$_POST['tax_included'] ? _('Yes') : _('No'));
+		label_row(_("Prices contain tax included:"), (bool) get_post('tax_included') ? _('Yes') : _('No'));
 	}
 
 	if (!(bool)$supplier_id) table_section(2);
 
 	table_section_title(_("Accounts"));
-	gl_all_accounts_list_row(_("Accounts Payable Account:"), 'payable_account', $_POST['payable_account']);
-	gl_all_accounts_list_row(_("Purchase Account:"), 'purchase_account', $_POST['purchase_account'],
+	gl_all_accounts_list_row(_("Accounts Payable Account:"), 'payable_account', get_post('payable_account'));
+	gl_all_accounts_list_row(_("Purchase Account:"), 'purchase_account', get_post('purchase_account'),
 		false, false, _("Use Item Inventory/COGS Account"));
-	gl_all_accounts_list_row(_("Purchase Discount Account:"), 'payment_discount_account', $_POST['payment_discount_account']);
+	gl_all_accounts_list_row(_("Purchase Discount Account:"), 'payment_discount_account',
+            get_post('payment_discount_account'));
 	if (!(bool)$supplier_id) {
 		table_section_title(_("Contact Data"));
 		text_row(_("Contact Person:"), 'contact', null, 42, 40);

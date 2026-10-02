@@ -30,13 +30,13 @@ check_db_has_tax_types(_("There are no tax types defined. Define tax types befor
 
 //-----------------------------------------------------------------------------------
 
-if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') 
+if (($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') && is_string($_POST['name']))
 {
 
 	//initialise no input errors assumed initially before we test
 	$input_error = 0;
 
-	if (strlen((string) $_POST['name']) == 0)
+	if (strlen($_POST['name']) == 0)
 	{
 		$input_error = 1;
 		display_error(_("The tax group name cannot be empty."));

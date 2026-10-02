@@ -14,7 +14,7 @@ function add_tax_type(string|int|float|bool|null $name, string|int|float|bool|nu
 {
 	$sql = "INSERT INTO ".TB_PREF."tax_types (name, sales_gl_code, purchasing_gl_code, rate)
 		VALUES (".db_escape($name).", ".db_escape($sales_gl_code)
-		.", ".db_escape($purchasing_gl_code).", ".(float)$rate.")";
+		.", ".db_escape($purchasing_gl_code).", ". (string)(float)$rate.")";
 
 	db_query($sql, "could not add tax type");
 }
@@ -24,7 +24,7 @@ function update_tax_type(string|int|float|bool|null $type_id, string|int|float|b
 	$sql = "UPDATE ".TB_PREF."tax_types SET name=".db_escape($name).",
 		sales_gl_code=".db_escape($sales_gl_code).",
 		purchasing_gl_code=".db_escape($purchasing_gl_code).",
-		rate=".(float)$rate."
+		rate=". (string)(float)$rate."
 		WHERE id=".db_escape($type_id);
 
 	db_query($sql, "could not update tax type");
@@ -104,26 +104,31 @@ function delete_tax_type(string|int|float|bool|null $type_id): void
 
 /*
 	Check if gl_code is used by more than 2 tax types,
-	or check if the two gl codes are not used by any other 
+	or check if the two gl codes are not used by any other
 	than selected tax type.
 	Necessary for pre-2.2 installations.
 */
-function is_tax_gl_unique(string|null $gl_code, string|int|null $gl_code2=-1, string|int|float|bool|null $selected_id=-1): bool {
-
+function is_tax_gl_unique(
+    string|array|null $gl_code,
+    string|int|array|null $gl_code2=-1,
+    string|int|float|bool|null $selected_id=-1): bool {
+    $row = [];
+    $sql = '';
+    if (!is_array($gl_code2) && !is_array($gl_code)) {
 	$purch_code = $gl_code2== -1 ? $gl_code : $gl_code2;
-
-	$sql = "SELECT count(*) FROM "
-			.TB_PREF."tax_types	
-		WHERE (sales_gl_code=" .db_escape($gl_code)
-			." OR purchasing_gl_code=" .db_escape($purch_code). ")";
-
-	if ($selected_id != -1)
-		$sql .= " AND id!=".db_escape($selected_id);
-
+        if (is_scalar($purch_code) || is_null($purch_code)
+            && (is_scalar($gl_code) || is_null($gl_code))) {
+                $sql = "SELECT count(*) FROM "
+		.TB_PREF."tax_types WHERE (sales_gl_code=" .db_escape($gl_code)
+		." OR purchasing_gl_code=" .db_escape($purch_code). ")";
+        }
+	if ($selected_id != -1) {
+	   $sql .= " AND id!=".db_escape($selected_id);
+        }
 	$res = db_select($sql, "could not query gl account uniqueness");
 	$row = row_or_empty(db_fetch($res));
-
-	return $gl_code2 == -1 ? ($row[0] <= 1) : ($row[0] == 0);
+    }
+    return $gl_code2 == -1 ? ($row[0] <= 1) : ($row[0] == 0);
 }
 
 /**

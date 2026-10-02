@@ -382,13 +382,13 @@ function select_button_cell(string|int|float|bool|null $name, string|int|float|b
 
 function check_value(string|array $name): int|array
 {
-	if (is_array($name)) {
-		$ret = array();
-		foreach($name as $key)
-			$ret[$key] = check_value($key);
-		return $ret;
-	} else
-		return (!(bool)($_POST[$name] ?? null) ? 0 : 1);
+    if (is_array($name)) {
+        $ret = array();
+        foreach($name as $key)
+            $ret[$key] = check_value($key);
+        return $ret;
+    } else
+        return (!(bool)($_POST[$name] ?? null) ? 0 : 1);
 }
 
 function checkbox(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $value=null, string|int|float|bool|null $submit_on_change=false, string|int|float|bool|null $title=false): string

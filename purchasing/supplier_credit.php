@@ -275,17 +275,17 @@ if (isset($_POST['PostCreditNote']))
 function check_item_data(string|int|null $n): bool
 {
 
-	if (!check_num('This_QuantityCredited'.$n, 0))
+	if (!check_num('This_QuantityCredited'.(string) $n, 0))
 	{
 		display_error(_("The quantity to credit must be numeric and greater than zero."));
-		set_focus('This_QuantityCredited'.$n);
+		set_focus('This_QuantityCredited'.(string) $n);
 		return false;
 	}
 
-	if (!check_num('ChgPrice'.$n, 0))
+	if (!check_num('ChgPrice'.(string) $n, 0))
 	{
 		display_error(_("The price is either not numeric or negative."));
-		set_focus('ChgPrice'.$n);
+		set_focus('ChgPrice'.(string) $n);
 		return false;
 	}
 
@@ -294,14 +294,18 @@ function check_item_data(string|int|null $n): bool
 
 function commit_item_data(string|int|null $n): void
 {
-	if (check_item_data($n))
+	if (check_item_data())
 	{
-		session_obj('supp_trans')->add_grn_to_trans($n,
-    		$_POST['po_detail_item'.$n], $_POST['item_code'.$n],
-    		$_POST['item_description'.$n], $_POST['qty_recd'.$n],
-    		$_POST['prev_quantity_inv'.$n], input_num('This_QuantityCredited'.$n),
-    		$_POST['order_price'.$n], input_num('ChgPrice'.$n));
-		reset_tax_input();
+            session_obj('supp_trans')->add_grn_to_trans($n,
+            get_post('po_detail_item'.(string) $n),
+            get_post('item_code'.(string) $n),
+            get_post('item_description'.(string) $n),
+            get_post('qty_recd'.(string) $n),
+            get_post('prev_quantity_inv'.(string) $n),
+            input_num('This_QuantityCredited'.(string) $n),
+            get_post('order_price'.(string) $n),
+            input_num('ChgPrice'.(string) $n));
+            reset_tax_input();
 	}
 }
 
