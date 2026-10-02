@@ -87,7 +87,7 @@ if (list_updated('BranchID')) {
 
 if (!isset($_POST['customer_id'])) {
 	$_POST['customer_id'] = get_global_customer(false);
-	session_obj('alloc')->set_person($_POST['customer_id'], PT_CUSTOMER);
+	session_obj('alloc')->set_person(post_scalar('customer_id'), PT_CUSTOMER);
 	session_obj('alloc')->read();
 	$dflt_act = row_or_empty(get_default_bank_account(session_obj('alloc')->person_curr));
 	$_POST['bank_account'] = $dflt_act['id'];
@@ -331,7 +331,7 @@ if (db_customer_has_branches(post_scalar('customer_id'))) {
 }
 
 if (list_updated('customer_id') || ($new && list_updated('bank_account'))) {
-	session_obj('alloc')->set_person($_POST['customer_id'], PT_CUSTOMER);
+	session_obj('alloc')->set_person(post_scalar('customer_id'), PT_CUSTOMER);
 	session_obj('alloc')->read();
 	$_POST['memo_'] = $_POST['amount'] = $_POST['discount'] = '';
 	if (list_updated('customer_id')) {
@@ -360,7 +360,7 @@ ref_row(_("Reference:"), 'ref','' , null, '', ST_CUSTPAYMENT);
 table_section(3);
 
 $comp_currency = get_company_currency();
-$cust_currency = session_obj('alloc')->set_person($_POST['customer_id'], PT_CUSTOMER);
+$cust_currency = session_obj('alloc')->set_person(post_scalar('customer_id'), PT_CUSTOMER);
 if (!$cust_currency)
 	$cust_currency = $comp_currency;
 $bank_currency = (string) get_bank_account_currency(post_scalar('bank_account'));
