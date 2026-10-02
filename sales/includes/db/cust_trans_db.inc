@@ -21,8 +21,9 @@ function update_customer_trans_version(?int $type, array $versions) {
 	$sql= 'UPDATE '.TB_PREF. 'debtor_trans SET version=version+1
 			WHERE type='.db_escape($type).' AND (';
 
+	$where = array();
 	foreach ($versions as $trans_no=>$version)
-		$where[] = 	'(trans_no='.db_escape($trans_no).' AND version='.$version.')';
+		$where[] = 	'(trans_no='.db_escape($trans_no).' AND version='.(string)$version.')';
 
 		$sql .= implode(' OR ', $where) .')';
 
@@ -41,16 +42,17 @@ function get_customer_trans_version(string|int|float|bool|null $type, string|int
 	$sql= 'SELECT trans_no, version FROM '.TB_PREF. 'debtor_trans
 			WHERE type='.db_escape($type).' AND (';
 
+	$where = array();
 	foreach ($trans_no as $key=>$trans)
-		$trans_no[$key] = 	'trans_no='.db_escape($trans_no[$key]);
+		$where[$key] = 	'trans_no='.db_escape(is_array($trans) ? null : (string) $trans);
 
-	$sql .= implode(' OR ', $trans_no) . ')';
+	$sql .= implode(' OR ', $where) . ')';
 
 	$res = db_select($sql, 'document version retreival');
 
 	$vers = array();
 	while($mysql=db_fetch($res)) {
-		$vers[$mysql['trans_no']] = $mysql['version'];
+		$vers[(string) $mysql['trans_no']] = $mysql['version'];
 	}
 	return $vers;
 }
@@ -68,11 +70,11 @@ function write_customer_trans(string|int|float|bool|null $trans_type, string|int
 	if ($rate == 0)
 		$rate = get_exchange_rate_from_home_currency($curr, $date_);
 
-	$SQLDate = date2sql($date_);
+	$SQLDate = date2sql($date_ === null ? null : (string) $date_);
 	if ($due_date == "")
 		$SQLDueDate = "0000-00-00";
 	else
-		$SQLDueDate = date2sql($due_date);
+		$SQLDueDate = date2sql($due_date === null ? null : (string) $due_date);
 	
 	if ($trans_type == ST_BANKPAYMENT)
 		$Total = -$Total;
@@ -362,11 +364,11 @@ function get_sql_for_customer_inquiry(string|null $from, string|null $to, string
     if (!(bool)$show_voided) 	
     	 	$sql .= " AND ISNULL(v.date_) AND (trans.ov_amount + trans.ov_gst + trans.ov_freight + trans.ov_freight_tax + trans.ov_discount) != 0";
     if ((bool)$ref) {
-    	$sql .= " AND trans.reference LIKE ". db_escape("%$ref%");
-    }	 
+    	$sql .= " AND trans.reference LIKE ". db_escape("%".(is_array($ref) ? '' : $ref)."%");
+    }
 	if ($filter == '2')
 		$sql .= " AND ABS(IF(prep_amount, prep_amount, ABS(trans.ov_amount) + trans.ov_gst + trans.ov_freight + trans.ov_freight_tax + trans.ov_discount)-trans.alloc)>"
-			.FLOAT_COMP_DELTA;
+			.(string) FLOAT_COMP_DELTA;
 	else {
 		$sql .= " AND trans.tran_date >= '$date_after'
 			AND trans.tran_date <= '$date_to'";
@@ -454,7 +456,7 @@ function get_sql_for_sales_deliveries_view(string|null $from, string|null $to, s
 	//figure out the sql required from the inputs available
 	if ((bool)$delivery)
 	{
-		$sql .= " AND trans.trans_no LIKE ".db_escape('%' . $delivery . '%');
+		$sql .= " AND trans.trans_no LIKE ".db_escape('%' . (is_array($delivery) ? '' : $delivery) . '%');
 		$sql .= " GROUP BY trans.trans_no";
 	}
 	else
