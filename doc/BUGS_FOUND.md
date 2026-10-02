@@ -201,6 +201,13 @@ a stand-in for a boolean) reaching a native, strictly-typed parameter.
   for available language packs). Changed the default to the int `80` and
   cast the parsed-URL branch to `(int)` for consistency.
 
+- **`admin/inst_chart.php` — `sortByOption()`.** The `uasort()` comparator's
+  own parameters were typed as plain scalars (`string|int|float|bool|null`),
+  but the function body accesses `$a['name']`/`$b['name']` — it's a
+  row-comparator, not a scalar one. Hit on every `inst_chart.php` load
+  (`uasort($mods, 'sortByOption')` always has rows to sort). Retyped both
+  parameters to `array`, matching actual usage.
+
 ## Live crashes
 
 - **`inventory/includes/inventory_db.inc` — `item_img_name()`.** Parameter

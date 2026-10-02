@@ -46,8 +46,8 @@ if ((bool)($id = find_submit('Update', false)))
 //---------------------------------------------------------------------------------------------
 
 /** @psalm-pure */
-function sortByOption(string|int|float|bool|null $a, string|int|float|bool|null $b): int {
-    return strcmp($a['name'], $b['name']);
+function sortByOption(array $a, array $b): int {
+    return strcmp((string) $a['name'], (string) $b['name']);
 }
 
 start_form(true);
