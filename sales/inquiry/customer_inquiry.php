@@ -23,7 +23,7 @@ include_once(dirname(__DIR__, 2) . "/reporting/includes/reporting.inc");
 $js = "";
 if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 500);
-if (user_use_date_picker())
+if ((bool) user_use_date_picker())
 	$js .= get_js_date_picker();
 page(_($help_context = "Customer Transactions"), isset($_GET['customer_id']), false, "", $js);
 
@@ -34,20 +34,20 @@ function systype_name(string|int|float|bool|array $dummy, string|int|float|bool|
 {
 	global $systypes_array;
 
-	return $systypes_array[$type];
+	return $systypes_array[(int) $type];
 }
 
 /** @return null|string */
 function order_view(array $row)
 {
 	return $row['order_']>0 ?
-		get_customer_trans_view_str(ST_SALESORDER, $row['order_'])
+		get_customer_trans_view_str(ST_SALESORDER, (string) $row['order_'])
 		: "";
 }
 
 function trans_view(array $trans)
 {
-	return get_trans_view_str($trans["type"], $trans["trans_no"]);
+	return get_trans_view_str((string) $trans["type"], (string) $trans["trans_no"]);
 }
 
 /** @psalm-pure */
@@ -59,13 +59,13 @@ function due_date(array $row)
 /** @return null|scalar */
 function gl_view(array $row)
 {
-	return get_gl_view_str($row["type"], $row["trans_no"]);
+	return get_gl_view_str((string) $row["type"], (string) $row["trans_no"]);
 }
 
 function fmt_amount(array $row): string
 {
 	$value =
-	    $row['type']==ST_CUSTCREDIT || $row['type']==ST_CUSTPAYMENT || $row['type']==ST_BANKDEPOSIT ? -$row["TotalAmount"] : $row["TotalAmount"];
+	    $row['type']==ST_CUSTCREDIT || $row['type']==ST_CUSTPAYMENT || $row['type']==ST_BANKDEPOSIT ? -(float)$row["TotalAmount"] : (float)$row["TotalAmount"];
     return price_format($value);
 }
 
@@ -97,7 +97,7 @@ function edit_link(array $row): string
 		return '';
 
 	return $row['type'] == ST_CUSTCREDIT && (bool)$row['order_'] ? '' : 	// allow  only free hand credit notes edition
-			trans_editor_link($row['type'], $row['trans_no']);
+			trans_editor_link((string) $row['type'], (string) $row['trans_no']);
 }
 
 /**
@@ -120,26 +120,26 @@ function copy_link(array $row)
 /** @return null|string */
 function prt_link(array $row)
 {
-  	if ($row['type'] == ST_CUSTPAYMENT || $row['type'] == ST_BANKDEPOSIT) 
+  	if ($row['type'] == ST_CUSTPAYMENT || $row['type'] == ST_BANKDEPOSIT)
 		return print_document_link((string)$row['trans_no']."-".(string)$row['type'], _("Print Receipt"), true, ST_CUSTPAYMENT, ICON_PRINT);
   	elseif ($row['type'] == ST_BANKPAYMENT) // bank payment printout not defined yet.
 		return '';
  	else
- 		return print_document_link((string)$row['trans_no']."-".(string)$row['type'], _("Print"), true, $row['type'], ICON_PRINT);
+ 		return print_document_link((string)$row['trans_no']."-".(string)$row['type'], _("Print"), true, (string) $row['type'], ICON_PRINT);
 }
 
 function check_overdue(array $row): bool
 {
 	return $row['OverDue'] == 1
-		&& floatcmp(ABS($row["TotalAmount"]), $row["Allocated"]) != 0;
+		&& floatcmp(ABS((float)$row["TotalAmount"]), (float) $row["Allocated"]) != 0;
 }
 //------------------------------------------------------------------------------------------------
 
 function display_customer_summary(bool|array|null $customer_record): void
 {
-	$past1 = get_company_pref('past_due_days');
+	$past1 = (int) get_company_pref('past_due_days');
 	$past2 = 2 * $past1;
-    if ((bool)$customer_record && $customer_record["dissallow_invoices"] != 0)
+    if ($customer_record && is_array($customer_record) && $customer_record["dissallow_invoices"] != 0)
     {
     	echo "<center><font color=red size=4><b>" . _("CUSTOMER ACCOUNT IS ON HOLD") . "</font></b></center>";
     }
@@ -155,13 +155,13 @@ function display_customer_summary(bool|array|null $customer_record): void
     if ($customer_record != false && is_array($customer_record))
     {
 		start_row();
-	    label_cell($customer_record["curr_code"]);
-	    label_cell($customer_record["terms"]);
+	    label_cell((string) $customer_record["curr_code"]);
+	    label_cell((string) $customer_record["terms"]);
 		amount_cell((float)$customer_record["Balance"] - (float)$customer_record["Due"]);
 		amount_cell((float)$customer_record["Due"] - (float)$customer_record["Overdue1"]);
 		amount_cell((float)$customer_record["Overdue1"] - (float)$customer_record["Overdue2"]);
-		amount_cell($customer_record["Overdue2"]);
-		amount_cell($customer_record["Balance"]);
+		amount_cell((float) $customer_record["Overdue2"]);
+		amount_cell((float) $customer_record["Balance"]);
 		end_row();
 	}
 
@@ -188,7 +188,7 @@ ref_cells(_("Reference:"), 'Ref', '', NULL, _('Enter reference fragment or leave
 if (!$page_nested)
 	customer_list_cells(_("Select a customer: "), 'customer_id', null, true, true, false, true);
 
-cust_allocations_list_cells(null, 'filterType', null, true, true);
+cust_allocations_list_cells(null, 'filterType', null, true);
 
 if ($_POST['filterType'] != '2')
 {
@@ -208,7 +208,8 @@ set_global_customer($_POST['customer_id']);
 div_start('totals_tbl');
 if ($_POST['customer_id'] != "" && $_POST['customer_id'] != ALL_TEXT)
 {
-	$customer_record = get_customer_details(get_post('customer_id'), get_post('TransToDate'), false);
+	$trans_to_date = post_scalar('TransToDate');
+	$customer_record = get_customer_details(post_scalar('customer_id'), $trans_to_date === null ? null : (string) $trans_to_date, false);
     display_customer_summary($customer_record);
     echo "<br>";
 }
@@ -219,8 +220,12 @@ if (get_post('RefreshInquiry') || list_updated('filterType'))
 	ajax()->activate('_page_body');
 }
 //------------------------------------------------------------------------------------------------
-$sql = get_sql_for_customer_inquiry(get_post('TransAfterDate'), get_post('TransToDate'),
-	get_post('customer_id'), get_post('filterType'), check_value('show_voided'), get_post('Ref'));
+$trans_after = post_scalar('TransAfterDate');
+$trans_to = post_scalar('TransToDate');
+$sql = get_sql_for_customer_inquiry(
+	$trans_after === null ? null : (string) $trans_after,
+	$trans_to === null ? null : (string) $trans_to,
+	post_scalar('customer_id'), get_post('filterType'), check_value('show_voided'), get_post('Ref'));
 
 //------------------------------------------------------------------------------------------------
 //db_query("set @bal:=0");
