@@ -24,10 +24,10 @@ include(dirname(__DIR__, 2) . "/includes/ui.inc");
 simple_page_mode(true);
 //-----------------------------------------------------------------------------------
 
-function can_process(): bool 
+function can_process(): bool
 {
-	
-	if (strlen($_POST['reason_description']) == 0) 
+
+	if (strlen((string) post_scalar('reason_description')) == 0)
 	{
 		display_error(_("The credit status description cannot be empty."));
 		set_focus('reason_description');
@@ -52,7 +52,7 @@ if ($Mode=='ADD_ITEM' && can_process())
 if ($Mode=='UPDATE_ITEM' && can_process()) 
 {
 	display_notification(_('Selected credit status has been updated'));
-	update_credit_status($selected_id, post_scalar('reason_description'), post_scalar('DisallowInvoices'));
+	update_credit_status(is_array($selected_id) ? null : (string) $selected_id, post_scalar('reason_description'), post_scalar('DisallowInvoices'));
 	$Mode = 'RESET';
 }
 
@@ -60,7 +60,7 @@ if ($Mode=='UPDATE_ITEM' && can_process())
 
 function can_delete(string|int|float|bool|array|null $selected_id): bool
 {
-	if ((bool)key_in_foreign_table($selected_id, 'debtors_master', 'credit_status'))
+	if ((bool)key_in_foreign_table(is_array($selected_id) ? null : (string) $selected_id, 'debtors_master', 'credit_status'))
 	{
 		display_error(_("Cannot delete this credit status because customer accounts have been created referring to it."));
 		return false;
@@ -75,9 +75,9 @@ function can_delete(string|int|float|bool|array|null $selected_id): bool
 if ($Mode == 'Delete')
 {
 
-	if (can_delete($selected_id))
+	if (can_delete(is_array($selected_id) ? '' : (string) $selected_id))
 	{
-		delete_credit_status($selected_id);
+		delete_credit_status(is_array($selected_id) ? null : (string) $selected_id);
 		display_notification(_('Selected credit status has been deleted'));
 	}
 	$Mode = 'RESET';
@@ -136,12 +136,12 @@ if ($selected_id != -1)
  	if ($Mode == 'Edit') {
 		//editing an existing status code
 
-		$myrow = row_or_empty(get_credit_status($selected_id));
+		$myrow = row_or_empty(get_credit_status(is_array($selected_id) ? null : (string) $selected_id));
 
 		$_POST['reason_description']  = $myrow["reason_description"];
 		$_POST['DisallowInvoices']  = $myrow["dissallow_invoices"];
 	}
-	hidden('selected_id', $selected_id);
+	hidden('selected_id', is_array($selected_id) ? null : (string) $selected_id);
 } 
 
 text_row_ex(_("Description:"), 'reason_description', 50);

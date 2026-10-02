@@ -70,6 +70,30 @@ sibling's body can shift which declaration Psalm treats as canonical
 elsewhere, causing count fluctuations in *other* sibling files; this is
 expected and tracked via the overall project total only.
 
+**Global-variable `@var` narrowing can leak across files via a collision
+function.** `/** @var int|string $selected_id */ $selected_id = $selected_id;`
+(the established pattern for narrowing the shared `simple_page_mode()`
+global ahead of local use) is file-local by itself, but if that narrowed
+variable is then passed as an argument to a *collision* function (one of the
+~37 names above, e.g. `can_delete($selected_id)`, declared separately in 8+
+`manage/*.php` CRUD pages), Psalm's whole-project analysis can attribute the
+narrowed type to *other* files' calls to that same collision function,
+producing new `MixedArgument`/`PossiblyInvalidArgument` regressions in files
+you never touched (confirmed: adding this assertion to
+`sales/manage/credit_status.php` shifted error counts in `admin/tags.php`,
+`fixed_assets/fixed_asset_classes.php`, three `gl/manage/*.php` files,
+`inventory/manage/locations.php`, and `manufacturing/manage/work_centres.php`
+— all unrelated files whose only connection is also calling their own
+same-named `can_delete()`). **Fix pattern: never re-type the global itself
+when a collision function is anywhere downstream in the same file — guard
+inline at each call site instead**, e.g.
+`can_delete(is_array($selected_id) ? '' : (string) $selected_id)`, which
+computes a narrowed *expression* for that one call without altering
+`$selected_id`'s inferred type for the rest of the file (or project).
+Because full-project scans are also subject to the cache noise below, verify
+a fix like this with `--no-cache` and by diffing the unrelated collision
+files' own counts before/after, not just the overall total.
+
 **Dynamic `$_SESSION[$key]` access against a shaped array type.** `psalm.xml`
 declares `$_SESSION` as a shaped array mapping specific literal keys to
 specific class types (`Items?: Cart, supp_trans?: supp_trans, ...`). When the
@@ -221,5 +245,12 @@ trying to silence the category.
   (`vendor/bin/psalm --output-format=json`, then filter by `file_name`).
   Exit code 2 means "errors were found" (normal), not an infrastructure
   failure.
+- Even full-project scans have measurable cache noise: consecutive *cached*
+  runs with no source changes between them have been observed to drift by
+  ~10-20 in the overall total (confirmed 8410 vs 8423 vs 8430 across three
+  cached runs around the same edit). A `--no-cache` run is the only reliable
+  number for before/after comparison when the delta is small or when ruling
+  out the collision-leakage class above; don't chase small total-count
+  deltas using cached runs alone.
 - Work proceeds one file (or one well-scoped bug) at a time; no batching or
   architectural shortcuts.
