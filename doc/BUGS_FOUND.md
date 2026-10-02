@@ -164,6 +164,15 @@ a stand-in for a boolean) reaching a native, strictly-typed parameter.
   site, matching the `(float)$this->freight_cost` casts already used
   elsewhere in this same class.
 
+- **`includes/ui/allocation_cart.inc`.** Five `abs()` calls on allocation
+  amounts (`$alloc_item->amount` ×3, `$cart->amount`,
+  `session_obj('alloc')->amount`) — these properties are populated from
+  form/DB values via methods documented as accepting `string|null`, but
+  `abs()`'s native parameter is `int|float`. Hit on
+  `sales/customer_payments.php` (empty-state render of the allocation table)
+  and would also hit the allocate/supplier_allocate pages that share this
+  include. Cast each to `(float)`.
+
 ## Live crashes
 
 - **`inventory/includes/inventory_db.inc` — `item_img_name()`.** Parameter

@@ -401,7 +401,7 @@ function show_allocatable(bool $show_totals): void {
 
 		foreach ($cart->allocs as $id => $alloc_item)
 		{
-		    if (floatcmp(abs($alloc_item->amount), $alloc_item->amount_allocated))
+		    if (floatcmp(abs((float)$alloc_item->amount), $alloc_item->amount_allocated))
 		    {
 				alt_table_row_color($k);
     			label_cell($systypes_array[$alloc_item->type]);
@@ -410,12 +410,12 @@ function show_allocatable(bool $show_totals): void {
 		   		label_cell($alloc_item->foreign_ref);
     			label_cell($alloc_item->date_, "align=right");
     			label_cell($alloc_item->due_date, "align=right");
-	    		amount_cell(abs($alloc_item->amount));
+	    		amount_cell(abs((float)$alloc_item->amount));
 				amount_cell($alloc_item->amount_allocated);
 
 		    	$_POST['amount' . $id] = price_format($alloc_item->current_allocated);
 
-	    		$un_allocated = round((abs($alloc_item->amount) - $alloc_item->amount_allocated), 6);
+	    		$un_allocated = round((abs((float)$alloc_item->amount) - $alloc_item->amount_allocated), 6);
 	    		amount_cell($un_allocated, false,'', 'maxval'.$id);
     			amount_cells(null, "amount" . $id);//, input_num('amount' . $id));
 				label_cell("<a href='#' name=Alloc$id".fa_action_attrs('allocate-all').">"
@@ -432,7 +432,7 @@ function show_allocatable(bool $show_totals): void {
     	   	label_row(_("Total Allocated"), price_format($total_allocated),
 	    		"colspan=8 align=right", "align=right id='total_allocated'", 3);
 
-			$amount = abs($cart->amount);
+			$amount = abs((float)$cart->amount);
 
 			if (floatcmp($amount, $total_allocated) < 0)
 	        {
@@ -506,7 +506,7 @@ function check_allocations(): bool
 		$total_allocated += (float)input_num('amount' . $counter);
 	}
 
-	$amount = abs(session_obj('alloc')->amount);
+	$amount = abs((float)session_obj('alloc')->amount);
 
 	if ($total_allocated - (((float)$amount + (float)input_num('discount')))  > sysprefs()->allocation_settled_allowance())
 	{
