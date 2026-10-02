@@ -16,11 +16,16 @@ declare(strict_types=1);
 */
 //-----------------------------------------------------------------------------------
 
-class allocation
+/**
+ * @psalm-suppress PropertyNotSetInConstructor person_curr/date_/currency are
+ * always populated by __construct()'s call to read(), but through branches
+ * Psalm can't trace property assignment through.
+ */
+final class allocation
 {
 
 	/** @var string|int|float|bool|null */
-	var $trans_no; 
+	var $trans_no;
 	/** @var string|int|float|bool|null */
 	var $type;
 	/** @var string|int|float|bool|null */
@@ -53,16 +58,17 @@ class allocation
 	{
 		/** @var array<int, allocation_item> */
 		$this->allocs = array();
-		
-		$this->trans_no = $trans_no;
-		$this->type = $type;
-		if ($person_id)
-			$this->set_person($person_id, $person_type_id);
+
+		$this->trans_no = is_array($trans_no) ? null : $trans_no;
+		$this->type = is_array($type) ? null : $type;
+		if ((bool)$person_id)
+			$this->set_person(is_array($person_id) ? null : $person_id, $person_type_id);
 
 		$this->read($type, $trans_no, $person_id, $person_type_id); // read payment or credit
 	}
 
 	/**
+	 * @param string|int|float|bool|null $person_id
 	 * @param int|null $person_type
 	 * @return string
 	 */
@@ -104,7 +110,7 @@ class allocation
 	}
 	
 	/**
-	 * @param int|null $index
+	 * @param int $index
 	 * @param string|null $type
 	 * @param string|null $type_no
 	 * @param string|null $date_
@@ -117,7 +123,7 @@ class allocation
 	 * @psalm-external-mutation-free
 	 * @return bool
 	 */
-	function update_item($index, $type, $type_no, $date_, $due_date, 
+	function update_item($index, $type, $type_no, $date_, $due_date,
 		$amount, $amount_allocated, $current_allocated, $ref, $foreign_ref)
 	{
 		if (floatcmp($amount, 0))
@@ -175,6 +181,7 @@ class allocation
 	 */
 	function read($type = null, $trans_no = 0, $person_id=null, $person_type_id=null)
 	{
+		$person_id_scalar = is_array($person_id) ? null : $person_id;
 		if ($type !== null) {	// otherwise re-read
 			$type = $this->type;
 			$trans_no = $this->trans_no;
@@ -182,7 +189,7 @@ class allocation
 			if (isset($person_type_id))
 			{
 				$this->person_type = $person_type_id;
-				$this->person_id = $person_id;
+				$this->person_id = $person_id_scalar;
 			} else { // guess person_type_id
 				if (in_array($type, array(ST_BANKPAYMENT, ST_BANKDEPOSIT)))
 				{
@@ -193,16 +200,16 @@ class allocation
 			}
 
 			if ((bool)$trans_no) {
-				$trans = $this->person_type == PT_SUPPLIER ? get_supp_trans($trans_no, $type, $person_id)
-					: get_customer_trans($trans_no, $type, $person_id);
+				$trans = row_or_empty($this->person_type == PT_SUPPLIER ? get_supp_trans($trans_no, $type, $person_id_scalar)
+					: get_customer_trans($trans_no, $type, $person_id_scalar));
 
 				$this->person_id = $trans[$this->person_type == PT_SUPPLIER ? 'supplier_id':'debtor_no'];
-				$this->person_name = $trans[$this->person_type == PT_SUPPLIER ? "supplier_name":"DebtorName"];
+				$this->person_name = (string) $trans[$this->person_type == PT_SUPPLIER ? "supplier_name":"DebtorName"];
 				$this->date_ = sql2date($trans["tran_date"]);
-				$this->person_curr = $trans['curr_code'];
-				$this->currency = isset($trans['bank_curr_code']) ? $trans['bank_curr_code'] : $trans['curr_code'];
-				$this->bank_amount = isset($trans["bank_amount"]) ? $trans["bank_amount"] : $trans["Total"]; // not set for journal entry
-				$this->amount = $trans["Total"];
+				$this->person_curr = (string) $trans['curr_code'];
+				$this->currency = (string) (isset($trans['bank_curr_code']) ? $trans['bank_curr_code'] : $trans['curr_code']);
+				$this->bank_amount = (float) (isset($trans["bank_amount"]) ? $trans["bank_amount"] : $trans["Total"]); // not set for journal entry
+				$this->amount = (float) $trans["Total"];
 			}
 		}
 		/* Now populate the array of possible (and previous actual) allocations 
@@ -217,7 +224,7 @@ class allocation
 				$trans_items = get_allocatable_to_supp_transactions($this->person_id);
 			else
 		 		$trans_items = get_allocatable_to_cust_transactions($this->person_id);
-			while ($myrow = db_fetch($trans_items))
+			while ($trans_items instanceof mysqli_result && ($myrow = db_fetch($trans_items)))
 			{
 				$this->add_item($myrow["type"], $myrow["trans_no"],
 					sql2date($myrow["tran_date"]),
@@ -235,16 +242,16 @@ class allocation
 		above logic will be overwritten with the prev alloc detail below */
 
 		if ($this->person_type==PT_SUPPLIER)
-			$trans_items = get_allocatable_to_supp_transactions($this->person_id, 
+			$trans_items = get_allocatable_to_supp_transactions($this->person_id,
 				$this->trans_no, $this->type);
 		else
-		 	$trans_items = get_allocatable_to_cust_transactions($this->person_id, 
+		 	$trans_items = get_allocatable_to_cust_transactions($this->person_id,
 				$this->trans_no, $this->type);
 
-		$amount = $this->amount;
-		while ($myrow = db_fetch($trans_items))
+		$amount = (float) $this->amount;
+		while ($trans_items instanceof mysqli_result && ($myrow = db_fetch($trans_items)))
 		{
-			$amount -= $myrow["Total"];
+			$amount -= (float) $myrow["Total"];
 			$this->add_or_update_item ($myrow["type"], $myrow["trans_no"],
 				sql2date($myrow["tran_date"]),
 				sql2date($myrow["due_date"]),
@@ -265,7 +272,7 @@ class allocation
 						$alloc_item->current_allocated = $allocatable;
 						$amount -= $allocatable;
 					} else {
-						$alloc_item->current_allocated += (float)$amount;
+						$alloc_item->current_allocated = (float)$alloc_item->current_allocated + $amount;
 						break;
 					}
 				}
@@ -289,12 +296,12 @@ class allocation
 
 		// now add the new allocations
 		$total_allocated = 0.0;
-		$dec = user_price_dec();
+		$dec = (int) user_price_dec();
 		foreach ($this->allocs as $alloc_item)
 		{
 			if ($alloc_item->current_allocated > 0)
 			{
-				$amount = round($alloc_item->current_allocated, $dec);
+				$amount = round((float) $alloc_item->current_allocated, $dec);
 
 				if ($this->person_type == PT_SUPPLIER) {
 					add_supp_allocation($amount,
@@ -334,48 +341,59 @@ class allocation
 
 //-----------------------------------------------------------------------------------
 
-class allocation_item 
+final class allocation_item
 {
 
 	/** @var string|int|float|bool|null */
 	var $type;
 	/** @var string|int|float|bool|null */
 	var $type_no;
-	
+
 	/** @var string */
 	var $date_;
 	/** @var string */
 	var $due_date;
-	
+
 	/** @var float|int|string */
 	var $amount_allocated;
 	/** @var float|int|string */
 	var $amount;
 	/** @var string */
 	var $ref;
-	
+
 	/** @var float|int|string */
 	var $current_allocated;
 	/** @var string */
 	var $foreign_ref;
 
-	/** @psalm-mutation-free */
-	function __construct($type, $type_no, $date_, $due_date, $amount, 
+	/**
+	 * @param string|int|float|bool|null $type
+	 * @param string|int|float|bool|null $type_no
+	 * @param string|null $date_
+	 * @param string|null $due_date
+	 * @param float|int|string|null $amount
+	 * @param float|int|string|null $amount_allocated
+	 * @param float|int|string|null $current_allocated
+	 * @param string|null $ref
+	 * @param string|null $foreign_ref
+	 * @psalm-mutation-free
+	 */
+	function __construct($type, $type_no, $date_, $due_date, $amount,
 		$amount_allocated, $current_allocated, $ref, $foreign_ref)
 	{
 
 		$this->type = $type;
 		$this->type_no = $type_no;
 
-		$this->ref = $ref;
-		$this->foreign_ref = $foreign_ref;
+		$this->ref = (string) $ref;
+		$this->foreign_ref = (string) $foreign_ref;
 
-		$this->date_ = $date_;
-		$this->due_date = $due_date;
-		
-		$this->amount = $amount;
-		$this->amount_allocated = $amount_allocated;
-		$this->current_allocated = $current_allocated;
+		$this->date_ = (string) $date_;
+		$this->due_date = (string) $due_date;
+
+		$this->amount = $amount ?? 0;
+		$this->amount_allocated = $amount_allocated ?? 0;
+		$this->current_allocated = $current_allocated ?? 0;
 	}
 }
 
@@ -388,6 +406,8 @@ function show_allocatable(bool $show_totals): void {
     $k = 0;
     $total_allocated = 0.0;
 
+	if (!isset($_SESSION['alloc']))
+		return;
 	/** @var allocation $cart */
 	$cart = $_SESSION['alloc'];
 	$supp_ref = in_array($cart->type, array(ST_SUPPCREDIT, ST_SUPPAYMENT, ST_BANKPAYMENT));
@@ -406,7 +426,7 @@ function show_allocatable(bool $show_totals): void {
 		    if (floatcmp(abs((float)$alloc_item->amount), $alloc_item->amount_allocated))
 		    {
 				alt_table_row_color($k);
-    			label_cell($systypes_array[$alloc_item->type]);
+    			label_cell($systypes_array[(int) $alloc_item->type]);
 	   			label_cell(get_trans_view_str($alloc_item->type, $alloc_item->type_no), "nowrap align='right'");
 		   		label_cell($alloc_item->ref);
 		   		label_cell($alloc_item->foreign_ref);
@@ -417,13 +437,13 @@ function show_allocatable(bool $show_totals): void {
 
 		    	$_POST['amount' . $id] = price_format($alloc_item->current_allocated);
 
-	    		$un_allocated = round((abs((float)$alloc_item->amount) - $alloc_item->amount_allocated), 6);
+	    		$un_allocated = round((abs((float)$alloc_item->amount) - (float)$alloc_item->amount_allocated), 6);
 	    		amount_cell($un_allocated, false,'', 'maxval'.$id);
     			amount_cells(null, "amount" . $id);//, input_num('amount' . $id));
 				label_cell("<a href='#' name=Alloc$id".fa_action_attrs('allocate-all').">"
 					 . _("All") . "</a>");
 				label_cell("<a href='#' name=DeAll$id".fa_action_attrs('allocate-none').">"
-					 . _("None") . "</a>".hidden("un_allocated" . $id, 
+					 . _("None") . "</a>".(string) hidden("un_allocated" . $id,
 					 price_format($un_allocated), false));
 				end_row();
 
@@ -443,7 +463,7 @@ function show_allocatable(bool $show_totals): void {
     	    }
 	        else
         		$font1 = $font2 = "";
-			$left_to_allocate = price_format((float)$amount - $total_allocated);
+			$left_to_allocate = price_format($amount - $total_allocated);
 	        label_row(_("Left to Allocate"), $font1 . $left_to_allocate . $font2, 
 				"colspan=8 align=right", "nowrap align=right id='left_to_allocate'",
 				 3);
@@ -503,14 +523,14 @@ function check_allocations(): bool
 			}
 		}
 
-		session_obj('alloc')->allocs[$counter]->current_allocated = input_num('amount' . $counter);
+		session_obj('alloc')->allocs[$counter]->current_allocated = (float) input_num('amount' . $counter);
 
 		$total_allocated += (float)input_num('amount' . $counter);
 	}
 
 	$amount = abs((float)session_obj('alloc')->amount);
 
-	if ($total_allocated - (((float)$amount + (float)input_num('discount')))  > sysprefs()->allocation_settled_allowance())
+	if ($total_allocated - (($amount + (float)input_num('discount')))  > sysprefs()->allocation_settled_allowance())
 	{
 		display_error(_("These allocations cannot be processed because the amount allocated is more than the total amount left to allocate."));
 		return false;
@@ -531,7 +551,7 @@ function get_inv_allocations(string|int|float|bool|null $trans_no, string|int|fl
 	else
 		$result = get_allocatable_from_cust_transactions($person_id, $trans_no, $trans_type);
 
-	while($dat = db_fetch($result))
+	while($result instanceof mysqli_result && ($dat = db_fetch($result)))
 	{
 		$allocs[] = array('type'=> $dat['type'], 'trans_no'=> $dat['trans_no'], 'amount'=>$dat['alloc']);
 	}
