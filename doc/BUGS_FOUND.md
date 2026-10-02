@@ -188,6 +188,12 @@ a stand-in for a boolean) reaching a native, strictly-typed parameter.
   `$item->person_id` case is the same bug on the "edit an existing journal
   line" path, not yet triggered by testing but fixed alongside it.
 
+- **`admin/print_profiles.php` — `get_reports()`.** `closedir();` called with
+  no argument — PHP 8.0 deprecated the implicit "last opened resource"
+  fallback that `closedir()`/`fclose()`-family functions used to have. Hit on
+  every `print_profiles.php` load. Passed the `$repdir` handle from the
+  matching `opendir($path)` call explicitly.
+
 ## Live crashes
 
 - **`inventory/includes/inventory_db.inc` — `item_img_name()`.** Parameter

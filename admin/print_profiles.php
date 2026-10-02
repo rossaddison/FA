@@ -57,7 +57,7 @@ function get_reports() {
 					$reports[$repno] = $title;
 				}
 			}
-			closedir();
+			closedir($repdir);
 		}
 		ksort($reports);
 		$_SESSION['reports'] = $reports;
