@@ -155,6 +155,15 @@ a stand-in for a boolean) reaching a native, strictly-typed parameter.
   `$outstanding`) is typed `string|bool|array|null`, so `bool` is valid there
   and no fix was needed.
 
+- **`sales/includes/cart_class.inc` — `Cart::get_taxes()`.** `$shipping_cost`
+  is typed `float|int|string|null` and, when `null`, defaults to
+  `$this->freight_cost` (itself `float|int|string|null` — set from form
+  input via `set_delivery()`), but was passed straight to
+  `get_tax_for_items()`'s native `?float $shipping_cost` parameter. Hit on
+  `sales/credit_note_entry.php?NewCredit=Yes`. Cast to `(float)` at the call
+  site, matching the `(float)$this->freight_cost` casts already used
+  elsewhere in this same class.
+
 ## Live crashes
 
 - **`inventory/includes/inventory_db.inc` — `item_img_name()`.** Parameter
