@@ -64,13 +64,14 @@ class allocation
 
 	/**
 	 * @param int|null $person_type
+	 * @return string
 	 */
 	function set_person($person_id, $person_type)
 	{
 		$this->person_id = $person_id;
 		$this->person_type = $person_type;
-		$this->person_curr = $person_type == PT_SUPPLIER ?
-			get_supplier_currency($person_id) : get_customer_currency($person_id);
+		$this->person_curr = (string) ($person_type == PT_SUPPLIER ?
+			get_supplier_currency($person_id) : get_customer_currency($person_id));
 		return $this->person_curr;
 	}
 

@@ -26,7 +26,7 @@ $js = "";
 if (sysprefs()->use_popup_windows) {
 	$js .= get_js_open_window(900, 500);
 }
-if (user_use_date_picker()) {
+if ((bool)user_use_date_picker()) {
 	$js .= get_js_date_picker();
 }
 add_js_file('payalloc.js');
@@ -50,10 +50,10 @@ if (!isset($_POST['bank_account'])) { // first page call
 
 	if (isset($_GET['SInvoice'])) {
 		//  get date and supplier
-		$type = !isset($_GET['Type']) ? ST_SALESINVOICE : $_GET['Type'];
-		$cust = !isset($_GET['customer_id']) ? null : $_GET['customer_id'];
-		$inv = get_customer_trans(get_scalar('SInvoice'), $type,  $cust);
-		$dflt_act = row_or_empty(get_default_bank_account($inv['curr_code']));
+		$type = !isset($_GET['Type']) ? ST_SALESINVOICE : get_scalar('Type');
+		$cust = !isset($_GET['customer_id']) ? null : get_scalar('customer_id');
+		$inv = row_or_empty(get_customer_trans(get_scalar('SInvoice'), $type,  $cust));
+		$dflt_act = row_or_empty(get_default_bank_account($inv['curr_code'] ?? null));
 		$_POST['bank_account'] = $dflt_act['id'];
 		if ((bool)$inv) {
 			$_POST['customer_id'] = $inv['debtor_no'];
@@ -79,7 +79,7 @@ if (!isset($_POST['bank_account'])) { // first page call
 
 if (list_updated('BranchID')) {
 	// when branch is selected via external editor also customer can change
-	$br = row_or_empty(get_branch(get_post('BranchID')));
+	$br = row_or_empty(get_branch((string) post_scalar('BranchID')));
 	$_POST['customer_id'] = $br['debtor_no'];
 	session_obj('alloc')->person_id = $br['debtor_no'];
 	ajax()->activate('customer_id');
@@ -101,7 +101,7 @@ if (!isset($_POST['DateBanked'])) {
 
 
 if (isset($_GET['AddedID'])) {
-	$payment_no = $_GET['AddedID'];
+	$payment_no = (string) get_scalar('AddedID');
 
 	display_notification_centered(_("The customer payment has been successfully entered."));
 
@@ -121,7 +121,7 @@ if (isset($_GET['AddedID'])) {
 	display_footer_exit();
 }
 elseif (isset($_GET['UpdatedID'])) {
-	$payment_no = $_GET['UpdatedID'];
+	$payment_no = (string) get_scalar('UpdatedID');
 
 	display_notification_centered(_("The customer payment has been successfully updated."));
 
@@ -131,6 +131,7 @@ elseif (isset($_GET['UpdatedID'])) {
 
 //	hyperlink_params($path_to_root . "/sales/allocations/customer_allocate.php", _("&Allocate this Customer Payment"), "trans_no=$payment_no&trans_type=12");
 
+	/** @var string $path_to_root */
 	hyperlink_no_params($path_to_root . "/sales/inquiry/customer_inquiry.php?", _("Select Another Customer Payment for &Edition"));
 
 	hyperlink_no_params($path_to_root . "/sales/customer_payments.php", _("Enter Another &Customer Payment"));
@@ -140,7 +141,7 @@ elseif (isset($_GET['UpdatedID'])) {
 
 //----------------------------------------------------------------------------------------------
 
-function can_process()
+function can_process(): bool
 {
 
 	if (!get_post('customer_id'))
@@ -157,7 +158,8 @@ function can_process()
 		return false;
 	} 
 	
-	if (!isset($_POST['DateBanked']) || !is_date(post_scalar('DateBanked'))) {
+	$date_banked = post_scalar('DateBanked');
+	if (!isset($_POST['DateBanked']) || !is_date($date_banked === null ? null : (string) $date_banked)) {
 		display_error(_("The entered date is invalid. Please enter a valid date for the payment."));
 		set_focus('DateBanked');
 		return false;
@@ -216,10 +218,12 @@ function can_process()
 		return false;
 	}
 
-	if (!db_has_currency_rates(get_customer_currency(post_scalar('customer_id')), post_scalar('DateBanked'), true))
+	$date_banked_scalar = post_scalar('DateBanked');
+	if (!db_has_currency_rates(get_customer_currency(post_scalar('customer_id')),
+			(is_float($date_banked_scalar) || is_bool($date_banked_scalar)) ? (string) $date_banked_scalar : $date_banked_scalar, true))
 		return false;
 
-	session_obj('alloc')->amount = input_num('amount');
+	session_obj('alloc')->amount = (float) input_num('amount');
 
 	if (isset($_POST["TotalNumberOfAllocs"]))
 		return check_allocations();
@@ -244,14 +248,14 @@ if (get_post('AddPaymentItem') && can_process()) {
 	//Chaitanya : 13-OCT-2011 - To support Edit feature
 	$payment_no = write_customer_payment(session_obj('alloc')->trans_no, post_scalar('customer_id'), post_scalar('BranchID'),
 		post_scalar('bank_account'), post_scalar('DateBanked'), post_scalar('ref'),
-                input_num('amount'), input_num('discount'), post_scalar('memo_'), 0, input_num('charge'), input_num('bank_amount', input_num('amount')), post_scalar('dimension_id'), post_scalar('dimension2_id'));
+                input_num('amount'), input_num('discount'), (string) post_scalar('memo_'), 0, input_num('charge'), input_num('bank_amount', input_num('amount')), post_scalar('dimension_id'), post_scalar('dimension2_id'));
 
 	session_obj('alloc')->trans_no = $payment_no;
-	session_obj('alloc')->date_ = $_POST['DateBanked'];
+	session_obj('alloc')->date_ = (string) post_scalar('DateBanked');
 	session_obj('alloc')->write();
 
 	unset($_SESSION['alloc']);
-	meta_forward($_SERVER['PHP_SELF'], $new_pmt ? "AddedID=$payment_no" : "UpdatedID=$payment_no");
+	meta_forward($_SERVER['PHP_SELF'] ?? '', $new_pmt ? "AddedID=$payment_no" : "UpdatedID=$payment_no");
 }
 
 //----------------------------------------------------------------------------------------------
@@ -259,10 +263,10 @@ if (get_post('AddPaymentItem') && can_process()) {
 function read_customer_data(): void
 {
 
-	$myrow = row_or_empty(get_customer_habit(post_scalar('customer_id')));
+	$myrow = row_or_empty(get_customer_habit((string) post_scalar('customer_id')));
 
 	$_POST['HoldAccount'] = !$myrow ? false : $myrow["dissallow_invoices"];
-	$_POST['pymt_discount'] = !$myrow ? 0 : $myrow["pymt_discount"];
+	$_POST['pymt_discount'] = !$myrow ? 0 : (string) $myrow["pymt_discount"];
 	// To support Edit feature
 	// If page is called first time and New entry fetch the nex reference number
 	if (!(bool)session_obj('alloc')->trans_no && !isset($_POST['charge'])) 
@@ -285,7 +289,7 @@ if (isset($_GET['trans_no']) && $_GET['trans_no'] > 0 )
 	$_POST['BranchID'] = $myrow["branch_code"];
 	$_POST['bank_account'] = $myrow["bank_act"];
 	$_POST['ref'] =  $myrow["reference"];
-	$charge = get_cust_bank_charge(ST_CUSTPAYMENT, post_scalar('trans_no'));
+	$charge = get_cust_bank_charge(ST_CUSTPAYMENT, (string) post_scalar('trans_no'));
 	$_POST['charge'] =  price_format($charge);
 	$_POST['DateBanked'] =  sql2date($myrow['tran_date']);
 	$_POST["amount"] = price_format((float)$myrow['Total'] - (float)$myrow['ov_discount']);
@@ -344,7 +348,8 @@ read_customer_data();
 set_global_customer($_POST['customer_id']);
 if (isset($_POST['HoldAccount']) && $_POST['HoldAccount'] != 0)	
 	display_warning(_("This customer account is on hold."));
-$display_discount_percent = percent_format((float)$_POST['pymt_discount']*100.0) . "%";
+$pymt_discount = is_array($_POST['pymt_discount']) ? 0.0 : (float) $_POST['pymt_discount'];
+$display_discount_percent = percent_format($pymt_discount*100.0) . "%";
 
 table_section(2);
 
@@ -358,7 +363,8 @@ $comp_currency = get_company_currency();
 $cust_currency = session_obj('alloc')->set_person($_POST['customer_id'], PT_CUSTOMER);
 if (!$cust_currency)
 	$cust_currency = $comp_currency;
-session_obj('alloc')->currency = $bank_currency = get_bank_account_currency(post_scalar('bank_account'));
+$bank_currency = (string) get_bank_account_currency(post_scalar('bank_account'));
+session_obj('alloc')->currency = $bank_currency;
 
 if ($cust_currency != $bank_currency)
 {
