@@ -231,6 +231,20 @@ a stand-in for a boolean) reaching a native, strictly-typed parameter.
   `item_img_name()` (`@psalm-pure`) calling it and getting flagged
   `ImpureFunctionCall`.
 
+- **`includes/dashboard.inc` — `display_title()`.** Its `$id` parameter was
+  typed `int|bool|null`, but every real call site passes a `Chart::$id`
+  (declared `string` in `reporting/includes/class.graphic.inc`, e.g. `'c1'`,
+  `'s1'`, `'g3'`) which the function interpolates into DOM id strings like
+  `"select_$id"` — never used as a number. Hit on `admin/dashboard.php?
+  sel_app=AP` (and every other dashboard view with a chart). Retyped to
+  `string|bool|null`, matching actual usage.
+
+- **`includes/dashboard.inc`.** Three more `abs($row[...])` calls (GL class
+  balances and GL analytic widgets) on `db_fetch()` columns, same bug class
+  as the ten `round()` casts already documented above — missing `(float)`
+  casts before `abs()`'s native `int|float` parameter. Hit on
+  `admin/dashboard.php?sel_app=GL`.
+
 ## Live crashes
 
 - **`inventory/includes/inventory_db.inc` — `item_img_name()`.** Parameter

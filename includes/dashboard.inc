@@ -88,7 +88,7 @@ function dashboard(string|int|float|bool|null $sel_app): void
 		display_all();
 }
 
-function display_title(?string $title, int|bool|null $id=false, string|int|float|bool|null $type = false, ?string $per = '', string|int|bool|array|null $num = false): void
+function display_title(?string $title, string|bool|null $id=false, string|int|float|bool|null $type = false, ?string $per = '', string|int|bool|array|null $num = false): void
 {
 	br();
 	start_form();
@@ -638,9 +638,9 @@ function dimension_top(?string $today, ?int $limit=10, string|int|null $width='3
 		amount_cell($myrow['result']);
 		if ($pg != null)
 		{
-			$names[] = $name; 
-			$balances[] = round(abs($myrow['balance']));
-			$results[] = round(abs($myrow['result']));
+			$names[] = $name;
+			$balances[] = round(abs((float) $myrow['balance']));
+			$results[] = round(abs((float) $myrow['result']));
 		}	
 		end_row();
 	}
@@ -679,8 +679,8 @@ function gl_top(?string $today, string|int|null $width='33', ?object &$pg=null):
 			$total += round((float) $myrow['total']);
 			if ($pg != null)
 			{
-				$names[] = $myrow['class_name']; 
-				$totals[] = round(abs($myrow['total']));
+				$names[] = $myrow['class_name'];
+				$totals[] = round(abs((float) $myrow['total']));
 			}	
 		}	
 		label_row($myrow['class_name'], number_format2($myrow['total'], user_price_dec()), 
