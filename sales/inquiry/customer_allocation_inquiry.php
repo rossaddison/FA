@@ -22,7 +22,7 @@ include_once(dirname(__DIR__, 2) . "/sales/includes/sales_db.inc");
 $js = "";
 if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 500);
-if (user_use_date_picker())
+if ((bool) user_use_date_picker())
 	$js .= get_js_date_picker();
 page(_($help_context = "Customer Allocation Inquiry"), false, false, "", $js);
 
@@ -59,15 +59,15 @@ end_table();
 //------------------------------------------------------------------------------------------------
 function check_overdue(array $row): bool
 {
-	return ($row['OverDue'] == 1 
-		&& ((float)abs($row["TotalAmount"]) - (float)$row["Allocated"] != 0));
+	return ($row['OverDue'] == 1
+		&& (abs((float)$row["TotalAmount"]) - (float)$row["Allocated"] != 0));
 }
 
 /** @return null|string */
 function order_link(array $row)
 {
 	return $row['order_']>0 ?
-		get_customer_trans_view_str(ST_SALESORDER, $row['order_'])
+		get_customer_trans_view_str(ST_SALESORDER, (string) $row['order_'])
 		: "";
 }
 
@@ -76,12 +76,12 @@ function systype_name(string|int|float|bool|array $dummy, string|int|float|bool|
 {
 	global $systypes_array;
 
-	return $systypes_array[$type];
+	return $systypes_array[(int) $type];
 }
 
 function view_link(array $trans)
 {
-	return get_trans_view_str($trans["type"], $trans["trans_no"]);
+	return get_trans_view_str((string) $trans["type"], (string) $trans["trans_no"]);
 }
 
 function due_date(array $row)
@@ -92,7 +92,7 @@ function due_date(array $row)
 /** @psalm-pure */
 function fmt_balance(array $row)
 {
-	return ($row["type"] == ST_JOURNAL && $row["TotalAmount"] < 0 ? -$row["TotalAmount"] : $row["TotalAmount"]) - (float)$row["Allocated"];
+	return ($row["type"] == ST_JOURNAL && $row["TotalAmount"] < 0 ? -(float)$row["TotalAmount"] : (float)$row["TotalAmount"]) - (float)$row["Allocated"];
 }
 
 /**
@@ -113,7 +113,7 @@ function alloc_link(array $row)
 	{
 		return $link;
 	} elseif (($row["type"] == ST_CUSTPAYMENT || $row["type"] == ST_BANKDEPOSIT) &&
-		(floatcmp($row['TotalAmount'], $row['Allocated']) >= 0))
+		(floatcmp((float)$row['TotalAmount'], (float)$row['Allocated']) >= 0))
 	{
 		/*its a receipt  which could have an allocation*/
 		return $link;
@@ -122,8 +122,8 @@ function alloc_link(array $row)
 	{
 		/*its a negative receipt */
 		return '';
-	} elseif (($row["type"] == ST_SALESINVOICE && ((float)$row['TotalAmount'] - (float)$row['Allocated']) > 0) || 
-		($row["type"] == ST_JOURNAL && ((float)ABS($row['TotalAmount']) - (float)$row['Allocated']) > 0) || $row["type"] == ST_BANKPAYMENT)
+	} elseif (($row["type"] == ST_SALESINVOICE && ((float)$row['TotalAmount'] - (float)$row['Allocated']) > 0) ||
+		($row["type"] == ST_JOURNAL && (ABS((float)$row['TotalAmount']) - (float)$row['Allocated']) > 0) || $row["type"] == ST_BANKPAYMENT)
 		return pager_link(_("Payment"),
 			"/sales/customer_payments.php?customer_id=".(string)$row["debtor_no"]."&SInvoice=" . (string)$row["trans_no"]."&Type=".(string)$row["type"], ICON_MONEY);
 
@@ -133,7 +133,7 @@ function fmt_debit(array $row): string
 {
 	$value =
 	    $row['type']==ST_CUSTCREDIT || $row['type']==ST_CUSTPAYMENT || $row['type']==ST_BANKDEPOSIT ?
-		-$row["TotalAmount"] : $row["TotalAmount"];
+		-(float)$row["TotalAmount"] : (float)$row["TotalAmount"];
 	return $value>=0 ? price_format($value) : '';
 
 }
@@ -142,13 +142,19 @@ function fmt_credit(array $row): string
 {
 	$value =
 	    !($row['type']==ST_CUSTCREDIT || $row['type']==ST_CUSTPAYMENT || $row['type']==ST_BANKDEPOSIT) ?
-		-$row["TotalAmount"] : $row["TotalAmount"];
+		-(float)$row["TotalAmount"] : (float)$row["TotalAmount"];
 	return $value>0 ? price_format($value) : '';
 }
 //------------------------------------------------------------------------------------------------
 
-$sql = get_sql_for_customer_allocation_inquiry(get_post('TransAfterDate'), get_post('TransToDate'),
-		get_post('customer_id'), get_post('filterType'), check_value('showSettled'));
+$trans_after = post_scalar('TransAfterDate');
+$trans_to = post_scalar('TransToDate');
+$cust_id = post_scalar('customer_id');
+$sql = get_sql_for_customer_allocation_inquiry(
+		$trans_after === null ? null : (string) $trans_after,
+		$trans_to === null ? null : (string) $trans_to,
+		$cust_id === null ? null : (string) $cust_id,
+		get_post('filterType'), check_value('showSettled'));
 
 //------------------------------------------------------------------------------------------------
 $cols = array(
