@@ -12,55 +12,44 @@ declare(strict_types=1);
 ***********************************************************************/
 //include_once($path_to_root . "/includes/reserved.inc");
 
-function set_global_supplier(string|int|float|bool|array|null $supplier_id): void 
+function set_global_supplier(string|int|float|bool|array|null $supplier_id): void
 {
-	$_SESSION['wa_global_supplier_id'] = $supplier_id; 
+	\FrontAccounting\Session\GlobalSelections::setSupplier($supplier_id);
 }
 
 function get_global_supplier(bool $return_all=true): string|int|float|bool|array|null
 {
-	if (!isset($_SESSION['wa_global_supplier_id']) || 
-		($return_all == false && $_SESSION['wa_global_supplier_id'] == ALL_TEXT))
-		return "";	
-	return $_SESSION['wa_global_supplier_id'];
+	return \FrontAccounting\Session\GlobalSelections::getSupplier($return_all);
 }
 
-function set_global_stock_item(string|int|float|bool|array|null $stock_id): void 
+function set_global_stock_item(string|int|float|bool|array|null $stock_id): void
 {
-	$_SESSION['wa_global_stock_id'] = $stock_id; 
+	\FrontAccounting\Session\GlobalSelections::setStockItem($stock_id);
 }
 
 function get_global_stock_item(string|int|float|bool|null $return_all=true): string|int|float|bool|array|null
 {
-	if (!isset($_SESSION['wa_global_stock_id']) || 
-		($return_all == false && $_SESSION['wa_global_stock_id'] == ALL_TEXT))
-		return "";		
-	return $_SESSION['wa_global_stock_id'];
+	return \FrontAccounting\Session\GlobalSelections::getStockItem($return_all);
 }
 
-function set_global_customer(string|int|float|bool|array|null $customer_id): void 
+function set_global_customer(string|int|float|bool|array|null $customer_id): void
 {
-	$_SESSION['wa_global_customer_id'] = $customer_id; 
+	\FrontAccounting\Session\GlobalSelections::setCustomer($customer_id);
 }
 
 function get_global_customer(bool $return_all=true): string|int|float|bool|array|null
 {
-	if (!isset($_SESSION['wa_global_customer_id']) || 
-		($return_all == false && $_SESSION['wa_global_customer_id'] == ALL_TEXT))
-		return "";
-	return $_SESSION['wa_global_customer_id'];
+	return \FrontAccounting\Session\GlobalSelections::getCustomer($return_all);
 }
 
-function set_global_curr_code(string|array|null $curr_code): void 
+function set_global_curr_code(string|array|null $curr_code): void
 {
-	$_SESSION['wa_global_curr_code'] = $curr_code;
+	\FrontAccounting\Session\GlobalSelections::setCurrencyCode($curr_code);
 }
 
 function get_global_curr_code(): string|array|null
 {
-	if (!isset($_SESSION['wa_global_curr_code']))
-		return "";
-	return $_SESSION['wa_global_curr_code'];
+	return \FrontAccounting\Session\GlobalSelections::getCurrencyCode();
 }
 
 /** @psalm-pure */

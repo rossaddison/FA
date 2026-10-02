@@ -18,6 +18,11 @@
         "rector/rector": "2.6.7",
         "vimeo/psalm": "7.0.0-beta21"
     },
+    "autoload": {
+        "psr-4": {
+            "FrontAccounting\\": "src/"
+        }
+    },
     "config": {
         "sort-packages": true
     },

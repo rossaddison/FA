@@ -45,6 +45,7 @@
         <directory name="manufacturing"/>
         <directory name="purchasing"/>
         <directory name="sales"/>
+        <directory name="src"/>
         <directory name="taxes"/>
         <file name="index.php"/>
         <file name="frontaccounting.php"/>
