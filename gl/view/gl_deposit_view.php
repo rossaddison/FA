@@ -80,6 +80,7 @@ if ($show_currencies)
 	label_cells(_("Settle currency"), $to_trans['settle_curr'], "class='tableheader2'");
 	label_cells(_("Settled amount"),  number_format2($to_trans['settled_amount'], user_price_dec()), "class='tableheader2'");
 }
+/** @var array<int, string> $bank_transfer_types */
 label_cells(_("Deposit Type"), $bank_transfer_types[(int) $to_trans['account_type']], "class='tableheader2'");
 end_row();
 start_row();

@@ -66,8 +66,10 @@ if ($show_currencies)
 label_cells(_("Amount"), number_format2(-$receipt['bank_amount'], user_price_dec()), "class='tableheader2'");
 if ($receipt['ov_discount'] != 0)
 	label_cells(_("Discount"), number_format2(-(float)$receipt['ov_discount']*(float)$receipt['rate'], user_price_dec()), "class='tableheader2'");
-else
+else {
+	/** @var array<int, string> $bank_transfer_types */
 	label_cells(_("Payment Type"), $bank_transfer_types[(int) $receipt['BankTransType']], "class='tableheader2'");
+}
 end_row();
 start_row();
 if ($show_currencies)
@@ -81,6 +83,7 @@ end_row();
 if ($receipt['ov_discount'] != 0)
 {
 	start_row();
+	/** @var array<int, string> $bank_transfer_types */
 	label_cells(_("Payment Type"), $bank_transfer_types[(int) $receipt['BankTransType']], "class='tableheader2'");
 	end_row();
 }

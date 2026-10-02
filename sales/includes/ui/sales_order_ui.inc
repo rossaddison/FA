@@ -21,6 +21,7 @@ function add_to_order(
     string|int|float|bool|null $discount,
     string|array|null $description=''): void
 {
+	/** @var Cart $order */
 	$new_item_qty = (float) $new_item_qty;
 	/** @var float $price */
 	$price = is_array($price) ? 0.0 : (float) $price;
@@ -64,15 +65,15 @@ function add_to_order(
 			// check duplicate stock item
 			foreach ($order->line_items as $order_item)
 			{
-				if (strcasecmp($order_item->stock_id, (string) $item['stock_id']) == 0)
+				if (strcasecmp((string) $order_item->stock_id, (string) $item['stock_id']) == 0)
 				{
 					display_warning(_("For Part :").(string)$item['stock_id']. " " 
 						. _("This item is already on this document. You have been warned."));
 					break;
 				}
 			}
-			$order->add_to_cart (count($order->line_items),	$item['stock_id'], 
-				$new_item_qty*(float)$item['quantity'], $item_price, $discount, 0,0, $description);
+			$order->add_to_cart (count($order->line_items),	$item['stock_id'],
+				$new_item_qty*(float)$item['quantity'], $item_price, (float) $discount, 0,0, $description);
 		}
 	}
 
@@ -119,7 +120,8 @@ function get_customer_details_to_order(Cart &$order, string|int|float|bool|null 
 	// FIX - implement editable contact selector in sales order
 	$contact = (array) get_branch_contacts($branch_id, 'order', $customer_id);
 	$order->set_branch($branch_id, $myrow["tax_group_id"],
-	$myrow["tax_group_name"], @$contact["phone"], @$contact["email"]);
+	$myrow["tax_group_name"], isset($contact["phone"]) && !is_array($contact["phone"]) ? $contact["phone"] : null,
+	isset($contact["email"]) && !is_array($contact["email"]) ? $contact["email"] : null);
 
 	$address = trim((string) $myrow["br_post_address"]) != '' ? $myrow["br_post_address"]
 		: (trim((string) $myrow["br_address"]) != '' ? $myrow["br_address"]:$deliver);
@@ -170,7 +172,7 @@ function display_order_summary(?string $title, Cart &$order, bool $editable_item
 
 	$id = find_submit('Edit');
 
-	$low_stock = $order->check_qoh($_POST['OrderDate'], $_POST['Location']);
+	$low_stock = $order->check_qoh((string) post_scalar('OrderDate'), (string) post_scalar('Location'));
 	foreach ($order->get_items() as $line_no=>$stock_item)
 	{
 
@@ -225,12 +227,12 @@ function display_order_summary(?string $title, Cart &$order, bool $editable_item
 		++$colspan;
 	start_row();
 	label_cell(_("Shipping Charge"), "colspan=$colspan align=right");
-	small_amount_cells(null, 'freight_cost', price_format((string) get_post('freight_cost',0)));
+	small_amount_cells(null, 'freight_cost', price_format((string) post_scalar('freight_cost')));
 	label_cell('', 'colspan=2');
 	end_row();
 	$display_sub_total = price_format($total + (float)input_num('freight_cost'));
 	label_row(_("Sub-total"), $display_sub_total, "colspan=$colspan align=right","align=right", 2);
-	$taxes = $order->get_taxes(input_num('freight_cost'));
+	$taxes = $order->get_taxes((float) input_num('freight_cost'));
 	$tax_total = (float) display_edit_tax_items($taxes, $colspan, $order->tax_included, 2);
 
 	$display_total = price_format(($total + (float)input_num('freight_cost') + $tax_total));
@@ -261,7 +263,7 @@ function display_sales_order_header(Cart &$order, bool $editable, ?string $date_
 
 	if (!$editable)
 	{
-		label_row(null, $order->customer_name . " - " . $order->deliver_to);
+		label_row(null, (string) $order->customer_name . " - " . (string) $order->deliver_to);
 		hidden('customer_id', $order->customer_id);
 		hidden('branch_id', $order->Branch);
 		hidden('sales_type', $order->sales_type);
@@ -375,7 +377,7 @@ function display_sales_order_header(Cart &$order, bool $editable, ?string $date_
 	{
 		label_row(_("Customer Currency:"), $order->customer_currency);
 		exchange_rate_display(get_company_currency(), $order->customer_currency,
-			(string) ($editable ? $_POST['OrderDate'] : $order->document_date));
+			$editable ? (string) post_scalar('OrderDate') : $order->document_date);
 	}
 
 	customer_credit_row($_POST['customer_id'], $order->credit);
@@ -389,8 +391,9 @@ function display_sales_order_header(Cart &$order, bool $editable, ?string $date_
 		&& !$order->is_started()) {
 		 // editable payment type
         if (isset($_POST['payment']) && $_POST['payment'] !== $order->payment) {
-			$order->payment = (string) get_post('payment');
-			$order->payment_terms = get_payment_terms($order->payment) ?: array('cash_sale' => false, 'days_before_due' => 0);
+			$order->payment = (string) post_scalar('payment');
+			$payment_terms = get_payment_terms($order->payment);
+			$order->payment_terms = $payment_terms === false ? array('cash_sale' => false, 'days_before_due' => 0) : $payment_terms;
 			$order->due_date = get_invoice_duedate($order->payment, $order->document_date);
 			if ((bool)$order->payment_terms['cash_sale']) {
 				$_POST['Location'] = $order->Location = (string) $pos['pos_location'];
@@ -438,9 +441,9 @@ function display_sales_order_header(Cart &$order, bool $editable, ?string $date_
 			}
 			ajax()->activate('_ex_rate');
 			if ($order->trans_type == ST_SALESINVOICE) {
-				$_POST['delivery_date'] = get_invoice_duedate((string) get_post('payment'), (string) get_post('OrderDate'));
+				$_POST['delivery_date'] = get_invoice_duedate((string) post_scalar('payment'), (string) post_scalar('OrderDate'));
 			} else
-				$_POST['delivery_date'] = add_days((string) get_post('OrderDate'), sysprefs()->default_delivery_required_by());
+				$_POST['delivery_date'] = add_days((string) post_scalar('OrderDate'), sysprefs()->default_delivery_required_by());
 			ajax()->activate('items_table');
 			ajax()->activate('delivery_date');
 		}
@@ -468,9 +471,8 @@ function display_sales_order_header(Cart &$order, bool $editable, ?string $date_
 	end_outer_table(1); // outer table
 
 	if ($change_prices != 0) {
-		foreach ($order->line_items as $line_no=>$item) {
-			$line = &$order->line_items[$line_no];
-			$line->price = (float) get_kit_price($line->stock_id, $order->customer_currency,
+		foreach ($order->line_items as $item) {
+			$item->price = (float) get_kit_price($item->stock_id, $order->customer_currency,
 				$order->sales_type, $order->price_factor, get_post('OrderDate'));
 		}
 	    ajax()->activate('items_table');
@@ -499,7 +501,7 @@ function sales_order_item_controls(Cart &$order, int|string|null &$rowcounter, s
 		$_POST['item_description'] = $edit_item->item_description;
 		hidden('stock_id', post_scalar('stock_id'));
 		label_cell(post_scalar('stock_id'));
-		if ($edit_item->descr_editable)
+		if ((bool)$edit_item->descr_editable)
 			text_cells(null,'item_description', null, 45, 50);
 		else {
 			hidden('item_description', post_scalar('item_description'));
@@ -515,7 +517,7 @@ function sales_order_item_controls(Cart &$order, int|string|null &$rowcounter, s
             if (!isset($_POST['stock_id'])) {   // Check if stock_id dosesn't exist
 				$_POST['stock_id'] = last_sales_order_detail($order, 'stk_code');  //get the llast sales stock id.
 			}
-            sales_items_list_cells(null,'stock_id', (string) $_POST['stock_id'], false, true, true);
+            sales_items_list_cells(null,'stock_id', (string) post_scalar('stock_id'), false, true, true);
         }
         if (list_updated('stock_id')) {
             ajax()->activate('price');

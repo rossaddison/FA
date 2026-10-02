@@ -53,6 +53,7 @@ end_row();
 start_row();
 label_cells(_("Into Bank Account"), (string)$receipt['bank_account_name'].' ['.(string)$receipt['bank_curr_code'].']', "class='tableheader2'");
 label_cells(_("Bank Amount"), price_format($receipt['bank_amount']), "class='tableheader2'");
+/** @var array<int, string> $bank_transfer_types */
 label_cells(_("Payment Type"), $bank_transfer_types[(int) $receipt['BankTransType']], "class='tableheader2'");
 end_row();
 comments_display_row(ST_CUSTPAYMENT, $trans_id);

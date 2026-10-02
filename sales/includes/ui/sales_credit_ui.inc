@@ -107,7 +107,7 @@ function display_credit_header(Cart &$order): string
 
     shippers_list_row(_("Shipping Company:"), 'ShipperID', $order->ship_via);
 
-	label_row(_("Customer Discount:"), ((float)$order->default_discount * 100.0) . "%");
+	label_row(_("Customer Discount:"), (string) ((float)$order->default_discount * 100.0) . "%");
 
 	table_section(4);
 
@@ -138,10 +138,9 @@ function display_credit_header(Cart &$order): string
 	end_outer_table(1); // outer table
 
 	if ($change_prices != 0) {
-		foreach ($order->line_items as $line_no=>$item) {
-			$line = &$order->line_items[$line_no];
-			$line->price = get_price($line->stock_id, $order->customer_currency,
-				$order->sales_type, $order->price_factor, get_post('OrderDate'));
+		foreach ($order->line_items as $item) {
+			$item->price = get_price($item->stock_id, $order->customer_currency,
+				$order->sales_type, $order->price_factor, post_scalar('OrderDate'));
 		}
 	    ajax()->activate('items_table');
 	}
@@ -174,15 +173,15 @@ function display_credit_items(?string $title, Cart &$order): void
     foreach ($order->get_items() as $line_no=>$line)
     {
 	$line_total =	round((float)$line->qty_dispatched * (float)$line->price * (1.0 - (float)$line->discount_percent),
-	   user_price_dec());
+	   (int) user_price_dec());
 
 	if ( $id != $line_no)
 	{
 	    alt_table_row_color($k);
 
-    	    label_cell("<a target='_blank' href='$path_to_root/inventory/inquiry/stock_status.php?stock_id=" . $line->stock_id . "'>$line->stock_id</a>");
+    	    label_cell("<a target='_blank' href='$path_to_root/inventory/inquiry/stock_status.php?stock_id=" . (string) $line->stock_id . "'>$line->stock_id</a>");
     	    label_cell($line->item_description, "nowrap");
-    	    qty_cell($line->qty_dispatched, false, get_qty_dec($line->stock_id));
+    	    qty_cell($line->qty_dispatched, false, get_qty_dec((string) $line->stock_id));
     	    label_cell($line->units);
     	    amount_cell($line->price);
 
@@ -215,15 +214,16 @@ function display_credit_items(?string $title, Cart &$order): void
 		$_POST['ChargeFreightCost'] = 0;
 	start_row();
 	label_cell(_("Shipping"), "colspan=$colspan align=right");
-	small_amount_cells(null, 'ChargeFreightCost', price_format(get_post('ChargeFreightCost',0)));
+	small_amount_cells(null, 'ChargeFreightCost', price_format((string) post_scalar('ChargeFreightCost')));
     label_cell('', 'colspan=2');
 	end_row();
 
-    $taxes = $order->get_taxes($_POST['ChargeFreightCost']);
+    $freight_cost = (float) post_scalar('ChargeFreightCost');
+    $taxes = $order->get_taxes($freight_cost);
 
     $tax_total = display_edit_tax_items($taxes, $colspan, $order->tax_included, 2);
 
-    $display_total = price_format(($subtotal + (float)$_POST['ChargeFreightCost'] + $tax_total));
+    $display_total = price_format($subtotal + $freight_cost + (float) $tax_total);
 
     label_row(_("Credit Note Total"), $display_total, "colspan=$colspan align=right","class='amount'", 2);
 
@@ -233,22 +233,23 @@ function display_credit_items(?string $title, Cart &$order): void
 
 //---------------------------------------------------------------------------------
 
-function credit_edit_item_controls(Cart &$order, string|int|float|bool|null $rowcounter, string|int|float|bool|null $line_no=-1): void
+function credit_edit_item_controls(Cart &$order, int|string|null &$rowcounter, string|int|float|bool|null $line_no=-1): void
 {
 	alt_table_row_color($rowcounter);
 	$id = find_submit('Edit');
 
 	if ($line_no!=-1 && $line_no == $id)
 	{
-		$_POST['stock_id'] = $order->line_items[$id]->stock_id;
-		$dec = get_qty_dec(post_scalar('stock_id'));
-		$_POST['qty'] = qty_format($order->line_items[$id]->qty_dispatched, $_POST['stock_id'], $dec);
-		$_POST['price'] = price_format($order->line_items[$id]->price);
-		$_POST['Disc'] = percent_format(((float)$order->line_items[$id]->discount_percent)*100.0);
-		$units = $order->line_items[$id]->units;
+		$edit_item = $order->line_items[(int) $id];
+		$_POST['stock_id'] = $edit_item->stock_id;
+		$dec = get_qty_dec((string) post_scalar('stock_id'));
+		$_POST['qty'] = qty_format($edit_item->qty_dispatched, (string) post_scalar('stock_id'), $dec);
+		$_POST['price'] = price_format($edit_item->price);
+		$_POST['Disc'] = percent_format(((float)$edit_item->discount_percent)*100.0);
+		$units = $edit_item->units;
 		hidden('stock_id', post_scalar('stock_id'));
 		label_cell(post_scalar('stock_id'));
-		label_cell($order->line_items[$id]->item_description, "nowrap");
+		label_cell($edit_item->item_description, "nowrap");
 	    ajax()->activate('items_table');
 	}
 	else
@@ -260,21 +261,21 @@ function credit_edit_item_controls(Cart &$order, string|int|float|bool|null $row
 			    ajax()->activate('units');
 			    ajax()->activate('line_total');
 		}
-  		$item_info = row_or_empty(get_item_edit_info(post_scalar('stock_id')));
+  		$item_info = row_or_empty(get_item_edit_info((string) post_scalar('stock_id')));
 
-		$dec = !$item_info ? 0 :  $item_info['decimals'];
+		$dec = !$item_info ? 0 : (int) $item_info['decimals'];
    		$_POST['qty'] = number_format2(0, $dec);
-		$units = !$item_info ? "" : $item_info["units"];
+		$units = !$item_info ? "" : (string) $item_info["units"];
 		$price = get_price(post_scalar('stock_id'),
 			$order->customer_currency, $order->sales_type,
-			$order->price_factor, get_post('OrderDate'));
+			$order->price_factor, post_scalar('OrderDate'));
 		$_POST['price'] = price_format($price);
 		
 		// default to the customer's discount %
 		$_POST['Disc'] = percent_format((float)$order->default_discount * 100.0);
 	}
 
-	qty_cells(null, 'qty', post_scalar('qty'), null, null, $dec);
+	qty_cells(null, 'qty', (string) post_scalar('qty'), null, null, $dec);
 
 	label_cell($units, '', 'units');
 	amount_cells(null, 'price');

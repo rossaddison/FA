@@ -25,7 +25,7 @@ include_once(dirname(__DIR__, 2) . "/gl/includes/gl_db.inc");
 $trans_no = null;
 if (isset($_GET["trans_no"])){
 
-	$trans_no = (string) $_GET["trans_no"];
+	$trans_no = get_scalar("trans_no");
 }
 
 $result = get_bank_trans(ST_BANKTRANSFER, $trans_no);
@@ -87,6 +87,7 @@ if ($show_both_amounts)
 end_row();
 start_row();
 label_cells(_("Date"), sql2date($from_trans['trans_date']), "class='tableheader2'");
+/** @var array<int, string> $bank_transfer_types */
 label_cells(_("Transfer Type"), $bank_transfer_types[(int) $from_trans['account_type']],
 	 "class='tableheader2'");
 label_cells(_("Reference"), $from_trans['ref'], "class='tableheader2'");

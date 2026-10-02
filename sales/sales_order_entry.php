@@ -550,6 +550,7 @@ if (isset($_POST['ProcessOrder']) && can_process()) {
 	}
 	else
 	{
+		/** @var array<array-key, mixed> $messages */
 		if (count($messages)) { // abort on failure or error messages are lost
 			ajax()->activate('_page_body');
 			display_footer_exit();
