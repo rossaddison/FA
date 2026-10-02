@@ -312,7 +312,7 @@ function set_page_security(mixed $value=null, mixed $trans = array(), mixed $gtr
 		}
 
 	// then check session value
-	if (isset($trans[$value])) {
+	if ($value !== null && isset($trans[$value])) {
 		$page_security = $trans[$value];
 		return;
 	}

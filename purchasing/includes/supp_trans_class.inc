@@ -291,7 +291,7 @@ class supp_trans
 		$total = 0.0;
 
 		foreach ($this->grn_items as $ln_itm)
-			$total += round($ln_itm->this_quantity_inv * $ln_itm->chg_price, user_price_dec());
+			$total += round($ln_itm->this_quantity_inv * $ln_itm->chg_price, (int) user_price_dec());
 
 		foreach ($this->gl_codes as $gl_line)
 		{

@@ -231,7 +231,7 @@ function display_po_items(purch_order &$order, bool $editable=true): void
 	$k = 0;
    	foreach ($order->line_items as $line_no => $po_line)
    	{
-    	$line_total =	round((float)$po_line->quantity * (float)$po_line->price,  user_price_dec());
+    	$line_total =	round((float)$po_line->quantity * (float)$po_line->price,  (int) user_price_dec());
     	if (!$editable || ($id != $line_no))
 		{
     		alt_table_row_color($k);
@@ -437,7 +437,7 @@ function po_item_controls(purch_order &$order, int|string|null &$rowcounter, str
    	else	
 		unit_amount_cells(null, 'price');
 
-	$line_total = round((float)input_num('qty') * (float)input_num('price'),  user_price_dec());
+	$line_total = round((float)input_num('qty') * (float)input_num('price'),  (int) user_price_dec());
 	amount_cell($line_total, false, '','line_total');
 
 	if ($id!=-1)

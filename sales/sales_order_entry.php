@@ -23,9 +23,9 @@ declare(strict_types=1);
 $path_to_root = "..";
 $page_security = 'SA_SALESORDER';
 
+include_once(dirname(__DIR__) . "/sales/includes/cart_class.inc");
 include(dirname(__DIR__) . "/includes/session.inc");
 include_once(dirname(__DIR__) . "/reporting/includes/reporting.inc");
-include_once(dirname(__DIR__) . "/sales/includes/cart_class.inc");
 include_once(dirname(__DIR__) . "/sales/includes/sales_db.inc");
 include_once(dirname(__DIR__) . "/sales/includes/sales_ui.inc");
 include_once(dirname(__DIR__) . "/sales/includes/db/sales_types_db.inc");
@@ -726,8 +726,7 @@ function  handle_cancel_order(): void
 //--------------------------------------------------------------------------------
 
 function create_cart(string|int|array|null $type, string|int|array|null $trans_no): void
-{ 
-
+{
 	if (!(bool)sysprefs()->db_ok) // create_cart is called before page() where the check is done
 		return;
 

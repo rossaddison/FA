@@ -184,7 +184,7 @@ function db_escape(string|int|float|bool|null $value = "", ?bool $nullify = fals
 {
 	global $db;
 
-	$value = @html_entity_decode($value, ENT_QUOTES, session_obj('language')->encoding=='iso-8859-2' ? 'ISO-8859-1' : session_obj('language')->encoding);
+	$value = @html_entity_decode((string) $value, ENT_QUOTES, session_obj('language')->encoding=='iso-8859-2' ? 'ISO-8859-1' : session_obj('language')->encoding);
 	$value = html_specials_encode($value);
 
   	//reset default if second parameter is skipped

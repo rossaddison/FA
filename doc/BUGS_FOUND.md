@@ -79,6 +79,68 @@ a stand-in for a boolean) reaching a native, strictly-typed parameter.
   `array`. Guarded with `is_array($x) ? null : (string) $x` at the call
   site.
 
+- **`includes/db/connect_db_mysqli.inc` — `db_escape()`.** Missing a
+  `(string)` cast before passing `$value` to `html_entity_decode()`'s native
+  `string $string` parameter. `db_escape()` is called constantly with plain
+  integers (e.g. `db_escape($trans_type)`, `db_escape($id)`) throughout the
+  codebase, so this broke essentially every page that executes a query built
+  from a non-string value — e.g. `sales_order_entry.php?NewOrder=Yes`, which
+  calls `db_escape(ST_SALESORDER)` deep in `create_cart()`.
+
+- **`purchasing/includes/ui/po_ui.inc` (×2), `includes/db/inventory_db.inc`,
+  `purchasing/includes/po_class.inc`, `purchasing/includes/supp_trans_class.inc`
+  — `round()` with `user_price_dec()`.** Same bug class as
+  `current_user.inc`'s `round2()` above but in five more call sites:
+  `user_price_dec(): int|string` passed straight to `round()`'s native
+  `int $precision` parameter. Other call sites in `tax_calc.inc`,
+  `sales_order_ui.inc` and `cart_class.inc` already cast with
+  `(int) user_price_dec()`; these five didn't. Crashed
+  `purchasing/po_entry_items.php?NewOrder=Yes` immediately on load. Cast all
+  five to match the established `(int) user_price_dec()` idiom.
+
+- **`sales/sales_order_entry.php` — include order; `sales/includes/sales_ui.inc`
+  — `processing_end()`.** Not a strict_types issue — a pre-existing PHP
+  session/class-loading bug, unmasked by live testing. `sales_order_entry.php`
+  included `includes/session.inc` (which calls `session_start()`) *before*
+  `sales/includes/cart_class.inc`; every other cart-using page in `sales/`
+  (`customer_invoice.php`, `customer_delivery.php`, `credit_note_entry.php`,
+  `create_recurrent_invoices.php`, `view/view_sales_order.php`) and the
+  equivalent purchasing/GL pages (`po_receive_items.php`, `gl_journal.php`,
+  `allocation_cart.inc` consumers) include their cart class first. Once a
+  `Cart` had been serialized into `$_SESSION['Items']` by a prior request,
+  `session_start()` on the *next* request unserialized it before `class Cart`
+  was defined, producing a permanent `__PHP_Incomplete_Class` stand-in for
+  that object (confirmed with a standalone repro — PHP does not retroactively
+  fix up an already-unserialized instance once the real class loads later in
+  the same request). Reading properties off it is silently fine; writing one
+  is a fatal "tried to modify a property on an incomplete object." The only
+  place in the whole codebase that *writes* to a cart property instead of
+  reading one is `processing_end()`'s `unset(session_obj('Items')->line_items)`
+  — and that call was already redundant, since the very next line,
+  `unset($_SESSION['Items'])`, discards the whole object anyway. Fixed both:
+  reordered the two includes in `sales_order_entry.php` to match the rest of
+  the codebase, and removed the redundant property-level `unset()`. Verified
+  live by hitting `sales_order_entry.php?NewOrder=Yes` twice in the same
+  session (second request unserializes the cart the first request created).
+
+- **`reporting/includes/reporting.inc` — `print_link()`.** Two `urlencode()`
+  calls fed non-string values straight into its native `string $string`
+  parameter: `urlencode($val)` over caller-supplied `$pars` (often an int,
+  e.g. a customer or transaction id), and `urlencode($rep)` where `$rep` is
+  typed `?int` — the latter would crash on *every* non-null call. `reporting/`
+  is parked out of Psalm scope for now, but this is a live crash (hit via
+  `sales/inquiry/sales_orders_view.php?OutstandingOnly=1`, which builds a
+  report link with an int param), so fixed it independent of the Psalm sweep.
+  Cast both to `(string)`.
+
+- **`includes/session.inc` — `set_page_security()`.** `isset($trans[$value])`
+  with `$value` able to be `null` (its own parameter default, and the normal
+  case for pages with no matching `$_GET` key and no session-derived trans
+  type yet) — PHP 8.5 deprecates using `null` as an array offset. Hit on
+  `sales/inquiry/sales_orders_view.php?type=32`. Guarded with
+  `$value !== null &&` before the `isset()` check, per the deprecation
+  notice's own suggestion.
+
 ## Live crashes
 
 - **`inventory/includes/inventory_db.inc` — `item_img_name()`.** Parameter

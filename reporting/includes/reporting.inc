@@ -151,9 +151,9 @@ function print_link(?string $link_text, ?int $rep, ?array $pars = array(), ?stri
 	$parm = array();
 	foreach($pars as $par => $val) {
 		if ($val != "")
-			$parm[] = "$par=".urlencode($val);
+			$parm[] = "$par=".urlencode((string) $val);
 	}
-	$parm[] = 'REP_ID='.urlencode($rep);
+	$parm[] = 'REP_ID='.urlencode((string) $rep);
 	$url .= implode ('&', $parm);
 	if ($class != '')
 		$class = sysprefs()->pdf_debug ? '' : " class='$class'";
