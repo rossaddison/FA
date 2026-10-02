@@ -64,7 +64,7 @@ function get_global_curr_code(): string|array|null
 }
 
 /** @psalm-pure */
-function count_array(array $array): int
+function count_array(mixed $array): int
 {
 	return (is_array($array)) ? count($array) : (($array === NULL) ? 0 : 1);
 }

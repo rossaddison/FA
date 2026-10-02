@@ -22,7 +22,7 @@ function processing_start(): void
 {
 	page_processing(false);
     processing_end();
-    $_SESSION['Processing'] = $_SERVER['PHP_SELF'];
+    $_SESSION['Processing'] = $_SERVER['PHP_SELF'] ?? '';
 }
 
 function processing_end(): void
@@ -36,13 +36,13 @@ function processing_end(): void
 
 function processing_active(): bool
 {
-    return (isset($_SESSION['Processing']) && $_SESSION['Processing']==$_SERVER['PHP_SELF']);
+    return (isset($_SESSION['Processing']) && $_SESSION['Processing']==($_SERVER['PHP_SELF'] ?? ''));
 }
 /*
 	Check if the cart was not destroyed during opening the edition page in
 	another browser tab.
 */
-function check_edit_conflicts(string|array|null $cart_id, ?string $cartname='Items'): void
+function check_edit_conflicts(string|array|null $cart_id, string $cartname='Items'): void
 {
     /** @var Cart $cart */
     $cart = $_SESSION[$cartname] ?? null;

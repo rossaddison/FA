@@ -384,7 +384,8 @@ function show_allocatable(bool $show_totals): void {
 
 	global $systypes_array;
 	
-    $k = $total_allocated = 0.0;
+    $k = 0;
+    $total_allocated = 0.0;
 
 	/** @var allocation $cart */
 	$cart = $_SESSION['alloc'];

@@ -142,7 +142,7 @@ class Cart
 	var $sum_paid; 		// sum of all allocated prepayments both to order and related invoices
 	/** @var float|int|string|null */
 	var $alloc; 		// sum of payments allocated to this document
-	/** @var array<int, array<string, mixed>> */
+	/** @var array<int, array<array-key, mixed>> */
 	var $prepayments = array(); // allocation records for this document
 	/** @var float|int|string|null */
 	var $ex_rate;

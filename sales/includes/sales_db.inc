@@ -51,8 +51,8 @@ function get_calculated_price(
     string|int|float|bool|null $stock_id,
     string|int|float|bool|null $add_pct
 ): int|float {
-    $avg = (float) get_unit_cost($stock_id);
-    if ((float) $avg === 0.0) {
+    $avg = (float) get_unit_cost(is_float($stock_id) ? (string) $stock_id : $stock_id);
+    if ($avg === 0.0) {
         return 0;
     }
 
@@ -76,7 +76,7 @@ function round_to_nearest(
         return 0;
     }
 
-    $pow = pow(10, user_price_dec());
+    $pow = (float) pow(10, (int) user_price_dec());
 
     if ($pow >= $roundTo) {
         $mod = fmod($pow, $roundTo);
@@ -122,38 +122,43 @@ function get_price (string|int|float|bool|null $stock_id, string|int|float|bool|
 	    user_exrate_dec());
 	$round_to = get_company_pref('round_to');
 	$prices = array();
-	while($myrow = db_fetch($result)) 
+	while($myrow = db_fetch($result))
 	{
-	    $prices[$myrow['sales_type_id']][$myrow['curr_abrev']] = $myrow['price'];
+	    $prices[(string)$myrow['sales_type_id']][(string)$myrow['curr_abrev']] = (float)$myrow['price'];
 	}
+	$sales_type_key = (string) $sales_type_id;
+	$base_id_key = (string) $base_id;
+	$currency_key = (string) $currency;
+	$home_curr_key = (string) $home_curr;
+	$factor = (float) $factor;
 	$price = false;
-	if (isset($prices[$sales_type_id][$currency])) 
+	if (isset($prices[$sales_type_key][$currency_key]))
 	{
-	    $price = $prices[$sales_type_id][$currency];
+	    $price = $prices[$sales_type_key][$currency_key];
 	}
-	elseif (isset($prices[$base_id][$currency])) 
+	elseif (isset($prices[$base_id_key][$currency_key]))
 	{
-	    $price = $prices[$base_id][$currency] * $factor;
+	    $price = $prices[$base_id_key][$currency_key] * $factor;
 	}
-	elseif (isset($prices[$sales_type_id][$home_curr])) 
+	elseif (isset($prices[$sales_type_key][$home_curr_key]))
 	{
-	    $price = $prices[$sales_type_id][$home_curr] / $rate;
+	    $price = $prices[$sales_type_key][$home_curr_key] / $rate;
 	}
-	elseif (isset($prices[$base_id][$home_curr])) 
+	elseif (isset($prices[$base_id_key][$home_curr_key]))
 	{
-	    $price = $prices[$base_id][$home_curr] * $factor / $rate;
+	    $price = $prices[$base_id_key][$home_curr_key] * $factor / $rate;
 	}
 	elseif ($num_rows == 0 && $add_pct != -1)
 	{
-		$price = get_calculated_price($stock_id, $add_pct);
+		$price = (float) get_calculated_price($stock_id, $add_pct);
 		if ($currency != $home_curr)
 			$price /= $rate;
 		if ($factor != 0)
 			$price *= $factor;
-	}	
+	}
 	if ($price === false)
 		return 0;
-	elseif ($round_to != 1)	
+	elseif ($round_to != 1)
 		return round_to_nearest($price, $round_to);
 	else
 		return round2($price, user_price_dec());
@@ -164,31 +169,33 @@ function get_price (string|int|float|bool|null $stock_id, string|int|float|bool|
 //  When $std==true price is calculated as a sum of all included stock items,
 //	otherwise all prices set for kits and items are accepted.
 //
-function get_kit_price(string|int|float|bool|null $item_code, string|int|float|bool|null $currency, string|int|float|bool|null $sales_type_id, string|int|float|bool|null $factor=null, 
-	string|int|float|bool|array|null $date=null, string|int|float|bool|null $std = false)
+function get_kit_price(string|int|float|bool|null $item_code, string|int|float|bool|null $currency, string|int|float|bool|null $sales_type_id, string|int|float|bool|null $factor=null,
+	string|int|float|bool|array|null $date=null, string|int|float|bool|null $std = false): int|float
 {
 	$kit_price = 0.00;
+	$date_scalar = is_array($date) ? null : $date;
 	if (!(bool)$std) {
-		$kit_price = get_price( $item_code, $currency, $sales_type_id, 
-			$factor, $date);
+		$kit_price = get_price( $item_code, $currency, $sales_type_id,
+			$factor, $date_scalar);
 
 		if ($kit_price !== 0) {
 			return $kit_price;
 		}
-	}	
+	}
 	// no price for kit found, get total value of all items
+	$kit_price = (float) $kit_price;
 	$kit = get_item_kit($item_code);
 	
 	while($item = db_fetch($kit)) {
 		if ($item['item_code'] != $item['stock_id']) {
 			// foreign/kit code
-			$kit_price += (float)$item['quantity'] * get_kit_price( $item['stock_id'], 
+			$kit_price += (float)$item['quantity'] * (float) get_kit_price( $item['stock_id'],
 				$currency, $sales_type_id, $factor, $date, $std);
 
 		} else {
 			// stock item
-			$kit_price += (float)$item['quantity'] * get_price( $item['stock_id'], 
-				$currency, $sales_type_id, $factor, $date);
+			$kit_price += (float)$item['quantity'] * (float) get_price( $item['stock_id'],
+				$currency, $sales_type_id, $factor, $date_scalar);
 		}
 	}
 	return $kit_price;
@@ -233,7 +240,7 @@ function get_location(Cart &$cart)
 		FROM ".TB_PREF."stock_moves move,"
 			.TB_PREF."locations location".
 		" WHERE type=".db_escape($cart->trans_type).
-		" AND trans_no=".key($cart->trans_no).
+		" AND trans_no=".(string) (is_array($cart->trans_no) ? key($cart->trans_no) : $cart->trans_no).
 		" AND qty!=0 ".
 		" AND location.loc_code=move.loc_code";
 
@@ -254,17 +261,20 @@ function read_sales_trans(string|int|float|bool|null $doc_type, string|int|float
 	if (!is_array($trans_no) && (bool)$trans_no)
 		$trans_no = array($trans_no);
 
-	$cart->trans_type = $doc_type;
+	$cart->trans_type = (is_bool($doc_type) || is_float($doc_type)) ? (string) $doc_type : $doc_type;
 	if (!(bool)$trans_no) { // new document
-		$cart->trans_no = $trans_no;
+		$cart->trans_no = is_array($trans_no) ? $trans_no : (int) $trans_no;
 	} else {
+		/** @var array<array-key, string|int|float|bool> $trans_no */
 		// read header data from first document
-		$myrow = (array) get_customer_trans($trans_no[0],$doc_type);
+		$first_trans_no = $trans_no[0];
+		$first_trans_key = (is_bool($first_trans_no) || is_float($first_trans_no)) ? (string) $first_trans_no : $first_trans_no;
+		$myrow = row_or_empty(get_customer_trans($first_trans_no,$doc_type));
         $debtor_no = $myrow['debtor_no'];
 		if (count_array($trans_no)>1)
 			$cart->trans_no = get_customer_trans_version($doc_type, $trans_no);
 		else
-			$cart->trans_no = array($trans_no[0]=>$myrow["version"]);
+			$cart->trans_no = array($first_trans_key=>$myrow["version"]);
 
 		$cart->set_sales_type($myrow["tpe"], $myrow["sales_type"], $myrow["tax_included"],0);
 
@@ -274,7 +284,7 @@ function read_sales_trans(string|int|float|bool|null $doc_type, string|int|float
 		$cart->set_branch($myrow["branch_code"], $myrow["tax_group_id"],
 			$myrow["tax_group_name"]);
 
-		$cart->reference = $myrow["reference"];
+		$cart->reference = (string) $myrow["reference"];
 		$cart->prepaid = $myrow["prepaid"];
 		$cart->order_no = $myrow["order_"];
 		$cart->due_date = sql2date($myrow["due_date"]);
@@ -327,6 +337,7 @@ function get_sales_child_lines(string|int|float|bool|null $trans_type, string|in
 	if (!is_array($trans_no)) {
 		$trans_no = array($trans_no);
 	}
+	/** @var array<array-key, string|int|float|bool|null> $trans_no */
 
 	$par_tbl = $trans_type == ST_SALESORDER ? "sales_order_details" : "debtor_trans_details";
 	$par_no = $trans_type == ST_SALESORDER ? "trans.order_no" : "trans.debtor_trans_no";
@@ -349,12 +360,17 @@ function get_sales_child_lines(string|int|float|bool|null $trans_type, string|in
 	return db_query($sql, "can't retrieve child trans");
 }
 
+/**
+ * @return list<string|null>
+ */
 function get_sales_child_numbers(?int $trans_type, string|int|float|bool|array|null $trans_no): array
 {
 	$trans = array();
 	$res = get_sales_child_lines($trans_type, $trans_no, false);
-	while ($line = db_fetch($res)) {
-		$trans[] = $line['debtor_trans_no'];
+	if ($res instanceof mysqli_result) {
+		while ($line = db_fetch($res)) {
+			$trans[] = $line['debtor_trans_no'];
+		}
 	}
 	return $trans;
 }
@@ -388,19 +404,24 @@ function get_sales_parent_lines(string|int|float|bool|null $trans_type, string|i
 
 }
 
+/**
+ * @return list<string|null>
+ */
 function get_sales_parent_numbers(string|int|float|bool|null $trans_type, string|int|float|bool|null $trans_no): array
 {
 	$trans = array();
 	$res = get_sales_parent_lines($trans_type, $trans_no, false);
-	while ($line = db_fetch($res))
-		$trans[] = $line[$trans_type==ST_CUSTDELIVERY ? 'order_no' : 'debtor_trans_no'];
+	if ($res instanceof mysqli_result) {
+		while ($line = db_fetch($res))
+			$trans[] = $line[$trans_type==ST_CUSTDELIVERY ? 'order_no' : 'debtor_trans_no'];
+	}
 	return $trans;
 }
 
 //----------------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return false|mysqli_result
  */
 function get_sales_child_documents(?int $trans_type, string|array|null $trans_no): mysqli_result|false
 {
@@ -409,13 +430,14 @@ function get_sales_child_documents(?int $trans_type, string|array|null $trans_no
 
 	if (!count_array($trans_no))
 		return false;
-	$childs = get_sales_child_numbers($trans_type, $trans_no, false);
+	$childs = get_sales_child_numbers($trans_type, $trans_no);
 	if (!count_array($childs))
 		return false;
 		
 	$sql = "SELECT * FROM ".TB_PREF."debtor_trans
-		WHERE type=".get_child_type($trans_type)." AND trans_no IN(". implode(',', array_values($childs)).")";
+		WHERE type=".get_child_type($trans_type)." AND trans_no IN(". implode(',', $childs).")";
 
-	return db_query($sql,"The related credit notes could not be retreived");
+	$result = db_query($sql,"The related credit notes could not be retreived");
+	return $result instanceof mysqli_result ? $result : false;
 }
 

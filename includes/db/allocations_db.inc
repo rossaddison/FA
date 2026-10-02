@@ -17,6 +17,9 @@ declare(strict_types=1);
 //
 //	Returns table of payments currently allocated to selected transaction.
 //
+/**
+ * @return list<array<array-key, string|null>>
+ */
 function get_payments_for(string|int|float|bool|null $trans_no, string|int|float|bool|null $trans_type, string|int|float|bool|null $person_id): array
 {
 	$allocations = array();
