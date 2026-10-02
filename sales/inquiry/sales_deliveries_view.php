@@ -22,7 +22,7 @@ include_once(dirname(__DIR__, 2) . "/reporting/includes/reporting.inc");
 $js = "";
 if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 600);
-if (user_use_date_picker())
+if ((bool) user_use_date_picker())
 	$js .= get_js_date_picker();
 
 if (isset($_GET['OutstandingOnly']) && ($_GET['OutstandingOnly'] == true))
@@ -49,9 +49,11 @@ if (isset($_POST['BatchInvoice']))
 {
 	// checking batch integrity
     $del_count = 0;
-    if (isset($_POST['Sel_'])) {
+    $del_branch = null;
+    $selected = array();
+    if (isset($_POST['Sel_']) && is_array($_POST['Sel_'])) {
 		foreach($_POST['Sel_'] as $delivery => $branch) {
-			$checkbox = 'Sel_'.$delivery;
+			$checkbox = 'Sel_'.(string)$delivery;
 			if (check_value($checkbox))	{
 				if (!$del_count) {
 					$del_branch = $branch;
@@ -73,7 +75,9 @@ if (isset($_POST['BatchInvoice']))
 		    the same customer branch.'));
     } else {
 		$_SESSION['DeliveryBatch'] = $selected;
-		meta_forward($path_to_root . '/sales/customer_invoice.php','BatchInvoice=Yes');
+		/** @var string $root */
+		$root = $path_to_root;
+		meta_forward($root . '/sales/customer_invoice.php','BatchInvoice=Yes');
     }
 }
 
@@ -97,7 +101,7 @@ if (get_post('_DeliveryNumber_changed'))
 
 //-----------------------------------------------------------------------------------
 
-start_form(false, false, (string)$_SERVER['PHP_SELF'] ."?OutstandingOnly=".(string)$_POST['OutstandingOnly']);
+start_form(false, false, ($_SERVER['PHP_SELF'] ?? '') ."?OutstandingOnly=".(string)$_POST['OutstandingOnly']);
 
 start_table(TABLESTYLE_NOBORDER);
 start_row();
@@ -128,7 +132,7 @@ end_table(1);
 /** @return null|string */
 function trans_view(array $trans, string|int|float|bool|array|null $trans_no): ?string
 {
-	return get_customer_trans_view_str(ST_CUSTDELIVERY, $trans['trans_no']);
+	return get_customer_trans_view_str(ST_CUSTDELIVERY, (string) $trans['trans_no']);
 }
 
 /** @psalm-pure */
@@ -145,13 +149,13 @@ function batch_checkbox(array $row): string
 function edit_link(array $row): string
 {
 	return $row["Outstanding"]==0 ? '' :
-		trans_editor_link(ST_CUSTDELIVERY, $row['trans_no']);
+		trans_editor_link(ST_CUSTDELIVERY, (string) $row['trans_no']);
 }
 
 /** @return non-empty-string|null */
 function prt_link(array $row)
 {
-	return print_document_link($row['trans_no'], _("Print"), true, ST_CUSTDELIVERY, ICON_PRINT);
+	return print_document_link((string) $row['trans_no'], _("Print"), true, ST_CUSTDELIVERY, ICON_PRINT);
 }
 
 function invoice_link(array $row): string
@@ -163,12 +167,22 @@ function invoice_link(array $row): string
 
 function check_overdue(array $row): bool
 {
-   	return date1_greater_date2(Today(), sql2date($row["due_date"])) && 
+   	return date1_greater_date2(Today(), sql2date((string) $row["due_date"])) &&
 			$row["Outstanding"]!=0;
 }
 //------------------------------------------------------------------------------------------------
-$sql = get_sql_for_sales_deliveries_view(get_post('DeliveryAfterDate'), get_post('DeliveryToDate'), get_post('customer_id'),	
-	get_post('SelectStockFromList'), get_post('StockLocation'), get_post('DeliveryNumber'), get_post('OutstandingOnly'));
+$delivery_after = post_scalar('DeliveryAfterDate');
+$delivery_to = post_scalar('DeliveryToDate');
+$cust_id = post_scalar('customer_id');
+$stock_item = post_scalar('SelectStockFromList');
+$stock_location = post_scalar('StockLocation');
+$sql = get_sql_for_sales_deliveries_view(
+	$delivery_after === null ? null : (string) $delivery_after,
+	$delivery_to === null ? null : (string) $delivery_to,
+	$cust_id === null ? null : (string) $cust_id,
+	$stock_item === null ? null : (string) $stock_item,
+	$stock_location === null ? null : (string) $stock_location,
+	get_post('DeliveryNumber'), get_post('OutstandingOnly'));
 
 $cols = array(
 		_("Delivery #") => array('fun'=>'trans_view', 'align'=>'right'), 
@@ -192,9 +206,9 @@ $cols = array(
 //-----------------------------------------------------------------------------------
 if (isset($_SESSION['Batch']))
 {
-    foreach($_SESSION['Batch'] as $trans=>$del)
-    	unset($_SESSION['Batch'][$trans]);
-    unset($_SESSION['Batch']);
+	// individually unsetting each element here was redundant - the whole
+	// key is removed immediately below
+	unset($_SESSION['Batch']);
 }
 
 $table =& new_db_pager('deliveries_tbl', $sql, $cols);
