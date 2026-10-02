@@ -87,12 +87,24 @@ function handle_submit(string|int|float|bool|null &$selected_id): void
 	if (!can_process())
 		return;
 
-	if ($selected_id)
+	if ((bool) $selected_id)
 	{
-		update_customer((string) post_scalar('customer_id'), (string) post_scalar('CustName'), (string) post_scalar('cust_ref'), (string) post_scalar('address'),
-			(string) post_scalar('tax_id'), (string) post_scalar('curr_code'), (string) post_scalar('dimension_id'), (string) post_scalar('dimension2_id'),
-			(string) post_scalar('credit_status'), (string) post_scalar('payment_terms'), (float)input_num('discount') / 100.0, (float)input_num('pymt_discount') / 100.0,
-			input_num('credit_limit'), (string) post_scalar('sales_type'), (string) post_scalar('notes'));
+		update_customer(
+                        (string) post_scalar('customer_id'),
+                        (string) post_scalar('CustName'),
+                        (string) post_scalar('cust_ref'),
+                        (string) post_scalar('address'),
+			(string) post_scalar('tax_id'),
+                        (string) post_scalar('curr_code'),
+                        (string) post_scalar('dimension_id'),
+                        (string) post_scalar('dimension2_id'),
+			(string) post_scalar('credit_status'),
+                        (string) post_scalar('payment_terms'),
+                        (float)input_num('discount') / 100.0,
+                        (float)input_num('pymt_discount') / 100.0,
+			input_num('credit_limit'),
+                        (string) post_scalar('sales_type'),
+                        (string) post_scalar('notes'));
 
 		update_record_status(post_scalar('customer_id'), $_POST['inactive'],
 			'debtors_master', 'debtor_no');
@@ -104,10 +116,21 @@ function handle_submit(string|int|float|bool|null &$selected_id): void
 	{ 	//it is a new customer
 
 		begin_transaction();
-		add_customer((string) post_scalar('CustName'), (string) post_scalar('cust_ref'), (string) post_scalar('address'),
-			(string) post_scalar('tax_id'), (string) post_scalar('curr_code'), (string) post_scalar('dimension_id'), (string) post_scalar('dimension2_id'),
-			(string) post_scalar('credit_status'), (string) post_scalar('payment_terms'), (float)input_num('discount') / 100.0, (float)input_num('pymt_discount') / 100.0,
-			input_num('credit_limit'), (string) post_scalar('sales_type'), (string) post_scalar('notes'));
+		add_customer(
+                        (string) post_scalar('CustName'),
+                        (string) post_scalar('cust_ref'),
+                        (string) post_scalar('address'),
+			(string) post_scalar('tax_id'),
+                        (string) post_scalar('curr_code'),
+                        (string) post_scalar('dimension_id'),
+                        (string) post_scalar('dimension2_id'),
+			(string) post_scalar('credit_status'),
+                        (string) post_scalar('payment_terms'),
+                        (float)input_num('discount') / 100.0,
+                        (float)input_num('pymt_discount') / 100.0,
+			input_num('credit_limit'),
+                        (string) post_scalar('sales_type'),
+                        (string) post_scalar('notes'));
 
 		$selected_id = $_POST['customer_id'] = db_insert_id();
 
@@ -115,28 +138,52 @@ function handle_submit(string|int|float|bool|null &$selected_id): void
 		{
 			/** @var string $selected_id */
 			$selected_id = $selected_id;
-        	add_branch($selected_id, (string) post_scalar('CustName'), (string) post_scalar('cust_ref'),
-                (string) post_scalar('address'), (string) post_scalar('salesman'), (string) post_scalar('area'), (string) post_scalar('tax_group_id'), '',
-                get_company_pref('default_sales_discount_act'), get_company_pref('debtors_act'), get_company_pref('default_prompt_payment_act'),
-                (string) post_scalar('location'), (string) post_scalar('address'), 0, (string) post_scalar('ship_via'), (string) post_scalar('notes'), (string) post_scalar('bank_account'));
+        	add_branch(
+                        $selected_id,
+                        (string) post_scalar('CustName'),
+                        (string) post_scalar('cust_ref'),
+                        (string) post_scalar('address'),
+                        (string) post_scalar('salesman'),
+                        (string) post_scalar('area'),
+                        (string) post_scalar('tax_group_id'),
+                        '',
+                        get_company_pref('default_sales_discount_act'),
+                        get_company_pref('debtors_act'),
+                        get_company_pref('default_prompt_payment_act'),
+                        (string) post_scalar('location'),
+                        (string) post_scalar('address'),
+                        0,
+                        (string) post_scalar('ship_via'),
+                        (string) post_scalar('notes'),
+                        (string) post_scalar('bank_account'));
                 
         	$selected_branch = db_insert_id();
         
-			add_crm_person(post_scalar('cust_ref'), post_scalar('CustName'), '', post_scalar('address'), 
-				post_scalar('phone'), post_scalar('phone2'), post_scalar('fax'), post_scalar('email'), '', '');
-
+		add_crm_person(
+                        post_scalar('cust_ref'),
+                        post_scalar('CustName'),
+                        '',
+                        post_scalar('address'),
+                        post_scalar('phone'),
+                        post_scalar('phone2'),
+                        post_scalar('fax'),
+                        post_scalar('email'), '', '');
 			$pers_id = db_insert_id();
-			add_crm_contact('cust_branch', 'general', $selected_branch, $pers_id);
-
-			add_crm_contact('customer', 'general', $selected_id, $pers_id);
+			add_crm_contact('cust_branch',
+                                'general', $selected_branch, $pers_id);
+			add_crm_contact('customer',
+                                'general', $selected_id, $pers_id);
 		}
 		commit_transaction();
 
 		display_notification(_("A new customer has been added."));
 
-		if (isset(sysprefs()->auto_create_branch) && sysprefs()->auto_create_branch == 1)
-			display_notification(_("A default Branch has been automatically created, please check default Branch values by using link below."));
-		
+		if (isset(sysprefs()->auto_create_branch)
+                        && sysprefs()->auto_create_branch == 1) {
+			display_notification(_("A default Branch has been"
+                        . " automatically created, please check default Branch"
+                        . " values by using link below."));
+                }
 		ajax()->activate('_page_body');
 	}
 }
@@ -161,7 +208,8 @@ if (isset($_POST['delete']))
 	if ((bool)key_in_foreign_table($selected_id, 'debtor_trans', 'debtor_no'))
 	{
 		$cancel_delete = 1;
-		display_error(_("This customer cannot be deleted because there are transactions that refer to it."));
+		display_error(_("This customer cannot be deleted because there"
+                        . " are transactions that refer to it."));
 	}
 	else
 	{
@@ -204,18 +252,18 @@ function customer_settings(string|int|float|bool|null $selected_id): void
 	
 	if (!(bool)$selected_id) 
 	{
-	 	if (list_updated('customer_id') || !isset($_POST['CustName'])) {
-			$_POST['CustName'] = $_POST['cust_ref'] = $_POST['address'] = $_POST['tax_id']  = '';
-			$_POST['dimension_id'] = 0;
-			$_POST['dimension2_id'] = 0;
-			$_POST['sales_type'] = -1;
-			$_POST['curr_code']  = get_company_currency();
-			$_POST['credit_status']  = -1;
-			$_POST['payment_terms']  = $_POST['notes']  = '';
+            if (list_updated('customer_id') || !isset($_POST['CustName'])) {
+                    $_POST['CustName'] = $_POST['cust_ref'] = $_POST['address'] = $_POST['tax_id']  = '';
+                    $_POST['dimension_id'] = 0;
+                    $_POST['dimension2_id'] = 0;
+                    $_POST['sales_type'] = -1;
+                    $_POST['curr_code']  = get_company_currency();
+                    $_POST['credit_status']  = -1;
+                    $_POST['payment_terms']  = $_POST['notes']  = '';
 
-			$_POST['discount']  = $_POST['pymt_discount'] = percent_format(0);
-			$_POST['credit_limit']	= price_format(sysprefs()->default_credit_limit());
-		}
+                    $_POST['discount']  = $_POST['pymt_discount'] = percent_format(0);
+                    $_POST['credit_limit']	= price_format(sysprefs()->default_credit_limit());
+            }
 	}
 	else 
 	{
@@ -249,7 +297,9 @@ function customer_settings(string|int|float|bool|null $selected_id): void
 	text_row(_("GSTNo:"), 'tax_id', null, 40, 40);
 
 
-	if (!(bool)$selected_id || is_new_customer($selected_id) || (!(bool)key_in_foreign_table($selected_id, 'debtor_trans', 'debtor_no') &&
+	if (!(bool)$selected_id ||
+            is_new_customer($selected_id) ||
+            (!(bool)key_in_foreign_table($selected_id, 'debtor_trans', 'debtor_no') &&
 		!(bool)key_in_foreign_table($selected_id, 'sales_orders', 'debtor_no')))
 	{
 		currencies_list_row(_("Customer's Currency:"), 'curr_code', post_scalar('curr_code'));
@@ -285,7 +335,7 @@ function customer_settings(string|int|float|bool|null $selected_id): void
 	credit_status_list_row(_("Credit Status:"), 'credit_status', (string) post_scalar('credit_status'));
 	$dim = get_company_pref('use_dimension');
 	if ($dim >= 1)
-		dimensions_list_row(_("Dimension")." 1:", 'dimension_id', post_scalar('dimension_id'), true, " ", false, 1);
+            dimensions_list_row(_("Dimension")." 1:", 'dimension_id', post_scalar('dimension_id'), true, " ", false, 1);
 	if ($dim > 1)
 		dimensions_list_row(_("Dimension")." 2:", 'dimension2_id', post_scalar('dimension2_id'), true, " ", false, 2);
 	if ($dim < 1)

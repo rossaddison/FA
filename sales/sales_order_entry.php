@@ -669,6 +669,15 @@ function handle_new_item(): void
         
         $stockId = get_post('stock_id');
         if (!is_array($stockId)) {
+	    // add_to_order() here resolves to sales/includes/ui/sales_order_ui.inc's
+	    // Cart-typed, 6-arg version (the one actually in scope via its include_once
+	    // chain); Psalm's global function table instead matches it against an
+	    // unrelated items_cart-typed, 4-arg collision elsewhere. Documented,
+	    // known noise - see doc/PSALM_MIGRATION.md's "Global function name collisions".
+	    /**
+	     * @psalm-suppress TooManyArguments
+	     * @psalm-suppress InvalidArgument
+	     */
 	    add_to_order($cart, $stockId, input_num('qty'),
  	        input_num('price'),
                 (float)input_num('Disc') / 100.0,
