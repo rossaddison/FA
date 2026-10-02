@@ -130,7 +130,7 @@ function get_branch_name(string|int|float|bool|null $branch_id)
 	$sql = "SELECT br_name FROM ".TB_PREF."cust_branch 
 		WHERE branch_code = ".db_escape($branch_id);
 
-	$result = db_select($sql,"could not retreive name for branch" . $branch_id);
+	$result = db_select($sql,"could not retreive name for branch" . (string) $branch_id);
 
 	$myrow = row_or_empty(db_fetch_row($result));
 	return $myrow[0];
@@ -144,7 +144,7 @@ function get_cust_branches_from_group(?string $group_no)
 	$sql = "SELECT branch_code, debtor_no FROM ".TB_PREF."cust_branch 
 		WHERE group_no = ".db_escape($group_no);
 
-	return db_select($sql,"could not retreive branches for group " . $group_no);
+	return db_select($sql,"could not retreive branches for group " . (string) $group_no);
 }
 
 /**
@@ -202,8 +202,8 @@ function get_sql_for_customer_branches(string|null $customer_id): string
  */
 function get_branch_contacts(string|int|float|bool|null $branch_code, ?string $action=null, string|int|float|bool|null $customer_id=null, bool $default = true)
 {
-	$defs = array('cust_branch.'.$action, 
-				'customer.'.$action,
+	$defs = array('cust_branch.'.(string) $action,
+				'customer.'.(string) $action,
 				'cust_branch.general',
 				'customer.general');
 
@@ -238,6 +238,9 @@ function get_branch_contacts(string|int|float|bool|null $branch_code, ?string $a
 	return $results;
 }
 
+/**
+ * @return array<array-key, non-empty-array<array-key, null|string>|null|string>
+ */
 function _get_branch_contacts(string|int|float|bool|null $branch_code, string|int|float|bool|null $action=null, string|int|float|bool|null $customer_id=null, mixed $default = false)
 {
 	$sql = "SELECT p.*, r.action, r.type, CONCAT(r.type,'.',r.action) as ext_type 
@@ -314,7 +317,7 @@ function  get_branches_search(string|int|float|bool|null $customer, string|array
 			ON c.entity_id=b.branch_code AND c.type='cust_branch' AND c.action='general'
 		LEFT JOIN ".TB_PREF."crm_persons p ON c.person_id=p.id
 		WHERE b.debtor_no = ".db_escape($customer)."
-			AND b.br_name LIKE " . db_escape("%" . ($branch ?? '') .  "%") . "
+			AND b.br_name LIKE " . db_escape("%" . (is_array($branch) ? '' : ($branch ?? '')) .  "%") . "
 		ORDER BY b.br_name LIMIT 0,". ($limit);
 
 	return db_select($sql, "Failed in retreiving branches list.");
