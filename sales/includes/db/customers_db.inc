@@ -23,8 +23,8 @@ function add_customer(string|null $CustName, string|null $cust_ref, string|null 
 		.db_escape($address) . ", " . db_escape($tax_id) . ","
 		.db_escape($dimension_id) . ", " 
 		.db_escape($dimension2_id) . ", ".db_escape($curr_code) . ", 
-		" . db_escape($credit_status) . ", ".db_escape($payment_terms) . ", " . ($discount ?? 0) . ", 
-		" . ($pymt_discount ?? 0) . ", " . ($credit_limit ?? 0)
+		" . db_escape($credit_status) . ", ".db_escape($payment_terms) . ", " . (string) ($discount ?? 0) . ",
+		" . (string) ($pymt_discount ?? 0) . ", " . (string) ($credit_limit ?? 0)
 		 .", ".db_escape($sales_type).", ".db_escape($notes) . ")";
 	db_query($sql,"The customer could not be added");
 }
@@ -76,8 +76,8 @@ function get_customer_details(string|int|float|bool|null $customer_id, string|nu
 		$todate = date("Y-m-d");
 	else
 		$todate = date2sql($to);
-	$past1 = get_company_pref('past_due_days');
-	$past2 = (2 * ($past1 ?? 0));
+	$past1 = (int) get_company_pref('past_due_days');
+	$past2 = 2 * $past1;
 
 	$sign = "IF(trans.type IN(".implode(',',  array(ST_CUSTCREDIT,ST_CUSTPAYMENT,ST_BANKDEPOSIT))."), -1, 1)";
 	$value = "$sign*(IF(trans.prep_amount, trans.prep_amount,
@@ -175,7 +175,7 @@ function get_customer_contacts(?string $customer_id, ?string $action=null): arra
 {
 	$results = array();
 	$res = get_crm_persons('customer', $action, $customer_id);
-	while($contact = db_fetch($res))
+	while($res instanceof mysqli_result && ($contact = db_fetch($res)))
 	{
 		if ($contact['lang'] == 'C') // Fix for improper lang in demo sql files.
 			$contact['lang'] = '';
@@ -241,12 +241,13 @@ function get_customers_search(string|array|null $customer = '')
 	else
 		$limit = 10;
 
-	$sql = "SELECT debtor_no, name, debtor_ref, address, tax_id FROM ".TB_PREF."debtors_master 
-	  WHERE (  name LIKE " . db_escape("%" . $customer. "%") . " OR 
-    		 debtor_ref LIKE " . db_escape("%" . $customer. "%") . " OR 
-	        address LIKE " . db_escape("%" . $customer. "%") . " OR 
-    	     tax_id LIKE " . db_escape("%" . $customer. "%").")
-	  ORDER BY name LIMIT 0,".(int)($limit);
+	$customer_like = "%" . (is_array($customer) ? '' : (string) $customer) . "%";
+	$sql = "SELECT debtor_no, name, debtor_ref, address, tax_id FROM ".TB_PREF."debtors_master
+	  WHERE (  name LIKE " . db_escape($customer_like) . " OR
+    		 debtor_ref LIKE " . db_escape($customer_like) . " OR
+	        address LIKE " . db_escape($customer_like) . " OR
+    	     tax_id LIKE " . db_escape($customer_like).")
+	  ORDER BY name LIMIT 0,".$limit;
 
 	return db_select($sql, "Failed in retreiving customer list.");
 }
