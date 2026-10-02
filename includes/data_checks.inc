@@ -47,14 +47,20 @@ function check_db_has_currencies(string|int|float|bool|null $msg): void
  */
 function db_has_currency_rates(string|int|float|bool|null $currency, string|int|null $date_, bool $msg=false): int|bool
 {
+	global $path_to_root;
+
 	$date = date2sql($date_);
 
 	if (is_company_currency($currency))
 		return 1;
 	$ret = check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."exchange_rates WHERE curr_code = '$currency' && date_ <= '$date'");
 	if ($ret == 0 && $msg)
-		display_error(sprintf(_("Cannot retrieve exchange rate for currency %s as of %s. Please add exchange rate manually on Exchange Rates page."),
-					 $currency, $date_), true);
+	{
+		$link = $path_to_root . "/gl/manage/exchange_rates.php?curr_abrev="
+			. urlencode((string) $currency) . "&date_=" . urlencode((string) $date_);
+		display_error(sprintf(_("Cannot retrieve exchange rate for currency %s as of %s. Please add exchange rate manually on %sExchange Rates page%s."),
+					 $currency, $date_, "<a href='$link'>", "</a>"), true);
+	}
 	return $ret;
 }
 

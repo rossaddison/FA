@@ -34,6 +34,8 @@ function get_company_currency()
 /** @return float(1)|null|string */
 function get_exchange_rate_from_home_currency(string|int|float|bool|null $currency_code, string|int|float|bool|null $date_): float|null|string
 {
+	global $path_to_root;
+
 	if ($currency_code == get_company_currency() || $currency_code == null)
 		return 1.0000;
 
@@ -43,9 +45,11 @@ function get_exchange_rate_from_home_currency(string|int|float|bool|null $curren
 	if (!$rate)
 	{
 		// no stored exchange rate, just return 1
+		$link = $path_to_root . "/gl/manage/exchange_rates.php?curr_abrev="
+			. urlencode((string) $currency_code) . "&date_=" . urlencode((string) $date_);
 		display_error(
-			sprintf(_("Cannot retrieve exchange rate for currency %s as of %s. Please add exchange rate manually on Exchange Rates page."),
-				 $currency_code, $date_));
+			sprintf(_("Cannot retrieve exchange rate for currency %s as of %s. Please add exchange rate manually on %sExchange Rates page%s."),
+				 $currency_code, $date_, "<a href='$link'>", "</a>"));
 		return 1.000;
 	}
 

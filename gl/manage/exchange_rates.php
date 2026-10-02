@@ -132,7 +132,8 @@ function display_rate_edit(): void
 	}
 	else
 	{
-		$_POST['date_'] = Today();
+		if (!isset($_POST['date_']))
+			$_POST['date_'] = Today();
 		$_POST['BuyRate'] = '';
 		date_row(_("Date to Use From:"), 'date_');
 	}
@@ -175,6 +176,13 @@ if ($Mode == 'Delete')
 //---------------------------------------------------------------------------------------------
 
 start_form();
+
+// deep link from "Cannot retrieve exchange rate..." messages elsewhere: jump
+// straight to the right currency/date instead of whatever was last selected
+if (isset($_GET['curr_abrev']) && !isset($_POST['curr_abrev']))
+	$_POST['curr_abrev'] = $_GET['curr_abrev'];
+if (isset($_GET['date_']) && !isset($_POST['date_']))
+	$_POST['date_'] = $_GET['date_'];
 
 if (!isset($_POST['curr_abrev']))
 	$_POST['curr_abrev'] = get_global_curr_code();
