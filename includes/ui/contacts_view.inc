@@ -148,17 +148,21 @@ class contacts extends simple_crud {
 	 * @return bool
 	 */
 	function insert_check() {
-		if (strlen((string) $_POST['name']) == 0) {
+                $name = get_post('name');
+		if (!is_string($name) || $name === '') {
 			display_error(_("The contact name cannot be empty."));
 			set_focus('name');
 			return false;
 		}
-		if (strlen((string) $_POST['ref']) == 0) {
+
+                $ref = get_post('ref');
+		if (!is_string($ref) || $ref === '') {
 			display_error(_("Contact reference cannot be empty."));
 			set_focus('ref');
 			return false;
 		}
-		if (count_array(@$_POST['assgn']) == 0) {
+                
+                if (count_array(@$_POST['assgn']) == 0) {
 			display_error(_("You have to select at least one category."));
 			set_focus('assgn');
 			return false;

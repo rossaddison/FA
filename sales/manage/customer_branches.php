@@ -65,14 +65,16 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 	//initialise no input errors assumed initially before we test
 	$input_error = 0;
 
-	if (strlen((string) $_POST['br_name']) == 0)
+	$brName = get_post('br_name');
+	if (!is_string($brName) || $brName === '')
 	{
 		$input_error = 1;
 		display_error(_("The Branch name cannot be empty."));
 		set_focus('br_name');
 	}
 
-	if (strlen((string) $_POST['br_ref']) == 0)
+        $brRef = get_post('br_ref');
+	if (!is_string($brRef) || $brRef === '')
 	{
 		$input_error = 1;
 		display_error(_("The Branch short name cannot be empty."));

@@ -19,7 +19,7 @@ include_once(dirname(__DIR__, 2) . "/includes/session.inc");
 $js = "";
 if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 500);
-if (user_use_date_picker())
+if ((bool) user_use_date_picker())
 	$js .= get_js_date_picker();
 	
 page(_($help_context = "Customers"), (bool) @$_REQUEST['popup'], false, "", $js);
@@ -40,40 +40,47 @@ $selected_id = get_post('customer_id','');
 
 function can_process(): bool
 {
-	if (strlen((string) $_POST['CustName']) == 0)
+	$custName = get_post('CustName');
+        if (!is_string($custName) || $custName === '')
 	{
-		display_error(_("The customer name cannot be empty."));
-		set_focus('CustName');
-		return false;
+            display_error(_("The customer name cannot be empty."));
+            set_focus('CustName');
+            return false;
 	}
 
-	if (strlen((string) $_POST['cust_ref']) == 0)
+	$custRef = get_post('cust_ref');
+        if (!is_string($custRef) || $custRef === '')
 	{
-		display_error(_("The customer short name cannot be empty."));
-		set_focus('cust_ref');
-		return false;
-	} 
+            display_error(_("The customer short name cannot be empty."));
+            set_focus('cust_ref');
+            return false;
+	}
 	
 	if (!check_num('credit_limit', 0))
 	{
-		display_error(_("The credit limit must be numeric and not less than zero."));
-		set_focus('credit_limit');
-		return false;		
-	} 
+            display_error(_("The credit limit must be numeric and not less "
+            . "than zero."));
+            set_focus('credit_limit');
+            return false;
+	}
 	
-	if (!check_num('pymt_discount', 0, 100)) 
+	if (!check_num('pymt_discount', 0, 100))
 	{
-		display_error(_("The payment discount must be numeric and is expected to be less than 100% and greater than or equal to 0."));
-		set_focus('pymt_discount');
-		return false;		
-	} 
+            display_error(_("The payment discount must be numeric and is "
+            .    "expected to be less than 100% and greater than or equal "
+            .    "to 0."));
+            set_focus('pymt_discount');
+            return false;
+	}
 	
-	if (!check_num('discount', 0, 100)) 
+	if (!check_num('discount', 0, 100))
 	{
-		display_error(_("The discount percentage must be numeric and is expected to be less than 100% and greater than or equal to 0."));
-		set_focus('discount');
-		return false;		
-	} 
+            display_error(_("The discount percentage must be numeric and "
+            .    "is expected to be less than 100% and greater than or "
+            .    "equal to 0."));
+            set_focus('discount');
+            return false;
+	}
 
 	return true;
 }
