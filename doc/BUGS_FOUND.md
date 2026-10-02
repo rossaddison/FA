@@ -208,6 +208,29 @@ a stand-in for a boolean) reaching a native, strictly-typed parameter.
   (`uasort($mods, 'sortByOption')` always has rows to sort). Retyped both
   parameters to `array`, matching actual usage.
 
+- **`inventory/includes/inventory_db.inc` — `send_reorder_email()`.** The
+  function's own body indexes `$loc`, `$st_num`, and `$st_reorder` as
+  arrays (`$loc['location_name']`, `$st_reorder[$i]`, `$st_num[$i]`), and
+  its sibling `calculate_reorder_level()` builds `$st_num`/`$st_reorder` as
+  arrays via `[] =` — but `send_reorder_email()`'s own declared parameter
+  types were plain scalars (`string|int|float|bool|null`) for all three.
+  Any real call (this function is only ever called with the arrays
+  `calculate_reorder_level()` built) would throw a `TypeError` at the call
+  boundary. Retyped to `array` throughout, matching actual usage; also
+  added a defensive `is_array($loc) ? $loc : array()` normalization since
+  `calculate_reorder_level()` can return `false` when its own location
+  lookup misses.
+
+- **`includes/main.inc` — `clean_file_name()`.** Two separate docblocks
+  were stacked back to back directly above the function; only the second
+  (nearer) one is actually attached to the function for Psalm's purposes,
+  and it was missing the `@psalm-pure` annotation the first docblock had —
+  silently dropping purity tracking for a function that genuinely has no
+  side effects (plain `str_replace`/`preg_replace`). Merged into one
+  docblock. Caught via `inventory/includes/inventory_db.inc`'s
+  `item_img_name()` (`@psalm-pure`) calling it and getting flagged
+  `ImpureFunctionCall`.
+
 ## Live crashes
 
 - **`inventory/includes/inventory_db.inc` — `item_img_name()`.** Parameter

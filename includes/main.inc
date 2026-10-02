@@ -410,9 +410,6 @@ function find_custom_file(?string $rep): string|null
  * @psalm-taint-escape has_quotes
  * @psalm-taint-escape sql
  */
-/** @psalm-taint-escape file
- *  @psalm-taint-escape html
- */
 function clean_file_name(string|int|float|bool|array|null $filename): array|string|null {
     $filename = str_replace(chr(0), '', $filename);
     return preg_replace('/[^a-zA-Z0-9.\-_]/', '_', $filename);

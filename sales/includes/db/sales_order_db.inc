@@ -46,20 +46,21 @@ function add_sales_order(Cart &$order)
 
 	db_query($sql, "order Cannot be Added");
 
-	$order->trans_no = array($order_no=>0);
+	$order->trans_no = array((int) $order_no=>0);
 
+	$loc = null;
+	$st_ids = array();
+	$st_names = array();
+	$st_num = array();
+	$st_reorder = array();
 	if (sysprefs()->loc_notification() == 1)
 	{
 		include_once(dirname(__DIR__, 3) . "/inventory/includes/inventory_db.inc");
-		$st_ids = array();
-		$st_names = array();
-		$st_num = array();
-		$st_reorder = array();
 	}
 	foreach ($order->line_items as $line)
 	{
 		if (sysprefs()->loc_notification() == 1 && is_inventory_item($line->stock_id))
-			$loc = calculate_reorder_level($order->Location, $line, $st_ids, $st_names, $st_num, $st_reorder); 
+			$loc = calculate_reorder_level($order->Location, $line, $st_ids, $st_names, $st_num, $st_reorder);
 
 		$sql = "INSERT INTO ".TB_PREF."sales_order_details (order_no, trans_type, stk_code, description, unit_price, quantity, discount_percent) VALUES (";
 		$sql .= (string) $order_no . ",". (string) $order->trans_type .
@@ -111,8 +112,13 @@ function delete_sales_order(string|int|float|bool|null $order_no, string|int|flo
 //----------------------------------------------------------------------------------------
 // Mark changes in sales_order_details
 //
-function update_sales_order_version(mixed $order): void
+/**
+ * @param array<int, int>|int $order
+ */
+function update_sales_order_version(array|int $order): void
 {
+  if (!is_array($order))
+    return;
   foreach ($order as $so_num => $so_ver) {
   $sql= 'UPDATE '.TB_PREF.'sales_orders SET version=version+1 WHERE order_no='. db_escape($so_num).
 	' AND version='.$so_ver . " AND trans_type=".ST_SALESORDER;
@@ -132,13 +138,14 @@ function update_sales_order(Cart $order): void
 	// is no longer the "0 for new" sentinel, so it is the array (num=>version) form here
 	/** @var array<int, int> $trans_no */
 	$trans_no = $order->trans_no;
-	$order_no = key($trans_no);
-	$version = current($trans_no);
+	$order_no = (int) key($trans_no);
+	$version = (int) current($trans_no);
 	$total = $order->get_trans_total();
 
 	begin_transaction();
 	hook_db_prewrite($order, $order->trans_type);
 
+	$allocs = array();
 	if ($order->trans_type == ST_SALESORDER)
 		$allocs = get_payments_for($order_no, $order->trans_type, $order->customer_id);
 
@@ -162,7 +169,7 @@ function update_sales_order(Cart $order): void
 		total = ". db_escape($total). ",
 		prep_amount = ". db_escape($order->prep_amount) ."
 	 WHERE order_no=" . db_escape($order_no) ."
-	 AND trans_type=".$order->trans_type." AND version=".$version;
+	 AND trans_type=".(string) $order->trans_type." AND version=".$version;
 	db_query($sql, "order Cannot be Updated, this can be concurrent edition conflict");
 
 	$id_tokeep = array();
@@ -171,29 +178,30 @@ function update_sales_order(Cart $order): void
 	}
 	$id_list = implode(', ', $id_tokeep);
 	
-	$sql = "DELETE FROM ".TB_PREF."sales_order_details WHERE order_no =" . db_escape($order_no) . " AND trans_type=".$order->trans_type;
+	$sql = "DELETE FROM ".TB_PREF."sales_order_details WHERE order_no =" . db_escape($order_no) . " AND trans_type=".(string) $order->trans_type;
 	$sql .= " AND id NOT IN ($id_list)";
 
 	db_query($sql, "Old order Cannot be Deleted");
 
+	$loc = null;
+	$st_ids = array();
+	$st_names = array();
+	$st_num = array();
+	$st_reorder = array();
 	if (sysprefs()->loc_notification() == 1)
 	{
 		include_once(dirname(__DIR__, 3) . "/inventory/includes/inventory_db.inc");
-		$st_ids = array();
-		$st_names = array();
-		$st_num = array();
-		$st_reorder = array();
 	}
 	foreach ($order->line_items as $line)
 	{
 		if (sysprefs()->loc_notification() == 1 && is_inventory_item($line->stock_id))
-			$loc = calculate_reorder_level($order->Location, $line, $st_ids, $st_names, $st_num, $st_reorder); 
+			$loc = calculate_reorder_level($order->Location, $line, $st_ids, $st_names, $st_num, $st_reorder);
 
 		if (!(bool)$line->id) //new line
 			$sql = "INSERT INTO ".TB_PREF."sales_order_details
 			 (order_no, trans_type, stk_code,  description, unit_price, quantity,
 			  discount_percent, qty_sent)
-			 VALUES (".$order_no . ",".$order->trans_type.","
+			 VALUES (".$order_no . ",".(string) $order->trans_type.","
 				  .db_escape($line->stock_id) . ","
 				  .db_escape($line->item_description) . ", "
 				  .db_escape($line->price) . ", "
@@ -204,7 +212,7 @@ function update_sales_order(Cart $order): void
 		$sql = "UPDATE ".TB_PREF."sales_order_details
 			SET id=".db_escape($line->id).",
 				order_no=$order_no,
-				trans_type=".$order->trans_type.",
+				trans_type=".(string) $order->trans_type.",
 				stk_code=".db_escape($line->stock_id).",
 				description=".db_escape($line->item_description).",
 				unit_price=".db_escape($line->price).",
@@ -219,7 +227,7 @@ function update_sales_order(Cart $order): void
 	if ($order->trans_type == ST_SALESORDER)
 		reallocate_payments($order_no, ST_SALESORDER, $ord_date, $total, $allocs, $order->customer_id);
 	add_audit_trail($order->trans_type, $order_no, $order->document_date, _("Updated."));
-	refs()->save($order->trans_type, $order_no, $order->reference, null, $order->fixed_asset);
+	refs()->save($order->trans_type, $order_no, $order->reference, null);
 
 	hook_db_postwrite($order, $order->trans_type);
 	commit_transaction();
@@ -320,7 +328,8 @@ function read_sales_order(string|int|float|bool|null $order_no, Cart &$order, st
 
 	$order->trans_type = $myrow['trans_type'];
 	$order->so_type =  $myrow["type"];
-	$order->trans_no = array($order_no=> $myrow["version"]);
+	$order_no_key = (is_string($order_no) || is_int($order_no)) ? $order_no : (string) $order_no;
+	$order->trans_no = array($order_no_key=> $myrow["version"]);
 
 	$order->set_customer($myrow["debtor_no"], $myrow["name"],
 	  $myrow["curr_code"], $myrow["discount"], $myrow["payment_terms"]);
@@ -338,15 +347,15 @@ function read_sales_order(string|int|float|bool|null $order_no, Cart &$order, st
 
 	$order->cust_ref = $myrow["customer_ref"];
 	$order->sales_type =$myrow["order_type"];
-	$order->reference = $myrow["reference"];
-	$order->Comments = $myrow["comments"];
+	$order->reference = (string) $myrow["reference"];
+	$order->Comments = (string) $myrow["comments"];
 	$order->due_date = sql2date($myrow["delivery_date"]);
 	$order->document_date = sql2date($myrow["ord_date"]);
 
 	$order->prepaid = $myrow["prepaid"];
 	$order->alloc = $myrow['alloc'];
 	$order->sum_paid = $myrow["sum_paid"]; // sum of all prepayments to so (also invoiced)
-	$order->prep_amount = $myrow["prep_amount"];
+	$order->prep_amount = (string) $myrow["prep_amount"];
 	$order->prepayments = get_payments_for($order_no, $myrow['trans_type'], $myrow['debtor_no']);
 
 	$result = get_sales_order_details($order_no, $order->trans_type);
@@ -400,7 +409,7 @@ function close_sales_order(string|int|float|bool|null $order_no): void
 
 function get_invoice_duedate(string|int|float|bool|null $terms, string|int|float|bool|null $invdate): string
 {
-	if (!is_date($invdate))
+	if (!is_date($invdate === null ? null : (string) $invdate))
 	{
 		return new_doc_date();
 	}
@@ -534,16 +543,16 @@ function get_sql_for_sales_orders_view(string|int|null $trans_type, string|array
 			AND sorder.branch_code = branch.branch_code
 			AND debtor.debtor_no = branch.debtor_no";
 
-	if (isset($trans_no) && $trans_no != "")
+	if (isset($trans_no) && $trans_no != "" && !is_array($trans_no))
 	{
-		// search orders with number like 
+		// search orders with number like
 		$number_like = "%".$trans_no;
 		$sql .= " AND sorder.order_no LIKE ".db_escape($number_like);
 //				." GROUP BY sorder.order_no";
 	}
-	elseif ($ref != "")
+	elseif ($ref != "" && $ref !== null && !is_array($ref))
 	{
-		// search orders with reference like 
+		// search orders with reference like
 		$sql .= " AND sorder.reference LIKE ".db_escape('%' . $ref . '%');
 //				." GROUP BY sorder.order_no";
 	}
@@ -601,7 +610,7 @@ function get_sql_for_sales_orders_view(string|int|null $trans_type, string|array
 function update_prepaid_so_line(string|int|float|bool|null $line_id, string|int|float|bool|null $qty_invoiced): bool
 {
 	$sql = "UPDATE ".TB_PREF."sales_order_details
-		SET invoiced = invoiced + ".(float)$qty_invoiced."
+		SET invoiced = invoiced + ".(string)(float)$qty_invoiced."
 		WHERE id=".db_escape($line_id);
 
 	db_query($sql, "The document detail record could not be updated with invoiced qty");
@@ -640,7 +649,7 @@ function is_sales_order_started(string|int|float|bool|null $order_no) : int
 
 	$result = row_or_empty(db_fetch(db_select($sql,
             "cannot retrieve sales invoices for sales order")));
-	return $result[0];
+	return (int) $result[0];
 }
 
 //---------------------------------------------------------------------------------------------

@@ -32,7 +32,8 @@ include_once(dirname(__DIR__, 2) . "/inventory/includes/db/items_units_db.inc");
 function item_img_name(string|int|float|bool|null $stock_id)
 {
 	$stock_id = strtr((string) $stock_id, "><\\/:|*?", '________');
-	return clean_file_name($stock_id);
+	$cleaned = clean_file_name($stock_id);
+	return is_array($cleaned) ? null : $cleaned;
 }
 
 /**
@@ -40,8 +41,8 @@ function item_img_name(string|int|float|bool|null $stock_id)
  */
 function get_stock_movements(string|int|float|bool|null $stock_id, string|int|float|bool|null $StockLocation,	string|int|float|bool|null $BeforeDate, string|int|float|bool|null $AfterDate)
 {
-	$before_date = date2sql($BeforeDate);
-	$after_date = date2sql($AfterDate);
+	$before_date = date2sql($BeforeDate === null ? null : (string) $BeforeDate);
+	$after_date = date2sql($AfterDate === null ? null : (string) $AfterDate);
 	// PO Delivery and Customer Credit Notes references should be saved in stock moves reference in 2.5
   	$sql = "SELECT move.*, IF(ISNULL(supplier.supplier_id), debtor.name, supplier.supp_name) name,
 		IF(move.type=".ST_SUPPRECEIVE.", grn.reference, IF(move.type=".ST_CUSTCREDIT.", cust_trans.reference, move.reference)) reference";
@@ -69,25 +70,25 @@ function get_stock_movements(string|int|float|bool|null $stock_id, string|int|fl
 }
 
 /**
- * @return array{email: null|string, ...<array-key, null|string>}|false
+ * @return array<array-key, null|string>|false
  */
-function calculate_reorder_level(string|int|float|bool|null $location, line_item|line_details $line, &$st_ids, &$st_names, &$st_num, &$st_reorder)
+function calculate_reorder_level(string|int|float|bool|null $location, line_item|line_details $line, array &$st_ids, array &$st_names, array &$st_num, array &$st_reorder)
 {
 	$sql = "SELECT stock.*, loc.location_name, loc.email
 		FROM ".TB_PREF."loc_stock stock,"
 			.TB_PREF."locations loc
 		WHERE stock.loc_code=loc.loc_code
-		AND stock.stock_id = '" . $line->stock_id . "'
-		AND stock.loc_code = '" . $location . "'";
+		AND stock.stock_id = '" . (string) $line->stock_id . "'
+		AND stock.loc_code = '" . (string) $location . "'";
 	$res = db_select($sql,"a location could not be retreived");
 	$loc = db_fetch($res);
-	if ($loc['email'] != "")
+	if ($loc !== false && $loc['email'] != "")
 	{
-		$qoh = get_qoh_on_date($line->stock_id, $location);
-		$qoh -= get_demand_qty($line->stock_id, $location);
+		$qoh = (float) get_qoh_on_date($line->stock_id, $location);
+		$qoh -= (float) get_demand_qty($line->stock_id, $location);
 		$qoh -= get_demand_asm_qty($line->stock_id, $location);
-		$qoh -= $line->quantity;
-		if ($qoh < $loc['reorder_level'])
+		$qoh -= (float) $line->quantity;
+		if ($qoh < (float) $loc['reorder_level'])
 		{
 			$st_ids[] = $line->stock_id;
 			$st_names[] = $line->item_description;
@@ -98,20 +99,28 @@ function calculate_reorder_level(string|int|float|bool|null $location, line_item
 	return $loc;
 }
 
-/** @return int<0, max> */
-function send_reorder_email(string|int|float|bool|null $loc, array $st_ids, array $st_names, string|int|float|bool|null $st_num, string|int|float|bool|null $st_reorder)
+/**
+ * @param array<array-key, mixed>|false|null $loc
+ * @param list<string|null> $st_ids
+ * @param list<string|null> $st_names
+ * @param list<float> $st_num
+ * @param list<string|null> $st_reorder
+ * @return int<0, max>
+ */
+function send_reorder_email(array|bool|null $loc, array $st_ids, array $st_names, array $st_num, array $st_reorder)
 {
 	global $path_to_root;
 
+	$loc = is_array($loc) ? $loc : array();
 	require_once(dirname(__DIR__, 2) . "/reporting/includes/class.mail.inc");
 	$company = get_company_prefs();
 	$mail = new email($company['coy_name'], $company['email']);
 	$subject = _("Stocks below Re-Order Level at ") . (string)$loc['location_name'];
 	$msg = "\n";
 	for ($i = 0; $i < count($st_ids); $i++)
-		$msg .= $st_ids[$i] . " " . $st_names[$i] . ", " . _("Re-Order Level") . ": " . $st_reorder[$i] . ", " . _("Below") . ": " . $st_num[$i] . "\n";
+		$msg .= (string) $st_ids[$i] . " " . (string) $st_names[$i] . ", " . _("Re-Order Level") . ": " . (string) $st_reorder[$i] . ", " . _("Below") . ": " . (string) $st_num[$i] . "\n";
 	$msg .= "\n" . _("Please reorder") . "\n\n";
-	$msg .= $company['coy_name'];
+	$msg .= (string) $company['coy_name'];
 	$mail->to($loc['location_name'], $loc['email']);
 	$mail->subject($subject);
 	$mail->text($msg);
