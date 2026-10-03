@@ -38,7 +38,7 @@ function yiiMenuHeader(string $title, bool $noMenu, bool $isIndex): string
 {
 	global $path_to_root, $db_connections;
 
-	$images = $path_to_root . '/themes/' . (string)user_theme() . '/images';
+	$images = $path_to_root . '/themes/' . user_theme() . '/images';
 	$data = array(
 		'noMenu' => $noMenu,
 		'showTitle' => (bool)$title && !$isIndex,
@@ -118,8 +118,8 @@ function yiiMenuFooter(bool $noMenu, bool $isIndex): string
 		'powerUrl' => sysprefs()->power_url,
 		'appTitle' => sysprefs()->app_title,
 		'version' => $version,
-		'themeLine' => _('Theme:') . ' ' . (string)user_theme() . ' - ' . show_users_online(),
+		'themeLine' => _('Theme:') . ' ' . user_theme() . ' - ' . show_users_online(),
 		'powerBy' => sysprefs()->power_by,
-		'demo' => (bool)sysprefs()->allow_demo_mode,
+		'demo' => sysprefs()->allow_demo_mode,
 	));
 }
