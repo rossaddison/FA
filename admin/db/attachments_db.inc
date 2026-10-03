@@ -66,8 +66,9 @@ function delete_attachments(string|int|float|bool|null $type_no, string|int|floa
 		$sql = "DELETE FROM ".TB_PREF."attachments WHERE unique_name='".(string)$row['unique_name']."'";
 		db_query($sql, "Could not delete attachment");
 
-		if (file_exists($dir."/".(string)$row['unique_name'])) {
-			unlink($dir."/".(string)$row['unique_name']);
+		$unique_name = basename((string) $row['unique_name']);
+		if (file_exists($dir."/".$unique_name)) {
+			unlink($dir."/".$unique_name);
 		}
 	}
 }
