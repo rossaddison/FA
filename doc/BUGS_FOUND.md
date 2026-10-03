@@ -514,6 +514,14 @@ resolved.
   runtime. Added the missing `$account` parameter, matching the sibling
   `subledger_list_cells()`.
 
+- **`gl/manage/gl_account_types.php`** — when editing an account group
+  whose parent is the sentinel `-1` (no parent), the code meant to clear
+  `$_POST['parent']` for display (`if ($_POST['parent'] == '-1')
+  $_POST['parent'] == "";`) but used `==` instead of `=` - a no-op
+  comparison whose result was discarded. The "Subgroup Of" dropdown kept
+  showing `-1` as the selected parent instead of "None" whenever editing a
+  top-level account group. Fixed to `=`.
+
 - **`reporting/rep108.php`** — an emailed-statement subject line built with
   `sql2date($date)` where `$date` only existed in a different function's
   local scope. Fixed to use `$myrow['tran_date']`, which the query already

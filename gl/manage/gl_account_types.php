@@ -30,19 +30,20 @@ simple_page_mode(false);
 #[\NoDiscard]
 function can_process(string|int|float|bool|array|null $selected_id): bool 
 {
-	if (strlen(trim($_POST['id'])) == 0) 
+	$post_id = (string) post_scalar('id');
+	if (strlen(trim($post_id)) == 0)
 	{
 	    display_error( _("The account group id cannot be empty."));
 	    set_focus('id');
 	    return false;
 	}
-	if (strlen(trim($_POST['name'])) == 0) 
+	if (strlen(trim((string) post_scalar('name'))) == 0)
 	{
 		display_error( _("The account group name cannot be empty."));
 		set_focus('name');
 		return false;
 	}
-	$type = row_or_empty(get_account_type(trim($_POST['id'])));
+	$type = row_or_empty(get_account_type(trim($post_id)));
 	if ($type && ($type['id'] != $selected_id)) 
 	{
 		display_error( _("This account group id is already in use."));
@@ -173,16 +174,18 @@ start_table(TABLESTYLE2);
 
 if ($selected_id != "")
 {
-	if ($Mode == 'Edit') 
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
+	if ($Mode == 'Edit')
 	{
 		//editing an existing status code
 		$myrow = row_or_empty(get_account_type($selected_id));
-	
+
 		$_POST['id']  = $myrow["id"];
 		$_POST['name']  = $myrow["name"];
 		$_POST['parent']  = $myrow["parent"];
 		if ($_POST['parent'] == '-1')
-			$_POST['parent'] == "";
+			$_POST['parent'] = "";
 		$_POST['class_id']  = $myrow["class_id"];
 		hidden('selected_id', $myrow['id']);
 		hidden('old_id', $myrow["id"]);
