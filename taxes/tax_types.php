@@ -26,7 +26,7 @@ $selected_id = $selected_id;
 //-----------------------------------------------------------------------------------
 
 #[\NoDiscard]
-function can_process(): bool
+function canProcessTaxTypes(): bool
 {
 	global $selected_id;
 	/** @var int|string $selected_id */
@@ -55,7 +55,7 @@ function can_process(): bool
 
 //-----------------------------------------------------------------------------------
 
-if ($Mode=='ADD_ITEM' && can_process())
+if ($Mode=='ADD_ITEM' && canProcessTaxTypes())
 {
 
 	add_tax_type(post_scalar('name'), post_scalar('sales_gl_code'),
@@ -66,7 +66,7 @@ if ($Mode=='ADD_ITEM' && can_process())
 
 //-----------------------------------------------------------------------------------
 
-if ($Mode=='UPDATE_ITEM' && can_process())
+if ($Mode=='UPDATE_ITEM' && canProcessTaxTypes())
 {
 
 	/** @var int|string $selected_id */
