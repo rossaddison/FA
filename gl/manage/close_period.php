@@ -22,7 +22,7 @@ include_once(dirname(__DIR__, 2) . "/includes/banking.inc");
 include_once(dirname(__DIR__, 2) . "/admin/db/fiscalyears_db.inc");
 
 $js = "";
-if (user_use_date_picker())
+if ((bool) user_use_date_picker())
 	$js .= get_js_date_picker();
 page(_($help_context = "Closing GL Transactions"), false, false, "", $js);
 

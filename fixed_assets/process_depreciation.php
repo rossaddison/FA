@@ -26,7 +26,7 @@ include_once(dirname(__DIR__) . "/fixed_assets/includes/depreciation.inc");
 include_once(dirname(__DIR__) . "/fixed_assets/includes/fixed_assets_db.inc");
 
 $js = "";
-if (user_use_date_picker())
+if ((bool) user_use_date_picker())
   $js .= get_js_date_picker();
 
 page(_($help_context = "Process Depreciation"), false, false, "", $js);

@@ -17,7 +17,7 @@ include(dirname(__DIR__, 2) . "/includes/db_pager.inc");
 include(dirname(__DIR__, 2) . "/includes/session.inc");
 
 $js = "";
-if (user_use_date_picker())
+if ((bool) user_use_date_picker())
 	$js .= get_js_date_picker();
 
 page(_($help_context = "Bank Accounts"), isset($_GET['bank_id']), false, "", $js);

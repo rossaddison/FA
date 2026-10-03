@@ -25,7 +25,7 @@ include_once(dirname(__DIR__) . "/manufacturing/includes/manufacturing_ui.inc");
 $js = "";
 if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 500);
-if (user_use_date_picker())
+if ((bool) user_use_date_picker())
 	$js .= get_js_date_picker();
 page(_($help_context = "Produce or Unassemble Finished Items From Work Order"), false, false, "", $js);
 

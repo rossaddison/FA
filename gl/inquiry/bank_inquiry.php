@@ -26,7 +26,7 @@ include_once(dirname(__DIR__, 2) . "/includes/banking.inc");
 $js = "";
 if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(800, 500);
-if (user_use_date_picker())
+if ((bool) user_use_date_picker())
 	$js .= get_js_date_picker();
 page(_($help_context = "Bank Account Inquiry"), isset($_GET['bank_account']) && !isset($_GET['TransAfterDate']), false, "", $js, false, "", true);
 

@@ -679,7 +679,7 @@ function date_cells(?string $label, string|int|float|bool|null $name, ?string $t
 			$_POST[$name] = $dd;
 		}
 	}
-	if (user_use_date_picker())
+	if ((bool) user_use_date_picker())
 	{
 		$calc_image = (file_exists("$path_to_root/themes/".user_theme()."/images/cal.gif")) ? 
 			"$path_to_root/themes/".user_theme()."/images/cal.gif" : "$path_to_root/themes/default/images/cal.gif";

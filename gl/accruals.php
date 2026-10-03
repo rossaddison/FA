@@ -23,7 +23,7 @@ include_once(dirname(__DIR__) . "/includes/session.inc");
 include_once(dirname(__DIR__) . "/includes/ui/items_cart.inc");
 
 $js = get_js_open_window(800, 500);
-if (user_use_date_picker())
+if ((bool) user_use_date_picker())
 	$js .= get_js_date_picker();
 
 // Begin the UI

@@ -23,7 +23,7 @@ include_once(dirname(__DIR__, 2) . "/includes/data_checks.inc");
 include_once(dirname(__DIR__, 2) . "/gl/includes/gl_db.inc");
 
 $js = "";
-if (user_use_date_picker())
+if ((bool) user_use_date_picker())
 	$js = get_js_date_picker();
 
 page(_($help_context = "Balance Sheet Drilldown"), false, false, "", $js);

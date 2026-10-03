@@ -27,7 +27,7 @@ include_once(dirname(__DIR__) . "/gl/includes/gl_ui.inc");
 $js = '';
 if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(800, 500);
-if (user_use_date_picker())
+if ((bool) user_use_date_picker())
 	$js .= get_js_date_picker();
 
 if (isset($_GET['ModifyGL'])) {

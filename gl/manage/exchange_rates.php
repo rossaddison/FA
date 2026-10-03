@@ -21,7 +21,7 @@ include_once(dirname(__DIR__, 2) . "/includes/ui.inc");
 include_once(dirname(__DIR__, 2) . "/includes/banking.inc");
 
 $js = "";
-if (user_use_date_picker())
+if ((bool) user_use_date_picker())
 	$js .= get_js_date_picker();
 page(_($help_context = "Exchange Rates"), false, false, "", $js);
 

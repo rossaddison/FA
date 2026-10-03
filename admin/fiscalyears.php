@@ -22,7 +22,7 @@ include_once(dirname(__DIR__) . "/includes/ui.inc");
 include_once(dirname(__DIR__) . "/sales/includes/db/cust_trans_db.inc");
 include_once(dirname(__DIR__) . "/admin/db/maintenance_db.inc");
 $js = "";
-if (user_use_date_picker())
+if ((bool) user_use_date_picker())
 	$js .= get_js_date_picker();
 page(_($help_context = "Fiscal Years"), false, false, "", $js);
 

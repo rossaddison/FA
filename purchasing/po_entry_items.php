@@ -34,7 +34,7 @@ set_page_security( @session_obj('PO')->trans_type,
 $js = '';
 if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(900, 500);
-if (user_use_date_picker())
+if ((bool) user_use_date_picker())
 	$js .= get_js_date_picker();
 
 if (isset($_GET['ModifyOrderNumber']) && is_numeric($_GET['ModifyOrderNumber'])) {
