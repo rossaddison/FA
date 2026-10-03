@@ -21,19 +21,25 @@ namespace FrontAccounting\Session;
  */
 final class GlobalSelections
 {
+    /**
+     * @param string|int|float|bool|array<array-key, mixed>|null $supplierId
+     */
     public static function setSupplier(
         string|int|float|bool|array|null $supplierId
     ): void {
         $_SESSION['wa_global_supplier_id'] = $supplierId;
     }
 
+    /**
+     * @return string|int|float|bool|array<array-key, mixed>
+     */
     public static function getSupplier(
         bool $returnAll = true
-    ): string|int|float|bool|array|null {
+    ): string|int|float|bool|array {
         if (
             !isset($_SESSION['wa_global_supplier_id'])
             || ($returnAll == false
-                && $_SESSION['wa_global_supplier_id'] == ALL_TEXT)
+                && $_SESSION['wa_global_supplier_id'] == \ALL_TEXT)
         ) {
             return "";
         }
@@ -42,19 +48,25 @@ final class GlobalSelections
         return $value;
     }
 
+    /**
+     * @param string|int|float|bool|array<array-key, mixed>|null $stockId
+     */
     public static function setStockItem(
         string|int|float|bool|array|null $stockId
     ): void {
         $_SESSION['wa_global_stock_id'] = $stockId;
     }
 
+    /**
+     * @return string|int|float|bool|array<array-key, mixed>
+     */
     public static function getStockItem(
         string|int|float|bool|null $returnAll = true
-    ): string|int|float|bool|array|null {
+    ): string|int|float|bool|array {
         if (
             !isset($_SESSION['wa_global_stock_id'])
             || ($returnAll == false
-                && $_SESSION['wa_global_stock_id'] == ALL_TEXT)
+                && $_SESSION['wa_global_stock_id'] == \ALL_TEXT)
         ) {
             return "";
         }
@@ -63,19 +75,25 @@ final class GlobalSelections
         return $value;
     }
 
+    /**
+     * @param string|int|float|bool|array<array-key, mixed>|null $customerId
+     */
     public static function setCustomer(
         string|int|float|bool|array|null $customerId
     ): void {
         $_SESSION['wa_global_customer_id'] = $customerId;
     }
 
+    /**
+     * @return string|int|float|bool|array<array-key, mixed>
+     */
     public static function getCustomer(
         bool $returnAll = true
-    ): string|int|float|bool|array|null {
+    ): string|int|float|bool|array {
         if (
             !isset($_SESSION['wa_global_customer_id'])
             || ($returnAll == false
-                && $_SESSION['wa_global_customer_id'] == ALL_TEXT)
+                && $_SESSION['wa_global_customer_id'] == \ALL_TEXT)
         ) {
             return "";
         }
@@ -84,12 +102,18 @@ final class GlobalSelections
         return $value;
     }
 
+    /**
+     * @param string|array<array-key, mixed>|null $currCode
+     */
     public static function setCurrencyCode(string|array|null $currCode): void
     {
         $_SESSION['wa_global_curr_code'] = $currCode;
     }
 
-    public static function getCurrencyCode(): string|array|null
+    /**
+     * @return string|array<array-key, mixed>
+     */
+    public static function getCurrencyCode(): string|array
     {
         if (!isset($_SESSION['wa_global_curr_code'])) {
             return "";

@@ -91,13 +91,12 @@ final class GrnItem
 
     /**
      * @param string|int|float|bool|null $tax_group_id
-     * @param array<array-key, array{Net?: null|scalar, Value?: null|scalar,
-     *     included_in_price?: null|scalar, purchasing_gl_code?: null|scalar,
-     *     rate: null|scalar, sales_gl_code?: null|scalar, tax_type_id: array-key,
-     *     tax_type_name?: null|scalar, ...<array-key, null|scalar>}>|null $tax_group
-     * @return null|scalar
+     * @param array<array-key, array{tax_type_id: array-key, tax_type_name?: scalar|null,
+     *     sales_gl_code?: scalar|null, purchasing_gl_code?: scalar|null, rate: scalar|null,
+     *     included_in_price?: scalar|null, Value?: scalar|null, Net?: scalar|null,
+     *     ...<array-key, scalar|null>}>|null $tax_group
      */
-    public function full_charge_price($tax_group_id, $tax_group = null)
+    public function full_charge_price($tax_group_id, $tax_group = null): float
     {
         return \get_full_price_for_item(
             $this->item_code,
@@ -110,13 +109,12 @@ final class GrnItem
 
     /**
      * @param string|int|float|bool|null $tax_group_id
-     * @param array<array-key, array{Net?: null|scalar, Value?: null|scalar,
-     *     included_in_price?: null|scalar, purchasing_gl_code?: null|scalar,
-     *     rate: null|scalar, sales_gl_code?: null|scalar, tax_type_id: array-key,
-     *     tax_type_name?: null|scalar, ...<array-key, null|scalar>}>|null $tax_group
-     * @return null|scalar
+     * @param array<array-key, array{tax_type_id: array-key, tax_type_name?: scalar|null,
+     *     sales_gl_code?: scalar|null, purchasing_gl_code?: scalar|null, rate: scalar|null,
+     *     included_in_price?: scalar|null, Value?: scalar|null, Net?: scalar|null,
+     *     ...<array-key, scalar|null>}>|null $tax_group
      */
-    public function taxfree_charge_price($tax_group_id, $tax_group = null)
+    public function taxfree_charge_price($tax_group_id, $tax_group = null): ?float
     {
         return \get_tax_free_price_for_item(
             $this->item_code,

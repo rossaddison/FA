@@ -16,6 +16,7 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.95.26",
+        "phpstan/phpstan": "^2.2.16",
         "rector/rector": "2.6.7",
         "squizlabs/php_codesniffer": "^4.0.4",
         "vimeo/psalm": "7.0.0-beta21"
@@ -33,6 +34,7 @@
         "psalm:fresh": "psalm --no-cache",
         "cs-fix": "php-cs-fixer fix",
         "cs-check": "php-cs-fixer fix --dry-run --diff",
-        "line-length": "phpcs"
+        "line-length": "phpcs",
+        "phpstan": "phpstan analyse -c quality/phpstan-config.neon"
     }
 }

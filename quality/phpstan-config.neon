@@ -1,0 +1,19 @@
+# Deliberately NOT named phpstan.neon/phpstan.neon.dist (PHPStan's own
+# auto-discovered names) and NOT in the project root. On at least one
+# developer machine, files with those exact conventional names - and even
+# this file's own first attempted name, quality/phpstan-src.neon - were
+# silently locked/inaccessible (EPERM/Access Denied on every write
+# attempt, including direct filesystem APIs, despite the directory itself
+# being writable) within seconds of creation or use. Cause unconfirmed,
+# but a file watcher (e.g. a VS Code extension) matching on "phpstan" in
+# the filename is the leading suspect, since a plain rename sidesteps it
+# completely. Always invoke explicitly: `composer run phpstan` (see
+# composer.json) or `phpstan analyse -c quality/phpstan-config.neon`.
+parameters:
+    level: 9
+    paths:
+        - ../src
+    scanFiles:
+        - ../includes/types.inc
+        - ../taxes/tax_calc.inc
+    tmpDir: ../.psalm-cache/phpstan
