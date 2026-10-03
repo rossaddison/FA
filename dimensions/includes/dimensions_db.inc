@@ -16,8 +16,8 @@ function add_dimension(string|int|float|bool|null $reference, string|int|float|b
 
 	begin_transaction();
 
-	$date = date2sql($date_);
-	$duedate = date2sql($due_date);
+	$date = date2sql((string) $date_);
+	$duedate = date2sql((string) $due_date);
 
 	$sql = "INSERT INTO ".TB_PREF."dimensions (reference, name, type_, date_, due_date)
 		VALUES (".db_escape($reference).", ".db_escape($name).", ".db_escape($type_)
@@ -39,8 +39,8 @@ function update_dimension(string|int|float|bool|null $id, string|int|float|bool|
 {
 	begin_transaction();
 
-	$date = date2sql($date_);
-	$duedate = date2sql($due_date);
+	$date = date2sql((string) $date_);
+	$duedate = date2sql((string) $due_date);
 
 	$sql = "UPDATE ".TB_PREF."dimensions SET name=".db_escape($name).",
 		type_ = ".db_escape($type_).",
@@ -101,7 +101,7 @@ function get_dimension_string(int|string|null $id, bool $html=false, ?string $sp
 	else
 	{
 		$row = row_or_empty(get_dimension($id, true));
-		$dim = (string)$row['reference'] . $space . (string)$row['name'];
+		$dim = (string)$row['reference'] . (string) $space . (string)$row['name'];
 	}
 
 	return $dim;
@@ -166,9 +166,9 @@ function reopen_dimension(string|int|float|bool|null $id): void
  */
 function get_dimension_balance_all(string|int|float|bool|null $id, string|int|float|bool|null $from, string|int|float|bool|null $to) 
 {
-	$from = date2sql($from);
-	$to = date2sql($to);
-	$sql = "SELECT account, coa.account_name, sum(amount) AS amt 
+	$from = date2sql((string) $from);
+	$to = date2sql((string) $to);
+	$sql = "SELECT account, coa.account_name, sum(amount) AS amt
 		FROM "
 		.TB_PREF."gl_trans trans,"
 		.TB_PREF."chart_master coa
@@ -214,7 +214,7 @@ function get_sql_for_search_dimensions(string|int|float|bool|null $dim, string|n
 
 	if ((bool)$order)
 	{
-		$sql .= " AND reference LIKE ".db_escape("%". $order . "%");
+		$sql .= " AND reference LIKE ".db_escape("%". (string) $order . "%");
 	} else {
 
 		if ($dim == 1)
