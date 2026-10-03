@@ -22,7 +22,7 @@ function add_user(string|int|float|bool|null $user_id, string|int|float|bool|nul
 		VALUES (".db_escape($user_id).", 
 		".db_escape($real_name).", ".db_escape($password) .",".db_escape($phone)
 		.",".db_escape($email).", ".db_escape($role_id).", ".db_escape($language)
-		.", ".db_escape($pos).",".db_escape($profile).",".db_escape($rep_popup)
+		.", ".db_escape(is_scalar($pos) ? $pos : null).",".db_escape($profile).",".db_escape($rep_popup)
 		." )";
 
 	return db_query($sql, "could not add user for $user_id");
@@ -56,7 +56,7 @@ function update_user(string|int|float|bool|null $id, string|int|float|bool|null 
 		language=".db_escape($language).",
 		print_profile=".db_escape($profile).",
 		rep_popup=".db_escape($rep_popup).",
-		pos=".db_escape($pos).",
+		pos=".db_escape(is_scalar($pos) ? $pos : null).",
 		user_id = " . db_escape($user_id)
 		. " WHERE id=" . db_escape($id);
 	return db_query($sql, "could not update user for $user_id");
@@ -65,6 +65,7 @@ function update_user(string|int|float|bool|null $id, string|int|float|bool|null 
 //-----------------------------------------------------------------------------------------------
 
 /**
+ * @param array<array-key, mixed> $prefs
  * @return bool|mysqli_result
  */
 function update_user_prefs(string|int|float|bool|null $id, mixed $prefs)
@@ -74,7 +75,7 @@ function update_user_prefs(string|int|float|bool|null $id, mixed $prefs)
 	foreach($prefs as $name => $value) {
 		if (!is_string($name) || !preg_match('/^[a-z_][a-z0-9_]*$/i', $name))
 			continue; // column name must be a safe identifier, never attacker-controlled data
-		$sets[] = $name.'='. db_escape($value);
+		$sets[] = $name.'='. db_escape(is_scalar($value) ? $value : null);
 	}
 	$sql .= implode(',', $sets) . " WHERE id=".db_escape($id);
 
@@ -221,11 +222,11 @@ function show_users_online(): string
 			$ip = $_SERVER['HTTP_FORWARDED'];
 		}
 		else {
-			$ip = $_SERVER['REMOTE_ADDR'];
+			$ip = $_SERVER['REMOTE_ADDR'] ?? '';
 		}
 
 		// Add user to database
-		db_query("INSERT INTO ".TB_PREF."useronline (timestamp, ip, file) VALUES ('". $timestamp ."',". db_escape($ip) .",". db_escape($_SERVER['PHP_SELF']) .")");
+		db_query("INSERT INTO ".TB_PREF."useronline (timestamp, ip, file) VALUES ('". $timestamp ."',". db_escape($ip) .",". db_escape($_SERVER['PHP_SELF'] ?? '') .")");
 		//Remove users that were not online within $timeoutseconds.
 		db_query("DELETE FROM ".TB_PREF."useronline WHERE timestamp<". $timeout);
 

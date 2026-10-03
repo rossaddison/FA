@@ -18,7 +18,7 @@ declare(strict_types=1);
 	$js = "<script".csp_nonce_attr()." language='JavaScript' type='text/javascript'>
 function defaultCompany()
 {
-	document.forms[0].company_login_name.options[".user_company()."].selected = true;
+	document.forms[0].company_login_name.options[".(string) user_company()."].selected = true;
 }
 </script>";
 	add_js_file('login.js');
@@ -50,7 +50,10 @@ function defaultCompany()
 	
 	div_start('_page_body');
 	br();br();
-	start_form(false, false, @$_SESSION['timeout']['uri'], "resetform");
+	$timeout = $_SESSION['timeout'] ?? null;
+	$uri_val = is_array($timeout) ? ($timeout['uri'] ?? null) : null;
+	$timeout_uri = is_scalar($uri_val) ? $uri_val : null;
+	start_form(false, false, $timeout_uri, "resetform");
 	start_table(false, "class='login'");
 	start_row();
 	echo "<td align='center' colspan=2>";
@@ -58,7 +61,7 @@ function defaultCompany()
 	echo "</td>\n";
 	end_row();
 
-	echo "<input type='hidden' id=ui_mode name='ui_mode' value='".fallback_mode()."' >\n";
+	echo "<input type='hidden' id=ui_mode name='ui_mode' value='".(string) fallback_mode()."' >\n";
 	table_section_title(_("Version")." $version   Build ".sysprefs()->build_version." - "._("Password reset"));
 
 	text_row(_("Email"), "email_entry_field", "", 20, 30);
