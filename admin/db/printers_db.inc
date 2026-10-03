@@ -59,9 +59,12 @@ function delete_printer(string|int|float|bool|null $id): void
 //============================================================================
 // printer profiles functions
 //
+/**
+ * @param array<array-key, string|int|float|bool|null>|null $dest
+ */
 function update_printer_profile(string|int|float|bool|null $name, ?array $dest): bool
 {
-	foreach( $dest as $rep => $printer) {
+	foreach( ($dest ?? array()) as $rep => $printer) {
 		if ($printer != '' || $rep == '') {
 			$sql = "REPLACE INTO ".TB_PREF."print_profiles "
 			."(profile, report, printer) VALUES ("
@@ -91,11 +94,11 @@ function get_report_printer(string|int|float|bool|null $profile, string|int|floa
 
 	$result = db_query($sql.db_escape($report), 'report printer lookup failed');
 
-	if (!$result) return false;
+	if (!($result instanceof mysqli_result)) return false;
 	$ret = db_fetch($result);
 	if ($ret === false) {
 		$result = db_query($sql."''", 'default report printer lookup failed');
-		if (!$result) return false;
+		if (!($result instanceof mysqli_result)) return false;
 
 		$ret = db_fetch($result);
 		if (!(bool)$ret) return false;

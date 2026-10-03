@@ -46,8 +46,14 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 	if ($error != 1)
 	{
-		write_printer_def($selected_id, get_post('name'), get_post('descr'),
-			get_post('queue'), get_post('host'), input_num('port',0),
+		/** @var int|string $selected_id */
+		$selected_id = $selected_id;
+		$name = get_post('name');
+		$descr = get_post('descr');
+		$queue = get_post('queue');
+		$host = get_post('host');
+		write_printer_def($selected_id, is_array($name) ? null : $name, is_array($descr) ? null : $descr,
+			is_array($queue) ? null : $queue, is_array($host) ? null : $host, input_num('port',0),
 			input_num('tout',0));
 
 		display_notification_centered($selected_id==-1? 
@@ -61,6 +67,8 @@ if ($Mode == 'Delete')
 {
 	// PREVENT DELETES IF DEPENDENT RECORDS IN print_profiles
 
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	if ((bool)key_in_foreign_table($selected_id, 'print_profiles', 'printer'))
 	{
 		display_error(_("Cannot delete this printer definition, because print profile have been created using it."));
@@ -112,8 +120,10 @@ start_form();
 
 start_table(TABLESTYLE2);
 
-if ($selected_id != -1) 
+if ($selected_id != -1)
 {
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	if ($Mode == 'Edit') {
 		$myrow = row_or_empty(get_printer($selected_id));
 		$_POST['name'] = $myrow['name'];
