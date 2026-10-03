@@ -14,7 +14,7 @@ declare(strict_types=1);
 // Mark changes in debtor_trans_details
 //
 /**
- * @param array<array-key, int|string> $versions
+ * @param array<array-key, int|string|null> $versions
  * @return bool|mysqli_result
  */
 function update_customer_trans_version(?int $type, array $versions) {

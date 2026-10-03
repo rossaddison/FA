@@ -92,7 +92,9 @@ function write_credit_note(Cart &$credit_note, string|int|float|bool|null $write
 		void_trans_tax_details(ST_CUSTCREDIT, $credit_no);
 	}
 	if ((bool)$credit_invoice) {
-		update_customer_trans_version(get_parent_type(ST_CUSTCREDIT), is_array($credit_note->src_docs) ? $credit_note->src_docs : array());
+		/** @var array<array-key, int|string|null> $credit_note_src_docs */
+		$credit_note_src_docs = is_array($credit_note->src_docs) ? $credit_note->src_docs : array();
+		update_customer_trans_version(get_parent_type(ST_CUSTCREDIT), $credit_note_src_docs);
 
 		$total = (float)$credit_note_total + (float)$credit_note->freight_cost + (float)$items_added_tax
 			+ (float)$freight_added_tax;
@@ -131,7 +133,7 @@ function write_credit_note(Cart &$credit_note, string|int|float|bool|null $write
 
 		if ($credit_type == 'Return')
 			add_credit_movements_item($credit_note, $credit_line,
-				$credit_type, ((float)$line_taxfree_price+(float)$line_tax)*((1.0-(float)$credit_line->discount_percent)), $credit_invoice);
+				$credit_type, ((float)$line_taxfree_price+$line_tax)*((1.0-(float)$credit_line->discount_percent)), $credit_invoice);
 
 		$total += add_gl_trans_credit_costs($credit_note, $credit_line, $credit_no,
 		    $credit_date, $credit_type, $write_off_acc, $branch_data);

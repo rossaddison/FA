@@ -43,8 +43,11 @@ function write_sales_invoice(&$invoice)
 	$items_total = $invoice->get_items_total_dispatch();
 	$freight_tax = $invoice->get_shipping_tax();
 
-	if (!((bool) $invoice->is_prepaid()))
-		update_customer_trans_version(get_parent_type(ST_SALESINVOICE), is_array($invoice->src_docs) ? $invoice->src_docs : array());
+	if (!((bool) $invoice->is_prepaid())) {
+		/** @var array<array-key, int|string|null> $invoice_src_docs */
+		$invoice_src_docs = is_array($invoice->src_docs) ? $invoice->src_docs : array();
+		update_customer_trans_version(get_parent_type(ST_SALESINVOICE), $invoice_src_docs);
+	}
     elseif (count($invoice->prepayments)) {	// partial invoice
 		$last_payment = end($invoice->prepayments);
 		$gl_date = sql2date((string) $last_payment['tran_date']);
