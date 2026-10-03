@@ -54,9 +54,9 @@ function void_transaction(string|int|float|bool|null $type, string|int|float|boo
 			if ($type == ST_CUSTDELIVERY)	// added 04 Oct 2008 by Joe Hunt. If delivery note has a not voided invoice, then NO.
 			{
 				$vers = get_customer_trans_version($type, $type_no);
-				if ($vers[$type_no] == 1) {
+				if ($vers[(string) $type_no] == 1) {
 					$childs = get_sales_child_lines($type, $type_no, false); // 2011-03-17 This had been changed. Joe
-					if ($childs && db_num_rows($childs))
+					if ($childs instanceof mysqli_result && db_num_rows($childs))
 						return _('This delivery cannot be voided because it was already invoiced.');
 				}
 			}
@@ -127,7 +127,7 @@ function void_transaction(string|int|float|bool|null $type, string|int|float|boo
 	}
 
 	// only add an entry if it's actually been voided
-	add_audit_trail($type, $type_no, $date_, _("Voided.")."\n".$memo_);
+	add_audit_trail($type, $type_no, $date_, _("Voided.")."\n".(string) $memo_);
 	refs()->restore_last($type, $type_no);
 	add_voided_entry($type, $type_no, $date_, $memo_);
 	return false;
@@ -152,7 +152,7 @@ function get_voided_entry(string|int|float|bool|null $type, string|int|float|boo
 
 function add_voided_entry(string|int|float|bool|null $type, string|int|float|bool|null $type_no, string|int|float|bool|null $date_, string|null $memo_): void
 {
-	$date = date2sql($date_);
+	$date = date2sql((string) $date_);
 	$sql = "INSERT INTO ".TB_PREF."voided (type, id, date_, memo_)
 		VALUES (".db_escape($type).", ".db_escape($type_no).", "
 		.db_escape($date).", ".db_escape($memo_).")";

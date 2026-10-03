@@ -11,7 +11,7 @@ declare(strict_types=1);
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-class user_prefs
+final class user_prefs
 {
 
 	/** @var string */
@@ -252,7 +252,7 @@ class user_prefs
 	/** @return non-falsy-string */
 	function date_display() 
 	{
-		$sep = sysprefs()->dateseps[$this->date_sep];
+		$sep = sysprefs()->dateseps[(int) $this->date_sep];
 		if ($this->date_format == 0)
 			return "m".$sep."d".$sep."Y";
 		elseif ($this->date_format == 1)
