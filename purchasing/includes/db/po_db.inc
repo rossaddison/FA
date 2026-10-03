@@ -65,6 +65,7 @@ function delete_po(mixed $po): void
 //----------------------------------------------------------------------------------------
 
 /** @return int */
+#[\NoDiscard]
 function add_po(purch_order &$po_obj)
 {
 

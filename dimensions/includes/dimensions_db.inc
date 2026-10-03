@@ -10,6 +10,7 @@ declare(strict_types=1);
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
+#[\NoDiscard]
 function add_dimension(string|int|float|bool|null $reference, string|int|float|bool|null $name, string|int|float|bool|null $type_, string|int|float|bool|null $date_, string|int|float|bool|null $due_date, string|int|float|bool|null $memo_): int|string
 {
 

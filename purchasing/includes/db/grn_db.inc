@@ -80,6 +80,7 @@ function update_average_material_cost(string|int|float|bool|null $supplier, stri
 //-------------------------------------------------------------------------------------------------------------
 
 /** @return int|string */
+#[\NoDiscard]
 function add_grn(purch_order &$po)
 {
 
@@ -165,6 +166,7 @@ function add_grn(purch_order &$po)
 
 //----------------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function add_grn_batch(string|int|float|bool|null $po_number, string|int|float|bool|null $supplier_id, string|int|float|bool|null $reference, string|int|float|bool|null $location, string|int|float|bool|null $date_, string|int|float|bool|null $rate): int|string
 {
 	$date = date2sql($date_);

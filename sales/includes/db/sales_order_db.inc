@@ -13,6 +13,7 @@ declare(strict_types=1);
 require_once(dirname(__DIR__, 3) . "/admin/db/attachments_db.inc");
 //----------------------------------------------------------------------------------------
 /** @return float|int */
+#[\NoDiscard]
 function add_sales_order(Cart &$order)
 {
 	global $SysPrefs, $path_to_root, $Refs;

@@ -17,6 +17,7 @@ declare(strict_types=1);
  * @param Cart $invoice
  * @return string|int|float|bool|null
  */
+#[\NoDiscard]
 function write_sales_invoice(&$invoice)
 {
 
