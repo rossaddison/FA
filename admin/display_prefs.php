@@ -49,16 +49,18 @@ if (isset($_POST['setprefs']))
 			array( 'show_gl', 'show_codes', 'show_hints', 'rep_popup',
 			  'graphic_links', 'sticky_doc_date', 'use_date_picker')));
 
-		if ($chg_lang)
-			session_obj('language')->set_language($_POST['language']);
+		if ($chg_lang) {
+			$language_code = $_POST['language'];
+			session_obj('language')->set_language(is_array($language_code) ? null : $language_code);
 			// refresh main menu
+		}
 
-		flush_dir(company_path().'/js_cache');	
+		flush_dir(company_path().'/js_cache');
 
 		if ($chg_theme && sysprefs()->allow_demo_mode)
-			session_obj('wa_current_user')->prefs->theme = post_scalar('theme');
+			session_obj('wa_current_user')->prefs->theme = (string) post_scalar('theme');
 		if ($chg_theme || $chg_lang || $chg_date_format || $chg_date_sep)
-			meta_forward($_SERVER['PHP_SELF']);
+			meta_forward($_SERVER['PHP_SELF'] ?? '');
 
 		
 		if (sysprefs()->allow_demo_mode)  

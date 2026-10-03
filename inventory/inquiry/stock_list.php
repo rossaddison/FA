@@ -34,7 +34,7 @@ if(get_post("search")) {
   ajax()->activate("item_tbl");
 }
 
-start_form(false, false, (string)$_SERVER['PHP_SELF'] . "?" . (string)$_SERVER['QUERY_STRING']);
+start_form(false, false, ($_SERVER['PHP_SELF'] ?? '') . "?" . ($_SERVER['QUERY_STRING'] ?? ''));
 
 start_table(TABLESTYLE_NOBORDER);
 
@@ -57,7 +57,8 @@ table_header($th);
 
 $k = 0;
 $name = $_GET["client_id"];
-$result = get_items_search(get_post("description"), @$_GET['type']);
+$type_filter = $_GET['type'] ?? null;
+$result = get_items_search(get_post("description"), is_array($type_filter) ? null : $type_filter);
 
 while ($myrow = db_fetch_assoc($result))
 {
