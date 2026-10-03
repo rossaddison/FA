@@ -122,109 +122,14 @@ codebase passing raw database fields straight to `label_cell()` —
 stored-XSS surface? Tested directly rather than guessing: added a shipping
 company with `shipper_name`/`contact` set to `<script>bad()</script>`
 through the real form (`admin/shipping_companies.php`), then read back both
-the raw database row and the rendered list page.
-
-**The payload was already HTML-escaped in the database itself** —
-`"Smith &amp; Sons O&#039;Brien"`-style encoding, stored that way, not
-decoded back to plain text on display. The cause: `db_escape()`
-(`includes/db/connect_db_mysqli.inc`) calls `html_specials_encode()`
-*before* its SQL-escaping step:
-
-```php
-function db_escape(string|int|float|bool|null $value = "", ?bool $nullify = false): string
-{
-    global $db;
-    $value = @html_entity_decode((string) $value, ENT_QUOTES, ...);
-    $value = html_specials_encode($value);   // <- HTML-escapes here, on the way IN
-    ...
-```
-
-So this codebase escapes HTML **on write**, not on read — the opposite of
-the usual "escape at output" convention. `label_cell()` and friends don't
-need to escape on the way out because, for any field written through
-`db_escape()`, the value is already safe by the time it comes back. This
-also confirms the earlier `combo_input()` fix didn't introduce
-double-escaping: `Html::encode()`/`encodeAttribute()` are always called
-there with `doubleEncode: false` (preserved from the original code, not
-something this fix added), and `htmlspecialchars(..., double_encode: false)`
-leaves already-valid entities like `&amp;` alone — confirmed with an
-isolated test reproducing the exact stored value.
-
-**There's an even more fundamental layer underneath this, found by tracing
-the escaping back one step further than `db_escape()`.** The shipping-company
-test above actually proved more than write-time DB escaping: the `$_POST`
-value was *already* HTML-escaped the moment it arrived, before
-`add_shipper()`/`db_escape()` ever touched it. Confirmed directly: added a
-temporary debug line printing `$_SERVER['PHP_SELF']` immediately before and
-immediately after `admin/shipping_companies.php`'s one `include
-(".../includes/session.inc")` call — raw and unescaped before, fully
-HTML-entity-encoded after, with no other code running in between (removed
-once confirmed; not part of this fix).
-
-The mechanism: `includes/session.inc` (included at or near the top of
-essentially every page in the application) calls a function that recursively
-walks an array by reference and runs every scalar through
-`html_specials_encode()`:
-
-```php
-function html_cleanup(array &$parms): void
-{
-    foreach($parms as $name => $value) {
-        if (is_array($value))
-            html_cleanup($parms[$name]);
-        else
-            $parms[$name] = html_specials_encode($value);
-    }
-}
-...
-html_cleanup($_GET);
-html_cleanup($_POST);
-html_cleanup($_REQUEST);
-html_cleanup($_SERVER);
-```
-
-So this isn't just "`db_escape()` happens to escape HTML too" — the
-application HTML-escapes **every value in every incoming request**
-(`$_GET`, `$_POST`, `$_REQUEST`, `$_SERVER`, which covers the classic
-`PHP_SELF`-reflected-XSS vector too — tested directly with a
-`"><script>` payload injected via `PATH_INFO`, confirmed reflected back
-fully escaped) before a single line of page-specific code runs. `db_escape()`
-re-escaping on the way into the database is effectively a second,
-largely-redundant safety net on top of this first one, for the common case
-where the value being written came from user input in the first place.
-
-One gap worth naming precisely, for completeness, not as something to fix
-here: `html_cleanup()` does **not** cover `$_COOKIE`. The one place this
-codebase reads a cookie into a value that later reaches `$_POST` directly
-(`reporting/includes/reports_classes.inc:172`,
-`$_POST['PARAM_'.$cnt] = $_COOKIE['select'][$id][$cnt];`, restoring a saved
-report parameter) does so *after* `html_cleanup($_POST)` has already run,
-so that specific value bypasses this layer. `reporting/` is already entirely
-out of Psalm's scope in this migration (`psalm.xml`'s `ignoreFiles`,
-"parked while focusing elsewhere" — see
-[PSALM_MIGRATION.md](PSALM_MIGRATION.md)), so this isn't investigated
-further here; noted for whoever eventually picks `reporting/` back up.
-
-**Why this isn't something to blanket-fix or blanket-suppress.** The
-`TaintedHtml` findings on `label_cell()`/`checkbox()`/`hidden()` are Psalm
-correctly (if conservatively) not trusting this global sanitization layer —
-reasonably so, since `html_cleanup()`'s shape (mutate an array by reference,
-recursively, in place) isn't something `@psalm-taint-escape` is designed to
-express at all (that annotation is for a function that takes a tainted value
-and *returns* an untainted one, not one that mutates a superglobal and
-leaves every future read of it implicitly safe). Even if Psalm could express
-it, blanket-trusting it project-wide would be exactly the kind of
-suppression this migration has already decided against for the analogous
-`TaintedFile`/`TaintedSSRF`-via-database-round-trip case
-([PSALM_MIGRATION.md](PSALM_MIGRATION.md)) — it would stop Psalm from
-flagging a *different* future bug where some value reaches HTML output
-without ever passing through `$_GET`/`$_POST`/`$_REQUEST`/`$_SERVER` or
-`db_escape()` at all (an external API response, a config file value, the
-`$_COOKIE` gap just described). A write path that skips `db_escape()` would
-also separately show up as a `TaintedSql` finding on the same line, since
-`db_escape()` is this codebase's only mechanism for SQL escaping too — so a
-real stored-XSS bug here would already be worth fixing as a SQL-injection
-bug first, via this migration's existing `TaintedSql`-hunting discipline.
+the raw database row and the rendered list page. **No** — the payload came
+back already HTML-escaped in the database itself, not decoded back to plain
+text on display. The reason turned out to be two layers deep (a
+request-superglobal sanitizer underneath `db_escape()`'s own HTML-escaping),
+general to the whole codebase rather than specific to this investigation —
+full mechanism, including why it isn't something to blanket-fix or
+blanket-suppress in Psalm, now lives in
+[DATA_FLOW_ARCHITECTURE.md](DATA_FLOW_ARCHITECTURE.md#input-escaping-every-request-value-is-html-escaped-twice-before-display).
 
 ## What's left
 

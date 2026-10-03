@@ -57,45 +57,14 @@ FrontAccounting supports multiple companies against possibly-different
 `tbpref` values (`config_db.php`'s `$db_connections[$company]['tbpref']`).
 Asked directly whether this fix stays correct if a second company with a
 different prefix is added — yes, and for a stronger reason than "both sides
-happen to use the same constant": **`TB_PREF` is never the real prefix at
-the point this comparison runs.**
-
-`includes/current_user.inc` defines it once, as a literal placeholder
-token:
-
-```php
-define('TB_PREF', '&TB_PREF&');
-```
-
-Every `TB_PREF.'tablename'` expression in the codebase — including both
-sides of the comparison in this bug — builds a plain PHP string containing
-the literal text `&TB_PREF&`, e.g. `"&TB_PREF&journal"`. The *real*
-substitution happens later, once, inside `db_query()`
-(`includes/db/connect_db_mysqli.inc:50-57`):
-
-```php
-$comp = isset(session_obj('wa_current_user')->cur_con) ? session_obj('wa_current_user')->cur_con : 0;
-$cur_prefix = @$db_connections[$comp]['tbpref'];
-$sql = str_replace(TB_PREF, $cur_prefix, $sql);
-```
-
-— i.e. the active company's real prefix is looked up fresh and substituted
-into the *finished SQL string*, immediately before every single query
-executes. The PHP-level string comparison in
-`get_sql_for_view_transactions()` happens entirely before that
-substitution, comparing two strings both still carrying the same
-unsubstituted `&TB_PREF&` token. Which company is active, or what its
-`tbpref` is, never enters into it — the fix is correct for a single-company
-install, for `fa_spike` here, and for any future multi-company setup with
-arbitrary/differing prefixes, by construction.
-
-This also explains an unrelated piece of Psalm noise: Psalm's
-`allConstantsGlobal` resolves `TB_PREF` to its literal define()'d value, so
-every `TB_PREF.'x'` concatenation Psalm sees really does type as the literal
-string `'&TB_PREF&x'` — which is why a hand-written docblock like
-`get_systype_db_info()`'s enumerates `'&TB_PREF&bank_accounts'|'&TB_PREF&bank_trans'|...`
-rather than anything resembling a real table name. Not a bug, just a
-faithful reflection of how this placeholder mechanism actually works.
+happen to use the same constant": `TB_PREF` is never the real prefix at the
+point this comparison runs — it's a literal placeholder token, substituted
+into the finished SQL string only once, immediately before each query
+executes. Both sides of this bug's comparison happen entirely before that
+substitution. Full mechanism (with the actual `define()`/`db_query()` code)
+now lives in [DATA_FLOW_ARCHITECTURE.md](DATA_FLOW_ARCHITECTURE.md#tb_pref-a-placeholder-token-substituted-at-query-time--not-a-real-per-company-constant),
+since it's a codebase-wide fact this bug happened to be the one that
+surfaced it, not something specific to this file.
 
 ## Verification done so far
 
