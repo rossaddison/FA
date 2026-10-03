@@ -106,7 +106,11 @@ final class supp_trans
 	var $currency;
 
 	/**
-	 * @var array<array-key, int|float|false>
+	 * Null means "no manual overrides entered / cancelled by a cart change"
+	 * (see the four unset()-replacement assignments below) - distinct from
+	 * an empty array, which would mean "overrides were entered but are all
+	 * gone", a state this class never actually produces.
+	 * @var array<array-key, int|float|false>|null
 	 */
 	var $tax_overrides = array();		// array of taxes manually inserted during sales invoice entry
 
@@ -174,7 +178,7 @@ final class supp_trans
 
 		$this->src_docs = find_src_invoices($this);
 
-		unset($this->tax_overrides); // cancel tax overrides after cart change
+		$this->tax_overrides = null; // cancel tax overrides after cart change
 		return 1;
 	}
 
@@ -193,7 +197,7 @@ final class supp_trans
 		$this->gl_codes[$this->gl_codes_counter] = new GlCodes($this->gl_codes_counter,
 			$gl_code, $gl_act_name, $gl_dim, $gl_dim2, $amount, $memo_);
 		$this->gl_codes_counter++;
-		unset($this->tax_overrides); // cancel tax overrides after cart change
+		$this->tax_overrides = null; // cancel tax overrides after cart change
 		return 1;
 	}
 
@@ -204,7 +208,7 @@ final class supp_trans
 	 */
 	function remove_grn_from_trans($grn_item_id)
 	{
-	    unset($this->tax_overrides); // cancel tax overrides after cart change
+	    $this->tax_overrides = null; // cancel tax overrides after cart change
 	    if ($grn_item_id !== null)
 	    	unset($this->grn_items[(int) $grn_item_id]);
 	}
@@ -215,7 +219,7 @@ final class supp_trans
 	 */
 	function remove_gl_codes_from_trans($gl_code_counter)
 	{
-		unset($this->tax_overrides); // cancel tax overrides after cart change
+		$this->tax_overrides = null; // cancel tax overrides after cart change
 		if ($gl_code_counter !== null)
 			unset($this->gl_codes[(int) $gl_code_counter]);
 	}
@@ -274,12 +278,8 @@ final class supp_trans
         $taxes = get_tax_for_items($items, $prices, $shipping_cost, $tax_group_id,
         	$this->tax_included);
 
-		// isset() here is not redundant at runtime despite the always-array
-		// docblock type: add_grn_to_trans()/add_gl_codes_to_trans()/
-		// remove_*_from_trans() all unset($this->tax_overrides) deliberately
-		// to cancel overrides after a cart change - Psalm doesn't model
-		// unset() narrowing a typed property back to "not set".
-		/** @psalm-suppress RedundantConditionGivenDocblockType */
+		// null means add_grn_to_trans()/add_gl_codes_to_trans()/
+		// remove_*_from_trans() cancelled any manual overrides after a cart change
 		if (isset($this->tax_overrides))
 			foreach($this->tax_overrides as $id => $value) // add values entered manually
 			{
@@ -297,7 +297,6 @@ final class supp_trans
 				if ($gl_codes)
 					$taxes[$index]['Value'] += (float) $gl_code->amount;
 				else {
-					/** @psalm-suppress RedundantConditionGivenDocblockType */
 					if (isset($this->tax_overrides)) {
 						$tax_entry = $taxes[$index];
 						$prev_override = isset($tax_entry['Override']) ? (float) $tax_entry['Override'] : 0.0;

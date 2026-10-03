@@ -62,7 +62,7 @@ function copy_to_trans(supp_trans &$supp_trans): void
 	    	}
 	}
 	else
-		unset($supp_trans->tax_overrides);
+		$supp_trans->tax_overrides = null;
 
 	if (count($supp_trans->grn_items) > 0)
 	{
