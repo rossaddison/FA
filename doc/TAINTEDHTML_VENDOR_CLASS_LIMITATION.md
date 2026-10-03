@@ -25,7 +25,9 @@ and registers, and even a deliberately-wrong return type in it goes
 completely unnoticed by Psalm, proving the stub's information is never
 merged onto the real, autoloaded class at all.
 
-This is a confirmed, currently open upstream bug:
+This is a confirmed, currently open upstream bug (also indexed in
+[PSALM_UPSTREAM_LIMITATIONS.md](PSALM_UPSTREAM_LIMITATIONS.md) alongside
+this project's other confirmed Psalm gaps):
 [vimeo/psalm#11752](https://github.com/vimeo/psalm/issues/11752) — "Taint
 analysis: autoloaded classes / methods are not safe for
 `@psalm-taint-escape` except in the class itself." Psalm can't be certain

@@ -15,6 +15,8 @@ See [doc/PSALM_MIGRATION.md](doc/PSALM_MIGRATION.md) for the methodology, the er
 
 **Why `Yiisoft\Html\Html::encode()`/`encodeAttribute()` are no longer called directly** — a confirmed, currently open upstream Psalm bug ([vimeo/psalm#11752](https://github.com/vimeo/psalm/issues/11752)) means `@psalm-taint-escape` on a vendor class's method is silently ignored for every external call site, which was the source of most of this codebase's 229 `TaintedHtml`/`TaintedTextWithQuotes` findings. See [doc/TAINTEDHTML_VENDOR_CLASS_LIMITATION.md](doc/TAINTEDHTML_VENDOR_CLASS_LIMITATION.md) for the isolated test that proved it, the two first-party wrapper functions that work around it, and a genuinely separate unescaped-output bug (a stored user preference in an `<img src>` attribute) the fix surfaced along the way.
 
+**Confirmed upstream Psalm bugs/limitations hit during this migration** — each independently rediscovered via an isolated test before being traced to an existing issue — are tracked in one place in [doc/PSALM_UPSTREAM_LIMITATIONS.md](doc/PSALM_UPSTREAM_LIMITATIONS.md), so the next person who hits the same symptom doesn't have to re-derive the root cause from scratch.
+
 FrontAccounting ERP is open source, web-based accounting software for small and medium enterprises.
 It supports double entry accounting providing both low level journal entry and user friendly, document based 
 interface for everyday business activity with automatic GL postings generation. This is multicurrency,

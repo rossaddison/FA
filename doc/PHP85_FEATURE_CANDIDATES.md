@@ -18,6 +18,10 @@ the local PHP 8.5.10 install before any candidate search began.
 
 ## Tooling caveat: pipe operator and array_first()/array_last() under Psalm
 
+(Both gaps below, plus the fix status of each, are also indexed in
+[PSALM_UPSTREAM_LIMITATIONS.md](PSALM_UPSTREAM_LIMITATIONS.md) alongside
+this project's other confirmed Psalm bugs.)
+
 Confirmed via an isolated scratch test (not from documentation): Psalm
 7.0.0-beta21 — the version this project runs — parses both features with no
 syntax error, but infers `mixed` for a pipe chain's result and for
