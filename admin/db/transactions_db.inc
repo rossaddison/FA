@@ -50,9 +50,9 @@ function get_sql_for_view_transactions(string|int|float|bool|null $filtertype, s
 	elseif ($type_name != null)
 		$sql .= " AND t.`$type_name` = ".db_escape($filtertype);
 
-	// the ugly hack below is necessary to exclude old gl_trans records lasting after edition,
+	// the ugly hack below is necessary to exclude old journal records lasting after edition,
 	// otherwise old data transaction can be retrieved instead of current one.
-	if ($table_name==TB_PREF.'gl_trans')
+	if ($table_name==TB_PREF.'journal')
 		$sql .= " AND t.`amount` <> 0";
 
 	$sql .= " GROUP BY ".($type_name ? "t.$type_name," : '')." t.$trans_no_name";
