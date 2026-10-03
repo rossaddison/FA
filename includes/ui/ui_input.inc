@@ -207,7 +207,7 @@ function submit(string|int|float|bool|null $name, string|int|float|bool|null $va
 	    ." name=\"$name\"  id=\"$name\" value=\"$value\""
 	    .((bool)$title ? " title='$title'" : '')
 	    .">"
-		.((bool)$icon ? "<img src='$path_to_root/themes/".user_theme()."/images/$icon' height='12' alt=''>" : '')
+		.((bool)$icon ? "<img src='".html_encode_attribute("$path_to_root/themes/".user_theme()."/images/$icon", false, output_encoding())."' height='12' alt=''>" : '')
 		."<span>$value</span>"
 		."</button>\n";
 	if ((bool)$echo)
@@ -322,7 +322,7 @@ function set_icon(string|int|float|bool|null $icon, string|int|float|bool|null $
 	global $path_to_root;
 	if (basename($icon) === $icon) // standard icons does not contain path separator
 		$icon = "$path_to_root/themes/".user_theme()."/images/$icon";
-	return "<img src='$icon' class='fa-icon12'".((bool)$title ? " title='$title'" : "")." >\n";	
+	return "<img src='".html_encode_attribute($icon, false, output_encoding())."' class='fa-icon12'".((bool)$title ? " title='".html_encode_attribute($title, false, output_encoding())."'" : "")." >\n";
 }
 
 function button(string|int|float|bool|null $name, string|int|float|bool|null $value, string|int|float|bool|null $title=false, string|int|float|bool|null $icon=false,  string|int|float|bool|null $aspect=''): string
@@ -681,10 +681,10 @@ function date_cells(?string $label, string|int|float|bool|null $name, ?string $t
 	}
 	if ((bool) user_use_date_picker())
 	{
-		$calc_image = (file_exists("$path_to_root/themes/".user_theme()."/images/cal.gif")) ? 
+		$calc_image = (file_exists("$path_to_root/themes/".user_theme()."/images/cal.gif")) ?
 			"$path_to_root/themes/".user_theme()."/images/cal.gif" : "$path_to_root/themes/default/images/cal.gif";
 		$post_label = "<a tabindex='-1' href='#'".fa_action_attrs('date-picker', array($name)).">"
-		. "	<img src='$calc_image' class='fa-icon16' alt='"._('Click Here to Pick up the date')."'></a>\n";
+		. "	<img src='".html_encode_attribute($calc_image, false, output_encoding())."' class='fa-icon16' alt='"._('Click Here to Pick up the date')."'></a>\n";
 	}	
 	else
 		$post_label = "";
