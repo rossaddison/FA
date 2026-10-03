@@ -84,13 +84,101 @@ from a fixed, installed-themes dropdown), but fixed as real defense in
 depth regardless, the same judgment call as `delete_attachments()`'s
 `basename()` hardening elsewhere in this migration.
 
+## More of the same pattern, fixed the same way
+
+Follow-up pass: `includes/ui/ui_input.inc` had three more
+`user_theme()`-into-`<img src>` sites (`submit()`'s optional button icon,
+`set_icon()` — the single shared icon-rendering helper used throughout the
+UI, and `date_cells()`'s calendar icon), all fixed with the same
+`html_encode_attribute()` wrapper. While live-testing this fix, found and
+fixed a genuinely unrelated bug surfaced along the way:
+`admin/db/shipping_db.inc`'s `add_shipper()`/`update_shipper()` declared
+`$contact` as `array` while every real caller passed a plain string, so
+*every* add/update crashed outright under `strict_types=1` — see
+[BUGS_FOUND.md](BUGS_FOUND.md)'s "Live crashes" section.
+
+## Why most of what's left isn't a `combo_input()`-style fix
+
+The remaining findings are concentrated in a different kind of function —
+`label_cell()`, `checkbox()`, `hidden()`, and similar primitives in
+`ui_input.inc`/`ui_controls.inc`/`ui_msgs.inc`/`ui_view.inc` — and these
+can't be fixed the same way. Confirmed by reading their source:
+`label_cell()` is literally `echo "<td $params>$label</td>\n";` — no
+escaping of `$label` at all, by design. Callers routinely rely on that to
+pass pre-built HTML through, e.g. `email_cell()`:
+`label_cell("<a href='mailto:$label'>$label</a>", ...)`. Wrapping
+`$label` in `html_encode()` inside `label_cell()` itself would silently
+break every caller like this — the `<a>` tag would render as visible text
+instead of a link. These functions are intentionally dual-purpose; the
+escaping decision has to be made by each *caller*, not the shared
+primitive.
+
+That raised an obvious question: with dozens of call sites across the
+codebase passing raw database fields straight to `label_cell()` —
+`label_cell($myrow["shipper_name"])`, `label_cell($myrow["description"])`,
+`label_cell($myrow["address"])`, and many more — is this a live, exploitable
+stored-XSS surface? Tested directly rather than guessing: added a shipping
+company with `shipper_name`/`contact` set to `<script>bad()</script>`
+through the real form (`admin/shipping_companies.php`), then read back both
+the raw database row and the rendered list page.
+
+**The payload was already HTML-escaped in the database itself** —
+`"Smith &amp; Sons O&#039;Brien"`-style encoding, stored that way, not
+decoded back to plain text on display. The cause: `db_escape()`
+(`includes/db/connect_db_mysqli.inc`) calls `html_specials_encode()`
+*before* its SQL-escaping step:
+
+```php
+function db_escape(string|int|float|bool|null $value = "", ?bool $nullify = false): string
+{
+    global $db;
+    $value = @html_entity_decode((string) $value, ENT_QUOTES, ...);
+    $value = html_specials_encode($value);   // <- HTML-escapes here, on the way IN
+    ...
+```
+
+So this codebase escapes HTML **on write**, not on read — the opposite of
+the usual "escape at output" convention. `label_cell()` and friends don't
+need to escape on the way out because, for any field written through
+`db_escape()`, the value is already safe by the time it comes back. This
+also confirms the earlier `combo_input()` fix didn't introduce
+double-escaping: `Html::encode()`/`encodeAttribute()` are always called
+there with `doubleEncode: false` (preserved from the original code, not
+something this fix added), and `htmlspecialchars(..., double_encode: false)`
+leaves already-valid entities like `&amp;` alone — confirmed with an
+isolated test reproducing the exact stored value.
+
+**Why this isn't something to blanket-fix or blanket-suppress.** The
+`TaintedHtml` findings on `label_cell()`/`checkbox()`/`hidden()` are Psalm
+correctly (if conservatively) not trusting that *every* write path to every
+table used `db_escape()` — the same reasoning already documented in
+[PSALM_MIGRATION.md](PSALM_MIGRATION.md)'s "`TaintedFile`/`TaintedSSRF` via
+a database round-trip" section, just for `html` instead of `file`/`ssrf`. A
+write path that skips `db_escape()` would be a real bug — but it would also
+show up as a `TaintedSql` finding (missing SQL escaping) on the *same* line,
+since `db_escape()` is this codebase's only mechanism for either kind of
+escaping. In other words: a stored-XSS bug here would already be flagged,
+and already be worth fixing, as a SQL-injection bug first. Annotating
+`db_escape()` as `@psalm-taint-escape html` wouldn't even help — per the
+vendor-class limitation above, the same kind of trust wouldn't propagate
+across a `$row = db_fetch(...)` round-trip regardless (confirmed by the
+fact that `combo_input()`'s DB-read values needed their *own* explicit
+`html_encode()` call at the read site, not just reliance on the write-time
+escaping that had already happened to the same data).
+
 ## What's left
 
-95 `TaintedHtml`/`TaintedTextWithQuotes` findings remain, in other
-`includes/ui/*.inc` files (`ui_input.inc`, `ui_controls.inc`, `ui_msgs.inc`,
-`ui_view.inc`) and a handful of page-level files
-(`gl/view/gl_trans_view.php`, `purchasing/includes/ui/invoice_ui.inc`,
-`includes/ui/class.reflines_crud.inc`). These are separate functions with
-their own escaping gaps (not `combo_input()`/`array_selector()` callers,
-which are now all clean) — not yet investigated, tracked here for whoever
-picks this up next.
+87 `TaintedHtml`/`TaintedTextWithQuotes` findings remain (confirmed by a
+fresh full-project scan, not assumed), almost entirely in
+`label_cell()`/`checkbox()`/`hidden()`-style dual-purpose primitives:
+`ui_input.inc` (44), `ui_controls.inc` (20), `ui_msgs.inc` (8),
+`ui_view.inc` (4), plus a handful of page-level files
+(`purchasing/includes/ui/invoice_ui.inc`, `includes/dashboard.inc`,
+`includes/page/header.inc`, `includes/page/footer.inc`,
+`includes/db_pager.inc`, `admin/db/maintenance_db.inc` — 1-2 each). Per the
+reasoning above, these are expected, not a to-do list to clear — the
+productive next step for any of them is the same discipline as this
+migration's existing `TaintedSql` hunting: trace one specific call site's
+*write* path and confirm `db_escape()` (or equivalent) is actually used,
+treating a genuine gap as the SQL-injection-class bug it would be, rather
+than trying to patch the shared output primitive.
