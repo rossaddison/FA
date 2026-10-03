@@ -519,6 +519,19 @@ resolved.
   file's identical copy was missed at the time. Fixed by dropping the extra
   argument, matching the existing precedent.
 
+- **`sales/customer_invoice.php` — prepayment-allocation validation bypass.**
+  The `AllocationNumber` branch builds `$payments = array(get_cust_allocation(...))`
+  — always a 1-element array, even when `get_cust_allocation()` itself returns
+  `false` (no matching allocation) — then guarded the error path with
+  `if (!$payments || ...)`. `!$payments` tests the *outer* array, which is
+  always truthy (it always has exactly one element), so the "please select a
+  correct prepayment" error could never fire no matter what
+  `get_cust_allocation()` returned; a bad/missing `AllocationNumber` fell
+  through to read `$payments[0]['trans_no_to']` off a `false` value instead.
+  Psalm's `RiskyTruthyFalsyComparison` on the always-truthy array caught it.
+  Fixed by checking `$payments[0]` (the actual allocation row) instead of the
+  wrapping array.
+
 ## Encoding / output bugs
 
 - **`includes/ui/ui_lists.inc` — mojibake, two distinct causes.**

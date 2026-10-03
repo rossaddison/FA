@@ -31,12 +31,12 @@ $js = "";
 if (sysprefs()->use_popup_windows) {
 	$js .= get_js_open_window(900, 500);
 }
-if (user_use_date_picker()) {
+if ((bool) user_use_date_picker()) {
 	$js .= get_js_date_picker();
 }
 
 if (isset($_GET['ModifyInvoice'])) {
-	$_SESSION['page_title'] = sprintf(_("Modifying Sales Invoice # %d.") ,$_GET['ModifyInvoice']);
+	$_SESSION['page_title'] = sprintf(_("Modifying Sales Invoice # %d.") ,(string) get_scalar('ModifyInvoice'));
 	$help_context = "Modifying Sales Invoice";
 } elseif (isset($_GET['DeliveryNumber'])) {
 	$_SESSION['page_title'] = _($help_context = "Issue an Invoice for Delivery Note");
@@ -45,7 +45,9 @@ if (isset($_GET['ModifyInvoice'])) {
 } elseif (isset($_GET['AllocationNumber']) || isset($_GET['InvoicePrepayments'])) {
 	$_SESSION['page_title'] = _($help_context = "Prepayment or Final Invoice Entry");
 }
-page($_SESSION['page_title'], false, false, "", $js);
+/** @var string $page_title */
+$page_title = $_SESSION['page_title'] ?? '';
+page($page_title, false, false, "", $js);
 
 //-----------------------------------------------------------------------------
 
@@ -53,7 +55,7 @@ check_edit_conflicts(get_post('cart_id'));
 
 if (isset($_GET['AddedID'])) {
 
-	$invoice_no = $_GET['AddedID'];
+	$invoice_no = (string) get_scalar('AddedID');
 	$trans_type = ST_SALESINVOICE;
 
 	display_notification(_("Selected deliveries has been processed"), true);
@@ -67,7 +69,8 @@ if (isset($_GET['AddedID'])) {
 
 	hyperlink_params("$path_to_root/sales/inquiry/sales_deliveries_view.php", _("Select Another &Delivery For Invoicing"), "OutstandingOnly=1");
 
-	if (!db_num_rows(get_allocatable_from_cust_transactions(null, $invoice_no, $trans_type)))
+	$allocatable = get_allocatable_from_cust_transactions(null, $invoice_no, $trans_type);
+	if (!($allocatable instanceof mysqli_result && db_num_rows($allocatable)))
 		hyperlink_params("$path_to_root/sales/customer_payments.php", _("Entry &customer payment for this invoice"),
 		"SInvoice=".$invoice_no);
 
@@ -77,7 +80,7 @@ if (isset($_GET['AddedID'])) {
 
 } elseif (isset($_GET['UpdatedID']))  {
 
-	$invoice_no = $_GET['UpdatedID'];
+	$invoice_no = (string) get_scalar('UpdatedID');
 	$trans_type = ST_SALESINVOICE;
 
 	display_notification_centered(sprintf(_('Sales Invoice # %d has been updated.'),$invoice_no));
@@ -87,15 +90,18 @@ if (isset($_GET['AddedID'])) {
 	display_note(print_document_link($invoice_no."-".$trans_type, _("&Print This Invoice"), true, ST_SALESINVOICE));
 	display_note(print_document_link($invoice_no."-".$trans_type, _("&Email This Invoice"), true, ST_SALESINVOICE, false, "printlink", "", 1),1);
 
-	hyperlink_no_params($path_to_root . "/sales/inquiry/customer_inquiry.php", _("Select Another &Invoice to Modify"));
+	/** @var string $root */
+	$root = $path_to_root;
+	hyperlink_no_params($root . "/sales/inquiry/customer_inquiry.php", _("Select Another &Invoice to Modify"));
 
 	display_footer_exit();
 
 } elseif (isset($_GET['RemoveDN'])) {
 
+	$remove_dn = get_scalar('RemoveDN');
 	for($line_no = 0; $line_no < count(session_obj('Items')->line_items); $line_no++) {
 		$line = &session_obj('Items')->line_items[$line_no];
-		if ($line->src_no == $_GET['RemoveDN']) {
+		if ($line->src_no == $remove_dn) {
 			$line->quantity = $line->qty_done;
 			$line->qty_dispatched=0;
 		}
@@ -104,28 +110,32 @@ if (isset($_GET['AddedID'])) {
 
     // Remove also src_doc delivery note
     $sources = &session_obj('Items')->src_docs;
-    unset($sources[$_GET['RemoveDN']]);
+    if (is_array($sources) && $remove_dn !== null)
+    	unset($sources[(string) $remove_dn]);
 }
 
 //-----------------------------------------------------------------------------
 
-if ( (isset($_GET['DeliveryNumber']) && ($_GET['DeliveryNumber'] > 0) )
+if ( (isset($_GET['DeliveryNumber']) && ((float) get_scalar('DeliveryNumber') > 0) )
 	|| isset($_GET['BatchInvoice'])) {
 
 	processing_start();
 
 	if (isset($_GET['BatchInvoice'])) {
-		$src = $_SESSION['DeliveryBatch'];
+		/** @var array<array-key, mixed> $src */
+		$src = $_SESSION['DeliveryBatch'] ?? array();
 		unset($_SESSION['DeliveryBatch']);
 	} else {
-		$src = array($_GET['DeliveryNumber']);
+		$src = array(get_scalar('DeliveryNumber'));
 	}
 
 	/*read in all the selected deliveries into the Items cart  */
 	$dn = new Cart(ST_CUSTDELIVERY, $src, true);
 
 	if ($dn->count_items() == 0) {
-		hyperlink_params($path_to_root . "/sales/inquiry/sales_deliveries_view.php",
+		/** @var string $root */
+		$root = $path_to_root;
+		hyperlink_params($root . "/sales/inquiry/sales_deliveries_view.php",
 			_("Select a different delivery to invoice"), "OutstandingOnly=1");
 		die ("<br><b>" . _("There are no delivered items with a quantity left to invoice. There is nothing left to invoice.") . "</b>");
 	}
@@ -133,12 +143,13 @@ if ( (isset($_GET['DeliveryNumber']) && ($_GET['DeliveryNumber'] > 0) )
 	$_SESSION['Items'] = $dn;
 	copy_from_cart();
 
-} elseif (isset($_GET['ModifyInvoice']) && $_GET['ModifyInvoice'] > 0) {
+} elseif (isset($_GET['ModifyInvoice']) && (float) get_scalar('ModifyInvoice') > 0) {
 
 	check_is_editable(ST_SALESINVOICE, get_scalar('ModifyInvoice'));
 
 	processing_start();
-	$_SESSION['Items'] = new Cart(ST_SALESINVOICE, $_GET['ModifyInvoice']);
+	$modify_id = get_scalar('ModifyInvoice');
+	$_SESSION['Items'] = new Cart(ST_SALESINVOICE, is_int($modify_id) ? $modify_id : (string) $modify_id);
 
 	if (session_obj('Items')->count_items() == 0) {
 		echo"<center><br><b>" . _("All quantities on this invoice has been credited. There is nothing to modify on this invoice") . "</b></center>";
@@ -153,7 +164,7 @@ if ( (isset($_GET['DeliveryNumber']) && ($_GET['DeliveryNumber'] > 0) )
 	{
 		$payments = array(get_cust_allocation(get_scalar('AllocationNumber')));
 
-		if (!$payments || ($payments[0]['trans_type_to'] != ST_SALESORDER))
+		if (!$payments[0] || ($payments[0]['trans_type_to'] != ST_SALESORDER))
 		{
 			display_error(_("Please select correct Sales Order Prepayment to be invoiced and try again."));
 			display_footer_exit();
@@ -161,13 +172,14 @@ if ( (isset($_GET['DeliveryNumber']) && ($_GET['DeliveryNumber'] > 0) )
 		$order_no = $payments[0]['trans_no_to'];
 	}
 	else {
-		$order_no = $_GET['InvoicePrepayments'];
+		$order_no = get_scalar('InvoicePrepayments');
 	}
 	processing_start();
 
-	$_SESSION['Items'] = new cart(ST_SALESORDER, $order_no, ST_SALESINVOICE);
-	session_obj('Items')->order_no = $order_no;
-	session_obj('Items')->src_docs = array($order_no);
+	$order_no_key = is_int($order_no) ? $order_no : (string) $order_no;
+	$_SESSION['Items'] = new Cart(ST_SALESORDER, $order_no_key, ST_SALESINVOICE);
+	session_obj('Items')->order_no = $order_no_key;
+	session_obj('Items')->src_docs = array($order_no_key);
 	session_obj('Items')->trans_no = 0;
 	session_obj('Items')->trans_type = ST_SALESINVOICE;
 
@@ -202,8 +214,8 @@ function check_quantities(): int
 	foreach (session_obj('Items')->line_items as $line_no=>$itm) {
 		if (isset($_POST['Line'.$line_no])) {
 			if((bool)session_obj('Items')->trans_no) {
-				$min = $itm->qty_done;
-				$max = $itm->quantity;
+				$min = (float) $itm->qty_done;
+				$max = (float) $itm->quantity;
 			} else {
 				$min = 0;
 				// Fixing floating point problem in PHP.
@@ -211,7 +223,7 @@ function check_quantities(): int
 			}
 			if (check_num('Line'.$line_no, $min, $max)) {
 				session_obj('Items')->line_items[$line_no]->qty_dispatched =
-				    input_num('Line'.$line_no);
+				    (float) input_num('Line'.$line_no);
 			}
 			else {
 				$ok = 0;
@@ -220,25 +232,28 @@ function check_quantities(): int
 		}
 
 		if (isset($_POST['Line'.$line_no.'Desc'])) {
-			$line_desc = $_POST['Line'.$line_no.'Desc'];
-			if (strlen($line_desc) > 0) {
-				session_obj('Items')->line_items[$line_no]->item_description = $line_desc;
+			$line_desc = post_scalar('Line'.$line_no.'Desc');
+			if (strlen((string) $line_desc) > 0) {
+				session_obj('Items')->line_items[$line_no]->item_description = (string) $line_desc;
 			}
 		}
 	}
  return $ok;
 }
 
-function set_delivery_shipping_sum(?array $delivery_notes): void 
+/**
+ * @param array<array-key, int|string>|null $delivery_notes
+ */
+function set_delivery_shipping_sum(?array $delivery_notes): void
 {
-    
-    $shipping = 0;
-    
-    foreach($delivery_notes as $delivery_num) 
-    {
-        $myrow = row_or_empty(get_customer_trans($delivery_num, ST_CUSTDELIVERY));
 
-        $shipping += $myrow['ov_freight'];
+    $shipping = 0.0;
+
+    foreach($delivery_notes ?? array() as $delivery_num)
+    {
+        $myrow = row_or_empty(get_customer_trans((string) $delivery_num, ST_CUSTDELIVERY));
+
+        $shipping += (float) $myrow['ov_freight'];
     }
     $_POST['ChargeFreightCost'] = price_format($shipping);
 }
@@ -246,34 +261,35 @@ function set_delivery_shipping_sum(?array $delivery_notes): void
 
 function copy_to_cart(): void
 {
-	$cart = &$_SESSION['Items'];
-	/** @var Cart $cart */
-	$cart->due_date = $cart->document_date =  $_POST['InvoiceDate'];
-	$cart->Comments = $_POST['Comments'];
-	$cart->due_date =  $_POST['due_date'];
-	if (((bool)$cart->pos['cash_sale'] || (bool)$cart->pos['credit_sale']) && isset($_POST['payment'])) {
-		$cart->payment = $_POST['payment'];
-		$cart->payment_terms = get_payment_terms(post_scalar('payment'));
+	$cart = session_obj('Items');
+	$cart->due_date = $cart->document_date = (string) post_scalar('InvoiceDate');
+	$cart->Comments = (string) post_scalar('Comments');
+	$cart->due_date = (string) post_scalar('due_date');
+	$pos = $cart->pos;
+	if ($pos && ((bool)$pos['cash_sale'] || (bool)$pos['credit_sale']) && isset($_POST['payment'])) {
+		$cart->payment = post_scalar('payment');
+		$cart->payment_terms = (array) get_payment_terms(post_scalar('payment'));
 	}
 	if (session_obj('Items')->trans_no == 0)
-		$cart->reference = $_POST['ref'];
+		$cart->reference = (string) post_scalar('ref');
 	if (!$cart->is_prepaid())
 	{
-		$cart->ship_via = $_POST['ship_via'];
-		$cart->freight_cost = input_num('ChargeFreightCost');
+		$cart->ship_via = post_scalar('ship_via');
+		$cart->freight_cost = (float) input_num('ChargeFreightCost');
 	}
 
 	$cart->update_payments();
 
-	$cart->dimension_id =  $_POST['dimension_id'];
-	$cart->dimension2_id =  $_POST['dimension2_id'];
+	$dim_id = post_scalar('dimension_id');
+	$cart->dimension_id = is_int($dim_id) ? $dim_id : (string) $dim_id;
+	$dim2_id = post_scalar('dimension2_id');
+	$cart->dimension2_id = is_int($dim2_id) ? $dim2_id : (string) $dim2_id;
 }
 //-----------------------------------------------------------------------------
 
 function copy_from_cart(): void
 {
-	$cart = &$_SESSION['Items'];
-	/** @var Cart $cart */
+	$cart = session_obj('Items');
  	$_POST['Comments']= $cart->Comments;
 	$_POST['InvoiceDate']= $cart->document_date;
  	$_POST['ref'] = $cart->reference;
@@ -296,7 +312,8 @@ function check_data(): bool
 
 	$prepaid = session_obj('Items')->is_prepaid();
 
-	if (!isset($_POST['InvoiceDate']) || !is_date(post_scalar('InvoiceDate'))) {
+	$invoice_date = post_scalar('InvoiceDate');
+	if (!isset($_POST['InvoiceDate']) || !is_date($invoice_date === null ? null : (string) $invoice_date)) {
 		display_error(_("The entered invoice date is invalid."));
 		set_focus('InvoiceDate');
 		return false;
@@ -309,7 +326,8 @@ function check_data(): bool
 	}
 
 
-	if (!$prepaid &&(!isset($_POST['due_date']) || !is_date(post_scalar('due_date'))))	{
+	$due_date_ = post_scalar('due_date');
+	if (!$prepaid &&(!isset($_POST['due_date']) || !is_date($due_date_ === null ? null : (string) $due_date_)))	{
 		display_error(_("The entered invoice due date is invalid."));
 		set_focus('due_date');
 		return false;
@@ -373,25 +391,28 @@ if (isset($_POST['process_invoice']) && check_data()) {
 		processing_end();
 
 		if ($newinvoice) {
-			meta_forward($_SERVER['PHP_SELF'], "AddedID=$invoice_no");
+			meta_forward($_SERVER['PHP_SELF'] ?? '', "AddedID=$invoice_no");
 		} else {
-			meta_forward($_SERVER['PHP_SELF'], "UpdatedID=$invoice_no");
+			meta_forward($_SERVER['PHP_SELF'] ?? '', "UpdatedID=$invoice_no");
 		}
-	}	
+	}
 }
 
 if(list_updated('payment')) {
-	$order = &$_SESSION['Items'];
+	$order = session_obj('Items');
 	copy_to_cart();
-	$order->payment = get_post('payment');
-	$order->payment_terms = get_payment_terms($order->payment);
+	$order->payment = post_scalar('payment');
+	$order->payment_terms = (array) get_payment_terms($order->payment);
 	$_POST['due_date'] = $order->due_date = get_invoice_duedate($order->payment, $order->document_date);
 	$_POST['Comments'] = '';
 	ajax()->activate('due_date');
 	ajax()->activate('options');
 	if ((bool)$order->payment_terms['cash_sale']) {
-		$_POST['Location'] = $order->Location = $order->pos['pos_location'];
-		$order->location_name = $order->pos['location_name'];
+		$pos = $order->pos;
+		if ($pos) {
+			$_POST['Location'] = $order->Location = $pos['pos_location'];
+			$order->location_name = $pos['location_name'];
+		}
 	}
 }
 
@@ -418,7 +439,8 @@ $dspans[] = $spanlen;
 
 //-----------------------------------------------------------------------------
 
-$is_batch_invoice = count(session_obj('Items')->src_docs) > 1;
+$src_docs = session_obj('Items')->src_docs;
+$is_batch_invoice = (is_array($src_docs) ? count($src_docs) : 1) > 1;
 $prepaid = session_obj('Items')->is_prepaid();
 
 $is_edition = session_obj('Items')->trans_type == ST_SALESINVOICE && session_obj('Items')->trans_no != 0;
@@ -434,9 +456,10 @@ if ($dim > 0)
 	$colspan = 3;
 label_cells(_("Customer"), session_obj('Items')->customer_name, "class='tableheader2'");
 label_cells(_("Branch"), get_branch_name(session_obj('Items')->Branch), "class='tableheader2'");
-if (((bool)session_obj('Items')->pos['credit_sale'] || (bool)session_obj('Items')->pos['cash_sale'])) {
-	$paymcat = !(bool)session_obj('Items')->pos['cash_sale'] ? PM_CREDIT :
-		(!(bool)session_obj('Items')->pos['credit_sale'] ? PM_CASH : PM_ANY);
+$items_pos = session_obj('Items')->pos;
+if ($items_pos && ((bool)$items_pos['credit_sale'] || (bool)$items_pos['cash_sale'])) {
+	$paymcat = !(bool)$items_pos['cash_sale'] ? PM_CREDIT :
+		(!(bool)$items_pos['credit_sale'] ? PM_CASH : PM_ANY);
 	label_cells(_("Payment terms:"), sale_payment_list('payment', $paymcat),
 		"class='tableheader2'", "colspan=$colspan");
 } else
@@ -477,19 +500,21 @@ if ($prepaid)
 	$shipper = row_or_empty(get_shipper(session_obj('Items')->ship_via));
 	label_cells(null, $shipper['shipper_name']);
 } else
-	shippers_list_cells(null, 'ship_via', $_POST['ship_via']);
+	shippers_list_cells(null, 'ship_via', post_scalar('ship_via'));
 
-if (!isset($_POST['InvoiceDate']) || !is_date(post_scalar('InvoiceDate'))) {
+$invoice_date_ = post_scalar('InvoiceDate');
+if (!isset($_POST['InvoiceDate']) || !is_date($invoice_date_ === null ? null : (string) $invoice_date_)) {
 	$_POST['InvoiceDate'] = new_doc_date();
 	if (!(bool)is_date_in_fiscalyear(post_scalar('InvoiceDate'))) {
 		$_POST['InvoiceDate'] = end_fiscalyear();
 	}
 }
 
-date_cells(_("Date"), 'InvoiceDate', '', session_obj('Items')->trans_no == 0, 
+date_cells(_("Date"), 'InvoiceDate', '', session_obj('Items')->trans_no == 0,
 	0, 0, 0, "class='tableheader2'", true);
 
-if (!isset($_POST['due_date']) || !is_date(post_scalar('due_date'))) {
+$due_date_2 = post_scalar('due_date');
+if (!isset($_POST['due_date']) || !is_date($due_date_2 === null ? null : (string) $due_date_2)) {
 	$_POST['due_date'] = get_invoice_duedate(session_obj('Items')->payment, post_scalar('InvoiceDate'));
 }
 
@@ -581,8 +606,8 @@ foreach (session_obj('Items')->line_items as $line=>$ln_itm) {
 			$dn_line_cnt = $dspans[0];
 			$dspans = array_slice($dspans, 1);
 			label_cell($ln_itm->src_no, "rowspan=$dn_line_cnt class='oddrow'");
-			label_cell("<a href='" . $_SERVER['PHP_SELF'] . "?RemoveDN=".
-				$ln_itm->src_no."'>" . _("Remove") . "</a>", "rowspan=$dn_line_cnt class='oddrow'");
+			label_cell("<a href='" . ($_SERVER['PHP_SELF'] ?? '') . "?RemoveDN=".
+				(string) $ln_itm->src_no."'>" . _("Remove") . "</a>", "rowspan=$dn_line_cnt class='oddrow'");
 		}
 		$dn_line_cnt--;
 	}
@@ -607,8 +632,10 @@ if (!isset($_POST['ChargeFreightCost']) || $_POST['ChargeFreightCost'] == "") {
 }
 
 $accumulate_shipping = get_company_pref('accumulate_shipping');
-if ($is_batch_invoice && $accumulate_shipping)
-	set_delivery_shipping_sum(array_keys(session_obj('Items')->src_docs));
+if ($is_batch_invoice && $accumulate_shipping) {
+	$items_src_docs = session_obj('Items')->src_docs;
+	set_delivery_shipping_sum(is_array($items_src_docs) ? array_keys($items_src_docs) : array());
+}
 
 $colspan = $prepaid ? 7:9;
 start_row();
@@ -628,8 +655,8 @@ $display_sub_total = price_format((float)$inv_items_total + (float)input_num('Ch
 
 label_row(_("Sub-total"), $display_sub_total, "colspan=$colspan align=right","align=right", $is_batch_invoice ? 2 : 0);
 
-$taxes = session_obj('Items')->get_taxes(input_num('ChargeFreightCost'));
-$tax_total = display_edit_tax_items($taxes, $colspan, session_obj('Items')->tax_included, $is_batch_invoice ? 2 : 0);
+$taxes = session_obj('Items')->get_taxes((float) input_num('ChargeFreightCost'));
+$tax_total = (float) display_edit_tax_items($taxes, $colspan, session_obj('Items')->tax_included, $is_batch_invoice ? 2 : 0);
 
 $display_total = price_format(((float)$inv_items_total + (float)input_num('ChargeFreightCost') + $tax_total));
 
@@ -642,21 +669,21 @@ start_table(TABLESTYLE2);
 if ($prepaid)
 {
 
-	label_row(_("Sales order:"), get_trans_view_str(ST_SALESORDER, session_obj('Items')->order_no, get_reference(ST_SALESORDER, session_obj('Items')->order_no)));
+	label_row(_("Sales order:"), get_trans_view_str((string) ST_SALESORDER, (string) session_obj('Items')->order_no, get_reference(ST_SALESORDER, session_obj('Items')->order_no)));
 
-	$list = array(); $allocs = 0;
+	$list = array(); $allocs = 0.0;
 	if (count(session_obj('Items')->prepayments))
 	{
 		foreach(session_obj('Items')->prepayments as $pmt)
 		{
-			$list[] = get_trans_view_str($pmt['trans_type_from'], $pmt['trans_no_from'], get_reference($pmt['trans_type_from'], $pmt['trans_no_from']));
-			$allocs += $pmt['amt'];
+			$list[] = get_trans_view_str((string) $pmt['trans_type_from'], (string) $pmt['trans_no_from'], get_reference((string) $pmt['trans_type_from'], (string) $pmt['trans_no_from']));
+			$allocs += (float) $pmt['amt'];
 		}
 	}
 	label_row(_("Payments received:"), implode(',', $list));
 	label_row(_("Invoiced here:"), price_format(session_obj('Items')->prep_amount), 'class=label');
 	label_row(session_obj('Items')->payment_terms['days_before_due'] == -1 ? _("Left to be invoiced:") : _("Invoiced so far:"),
-		price_format(session_obj('Items')->get_trans_total()-max(session_obj('Items')->prep_amount, $allocs)), 'class=label');
+		price_format(session_obj('Items')->get_trans_total()-max((float)session_obj('Items')->prep_amount, $allocs)), 'class=label');
 }
 
 textarea_row(_("Memo:"), 'Comments', null, 50, 4);
