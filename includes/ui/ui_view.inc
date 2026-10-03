@@ -542,7 +542,7 @@ function display_edit_tax_items(array $taxes, ?int $columns, string|int|float|bo
 
 //--------------------------------------------------------------------------------------
 
-function display_footer_exit(string|int|float|bool|null $space=2): void
+function display_footer_exit(string|int|float|bool|null $space=2): never
 {
 	if ((bool)$space)
 		br($space);
