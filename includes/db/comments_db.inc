@@ -29,7 +29,8 @@ function add_comments(string|int|float|bool|null $type, string|int|float|bool|nu
 {
 	if ($memo_ != null && $memo_ != "")
 	{
-    	$date = date2sql($date_);
+    	$safe_date = is_array($date_) ? null : $date_;
+    	$date = date2sql($safe_date === null ? null : (string) $safe_date);
     	$sql = "INSERT INTO ".TB_PREF."comments (type, id, date_, memo_)
     		VALUES (".db_escape($type).", ".db_escape($type_no)
 			.", '$date', ".db_escape($memo_).")";
