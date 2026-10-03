@@ -27,6 +27,7 @@ if ((bool) user_use_date_picker())
 page(_($help_context = "Closing GL Transactions"), false, false, "", $js);
 
 //---------------------------------------------------------------------------------------------
+#[\NoDiscard]
 function check_data(): bool
 {
 	

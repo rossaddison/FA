@@ -234,6 +234,7 @@ function handle_cancel_po(): void
 
 //---------------------------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function check_data(): bool
 {
 	if(!(bool)get_post('stock_id_text', true)) {
@@ -343,6 +344,7 @@ function handle_add_new_item(): void
 
 //---------------------------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function can_commit(): bool
 {
 	if (!get_post('supplier_id')) 

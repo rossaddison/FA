@@ -32,6 +32,7 @@ $selected_id = (int) $selected_id;
 	FIXME: tb_pref_counter should track prefix per database.
 */
 //---------------------------------------------------------------------------------------------
+#[\NoDiscard]
 function check_data(string|int|float|bool|array|null $selected_id): bool
 {
 	global $db_connections, $tb_pref_counter;

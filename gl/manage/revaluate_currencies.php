@@ -40,6 +40,7 @@ if (isset($_GET['BA']))
 
 
 //---------------------------------------------------------------------------------------------
+#[\NoDiscard]
 function check_data(): bool
 {
 	if (!is_date(post_scalar('date')))

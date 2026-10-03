@@ -28,6 +28,7 @@ page(_($help_context = "Exchange Rates"), false, false, "", $js);
 simple_page_mode(false);
 
 //---------------------------------------------------------------------------------------------
+#[\NoDiscard]
 function check_data(string|int|float|bool|array|null $selected_id): bool
 {
 	if (!is_date(post_scalar('date_')))

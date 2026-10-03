@@ -129,6 +129,7 @@ function display_languages(): void
 //---------------------------------------------------------------------------------------------
 // Non standard (manually entered) languages support.
 //
+#[\NoDiscard]
 function check_data(): bool
 {
 	global $installed_languages;

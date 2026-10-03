@@ -32,6 +32,7 @@ if ((bool) user_use_date_picker())
 page(_($help_context = "Process Depreciation"), false, false, "", $js);
 
 //---------------------------------------------------------------------------------------------
+#[\NoDiscard]
 function check_data(): bool
 {
   $myrow = row_or_empty(get_item(post_scalar('stock_id')));

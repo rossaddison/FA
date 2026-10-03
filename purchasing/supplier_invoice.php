@@ -175,6 +175,7 @@ if (isset($_POST['AddGLCodeToTrans'])){
 
 //------------------------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function check_data(): bool
 {
 	global $Refs;

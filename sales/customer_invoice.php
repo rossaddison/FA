@@ -307,6 +307,7 @@ function copy_from_cart(): void
 
 //-----------------------------------------------------------------------------
 
+#[\NoDiscard]
 function check_data(): bool
 {
 

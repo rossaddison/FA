@@ -24,6 +24,7 @@ simple_page_mode(false);
 
 //---------------------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function check_data(): bool
 {
 	if (strlen($_POST['Abbreviation']) == 0) 

@@ -29,6 +29,7 @@ page(_($help_context = "Fiscal Years"), false, false, "", $js);
 simple_page_mode(true);
 //---------------------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function check_data(): bool
 {
 	if (!is_date(post_scalar('from_date')) || is_date_in_fiscalyears($_POST['from_date']))

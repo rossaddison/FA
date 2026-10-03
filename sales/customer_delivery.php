@@ -154,6 +154,7 @@ if (isset($_GET['OrderNumber']) && $_GET['OrderNumber'] > 0) {
 
 //-----------------------------------------------------------------------------
 
+#[\NoDiscard]
 function check_data(): bool
 {
 
