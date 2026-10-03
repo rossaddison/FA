@@ -126,23 +126,20 @@ function get_item_code_dflts(string|int|float|bool|null $stock_id)
 function check_item_in_kit(string|int|float|bool|null $old_id, string|null $kit_code, string|null $item_code, bool $recurse=false): int
 {
 	$result = get_item_kit($kit_code);
-	if ($result)
+	while ($myrow = db_fetch($result))
 	{
-		while ($myrow = db_fetch($result))
-		{
-			if ($myrow['id'] == $old_id) 
-				continue;
-				
-			if ($myrow['stock_id'] == $item_code)
-			{
-				return 1;
-			}
+		if ($myrow['id'] == $old_id)
+			continue;
 
-			if ($recurse && $myrow['item_code'] != $myrow['stock_id']
-				&& check_item_in_kit($old_id, $item_code, $myrow['stock_id'], true))
-			{
-				return 1;
-			}
+		if ($myrow['stock_id'] == $item_code)
+		{
+			return 1;
+		}
+
+		if ($recurse && $myrow['item_code'] != $myrow['stock_id']
+			&& check_item_in_kit($old_id, $item_code, $myrow['stock_id'], true))
+		{
+			return 1;
 		}
 	}
 	return 0;

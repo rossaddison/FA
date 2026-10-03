@@ -175,7 +175,7 @@ function get_customer_contacts(?string $customer_id, ?string $action=null): arra
 {
 	$results = array();
 	$res = get_crm_persons('customer', $action, $customer_id);
-	while($res instanceof mysqli_result && ($contact = db_fetch($res)))
+	while($contact = db_fetch($res))
 	{
 		if ($contact['lang'] == 'C') // Fix for improper lang in demo sql files.
 			$contact['lang'] = '';

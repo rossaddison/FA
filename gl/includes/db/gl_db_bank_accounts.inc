@@ -335,7 +335,7 @@ function update_reconciled_values(string|int|float|bool|null $reconcile_id, ?str
 	// save last reconcilation status (date, end balance)
     $sql2 = "UPDATE ".TB_PREF."bank_accounts SET last_reconciled_date='"
 			.date2sql($reconcile_date)."',
-    	    ending_reconcile_balance=".(float)$end_balance."
+    	    ending_reconcile_balance=".(string)(float)$end_balance."
 			WHERE id=".db_escape($bank_account);
 
 	db_query($sql2,"Error updating reconciliation information");

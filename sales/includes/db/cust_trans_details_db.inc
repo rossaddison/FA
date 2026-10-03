@@ -13,6 +13,7 @@ declare(strict_types=1);
 //----------------------------------------------------------------------------------------
 
 /**
+ * @param array<array-key, string|int|float|bool|null>|string|int|float|bool|null $debtor_trans_no
  * @return mysqli_result
  */
 function get_customer_trans_details(string|int|float|bool|null $debtor_trans_type, string|int|float|bool|array|null $debtor_trans_no)
@@ -33,7 +34,7 @@ if (!is_array($debtor_trans_no))
 
 	$tr=array();
 	foreach ($debtor_trans_no as $trans_no)
-		$tr[] = 'debtor_trans_no='.db_escape(is_array($trans_no) ? null : (string) $trans_no);
+		$tr[] = 'debtor_trans_no='.db_escape((string) $trans_no);
 
 	$sql .= implode(' OR ', $tr);
 
