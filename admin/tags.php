@@ -45,7 +45,7 @@ switch ($_POST['type']) {
 		$_SESSION['page_title'] = _($help_context = "Dimension Tags");
 }
 
-page($_SESSION['page_title']);
+page((string) ($_SESSION['page_title'] ?? ''));
 
 simple_page_mode(true);
 
@@ -54,7 +54,7 @@ simple_page_mode(true);
 #[\NoDiscard]
 function can_process(): bool 
 {
-	if (strlen($_POST['name']) == 0) 
+	if (strlen((string) post_scalar('name')) == 0)
 	{
 		display_error( _("The tag name cannot be empty."));
 		set_focus('name');
@@ -69,8 +69,10 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 {
 	if (can_process()) 
 	{
-    	if ($selected_id != -1) 
+    	if ($selected_id != -1)
     	{
+    		/** @var int|string $selected_id */
+    		$selected_id = $selected_id;
     		if( $ret = update_tag($selected_id, post_scalar('name'), post_scalar('description')))
 				display_notification(_('Selected tag settings have been updated'));
     	} 
@@ -154,10 +156,12 @@ start_table(TABLESTYLE2);
 
 if ($selected_id != -1) // We've selected a tag 
 {
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	if ($Mode == 'Edit') {
 		// Editing an existing tag
 		$myrow = row_or_empty(get_tag($selected_id));
-	
+
 		$_POST['name'] = $myrow["name"];
 		$_POST['description'] = $myrow["description"];
 	}

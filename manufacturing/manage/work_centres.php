@@ -30,7 +30,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 	//initialise no input errors assumed initially before we test
 	$input_error = 0;
 
-	if (strlen($_POST['name']) == 0) 
+	if (strlen((string) post_scalar('name')) == 0)
 	{
 		$input_error = 1;
 		display_error(_("The work centre name cannot be empty."));
@@ -40,8 +40,10 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 	if ($input_error != 1) 
 	{
 		
-    	if ($selected_id != -1) 
+    	if ($selected_id != -1)
     	{
+    		/** @var int|string $selected_id */
+    		$selected_id = $selected_id;
     		update_work_centre($selected_id, post_scalar('name'), post_scalar('description'));
 			display_notification(_('Selected work center has been updated'));
     	} 
@@ -59,13 +61,14 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 #[\NoDiscard]
 function can_delete(string|int|float|bool|array|null $selected_id): bool
 {
-	if ((bool)key_in_foreign_table($selected_id, 'bom', 'workcentre_added'))
+	$selected_id_scalar = is_array($selected_id) ? null : $selected_id;
+	if ((bool)key_in_foreign_table($selected_id_scalar, 'bom', 'workcentre_added'))
 	{
 		display_error(_("Cannot delete this work centre because BOMs have been created referring to it."));
 		return false;
 	}
 
-	if ((bool)key_in_foreign_table($selected_id, 'wo_requirements', 'workcentre'))	
+	if ((bool)key_in_foreign_table($selected_id_scalar, 'wo_requirements', 'workcentre'))
 	{
 		display_error(_("Cannot delete this work centre because work order requirements have been created referring to it."));
 		return false;
@@ -127,10 +130,12 @@ start_table(TABLESTYLE2);
 
 if ($selected_id != -1) 
 {
- 	if ($Mode == 'Edit') {
+ 	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
+	if ($Mode == 'Edit') {
 		//editing an existing status code
 		$myrow = row_or_empty(get_work_centre($selected_id));
-		
+
 		$_POST['name']  = $myrow["name"];
 		$_POST['description']  = $myrow["description"];
 	}

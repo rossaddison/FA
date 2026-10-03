@@ -24,7 +24,7 @@ function work_order_produce(string|int|float|bool|null $woid, string|int|float|b
 
 	$product = row_or_empty(get_work_order($woid));
 
-    $date = date2sql($date_);
+    $date = date2sql((string) $date_);
 
     $sql = "INSERT INTO ".TB_PREF."wo_manufacture (workorder_id, reference, quantity, date_)
 		VALUES (".db_escape($woid).", ".db_escape($ref).", ".db_escape($quantity)
@@ -79,13 +79,14 @@ function work_order_produce(string|int|float|bool|null $woid, string|int|float|b
 	    add_gl_trans_std_cost(ST_WORKORDER, $woid, $date_, $product['inventory_account'],
 	   	    0, 0, $memo, $total_cost);
 
-		$unit_cost = $total_cost/((float)((float)$product['units_issued']+$quantity));
+		$quantity_num = (float) $quantity;
+		$unit_cost = $total_cost/((float)$product['units_issued']+$quantity_num);
 
 		// first update material cost
-		update_material_cost($product['stock_id'], (float)$product['units_issued']+$quantity, $unit_cost, $date_);
+		update_material_cost($product['stock_id'], (float)$product['units_issued']+$quantity_num, $unit_cost, $date_);
 
 		add_stock_move(ST_WORKORDER, $product["stock_id"], $woid,
-			$product["loc_code"], $date_, $ref, (float)$product['units_issued']+$quantity, $unit_cost);
+			$product["loc_code"], $date_, $ref, (float)$product['units_issued']+$quantity_num, $unit_cost);
 	}
 
 	if ((bool)$memo)
