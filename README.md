@@ -7,6 +7,8 @@ This branch (`chore/php-8.5-minimum`) is undergoing a file-by-file Psalm static-
 
 See [doc/PSALM_MIGRATION.md](doc/PSALM_MIGRATION.md) for the methodology, the error-category breakdown, and the established idioms/known-noise patterns, and [doc/BUGS_FOUND.md](doc/BUGS_FOUND.md) for the running list of genuine bugs (including a site-wide XSS, several SQL injection fixes, a couple of live crashes, and a broken access-control check) the cleanup has turned up so far.
 
+**Alongside the Psalm cleanup, selected files are also being incrementally extracted into a real PSR-4 `FrontAccounting\` namespace under `src/`** — see [doc/YII3_PSR4_MIGRATION.md](doc/YII3_PSR4_MIGRATION.md) for the pilot criteria (and why most of this codebase's central business objects, e.g. `Cart`/`supp_trans`/`allocation`, are *not* candidates — they're live objects stored directly in `$_SESSION`, and renaming the class they're stored under breaks every in-flight session at deploy time). Two pilots so far: `includes/ui/ui_globals.inc`'s global-selection helpers → `src/Session/GlobalSelections.php`, and `purchasing/includes/supp_trans_class.inc`'s `grn_item`/`gl_codes` line-item classes → `src/Purchasing/GrnItem.php` / `GlCodes.php` (`supp_trans` itself was deliberately left untouched in that file, for the `$_SESSION` reason above).
+
 FrontAccounting ERP is open source, web-based accounting software for small and medium enterprises.
 It supports double entry accounting providing both low level journal entry and user friendly, document based 
 interface for everyday business activity with automatic GL postings generation. This is multicurrency,
