@@ -247,6 +247,22 @@ a stand-in for a boolean) reaching a native, strictly-typed parameter.
 
 ## Live crashes
 
+- **`admin/db/shipping_db.inc` — `add_shipper()` / `update_shipper()`.**
+  Both declared their `$contact` parameter as `array`, but both callers
+  (`admin/shipping_companies.php`) always passed `$_POST['contact']` — a
+  plain string in every normal submission. Under `strict_types=1` this is a
+  fatal `TypeError` on *every* add or update, not a weak-typing edge case:
+  the "Add Shipping Company" and "Update Shipping Company" actions were
+  completely broken. Found while live-testing an unrelated `TaintedHtml`
+  fix (confirmed by actually submitting the form, not just reading the
+  code). `db_escape()` — which both functions pass `$contact` straight
+  into — only accepts scalars, so `array` was never a type this function
+  could have correctly handled anyway. Narrowed both to
+  `string|int|float|bool|null`, matching every sibling parameter, and
+  switched both call sites from raw `$_POST['contact']` to
+  `post_scalar('contact')` for consistency with the other fields on the
+  same form.
+
 - **`inventory/includes/inventory_db.inc` — `item_img_name()`.** Parameter
   type included `array`, but the function's first operation, `strtr()`,
   cannot accept an array — passing one would crash immediately with a

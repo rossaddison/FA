@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 //--------------------------------------------------------------------------------------
 
-function add_shipper(string|int|float|bool|null $shipper_name, array $contact, string|int|float|bool|null $phone, string|int|float|bool|null $phone2, string|int|float|bool|null $address): void
+function add_shipper(string|int|float|bool|null $shipper_name, string|int|float|bool|null $contact, string|int|float|bool|null $phone, string|int|float|bool|null $phone2, string|int|float|bool|null $address): void
 {
 	$sql = "INSERT INTO ".TB_PREF."shippers (shipper_name, contact, phone, phone2, address)
 		VALUES (" . db_escape($shipper_name) . ", " .
@@ -27,7 +27,7 @@ function add_shipper(string|int|float|bool|null $shipper_name, array $contact, s
 
 //--------------------------------------------------------------------------------------
 
-function update_shipper(string|int|float|bool|null $selected_id, string|int|float|bool|null $shipper_name, array $contact, string|int|float|bool|null $phone, string|int|float|bool|null $phone2, string|int|float|bool|null $address): void
+function update_shipper(string|int|float|bool|null $selected_id, string|int|float|bool|null $shipper_name, string|int|float|bool|null $contact, string|int|float|bool|null $phone, string|int|float|bool|null $phone2, string|int|float|bool|null $address): void
 {
 	$sql = "UPDATE ".TB_PREF."shippers SET shipper_name=" . db_escape($shipper_name). " ,
 		contact =" . db_escape($contact). " ,

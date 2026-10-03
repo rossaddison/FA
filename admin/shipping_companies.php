@@ -36,7 +36,7 @@ function can_process(): bool
 //----------------------------------------------------------------------------------------------
 if ($Mode=='ADD_ITEM' && can_process()) 
 {
-	add_shipper(post_scalar('shipper_name'), $_POST['contact'], post_scalar('phone'), post_scalar('phone2'), post_scalar('address'));
+	add_shipper(post_scalar('shipper_name'), post_scalar('contact'), post_scalar('phone'), post_scalar('phone2'), post_scalar('address'));
 	display_notification(_('New shipping company has been added'));
 	$Mode = 'RESET';
 }
@@ -45,7 +45,7 @@ if ($Mode=='ADD_ITEM' && can_process())
 
 if ($Mode=='UPDATE_ITEM' && can_process()) 
 {
-	update_shipper($selected_id, post_scalar('shipper_name'), $_POST['contact'], post_scalar('phone'), post_scalar('phone2'), post_scalar('address'));
+	update_shipper($selected_id, post_scalar('shipper_name'), post_scalar('contact'), post_scalar('phone'), post_scalar('phone2'), post_scalar('address'));
 	display_notification(_('Selected shipping company has been updated'));
 	$Mode = 'RESET';
 }
