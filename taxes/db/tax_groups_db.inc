@@ -131,16 +131,25 @@ function get_tax_group_rates(string|int|float|bool|null $group_id=null, bool $ta
 }
 
 /**
- * @return array<string, array<array-key, mixed>>
+ * @return array<string, array{tax_type_id: array-key, tax_type_name?: null|scalar,
+ *     sales_gl_code?: null|scalar, purchasing_gl_code?: null|scalar,
+ *     rate: null|scalar, included_in_price?: null|scalar, Value?: null|scalar,
+ *     Net?: null|scalar, ...<array-key, null|scalar>}>
  */
 function get_tax_group_items_as_array(string|int|float|bool|null $id): array
 {
 	$ret_tax_array = array();
-	
+
 	$tax_group_items = get_tax_group_rates($id);
-	
-	while ($tax_group_item = db_fetch($tax_group_items)) 
+
+	while ($tax_group_item = db_fetch($tax_group_items))
 	{
+		/**
+		 * @var array{tax_type_id: array-key, tax_type_name?: null|scalar,
+		 *     sales_gl_code?: null|scalar, purchasing_gl_code?: null|scalar,
+		 *     rate: null|scalar, included_in_price?: null|scalar, Value?: null|scalar,
+		 *     Net?: null|scalar, ...<array-key, null|scalar>} $tax_group_item
+		 */
 		$tax_group_item['Value'] = 0;
 		$ret_tax_array[(string) $tax_group_item['tax_type_id']] = $tax_group_item;
 

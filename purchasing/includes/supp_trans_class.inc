@@ -106,7 +106,7 @@ final class supp_trans
 	var $currency;
 
 	/**
-	 * @var array
+	 * @var array<array-key, int|float|false>
 	 */
 	var $tax_overrides = array();		// array of taxes manually inserted during sales invoice entry
 
@@ -140,7 +140,7 @@ final class supp_trans
  		$this->grn_items = array();
  		/** @var array<int, GlCodes> */
  		$this->gl_codes = array();
-		if ($trans_no) {
+		if ((bool)$trans_no) {
 			read_supp_invoice(is_array($trans_no) ? null : $trans_no, $trans_type, $this);
 			if ($trans_type == ST_SUPPCREDIT)
 			{
@@ -283,7 +283,7 @@ final class supp_trans
 		if (isset($this->tax_overrides))
 			foreach($this->tax_overrides as $id => $value) // add values entered manually
 			{
-				$taxes[$id]['Override'] = $value;
+				$taxes[$id]['Override'] = (float) $value;
 			}
 
 		// Taxes included in gl_codes table have exact value, but count to overrides as well.
@@ -298,8 +298,12 @@ final class supp_trans
 					$taxes[$index]['Value'] += (float) $gl_code->amount;
 				else {
 					/** @psalm-suppress RedundantConditionGivenDocblockType */
-					if (isset($this->tax_overrides))
-						$taxes[$index]['Override'] = (float) ($taxes[$index]['Override'] ?? 0) - (float) $gl_code->amount;
+					if (isset($this->tax_overrides)) {
+						$tax_entry = $taxes[$index];
+						$prev_override = isset($tax_entry['Override']) ? (float) $tax_entry['Override'] : 0.0;
+						$tax_entry['Override'] = $prev_override - (float) $gl_code->amount;
+						$taxes[$index] = $tax_entry;
+					}
 				}
 			}
 		}
