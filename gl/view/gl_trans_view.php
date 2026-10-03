@@ -55,7 +55,7 @@ function display_gl_heading(array $myrow): void
 	}
     table_header($th);	
     start_row();	
-    label_cell("$trans_name #" . (string)$_GET['trans_no']);
+    label_cell("$trans_name #" . (string)get_scalar('trans_no'));
     label_cell((string) $myrow["reference"], "align='center'");
 	if($myrow['supp_reference'])
 	{
@@ -89,7 +89,7 @@ $result = get_gl_trans(get_scalar('type_id'), get_scalar('trans_no'));
 
 if (db_num_rows($result) == 0)
 {
-    echo "<p><center>" . _("No general ledger transactions have been created for") . " " .$systypes_array[(int) get_scalar('type_id')]." " . _("number") . " " . \Yiisoft\Html\Html::encode((string)$_GET['trans_no']) . "</center></p><br><br>";
+    echo "<p><center>" . _("No general ledger transactions have been created for") . " " .$systypes_array[(int) get_scalar('type_id')]." " . _("number") . " " . \Yiisoft\Html\Html::encode((string)get_scalar('trans_no')) . "</center></p><br><br>";
 	end_page(true);
 	exit;
 }

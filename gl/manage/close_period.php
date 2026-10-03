@@ -31,7 +31,7 @@ page(_($help_context = "Closing GL Transactions"), false, false, "", $js);
 function check_data(): bool
 {
 	
-	if (!is_date(post_scalar('date')) || date1_greater_date2($_POST['date'], Today()))
+	if (!is_date((string) post_scalar('date')) || date1_greater_date2($_POST['date'], Today()))
 	{
 		display_error( _("The entered date is invalid."));
 		set_focus('date');
@@ -65,7 +65,7 @@ function handle_submit(): void
 	if (!check_data())
 		return;
 
-	if (!close_transactions(post_scalar('date')))
+	if (!close_transactions((string) post_scalar('date')))
 	{
 		display_notification(
 			sprintf( _("All transactions resulting in GL accounts changes up to %s has been closed for further edition."),

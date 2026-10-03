@@ -10,7 +10,7 @@ declare(strict_types=1);
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-class setup_app extends application
+final class setup_app extends application
 {
 	function __construct()
 	{

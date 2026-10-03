@@ -35,7 +35,8 @@ br();
   start_table();
 	start_row();
 
-	$log = strtr(file_get_contents(VARLOG_PATH.'/upgrade.'.$company_id.'.log'),
+	$log_contents = file_get_contents(VARLOG_PATH.'/upgrade.'.$company_id.'.log');
+	$log = strtr($log_contents === false ? '' : $log_contents,
 		  array('Fatal error' => 'Fatal  error')); // prevent misinterpretation in output_handler
     label_cells(null, nl2br(html_specials_encode($log)));
 	end_row();

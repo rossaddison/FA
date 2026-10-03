@@ -19,7 +19,8 @@ declare(strict_types=1);
 	include_once("includes/session.inc");
 
 	add_access_extensions();
-	$app = &$_SESSION["App"];
+	/** @var front_accounting $app */
+	$app = $_SESSION["App"];
 	if (isset($_GET['application']))
 		$app->selected_application = $_GET['application'];
 

@@ -58,7 +58,7 @@ function security_header_lines(): array
 		'X-Frame-Options: SAMEORIGIN',
 	);
 	// {nonce} in the policy stands for this request's nonce, e.g. "script-src 'self' {nonce}"
-	$policy = str_replace('{nonce}', "'nonce-" . csp_nonce() . "'", trim((string)sysprefs()->content_security_policy));
+	$policy = str_replace('{nonce}', "'nonce-" . csp_nonce() . "'", trim(sysprefs()->content_security_policy));
 	if ($policy !== '') {
 		$lines[] = ((bool)sysprefs()->csp_report_only ? 'Content-Security-Policy-Report-Only: ' : 'Content-Security-Policy: ') . $policy;
 	}
