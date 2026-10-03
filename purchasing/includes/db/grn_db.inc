@@ -224,7 +224,7 @@ function get_grn_batch(?string $grn)
 }
 
 /**
- * @param grn_item $entered_grn
+ * @param \FrontAccounting\Purchasing\GrnItem $entered_grn
  */
 function set_grn_item_credited(&$entered_grn, string|int|float|bool|null $supplier, int|float|null $transno, string|int|float|bool|null $date, string|int|float|bool|null $taxfree_line): void
 {
