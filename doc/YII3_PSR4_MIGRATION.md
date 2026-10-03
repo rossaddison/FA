@@ -112,13 +112,17 @@ cleanly:
 - `FrontAccounting\Purchasing\GlCodes` replaces `gl_codes` — same treatment.
 - `supp_trans_class.inc` gained `use` imports for both and had its own,
   separate Psalm backlog fixed in the same pass (property-type coercions,
-  float casts through the GL-posting arithmetic, a documented
-  `@psalm-suppress` for two `isset($this->tax_overrides)` checks that are
-  genuinely not redundant at runtime — see the file's own comment for why).
+  float casts through the GL-posting arithmetic, and — in a follow-up pass —
+  `$tax_overrides` made genuinely nullable (`null` assigned instead of
+  `unset()`) so its "cancelled after a cart change" state is honestly
+  reflected in the declared type, replacing two `@psalm-suppress
+  RedundantConditionGivenDocblockType` annotations that had been covering for
+  the mismatch).
 
 Both new classes scan at **0 Psalm errors**; `supp_trans_class.inc` itself
-went from roughly 90 errors to 5, all accepted/inherent noise (see
-[PSALM_MIGRATION.md](PSALM_MIGRATION.md)'s known-noise categories).
+went from roughly 90 errors to 0 (see
+[PSALM_MIGRATION.md](PSALM_MIGRATION.md)'s known-noise categories for the
+general verification approach).
 
 Verified via a standalone Composer-autoload smoke test (`new GrnItem(...)`,
 `new GlCodes(...)` resolved and instantiated with no `dump-autoload` needed,
