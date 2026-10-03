@@ -532,6 +532,22 @@ resolved.
   Fixed by checking `$payments[0]` (the actual allocation row) instead of the
   wrapping array.
 
+- **`admin/db/transactions_db.inc` — `get_sql_for_view_transactions()` checked
+  the wrong table name.** An exclusion step meant to hide stale, voided
+  journal entries from `admin/void_transaction.php`'s and
+  `admin/view_print_transaction.php`'s transaction search compared
+  `$table_name` against `TB_PREF.'gl_trans'` — a value
+  `get_systype_db_info()`'s exhaustive `switch` never actually returns (for
+  `ST_JOURNAL`/`ST_COSTUPDATE` it returns `TB_PREF.'journal'`, a different
+  real table), so the condition could never be true for any transaction
+  type. Psalm's `DocblockTypeContradiction` on a docblock a few lines below
+  caught it. `void_journal_trans()` zeroes `journal.amount` on void/edit —
+  exactly the stale row the original comment describes. Fixed by comparing
+  against `TB_PREF.'journal'` instead; verified live against the real
+  database (see [TRANSACTION_VIEW_FILTER_BUG.md](TRANSACTION_VIEW_FILTER_BUG.md)
+  for the full trace, including why the fix holds across per-company table
+  prefixes).
+
 ## Encoding / output bugs
 
 - **`includes/ui/ui_lists.inc` — mojibake, two distinct causes.**

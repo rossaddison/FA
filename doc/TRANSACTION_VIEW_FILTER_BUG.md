@@ -2,12 +2,13 @@
 
 Found while chasing a Psalm `DocblockTypeContradiction` on
 `admin/db/transactions_db.inc` during the [Psalm cleanup](PSALM_MIGRATION.md)
-of `purchasing/includes/db/suppliers_db.inc`'s neighbourhood. Not fixed yet —
-documented first per standing practice for anything beyond a type
-annotation. See [BUGS_FOUND.md](BUGS_FOUND.md) for the project's running
-list of fixed defects; this one gets its own page because confirming it
-required first understanding how `TB_PREF` actually works, which is reusable
-background for any future table-name-comparison bug in this codebase.
+of `purchasing/includes/db/suppliers_db.inc`'s neighbourhood. Documented
+first, fix applied and verified afterward (commit `ce06569f`) — see
+[BUGS_FOUND.md](BUGS_FOUND.md) for the one-paragraph summary in the
+project's running list of fixed defects; this one gets its own page because
+confirming it required first understanding how `TB_PREF` actually works,
+which is reusable background for any future table-name-comparison bug in
+this codebase.
 
 ## The bug
 
@@ -47,8 +48,8 @@ type. Confirmed the mechanism is live-reachable; this specific dev database
 just hasn't had a journal entry edited yet (2 rows total, neither zeroed),
 so reproducing it visibly needs a deliberate edit-then-search first.
 
-**Fix (not yet applied):** change `TB_PREF.'gl_trans'` to `TB_PREF.'journal'`
-on that one line.
+**Fix (applied, commit `ce06569f`):** changed `TB_PREF.'gl_trans'` to
+`TB_PREF.'journal'` on that one line.
 
 ## Why the fix holds regardless of per-company table prefixes
 
@@ -109,6 +110,12 @@ faithful reflection of how this placeholder mechanism actually works.
   column sets; `0_gl_trans` does not exist.
 - Traced `void_journal_trans()`'s `UPDATE journal SET amount=0` as the
   source of the stale rows the original comment is about.
-- Not yet done: applying the fix, and a live before/after test (create a
-  journal entry, edit it, confirm the stale row appears in
-  `view_print_transaction.php` pre-fix and is excluded post-fix).
+- A full-project `--no-cache` Psalm scan after the fix: both findings at
+  this line are gone, no regressions (7908 total, down from 7910).
+- A live end-to-end test against the real `fa_spike` database: inserted two
+  `journal` rows directly (`trans_no` 9999001, `amount` 0, simulating a
+  voided/stale entry; `trans_no` 9999002, `amount` 555, the current one),
+  logged in as Administrator, and searched
+  `admin/view_print_transaction.php` filtered by the Journal Entry type
+  across that range. Only 9999002 appeared in the results table — 9999001
+  was correctly excluded. Test rows deleted afterward.
