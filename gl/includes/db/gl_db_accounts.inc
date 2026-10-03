@@ -86,7 +86,8 @@ function is_account_balancesheet(string|int|float|bool|null $code): bool
 
 	$result = db_select($sql,"could not retreive the account class for $code");
 	$row = row_or_empty(db_fetch_row($result));
-	return $row[0] > 0 && $row[0] < CL_INCOME;
+	$ctype = $row[0] ?? 0;
+	return $ctype > 0 && $ctype < CL_INCOME;
 }
 
 /**
@@ -339,10 +340,11 @@ function get_chart_accounts_search(string|array|null $like, string|int|float|boo
 	else		
 		$sql = "SELECT chart.account_code, chart.account_name, type.name, chart.inactive, type.id
 			FROM ".TB_PREF."chart_master chart,".TB_PREF."chart_types type WHERE chart.account_type=type.id ";
+	$like_str = is_array($like) ? '' : (string) $like;
 	$sql .= "AND (
-          	chart.account_name LIKE " . db_escape("%" . $like. "%") . " OR
-          	chart.account_code LIKE " . db_escape("%" . $like. "%") . "
-        	) 
-    		ORDER BY chart.account_code LIMIT 0,".(int)($limit); // We only display 10 items.
+          	chart.account_name LIKE " . db_escape("%" . $like_str. "%") . " OR
+          	chart.account_code LIKE " . db_escape("%" . $like_str. "%") . "
+        	)
+    		ORDER BY chart.account_code LIMIT 0,".$limit; // We only display 10 items.
 	return db_select($sql, "Failed in retreiving GL account list.");
 }

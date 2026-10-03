@@ -72,8 +72,10 @@ function delete_wo_requirements(string|int|float|bool|null $woid): void
 */
 function update_wo_requirement_issued(?string $id, string|int|float|bool|null $quantity, ?string $cost): void
 {
-	$sql = "UPDATE ".TB_PREF."wo_requirements SET 
-				unit_cost = (units_issued*unit_cost+".$quantity*$cost.")/(units_issued+".$quantity."),
+	$quantity_num = (float) $quantity;
+	$cost_num = (float) $cost;
+	$sql = "UPDATE ".TB_PREF."wo_requirements SET
+				unit_cost = (units_issued*unit_cost+".(string)($quantity_num*$cost_num).")/(units_issued+".(string)$quantity_num."),
 				units_issued = units_issued + ".db_escape($quantity)."
 			WHERE id = ".db_escape($id);
 
