@@ -92,7 +92,7 @@ function delete_crm_person(string|int|float|bool|null $person, bool $with_contac
 /*
 	Retrieve full contact data from database for selected type/action/entity or person
 */
-function get_crm_persons(string|int|float|bool|null $type=null, string|int|float|bool|null $action=null, mixed $entity=null, string|int|float|bool|null $person=null, string|int|float|bool|null $unique=false)
+function get_crm_persons(string|int|float|bool|null $type=null, string|int|float|bool|null $action=null, mixed $entity=null, string|int|float|bool|null $person=null, string|int|float|bool|null $unique=false): mysqli_result
 {
 	$sql = "SELECT t.*, p.*, r.id as contact_id FROM ".TB_PREF."crm_persons p,"
 		.TB_PREF."crm_categories t, "

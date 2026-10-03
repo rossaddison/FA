@@ -11,11 +11,27 @@ declare(strict_types=1);
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 require_once(dirname(__DIR__, 3) . "/admin/db/attachments_db.inc");
+require_once(dirname(__DIR__, 3) . "/includes/db/connect_db_mysqli.inc");
 
-function add_supplier(string|null $supp_name, string|null $supp_ref, string|null $address, string|null $supp_address, string|null $gst_no,
-	string|null $website, string|null $supp_account_no, string|null $bank_account, int|float|bool|null $credit_limit, string|null $dimension_id, string|null $dimension2_id, 
-	string|null $curr_code, string|null $payment_terms, string|null $payable_account, string|null $purchase_account, string|null $payment_discount_account, 
-	string|null $notes, string|null $tax_group_id, int|null $tax_included): void
+function add_supplier(
+        string|null $supp_name,
+        string|null $supp_ref,
+        string|null $address,
+        string|null $supp_address,
+        string|null $gst_no,
+	string|null $website,
+        string|null $supp_account_no,
+        string|null $bank_account,
+        int|float|bool|null $credit_limit,
+        string|null $dimension_id,
+        string|null $dimension2_id, 
+	string|null $curr_code,
+        string|null $payment_terms,
+        string|null $payable_account,
+        string|null $purchase_account,
+        string|null $payment_discount_account, 
+	string|null $notes,
+        string|null $tax_group_id, int|null $tax_included): void
 {
 	$sql = "INSERT INTO ".TB_PREF."suppliers (supp_name, supp_ref, address, supp_address, gst_no, website,
 		supp_account_no, bank_account, credit_limit, dimension_id, dimension2_id, curr_code,
@@ -29,7 +45,7 @@ function add_supplier(string|null $supp_name, string|null $supp_ref, string|null
 		.db_escape($website). ", "
 		.db_escape($supp_account_no). ", "
 		.db_escape($bank_account). ", "
-		.$credit_limit. ", "
+		.(string) ($credit_limit ?? 0). ", "
 		.db_escape($dimension_id). ", "
 		.db_escape($dimension2_id). ", "
 		.db_escape($curr_code). ", "
@@ -44,10 +60,27 @@ function add_supplier(string|null $supp_name, string|null $supp_ref, string|null
 	db_query($sql,"The supplier could not be added");
 }
 
-function update_supplier(string|null $supplier_id, string|null $supp_name, string|null $supp_ref, string|null $address, string|null $supp_address, string|null $gst_no, 
-	string|null $website, string|null $supp_account_no, string|null $bank_account, int|float|bool|null $credit_limit, string|null $dimension_id, string|null $dimension2_id, 
-	string|null $curr_code, string|null $payment_terms, string|null $payable_account, string|null $purchase_account, string|null $payment_discount_account, 
-	string|null $notes, string|null $tax_group_id, int|null $tax_included): void
+function update_supplier(
+        string|null $supplier_id,
+        string|null $supp_name,
+        string|null $supp_ref,
+        string|null $address,
+        string|null $supp_address,
+        string|null $gst_no, 
+	string|null $website,
+        string|null $supp_account_no,
+        string|null $bank_account,
+        int|float|bool|null $credit_limit,
+        string|null $dimension_id,
+        string|null $dimension2_id, 
+	string|null $curr_code,
+        string|null $payment_terms,
+        string|null $payable_account,
+        string|null $purchase_account,
+        string|null $payment_discount_account, 
+	string|null $notes,
+        string|null $tax_group_id,
+        int|null $tax_included): void
 {
 	$sql = "UPDATE ".TB_PREF."suppliers SET supp_name=".db_escape($supp_name) . ",
 		supp_ref=".db_escape($supp_ref) . ",
@@ -57,7 +90,7 @@ function update_supplier(string|null $supplier_id, string|null $supp_name, strin
 		website=".db_escape($website) . ",
 		supp_account_no=".db_escape($supp_account_no) . ",
 		bank_account=".db_escape($bank_account) . ",
-		credit_limit=".$credit_limit . ",
+		credit_limit=".(string) ($credit_limit ?? 0) . ",
 		dimension_id=".db_escape($dimension_id) . ",
 		dimension2_id=".db_escape($dimension2_id) . ",
 		curr_code=".db_escape($curr_code).",
@@ -87,14 +120,17 @@ function delete_supplier(string|null $supplier_id): void
 /**
  * @return array<array-key, null|string>|false
  */
-function get_supplier_details(string|int|float|bool|array|null $supplier_id, string|null $to=null, string|bool|array|null $all=true)
+function get_supplier_details(
+        string|int|float|bool|array|null $supplier_id,
+        string|null $to=null,
+        string|bool|array|null $all=true)
 {
 
 	if ($to == null)
 		$todate = date("Y-m-d");
 	else
 		$todate = date2sql($to);
-	$past1 = get_company_pref('past_due_days');
+	$past1 = (int) get_company_pref('past_due_days');
 	$past2 = 2 * $past1;
 	// removed - supp_trans.alloc from all summations
 
@@ -123,7 +159,7 @@ function get_supplier_details(string|int|float|bool|array|null $supplier_id, str
 
 		WHERE
 			 supp.payment_terms = ".TB_PREF."payment_terms.terms_indicator
-			 AND supp.supplier_id = ".db_escape($supplier_id)." ";
+			 AND supp.supplier_id = ".db_escape(is_array($supplier_id) ? null : $supplier_id)." ";
 	if (!(bool)$all)
 		$sql .= "AND $value <> 0 ";  
 	$sql .= "GROUP BY
@@ -214,7 +250,7 @@ function get_supplier_currency(string|int|float|bool|null $supplier_id)
 /**
  * @return mysqli_result
  */
-function get_suppliers_search(string|array|null $supplier)
+function get_suppliers_search(string $supplier)
 {
 
 	if (isset(sysprefs()->max_rows_in_search))
@@ -228,7 +264,7 @@ function get_suppliers_search(string|array|null $supplier)
 			supp_ref LIKE " . db_escape("%" . $supplier. "%") . " OR 
 			address LIKE " . db_escape("%" . $supplier. "%") . " OR 
 			gst_no LIKE " . db_escape("%" . $supplier. "%") . ")
-		ORDER BY supp_name LIMIT 0,".(int)($limit);
+		ORDER BY supp_name LIMIT 0,".$limit;
 
 	return db_select($sql, "Failed in retreiving supplier list.");
 }
