@@ -14,6 +14,7 @@ declare(strict_types=1);
 // Mark changes in debtor_trans_details
 //
 /**
+ * @param array<array-key, int|string> $versions
  * @return bool|mysqli_result
  */
 function update_customer_trans_version(?int $type, array $versions) {
@@ -35,6 +36,9 @@ function update_customer_trans_version(?int $type, array $versions) {
 // $trans_no = array(num1, num2,...);
 // returns array(num1=>ver1, num2=>ver2...)
 //
+/**
+ * @param string|int|float|bool|array<array-key, string|int|float|bool|null>|null $trans_no
+ */
 function get_customer_trans_version(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no): array {
 	if (!is_array($trans_no))
 		$trans_no = array( $trans_no );
@@ -44,7 +48,7 @@ function get_customer_trans_version(string|int|float|bool|null $type, string|int
 
 	$where = array();
 	foreach ($trans_no as $key=>$trans)
-		$where[$key] = 	'trans_no='.db_escape(is_array($trans) ? null : (string) $trans);
+		$where[$key] = 	'trans_no='.db_escape($trans);
 
 	$sql .= implode(' OR ', $where) . ')';
 

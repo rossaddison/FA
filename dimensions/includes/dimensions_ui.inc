@@ -32,14 +32,15 @@ function display_dimension_balance(string|int|float|bool|null $id, string|int|fl
 		$th = array(_("Account"), _("Debit"), _("Credit"));
 		table_header($th);
 
-        $total = $k = 0;
+        $total = 0.0;
+        $k = 0;
         while ($myrow = db_fetch($result))
         {
 			alt_table_row_color($k);
 
 			label_cell((string)$myrow["account"]." ".(string)$myrow['account_name']);
 			display_debit_or_credit_cells($myrow["amt"]);
-			$total += $myrow["amt"];
+			$total += (float) $myrow["amt"];
 			end_row();
 		}
 		start_row();

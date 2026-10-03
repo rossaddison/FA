@@ -36,7 +36,7 @@ start_table(TABLESTYLE_NOBORDER);
 stock_manufactured_items_list_row(_("Select a manufacturable item:"), 'stock_id', null, false, true);
 end_table();
 br();
-display_heading(_("All Costs Are In:") . " " . get_company_currency());
+display_heading(_("All Costs Are In:") . " " . (string) get_company_currency());
 display_bom(post_scalar('stock_id'));
 
 end_form();
