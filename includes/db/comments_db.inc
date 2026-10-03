@@ -50,7 +50,7 @@ function update_comments(string|int|float|bool|null $type, string|int|float|bool
 	}
 	else
 	{
-		$date = date2sql($date_);
+		$date = date2sql((string) $date_);
     	$sql = "UPDATE ".TB_PREF."comments SET memo_=".db_escape($memo_)
 			." WHERE type=".db_escape($type)." AND id=".db_escape($id)
 			." AND date_='$date'";

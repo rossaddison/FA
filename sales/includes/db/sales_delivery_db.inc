@@ -47,11 +47,11 @@ function write_sales_delivery(Cart &$delivery,string|int|float|bool|null $bo_pol
 	$delivery_no = write_customer_trans(ST_CUSTDELIVERY, $trans_no, $delivery->customer_id,
 		$delivery->Branch, $delivery->document_date, $delivery->reference,
 		$delivery_items_total, 0,
-		$delivery->tax_included ? 0 : $tax_total-$freight_tax,
+		(bool) $delivery->tax_included ? 0 : $tax_total-$freight_tax,
 		$delivery->freight_cost,
-		$delivery->tax_included ? 0 : $freight_tax,
+		(bool) $delivery->tax_included ? 0 : $freight_tax,
 		$delivery->sales_type, $delivery->order_no,
-		$delivery->ship_via, $delivery->due_date, 0, 0, $delivery->dimension_id, 
+		$delivery->ship_via, $delivery->due_date, 0, 0, $delivery->dimension_id,
 		$delivery->dimension2_id, $delivery->payment, $delivery->tax_included, $delivery->prep_amount);
 
 	if ($trans_no == 0) {
@@ -68,7 +68,7 @@ function write_sales_delivery(Cart &$delivery,string|int|float|bool|null $bo_pol
 	// for prepaid delivery repost income from deffered account
 	$branch_data = array();
 	$total = 0.0;
-	if ($delivery->is_prepaid())
+	if ((bool) $delivery->is_prepaid())
 	{
 		$branch_data = row_or_empty(get_branch_accounts($delivery->Branch));
 	}
@@ -126,7 +126,7 @@ function write_sales_delivery(Cart &$delivery,string|int|float|bool|null $bo_pol
 				($customer['dimension_id'] != 0 ? $customer["dimension_id"] : $stock_gl_code["dimension_id"]));
 			$dim2 = ($delivery->dimension2_id != $customer['dimension2_id'] ? $delivery->dimension2_id : 
 				($customer['dimension2_id'] != 0 ? $customer["dimension2_id"] : $stock_gl_code["dimension2_id"]));
-			if ($delivery->is_prepaid())
+			if ((bool) $delivery->is_prepaid())
 			{
 				$sales_account = (string) ($branch_data['sales_account'] != "" ? $branch_data['sales_account'] : $stock_gl_code['sales_account']);
 
@@ -181,7 +181,7 @@ function write_sales_delivery(Cart &$delivery,string|int|float|bool|null $bo_pol
 		} /*quantity dispatched is more than 0 */
 	} /*end of order_line loop */
 
-	if ($delivery->is_prepaid())
+	if ((bool) $delivery->is_prepaid())
 	{
 		$deferred_act = get_company_pref('deferred_income_act');
 		add_gl_trans(ST_CUSTDELIVERY, $delivery_no, $delivery->document_date, $deferred_act, 0, 0, 

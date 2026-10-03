@@ -270,9 +270,10 @@ function copy_to_cart(): void
 		$cart->payment = post_scalar('payment');
 		$cart->payment_terms = (array) get_payment_terms(post_scalar('payment'));
 	}
-	if (session_obj('Items')->trans_no == 0)
+	if (session_obj('Items')->trans_no == 0) {
 		$cart->reference = (string) post_scalar('ref');
-	if (!$cart->is_prepaid())
+        }
+	if (!((bool) $cart->is_prepaid()))
 	{
 		$cart->ship_via = post_scalar('ship_via');
 		$cart->freight_cost = (float) input_num('ChargeFreightCost');
@@ -296,7 +297,7 @@ function copy_from_cart(): void
 	$_POST['cart_id'] = $cart->cart_id;
 	$_POST['due_date'] = $cart->due_date;
  	$_POST['payment'] = $cart->payment;
-	if (!session_obj('Items')->is_prepaid())
+	if (!((bool) session_obj('Items')->is_prepaid()))
 	{
 		$_POST['ship_via'] = $cart->ship_via;
 		$_POST['ChargeFreightCost'] = price_format($cart->freight_cost);
@@ -311,7 +312,7 @@ function copy_from_cart(): void
 function check_data(): bool
 {
 
-	$prepaid = session_obj('Items')->is_prepaid();
+	$prepaid = (bool) session_obj('Items')->is_prepaid();
 
 	$invoice_date = post_scalar('InvoiceDate');
 	if (!isset($_POST['InvoiceDate']) || !is_date($invoice_date === null ? null : (string) $invoice_date)) {

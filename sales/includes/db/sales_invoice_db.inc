@@ -43,7 +43,7 @@ function write_sales_invoice(&$invoice)
 	$items_total = $invoice->get_items_total_dispatch();
 	$freight_tax = $invoice->get_shipping_tax();
 
-	if (!$invoice->is_prepaid())
+	if (!((bool) $invoice->is_prepaid()))
 		update_customer_trans_version(get_parent_type(ST_SALESINVOICE), is_array($invoice->src_docs) ? $invoice->src_docs : array());
     elseif (count($invoice->prepayments)) {	// partial invoice
 		$last_payment = end($invoice->prepayments);
@@ -82,7 +82,7 @@ function write_sales_invoice(&$invoice)
 	} else
 		$allocs = get_payments_for($invoice->order_no, ST_SALESORDER, $invoice->customer_id);
 
-	if ($invoice->is_prepaid()) // selected prepayment is already in cart
+	if ((bool) $invoice->is_prepaid()) // selected prepayment is already in cart
 	{
 		$allocs = $invoice->prepayments;
 		// values posted are reduced by prepaid_factor
@@ -105,7 +105,7 @@ function write_sales_invoice(&$invoice)
 
 	$total = 0.0;
 	// for prepayments use deferred income account if set
-	$sales_account = $invoice->is_prepaid() ? get_company_pref('deferred_income_act') : 0;
+	$sales_account = ((bool) $invoice->is_prepaid() ? get_company_pref('deferred_income_act') : 0);
 
 	/**
 	 * @var array<array-key, array{Net?: null|scalar, Value?: null|scalar,
@@ -133,8 +133,10 @@ function write_sales_invoice(&$invoice)
 		// Update delivery items for the quantity invoiced
 		if ($invoice_line->qty_old != $invoice_line->qty_dispatched)
 		{
-			if ($invoice->is_prepaid())
-				update_prepaid_so_line($invoice_line->src_id, (float)$invoice_line->qty_dispatched-(float)$invoice_line->qty_old);
+			if ((bool) $invoice->is_prepaid()) {
+                            update_prepaid_so_line(
+                                $invoice_line->src_id,
+                                (float) $invoice_line->qty_dispatched-(float)$invoice_line->qty_old); }
 			else
 				update_parent_line(ST_SALESINVOICE, $invoice_line->src_id, ((float)$invoice_line->qty_dispatched-(float)$invoice_line->qty_old));
 		}
@@ -146,7 +148,7 @@ function write_sales_invoice(&$invoice)
 
 				// If there is a Branch Sales Account, then override with this,
 				// else take the Item Sales Account
-				if (!$invoice->is_prepaid())
+				if (!((bool) $invoice->is_prepaid()))
 					$sales_account = ($branch_data['sales_account'] != "" ? $branch_data['sales_account'] : $stock_gl_code['sales_account']);
 				// If there is a Customer Dimension, then override with this,
 				// else take the Item Dimension (if any)
@@ -186,11 +188,11 @@ function write_sales_invoice(&$invoice)
 		if ($taxitem['Net'] != 0) {
 			$ex_rate = get_exchange_rate_from_home_currency(get_customer_currency($invoice->customer_id), $date_);
 			add_trans_tax_details(ST_SALESINVOICE, $invoice_no, $taxitem['tax_type_id'],
-				$taxitem['rate'], $invoice->tax_included, $prepaid_factor*(float)$taxitem['Value'],
+				$taxitem['rate'], $invoice->tax_included, $prepaid_factor*$taxitem['Value'],
 				 $taxitem['Net'], $ex_rate, $date_, $invoice->reference, TR_OUTPUT);
 			if (isset($taxitem['sales_gl_code']) && !empty($taxitem['sales_gl_code']) && $taxitem['Value'] != 0)
 				$total += add_gl_trans_customer(ST_SALESINVOICE, $invoice_no, $date_, $taxitem['sales_gl_code'], $invoice->dimension_id, $invoice->dimension2_id,
-					(-(float)$taxitem['Value'])*$prepaid_factor, $invoice->customer_id,
+					(-$taxitem['Value'])*$prepaid_factor, $invoice->customer_id,
 					"A tax GL posting could not be inserted");
 		}
 	}
