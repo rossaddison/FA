@@ -15,7 +15,7 @@ declare(strict_types=1);
 function add_supp_allocation(string|int|float|bool|null $amount, string|int|float|bool|null $trans_type_from, string|int|float|bool|null $trans_no_from,
 	string|int|float|bool|null $trans_type_to, string|int|float|bool|null $trans_no_to, string|int|float|bool|null $person_id, string|int|float|bool|null $date_): void
 {
-	$date = date2sql($date_);
+	$date = date2sql($date_ === null ? null : (string) $date_);
 	$sql = "INSERT INTO ".TB_PREF."supp_allocations (
 		amt, date_alloc,
 		trans_type_from, trans_no_from, trans_no_to, trans_type_to, person_id)
@@ -274,8 +274,10 @@ function get_allocatable_from_supp_transactions(string|int|float|bool|null $supp
 
 function get_sql_for_supplier_allocation_inquiry(): string
 {
- 	$date_after = date2sql(post_scalar('TransAfterDate'));
- 	$date_to = date2sql(post_scalar('TransToDate'));
+ 	$trans_after_date = post_scalar('TransAfterDate');
+ 	$date_after = date2sql($trans_after_date === null ? null : (string) $trans_after_date);
+ 	$trans_to_date = post_scalar('TransToDate');
+ 	$date_to = date2sql($trans_to_date === null ? null : (string) $trans_to_date);
 
     $sql = "SELECT 
 		trans.type, 
