@@ -25,6 +25,7 @@ simple_page_mode(true);
 $selected_id = $selected_id;
 //-----------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function can_process(): bool
 {
 	global $selected_id;
@@ -78,6 +79,7 @@ if ($Mode=='UPDATE_ITEM' && can_process())
 
 //-----------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function can_delete(int|string $selected_id): bool
 {
 	if ((bool)key_in_foreign_table($selected_id, 'tax_group_items', 'tax_type_id'))

@@ -24,6 +24,7 @@ include(dirname(__DIR__, 2) . "/includes/ui.inc");
 simple_page_mode(true);
 //-----------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function can_process(): bool
 {
 
@@ -58,6 +59,7 @@ if ($Mode=='UPDATE_ITEM' && can_process())
 
 //-----------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function can_delete(string|int|float|bool|array|null $selected_id): bool
 {
 	if ((bool)key_in_foreign_table(is_array($selected_id) ? null : (string) $selected_id, 'debtors_master', 'credit_status'))

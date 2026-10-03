@@ -43,6 +43,7 @@ else
 
 //------------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function can_process(array $myrow): bool
 {
 	if ($myrow['released'])

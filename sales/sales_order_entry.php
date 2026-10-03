@@ -414,6 +414,7 @@ function line_start_focus(): void {
 }
 
 //--------------------------------------------------------------------------------
+#[\NoDiscard]
 function can_process(): bool {
 
 

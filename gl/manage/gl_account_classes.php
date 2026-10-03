@@ -24,6 +24,7 @@ include(dirname(__DIR__, 2) . "/includes/ui.inc");
 simple_page_mode(false);
 //-----------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function can_process(): bool 
 {
 
@@ -69,6 +70,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 //-----------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function can_delete(string|int|float|bool|array|null $selected_id): bool
 {
 	if ($selected_id == "")

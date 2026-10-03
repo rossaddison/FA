@@ -25,6 +25,7 @@ include_once(dirname(__DIR__) . "/admin/db/users_db.inc");
 simple_page_mode(true);
 //-------------------------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function can_process(string|int|float|bool|array|null $new): bool 
 {
 

@@ -22,6 +22,7 @@ include_once(dirname(__DIR__) . "/includes/ui.inc");
 
 include_once(dirname(__DIR__) . "/admin/db/users_db.inc");
 
+#[\NoDiscard]
 function can_process(): bool
 {
 

@@ -95,6 +95,7 @@ function handle_new_order(): void
 
 //-----------------------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function can_process(): bool
 {
 

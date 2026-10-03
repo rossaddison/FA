@@ -69,6 +69,7 @@ if ($wo_details === false)
 
 //--------------------------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function can_process(array $wo_details): bool
 {
 

@@ -70,6 +70,7 @@ function handle_new_order(): void
 }
 
 //-----------------------------------------------------------------------------------------------
+#[\NoDiscard]
 function can_process(): bool
 {
 	if (!is_date(post_scalar('date_')))

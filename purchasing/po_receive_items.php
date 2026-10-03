@@ -164,6 +164,7 @@ function check_po_changed(): bool
 
 //--------------------------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function can_process(): bool
 {
 	

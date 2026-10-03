@@ -137,6 +137,7 @@ function handle_new_credit(string|int|array|null $trans_no): void
 
 //-----------------------------------------------------------------------------
 
+#[\NoDiscard]
 function can_process(): bool
 {
 

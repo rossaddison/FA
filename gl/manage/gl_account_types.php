@@ -27,6 +27,7 @@ if (isset($_GET["cid"]))
 simple_page_mode(false);
 //-----------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function can_process(string|int|float|bool|array|null $selected_id): bool 
 {
 	if (strlen(trim($_POST['id'])) == 0) 
@@ -83,6 +84,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 //-----------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function can_delete(string|int|float|bool|null $type): bool
 {
 	if ($type == "")

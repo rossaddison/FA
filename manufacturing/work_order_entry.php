@@ -122,6 +122,7 @@ if (!isset($_POST['date_']))
 		$_POST['date_'] = end_fiscalyear();
 }
 
+#[\NoDiscard]
 function can_process(): bool
 {
 	global $selected_id;

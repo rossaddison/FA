@@ -37,6 +37,7 @@ if (isset($_GET['supplier_id']))
 
 $supplier_id = get_post('supplier_id', ''); 
 
+#[\NoDiscard]
 function can_process(): bool
 {
 	/* actions to take once the user has clicked the submit button

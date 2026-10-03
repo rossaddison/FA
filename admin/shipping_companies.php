@@ -21,6 +21,7 @@ include(dirname(__DIR__) . "/admin/db/shipping_db.inc");
 simple_page_mode(true);
 //----------------------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function can_process(): bool 
 {
 	if (strlen($_POST['shipper_name']) == 0) 

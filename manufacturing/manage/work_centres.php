@@ -56,6 +56,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 //-----------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function can_delete(string|int|float|bool|array|null $selected_id): bool
 {
 	if ((bool)key_in_foreign_table($selected_id, 'bom', 'workcentre_added'))

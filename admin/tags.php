@@ -51,6 +51,7 @@ simple_page_mode(true);
 
 //-----------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function can_process(): bool 
 {
 	if (strlen($_POST['name']) == 0) 
@@ -84,6 +85,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 //-----------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function can_delete(string|int|float|bool|null $selected_id): bool
 {
 	if ($selected_id == -1)

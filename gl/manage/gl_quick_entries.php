@@ -67,6 +67,7 @@ function submit_add_or_update_center2(bool $add=true, string|bool|null $title=fa
 
 //-----------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function can_process(): bool 
 {
 

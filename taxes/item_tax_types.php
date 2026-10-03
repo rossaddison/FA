@@ -74,6 +74,7 @@ if (($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') && (is_string($_POST['name'])))
 
 //-----------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function can_delete(int|string $selected_id): bool
 {
 	if ((bool)key_in_foreign_table($selected_id, 'stock_master', 'tax_type_id'))

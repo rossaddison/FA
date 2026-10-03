@@ -29,6 +29,7 @@ include_once(dirname(__DIR__) . "/admin/db/company_db.inc");
 
 //-------------------------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function can_process(): bool
 {
     if (!check_num('past_due_days', 0, 100))

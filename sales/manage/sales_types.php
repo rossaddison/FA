@@ -25,6 +25,7 @@ simple_page_mode(true);
 $selected_id = $selected_id;
 //----------------------------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function can_process(): bool
 {
 	

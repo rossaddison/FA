@@ -38,6 +38,7 @@ if (isset($_GET['debtor_no']))
 $selected_id = get_post('customer_id','');
 //--------------------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function can_process(): bool
 {
 	$custName = get_post('CustName');

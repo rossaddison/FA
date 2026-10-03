@@ -116,6 +116,7 @@ if (isset($_POST['add']) || isset($_POST['update']))
 
 //-------------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function can_delete(string|int|float|bool|null $selected_account): bool
 {
 	if ($selected_account == "")

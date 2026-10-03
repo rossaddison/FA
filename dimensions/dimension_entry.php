@@ -105,6 +105,7 @@ function safe_exit(): void
 
 //-------------------------------------------------------------------------------------
 
+#[\NoDiscard]
 function can_process(): bool
 {
 	global $selected_id;
