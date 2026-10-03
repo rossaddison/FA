@@ -40,28 +40,32 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 	ie the page has called itself with some user input */
 
 	//first off validate inputs sensible
-	$_POST['loc_code'] = strtoupper($_POST['loc_code']);
+	$_POST['loc_code'] = strtoupper((string) post_scalar('loc_code'));
 
 	if ((strlen(db_escape(post_scalar('loc_code'))) > 7) || empty($_POST['loc_code'])) //check length after conversion
 	{
 		$input_error = 1;
 		display_error( _("The location code must be five characters or less long (including converted special chars)."));
 		set_focus('loc_code');
-	} 
-	elseif (strlen($_POST['location_name']) == 0) 
+	}
+	elseif (strlen((string) post_scalar('location_name')) == 0)
 	{
 		$input_error = 1;
 		display_error( _("The location name must be entered."));		
 		set_focus('location_name');
 	}
 
-	if ($input_error != 1) 
+	if ($input_error != 1)
 	{
-    	if ($selected_id != -1) 
+		/** @var int|string $selected_id */
+		$selected_id = $selected_id;
+		$fixed_asset_value = check_value('fixed_asset');
+		$fixed_asset_value = is_array($fixed_asset_value) ? 0 : $fixed_asset_value;
+    	if ($selected_id != -1)
     	{
     
     		update_item_location($selected_id, post_scalar('location_name'), post_scalar('delivery_address'),
-				post_scalar('phone'), post_scalar('phone2'), post_scalar('fax'), post_scalar('email'), $_POST['contact'], check_value('fixed_asset'));
+				post_scalar('phone'), post_scalar('phone2'), post_scalar('fax'), post_scalar('email'), post_scalar('contact'), $fixed_asset_value);
 			display_notification(_('Selected location has been updated'));
     	} 
     	else 
@@ -69,8 +73,8 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
     
     	/*selected_id is null cos no item selected on first time round so must be adding a	record must be submitting new entries in the new Location form */
     	
-    		add_item_location(post_scalar('loc_code'), post_scalar('location_name'), post_scalar('delivery_address'), 
-				post_scalar('phone'), post_scalar('phone2'), post_scalar('fax'), post_scalar('email'), $_POST['contact'], check_value('fixed_asset'));
+    		add_item_location(post_scalar('loc_code'), post_scalar('location_name'), post_scalar('delivery_address'),
+				post_scalar('phone'), post_scalar('phone2'), post_scalar('fax'), post_scalar('email'), post_scalar('contact'), $fixed_asset_value);
 			display_notification(_('New location has been added'));
     	}
 		
@@ -79,7 +83,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 } 
 
 #[\NoDiscard]
-function can_delete(string|int|float|bool|array|null $selected_id): bool
+function can_delete(int|string $selected_id): bool
 {
 	if ((bool)key_in_foreign_table($selected_id, 'stock_moves', 'loc_code'))
 	{
@@ -132,8 +136,10 @@ function can_delete(string|int|float|bool|array|null $selected_id): bool
 
 if ($Mode == 'Delete')
 {
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 
-	if (can_delete($selected_id)) 
+	if (can_delete($selected_id))
 	{
 		delete_item_location($selected_id);
 		display_notification(_('Selected location has been deleted'));
@@ -151,7 +157,8 @@ if ($Mode == 'RESET')
 	$_POST['fixed_asset'] = $sav2;
 }
 
-$result = get_item_locations(check_value('show_inactive'), get_post('fixed_asset', 0));
+$fixed_asset_filter = get_post('fixed_asset', 0);
+$result = get_item_locations(check_value('show_inactive'), is_array($fixed_asset_filter) ? 0 : $fixed_asset_filter);
 
 start_form();
 start_table(TABLESTYLE);
@@ -184,7 +191,9 @@ start_table(TABLESTYLE2);
 hidden("fixed_asset");
 
 $_POST['email'] = "";
-if ($selected_id != -1) 
+/** @var int|string $selected_id */
+$selected_id = $selected_id;
+if ($selected_id != -1)
 {
 	//editing an existing Location
 

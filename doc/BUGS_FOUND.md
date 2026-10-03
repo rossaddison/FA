@@ -263,6 +263,16 @@ a stand-in for a boolean) reaching a native, strictly-typed parameter.
   `post_scalar('contact')` for consistency with the other fields on the
   same form.
 
+- **`inventory/includes/db/items_locations_db.inc` — `add_item_location()`
+  / `update_item_location()`.** The exact same bug as the shipping-company
+  one just above, found immediately after by checking for other `array
+  $contact` parameters project-wide: both declared `$contact` as `array`,
+  both callers (`inventory/manage/locations.php`) always passed
+  `$_POST['contact']` raw. Every add/update of an inventory location was a
+  fatal `TypeError` under `strict_types=1`. Same fix: narrowed both to
+  `string|int|float|bool|null` and switched both call sites to
+  `post_scalar('contact')`.
+
 - **`inventory/includes/inventory_db.inc` — `item_img_name()`.** Parameter
   type included `array`, but the function's first operation, `strtr()`,
   cannot accept an array — passing one would crash immediately with a

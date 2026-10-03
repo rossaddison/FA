@@ -10,7 +10,7 @@ declare(strict_types=1);
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-function add_item_location(string|int|float|bool|null $loc_code, string|int|float|bool|null $location_name, string|int|float|bool|null $delivery_address, string|int|float|bool|null $phone, string|int|float|bool|null $phone2, string|int|float|bool|null $fax, string|int|float|bool|null $email, array $contact, int|null $fixed_asset = 0): void
+function add_item_location(string|int|float|bool|null $loc_code, string|int|float|bool|null $location_name, string|int|float|bool|null $delivery_address, string|int|float|bool|null $phone, string|int|float|bool|null $phone2, string|int|float|bool|null $fax, string|int|float|bool|null $email, string|int|float|bool|null $contact, int|null $fixed_asset = 0): void
 {
 	$sql = "INSERT INTO ".TB_PREF."locations (loc_code, location_name, delivery_address, phone, phone2, fax, email, contact, fixed_asset)
 		VALUES (".db_escape($loc_code).", ".db_escape($location_name).", ".db_escape($delivery_address).", "
@@ -28,7 +28,7 @@ function add_item_location(string|int|float|bool|null $loc_code, string|int|floa
 
 //------------------------------------------------------------------------------------
 
-function update_item_location(string|int|float|bool|null $loc_code, string|int|float|bool|null $location_name, string|int|float|bool|null $delivery_address, string|int|float|bool|null $phone, string|int|float|bool|null $phone2, string|int|float|bool|null $fax, string|int|float|bool|null $email, array $contact, int|null $fixed_asset = 0): void
+function update_item_location(string|int|float|bool|null $loc_code, string|int|float|bool|null $location_name, string|int|float|bool|null $delivery_address, string|int|float|bool|null $phone, string|int|float|bool|null $phone2, string|int|float|bool|null $fax, string|int|float|bool|null $email, string|int|float|bool|null $contact, int|null $fixed_asset = 0): void
 
 {
     $sql = "UPDATE ".TB_PREF."locations SET location_name=".db_escape($location_name).",
