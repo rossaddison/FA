@@ -58,7 +58,7 @@ function get_mysql_encoding_name(string|int|float|bool|null $encoding): string|n
 		'TIS-620' => 'tis620',
 		'ASCII' => 'ascii',
 	);
-	$encoding = strtoupper($encoding);
+	$encoding = strtoupper((string) $encoding);
 
 	return isset($db_encoding[$encoding]) ? $db_encoding[$encoding] : null;
 }
@@ -92,6 +92,7 @@ function get_mysql_collation(string|int|float|bool|null $lang=null): string
 		'utf8_it' => 'utf8_roman_ci',
 	);
 
+	$lang = (string) $lang;
 	return isset($db_collation[$lang]) ? $db_collation[$lang] : 'utf8_unicode_ci';
 }
 
@@ -130,7 +131,7 @@ function db_get_view_schema(string|int|float|bool|null $view)
     $schema = NULL;
     $qry = "select view_definition from information_schema.views where table_schema=DATABASE() and table_name='$view'";
     $res = db_query($qry,'Failed to select view schema');
-    if ($res && db_num_rows($res) == 1) {
+    if ($res instanceof mysqli_result && db_num_rows($res) == 1) {
         $row = row_or_empty(db_fetch_assoc($res));
         $schema = $row['view_definition'];
     }

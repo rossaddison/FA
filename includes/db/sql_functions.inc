@@ -48,6 +48,7 @@ function commit_transaction(): void
 function cancel_transaction(): void
 {
 	global $transaction_level;
+	/** @var int $transaction_level */
 
 	if ($transaction_level) {
 		db_query("ROLLBACK", "could not cancel a transaction");	
@@ -59,8 +60,8 @@ function cancel_transaction(): void
 //	Update record activity status.
 //
 function update_record_status(string|int|float|bool|null $id, string|int|float|bool|array|null $status, string|int|float|bool|null $table, string|int|float|bool|null $key): void {
-	$sql = "UPDATE ".TB_PREF.$table." SET inactive = "
-		. ((int)$status)." WHERE $key=".db_escape($id);
+	$sql = "UPDATE ".TB_PREF.(string) $table." SET inactive = "
+		. (is_array($status) ? 0 : (int)$status)." WHERE $key=".db_escape($id);
 		
   	db_query($sql, "Can't update record status");
 }

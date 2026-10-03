@@ -12,7 +12,7 @@ declare(strict_types=1);
 ***********************************************************************/
 require_once(dirname(__DIR__) . "/includes/JsHttpRequest.php");
 
-class Ajax extends JsHttpRequest {
+final class Ajax extends JsHttpRequest {
 
 	/** @var array<int, array<string, mixed>> */
 	var $aCommands = array();
@@ -178,7 +178,7 @@ class Ajax extends JsHttpRequest {
 	//
 	/**
 	 * @param bool|string|null $trigger
-	 * @param array<array-key, mixed>|null $aAttributes
+	 * @param array<string, mixed> $aAttributes
 	 * @param mixed $mData
 	 * @return void
 	 */
@@ -201,7 +201,8 @@ class Ajax extends JsHttpRequest {
 		foreach ($this->aCommands as $idx => $com) {
 // If we should reload whole page content ignore all commands but the update.
 // This is page repost equivalent, although header and footer are not reloaded.
-		  	if ($com['why'] !== true && !isset($this->triggers[$com['why']])) {
+			$why = $com['why'];
+		  	if ($why !== true && !isset($this->triggers[is_string($why) ? $why : ''])) {
 				unset($this->aCommands[$idx]);
 			}
 			elseif($com['n'] == 'up' && $com['t'] == '_page_body') {
@@ -230,7 +231,7 @@ function in_ajax() {
 function absolute_url(string|int|float|bool|null $url): string
 {
    $url = (string) $url;
-   return strpos($url, '..')===0 ? dirname((string) $_SERVER['PHP_SELF']).'/'.$url : $url;
+   return strpos($url, '..')===0 ? dirname($_SERVER['PHP_SELF'] ?? '').'/'.$url : $url;
 }
 
 /**
