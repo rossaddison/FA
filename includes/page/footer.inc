@@ -10,6 +10,19 @@ declare(strict_types=1);
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
+/**
+ * A JSON-encoded, JS-string-literal-safe, HTML-script-tag-safe rendering of $value - the JSON_HEX_* flags escape
+ * every character that could break out of a single-quoted JS string or the surrounding <script> tag.
+ *
+ * @psalm-taint-escape html
+ * @psalm-taint-escape has_quotes
+ * @psalm-pure
+ */
+function json_encode_for_script(mixed $value): string
+{
+	return json_encode($value, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?: 'null';
+}
+
 function page_footer(string|int|float|bool|null $no_menu=false, bool $is_index=false): void
 {
 	global $path_to_root, $js_lib, $Validate, $Editors, $Ajax, $sql_queries;
@@ -25,7 +38,7 @@ function page_footer(string|int|float|bool|null $no_menu=false, bool $is_index=f
 	ajax()->addState('editors', 'editors', $Editors);
 
 	echo "<script".csp_nonce_attr()." type='text/javascript'>
-		_focus = ".json_encode(get_post('_focus'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP).";
+		_focus = ".json_encode_for_script(get_post('_focus')).";
 		_validate = " . ajax()->php2js($Validate).";
 		var $edits
 	</script>";
