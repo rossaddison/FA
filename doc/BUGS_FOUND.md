@@ -315,6 +315,17 @@ a stand-in for a boolean) reaching a native, strictly-typed parameter.
   strict `array` parameter throws a fatal `TypeError` — this crashed the
   Reports menu on every load. Fixed the type hint to `BoxReports &$reports`.
 
+- **`admin/change_current_user_password.php` — `can_process()`.** Read
+  `$_POST['cur_password']`/`$_POST['password']` raw and passed them straight
+  into `md5()`, `strlen()` and `strstr()`, all of which require a `string`
+  argument. A submission with an array-valued field (e.g.
+  `password[]=x&cur_password[]=y`, trivial to send directly without a
+  browser) threw a fatal `TypeError` on the very first `md5()` call under
+  `strict_types=1`, instead of the expected "invalid password" error —
+  confirmed by sending exactly that payload before and after the fix.
+  Switched every read to `post_scalar()` with an explicit `(string)` cast,
+  matching the project's established idiom for this parameter class.
+
 - **`reporting/rep303.php` (Stock Check Sheet) — barcode printing.** The
   "Print Barcode on stock check sheet" company preference (a genuine,
   settable option) triggered calls to `$rep->GetY()` and

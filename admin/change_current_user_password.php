@@ -26,10 +26,11 @@ include_once(dirname(__DIR__) . "/admin/db/users_db.inc");
 function can_process(): bool
 {
 
-	$Auth_Result = hook_authenticate(session_obj('wa_current_user')->username, $_POST['cur_password']);
+	$cur_password = (string) post_scalar('cur_password');
+	$Auth_Result = hook_authenticate(session_obj('wa_current_user')->username, $cur_password);
 
 	if (!isset($Auth_Result))	// if not used external login: standard method
-		$Auth_Result = get_user_auth(session_obj('wa_current_user')->username, md5($_POST['cur_password']));
+		$Auth_Result = get_user_auth(session_obj('wa_current_user')->username, md5($cur_password));
 
 	if (!(bool)$Auth_Result)
    	{
@@ -37,22 +38,23 @@ function can_process(): bool
 		set_focus('cur_password');
    		return false;
    	}
-	
-   	if (strlen($_POST['password']) < 4)
+
+   	$password = (string) post_scalar('password');
+   	if (strlen($password) < 4)
    	{
   		display_error( _("The password entered must be at least 4 characters long."));
 		set_focus('password');
    		return false;
    	}
 
-   	if (strstr($_POST['password'], session_obj('wa_current_user')->username) != false)
+   	if (strstr($password, session_obj('wa_current_user')->username) != false)
    	{
    		display_error( _("The password cannot contain the user login."));
 		set_focus('password');
    		return false;
    	}
 
-   	if ($_POST['password'] != $_POST['passwordConfirm'])
+   	if ($password != post_scalar('passwordConfirm'))
    	{
    		display_error( _("The passwords entered are not the same."));
 		set_focus('password');
@@ -70,9 +72,9 @@ if (isset($_POST['UPDATE_ITEM']) && check_csrf_token())
 		if (sysprefs()->allow_demo_mode) {
 		    display_warning(_("Password cannot be changed in demo mode."));
 		} else {
-			update_user_password(session_obj('wa_current_user')->user, 
+			update_user_password(session_obj('wa_current_user')->user,
 				session_obj('wa_current_user')->username,
-				md5($_POST['password']));
+				md5((string) post_scalar('password')));
 		    display_notification(_("Your password has been updated."));
 		}
 		ajax()->activate('_page_body');
