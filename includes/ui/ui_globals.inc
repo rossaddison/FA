@@ -17,7 +17,7 @@ function set_global_supplier(string|int|float|bool|array|null $supplier_id): voi
 	\FrontAccounting\Session\GlobalSelections::setSupplier($supplier_id);
 }
 
-function get_global_supplier(bool $return_all=true): string|int|float|bool|array|null
+function get_global_supplier(bool $return_all=true): string|int|float|bool|array
 {
 	return \FrontAccounting\Session\GlobalSelections::getSupplier($return_all);
 }
@@ -27,7 +27,7 @@ function set_global_stock_item(string|int|float|bool|array|null $stock_id): void
 	\FrontAccounting\Session\GlobalSelections::setStockItem($stock_id);
 }
 
-function get_global_stock_item(string|int|float|bool|null $return_all=true): string|int|float|bool|array|null
+function get_global_stock_item(string|int|float|bool|null $return_all=true): string|int|float|bool|array
 {
 	return \FrontAccounting\Session\GlobalSelections::getStockItem($return_all);
 }
@@ -37,7 +37,7 @@ function set_global_customer(string|int|float|bool|array|null $customer_id): voi
 	\FrontAccounting\Session\GlobalSelections::setCustomer($customer_id);
 }
 
-function get_global_customer(bool $return_all=true): string|int|float|bool|array|null
+function get_global_customer(bool $return_all=true): string|int|float|bool|array
 {
 	return \FrontAccounting\Session\GlobalSelections::getCustomer($return_all);
 }
@@ -47,7 +47,7 @@ function set_global_curr_code(string|array|null $curr_code): void
 	\FrontAccounting\Session\GlobalSelections::setCurrencyCode($curr_code);
 }
 
-function get_global_curr_code(): string|array|null
+function get_global_curr_code(): string|array
 {
 	return \FrontAccounting\Session\GlobalSelections::getCurrencyCode();
 }

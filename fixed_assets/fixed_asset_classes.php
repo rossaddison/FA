@@ -39,8 +39,10 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 	if ($input_error != 1) 
 	{
-    	if ($selected_id != -1) 
+    	if ($selected_id != -1)
     	{
+    		/** @var int|string $selected_id */
+    		$selected_id = $selected_id;
     		update_fixed_asset_class($selected_id, post_scalar('parent_id'), post_scalar('description'), post_scalar('long_description'),
     			input_num('depreciation_rate'));
 			  display_notification(_('Selected fixed asset class has been updated'));
@@ -117,6 +119,8 @@ start_table(TABLESTYLE2);
 if ($selected_id != -1) 
 {
  	if ($Mode == 'Edit') {
+		/** @var int|string $selected_id */
+		$selected_id = $selected_id;
 		$myrow = row_or_empty(get_fixed_asset_class($selected_id));
 
 		$_POST['fa_class_id'] = $myrow["fa_class_id"];
@@ -125,6 +129,8 @@ if ($selected_id != -1)
 		$_POST['long_description']  = $myrow["long_description"];
 		$_POST['depreciation_rate'] = $myrow["depreciation_rate"];
 	}
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	hidden("selected_id", $selected_id);
 	hidden("fa_class_id");
   hidden('parent_id');

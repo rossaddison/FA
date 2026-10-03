@@ -84,15 +84,15 @@ function show_results(): void
 	$k = 0;
 	$total = 0.0;
 
-	$taxes = get_tax_summary(post_scalar('TransFromDate'), post_scalar('TransToDate'));
+	$taxes = get_tax_summary((string) post_scalar('TransFromDate'), (string) post_scalar('TransToDate'));
 
 	while ($tx = db_fetch($taxes))
 	{
 
-		$payable = $tx['payable'];
-		$collectible = -$tx['collectible'];
+		$payable = (float) $tx['payable'];
+		$collectible = -(float) $tx['collectible'];
 		$net = $collectible + $payable;
-		$total += (float)$net;
+		$total += $net;
 		alt_table_row_color($k);
 		label_cell((string)$tx['name'] . " " . (string)$tx['rate'] . "%");
 		label_cell(_("Charged on sales") . " (" . _("Output Tax")."):");
