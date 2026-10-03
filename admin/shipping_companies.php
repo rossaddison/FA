@@ -19,12 +19,14 @@ include(dirname(__DIR__) . "/includes/ui.inc");
 include(dirname(__DIR__) . "/admin/db/shipping_db.inc");
 
 simple_page_mode(true);
+/** @var int|string $selected_id */
+$selected_id = $selected_id;
 //----------------------------------------------------------------------------------------------
 
 #[\NoDiscard]
-function can_process(): bool 
+function can_process(): bool
 {
-	if (strlen($_POST['shipper_name']) == 0) 
+	if (strlen((string) post_scalar('shipper_name')) == 0)
 	{
 		display_error(_("The shipping company name cannot be empty."));
 		set_focus('shipper_name');
@@ -43,8 +45,10 @@ if ($Mode=='ADD_ITEM' && can_process())
 
 //----------------------------------------------------------------------------------------------
 
-if ($Mode=='UPDATE_ITEM' && can_process()) 
+if ($Mode=='UPDATE_ITEM' && can_process())
 {
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	update_shipper($selected_id, post_scalar('shipper_name'), post_scalar('contact'), post_scalar('phone'), post_scalar('phone2'), post_scalar('address'));
 	display_notification(_('Selected shipping company has been updated'));
 	$Mode = 'RESET';
@@ -54,6 +58,8 @@ if ($Mode=='UPDATE_ITEM' && can_process())
 
 if ($Mode == 'Delete')
 {
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 // PREVENT DELETES IF DEPENDENT RECORDS IN 'sales_orders'
 
 	if ((bool)key_in_foreign_table($selected_id, 'sales_orders', 'ship_via'))
@@ -118,8 +124,10 @@ end_table(1);
 
 start_table(TABLESTYLE2);
 
-if ($selected_id != -1) 
+if ($selected_id != -1)
 {
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
  	if ($Mode == 'Edit') {
 		//editing an existing Shipper
 
