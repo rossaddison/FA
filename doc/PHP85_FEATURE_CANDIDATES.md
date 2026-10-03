@@ -1,11 +1,15 @@
 # PHP 8.5 Feature Adoption Candidates
 
-This is an inventory, not a to-do list: a catalog of where in the codebase
-each new PHP 8.5 language feature would fit, for future reference. Raising
-the minimum version to 8.5 (tracked in [PSALM_MIGRATION.md](PSALM_MIGRATION.md))
-only makes these features *available* — actually adopting one at a given
-site is a separate decision, taken file-by-file like the rest of this
-migration, not a blanket sweep.
+This started as an inventory, not a to-do list: a catalog of where in the
+codebase each new PHP 8.5 language feature would fit, for future reference.
+Raising the minimum version to 8.5 (tracked in
+[PSALM_MIGRATION.md](PSALM_MIGRATION.md)) only makes these features
+*available* — actually adopting one at a given site is a separate decision.
+`#[\NoDiscard]` has since moved from catalog to actually adopted, codebase-wide
+(see its section below) — it's the one feature with no Psalm/PHPStan
+inference gap, so there was no reason to wait. The other three remain
+catalog-only for now, each blocked on something external (tooling, in two
+cases) rather than on a decision still to be made.
 
 Four features were surveyed: the pipe operator (`|>`), `array_first()`/
 `array_last()`, `final` on promoted constructor properties, and the
@@ -165,20 +169,41 @@ A longer list of constructors was checked and rejected as too complex
 parameter) — not reproduced here since they're non-candidates, not
 candidates.
 
-## `#[\NoDiscard]`
+## `#[\NoDiscard]` — adopted codebase-wide
 
-Warns (does not error) if a call's return value is silently discarded.
-Three families were surveyed, with **every call site individually
-verified** — the finding in all three is that there are no currently-silent
-discard bugs anywhere in this codebase today. The value of adopting
-`#[\NoDiscard]` on any of them would be purely preventive (catching a future
-mistake), not a fix for an existing one.
+Warns (does not error, under Psalm) if a call's return value is silently
+discarded — but on PHP 8.5 itself it's not just a static-analysis hint: the
+engine emits a real runtime warning when a marked return value is
+discarded. Three families were surveyed, with **every call site
+individually verified** (re-verified fresh at adoption time, not just taken
+from the original survey, precisely because of that runtime behavior) — the
+finding in all three was that there were no currently-silent discard bugs
+anywhere in this codebase. Adopting `#[\NoDiscard]` on them is therefore
+purely preventive (catching a future mistake), not a fix for an existing
+one.
 
-| Family | Definitions | Call sites | Result |
-|---|---|---|---|
-| `can_process()` / `can_commit()` / `can_delete()` | ~30, across ~25 files | ~35 | all correctly checked today |
-| `check_data()` | ~13 | all checked at every site | all correctly checked today |
-| ID-returning `write_*`/`add_*` in `*_db.inc` files | 9 named functions (`write_customer_trans`, `add_sales_order`, `write_sales_invoice`, `add_grn`, `add_grn_batch`, `add_po`, `add_supp_invoice`, `write_supp_trans`, `add_dimension`) | all | every call site captures the return value |
+Unlike the pipe operator and `array_first()`/`array_last()` above, this
+feature has no Psalm/PHPStan inference gap (confirmed via
+vimeo/psalm#11381, already closed/merged), so all three families were
+adopted immediately rather than left as a catalog entry:
+
+| Family | Definitions | Call sites | Result | Commit |
+|---|---|---|---|---|
+| ID-returning `write_*`/`add_*` in `*_db.inc` files | 9 named functions (`write_customer_trans`, `add_sales_order`, `write_sales_invoice`, `add_grn`, `add_grn_batch`, `add_po`, `add_supp_invoice`, `write_supp_trans`, `add_dimension`) | 9 | every call site captures the return value | `7e0d1c57` |
+| `check_data()` / `can_commit()` | 13 + 1, across 13 files | 14 | all used in an if/&&/! condition or assignment | `fb810046` |
+| `can_process()` / `can_delete()` | 26 + 11, across 32 files | 37 | all used in an if/&&/! condition or assignment | `eafff689` |
+
+60 functions across 55 files in total. `can_process()`/`can_commit()`/
+`can_delete()`/`check_data()` are PSALM_MIGRATION.md's documented "global
+function name collision" pattern — each entry/manage page declares its own,
+sharing the name with every other page's — but every call site sits in the
+same file as its own definition, so there's no cross-file resolution
+ambiguity for these specific functions the way there is for the genuinely
+cross-file-called collision functions (`getTransactions`, `display_type`,
+etc., which are NOT part of this rollout). Full-project `--no-cache` Psalm
+scans before and after each commit showed no change in the project's error
+total (7916 throughout) — the attribute is fully invisible to Psalm's
+count, as expected.
 
 ### Explicitly rejected as weaker candidates
 
