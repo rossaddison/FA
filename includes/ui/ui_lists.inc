@@ -63,6 +63,50 @@ function nbsp(): string
 	return $nbsp;
 }
 
+/**
+ * Html::encode(), annotated for Psalm's taint analysis.
+ *
+ * Html::encode() genuinely calls htmlspecialchars() (confirmed by reading the
+ * vendor source) and is already used correctly everywhere below for plain
+ * HTML text content - but Psalm only honours a taint-escape tag on a vendor
+ * class's method when the call is made from inside that same class (a
+ * confirmed, currently-open Psalm limitation/bug: vimeo/psalm#11752 - the
+ * tag can't be trusted across an autoloaded class boundary, since Psalm
+ * can't be sure which physical file actually provided the autoloaded
+ * class). Routing every external call through this plain first-party
+ * function sidesteps that restriction, matching the established pattern for
+ * this codebase's other real sanitizers (db_escape(), date2sql(),
+ * html_specials_encode(), clean_file_name() - see
+ * doc/PSALM_MIGRATION.md's "Missing taint-escape annotations on real
+ * sanitizers" section).
+ *
+ * encode() uses ENT_NOQUOTES - safe for HTML text content, NOT for a quoted
+ * attribute value (it doesn't escape quote characters). Use
+ * html_encode_attribute() for attributes.
+ *
+ * @psalm-taint-escape html
+ */
+function html_encode(mixed $content, bool $doubleEncode = true, string $encoding = 'UTF-8'): string
+{
+	return Html::encode($content, $doubleEncode, $encoding);
+}
+
+/**
+ * Html::encodeAttribute(), annotated for Psalm's taint analysis - see
+ * html_encode()'s docblock just above for why this wrapper exists at all.
+ *
+ * encodeAttribute() uses ENT_QUOTES plus escapes tab/space/=/backtick/etc,
+ * making it safe for HTML text and for both quoted and unquoted attribute
+ * values.
+ *
+ * @psalm-taint-escape html
+ * @psalm-taint-escape has_quotes
+ */
+function html_encode_attribute(mixed $value, bool $doubleEncode = true, string $encoding = 'UTF-8'): string
+{
+	return Html::encodeAttribute($value, $doubleEncode, $encoding);
+}
+
 //----------------------------------------------------------------------------
 //	Universal sql combo generator
 //	$sql must return selector values and selector texts in columns 0 & 1
@@ -263,10 +307,10 @@ $opts = array(		// default options
 			if ($opts['category'] !== false && $cat != $lastcat){
 				if ($lastcat!==null)
 					$selector .= "</optgroup>";
-				$selector .= "<optgroup label='".Html::encodeAttribute($cat, false, output_encoding())."'>\n";
+				$selector .= "<optgroup label='".html_encode_attribute($cat, false, output_encoding())."'>\n";
 				$lastcat = $cat;
 			}
-			$selector .= "<option $sel $optclass value='".Html::encodeAttribute($value, false, output_encoding())."'>".Html::encode($descr, false, output_encoding())."</option>\n";
+			$selector .= "<option $sel $optclass value='".html_encode_attribute($value, false, output_encoding())."'>".html_encode($descr, false, output_encoding())."</option>\n";
 		}
 		if ($lastcat!==null)
 			$selector .= "</optgroup>";
@@ -279,7 +323,7 @@ $opts = array(		// default options
 		$first_opt = $spec_option;
 		$sel = $found===false ? 'selected' : '';
 		$optclass = @$contact_row['inactive'] ? "class='inactive'" : '';
-		$selector = "<option $sel value='".Html::encodeAttribute($first_id, false, output_encoding())."'>".Html::encode((string) $first_opt, false, output_encoding())."</option>\n"
+		$selector = "<option $sel value='".html_encode_attribute($first_id, false, output_encoding())."'>".html_encode((string) $first_opt, false, output_encoding())."</option>\n"
 			. $selector;
 	}
 
@@ -302,9 +346,9 @@ $opts = array(		// default options
 	if ($by_id && ($search_box != false || (bool)$opts['editable']) ) {
 		// on first display show selector list
 		if (isset($_POST[$search_box]) && (bool)$opts['editable'] && (bool)$edit) {
-			$selector = "<input type='hidden' name='$name' value='".Html::encodeAttribute($_POST[$name], false, output_encoding())."'>"
+			$selector = "<input type='hidden' name='$name' value='".html_encode_attribute($_POST[$name], false, output_encoding())."'>"
 			."<input type='text' $disabled name='{$name}_text' id='{$name}_text' size='".
-				(string)$opts['editable']."' maxlength='".(string)$opts['max']."' $rel value='".Html::encodeAttribute($edit, false, output_encoding())."'>\n";
+				(string)$opts['editable']."' maxlength='".(string)$opts['max']."' $rel value='".html_encode_attribute($edit, false, output_encoding())."'>\n";
 				set_focus($name.'_text'); // prevent lost focus
 		} else if (get_post((bool)$search_submit ? $search_submit : "_{$name}_button"))
 			set_focus($name); // prevent lost focus
@@ -330,7 +374,7 @@ $opts = array(		// default options
 	if ($search_box != false) {
 		$edit_entry = "<input $disabled type='text' name='$search_box' id='$search_box' size='".
 			(string)$opts['size']."' maxlength='".(string)$opts['max'].
-			"' value='".Html::encodeAttribute($txt, false, output_encoding())."' class='$class".(!fallback_mode() && !$by_id ? ' fa-none' : '')."' rel='$name' autocomplete='off' title='"
+			"' value='".html_encode_attribute($txt, false, output_encoding())."' class='$class".(!fallback_mode() && !$by_id ? ' fa-none' : '')."' rel='$name' autocomplete='off' title='"
 			.(string)$opts['box_hint']."'"
 			.">\n";
 		if ($search_submit != false || (bool)$opts['editable']) {
@@ -402,7 +446,7 @@ $opts = array(		// default options
   		}
 
   		if ($link !=="") {
-    		$theme = user_theme();
+    		$theme = html_encode_attribute(user_theme(), false, output_encoding());
     		$img = '<img src="'.$path_to_root.'/themes/'.$theme.'/images/'.ICON_VIEW.
     			'" '.fa_action_attrs('lookup-window', array($link, '')).' title="' . $img_title . '" class="fa-pointer fa-icon12" />';
   		}
@@ -482,7 +526,7 @@ $opts = array(		// default options
 			$first_id = $value;
 			$first_opt = $descr;
 		}
-		$selector .= "<option $sel value='".Html::encodeAttribute($value, false, output_encoding())."'>".Html::encode($descr, false, output_encoding())."</option>\n";
+		$selector .= "<option $sel value='".html_encode_attribute($value, false, output_encoding())."'>".html_encode($descr, false, output_encoding())."</option>\n";
 	}
 
 	if ($first_id!==false) {
@@ -493,7 +537,7 @@ $opts = array(		// default options
 		$first_id = $spec_id;
 		$first_opt = $spec_option;
 		$sel = $found===false ? 'selected' : '';
-		$selector = "<option $sel value='".Html::encodeAttribute($spec_id, false, output_encoding())."'>".Html::encode((string) $spec_option, false, output_encoding())."</option>\n"
+		$selector = "<option $sel value='".html_encode_attribute($spec_id, false, output_encoding())."'>".html_encode((string) $spec_option, false, output_encoding())."</option>\n"
 			. $selector;
 	}
 
