@@ -425,6 +425,22 @@ it, not a flaw in the escaping function itself.
   `get_balance()` two functions down correctly escapes the same field —
   a clear one-off oversight. Fixed both to `db_escape($account)`.
 
+- **`purchasing/includes/db/supp_trans_db.inc` — `get_supp_payment_before()`.**
+  Interpolated `$supplier_id` directly into
+  `supp_trans.supplier_id='$supplier_id'` with no `db_escape()` and no
+  surrounding type guard. Traced the call chain
+  (`purchasing/supplier_payment.php`'s `get_default_supplier_payment_bank_account()`
+  → `get_supp_payment_before()`) back to `$_GET['supplier_id']`/
+  `$_POST['supplier_id']`, read raw with no `post_scalar()`/`get_scalar()`
+  guard - a real, unauthenticated-from-the-request's-perspective SQL
+  injection on the supplier payment page. Not caught by Psalm's `TaintedSql`
+  tracking here (a type-only `PossiblyNullOperand`/`InvalidOperand` finding
+  on the same line is what led to it instead) - likely lost across the
+  `get_default_supplier_payment_bank_account()` parameter boundary, a taint-
+  tracking gap rather than a false negative on this function in isolation.
+  Fixed by switching to `db_escape($supplier_id)` (removing the function's
+  own manual quoting, since `db_escape()` already quotes string values).
+
 - **`inventory/includes/db/items_db.inc`.** `$parent = $_GET['parent'];` used
   raw, unescaped, in `AND i.stock_id <> '$parent'`. Fixed with `db_escape()`.
 

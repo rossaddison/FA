@@ -20,11 +20,11 @@ function write_supp_trans(string|int|float|bool|null $type, ?int $trans_no, stri
 	string|int|float|bool|null $amount, string|int|float|bool|null $amount_tax, string|int|float|bool|null $discount, ?string $err_msg="", string|int|float|bool|null $rate=0, string|int|float|bool|null $included=0)
 {
 	$new = $trans_no==0;
-	$date = date2sql($date_);
+	$date = date2sql((string) $date_);
 	if ($due_date == "")
 		$due_date = "0000-00-00";
 	else
-		$due_date = date2sql($due_date);
+		$due_date = date2sql((string) $due_date);
 
 	if ($new)
 		$trans_no = get_next_trans_no($type);
@@ -141,8 +141,8 @@ function get_supp_payment_before(string|int|float|bool|null $supplier_id, string
 	. TB_PREF . "bank_trans,"
 	. TB_PREF . "bank_accounts "
 	. "WHERE "
-	. TB_PREF . "supp_trans.supplier_id='" . $supplier_id . "' "
-	. "AND " . TB_PREF . "supp_trans.tran_date<'" . $date . "' "
+	. TB_PREF . "supp_trans.supplier_id=" . db_escape($supplier_id) . " "
+	. "AND " . TB_PREF . "supp_trans.tran_date<'" . (string) $date . "' "
 	. "AND " . TB_PREF . "supp_trans.type=" . ST_SUPPAYMENT . " "
 	. "AND " . TB_PREF . "supp_trans.trans_no=" . TB_PREF . "bank_trans.trans_no "
 	. "AND " . TB_PREF . "supp_trans.type=" . TB_PREF . "bank_trans.type "
@@ -241,7 +241,7 @@ function get_sql_for_supplier_inquiry(string|array|null $filter, string|null $af
     		(ABS(trans.ov_amount + trans.ov_gst + trans.ov_discount) - trans.alloc) Balance,
 		trans.alloc AS Allocated,
 		((trans.type = ".ST_SUPPINVOICE." OR trans.type = ".ST_SUPPCREDIT.") AND trans.due_date < '" . date2sql(Today()) . "') AS OverDue,
-    	(ABS(trans.ov_amount + trans.ov_gst  + trans.ov_discount) - trans.alloc <= ".FLOAT_COMP_DELTA.") AS Settled
+    	(ABS(trans.ov_amount + trans.ov_gst  + trans.ov_discount) - trans.alloc <= ".(string)FLOAT_COMP_DELTA.") AS Settled
     	FROM ".TB_PREF."supp_trans as trans, ".TB_PREF."suppliers as supplier
     	WHERE supplier.supplier_id = trans.supplier_id
 		AND trans.ov_amount != 0";	// exclude voided transactions
@@ -264,7 +264,7 @@ function get_sql_for_supplier_inquiry(string|array|null $filter, string|null $af
     	AND trans.purch_order_no = po.order_no";
 
 	if ($filter == '2')
-		$sql .= " AND ABS(trans.ov_amount + trans.ov_gst + trans.ov_discount) - trans.alloc>".FLOAT_COMP_DELTA;
+		$sql .= " AND ABS(trans.ov_amount + trans.ov_gst + trans.ov_discount) - trans.alloc>".(string)FLOAT_COMP_DELTA;
 	else {
 		$sql .= " AND trans.tran_date >= '$date_after'
 			AND trans.tran_date <= '$date_to'";

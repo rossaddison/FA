@@ -18,6 +18,9 @@ require_once(dirname(__DIR__, 3) . "/admin/db/attachments_db.inc");
 function add_journal(string|int|float|bool|null $type, int|float|null $trans_no, string|int|float|bool|null $amount, string|int|float|bool|array|null $tran_date, string|int|float|bool|null $currency, string|int|float|bool|null $reference, string|int|float|bool|null $source_ref='', string|int|float|bool|null $rate=1,
 	 string|int|float|bool|array|null $event_date='', string|int|float|bool|array|null $doc_date='')
 {
+	$tran_date_scalar = is_array($tran_date) ? null : $tran_date;
+	$event_date_scalar = is_array($event_date) ? null : $event_date;
+	$doc_date_scalar = is_array($doc_date) ? null : $doc_date;
 	$sql = "INSERT INTO ".TB_PREF."journal(
 	   `type`,`trans_no`, `amount`, `currency`, `rate`, `reference`, `source_ref`, `tran_date`,`event_date`,`doc_date`)
 	  VALUES("
@@ -28,9 +31,9 @@ function add_journal(string|int|float|bool|null $type, int|float|null $trans_no,
 	  .db_escape($rate).","
 	  .db_escape($reference).","
 	  .db_escape($source_ref).","
-	  ."'".date2sql($tran_date)."','"
-	  . ($event_date === '' ? '0000-00-00' : date2sql($event_date))."','"
-	  . ($doc_date === '' ? '0000-00-00' : date2sql($doc_date))."')";
+	  ."'".date2sql((string) $tran_date_scalar)."','"
+	  . ($event_date === '' ? '0000-00-00' : date2sql((string) $event_date_scalar))."','"
+	  . ($doc_date === '' ? '0000-00-00' : date2sql((string) $doc_date_scalar))."')";
 
 	return db_query($sql, 'cannot add journal entry');
 }
@@ -47,9 +50,9 @@ function update_journal(string|int|float|bool|null $type, string|int|float|bool|
 	  ."`rate`=".db_escape($rate).","
 	  ."`reference`=".db_escape($reference).","
 	  ."`source_ref`=".db_escape($source_ref).","
-	  ."`tran_date`='".date2sql($tran_date)."',"
-	  ."`event_date`='".($event_date === '' ? '0000-00-00' : date2sql($event_date))."',"
-	  ."`doc_date`='".($doc_date === '' ? '0000-00-00' : date2sql($doc_date))."'
+	  ."`tran_date`='".date2sql((string) $tran_date)."',"
+	  ."`event_date`='".($event_date === '' ? '0000-00-00' : date2sql((string) $event_date))."',"
+	  ."`doc_date`='".($doc_date === '' ? '0000-00-00' : date2sql((string) $doc_date))."'
 	   WHERE `type`=".db_escape($type)." AND " ."`trans_no`=".db_escape($trans_no);
 
 	return db_query($sql, 'cannot update journal entry');
@@ -93,7 +96,7 @@ function write_cust_journal(string|int|float|bool|null $trans_type, string|int|f
 	$sql = "INSERT INTO ".TB_PREF."debtor_trans (trans_no, type, debtor_no, branch_code, tran_date, reference, ov_amount, rate)
         VALUES (".db_escape($trans_no).", ".db_escape($trans_type).", 
 			(SELECT debtor_no FROM ".TB_PREF."cust_branch WHERE branch_code=".db_escape($branch_id). ") ,"
-			.db_escape($branch_id).",'".date2sql($date)."', ".db_escape($ref).","
+			.db_escape($branch_id).",'".date2sql((string) $date)."', ".db_escape($ref).","
 			.db_escape($amount).", ".db_escape($rate).")";
 	return db_query($sql, 'cannot write cust_journal');
 }
@@ -108,7 +111,7 @@ function write_cust_journal(string|int|float|bool|null $trans_type, string|int|f
 function write_supp_journal(string|int|float|bool|null $trans_type, string|int|float|bool|null $trans_no, string|int|float|bool|null $supp_id, string|int|float|bool|null $date, string|int|float|bool|null $ref, string|int|float|bool|null $amount, string|int|float|bool|null $rate, string|int|float|bool|null $src_ref)
 {
 	$sql = "INSERT INTO ".TB_PREF."supp_trans (trans_no, type, supplier_id, tran_date, reference, ov_amount, rate, supp_reference)
-		VALUES (".db_escape($trans_no).", ".db_escape($trans_type).", ".db_escape($supp_id).", '".date2sql($date)."',"
+		VALUES (".db_escape($trans_no).", ".db_escape($trans_type).", ".db_escape($supp_id).", '".date2sql((string) $date)."',"
 		.db_escape($ref).", ".db_escape($amount).",".db_escape($rate).",".db_escape($src_ref).")";
 
 	return db_query($sql, 'cannot write supp_journal');

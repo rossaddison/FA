@@ -20,8 +20,8 @@ function add_item_purchasing_data(string|null $supplier_id, string|null $stock_i
 	$sql = "INSERT INTO ".TB_PREF."purch_data (supplier_id, stock_id, price, suppliers_uom,
 		conversion_factor, supplier_description) VALUES (";
 	$sql .= db_escape($supplier_id).", ".db_escape($stock_id). ", "
-		.$price . ", ".db_escape($suppliers_uom ). ", "
-		.$conversion_factor . ", "
+		.(string)(float)$price . ", ".db_escape($suppliers_uom ). ", "
+		.(string)(float)$conversion_factor . ", "
 		.$supp_desc . ")";
 
 	db_query($sql,"The supplier purchasing details could not be added");
@@ -33,9 +33,9 @@ function update_item_purchasing_data(string|int|float|bool|null $selected_id, st
 	$supp_desc = db_escape($supplier_description);
 	if (strlen($supp_desc) > 50) // to be fixed and removed in 2.5
 		$supp_desc = substr($supp_desc, 0, 50) ."'";
-	$sql = "UPDATE ".TB_PREF."purch_data SET price=" . $price . ",
+	$sql = "UPDATE ".TB_PREF."purch_data SET price=" . (string)(float)$price . ",
 		suppliers_uom=".db_escape($suppliers_uom) . ",
-		conversion_factor=" . $conversion_factor . ",
+		conversion_factor=" . (string)(float)$conversion_factor . ",
 		supplier_description=" . $supp_desc . "
 		WHERE stock_id=".db_escape($stock_id) . " AND
 		supplier_id=".db_escape($selected_id);
