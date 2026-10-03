@@ -42,9 +42,11 @@ if (list_updated('stock_id'))
 }
 //------------------------------------------------------------------------------------
 
-$action = $_SERVER['PHP_SELF'];
-if ($page_nested)
-	$action .= "?stock_id=".get_post('stock_id');
+$action = $_SERVER['PHP_SELF'] ?? '';
+if ($page_nested) {
+	$stock_id_param = get_post('stock_id');
+	$action .= "?stock_id=".(is_array($stock_id_param) ? '' : $stock_id_param);
+}
 start_form(false, false, $action);
 
 if (!isset($_POST['stock_id']))
@@ -82,19 +84,22 @@ while ($myrow = db_fetch($result))
 
 	alt_table_row_color($k);
 
-	if (isset($_POST['UpdateData']) && check_num($myrow["loc_code"]))
+	$loc_code = (string) $myrow["loc_code"];
+
+	if (isset($_POST['UpdateData']) && check_num($loc_code))
 	{
 
-		$myrow["reorder_level"] = input_num($myrow["loc_code"]);
-		set_reorder_level(post_scalar('stock_id'), $myrow["loc_code"], input_num($myrow["loc_code"]));
+		$myrow["reorder_level"] = input_num($loc_code);
+		set_reorder_level(post_scalar('stock_id'), $loc_code, input_num($loc_code));
 		display_notification(_("Reorder levels has been updated."));
 	}
 
-	$qoh = get_qoh_on_date(post_scalar('stock_id'), $myrow["loc_code"]);
+	$qoh = get_qoh_on_date(post_scalar('stock_id'), $loc_code);
 
 	label_cell($myrow["location_name"]);
 
-	$_POST[$myrow["loc_code"]] = qty_format($myrow["reorder_level"], $_POST['stock_id'], $dec);
+	$stock_id_post = $_POST['stock_id'] ?? null;
+	$_POST[$loc_code] = qty_format($myrow["reorder_level"], is_array($stock_id_post) ? null : $stock_id_post, $dec);
 
 	qty_cell($qoh, false, $dec);
 	qty_cells(null, $myrow["loc_code"], null, null, null, $dec);
