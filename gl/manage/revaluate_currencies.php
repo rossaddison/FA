@@ -24,10 +24,11 @@ if ((bool) user_use_date_picker())
 	$js .= get_js_date_picker();
 page(_($help_context = "Revaluation of Currency Accounts"), false, false, "", $js);
 
-if (isset($_GET['BA'])) 
+if (isset($_GET['BA']))
 {
-	$BA = $_GET['BA'];
-	$JE = $_GET['JE'];
+	$BA = is_array($_GET['BA']) ? 0 : $_GET['BA'];
+	$JE_raw = $_GET['JE'] ?? 0;
+	$JE = is_array($JE_raw) ? 0 : $JE_raw;
 
 	if ($BA != 0 || $JE !=0)
 	{
@@ -43,7 +44,7 @@ if (isset($_GET['BA']))
 #[\NoDiscard]
 function check_data(): bool
 {
-	if (!is_date(post_scalar('date')))
+	if (!is_date((string) post_scalar('date')))
 	{
 		display_error( _("The entered date is invalid."));
 		set_focus('date');
@@ -66,9 +67,9 @@ function handle_submit(): void
 	if (!check_data())
 		return;
 
-	$trans = add_exchange_variation_all(post_scalar('date'), post_scalar('memo_'));
+	$trans = add_exchange_variation_all((string) post_scalar('date'), (string) post_scalar('memo_'));
 
-	meta_forward($_SERVER['PHP_SELF'], "BA=".$trans[0]."&JE=".$trans[1]);
+	meta_forward($_SERVER['PHP_SELF'] ?? '', "BA=".$trans[0]."&JE=".$trans[1]);
 	//clear_data();
 }
 
