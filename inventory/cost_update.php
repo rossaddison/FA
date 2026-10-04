@@ -53,10 +53,10 @@ if (isset($_GET['stock_id']))
 $should_update = false;
 if (isset($_POST['UpdateData']))
 {
-	$old_cost = get_unit_cost(post_scalar('stock_id'));
+	$old_cost = get_unit_cost((string) post_scalar('stock_id'));
 
    	$new_cost = (float)input_num('material_cost') + (float)input_num('labour_cost')
-	     + input_num('overhead_cost');
+	     + (float)input_num('overhead_cost');
 
    	$should_update = true;
 
@@ -75,10 +75,10 @@ if (isset($_POST['UpdateData']))
 
    	if ($should_update)
    	{
-		$update_no = stock_cost_update(post_scalar('stock_id'),
+		$update_no = stock_cost_update((string) post_scalar('stock_id'),
 		    input_num('material_cost'), input_num('labour_cost'),
-		    input_num('overhead_cost'),	$old_cost, 
-        $_POST['refline'], $_POST['memo_']);
+		    input_num('overhead_cost'),	$old_cost,
+        (string) post_scalar('refline'), (string) post_scalar('memo_'));
 
         display_notification(_("Cost has been updated."));
 
@@ -96,9 +96,11 @@ if (list_updated('stock_id') || $should_update) {
 }
 //-----------------------------------------------------------------------------------------
 
-$action = $_SERVER['PHP_SELF'];
-if ($page_nested)
-	$action .= "?stock_id=".get_post('stock_id');
+$action = $_SERVER['PHP_SELF'] ?? '';
+if ($page_nested) {
+	$stock_id_param = get_post('stock_id');
+	$action .= "?stock_id=".(is_array($stock_id_param) ? '' : $stock_id_param);
+}
 start_form(false, false, $action);
 
 hidden('fixed_asset');
@@ -110,7 +112,7 @@ if (!$page_nested)
 {
 	echo "<center>" . _("Item:"). "&nbsp;";
 	if (get_post('fixed_asset') == 1)
-		echo stock_disposable_fa_list('stock_id', $_POST['stock_id'], false, true);
+		stock_disposable_fa_list('stock_id', $_POST['stock_id'], false, true);
 	else
 		echo stock_items_list('stock_id', $_POST['stock_id'], false, true);
 
@@ -145,7 +147,7 @@ else
 	hidden("labour_cost", 0);
 	hidden("overhead_cost", 0);
 }
-refline_list_row(_("Reference line:"), 'refline', ST_COSTUPDATE, null, false, get_post('fixed_asset'));
+refline_list_row(_("Reference line:"), 'refline', ST_COSTUPDATE, null, false);
 textarea_row(_("Memo"), 'memo_', null, 40, 4);
 
 end_table(1);
