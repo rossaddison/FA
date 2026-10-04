@@ -30,7 +30,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 	//initialise no input errors assumed initially before we test
 	$input_error = 0;
 
-	if (strlen($_POST['abbr']) == 0)
+	if (strlen((string) post_scalar('abbr')) == 0)
 	{
 		$input_error = 1;
 		display_error(_("The unit of measure code cannot be empty."));
@@ -42,7 +42,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 		display_error(_("The unit of measure code is too long."));
 		set_focus('abbr');
 	}
-	if (strlen($_POST['description']) == 0)
+	if (strlen((string) post_scalar('description')) == 0)
 	{
 		$input_error = 1;
 		display_error(_("The unit of measure description cannot be empty."));
@@ -50,6 +50,8 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 	}
 
 	if ($input_error !=1) {
+		/** @var int|string $selected_id */
+		$selected_id = $selected_id;
     	write_item_unit($selected_id, post_scalar('abbr'), post_scalar('description'), post_scalar('decimals') );
 		if($selected_id != '')
 			display_notification(_('Selected unit has been updated'));
@@ -66,6 +68,8 @@ if ($Mode == 'Delete')
 
 	// PREVENT DELETES IF DEPENDENT RECORDS IN 'stock_master'
 
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	if (item_unit_used($selected_id))
 	{
 		display_error(_("Cannot delete this unit of measure because items have been created using this unit."));
@@ -121,8 +125,10 @@ end_table(1);
 
 start_table(TABLESTYLE2);
 
-if ($selected_id != '') 
+if ($selected_id != '')
 {
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
  	if ($Mode == 'Edit') {
 		//editing an existing item category
 
@@ -132,8 +138,10 @@ if ($selected_id != '')
 		$_POST['description']  = $myrow["name"];
 		$_POST['decimals']  = $myrow["decimals"];
 	}
-	hidden('selected_id', $myrow["abbr"]);
+	hidden('selected_id', $selected_id);
 }
+/** @var int|string $selected_id */
+$selected_id = $selected_id;
 if ($selected_id != '' && item_unit_used($selected_id)) {
     label_row(_("Unit Abbreviation:"), post_scalar('abbr'));
     hidden('abbr', post_scalar('abbr'));

@@ -538,6 +538,19 @@ resolved.
   showing `-1` as the selected parent instead of "None" whenever editing a
   top-level account group. Fixed to `=`.
 
+- **`inventory/manage/item_units.php`** — the hidden `selected_id` field was
+  set from `$myrow["abbr"]` instead of `$selected_id`, but `$myrow` is only
+  freshly assigned inside the `if ($Mode == 'Edit')` block a few lines up.
+  Reaching this code with `$selected_id != ''` in any mode other than
+  `'Edit'` would read the stale `$myrow` left over from the page's earlier
+  listing loop (`while ($myrow = db_fetch($result))`) instead - submitting
+  the last-listed unit's abbreviation rather than the actually-selected
+  one. `$selected_id` already holds the correct value (it *is* the unit's
+  abbreviation, used identically by `item_unit_used()`/`get_item_unit()`/
+  `delete_item_unit()` elsewhere on the same page) and is what `$myrow`
+  equals in the one case this accidentally worked (`Mode == 'Edit'`) -
+  fixed by using `$selected_id` directly.
+
 - **`reporting/rep108.php`** — an emailed-statement subject line built with
   `sql2date($date)` where `$date` only existed in a different function's
   local scope. Fixed to use `$myrow['tran_date']`, which the query already
