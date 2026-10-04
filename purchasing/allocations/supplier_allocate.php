@@ -50,9 +50,10 @@ function edit_allocations_for_transaction(string|int|float|bool|null $type, stri
 	start_form();
 
 	/** @var allocation $cart */
-	$cart = $_SESSION['alloc'];
+	$cart = session_obj('alloc');
 
-    display_heading(_("Allocation of") . " " . $systypes_array[$cart->type] . " # " . $cart->trans_no);
+	$cart_type = (int) $cart->type;
+    display_heading(_("Allocation of") . " " . $systypes_array[$cart_type] . " # " . (string) $cart->trans_no);
 
 	display_heading($cart->person_name);
 
@@ -106,6 +107,8 @@ if (isset($_POST['Process']))
 if (isset($_POST['Cancel']))
 {
 	clear_allocations();
+	/** @var string $path_to_root */
+	$path_to_root = $path_to_root;
 	meta_forward($path_to_root . "/purchasing/allocations/supplier_allocation_main.php");
 }
 

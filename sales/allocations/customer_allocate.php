@@ -48,14 +48,15 @@ function edit_allocations_for_transaction(string|int|float|bool|null $type, stri
 	global $systypes_array;
 
 	/** @var allocation $cart */
-	$cart = $_SESSION['alloc'];
+	$cart = session_obj('alloc');
 
 	if ($cart->type == ST_JOURNAL && $cart->bank_amount < 0)
 	{
 		$cart->bank_amount = -$cart->bank_amount;
 		$cart->amount = -$cart->amount;
-	}	
-    display_heading(sprintf(_("Allocation of %s # %d"), $systypes_array[$cart->type], $cart->trans_no));
+	}
+	$cart_type = (int) $cart->type;
+    display_heading(sprintf(_("Allocation of %s # %d"), $systypes_array[$cart_type], (string) $cart->trans_no));
 
     display_heading($cart->person_name);
 
@@ -108,6 +109,8 @@ if (isset($_POST['Process']))
 if (isset($_POST['Cancel']))
 {
 	clear_allocations();
+	/** @var string $path_to_root */
+	$path_to_root = $path_to_root;
 	meta_forward($path_to_root . "/sales/allocations/customer_allocation_main.php");
 }
 
