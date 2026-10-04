@@ -81,17 +81,26 @@ submit_cells('SearchOrders', _("Search"),'',_('Select documents'), 'default');
 end_row();
 end_table(1);
 //---------------------------------------------------------------------------------------------
+/**
+ * @param array<array-key, string|int|float|bool|null> $trans
+ */
 function trans_view(array $trans)
 {
 	return get_trans_view_str(ST_PURCHORDER, $trans["order_no"]);
 }
 
+/**
+ * @param array<array-key, string|int|float|bool|null> $row
+ */
 function edit_link(array $row): string
 {
 	return trans_editor_link(ST_PURCHORDER, $row["order_no"]);
 }
 
-/** @return non-empty-string|null */
+/**
+ * @param array<array-key, string|int|float|bool|null> $row
+ * @return non-empty-string|null
+ */
 function prt_link(array $row)
 {
 	return print_document_link($row['order_no'], _("Print"), true, ST_PURCHORDER, ICON_PRINT);
@@ -110,8 +119,18 @@ function check_overdue(array $row): bool
 //---------------------------------------------------------------------------------------------
 
 //figure out the sql required from the inputs available
-$sql = get_sql_for_po_search(get_post('OrdersAfterDate'), get_post('OrdersToDate'), get_post('supplier_id'), get_post('StockLocation'),
-	post_scalar('order_number'), get_post('SelectStockFromList'));
+$after_date = get_post('OrdersAfterDate');
+$to_date = get_post('OrdersToDate');
+$po_supplier_id = get_post('supplier_id');
+$stock_location = get_post('StockLocation');
+$select_stock = get_post('SelectStockFromList');
+$sql = get_sql_for_po_search(
+	is_array($after_date) ? null : $after_date,
+	is_array($to_date) ? null : $to_date,
+	is_array($po_supplier_id) ? null : $po_supplier_id,
+	is_array($stock_location) ? null : $stock_location,
+	post_scalar('order_number'),
+	is_array($select_stock) ? null : $select_stock);
 
 //$result = db_query($sql,"No orders were returned");
 
