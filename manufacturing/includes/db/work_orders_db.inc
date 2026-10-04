@@ -30,8 +30,8 @@ function add_work_order(string|int|float|bool|null $wo_ref, string|int|float|boo
 	if ($type != WO_ADVANCED)
 		$required_by = $date_;
 
-	$date = date2sql($date_);
-	$required = date2sql($required_by);
+	$date = date2sql((string) $date_);
+	$required = date2sql((string) $required_by);
 	$sql = "INSERT INTO ".TB_PREF."workorders (wo_ref, loc_code, units_reqd, stock_id,
 		type, date_, required_by)
     	VALUES (".db_escape($wo_ref).", ".db_escape($loc_code).", "
@@ -82,8 +82,8 @@ function update_work_order(string|int|float|bool|null $woid, string|int|float|bo
 		'date_', 'required_by', 'memo_'), $args);
 	hook_db_prewrite($args, ST_WORKORDER);
 
-	$date = date2sql($date_);
-	$required = date2sql($required_by);
+	$date = date2sql((string) $date_);
+	$required = date2sql((string) $required_by);
 
 	$sql = "UPDATE ".TB_PREF."workorders SET loc_code=".db_escape($loc_code).",
 		units_reqd=".db_escape($units_reqd).", stock_id=".db_escape($stock_id).",
@@ -190,7 +190,7 @@ function release_work_order(string|int|float|bool|null $woid, string|int|float|b
 	$myrow = row_or_empty(get_work_order($woid));
 	$stock_id = $myrow["stock_id"];
 
-	$date = date2sql($releaseDate);
+	$date = date2sql((string) $releaseDate);
 
 	$sql = "UPDATE ".TB_PREF."workorders SET released_date='$date',
 		released=1 WHERE id = ".db_escape($woid);
@@ -340,14 +340,14 @@ function get_sql_for_work_orders(?int $outstanding_only, string|null $stock_id, 
 		$sql .= " AND workorder.loc_code=".db_escape($location);
 	}
 
-	if ($order_no != '')
+	if ($order_no != '' && !is_array($order_no))
 	{
-		$sql .= " AND workorder.id LIKE ".db_escape('%'.$order_no.'%');
+		$sql .= " AND workorder.id LIKE ".db_escape('%'.(string)$order_no.'%');
 	}
 
-	if ($order_ref != '')
+	if ($order_ref != '' && !is_array($order_ref))
 	{
-		$sql .= " AND workorder.wo_ref LIKE ".db_escape('%'.$order_ref.'%');
+		$sql .= " AND workorder.wo_ref LIKE ".db_escape('%'.(string)$order_ref.'%');
 	}
 
 	if ($stock_id != ALL_TEXT)
