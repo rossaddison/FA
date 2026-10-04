@@ -128,11 +128,12 @@ final class sys_prefs extends stdClass
 		$sql = "SELECT name, value FROM ".TB_PREF."sys_prefs";
 		$result = @db_query($sql); // supress errors before 2.3 db structure upgrade
 
-		if(!$result)
+		if(!($result instanceof mysqli_result))
 			return null;
 
 		while($pref = db_fetch_assoc($result)) {
-			$this->prefs[$pref['name']] = $pref['value'];
+			if ($pref['name'] !== null)
+				$this->prefs[$pref['name']] = $pref['value'];
 		}
 
 		// update current db status for info in log file
@@ -328,11 +329,15 @@ final class sys_prefs extends stdClass
 		return $this->prefs['suppress_tax_rates'];
 	}
 
-	/** @return string */
+	/**
+	 * @param string|int|float|bool|null $comp
+	 * @return string
+	 */
 	function backup_dir($comp=null)
 	{
 		if (!isset($comp))
 			$comp = user_company();
+		$comp = is_scalar($comp) ? (string) $comp : '';
 
 		if (isset($this->backup_path))
 			return sprintf($this->backup_path, $comp);
