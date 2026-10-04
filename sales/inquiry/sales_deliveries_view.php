@@ -129,7 +129,12 @@ end_row();
 end_table(1);
 //---------------------------------------------------------------------------------------------
 
-/** @return null|string */
+/**
+ * 
+ * @param array $trans
+ * @param string|int|float|bool|array|null $trans_no
+ * @return string|null
+ */
 function trans_view(array $trans, string|int|float|bool|array|null $trans_no): ?string
 {
 	return get_customer_trans_view_str(ST_CUSTDELIVERY, (string) $trans['trans_no']);

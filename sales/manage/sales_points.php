@@ -25,7 +25,7 @@ $selected_id = $selected_id;
 //----------------------------------------------------------------------------------------------------
 
 #[\NoDiscard]
-function can_process(): bool
+function canProcessSalesPoints(): bool
 {
     $pointsName = get_post('name');
     if (!is_string($pointsName) || $pointsName === '')
@@ -43,7 +43,7 @@ $checkValueCash = check_value('cash');
 $checkValueCredit = check_value('credit');
 
 if ($Mode=='ADD_ITEM'
-    && can_process()
+    && canProcessSalesPoints()
     && is_int($checkValueCash)
     && is_int($checkValueCredit))
 {
@@ -56,7 +56,7 @@ if ($Mode=='ADD_ITEM'
 //----------------------------------------------------------------------------------------------------
 
 if ($Mode=='UPDATE_ITEM'
-    && can_process()
+    && canProcessSalesPoints()
     && is_int($checkValueCash)
     && is_int($checkValueCredit))
 {
@@ -172,4 +172,3 @@ submit_add_or_update_center($selected_id == -1, '', 'both');
 end_form();
 
 end_page();
-

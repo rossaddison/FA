@@ -443,7 +443,7 @@ $dspans[] = $spanlen;
 
 $src_docs = session_obj('Items')->src_docs;
 $is_batch_invoice = (is_array($src_docs) ? count($src_docs) : 1) > 1;
-$prepaid = session_obj('Items')->is_prepaid();
+$prepaid = (bool) session_obj('Items')->is_prepaid();
 
 $is_edition = session_obj('Items')->trans_type == ST_SALESINVOICE && session_obj('Items')->trans_no != 0;
 start_form();
