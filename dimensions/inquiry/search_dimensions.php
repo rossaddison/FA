@@ -67,7 +67,7 @@ if (isset($_GET["stock_id"]))
 
 //--------------------------------------------------------------------------------------
 
-start_form(false, false, (string)$_SERVER['PHP_SELF'] ."?outstanding_only=$outstanding_only");
+start_form(false, false, ($_SERVER['PHP_SELF'] ?? '') ."?outstanding_only=$outstanding_only");
 
 start_table(TABLESTYLE_NOBORDER);
 start_row();
@@ -100,10 +100,13 @@ function view_link(array $row)
 	return get_dimensions_trans_view_str(ST_DIMENSION, $row["id"]);
 }
 
-/** @return null|string */
-function sum_dimension(array $row) 
+/**
+ * @param array<array-key, string|int|float|bool|null> $row
+ * @return null|string
+ */
+function sum_dimension(array $row)
 {
-	return get_dimension_balance($row['id'], post_scalar('FromDate'), post_scalar('ToDate')); 
+	return get_dimension_balance($row['id'], (string) post_scalar('FromDate'), (string) post_scalar('ToDate'));
 }
 
 /** @psalm-pure */
@@ -112,26 +115,37 @@ function is_closed(array $row): string
 	return (bool)$row['closed'] ? _('Yes') : _('No');
 }
 
+/**
+ * @param array<array-key, string|int|float|bool|null> $row
+ */
 function is_overdue(array $row): bool
 {
-	return date_diff2(Today(), sql2date($row["due_date"]), "d") > 0;
+	return date_diff2(Today(), sql2date((string) $row["due_date"]), "d") > 0;
 }
 
+/**
+ * @param array<array-key, string|int|float|bool|null> $row
+ */
 function edit_link(array $row): string
 {
 	return pager_link(_("Edit"),
 			"/dimensions/dimension_entry.php?trans_no=" . (string)$row["id"], ICON_EDIT);
 }
 
-/** @return non-empty-string|null */
+/**
+ * @param array<array-key, string|int|float|bool|null> $row
+ * @return non-empty-string|null
+ */
 function prt_link(array $row)
 {
 	return print_document_link($row['id'], _("Print"), true, ST_DIMENSION, ICON_PRINT);
 }
 
 
-$sql = get_sql_for_search_dimensions($dim, post_scalar('FromDate'), post_scalar('ToDate'),
-	post_scalar('OrderNumber'), post_scalar('type_'), check_value('OpenOnly'), check_value('OverdueOnly'));
+$type_param = post_scalar('type_');
+$sql = get_sql_for_search_dimensions($dim, (string) post_scalar('FromDate'), (string) post_scalar('ToDate'),
+	post_scalar('OrderNumber'), is_string($type_param) || is_int($type_param) ? $type_param : null,
+	check_value('OpenOnly'), check_value('OverdueOnly'));
 
 $cols = array(
 	_("#") => array('fun'=>'view_link'), 
