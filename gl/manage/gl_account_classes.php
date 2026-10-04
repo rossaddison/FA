@@ -28,13 +28,13 @@ simple_page_mode(false);
 function can_process(): bool 
 {
 
-	if (strlen(trim($_POST['id'])) == 0) 
+	if (strlen(trim((string) post_scalar('id'))) == 0)
 	{
 		display_error( _("The account class ID cannot be empty."));
 		set_focus('id');
 		return false;
 	}
-	if (strlen(trim($_POST['name'])) == 0) 
+	if (strlen(trim((string) post_scalar('name'))) == 0)
 	{
 		display_error( _("The account class name cannot be empty."));
 		set_focus('name');
@@ -53,8 +53,10 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 	if (can_process()) 
 	{
 
-    	if ($selected_id != "") 
+    	if ($selected_id != "")
     	{
+    		/** @var int|string $selected_id */
+    		$selected_id = $selected_id;
     		if(update_account_class($selected_id, post_scalar('name'), post_scalar('ctype')))
 				display_notification(_('Selected account class settings has been updated'));
     	} 
@@ -75,7 +77,8 @@ function can_delete(string|int|float|bool|array|null $selected_id): bool
 {
 	if ($selected_id == "")
 		return false;
-	if ((bool)key_in_foreign_table($selected_id, 'chart_types', 'class_id'))	
+	$selected_id_scalar = is_array($selected_id) ? null : $selected_id;
+	if ((bool)key_in_foreign_table($selected_id_scalar, 'chart_types', 'class_id'))
 	{
 		display_error(_("Cannot delete this account class because GL account types have been created referring to it."));
 		return false;
@@ -92,6 +95,8 @@ if ($Mode == 'Delete')
 
 	if (can_delete($selected_id))
 	{
+		/** @var int|string $selected_id */
+		$selected_id = $selected_id;
 		delete_account_class($selected_id);
 		display_notification(_('Selected account class has been deleted'));
 	}
@@ -128,8 +133,8 @@ while ($myrow = db_fetch($result))
 		$myrow['ctype'] = ($myrow["ctype"] >= CL_ASSETS && $myrow["ctype"] < CL_INCOME ? 1 : 0);
 		label_cell(($myrow['ctype'] == 1 ? _("Yes") : _("No")));
 	}	
-	else	
-		label_cell($class_types[$myrow["ctype"]]);
+	else
+		label_cell($class_types[(int) $myrow["ctype"]]);
 	inactive_control_cell($myrow["cid"], $myrow["inactive"], 'chart_class', 'cid');
 	edit_button_cell("Edit".(string)$myrow["cid"], _("Edit"));
 	delete_button_cell("Delete".(string)$myrow["cid"], _("Delete"));
@@ -141,8 +146,10 @@ end_table(1);
 
 start_table(TABLESTYLE2);
 
-if ($selected_id != "") 
+if ($selected_id != "")
 {
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
  	if ($Mode == 'Edit') {
 		//editing an existing status code
 		$myrow = row_or_empty(get_account_class($selected_id));
