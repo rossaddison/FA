@@ -40,6 +40,7 @@ else
 	display_note("This page must be called with a work order reference");
 	exit;
 }
+$selected_id = is_array($selected_id) ? null : $selected_id;
 
 //------------------------------------------------------------------------------------
 
@@ -88,7 +89,7 @@ if (isset($_POST['release']))
 
 start_form();
 
-$myrow = get_work_order($selected_id);
+$myrow = row_or_empty(get_work_order($selected_id));
 
 $_POST['released'] = $myrow["released"];
 $_POST['memo_'] = "";
