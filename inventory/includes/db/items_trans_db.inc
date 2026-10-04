@@ -19,7 +19,7 @@ function stock_cost_update(string|null $stock_id, int|float|bool|null $material_
 
 	$update_no = -1;
 
-    if (is_service($mb_flag))
+    if (is_service(is_string($mb_flag) ? $mb_flag : null))
     {
 		$sql = "UPDATE ".TB_PREF."stock_master SET material_cost=".db_escape($material_cost)."
 		WHERE stock_id=".db_escape($stock_id);
@@ -45,9 +45,9 @@ function stock_cost_update(string|null $stock_id, int|float|bool|null $material_
 
 	if ($qoh > 0)
 	{
-		$new_cost = (float)$material_cost + (float)$labour_cost + $overhead_cost;
+		$new_cost = (float)$material_cost + (float)$labour_cost + (float)$overhead_cost;
 
-		$value_of_change = round2($qoh * ($new_cost - $last_cost), user_price_dec());
+		$value_of_change = round2((float)$qoh * ($new_cost - (float)$last_cost), user_price_dec());
 
 		if ($value_of_change != 0)
 		{
@@ -57,13 +57,13 @@ function stock_cost_update(string|null $stock_id, int|float|bool|null $material_
 			$cart->tran_date = $cart->doc_date = $cart->event_date = $date_;
 			if (!(bool)is_date_in_fiscalyear($cart->tran_date))
 				$cart->tran_date = end_fiscalyear();
-			$cart->reference = refs()->get_next(ST_COSTUPDATE, $refline, $cart->tran_date, $date_);
+			$cart->reference = refs()->get_next(ST_COSTUPDATE, $refline, $cart->tran_date);
  
 			if (!(bool)($memo_ ?? null))
 				$cart->memo_ = sprintf(_("Cost was %s changed to %s x quantity on hand of %s"),
 					number_format2($last_cost, user_price_dec()), number_format2($new_cost, user_price_dec()), $qoh);
 			else
-				$cart->memo_ = $memo_;
+				$cart->memo_ = is_array($memo_) ? '' : (string) $memo_;
 
 			$cart->add_gl_item($stock_gl_code["adjustment_account"],
 				$stock_gl_code["dimension_id"], $stock_gl_code["dimension2_id"], -$value_of_change);
