@@ -100,17 +100,20 @@ function get_tag_name(string|int|float|bool|null $id)
 }
 
 //----------------------------------------------------------------------------------------------------
+/**
+ * @param array<array-key, string|int|float|bool|null>|int|string|null $tags
+ */
 function get_tag_names(string|int|array|null $tags): string
 {
 	$str = "";
-	if ($tags == -1)
+	if ($tags == -1 || !is_array($tags))
 		return $str;
 	foreach($tags as $id)
 	{
-		$tag = get_tag_name($id);
+		$tag = (string) get_tag_name($id);
 		if ($str == "")
 			$str .= $tag;
-		else	
+		else
 			$str .= ", ".$tag;
 	}
 	return $str;
@@ -141,6 +144,9 @@ function delete_tag(string|int|float|bool|null $id): void
 
 //--------------------------------------------------------------------------------------
 
+/**
+ * @param array<array-key, string|int|float|bool|null> $tagids
+ */
 function add_tag_associations(string|int|float|bool|null $recordid, array $tagids): void
 {
 	foreach($tagids as $tagid) {
@@ -154,6 +160,9 @@ function add_tag_associations(string|int|float|bool|null $recordid, array $tagid
 
 //--------------------------------------------------------------------------------------
 
+/**
+ * @param array<array-key, string|int|float|bool|null> $tagids
+ */
 function update_tag_associations(?int $type, string|int|float|bool|null $recordid, array $tagids): void
 {
 	// Delete the old associations
@@ -234,9 +243,12 @@ function get_tags_associated_with_record(?int $type, string|int|float|bool|null 
 
 //--------------------------------------------------------------------------------------
 
+/**
+ * @param array<array-key, string|int|float|bool|null>|null $tags
+ */
 function is_record_in_tags(?array $tags, ?int $type, ?string $recordid): bool
 {
-	foreach($tags as $id)
+	foreach(($tags ?? array()) as $id)
 	{
 		$sql = "SELECT ta.record_id FROM ".TB_PREF."tag_associations AS ta 
 				INNER JOIN ".TB_PREF."tags AS tags ON tags.id = ta.tag_id 
