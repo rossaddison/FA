@@ -196,9 +196,12 @@ function inquiry_controls(): void
 
 //----------------------------------------------------------------------------------------------------
 
-function display_profit_and_loss(string|array|null $compare): void
+function display_profit_and_loss(string|int|array|null $compare): void
 {
 	global $path_to_root, $compare_types;
+
+	/** @var int|string $compare */
+	$compare = is_array($compare) || $compare === null ? 0 : $compare;
 
 	if (!isset($_POST['Dimension']))
 		$_POST['Dimension'] = 0;

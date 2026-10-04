@@ -27,8 +27,16 @@ include_once(dirname(__DIR__, 2) . "/taxes/tax_calc.inc");
  * Comments/tax_group_name are always populated by __construct()'s call to
  * read(), but through branches (read_sales_order()/read_sales_trans(), or the
  * "new document" branch) that Psalm can't trace property assignment through.
+ *
+ * Do NOT mark this class final. Psalm's ClassMustBeFinal suggests it because
+ * nothing in the scanned tree extends Cart - but modules/import_transactions/
+ * includes/import_sales_cart_class.inc's import_sales_cart does, and modules/
+ * is deliberately out of Psalm's scope (see psalm.xml's ignoreFiles). Marking
+ * this final broke that module's real, live "class X cannot extend final
+ * class Cart" fatal error - confirmed via screenshot of the actual crash.
+ * @psalm-suppress ClassMustBeFinal
  */
-final class Cart
+class Cart
 {
 	/** @var int|string|null */
 	var $trans_type; // invoice, order, quotation, delivery note ...

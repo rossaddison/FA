@@ -566,7 +566,8 @@ function display_allocations(bool|mysqli_result $alloc_result, string|int|float|
     $th = array( _("Type"), _("Number"), _("Date"), _("Total Amount"),
     	_("Left to Allocate"), _("This Allocation"));
 	table_header($th);
-    $k = $total_allocated = 0.0;
+    $k = 0;
+    $total_allocated = 0.0;
 
     while ($alloc_row = db_fetch($alloc_result))
     {
