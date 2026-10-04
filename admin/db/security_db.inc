@@ -17,32 +17,40 @@ declare(strict_types=1);
  */
 function get_security_role(string|int|float|bool|array|null $id)
 {
-	$sql = "SELECT * FROM ".TB_PREF."security_roles WHERE id=".(int)$id;
+	$sql = "SELECT * FROM ".TB_PREF."security_roles WHERE id=".(is_array($id) ? 0 : (int)$id);
 	$ret = db_select($sql, "could not retrieve security roles");
 	$row = db_fetch($ret);
 	if ($row != false) {
-		$row['areas'] = explode(';', $row['areas']);
-		$row['sections'] = explode(';', $row['sections']);
+		$row['areas'] = explode(';', (string) $row['areas']);
+		$row['sections'] = explode(';', (string) $row['sections']);
 	}
 	return $row;
 }
 
 //--------------------------------------------------------------------------------------------------
 
+/**
+ * @param array<array-key, int>|null $sections
+ * @param array<array-key, int>|null $areas
+ */
 function add_security_role(string|int|float|bool|null $name, string|int|float|bool|null $description, ?array $sections, ?array $areas): void
 {
 	$sql = "INSERT INTO ".TB_PREF."security_roles (role, description, sections, areas)
 	VALUES ("
 	.db_escape($name).","
 	.db_escape($description).","
-	.db_escape(implode(';', $sections)).","
-	.db_escape(implode(';', $areas)).")";
+	.db_escape(implode(';', $sections ?? array())).","
+	.db_escape(implode(';', $areas ?? array())).")";
 
 	db_query($sql, "could not add new security role");
 }
 
 //--------------------------------------------------------------------------------------------------
 
+/**
+ * @param array<array-key, int> $sections
+ * @param array<array-key, int> $areas
+ */
 function update_security_role(string|int|float|bool|null $id, string|int|float|bool|null $name, string|int|float|bool|null $description, array $sections, array $areas): void
 {
     	$sql = "UPDATE ".TB_PREF."security_roles SET role=".db_escape($name)
@@ -56,7 +64,7 @@ function update_security_role(string|int|float|bool|null $id, string|int|float|b
 
 function delete_security_role(string|array|null $id): void
 {
-	$sql = "DELETE FROM ".TB_PREF."security_roles WHERE id=".(int)$id;
+	$sql = "DELETE FROM ".TB_PREF."security_roles WHERE id=".(is_array($id) ? 0 : (int)$id);
 
 	db_query($sql, "could not delete role");
 }
@@ -66,7 +74,7 @@ function delete_security_role(string|array|null $id): void
  * @return null|string
  */
 function check_role_used(string|array|null $id) {
-	$sql = "SELECT count(*) FROM ".TB_PREF."users WHERE role_id=".(int)$id;
+	$sql = "SELECT count(*) FROM ".TB_PREF."users WHERE role_id=".(is_array($id) ? 0 : (int)$id);
 	$ret = db_select($sql, 'cannot check role usage');
 	$row = row_or_empty(db_fetch($ret));
 	return $row[0];
