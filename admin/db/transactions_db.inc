@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 //--------------------------------------------------------------------------------------
 
+/**
+ * @param string|null $trans_ref
+ */
 function get_sql_for_view_transactions(string|int|float|bool|null $filtertype, string|int|float|bool|null $from, string|int|float|bool|null $to, &$trans_ref): string
 {
 	$db_info = get_systype_db_info($filtertype);
@@ -28,10 +31,7 @@ function get_sql_for_view_transactions(string|int|float|bool|null $filtertype, s
 
 	$sql = "SELECT t.$trans_no_name as trans_no";
 
-	if ($trans_ref)
-		$sql .= " ,t.$trans_ref as ref ";
-	else
-		$sql .= ", r.reference as ref";
+	$sql .= " ,t.$trans_ref as ref ";
 	if ($trans_date)
 		$sql .= ",t.$trans_date as trans_date";
  	if ($type_name)
@@ -145,7 +145,7 @@ function get_counterparty_name(string|int|float|bool|null $trans_type, string|in
 	if (db_num_rows($result))
 	{
 		$row = row_or_empty(db_fetch($result));
-		return sprintf("[%05s] %s", $row['person_id'], $row['name']);
+		return sprintf("[%05s] %s", (string) $row['person_id'], (string) $row['name']);
 	}
 
 	return '';
@@ -161,7 +161,7 @@ function get_next_trans_no (string|int|float|bool|null $trans_type): float|int{
 
 	$st = get_systype_db_info($trans_type);
 
-	if (!($st && $st[0] && $st[2])) {
+	if (!$st) {
 		// this is in fact internal error condition.
 		display_error('Internal error: invalid type passed to get_next_trans_no()');
 		return 0;
@@ -177,7 +177,7 @@ function get_next_trans_no (string|int|float|bool|null $trans_type): float|int{
     $result = db_select($sql,"The next transaction number for $trans_type could not be retrieved");
     $myrow = row_or_empty(db_fetch_row($result));
 
-    return $myrow[0] + 1;
+    return (float)$myrow[0] + 1.0;
 }
 
 //-----------------------------------------------------------------------------
