@@ -49,7 +49,7 @@ if (check_value('ShowSettled'))
 	$settled = true;
 
 $customer_id = null;
-if (isset($_POST['customer_id']))
+if (isset($_POST['customer_id']) && !is_array($_POST['customer_id']))
 	$customer_id = $_POST['customer_id'];
 
 //--------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ function systype_name(string|int|float|bool|array $dummy, string|int|float|bool|
 {
 	global $systypes_array;
 
-	return $systypes_array[$type];
+	return $systypes_array[(int) $type];
 }
 
 function trans_view(array $trans)
@@ -75,12 +75,12 @@ function alloc_link(array $row): string
 
 function amount_total(array $row): string
 {
-	return price_format($row['type'] == ST_JOURNAL && $row["Total"] < 0 ? -$row["Total"] : $row["Total"]);
+	return price_format($row['type'] == ST_JOURNAL && $row["Total"] < 0 ? -(float)$row["Total"] : (float)$row["Total"]);
 }
 
 function amount_left(array $row): string
 {
-	return price_format(($row['type'] == ST_JOURNAL && $row["Total"] < 0 ? -$row["Total"] : $row["Total"])-(float)$row["alloc"]);
+	return price_format(($row['type'] == ST_JOURNAL && $row["Total"] < 0 ? -(float)$row["Total"] : (float)$row["Total"])-(float)$row["alloc"]);
 }
 
 /** @psalm-pure */
