@@ -51,7 +51,7 @@ start_form();
 	if (check_value('ShowSettled'))
 		$settled = true;
 	$supplier_id = null;
-	if (isset($_POST['supplier_id']))
+	if (isset($_POST['supplier_id']) && !is_array($_POST['supplier_id']))
 		$supplier_id = $_POST['supplier_id'];
 
 //--------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ function systype_name(string|int|float|bool|array $dummy, string|int|float|bool|
 {
 	global $systypes_array;
 
-	return $systypes_array[$type];
+	return $systypes_array[(int) $type];
 }
 
 function trans_view(array $trans)
@@ -77,12 +77,12 @@ function alloc_link(array $row): string
 
 function amount_left(array $row): string
 {
- 	return price_format($row['type'] == ST_JOURNAL ?  (float)abs($row["Total"])-(float)$row["alloc"] : (float)(-$row["Total"])-(float)$row["alloc"]);
+ 	return price_format($row['type'] == ST_JOURNAL ?  abs((float)$row["Total"])-(float)$row["alloc"] : -(float)$row["Total"]-(float)$row["alloc"]);
 }
 
 function amount_total(array $row): string
 {
-	return price_format(-$row["Total"]);
+	return price_format(-(float)$row["Total"]);
 }
 
 function check_settled(array $row): bool
