@@ -31,7 +31,7 @@ simple_page_mode(false);
 #[\NoDiscard]
 function check_data(string|int|float|bool|array|null $selected_id): bool
 {
-	if (!is_date(post_scalar('date_')))
+	if (!is_date((string) post_scalar('date_')))
 	{
 		display_error( _("The entered date is invalid."));
 		set_focus('date_');
@@ -64,7 +64,7 @@ function handle_submit()
 	if ($selected_id != "")
 	{
 
-		update_exchange_rate(post_scalar('curr_abrev'), post_scalar('date_'),
+		update_exchange_rate((string) post_scalar('curr_abrev'), (string) post_scalar('date_'),
 		input_num('BuyRate'), input_num('BuyRate'));
 	}
 	else
@@ -86,6 +86,8 @@ function handle_delete(): void
 
 	if ($selected_id == "")
 		return;
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	delete_exchange_rate($selected_id);
 	$selected_id = '';
 	clear_data();
@@ -121,6 +123,8 @@ function display_rate_edit(): void
 	{
 		//editing an existing exchange rate
 
+		/** @var int|string $selected_id */
+		$selected_id = $selected_id;
 		$myrow = row_or_empty(get_exchange_rate($selected_id));
 
 		$_POST['date_'] = sql2date($myrow["date_"]);
@@ -202,7 +206,8 @@ if ($_POST['curr_abrev'] != get_global_curr_code())
 
 set_global_curr_code(get_post('curr_abrev'));
 
-$sql = get_sql_for_exchange_rates(get_post('curr_abrev'));
+$curr_abrev_param = get_post('curr_abrev');
+$sql = get_sql_for_exchange_rates(is_array($curr_abrev_param) ? null : $curr_abrev_param);
 
 $cols = array(
 	_("Date to Use From") => 'date', 
