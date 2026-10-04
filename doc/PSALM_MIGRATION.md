@@ -129,14 +129,31 @@ over a request's lifetime (`includes/db/sql_functions.inc`'s
 at points where the real runtime value is a general `int`/array; same
 `@var` fix.
 
-**`psalm.xml`'s `<globals>` type declarations can themselves be wrong.**
-`installed_languages` was declared `array<int, array<string, string>>`, but
-the real `rtl` key is a genuine `bool` everywhere it's set
-(`install/isession.inc`, `admin/inst_lang.php`'s `(bool)$_POST['rtl']`,
-`includes/packages.inc`). This made every `$lang['rtl'] === true` check
-across the codebase look like a permanent-false `DocblockTypeContradiction` —
-the application code was correct; the global's declared type was too narrow.
-Widened to `array<int, array<string, string|bool>>`.
+**`psalm.xml`'s `<globals>` type declarations can themselves be wrong —
+but widening one isn't always the right fix.** `installed_languages` is
+declared `array<int, array<string, string>>`, yet the real `rtl` key is a
+genuine `bool` everywhere it's set (`install/isession.inc`,
+`admin/inst_lang.php`'s `(bool)$_POST['rtl']`, `includes/packages.inc`).
+This made every `$lang['rtl'] === true` check across the codebase look
+like a permanent-false `DocblockTypeContradiction` — the application code
+was correct; the global's declared type was too narrow. This note
+previously said the fix was to widen the stub to
+`array<int, array<string, string|bool>>`; that widening was never actually
+applied to `psalm.xml`, and re-tried later in the migration (confirmed via
+a real before/after scan), it made the project total go *up*, cascading
+new findings into `admin/inst_lang.php`, `includes/packages.inc` and
+`install/isession.inc` that the one caller which actually needed `rtl`
+typed as `bool` (`includes/lang/language.inc`'s `set_language()`) didn't
+justify. Fixed there instead with a local, scoped `@var` assertion on the
+one variable that needed it, leaving the global stub untouched. The same
+pattern played out once before, trying to type `$_SESSION["App"]` as
+`front_accounting` in the `_SESSION` stub to fix two findings in
+`index.php` — it cascaded ~25 new findings into `includes/page/header.inc`,
+a file that had been clean. Both times the fix was the same: revert the
+global stub change, and narrow the one call site that actually needed it
+with a local `@var` instead. A global type stub's blast radius has to be
+weighed against the one finding it's meant to fix — a local `@var` is
+usually the safer, surgical choice.
 
 **Overly-broad legacy `@return` docblocks that were never actually reachable.**
 `write_customer_trans()` (`sales/includes/db/cust_trans_db.inc`) was declared

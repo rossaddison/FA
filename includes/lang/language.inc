@@ -16,7 +16,7 @@ if (isset($_GET['path_to_root']) || isset($_POST['path_to_root']))
 @include_once(dirname(__DIR__, 2) . "/lang/installed_languages.inc");
 include_once(dirname(__DIR__, 2) . "/includes/lang/gettext.inc");
 
-class language 
+final class language
 {
 	/** @var string */
 	var $name;
@@ -42,6 +42,7 @@ class language
 		$this->dir = $dir;
 	}
 
+	/** @psalm-mutation-free */
 	function get_language_dir(): string
 	{
 		return "lang/" . $this->code;
@@ -50,23 +51,26 @@ class language
 	function get_current_language_dir(): string
 	{
 		/** @var language $lang */
-		$lang = $_SESSION['language'];
+		$lang = session_obj('language');
 		return "lang/" . $lang->code;
 	}
 
 	function set_language(string|int|float|bool|null $code): void
 	{
 	    global $path_to_root, $installed_languages, $GetText;
+		/** @var gettext_native_support $GetText */
+		$GetText = $GetText;
 
+		/** @var array{name: string, code: string, encoding: string, version?: string, rtl?: bool}|null $lang */
 		$lang = array_search_value($code, $installed_languages, 'code');
-		$changed = $this->code != $code || $this->version != @$lang['version'];
+		$changed = $this->code != $code || $this->version != ($lang['version'] ?? null);
 
 		if ($lang && $changed)
 		{
 			$this->name = $lang['name'];
 			$this->code = $lang['code'];
 			$this->encoding = $lang['encoding'];
-			$this->version = @$lang['version'];
+			$this->version = $lang['version'] ?? null;
 			$this->dir = (isset($lang['rtl']) && $lang['rtl'] === true) ? 'rtl' : 'ltr';
 			$locale = $path_to_root . "/lang/" . $this->code . "/locale.inc";
 			$this->is_locale_file = file_exists($locale);
@@ -79,8 +83,11 @@ class language
 		// version set globally in php.ini
 		ini_set('default_charset', $this->encoding);
 
-		if (isset($_SESSION['wa_current_user']) && $_SESSION['wa_current_user']->logged_in() && isset($_SESSION['App']) && $changed)
-			$_SESSION['App']->init(); // refresh menu
+		if (isset($_SESSION['wa_current_user']) && $_SESSION['wa_current_user']->logged_in() && isset($_SESSION['App']) && $changed) {
+			/** @var front_accounting $app */
+			$app = $_SESSION['App'];
+			$app->init(); // refresh menu
+		}
 	}
 }
 
