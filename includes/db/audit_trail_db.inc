@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 function add_audit_trail(string|int|float|bool|null $trans_type, string|int|float|bool|null $trans_no, string|int|float|bool|array|null $trans_date, ?string $descr=''): void
 {
-	$descr = substr($descr, 0, 60);
+	$descr = substr($descr ?? '', 0, 60);
 	begin_transaction();
 
-	$date = date2sql($trans_date);
+	$date = date2sql(is_array($trans_date) ? null : (string) $trans_date);
 	$sql = "INSERT INTO ".TB_PREF."audit_trail"
 		. " (type, trans_no, user, gl_date, description, stamp)
 			VALUES(".db_escape($trans_type).", ".db_escape($trans_no).","
@@ -48,6 +48,9 @@ function get_audit_trail_all(string|int|float|bool|null $trans_type, string|int|
 	return db_select($sql, "Cannot get all audit info for transaction");
 }
 
+/**
+ * @return array<array-key, null|string>|false
+ */
 function get_audit_trail_last(string|int|float|bool|null $trans_type, string|int|float|bool|null $trans_no)
 {
 	$sql = "SELECT * FROM ".TB_PREF."audit_trail"
@@ -55,7 +58,8 @@ function get_audit_trail_last(string|int|float|bool|null $trans_type, string|int
 			" AND trans_no=".db_escape($trans_no)." AND NOT ISNULL(gl_seq)";
 
 	$res = db_query($sql, "Cannot get last audit info for transaction");
-	if ($res)
+	$row = false;
+	if ($res instanceof mysqli_result)
 		$row = db_fetch($res);
 
 	return $row;
@@ -83,6 +87,7 @@ function close_transactions(string|null $todate): int {
 
 	if (db_num_rows($result)) {
 		$last_year = 0;
+		$counter = 0;
 
 		while ($row = db_fetch($result)) {
 			if ($row['fiscal_year'] == null) {
