@@ -83,7 +83,7 @@ function delete_fiscalyear(string|int|float|bool|null $id): void
 
 function is_date_in_fiscalyears(string|int|float|bool|array|null $date, bool $closed=true): bool
 {
-	$date = date2sql($date);
+	$date = date2sql(is_array($date) ? null : (string) $date);
 	$sql = "SELECT * FROM ".TB_PREF."fiscal_year WHERE '$date' >= begin AND '$date' <= end";
 	if (!$closed)
 		$sql .= " AND closed=0";
@@ -93,7 +93,7 @@ function is_date_in_fiscalyears(string|int|float|bool|array|null $date, bool $cl
 
 function get_fiscalyear_begin_for_date(string|int|float|bool|array|null $date): string
 {
- 	$date = date2sql($date);
+ 	$date = date2sql(is_array($date) ? null : (string) $date);
 	$sql = "SELECT begin FROM ".TB_PREF."fiscal_year WHERE '$date' >= begin AND '$date' <= end";
 	$result = db_select($sql, "could not get begin date of the fiscal year");
 	$row = db_fetch_row($result);
@@ -108,7 +108,7 @@ function check_begin_end_date(string|array|null $date1, string|array|null $date2
 	$sql = "SELECT MAX(end), MIN(begin) FROM ".TB_PREF."fiscal_year";
 	$result = db_select($sql, "could not retrieve last fiscal years");
 	$row = row_or_empty(db_fetch_row($result));
-	if ($row[0] === null)
+	if (($row[0] ?? null) === null)
 		return true;
 	$max = add_days(sql2date($row[0]), 1);
 	$min = add_days(sql2date($row[1]), -1);
@@ -120,7 +120,7 @@ function next_begin_date(): false|string
 	$sql = "SELECT MAX(end) FROM ".TB_PREF."fiscal_year";
 	$result = db_select($sql, "could not retrieve last fiscal years");
 	$row = row_or_empty(db_fetch_row($result));
-	if ($row[0] === null)
+	if (($row[0] ?? null) === null)
 		return false;
 	return add_days(sql2date($row[0]), 1);
 }
@@ -209,8 +209,10 @@ function delete_attachments_and_comments(string|int|null $type_no, string|int|fl
 function delete_this_fiscalyear(string|int|float|bool|null $selected_id): void
 {
 	global $db_connections;
-	
-	db_backup($db_connections[user_company()], 'Security backup before Fiscal Year Removal');
+
+	$company = user_company();
+	$company_idx = is_numeric($company) ? (int) $company : 0;
+	db_backup($db_connections[$company_idx], 'Security backup before Fiscal Year Removal');
 	begin_transaction();
 	$ref = _("Open Balance");
 	$myrow = row_or_empty(get_fiscalyear($selected_id));
@@ -328,7 +330,7 @@ function delete_this_fiscalyear(string|int|float|bool|null $selected_id): void
 		$sql = "DELETE FROM ".TB_PREF."stock_moves WHERE tran_date <= '$to' AND loc_code = '{$row['loc_code']}' AND stock_id = '{$row['stock_id']}'";
 		db_query($sql, "Could not delete stock moves");
 		$qty = $row['qty'];
-		$std_cost = ($qty == 0 ? 0 : round2((float)$row['std_cost'] / $qty, user_price_dec()));
+		$std_cost = ($qty == 0 ? 0 : round2((float)$row['std_cost'] / (float)$qty, user_price_dec()));
 		$sql = "INSERT INTO ".TB_PREF."stock_moves (stock_id, loc_code, tran_date, reference, qty, standard_cost) VALUES
 			('{$row['stock_id']}', '{$row['loc_code']}', '$to', '$ref', $qty, $std_cost)";   
 		db_query($sql, "Could not insert stock move");
@@ -364,7 +366,7 @@ function delete_this_fiscalyear(string|int|float|bool|null $selected_id): void
 				.db_escape($row['person_type_id'], true).", ".db_escape($row['person_id'], true).")";
 			db_query($sql, "Could not insert gl trans");
 			if ($row['amount'] > 0.0)
-				$total += $row['amount'];
+				$total += (float) $row['amount'];
 			$new = true;
 		}
 	}
