@@ -72,6 +72,8 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
     		display_notification(_("New item code has been added."));
        	} else
        	{
+			/** @var int|string $selected_id */
+			$selected_id = $selected_id;
 			update_item_code($selected_id, post_scalar('item_code'), post_scalar('stock_id'),
 				post_scalar('description'), post_scalar('category_id'), post_scalar('quantity'), 1); 
 
@@ -85,6 +87,8 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 if ($Mode == 'Delete')
 {
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	delete_item_code($selected_id);
 	
 	display_notification(_("Item code has been sucessfully deleted."));
@@ -116,6 +120,7 @@ echo "<hr></center>";
 set_global_stock_item($_POST['stock_id']);
 
 $units = $dec = '';
+$dflt_desc = $dflt_cat = null;
 $result = get_item_code_dflts(post_scalar('stock_id'));
 if ((bool)$result) {
 	$dec = $result['decimals'];
@@ -163,6 +168,8 @@ div_end();
 //-----------------------------------------------------------------------------------------------
 
 if ($selected_id != '') {
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	if ($Mode =='Edit')
 	{
 		$myrow = row_or_empty(get_item_code($selected_id));
@@ -181,6 +188,8 @@ if ($selected_id != '') {
 echo "<br>";
 start_table(TABLESTYLE2);
 
+/** @var int|string $selected_id */
+$selected_id = $selected_id;
 hidden('code_id', $selected_id);
 
 text_row(_("UPC/EAN code:"), 'item_code', null, 20, 20);
