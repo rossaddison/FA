@@ -111,7 +111,8 @@ function can_delete(string|int|float|bool|null $type): bool
 
 if ($Mode == 'Delete')
 {
-
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	if (can_delete($selected_id))
 	{
 		delete_account_type($selected_id);
