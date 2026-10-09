@@ -363,9 +363,9 @@ function read_grn_items_to_order(mixed $grn_batch, purch_order &$order): void
 		 	}
 
 			$order->add_to_order($order->lines_on_order, $myrow["item_code"],
-				$myrow["qty_recd"],$myrow["description"], $myrow["unit_price"],$units,
-				sql2date($myrow["req_del_date"]), $myrow["quantity_inv"],
-				$myrow["qty_recd"]);
+				(int) $myrow["qty_recd"],$myrow["description"], (float) $myrow["unit_price"],$units,
+				sql2date($myrow["req_del_date"]), (int) $myrow["quantity_inv"],
+				(int) $myrow["qty_recd"]);
 
 			$order->line_items[$order->lines_on_order-1]->po_detail_rec = $myrow["po_detail_item"];
 		} /* line po from purchase order details */
