@@ -108,6 +108,8 @@ function can_delete(string|int|float|bool|null $selected_id): bool
 
 if ($Mode == 'Delete')
 {
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	if (can_delete($selected_id))
 	{
 		delete_tag($selected_id);

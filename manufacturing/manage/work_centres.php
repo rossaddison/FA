@@ -82,7 +82,8 @@ function can_delete(string|int|float|bool|array|null $selected_id): bool
 
 if ($Mode == 'Delete')
 {
-
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
 	if (can_delete($selected_id))
 	{
 		delete_work_centre($selected_id);

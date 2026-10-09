@@ -72,8 +72,9 @@ function can_delete(string|int|float|bool|null $selected_id): bool
 
 if ($Mode == 'Delete')
 {
-
-	if (can_delete($selected_id)) 
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
+	if (can_delete($selected_id))
 	{
 		delete_fixed_asset_class($selected_id);
 		display_notification(_('Selected fixed asset class has been deleted'));
