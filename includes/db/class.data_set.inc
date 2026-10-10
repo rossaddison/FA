@@ -22,19 +22,24 @@ $validator_types = array(
 	Generic record set object
 */
 abstract class record_set {
-	/** @var string */
+	/** @var string|array<int, string> */
 	var $key;			// unique key fields
+	/** @var array<array-key, mixed> */
 	var $fields;		// other fields
 	/** @var string */
 	var $name;			// table name (without prefix)
+	/** @var array<int, array{fld: string, type: string|null, msg: string|null, opts: array<array-key, mixed>, mode: string|null}> */
 	var $checks = array();		// checks on data before insert/update/delete
 
+	/** @var mixed */
 	var $selected_id;	// current key
+	/** @var mixed */
 	var $data;			// current record data
 	/** @var array<string, string> */
 	var $errors = array();
 	/** @var array<int, string> */
 	var $debug = array();
+	/** @var string|array<array-key, string>|null */
 	var $subset;		// optional where clause for record subset
 
 	/** @psalm-external-mutation-free */
@@ -43,7 +48,13 @@ abstract class record_set {
 		$this->errors = array();
 	}
 
-	/** @psalm-mutation-free */
+	/**
+	 * @param string $name
+	 * @param array<array-key, mixed> $fields
+	 * @param string|array<int, string> $key
+	 * @param string|array<array-key, string>|null $subset
+	 * @psalm-mutation-free
+	 */
 	function __construct($name, $fields, $key, $subset=null)
 	{
 		$this->name = $name;
@@ -52,17 +63,21 @@ abstract class record_set {
 		$this->subset = $subset;
 	}
 
-	/** @return false */
+	/**
+	 * @param string $msg
+	 * @param string|int|null $field
+	 * @return false
+	 */
 	function error($msg, $field=null) {
 		global $db;
 
 		// save error message
 		if (!isset($field))
 			$field = count($this->errors);
-		$this->errors[$field] = $msg;
+		$this->errors[(string) $field] = $msg;
 
 		// save db errors for debugging purposes
-		if ($db && db_error_no()) $this->debug[] = db_error_msg($db);
+		if (db_error_no()) $this->debug[] = db_error_msg($db);
 
 		return false;
 	}
@@ -80,10 +95,10 @@ abstract class record_set {
 	* @param string|null $msg
 	* @return void
 	**/
-	
-	function set_validator($check, $msg=null)
+
+	function set_validator(?string $check, ?string $msg=null): void
 	{
-		$params = explode(':', $check);
+		$params = explode(':', (string) $check);
 		if (count($params)<3)
 			display_error(_('Invalid validator string'));
 
@@ -107,21 +122,24 @@ abstract class record_set {
 	*	Validate data
 	*	@key - record key (u/d)
 	*	@data - data to be validated (i/u)
+	* @param string|int|array<array-key, mixed>|null $key
+	* @param array<array-key, mixed>|null $data
 	* @return bool
 	**/
 	function _validate($key, $data)
 	{
 		$mode = isset($data) ? (isset($key) ? 'u' : 'i') : 'd';
+		$row = $data ?? array();
 
 		foreach($this->checks as $check) {
 
-			if (strpos($check['mode'], $mode) !== false) {
+			if (strpos((string) $check['mode'], $mode) !== false) {
 				$msg = $check['msg'];
 				$fld = $check['fld'];
 				$opts = @$check['opts'];
 
-				// precheck for existing 
-				if ($mode == 'i' && $fld && !isset($data[$fld])) {
+				// precheck for existing
+				if ($mode == 'i' && $fld && !isset($row[$fld])) {
 					$msg = sprintf(_("Input parameter '%s' have to be set."), $check['fld']);
 					return $this->error($msg, $check['fld']);
 				}
@@ -129,26 +147,26 @@ abstract class record_set {
 				switch($check['type']) {
 
 					case 'required':
-						if ($data[$fld]==='') {
-							if (!$msg) $msg = sprintf(_("Parameter '%s' cannot be empty.", $check['fld']));
+						if ($row[$fld]==='') {
+							if ($msg === null || $msg === '') $msg = sprintf(_("Parameter '%s' cannot be empty."), $check['fld']);
 								return $this->error($msg, $check['fld']);
 						}
 						break;
 
 					case 'clean_file_name':
-						if (isset($data[$fld]) && ($data[$fld] != clean_file_name($data[$fld]))) {
-							if (!$msg) $msg = sprintf(_("Parameter '%s' contains invalid characters.", $check['fld']));
+						if (isset($row[$fld]) && ($row[$fld] != clean_file_name(is_scalar($row[$fld]) || is_array($row[$fld]) ? $row[$fld] : null))) {
+							if ($msg === null || $msg === '') $msg = sprintf(_("Parameter '%s' contains invalid characters."), $check['fld']);
 							return $this->error($msg, $check['fld']);
 						}
 						break;
 
 					case 'range':
-						if (!$msg) $msg = sprintf(_("Parameter '%s' has invalid value.", $check['fld']));
+						if ($msg === null || $msg === '') $msg = sprintf(_("Parameter '%s' has invalid value."), $check['fld']);
 						// TODO: check at least one named parameter is passed
-						if (isset($opts['lt']) && !($data[$fld] < $opts['lt']) ||
-							(isset($opts['gt']) && !($data[$fld] > $opts['gt'])) ||
-							(isset($opts['min']) && !($data[$fld] < $opts['min'])) ||
-							(isset($opts['max']) && !($data[$fld] > $opts['max'])) )
+						if (isset($opts['lt']) && !($row[$fld] < $opts['lt']) ||
+							(isset($opts['gt']) && !($row[$fld] > $opts['gt'])) ||
+							(isset($opts['min']) && !($row[$fld] < $opts['min'])) ||
+							(isset($opts['max']) && !($row[$fld] > $opts['max'])) )
 								return $this->error($msg, $check['fld']);
 
 //					case 'match':
@@ -156,7 +174,8 @@ abstract class record_set {
 
 					// user defined checks
 					default:
-						$func = $check['type'];
+						if ($msg === null || $msg === '') $msg = sprintf(_("Parameter '%s' has invalid value."), $check['fld']);
+						$func = (string) $check['type'];
 						if (method_exists($this, $func)) {
 							if (!$this->$func($data, $check['opts'], $key))
 								return $this->error($msg, $check['fld']);
@@ -176,7 +195,9 @@ abstract class record_set {
 	*	Array contains true for editable, false for readonly fields.
 	*	This looks redundant ('forbidden' update_check could be used)
 	*	but in fact the constraints are related to exact record, so changes with key.
+	* @param string|int|array<array-key, mixed>|null $key
 	* @return array<array-key, bool>
+	* @psalm-mutation-free
 	**/
 	function edit_status($key)
 	{
@@ -190,16 +211,22 @@ abstract class record_set {
 	}
 
 
+	/** @param string|int|array<array-key, mixed>|null $key */
 	function delete_check($key): bool
 	{
 		return $this->_validate($key, null);
 	}
 
+	/** @param array<array-key, mixed>|null $data */
 	function insert_check($data): bool
 	{
 		return $this->_validate(null, $data);
 	}
 
+	/**
+	 * @param string|int|array<array-key, mixed>|null $key
+	 * @param array<array-key, mixed>|null $data
+	 */
 	function update_check($key, $data): bool
 	{
 		// Note: this does not allow change of key
@@ -208,11 +235,15 @@ abstract class record_set {
 
 	//===========================================================================
 	//	Database functions placeholders
-	
+
 	//
 	//	Generic read record routine
 	//
-	/** @return mixed */
+	/**
+	 * @param string|int|array<array-key, mixed>|null $key
+	 * @return mixed
+	 * @psalm-impure
+	 */
 	function get($key=null)
 	{
 		$defaults = array();
@@ -231,12 +262,19 @@ abstract class record_set {
 	//
 	//	Generic list record routine
 	//
-	/** @return mixed */
+	/**
+	 * @return mixed
+	 * @psalm-impure
+	 */
 	abstract function get_all();
 	//
 	//	Generic update record routine
 	//
-	/** @return bool */
+	/**
+	 * @param string|int|array<array-key, mixed>|null $key
+	 * @param array<array-key, mixed>|null $data
+	 * @return bool
+	 */
 	function update($key, $data)
 	{
 		if (!$this->update_check($key, $data))
@@ -247,7 +285,10 @@ abstract class record_set {
 	//
 	//	Generic delete record routine
 	//
-	/** @return bool */
+	/**
+	 * @param string|int|array<array-key, mixed>|null $key
+	 * @return bool
+	 */
 	function delete($key)
 	{
 		if (!$this->delete_check($key))
@@ -258,7 +299,10 @@ abstract class record_set {
 	//
 	//	Insert record
 	//
-	/** @return bool */
+	/**
+	 * @param array<array-key, mixed>|null $data
+	 * @return bool
+	 */
 	function insert($data)
 	{
 		if (!$this->insert_check($data))
@@ -272,9 +316,10 @@ abstract class record_set {
 class data_set extends record_set {
 
 	/**
-	 * @param string|null $name
-	 * @param array<array-key, mixed>|null $fields
-	 * @param string|null $key
+	 * @param string $name
+	 * @param array<array-key, mixed> $fields
+	 * @param string|array<int, string> $key
+	 * @param string|array<array-key, string>|null $subset
 	 * @psalm-mutation-free
 	 */
 	function __construct($name, $fields, $key, $subset=null)
@@ -285,39 +330,48 @@ class data_set extends record_set {
 	//
 	//	Generic read record routine
 	//
-	/** @return array<array-key, mixed>|false|null */
+	/**
+	 * @param string|int|array<array-key, mixed>|null $key
+	 * @return array<array-key, mixed>|false|null
+	 */
+	#[\Override]
 	function get($key=null)
 	{
 		if ($key===null)
 			return parent::get();
 
 		$sql = "SELECT * FROM ".TB_PREF.$this->name." WHERE ";
-		$where = $this->subset ? (array)$this->subset : array();
+		$where = (bool)$this->subset ? (array)$this->subset : array();
 
 		if (is_array($this->key)) {
 			foreach($this->key as $fld)
-				if (isset($key[$fld]))
-					$where[$fld] = "`$fld`=".db_escape($key[$fld]);
+				if (is_array($key) && isset($key[$fld])) {
+					$val = $key[$fld];
+					$where[$fld] = "`$fld`=".db_escape(is_scalar($val) ? $val : null);
+				}
 				else
 					return $this->error(sprintf(_("Invalid key passed reading '%s'"), $this->name));
 		} else {
-			$where = array($this->key => "`".$this->key."`=".db_escape($key));
+			$where = array($this->key => "`".$this->key."`=".db_escape(is_array($key) ? null : $key));
 		}
 
 		$sql .= implode(' AND ', $where);
 		$result = db_query($sql);
-		if (!$result)
+		if (!($result instanceof mysqli_result))
 			return $this->error("Cannot get record from ".$this->name);
 
-		return $rec = db_num_rows($result) ? db_fetch_assoc($result) : null;
+		$rec = db_num_rows($result) ? db_fetch_assoc($result) : null;
+		return $rec;
 	}
 	//
 	//	Generic list record routine
 	//
 	/**
 	 * @param string|null $where
+	 * @param string|array<array-key, mixed>|null $order_by
 	 * @return bool|mysqli_result
 	 */
+	#[\Override]
 	function get_all($where=null, $order_by=null)
 	{
 		$fields = array();
@@ -325,16 +379,16 @@ class data_set extends record_set {
 			$fields[] = '`'.$fld.'`';
 		$sql = "SELECT ".implode(',', $fields)." FROM ".TB_PREF.$this->name;
 
-		if ($where)
-			$sql .= " WHERE ".($this->subset ? '('.$this->subset . ') AND ' : ''). $where;
-		if ($order_by) {
-			$order_by = (array)$order_by;
-			foreach($order_by as $i => $fld)
-				$order_by[$i] = '`'.$fld.'`';
-			$sql .= " ORDER BY ".implode(',', $order_by);
+		if ((bool)$where)
+			$sql .= " WHERE ".((bool)$this->subset ? '('.(is_array($this->subset) ? implode(' AND ', $this->subset) : $this->subset) . ') AND ' : ''). $where;
+		if ((bool)$order_by) {
+			$cols = array();
+			foreach((array)$order_by as $fld)
+				$cols[] = '`'.(string)$fld.'`';
+			$sql .= " ORDER BY ".implode(',', $cols);
 		}
 		$result = db_query($sql);
-		if ($result==false)
+		if (!($result instanceof mysqli_result))
 			return $this->error("Cannot get record from ".$this->name);
 
 		return $result;
@@ -342,6 +396,11 @@ class data_set extends record_set {
 	//
 	//	Generic update record routine
 	//
+	/**
+	 * @param string|int|array<array-key, mixed>|null $key
+	 * @param array<array-key, mixed>|null $data
+	 */
+	#[\Override]
 	function update($key, $data)
 	{
 		if (!parent::update($key, $data))	// validate data
@@ -350,24 +409,26 @@ class data_set extends record_set {
 		$sql = "UPDATE ".TB_PREF.$this->name." SET ";
 		$updates = array();
 
-		foreach($data as $fld => $value) {	// select only data relevant for this model
+		foreach(($data ?? array()) as $fld => $value) {	// select only data relevant for this model
 			if (in_array($fld, $this->fields))
-				$updates[$fld] = "`$fld`=".db_escape($value);
+				$updates[$fld] = "`$fld`=".db_escape(is_scalar($value) ? $value : null);
 		}
 		if (count($updates) == 0)
 			return $this->error(_("Empty update data for table ").$this->name);
 
 		$sql .= implode(',', $updates)." WHERE ";
-		$where = $this->subset ? (array)$this->subset : array();
+		$where = (bool)$this->subset ? (array)$this->subset : array();
 
 		if(is_array($this->key)) {			// construct key phrase
 			foreach($this->key as $fld)
-				if (isset($key[$fld]))
-					$where[$fld] = "`$fld`=".db_escape($key[$fld]);
+				if (is_array($key) && isset($key[$fld])) {
+					$val = $key[$fld];
+					$where[$fld] = "`$fld`=".db_escape(is_scalar($val) ? $val : null);
+				}
 				else
 					return $this->error(sprintf(_("Invalid key for update '%s'"), $this->name));
 		} else {
-			$where = array("`".$this->key."`=".db_escape($key));
+			$where = array("`".$this->key."`=".db_escape(is_array($key) ? null : $key));
 		}
 
 		$sql .= implode(' AND ', $where);
@@ -381,22 +442,26 @@ class data_set extends record_set {
 	//
 	//	Generic delete record routine
 	//
+	/** @param string|int|array<array-key, mixed>|null $key */
+	#[\Override]
 	function delete($key)
 	{
 		if (!parent::delete_check($key))
 			return false;
 
 		$sql = "DELETE FROM ".TB_PREF.$this->name;
-		$where = $this->subset ? (array)$this->subset : array();
+		$where = (bool)$this->subset ? (array)$this->subset : array();
 
 		if(is_array($this->key)) {
 			foreach($this->key as $fld)
-				if (isset($key[$fld]))
-					$where[$fld] = "`$fld`=".db_escape($key[$fld]);
+				if (is_array($key) && isset($key[$fld])) {
+					$val = $key[$fld];
+					$where[$fld] = "`$fld`=".db_escape(is_scalar($val) ? $val : null);
+				}
 				else
 					return $this->error(sprintf(_("Invalid key for update '%s'"), $this->name));
 		} else {
-			$where = array("`".$this->key."`=".db_escape($key));
+			$where = array("`".$this->key."`=".db_escape(is_array($key) ? null : $key));
 		}
 
 		$sql .= " WHERE ".implode(' AND ', $where);
@@ -409,6 +474,8 @@ class data_set extends record_set {
 	//
 	//	Insert record
 	//
+	/** @param array<array-key, mixed>|null $data */
+	#[\Override]
 	function insert($data)
 	{
 		if (!parent::insert_check($data))
@@ -416,9 +483,9 @@ class data_set extends record_set {
 
 		$sql = "INSERT INTO ".TB_PREF.$this->name. ' (';
 		$fields = array();
-		foreach($data as $fld => $value) {
-			if (in_array($fld, $this->fields) || (is_array($this->key) ? in_array($this->key) : $fld==$this->key))
-				$fields["`$fld`"] = db_escape($value);
+		foreach(($data ?? array()) as $fld => $value) {
+			if (in_array($fld, $this->fields) || (is_array($this->key) ? in_array($fld, $this->key) : $fld==$this->key))
+				$fields["`$fld`"] = db_escape(is_scalar($value) ? $value : null);
 		}
 		if (!count($fields))
 			return $this->error(_("Empty data set for insertion into ".$this->name));

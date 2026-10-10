@@ -214,7 +214,7 @@ function db_error_no(): int
 }
 
 /** @psalm-pure */
-function db_error_msg(array $conn): string
+function db_error_msg(mysqli $conn): string
 {
 	return mysqli_error($conn);
 }
