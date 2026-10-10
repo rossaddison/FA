@@ -8,9 +8,9 @@ cleanup has turned up.
 
 ## Snapshot
 
-Full project scan, 2026-10-10: **6,968** Psalm errors (errorLevel=1), down
-from 7,220 earlier the same day, 10,158 on 2026-09-27, and 13,353 at the
-start of this migration. Tracked
+Full project scan, 2026-10-10: **6,652** Psalm errors (errorLevel=1), down
+from 6,968 earlier the same day, 7,220 before that same day, 10,158 on
+2026-09-27, and 13,353 at the start of this migration. Tracked
 at the top of [README.md](../README.md) via a hand-updated badge, same as
 this project's other static badges (not wired to CI).
 

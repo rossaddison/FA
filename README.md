@@ -1,11 +1,11 @@
 ![FrontAccounting ERP](./themes/default/images/logo_frontaccounting.jpg  "FrontAccounting ERP")
 ===================
 
-![Psalm Level 1](https://img.shields.io/static/v1?label=Psalm%20Level%201&message=6%2C968%20errors&color=orange)
+![Psalm Level 1](https://img.shields.io/static/v1?label=Psalm%20Level%201&message=6%2C652%20errors&color=orange)
 
 ## PHP 8.5 / Psalm Migration Status
 
-This branch (`chore/php-8.5-minimum`) is undergoing a file-by-file Psalm static-analysis cleanup as part of raising the minimum PHP version to 8.5. Full project scan, 2026-10-10: **6,968** Psalm errors (errorLevel=1), down from an initial 13,353. The badge above tracks this same number and is updated by hand alongside it — not wired to CI yet, the same as this project's other static badges. All first-party source files now also declare `strict_types=1` — see [doc/PSALM_MIGRATION.md](doc/PSALM_MIGRATION.md) for the rollout notes, and [doc/BUGS_FOUND.md](doc/BUGS_FOUND.md) for the crashes it surfaced (including one that broke login entirely) and their fixes.
+This branch (`chore/php-8.5-minimum`) is undergoing a file-by-file Psalm static-analysis cleanup as part of raising the minimum PHP version to 8.5. Full project scan, 2026-10-10: **6,652** Psalm errors (errorLevel=1), down from an initial 13,353. The badge above tracks this same number and is updated by hand alongside it — not wired to CI yet, the same as this project's other static badges. All first-party source files now also declare `strict_types=1` — see [doc/PSALM_MIGRATION.md](doc/PSALM_MIGRATION.md) for the rollout notes, and [doc/BUGS_FOUND.md](doc/BUGS_FOUND.md) for the crashes it surfaced (including one that broke login entirely) and their fixes.
 
 **Three real crashes found by actually clicking through a logged-in session** (not by Psalm) — a parameter narrowed to exclude a type its one real caller can produce at runtime, a class marked `final` that a live subclass outside Psalm's scanned scope (`modules/`) genuinely extends, and a row-color counter accidentally typed as `float` via a chained assignment. All three trace back to earlier Psalm-driven narrowing passes that were never exercised against the real pages with real authentication. See [doc/LIVE_CRASHES_FROM_TYPE_NARROWING.md](doc/LIVE_CRASHES_FROM_TYPE_NARROWING.md) for the full writeup and fixes.
 
