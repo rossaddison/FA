@@ -120,7 +120,7 @@ function input_num(?string $postname=null, int|float|string|null $dflt=0)
 	if ($postname === null || !isset($_POST[$postname]) || $_POST[$postname] == "")
 	  	return $dflt;
 
-    return user_numeric($_POST[$postname]);
+    return user_numeric(post_scalar($postname));
 }
 
 //---------------------------------------------------------------------------------
@@ -180,7 +180,7 @@ function submit(string|int|float|bool|null $name, string|int|float|bool|null $va
 	} elseif (!is_bool($atype)) { // necessary: switch uses '=='
 
 		$aspect = " aspect='$atype' ";
-		$types = explode(' ', $atype);
+		$types = explode(' ', (string) $atype);
 
 		foreach ($types as $type) {
 			switch($type) {
@@ -321,7 +321,7 @@ function submit_js_confirm(?string $name, ?string $msg, bool $set = true): void 
 function set_icon(string|int|float|bool|null $icon, string|int|float|bool|null $title=false): string
 {
 	global $path_to_root;
-	if (basename($icon) === $icon) // standard icons does not contain path separator
+	if (basename((string) $icon) === $icon) // standard icons does not contain path separator
 		$icon = "$path_to_root/themes/".user_theme()."/images/$icon";
 	return "<img src='".html_encode_attribute($icon, false, output_encoding())."' class='fa-icon12'".((bool)$title ? " title='".html_encode_attribute($title, false, output_encoding())."'" : "")." >\n";
 }
@@ -340,7 +340,7 @@ function button(string|int|float|bool|null $name, string|int|float|bool|null $va
 		if ($value == _("Delete")) // Helper during implementation
 			$icon = ICON_DELETE;
 		return "<button type='submit' class='editbutton' name='"
-			.html_specials_encode(strtr($name, array('.'=>'=2E', '='=>'=3D',// ' '=>'=20','['=>'=5B'
+			.html_specials_encode(strtr((string) $name, array('.'=>'=2E', '='=>'=3D',// ' '=>'=20','['=>'=5B'
 			)))
 			."' value='1'" . ((bool)$title ? " title='$title'":" title='$value'")
 			. ((bool)$aspect ? " aspect='$aspect'" : '')
@@ -349,7 +349,7 @@ function button(string|int|float|bool|null $name, string|int|float|bool|null $va
 	}
 	else
 		return "<input type='submit' class='editbutton' name='"
-			.html_specials_encode(strtr($name, array('.'=>'=2E', '='=>'=3D',// ' '=>'=20','['=>'=5B'
+			.html_specials_encode(strtr((string) $name, array('.'=>'=2E', '='=>'=3D',// ' '=>'=20','['=>'=5B'
 			)))
 			."' value='$value'"
 			.((bool)$title ? " title='$title'":'')
@@ -390,7 +390,7 @@ function check_value(string|array $name): int|array
     if (is_array($name)) {
         $ret = array();
         foreach($name as $key)
-            $ret[$key] = check_value($key);
+            $ret[$key] = (int) check_value($key);
         return $ret;
     } else
         return (!(bool)($_POST[$name] ?? null) ? 0 : 1);
@@ -473,12 +473,12 @@ function label_cell(string|int|float|bool|null $label, ?string $params="", strin
 	return $label;
 }
 
-function email_cell(string|int|float|bool|null $label, string|int|float|bool|null $params="", string|int|float|bool|null $id=null): void
+function email_cell(string|int|float|bool|null $label, ?string $params="", string|int|null $id=null): void
 {
 	label_cell("<a href='mailto:$label'>$label</a>", $params, $id);
 }
 
-function amount_decimal_cell(string|int|float|bool|null $label, ?string $params="", string|int|float|bool|null $id=null): void
+function amount_decimal_cell(string|int|float|bool|null $label, ?string $params="", string|int|null $id=null): void
 {
 	$dec = 0;
 	label_cell(price_decimal_format($label, $dec), "nowrap align=right ".$params, $id);
@@ -493,7 +493,7 @@ function amount_cell(string|int|float|bool|null $label, ?bool $bold=false, strin
 }
 
 //JAM  Allow entered unit prices to be fractional
-function unit_amount_cell(string|int|float|bool|null $label, string|int|float|bool|null $bold=false, string|int|float|bool|null $params="", string|int|float|bool|null $id=null): void
+function unit_amount_cell(string|int|float|bool|null $label, string|int|float|bool|null $bold=false, string|int|float|bool|null $params="", string|int|null $id=null): void
 {
 	if ((bool)$bold)
 		label_cell("<b>".price_format($label)."</b>", "nowrap align=right ".$params, $id);
@@ -502,7 +502,7 @@ function unit_amount_cell(string|int|float|bool|null $label, string|int|float|bo
 }
 
 
-function percent_cell(string|int|float|bool|null $label, bool $bold=false, string|int|float|bool|null $id=null): void
+function percent_cell(string|int|float|bool|null $label, bool $bold=false, string|int|null $id=null): void
 {
 	if ($bold)
 		label_cell("<b>".percent_format($label)."</b>", "nowrap align=right", $id);
