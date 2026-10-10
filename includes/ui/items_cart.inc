@@ -13,7 +13,7 @@ declare(strict_types=1);
 include_once(dirname(__DIR__, 2) . "/includes/prefs/sysprefs.inc");
 include_once(dirname(__DIR__, 2) . "/inventory/includes/inventory_db.inc");
 
-class items_cart
+final class items_cart
 {
 	/** @var int|string */
 	var $trans_type;
@@ -26,47 +26,47 @@ class items_cart
 	var	$order_id;
 
 	/** @var string|int|float|bool|null */
-	var $from_loc;
+	var $from_loc = null;
 	/** @var string|int|float|bool|null */
-	var $to_loc;
+	var $to_loc = null;
 	/** @var string */
-	var $tran_date;
+	var $tran_date = '';
 	/** @var string */
-	var $doc_date;
+	var $doc_date = '';
 	/** @var string */
-	var $event_date;
+	var $event_date = '';
 	/** @var string|int|float|bool|null */
-	var $transfer_type;
+	var $transfer_type = null;
 	/** @var string|int|float|bool|null */
-	var $increase;
+	var $increase = null;
 	/** @var string */
-	var $memo_;
+	var $memo_ = '';
 	/** @var string|int|float|bool|null */
-	var $branch_id;
+	var $branch_id = null;
 	/** @var string */
-	var $reference;
+	var $reference = '';
 	/** @var float|int|string */
-	var $original_amount;
+	var $original_amount = 0;
 	/** @var string */
-	var $currency;
+	var $currency = '';
 	/** @var float|int|string */
 	var $rate;
 	/** @var string */
-	var $source_ref;
+	var $source_ref = '';
 	/** @var string|int|float|bool|null */
-	var $vat_category;
+	var $vat_category = null;
 
 	/** @var array<array-key, mixed>|null */
-	var $tax_info;	// tax info for the GL transaction
+	var $tax_info = null;	// tax info for the GL transaction
 
 	/** @var bool|null */
-	var $fixed_asset;
+	var $fixed_asset = null;
 
 	/**
 	 * @param string|int|array<array-key, mixed>|null $type
 	 * @param int|null $trans_no
 	 */
-	function __construct($type, $trans_no=0)
+	function __construct(string|int|array|null $type, ?int $trans_no=0)
 	{
 		$this->trans_type = $type;
 		$this->order_id = $trans_no;
@@ -80,9 +80,10 @@ class items_cart
 
 	/**
 	 * @param int|float|bool|null $qty
+	 * @param string|int|float|bool|null $standard_cost
 	 * @return bool
 	 */
-	function add_to_cart(int $line_no, $stock_id, $qty, $standard_cost, $description=null)
+	function add_to_cart(int $line_no, string|int|float|bool|null $stock_id, int|float|bool|null $qty, string|int|float|bool|null $standard_cost, ?string $description=null)
 	{
 
 		if (isset($stock_id) && $stock_id != "" && isset($qty))
@@ -101,7 +102,7 @@ class items_cart
 	}
 
 	/** @return line_item|null */
-	function find_cart_item($stock_id)
+	function find_cart_item(string|int|float|bool|null $stock_id)
 	{
 		foreach($this->line_items as $line_no=>$line) {
 			if ($line->stock_id == $stock_id)
@@ -112,20 +113,20 @@ class items_cart
 
 	/**
 	 * @param int|float|bool|null $qty
+	 * @param string|int|float|bool|null $standard_cost
 	 * @return void
 	 */
-	function update_cart_item($line_no, $qty, $standard_cost)
+	function update_cart_item(int|string $line_no, int|float|bool|null $qty, string|int|float|bool|null $standard_cost)
 	{
 		$this->line_items[$line_no]->quantity = $qty;
 		$this->line_items[$line_no]->standard_cost = $standard_cost;
 	}
 
 	/**
-	 * @param string|int|null $line_no
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
-	function remove_from_cart($line_no)
+	function remove_from_cart(string|int|null $line_no)
 	{
 		array_splice($this->line_items, $line_no, 1);
 	}
@@ -140,10 +141,9 @@ class items_cart
 	}
 
 	/**
-	 * @param bool $reverse
 	 * @return list<array<array-key, mixed>|null|scalar>
 	 */
-	function check_qoh($location, $date_, $reverse=false)
+	function check_qoh(string|int|float|bool|null $location, string|int|float|bool|array|null $date_, bool $reverse=false)
 	{
 
 		$low_stock = array();
@@ -170,11 +170,10 @@ class items_cart
 	// ----------- GL item functions
 
 	/**
-	 * @param string|null $act_descr
 	 * @param string|int|array<array-key, mixed>|null $person_id
 	 * @return bool
 	 */
-	function add_gl_item($code_id, $dimension_id, $dimension2_id, $amount, $memo='', $act_descr=null, $person_id=null, $date=null)
+	function add_gl_item(string|int|float|bool|null $code_id, string|int|float|bool|null $dimension_id, string|int|float|bool|null $dimension2_id, string|int|float|bool|null $amount, string|int|float|bool|null $memo='', ?string $act_descr=null, string|int|array|null $person_id=null, string|int|float|bool|null $date=null)
 	{
 		if (isset($code_id) && $code_id != "" && isset($amount) && isset($dimension_id)  &&
 			isset($dimension2_id))
@@ -192,12 +191,10 @@ class items_cart
 	}
 
 	/**
-	 * @param int|float|bool|null $amount
-	 * @param string|null $act_descr
 	 * @param string|array<array-key, mixed>|null $person_id
 	 * @return void
 	 */
-	function update_gl_item($index, $code_id, $dimension_id, $dimension2_id, $amount, $memo='', $act_descr=null, $person_id=null)
+	function update_gl_item(int|string $index, string|int|float|bool|null $code_id, string|int|float|bool|null $dimension_id, string|int|float|bool|null $dimension2_id, int|float|bool|null $amount, string|int|float|bool|null $memo='', ?string $act_descr=null, string|array|null $person_id=null)
 	{
 	    $this->gl_items[$index]->code_id = $code_id;
 	    $this->gl_items[$index]->person_id = $person_id;
@@ -225,11 +222,10 @@ class items_cart
 	}
 
 	/**
-	 * @param string|int|null $index
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
-	function remove_gl_item($index)
+	function remove_gl_item(string|int|null $index)
 	{
 		array_splice($this->gl_items, $index, 1);
 	}
@@ -410,7 +406,7 @@ class items_cart
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
-	function set_currency($curr, $rate=0)
+	function set_currency(string|int|float|bool|null $curr, float|int|string $rate=0)
 	{
 		$this->currency = $curr;
 		$this->rate = $rate;
@@ -550,7 +546,7 @@ class items_cart
 
 //--------------------------------------------------------------------------------------------
 
-class line_item
+final class line_item
 {
 	/** @var string */
 	var $stock_id;
@@ -574,7 +570,7 @@ class line_item
 	/**
 	 * @param int|float|bool|null $qty
 	 */
-	function __construct($stock_id, $qty, $standard_cost=null, $description=null)
+	function __construct(string|int|float|bool|null $stock_id, $qty, string|int|float|bool|null $standard_cost=null, ?string $description=null)
 	{
 		$item_row = get_item($stock_id);
 
@@ -603,7 +599,7 @@ class line_item
 
 //---------------------------------------------------------------------------------------
 
-class gl_item
+final class gl_item
 {
 
 	/** @var string */
@@ -630,11 +626,10 @@ class gl_item
 	var $date;
 
 	/**
-	 * @param string|null $act_descr
 	 * @param string|int|array<array-key, mixed>|null $person_id
 	 */
-	function __construct($code_id=null, $dimension_id=0, $dimension2_id=0, $amount=0, $memo='',
-		$act_descr=null, $person_id=null, $date=null)
+	function __construct(string|int|float|bool|null $code_id=null, string|int|float|bool|null $dimension_id=0, string|int|float|bool|null $dimension2_id=0, string|int|float|bool|null $amount=0, string|int|float|bool|null $memo='',
+		?string $act_descr=null, string|int|array|null $person_id=null, string|int|float|bool|null $date=null)
 	{
 		//echo "adding $index, $code_id, $dimension_id, $amount, $reference<br>";
 
