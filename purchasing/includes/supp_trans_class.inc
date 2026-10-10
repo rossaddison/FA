@@ -254,6 +254,17 @@ final class supp_trans
      * @param string|int|float|bool|null $tax_group_id
      * @param int|null $shipping_cost
      * @param bool $gl_codes
+     * @return array<array-key, array{
+     *     tax_type_id: array-key,
+     *     tax_type_name?: scalar|null,
+     *     sales_gl_code?: scalar|null,
+     *     purchasing_gl_code?: scalar|null,
+     *     rate: scalar|null,
+     *     included_in_price?: scalar|null,
+     *     Value: float,
+     *     Net: float,
+     *     ...<array-key, scalar|null>
+     * }>
      */
     function get_taxes($tax_group_id=null, $shipping_cost=0, $gl_codes=true): array
     {
