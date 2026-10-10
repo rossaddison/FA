@@ -21,11 +21,15 @@ declare(strict_types=1);
  */
 define('EXPORT_MAX_INSERT', 50000);
 
-/** @psalm-pure */
-function array_natsort(array $aryData, ?string $strIndex, ?string $strSortBy, bool $strSortType=false)
+/**
+ * @param array<array-key, array<array-key, string|int|float|bool|null>> $aryData
+ * @return array<array-key, array<array-key, string|int|float|bool|null>>
+ * @psalm-pure
+ */
+function array_natsort(array $aryData, ?string $strIndex, ?string $strSortBy, bool|string $strSortType=false)
 {
    //    if the parameters are invalid
-   if (!is_array($aryData) || !(bool)$strSortBy)
+   if (!(bool)$strSortBy)
        //    return the array
        return $aryData;
 
@@ -41,13 +45,13 @@ function array_natsort(array $aryData, ?string $strIndex, ?string $strSortBy, bo
    natsort($arySort);
 
    //    if the sort type is descending
-   if ($strSortType=="desc")
+   if ($strSortType===true || $strSortType=="desc")
        //    reverse the array
        arsort($arySort);
 
    //    loop through the sorted and original data
 		foreach ($arySort as $arySortKey => $arySorted)
-			if((bool)$strIndex) 
+			if((bool)$strIndex)
 			{
 				foreach ($aryData as $aryOriginal)
 				// if the key matches
@@ -195,10 +199,13 @@ function update_extensions(?array $extensions): bool {
  	$cnt = max(1, count_array($db_connections));
 	for($i = 0; $i < $cnt; $i++) 
 	{
+		/** @var array<array-key, array<string, string|int|float|bool|null>>|null $newexts */
 		$newexts = $extensions;
-		// update 'active' status 
+		// update 'active' status
 		$exts = get_company_extensions($i);
-		foreach ($exts as $key => $ext) 
+		/** @var array<array-key, array<string, string|int|float|bool|null>> $exts */
+		$exts = $exts;
+		foreach ($exts as $key => $ext)
 		{
 			if (isset($newexts[$key]))
 				$newexts[$key]['active'] = $exts[$key]['active'];
@@ -276,6 +283,10 @@ function write_lang(): bool
 function db_import(string|int|float|bool|null $filename, mixed $connection, string|int|float|bool|null $force=true, string|int|float|bool|null $init=true, string|int|float|bool|array|null $protect=false, string|int|float|bool|null $return_errors=false): array|string|bool
 {
 	global $db;
+
+	/** @var array<string, string|int|float|bool|null> $connection */
+	$connection = $connection;
+	$filename = (string) $filename;
 
 	$trail = sysprefs()->sql_trail;
 	sysprefs()->sql_trail = false;
