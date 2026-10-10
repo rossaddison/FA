@@ -496,6 +496,33 @@ latent taint-tracking noise (Psalm was treating their output as still
 the real bugs above one at a time as each previously-reported path was
 resolved.
 
+## Path traversal / arbitrary file write
+
+Found by chasing Psalm's `TaintedFile` findings in `admin/db/maintenance_db.inc`
+to their source.
+
+- **`write_extensions()`.** Its `$company` parameter is concatenated directly
+  into a filesystem path (`$path_to_root.'/company/'.$company.'/installed_extensions.php'`)
+  with no cast or validation, and is meant to always be a plain integer index
+  into `$db_connections`. Traced its one unguarded caller,
+  `admin/inst_module.php`'s `write_extensions($exts, get_post('extset'))`, back
+  to raw, unauthenticated-from-the-request's-perspective POST data with no
+  `(int)` cast anywhere in between - an authenticated user with access to the
+  extensions-install page could pass a path-traversal payload as `extset` and
+  make this function write arbitrary PHP (the `var_export()`'d extensions
+  list, built into `$msg` a few lines above) to any writable path on disk, a
+  real privilege-escalation/RCE route for a user who only has
+  install/activate-extensions access, not full filesystem access. Fixed by
+  casting to `(int)` at the point of use inside `write_extensions()` itself
+  (the single choke point for all 5 call sites), rather than patching each
+  caller individually. `create_comp_dirs()`/`company_path()` were also
+  investigated for the identical pattern (Psalm flagged the same `TaintedFile`
+  category on their `mkdir()`/`fopen()` calls) but their one real caller,
+  `admin/create_coy.php`, already explicitly casts `$selected_id` to `(int)`
+  right at the top of the file before it reaches either function (with a
+  comment already documenting exactly this concern) - confirmed safe, no
+  change needed.
+
 ## Broken access control
 
 - **`includes/dashboard.inc` — `dashboard()`.** The per-app dashboard access

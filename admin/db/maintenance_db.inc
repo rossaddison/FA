@@ -147,7 +147,14 @@ function write_extensions(?array $extensions=null, string|int|float|bool|array|n
 
 	$msg .= "\$installed_extensions = ". var_export($extensions, true);
 	$msg .= ";\n";
-	$filename = $path_to_root . ($company==-1 ? '' : '/company/'.$company)
+	// Cast to int before using in the path: $company must always be a plain
+	// company array index, and this value flows in directly from raw POST
+	// data (admin/inst_module.php's get_post('extset')) with no prior
+	// validation - without this cast a path-traversal payload here would
+	// let an authenticated extensions-admin write an arbitrary PHP file
+	// anywhere on disk via $msg's var_export()'d content.
+	$company_idx = (int) $company;
+	$filename = $path_to_root . ($company_idx==-1 ? '' : '/company/'.$company_idx)
 		.'/installed_extensions.php';
 
 	// Check if the file is writable first.
@@ -539,7 +546,7 @@ function db_unzip(?string $mode, ?string $path): array|string|false
         $comp = substr($comp, 0, (strlen($comp) - 80 - strlen($filename)-13));
 
         // fix the crc bugfix (see function save_to_file)
-        $comp = "xœ" . $comp . $suffix;
+        $comp = "xï¿½" . $comp . $suffix;
         $file_data = gzuncompress($comp);
     }
 
