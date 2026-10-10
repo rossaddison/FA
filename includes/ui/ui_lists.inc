@@ -159,14 +159,26 @@ $opts = array(		// default options
 		$opts = array_merge($opts, $options);
 	if (!is_array($opts['where']))  $opts['where'] = array($opts['where']);
 
+	/** @var string $sql */
+	$sql = (string) $sql;
+
 	$search_box = $opts['search_box']===true ? '_'.$name.'_edit' : $opts['search_box'];
+	/** @var string|bool $search_box */
+	$search_box = $search_box;
 	// select content filtered by search field:
 	$search_submit = $opts['search_submit']===true ? '_'.$name.'_button' : $opts['search_submit'];
+	/** @var string|bool $search_submit */
+	$search_submit = $search_submit;
 	// select set by select content field
 	$search_button = (bool)$opts['editable'] ? '_'.$name.'_button' : ((bool)$search_box ? $search_submit : false);
+	/** @var string|bool $search_button */
+	$search_button = $search_button;
 
+	/** @var bool|string $select_submit */
 	$select_submit =  $opts['select_submit'];
+	/** @var int|string $spec_id */
 	$spec_id = $opts['spec_id'];
+	/** @var string|false $spec_option */
 	$spec_option = $opts['spec_option'];
 	if ($opts['type'] == 0) {
 		$by_id = true;
@@ -182,8 +194,10 @@ $opts = array(		// default options
 	$disabled = (bool)$opts['disabled'] ? "disabled" : '';
 	$multi = $opts['multi'];
 	
-	if(!count($opts['search'])) {
-		$opts['search'] = array($by_id ? $valfield : $namefield);
+	/** @var array<array-key, string|int|float|bool|null> $search */
+	$search = $opts['search'];
+	if(!count($search)) {
+		$search = array($by_id ? $valfield : $namefield);
 	}
 	if ($opts['sel_hint'] === null) 
 		$opts['sel_hint'] = $by_id || $search_box==false ?
@@ -238,10 +252,10 @@ $opts = array(		// default options
 			else
 				if ($txt != '*') {
 
-					foreach($opts['search'] as $i=> $s)
-						$opts['search'][$i] = $s . " LIKE "
+					foreach($search as $i=> $s)
+						$search[$i] = (string) $s . " LIKE "
 							.db_escape(($class=='combo3' ? '' : '%').$txt.'%');
-					$opts['where'][] = '('. implode(' OR ', $opts['search']) . ')';
+					$opts['where'][] = '('. implode(' OR ', $search) . ')';
 				}
 		}
 	}
@@ -258,10 +272,12 @@ $opts = array(		// default options
 			$sql .= $where;
 		}
 	}
-	if ($opts['order'] != false) {
-		if (!is_array($opts['order']))
-			$opts['order'] = array($opts['order']);
-		$sql .= ' ORDER BY '.implode(',',$opts['order']);
+	/** @var string|int|float|bool|array<array-key, string|int|float|bool|null>|null $order */
+	$order = $opts['order'];
+	if ($order != false) {
+		if (!is_array($order))
+			$order = array($order);
+		$sql .= ' ORDER BY '.implode(',',$order);
 	}
 
 	$sql .= $limit;
@@ -274,11 +290,15 @@ $opts = array(		// default options
 	$pname = false;
 	if (($type === "customer" || $type === "supplier") && !empty(sysprefs()->prefs['shortname_name_in_list']))
 		$pname = true;
+	/** @var callable|string|null $format */
+	$format = $opts['format'];
+	/** @var int|string|false $category */
+	$category = $opts['category'];
 	if($result = db_select($sql)) {
 		while ($contact_row = db_fetch($result)) {
 			$value = $contact_row[0];
-			$descr = $opts['format']==null ?  $contact_row[1] :
-				call_user_func($opts['format'], $contact_row, $pname);
+			$descr = $format==null ?  $contact_row[1] :
+				call_user_func($format, $contact_row, $pname);
 			$sel = '';
  		 	if (is_string($search_button) && get_post($search_button) && ($txt == $value)) {
  		 		$selected_id[] = $value;
@@ -303,8 +323,8 @@ $opts = array(		// default options
 				$first_id = $value;
 				$first_opt = $descr;
 			}
-			$cat = $contact_row[$opts['category']];
-			if ($opts['category'] !== false && $cat != $lastcat){
+			$cat = $contact_row[$category];
+			if ($category !== false && $cat != $lastcat){
 				if ($lastcat!==null)
 					$selector .= "</optgroup>";
 				$selector .= "<optgroup label='".html_encode_attribute($cat, false, output_encoding())."'>\n";
@@ -390,7 +410,7 @@ $opts = array(		// default options
 	{
 		$img_title = "";
 		$link = "";
-  		$id = $name;
+  		$id = (string) $name;
   		if (sysprefs()->use_popup_windows) {
   			if ($type != NULL) {
 	    		switch (strtolower($type)) {
@@ -415,8 +435,9 @@ $opts = array(		// default options
 	        			$img_title = _("Search items");
 	        			break;
 	      			case "component":
+	      				/** @var string|int|float|bool|null $parent */
 	      				$parent = $opts['parent'];
-	        			$link = $path_to_root . "/inventory/inquiry/stock_list.php?popup=1&type=component&parent=".$parent."&client_id=" . $id;
+	        			$link = $path_to_root . "/inventory/inquiry/stock_list.php?popup=1&type=component&parent=".(string)$parent."&client_id=" . $id;
 	        			$img_title = _("Search items");
 	        			break;
 	      			case "kits":
@@ -438,7 +459,7 @@ $opts = array(		// default options
 	      			case "account":
 	      			case "account2":
 	      				$skip = strtolower($type) == "account" ? false : true;
-	        			$link = $path_to_root . "/gl/inquiry/accounts_list.php?popup=1&skip=".$skip."&client_id=" . $id;
+	        			$link = $path_to_root . "/gl/inquiry/accounts_list.php?popup=1&skip=".(string)$skip."&client_id=" . $id;
 	        			$img_title = _("Search GL accounts");
 	        			break;
 	    		}
@@ -493,14 +514,20 @@ $opts = array(		// default options
 // ------ merge options with defaults ----------
 	if($options != null)
 		$opts = array_merge($opts, $options);
+	/** @var bool|string $select_submit */
 	$select_submit =  $opts['select_submit'];
+	/** @var int|string $spec_id */
 	$spec_id = $opts['spec_id'];
+	/** @var string|false $spec_option */
 	$spec_option = $opts['spec_option'];
 	$disabled = (bool)$opts['disabled'] ? "disabled" : '';
+	/** @var bool $multi */
 	$multi = $opts['multi'];
 
 	if ($selected_id == null) {
-		$selected_id = get_post($name, $opts['default']);
+		/** @var string|int|float|bool|array|null $default */
+		$default = $opts['default'];
+		$selected_id = get_post($name, $default);
 	}
 	if(!is_array($selected_id))
 		$selected_id = array((string)$selected_id); // code is generalized for multiple selection support
