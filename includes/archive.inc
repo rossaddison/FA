@@ -77,25 +77,26 @@ class archive
 	 */
 	function set_options($options)
 	{
-		foreach ($options as $key => $value)
-			$this->options[$key] = $value;
+		if (is_array($options))
+			foreach ($options as $key => $value)
+				$this->options[(string) $key] = $value;
 		if (!empty ($this->options['basedir']))
 		{
-			$this->options['basedir'] = str_replace("\\", "/", $this->options['basedir']);
-			$this->options['basedir'] = preg_replace("/\/+/", "/", $this->options['basedir']);
-			$this->options['basedir'] = preg_replace("/\/$/", "", $this->options['basedir']);
+			$this->options['basedir'] = str_replace("\\", "/", (string) $this->options['basedir']);
+			$this->options['basedir'] = preg_replace("/\/+/", "/", (string) $this->options['basedir']);
+			$this->options['basedir'] = preg_replace("/\/$/", "", (string) $this->options['basedir']);
 		}
 		if (!empty ($this->options['name']))
 		{
-			$this->options['name'] = str_replace("\\", "/", $this->options['name']);
+			$this->options['name'] = str_replace("\\", "/", (string) $this->options['name']);
 //			$this->options['name'] = preg_replace("/\/+/", "/", $this->options['name']);
 		}
 		if (!empty ($this->options['prepend']))
 		{
-			$this->options['prepend'] = str_replace("\\", "/", $this->options['prepend']);
-			$this->options['prepend'] = preg_replace("/^(\.*\/+)+/", "", $this->options['prepend']);
-			$this->options['prepend'] = preg_replace("/\/+/", "/", $this->options['prepend']);
-			$this->options['prepend'] = preg_replace("/\/$/", "", $this->options['prepend']) . "/";
+			$this->options['prepend'] = str_replace("\\", "/", (string) $this->options['prepend']);
+			$this->options['prepend'] = preg_replace("/^(\.*\/+)+/", "", (string) $this->options['prepend']);
+			$this->options['prepend'] = preg_replace("/\/+/", "/", (string) $this->options['prepend']);
+			$this->options['prepend'] = preg_replace("/\/$/", "", (string) $this->options['prepend']) . "/";
 		}
 	}
 
@@ -113,10 +114,14 @@ class archive
 				$this->error[] = "File {$this->options['name']} already exists.";
 				return 0;
 			}
-			else if (!($this->archive = @fopen((string)$this->options['name'].".tmp", "wb+")))
-			{
-				$this->error[] = "Could not open {$this->options['name']} for writing.".':'.getcwd();
-				return 0;
+			else {
+				$fp = @fopen((string)$this->options['name'].".tmp", "wb+");
+				if (!$fp)
+				{
+					$this->error[] = "Could not open {$this->options['name']} for writing.".':'.getcwd();
+					return 0;
+				}
+				$this->archive = $fp;
 			}
 		}
 		else
@@ -153,7 +158,10 @@ class archive
 			$this->archive .= $data;
 	}
 
-	/** @return void */
+	/**
+	 * @return void
+	 * @psalm-external-mutation-free
+	 */
 	function make_list()
 	{
 		if (!empty ($this->exclude)) {
