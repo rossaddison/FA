@@ -102,7 +102,7 @@ function get_customer_trans_view_str(string|int|float|bool|null $type, string|in
 		$lbl = $trans;
 	if($preview_str!='') $preview_str .= ',';
 
-	$preview_str .= viewer_link($lbl, $viewer."?trans_no=$trans&trans_type=$type", 
+	$preview_str .= (string) viewer_link($lbl, $viewer."?trans_no=$trans&trans_type=$type",
 		$class, $id, $icon);
 
   }
@@ -329,7 +329,7 @@ function exchange_rate_display(string|int|float|bool|null $from_currency, string
 				$rate = get_exchange_rate_from_home_currency($currency, $date_);
 			}
 			if ($from_currency != $comp_currency)
-				$rate = 1 / ($rate / get_exchange_rate_from_home_currency($to_currency, $date_));
+				$rate = 1 / ((float) $rate / (float) get_exchange_rate_from_home_currency($to_currency, $date_));
 			ajax()->activate('_ex_rate_span');
 		}
 
@@ -744,8 +744,8 @@ function quickentry_calculate(int|float|bool|null $base, string|int|float|bool|n
 				case "t": // post taxes calculated on base amount
 				case "t+": // ditto & increase base amount
 				case "t-": // ditto & reduce base amount
-					if (substr($row['action'], 0, 1) != 'T') 
-						$totrate += get_tax_type_rate($row['dest_id']);
+					if (substr((string) $row['action'], 0, 1) != 'T')
+						$totrate += (float) get_tax_type_rate((string) $row['dest_id']);
 			}
 		}
 		$first = true;
@@ -760,23 +760,23 @@ function quickentry_calculate(int|float|bool|null $base, string|int|float|bool|n
 					$part = $base;
 					break;
 				case "a": // post amount to GL account and reduce base
-					$part = $qe_line['amount'];
+					$part = (float) $qe_line['amount'];
 					break;
 				case "a+": // post amount to GL account and increase base
-					$part = $qe_line['amount']; $base += $part;
+					$part = (float) $qe_line['amount']; $base += $part;
 					break;
 				case "a-": // post amount to GL account and reduce base
-					$part = $qe_line['amount']; $base -= $part;
+					$part = (float) $qe_line['amount']; $base -= $part;
 					break;
 				case "%":	// store acc*amount% to GL account
-					$part = round2($base * $qe_line['amount'] / 100, user_price_dec());
+					$part = round2($base * (float) $qe_line['amount'] / 100, user_price_dec());
 					break;
 				case "%+":	// ditto & increase base amount
-					$part = round2($base * $qe_line['amount'] / 100, user_price_dec());
+					$part = round2($base * (float) $qe_line['amount'] / 100, user_price_dec());
 					$base += $part;
 					break;
 				case "%-":	// ditto & reduce base amount
-					$part = round2($base * $qe_line['amount'] / 100, user_price_dec());
+					$part = round2($base * (float) $qe_line['amount'] / 100, user_price_dec());
 					$base -= $part;
 					break;
 				case "t": // post taxes calculated on base amount

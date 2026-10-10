@@ -266,6 +266,7 @@ function hyperlink_no_params_td(string|int|float|bool|null $target, string|int|f
 }
 
 /** @return null|scalar */
+/** @return string|int|float|bool|null */
 function viewer_link(string|int|float|bool|null $label, ?string $url='', ?string $class='', string|int|float|bool|null $id='',  string|bool|null $icon=null)
 {
 	global $path_to_root;
