@@ -760,6 +760,7 @@ function ref_cells(?string $label, ?string $name, ?string $title=null, string|in
 {
 
 	if (isset($type)) {
+		$name = (string) $name;
 		if (!(bool)($_POST[$name.'_list'] ?? null)) // restore refline id
 			$_POST[$name.'_list'] = refs()->reflines->find_refline_id(!(bool)($_POST[$name] ?? null) ? $init : $_POST[$name], $type);
 

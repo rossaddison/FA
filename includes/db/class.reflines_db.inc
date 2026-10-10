@@ -161,6 +161,7 @@ class reflines_db extends data_set {
 	*/
 	/**
 	 * @param bool $fallback
+	 * @return string|int|null
 	 */
 	function find_refline_id($reference, $type, $fallback=true)
 	{
@@ -171,10 +172,11 @@ class reflines_db extends data_set {
 		$ret = db_select($sql, "cannot check reference line id");
 		$line = row_or_empty(db_fetch($ret));
 
-		if (!$fallback && (db_num_rows($fallback) != 1))	// more than one record means ambigous reference line
+		if (!$fallback && (db_num_rows($ret) != 1))	// more than one record means ambigous reference line
 			return null;
 
-		return $line ? $line['id'] : null;
+		$id = $line ? $line['id'] : null;
+		return (is_int($id) || is_string($id)) ? $id : null;
 	}
 
 	/** @return bool|mysqli_result */

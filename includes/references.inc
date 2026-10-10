@@ -71,29 +71,32 @@ $refline_placeholders = array(
 //	'L' => 'location'
 );
 
-class references 
+final class references
 {
 	/**
 	 * @var reflines_db
 	 */
 	var $reflines;
-	
+
 	function __construct()
 	{
 		$this->reflines = new reflines_db();
 	}
 
 	/**
+	 * @param array<array-key, mixed> $refline
 	 * @psalm-pure
 	 * @return bool
 	 */
 	function _legacy_line($refline)
 	{
-		return strpbrk($refline['pattern'], '{}') == false;
+		return strpbrk((string) $refline['pattern'], '{}') == false;
 	}
 
 	/**
-	 * @param string|null $template
+	 * @param string|int|float|bool|null $type
+	 * @param string $template
+	 * @param string|array<array-key, mixed>|null $context
 	 * @return string
 	 */
 	function _parse_next($type, $template, $context=null)
@@ -129,41 +132,49 @@ class references
 					display_warning(sprintf(_("Missing refline context data: '%s'"), $refline_placeholders[$ph]));
 					$out .= $ph; // debug
 				} else {
+					$ctx_date = $context['date'] ?? null;
+					$ctx_date = is_scalar($ctx_date) ? $ctx_date : null;
 					switch ($ph)
 					{
 						case 'MM':
 						case 'YY':
 						case 'YYYY':
-							list($day, $month, $year) = explode_date_to_dmy($context['date']);
+							list($day, $month, $year) = explode_date_to_dmy($ctx_date);
 							$out .= $ph == 'MM' ? sprintf('%02d', $month) : ($ph == 'YY' ? sprintf('%02d', $year%100): sprintf('%04d', $year));
 							break;
 						case 'FF':
 						case 'FFFF':
-							list($day, $month, $year) = explode_date_to_dmy(get_fiscalyear_begin_for_date($context['date']));
+							list($day, $month, $year) = explode_date_to_dmy(get_fiscalyear_begin_for_date($ctx_date));
 							$out .= $ph == 'FF' ? sprintf('%02d', $year%100): sprintf('%04d', $year);
 							break;
 						case 'C':
-							$out .= sprintf('%d', $context['customer']);
+							$ctx_val = $context['customer'];
+							$out .= sprintf('%d', is_scalar($ctx_val) ? (int) $ctx_val : 0);
 							break;
 
 						case 'B':
-							$out .= sprintf('%d', $context['branch']);
+							$ctx_val = $context['branch'];
+							$out .= sprintf('%d', is_scalar($ctx_val) ? (int) $ctx_val : 0);
 							break;
 
 						case 'S':
-							$out .= sprintf('%d', $context['supplier']);
+							$ctx_val = $context['supplier'];
+							$out .= sprintf('%d', is_scalar($ctx_val) ? (int) $ctx_val : 0);
 							break;
 
 						case 'L':
-							$out .= sprintf('%s', $context['location']);
+							$ctx_val = $context['location'];
+							$out .= sprintf('%s', is_scalar($ctx_val) ? (string) $ctx_val : '');
 							break;
 
 						case 'P':
-							$out .= sprintf('%s', $context['pos']);
+							$ctx_val = $context['pos'];
+							$out .= sprintf('%s', is_scalar($ctx_val) ? (string) $ctx_val : '');
 							break;
 
 						case 'UU':
-							$out .= sprintf('%02d', $context['user']);
+							$ctx_val = $context['user'];
+							$out .= sprintf('%02d', (int) $ctx_val);
 						break;
 					}
 				}
@@ -182,6 +193,10 @@ class references
 		$postfix = $match[3];
 
 		$db_info = get_systype_db_info($type);
+		if ($db_info === null) {
+			display_error(_("Unknown transaction type."));
+			return $out;
+		}
 		$trans_table = $db_info[0];
 		$type_fld = $db_info[1];
 		$tno_fld = $db_info[2];
@@ -196,10 +211,12 @@ class references
 				.($type_fld ? " AND tbl.`$type_fld`=$type" : '')
 				." AND `$ref_fld` REGEXP ".db_escape('^'.preg_quote($prefix).'[0-9]*'.preg_quote($postfix).'$');
 		$result = db_select($sql, 'cannot retrieve last reference');
-		$result = db_fetch_row($result);
+		$result = row_or_empty(db_fetch_row($result));
+		$last_num = $result[0] ?? null;
+		$next_num = is_numeric($last_num) ? (int)$last_num + 1 : 1;
 
 			// fill with zeros to the length of original index placeholder
-		return $prefix.sprintf('%0'.strlen($match[2]).'d', $result[0]+1).$postfix;
+		return $prefix.sprintf('%0'.strlen($match[2]).'d', $next_num).$postfix;
 	}
 
 	//
@@ -207,10 +224,17 @@ class references
 	// 	$ref!=null => check reference is not used (or unique for $trans_no!=0)
 	//  $trans!=0 $ref=null => retrieve reference for the $type/$trans_no (if any)
 	//
-	/** @return false|null|string */
+	/**
+	 * @param string|int|float|bool|null $type
+	 * @param string|int|float|bool|null $trans_no
+	 * @param string|int|float|bool|null $ref
+	 * @return false|null|string
+	 */
 	function _get($type, $trans_no=0, $ref=null)
 	{
 		$db_info = get_systype_db_info($type);
+		if ($db_info === null)
+			return false;
 		$trans_table = $db_info[0];
 		$type_fld = $db_info[1];
 		$tno_fld = $db_info[2];
@@ -218,49 +242,57 @@ class references
 
 		$type = db_escape($type);
 
-		$sql = "SELECT `$ref_fld` 
+		$sql = "SELECT `$ref_fld`
 				FROM `$trans_table` tbl
-					LEFT JOIN ".TB_PREF."voided v ON 
+					LEFT JOIN ".TB_PREF."voided v ON
 				tbl.`$tno_fld`=v.id AND v.type=$type"
 			." WHERE ISNULL(v.id)"
 			.($type_fld ? " AND tbl.`$type_fld`=$type" : '');
-		if ($ref)
+		if ((bool)$ref)
 		{
-			$sql .= " AND tbl.`$ref_fld`=".db_escape(trim($ref));
-			if ($trans_no)
+			$sql .= " AND tbl.`$ref_fld`=".db_escape(trim((string) $ref));
+			if ((bool)$trans_no)
 				$sql .= " AND tbl.`$tno_fld` != ".db_escape($trans_no);
 		} else {
 			$sql .= " AND tbl.`$tno_fld`=".db_escape($trans_no);
 		}
 
 		$result = db_query($sql, "could not test for unique reference");
-		if (!$result)
+		if (!($result instanceof mysqli_result))
 			return false;
 
 		$result = db_fetch_row($result);
-		return $result == false ? false : $result[0];
+		return $result == false ? false : (is_scalar($result[0]) ? $result[0] : null);
 	}
 
-	/** @return bool */
+	/**
+	 * @param string|int|float|bool|null $ref
+	 * @param string|int|float|bool|null $type
+	 * @param string|int|float|bool|null $trans_no
+	 * @return bool
+	 */
 	function is_new_reference($ref, $type, $trans_no=0)
 	{
-		return !$this->_get($type, $trans_no, $ref);
+		return !(bool)$this->_get($type, $trans_no, $ref);
 	}
 
 	//
 	// Get default reference for new transaction.
 	//
 	/**
+	 * @param string|int|float|bool|null $type
+	 * @param string|int|array<array-key, mixed>|null $line
+	 * @param string|array<array-key, mixed>|null $context
 	 * @return string
 	 */
-	function get_next($type, $line=null, $context=null) 
+	function get_next($type, $line=null, $context=null)
 	{
 
 		if (isset($line))
 			$refline = $this->reflines->get($line);
 		else {
 			$refs = $this->reflines->get_all("trans_type=".db_escape($type)." AND `default`");
-			$refline = db_fetch($refs);
+			$refline = $refs instanceof mysqli_result ? db_fetch($refs) : false;
 		}
 		$refline = row_or_empty($refline);
 		if (!isset($refline['pattern']))
@@ -274,16 +306,20 @@ class references
 
 	/**
  	*	Normalize reference to format allowed by refline (optionally selected by prefix).
- 	*	FIXME: currently this is fake function which return either input reference or 
+ 	*	FIXME: currently this is fake function which return either input reference or
  	*	next reference when no line has been recognized.
+	* @param string|int|float|bool|null $ref
+	* @param string|int|float|bool|null $type
 	* @param string|array<array-key, mixed>|null $context
+	* @param string|int|array<array-key, mixed>|null $line
+	* @return string|int|float|bool|null
 	**/
 	function normalize($ref, $type, $context, $line=null)
 	{
 		if (!isset($type)) // inquiries
 			return $ref;
 
-		if (!$line)
+		if (!(bool)$line)
 			$line = $this->reflines->find_refline_id($ref, $type);
 
 		return $this->is_valid($ref, $type, $context, $line) ? $ref : $this->get_next($type, $line, $context);
@@ -293,7 +329,13 @@ class references
 	// Check reference is valid before add/update transaction.
 	// FIXME: does not check leading zeros in number
 	//
- 	/** @return 0|1|bool */
+	/**
+	 * @param string|int|float|bool|null $reference
+	 * @param string|int|float|bool|null $type
+	 * @param string|array<array-key, mixed>|null $context
+	 * @param string|int|array<array-key, mixed>|null $line
+	 * @return 0|1|bool
+	 */
  	function is_valid($reference, $type, $context=null, $line=null)
 	{
  		if (!isset($line))
@@ -303,9 +345,10 @@ class references
  			return false;
 
 		$refline = $this->reflines->get($line);
+		$refline = is_array($refline) ? $refline : array();
 
 		if ($this->_legacy_line($refline))	//legacy non-templated line
-			return strlen(trim($reference)) > 0;
+			return strlen(trim((string) $reference)) > 0;
 
 		$regex = preg_quote((string)$refline['prefix'].(string)$refline['pattern']);
 		if (!is_array($context))
@@ -313,11 +356,13 @@ class references
 
  		$context['pos'] = session_obj('wa_current_user')->pos;
 
-		if (is_date(@$context['date']))
+		$ctx_date = $context['date'] ?? null;
+		$ctx_date = is_string($ctx_date) ? $ctx_date : null;
+		if (is_date($ctx_date))
 		{
-			list($year4, $month, $day) = explode("-", date2sql($context['date']));
+			list($year4, $month, $day) = explode("-", (string) date2sql($ctx_date));
 			$year2 = substr($year4, 2);
-			$f_year = explode("-", date2sql(get_fiscalyear_begin_for_date($context['date'])));
+			$f_year = explode("-", (string) date2sql(get_fiscalyear_begin_for_date($ctx_date)));
 			$f_year2 = substr($f_year[0], 2);
 			$f_year4 = $f_year[0];
 		} else
@@ -328,11 +373,16 @@ class references
 			$f_year2 = '\d{2,}';
 			$f_year4 = '\d{4,}';
 		}
-		$cust = @$context['customer'] ? $context['customer'] : '\d+';
-		$supp = @$context['supplier'] ? $context['supplier'] : '\d+';
-		$branch = @$context['branch'] ? $context['branch'] : '\d+';
-		$location = @$context['location'] ? $context['location'] : '[a-z0-9]+';
- 		$pos = (bool)(@$context['pos']) ? $context['pos'] : '\d+';
+		$ctx_cust = $context['customer'] ?? null;
+		$ctx_supp = $context['supplier'] ?? null;
+		$ctx_branch = $context['branch'] ?? null;
+		$ctx_location = $context['location'] ?? null;
+		$ctx_pos = $context['pos'] ?? null;
+		$cust = is_scalar($ctx_cust) && (bool)$ctx_cust ? (string) $ctx_cust : '\d+';
+		$supp = is_scalar($ctx_supp) && (bool)$ctx_supp ? (string) $ctx_supp : '\d+';
+		$branch = is_scalar($ctx_branch) && (bool)$ctx_branch ? (string) $ctx_branch : '\d+';
+		$location = is_scalar($ctx_location) && (bool)$ctx_location ? (string) $ctx_location : '[a-z0-9]+';
+ 		$pos = is_scalar($ctx_pos) && (bool)$ctx_pos ? (string) $ctx_pos : '\d+';
 		$user = sprintf("%02d", session_obj('wa_current_user')->user);
 
 		$regex = preg_replace(
@@ -367,18 +417,24 @@ class references
 				$user,
  				$pos,
 				'\d+',
-			), $regex);
+			), $regex) ?? '';
 
 		$regex = '"^'.$regex.'"i';
 
-		return preg_match($regex, $reference, $match) ? 1 : 0;
+		return preg_match($regex, (string) $reference, $match) ? 1 : 0;
 	}
 
 	//
 	//	Save reference (and prepare next) on write transaction.
 	//
-	/** @return void */
-	function save($type, $id, $reference, $line = null) 
+	/**
+	 * @param string|int|float|bool|null $type
+	 * @param string|int|float|bool|null $id
+	 * @param string|int|float|bool|null $reference
+	 * @param string|int|array<array-key, mixed>|null $line
+	 * @return void
+	 */
+	function save($type, $id, $reference, $line = null)
 	{
 		if ($reference == 'auto')
 			return;
@@ -393,6 +449,7 @@ class references
 		}
 
 		$refline = $this->reflines->get($line);
+		$refline = is_array($refline) ? $refline : array();
 		 // legacy code used with simple templates
 		if ($this->_legacy_line($refline) && ($reference == $this->get_next($type, $line))) { // if reference was not changed from default
 			$next = $this->_increment($reference);	// increment default
@@ -402,13 +459,18 @@ class references
 	//
 	// Restore previous reference (if possible) after voiding transaction.
 	//
-	/** @return void */
+	/**
+	 * @param string|int|float|bool|null $type
+	 * @param string|int|float|bool|array|null $id
+	 * @return void
+	 */
 	function restore_last($type, $id)
 	{
 		// get refline for removed document reference
 		$reference = get_reference($type, $id);
 		$line = $this->reflines->find_refline_id($reference, $type);
 		$refline = $this->reflines->get($line);
+		$refline = is_array($refline) ? $refline : array();
 
 		if ($this->_legacy_line($refline)) // legacy code used with simple templates
 		{
@@ -416,7 +478,7 @@ class references
 			if ($reference == $last)
 			{
 				// save last reference as next
-			    $sql = "UPDATE ".TB_PREF."reflines SET pattern=SUBSTRING(" . db_escape(trim($last)) .", LENGTH(`prefix`)+1)"
+			    $sql = "UPDATE ".TB_PREF."reflines SET pattern=SUBSTRING(" . db_escape(trim((string) $last)) .", LENGTH(`prefix`)+1)"
 					. " WHERE trans_type = ".db_escape($type) . " AND `id`=".db_escape($line);
 
 				db_query($sql, "The next transaction ref for $type could not be updated");
@@ -429,24 +491,27 @@ class references
 	//	Increments (or decrements if $back==true) reference template
 	//
 	/**
+	 * @param string|int|float|bool|null $reference
 	 * @param bool $back
+	 * @return string|int|float|bool|null
 	 * @psalm-pure
 	 */
-	function _increment($reference, $back=false) 
+	function _increment($reference, $back=false)
 	{
 		// Legacy code used when no palceholder is in use:
 		//  WA036 will increment to WA037 and so on.
        	// If $reference contains at least one group of digits,
         // extract first didgits group and add 1, then put all together.
-        // NB. preg_match returns 1 if the regex matches completely 
+        // NB. preg_match returns 1 if the regex matches completely
         // also $result[0] holds entire string, 1 the first captured, 2 the 2nd etc.
         //
-        if (preg_match('/^(\D*?)(\d+)(.*)/', $reference, $result) == 1) 
+        if (preg_match('/^(\D*?)(\d+)(.*)/', (string) $reference, $result) == 1)
         {
 			list($all, $prefix, $number, $postfix) = $result;
 			$dig_count = strlen($number); // How many digits? eg. 0003 = 4
 			$fmt = '%0' . $dig_count . 'd'; // Make a format string - leading zeroes
-			$val = intval($number + ($back ? ($number<1 ? 0 : -1) : 1));
+			$num = (int) $number;
+			$val = $num + ($back ? ($num<1 ? 0 : -1) : 1);
 			$nextval =  sprintf($fmt, $val); // Add one on, and put prefix back on
 
 			return $prefix.$nextval.$postfix;
@@ -472,7 +537,7 @@ function is_new_reference(string|int|float|bool|null $ref, string|int|float|bool
 function get_reference(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no)
 {
 
-	return refs()->_get($type, $trans_no);
+	return refs()->_get($type, is_array($trans_no) ? null : $trans_no);
 }
 
 /**
