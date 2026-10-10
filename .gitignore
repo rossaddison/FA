@@ -2,7 +2,7 @@
 /company/*/backup/*.sql
 /company/*/backup/*.sql.gz
 /company/*/pdf_files/*.pdf
-/company/*/js_cache/*.js
+/company/*/js_cache/*/*.js
 /company/*/reporting
 /company/*/images
 /tmp
@@ -18,8 +18,11 @@ installed_languages.inc
 installed_extensions.php
 config.php
 config_db.php
+psalm*.json
+psalm_sweep_continue*.json
+scratch*.json
 !index.php
 vendor/
 composer.lock
 .psalm-cache/
-/nbproject/private/
+/nbproject/*

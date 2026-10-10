@@ -458,7 +458,7 @@ function percent_format(string|int|float|bool|null $number): string {
 
 function user_numeric(string|int|float|bool|null $input): int|float|false {
 
-    $num = trim($input);
+    $num = trim((string) $input);
     $sep = sysprefs()->thoseps[user_tho_sep()];
     if ($sep!='')
     	$num = str_replace( $sep, '', $num);

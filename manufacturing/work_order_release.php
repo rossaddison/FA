@@ -45,7 +45,7 @@ $selected_id = is_array($selected_id) ? null : $selected_id;
 //------------------------------------------------------------------------------------
 
 #[\NoDiscard]
-function can_process(array $myrow): bool
+function canProcessWorkOrderRelease(array $myrow): bool
 {
 	if ($myrow['released'])
 	{
@@ -94,7 +94,7 @@ $myrow = row_or_empty(get_work_order($selected_id));
 $_POST['released'] = $myrow["released"];
 $_POST['memo_'] = "";
 
-if (can_process($myrow))
+if (canProcessWorkOrderRelease($myrow))
 {
 	start_table(TABLESTYLE2);
 

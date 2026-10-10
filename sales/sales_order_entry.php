@@ -415,24 +415,24 @@ function line_start_focus(): void {
 
 //--------------------------------------------------------------------------------
 #[\NoDiscard]
-function can_process(): bool {
+function canProcessSalesOrderEntry(): bool {
 
 
 	copy_to_cart();
 
-	if (!get_post('customer_id')) 
+	if (!get_post('customer_id'))
 	{
 		display_error(_("There is no customer selected."));
 		set_focus('customer_id');
 		return false;
-	} 
+	}
 	
-	if (!get_post('branch_id')) 
+	if (!get_post('branch_id'))
 	{
 		display_error(_("This customer has no branch defined."));
 		set_focus('branch_id');
 		return false;
-	} 
+	}
 	
 	if (!is_date((string) post_scalar('OrderDate'))) {
 		display_error(_("The entered date is invalid."));
@@ -532,7 +532,7 @@ if (isset($_POST['update'])) {
 	ajax()->activate('items_table');
 }
 
-if (isset($_POST['ProcessOrder']) && can_process()) {
+if (isset($_POST['ProcessOrder']) && canProcessSalesOrderEntry()) {
 
 	$modified = (session_obj('Items')->trans_no != 0);
 	$so_type = session_obj('Items')->so_type;

@@ -142,7 +142,7 @@ elseif (isset($_GET['UpdatedID'])) {
 //----------------------------------------------------------------------------------------------
 
 #[\NoDiscard]
-function can_process(): bool
+function canProcessCustomerPayments(): bool
 {
 
 	if (!get_post('customer_id'))
@@ -241,7 +241,7 @@ if (isset($_POST['_customer_id_button'])) {
 
 //----------------------------------------------------------------------------------------------
 
-if (get_post('AddPaymentItem') && can_process()) {
+if (get_post('AddPaymentItem') && canProcessCustomerPayments()) {
 
 	new_doc_date($_POST['DateBanked']);
 

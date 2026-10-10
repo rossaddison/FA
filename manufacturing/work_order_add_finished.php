@@ -70,7 +70,7 @@ if ($wo_details === false)
 //--------------------------------------------------------------------------------------------------
 
 #[\NoDiscard]
-function can_process(array $wo_details): bool
+function canProcessWorkOrderAddFinished(array $wo_details): bool
 {
 
 	if (!check_reference($_POST['ref'], ST_MANURECEIVE))
@@ -150,7 +150,8 @@ function can_process(array $wo_details): bool
 
 //--------------------------------------------------------------------------------------------------
 
-if ((isset($_POST['Process']) || isset($_POST['ProcessAndClose'])) && can_process($wo_details) == true)
+if ((isset($_POST['Process']) || isset($_POST['ProcessAndClose']))
+    && canProcessWorkOrderAddFinished($wo_details) == true)
 {
 
 	$close_wo = 0;

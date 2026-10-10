@@ -68,7 +68,7 @@ function submit_add_or_update_center2(bool $add=true, string|bool|null $title=fa
 //-----------------------------------------------------------------------------------
 
 #[\NoDiscard]
-function can_process(): bool 
+function canProcessGlQuickEntries(): bool 
 {
 
 	if (strlen($_POST['description']) == 0) 
@@ -99,7 +99,7 @@ function can_process(): bool
 if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') 
 {
 
-	if (can_process()) 	
+	if (canProcessGlQuickEntries()) 	
 	{	
 
 		if ($selected_id != -1) 

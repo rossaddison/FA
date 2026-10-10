@@ -69,7 +69,7 @@ if ($wo_details === false)
 //--------------------------------------------------------------------------------------------------
 
 #[\NoDiscard]
-function can_process(array $wo_details): bool
+function canProcessWorkOrderCosts(array $wo_details): bool
 {
 	if (input_num('costs')<=0)
 	{
@@ -102,7 +102,7 @@ function can_process(array $wo_details): bool
 
 //--------------------------------------------------------------------------------------------------
 
-if (isset($_POST['process']) && can_process($wo_details) == true)
+if (isset($_POST['process']) && canProcessWorkOrderCosts($wo_details) == true)
 {
 	$date = $_POST['date_'];
 	$memo = $_POST['memo'];

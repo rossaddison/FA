@@ -12,33 +12,33 @@ declare(strict_types=1);
 ***********************************************************************/
 /* Definition of the purch_order class to hold all the information for a purchase order and delivery
 */
-
-class purch_order 
+ 
+final class purch_order 
 {
 	/** @var string|int|float|bool|null|array */
-	var $trans_no; 
+	var $trans_no = 0;
 	/** @var int|string */
-	var $trans_type; // order/grn/invoice (direct)
+	var $trans_type = ''; // order/grn/invoice (direct)
 	/** @var array<int, po_line_details> */
-	var $line_items;
+	var $line_items = [];
 	/** @var string */
-	var $curr_code;
+	var $curr_code = '';
 	/** @var string */
-	var $supp_ref;
+	var $supp_ref = '';
 	/** @var string */
-	var $delivery_address;
+	var $delivery_address = '';
 	/** @var string */
-	var $Comments;
+	var $Comments = '';
 	/** @var string */
-	var $Location;
+	var $Location = '';
 	/** @var string|int|float|bool|null */
 	var $supplier_id;
 	/** @var string */
-	var $supplier_name;
+	var $supplier_name = '';
 	/** @var string */
-	var $orig_order_date;
+	var $orig_order_date = '';
 	/** @var string */
-	var $due_date;
+	var $due_date = '';
 
 	/**
 	 * @var int
@@ -47,26 +47,26 @@ class purch_order
 	/** @var int */
 	var $lines_on_order = 0;
 	/** @var float|int|string|null */
-	var $credit;
+	var $credit = 0.0;
 	/** @var string|int|float|bool|null */
-	var $tax_group_id;
+	var $tax_group_id ;
 	/** @var array<array-key, mixed>|null */
 	var $tax_group_array = null; // saves db queries
-	/** @var string|int|float|bool|null */
-	var $tax_included; // type of prices
-	/** @var string|int|float|bool|null */
-	var $terms;
-	/** @var float|int|string|null */
-	var $ex_rate;
+	/** @var int */
+	var $tax_included = 0; // type of prices
+	/** @var string */
+	var $terms = '';
+	/** @var float */
+	var $ex_rate = 0.0;
 	/** @var string|int|float|bool|null */
 	var $cash_account;
-	/** @var int|string */
-	var $dimension;
-	/** @var int|string */
-	var $dimension2;
+	/** @var string */
+	var $dimension = '';
+	/** @var string */
+	var $dimension2 = '';
 
 	/** @var string */
-	var $reference;
+	var $reference = '';
 
 	/**
 	 * @var array
@@ -99,7 +99,12 @@ class purch_order
 	}
 	
 	/** @return void */
-	function set_supplier($supplier_id, $supplier_name, $curr_code, $tax_group_id, $tax_included)
+	function set_supplier(
+            int $supplier_id, 
+            string $supplier_name,
+            string $curr_code,
+            int $tax_group_id,
+            bool $tax_included): void
 	{
 		$this->supplier_id = $supplier_id;
 		$this->supplier_name = $supplier_name;
@@ -110,18 +115,29 @@ class purch_order
 	}
 	
 	/**
-	 * @param int|null $line_no
-	 * @param string|int|float|bool|null $qty
-	 * @param string|array<array-key, mixed>|null $item_descr
-	 * @param string|int|float|bool|null $price
-	 * @param string|null $uom
-	 * @param string|int|null $qty_inv
-	 * @param string|int|null $qty_recd
-	 * @return 0|1
-	 */
-	function add_to_order($line_no, $stock_id, $qty, $item_descr, $price, $uom, $req_del_date, $qty_inv, $qty_recd)
+         * @param int $line_no
+         * @param string $stock_id
+         * @param int $qty
+         * @param string $item_descr
+         * @param float $price
+         * @param string $uom
+         * @param string $req_del_date
+         * @param int $qty_inv
+         * @param int $qty_recd
+         * @return 0|1
+         */
+        function add_to_order(
+            int $line_no,
+            string $stock_id,
+            int $qty,
+            string $item_descr,
+            float $price,
+            string $uom,
+            string $req_del_date,
+            int $qty_inv,
+            int $qty_recd)
 	{
-		if (isset($qty) && $qty != 0)
+		if ($qty > 0)
 		{
 			$this->line_items[$line_no] = new po_line_details($line_no, $stock_id, $item_descr, $qty, $price, $uom, 
 				$req_del_date, $qty_inv, $qty_recd);
@@ -132,14 +148,23 @@ class purch_order
 	}
 
 	/**
-	 * @param int|float|bool|null $qty
-	 * @param int|float|bool|null $price
-	 * @return void
-	 */
-	function update_order_item($line_no, $qty, $price, $req_del_date, $description="")
+         * @param int $line_no
+         * @param int $qty
+         * @param float $price
+         * @param string $req_del_date
+         * @param string $description
+         * @return void
+         */
+        function update_order_item(
+            int $line_no,
+            int $qty,
+            float $price,
+            string $req_del_date,
+            string $description="") : void
 	{
-		if ($description != "")
-			$this->line_items[$line_no]->item_description = $description;
+		if ($description != "") {
+		    $this->line_items[$line_no]->item_description = $description;
+                }
 		$this->line_items[$line_no]->quantity = $qty;
 		$this->line_items[$line_no]->price = $price;
 		$this->line_items[$line_no]->req_del_date = $req_del_date;
@@ -147,20 +172,18 @@ class purch_order
 	}
 
 	/**
-	 * @param string|int|null $line_no
+	 * @param int $line_no
 	 * @psalm-external-mutation-free
-	 * @return void
 	 */
-	function remove_from_order($line_no)
+	function remove_from_order(int $line_no): void
 	{
 		array_splice($this->line_items, $line_no, 1);
 	}
 	
 	/**
 	 * @psalm-mutation-free
-	 * @return bool
 	 */
-	function order_has_items() 
+	function order_has_items(): bool
 	{
 		return count($this->line_items) != 0;
 	}
@@ -200,7 +223,7 @@ class purch_order
 	}
 
 	/**
-	 * @param string|int|null $line_no
+	 * @param int $line_no
 	 * @psalm-mutation-free
 	 * @return 0|1
 	 */
@@ -209,7 +232,7 @@ class purch_order
 		/* Checks if there have been deliveries or amounts invoiced against a specific line item */
 		if (count($this->line_items) > 0)
 		{
-		   	if ($this->line_items[$line_no]->qty_received != 0 || 
+		   	if ($this->line_items[$line_no]->qty_received != 0 ||
 		   		$this->line_items[$line_no]->qty_inv != 0)
 		 	{
 				return 1;
@@ -223,19 +246,22 @@ class purch_order
 	//	$receival=true in purchase receive context.
 	//
 	/**
-	 * @param int|float|bool|null $shipping_cost
-	 * @param bool $receival
-	 */
-	function get_taxes($shipping_cost=null, $receival=false): array
+         * @param float $shipping_cost
+         * @param bool $receival
+         * @return array
+         */
+	function get_taxes(?float $shipping_cost=null, bool $receival=false): array
 	{
 		$items = array();
 		$prices = array();
 		if($shipping_cost==null)
-			$shipping_cost = 0;//$this->freight_cost;
+		    $shipping_cost = 0.0;//$this->freight_cost;
 
 		foreach ($this->line_items as $ln_itm) {
 			$items[] = $ln_itm->stock_id;
-			$prices[] = round((float)$ln_itm->price * ((float)($receival ? $ln_itm->receive_qty : $ln_itm->quantity)),  (int) user_price_dec());
+			$prices[] = round($ln_itm->price *
+                            ((float)($receival ? $ln_itm->receive_qty :
+                                $ln_itm->quantity)),  (int) user_price_dec());
 		}
 		$taxes = get_tax_for_items($items, $prices, $shipping_cost,
 		  $this->tax_group_id, $this->tax_included,  $this->tax_group_array);
@@ -248,7 +274,10 @@ class purch_order
 		}
 		foreach($this->tax_overrides as $id => $value) // add values entered manually
 		{
-			$taxes[$id]['Override'] = $value;
+                    /*
+                     *  float $value
+                     */
+                    $taxes[$id]['Override'] = $value;
 		}
 		return $taxes;
 	}
@@ -261,7 +290,8 @@ class purch_order
 		
 		$total = 0.0;
 		$dec = user_price_dec();
-
+                $items = [];
+                $prices = [];
 		foreach ($this->line_items as $ln_itm) {
 			$items[] = $ln_itm->stock_id;
 			$value = round((float)$ln_itm->quantity * (float)$ln_itm->price, $dec);
@@ -281,78 +311,89 @@ class purch_order
 
 } /* end of class defintion */
 
-class po_line_details 
+final class po_line_details 
 {
 
 	/** @var int */
-	var $line_no;
+	var $line_no = 0;
 	/** @var string|int|float|bool|null */
 	var $po_detail_rec;
-	/** @var string|int|float|bool|null */
-	var $grn_item_id;
+	/** @var int */
+	var $grn_item_id = 0;
 	/** @var string */
-	var $stock_id;
+	var $stock_id = '';
 	/** @var string */
-	var $item_description;
-	/** @var float|int|string */
-	var $price;
+	var $item_description = '';
+	/** @var float */
+	var $price = 0.0;
 	/** @var string */
-	var $units;
+	var $units = '';
 	/** @var string */
-	var $req_del_date;
-	/** @var string|int|float|bool|null */
-	var $tax_type;
+	var $req_del_date = '';
+	/** @var int */
+	var $tax_type = -1;
 	/** @var string */
-	var $tax_type_name;
+	var $tax_type_name = '';
 
-	/** @var float|int|string */
-	var $quantity;		// current/entry quantity of PO line
-	/** @var float|int|string */
-	var $qty_inv;	// quantity already invoiced against this line
-
-	/**
-	 * @var int
-	 */
-	var $receive_qty;	// current/entry GRN quantity
-	/** @var float|int|string */
-	var $qty_received;	// quantity already received against this line
+	/** @var int */
+	var $quantity = 0;		// current/entry quantity of PO line
+	/** @var int */
+	var $qty_inv = 0;	// quantity already invoiced against this line
 
 	/**
 	 * @var int
 	 */
-	var $standard_cost;
-	/** @var string|int|float|bool|null */
-	var $descr_editable;
+	var $receive_qty = 0;	// current/entry GRN quantity
+	/** @var float|int|string */
+	var $qty_received = 0;	// quantity already received against this line
 
 	/**
-	 * @param int|null $grn_item_id
-	 * @param int|null $line_no
-	 * @param string|array<array-key, mixed>|null $item_descr
-	 * @param string|null $uom
-	 * @param string|int|null $qty_inv
-	 * @param string|int|null $qty_recd
+	 * @var float
 	 */
-	function __construct($line_no, $stock_item, $item_descr, $qty, $prc, $uom, $req_del_date, 
-		$qty_inv, $qty_recd, $grn_item_id=0)
+	var $standard_cost = 0.0;
+	/** @var bool */
+	var $descr_editable = true;
+
+	/**y
+         * @param int $line_no
+         * @param string $stock_item
+         * @param string|null $item_descr
+         * @param int $qty
+         * @param float $prc
+         * @param string $uom
+         * @param string $req_del_date
+         * @param int $qty_inv
+         * @param int $qty_recd
+         * @param int $grn_item_id
+         * @return po_line_details
+         */
+	function __construct(
+            int $line_no,
+            string $stock_item,
+            string|null $item_descr,
+            int $qty,
+            float $prc,
+            string $uom,
+            string $req_del_date, 
+	    int	$qty_inv,
+            int $qty_recd,
+            int $grn_item_id=0)
 	{
 
 		/* Constructor function to add a new LineDetail object with passed params */
 		$this->line_no = $line_no;
 		$this->stock_id = $stock_item;
 		$item_row = row_or_empty(get_item($stock_item));
-		if (!$item_row) 
-			return;
-
-		$this->descr_editable = $item_row["editable"];
+		$this->descr_editable = (bool) $item_row["editable"];
 		//if ($item_descr == null || !$this->descr_editable) this was overriding the prchase description!!
 		if ($item_descr == null)
-			$this->item_description = $item_row["description"];
+			$this->item_description = $item_row["description"] ?? '';
 		else
 			$this->item_description = $item_descr;
 		$this->quantity = $qty;
 		$this->req_del_date = $req_del_date;
 		$this->price = $prc;
-//		$this->units = $uom;
+		$this->units = $uom;
 		$this->tax_type = $item_row["tax_type_id"];
 		$this->tax_type_name = $item_row["tax_type_name"];
 		$this->units = $item_row["units"];
@@ -365,10 +406,10 @@ class po_line_details
 	
 	// Deprecated, use with care. If you need line value as it is calculated in invoice, use taxfree_charge_value below.
  	/** @return null|scalar */
- 	function taxfree_charge_price($po)
+ 	function taxfree_charge_price(purch_order $po)
 	{
-		return get_tax_free_price_for_item($this->stock_id, $this->price, 
-		  $po->tax_group_id, $po->tax_included, $po->tax_group_array);
+	    return get_tax_free_price_for_item($this->stock_id, $this->price,
+	    $po->tax_group_id, $po->tax_included, $po->tax_group_array);
 	}
 
 	//
@@ -378,10 +419,11 @@ class po_line_details
 	 * @param purch_order $po
 	 * @return null|scalar
 	 */
-	function taxfree_charge_value($po)
+	function taxfree_charge_value(purch_order $po)
 	{
-		return get_tax_free_price_for_item($this->stock_id, (float)$this->receive_qty*(float)$this->price,
-		  $po->tax_group_id, $po->tax_included, $po->tax_group_array);
+	    return get_tax_free_price_for_item($this->stock_id,
+                (float)$this->receive_qty*(float)$this->price,
+	    $po->tax_group_id, $po->tax_included, $po->tax_group_array);
 	}
 }
 

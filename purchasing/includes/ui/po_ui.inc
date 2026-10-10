@@ -116,7 +116,7 @@ function display_po_header(purch_order &$order): void
 
 	if ($order->supplier_id != get_post('supplier_id',-1)) {
 		$old_supp = $order->supplier_id;
-		get_supplier_details_to_order($order, post_scalar('supplier_id')); 
+		get_supplier_details_to_order($order, (int) post_scalar('supplier_id')); 
 	    get_duedate_from_terms($order);
 		$_POST['due_date'] = $order->due_date;
 

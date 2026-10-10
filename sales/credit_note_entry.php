@@ -138,7 +138,7 @@ function handle_new_credit(string|int|array|null $trans_no): void
 //-----------------------------------------------------------------------------
 
 #[\NoDiscard]
-function can_process(): bool
+function canProcessCreditNoteEntry(): bool
 {
 
 	$input_error = 0;
@@ -184,7 +184,7 @@ function can_process(): bool
 
 //-----------------------------------------------------------------------------
 
-if (isset($_POST['ProcessCredit']) && can_process()) {
+if (isset($_POST['ProcessCredit']) && canProcessCreditNoteEntry()) {
 	copy_to_cn();
 	if ($_POST['CreditType'] == "WriteOff" && (!isset($_POST['WriteOffGLCode']) ||
 		$_POST['WriteOffGLCode'] == '')) {

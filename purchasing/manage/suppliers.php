@@ -38,7 +38,7 @@ if (isset($_GET['supplier_id']))
 $supplier_id = get_post('supplier_id', ''); 
 
 #[\NoDiscard]
-function can_process(): bool
+function canProcessSuppliers(): bool
 {
 	/* actions to take once the user has clicked the submit button
 	ie the page has called itself with some user input */
@@ -65,7 +65,7 @@ function handle_submit(&$supplier_id): void
 {
 	global $path_to_root;
 	
-	if (!can_process())
+	if (!canProcessSuppliers())
 		return;
 	begin_transaction();
 	if ($supplier_id) 

@@ -26,7 +26,7 @@ $selected_id = $selected_id;
 //----------------------------------------------------------------------------------------------------
 
 #[\NoDiscard]
-function can_process(): bool
+function canProcessSalesTypes(): bool
 {
 	
         $salesType = get_post('sales_type');
@@ -49,7 +49,7 @@ function can_process(): bool
 
 //----------------------------------------------------------------------------------------------------
 
-if ($Mode=='ADD_ITEM' && can_process())
+if ($Mode=='ADD_ITEM' && canProcessSalesTypes())
 {
 	/** @var int $tax_included */
 	$tax_included = check_value('tax_included');
@@ -61,7 +61,7 @@ if ($Mode=='ADD_ITEM' && can_process())
 
 //----------------------------------------------------------------------------------------------------
 
-if ($Mode=='UPDATE_ITEM' && can_process())
+if ($Mode=='UPDATE_ITEM' && canProcessSalesTypes())
 {
 	/** @var int|string $selected_id */
 	$selected_id = $selected_id;

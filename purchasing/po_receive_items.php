@@ -165,7 +165,7 @@ function check_po_changed(): bool
 //--------------------------------------------------------------------------------------------------
 
 #[\NoDiscard]
-function can_process(): bool
+function canProcessPoReceiveItems(): bool
 {
 	
 	if (count(session_obj('PO')->line_items) <= 0)
@@ -236,7 +236,7 @@ function process_receive_po(): void
 {
 	global $path_to_root;
 
-	if (!can_process())
+	if (!canProcessPoReceiveItems())
 		return;
 
 	if (check_po_changed())

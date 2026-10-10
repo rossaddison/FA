@@ -28,7 +28,7 @@ simple_page_mode(false);
 //-----------------------------------------------------------------------------------
 
 #[\NoDiscard]
-function can_process(string|int|float|bool|array|null $selected_id): bool 
+function canProcessGlAccountTypes(string|int|float|bool|array|null $selected_id): bool 
 {
 	$post_id = (string) post_scalar('id');
 	if (strlen(trim($post_id)) == 0)
@@ -65,7 +65,7 @@ function can_process(string|int|float|bool|array|null $selected_id): bool
 if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') 
 {
 
-	if (can_process($selected_id)) 
+	if (canProcessGlAccountTypes($selected_id)) 
 	{
 
     	if ($selected_id != "") 

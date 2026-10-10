@@ -74,11 +74,8 @@ function get_gl_view_str_cell(string|int|float|bool|null $type, string|int|float
 
 //--------------------------------------------------------------------------------------
 
-/**
- * @return null|string
- */
 function get_customer_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|array|null $trans_no, string|int|float|bool|null $label="", bool $icon=false, 
-	?string $class='', string|int|float|bool|null $id='')
+	?string $class='', string|int|float|bool|null $id=''): string|null
 {
 	$viewer = "sales/view/";
 

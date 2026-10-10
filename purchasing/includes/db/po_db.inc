@@ -13,7 +13,7 @@ declare(strict_types=1);
 require_once(dirname(__DIR__, 3) . "/admin/db/attachments_db.inc");
 // ------------------------------------------------------------------------------
 
-function get_supplier_details_to_order(?purch_order &$order, string|null $supplier_id): void
+function get_supplier_details_to_order(?purch_order &$order, int $supplier_id): void
 {
 	$sql = "SELECT curr_code, supp_name, tax_group_id, supp.tax_included, dimension_id, dimension2_id,
 			supp.credit_limit - Sum((ov_amount + ov_gst + ov_discount)) as cur_credit,
@@ -31,7 +31,7 @@ function get_supplier_details_to_order(?purch_order &$order, string|null $suppli
 	$order->credit = $myrow["cur_credit"];
 	$order->terms = array( 
 		'description' => $myrow['terms'],
-		'days_before_due' => $myrow['days_before_due'], 
+		'days_before_due' => $myrow['days_before_due'],
 		'day_in_following_month' => $myrow['day_in_following_month'] );
 
 	$_POST['supplier_id'] = $supplier_id;
@@ -40,8 +40,8 @@ function get_supplier_details_to_order(?purch_order &$order, string|null $suppli
 	$_POST['dimension'] = $myrow["dimension_id"];
 	$_POST['dimension2'] = $myrow["dimension2_id"];
 
-	$order->set_supplier($supplier_id, $myrow["supp_name"], $myrow["curr_code"], 
-		$myrow["tax_group_id"], $myrow["tax_included"]);
+	$order->set_supplier($supplier_id, $myrow["supp_name"], $myrow["curr_code"],
+		(int) $myrow["tax_group_id"], (bool) $myrow["tax_included"]);
 }
 
 //----------------------------------------------------------------------------------------
@@ -208,8 +208,8 @@ function read_po_header(string|int|float|bool|null $order_no, purch_order &$orde
       	$order->trans_type = ST_PURCHORDER;
       	$order->order_no = $order_no;
 
-      	$order->set_supplier($myrow["supplier_id"], $myrow["supp_name"], $myrow["curr_code"],
-      		$myrow['tax_group_id'], $myrow["tax_included"]);
+      	$order->set_supplier((int) $myrow["supplier_id"], $myrow["supp_name"], $myrow["curr_code"],
+      		(int) $myrow['tax_group_id'], (bool) $myrow["tax_included"]);
 
 		$order->credit = get_current_supp_credit($order->supplier_id);
 
@@ -266,9 +266,9 @@ function read_po_items(string|int|float|bool|null $order_no, purch_order &$order
             }
 
             if ($order->add_to_order($order->lines_on_order, $myrow["item_code"],
-            	$myrow["quantity_ordered"],$myrow["description"],
-            	$myrow["unit_price"],$units, sql2date($myrow["delivery_date"]),
-            	$myrow["qty_invoiced"], $myrow["quantity_received"])) {
+            	(int) $myrow["quantity_ordered"],$myrow["description"],
+            	(float) $myrow["unit_price"],$units, sql2date($myrow["delivery_date"]),
+            	(int) $myrow["qty_invoiced"], (int) $myrow["quantity_received"])) {
 				$order->line_items[$order->lines_on_order-1]->po_detail_rec = $myrow["po_detail_item"];
 			}
         } /* line po from purchase order details */

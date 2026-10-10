@@ -11,7 +11,7 @@ declare(strict_types=1);
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 //--------------------------------------------------------------------------------------------------
-function pager_link(?string $link_text, ?string $url, string|bool|null $icon=false): string
+function pager_link(string $link_text = '', string $url = '', string|bool|null $icon=false): string
 {
 	global $path_to_root;
 	
@@ -22,7 +22,7 @@ function pager_link(?string $link_text, ?string $url, string|bool|null $icon=fal
 	return "<a href='$href'>" . $link_text . "</a>";
 }
 
-function navi_button(?string $name, string|int|float|bool|null $value, string|int|float|bool|null $enabled=true, ?string $icon = null): string {
+function navi_button(string $name = '', string|int|float|bool|null $value, string|int|float|bool|null $enabled=true, ?string $icon = null): string {
 	global $path_to_root;
   	return "<button ". ((bool)$enabled ? '':'disabled')
   		." class=\"navibutton\" type=\"submit\""

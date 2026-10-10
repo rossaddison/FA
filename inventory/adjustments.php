@@ -96,7 +96,7 @@ function handle_new_order(): void
 //-----------------------------------------------------------------------------------------------
 
 #[\NoDiscard]
-function can_process(): bool
+function canProcessInventoryAdjustments(): bool
 {
 
 	$adj = &$_SESSION['adj_items'];
@@ -142,7 +142,7 @@ function can_process(): bool
 
 //-------------------------------------------------------------------------------
 
-if (isset($_POST['Process']) && can_process()){
+if (isset($_POST['Process']) && canProcessInventoryAdjustments()){
 
   $fixed_asset = session_obj('adj_items')->fixed_asset; 
 

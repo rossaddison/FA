@@ -85,7 +85,7 @@ if (isset($_GET['AddedID'])) {
 //-----------------------------------------------------------------------------
 
 #[\NoDiscard]
-function can_process(): bool
+function canProcessCustomerCreditInvoices(): bool
 {
 
 	if (!is_date(post_scalar('CreditDate'))) {
@@ -193,7 +193,7 @@ function copy_from_cart(): void
 }
 //-----------------------------------------------------------------------------
 
-if (isset($_POST['ProcessCredit']) && can_process()) {
+if (isset($_POST['ProcessCredit']) && canProcessCustomerCreditInvoices()) {
 	$new_credit = (session_obj('Items')->trans_no == 0);
 
 	if (!isset($_POST['WriteOffGLCode']))

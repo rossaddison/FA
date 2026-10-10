@@ -123,7 +123,7 @@ if (!isset($_POST['date_']))
 }
 
 #[\NoDiscard]
-function can_process(): bool
+function canProcessWorkOrderEntry(): bool
 {
 	global $selected_id;
 
@@ -242,7 +242,7 @@ function can_process(): bool
 
 //-------------------------------------------------------------------------------------
 
-if (isset($_POST['ADD_ITEM']) && can_process())
+if (isset($_POST['ADD_ITEM']) && canProcessWorkOrderEntry())
 {
 	if (!isset($_POST['cr_acc']))
 		$_POST['cr_acc'] = "";

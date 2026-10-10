@@ -25,7 +25,7 @@ simple_page_mode(true);
 //-----------------------------------------------------------------------------------
 
 #[\NoDiscard]
-function can_process(): bool
+function canProcessCreditStatus(): bool
 {
 
 	if (strlen((string) post_scalar('reason_description')) == 0)
@@ -33,14 +33,14 @@ function can_process(): bool
 		display_error(_("The credit status description cannot be empty."));
 		set_focus('reason_description');
 		return false;
-	}	
+        }
 	
 	return true;
 }
 
 //-----------------------------------------------------------------------------------
 
-if ($Mode=='ADD_ITEM' && can_process()) 
+if ($Mode=='ADD_ITEM' && canProcessCreditStatus())
 {
 
 	add_credit_status(post_scalar('reason_description'), post_scalar('DisallowInvoices'));
@@ -50,7 +50,7 @@ if ($Mode=='ADD_ITEM' && can_process())
 
 //-----------------------------------------------------------------------------------
 
-if ($Mode=='UPDATE_ITEM' && can_process()) 
+if ($Mode=='UPDATE_ITEM' && canProcessCreditStatus())
 {
 	display_notification(_('Selected credit status has been updated'));
 	update_credit_status(is_array($selected_id) ? null : (string) $selected_id, post_scalar('reason_description'), post_scalar('DisallowInvoices'));

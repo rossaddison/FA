@@ -14,6 +14,7 @@ $path_to_root = "../..";
 
 include_once(dirname(__DIR__, 2) . "/includes/db_pager.inc");
 include_once(dirname(__DIR__, 2) . "/includes/session.inc");
+include_once(dirname(__DIR__, 2) . "/includes/ui/ui_view.inc");
 include_once(dirname(__DIR__, 2) . "/sales/includes/sales_ui.inc");
 include_once(dirname(__DIR__, 2) . "/reporting/includes/reporting.inc");
 
@@ -93,15 +94,13 @@ function check_overdue(array $row): bool|int
 			&& ($row['TotDelivered'] < $row['TotQuantity']));
 }
 
-/** @return null|string */
-function view_link(string|int|float|bool|array $dummy, string|int|float|bool|null $order_no): ?string
+function view_link(string|int|float|bool|array $dummy, string|int|float|bool|null $order_no): string
 {
 	global $trans_type;
 	return  get_customer_trans_view_str($trans_type, $order_no);
 }
 
-/** @return non-empty-string|null */
-function prt_link(array $row)
+function prt_link(array $row): null|string
 {
 	global $trans_type;
 	return print_document_link((string) $row['order_no'], _("Print"), true, $trans_type, ICON_PRINT);
@@ -153,7 +152,7 @@ function delivery_link(array $row): string
 	"/sales/sales_order_entry.php?NewDelivery=" .(string)$row['order_no'], ICON_DOC);
 }
 
-function order_link(array $row): string
+function order_link(array $row): null|string
 {
   return pager_link( _("Sales Order"),
 	"/sales/sales_order_entry.php?NewQuoteToSalesOrder=" .(string)$row['order_no'], ICON_DOC);

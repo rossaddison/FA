@@ -25,7 +25,7 @@ simple_page_mode(false);
 //-----------------------------------------------------------------------------------
 
 #[\NoDiscard]
-function can_process(): bool 
+function canPocessGlAccountClasses(): bool 
 {
 
 	if (strlen(trim((string) post_scalar('id'))) == 0)
@@ -47,10 +47,10 @@ function can_process(): bool
 
 //-----------------------------------------------------------------------------------
 
-if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') 
+if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 {
 
-	if (can_process()) 
+	if (canProcessGlAccountClasses())
 	{
 
     	if ($selected_id != "")
@@ -59,8 +59,8 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
     		$selected_id = $selected_id;
     		if(update_account_class($selected_id, post_scalar('name'), post_scalar('ctype')))
 				display_notification(_('Selected account class settings has been updated'));
-    	} 
-    	else 
+    	}
+    	else
     	{
     		if(add_account_class(post_scalar('id'), post_scalar('name'), post_scalar('ctype'))) {
 				display_notification(_('New account class has been added'));
