@@ -528,6 +528,7 @@ provided that both dates are after 1970. Also only works for dates up to the yea
 }
 
 /** @return array{0: int|string, 1: int|string, 2: int|string} */
+/** @return array{0: int, 1: int, 2: int} */
 function explode_date_to_dmy(string|int|float|bool|null $date_): array
 {
 	$date = date2sql($date_);
@@ -550,14 +551,15 @@ function div(string|int|float|bool|null $a, ?int $b): int
 
 /** @psalm-pure */
 /** @return array{0: int|float, 1: int|float, 2: int|float} */
+/** @return array{0: int|float, 1: int|float, 2: int|float} */
 function gregorian_to_jalali (string|int|float|bool|null $g_y, string|int|float|bool|null $g_m, string|int|float|bool|null $g_d): array
 {
     $g_days_in_month = array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
     $j_days_in_month = array(31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29);
 
-   	$gy = $g_y - 1600;
-   	$gm = $g_m - 1;
-   	$gd = $g_d - 1;
+   	$gy = (int) $g_y - 1600;
+   	$gm = (int) $g_m - 1;
+   	$gd = (int) $g_d - 1;
 
    	$g_day_no = 365.0 * (float)$gy + div((float)$gy + 3.0, 4) - div((float)$gy + 99.0, 100) + div((float)$gy + 399.0, 400);
 
@@ -648,11 +650,12 @@ function jalali_to_gregorian(string|int|float|bool|null $j_y, string|int|float|b
    Released under GNU General Public License */
 /** @psalm-pure */
 /** @return array{0: int|float, 1: int|float, 2: int|float} */
+/** @return array{0: int|float, 1: int|float, 2: int|float} */
 function gregorian_to_islamic(string|int|float|bool|null $g_y, string|int|float|bool|null $g_m, string|int|float|bool|null $g_d): array
 {
-	$y = $g_y;   
-	$m = $g_m;
-	$d = $g_d;
+	$y = (float) $g_y;
+	$m = (float) $g_m;
+	$d = (float) $g_d;
 	if (($y > 1582) || (($y == 1582) && ($m > 10)) || (($y == 1582) && 
 		($m == 10) && ($d > 14))) 
 	{
