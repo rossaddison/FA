@@ -517,7 +517,7 @@ function db_import(string|int|float|bool|null $filename, mixed $connection, stri
 /** @psalm-pure */
 function db_ungzip(?string $mode, ?string $path): array|string|false
 {
-    $file_data = gzfile($path);
+    $file_data = gzfile((string) $path);
     // returns one string or an array of lines
     if ($mode != "lines")
     	return implode("",$file_data);
@@ -530,10 +530,10 @@ function db_ungzip(?string $mode, ?string $path): array|string|false
 function db_unzip(?string $mode, ?string $path): array|string|false
 {
     $all = false;
-    $all = implode("", file($path));
+    $all = implode("", file((string) $path));
 
     // convert path to name of ziped file
-    $filename = preg_replace("/.*\//", "", $path);
+    $filename = (string) preg_replace("/.*\//", "", (string) $path);
     $filename = substr($filename, 0, strlen($filename) - 4);
 
     // compare filname in zip and filename from $_GET
@@ -603,8 +603,8 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
     	$backupfile = $filename;
     $company = $conn['name']; // get_company_pref('coy_name');
 
-	if (file_exists($backupfile))	// prevent appends
-		unlink($backupfile);
+	if (file_exists((string) $backupfile))	// prevent appends
+		unlink((string) $backupfile);
 
     //create comment
     $out="# MySQL dump of database '".(string)$conn["dbname"]."' on host '".(string)$conn["host"]."'\n";
@@ -621,7 +621,7 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
 		$out .= "# Comment:\n";
 		$comment=preg_replace("'\n'","\n# ","# ".$comment);
 		//$comment=str_replace("\n", "\n# ", $comment);
-		foreach(explode("\n",$comment) as $line)
+		foreach(explode("\n",(string) $comment) as $line)
 			$out .= $line."\n";
 		$out.="\n";
 	}
@@ -637,8 +637,8 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
     $all_tables = array();
     while($row = db_fetch($res))
     {
-		if (($conn["tbpref"] == "" && !preg_match('/[0-9]+_/', $row['Name'])) ||
-			($conn["tbpref"] != "" && strpos($row['Name'], $conn["tbpref"]) === 0))
+		if (($conn["tbpref"] == "" && !preg_match('/[0-9]+_/', (string) $row['Name'])) ||
+			($conn["tbpref"] != "" && strpos((string) $row['Name'], (string) $conn["tbpref"]) === 0))
     		$all_tables[] = $row;
     }
         // get table structures
