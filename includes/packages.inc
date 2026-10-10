@@ -19,7 +19,7 @@ define('PUBKEY_PATH', $path_to_root);
 //
 // FrontAccounting package class
 //
-class package extends gzip_file {
+final class package extends gzip_file {
 
 	/**
 	 * @param string|null $filename
@@ -44,7 +44,8 @@ class package extends gzip_file {
 	//	Used by archive class. Use create_archive() instead.
 	//	
 	/** @return 0|1 */
-	function create_pkg() 
+	#[\Override]
+	function create_pkg()
 	{
 		return $this->create_gzip();
 	}
@@ -655,7 +656,7 @@ function install_language(string|int|float|bool|null $pkg_name): bool
 			if ($pkg['RTLDir']=='yes')
 				$lang['rtl'] = true;
 			$installed_languages[$i] = $lang;
-			write_lang($installed_languages);
+			write_lang();
 			unlink(VARLIB_PATH."/".(string)$pkg['Filename'].'.pkg');
 			ajax()->activate('lang_tbl');
 		} else {
@@ -760,8 +761,8 @@ function check_src_ext_version(string|int|float|bool|null $ext_v): bool
     global $src_version;
     if ($ext_v != '-') {
         $compat_levels = 2;    // current policy is keeping compatibility on major version level.
-        $app = explode('.', substr($src_version, 0, strspn($src_version, "0123456789.")));
-        $pkg = explode('.', substr($ext_v, 0, strspn($ext_v, "0123456789.")));
+        $app = explode('.', substr((string) $src_version, 0, strspn((string) $src_version, "0123456789.")));
+        $pkg = explode('.', substr((string) $ext_v, 0, strspn((string) $ext_v, "0123456789.")));
 
         for ($i=0; $i < min($compat_levels, count($app)); $i++)
             if ($pkg[$i] < $app[$i])
