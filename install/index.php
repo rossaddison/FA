@@ -36,12 +36,13 @@ function subpage_title(?string $txt): void
 	echo '<center><img src="'.$path_to_root.'/themes/default/images/logo_frontaccounting.png" width="250" height="50" alt="Logo" >
 		</center>';
 
-	$page = (bool)(@$_POST['Page']) ? $_POST['Page'] : 1;
+	$page_raw = @$_POST['Page'];
+	$page = is_scalar($page_raw) && (bool)$page_raw ? $page_raw : 1;
 
 	display_heading(
 		$page == 6 ? $txt :
 			_("FrontAccouting ERP Installation Wizard").'<br>'
-			. sprintf(_('Step %d: %s'),  $page , $txt));
+			. sprintf(_('Step %d: %s'), (int) $page, (string) $txt));
 	br();
 }
 
@@ -52,20 +53,33 @@ function display_coas(): void
 	table_header($th);
 
 	$k = 0;
+	/**
+	 * @var array<array-key, array{
+	 *     package?: string|int|float|bool|null,
+	 *     name?: string|int|float|bool|null,
+	 *     version?: string|int|float|bool|null,
+	 *     available?: string|int|float|bool|null,
+	 *     Descr?: string|int|float|bool|array<array-key, string>|null,
+	 *     encoding?: string|int|float|bool|null,
+	 *     local_id?: array-key,
+	 *     ...<array-key, mixed>
+	 * }> $charts
+	 */
 	$charts = get_charts_list();
 
 	foreach($charts as $pkg_name => $coa)
 	{
-		$available = @$coa['available'];
-		$installed = @$coa['version'];
-		$id = @$coa['local_id'];
+		$installed = $coa['version'] ?? null;
+		$descr = $coa['Descr'] ?? null;
+		$coa_name = $coa['name'] ?? null;
+		$coa_encoding = $coa['encoding'] ?? null;
 
 		alt_table_row_color($k);
-		label_cell($coa['name']);
-		label_cell($coa['encoding']);
-		label_cell(is_array($coa['Descr']) ? implode('<br>', $coa['Descr']) :  $coa['Descr']);
-		label_cell($installed ?
-			_("Installed") : checkbox(null, 'coas['.(string)$coa['package'].']'), "align='center'");
+		label_cell(is_scalar($coa_name) ? $coa_name : null);
+		label_cell(is_scalar($coa_encoding) ? $coa_encoding : null);
+		label_cell(is_array($descr) ? implode('<br>', $descr) :  $descr);
+		label_cell((bool)$installed ?
+			_("Installed") : checkbox(null, 'coas['.(string)($coa['package'] ?? '').']'), "align='center'");
 
 		end_row();
 	}
@@ -79,21 +93,35 @@ function display_langs(): void
 	table_header($th);
 
 	$k = 0;
+	/**
+	 * @var array<array-key, array{
+	 *     package?: string|int|float|bool|null,
+	 *     name?: string|int|float|bool|null,
+	 *     version?: string|int|float|bool|null,
+	 *     available?: string|int|float|bool|null,
+	 *     Descr?: string|int|float|bool|array<array-key, string>|null,
+	 *     encoding?: string|int|float|bool|null,
+	 *     local_id?: array-key,
+	 *     ...<array-key, mixed>
+	 * }> $langs
+	 */
 	$langs = get_languages_list();
 
 	foreach($langs as $pkg_name => $lang)
 	{
-		$available = @$lang['available'];
-		$installed = @$lang['version'];
-		$id = @$lang['local_id'];
-		if (!$available) continue;
+		$available = $lang['available'] ?? null;
+		$installed = $lang['version'] ?? null;
+		$descr = $lang['Descr'] ?? null;
+		$lang_name = $lang['name'] ?? null;
+		$lang_encoding = $lang['encoding'] ?? null;
+		if (!(bool)$available) continue;
 
 		alt_table_row_color($k);
-		label_cell($lang['name']);
-		label_cell($lang['encoding']);
-		label_cell(is_array($lang['Descr']) ? implode('<br>', $lang['Descr']) :  $lang['Descr']);
-		label_cell($installed ?
-			_("Installed") : checkbox(null, 'langs['.(string)$lang['package'].']'), "align='center'");
+		label_cell(is_scalar($lang_name) ? $lang_name : null);
+		label_cell(is_scalar($lang_encoding) ? $lang_encoding : null);
+		label_cell(is_array($descr) ? implode('<br>', $descr) :  $descr);
+		label_cell((bool)$installed ?
+			_("Installed") : checkbox(null, 'langs['.(string)($lang['package'] ?? '').']'), "align='center'");
 		end_row();
 	}
 	end_table(1);
@@ -102,6 +130,7 @@ function display_langs(): void
 function instlang_list_row(?string $label, ?string $name, string|int|float|bool|null $value=null): void {
 
 	global $inst_langs;
+	/** @var array<string, array{name: string, code: string, encoding: string, rtl?: bool}> $inst_langs */
 
 	$langs = array();
 	foreach ($inst_langs as $n => $lang)
@@ -115,20 +144,23 @@ function instlang_list_row(?string $label, ?string $name, string|int|float|bool|
 			)) . "</td>\n";
 }
 
+/** @return int|mysqli|false */
 function install_connect_db() {
 
 	global $db;
 
+	/** @var array<string, mixed> $conn */
 	$conn = $_SESSION['inst_set'];
 
 	$db = db_create_db($conn);
-	if (!(bool)$db) {
+	$result = $db;
+	if (!(bool)$result) {
 		display_error(_("Cannot connect to database. User or password is invalid or you have no permittions to create database."));
 	} else {
-		if (strncmp(db_get_version(), "5.6", 3) >= 0) 
+		if (strncmp((string) db_get_version(), "5.6", 3) >= 0)
 			db_query("SET sql_mode = ''");
 	}
-	return $db;
+	return $result;
 }
 
 function do_install(): bool {
@@ -136,31 +168,37 @@ function do_install(): bool {
 	global $path_to_root, $db_connections, $def_coy, $installed_extensions, $tb_pref_counter,
 		$dflt_lang, $installed_languages;
 
+	/** @var string $coa */
 	$coa = $_SESSION['inst_set']['coa'];
-	if (install_connect_db() && (bool)db_import($path_to_root.'/sql/'.$coa, $_SESSION['inst_set'])) {
-		$con = $_SESSION['inst_set'];
-		$table_prefix = $con['tbpref'];
+	/** @var array<string, mixed> $inst_set */
+	$inst_set = $_SESSION['inst_set'];
+	if ((bool)install_connect_db() && (bool)db_import($path_to_root.'/sql/'.$coa, $inst_set)) {
+		$con = $inst_set;
+		$table_prefix = (string) $con['tbpref'];
 
 		$def_coy = 0;
 		$tb_pref_counter = 0;
 		$db_connections = array (0=> array (
-		 'name' => $con['name'],
-		 'host' => $con['host'],
-		 'port' => $con['port'],
-		 'dbname' => $con['dbname'],
-		 'collation' => $con['collation'],
+		 'name' => (string) $con['name'],
+		 'host' => (string) $con['host'],
+		 'port' => (string) $con['port'],
+		 'dbname' => (string) $con['dbname'],
+		 'collation' => (string) $con['collation'],
 		 'tbpref' => $table_prefix,
-		 'dbuser' => $con['dbuser'],
-		 'dbpassword' => $con['dbpassword'],
+		 'dbuser' => (string) $con['dbuser'],
+		 'dbpassword' => (string) $con['dbpassword'],
 		));
 
-		$_SESSION['wa_current_user']->cur_con = 0;
-		
+		/** @var current_user $wa_current_user */
+		$wa_current_user = $_SESSION['wa_current_user'];
+		$wa_current_user->cur_con = 0;
+
 		update_company_prefs(array('coy_name'=>$con['name']));
 		$admin = row_or_empty(get_user_by_login('admin'));
-		update_user_prefs($admin['id'], array(
-			'language' => $con['lang'], 
-			'password' => md5($con['pass']),
+		$admin_id = $admin['id'];
+		update_user_prefs(is_scalar($admin_id) ? $admin_id : null, array(
+			'language' => $con['lang'],
+			'password' => md5((string) $con['pass']),
 			'user_id' => $con['admin']));
 
 		if (!copy($path_to_root. "/config.default.php", $path_to_root. "/config.php")) {
@@ -190,9 +228,10 @@ function do_install(): bool {
 	return false;
 }
 
-if (!isset($_SESSION['inst_set']))  // default settings
-	$_SESSION['inst_set'] = array(
-		'host'=>'localhost', 
+if (!isset($_SESSION['inst_set'])) { // default settings
+	/** @var array<string, string> $default_inst_set */
+	$default_inst_set = array(
+		'host'=>'localhost',
 		'port' => '', // 3306
 		'dbuser' => 'root',
 		'dbpassword' => '',
@@ -202,6 +241,8 @@ if (!isset($_SESSION['inst_set']))  // default settings
 		'inst_lang' => 'C',
 		'collation' => 'xx',
 	);
+	$_SESSION['inst_set'] = $default_inst_set;
+}
 
 if (!@$_POST['Tests'])
 	$_POST['Page'] = 1; // set to start page
@@ -235,18 +276,20 @@ elseif (isset($_POST['db_test'])) {
 	else {
 		/** @var language $lang */
 		$lang = $_SESSION['language'];
-		$_SESSION['inst_set'] = array_merge($_SESSION['inst_set'], array(
+		/** @var array<string, mixed> $inst_set */
+		$inst_set = $_SESSION['inst_set'];
+		$_SESSION['inst_set'] = array_merge($inst_set, array(
 			'host' => $_POST['host'],
 			'port' => $_POST['port'],
 			'dbuser' => $_POST['dbuser'],
-			'dbpassword' => @html_entity_decode($_POST['dbpassword'], ENT_QUOTES, $lang->encoding=='iso-8859-2' ? 'ISO-8859-1' : $lang->encoding),
+			'dbpassword' => @html_entity_decode(is_scalar($_POST['dbpassword']) ? (string) $_POST['dbpassword'] : '', ENT_QUOTES, $lang->encoding=='iso-8859-2' ? 'ISO-8859-1' : $lang->encoding),
 			'dbname' => $_POST['dbname'],
 			'tbpref' => $_POST['tbpref'] ? '0_' : '',
 			'sel_langs' => check_value('sel_langs'),
 			'sel_coas' => check_value('sel_coas'),
 			'collation' => $_POST['collation'],
 		));
-		if (install_connect_db()) {
+		if ((bool)install_connect_db()) {
 			$_POST['Page'] = check_value('sel_langs') ? 3 :
 				(check_value('sel_coas') ? 4 : 5);
 		}
@@ -261,24 +304,30 @@ elseif (isset($_POST['db_test'])) {
 elseif(get_post('install_langs')) 
 {
 	$ret = true;
-	if (isset($_POST['langs']))
-		foreach($_POST['langs'] as $package => $ok) {
-			$ret &= install_language($package);
+	$post_langs = @$_POST['langs'];
+	if (is_array($post_langs))
+		foreach($post_langs as $package => $ok) {
+			if (!install_language($package))
+				$ret = false;
 		}
-	if ((bool)$ret) {
-		$_POST['Page'] = $_SESSION['inst_set']['sel_coas'] ? 4 : 5;
+	/** @var array<string, mixed> $inst_set */
+	$inst_set = $_SESSION['inst_set'];
+	if ($ret) {
+		$_POST['Page'] = (bool)@$inst_set['sel_coas'] ? 4 : 5;
 	}
 }
-elseif(get_post('install_coas')) 
+elseif(get_post('install_coas'))
 {
 	$ret = true;
 	$next_extension_id = 0;
-	
-	if (isset($_POST['coas']))
-		foreach($_POST['coas'] as $package => $ok) {
-			$ret &= install_extension($package);
+
+	$post_coas = @$_POST['coas'];
+	if (is_array($post_coas))
+		foreach($post_coas as $package => $ok) {
+			if (!install_extension($package))
+				$ret = false;
 		}
-	if ((bool)$ret) {
+	if ($ret) {
 		if (file_exists($path_to_root . '/installed_extensions.php'))
 			include(dirname(__DIR__) . '/installed_extensions.php');
 		$_POST['Page'] = 5;
@@ -304,7 +353,9 @@ elseif(get_post('install_coas'))
 	}
 	else {
 
-		$_SESSION['inst_set'] = array_merge($_SESSION['inst_set'], array(
+		/** @var array<string, mixed> $inst_set */
+		$inst_set = $_SESSION['inst_set'];
+		$_SESSION['inst_set'] = array_merge($inst_set, array(
 			'coa' => clean_file_name($_POST['coa']),
 			'pass' => $_POST['pass'],
 			'name' => $_POST['name'],
@@ -318,8 +369,10 @@ elseif(get_post('install_coas'))
 }
 
 if (list_updated('inst_lang')) {
-	$_SESSION['inst_set']['inst_lang'] = get_post('inst_lang');
-	ajax()->setEncoding($inst_langs[get_post('inst_lang')]['encoding']);
+	/** @var array<string, array{name: string, code: string, encoding: string, rtl?: bool}> $inst_langs */
+	$inst_lang_sel = get_post('inst_lang');
+	$_SESSION['inst_set']['inst_lang'] = $inst_lang_sel;
+	ajax()->setEncoding($inst_langs[is_scalar($inst_lang_sel) ? $inst_lang_sel : '']['encoding']);
 	ajax()->activate('welcome');
 }
 
@@ -330,8 +383,11 @@ start_form();
 			div_start('welcome');
 			subpage_title(_('System Diagnostics'));
 			start_table();
+			/** @var array<string, mixed> $inst_set */
+			$inst_set = $_SESSION['inst_set'];
+			$cur_inst_lang = @$inst_set['inst_lang'];
 			instlang_list_row(_("Select install wizard language:"), 'inst_lang',
-				$_SESSION['inst_set']['inst_lang']);
+				is_scalar($cur_inst_lang) ? $cur_inst_lang : null);
 			end_table(1);
 			$_POST['Tests'] = display_system_tests(true);
 			br();
@@ -347,7 +403,9 @@ start_form();
 
 		case '2':
 			if (!isset($_POST['host'])) {
-				foreach($_SESSION['inst_set'] as $name => $val)
+				/** @var array<string, mixed> $inst_set */
+				$inst_set = $_SESSION['inst_set'];
+				foreach($inst_set as $name => $val)
 					$_POST[$name] = $val;
 			}
 			subpage_title(_('Database Server Settings'));
@@ -387,7 +445,9 @@ start_form();
 
 		case '5':
 			if (!isset($_POST['name'])) {
-				foreach($_SESSION['inst_set'] as $name => $val)
+				/** @var array<string, mixed> $inst_set */
+				$inst_set = $_SESSION['inst_set'];
+				foreach($inst_set as $name => $val)
 					$_POST[$name] = $val;
 				set_focus('name');
 			}
@@ -400,8 +460,10 @@ start_form();
 			start_table(TABLESTYLE);
 			text_row_ex(_("Company Name:"), 'name', 30);
 			text_row_ex(_("Admin Login:"), 'admin', 30);
-			password_row(_("Admin Password:"), 'pass', @$_POST['pass']);
-			password_row(_("Reenter Password:"), 'repass', @$_POST['repass']);
+			$post_pass = @$_POST['pass'];
+			$post_repass = @$_POST['repass'];
+			password_row(_("Admin Password:"), 'pass', is_scalar($post_pass) ? $post_pass : null);
+			password_row(_("Reenter Password:"), 'repass', is_scalar($post_repass) ? $post_repass : null);
 			coa_list_row(_("Select Chart of Accounts:"), 'coa');
 			languages_list_row(_("Select Default Language:"), 'lang');
 			end_table(1);
@@ -414,7 +476,7 @@ start_form();
 			display_note(_('Please do not forget to remove install wizard folder.'));
 			session_unset();
 			session_destroy();
-			hyperlink_no_params($path_to_root.'/index.php', _('Click here to start.'));
+			hyperlink_no_params((string)$path_to_root.'/index.php', _('Click here to start.'));
 			break;
 
 	}

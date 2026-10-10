@@ -14,6 +14,25 @@ include_once(dirname(__DIR__) . "/includes/archive.inc");
 include_once(dirname(__DIR__) . "/includes/remote_url.inc");
 include_once(dirname(__DIR__) . "/includes/hooks.inc");
 
+/**
+ * @psalm-type PkgListItem = array{
+ *     package?: string|int|float|bool|null,
+ *     name?: string|int|float|bool|null,
+ *     version?: string|int|float|bool|null,
+ *     available?: string|int|float|bool|null,
+ *     Descr?: string|int|float|bool|array<array-key, string>|null,
+ *     type?: string|int|float|bool|null,
+ *     path?: string|int|float|bool|null,
+ *     encoding?: string|int|float|bool|null,
+ *     sql?: string|int|float|bool|null,
+ *     code?: string|int|float|bool|null,
+ *     rtl?: string|int|float|bool|null,
+ *     local_id?: array-key,
+ *     active?: bool,
+ *     ...<array-key, mixed>
+ * }
+ */
+
 define('PKG_CACHE_PATH', $path_to_root.'/modules/_cache');
 define('PUBKEY_PATH', $path_to_root);
 //
@@ -462,10 +481,12 @@ function uninstall_package(string|int|float|bool|null $name): bool
 //	Return merged list of available and installed languages in inform of local 
 // configuration array supplemented with installed versions information.
 //
+/** @return array<array-key, PkgListItem> */
 function get_languages_list(): array
 {
 	global $installed_languages;
-	
+
+	/** @var array<array-key, PkgListItem> $pkgs */
 	$pkgs = get_pkg_or_list('language', null, array(
 				'Package' => 'package',
 				'Version' => 'available',
@@ -595,8 +616,10 @@ function get_themes_list(): array
 //	Return merged list of available and installed COAs as a local 
 // configuration array supplemented with installed versions information.
 //
+/** @return array<array-key, PkgListItem> */
 function get_charts_list(): array
 {
+	/** @var array<array-key, PkgListItem> $pkgs */
 	$pkgs = get_pkg_or_list('chart', null, array(
 				'Package' => 'package',
 				'Version' => 'available',
