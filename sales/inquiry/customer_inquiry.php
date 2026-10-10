@@ -30,7 +30,7 @@ page(_($help_context = "Customer Transactions"), isset($_GET['customer_id']), fa
 //------------------------------------------------------------------------------------------------
 
 /** @return string */
-function systype_name(string|int|float|bool|array $dummy, string|int|float|bool|null $type)
+function systypeNameCustomerInquiry(string|int|float|bool|array $dummy, string|int|float|bool|null $type)
 {
 	global $systypes_array;
 
@@ -45,13 +45,18 @@ function order_view(array $row)
 		: "";
 }
 
-function trans_view(array $trans)
+/** @return non-empty-scalar|null */
+function transViewCustomerInquiry(array $trans)
 {
 	return get_trans_view_str((string) $trans["type"], (string) $trans["trans_no"]);
 }
 
-/** @psalm-pure */
-function due_date(array $row)
+/**
+ * @param array<array-key, string|int|float|bool|null> $row
+ * @return string|int|float|bool|null
+ * @psalm-pure
+ */
+function dueDateCustomerInquiry(array $row)
 {
 	return	$row["type"] == ST_SALESINVOICE	? $row["due_date"] : '';
 }
@@ -72,7 +77,7 @@ function fmt_amount(array $row): string
 /**
  * @return null|string
  */
-function credit_link(array $row)
+function creditLinkCustomerInquiry(array $row)
 {
 	global $page_nested;
 
@@ -89,7 +94,7 @@ function credit_link(array $row)
 	}	
 }
 
-function edit_link(array $row): string
+function editLinkCustomerInquiry(array $row): string
 {
 	global $page_nested;
 
@@ -118,7 +123,7 @@ function copy_link(array $row)
 }
 
 /** @return null|string */
-function prt_link(array $row)
+function prtLinkCustomerInquiry(array $row)
 {
   	if ($row['type'] == ST_CUSTPAYMENT || $row['type'] == ST_BANKDEPOSIT)
 		return print_document_link((string)$row['trans_no']."-".(string)$row['type'], _("Print Receipt"), true, ST_CUSTPAYMENT, ICON_PRINT);
@@ -231,22 +236,22 @@ $sql = get_sql_for_customer_inquiry(
 //db_query("set @bal:=0");
 
 $cols = array(
-	_("Type") => array('fun'=>'systype_name', 'ord'=>''),
-	_("#") => array('fun'=>'trans_view', 'ord'=>'', 'align'=>'right'),
-	_("Order") => array('fun'=>'order_view', 'align'=>'right'), 
-	_("Reference"), 
+	_("Type") => array('fun'=>'systypeNameCustomerInquiry', 'ord'=>''),
+	_("#") => array('fun'=>'transViewCustomerInquiry', 'ord'=>'', 'align'=>'right'),
+	_("Order") => array('fun'=>'order_view', 'align'=>'right'),
+	_("Reference"),
 	_("Date") => array('name'=>'tran_date', 'type'=>'date', 'ord'=>'desc'),
-	_("Due Date") => array('type'=>'date', 'fun'=>'due_date'),
-	_("Customer") => array('ord'=>''), 
-	_("Branch") => array('ord'=>''), 
+	_("Due Date") => array('type'=>'date', 'fun'=>'dueDateCustomerInquiry'),
+	_("Customer") => array('ord'=>''),
+	_("Branch") => array('ord'=>''),
 	_("Currency") => array('align'=>'center'),
-	_("Amount") => array('align'=>'right', 'fun'=>'fmt_amount'), 
+	_("Amount") => array('align'=>'right', 'fun'=>'fmt_amount'),
 	_("Balance") => array('align'=>'right', 'type'=>'amount'),
 		array('insert'=>true, 'fun'=>'gl_view'),
-		array('insert'=>true, 'fun'=>'edit_link'),
+		array('insert'=>true, 'fun'=>'editLinkCustomerInquiry'),
 		array('insert'=>true, 'fun'=>'copy_link'),
-		array('insert'=>true, 'fun'=>'credit_link'),
-		array('insert'=>true, 'fun'=>'prt_link')
+		array('insert'=>true, 'fun'=>'creditLinkCustomerInquiry'),
+		array('insert'=>true, 'fun'=>'prtLinkCustomerInquiry')
 	);
 
 
