@@ -30,7 +30,7 @@ class package extends gzip_file {
 		global $path_to_root;
 
 		if (!$basedir) {
-			$basedir = PKG_CACHE_PATH.'/'.substr(basename($filename), 0, -4);
+			$basedir = PKG_CACHE_PATH.'/'.substr(basename((string) $filename), 0, -4);
 			if (file_exists($basedir)) {
 //				flush_dir($basedir, true); 
 			} else
@@ -56,12 +56,14 @@ class package extends gzip_file {
 	{
 		global $path_to_root;
 		
-		$success = true;
+		$success = 1;
 
 		$this->set_options(array('overwrite' => 1));
 		$this->extract_files(); // extract package in cache directory
 		$cachepath = $this->options['basedir'];
-		$ctrl = get_control_file("$cachepath/_init/config");
+		$ctrl = get_control_file("$cachepath/_init/config") ?? array();
+		/** @var array<array-key, string|int|float|bool|null> $ctrl */
+		$ctrl = $ctrl;
 
 		$targetdir = $path_to_root.'/'.(string)$ctrl['InstallPath'];
 
@@ -94,10 +96,12 @@ class package extends gzip_file {
 	{
 		global $path_to_root;
 
-		$success = true;
+		$success = 1;
 
 		$cachepath = $this->options['basedir'];
-		$ctrl = get_control_file("$cachepath/_init/config");
+		$ctrl = get_control_file("$cachepath/_init/config") ?? array();
+		/** @var array<array-key, string|int|float|bool|null> $ctrl */
+		$ctrl = $ctrl;
 
 		$targetdir = $path_to_root.'/'.(string)$ctrl['InstallPath'];
 
@@ -107,7 +111,7 @@ class package extends gzip_file {
 
 		$success &= copy_files($flist, "$cachepath/_back", $targetdir, true);
 
-		if (strpos($ctrl['InstallPath'], 'modules/') === 0) { // flush module directory
+		if (strpos((string) $ctrl['InstallPath'], 'modules/') === 0) { // flush module directory
 			flush_dir($targetdir, true);
 			rmdir($targetdir);
 		}
@@ -179,7 +183,7 @@ function ufmt_property(mixed $key, string|array|null $value): string|array|null
 //
 function get_control_file(string|int|float|bool|null $file, string|bool|null $index = false): array|null {
 
-	$list = gzopen($file, 'rb');
+	$list = gzopen((string) $file, 'rb');
 	if (!$list) return null;
 
 	$repo = $pkg = array();
@@ -234,7 +238,7 @@ function get_control_file(string|int|float|bool|null $file, string|bool|null $in
 //
 function save_control_file(string|int|float|bool|null $fname, array $list, string|int|float|bool|null $zip=false): void 
 {
-	$file = (bool)$zip ?  gzopen($fname, 'wb') : fopen($fname, 'wb');
+	$file = (bool)$zip ?  gzopen((string) $fname, 'wb') : fopen((string) $fname, 'wb');
 	foreach($list as $section) {
 		foreach($section as $key => $value) {
 			if (is_array($value)) { // multiline value
@@ -264,13 +268,13 @@ function save_control_file(string|int|float|bool|null $fname, array $list, strin
 //	Retrieve text field in localized version or default one 
 //	when the localized is not avaialable.
 //
-function pkg_prop(string|int|float|bool|null $pkg, string|int|float|bool|null $property, string|int|float|bool|null $lang=false): mixed
+function pkg_prop(array|null $pkg, string|int|float|bool|null $property, string|int|float|bool|null $lang=false): mixed
 {
-	
-	if ((bool)$lang && isset($pkg[$property.'-'.user_language()]))
-		$prop = @$pkg[$property.'-'.user_language()];
+
+	if ((bool)$lang && isset($pkg[(string)$property.'-'.user_language()]))
+		$prop = @$pkg[(string)$property.'-'.user_language()];
 	else
-		$prop = @$pkg[$property];
+		$prop = @$pkg[(string)$property];
 
 	return is_array($prop) ? implode("\n ",$prop): $prop;
 }
