@@ -405,10 +405,11 @@ function get_comments_string(string|int|float|bool|null $type, string|int|float|
 function view_stock_status(string|int|float|bool|null $stock_id, string|int|float|bool|null $description=null, bool $echo=true): string
 {
 	global $path_to_root;
+	$stock_id_attr = html_encode_attribute($stock_id, false, output_encoding());
 	if ((bool)$description)
-		$preview_str = "<a target='_blank' href='$path_to_root/inventory/inquiry/stock_status.php?stock_id=$stock_id&popup=1'".fa_action_attrs('open-window')." >". (user_show_codes()?$stock_id . " - ":"") . $description."</a>";
+		$preview_str = "<a target='_blank' href='$path_to_root/inventory/inquiry/stock_status.php?stock_id=$stock_id_attr&popup=1'".fa_action_attrs('open-window')." >". (user_show_codes()? html_encode($stock_id, false, output_encoding()) . " - ":"") . html_encode($description, false, output_encoding())."</a>";
 	else
-		$preview_str = "<a target='_blank' href='$path_to_root/inventory/inquiry/stock_status.php?stock_id=$stock_id&popup=1'".fa_action_attrs('open-window')." >$stock_id</a>";
+		$preview_str = "<a target='_blank' href='$path_to_root/inventory/inquiry/stock_status.php?stock_id=$stock_id_attr&popup=1'".fa_action_attrs('open-window')." >".html_encode($stock_id, false, output_encoding())."</a>";
 	if($echo)
 		echo $preview_str;
 	return $preview_str;
@@ -494,6 +495,9 @@ function display_supp_trans_tax_details(bool|mysqli_result $tax_items, ?int $col
 
 //--------------------------------------------------------------------------------------
 
+/**
+ * @param array<array-key, array{Net?: null|scalar, Value?: null|scalar, Override?: null|scalar, included_in_price?: null|scalar, purchasing_gl_code?: null|scalar, rate?: null|scalar, sales_gl_code?: null|scalar, tax_type_id?: array-key, tax_type_name?: null|scalar, ...<array-key, null|scalar>}> $taxes
+ */
 function display_edit_tax_items(array $taxes, ?int $columns, string|int|float|bool|null $tax_included, ?int $rightspan=0, bool $editable=false): int|float
 {
 	$total = 0.0;
@@ -694,6 +698,9 @@ function display_quick_entries(&$cart, string|int|float|bool|null $id, int|float
 
 //--------------------------------------------------------------------------------------
 
+/**
+ * @return array<array-key, array{code: string|int|float|bool|null, name: string|int|float|bool|null, dim1: string|int|float|bool|null, dim2: string|int|float|bool|null, amount: string|int|float|bool|null, descr: string|int|float|bool|null}>|int
+ */
 function quickentry_calculate(int|float|bool|null $base, string|int|float|bool|null $id, string|int|float|bool|null $taxgroup=null, string|int|float|bool|null $date=null): array|int
 {
 		$gl_entries = array();
@@ -748,8 +755,10 @@ function quickentry_calculate(int|float|bool|null $base, string|int|float|bool|n
 		$taxbase = 0;
 		foreach($qe_lines as $qe_line)
 		{
+			/** @var array<array-key, null|scalar> $qe_line */
+			$qe_line = $qe_line;
 			$gl_code = $qe_line['dest_id'];
-			switch (strtolower($qe_line['action'])) {
+			switch (strtolower((string) $qe_line['action'])) {
 				case "=": // post current base amount to GL account
 					$part = $base;
 					break;
@@ -782,7 +791,7 @@ function quickentry_calculate(int|float|bool|null $base, string|int|float|bool|n
 						$first = false;
 					}
 
-					if (substr($qe_line['action'],0,1) != 'T') 
+					if (substr((string) $qe_line['action'],0,1) != 'T')
 						$part = $taxbase;
 					else
 						$part = $base/100;
@@ -807,9 +816,9 @@ function quickentry_calculate(int|float|bool|null $base, string|int|float|bool|n
 					}
 
 					$part = $tax;
-					if ((bool)strpos($qe_line['action'], '+'))
+					if ((bool)strpos((string) $qe_line['action'], '+'))
 						$base += $tax;
-					elseif ((bool)strpos($qe_line['action'], '-'))
+					elseif ((bool)strpos((string) $qe_line['action'], '-'))
 						$base -= $tax;
 				}
 				$gl_entries[] = array(
