@@ -191,7 +191,7 @@ function display_customer_topten(): void
 	echo "<div class='square square2'>"._('Overdue Invoices')."<p class='span1'>";
 	echo get_num_overdue_sales()."</p></div>";
 	table_end();
-	$pg = new chart('horizontalBar', 'c1');
+	$pg = new Chart('horizontalBar', 'c1');
 	if (isset($_POST['select_c1']))
 		$pg->type = $_POST['select_c1'];
 	$today = calc_today();
@@ -228,7 +228,7 @@ function display_supplier_topten(): void
 	echo "<div class='square square2'>"._('Overdue Invoices')."<p class='span1'>";
 	echo get_num_overdue_purch()."</p></div>";
 	table_end();
-	$pg = new chart('horizontalBar', 's1');
+	$pg = new Chart('horizontalBar', 's1');
 	if (isset($_POST['select_s1']))
 		$pg->type = $_POST['select_s1'];
 	$today = calc_today();
@@ -299,7 +299,7 @@ function display_stock_topten(?int $type=0): void
 		echo get_num_fixed_classes()."</p></div>";
 		table_end();
 	}
-	$pg = new chart('bar', 'i1');
+	$pg = new Chart('bar', 'i1');
 	if (isset($_POST['select_i1']))
 		$pg->type = $_POST['select_i1'];
 	table('100%', '50%');
@@ -346,7 +346,7 @@ function display_dimension_topten(): void
 	echo "<div class='square square{$s}'>"._('Dimensions Total Result')."<p class='span1'>";
 	echo number_format2($res[1])."</p></div>";
 	table_end();
-	$pg = new chart('bar', 'd1');
+	$pg = new Chart('bar', 'd1');
 	if (isset($_POST['select_d1']))
 		$pg->type = $_POST['select_d1'];
 	table('100%', '50%');
@@ -373,7 +373,7 @@ function display_gl_info(): void
 	echo "<div class='square square2'>"._('Todays Payments')."<p class='span1'>";
 	echo number_format2(get_today_payments($today))."</p></div>";
 	table_end();
-	$pg = new chart('halfDonut', 'g1');
+	$pg = new Chart('halfDonut', 'g1');
 	if (isset($_POST['select_g1']))
 		$pg->type = $_POST['select_g1'];
 	table('100%', '50%');
@@ -404,25 +404,25 @@ function display_all(): void
 	echo "<div class='square square1'>"._('Database Size')."<p class='span1'>";
 	echo get_database_size()."</p></div>";
 	table_end();
-	$pg = new chart('horizontalBar', 'c2');
+	$pg = new Chart('horizontalBar', 'c2');
 	if (isset($_POST['select_c2']))
 		$pg->type = $_POST['select_c2'];
 	table('100%', '50%');
 	$title = customer_top($today, 3, 66, $pg);
 	source_graphic($today, $title[0], _("Customer"), $pg);
-	$pg = new chart('horizontalBar', 's2');
+	$pg = new Chart('horizontalBar', 's2');
 	if (isset($_POST['select_s2']))
 		$pg->type = $_POST['select_s2'];
 	$title = supplier_top($today, 3, 66, $pg);
 	source_graphic($today, $title[0], _("Supplier"), $pg);
-	$pg = new chart('bar', 'i2');
+	$pg = new Chart('bar', 'i2');
 	if (isset($_POST['select_i2']))
 		$pg->type = $_POST['select_i2'];
 	$title = stock_top($today, 3, 66, 0, $pg);
 	source_graphic($today, $title[0], _("Items"), $pg);
 	td('50%');
 	dimension_top($today, 3, 66);
-	$pg = new chart('pie', 'd2');
+	$pg = new Chart('pie', 'd2');
 	if (isset($_POST['select_d2']))
 		$pg->type = $_POST['select_d2'];
 	$title = gl_top($today, 66, $pg);
@@ -706,7 +706,7 @@ function gl_top(?string $today, string|int|null $width='33', ?object &$pg=null):
 function gl_week_performance(?string $today, string|int|null $width="33", ?int $weeks=4): void
 {
 	
-	$pg = new chart('bar', 'g3');
+	$pg = new Chart('bar', 'g3');
 	if (isset($_POST['select_g3']))
 		$pg->type = $_POST['select_g3'];
 	if (isset($_POST['per_g3']))
@@ -744,7 +744,7 @@ function gl_week_performance(?string $today, string|int|null $width="33", ?int $
 
 function gl_month_performance(?string $today, string|int|null $width="33", ?int $months=5): void
 {
-	$pg = new chart('bar', 'g4');
+	$pg = new Chart('bar', 'g4');
 	if (isset($_POST['select_g4']))
 		$pg->type = $_POST['select_g4'];
 	if (isset($_POST['per_g4']))
@@ -782,7 +782,7 @@ function gl_month_performance(?string $today, string|int|null $width="33", ?int 
 
 function customer_aging(?string $today, string|int|null $width="33"): float
 {
-	$pg = new chart('bar', 'c3');
+	$pg = new Chart('bar', 'c3');
 	if (isset($_POST['select_c3']))
 		$pg->type = $_POST['select_c3'];
 	$today1 = date2sql($today);
@@ -847,7 +847,7 @@ function customer_balance(?string $today)
 
 function supplier_aging(?string $today, string|int|null $width="33"): float
 {
-	$pg = new chart('bar', 's3'); 
+	$pg = new Chart('bar', 's3');
 	if (isset($_POST['select_s3']))
 		$pg->type = $_POST['select_s3'];
 	$today1 = date2sql($today);
@@ -909,7 +909,7 @@ function cash_flow(?string $today): void
 {
 	global $date_system;
 	$months = 6;
-	$pg = new chart('spline', 'g5');
+	$pg = new Chart('spline', 'g5');
 	if (isset($_POST['select_g5']))
 		$pg->type = $_POST['select_g5'];
 	if (isset($_POST['per_g5']))
