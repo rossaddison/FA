@@ -303,6 +303,7 @@ class tar_file extends archive
 	}
 
 	/** @return 1 */
+	#[\Override]
 	function create_tar()
 	{
 		$pwd = getcwd();
@@ -530,6 +531,7 @@ class gzip_file extends tar_file
 	 * @psalm-mutation-free
 	 * @return false|resource
 	 */
+	#[\Override]
 	function open_archive()
 	{
 		return @gzopen($this->options['name'], "rb");
