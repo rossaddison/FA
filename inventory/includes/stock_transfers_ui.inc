@@ -19,10 +19,12 @@ function add_to_order(items_cart &$order, string|null $new_item, string|int|floa
 {
 	$kit = get_item_kit($new_item);
 	foreach($kit as $item) {
-		if ($order->find_cart_item($item['stock_id']))
+		$item_stock_id = $item['stock_id'];
+		$item_stock_id = is_scalar($item_stock_id) ? $item_stock_id : null;
+		if ($order->find_cart_item($item_stock_id))
 			display_error(_("For Part :") . (string)$item['stock_id'] . " " . "This item is already on this document. You can change the quantity on the existing line if necessary.");
 		else
-			$order->add_to_cart (count($order->line_items), $item['stock_id'], $new_item_qty * (float)$item['quantity'], $standard_cost);
+			$order->add_to_cart (count($order->line_items), $item_stock_id, $new_item_qty * (float)$item['quantity'], is_array($standard_cost) ? null : $standard_cost);
 	}
 }
 
@@ -61,7 +63,7 @@ function display_transfer_items(?string $title, items_cart &$order): void
 	table_header($th);
 	$k = 0;  //row colour counter
 
-	$low_stock = $order->check_qoh($_POST['FromStockLocation'], $_POST['AdjDate'], true);
+	$low_stock = $order->check_qoh(post_scalar('FromStockLocation'), post_scalar('AdjDate'), true);
 	$id = find_submit('Edit');
 	foreach ($order->line_items as $line_no=>$stock_item)
 	{

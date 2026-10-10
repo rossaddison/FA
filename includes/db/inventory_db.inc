@@ -15,7 +15,7 @@ declare(strict_types=1);
  */
 function get_qoh_on_date(string|int|float|bool|null $stock_id, string|int|float|bool|null $location=null, string|int|float|bool|array|null $date_=null): int|string
 {
-    if ($date_ == null)
+    if ($date_ == null || is_array($date_))
         $date_ = Today();
 
      $date = date2sql($date_);
@@ -53,7 +53,7 @@ function check_negative_stock(string|int|float|bool|null $stock_id, string|int|f
 	if ($delta_qty >= 0)
 		 return null;	// qty increese is always safe
 
-	if (!isset($date))
+	if (!isset($date) || is_array($date))
 		$date = Today();
 
 	$date = date2sql($date);
@@ -319,17 +319,17 @@ function adjust_deliveries(string|int|float|bool|null $stock_id, string|int|floa
 
 	if ($row == false)
 		return;	
-	$old_sales_cost = $row[1];
-	$new_sales_cost = $row[0] * $material_cost;
+	$old_sales_cost = (float) ($row[1] ?? 0);
+	$new_sales_cost = (float) ($row[0] ?? 0) * (float) $material_cost;
 	$sales_diff = $new_sales_cost - $old_sales_cost;
-	
+
 	$row = get_purchases_from_trans($stock_id, $move_id);
-	$purchase_diff = 0;
-	$old_purchase_cost = $new_purchase_cost = 0;
+	$purchase_diff = 0.0;
+	$old_purchase_cost = $new_purchase_cost = 0.0;
 	if ($row != false)
 	{
-		$old_purchase_cost = $row[1];
-		$new_purchase_cost = $row[0] * $material_cost;
+		$old_purchase_cost = (float) ($row[1] ?? 0);
+		$new_purchase_cost = (float) ($row[0] ?? 0) * (float) $material_cost;
 		$purchase_diff = $new_purchase_cost - $old_purchase_cost;
 	}
 
@@ -347,7 +347,7 @@ function adjust_deliveries(string|int|float|bool|null $stock_id, string|int|floa
 		$cart->tran_date = $cart->doc_date = $cart->event_date = $to;
 		if (!(bool)is_date_in_fiscalyear($cart->tran_date))
 			$cart->tran_date = end_fiscalyear();
-		$cart->reference = refs()->get_next(ST_COSTUPDATE, null, $cart->tran_date, $to);
+		$cart->reference = refs()->get_next(ST_COSTUPDATE, null, $cart->tran_date);
 
 		$cart->memo_ = _("Cost was ") . $old_cost. _(" changed to ") . $new_cost . _(" for item ")."'$stock_id'";
 

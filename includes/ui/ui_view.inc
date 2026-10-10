@@ -678,15 +678,24 @@ function display_quick_entries(&$cart, string|int|float|bool|null $id, int|float
 		foreach($qe_lines as $qe_line)
 		{
 			if ($descr != '') $qe_line['descr'] .= ': '.$descr;
+			$qe_code = $qe_line['code'];
+			$qe_code = is_scalar($qe_code) ? $qe_code : null;
+			$qe_dim1 = $qe_line['dim1'];
+			$qe_dim1 = is_scalar($qe_dim1) ? $qe_dim1 : null;
+			$qe_dim2 = $qe_line['dim2'];
+			$qe_dim2 = is_scalar($qe_dim2) ? $qe_dim2 : null;
+			$qe_amount = $qe_line['amount'];
+			$qe_amount = is_scalar($qe_amount) ? $qe_amount : 0;
+			$qe_descr = $qe_line['descr'];
+			$qe_descr = is_scalar($qe_descr) ? $qe_descr : '';
 			if ($type != QE_SUPPINV)
-				$cart->add_gl_item($qe_line['code'], $qe_line['dim1'],
-					$qe_line['dim2'], $qe_line['amount'], $qe_line['descr']);
+				$cart->add_gl_item($qe_code, $qe_dim1, $qe_dim2, $qe_amount, $qe_descr);
 			else if ($cart instanceof supp_trans)
 			{
-				$acc_name = get_gl_account_name($qe_line['code']);
-				$cart->add_gl_codes_to_trans($qe_line['code'],
-					$acc_name, $qe_line['dim1'],
-					$qe_line['dim2'], $qe_line['amount'], $qe_line['descr']);
+				$acc_name = get_gl_account_name($qe_code);
+				$cart->add_gl_codes_to_trans($qe_code,
+					$acc_name, $qe_dim1,
+					$qe_dim2, $qe_amount, $qe_descr);
 			}
 		}
 	}

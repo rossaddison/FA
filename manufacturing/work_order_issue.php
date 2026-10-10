@@ -36,7 +36,7 @@ page(_($help_context = "Issue Items to Work Order"), false, false, "", $js);
 
 if (isset($_GET['AddedID'])) 
 {
-	$id = $_GET['AddedID'];
+	$id = is_array($_GET['AddedID']) ? '' : $_GET['AddedID'];
    	display_notification(_("The work order issue has been entered."));
 
     display_note(get_trans_view_str(ST_WORKORDER, $id, _("View this Work Order")));
@@ -91,7 +91,7 @@ function can_process(): bool
 		return false;
 	}
 
-	$failed_item = session_obj('issue_items')->check_qoh($_POST['Location'], $_POST['date_'], !(bool)$_POST['IssueType']);
+	$failed_item = session_obj('issue_items')->check_qoh(post_scalar('Location'), post_scalar('date_'), !(bool)$_POST['IssueType']);
 	if ($failed_item)
 	{
    		display_error(_("The issue cannot be processed because it would cause negative inventory balance for marked items as of document date or later."));
@@ -141,6 +141,7 @@ function handle_update_item(): void
     if($_POST['UpdateItem'] != "" && check_item_data())
     {
 		$id = $_POST['LineNo'];
+		$id = is_array($id) ? 0 : (int) $id;
     	session_obj('issue_items')->update_cart_item($id, input_num('qty'), input_num('std_cost'));
     }
 	line_start_focus();

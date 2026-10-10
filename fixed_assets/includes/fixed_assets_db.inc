@@ -15,8 +15,8 @@ declare(strict_types=1);
 function process_fixed_asset_depreciation(string|null $stock_id, ?array $gl_rows, string|array|null $refline, string|array|null $memo_)
 {
 
-  $row = get_item($stock_id);
-  $old_cost = $row['material_cost'];
+  $row = row_or_empty(get_item($stock_id));
+  $old_cost = (float) $row['material_cost'];
 
   begin_transaction();
 
@@ -29,17 +29,21 @@ function process_fixed_asset_depreciation(string|null $stock_id, ?array $gl_rows
   $cart = new items_cart(ST_JOURNAL);
   $cart->tran_date = $cart->doc_date = $cart->event_date = $date_;
   $cart->tran_date = end_fiscalyear();
-  $cart->reference = refs()->get_next(ST_JOURNAL, $refline, $cart->tran_date, $date_);
+  $cart->reference = refs()->get_next(ST_JOURNAL, $refline, $cart->tran_date);
 
   $value_of_change = 0.0;
-  foreach ($gl_rows as $row) {
-    $value_of_change += round2($row['value'], user_price_dec());
+  foreach ($gl_rows ?? [] as $row) {
+    $raw_value = $row['value'] ?? null;
+    $row_value = is_scalar($raw_value) ? $raw_value : 0;
+    $raw_date = $row['date'] ?? null;
+    $row_date = is_scalar($raw_date) ? $raw_date : null;
+    $value_of_change += round2($row_value, user_price_dec());
 
     $cart->add_gl_item($stock_gl_code["adjustment_account"],
-        $stock_gl_code["dimension_id"], $stock_gl_code["dimension2_id"], -$row['value'],
-        '', null, null, $row['date']);
-    $cart->add_gl_item($stock_gl_code["cogs_account"], 0, 0, $row['value'],
-        '', null, null, $row['date']);
+        $stock_gl_code["dimension_id"], $stock_gl_code["dimension2_id"], -$row_value,
+        '', null, null, $row_date);
+    $cart->add_gl_item($stock_gl_code["cogs_account"], 0, 0, $row_value,
+        '', null, null, $row_date);
   }
 
   $new_cost = $old_cost - $value_of_change;
@@ -48,7 +52,7 @@ function process_fixed_asset_depreciation(string|null $stock_id, ?array $gl_rows
     $cart->memo_ = sprintf(_("Fixed asset has been deprecated by the value of %s"),
         number_format2($value_of_change, user_price_dec()));
   else
-    $cart->memo_ = $memo_;
+    $cart->memo_ = is_array($memo_) ? '' : (string) $memo_;
 
   $trans_no = write_journal_entries($cart);
 

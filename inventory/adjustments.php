@@ -42,11 +42,11 @@ page($_SESSION['page_title'], false, false, "", $js);
 
 if (isset($_GET['AddedID'])) 
 {
-	$trans_no = $_GET['AddedID'];
+	$trans_no = is_array($_GET['AddedID']) ? '' : $_GET['AddedID'];
 	$trans_type = ST_INVADJUST;
 
   $result = get_stock_adjustment_items($trans_no);
-  $row = row_or_empty(db_fetch($result));
+  $row = row_or_empty($result instanceof mysqli_result ? db_fetch($result) : false);
 
   if (is_fixed_asset($row['mb_flag'])) {
     display_notification_centered(_("Fixed Assets disposal has been processed"));
@@ -128,7 +128,7 @@ function canProcessInventoryAdjustments(): bool
 	}
 	elseif (!sysprefs()->allow_negative_stock())
 	{
-		$low_stock = $adj->check_qoh($_POST['StockLocation'], $_POST['AdjDate']);
+		$low_stock = $adj->check_qoh(post_scalar('StockLocation'), post_scalar('AdjDate'));
 
 		if ($low_stock)
 		{
@@ -185,7 +185,8 @@ function check_item_data(): bool
 function handle_update_item(): void
 {
 	$id = $_POST['LineNo'];
-   	session_obj('adj_items')->update_cart_item($id, input_num('qty'), 
+	$id = is_array($id) ? 0 : (int) $id;
+   	session_obj('adj_items')->update_cart_item($id, input_num('qty'),
 		input_num('std_cost'));
 	line_start_focus();
 }

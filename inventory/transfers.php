@@ -47,13 +47,14 @@ check_db_has_costable_items(_("There are no inventory items defined in the syste
 
 if (isset($_GET['AddedID'])) 
 {
-	$trans_no = $_GET['AddedID'];
+	$trans_no = is_array($_GET['AddedID']) ? '' : $_GET['AddedID'];
 	$trans_type = ST_LOCTRANSFER;
 
 	display_notification_centered(_("Inventory transfer has been processed"));
 	display_note(get_trans_view_str($trans_type, $trans_no, _("&View this transfer")));
 
-  $itm = row_or_empty(db_fetch(get_stock_transfer_items(get_scalar('AddedID'))));
+  $transfer_items_result = get_stock_transfer_items(get_scalar('AddedID'));
+  $itm = row_or_empty($transfer_items_result instanceof mysqli_result ? db_fetch($transfer_items_result) : false);
 
   if (is_fixed_asset($itm['mb_flag']))
 	  hyperlink_params($_SERVER['PHP_SELF'], _("Enter &Another Fixed Assets Transfer"), "NewTransfer=1&FixedAsset=1");
@@ -126,7 +127,7 @@ if (isset($_POST['Process']))
 	}
 	elseif (!sysprefs()->allow_negative_stock())
 	{
-		$low_stock = $tr->check_qoh($_POST['FromStockLocation'], $_POST['AdjDate'], true);
+		$low_stock = $tr->check_qoh(post_scalar('FromStockLocation'), post_scalar('AdjDate'), true);
 
 		if ($low_stock)
 		{
@@ -172,9 +173,11 @@ function check_item_data(): bool
 function handle_update_item(): void
 {
 	$id = $_POST['LineNo'];
+	$id = is_array($id) ? 0 : (int) $id;
    	if (!isset($_POST['std_cost']))
    		$_POST['std_cost'] = session_obj('transfer_items')->line_items[$id]->standard_cost;
-   	session_obj('transfer_items')->update_cart_item($id, input_num('qty'), $_POST['std_cost']);
+   	$std_cost = $_POST['std_cost'];
+   	session_obj('transfer_items')->update_cart_item($id, input_num('qty'), is_array($std_cost) ? null : $std_cost);
 	line_start_focus();
 }
 

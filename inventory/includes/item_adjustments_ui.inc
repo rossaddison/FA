@@ -17,10 +17,12 @@ include_once(dirname(__DIR__, 2) . "/includes/ui/items_cart.inc");
 
 function add_to_order(items_cart &$order, string|array|null $new_item, int|float|bool|null $new_item_qty, string|int|float|bool|array|null $standard_cost): void
 {
-    if ($order->find_cart_item($new_item))
+    $stock_id = is_array($new_item) ? null : $new_item;
+    $cost = is_array($standard_cost) ? null : $standard_cost;
+    if ($order->find_cart_item($stock_id))
          display_error(_("For Part :") . $new_item . " " . "This item is already on this document. You can change the quantity on the existing line if necessary.");
 	else
-         $order->add_to_cart (count($order->line_items), $new_item, $new_item_qty, $standard_cost);
+         $order->add_to_cart (count($order->line_items), $stock_id, $new_item_qty, $cost);
 }
 
 //--------------------------------------------------------------------------------
@@ -65,8 +67,9 @@ function display_adjustment_items(?string $title, items_cart &$order): void
 	$total = 0.0;
 	$k = 0;  //row colour counter
 
-	$low_stock = $order->check_qoh($_POST['StockLocation'], $_POST['AdjDate']);
+	$low_stock = $order->check_qoh(post_scalar('StockLocation'), post_scalar('AdjDate'));
 	$id = get_post('selected_id', find_submit('Edit'));
+	$id = is_array($id) ? find_submit('Edit') : $id;
 	foreach ($order->line_items as $line_no=>$stock_item)
 	{
 
@@ -170,7 +173,7 @@ function adjustment_edit_item_controls(items_cart &$order, string|int|float|bool
 
 	}
 
-   	$item_info = row_or_empty(get_item_edit_info(get_post('stock_id')));
+   	$item_info = row_or_empty(get_item_edit_info((string) post_scalar('stock_id')));
    	if ($item_info) {
 		$dec = $item_info['decimals'];
 		$_POST['std_cost'] = price_decimal_format($item_info["material_cost"], $dec2);
@@ -181,11 +184,13 @@ function adjustment_edit_item_controls(items_cart &$order, string|int|float|bool
 		hidden('qty', -1);
 		qty_cell(1, false, 0);
 	} else {
-		$qoh = get_qoh_on_date(get_post('stock_id'), post_scalar('StockLocation'));
+		$qoh = get_qoh_on_date(post_scalar('stock_id'), post_scalar('StockLocation'));
 		qty_cell($qoh, false, $dec);
-		label_cell( text_input('qty', get_post('qty', '0'), 15, 15, '',  'class="amount active" dec='.$dec), "nowrap align=right");
+		$qty_post = get_post('qty', '0');
+		label_cell( text_input('qty', is_array($qty_post) ? '0' : $qty_post, 15, 15, '',  'class="amount active" dec='.$dec), "nowrap align=right");
 	}
-	label_cell(get_post('units'), '', 'units');
+	$units_post = get_post('units');
+	label_cell(is_array($units_post) ? null : $units_post, '', 'units');
 
 	if ($order->fixed_asset) {
 		hidden('std_cost');

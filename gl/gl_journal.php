@@ -31,8 +31,8 @@ if ((bool) user_use_date_picker())
 	$js .= get_js_date_picker();
 
 if (isset($_GET['ModifyGL'])) {
-	$_SESSION['page_title'] = sprintf(_("Modifying Journal Transaction # %d."), 
-		$_GET['trans_no']);
+	$_SESSION['page_title'] = sprintf(_("Modifying Journal Transaction # %d."),
+		is_array($_GET['trans_no']) ? '' : $_GET['trans_no']);
 	$help_context = "Modifying Journal Entry";
 } else
 	$_SESSION['page_title'] = _($help_context = "Journal Entry");
@@ -52,7 +52,7 @@ function line_start_focus(): void {
 
 if (isset($_GET['AddedID'])) 
 {
-	$trans_no = $_GET['AddedID'];
+	$trans_no = is_array($_GET['AddedID']) ? '' : $_GET['AddedID'];
 	$trans_type = ST_JOURNAL;
 
    	display_notification_centered( _("Journal entry has been entered") . " #$trans_no");
@@ -67,7 +67,7 @@ if (isset($_GET['AddedID']))
 	display_footer_exit();
 } elseif (isset($_GET['UpdatedID'])) 
 {
-	$trans_no = $_GET['UpdatedID'];
+	$trans_no = is_array($_GET['UpdatedID']) ? '' : $_GET['UpdatedID'];
 	$trans_type = ST_JOURNAL;
 
    	display_notification_centered( _("Journal entry has been updated") . " #$trans_no");
@@ -364,7 +364,8 @@ function check_item_data(): bool
 		set_focus('code_id');
    		return false;
 	}
-	if ((bool)is_subledger_account(get_post('code_id'))) {
+	$code_id = get_post('code_id');
+	if ((bool)is_subledger_account(is_array($code_id) ? null : $code_id)) {
 		if(!get_post('person_id')) {
 	   		display_error(_("You must select subledger account."));
    			ajax()->activate('items_table');
@@ -393,12 +394,12 @@ function check_item_data(): bool
     		return false;
   	}
 
-	if (strlen($_POST['AmountDebit']) && !check_num('AmountDebit', 0)) 
+	if (strlen((string) post_scalar('AmountDebit')) && !check_num('AmountDebit', 0))
 	{
     		display_error(_("The debit amount entered is not a valid number or is less than zero."));
 		set_focus('AmountDebit');
     		return false;
-  	} elseif (strlen($_POST['AmountCredit']) && !check_num('AmountCredit', 0))
+  	} elseif (strlen((string) post_scalar('AmountCredit')) && !check_num('AmountCredit', 0))
 	{
     		display_error(_("The credit amount entered is not a valid number or is less than zero."));
 		set_focus('AmountCredit');
@@ -432,8 +433,8 @@ function handle_update_item(): void
     	else
     		$amount = -input_num('AmountCredit');
 
-    	session_obj('journal_items')->update_gl_item($_POST['Index'], $_POST['code_id'], 
-    	    $_POST['dimension_id'], $_POST['dimension2_id'], $amount, $_POST['LineMemo'], '', get_post('person_id'));
+    	session_obj('journal_items')->update_gl_item((string) post_scalar('Index'), post_scalar('code_id'),
+    	    post_scalar('dimension_id'), post_scalar('dimension2_id'), $amount, post_scalar('LineMemo'), '', get_post('person_id'));
     	unset(session_obj('journal_items')->tax_info);
 		line_start_focus();
     }
@@ -460,8 +461,8 @@ function handle_new_item(): void
 	else
 		$amount = -input_num('AmountCredit');
 	
-	session_obj('journal_items')->add_gl_item($_POST['code_id'], $_POST['dimension_id'],
-		$_POST['dimension2_id'], $amount, $_POST['LineMemo'], '', get_post('person_id'));
+	session_obj('journal_items')->add_gl_item(post_scalar('code_id'), post_scalar('dimension_id'),
+		post_scalar('dimension2_id'), $amount, post_scalar('LineMemo'), '', get_post('person_id'));
   	unset(session_obj('journal_items')->tax_info);
 	line_start_focus();
 }

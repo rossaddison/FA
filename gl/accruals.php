@@ -67,8 +67,8 @@ if (isset($_POST['go']) || isset($_POST['show']))
 	{
 		$periods = input_num('periods');
 		$per = (float)$periods - 1.0;
-		$date = $date_ = get_post('date_');
-		$freq = get_post('freq');
+		$date = $date_ = post_scalar('date_');
+		$freq = post_scalar('freq');
 		if ($freq == 3 || $freq == 4) {
 			$date_ = begin_month($date_); // avoid skip on shorter months
 			$date  = end_month($date_); // avoid skip on shorter months
@@ -93,7 +93,7 @@ if (isset($_POST['go']) || isset($_POST['show']))
 			else
 				$am0 = $am;
 			if (get_post('memo_') != "")
-				$memo = $_POST['memo_'];
+				$memo = post_scalar('memo_');
 			else
 				$memo = sprintf(_("Accruals for %s"), $amount);
 			if (isset($_POST['go']))
@@ -143,12 +143,12 @@ if (isset($_POST['go']) || isset($_POST['show']))
 				if (isset($_POST['go']))
 				{
 					$cart = new items_cart(ST_JOURNAL);
-					$cart->memo_ = $memo;
+					$cart->memo_ = (string) $memo;
 					$cart->reference = refs()->get_next(ST_JOURNAL, null, $date);
-					$cart->tran_date = $cart->doc_date = $cart->event_date = $date;
-					$cart->add_gl_item(get_post('acc_act'), 0, 0, -$am0, $cart->reference);
-					$cart->add_gl_item(get_post('res_act'), get_post('dimension_id'),
-						get_post('dimension2_id'), $am0, $cart->reference);
+					$cart->tran_date = $cart->doc_date = $cart->event_date = (string) $date;
+					$cart->add_gl_item(post_scalar('acc_act'), 0, 0, -$am0, $cart->reference);
+					$cart->add_gl_item(post_scalar('res_act'), post_scalar('dimension_id'),
+						post_scalar('dimension2_id'), $am0, $cart->reference);
 					write_journal_entries($cart);
 					$cart->clear_items();
 				}

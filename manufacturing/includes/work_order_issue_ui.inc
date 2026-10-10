@@ -17,10 +17,11 @@ include_once(dirname(__DIR__, 2) . "/includes/ui/items_cart.inc");
 
 function add_to_issue(items_cart &$order, string|array|null $new_item, int|float|bool|null $new_item_qty, int|float|bool|null $standard_cost): void
 {
-    if ($order->find_cart_item($new_item))
+    $stock_id = is_array($new_item) ? null : $new_item;
+    if ($order->find_cart_item($stock_id))
          display_error(_("For Part :") . $new_item . " " . "This item is already on this issue.  You can change the quantity issued of the existing line if necessary.");
 	else
-         $order->add_to_cart (count($order->line_items), $new_item, $new_item_qty, $standard_cost);
+         $order->add_to_cart (count($order->line_items), $stock_id, $new_item_qty, $standard_cost);
 }
 //---------------------------------------------------------------------------------
 
@@ -40,7 +41,7 @@ function display_issue_items(?string $title, items_cart &$order): void
 	$k = 0;  //row colour counter
 
 	if (count($order->line_items))
-		$low_stock = $order->check_qoh($_POST['Location'], $_POST['date_'], !(bool)$_POST['IssueType']);
+		$low_stock = $order->check_qoh(post_scalar('Location'), post_scalar('date_'), !(bool)$_POST['IssueType']);
 	$id = find_submit('Edit');
 	foreach ($order->line_items as $line_no=>$stock_item)
 	{

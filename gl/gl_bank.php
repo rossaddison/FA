@@ -63,7 +63,8 @@ if (!isset($_SESSION['pay_items']))
 
 //----------------------------------------------------------------------------------------
 if (list_updated('PersonDetailID')) {
-	$br = row_or_empty(get_branch(get_post('PersonDetailID')));
+	$person_detail_id = get_post('PersonDetailID');
+	$br = row_or_empty(get_branch(is_array($person_detail_id) ? null : $person_detail_id));
 	$_POST['person_id'] = $br['debtor_no'];
 	ajax()->activate('person_id');
 }
@@ -84,7 +85,7 @@ function line_start_focus(): void {
 
 if (isset($_GET['AddedID']))
 {
-	$trans_no = $_GET['AddedID'];
+	$trans_no = is_array($_GET['AddedID']) ? '' : $_GET['AddedID'];
 	$trans_type = ST_BANKPAYMENT;
 
    	display_notification_centered(sprintf(_("Payment %d has been entered"), $trans_no));
@@ -102,7 +103,7 @@ if (isset($_GET['AddedID']))
 
 if (isset($_GET['UpdatedID']))
 {
-	$trans_no = $_GET['UpdatedID'];
+	$trans_no = is_array($_GET['UpdatedID']) ? '' : $_GET['UpdatedID'];
 	$trans_type = ST_BANKPAYMENT;
 
    	display_notification_centered(sprintf(_("Payment %d has been modified"), $trans_no));
@@ -118,7 +119,7 @@ if (isset($_GET['UpdatedID']))
 
 if (isset($_GET['AddedDep']))
 {
-	$trans_no = $_GET['AddedDep'];
+	$trans_no = is_array($_GET['AddedDep']) ? '' : $_GET['AddedDep'];
 	$trans_type = ST_BANKDEPOSIT;
 
    	display_notification_centered(sprintf(_("Deposit %d has been entered"), $trans_no));
@@ -133,7 +134,7 @@ if (isset($_GET['AddedDep']))
 }
 if (isset($_GET['UpdatedDep']))
 {
-	$trans_no = $_GET['UpdatedDep'];
+	$trans_no = is_array($_GET['UpdatedDep']) ? '' : $_GET['UpdatedDep'];
 	$trans_type = ST_BANKDEPOSIT;
 
    	display_notification_centered(sprintf(_("Deposit %d has been modified"), $trans_no));
@@ -305,12 +306,12 @@ if (isset($_POST['Process']) && !check_trans())
 	/** @var items_cart $pay_items */
 	$new = $pay_items->order_id == 0;
 
-	add_new_exchange_rate(get_bank_account_currency(get_post('bank_account')), get_post('date_'), input_num('_ex_rate'));
+	add_new_exchange_rate(get_bank_account_currency(post_scalar('bank_account')), get_post('date_'), input_num('_ex_rate'));
 
 	$trans = row_or_empty(write_bank_transaction(
 		$pay_items->trans_type, $pay_items->order_id, post_scalar('bank_account'),
 		$pay_items, post_scalar('date_'),
-		post_scalar('PayType'), post_scalar('person_id'), get_post('PersonDetailID'),
+		post_scalar('PayType'), post_scalar('person_id'), (string) post_scalar('PersonDetailID'),
 		post_scalar('ref'), post_scalar('memo_'), true, input_num('settled_amount', null)));
 
 	$trans_type = $trans[0];
@@ -358,8 +359,8 @@ function handle_update_item(): void
 	$amount = ((float)(session_obj('pay_items')->trans_type==ST_BANKPAYMENT ? 1:-1)) * (float)input_num('amount');
     if($_POST['UpdateItem'] != "" && check_item_data())
     {
-    	session_obj('pay_items')->update_gl_item($_POST['Index'], $_POST['code_id'], 
-    	    $_POST['dimension_id'], $_POST['dimension2_id'], $amount , $_POST['LineMemo']);
+    	session_obj('pay_items')->update_gl_item((string) post_scalar('Index'), post_scalar('code_id'),
+    	    post_scalar('dimension_id'), post_scalar('dimension2_id'), $amount , post_scalar('LineMemo'));
     }
 	line_start_focus();
 }
@@ -380,8 +381,8 @@ function handle_new_item(): void
 		return;
 	$amount = ((float)(session_obj('pay_items')->trans_type==ST_BANKPAYMENT ? 1:-1)) * (float)input_num('amount');
 
-	session_obj('pay_items')->add_gl_item($_POST['code_id'], $_POST['dimension_id'],
-		$_POST['dimension2_id'], $amount, $_POST['LineMemo']);
+	session_obj('pay_items')->add_gl_item(post_scalar('code_id'), post_scalar('dimension_id'),
+		post_scalar('dimension2_id'), $amount, post_scalar('LineMemo'));
 	line_start_focus();
 }
 //-----------------------------------------------------------------------------------------------
