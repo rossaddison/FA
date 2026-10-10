@@ -28,11 +28,12 @@ declare(strict_types=1);
 function find_submit(string|int|float|bool|null $prefix, string|int|float|bool|null $numeric=true): int|string|null
 {
 
+    $prefix = (string) $prefix;
     foreach($_POST as $postkey=>$postval )
     {
-		if (strpos($postkey, $prefix) === 0)
+		if (strpos((string) $postkey, $prefix) === 0)
 		{
-			$id = substr($postkey, strlen($prefix));
+			$id = substr((string) $postkey, strlen($prefix));
 			return (bool)$numeric ? (int)$id : $id;
 		}
     }
@@ -44,7 +45,7 @@ function find_submit(string|int|float|bool|null $prefix, string|int|float|bool|n
 */
 function input_changed(?string $name): bool
 {
-	return isset($_POST['_'.$name.'_changed']);
+	return isset($_POST['_'.(string)$name.'_changed']);
 }
 
 //------------------------------------------------------------------------------
@@ -133,12 +134,12 @@ $hidden_fields = array();
 function hidden(string|int|float|bool|null $name, string|int|float|bool|null $value=null, bool $echo=true): ?string
 {
   	global $hidden_fields;
-	
-	if ($value === null) 
-		$value = get_post($name);
-	
-  	$ret = "<input type=\"hidden\" name=\"$name\" value=\"$value\">";
-	ajax()->addUpdate($name, $name, $value);
+
+	if ($value === null)
+		$value = get_post((string) $name);
+
+  	$ret = "<input type=\"hidden\" name=\"$name\" value=\"".html_encode_attribute($value, false, output_encoding())."\">";
+	ajax()->addUpdate((string) $name, (string) $name, $value);
 	if ($echo) {
 		$hidden_fields[] = $ret;
 		return null;
@@ -380,6 +381,10 @@ function select_button_cell(string|int|float|bool|null $name, string|int|float|b
 }
 //-----------------------------------------------------------------------------------
 
+/**
+ * @param string|array<array-key, string> $name
+ * @return int|array<array-key, int>
+ */
 function check_value(string|array $name): int|array
 {
     if (is_array($name)) {
