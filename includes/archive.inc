@@ -31,7 +31,7 @@ class archive
 	var $archive = '';
 
 	/** @psalm-mutation-free */
-	function __construct($name)
+	function __construct(?string $name)
 	{
 		$this->options = array (
 			'basedir' => ".",
@@ -53,6 +53,7 @@ class archive
 	/**
 	 * Overridden by tar_file; base class is never used standalone.
 	 * @return 0|1
+	 * @psalm-pure
 	 */
 	function create_tar()
 	{
@@ -62,6 +63,7 @@ class archive
 	/**
 	 * Overridden by package (via gzip_file); base class is never used standalone.
 	 * @return 0|1
+	 * @psalm-pure
 	 */
 	function create_pkg()
 	{
@@ -71,6 +73,7 @@ class archive
 	/**
 	 * @param array<array-key, mixed>|null $options
 	 * @return void
+	 * @psalm-external-mutation-free
 	 */
 	function set_options($options)
 	{
@@ -285,7 +288,7 @@ class archive
 class tar_file extends archive
 {
 	/** @psalm-mutation-free */
-	function __construct($name)
+	function __construct(?string $name)
 	{
 		parent::__construct($name);
 		$this->options['type'] = "tar";
