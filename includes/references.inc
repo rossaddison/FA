@@ -360,9 +360,9 @@ final class references
 		$ctx_date = is_string($ctx_date) ? $ctx_date : null;
 		if (is_date($ctx_date))
 		{
-			list($year4, $month, $day) = explode("-", (string) date2sql($ctx_date));
+			list($year4, $month, $day) = explode("-", date2sql($ctx_date));
 			$year2 = substr($year4, 2);
-			$f_year = explode("-", (string) date2sql(get_fiscalyear_begin_for_date($ctx_date)));
+			$f_year = explode("-", date2sql(get_fiscalyear_begin_for_date($ctx_date)));
 			$f_year2 = substr($f_year[0], 2);
 			$f_year4 = $f_year[0];
 		} else

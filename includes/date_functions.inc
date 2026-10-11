@@ -25,7 +25,8 @@ function __date(string|int|float|bool|null $year, string|int|float|bool|null $mo
 	global $tmonths;
 	
 	$how = user_date_format();
-	$sep = sysprefs()->dateseps[user_date_sep()];
+	$date_sep = user_date_sep();
+	$sep = sysprefs()->dateseps[is_scalar($date_sep) ? (int) $date_sep : 0];
 	$year = (int)$year;
 	$day = (int)$day;
 	$month = (int)$month;
@@ -43,27 +44,29 @@ function __date(string|int|float|bool|null $year, string|int|float|bool|null $mo
 	elseif ($how == 2)
 		return $year.$sep.$month.$sep.$day;
 	elseif ($how == 3)
-		return $tmonths[$month].$sep.$day.$sep.$year;
+		return $tmonths[(int) $month].$sep.$day.$sep.$year;
 	elseif ($how == 4)
-		return $day.$sep.$tmonths[$month].$sep.$year;
+		return $day.$sep.$tmonths[(int) $month].$sep.$year;
 	else
-		return $year.$sep.$tmonths[$month].$sep.$day;
+		return $year.$sep.$tmonths[(int) $month].$sep.$day;
 }
 
-function is_date(?string $date_): int 
+function is_date(?string $date_): int
 {
+	global $tmonths;
 
 	if ($date_ == null || $date_ == "")
 		return 0;
 	$how = user_date_format();
-	$sep = sysprefs()->dateseps[user_date_sep()];
+	$date_sep = user_date_sep();
+	$sep = sysprefs()->dateseps[is_scalar($date_sep) ? (int) $date_sep : 0];
 
 	$date_ = trim($date_);
 	$date = str_replace($sep, "", $date_);
-	
+	$year = $month = $day = null;
+
 	if ($how > 2)
 	{
-		global $tmonths;
 		$dd = explode($sep, $date_);
 		if ($how == 3)
 		{
@@ -249,6 +252,8 @@ function begin_month(string|int|float|bool|null $date): string
 
 function days_in_month(string|int|float|bool|null $month, string|int|float|bool|null $year): int
 {
+	$month = (int) $month;
+	$year = (int) $year;
 
 	if (sysprefs()->date_system == 1)
 	{
@@ -256,7 +261,7 @@ function days_in_month(string|int|float|bool|null $month, string|int|float|bool|
 	}
 	elseif (sysprefs()->date_system == 2)
 	{
-		$days_in_month = array(30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, ((((((float)(11 * $year)) + 14.0) % 30) < 11) ? 30 : 29));
+		$days_in_month = array(30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, (((((int)((float)(11 * $year) + 14.0)) % 30) < 11) ? 30 : 29));
 	}
 	else // gregorian date
 		$days_in_month = array(31, ((!($year % 4 ) && (($year % 100) || !($year % 400)))?29:28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
@@ -283,7 +288,7 @@ function end_month(string|int|float|bool|null $date): string
 function add_days(string|int|float|bool|null $date, string|int|float|bool|null $days): string // accepts negative values as well
 {
     list($day, $month, $year) = explode_date_to_dmy($date);
-   	$timet = mktime(0,0,0, $month, (int) ($day + $days), $year);
+   	$timet = mktime(0,0,0, $month, (int) ((float) $day + (float) $days), $year);
     if (sysprefs()->date_system == 1 || sysprefs()->date_system == 2)
     {
     	if (sysprefs()->date_system == 1)
@@ -302,11 +307,11 @@ function add_months(string|int|float|bool|null $date, string|int|float|bool|null
 
     list($day, $month, $year) = explode_date_to_dmy($date);
 
-	$months += $year*12+$month;
-	$month = (int) (($months-1)%12+1);
-	$year = (int) (($months-$month)/12);
+	$months = (int) ((float) $months) + $year*12+$month;
+	$month = ($months-1)%12+1;
+	$year = ($months-$month)/12;
 
-   	$timet = mktime(0,0,0, $month, (int) min($day, days_in_month($month, $year)), $year);
+   	$timet = mktime(0,0,0, $month, min($day, days_in_month($month, $year)), $year);
 
     if (sysprefs()->date_system == 1 || sysprefs()->date_system == 2)
     {
@@ -325,7 +330,7 @@ function add_years(string|int|float|bool|null $date, string|int|float|bool|null 
 {
 
     list($day, $month, $year) = explode_date_to_dmy($date);
-   	$timet = Mktime(0,0,0, $month, $day, (int) ($year + $years));
+   	$timet = Mktime(0,0,0, $month, $day, (int) ((float) $year + (float) $years));
     if (sysprefs()->date_system == 1 || sysprefs()->date_system == 2)
     {
     	if (sysprefs()->date_system == 1)
@@ -372,7 +377,7 @@ function sql2date(string|int|float|bool|null $date_): string
 
 
 /** @psalm-taint-escape sql */
-function date2sql(?string $date_): string|int
+function date2sql(?string $date_): string
 {
 	global $tmonths;
 /* takes a date in a the format specified in $DefaultDateFormat
@@ -417,7 +422,12 @@ and converts to a yyyy/mm/dd format */
 		}
 		if ((int)$year > 9999)
 		{
-			return 0;
+			// was `return 0;` - a plain int where every other path and every
+			// real caller treats this function's result as a "YYYY-MM-DD"
+			// string (explode("-", ...) etc.) - under strict_types that int
+			// would TypeError the moment a date past year 9999 reached one
+			// of those callers, instead of just producing a harmless result
+			return "0000-00-00";
 		}
 		if (sysprefs()->date_system == 1)
 			list($year, $month, $day) = jalali_to_gregorian($year, $month, $day); 
@@ -435,8 +445,8 @@ and converts to a yyyy/mm/dd format */
  */
 function sql_date_comp(string|int|float|bool|null $date1, string|int|null $date2): int
 {
-	@list($year1, $month1, $day1) = explode("-", $date1);
-	@list($year2, $month2, $day2) = explode("-", $date2);
+	@list($year1, $month1, $day1) = explode("-", (string) $date1);
+	@list($year2, $month2, $day2) = explode("-", (string) $date2);
 
 	if ($year1 != $year2) {
 		return $year1 < $year2 ? -1 : +1;
@@ -465,8 +475,8 @@ function date1_greater_date2 (string|int|float|bool|array|null $date1, string|in
 
 /* returns 1 true if date1 is greater than date_ 2 */
 
-	$date1 = date2sql($date1);
-	$date2 = date2sql($date2);
+	$date1 = date2sql(is_array($date1) ? null : $date1);
+	$date2 = date2sql(is_array($date2) ? null : $date2);
 
 	@list($year1, $month1, $day1) = explode("-", $date1);
 	@list($year2, $month2, $day2) = explode("-", $date2);
@@ -527,7 +537,6 @@ provided that both dates are after 1970. Also only works for dates up to the yea
 	}
 }
 
-/** @return array{0: int|string, 1: int|string, 2: int|string} */
 /** @return array{0: int, 1: int, 2: int} */
 function explode_date_to_dmy(string|int|float|bool|null $date_): array
 {
@@ -541,17 +550,18 @@ function explode_date_to_dmy(string|int|float|bool|null $date_): array
 }
 
 /** @psalm-pure */
-function div(string|int|float|bool|null $a, ?int $b): int 
+function div(string|int|float|bool|null $a, int $b): int
 {
-    return (int) ($a / $b);
+    return (int) ((float) $a / (float) $b);
 }
 /* Based on convertor to and from Gregorian and Jalali calendars.
    Copyright (C) 2000  Roozbeh Pournader and Mohammad Toossi 
    Released under GNU General Public License */
 
-/** @psalm-pure */
-/** @return array{0: int|float, 1: int|float, 2: int|float} */
-/** @return array{0: int|float, 1: int|float, 2: int|float} */
+/**
+ * @psalm-pure
+ * @return array{0: int|float, 1: int|float, 2: int|float}
+ */
 function gregorian_to_jalali (string|int|float|bool|null $g_y, string|int|float|bool|null $g_m, string|int|float|bool|null $g_d): array
 {
     $g_days_in_month = array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
@@ -561,7 +571,7 @@ function gregorian_to_jalali (string|int|float|bool|null $g_y, string|int|float|
    	$gm = (int) $g_m - 1;
    	$gd = (int) $g_d - 1;
 
-   	$g_day_no = 365.0 * (float)$gy + div((float)$gy + 3.0, 4) - div((float)$gy + 99.0, 100) + div((float)$gy + 399.0, 400);
+   	$g_day_no = 365.0 * (float)$gy + (float) div((float)$gy + 3.0, 4) - (float) div((float)$gy + 99.0, 100) + (float) div((float)$gy + 399.0, 400);
 
    	for ($i = 0; $i < $gm; ++$i)
       	$g_day_no += $g_days_in_month[$i];
@@ -569,7 +579,7 @@ function gregorian_to_jalali (string|int|float|bool|null $g_y, string|int|float|
       	/* leap and after Feb */
       	$g_day_no++;
    	$g_day_no += $gd;
-   	$j_day_no = $g_day_no - 79;
+   	$j_day_no = (int) $g_day_no - 79;
 
    	$j_np = div($j_day_no, 12053); /* 12053 = 365*33 + 32/4 */
    	$j_day_no %= 12053;
@@ -578,7 +588,7 @@ function gregorian_to_jalali (string|int|float|bool|null $g_y, string|int|float|
 
    	$j_day_no %= 1461;
 
-   	if ($j_day_no >= 366) 
+   	if ($j_day_no >= 366)
    	{
       	$jy += div($j_day_no - 1, 365);
       	$j_day_no = ($j_day_no - 1) % 365;
@@ -592,24 +602,26 @@ function gregorian_to_jalali (string|int|float|bool|null $g_y, string|int|float|
    	return array($jy, $jm, $jd);
 }
 
-/** @psalm-pure */
-/** @return array{0: int|float, 1: int|float, 2: int|float} */
+/**
+ * @psalm-pure
+ * @return array{0: int|float, 1: int|float, 2: int|float}
+ */
 function jalali_to_gregorian(string|int|float|bool|null $j_y, string|int|float|bool|null $j_m, string|int|float|bool|null $j_d): array
 {
     $g_days_in_month = array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
     $j_days_in_month = array(31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29);
 
-  	$jy = $j_y - 979;
-   	$jm = $j_m - 1;
-   	$jd = $j_d - 1;
+  	$jy = (int) $j_y - 979;
+   	$jm = (int) $j_m - 1;
+   	$jd = (int) $j_d - 1;
 
-   	$j_day_no = 365.0 * (float)$jy + div($jy, 33) * 8.0 + div((float)($jy % 33) + 3.0, 4);
+   	$j_day_no = 365.0 * (float)$jy + (float) div($jy, 33) * 8.0 + (float) div((float)($jy % 33) + 3.0, 4);
    	for ($i = 0; $i < $jm; ++$i)
       	$j_day_no += $j_days_in_month[$i];
 
    	$j_day_no += $jd;
 
-   	$g_day_no = $j_day_no + 79;
+   	$g_day_no = (int) $j_day_no + 79;
 
    	$gy = 1600 + 400 * div($g_day_no, 146097); /* 146097 = 365*400 + 400/4 - 400/100 + 400/400 */
    	$g_day_no %= 146097;
@@ -648,9 +660,10 @@ function jalali_to_gregorian(string|int|float|bool|null $j_y, string|int|float|b
 }
 /* Based on Hidri Date Script 
    Released under GNU General Public License */
-/** @psalm-pure */
-/** @return array{0: int|float, 1: int|float, 2: int|float} */
-/** @return array{0: int|float, 1: int|float, 2: int|float} */
+/**
+ * @psalm-pure
+ * @return array{0: int|float, 1: int|float, 2: int|float}
+ */
 function gregorian_to_islamic(string|int|float|bool|null $g_y, string|int|float|bool|null $g_m, string|int|float|bool|null $g_d): array
 {
 	$y = (float) $g_y;
@@ -681,13 +694,15 @@ function gregorian_to_islamic(string|int|float|bool|null $g_y, string|int|float|
 	return array($y, $m, $d);
 }
 
-/** @psalm-pure */
-/** @return array{0: int|float, 1: int|float, 2: int|float} */
+/**
+ * @psalm-pure
+ * @return array{0: int|float, 1: int|float, 2: int|float}
+ */
 function islamic_to_gregorian(string|int|float|bool|null $i_y, string|int|float|bool|null $i_m, string|int|float|bool|null $i_d): array
 {
-	$y = $i_y;   
-	$m = $i_m;
-	$d = $i_d;
+	$y = (float) $i_y;
+	$m = (float) $i_m;
+	$d = (float) $i_d;
 
 	$jd = (float)((int)((11.0 * $y + 3.0) / 30.0)) + (float)(354.0 * $y) + 30.0 * $m - (int)(((float)($m - 1.0)) / 2.0) + $d + 1948440.0 - 385.0;
 	if ($jd > 2299160)
