@@ -88,20 +88,22 @@ class Cpdf extends FPDI {
 		else
 			install_hooks($code);
 
-		$lang = array_search_value($code, $installed_languages, 'code');
-		$GetText->set_language($lang['code'], strtoupper($lang['encoding']));
+		$lang = row_or_empty(array_search_value($code, $installed_languages, 'code'));
+		$langCode = isset($lang['code']) ? (string) $lang['code'] : (string) $code;
+		$encoding = isset($lang['encoding']) ? (string) $lang['encoding'] : 'ISO-8859-1';
+		$GetText->set_language($langCode, strtoupper($encoding));
 
 		// $local_path_to_root is  set inside find_custom_file.
 		// Select extension domain if po file is provided
 		// otherwise use global translation.
-		if (file_exists($local_path_to_root.'/lang/'.(string)$lang['code'].'/LC_MESSAGES/'.(string)$lang['code'].'.po'))
-			$GetText->add_domain($lang['code'], $local_path_to_root . "/lang");
+		if (file_exists($local_path_to_root.'/lang/'.$langCode.'/LC_MESSAGES/'.$langCode.'.po'))
+			$GetText->add_domain($langCode, $local_path_to_root . "/lang");
 		else
-			$GetText->add_domain($lang['code'], $path_to_root . "/lang", @$lang['version']);
+			$GetText->add_domain($langCode, $path_to_root . "/lang", @$lang['version']);
 		// re-read translated sys names.
 		include(dirname(__DIR__, 2) . '/includes/sysnames.inc');
 
-		$l = array('a_meta_charset' => strtoupper($lang['encoding']), 
+		$l = array('a_meta_charset' => strtoupper($encoding),
 			'a_meta_dir' => @$lang['rtl'] ? 'rtl' : 'ltr',
 	 		'a_meta_language' => $code, 'w_page' => 'page');
 
