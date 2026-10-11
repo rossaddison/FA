@@ -121,7 +121,7 @@ class Cpdf extends FPDI {
 				global $unicode, $unicode_mirror, $unicode_arlet, $laa_array, $diacritics;
 				include_once(dirname(__FILE__)."/unicode_data2.php");
 		}
-		$this->encoding = strtoupper($lang['encoding']);
+		$this->encoding = strtoupper($encoding);
 
 		$this->FontFamily = 'helvetica';
 		$this->FontStyle = '';
