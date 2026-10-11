@@ -455,8 +455,14 @@ function get_pkg_or_list(string|int|float|bool|array|null $type = null, string|i
 					$p = $pkg;
 				else {
 					foreach($filter as $field => $key) {
+						// positional form (0=>'Field1', 1=>'Field2'): $key holds the
+						// source field name, copied through unrenamed; named form
+						// ('Field'=>'newkey'): $field is the source, $key the new name.
+						// The previous $p[$field] = $pkg[$field] lookup used the
+						// positional int index as if it were a source field name,
+						// which $pkg is never keyed by - always a no-op/undefined read.
 						if (is_int($field))
-							$p[$field] = $pkg[$field] ?? null;
+							$p[$key] = $pkg[$key] ?? null;
 						else
 							$p[$key] = $pkg[$field] ?? null;
 					}
