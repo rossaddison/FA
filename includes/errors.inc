@@ -68,7 +68,7 @@ function get_backtrace(bool $html = false, ?int $skip=0): string
 //    Error handler - collects all php/user messages for
 //    display in message box.
 
-function error_handler(int $errno, string $errstr, string $file = '', int $line = 0): bool {
+function error_handler(int $errno, string $errstr, string $file = '', int $line = 0, array $errcontext = array()): bool {
     global $messages, $SysPrefs, $cur_error_level;
 
 	// skip well known warnings we don't care about.
