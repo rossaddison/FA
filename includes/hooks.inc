@@ -19,6 +19,16 @@ declare(strict_types=1);
 //
 // To find how various hooks are processed look into respective hook_* functions below.
 //
+/**
+ * Do NOT mark this class final. Psalm's ClassMustBeFinal suggests it because
+ * nothing in the scanned tree extends hooks - but modules/import_transactions/
+ * hooks.php's hooks_import_transactions does (overriding install_options() and
+ * install_access()), and modules/ is deliberately out of Psalm's scope (see
+ * psalm.xml's ignoreFiles). Marking a base class final when a real module
+ * extends it has already broken this codebase once before (Cart, see
+ * doc/LIVE_CRASHES_FROM_TYPE_NARROWING.md) - same bug class, don't repeat it.
+ * @psalm-suppress ClassMustBeFinal
+ */
 class hooks {
 	/** @var string|null */
 	var $module_name; // extension module name.
@@ -32,14 +42,14 @@ class hooks {
 	// $check_only - don't update database, check table/field/property existence only
 	//
 	/**
-	 * @param array<string, array<int, string>> $updates
-	 * @return float|int|true
+	 * @param array<string, array{0?: string, 1?: string, 2?: array<array-key, mixed>|null}> $updates
+	 * @return bool
 	 */
 	function update_databases(int $comp, array $updates, bool $check_only=false)
 	{
 		global $db_connections, $path_to_root;
-	
-		if ($comp == -1) 
+
+		if ($comp == -1)
 			$conn = $db_connections;
 		else
 			$conn = array( $comp => $db_connections[$comp]);
@@ -48,22 +58,23 @@ class hooks {
 		foreach($conn as $comp => $con) {
 			set_global_connection($comp);
 			foreach($updates as $file => $update) {
-				$table = @$update[0];
-				$field = @$update[1];
-				$properties = @$update[2];
+				$table = $update[0] ?? null;
+				$field = $update[1] ?? null;
+				$properties = $update[2] ?? null;
 
 				$ok = check_table($con['tbpref'], $table, $field, $properties) == 0;
 
 				if (!$check_only && !$ok) {
-					$ok = db_import($path_to_root.'/modules/'.$this->module_name.'/sql/'.$file,
+					$ok = (bool) db_import((string)$path_to_root.'/modules/'.(string)$this->module_name.'/sql/'.$file,
 						$con);
 				}
-				$result &= $ok;
+				if (!$ok)
+					$result = false;
 				if (!$result)
 					break;
 			}
 			db_close();
-			if (!(bool)$result)
+			if (!$result)
 				break;
 		}
 		set_global_connection(0); // return to siteadmin account
@@ -77,7 +88,7 @@ class hooks {
 	 * @psalm-mutation-free
 	 * @return void
 	 */
-	function install_tabs($app)
+	function install_tabs(front_accounting $app): void
 	{
 //		$app->add_application(new example_class); // add menu tab defined by example_class
 	}
@@ -88,7 +99,7 @@ class hooks {
 	 * @psalm-mutation-free
 	 * @return void
 	 */
-	function install_options($app)
+	function install_options(application $app): void
 	{
 //		global $path_to_root;
 //
@@ -116,20 +127,22 @@ class hooks {
 	//	Invoked for all modules before page header is displayed
 	//
 	/**
+	 * @param array<array-key, mixed> $fun_args
 	 * @psalm-mutation-free
 	 * @return void
 	 */
-	function pre_header($fun_args)
+	function pre_header(array $fun_args): void
 	{
 	}
 	//
 	//	Invoked for all modules before page footer is displayed
 	//
 	/**
+	 * @param array<array-key, mixed> $fun_args
 	 * @psalm-mutation-free
 	 * @return void
 	 */
-	function pre_footer($fun_args)
+	function pre_footer(array $fun_args): void
 	{
 	}
 
@@ -144,7 +157,7 @@ class hooks {
 	 * @psalm-mutation-free
 	 * @return void
 	 */
-	function price_in_words($amount, $doc_type)
+	function price_in_words(string|int|float|null $amount, mixed $doc_type): void
 	{
 	}
 
@@ -159,7 +172,7 @@ class hooks {
 	 * @psalm-pure
 	 * @return null
 	 */
-	function retrieve_exrate($curr, $date)
+	function retrieve_exrate(?string $curr, ?string $date): null
 	{
 //	 	$provider = 'ECB'; // 'ECB', 'YAHOO' or 'GOOGLE'
 //		return get_extern_rate($curr, $provider, $date);
@@ -172,7 +185,7 @@ class hooks {
 	 * @psalm-pure
 	 * @return null
 	 */
-	function authenticate($login, $password)
+	function authenticate(?string $login, ?string $password): null
 	{
 		return null;
 	}
@@ -185,7 +198,7 @@ class hooks {
 	 * @psalm-mutation-free
 	 * @return void
 	 */
-	function tax_report_done()
+	function tax_report_done(): void
 	{
 	}
 	// Following database transaction hooks akcepts array of parameters:
@@ -196,7 +209,7 @@ class hooks {
 	 * @psalm-pure
 	 * @return true
 	 */
-	function db_prewrite(&$cart, $trans_type)
+	function db_prewrite(mixed &$cart, string|int|float|bool|null $trans_type): true
 	{
 		return true;
 	}
@@ -205,7 +218,7 @@ class hooks {
 	 * @psalm-pure
 	 * @return true
 	 */
-	function db_postwrite(&$cart, $trans_type)
+	function db_postwrite(mixed &$cart, string|int|float|bool|null $trans_type): true
 	{
 		return true;
 	}
@@ -214,7 +227,7 @@ class hooks {
 	 * @psalm-pure
 	 * @return true
 	 */
-	function db_prevoid($trans_type, $trans_no)
+	function db_prevoid(string|int|float|bool|null $trans_type, string|int|float|bool|null $trans_no): true
 	{
 		return true;
 	}
@@ -225,7 +238,7 @@ class hooks {
 	 * @psalm-pure
 	 * @return true
 	 */
-	function install_extension($check_only=true)
+	function install_extension(bool $check_only=true): true
 	{
 		return true;
 	}
@@ -236,7 +249,7 @@ class hooks {
 	 * @psalm-pure
 	 * @return true
 	 */
-	function uninstall_extension($check_only=true)
+	function uninstall_extension(bool $check_only=true): true
 	{
 		return true;
 	}
@@ -247,7 +260,7 @@ class hooks {
 	 * @psalm-pure
 	 * @return true
 	 */
-	function activate_extension($company, $check_only=true)
+	function activate_extension(string|int|float|bool|array|null $company, bool $check_only=true): true
 	{
 		return true;
 	}
@@ -258,7 +271,7 @@ class hooks {
 	 * @psalm-pure
 	 * @return true
 	 */
-	function deactivate_extension($company, $check_only=true)
+	function deactivate_extension(string|int|float|bool|array|null $company, bool $check_only=true): true
 	{
 		return true;
 	}
@@ -275,10 +288,15 @@ class hooks {
 	 */
 	/* Default behavior check if there is enough quantity on hand and change the css
  	 * class if needed */
-	/** @return list{mixed, 'stockmankobg'}|true */
-	static function  default_get_dispatchable_quantity($line_item, $location, $date, $qoh) {
+	/**
+	 * @param string|int|float|bool|array|null $location
+	 * @param string|int|float|bool|array|null $date
+	 * @param string|int|float|bool|null $qoh
+	 * @return list{mixed, 'stockmankobg'}|true
+	 */
+	static function  default_get_dispatchable_quantity(line_details $line_item, $location, $date, $qoh) {
 
-		if (sysprefs()->allow_negative_stock() || ($line_item->qty_dispatched <= $qoh)) {
+		if ((bool)sysprefs()->allow_negative_stock() || ($line_item->qty_dispatched <= $qoh)) {
 			return true;
 		}
 		return array($qoh, 'stockmankobg');
@@ -291,54 +309,73 @@ class hooks {
 */
 function install_hooks(string|int|float|bool|null $lang_code=null): void
 {
-	global $path_to_root, $Hooks, $installed_extensions;
+	global $path_to_root, $hooks, $installed_extensions;
 
-	$Hooks = array();
-	// include current language related $Hooks object if locale file exists
+	$hooks = array();
+	// include current language related $hooks object if locale file exists
 	if (!(bool)$lang_code)
 		$lang_code = session_obj('language')->code;
-	$lang_code  = clean_file_name($lang_code);
+	$lang_code = clean_file_name($lang_code);
+	$lang_code = is_array($lang_code) ? '' : (string) $lang_code;
 
 	if (file_exists($path_to_root . "/lang/" . $lang_code . "/locale.inc"))
 	{
 		include_once($path_to_root . "/lang/" . $lang_code . "/locale.inc");
 		$code = $lang_code;
 		$hook_class = 'hooks_'.$code;
-		$Hooks[$code] = new $hook_class;
-		$Hooks[$code]->path = "/lang/" . $lang_code . "/locale.inc";
+		/**
+		 * @var class-string<hooks> $hook_class
+		 * @psalm-suppress UnsafeInstantiation extension/locale hook classes are
+		 * plain data holders with no constructor of their own - trusted by design,
+		 * same as every other dynamic class-name lookup in this file.
+		 */
+		$hooks[$code] = new $hook_class;
+		$hooks[$code]->path = "/lang/" . $lang_code . "/locale.inc";
 		unset($code, $hook_class);
 	}
 	// install hooks provided by active extensions
-	if (isset($installed_extensions) && !empty($installed_extensions)) {
+	if (!empty($installed_extensions)) {
 		foreach($installed_extensions as $ext) {
-			$hook_class = 'hooks_'.(string)$ext['package'];
-			if ($ext['active'] && class_exists($hook_class)) {
-				$Hooks[$ext['package']] = new $hook_class;
-				$Hooks[$ext['package']]->path = $ext['path'];
+			$package = (string) ($ext['package'] ?? '');
+			$hook_class = 'hooks_'.$package;
+			if ((bool)($ext['active'] ?? false) && class_exists($hook_class)) {
+				/**
+				 * @var class-string<hooks> $hook_class
+				 * @psalm-suppress UnsafeInstantiation see install_hooks()'s other instantiation above
+				 */
+				$hooks[$package] = new $hook_class;
+				$ext_path = $ext['path'] ?? null;
+				$hooks[$package]->path = is_string($ext_path) ? $ext_path : null;
 			}
-		}	
+		}
 	}
 }
 /*
-	Non active hooks are not included in $Hooks array, so we can use special function to 
+	Non active hooks are not included in $hooks array, so we can use special function to
 	activate.
 */
 function activate_hooks(string|int|float|bool|null $ext, string|int|float|bool|array|null $comp, bool $on=true): mixed
 {
-	global $Hooks;
+	global $hooks;
 
-	$hooks = @$Hooks[$ext];
-	if (!$hooks) {
+	$ext = (string) $ext;
+	if (isset($hooks[$ext])) {
+		$hook = $hooks[$ext];
+	} else {
 		$hookclass = 'hooks_'.$ext;
-		if (class_exists($hookclass))
-			$hooks = new $hookclass;
-		else
+		if (class_exists($hookclass)) {
+			/**
+			 * @var class-string<hooks> $hookclass
+			 * @psalm-suppress UnsafeInstantiation see install_hooks()'s instantiation for why
+			 */
+			$hook = new $hookclass;
+		} else
 			return true; // extension does not have hooks file
 	}
 	if ($on)
-		return $hooks->activate_extension($comp, false);
+		return $hook->activate_extension($comp, false);
 	else
-		return $hooks->deactivate_extension($comp, false);
+		return $hook->deactivate_extension($comp, false);
 }
 /*
 	Calls hook $method defined in extension $ext (if any)
@@ -351,14 +388,16 @@ function activate_hooks(string|int|float|bool|null $ext, string|int|float|bool|a
 function hook_invoke(string|int|float|bool|null $ext, string|int|float|bool|null $method, mixed &$data, ?array $opts=null): mixed
 {
 
-	global $Hooks;
+	global $hooks;
 
+	$ext = (string) $ext;
+	$method = (string) $method;
 	$ret = null;
-	if (isset($Hooks[$ext]) && method_exists($Hooks[$ext], $method)) {
-		set_ext_domain($Hooks[$ext]->path);
-		$ret = $Hooks[$ext]->$method($data, $opts);
+	if (isset($hooks[$ext]) && method_exists($hooks[$ext], $method)) {
+		set_ext_domain($hooks[$ext]->path);
+		$ret = $hooks[$ext]->$method($data, $opts);
 		set_ext_domain();
-	} 
+	}
 	return $ret;
 }
 
@@ -370,26 +409,24 @@ function hook_invoke(string|int|float|bool|null $ext, string|int|float|bool|null
  * @param T $data
  * @param-out T $data
  */
-function hook_invoke_all(string|int|float|bool|null $method, mixed &$data, array|int|null $opts=null): array
+function hook_invoke_all(string|int|float|bool|null $method, mixed &$data, array|int|string|float|bool|null $opts=null): array
 {
 
-	global $Hooks;
-	
+	global $hooks;
+
+	$method = (string) $method;
 	$return = array();
-	if (isset($Hooks))
-	{
-		foreach($Hooks as $ext => $hook)
-			if (method_exists($hook, $method)) {
-				set_ext_domain($hook->path);
-				$result = $hook->$method($data, $opts);
-				if (isset($result) && is_array($result)) {
-					$return = array_merge_recursive($return, $result);
-				} else if (isset($result)) {
-					$return[] = $result;
-					}
-				set_ext_domain();
+	foreach($hooks as $ext => $hook)
+		if (method_exists($hook, $method)) {
+			set_ext_domain($hook->path);
+			$result = $hook->$method($data, $opts);
+			if (isset($result) && is_array($result)) {
+				$return = array_merge_recursive($return, $result);
+			} else if (isset($result)) {
+				$return[] = $result;
 			}
-	}
+			set_ext_domain();
+		}
 	return $return;
 }
 /*
@@ -400,13 +437,13 @@ function hook_invoke_all(string|int|float|bool|null $method, mixed &$data, array
  * @param T $data
  * @param-out T $data
  */
-function hook_invoke_first(?string $method, mixed &$data, ?array $opts=null): mixed
+function hook_invoke_first(string $method, mixed &$data, ?array $opts=null): mixed
 {
 
-	global $Hooks;
+	global $hooks;
 
 	$result = null;
-	foreach($Hooks as $ext => $hook) {
+	foreach($hooks as $ext => $hook) {
 		if (method_exists($hook, $method)) {
 			set_ext_domain($hook->path);
 			$result = $hook->$method($data, $opts);
@@ -426,14 +463,14 @@ function hook_invoke_first(?string $method, mixed &$data, ?array $opts=null): mi
  * @param T $data
  * @param-out T $data
  */
-function hook_invoke_last(?string $method, mixed &$data, array|string|null $opts=null): mixed
+function hook_invoke_last(string $method, mixed &$data, mixed $opts=null): mixed
 {
 
-	global $Hooks;
+	global $hooks;
 
 	$result = null;
-	$Reverse = array_reverse($Hooks);
-	foreach($Reverse as $ext => $hook) {
+	$reverse = array_reverse($hooks);
+	foreach($reverse as $ext => $hook) {
 		if (method_exists($hook, $method)) {
 			set_ext_domain($hook->path);
 			$result = $hook->$method($data, $opts);
@@ -523,6 +560,7 @@ function hook_retrieve_exrate(string|int|float|bool|null $currency, string|int|f
  */
 function hook_tax_report_done(): array
 {
+	$dummy = null;
 	return hook_invoke_all('tax_report_done', $dummy);
 }
 //
@@ -566,7 +604,7 @@ function hook_authenticate(string|int|float|bool|null $login, string|int|float|b
 	 * more than one in  the cart.
 	 * If 'skip' is returned, the line will be skipped and not displayed
 	 */
-function hook_get_dispatchable_quantity(mixed $line_item, string|int|float|bool|array|null $location, string|int|float|bool|array|null $date, string|int|float|bool|null $qoh): mixed {
+function hook_get_dispatchable_quantity(line_details $line_item, string|int|float|bool|array|null $location, string|int|float|bool|array|null $date, string|int|float|bool|null $qoh): mixed {
 		$result =  hook_invoke_first('get_dispatchable_quantity', $line_item, array($location, $date, $qoh));
 		return $result !== null ? $result : hooks::default_get_dispatchable_quantity($line_item, $location, $date, $qoh);
 }
