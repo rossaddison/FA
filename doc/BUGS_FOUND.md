@@ -739,6 +739,24 @@ to their source.
   "Attempt to read property 'help_context' on null". Applied the same
   `'orders'` fallback used by the other lookup.
 
+- **44 files under `reporting/` — missing `includes/ui/ui_input.inc`
+  include.** An earlier pass in this migration converted raw
+  `$_POST[...]` reads to the typed `post_scalar()` accessor across nearly
+  every file in `reporting/`, matching the pattern already used
+  throughout the rest of the codebase. It correctly added the
+  `include_once` for `includes/ui/ui_input.inc` (where `post_scalar()`
+  lives) to the handful of files that already called some other
+  `ui_input.inc` function, but missed every file that previously only
+  ever touched `$_POST` directly and so had never needed that include
+  before — 44 files in total. Every one of those has been a guaranteed
+  "Call to undefined function post_scalar()" fatal error on its
+  reporting action ever since, invisible to Psalm (which resolves
+  functions project-wide regardless of per-file include order). Hit
+  live via Sales → Inquiries → Search All Sales Orders → Print
+  (`reporting/rep109.php`). Fixed by adding the same `include_once`
+  already present in sibling files (`rep104.php`, `rep307.php`,
+  `rep308.php`) to all 44 affected files.
+
 ## Missing feature (implemented, not just guarded)
 
 - **`includes/ui/attachment.inc` — no attachment size limit.** `db_insert()`
