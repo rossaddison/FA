@@ -26,20 +26,30 @@ define('EXPORT_MAX_INSERT', 50000);
  * @return array<array-key, array<array-key, string|int|float|bool|null>>
  * @psalm-pure
  */
-function array_natsort(array $aryData, ?string $strIndex, ?string $strSortBy, bool|string $strSortType=false)
+function array_natsort(array $aryData, ?string $strIndex, ?string $strSortBy, bool|string $strSortType=false): array
 {
    //    if the parameters are invalid
    if (!(bool)$strSortBy)
        //    return the array
        return $aryData;
 
+   $hasIndex = $strIndex !== null && $strIndex !== '';
+
    //    create our temporary arrays
-   $arySort = $aryResult = array();
+   $arySort = array();
+   $aryResult = array();
 
    //    loop through the array
-   foreach ($aryData as $key => $aryRow)
+   foreach ($aryData as $key => $aryRow) {
        //    set up the value in the array
-       $arySort[(bool)$strIndex ? $aryRow[$strIndex] : $key] = $aryRow[$strSortBy];
+       if ($hasIndex) {
+           $idxVal = $aryRow[$strIndex] ?? null;
+           $sortKey = is_string($idxVal) || is_int($idxVal) ? $idxVal : (string) $idxVal;
+       } else {
+           $sortKey = $key;
+       }
+       $arySort[$sortKey] = $aryRow[$strSortBy] ?? null;
+   }
 
    //    apply the natural sort
    natsort($arySort);
@@ -51,14 +61,14 @@ function array_natsort(array $aryData, ?string $strIndex, ?string $strSortBy, bo
 
    //    loop through the sorted and original data
 		foreach ($arySort as $arySortKey => $arySorted)
-			if((bool)$strIndex)
+			if($hasIndex)
 			{
 				foreach ($aryData as $aryOriginal)
 				// if the key matches
-					if ($aryOriginal[$strIndex]==$arySortKey)
+					if (($aryOriginal[$strIndex] ?? null)==$arySortKey)
 						// add it to the output array
-						array_push($aryResult, $aryOriginal);
-			} else
+						$aryResult[] = $aryOriginal;
+			} else if (isset($aryData[$arySortKey]))
 				$aryResult[$arySortKey] = $aryData[$arySortKey];
    //    return the return
    return $aryResult;
@@ -149,6 +159,10 @@ function write_extensions(?array $extensions=null, string|int|float|bool|array|n
 	by extensions editor.
 */\n\n";
 
+	// var_export()'d content below is written to a PHP source file via
+	// fwrite() further down, never echoed as an HTTP response - not an HTML
+	// sink, so TaintedHtml doesn't apply here.
+	/** @psalm-suppress TaintedHtml */
 	$msg .= "\$installed_extensions = ". var_export($extensions, true);
 	$msg .= ";\n";
 	// Cast to int before using in the path: $company must always be a plain
@@ -156,8 +170,9 @@ function write_extensions(?array $extensions=null, string|int|float|bool|array|n
 	// data (admin/inst_module.php's get_post('extset')) with no prior
 	// validation - without this cast a path-traversal payload here would
 	// let an authenticated extensions-admin write an arbitrary PHP file
-	// anywhere on disk via $msg's var_export()'d content.
-	$company_idx = (int) $company;
+	// anywhere on disk via $msg's var_export()'d content. is_scalar guard
+	// first since (int) on an array is 0/1, not a meaningful index.
+	$company_idx = is_scalar($company) ? (int) $company : -1;
 	$filename = $path_to_root . ($company_idx==-1 ? '' : '/company/'.$company_idx)
 		.'/installed_extensions.php';
 
@@ -280,13 +295,13 @@ function write_lang(): bool
 		$protect - protect users/roles 
 		$return_errors - return errors instead of display them
 */
-function db_import(string|int|float|bool|null $filename, mixed $connection, string|int|float|bool|null $force=true, string|int|float|bool|null $init=true, string|int|float|bool|array|null $protect=false, string|int|float|bool|null $return_errors=false): array|string|bool
+/** @param array<string, mixed> $connection */
+function db_import(string|int|float|bool|null $filename, array $connection, string|int|float|bool|null $force=true, string|int|float|bool|null $init=true, string|int|float|bool|array|null $protect=false, string|int|float|bool|null $return_errors=false): array|string|bool
 {
 	global $db;
-
-	/** @var array<string, string|int|float|bool|null> $connection */
-	$connection = $connection;
 	$filename = (string) $filename;
+	$connection_tbpref_raw = $connection["tbpref"] ?? null;
+	$connection_tbpref = is_scalar($connection_tbpref_raw) ? (string) $connection_tbpref_raw : '';
 
 	$trail = sysprefs()->sql_trail;
 	sysprefs()->sql_trail = false;
@@ -321,10 +336,11 @@ function db_import(string|int|float|bool|null $filename, mixed $connection, stri
 		'1091'  // can't drop key/column check if exists
 	);
 
-	$set_names = array();
-	$data_queries = array();
-	$drop_queries = array();
-	$table_queries = array();
+	// bucket names match $allowed_commands' values; indexed by name (rather
+	// than the variable-variable ${$table}[] the parse loop used to write
+	// through) so Psalm can actually trace what ends up in each one
+	/** @var array<string, array<int, array{0: string, 1: int}>> $buckets */
+	$buckets = array('set_names' => array(), 'data_queries' => array(), 'drop_queries' => array(), 'table_queries' => array());
 	$sql_errors = array();
 
 	$old_encoding = db_get_charset($db);
@@ -333,8 +349,9 @@ function db_import(string|int|float|bool|null $filename, mixed $connection, stri
 	db_query("SET foreign_key_checks=0");
 	db_query("SET sql_mode=''");
 
-	if (isset($connection['collation']))
-		db_set_collation($db, $connection['collation']);
+	$connection_collation = $connection['collation'] ?? null;
+	if (is_scalar($connection_collation))
+		db_set_collation($db, $connection_collation);
 
 	$check_line_len = false;
 
@@ -346,10 +363,13 @@ function db_import(string|int|float|bool|null $filename, mixed $connection, stri
 		$lines = db_unzip("lines", $filename);
 	else
 		$lines = file("". $filename);
+	/** @var array<int, string> $lines */
+	$lines = is_array($lines) ? $lines : array();
 
 	// parse input file
 	$query_table = '';
 	$delimiter = ';';
+	$skip = false;
 
 	foreach($lines as $line_no => $line)
 	{
@@ -357,7 +377,7 @@ function db_import(string|int|float|bool|null $filename, mixed $connection, stri
 
 		$line = trim($line);
 		if ((bool)$init)
-			$line = str_replace("0_", $connection["tbpref"], $line);
+			$line = str_replace("0_", $connection_tbpref, $line);
 
 		if ($query_table == '') 
 		{	// check if line begins with one of allowed queries
@@ -374,13 +394,13 @@ function db_import(string|int|float|bool|null $filename, mixed $connection, stri
 					if ((bool)$protect)
 					{
 						foreach($protected as $protbl)
-							if (strpos($line, (string)$connection["tbpref"].$protbl) !== false)
+							if (strpos($line, $connection_tbpref.$protbl) !== false)
 							{
 								$skip = true; break;
 							}
 					}
 					if (!$skip)
-						${$query_table}[] = array('', $line_no+1);
+						$buckets[$query_table][] = array('', $line_no+1);
 					break;
 				}
 		 	}
@@ -394,10 +414,15 @@ function db_import(string|int|float|bool|null $filename, mixed $connection, stri
 				$query_table = '';
 			}
 			if (!$skip)
-				${$table}[count(${$table}) - 1][0] .= $line . "\n";
+				$buckets[$table][count($buckets[$table]) - 1][0] .= $line . "\n";
 		}
 
 	}
+
+	$set_names = $buckets['set_names'];
+	$data_queries = $buckets['data_queries'];
+	$drop_queries = $buckets['drop_queries'];
+	$table_queries = $buckets['table_queries'];
 
 	//
 	// 'set names' or equivalents should be used only on post 2.3 FA versions
@@ -445,48 +470,40 @@ function db_import(string|int|float|bool|null $filename, mixed $connection, stri
 	fclose($f);
 	}
 /*/
+	/** @var mysqli $db */
+	$save_debug = sysprefs()->go_debug;
 	if ((bool)$return_errors)
 	{	// prevent errors display
-		$save_debug = sysprefs()->go_debug;
 		sysprefs()->go_debug = 0;
 	}
 	// execute drop tables if exists queries
-	if (is_array($drop_queries))
+	foreach($drop_queries as $drop_query)
 	{
-		foreach($drop_queries as $drop_query)
+		if (!db_query($drop_query[0]))
 		{
-			if (!db_query($drop_query[0]))
-			{
-				if (!in_array(db_error_no(), $ignored_mysql_errors) || !(bool)$force)
-					$sql_errors[] = array(db_error_msg($db), $drop_query[1]);
-			}
+			if (!in_array(db_error_no(), $ignored_mysql_errors) || !(bool)$force)
+				$sql_errors[] = array(db_error_msg($db), $drop_query[1]);
 		}
 	}
 
 	// execute create tables queries
-	if (is_array($table_queries))
+	foreach($table_queries as $table_query)
 	{
-		foreach($table_queries as $table_query)
+		if (!db_query($table_query[0]))
 		{
-			if (!db_query($table_query[0]))
-			{	
-				if (!in_array(db_error_no(), $ignored_mysql_errors) || !(bool)$force) {
-					$sql_errors[] = array(db_error_msg($db), $table_query[1]);
-				}
+			if (!in_array(db_error_no(), $ignored_mysql_errors) || !(bool)$force) {
+				$sql_errors[] = array(db_error_msg($db), $table_query[1]);
 			}
 		}
 	}
 
 	// execute insert data queries
-	if (is_array($data_queries))
+	foreach($data_queries as $data_query)
 	{
-		foreach($data_queries as $data_query)
+		if (!db_query($data_query[0]))
 		{
-			if (!db_query($data_query[0]))
-			{
-				if (!in_array(db_error_no(),$ignored_mysql_errors) || !(bool)$force)
-					$sql_errors[] = array(db_error_msg($db), $data_query[1]);
-			}
+			if (!in_array(db_error_no(),$ignored_mysql_errors) || !(bool)$force)
+				$sql_errors[] = array(db_error_msg($db), $data_query[1]);
 		}
 	}
 
@@ -568,19 +585,25 @@ function db_unzip(?string $mode, ?string $path): array|string|false
     	return explode("\n", $file_data);
 }
 
-/** @return false|null|string */
+/**
+ * @param array<string, mixed> $conn
+ * @return false|null|string
+ */
 function db_backup(array $conn, string|int|float|bool|null $ext='no', string|int|float|bool|null $comm='', string|int|float|bool|null $path='')
 {
-	if ($conn['tbpref'] != "")
-		$filename = (string)$conn['dbname'] . "_" . (string)$conn['tbpref'] . date("Ymd_Hi") . ".sql";
+	$conn_dbname = is_scalar($conn['dbname'] ?? null) ? (string) $conn['dbname'] : '';
+	$conn_tbpref = is_scalar($conn['tbpref'] ?? null) ? (string) $conn['tbpref'] : '';
+	if ($conn_tbpref != "")
+		$filename = $conn_dbname . "_" . $conn_tbpref . date("Ymd_Hi") . ".sql";
 	else
-		$filename = (string)$conn['dbname'] . "_" . date("Ymd_Hi") . ".sql";
+		$filename = $conn_dbname . "_" . date("Ymd_Hi") . ".sql";
 
 	return db_export($conn, $path . clean_file_name($filename), $ext, $comm);
 }
 // Generates a dump of $db database
 //
 /**
+ * @param array<string, mixed> $conn
  * @return false|null|string
  */
 function db_export(array $conn, ?string $filename, string|int|float|bool|null $zip='no', string|int|float|bool|null $comment='')
@@ -589,6 +612,7 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
 	global $version;
 
     $error = false;
+    $auto_incr = array();
     // set max string size before writing to file
     $max_size = 1048576 * 2; // 2 MB
     // changes max size if value can be retrieved
@@ -601,17 +625,21 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
     	$backupfile = $filename . ".zip";
     else
     	$backupfile = $filename;
-    $company = $conn['name']; // get_company_pref('coy_name');
+    $company = $conn['name'] ?? null; // get_company_pref('coy_name');
+    $company = is_scalar($company) ? $company : null;
 
 	if (file_exists((string) $backupfile))	// prevent appends
 		unlink((string) $backupfile);
 
+    $conn_dbname = is_scalar($conn["dbname"] ?? null) ? (string) $conn["dbname"] : '';
+    $conn_host = is_scalar($conn["host"] ?? null) ? (string) $conn["host"] : '';
+    $conn_tbpref = is_scalar($conn["tbpref"] ?? null) ? (string) $conn["tbpref"] : '';
     //create comment
-    $out="# MySQL dump of database '".(string)$conn["dbname"]."' on host '".(string)$conn["host"]."'\n";
+    $out="# MySQL dump of database '".$conn_dbname."' on host '".$conn_host."'\n";
     $out.="# Backup Date and Time: ".date("Y-m-d H:i")."\n";
     $out.="# Built by " . sysprefs()->app_title . " " . $version ."\n";
     $out.="# ".sysprefs()->power_url."\n";
-    $out.="# Company: ". @html_entity_decode($company, ENT_QUOTES, session_obj('language')->encoding)."\n";
+    $out.="# Company: ". @html_entity_decode((string) $company, ENT_QUOTES, session_obj('language')->encoding)."\n";
     $out.="# User: ".session_obj('wa_current_user')->name."\n\n";
     $out.="# Compatibility: ".get_company_pref('version_id')."\n\n";
 
@@ -637,11 +665,12 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
     $all_tables = array();
     while($row = db_fetch($res))
     {
-		if (($conn["tbpref"] == "" && !preg_match('/[0-9]+_/', (string) $row['Name'])) ||
-			($conn["tbpref"] != "" && strpos((string) $row['Name'], (string) $conn["tbpref"]) === 0))
+		if (($conn_tbpref == "" && !preg_match('/[0-9]+_/', (string) $row['Name'])) ||
+			($conn_tbpref != "" && strpos((string) $row['Name'], $conn_tbpref) === 0))
     		$all_tables[] = $row;
     }
         // get table structures
+	$table_sql = array();
 	foreach ($all_tables as $table)
 	{
 		$res1 = db_select("SHOW CREATE TABLE `" . (string)$table['Name'] . "`");
@@ -651,7 +680,7 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
 
 	// find foreign keys
 	$fks = array();
-	if (isset($table_sql))
+	if (count($table_sql))
 	{
 		foreach($table_sql as $tablenme=>$table)
 		{
@@ -812,9 +841,11 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
 // orders the tables in $tables according to the constraints in $fks
 // $fks musst be filled like this: $fks[tablename][0]=needed_table1; $fks[tablename][1]=needed_table2; ...
 /**
- * @return array<array-key, mixed>|null
+ * @param array<array-key, array<array-key, mixed>> $tables
+ * @param array<array-key, array<array-key, string>> $fks
+ * @return array<array-key, array<array-key, mixed>>
  */
-function order_sql_tables(?array $tables, ?array $fks)
+function order_sql_tables(array $tables, array $fks): array
 {
 	// do not order if no contraints exist
 	if (!count($fks))
@@ -865,6 +896,8 @@ function order_sql_tables(?array $tables, ?array $fks)
 // returns backup file name if name has changed (zip), else TRUE. If saving failed, return value is FALSE
 function save_to_file(?string $path, string|int|float|bool|null $zip, ?string $fileData): bool
 {
+	if ($path === null) return false;
+	$fileData = (string) $fileData;
 
 	$backupfile = basename($path);
 
@@ -975,18 +1008,26 @@ function save_to_file(?string $path, string|int|float|bool|null $zip, ?string $f
     }
 }
 
-function create_comp_dirs(?string $comp_path, ?array $comp_subdirs): void
+// its one real caller, admin/create_coy.php, already casts $selected_id to
+// (int) before company_path() builds $comp_path from it - confirmed safe,
+// see doc/BUGS_FOUND.md
+/** @param array<array-key, string> $comp_subdirs */
+function create_comp_dirs(string $comp_path, array $comp_subdirs): void
 {
 		$index = "<?php\nheader(\"Location: ../index.php\");\n";
 	    $cdir = $comp_path;
+	    /** @psalm-suppress TaintedFile confirmed safe, see doc/BUGS_FOUND.md */
 	    @mkdir($cdir);
+		/** @psalm-suppress TaintedFile confirmed safe, see doc/BUGS_FOUND.md */
 		$f = @fopen("$cdir/index.php", "wb");
 		@fwrite($f, $index);
 		@fclose($f);
 
 	    foreach($comp_subdirs as $dir)
 	    {
+			/** @psalm-suppress TaintedFile confirmed safe, see doc/BUGS_FOUND.md */
 			@mkdir($cdir.'/'.$dir);
+			/** @psalm-suppress TaintedFile confirmed safe, see doc/BUGS_FOUND.md */
 			$f = @fopen("$cdir/$dir/index.php", "wb");
 			@fwrite($f, $index);
 			@fclose($f);
@@ -1032,21 +1073,24 @@ function check_table(string|int|float|bool|null $pref, string|int|float|bool|nul
 */
 function update_config_var(string|int|float|bool|null $file, string|int|float|bool|null $variable, string|int|float|bool|null $value, string|int|float|bool|null $comment=''): bool
 {
+	$file = (string) $file;
 	if (!is_file($file) || !is_writeable($file))
 		return false;
 	$content = file_get_contents($file);
+	if ($content === false)
+		return false;
 	$strvalue = '$'."$variable = ".var_export($value, true).';';
 	$pattern = '/'.preg_quote('$'.$variable).'\s*=\s*[^;]*;/m';
 	$content = preg_replace($pattern, $strvalue, $content, -1, $result);
 	if (!(bool)$result)
 	{
 		$strvalue = ((bool)$comment ? "// $comment" : '') ."\n$strvalue\n";
-		$content = preg_replace('/\?>\s*/m', $strvalue, $content, -1, $result);
+		$content = preg_replace('/\?>\s*/m', $strvalue, (string) $content, -1, $result);
 		if (!(bool)$result)
 			$content .= $strvalue;
 	}
 
-	return file_put_contents($file, $content)!=false;
+	return file_put_contents($file, (string) $content)!=false;
 }
 
 
