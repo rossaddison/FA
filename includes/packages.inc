@@ -31,6 +31,7 @@ include_once(dirname(__DIR__) . "/includes/hooks.inc");
  *     active?: bool,
  *     ...<array-key, mixed>
  * }
+ * @psalm-type ControlRecord = array<string, string|array<array-key, mixed>|null>
  */
 
 define('PKG_CACHE_PATH', $path_to_root.'/modules/_cache');
@@ -80,10 +81,14 @@ final class package extends gzip_file {
 
 		$this->set_options(array('overwrite' => 1));
 		$this->extract_files(); // extract package in cache directory
-		$cachepath = is_string($this->options['basedir'] ?? null) ? $this->options['basedir'] : '';
-		$ctrl = get_control_file("$cachepath/_init/config") ?? array();
-		$ctrl_package = is_scalar($ctrl['Package'] ?? null) ? $ctrl['Package'] : null;
-		$ctrl_path = is_string($ctrl['InstallPath'] ?? null) ? $ctrl['InstallPath'] : '';
+		$basedir_raw = $this->options['basedir'] ?? null;
+		$cachepath = is_string($basedir_raw) ? $basedir_raw : '';
+		/** @var ControlRecord $ctrl */
+		$ctrl = get_control_file("$cachepath/_init/config", false) ?? array();
+		$ctrl_package_raw = $ctrl['Package'] ?? null;
+		$ctrl_package = is_scalar($ctrl_package_raw) ? $ctrl_package_raw : null;
+		$ctrl_path_raw = $ctrl['InstallPath'] ?? null;
+		$ctrl_path = is_string($ctrl_path_raw) ? $ctrl_path_raw : '';
 
 		$targetdir = $path_to_root.'/'.$ctrl_path;
 
@@ -121,10 +126,14 @@ final class package extends gzip_file {
 
 		$success = 1;
 
-		$cachepath = is_string($this->options['basedir'] ?? null) ? $this->options['basedir'] : '';
-		$ctrl = get_control_file("$cachepath/_init/config") ?? array();
-		$ctrl_package = is_scalar($ctrl['Package'] ?? null) ? $ctrl['Package'] : null;
-		$ctrl_path = is_string($ctrl['InstallPath'] ?? null) ? $ctrl['InstallPath'] : '';
+		$basedir_raw = $this->options['basedir'] ?? null;
+		$cachepath = is_string($basedir_raw) ? $basedir_raw : '';
+		/** @var ControlRecord $ctrl */
+		$ctrl = get_control_file("$cachepath/_init/config", false) ?? array();
+		$ctrl_package_raw = $ctrl['Package'] ?? null;
+		$ctrl_package = is_scalar($ctrl_package_raw) ? $ctrl_package_raw : null;
+		$ctrl_path_raw = $ctrl['InstallPath'] ?? null;
+		$ctrl_path = is_string($ctrl_path_raw) ? $ctrl_path_raw : '';
 
 		$targetdir = $path_to_root.'/'.$ctrl_path;
 
@@ -209,10 +218,19 @@ function ufmt_property(string $key, string|array $value): string|array|null
 //	$index is name of field used as key in result array, or null for numeric keys
 //
 /**
- * @psalm-type ControlRecord = array<string, string|array<array-key, mixed>|null>
  * @return ($index is false ? ControlRecord|null : array<array-key, ControlRecord>|null)
  */
 function get_control_file(string $file, string|bool $index = false): array|null {
+	// delegated to a plain-typed implementation: Psalm's conditional-return-type
+	// mechanism treats $index as a fixed template type throughout the body when
+	// declared directly on this function, which makes its own internal branches
+	// on $index look self-contradictory even though they're exactly what
+	// resolves the conditional for the caller
+	return get_control_file_impl($file, $index);
+}
+
+/** @return ControlRecord|array<array-key, ControlRecord>|null */
+function get_control_file_impl(string $file, string|bool $index): array|null {
 
 	$list = gzopen($file, 'rb');
 	if (!$list) return null;
@@ -224,8 +242,8 @@ function get_control_file(string $file, string|bool $index = false): array|null 
 	$key = null; $value = '';
 	$line = '';
 	do {
-		$line = rtrim($line);
-		if ($line && ctype_space($line[0])) { // continuation of multiline property
+		$line = rtrim((string) $line);
+		if ($line !== '' && ctype_space($line[0])) { // continuation of multiline property
 			if (strlen(ltrim($line))) {
 				if (!is_array($value))
 					$value = array($value);
@@ -233,7 +251,7 @@ function get_control_file(string $file, string|bool $index = false): array|null 
 				continue;
 			}
 		}
-		if ($key) { // save previous property if any
+		if ($key !== null && $key !== '') { // save previous property if any
 			$pkg[$key] = ufmt_property($key, $value);
 		}
 		if (!strlen($line)) { // end of section
@@ -263,7 +281,7 @@ function get_control_file(string $file, string|bool $index = false): array|null 
 			return null;
 		}
 
-	} while ((($line = fgets($list))!==false) || $key);
+	} while ((($line = fgets($list))!==false) || ($key !== null && $key !== ''));
 	fclose($list);
 
 	return $index === false ? $pkg : $repo;
@@ -271,9 +289,10 @@ function get_control_file(string $file, string|bool $index = false): array|null 
 //
 //	Save configuration data to control file.
 //
-function save_control_file(string|int|float|bool|null $fname, array $list, string|int|float|bool|null $zip=false): void 
+function save_control_file(string|int|float|bool|null $fname, array $list, string|int|float|bool|null $zip=false): void
 {
 	$file = (bool)$zip ?  gzopen((string) $fname, 'wb') : fopen((string) $fname, 'wb');
+	if ($file === false) return;
 	foreach($list as $section) {
 		foreach($section as $key => $value) {
 			if (is_array($value)) { // multiline value
@@ -388,7 +407,8 @@ function get_pkg_or_list(string|int|float|bool|array|null $type = null, string|i
 	// then complete package list or seek for pkg
 	$Packages = array();
 	foreach($Release as $fname => $parms) {
-		$parmsType = is_string($parms['Type'] ?? null) ? $parms['Type'] : '';
+		$parmsType_raw = $parms['Type'] ?? null;
+		$parmsType = is_string($parmsType_raw) ? $parmsType_raw : '';
 		if ((bool)$type && !count(array_intersect(explode(' ', $parmsType), $type))) {
 			unset($Release[$fname]); continue; // no packages of selected type in this index
 		}
@@ -424,8 +444,10 @@ function get_pkg_or_list(string|int|float|bool|array|null $type = null, string|i
 		 // scan subdir list and select packages of given type
 		$pkglist = get_control_file($locindex, 'Package') ?? array();
 		foreach($pkglist as $name => $pkg) {
-			$pkgPath = is_string($parms['Path'] ?? null) ? $parms['Path'] : '';
-			$pkgFilename = is_string($pkg['Filename'] ?? null) ? $pkg['Filename'] : '';
+			$pkgPath_raw = $parms['Path'] ?? null;
+			$pkgPath = is_string($pkgPath_raw) ? $pkgPath_raw : '';
+			$pkgFilename_raw = $pkg['Filename'] ?? null;
+			$pkgFilename = is_string($pkgFilename_raw) ? $pkgFilename_raw : '';
 			$pkgfullname = $repo.'/'.$pkgPath."/".$pkgFilename.'.pkg';
 			if (!isset($type) || in_array($pkg['Type'] ?? null, $type)) {
 				$p = array();
@@ -433,7 +455,7 @@ function get_pkg_or_list(string|int|float|bool|array|null $type = null, string|i
 					$p = $pkg;
 				else {
 					foreach($filter as $field => $key) {
-						if (is_numeric($field))
+						if (is_int($field))
 							$p[$field] = $pkg[$field] ?? null;
 						else
 							$p[$key] = $pkg[$field] ?? null;
@@ -695,29 +717,37 @@ function install_language(string|int|float|bool|null $pkg_name): bool
 	$pkg = get_pkg_or_list('language', $pkg_name);
 
 	if ($pkg !== null) {
-		$pkg_filename = is_string($pkg['Filename'] ?? null) ? $pkg['Filename'] : '';
-		$pkg_language = is_scalar($pkg['Language'] ?? null) ? $pkg['Language'] : null;
-		$pkg_package = is_scalar($pkg['Package'] ?? null) ? $pkg['Package'] : null;
+		$pkg_filename_raw = $pkg['Filename'] ?? null;
+		$pkg_filename = is_string($pkg_filename_raw) ? $pkg_filename_raw : '';
+		$pkg_language_raw = $pkg['Language'] ?? null;
+		$pkg_language = is_scalar($pkg_language_raw) ? $pkg_language_raw : null;
+		$pkg_package_raw = $pkg['Package'] ?? null;
+		$pkg_package = is_scalar($pkg_package_raw) ? $pkg_package_raw : null;
 
+		/** @var array-key|null $i */
 		$i = array_search_key($pkg_language, $installed_languages, 'code');
 		if ($i === null)
 			$i = count($installed_languages);
 		else {	// remove another already installed package for this language
 			$old_pkg = $installed_languages[$i]['package'] ?? null;
-			if ($old_pkg && ($pkg_package != $old_pkg))
+			if (is_string($old_pkg) && $old_pkg !== '' && ($pkg_package != $old_pkg))
 				uninstall_package($old_pkg);
 		}
 
 		$package = new package(VARLIB_PATH."/".$pkg_filename.'.pkg');
-		if ($package->install()) {
+		if ((bool) $package->install()) {
+			$pkg_name_raw = $pkg['Name'] ?? null;
+			$pkg_encoding_raw = $pkg['Encoding'] ?? null;
+			$pkg_version_raw = $pkg['Version'] ?? null;
+			$pkg_path_raw = $pkg['InstallPath'] ?? null;
 			/** @var array<string, string|bool> $lang */
 			$lang = array(
-				'name' => (string) ($pkg['Name'] ?? ''),
+				'name' => is_scalar($pkg_name_raw) ? (string) $pkg_name_raw : '',
 				'package' => (string) ($pkg_package ?? ''),
 				'code' => (string) ($pkg_language ?? ''),
-				'encoding' => (string) ($pkg['Encoding'] ?? ''),
-				'version' => (string) ($pkg['Version'] ?? ''),
-				'path' => (string) ($pkg['InstallPath'] ?? '')
+				'encoding' => is_scalar($pkg_encoding_raw) ? (string) $pkg_encoding_raw : '',
+				'version' => is_scalar($pkg_version_raw) ? (string) $pkg_version_raw : '',
+				'path' => is_scalar($pkg_path_raw) ? (string) $pkg_path_raw : ''
 			);
 			if (($pkg['RTLDir'] ?? null) == 'yes')
 				$lang['rtl'] = true;
@@ -730,7 +760,7 @@ function install_language(string|int|float|bool|null $pkg_name): bool
 			return false;
 		}
 	} else {
-		display_error(sprintf(_("Package '%s' not found."), $pkg_name));
+		display_error(sprintf(_("Package '%s' not found."), (string) $pkg_name));
 		return false;
 	}
 	return true;
@@ -744,19 +774,22 @@ function install_extension(string|int|float|bool|null $pkg_name): bool
 	
 	$pkg = get_pkg_or_list(array('extension', 'theme', 'chart'), $pkg_name);
 	if ($pkg !== null) {
-		$pkg_filename = is_string($pkg['Filename'] ?? null) ? $pkg['Filename'] : '';
-		$pkg_package = is_scalar($pkg['Package'] ?? null) ? $pkg['Package'] : null;
+		$pkg_filename_raw = $pkg['Filename'] ?? null;
+		$pkg_filename = is_string($pkg_filename_raw) ? $pkg_filename_raw : '';
+		$pkg_package_raw = $pkg['Package'] ?? null;
+		$pkg_package = is_scalar($pkg_package_raw) ? $pkg_package_raw : null;
 
 		$package = new package(VARLIB_PATH."/".$pkg_filename.'.pkg');
 		$local_exts = get_company_extensions();
-		if ($package->install()) {
+		if ((bool) $package->install()) {
+			/** @var array-key|null $ext_id */
 			$ext_id = array_search_key($pkg_package, $local_exts, 'package');
 			if ($ext_id === null)
 				$ext_id = $next_extension_id++;
 			else {	// remove another already installed package for this language
 				$old_pkg = $installed_extensions[$ext_id]['package'] ?? null;
-				if ($old_pkg)
-					uninstall_package(is_scalar($old_pkg) ? $old_pkg : null);
+				if (is_scalar($old_pkg) && (bool) $old_pkg)
+					uninstall_package($old_pkg);
 			}
 			/** @var array<string, mixed> $ext */
 			$ext = array(
@@ -773,13 +806,17 @@ function install_extension(string|int|float|bool|null $pkg_name): bool
 			$local_exts[$ext_id] = $ext;
 			$ret = update_extensions($local_exts);
 
-			$ext_path = is_string($ext['path']) ? $ext['path'] : '';
+			$ext_path_raw = $ext['path'];
+			$ext_path = is_string($ext_path_raw) ? $ext_path_raw : '';
+			$ext_package_raw = $ext['package'];
+			$ext_package_scalar = is_scalar($ext_package_raw) ? $ext_package_raw : null;
 			if (($ext['active'] == true) && file_exists($path_to_root.'/'.$ext_path.'/hooks.php'))
 			{
 				// we need to include the new hooks file to activate extension
 				include_once($path_to_root.'/'.$ext_path.'/hooks.php');
+				/** @var array<int, array<string, string>> $db_connections */
 				foreach($db_connections as $comp => $db)
-					activate_hooks(is_scalar($ext['package']) ? $ext['package'] : null, $comp);
+					activate_hooks($ext_package_scalar, $comp);
 			}
 
 			unlink(VARLIB_PATH."/".$pkg_filename.'.pkg');
@@ -790,7 +827,7 @@ function install_extension(string|int|float|bool|null $pkg_name): bool
 			return false;
 		}
 	} else {
-		display_error(sprintf(_("Package '%s' not found."), $pkg_name));
+		display_error(sprintf(_("Package '%s' not found."), (string) $pkg_name));
 		return false;
 	}
 	return true;
