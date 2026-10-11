@@ -23,6 +23,7 @@ $path_to_root="..";
 include_once(dirname(__DIR__) . "/includes/session.inc");
 include_once(dirname(__DIR__) . "/admin/db/fiscalyears_db.inc");
 include_once(dirname(__DIR__) . "/includes/date_functions.inc");
+include_once(dirname(__DIR__) . "/includes/ui/ui_input.inc");
 include_once(dirname(__DIR__) . "/includes/data_checks.inc");
 include_once(dirname(__DIR__) . "/gl/includes/gl_db.inc");
 
