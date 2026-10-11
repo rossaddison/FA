@@ -61,9 +61,12 @@ class archive
 	}
 
 	/**
-	 * Overridden by package (via gzip_file); base class is never used standalone.
+	 * Overridden by package (via gzip_file) with a real, impure gzip-writing
+	 * implementation; base class is never used standalone, so not marked pure.
 	 * @return 0|1
-	 * @psalm-pure
+	 * @psalm-impure
+	 * @psalm-suppress MissingPureAnnotation this stub body looks pure in isolation,
+	 *   but its one real override is genuinely impure (file I/O) - see above
 	 */
 	function create_pkg()
 	{

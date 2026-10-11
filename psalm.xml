@@ -35,6 +35,7 @@
         <var name="def_coy" type="int|string"/>
         <var name="installed_languages" type="array&lt;int, array&lt;string, string|bool&gt;&gt;"/>
         <var name="installed_extensions" type="array&lt;int, array&lt;string, mixed&gt;&gt;"/>
+        <var name="next_extension_id" type="int"/>
         <var name="tmonths" type="array&lt;int, string&gt;"/>
         <var name="wo_types_array" type="array&lt;int, string&gt;"/>
         <var name="class_types" type="array&lt;int, string&gt;"/>

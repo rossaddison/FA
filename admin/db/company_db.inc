@@ -77,10 +77,12 @@ function get_base_sales_type()
 	return get_company_pref('base_sales');
 }
 
+/** @return array<int, array<string, mixed>> */
 function get_company_extensions(string|int|float|bool|array|null $id = -1): array {
 	global $path_to_root;
 
 	$file = $path_to_root.($id == -1 ? '' : '/company/'.(int)$id).'/installed_extensions.php';
+	/** @var array<int, array<string, mixed>> $installed_extensions */
 	$installed_extensions = array();
 	if (is_file($file)) {
 		include($file);

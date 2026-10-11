@@ -48,7 +48,7 @@ final class package extends gzip_file {
 	{
 		global $path_to_root;
 
-		if (!$basedir) {
+		if ($basedir === null || $basedir === '') {
 			$basedir = PKG_CACHE_PATH.'/'.substr(basename((string) $filename), 0, -4);
 			if (file_exists($basedir)) {
 //				flush_dir($basedir, true); 
@@ -71,21 +71,21 @@ final class package extends gzip_file {
 	//
 	//	Install package and clean temp directory.
 	//
-	/** @return false|float|int */
+	/** @return false|int */
 	function install()
 	{
 		global $path_to_root;
-		
+
 		$success = 1;
 
 		$this->set_options(array('overwrite' => 1));
 		$this->extract_files(); // extract package in cache directory
-		$cachepath = $this->options['basedir'];
+		$cachepath = is_string($this->options['basedir'] ?? null) ? $this->options['basedir'] : '';
 		$ctrl = get_control_file("$cachepath/_init/config") ?? array();
-		/** @var array<array-key, string|int|float|bool|null> $ctrl */
-		$ctrl = $ctrl;
+		$ctrl_package = is_scalar($ctrl['Package'] ?? null) ? $ctrl['Package'] : null;
+		$ctrl_path = is_string($ctrl['InstallPath'] ?? null) ? $ctrl['InstallPath'] : '';
 
-		$targetdir = $path_to_root.'/'.(string)$ctrl['InstallPath'];
+		$targetdir = $path_to_root.'/'.$ctrl_path;
 
 		if (!is_dir($targetdir))
 			mkdir($targetdir);
@@ -99,45 +99,51 @@ final class package extends gzip_file {
 			return false;
 		}
 		copy_files($flist, $targetdir, "$cachepath/_back");
-	
+
 		$dpackage->extract_files(); //install package in target directory
 
-		$install = hook_invoke($ctrl['Package'], 'install_extension', $dummy);
-		$success &= $install===null || $install;
-		$success &= count($dpackage->error) == 0;
+		$dummy = null;
+		$install = hook_invoke($ctrl_package, 'install_extension', $dummy);
+		if (!($install===null || $install))
+			$success = 0;
+		if (count($dpackage->error) != 0)
+			$success = 0;
 		$this->error = array_merge($this->error, $dpackage->error);
 		return $success;
 	}
 	//
 	//	Removing package related sources
 	//
-	/** @return float|int */
+	/** @return int */
 	function uninstall()
 	{
 		global $path_to_root;
 
 		$success = 1;
 
-		$cachepath = $this->options['basedir'];
+		$cachepath = is_string($this->options['basedir'] ?? null) ? $this->options['basedir'] : '';
 		$ctrl = get_control_file("$cachepath/_init/config") ?? array();
-		/** @var array<array-key, string|int|float|bool|null> $ctrl */
-		$ctrl = $ctrl;
+		$ctrl_package = is_scalar($ctrl['Package'] ?? null) ? $ctrl['Package'] : null;
+		$ctrl_path = is_string($ctrl['InstallPath'] ?? null) ? $ctrl['InstallPath'] : '';
 
-		$targetdir = $path_to_root.'/'.(string)$ctrl['InstallPath'];
+		$targetdir = $path_to_root.'/'.$ctrl_path;
 
 		$dpackage = new package("$cachepath/_data", $targetdir);
 
 		$flist = $dpackage->extract_files(true);
 
-		$success &= copy_files($flist, "$cachepath/_back", $targetdir, true);
+		if (!copy_files($flist, "$cachepath/_back", $targetdir, true))
+			$success = 0;
 
-		if (strpos((string) $ctrl['InstallPath'], 'modules/') === 0) { // flush module directory
+		if (strpos($ctrl_path, 'modules/') === 0) { // flush module directory
 			flush_dir($targetdir, true);
 			rmdir($targetdir);
 		}
 
-		$uninstall = hook_invoke($ctrl['Package'], 'uninstall_extension', $dummy);
-		$success &= $uninstall===null || $uninstall;
+		$dummy = null;
+		$uninstall = hook_invoke($ctrl_package, 'uninstall_extension', $dummy);
+		if (!($uninstall===null || $uninstall))
+			$success = 0;
 
 		return $success;
 	}
@@ -159,12 +165,13 @@ final class package extends gzip_file {
 // arrays of subfields if needed.
 //
 /**
- * @return array<array-key, mixed>|non-empty-string|null
+ * @return string|array<array-key, mixed>|null
  * @psalm-pure
  */
-function ufmt_property(mixed $key, string|array|null $value): string|array|null
+function ufmt_property(string $key, string|array $value): string|array|null
 {
 	// indexes used in output arrays
+	/** @var array<string, list<string>> $sub_fields */
 	$sub_fields = array(
 //		'MenuTabs' => array('url', 'access', 'tab_id', 'title', 'section'),
 //		'MenuEntries' => array('url', 'access', 'tab_id', 'title'),
@@ -201,40 +208,48 @@ function ufmt_property(mixed $key, string|array|null $value): string|array|null
 // Retrieve control file and return as associative array
 //	$index is name of field used as key in result array, or null for numeric keys
 //
-function get_control_file(string|int|float|bool|null $file, string|bool|null $index = false): array|null {
+/**
+ * @psalm-type ControlRecord = array<string, string|array<array-key, mixed>|null>
+ * @return ($index is false ? ControlRecord|null : array<array-key, ControlRecord>|null)
+ */
+function get_control_file(string $file, string|bool $index = false): array|null {
 
-	$list = gzopen((string) $file, 'rb');
+	$list = gzopen($file, 'rb');
 	if (!$list) return null;
 
-	$repo = $pkg = array();
-	$key = false; $value = '';
+	/** @var array<array-key, ControlRecord> $repo */
+	$repo = array();
+	/** @var ControlRecord $pkg */
+	$pkg = array();
+	$key = null; $value = '';
 	$line = '';
 	do {
 		$line = rtrim($line);
 		if ($line && ctype_space($line[0])) { // continuation of multiline property
 			if (strlen(ltrim($line))) {
-				if ($value !== '' && !is_array($value))
+				if (!is_array($value))
 					$value = array($value);
 				$value[] = ltrim($line);
 				continue;
 			}
 		}
-		if ((bool)$key) { // save previous property if any
+		if ($key) { // save previous property if any
 			$pkg[$key] = ufmt_property($key, $value);
 		}
 		if (!strlen($line)) { // end of section
 			if (count($pkg)) {
 				if ($index !== true) {
 					if ($index === false) break;
-					if (!isset($pkg[$index])) {
+					$repo_key = $pkg[$index] ?? null;
+					if (!is_string($repo_key)) {
 						display_error(sprintf(_("No key field '%s' in file '%s'"), $index, $file));
 						return null;
 					}
-					$repo[$pkg[$index]] = $pkg;
+					$repo[$repo_key] = $pkg;
 				} else
 					$repo[] = $pkg;
 			}
-			$pkg = array(); 
+			$pkg = array();
 			$key = null; $value = '';
 			continue;
 		} elseif (preg_match('/([^:]*):\s*(.*)/', $line, $m)) {
@@ -247,8 +262,8 @@ function get_control_file(string|int|float|bool|null $file, string|bool|null $in
 			display_error("File parse error in line $line");
 			return null;
 		}
-		
-	} while ((($line = fgets($list))!==false) || (bool)$key);
+
+	} while ((($line = fgets($list))!==false) || $key);
 	fclose($list);
 
 	return $index === false ? $pkg : $repo;
@@ -307,16 +322,20 @@ function pkg_prop(array|null $pkg, string|int|float|bool|null $property, string|
 //	 	or (0=>field1, 1=>field2...)
 //  $outkey - field used as a key in package list. If null 'Package' field is used.
 //
+/**
+ * @param array<array-key, array-key>|null $filter
+ * @return ($pkgname is null ? array<array-key, ControlRecord|PkgListItem>|null : ControlRecord|PkgListItem|null)
+ */
 function get_pkg_or_list(string|int|float|bool|array|null $type = null, string|int|float|bool|null $pkgname = null, ?array $filter=array(), string|int|float|bool|null $outkey=null, bool $download=true): array|null {
 
 	global $path_to_root, $repo_auth;
 
 	$repo =  (isset($repo_auth['scheme']) ? $repo_auth['scheme'] : 'http://')
-			.(isset($repo_auth['login'])  ? (string)$repo_auth['login'].':' : '')
-			.(isset($repo_auth['pass'])   ? (string)$repo_auth['pass'].'@' : '')
-			.(isset($repo_auth['host'])   ? (string)$repo_auth['host'].'/' : '')
-			.(isset($repo_auth['path'])   ? (string)$repo_auth['path'].'/' : '')
-			.(string)$repo_auth['branch'];
+			.(isset($repo_auth['login'])  ? $repo_auth['login'].':' : '')
+			.(isset($repo_auth['pass'])   ? $repo_auth['pass'].'@' : '')
+			.(isset($repo_auth['host'])   ? $repo_auth['host'].'/' : '')
+			.(isset($repo_auth['path'])   ? $repo_auth['path'].'/' : '')
+			.($repo_auth['branch'] ?? '');
 
 	// first download local copy of repo release file
 	// and check remote signature with local copy of public key
@@ -343,7 +362,11 @@ function get_pkg_or_list(string|int|float|bool|array|null $type = null, string|i
 		if (!function_exists('openssl_verify')) {
 			display_error(_("OpenSSL have to be available on your server to use extension repository system."));
 			return null;
-		}	
+		}
+		if (!is_string($sig) || $data === false || $cert === false) {
+			display_error(_('Release file in repository is invalid, or public key is outdated.'));
+			return null;
+		}
 		if (openssl_verify($data, $sig, $cert) <= 0) {
 			if ($refresh) {
 				if (!@unlink($loclist))
@@ -360,29 +383,30 @@ function get_pkg_or_list(string|int|float|bool|array|null $type = null, string|i
 
 	} while($refresh);
 
-	$Release = get_control_file($loclist, 'Filename');
+	$Release = get_control_file($loclist, 'Filename') ?? array();
 	// download and check all indexes containing given package types
 	// then complete package list or seek for pkg
 	$Packages = array();
 	foreach($Release as $fname => $parms) {
-		if ((bool)$type && !count(array_intersect(explode(' ', $parms['Type']), $type))) {
+		$parmsType = is_string($parms['Type'] ?? null) ? $parms['Type'] : '';
+		if ((bool)$type && !count(array_intersect(explode(' ', $parmsType), $type))) {
 			unset($Release[$fname]); continue; // no packages of selected type in this index
 		}
-		if ($Release[$fname]['Version'] != $repo_auth['branch']) {
+		if (($parms['Version'] ?? null) != ($repo_auth['branch'] ?? null)) {
 			display_warning(_('Repository version does not match application version.')); // ?
 		}
 		$remoteindex = $repo.'/'.$fname;
 		$locindex = PKG_CACHE_PATH.'/'.$fname;
 		$refresh = true;
 		do{
-			if (!file_exists($locindex)) { 
+			if (!file_exists($locindex)) {
 				if (!url_copy($remoteindex, $locindex)) {
 					display_error(sprintf(_("Cannot download '%s' file." ), $fname));
 					return null;
 				}
 				$refresh = false;
 			}
-			if ($parms['SHA1sum'] != sha1_file($locindex)) {	// check subdir index consistency
+			if (($parms['SHA1sum'] ?? null) != sha1_file($locindex)) {	// check subdir index consistency
 				if ($refresh) {
 					if (!@unlink($locindex)) {
 						display_error(sprintf(_("Cannot delete outdated '%s' file."), $locindex));
@@ -396,35 +420,38 @@ function get_pkg_or_list(string|int|float|bool|array|null $type = null, string|i
 			} else
 				$refresh = false;
 		} while($refresh);
-		
+
 		 // scan subdir list and select packages of given type
-		$pkglist = get_control_file($locindex, 'Package');
+		$pkglist = get_control_file($locindex, 'Package') ?? array();
 		foreach($pkglist as $name => $pkg) {
-			$pkgfullname = $repo.'/'.(string)$parms['Path']."/".(string)$pkg['Filename'].'.pkg';
-			if (!isset($type) || in_array($pkg['Type'], $type)) {
+			$pkgPath = is_string($parms['Path'] ?? null) ? $parms['Path'] : '';
+			$pkgFilename = is_string($pkg['Filename'] ?? null) ? $pkg['Filename'] : '';
+			$pkgfullname = $repo.'/'.$pkgPath."/".$pkgFilename.'.pkg';
+			if (!isset($type) || in_array($pkg['Type'] ?? null, $type)) {
+				$p = array();
 				if (!(bool)($filter ?? null))
 					$p = $pkg;
 				else {
 					foreach($filter as $field => $key) {
 						if (is_numeric($field))
-							$p[$field] = @$pkg[$field];
+							$p[$field] = $pkg[$field] ?? null;
 						else
-							$p[$key] = @$pkg[$field];
+							$p[$key] = $pkg[$field] ?? null;
 					}
 				}
 				if ($pkgname == null) {
 					$Packages[(bool)$outkey ? $outkey : $name] = $p;
-				} elseif ($pkgname == $pkg['Package']) {
+				} elseif ($pkgname == ($pkg['Package'] ?? null)) {
 					//download package to temp directory
 					if ($download) {
-						$locname = $target_dir.(string)$pkg['Filename'].'.pkg';
+						$locname = $target_dir.$pkgFilename.'.pkg';
 						if (!url_copy($pkgfullname, $locname)) {
 							display_error(sprintf(_("Cannot download '%s' file." ), $pkgfullname));
 							return null;
 						}
 						 // checking sha1 hash is expensive proces, so chekc the package
 						 // consistency just before downloading
-						if ($pkg['SHA1sum'] != sha1_file($locname)) {
+						if (($pkg['SHA1sum'] ?? null) != sha1_file($locname)) {
 							display_error(sprintf( _("Security alert: broken package '%s' in repository. Please inform repository administrator about this issue."),
 								$pkgfullname));
 							return null;
@@ -439,6 +466,9 @@ function get_pkg_or_list(string|int|float|bool|array|null $type = null, string|i
 	return $Packages;
 }
 
+/**
+ * @return ($pkgname is null ? array<array-key, ControlRecord|PkgListItem>|null : ControlRecord|PkgListItem|null)
+ */
 function get_package(string|int|float|bool|null $pkgname, string|int|float|bool|null $type = null): array|null
 {
 	return get_pkg_or_list($type, $pkgname);
@@ -449,11 +479,12 @@ function get_package(string|int|float|bool|null $pkgname, string|int|float|bool|
 function installed_package(string|int|float|bool|null $package): string|null
 {
 	$cache = opendir(PKG_CACHE_PATH);
+	if ($cache === false) return null;
 
 	while ($file = @readdir($cache)) {
 		if (!is_dir(PKG_CACHE_PATH.'/'.$file))
 			continue;
-		if (strpos($file, $package.'-') === 0)
+		if (strpos($file, (string) $package.'-') === 0)
 			return $file;
 	}
 	@closedir($cache);
@@ -499,21 +530,22 @@ function get_languages_list(): array
 			)) ?? array();
 
 	// add/update languages already installed
-	// 
+	//
 	foreach($installed_languages as $id => $l) {
-		$list = array_search_keys($l['code'], $pkgs, 'code');	// get all packages with this code
+		$list = array_search_keys($l['code'] ?? null, $pkgs, 'code');	// get all packages with this code
 		foreach ($list as $name) {
-			if ($l['encoding'] == $pkgs[$name]['encoding']) {	// if the same encoding
-				$pkgs[$name]['version'] = @$l['version'];		// set installed version
+			if (($l['encoding'] ?? null) == ($pkgs[$name]['encoding'] ?? null)) {	// if the same encoding
+				$pkgs[$name]['version'] = $l['version'] ?? null;		// set installed version
 				$pkgs[$name]['local_id'] = $id;		// index in installed_languages
 				continue 2;
 			}
 		}
 		$l['local_id'] = $id;
-		if (!isset($l['package']) || $l['package'] == '' || !isset($pkgs[$l['package']]))
+		$l_package = $l['package'] ?? null;
+		if (!is_string($l_package) || $l_package === '' || !isset($pkgs[$l_package]))
 			$pkgs[] = $l;
 		else
-			$pkgs[$l['package']] = array_merge($pkgs[$l['package']], $l);
+			$pkgs[$l_package] = array_merge($pkgs[$l_package], $l);
 	}
 	if ((bool)$pkgs)
 		ksort($pkgs);
@@ -528,9 +560,9 @@ function get_extensions_list(?string $type = null): array
 {
 	global $path_to_root;
 
-	if (isset($type) || !is_array($type)) {
-		$type = array($type);
-	}
+	// the "no type given" default is 'extension' (this function's own name), matching
+	// its siblings get_themes_list()/get_charts_list(), which hardcode a single type
+	$type = isset($type) ? array($type) : array('extension');
 
 	$pkgs = get_pkg_or_list($type, null, array(
 				'Package' => 'package',
@@ -551,7 +583,7 @@ function get_extensions_list(?string $type = null): array
 	$loc = array();
 	$moddir = opendir($path);
 
-	while(false != ($fname = readdir($moddir)))
+	while($moddir !== false && false != ($fname = readdir($moddir)))
 	{
 		if(!in_array($fname, array('.','..','CVS','_cache')) && is_dir($path.$fname))
 		{
@@ -569,15 +601,17 @@ function get_extensions_list(?string $type = null): array
 	}
 
 	// add/update extensions already installed
-	// 
+	//
 	$installed = get_company_extensions();
 	foreach($installed as $extno => $ext) {
-		if (!in_array($ext['type'], $type)) continue;
+		if (!in_array($ext['type'] ?? null, $type)) continue;
 		$ext['local_id'] = $extno;
+		$ext_package = $ext['package'] ?? null;
 //		if (!isset($pkgs[$ext['package']]) || $ext['package'] == '')
 //			$pkgs[] = $ext;
 //		else
-			$pkgs[$ext['package']] = array_merge($pkgs[$ext['package']], $ext);
+		if (is_string($ext_package) || is_int($ext_package))
+			$pkgs[$ext_package] = array_merge($pkgs[$ext_package] ?? array(), $ext);
 	}
 	if ((bool)$pkgs)
 		ksort($pkgs);
@@ -587,8 +621,10 @@ function get_extensions_list(?string $type = null): array
 // Return merged list of available and installed extensions as a local
 // configuration array supplemented with installed versions information.
 //
+/** @return array<array-key, PkgListItem> */
 function get_themes_list(): array
 {
+	/** @var array<array-key, PkgListItem> $pkgs */
 	$pkgs = get_pkg_or_list('theme', null, array(
 				'Package' => 'package',
 				'Version' => 'available',
@@ -597,13 +633,14 @@ function get_themes_list(): array
 			)) ?? array();
 
 	// add/update extensions already installed
-	// 
+	//
 	$local = get_company_extensions();
-	
+
 	foreach($local as $extno => $ext) {
-		if (isset($pkgs[@$ext['package']])) {
+		$ext_package = $ext['package'] ?? null;
+		if ((is_string($ext_package) || is_int($ext_package)) && isset($pkgs[$ext_package])) {
 			$ext['local_id'] = $extno;
-			$pkgs[$ext['package']] = array_merge($pkgs[$ext['package']], $ext);
+			$pkgs[$ext_package] = array_merge($pkgs[$ext_package], $ext);
 		}
 	}
 	// TODO: Add other themes from themes directory
@@ -636,12 +673,13 @@ function get_charts_list(): array
 	$local = get_company_extensions();
 
 	foreach($local as $extno => $ext) {
-		if ($ext['type'] != 'chart') continue;
+		if (($ext['type'] ?? null) != 'chart') continue;
 		$ext['local_id'] = $extno;
-		if (!isset($pkgs[$ext['package']]) || $ext['package'] == '')
+		$ext_package = $ext['package'] ?? null;
+		if (!is_string($ext_package) || $ext_package === '' || !isset($pkgs[$ext_package]))
 			$pkgs[] = $ext;
 		else
-			$pkgs[$ext['package']] = array_merge($pkgs[$ext['package']], $ext);
+			$pkgs[$ext_package] = array_merge($pkgs[$ext_package], $ext);
 	}
 	if ((bool)$pkgs)
 		ksort($pkgs);
@@ -656,31 +694,36 @@ function install_language(string|int|float|bool|null $pkg_name): bool
 	
 	$pkg = get_pkg_or_list('language', $pkg_name);
 
-	if ($pkg) {
-		$i = array_search_key($pkg['Language'], $installed_languages, 'code');
+	if ($pkg !== null) {
+		$pkg_filename = is_string($pkg['Filename'] ?? null) ? $pkg['Filename'] : '';
+		$pkg_language = is_scalar($pkg['Language'] ?? null) ? $pkg['Language'] : null;
+		$pkg_package = is_scalar($pkg['Package'] ?? null) ? $pkg['Package'] : null;
+
+		$i = array_search_key($pkg_language, $installed_languages, 'code');
 		if ($i === null)
 			$i = count($installed_languages);
-		else {	// remove another already installed package for this language 
-			$old_pkg = @$installed_languages[$i]['package'];
-			if ($old_pkg && ($pkg['Package'] != $old_pkg))
+		else {	// remove another already installed package for this language
+			$old_pkg = $installed_languages[$i]['package'] ?? null;
+			if ($old_pkg && ($pkg_package != $old_pkg))
 				uninstall_package($old_pkg);
 		}
 
-		$package = new package(VARLIB_PATH."/".(string)$pkg['Filename'].'.pkg');
+		$package = new package(VARLIB_PATH."/".$pkg_filename.'.pkg');
 		if ($package->install()) {
+			/** @var array<string, string|bool> $lang */
 			$lang = array(
-				'name' => $pkg['Name'],
-				'package' => $pkg['Package'],
-				'code' => $pkg['Language'],
-				'encoding' => $pkg['Encoding'],
-				'version' => $pkg['Version'],
-				'path' => $pkg['InstallPath']
+				'name' => (string) ($pkg['Name'] ?? ''),
+				'package' => (string) ($pkg_package ?? ''),
+				'code' => (string) ($pkg_language ?? ''),
+				'encoding' => (string) ($pkg['Encoding'] ?? ''),
+				'version' => (string) ($pkg['Version'] ?? ''),
+				'path' => (string) ($pkg['InstallPath'] ?? '')
 			);
-			if ($pkg['RTLDir']=='yes')
+			if (($pkg['RTLDir'] ?? null) == 'yes')
 				$lang['rtl'] = true;
 			$installed_languages[$i] = $lang;
 			write_lang();
-			unlink(VARLIB_PATH."/".(string)$pkg['Filename'].'.pkg');
+			unlink(VARLIB_PATH."/".$pkg_filename.'.pkg');
 			ajax()->activate('lang_tbl');
 		} else {
 			display_error(implode('<br>', $package->error));
@@ -700,25 +743,29 @@ function install_extension(string|int|float|bool|null $pkg_name): bool
 	global $path_to_root, $installed_extensions, $next_extension_id, $Ajax, $db_connections;
 	
 	$pkg = get_pkg_or_list(array('extension', 'theme', 'chart'), $pkg_name);
-	if ($pkg) {
-		$package = new package(VARLIB_PATH."/".(string)$pkg['Filename'].'.pkg');
+	if ($pkg !== null) {
+		$pkg_filename = is_string($pkg['Filename'] ?? null) ? $pkg['Filename'] : '';
+		$pkg_package = is_scalar($pkg['Package'] ?? null) ? $pkg['Package'] : null;
+
+		$package = new package(VARLIB_PATH."/".$pkg_filename.'.pkg');
 		$local_exts = get_company_extensions();
 		if ($package->install()) {
-			$ext_id = array_search_key($pkg['Package'], $local_exts, 'package');
+			$ext_id = array_search_key($pkg_package, $local_exts, 'package');
 			if ($ext_id === null)
 				$ext_id = $next_extension_id++;
-			else {	// remove another already installed package for this language 
-				$old_pkg = $installed_extensions[$ext_id]['package'];
+			else {	// remove another already installed package for this language
+				$old_pkg = $installed_extensions[$ext_id]['package'] ?? null;
 				if ($old_pkg)
-					uninstall_package($old_pkg);
+					uninstall_package(is_scalar($old_pkg) ? $old_pkg : null);
 			}
+			/** @var array<string, mixed> $ext */
 			$ext = array(
-				'name' => $pkg['Name'],
-				'package' => $pkg['Package'],
-				'version' => $pkg['Version'],
-				'type' => $pkg['Type'],
-				'active' => @$pkg['DefaultStatus'] == 'active' ? true : false,
-				'path' => $pkg['InstallPath'],
+				'name' => $pkg['Name'] ?? null,
+				'package' => $pkg_package,
+				'version' => $pkg['Version'] ?? null,
+				'type' => $pkg['Type'] ?? null,
+				'active' => ($pkg['DefaultStatus'] ?? null) == 'active',
+				'path' => $pkg['InstallPath'] ?? null,
 			);
 			if (isset($pkg['SqlScript']))
 				$ext['sql'] = $pkg['SqlScript'];
@@ -726,15 +773,16 @@ function install_extension(string|int|float|bool|null $pkg_name): bool
 			$local_exts[$ext_id] = $ext;
 			$ret = update_extensions($local_exts);
 
-			if (($ext['active'] == true) && file_exists($path_to_root.'/'.(string)$ext['path'].'/hooks.php'))
+			$ext_path = is_string($ext['path']) ? $ext['path'] : '';
+			if (($ext['active'] == true) && file_exists($path_to_root.'/'.$ext_path.'/hooks.php'))
 			{
 				// we need to include the new hooks file to activate extension
-				include_once($path_to_root.'/'.(string)$ext['path'].'/hooks.php');
+				include_once($path_to_root.'/'.$ext_path.'/hooks.php');
 				foreach($db_connections as $comp => $db)
-					activate_hooks($ext['package'], $comp);
+					activate_hooks(is_scalar($ext['package']) ? $ext['package'] : null, $comp);
 			}
 
-			unlink(VARLIB_PATH."/".(string)$pkg['Filename'].'.pkg');
+			unlink(VARLIB_PATH."/".$pkg_filename.'.pkg');
 			ajax()->activate('ext_tbl');
 			return $ret;
 		} else {
@@ -755,12 +803,12 @@ function check_pkg_upgrade(string|int|float|bool|null $current, string|int|float
 {
 	if ($available == NULL)
 		return false;
-	preg_match_all('/[\d]+/', $available, $aver);
+	preg_match_all('/[\d]+/', (string) $available, $aver);
 	if (!count($aver[0]))
 		return false;
 	if ($current == NULL)
 		return true;
-	preg_match_all('/[\d]+/', $current, $cver);
+	preg_match_all('/[\d]+/', (string) $current, $cver);
 	if (!count($cver[0]))
 		return true;
 	foreach($aver[0] as $n => $ver)
@@ -772,6 +820,10 @@ function check_pkg_upgrade(string|int|float|bool|null $current, string|int|float
 //
 //	Returns package info from index file
 //
+/**
+ * @param array<array-key, array-key>|null $filter
+ * @return ($pkg is null ? array<array-key, ControlRecord|PkgListItem>|null : ControlRecord|PkgListItem|null)
+ */
 function get_package_info(string|int|float|bool|null $pkg, string|int|float|bool|null $type=null, ?array $filter=array(), string|int|float|bool|null $outkey=null, bool $download=true): array|null {
 	return get_pkg_or_list($type, $pkg, $filter, null, false);
 }
