@@ -80,7 +80,7 @@ function display_transfer_items(?string $title, items_cart &$order): void
 			else
 				view_stock_status_cell($stock_item->stock_id);
     		label_cell($stock_item->item_description);
-    		qty_cell($stock_item->quantity, false, get_qty_dec($stock_item->stock_id));
+    		qty_cell($stock_item->quantity, false, get_qty_dec((string) $stock_item->stock_id));
     		label_cell($stock_item->units);
 
 	     	if (!$order->fixed_asset)

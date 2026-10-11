@@ -13,6 +13,21 @@ declare(strict_types=1);
 include_once(dirname(__DIR__, 2) . "/includes/prefs/sysprefs.inc");
 include_once(dirname(__DIR__, 2) . "/inventory/includes/inventory_db.inc");
 
+/**
+ * @psalm-type TaxInfo = array{
+ *     tax_date?: string,
+ *     person_type?: int,
+ *     person_id?: string|int|float|bool|null,
+ *     tax_group?: string|int|float|bool|null,
+ *     tax_in?: array<array-key, float>,
+ *     tax_out?: array<array-key, float>,
+ *     tax_reg?: int,
+ *     net_amount?: array<array-key, float>,
+ *     net_amount_ex?: float,
+ *     rate?: array<array-key, float>
+ * }
+ */
+
 final class items_cart
 {
 	/** @var int|string */
@@ -56,7 +71,7 @@ final class items_cart
 	/** @var string|int|float|bool|null */
 	var $vat_category = null;
 
-	/** @var array<array-key, mixed>|null */
+	/** @var TaxInfo|null */
 	var $tax_info = null;	// tax info for the GL transaction
 
 	/** @var bool|null */
@@ -68,11 +83,11 @@ final class items_cart
 	 */
 	function __construct(string|int|array|null $type, ?int $trans_no=0)
 	{
-		$this->trans_type = $type;
+		$this->trans_type = is_array($type) ? 0 : ($type ?? 0);
 		$this->order_id = $trans_no;
 		$this->clear_items();
 		if (in_array($type, array(ST_LOCTRANSFER, ST_INVADJUST, ST_COSTUPDATE, ST_MANUISSUE, ST_MANURECEIVE, ST_JOURNAL)))
-			$this->currency = get_company_pref('curr_default');
+			$this->currency = (string) get_company_pref('curr_default');
 		$this->rate = 1;
 	}
 
@@ -95,7 +110,7 @@ final class items_cart
 		else
 		{
 			// shouldn't come here under normal circumstances
-			display_error("unexpected - adding an invalid item or null quantity", "", true);
+			display_error("unexpected - adding an invalid item or null quantity", true);
 		}
 
 		return false;
@@ -118,6 +133,7 @@ final class items_cart
 	 */
 	function update_cart_item(int|string $line_no, int|float|bool|null $qty, string|int|float|bool|null $standard_cost)
 	{
+		$line_no = (int) $line_no;
 		$this->line_items[$line_no]->quantity = $qty;
 		$this->line_items[$line_no]->standard_cost = $standard_cost;
 	}
@@ -128,7 +144,7 @@ final class items_cart
 	 */
 	function remove_from_cart(string|int|null $line_no)
 	{
-		array_splice($this->line_items, $line_no, 1);
+		array_splice($this->line_items, (int) $line_no, 1);
 	}
 
 	/**
@@ -153,9 +169,9 @@ final class items_cart
 			foreach ($this->line_items as $line_no => $line_item)
 				if (has_stock_holding($line_item->mb_flag) || is_fixed_asset($line_item->mb_flag))
 				{
-					$quantity = $line_item->quantity;
+					$quantity = (float) $line_item->quantity;
 					if ($reverse)
-						$quantity = -$line_item->quantity;
+						$quantity = -$quantity;
 
 					if ($quantity >= 0)
 						continue;
@@ -184,7 +200,7 @@ final class items_cart
 		else
 		{
 			// shouldn't come here under normal circumstances
-			display_error("unexpected - invalid parameters in add_gl_item($code_id, $dimension_id, $dimension2_id, $amount,...)", "", true);
+			display_error("unexpected - invalid parameters in add_gl_item($code_id, $dimension_id, $dimension2_id, $amount,...)", true);
 		}
 
 		return false;
@@ -196,26 +212,27 @@ final class items_cart
 	 */
 	function update_gl_item(int|string $index, string|int|float|bool|null $code_id, string|int|float|bool|null $dimension_id, string|int|float|bool|null $dimension2_id, int|float|bool|null $amount, string|int|float|bool|null $memo='', ?string $act_descr=null, string|array|null $person_id=null)
 	{
-	    $this->gl_items[$index]->code_id = $code_id;
-	    $this->gl_items[$index]->person_id = $person_id;
+	    $index = (int) $index;
+	    $this->gl_items[$index]->code_id = (string) $code_id;
+	    $this->gl_items[$index]->person_id = is_array($person_id) ? null : $person_id;
 
         $gl_type = is_subledger_account($code_id);
-        if ($person_id != null && (bool)$gl_type)
+        if ($person_id != null && !is_array($person_id) && (bool)$gl_type)
 		{
 			$this->gl_items[$index]->person_type_id = $gl_type > 0 ? PT_CUSTOMER : PT_SUPPLIER;
 			$data = row_or_empty(get_subaccount_data($code_id, $person_id));
-			$this->gl_items[$index]->person_name = $data['name'];
-			$this->gl_items[$index]->branch_id = $data['id'];
+			$this->gl_items[$index]->person_name = (string) ($data['name'] ?? '');
+			$this->gl_items[$index]->branch_id = $data['id'] ?? null;
 		} else
 		{
 			$this->gl_items[$index]->person_type_id = $this->gl_items[$index]->person_name = '';
 		}
-		$this->gl_items[$index]->dimension_id = $dimension_id;
-		$this->gl_items[$index]->dimension2_id = $dimension2_id;
-		$this->gl_items[$index]->amount = $amount;
-		$this->gl_items[$index]->reference = $memo;
+		$this->gl_items[$index]->dimension_id = is_int($dimension_id) || is_string($dimension_id) ? $dimension_id : (int) $dimension_id;
+		$this->gl_items[$index]->dimension2_id = is_int($dimension2_id) || is_string($dimension2_id) ? $dimension2_id : (int) $dimension2_id;
+		$this->gl_items[$index]->amount = is_int($amount) || is_float($amount) ? $amount : (float) $amount;
+		$this->gl_items[$index]->reference = (string) $memo;
 		if ($act_descr == null)
-			$this->gl_items[$index]->description = get_gl_account_name($code_id);
+			$this->gl_items[$index]->description = (string) get_gl_account_name($code_id);
 		else
 			$this->gl_items[$index]->description = $act_descr;
 
@@ -334,19 +351,20 @@ final class items_cart
 			'tax_in', 'tax_out' - tax amounts array indexed by tax type id
 			'tax_reg' - tax register used
 	*/
-	/** @return array<array-key, mixed> */
+	/** @return TaxInfo */
 	function collect_tax_info()
 	{
+		/** @var TaxInfo $tax_info */
 		$tax_info = array();
 		$subledger_sum = $net_sum = 0.0;
 
 		$tax_info['tax_date'] = $this->tran_date;
 		$vat_percent = get_company_pref('partial_vat_percent');
-		$factor = $vat_percent && ($this->vat_category == VC_PARTIAL) ? $vat_percent/100: 1;
+		$factor = $vat_percent && ($this->vat_category == VC_PARTIAL) ? (float) $vat_percent/100 : 1;
 
 		foreach($this->gl_items as $gl)
 		{
-            if ((bool)($person_type = is_subledger_account($gl->code_id)))
+            if ($person_type = is_subledger_account($gl->code_id))
 			{
 				$tax_info['person_type'] = $person_type < 0 ? PT_SUPPLIER : PT_CUSTOMER;
 				$tax_info['person_id'] = $gl->person_id;
@@ -360,29 +378,32 @@ final class items_cart
 					$tax_info['tax_group'] = $supplier['tax_group_id'];
 				}
 				$subledger_sum += (float)$gl->amount;
-			} elseif ((bool)($tax_id = is_tax_account($gl->code_id)))
+			} elseif ($tax_id = is_tax_account($gl->code_id))
 			{
 				$tax_type = row_or_empty(get_tax_type($tax_id));
+				$tax_rate = is_scalar($tax_type['rate'] ?? null) ? (float) $tax_type['rate'] : 0.0;
 				if ($gl->code_id == $tax_type['purchasing_gl_code'] && $gl->amount > 0) {
 					if (!isset($tax_info['tax_in'][$tax_id]))
-						$tax_info['tax_in'][$tax_id] = 0;
+						$tax_info['tax_in'][$tax_id] = 0.0;
 					$tax_info['tax_in'][$tax_id] += (float)$gl->amount;
 					$tax_info['tax_reg'] = TR_INPUT;
 				} else {
 					if (!isset($tax_info['tax_out'][$tax_id]))
-						$tax_info['tax_out'][$tax_id] = 0;
+						$tax_info['tax_out'][$tax_id] = 0.0;
 					$tax_info['tax_out'][$tax_id] -= (float)$gl->amount;
 					if (!isset($tax_info['tax_reg'])) // TR_INPUT has priority (EU are posted on both accounts)
 						$tax_info['tax_reg'] = TR_OUTPUT;
 				}
-				if ($tax_type['rate'])
+				if ($tax_rate)
 				{
 					// assume transaction adjustment for negative tax in/out
-					$sign = (@$tax_info['tax_in'][$tax_id] < 0 || @$tax_info['tax_out'][$tax_id] < 0) ? -1 : 1;
+					$tax_in = $tax_info['tax_in'][$tax_id] ?? 0.0;
+					$tax_out = $tax_info['tax_out'][$tax_id] ?? 0.0;
+					$sign = ($tax_in < 0 || $tax_out < 0) ? -1 : 1;
 					// we can have both input and output tax postings in some cases like intra-EU trade.
 					// so just calculate net_amount from the higher in/out tax
 					$tax_info['net_amount'][$tax_id]
-						= (float)$sign*round2(max(abs(@$tax_info['tax_in'][$tax_id]), abs(@$tax_info['tax_out'][$tax_id]))/$tax_type['rate']*100.0, user_price_dec())/$factor;
+						= (float)$sign*round2(max(abs($tax_in), abs($tax_out))/$tax_rate*100.0, user_price_dec())/$factor;
 
 				}
 			} else
@@ -392,9 +413,10 @@ final class items_cart
 		if (!isset($tax_info['tax_reg']) && isset($tax_info['person_type']))
 			$tax_info['tax_reg'] = $tax_info['person_type']==PT_CUSTOMER ? TR_OUTPUT : TR_INPUT;
 
-		if (count_array(@$tax_info['net_amount']))	// guess exempt sales/purchase if any tax has been found
+		$net_amount = $tax_info['net_amount'] ?? array();
+		if (count_array($net_amount))	// guess exempt sales/purchase if any tax has been found
 		{
-			$ex_net = abs($net_sum) - (@array_sum($tax_info['net_amount']));
+			$ex_net = abs($net_sum) - array_sum($net_amount);
 			if ($ex_net != 0)
 				$tax_info['net_amount_ex'] = $ex_net;
 		}
@@ -408,7 +430,7 @@ final class items_cart
 	 */
 	function set_currency(string|int|float|bool|null $curr, float|int|string $rate=0)
 	{
-		$this->currency = $curr;
+		$this->currency = (string) $curr;
 		$this->rate = $rate;
 	}
 
@@ -419,19 +441,21 @@ final class items_cart
 	function reduce_gl()
 	{
 		/* reduce additional postings */
+		/** @var array<array-key, mixed> $codes */
 		$codes = array();
 		foreach($this->gl_items as $n => $gl)
 		{
-			$prev = @$codes[$gl->code_id][$gl->person_id][$gl->dimension_id][$gl->dimension2_id][$gl->reference];
+			$person_id = is_scalar($gl->person_id) ? $gl->person_id : '';
+			$prev = $codes[$gl->code_id][$person_id][$gl->dimension_id][$gl->dimension2_id][$gl->reference] ?? null;
 			if (isset($prev)) { // add amount to previous line for the same gl_code dims and memo
 				$this->gl_items[$prev]->amount += (float)$gl->amount;
 				if ($this->gl_items[$prev]->amount == 0) // discard if overall amount==0
 				{
-					unset($this->gl_items[$prev], $codes[$gl->code_id][$gl->person_id][$gl->dimension_id][$gl->dimension2_id][$gl->reference]);
+					unset($this->gl_items[$prev], $codes[$gl->code_id][$person_id][$gl->dimension_id][$gl->dimension2_id][$gl->reference]);
 				}
 				unset($this->gl_items[$n]);
 			} else
-				$codes[$gl->code_id][$gl->person_id][$gl->dimension_id][$gl->dimension2_id][$gl->reference] = $n;
+				$codes[$gl->code_id][$person_id][$gl->dimension_id][$gl->dimension2_id][$gl->reference] = $n;
 		}
 	}
 	/*
@@ -463,7 +487,7 @@ final class items_cart
 
 			// post to first found bank account using given gl acount code.
 			$is_bank_to = is_bank_account($gl->code_id);
-	    	if ((bool)$is_bank_to && (get_bank_account_currency($is_bank_to) == $this->currency)) // do not register exchange variations in bank trans
+	    	if ($is_bank_to && (get_bank_account_currency($is_bank_to) == $this->currency)) // do not register exchange variations in bank trans
     		{
     			if (!isset($bank_trans[$is_bank_to]))
     				$bank_trans[$is_bank_to] = 0;
@@ -472,12 +496,14 @@ final class items_cart
     		} elseif ((bool)$gl->person_id)
     		{
     			$home_currency = get_company_currency();
+				$person_id = is_string($gl->person_id) || is_int($gl->person_id) ? $gl->person_id : '';
+				$branch_id = is_string($gl->branch_id) || is_int($gl->branch_id) ? $gl->branch_id : '';
 				// collect per counterparty amounts (in case more than one posting was done to the account),
 				// do not post exchange variations to AR/AP (journal in not customer/supplier currency)
 	    		if ($gl->person_type_id==PT_SUPPLIER && (get_supplier_currency($gl->person_id) == $this->currency || $this->currency != $home_currency))
-	   				$supp_trans[$gl->person_id] = (@$supp_trans[$gl->person_id]) + (float)$gl->amount;
+	   				$supp_trans[$person_id] = ($supp_trans[$person_id] ?? 0) + (float)$gl->amount;
     			elseif ($gl->person_type_id==PT_CUSTOMER && (get_customer_currency(null, $gl->branch_id) == $this->currency || $this->currency != $home_currency))
-	   				$cust_trans[$gl->branch_id] = (@$cust_trans[$gl->branch_id]) + (float)$gl->amount;
+	   				$cust_trans[$branch_id] = ($cust_trans[$branch_id] ?? 0) + (float)$gl->amount;
     		}
 
 		}
@@ -510,33 +536,35 @@ final class items_cart
 		// generate tax records for journal transaction
 		if ($this->trans_type == ST_JOURNAL && is_array($this->tax_info))
 		{
-			foreach($this->tax_info['net_amount'] as $tax_id => $net)
+			$tax_info = $this->tax_info;
+			foreach($tax_info['net_amount'] ?? array() as $tax_id => $net)
 			{
 				if (!$net)
 					continue;
 
 				// in EU VAT system intra-community goods aquisition is posted to both purchasing and sales tax accounts,
 				// but included only in purchase register. To avoid double registering ELSE is used below!
-				if (isset($this->tax_info['tax_in'][$tax_id]))
+				if (isset($tax_info['tax_in'][$tax_id]))
 				{
-					$tax = $this->tax_info['tax_in'][$tax_id];
+					$tax = $tax_info['tax_in'][$tax_id];
 					$reg = TR_INPUT;
 				}
-				elseif (isset($this->tax_info['tax_out'][$tax_id]))
+				elseif (isset($tax_info['tax_out'][$tax_id]))
 				{
-					$tax = $this->tax_info['tax_out'][$tax_id];
+					$tax = $tax_info['tax_out'][$tax_id];
 					$reg = TR_OUTPUT;
 				}
-				elseif (isset($this->tax_info['tax_reg'])) // e.g. export
+				elseif (isset($tax_info['tax_reg'])) // e.g. export
 				{
 					$tax = 0;
-					$reg = $this->tax_info['tax_reg'];
+					$reg = $tax_info['tax_reg'];
 				} else
 					continue;
 
-				$tax_nominal = $this->tax_info['rate'][$tax_id]/100*$net;
+				$rate = $tax_info['rate'][$tax_id] ?? 0.0;
+				$tax_nominal = $rate/100*$net;
 				add_trans_tax_details($this->trans_type, $this->order_id,
-					$tax_id, $this->tax_info['rate'][$tax_id], 0, $tax_nominal, $net, $this->rate,
+					$tax_id, $rate, 0, $tax_nominal, $net, $this->rate,
 					$this->tran_date,
 					$this->source_ref, $reg);
 			}
@@ -548,7 +576,7 @@ final class items_cart
 
 final class line_item
 {
-	/** @var string */
+	/** @var string|int|float|bool|null */
 	var $stock_id;
 	/** @var string */
 	var $item_description;
@@ -557,14 +585,14 @@ final class line_item
 	/** @var string */
 	var $mb_flag;
 
-	/** @var float|int|string */
+	/** @var float|int|string|bool|null */
 	var $quantity;
 
 	/**
 	 * @var int
 	 */
 	var $price;
-	/** @var float|int|string */
+	/** @var float|int|string|bool|null */
 	var $standard_cost;
 
 	/**
@@ -575,18 +603,19 @@ final class line_item
 		$item_row = get_item($stock_id);
 
 		if ($item_row == null)
-			display_error("invalid item added to order : $stock_id", "");
+			display_error("invalid item added to order : $stock_id");
 
-		$this->mb_flag = $item_row["mb_flag"];
-		$this->units = $item_row["units"];
+		$item_row = row_or_empty($item_row);
+		$this->mb_flag = $item_row["mb_flag"] ?? '';
+		$this->units = $item_row["units"] ?? '';
 
 		if ($description == null)
-			$this->item_description = $item_row["description"];
+			$this->item_description = $item_row["description"] ?? '';
 		else
 			$this->item_description = $description;
 
 		if ($standard_cost == null)
-			$this->standard_cost = $item_row["purchase_cost"];
+			$this->standard_cost = $item_row["purchase_cost"] ?? 0;
 		else
 			$this->standard_cost = $standard_cost;
 
@@ -619,10 +648,10 @@ final class gl_item
 	/** @var string|int|float|bool|null */
 	var $person_type_id;
 	/** @var string */
-	var $person_name;
+	var $person_name = '';
 	/** @var string|int|float|bool|null */
 	var $branch_id;
-	/** @var string */
+	/** @var string|null */
 	var $date;
 
 	/**
@@ -634,24 +663,24 @@ final class gl_item
 		//echo "adding $index, $code_id, $dimension_id, $amount, $reference<br>";
 
 		if ($act_descr == null && $code_id)
-			$this->description = get_gl_account_name($code_id);
+			$this->description = (string) get_gl_account_name($code_id);
 		else
-			$this->description = $act_descr;
+			$this->description = (string) $act_descr;
 
-		$this->code_id = $code_id;
-		$this->person_id = $person_id;
+		$this->code_id = (string) $code_id;
+		$this->person_id = is_array($person_id) ? null : $person_id;
         $gl_type = is_subledger_account($code_id);
-        if ($person_id != null  && (bool)$gl_type)
+        if ($person_id != null && !is_array($person_id) && (bool)$gl_type)
 		{
 			$this->person_type_id = $gl_type > 0 ? PT_CUSTOMER : PT_SUPPLIER;
 			$data = row_or_empty(get_subaccount_data($code_id, $person_id));
-			$this->person_name = $data['name'];
-			$this->branch_id = $data['id'];
+			$this->person_name = (string) ($data['name'] ?? '');
+			$this->branch_id = $data['id'] ?? null;
 		}
-		$this->dimension_id = $dimension_id;
-		$this->dimension2_id = $dimension2_id;
+		$this->dimension_id = is_int($dimension_id) || is_string($dimension_id) ? $dimension_id : (int) $dimension_id;
+		$this->dimension2_id = is_int($dimension2_id) || is_string($dimension2_id) ? $dimension2_id : (int) $dimension2_id;
 		$this->amount = round2($amount, user_price_dec());
-		$this->reference = $memo;
-		$this->date = $date;
+		$this->reference = (string) $memo;
+		$this->date = $date === null ? null : (string) $date;
 	}
 }

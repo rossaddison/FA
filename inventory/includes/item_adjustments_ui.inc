@@ -73,7 +73,7 @@ function display_adjustment_items(?string $title, items_cart &$order): void
 	foreach ($order->line_items as $line_no=>$stock_item)
 	{
 
-		$total += ((float)($stock_item->standard_cost * $stock_item->quantity));
+		$total += (float)$stock_item->standard_cost * (float)$stock_item->quantity;
 
 		if ($id != $line_no)
 		{
@@ -88,7 +88,7 @@ function display_adjustment_items(?string $title, items_cart &$order): void
 				view_stock_status_cell($stock_item->stock_id);
 
 			label_cell($stock_item->item_description);
-			$dec = get_qty_dec($stock_item->stock_id);
+			$dec = get_qty_dec((string) $stock_item->stock_id);
     		if (!$order->fixed_asset)
 			{
 				$qoh = get_qoh_on_date($stock_item->stock_id, post_scalar('StockLocation'));

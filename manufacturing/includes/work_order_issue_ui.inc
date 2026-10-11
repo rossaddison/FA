@@ -55,7 +55,7 @@ function display_issue_items(?string $title, items_cart &$order): void
 
 			view_stock_status_cell($stock_item->stock_id);
 			label_cell($stock_item->item_description);
-    		qty_cell($stock_item->quantity, false, get_qty_dec($stock_item->stock_id));
+    		qty_cell($stock_item->quantity, false, get_qty_dec((string) $stock_item->stock_id));
 			label_cell($stock_item->units);
 			amount_cell($stock_item->standard_cost);
 //			amount_cell($stock_item->standard_cost * $stock_item->quantity);
