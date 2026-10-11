@@ -757,6 +757,24 @@ to their source.
   already present in sibling files (`rep104.php`, `rep307.php`,
   `rep308.php`) to all 44 affected files.
 
+- **`reporting/includes/class.pdf.inc` — `Cpdf::SetLang()` crashed on an
+  unmatched language code.** Chained on from the bug above — once
+  `rep109.php` could actually run, it hit
+  `strtoupper($lang['encoding'])` with `$lang` null, because
+  `array_search_value($code, $installed_languages, 'code')` returns
+  `null` whenever the requested code (here, the logged-in user's
+  language preference) isn't present in `$installed_languages` — this
+  install's `lang/installed_languages.inc` only has a single `'C'`
+  entry. The function already had dead fallback logic further down
+  (falling back to `ISO-8859-1`/`en_GB`) for exactly this case, but
+  could never reach it: `strtoupper(null)` throws on PHP 8.1+, where
+  passing `null` to a non-nullable native string parameter is a hard
+  error instead of the silent empty-string coercion older PHP allowed.
+  Same "strict_types fallout" class as the section above. Fixed by
+  wrapping the lookup with `row_or_empty()` and resolving
+  `$langCode`/`$encoding` with an explicit `ISO-8859-1` fallback before
+  either reaches `strtoupper()` or the `GetText` calls.
+
 ## Missing feature (implemented, not just guarded)
 
 - **`includes/ui/attachment.inc` — no attachment size limit.** `db_insert()`
