@@ -416,17 +416,19 @@ function hook_invoke_all(string|int|float|bool|null $method, mixed &$data, array
 
 	$method = (string) $method;
 	$return = array();
-	foreach($hooks as $ext => $hook)
-		if (method_exists($hook, $method)) {
-			set_ext_domain($hook->path);
-			$result = $hook->$method($data, $opts);
-			if (isset($result) && is_array($result)) {
-				$return = array_merge_recursive($return, $result);
-			} else if (isset($result)) {
-				$return[] = $result;
+	if (isset($hooks)) {
+		foreach($hooks as $ext => $hook)
+			if (method_exists($hook, $method)) {
+				set_ext_domain($hook->path);
+				$result = $hook->$method($data, $opts);
+				if (isset($result) && is_array($result)) {
+					$return = array_merge_recursive($return, $result);
+				} else if (isset($result)) {
+					$return[] = $result;
+				}
+				set_ext_domain();
 			}
-			set_ext_domain();
-		}
+	}
 	return $return;
 }
 /*
@@ -443,7 +445,7 @@ function hook_invoke_first(string $method, mixed &$data, ?array $opts=null): mix
 	global $hooks;
 
 	$result = null;
-	foreach($hooks as $ext => $hook) {
+	foreach($hooks ?? array() as $ext => $hook) {
 		if (method_exists($hook, $method)) {
 			set_ext_domain($hook->path);
 			$result = $hook->$method($data, $opts);
@@ -455,7 +457,7 @@ function hook_invoke_first(string $method, mixed &$data, ?array $opts=null): mix
 	return $result;
 }
 /*
-	Returns last non-null result returned from modules method. Helps implement hooks overriding by 
+	Returns last non-null result returned from modules method. Helps implement hooks overriding by
 	extensions installed later.
 */
 /**
@@ -469,7 +471,7 @@ function hook_invoke_last(string $method, mixed &$data, mixed $opts=null): mixed
 	global $hooks;
 
 	$result = null;
-	$reverse = array_reverse($hooks);
+	$reverse = array_reverse($hooks ?? array());
 	foreach($reverse as $ext => $hook) {
 		if (method_exists($hook, $method)) {
 			set_ext_domain($hook->path);

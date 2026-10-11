@@ -712,6 +712,33 @@ to their source.
   and returning `''` when no pattern is found, satisfying the declared
   non-nullable `string` return.
 
+- **`includes/hooks.inc` — `hook_invoke_all()` lost its `isset($hooks)`
+  guard during the Psalm pass on this file.** The original code wrapped its
+  `foreach($Hooks as ...)` in `if (isset($Hooks)) { ... }`, because `$hooks`
+  is only ever populated by `install_hooks()`, which `includes/session.inc`
+  calls inside `if (!defined('FA_LOGOUT_PHP_FILE')){ ... }` — on
+  `access/logout.php` (which defines that constant before including
+  `session.inc`) `$hooks` is never set. Typing the function's parameters
+  during the pass silently dropped the guard, so `foreach($hooks as ...)`
+  ran on `null` and crashed every visit to `access/logout.php` with
+  "foreach() argument must be of type array|object, null given". Caught by
+  live-testing after the pass, not by Psalm (which only knows `$hooks` via
+  its non-nullable `psalm.xml` global stub, so it couldn't see the gap).
+  Restored the guard. `hook_invoke_first()`/`hook_invoke_last()` have the
+  same unguarded `foreach($hooks ...)`/`array_reverse($hooks)` in the
+  original code (never hit yet via this call path) — hardened both with
+  `$hooks ?? array()` while fixing the regression above.
+
+- **`includes/page/header.inc` — `help_url()`.** `$_SESSION['App']->applications[$app]->help_context`
+  assumed `$_SESSION['sel_app']` always indexes a currently-registered
+  application, with no fallback — unlike the near-identical lookup a little
+  further down in the same file (`page()`, setting `$_SESSION["App"]->selected_application`),
+  which already falls back to `'orders'` when the stored id points at a
+  removed/inactivated extension's tab. Hit live after a stale `sel_app`
+  session value stopped matching any key in `applications`, producing
+  "Attempt to read property 'help_context' on null". Applied the same
+  `'orders'` fallback used by the other lookup.
+
 ## Missing feature (implemented, not just guarded)
 
 - **`includes/ui/attachment.inc` — no attachment size limit.** `db_insert()`

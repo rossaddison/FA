@@ -31,6 +31,9 @@ function help_url(mixed $context=null): string
 	} else // main menu
 	{
 		$app = $_SESSION['sel_app'];
+		// fall back to the default tab if the stored app id is stale (e.g. a removed/inactivated extension)
+		if (!isset($_SESSION['App']->applications[$app]))
+			$app = 'orders';
 		$help_page_url = $_SESSION['App']->applications[$app]->help_context;
 		$clean = 1;
 	}
