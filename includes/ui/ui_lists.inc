@@ -113,12 +113,69 @@ function html_encode_attribute(mixed $value, bool $doubleEncode = true, string $
 //	Options are merged with defaults.
 
 /**
+ * combo_input()'s/array_selector()'s $options, merged over their own
+ * defaults - every key below is always present after that merge.
+ * 'fixed_asset'/'parent' are the only keys never in either function's own
+ * default array; callers (e.g. stock_component_items_list_cells() for
+ * 'parent', the fixed-asset list wrappers for 'fixed_asset') inject them
+ * via $options instead.
+ *
+ * @psalm-type ComboOptions = array{
+ *   where: array<array-key, string>|string,
+ *   order: string|int|float|bool|array<array-key, string|int|float|bool|null>|null,
+ *   spec_option: string|false,
+ *   spec_id: int|string,
+ *   default: string|int|float|bool|null,
+ *   multi: bool,
+ *   select_submit: bool|string,
+ *   async: bool,
+ *   sel_hint: string|null,
+ *   search_box: string|bool,
+ *   type: int,
+ *   search_submit: bool|string,
+ *   size: int,
+ *   max: int,
+ *   height: int|false,
+ *   cells: bool,
+ *   search: array<array-key, string|int|float|bool|null>,
+ *   format: callable|string|null,
+ *   category: int|string|false,
+ *   disabled: bool,
+ *   box_hint: string|null,
+ *   show_inactive: bool,
+ *   editable: bool|int,
+ *   editlink: bool|string,
+ *   fixed_asset?: bool,
+ *   parent?: string|int|float|bool|null
+ * }
+ */
+
+/**
+ * array_selector()'s own, smaller $options - same defaulting pattern as
+ * ComboOptions above but a different (unrelated) default array, so it
+ * doesn't carry ComboOptions' other fields.
+ *
+ * @psalm-type ArraySelectorOptions = array{
+ *   spec_option: string|false,
+ *   spec_id: int|string,
+ *   select_submit: bool|string,
+ *   async: bool,
+ *   default: string|int|float|bool|null,
+ *   multi: bool,
+ *   height: int|false,
+ *   sel_hint: string|null,
+ *   disabled: bool
+ * }
+ */
+
+/**
  * @return non-empty-string
  */
 function combo_input(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id, string|int|float|bool|null $sql, string|int|float|bool|null $valfield, string|int|float|bool|null $namefield,
 	?array $options=null, ?string $type=null): string
 {
 global $path_to_root;
+$name = (string) $name;
 
 $opts = array(		// default options
 	'where'=> array(),		// additional constraints
@@ -157,28 +214,21 @@ $opts = array(		// default options
 // ------ merge options with defaults ----------
 	if($options != null)
 		$opts = array_merge($opts, $options);
+	/** @var ComboOptions $opts */
+	$opts = $opts;
 	if (!is_array($opts['where']))  $opts['where'] = array($opts['where']);
 
 	/** @var string $sql */
 	$sql = (string) $sql;
 
 	$search_box = $opts['search_box']===true ? '_'.$name.'_edit' : $opts['search_box'];
-	/** @var string|bool $search_box */
-	$search_box = $search_box;
 	// select content filtered by search field:
 	$search_submit = $opts['search_submit']===true ? '_'.$name.'_button' : $opts['search_submit'];
-	/** @var string|bool $search_submit */
-	$search_submit = $search_submit;
 	// select set by select content field
 	$search_button = (bool)$opts['editable'] ? '_'.$name.'_button' : ((bool)$search_box ? $search_submit : false);
-	/** @var string|bool $search_button */
-	$search_button = $search_button;
 
-	/** @var bool|string $select_submit */
 	$select_submit =  $opts['select_submit'];
-	/** @var int|string $spec_id */
 	$spec_id = $opts['spec_id'];
-	/** @var string|false $spec_option */
 	$spec_option = $opts['spec_option'];
 	if ($opts['type'] == 0) {
 		$by_id = true;
@@ -191,10 +241,9 @@ $opts = array(		// default options
 		$class = 'combo3';
 	}
 
-	$disabled = (bool)$opts['disabled'] ? "disabled" : '';
+	$disabled = $opts['disabled'] ? "disabled" : '';
 	$multi = $opts['multi'];
-	
-	/** @var array<array-key, string|int|float|bool|null> $search */
+
 	$search = $opts['search'];
 	if(!count($search)) {
 		$search = array($by_id ? $valfield : $namefield);
@@ -220,13 +269,13 @@ $opts = array(		// default options
 	if (isset($_POST['_'.$name.'_update'])) { // select list or search box change
 		if ($by_id) $txt = $_POST[$name];
 
-		if (!(bool)$opts['async'])
+		if (!$opts['async'])
 			ajax()->activate('_page_body');
 		else
 			ajax()->activate($name);
 	}
 	if (isset($_POST[$search_button])) {
-		if (!(bool)$opts['async'])
+		if (!$opts['async'])
 			ajax()->activate('_page_body');
 		else
 			ajax()->activate($name);
@@ -238,7 +287,7 @@ $opts = array(		// default options
 		if ((bool)$opts['search_submit']) {
 			if (isset($_POST[$search_button])) {
 				$selected_id = array(); // ignore selected_id while search
-				if (!(bool)$opts['async'])
+				if (!$opts['async'])
 					ajax()->activate('_page_body');
 				else
 					ajax()->activate($name);
@@ -272,7 +321,6 @@ $opts = array(		// default options
 			$sql .= $where;
 		}
 	}
-	/** @var string|int|float|bool|array<array-key, string|int|float|bool|null>|null $order */
 	$order = $opts['order'];
 	if ($order != false) {
 		if (!is_array($order))
@@ -290,9 +338,7 @@ $opts = array(		// default options
 	$pname = false;
 	if (($type === "customer" || $type === "supplier") && !empty(sysprefs()->prefs['shortname_name_in_list']))
 		$pname = true;
-	/** @var callable|string|null $format */
 	$format = $opts['format'];
-	/** @var int|string|false $category */
 	$category = $opts['category'];
 	if($result = db_select($sql)) {
 		while ($contact_row = db_fetch($result)) {
@@ -313,8 +359,8 @@ $opts = array(		// default options
 				if ((bool)$edit)
 					break;	// selected field is editable - abandon list construction
 			}
-			// show selected option even if inactive 
-			if (!(bool)$opts['show_inactive'] && (bool)(@$contact_row['inactive']) && $sel==='') {
+			// show selected option even if inactive
+			if (!$opts['show_inactive'] && (bool)(@$contact_row['inactive']) && $sel==='') {
 				continue;
 			} else 
 				$optclass = (bool)(@$contact_row['inactive']) ? "class='inactive'" : '';
@@ -343,26 +389,26 @@ $opts = array(		// default options
 		$first_opt = $spec_option;
 		$sel = $found===false ? 'selected' : '';
 		$optclass = @$contact_row['inactive'] ? "class='inactive'" : '';
-		$selector = "<option $sel value='".html_encode_attribute($first_id, false, output_encoding())."'>".html_encode((string) $first_opt, false, output_encoding())."</option>\n"
+		$selector = "<option $sel value='".html_encode_attribute($first_id, false, output_encoding())."'>".html_encode($first_opt, false, output_encoding())."</option>\n"
 			. $selector;
 	}
 
 	if ($found===false) {
 		$selected_id = array($first_id);
 	}
-	
-	$_POST[$name] = (bool)$multi ? $selected_id : $selected_id[0];
+
+	$_POST[$name] = $multi ? $selected_id : $selected_id[0];
 
 	if (sysprefs()->use_popup_search)
-		$selector = "<select id='$name' autocomplete='off' ".((bool)$multi ? "multiple" : '')
+		$selector = "<select id='$name' autocomplete='off' ".($multi ? "multiple" : '')
 		. ($opts['height']!==false ? ' size="'.(string)$opts['height'].'"' : '')
-		. "$disabled name='$name".((bool)$multi ? '[]':'')."' class='$class' title='"
-		. (string)$opts['sel_hint']."' $rel>".$selector."</select>\n";
+		. "$disabled name='$name".($multi ? '[]':'')."' class='$class' title='"
+		. $opts['sel_hint']."' $rel>".$selector."</select>\n";
 	else
-		$selector = "<select autocomplete='off' ".((bool)$multi ? "multiple" : '')
+		$selector = "<select autocomplete='off' ".($multi ? "multiple" : '')
 		. ($opts['height']!==false ? ' size="'.(string)$opts['height'].'"' : '')
-		. "$disabled name='$name".((bool)$multi ? '[]':'')."' class='$class' title='"
-		. (string)$opts['sel_hint']."' $rel>".$selector."</select>\n";
+		. "$disabled name='$name".($multi ? '[]':'')."' class='$class' title='"
+		. $opts['sel_hint']."' $rel>".$selector."</select>\n";
 	if ($by_id && ($search_box != false || (bool)$opts['editable']) ) {
 		// on first display show selector list
 		if (isset($_POST[$search_box]) && (bool)$opts['editable'] && (bool)$edit) {
@@ -395,7 +441,7 @@ $opts = array(		// default options
 		$edit_entry = "<input $disabled type='text' name='$search_box' id='$search_box' size='".
 			(string)$opts['size']."' maxlength='".(string)$opts['max'].
 			"' value='".html_encode_attribute($txt, false, output_encoding())."' class='$class".(!fallback_mode() && !$by_id ? ' fa-none' : '')."' rel='$name' autocomplete='off' title='"
-			.(string)$opts['box_hint']."'"
+			.$opts['box_hint']."'"
 			.">\n";
 		if ($search_submit != false || (bool)$opts['editable']) {
 			$edit_entry .= sprintf(SEARCH_BUTTON, $disabled,
@@ -435,8 +481,7 @@ $opts = array(		// default options
 	        			$img_title = _("Search items");
 	        			break;
 	      			case "component":
-	      				/** @var string|int|float|bool|null $parent */
-	      				$parent = $opts['parent'];
+	      				$parent = $opts['parent'] ?? null;
 	        			$link = $path_to_root . "/inventory/inquiry/stock_list.php?popup=1&type=component&parent=".(string)$parent."&client_id=" . $id;
 	        			$img_title = _("Search items");
 	        			break;
@@ -476,7 +521,7 @@ $opts = array(		// default options
 	if ((bool)$opts['editlink'])
 		$selector .= ' '.(string)$opts['editlink'];
 
-	if ($search_box && (bool)$opts['cells'])
+	if ($search_box && $opts['cells'])
 		$str = ($edit_entry!='' ? "<td>$edit_entry</td>" : '')."<td nowrap>$selector$img</td>";
 	else
 		$str = $edit_entry.$selector.$img;
@@ -498,6 +543,7 @@ function list_updated(string|int|float|bool|null $name): bool
 
 function array_selector(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id, array $items, ?array $options=null): string
 {
+$name = (string) $name;
 
 $opts = array(		// default options
 	'spec_option'=>false, 	// option text or false
@@ -514,18 +560,15 @@ $opts = array(		// default options
 // ------ merge options with defaults ----------
 	if($options != null)
 		$opts = array_merge($opts, $options);
-	/** @var bool|string $select_submit */
+	/** @var ArraySelectorOptions $opts */
+	$opts = $opts;
 	$select_submit =  $opts['select_submit'];
-	/** @var int|string $spec_id */
 	$spec_id = $opts['spec_id'];
-	/** @var string|false $spec_option */
 	$spec_option = $opts['spec_option'];
-	$disabled = (bool)$opts['disabled'] ? "disabled" : '';
-	/** @var bool $multi */
+	$disabled = $opts['disabled'] ? "disabled" : '';
 	$multi = $opts['multi'];
 
 	if ($selected_id == null) {
-		/** @var string|int|float|bool|array|null $default */
 		$default = $opts['default'];
 		$selected_id = get_post($name, $default);
 	}
@@ -533,7 +576,7 @@ $opts = array(		// default options
 		$selected_id = array((string)$selected_id); // code is generalized for multiple selection support
 
 	if (isset($_POST[ '_'.$name.'_update'])) {
-		if (!(bool)$opts['async'])
+		if (!$opts['async'])
 			ajax()->activate('_page_body');
 		else
 			ajax()->activate($name);
@@ -564,18 +607,18 @@ $opts = array(		// default options
 		$first_id = $spec_id;
 		$first_opt = $spec_option;
 		$sel = $found===false ? 'selected' : '';
-		$selector = "<option $sel value='".html_encode_attribute($spec_id, false, output_encoding())."'>".html_encode((string) $spec_option, false, output_encoding())."</option>\n"
+		$selector = "<option $sel value='".html_encode_attribute($spec_id, false, output_encoding())."'>".html_encode($spec_option, false, output_encoding())."</option>\n"
 			. $selector;
 	}
 
 	if ($found===false) {
 		$selected_id = array($first_id);
 	}
-	$_POST[$name] = (bool)$multi ? $selected_id : $selected_id[0];
+	$_POST[$name] = $multi ? $selected_id : $selected_id[0];
 
-	$selector = "<select autocomplete='off' ".((bool)$multi  ? "multiple" : '')
+	$selector = "<select autocomplete='off' ".($multi  ? "multiple" : '')
 		. ($opts['height']!==false ? ' size="'.(string)$opts['height'].'"' : '')
-		. "$disabled name='$name".((bool)$multi ? '[]' : '')."' class='combo' title='"
+		. "$disabled name='$name".($multi ? '[]' : '')."' class='combo' title='"
 		. (string)$opts['sel_hint']."'>".$selector."</select>\n";
 
 	ajax()->addUpdate($name, "_{$name}_sel", $selector);
@@ -1204,6 +1247,7 @@ function stock_units_list_row(?string $label, ?string $name, string|int|float|bo
 		echo "<td class='label'>$label</td>\n";
 	echo "<td>";
 
+	$units = array();
 	while($unit = db_fetch($result))
 		$units[$unit['abbr']] = $unit['name'];
 
@@ -1218,6 +1262,7 @@ function stock_purchasable_fa_list_cells(string|int|float|bool|null $label, ?str
 	bool $submit_on_change=false, bool $all=false, bool $editkey = false, array $exclude_items = array()): void
 {
 	// Check if a fixed asset has been bought.
+	$where_opts = array();
 	$where_opts[] = "stock_id NOT IN
     	( SELECT stock_id FROM ".TB_PREF."stock_moves WHERE type=".ST_SUPPRECEIVE." AND qty!=0 )";
 
@@ -1235,6 +1280,7 @@ function stock_disposable_fa_list(?string $name, string|int|float|bool|array|nul
 	bool $all_option=false, bool $submit_on_change=false): void
 {
 	// Check if a fixed asset has been bought....
+	$where_opts = array();
 	$where_opts[] = "stock_id IN
     	( SELECT stock_id FROM ".TB_PREF."stock_moves WHERE type=".ST_SUPPRECEIVE." AND qty!=0 )";
 	// ...but has not been disposed or sold already.
@@ -1251,6 +1297,7 @@ function stock_disposable_fa_list_cells(string|int|float|bool|null $label, ?stri
 	string|bool|null $all_option=false, bool $submit_on_change=false, array $exclude_items = array()): void
 {
 	// Check if a fixed asset has been bought....
+	$where_opts = array();
 	$where_opts[] = "stock_id IN
     	( SELECT stock_id FROM ".TB_PREF."stock_moves WHERE type=".ST_SUPPRECEIVE." AND qty!=0 )";
 	// ...but has not been disposed or sold already.
@@ -1274,6 +1321,7 @@ function stock_depreciable_fa_list_cells(?string $label, ?string $name, string|i
 {
 
 	// Check if a fixed asset has been bought....
+	$where_opts = array();
 	$where_opts[] = "stock_id IN
     	( SELECT stock_id FROM ".TB_PREF."stock_moves WHERE type=".ST_SUPPRECEIVE." AND qty!=0 )";
 	// ...but has not been disposed or sold already.
@@ -1504,7 +1552,6 @@ function sales_groups_list_row(?string $label, ?string $name, string|int|float|b
 
 //------------------------------------------------------------------------------------
 
-/** @psalm-pure */
 function _format_template_items(array $row): string
 {
 	return ($row[0] . nbsp() . "- " . nbsp() . _("Amount") . nbsp().$row[1]);
@@ -1996,7 +2043,6 @@ function gl_all_accounts_list(string|int|float|bool|null $name, string|int|float
 		), $account );
 }
 
-/** @psalm-pure */
 function _format_account(array $row): string
 {
 	return $row[0] . str_repeat(nbsp(), 4) . $row[1];
@@ -2195,7 +2241,7 @@ function themes_list_row(?string $label, ?string $name, string|int|float|bool|nu
 	$path = $path_to_root.'/themes/';
 	$themes = array();
 	$themedir = opendir($path);
-	while(false !== ($fname = readdir($themedir)))
+	while($themedir !== false && false !== ($fname = readdir($themedir)))
 	{
 		if($fname!='.' && $fname!='..' && $fname!='CVS' && is_dir($path.$fname))
 		{
@@ -2405,7 +2451,7 @@ function print_profiles_list_row(?string $label, ?string $name, string|int|float
 	$result = db_select($sql, 'cannot get all profile names');
 	$profiles = array();
 	while($myrow=db_fetch($result)) {
-		$profiles[$myrow['profile']] = $myrow['profile'];
+		$profiles[(string) $myrow['profile']] = $myrow['profile'];
 	}
 
 	echo "<tr>";
@@ -2424,7 +2470,8 @@ function print_profiles_list_row(?string $label, ?string $name, string|int|float
 
 function printers_list(?string $name, string|int|float|bool|array|null $selected_id=null, string|bool|null $spec_opt=false, bool $submit_on_change=false): string
 {
-	static $printers; // query only once for page display
+	/** @var array<int|string, string>|null $printers */
+	static $printers = null; // query only once for page display
 
 	if (!$printers) {
 		$sql = "SELECT id, name, description FROM ".TB_PREF."printers";	
@@ -2580,10 +2627,11 @@ function tag_list(string|int|float|bool|null $name, string|int|float|bool|null $
 	include_once(dirname(__DIR__, 2) . "/admin/db/tags_db.inc");
 	$results = get_tags($type, $all);
 
+	$tags = array();
 	while ($tag = db_fetch($results))
 		$tags[$tag['id']] = $tag['name'];
-	
-	if (!isset($tags)) {
+
+	if (count($tags) === 0) {
 		$tags[''] = $all ? _("No tags defined.") : _("No active tags defined.");
 		$spec_opt = false;
 	}
@@ -2688,7 +2736,7 @@ function coa_list_row(?string $label, ?string $name, string|int|float|bool|null 
 	$path = $path_to_root.'/sql/';
 	$coas = array();
 	$sqldir = opendir($path);
-	while (false !== ($fname = readdir($sqldir)))
+	while ($sqldir !== false && false !== ($fname = readdir($sqldir)))
 	{
 		if (is_file($path.$fname) && substr($fname,-4)=='.sql' && @($fname[2] == '_'))
 		{

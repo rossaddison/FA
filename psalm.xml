@@ -40,6 +40,22 @@
         <var name="tmonths" type="array&lt;int, string&gt;"/>
         <var name="wo_types_array" type="array&lt;int, string&gt;"/>
         <var name="class_types" type="array&lt;int, string&gt;"/>
+        <var name="fa_systypes_array" type="array&lt;int, string&gt;"/>
+        <var name="type_shortcuts" type="array&lt;int, string&gt;"/>
+        <var name="bank_account_types" type="array&lt;int, string&gt;"/>
+        <var name="bank_transfer_types" type="array&lt;int, string&gt;"/>
+        <var name="payment_person_types" type="array&lt;int, string&gt;"/>
+        <var name="wo_cost_types" type="array&lt;int, string&gt;"/>
+        <var name="quick_actions" type="array&lt;string, string&gt;"/>
+        <var name="quick_entry_types" type="array&lt;int, string&gt;"/>
+        <var name="depreciation_methods" type="array&lt;string, string&gt;"/>
+        <var name="stock_types" type="array&lt;string, string&gt;"/>
+        <var name="tag_types" type="array&lt;int, string&gt;"/>
+        <var name="sys_crm_cats" type="array&lt;string, string&gt;"/>
+        <var name="pterm_types" type="array&lt;int, string&gt;"/>
+        <var name="tax_algorithms" type="array&lt;int, string&gt;"/>
+        <var name="bank_owner_types" type="array&lt;int, string&gt;"/>
+        <var name="supported_collations" type="array&lt;string, string&gt;"/>
         <var name="_SESSION" type="array{wa_current_user?: current_user, Items?: Cart, supp_trans?: supp_trans, alloc?: allocation, language?: language, SysPrefs?: sys_prefs, transfer_items?: items_cart, issue_items?: items_cart, adj_items?: items_cart, pay_items?: items_cart, journal_items?: items_cart, View?: Cart, PO?: purch_order, ...&lt;string, mixed&gt;}"/>
         <var name="db_connections" type="array&lt;int, array&lt;string, string&gt;&gt;"/>
         <var name="repo_auth" type="array{scheme?: string, login?: string, pass?: string, host?: string, path?: string, branch?: string}"/>
