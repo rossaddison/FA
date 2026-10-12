@@ -193,7 +193,7 @@ function display_customer_topten(): void
 	table_end();
 	$pg = new Chart('horizontalBar', 'c1');
 	if (isset($_POST['select_c1']))
-		$pg->type = $_POST['select_c1'];
+		$pg->type = (int) post_scalar('select_c1');
 	$today = calc_today();
 	table('100%', '50%');
 	$title = customer_top($today, 10, 66, $pg);
@@ -230,7 +230,7 @@ function display_supplier_topten(): void
 	table_end();
 	$pg = new Chart('horizontalBar', 's1');
 	if (isset($_POST['select_s1']))
-		$pg->type = $_POST['select_s1'];
+		$pg->type = (int) post_scalar('select_s1');
 	$today = calc_today();
 	table('100%', '50%');
 	$title = supplier_top($today, 10, 66, $pg);
@@ -301,7 +301,7 @@ function display_stock_topten(?int $type=0): void
 	}
 	$pg = new Chart('bar', 'i1');
 	if (isset($_POST['select_i1']))
-		$pg->type = $_POST['select_i1'];
+		$pg->type = (int) post_scalar('select_i1');
 	table('100%', '50%');
 	$today = calc_today();
 	$title = stock_top($today, 5, 66, $type, $pg);
@@ -348,7 +348,7 @@ function display_dimension_topten(): void
 	table_end();
 	$pg = new Chart('bar', 'd1');
 	if (isset($_POST['select_d1']))
-		$pg->type = $_POST['select_d1'];
+		$pg->type = (int) post_scalar('select_d1');
 	table('100%', '50%');
 	$today = calc_today();
 	$title = dimension_top($today, 5, 66, $pg);
@@ -375,7 +375,7 @@ function display_gl_info(): void
 	table_end();
 	$pg = new Chart('halfDonut', 'g1');
 	if (isset($_POST['select_g1']))
-		$pg->type = $_POST['select_g1'];
+		$pg->type = (int) post_scalar('select_g1');
 	table('100%', '50%');
 	$title = gl_top($today, 66, $pg);
 	source_graphic($today, $title, _("Class"), $pg);
@@ -406,25 +406,25 @@ function display_all(): void
 	table_end();
 	$pg = new Chart('horizontalBar', 'c2');
 	if (isset($_POST['select_c2']))
-		$pg->type = $_POST['select_c2'];
+		$pg->type = (int) post_scalar('select_c2');
 	table('100%', '50%');
 	$title = customer_top($today, 3, 66, $pg);
 	source_graphic($today, $title[0], _("Customer"), $pg);
 	$pg = new Chart('horizontalBar', 's2');
 	if (isset($_POST['select_s2']))
-		$pg->type = $_POST['select_s2'];
+		$pg->type = (int) post_scalar('select_s2');
 	$title = supplier_top($today, 3, 66, $pg);
 	source_graphic($today, $title[0], _("Supplier"), $pg);
 	$pg = new Chart('bar', 'i2');
 	if (isset($_POST['select_i2']))
-		$pg->type = $_POST['select_i2'];
+		$pg->type = (int) post_scalar('select_i2');
 	$title = stock_top($today, 3, 66, 0, $pg);
 	source_graphic($today, $title[0], _("Items"), $pg);
 	td('50%');
 	dimension_top($today, 3, 66);
 	$pg = new Chart('pie', 'd2');
 	if (isset($_POST['select_d2']))
-		$pg->type = $_POST['select_d2'];
+		$pg->type = (int) post_scalar('select_d2');
 	$title = gl_top($today, 66, $pg);
 	source_graphic($today, $title, _("Class"), $pg);
 	stock_top($today, 3, 66, 2);
@@ -432,7 +432,7 @@ function display_all(): void
 	table_end();
 }
 
-function customer_top(?string $today, ?int $limit=10, string|int|null $width='33', ?object &$pg=null): array
+function customer_top(?string $today, ?int $limit=10, string|int|null $width='33', ?Chart &$pg=null): array
 {
 	$begin = date2sql(begin_fiscalyear());
 	$today = date2sql($today);
@@ -473,7 +473,7 @@ function customer_top(?string $today, ?int $limit=10, string|int|null $width='33
 	return array($title, $sales);
 }
 
-function supplier_top(?string $today, ?int $limit=10, string|int|null $width='33', ?object &$pg=null): array
+function supplier_top(?string $today, ?int $limit=10, string|int|null $width='33', ?Chart &$pg=null): array
 {
 	$begin = date2sql(begin_fiscalyear());
 	$today = date2sql($today);
@@ -515,7 +515,7 @@ function supplier_top(?string $today, ?int $limit=10, string|int|null $width='33
 	return array($title, $total);
 }
 
-function stock_top(?string $today, ?int $limit=10, string|int|null $width='33', ?int $type=0, ?object &$pg=null): array
+function stock_top(?string $today, ?int $limit=10, string|int|null $width='33', ?int $type=0, ?Chart &$pg=null): array
 {
 	if ($type == 2)
 		$sec = 'SA_ASSETSANALYTIC';
@@ -608,7 +608,7 @@ function stock_top(?string $today, ?int $limit=10, string|int|null $width='33', 
 	return array($title, $sales, $cost, $res);
 }
 
-function dimension_top(?string $today, ?int $limit=10, string|int|null $width='33', ?object &$pg=null): string
+function dimension_top(?string $today, ?int $limit=10, string|int|null $width='33', ?Chart &$pg=null): string
 {
 	$begin = date2sql(begin_fiscalyear());
 	$today = date2sql($today);
@@ -655,7 +655,7 @@ function dimension_top(?string $today, ?int $limit=10, string|int|null $width='3
 	return $title;
 }
 
-function gl_top(?string $today, string|int|null $width='33', ?object &$pg=null): string
+function gl_top(?string $today, string|int|null $width='33', ?Chart &$pg=null): string
 {
 	$begin = date2sql(begin_fiscalyear());
 	$today = date2sql($today);
@@ -708,7 +708,7 @@ function gl_week_performance(?string $today, string|int|null $width="33", ?int $
 	
 	$pg = new Chart('bar', 'g3');
 	if (isset($_POST['select_g3']))
-		$pg->type = $_POST['select_g3'];
+		$pg->type = (int) post_scalar('select_g3');
 	if (isset($_POST['per_g3']))
 		$weeks = (int) $_POST['per_g3'];
 	$begin = date2sql(begin_fiscalyear());
@@ -746,7 +746,7 @@ function gl_month_performance(?string $today, string|int|null $width="33", ?int 
 {
 	$pg = new Chart('bar', 'g4');
 	if (isset($_POST['select_g4']))
-		$pg->type = $_POST['select_g4'];
+		$pg->type = (int) post_scalar('select_g4');
 	if (isset($_POST['per_g4']))
 		$months = (int) $_POST['per_g4'];
 	$begin = date2sql(begin_fiscalyear());
@@ -784,7 +784,7 @@ function customer_aging(?string $today, string|int|null $width="33"): float
 {
 	$pg = new Chart('bar', 'c3');
 	if (isset($_POST['select_c3']))
-		$pg->type = $_POST['select_c3'];
+		$pg->type = (int) post_scalar('select_c3');
 	$today1 = date2sql($today);
 	$past1 = get_company_pref('past_due_days');
 	$past2 = 2 * $past1;
@@ -842,14 +842,14 @@ function customer_balance(?string $today)
 			WHERE ABS(trans.ov_amount + trans.ov_gst + trans.ov_freight + trans.ov_freight_tax + trans.ov_discount) - trans.alloc > ".FLOAT_COMP_DELTA;
     $result = db_select($sql,"The customer details could not be retrieved");
     $row = row_or_empty(db_fetch($result));
-	return (string) ($row[0] ?? '0');
+	return $row[0] ?? '0';
 }
 
 function supplier_aging(?string $today, string|int|null $width="33"): float
 {
 	$pg = new Chart('bar', 's3');
 	if (isset($_POST['select_s3']))
-		$pg->type = $_POST['select_s3'];
+		$pg->type = (int) post_scalar('select_s3');
 	$today1 = date2sql($today);
 	$past1 = get_company_pref('past_due_days');
 	$past2 = 2 * $past1;
@@ -902,7 +902,7 @@ function supplier_balance(?string $today)
 			AND ABS(trans.ov_amount + trans.ov_gst + trans.ov_discount) - trans.alloc > ".FLOAT_COMP_DELTA;
     $result = db_select($sql,"The supplier details could not be retrieved");
     $row = row_or_empty(db_fetch($result));
-	return (string) ($row[0] ?? '0');
+	return $row[0] ?? '0';
 }
 
 function cash_flow(?string $today): void
@@ -911,7 +911,7 @@ function cash_flow(?string $today): void
 	$months = 6;
 	$pg = new Chart('spline', 'g5');
 	if (isset($_POST['select_g5']))
-		$pg->type = $_POST['select_g5'];
+		$pg->type = (int) post_scalar('select_g5');
 	if (isset($_POST['per_g5']))
 		$months = (int) $_POST['per_g5'];
 	if (!(bool)is_date_in_fiscalyear($today))
@@ -967,7 +967,7 @@ function cash_flow(?string $today): void
 	source_graphic($today, $title, _("Month"), $pg, _("Months"), $months);
 }
 
-function source_graphic(string|int|float|bool|null $today, string|int|float|bool|null $title, ?string $x_axis, ?object $pg, ?string $per = '', string|int|bool|array|null $num = false): void
+function source_graphic(string|int|float|bool|null $today, string|int|float|bool|null $title, ?string $x_axis, ?Chart $pg, ?string $per = '', string|int|bool|array|null $num = false): void
 {
 	if ((bool)($per ?? null))
 		div_start($pg->id);
@@ -1202,7 +1202,7 @@ function get_num_customers()
 	$sql = "SELECT count(*) FROM ".TB_PREF."debtors_master";
 	$result = db_select($sql, "Fail in count customers");
     $row = row_or_empty(db_fetch($result));
-	return (string) ($row[0] ?? '0');
+	return $row[0] ?? '0';
 }
 
 /**
@@ -1213,7 +1213,7 @@ function get_num_branches()
 	$sql = "SELECT count(*) FROM ".TB_PREF."cust_branch";
 	$result = db_select($sql, "Fail in count branches");
     $row = row_or_empty(db_fetch($result));
-	return (string) ($row[0] ?? '0');
+	return $row[0] ?? '0';
 }
 
 /**
@@ -1224,7 +1224,7 @@ function get_num_salesmen()
 	$sql = "SELECT count(*) FROM ".TB_PREF."salesman";
 	$result = db_select($sql, "Fail in count salesmen");
     $row = row_or_empty(db_fetch($result));
-	return (string) ($row[0] ?? '0');
+	return $row[0] ?? '0';
 }
 
 /**
@@ -1241,7 +1241,7 @@ function get_num_overdue_sales()
 			AND DATEDIFF('$today', trans.due_date) > 0";
 	$result = db_select($sql);
     $row = row_or_empty(db_fetch($result));
-	return (string) ($row[0] ?? '0');
+	return $row[0] ?? '0';
 }
 
 /**
@@ -1252,7 +1252,7 @@ function get_num_suppliers()
 	$sql = "SELECT count(*) FROM ".TB_PREF."suppliers";
 	$result = db_select($sql, "Fail in count suppliers");
     $row = row_or_empty(db_fetch($result));
-	return (string) ($row[0] ?? '0');
+	return $row[0] ?? '0';
 }
 
 /**
@@ -1264,7 +1264,7 @@ function get_new_purch_orders()
 		quantity_received < quantity_ordered";
 	$result = db_select($sql, "Fail in count purch orders");
     $row = row_or_empty(db_fetch($result));
-	return (string) ($row[0] ?? '0');
+	return $row[0] ?? '0';
 }
 
 /**
@@ -1275,7 +1275,7 @@ function get_num_supp_invoices()
 	$sql = "SELECT count(*) FROM ".TB_PREF."supp_trans WHERE (ov_amount+ov_discount+ov_gst - alloc) <> 0";
 	$result = db_select($sql, "Fail in count purch invoices");
     $row = row_or_empty(db_fetch($result));
-	return (string) ($row[0] ?? '0');
+	return $row[0] ?? '0';
 }
 
 /**
@@ -1288,7 +1288,7 @@ function get_num_overdue_purch()
 	$sql = "SELECT COUNT(*) FROM ".TB_PREF."supp_trans WHERE (ov_amount+ov_discount+ov_gst - alloc) > ".FLOAT_COMP_DELTA." AND DATEDIFF('$today', due_date) > 0";
 	$result = db_select($sql, "Fail in count purch invoices");
     $row = row_or_empty(db_fetch($result));
-	return (string) ($row[0] ?? '0');
+	return $row[0] ?? '0';
 }
 
 /**
@@ -1299,7 +1299,7 @@ function get_num_items()
 	$sql = "SELECT count(*) FROM ".TB_PREF."stock_master";
 	$result = db_select($sql, "Fail in count stock master");
     $row = row_or_empty(db_fetch($result));
-	return (string) ($row[0] ?? '0');
+	return $row[0] ?? '0';
 }
 
 /**
@@ -1310,7 +1310,7 @@ function get_num_locations()
 	$sql = "SELECT count(*) FROM ".TB_PREF."locations";
 	$result = db_select($sql, "Fail in count locations");
     $row = row_or_empty(db_fetch($result));
-	return (string) ($row[0] ?? '0');
+	return $row[0] ?? '0';
 }
 
 /**
@@ -1322,7 +1322,7 @@ function get_num_kits()
 
 	$result = db_select($sql, "Fail in count kits");
     $row = row_or_empty(db_fetch($result));
-	return (string) ($row[0] ?? '0');
+	return $row[0] ?? '0';
 }
 
 function get_num_reorder(): int|string
@@ -1353,7 +1353,7 @@ function get_num_assembled()
 		AND released_date <= '$today'";
 	$result = db_select($sql, "Fail in count workorders");
     $row = row_or_empty(db_fetch($result));
-	return (string) ($row[0] ?? '0');
+	return $row[0] ?? '0';
 }
 
 /**
@@ -1367,7 +1367,7 @@ function get_num_manufactured()
 		AND released_date <= '$today'";
 	$result = db_select($sql, "Fail in count workorders");
     $row = row_or_empty(db_fetch($result));
-	return (string) ($row[0] ?? '0');
+	return $row[0] ?? '0';
 }
 	
 /**
@@ -1378,7 +1378,7 @@ function get_num_workcentres()
 	$sql = "SELECT count(*) FROM ".TB_PREF."workcentres";
 	$result = db_select($sql, "Fail in count work centres");
     $row = row_or_empty(db_fetch($result));
-	return (string) ($row[0] ?? '0');
+	return $row[0] ?? '0';
 }
 	
 /**
@@ -1389,7 +1389,7 @@ function get_open_workorders()
 	$sql = "SELECT count(*) FROM ".TB_PREF."workorders WHERE closed = 0";
 	$result = db_select($sql, "Fail in count workorders");
     $row = row_or_empty(db_fetch($result));
-	return (string) ($row[0] ?? '0');
+	return $row[0] ?? '0';
 }
 
 /**
@@ -1400,7 +1400,7 @@ function get_num_fixed_assets()
 	$sql = "SELECT count(*) FROM ".TB_PREF."stock_master WHERE mb_flag = 'F'";
 	$result = db_select($sql, "Fail in count fixed assets");
     $row = row_or_empty(db_fetch($result));
-	return (string) ($row[0] ?? '0');
+	return $row[0] ?? '0';
 }
 
 /**
@@ -1412,7 +1412,7 @@ function get_num_fixed_locations()
 		WHERE mb_flag = 'F'";
 	$result = db_select($sql, "Fail in count locations");
     $row = row_or_empty(db_fetch($result));
-	return (string) ($row[0] ?? '0');
+	return $row[0] ?? '0';
 }
 
 /**
@@ -1424,7 +1424,7 @@ function get_num_fixed_categories()
 		WHERE mb_flag = 'F'";
 	$result = db_select($sql, "Fail in count categories");
     $row = row_or_empty(db_fetch($result));
-	return (string) ($row[0] ?? '0');
+	return $row[0] ?? '0';
 }
 
 /**
@@ -1435,7 +1435,7 @@ function get_num_fixed_classes()
 	$sql = "SELECT count(*) FROM ".TB_PREF."stock_fa_class";
 	$result = db_select($sql, "Fail in count fa classes");
     $row = row_or_empty(db_fetch($result));
-	return (string) ($row[0] ?? '0');
+	return $row[0] ?? '0';
 }
 
 /**
@@ -1446,7 +1446,7 @@ function get_num_dimensions()
 	$sql = "SELECT count(*) FROM ".TB_PREF."dimensions";
 	$result = db_select($sql, "Fail in count dimensions");
     $row = row_or_empty(db_fetch($result));
-	return (string) ($row[0] ?? '0');
+	return $row[0] ?? '0';
 }
 
 /**
@@ -1457,7 +1457,7 @@ function get_dim_type2()
 	$sql = "SELECT count(*) FROM ".TB_PREF."dimensions WHERE type_ = 2";
 	$result = db_select($sql, "Fail in count simensions 2");
     $row = row_or_empty(db_fetch($result));
-	return (string) ($row[0] ?? '0');
+	return $row[0] ?? '0';
 }
 
 /**
@@ -1468,7 +1468,7 @@ function get_dim_closed()
 	$sql = "SELECT count(*) FROM ".TB_PREF."dimensions WHERE closed = 1";
 	$result = db_select($sql, "Fail in count closed dimensions");
     $row = row_or_empty(db_fetch($result));
-	return (string) ($row[0] ?? '0');
+	return $row[0] ?? '0';
 }
 
 function get_dim_total(): array
@@ -1507,7 +1507,7 @@ function get_today_deposits(?string $today)
 	else
 	{
 		$row = row_or_empty(db_fetch($result));
-		return (string) ($row[0] ?? '0');
+		return $row[0] ?? '0';
 	}
 }
 
@@ -1525,7 +1525,7 @@ function get_today_payments(?string $today)
 	else
 	{
 		$row = row_or_empty(db_fetch($result));
-		return (string) ($row[0] ?? '0');
+		return $row[0] ?? '0';
 	}
 }
 
@@ -1537,7 +1537,7 @@ function get_num_users()
 	$sql = "SELECT count(*) FROM ".TB_PREF."users";
 	$result = db_select($sql, "could not get num users");
     $row = row_or_empty(db_fetch($result));
-	return (string) ($row[0] ?? '0');
+	return $row[0] ?? '0';
 }
 
 function get_num_extensions(): int
