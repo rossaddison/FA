@@ -403,6 +403,62 @@ their source.
   alongside the existing month/day casts in `__date()` — protects every
   caller project-wide, not just this one call site.
 
+- **`includes/ui/ui_input.inc` — nearly every basic form-field primitive
+  (`text_input()`, `text_cells_ex()`, `date_cells()`, `amount_cells_ex()`,
+  `checkbox()`, `radio()`, `hidden()`, `button()`, `ref_cells()`).** All of
+  these interpolate `$name`/`$value`/`$title`/`$_POST[$name]` straight into
+  HTML attributes (`name="$name"`, `value="$value"`, `title='$title'`,
+  `onclick='$submit_on_change'`) with zero escaping. Since `$value` for a
+  text/date/amount field is read straight back from `$_POST[$name]` and
+  re-echoed on the very next render (every validation-failure redisplay,
+  every multi-step form), this is reflected XSS on essentially every form
+  field in the application: submit `"><script>...</script>` into any text
+  box, trigger a validation error, and it executes on redisplay.
+  `ref_cells()` additionally had a raw, `@`-suppressed `$_POST[$name]` read
+  wired straight into a `value='...'` attribute (the `@` only silences the
+  PHP notice, not the injection). Fixed by routing every one of these
+  through `html_encode()`/`html_encode_attribute()` (the two wrappers this
+  migration already added around `Yiisoft\Html\Html::encode()`/
+  `encodeAttribute()` specifically so Psalm's taint-escape tracking
+  recognizes them — see `PSALM_MIGRATION.md`'s taint-escape section).
+  `textarea_cells()` had the same gap for a `<textarea>`'s actual text
+  content (not just its attributes) — the single worst instance, since
+  textareas are exactly where users type free-form text (memos, notes).
+
+- **`includes/ui/ui_input.inc` — `email_cell()`, `email_row()`,
+  `email_row_ex()`, `link_row()`, `link_row_ex()`.** All five build an
+  `<a href='...'>` anchor by directly concatenating an email address or a
+  user-supplied URL (`$_POST[$name]`, sometimes prefixed with `http://` if
+  the user didn't type a scheme) into the `href` attribute, with the same
+  value (or the field's label) repeated unescaped as the link text. A
+  crafted value like `' onmouseover='alert(1)` or a `javascript:`-adjacent
+  payload would break out of the attribute or inject markup the moment the
+  field was redisplayed. Fixed the same way — `html_encode_attribute()` on
+  the `href` value, `html_encode()` on the link text. `email_row()`/
+  `email_row_ex()`/`link_row()`/`link_row_ex()` build their own
+  `<tr><td class='label'>` directly now instead of delegating to
+  `text_row()`/`text_row_ex()`, because their label is legitimately
+  pre-built HTML (the anchor) — see the note below.
+
+  Two related findings were investigated and left as documented, confirmed
+  exceptions rather than force-fixed: `label_cell()`'s own `$label` echo,
+  and `amount_cells_ex()`'s `$post_label` span. Both are genuine "accept
+  caller-supplied HTML, verbatim, by design" primitives — confirmed via
+  grep that real call sites across the codebase rely on this (e.g.
+  `gl/manage/gl_account_classes.php`, `sales/customer_invoice.php` pass
+  `"<b>...</b>"`/badge markup straight into `label_cell()`;
+  `inventory/manage/items.php` passes a whole `<button>` element as
+  `amount_cells_ex()`'s `$post_label`). Auto-escaping either would visibly
+  break rendering across many existing pages without a much larger,
+  coordinated rewrite of every caller — out of scope for this pass, and
+  called out here rather than silently left as unexplained Psalm noise.
+  Every caller of `label_cell()`/`text_row()`/`text_row_ex()` identified in
+  this pass that constructs its own HTML internally (the email/link/ref
+  functions above) now pre-escapes its own dynamic content before handing
+  it to these passthrough primitives, so the real injection points are
+  closed even though the primitives themselves stay deliberately
+  unescaping.
+
 ## SQL injection
 
 Found by chasing Psalm's `TaintedSql` findings to their source. `db_escape()`

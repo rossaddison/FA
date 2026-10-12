@@ -138,7 +138,7 @@ function hidden(string|int|float|bool|null $name, string|int|float|bool|null $va
 	if ($value === null)
 		$value = get_post((string) $name);
 
-  	$ret = "<input type=\"hidden\" name=\"$name\" value=\"".html_encode_attribute($value, false, output_encoding())."\">";
+  	$ret = "<input type=\"hidden\" name=\"".html_encode_attribute($name, false, output_encoding())."\" value=\"".html_encode_attribute($value, false, output_encoding())."\">";
 	ajax()->addUpdate((string) $name, (string) $name, $value);
 	if ($echo) {
 		$hidden_fields[] = $ret;
@@ -179,13 +179,13 @@ function submit(string|int|float|bool|null $name, string|int|float|bool|null $va
 
 	} elseif (!is_bool($atype)) { // necessary: switch uses '=='
 
-		$aspect = " aspect='$atype' ";
+		$aspect = " aspect='".html_encode_attribute($atype, false, output_encoding())."' ";
 		$types = explode(' ', (string) $atype);
 
 		foreach ($types as $type) {
 			switch($type) {
 				case 'selector':
-					$aspect = " aspect='selector' rel = '$value'"; 
+					$aspect = " aspect='selector' rel = '".html_encode_attribute($value, false, output_encoding())."'";
 					$value = _("Select");
 					if ($icon===false) $icon=ICON_SUBMIT; break;
 
@@ -205,11 +205,13 @@ function submit(string|int|float|bool|null $name, string|int|float|bool|null $va
 	    .((bool)$atype ? 'ajaxsubmit' : 'inputsubmit') . $hide
 		."\" type=\"submit\""
 		.$aspect
-	    ." name=\"$name\"  id=\"$name\" value=\"$value\""
-	    .((bool)$title ? " title='$title'" : '')
+	    ." name=\"".html_encode_attribute($name, false, output_encoding())
+	    ."\"  id=\"".html_encode_attribute($name, false, output_encoding())
+	    ."\" value=\"".html_encode_attribute($value, false, output_encoding())."\""
+	    .((bool)$title ? " title='".html_encode_attribute($title, false, output_encoding())."'" : '')
 	    .">"
 		.((bool)$icon ? "<img src='".html_encode_attribute("$path_to_root/themes/".user_theme()."/images/$icon", false, output_encoding())."' height='12' alt=''>" : '')
-		."<span>$value</span>"
+		."<span>".html_encode($value, false, output_encoding())."</span>"
 		."</button>\n";
 	if ((bool)$echo)
 		echo $submit_str;
@@ -332,7 +334,7 @@ function button(string|int|float|bool|null $name, string|int|float|bool|null $va
 	// to underscore in POST names, to maintain compatibility with register_globals
 	$rel = '';
 	if ($aspect == 'selector') {
-		$rel = " rel='$value'";
+		$rel = " rel='".html_encode_attribute($value, false, output_encoding())."'";
 		$value = _("Select");
 	}
 	if (user_graphic_links() && (bool)$icon)
@@ -342,8 +344,8 @@ function button(string|int|float|bool|null $name, string|int|float|bool|null $va
 		return "<button type='submit' class='editbutton' name='"
 			.html_specials_encode(strtr((string) $name, array('.'=>'=2E', '='=>'=3D',// ' '=>'=20','['=>'=5B'
 			)))
-			."' value='1'" . ((bool)$title ? " title='$title'":" title='$value'")
-			. ((bool)$aspect ? " aspect='$aspect'" : '')
+			."' value='1'" . ((bool)$title ? " title='".html_encode_attribute($title, false, output_encoding())."'":" title='".html_encode_attribute($value, false, output_encoding())."'")
+			. ((bool)$aspect ? " aspect='".html_encode_attribute($aspect, false, output_encoding())."'" : '')
 			. $rel
 			." >".set_icon($icon)."</button>\n";
 	}
@@ -351,9 +353,9 @@ function button(string|int|float|bool|null $name, string|int|float|bool|null $va
 		return "<input type='submit' class='editbutton' name='"
 			.html_specials_encode(strtr((string) $name, array('.'=>'=2E', '='=>'=3D',// ' '=>'=20','['=>'=5B'
 			)))
-			."' value='$value'"
-			.((bool)$title ? " title='$title'":'')
-			. ((bool)$aspect ? " aspect='$aspect'" : '')
+			."' value='".html_encode_attribute($value, false, output_encoding())."'"
+			.((bool)$title ? " title='".html_encode_attribute($title, false, output_encoding())."'":'')
+			. ((bool)$aspect ? " aspect='".html_encode_attribute($aspect, false, output_encoding())."'" : '')
 			. $rel
 			." >\n";
 }
@@ -398,11 +400,12 @@ function check_value(string|array $name): int|array
 
 function checkbox(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $value=null, string|int|float|bool|null $submit_on_change=false, string|int|float|bool|null $title=false): string
 {
+	$name = (string) $name;
 
-	$str = '';	
+	$str = '';
 
 	if ((bool)$label)
-		$str .= $label . "  ";
+		$str .= html_encode($label, false, output_encoding()) . "  ";
 	if ($submit_on_change !== false) {
 		if ($submit_on_change === true)
 			$submit_on_change = 'update';
@@ -412,9 +415,9 @@ function checkbox(string|int|float|bool|null $label, string|int|float|bool|null 
 
 	$str .= "<input"
 	    .($value == 1 ? ' checked':'')
-	    ." type='checkbox' name='$name' value='1'"
-	    .($submit_on_change === 'update' ? fa_action_attrs('submit-update', array($name)) : ((bool)$submit_on_change ? " onclick='$submit_on_change'" : ''))
-	    .((bool)$title ? " title='$title'" : '')
+	    ." type='checkbox' name='".html_encode_attribute($name, false, output_encoding())."' value='1'"
+	    .($submit_on_change === 'update' ? fa_action_attrs('submit-update', array($name)) : ((bool)$submit_on_change ? " onclick='".html_encode_attribute($submit_on_change, false, output_encoding())."'" : ''))
+	    .((bool)$title ? " title='".html_encode_attribute($title, false, output_encoding())."'" : '')
 	    ." >\n";
 
 	ajax()->addUpdate($name, $name, $value);
@@ -449,15 +452,16 @@ function radio(?string $label, ?string $name, string|int|float|bool|null $value,
 	if (!isset($selected))
 		$selected = get_post($name) === (string)$value;
 
-	return "<input type='radio' name=$name value='$value' ".($selected ? "checked":'')
+	return "<input type='radio' name='".html_encode_attribute($name, false, output_encoding())
+	    ."' value='".html_encode_attribute($value, false, output_encoding())."' ".($selected ? "checked":'')
 	    .($submit_on_change ? fa_action_attrs('submit-update', array($name)) : '')
-		.">".((bool)$label ? $label : '');
+		.">".((bool)$label ? html_encode($label, false, output_encoding()) : '');
 }
 
 //-----------------------------------------------------------------------------------
 function labelheader_cell(string|int|float|bool|null $label, ?string $params=""): void
 {
-	echo "<td class='tableheader' $params>$label</td>\n";
+	echo "<td class='tableheader' $params>".html_encode($label, false, output_encoding())."</td>\n";
 }
 
 function label_cell(string|int|float|bool|null $label, ?string $params="", string|int|null $id=null): string|int|float|bool|null
@@ -475,7 +479,8 @@ function label_cell(string|int|float|bool|null $label, ?string $params="", strin
 
 function email_cell(string|int|float|bool|null $label, ?string $params="", string|int|null $id=null): void
 {
-	label_cell("<a href='mailto:$label'>$label</a>", $params, $id);
+	label_cell("<a href='mailto:".html_encode_attribute($label, false, output_encoding())."'>"
+		.html_encode($label, false, output_encoding())."</a>", $params, $id);
 }
 
 function amount_decimal_cell(string|int|float|bool|null $label, ?string $params="", string|int|null $id=null): void
@@ -523,7 +528,7 @@ function qty_cell(string|int|float|bool|null $label, string|bool|null $bold=fals
 function label_cells(string|int|float|bool|null $label, string|int|float|bool|null $value, string|int|float|bool|null $params="", ?string $params2="", ?string $id=null): void
 {
 	if ($label != null)
-		echo "<td $params>$label</td>\n";
+		echo "<td $params>".html_encode($label, false, output_encoding())."</td>\n";
 	label_cell($value, $params2, $id);
 }
 
@@ -543,24 +548,29 @@ function label_row(string|int|float|bool|null $label, string|int|float|bool|null
 
 function text_input(string|int|float|bool|null $name, string|int|float|bool|null $value=null, string|int|float|bool|null $size='', string|int|float|bool|null $max='', string|int|float|bool|null $title='', string|int|float|bool|null $params=''): string
 {
+	$name = (string) $name;
 	if ($value === null)
 		$value = get_post($name);
 	$value = (string) $value;
 
-	return "<input $params type=\"text\" name=\"$name\" size=\"$size\" maxlength=\"$max\" value=\"$value\""
-	    .((bool)$title ? " title='$title'" : '')
+	return "<input $params type=\"text\" name=\"".html_encode_attribute($name, false, output_encoding())
+	    ."\" size=\"".html_encode_attribute($size, false, output_encoding())
+	    ."\" maxlength=\"".html_encode_attribute($max, false, output_encoding())
+	    ."\" value=\"".html_encode_attribute($value, false, output_encoding())."\""
+	    .((bool)$title ? " title='".html_encode_attribute($title, false, output_encoding())."'" : '')
 	    .">";
 }
 
 //-----------------------------------------------------------------------------------
 
-function text_cells(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $value=null, string|int|float|bool|null $size="", string|int|float|bool|null $max="", string|int|float|bool|null $title=false, 
+function text_cells(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $value=null, string|int|float|bool|null $size="", string|int|float|bool|null $max="", string|int|float|bool|null $title=false,
 	string|int|float|bool|null $labparams="", string|int|float|bool|null $post_label="", string $inparams=""): void
 {
+	$name = (string) $name;
 
 	default_focus($name);
 	if ($label != null)
-		label_cell($label, $labparams);
+		label_cell($label, $labparams === null ? null : (string) $labparams);
 	echo "<td>";
 
 	echo text_input($name, $value, $size, $max, $title, $inparams);
@@ -575,6 +585,7 @@ function text_cells(string|int|float|bool|null $label, string|int|float|bool|nul
 function text_cells_ex(?string $label, string|int|float|bool|null $name, string|int|float|bool|null $size, string|int|float|bool|null $max=null, string|int|float|bool|null $init=null, string|int|float|bool|null $title=null,
 	string|int|float|bool|null $labparams=null, string|int|float|bool|null $post_label=null, string|bool|null $submit_on_change=false): void
 {
+	$name = (string) $name;
 
 	default_focus($name);
 	if (!isset($_POST[$name]) || $_POST[$name] == "")
@@ -585,15 +596,18 @@ function text_cells_ex(?string $label, string|int|float|bool|null $name, string|
 			$_POST[$name] = "";
 	}
 	if ($label != null)
-		label_cell($label, $labparams);
+		label_cell($label, $labparams === null ? null : (string) $labparams);
 
 	if (!isset($max))
 		$max = $size;
 
 	echo "<td>";
 	$class = (bool)$submit_on_change ? 'class="searchbox"' : '';
-	echo "<input $class type=\"text\" name=\"$name\" size=\"$size\" maxlength=\"$max\" value=\"" . $_POST[$name]. "\""
-	 .((bool)$title ? " title='$title'": '')." >";
+	echo "<input $class type=\"text\" name=\"".html_encode_attribute($name, false, output_encoding())
+	 ."\" size=\"".html_encode_attribute($size, false, output_encoding())
+	 ."\" maxlength=\"".html_encode_attribute($max, false, output_encoding())
+	 ."\" value=\"".html_encode_attribute($_POST[$name], false, output_encoding())."\""
+	 .((bool)$title ? " title='".html_encode_attribute($title, false, output_encoding())."'": '')." >";
 
 	if ((bool)$post_label)
 		echo " " . $post_label;
@@ -604,7 +618,7 @@ function text_cells_ex(?string $label, string|int|float|bool|null $name, string|
 
 function text_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $value, string|int|float|bool|null $size, string|int|float|bool|null $max, string|int|float|bool|null $title=null, ?string $params="", ?string $post_label=""): void
 {
-	echo "<tr><td class='label'>$label</td>";
+	echo "<tr><td class='label'>".html_encode($label, false, output_encoding())."</td>";
 	text_cells(null, $name, $value, $size, $max, $title, $params, $post_label);
 
 	echo "</tr>\n";
@@ -614,47 +628,70 @@ function text_row(string|int|float|bool|null $label, string|int|float|bool|null 
 
 function text_row_ex(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $size, string|int|float|bool|null $max=null, string|int|float|bool|null $title=null, string|int|float|bool|null $value=null, string|int|float|bool|null $params=null, string|int|float|bool|null $post_label=null): void
 {
-	echo "<tr><td class='label'>$label</td>";
+	echo "<tr><td class='label'>".html_encode($label, false, output_encoding())."</td>";
 	text_cells_ex(null, $name, $size, $max, $value, $title, $params, $post_label);
 
 	echo "</tr>\n";
 }
 
 //-----------------------------------------------------------------------------------
+// These four build their own <tr>/<td class='label'> directly, rather than
+// going through text_row()/text_row_ex(), because their label legitimately
+// is pre-built HTML (an href-wrapped mailto:/link around the plain label) -
+// text_row()/text_row_ex() themselves html_encode() their $label, which
+// would otherwise double-escape the anchor tag built here.
 function email_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $value, string|int|float|bool|null $size, string|int|float|bool|null $max, string|int|float|bool|null $title=null, ?string $params="", ?string $post_label=""): void
 {
-	if (get_post($name)) 
-		$label = "<a href='Mailto:".$_POST[$name]."'>$label</a>";
-	text_row($label, $name, $value, $size, $max, $title, $params, $post_label);
+	$name = (string) $name;
+	$rowLabel = html_encode($label, false, output_encoding());
+	if (get_post($name))
+		$rowLabel = "<a href='Mailto:".html_encode_attribute($_POST[$name], false, output_encoding())."'>"
+			.$rowLabel."</a>";
+	echo "<tr><td class='label'>$rowLabel</td>";
+	text_cells(null, $name, $value, $size, $max, $title, $params, $post_label);
+	echo "</tr>\n";
 }
 
 function email_row_ex(?string $label, ?string $name, ?int $size, ?int $max=null, string|int|float|bool|null $title=null, string|int|float|bool|null $value=null, string|int|float|bool|null $params=null, string|int|float|bool|null $post_label=null): void
 {
-	if (get_post($name)) 
-		$label = "<a href='Mailto:".$_POST[$name]."'>$label</a>";
-	text_row_ex($label, $name, $size, $max, $title, $value, $params, $post_label);
+	$rowLabel = html_encode($label, false, output_encoding());
+	if (get_post($name))
+		$rowLabel = "<a href='Mailto:".html_encode_attribute($_POST[$name], false, output_encoding())."'>"
+			.$rowLabel."</a>";
+	echo "<tr><td class='label'>$rowLabel</td>";
+	text_cells_ex(null, $name, $size, $max, $value, $title, $params, $post_label);
+	echo "</tr>\n";
 }
 
 function link_row(?string $label, ?string $name, string|int|float|bool|null $value, ?int $size, ?int $max, string|int|float|bool|null $title=null, ?string $params="", ?string $post_label=""): void
 {
 	$val = get_post($name);
+	$rowLabel = html_encode($label, false, output_encoding());
 	if ($val) {
-		if (strpos($val,'http://')===false)
+		if (strpos((string) $val,'http://')===false)
 			$val = 'http://'.$val;
-		$label = "<a href='$val' target='_blank'>$label</a>";
+		$rowLabel = "<a href='".html_encode_attribute($val, false, output_encoding())."' target='_blank'>"
+			.$rowLabel."</a>";
 	}
-	text_row($label, $name, $value, $size, $max, $title, $params, $post_label);
+	echo "<tr><td class='label'>$rowLabel</td>";
+	text_cells(null, $name, $value, $size, $max, $title, $params, $post_label);
+	echo "</tr>\n";
 }
 
 function link_row_ex(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $size, string|int|float|bool|null $max=null, string|int|float|bool|null $title=null, string|int|float|bool|null $value=null, string|int|float|bool|null $params=null, string|int|float|bool|null $post_label=null): void
 {
+	$name = (string) $name;
 	$val = get_post($name);
+	$rowLabel = html_encode($label, false, output_encoding());
 	if ($val) {
-		if (strpos($val,'http://')===false)
+		if (strpos((string) $val,'http://')===false)
 			$val = 'http://'.$val;
-		$label = "<a href='$val' target='_blank'>$label</a>";
+		$rowLabel = "<a href='".html_encode_attribute($val, false, output_encoding())."' target='_blank'>"
+			.$rowLabel."</a>";
 	}
-	text_row_ex($label, $name, $size, $max, $title, $value, $params, $post_label);
+	echo "<tr><td class='label'>$rowLabel</td>";
+	text_cells_ex(null, $name, $size, $max, $value, $title, $params, $post_label);
+	echo "</tr>\n";
 }
 
 //-----------------------------------------------------------------------------------
@@ -667,6 +704,7 @@ function date_cells(?string $label, string|int|float|bool|null $name, ?string $t
 	?int $inc_months=0, ?int $inc_years=0, ?string $params=null, bool $submit_on_change=false): void
 {
 	global $path_to_root;
+	$name = (string) $name;
 
 	if (!isset($_POST[$name]) || $_POST[$name] == "")
 	{
@@ -706,10 +744,11 @@ function date_cells(?string $label, string|int|float|bool|null $name, ?string $t
 		$class .= ' fa-red';
 
 	default_focus($name);
-	$size = (user_date_format()>3)?11:10; 
-	echo "<input type=\"text\" name=\"$name\" class=\"$class\" $aspect size=\"$size\" maxlength=\"12\" value=\"" 
-	 . $_POST[$name]. "\""
-	 .((bool)$title ? " title='$title'": '')." > $post_label";
+	$size = (user_date_format()>3)?11:10;
+	echo "<input type=\"text\" name=\"".html_encode_attribute($name, false, output_encoding())
+	 ."\" class=\"$class\" $aspect size=\"$size\" maxlength=\"12\" value=\""
+	 . html_encode_attribute($_POST[$name], false, output_encoding()). "\""
+	 .((bool)$title ? " title='".html_encode_attribute($title, false, output_encoding())."'": '')." > $post_label";
 	echo "</td>\n";
 	ajax()->addUpdate($name, $name, $_POST[$name]);
 }
@@ -726,24 +765,24 @@ function date_row(string|int|float|bool|null $label, string|int|float|bool|null 
 //-----------------------------------------------------------------------------------
 function password_row(?string $label, ?string $name, string|int|float|bool|null $value): void
 {
-	echo "<tr><td class='label'>$label</td>";
-	label_cell("<input type='password' name='$name' size=32 maxlength=32 value='$value' >");
+	echo "<tr><td class='label'>".html_encode($label, false, output_encoding())."</td>";
+	label_cell("<input type='password' name='".html_encode_attribute($name, false, output_encoding())
+		."' size=32 maxlength=32 value='".html_encode_attribute($value, false, output_encoding())."' >");
 	echo "</tr>\n";
-}	
+}
 
 //-----------------------------------------------------------------------------------
 function file_cells(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $id=""): void
 {
-	if ($id != "")
-		$id = "id='$id'";
-	label_cells($label, "<input type='file' name='$name' $id >");
-}		
+	$idAttr = $id != "" ? "id='".html_encode_attribute($id, false, output_encoding())."'" : "";
+	label_cells($label, "<input type='file' name='".html_encode_attribute($name, false, output_encoding())."' $idAttr >");
+}
 function file_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $id = ""): void
 {
-	echo "<tr><td class='label'>$label</td>";
+	echo "<tr><td class='label'>".html_encode($label, false, output_encoding())."</td>";
 	file_cells(null, $name, $id);
 	echo "</tr>\n";
-}	
+}
 
 /*-----------------------------------------------------------------------------------
 
@@ -770,19 +809,25 @@ function ref_cells(?string $label, ?string $name, ?string $title=null, string|in
 			{
 				$_POST[$name] = $init;
 			} else {
-				$_POST[$name] = refs()->get_next($type, $_POST[$name.'_list'], $context);
+				/** @var string|int|array<array-key, mixed>|null $reflineId */
+				$reflineId = is_array($_POST[$name.'_list'] ?? null) ? $_POST[$name.'_list'] : (string) ($_POST[$name.'_list'] ?? '');
+				$_POST[$name] = refs()->get_next($type, $reflineId, $context);
 			}
 			ajax()->addUpdate(true, $name, $_POST[$name]);
 		}
 
 		if (check_ui_refresh($name)) { // call context changed
-			$_POST[$name] = refs()->normalize($_POST[$name], $type, $context, $_POST[$name.'_list']);
+			/** @var string|int|array<array-key, mixed>|null $reflineId */
+			$reflineId = is_array($_POST[$name.'_list'] ?? null) ? $_POST[$name.'_list'] : (string) ($_POST[$name.'_list'] ?? '');
+			$_POST[$name] = refs()->normalize($_POST[$name], $type, $context, $reflineId);
 			ajax()->addUpdate(true, $name, $_POST[$name]);
 		}
 
 		if (refs()->reflines->count($type)>1) {
 			if (list_updated($name.'_list')) {
-				$_POST[$name] = refs()->get_next($type, $_POST[$name.'_list'], $context);
+				/** @var string|int|array<array-key, mixed>|null $reflineId */
+				$reflineId = is_array($_POST[$name.'_list'] ?? null) ? $_POST[$name.'_list'] : (string) ($_POST[$name.'_list'] ?? '');
+				$_POST[$name] = refs()->get_next($type, $reflineId, $context);
 				ajax()->addUpdate(true, $name, $_POST[$name]);
 			}
 			$list = refline_list($name.'_list', $type);
@@ -793,9 +838,9 @@ function ref_cells(?string $label, ?string $name, ?string $title=null, string|in
 		if (isset($label))
 			label_cell($label, $params);
 
-		label_cell($list."<input name='".$name."' "
+		label_cell($list."<input name='".html_encode_attribute($name, false, output_encoding())."' "
 			.(check_edit_access($name) ? '' : 'disabled ')
-			."value='".@$_POST[$name]."' size=16 maxlength=35>");
+			."value='".html_encode_attribute(@$_POST[$name], false, output_encoding())."' size=16 maxlength=35>");
 	}
 	else // just wildcard ref field (e.g. for global inquires)
 	{
@@ -827,6 +872,7 @@ function percent_row(?string $label, ?string $name, string|array|null $init=null
 
 function amount_cells_ex(string|int|float|bool|null $label, string|int|float|bool|null $name, ?int $size, ?int $max=null, string|int|float|bool|null $init=null, string|int|float|bool|null $params=null, string|int|float|bool|null $post_label=null, string|int|float|bool|null $dec=null): void
 {
+	$name = (string) $name;
 
 	if (!isset($dec))
 	  	$dec = user_price_dec();
@@ -839,9 +885,8 @@ function amount_cells_ex(string|int|float|bool|null $label, string|int|float|boo
 	}
 	if ($label != null)
 	{
-		if ($params == null)
-			$params = "class='label'";
-		label_cell($label, $params);
+		$paramsStr = $params == null ? "class='label'" : (string) $params;
+		label_cell($label, $paramsStr);
 	}
 	if (!isset($max))
 		$max = $size;
@@ -851,7 +896,9 @@ function amount_cells_ex(string|int|float|bool|null $label, string|int|float|boo
 	else
 		echo "<td align='right'>";
 
-	echo "<input class='amount' type=\"text\" name=\"$name\" size=\"$size\" maxlength=\"$max\" dec=\"$dec\" value=\"" . $_POST[$name]. "\">";
+	echo "<input class='amount' type=\"text\" name=\"".html_encode_attribute($name, false, output_encoding())
+		."\" size=\"$size\" maxlength=\"$max\" dec=\"$dec\" value=\""
+		. html_encode_attribute($_POST[$name], false, output_encoding()). "\">";
 
 	if ((bool)$post_label) {
 		echo "<span id='_{$name}_label'> $post_label</span>";
@@ -946,20 +993,22 @@ function textarea_cells(string|int|float|bool|null $label, string|int|float|bool
 
 	default_focus($name);
 	if ($label != null)
-		echo "<td $params>$label</td>\n";
+		echo "<td $params>".html_encode($label, false, output_encoding())."</td>\n";
 	if ($value == null)
 		$value = (!isset($_POST[$name]) ? "" : $_POST[$name]);
 	$value = (string) $value;
-	echo "<td><textarea name='$name' cols='$cols' rows='$rows'"
-	.((bool)$title ? " title='$title'" : '')
+	echo "<td><textarea name='".html_encode_attribute($name, false, output_encoding())
+	."' cols='".html_encode_attribute($cols, false, output_encoding())
+	."' rows='".html_encode_attribute($rows, false, output_encoding())."'"
+	.((bool)$title ? " title='".html_encode_attribute($title, false, output_encoding())."'" : '')
 	.((bool)$max ? " maxlength=$max" : '')
-	.">$value</textarea></td>\n";
+	.">".html_encode($value, false, output_encoding())."</textarea></td>\n";
 	ajax()->addUpdate($name, $name, $value);
 }
 
 function textarea_row(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $value, string|int|float|bool|null $cols, string|int|float|bool|null $rows, ?int $max=255, ?string $title=null, ?string $params=""): void
 {
-	echo "<tr><td class='label'>$label</td>";
+	echo "<tr><td class='label'>".html_encode($label, false, output_encoding())."</td>";
 	textarea_cells(null, $name, $value, $cols, $rows, $max, $title, $params);
 	echo "</tr>\n";
 }
