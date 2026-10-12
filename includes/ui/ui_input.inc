@@ -459,9 +459,16 @@ function radio(?string $label, ?string $name, string|int|float|bool|null $value,
 }
 
 //-----------------------------------------------------------------------------------
+// NOT auto-escaped: table_header() (includes/ui/ui_controls.inc) feeds this
+// column-sort buttons built by navi_button() (includes/ui/db_pager_view.inc) -
+// a pre-built <button>...</button> string, not plain text. That caller passes
+// it through a variable, not a literal, so grepping for literal-HTML callers
+// (the check used to confirm label_cell()'s own equivalent exception) missed
+// it - caught live, via every sortable list's column headers rendering as
+// literal escaped markup instead of clickable buttons.
 function labelheader_cell(string|int|float|bool|null $label, ?string $params=""): void
 {
-	echo "<td class='tableheader' $params>".html_encode($label, false, output_encoding())."</td>\n";
+	echo "<td class='tableheader' $params>$label</td>\n";
 }
 
 function label_cell(string|int|float|bool|null $label, ?string $params="", string|int|null $id=null): string|int|float|bool|null
@@ -525,10 +532,17 @@ function qty_cell(string|int|float|bool|null $label, string|bool|null $bold=fals
 		label_cell(number_format2($label, $dec), "nowrap align=right", $id);
 }
 
+// NOT auto-escaped: label_row() (below) passes this function pre-built HTML
+// as $label when it already decided NOT to render its own label <td> itself
+// ($params non-empty) - confirmed real callers (sales/view/view_credit.php,
+// purchasing/view/view_supp_credit.php, manufacturing/includes/
+// manufacturing_ui.inc) pass a "<font color=red>...</font"/"<b>...</b>"
+// fragment through label_row() with a non-empty $params, which routes it
+// here. Same raw-HTML-passthrough-by-design exception as label_cell().
 function label_cells(string|int|float|bool|null $label, string|int|float|bool|null $value, string|int|float|bool|null $params="", ?string $params2="", ?string $id=null): void
 {
 	if ($label != null)
-		echo "<td $params>".html_encode($label, false, output_encoding())."</td>\n";
+		echo "<td $params>$label</td>\n";
 	label_cell($value, $params2, $id);
 }
 
