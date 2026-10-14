@@ -31,15 +31,16 @@ $installers = get_installers();
 
 if (get_post('Upgrade')) 
 {
-	$comp = get_post('select_comp');
+	$comp = post_scalar('select_comp');
 
-    if ($comp === '')
+    if ($comp === '' || $comp === null)
 		display_error(_('Select company to be upgraded.'));
 	else {
+		$comp = is_string($comp) || is_int($comp) ? $comp : (string) $comp;
 		$patch = @$installers[$site_status[$comp]['version']];
 		if ($patch)
 		{
-			if (!$patch->upgrade_company($comp, check_value('force')))
+			if (!$patch->upgrade_company($comp, (bool) check_value('force')))
 				display_error(implode('<hr>', $patch->errors));
 			else
 				display_notification(_("Company upgraded successfully."));
@@ -102,18 +103,20 @@ end_table();
 br();
 
 div_start('upgrade_args');
-if (get_post('select_comp') !== '')
+$select_comp = post_scalar('select_comp');
+if ($select_comp !== '' && $select_comp !== null)
 {
-	$patch = @$installers[$site_status[get_post('select_comp')]['version']];
+	$select_comp = is_string($select_comp) || is_int($select_comp) ? $select_comp : (string) $select_comp;
+	$patch = @$installers[$site_status[$select_comp]['version']];
 	if ($patch)
-		$patch->show_params(get_post('select_comp'));
+		$patch->show_params($select_comp);
 }
 div_end();
 
 if ($uptodate)
 	display_note(_('All company database schemes are up to date.'));
 else {
-	if (get_post('select_comp') === '')
+	if ($select_comp === '' || $select_comp === null)
 		display_note(_("Select company for incremental upgrade."), 0, 1, "class='stockmankofg'");
 	submit_center('Upgrade', _('Upgrade'), true, _('Save database and perform upgrade'), 'nonajax');
 }

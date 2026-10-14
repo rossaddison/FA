@@ -16,20 +16,20 @@ include_once(dirname(__DIR__, 2) . "/includes/packages.inc");
 //
 class fa_patch {
 	/** @var string */
-	var $previous;				// previous database version 
+	var $previous = '';		// previous database version
 	/** @var string */
-	var $version;		 		// version after upgrade
+	var $version = '';	 		// version after upgrade
 	/** @var string */
-	var $description;			// short patch description
+	var $description = '';		// short patch description
 
 	/** @var string */
-	var $sql;					// basic sql file
+	var $sql = '';				// basic sql file
 
 	/** @var int|string */
-	var $cur_company;
+	var $cur_company = 0;
 	var $backup;				// pre-upgrade backup filename
 	/** @var string|false */
-	var $save_log;				// ini_set('error_log', ...) previous value, restored after upgrade
+	var $save_log = false;		// ini_set('error_log', ...) previous value, restored after upgrade
 
 	/** @var array<int, string|bool|null> */
 	var $errors = array();
@@ -43,7 +43,7 @@ class fa_patch {
 
 	function __construct()
 	{
-		global $path_to_root;
+		global $path_to_root, $db_connections;
 
 		include $path_to_root."/config_db.php";
 
@@ -69,8 +69,11 @@ class fa_patch {
 	/*
 		Selectively extends access to selected security areas/sections.
 	*/
-	/** @return true */
-	function update_security_roles($sec_updates)
+	/**
+	 * @param array<array-key, array<array-key, mixed>> $sec_updates
+	 * @return true
+	 */
+	function update_security_roles(array $sec_updates)
 	{
 		global $security_areas, $security_sections;
 
@@ -128,7 +131,7 @@ class fa_patch {
 		Pre-install maintenance: login to company, open upgrade log, make a backup
 	*/
 	/** @return bool */
-	function pre_install($company)
+	function pre_install(string|int $company)
 	{
 
 		$this->cur_company = $company;
@@ -141,7 +144,7 @@ class fa_patch {
 		if (!set_global_connection($this->cur_company))
 			return $this->log_error(_("Cannot connect to company database."));
 
-		$cur_ver = get_company_pref('version_id', true);
+		$cur_ver = get_company_pref('version_id');
 		if ($cur_ver != $this->previous)
 			return $this->log_error(sprintf(_("Cannot upgrade company %s: database version is incompatible ('%s' instead of '%s')."),
 				$this->cur_company, $cur_ver, $this->previous));
@@ -168,7 +171,7 @@ class fa_patch {
 		Basic install procedure using sql file.
 	*/
 	/** @return bool */
-	function sql_install($company, $force=false) 
+	function sql_install(string|int $company, bool $force=false)
 	{
 		global $path_to_root;
 
@@ -242,7 +245,7 @@ class fa_patch {
 		Main routine for single company upgrade.
 	*/
 	/** @return bool */
-	function upgrade_company($comp, $force=false)
+	function upgrade_company(string|int $comp, bool $force=false)
 	{
 		$result = $this->pre_install($comp) && $this->sql_install($comp, $force) && $this->install($comp, $force);
 
@@ -259,7 +262,7 @@ class fa_patch {
 	 * @psalm-pure
 	 * @return true
 	 */
-	function install($company, $force=false) 
+	function install(string|int $company, bool $force=false)
 	{
 		return true;
 	}
@@ -271,7 +274,7 @@ class fa_patch {
 	 * @psalm-mutation-free
 	 * @return void
 	 */
-	function post_fail($company)
+	function post_fail(string|int $company)
 	{
 	}
 
@@ -283,7 +286,7 @@ class fa_patch {
 	 * @psalm-mutation-free
 	 * @return void
 	 */
-	function show_params($comp)
+	function show_params(string|int $comp)
     {
 	}
 
@@ -345,7 +348,8 @@ function get_installers(): array
 			if (!is_dir($patchdir . $fname) && ($fname != 'index.php')
 				&& stristr($fname, '.php') != false && $fname[0] != '.')
 			{
-				unset($install);
+				/** @var fa_patch|null $install */
+				$install = null;
 				include_once($patchdir . $fname);
 				if (isset($install)) // add installer if found
 					$upgrades[$install->previous] =  $install;
