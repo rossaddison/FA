@@ -62,6 +62,8 @@
         <var name="hooks" type="array&lt;string, hooks&gt;|null"/>
         <var name="messages" type="array&lt;int, array{0: int, 1: string|int|float|bool|null, 2: string|null, 3: int|null, 4?: array|string}&gt;"/>
         <var name="before_box" type="string"/>
+        <var name="refline_options" type="array&lt;int, array&lt;int, string&gt;&gt;"/>
+        <var name="refline_placeholders" type="array&lt;string, string&gt;"/>
     </globals>
     <projectFiles>
         <directory name="access"/>

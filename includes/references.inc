@@ -452,7 +452,7 @@ final class references
 		$refline = is_array($refline) ? $refline : array();
 		 // legacy code used with simple templates
 		if ($this->_legacy_line($refline) && ($reference == $this->get_next($type, $line))) { // if reference was not changed from default
-			$next = $this->_increment($reference);	// increment default
+			$next = (string) $this->_increment($reference);	// increment default
 			$this->reflines->save_next($type, $next, $line);
 		}
 	}

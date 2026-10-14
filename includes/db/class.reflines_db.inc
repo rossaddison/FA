@@ -13,11 +13,21 @@ declare(strict_types=1);
 include_once 'class.data_set.inc';
 
 /**
+ * Data as submitted for insert/update (prefix/trans_type/pattern/etc. validation).
+ * @psalm-type ReflineData = array{trans_type?: string|int|float|bool|null, prefix?: string|int|float|bool|null, pattern?: string|int|float|bool|null, description?: string|int|float|bool|null, default?: string|int|float|bool|null, id?: string|int|float|bool|null, inactive?: string|int|float|bool|null}
+ */
+
+/**
+ * A row as read back from the reflines table; mysqli returns every column as a string or null.
+ * @psalm-type ReflineRow = array{trans_type?: string|null, prefix?: string|null, pattern?: string|null, description?: string|null, default?: string|null, id?: string|null, inactive?: string|null}
+ */
+
+/**
 *	Reference lines.
 *
 **/
 
-class reflines_db extends data_set {
+final class reflines_db extends data_set {
 	function __construct()
 	{
 		$this->set_validator('prefix:ui:_check_prefix', _("This prefix conflicts with another one already defined. Prefix have to be unambigous."));
@@ -32,39 +42,59 @@ class reflines_db extends data_set {
 	/*
 		Prefix cannot be ambigous.
 	*/
-	/** @return bool */
-	function _check_prefix($data, $dummy_opt, $key)
+	/**
+	 * @param array<array-key, mixed> $data
+	 * @param array<array-key, mixed> $dummy_opt
+	 * @param string|int|array<array-key, mixed>|null $key
+	 */
+	function _check_prefix($data, $dummy_opt, $key): bool
 	{
-		$cond = "`id`<>".db_escape($key)." AND `trans_type`=".db_escape($data['trans_type']);
-		if ($data['prefix'] === '')
-			$cond .= " AND `prefix`='".(string)$data['prefix']."'";
+		/** @var ReflineData */
+		$data = $data;
+		$prefix = (string) ($data['prefix'] ?? '');
+		$pattern = (string) ($data['pattern'] ?? '');
+		$cond = "`id`<>".db_escape(is_array($key) ? null : $key)." AND `trans_type`=".db_escape($data['trans_type'] ?? null);
+		if ($prefix === '')
+			$cond .= " AND `prefix`=''";
 		else
-			$cond .= "AND ((LOCATE('".(string)$data['prefix']."', CONCAT(`prefix`,`pattern`))=1 OR (`prefix`<>'' AND LOCATE(`prefix`, '".(string)$data['prefix'].(string)$data['pattern']."')=1)))";
+			$cond .= "AND ((LOCATE('".$prefix."', CONCAT(`prefix`,`pattern`))=1 OR (`prefix`<>'' AND LOCATE(`prefix`, '".$prefix.$pattern."')=1)))";
 
-		return db_num_rows($this->get_all($cond)) == 0;
+		// get_all() can return false on a failed query; db_num_rows() requires a real mysqli_result.
+		$rows = $this->get_all($cond);
+		return !($rows instanceof mysqli_result) || db_num_rows($rows) == 0;
 	}
 
-	/** @return bool */
-	function _check_template($data, $dummy_opt, $key)
+	/**
+	 * @param array<array-key, mixed> $data
+	 * @param array<array-key, mixed> $dummy_opt
+	 * @param string|int|array<array-key, mixed>|null $key
+	 */
+	function _check_template($data, $dummy_opt, $key): bool
 	{
 		global $refline_options, $refline_placeholders;
 
-		if (strpbrk($data['prefix'], '{}') !== false)
+		/** @var ReflineData */
+		$data = $data;
+		$prefix = (string) ($data['prefix'] ?? '');
+		$pattern = (string) ($data['pattern'] ?? '');
+		$trans_type = (int) ($data['trans_type'] ?? 0);
+
+		if (strpbrk($prefix, '{}') !== false)
 			return $this->error(_("You cannot use placeholders in refline prefix."));
 
-		if (substr_count($data['pattern'], '{') != substr_count($data['pattern'], '}'))
+		if (substr_count($pattern, '{') != substr_count($pattern, '}'))
 			return $this->error(_("Curly brackets does not balance."));
 
-		if ((bool)preg_match_all('/\{([^\}]*)\}/', $data['pattern'], $match)) // placeholders defind in template
+		if ((bool)preg_match_all('/\{([^\}]*)\}/', $pattern, $match)) // placeholders defind in template
 		{
 			$numph = 0;
 			foreach($match[1] as $ph) {
 				if (is_numeric($ph))
 					$numph++;
-				elseif (!isset($refline_placeholders[$ph]) || !@in_array($refline_placeholders[$ph], $refline_options[$data['trans_type']])) {
+				elseif (!isset($refline_placeholders[$ph]) || !@in_array($refline_placeholders[$ph], $refline_options[$trans_type] ?? array())) {
 					$allowed = array();
 					foreach($refline_placeholders as $id => $dt)
-						 if (in_array($dt, $refline_options[$data['trans_type']]))
+						 if (in_array($dt, $refline_options[$trans_type] ?? array()))
 						 	$allowed[] = $id;
 
 					return $this->error(sprintf(_("Invalid placeholder '%s'. Placeholders allowed for this transaction type are: %s."),
@@ -78,9 +108,15 @@ class reflines_db extends data_set {
 		return true;
 	}
 
-	/** @return int|string */
+	/**
+	 * @param string|int|float|bool|array<array-key, mixed>|null $prefix
+	 * @param string|int|float|bool|array<array-key, mixed>|null $trans_type
+	 * @return int|string
+	 */
 	function is_used($prefix, $trans_type)
 	{
+		$prefix = is_array($prefix) ? null : $prefix;
+		$trans_type = is_array($trans_type) ? null : $trans_type;
 
 		$sql = "SELECT *
 			FROM (SELECT r.* FROM ".TB_PREF."refs r 
@@ -96,57 +132,84 @@ class reflines_db extends data_set {
 		return db_num_rows($res);
 	}
 
-	function delete_check($ref_id): bool
+	/** @param string|int|array<array-key, mixed>|null $key */
+	#[\Override]
+	function delete_check($key): bool
 	{
-		$rec = $this->get($ref_id);
-		if ($rec['default'])
+		$rec = row_or_empty($this->get($key));
+		/** @var ReflineRow */
+		$rec = $rec;
+		if ((bool) ($rec['default'] ?? false))
 			return $this->error(_("Reference line which is default for any transaction type cannot be deleted."));
 
-		if ($this->is_used($rec['prefix'], $rec['trans_type']))
+		if ($this->is_used($rec['prefix'] ?? null, $rec['trans_type'] ?? null))
 			return $this->error(_("Reference line cannot be deleted because it is already in use."));
 
 		return true;
 	}
 
-	/** @return bool|mysqli_result */
+	/**
+	 * @param string|int|array<array-key, mixed>|null $id
+	 * @param string|int|float|bool|array<array-key, mixed>|null $type
+	 * @return bool|mysqli_result
+	 */
 	function _set_as_default($id, $type)
 	{
-		$sql  = "UPDATE ".TB_PREF."reflines SET `default`=(`id`=".db_escape($id).")
-			 WHERE `trans_type`=".db_escape($type);
+		$sql  = "UPDATE ".TB_PREF."reflines SET `default`=(`id`=".db_escape(is_array($id) ? null : $id).")
+			 WHERE `trans_type`=".db_escape(is_array($type) ? null : $type);
 		return db_query($sql, "cannot update default refline");
 	}
 
+	/** @param array<array-key, mixed>|null $data */
+	#[\Override]
 	function insert($data)
 	{
 		if (!parent::insert($data))
 			return false;
-		if (@$data['default'])
-			return (bool) $this->_set_as_default(db_insert_id(), $data['trans_type']);
+
+		/** @var ReflineData */
+		$data = $data ?? array();
+		if (!empty($data['default']))
+			return (bool) $this->_set_as_default(db_insert_id(), $data['trans_type'] ?? null);
 		return true;
 	}
 
+	/**
+	 * @param string|int|array<array-key, mixed>|null $key
+	 * @param array<array-key, mixed>|null $data
+	 */
+	#[\Override]
 	function update($key, $data)
 	{
 		if (!parent::update($key, $data))
 			return false;
-		if (@$data['default'])
-			return (bool) $this->_set_as_default($key , $data['trans_type']);
+
+		/** @var ReflineData */
+		$data = $data ?? array();
+		if (!empty($data['default']))
+			return (bool) $this->_set_as_default($key, $data['trans_type'] ?? null);
 		return true;
 	}
 
-	/** @return array<array-key, null|string>|false */
+	/**
+	 * @param string|int|float|bool|array<array-key, mixed>|null $type
+	 * @return array<array-key, null|string>|false
+	 */
 	function get_default($type)
 	{
+		$type = is_array($type) ? null : $type;
 		$sql = "SELECT * FROM ".TB_PREF."reflines WHERE trans_type=".db_escape($type)." AND `default`";
 		$result = db_select($sql, "cannot retreive default refline for trnasaction type $type");
 		return db_fetch($result);
 	}
 
 	/**
-	 * @param bool $all
+	 * @param string|int|float|bool|array<array-key, mixed>|null $type
+	 * @return int|string|null
 	 */
-	function count($type, $all=false)
+	function count($type, bool $all=false)
 	{
+		$type = is_array($type) ? null : $type;
 		$sql = "SELECT count(*) FROM ".TB_PREF."reflines WHERE trans_type=".db_escape($type);
 
 		if (!$all)
@@ -160,11 +223,14 @@ class reflines_db extends data_set {
 		Recognize refline by reference prefix
 	*/
 	/**
-	 * @param bool $fallback
-	 * @return string|int|null
+	 * @param string|int|float|bool|array<array-key, mixed>|null $reference
+	 * @param string|int|float|bool|array<array-key, mixed>|null $type
+	 * @return string|null
 	 */
-	function find_refline_id($reference, $type, $fallback=true)
+	function find_refline_id($reference, $type, bool $fallback=true)
 	{
+		$reference = is_array($reference) ? null : $reference;
+		$type = is_array($type) ? null : $type;
 		$sql = "SELECT * FROM ".TB_PREF."reflines WHERE trans_type=".db_escape($type)
 			." AND CHAR_LENGTH(`prefix`) AND LEFT(".db_escape($reference).", CHAR_LENGTH(`prefix`)) = `prefix`";
 		if ($fallback)	// if not found return refline with empty prefix
@@ -175,13 +241,20 @@ class reflines_db extends data_set {
 		if (!$fallback && (db_num_rows($ret) != 1))	// more than one record means ambigous reference line
 			return null;
 
-		$id = $line ? $line['id'] : null;
-		return (is_int($id) || is_string($id)) ? $id : null;
+		// mysqli returns every column as a string or null, never int
+		$id = $line['id'] ?? null;
+		return is_string($id) ? $id : null;
 	}
 
-	/** @return bool|mysqli_result */
-	function save_next($type, $reference, $line=null)
+	/**
+	 * @param string|int|float|bool|array<array-key, mixed>|null $type
+	 * @param string|int|array<array-key, mixed>|null $line
+	 * @return bool|mysqli_result
+	 */
+	function save_next($type, string $reference, $line=null)
 	{
+		$type = is_array($type) ? null : $type;
+		$line = is_array($line) ? null : $line;
 	    $sql = "UPDATE ".TB_PREF."reflines SET pattern=SUBSTRING(" . db_escape(trim($reference)) .", LENGTH(`prefix`)+1)"
 		. " WHERE trans_type = ".db_escape($type)." AND ";
 
