@@ -146,8 +146,8 @@ function create_cart(string|int|null $type=0, string|int|null $trans_no=0): void
 		$taxes = get_trans_tax_details($type, $trans_no);
 		while ($detail = db_fetch($taxes))
 		{
-			$tax_id = $detail['tax_type_id'];
-			$tax_info['net_amount'][$tax_id] = $detail['net_amount']; // we can two records for the same tax_id, but in this case net_amount is the same
+			$tax_id = (string) $detail['tax_type_id'];
+			$tax_info['net_amount'][$tax_id] = (float) $detail['net_amount']; // we can two records for the same tax_id, but in this case net_amount is the same
 			$tax_info['tax_date'] = sql2date($detail['tran_date']);
 			//$tax_info['tax_group'] = $detail['tax_group_id'];
 
@@ -306,6 +306,8 @@ if (isset($_POST['Process']))
 if (isset($_POST['Process']))
 {
 	$cart = &$_SESSION['journal_items'];
+	/** @var items_cart $cart */
+	$cart = $cart;
 	$new = $cart->order_id == 0;
 
 	$cart->reference = $_POST['ref'];
@@ -323,17 +325,17 @@ if (isset($_POST['Process']))
 	if (check_value('taxable_trans'))
 	{
 		// complete tax register data
-		$cart->tax_info['tax_date'] = $_POST['tax_date'];
+		$cart->tax_info['tax_date'] = is_array($_POST['tax_date']) ? '' : (string) $_POST['tax_date'];
 		//$cart->tax_info['tax_group'] = $_POST['tax_group'];
 		$taxes = get_all_tax_types();
 		while ($tax = db_fetch($taxes))
 		{
-			$tax_id = $tax['id'];
-			$cart->tax_info['net_amount'][$tax_id] = input_num('net_amount_'.$tax_id);
-			$cart->tax_info['rate'][$tax_id] = $tax['rate'];
+			$tax_id = (string) $tax['id'];
+			$cart->tax_info['net_amount'][$tax_id] = (float) input_num('net_amount_'.$tax_id);
+			$cart->tax_info['rate'][$tax_id] = (float) $tax['rate'];
 		}
 	} else
-		$cart->tax_info = false;
+		$cart->tax_info = null;
 	$trans_no = write_journal_entries($cart);
 
         // retain the reconciled status if desired by user
@@ -483,14 +485,16 @@ if (tab_closed('tabs', 'gl'))
  elseif (tab_closed('tabs', 'tax'))
 {
 	$cart = &$_SESSION['journal_items'];
-	$cart->tax_info['tax_date'] = $_POST['tax_date'];
+	/** @var items_cart $cart */
+	$cart = $cart;
+	$cart->tax_info['tax_date'] = is_array($_POST['tax_date']) ? '' : (string) $_POST['tax_date'];
 	//$cart->tax_info['tax_group'] = $_POST['tax_group'];
 	$taxes = get_all_tax_types();
 	while ($tax = db_fetch($taxes))
 	{
-		$tax_id = $tax['id'];
-		$cart->tax_info['net_amount'][$tax_id] = input_num('net_amount_'.$tax_id);
-		$cart->tax_info['rate'][$tax_id] = $tax['rate'];
+		$tax_id = (string) $tax['id'];
+		$cart->tax_info['net_amount'][$tax_id] = (float) input_num('net_amount_'.$tax_id);
+		$cart->tax_info['rate'][$tax_id] = (float) $tax['rate'];
 	}
 }
 if (tab_opened('tabs', 'gl'))
