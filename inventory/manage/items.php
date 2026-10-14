@@ -97,9 +97,9 @@ if (isset($_GET['stock_id']))
 {
 	$_POST['stock_id'] = $_GET['stock_id'];
 }
-$stock_id = get_post('stock_id');
+$stock_id = post_scalar('stock_id');
 if (list_updated('stock_id')) {
-	$_POST['NewStockID'] = $stock_id = get_post('stock_id');
+	$_POST['NewStockID'] = $stock_id = post_scalar('stock_id');
     clear_data();
 	ajax()->activate('details');
 	ajax()->activate('controls');
@@ -117,7 +117,7 @@ if (list_updated('category_id') || list_updated('mb_flag') || list_updated('fa_c
 $upload_file = "";
 if (isset($_FILES['pic']) && $_FILES['pic']['name'] != '') 
 {
-	$stock_id = $_POST['NewStockID'];
+	$stock_id = post_scalar('NewStockID');
 	$result = $_FILES['pic']['error'];
  	$upload_file = 'Yes'; //Assume all is well to start off with
 	$filename = company_path().'/images';
@@ -216,21 +216,25 @@ if (isset($_POST['addupdate']))
 	$input_error = 0;
 	if ($upload_file == 'No')
 		$input_error = 1;
-	if (strlen($_POST['description']) == 0) 
+	$description_raw = $_POST['description'] ?? null;
+	$description = is_array($description_raw) ? '' : (string) $description_raw;
+	$new_stock_id_raw = $_POST['NewStockID'] ?? null;
+	$new_stock_id = is_array($new_stock_id_raw) ? '' : (string) $new_stock_id_raw;
+	if (strlen($description) == 0)
 	{
 		$input_error = 1;
 		display_error( _('The item name must be entered.'));
 		set_focus('description');
-	} 
-	elseif (strlen($_POST['NewStockID']) == 0) 
+	}
+	elseif (strlen($new_stock_id) == 0)
 	{
 		$input_error = 1;
 		display_error( _('The item code cannot be empty'));
 		set_focus('NewStockID');
 	}
-	elseif ((bool)strstr($_POST['NewStockID'], " ") || (bool)strstr($_POST['NewStockID'],"'") || 
-		(bool)strstr($_POST['NewStockID'], "+") || (bool)strstr($_POST['NewStockID'], "\"") || 
-		(bool)strstr($_POST['NewStockID'], "&") || (bool)strstr($_POST['NewStockID'], "\t")) 
+	elseif ((bool)strstr($new_stock_id, " ") || (bool)strstr($new_stock_id,"'") ||
+		(bool)strstr($new_stock_id, "+") || (bool)strstr($new_stock_id, "\"") ||
+		(bool)strstr($new_stock_id, "&") || (bool)strstr($new_stock_id, "\t"))
 	{
 		$input_error = 1;
 		display_error( _('The item code cannot contain any of the following characters -  & + OR a space OR quotes'));
@@ -252,7 +256,7 @@ if (isset($_POST['addupdate']))
       $_POST['depreciation_rate'] = 0;
     }
     $move_row = row_or_empty(get_fixed_asset_move(post_scalar('NewStockID'), ST_SUPPRECEIVE));
-    if ($move_row && isset($_POST['depreciation_start']) && strtotime($_POST['depreciation_start']) < strtotime($move_row['tran_date'])) {
+    if ($move_row && isset($_POST['depreciation_start']) && strtotime((string) post_scalar('depreciation_start')) < strtotime((string) $move_row['tran_date'])) {
       display_warning(_('The depracation cannot start before the fixed asset purchase date'));
     }
   }
@@ -260,24 +264,24 @@ if (isset($_POST['addupdate']))
 	if ($input_error != 1)
 	{
 		if (check_value('del_image'))
-			del_image($_POST['NewStockID']);
+			del_image(post_scalar('NewStockID'));
 		
 		if (!$new_item) 
 		{ /*so its an existing one */
 			update_item(post_scalar('NewStockID'), post_scalar('description'),
-				post_scalar('long_description'), post_scalar('category_id'), 
-				post_scalar('tax_type_id'), get_post('units'),
-				get_post('fixed_asset') ? 'F' : get_post('mb_flag'), post_scalar('sales_account'),
+				post_scalar('long_description'), post_scalar('category_id'),
+				post_scalar('tax_type_id'), post_scalar('units'),
+				get_post('fixed_asset') ? 'F' : post_scalar('mb_flag'), post_scalar('sales_account'),
 				post_scalar('inventory_account'), post_scalar('cogs_account'),
-				post_scalar('adjustment_account'), post_scalar('wip_account'), 
+				post_scalar('adjustment_account'), post_scalar('wip_account'),
 				post_scalar('dimension_id'), post_scalar('dimension2_id'),
 				check_value('no_sale'), check_value('editable'), check_value('no_purchase'),
-				get_post('depreciation_method'), input_num('depreciation_rate'), input_num('depreciation_factor'), get_post('depreciation_start', null),
-				get_post('fa_class_id'));
+				post_scalar('depreciation_method'), input_num('depreciation_rate'), input_num('depreciation_factor'), post_scalar('depreciation_start'),
+				post_scalar('fa_class_id'));
 
-			update_record_status(post_scalar('NewStockID'), $_POST['inactive'],
+			update_record_status(post_scalar('NewStockID'), post_scalar('inactive'),
 				'stock_master', 'stock_id');
-			update_record_status(post_scalar('NewStockID'), $_POST['inactive'],
+			update_record_status(post_scalar('NewStockID'), post_scalar('inactive'),
 				'item_codes', 'item_code');
 			set_focus('stock_id');
 			ajax()->activate('stock_id'); // in case of status change
@@ -288,13 +292,13 @@ if (isset($_POST['addupdate']))
 
 			add_item(post_scalar('NewStockID'), post_scalar('description'),
 				post_scalar('long_description'), post_scalar('category_id'), post_scalar('tax_type_id'),
-				post_scalar('units'), get_post('fixed_asset') ? 'F' : get_post('mb_flag'), post_scalar('sales_account'),
+				post_scalar('units'), get_post('fixed_asset') ? 'F' : post_scalar('mb_flag'), post_scalar('sales_account'),
 				post_scalar('inventory_account'), post_scalar('cogs_account'),
-				post_scalar('adjustment_account'), post_scalar('wip_account'), 
+				post_scalar('adjustment_account'), post_scalar('wip_account'),
 				post_scalar('dimension_id'), post_scalar('dimension2_id'),
 				check_value('no_sale'), check_value('editable'), check_value('no_purchase'),
-				get_post('depreciation_method'), input_num('depreciation_rate'), input_num('depreciation_factor'), get_post('depreciation_start', null),
-				get_post('fa_class_id'));
+				post_scalar('depreciation_method'), input_num('depreciation_rate'), input_num('depreciation_factor'), post_scalar('depreciation_start'),
+				post_scalar('fa_class_id'));
 
 			display_notification(_("A new item has been added."));
 			$_POST['stock_id'] = $_POST['NewStockID'] = 
@@ -330,12 +334,12 @@ function check_usage(string|int|float|bool|null $stock_id, bool $dispmsg=true): 
 
 //------------------------------------------------------------------------------------
 
-if (isset($_POST['delete']) && strlen($_POST['delete']) > 1) 
+if (isset($_POST['delete']) && strlen((string) post_scalar('delete')) > 1)
 {
 
 	if (check_usage(post_scalar('NewStockID'))) {
 
-		$stock_id = $_POST['NewStockID'];
+		$stock_id = post_scalar('NewStockID');
 		delete_item($stock_id);
 		del_image($stock_id);
 		display_notification(_("Selected item has been deleted."));
@@ -385,13 +389,13 @@ function item_settings(&$stock_id, bool $new_item): void
 		hidden('NewStockID', post_scalar('NewStockID'));
 		set_focus('description');
 	}
-	$fixed_asset = get_post('fixed_asset');
+	$fixed_asset = post_scalar('fixed_asset');
 
 	text_row(_("Name:"), 'description', null, 52, 200);
 
 	textarea_row(_('Description:'), 'long_description', null, 42, 3);
 
-	stock_categories_list_row(_("Category:"), 'category_id', null, false, $new_item, $fixed_asset);
+	stock_categories_list_row(_("Category:"), 'category_id', null, false, $new_item, is_bool($fixed_asset) ? $fixed_asset : (string) $fixed_asset);
 
 	if ($new_item && (list_updated('category_id') || !isset($_POST['sales_account']))) { // changed category for new item or first page view
 
@@ -416,7 +420,7 @@ function item_settings(&$stock_id, bool $new_item): void
 		|| check_usage(post_scalar('stock_id'),false);
 
 	// show inactive item tax type in selector only if already set.
-  item_tax_types_list_row(_("Item Tax Type:"), 'tax_type_id', null, !$new_item && item_type_inactive(get_post('tax_type_id')));
+  item_tax_types_list_row(_("Item Tax Type:"), 'tax_type_id', null, !$new_item && item_type_inactive((string) post_scalar('tax_type_id')));
 
 	if (!get_post('fixed_asset'))
 		stock_item_types_list_row(_("Item Type:"), 'mb_flag', null, $fresh_item);
@@ -466,7 +470,7 @@ function item_settings(&$stock_id, bool $new_item): void
 		else {
 			hidden('depreciation_start');
 			label_row(_("Depreciation Start").':', post_scalar('depreciation_start'));
-			label_row(_("Last Depreciation").':', $_POST['depreciation_date']==$_POST['depreciation_start'] ? _("None") :  $_POST['depreciation_date']);
+			label_row(_("Last Depreciation").':', $_POST['depreciation_date']==$_POST['depreciation_start'] ? _("None") :  post_scalar('depreciation_date'));
 		}
 		hidden('depreciation_date');
 	}
@@ -495,7 +499,7 @@ function item_settings(&$stock_id, bool $new_item): void
 		gl_all_accounts_list_row(_("Depreciation cost account:"), 'cogs_account', $_POST['cogs_account']);
 		gl_all_accounts_list_row(_("Depreciation/Disposal account:"), 'adjustment_account', $_POST['adjustment_account']);
 	}
-	elseif (!is_service(get_post('mb_flag')))
+	elseif (!is_service((string) post_scalar('mb_flag')))
 	{
 		gl_all_accounts_list_row(_("Inventory Account:"), 'inventory_account', $_POST['inventory_account']);
 		gl_all_accounts_list_row(_("C.O.G.S. Account:"), 'cogs_account', $_POST['cogs_account']);
@@ -509,7 +513,7 @@ function item_settings(&$stock_id, bool $new_item): void
 	}
 
 
-	if (is_manufactured(get_post('mb_flag')))
+	if (is_manufactured((string) post_scalar('mb_flag')))
 		gl_all_accounts_list_row(_("WIP Account:"), 'wip_account', $_POST['wip_account']);
 	else
 		hidden('wip_account', post_scalar('wip_account'));
@@ -575,12 +579,12 @@ if (db_has_stock_items())
 }
 else
 {
-	hidden('stock_id', get_post('stock_id'));
+	hidden('stock_id', post_scalar('stock_id'));
 }
 
 div_start('details');
 
-$stock_id = get_post('stock_id');
+$stock_id = post_scalar('stock_id');
 if (!$stock_id)
 	unset($_POST['_tabs_sel']); // force settings tab for new customer
 
@@ -654,7 +658,7 @@ tabbed_content_end();
 
 div_end();
 
-hidden('fixed_asset', get_post('fixed_asset'));
+hidden('fixed_asset', post_scalar('fixed_asset'));
 
 if (get_post('fixed_asset'))
 	hidden('mb_flag', 'F');
