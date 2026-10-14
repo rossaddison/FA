@@ -49,9 +49,10 @@ function start_form(bool $multi=false, bool $dummy=false, string|int|float|bool|
 	if (++$form_nested) return;
 
 	if ($name != "")
-		$name = "name='$name'";
+		$name = "name='".html_encode_attribute($name, false, output_encoding())."'";
 	if ($action == "")
 		$action = $_SERVER['PHP_SELF'];
+	$action = html_encode_attribute($action, false, output_encoding());
 
 	if ($multi)
 		echo "<form enctype='multipart/form-data' method='post' action='$action' $name>\n";
@@ -98,7 +99,7 @@ function check_csrf_token(): bool
 	if ($_SESSION['csrf_token'] != @$_POST['_token'])
 	{
 		display_error(_("Request from outside of this page is forbidden."));
-		error_log(_("CSRF attack detected from: ").@$_SERVER['HTTP_HOST'].' ('.@$_SERVER['HTTP_REFERER'].')');
+		error_log(_("CSRF attack detected from: ").(string)@$_SERVER['HTTP_HOST'].' ('.(string)@$_SERVER['HTTP_REFERER'].')');
 		return false;
 	}
 	return true;
@@ -166,9 +167,11 @@ function vertical_space(?string $params=''): void
 
 function meta_forward(string|int|float|bool|null $forward_to, ?string $params="", ?int $timeout=0, bool $return=false): void
 {
-	echo "<meta http-equiv='Refresh' content='".$timeout."; url=$forward_to?$params'>\n";
+	$forward_url = html_encode_attribute($forward_to, false, output_encoding())
+		."?".html_encode_attribute($params, false, output_encoding());
+	echo "<meta http-equiv='Refresh' content='".$timeout."; url=$forward_url'>\n";
 	echo "<center><br>" . _("You should automatically be forwarded.");
-	echo " " . _("If this does not happen") . " " . "<a href='$forward_to?$params'>" . _("click here") . "</a> " . _("to continue") . ".<br><br></center>\n";
+	echo " " . _("If this does not happen") . " " . "<a href='$forward_url'>" . _("click here") . "</a> " . _("to continue") . ".<br><br></center>\n";
 	if ($params !='') $params = '?'.$params;
 	ajax()->redirect($forward_to.$params);
 	if (!$return) exit;
@@ -253,7 +256,7 @@ function hyperlink_no_params(string|int|float|bool|null $target, string|int|floa
 		$target = $_SERVER['PHP_SELF'];
 	if ($center)
 		echo "<br><center>";
-	echo "<a href='$target' id='$id' $pars[1]>$pars[0]</a>\n";
+	echo "<a href='".html_encode_attribute($target, false, output_encoding())."' id='$id' $pars[1]>$pars[0]</a>\n";
 	if ($center)
 		echo "</center>";
 }
@@ -328,7 +331,8 @@ function hyperlink_params(?string $target, ?string $label, ?string $params, bool
 		$target = $_SERVER['PHP_SELF'];
 	if ($center)
 		echo "<br><center>";
-	echo "<a id='$id' href='$target?$params'$pars[1]>$pars[0]</a>\n";
+	echo "<a id='$id' href='".html_encode_attribute($target, false, output_encoding())
+		."?".html_encode_attribute($params, false, output_encoding())."'$pars[1]>$pars[0]</a>\n";
 	if ($center)
 		echo "</center>";
 }
@@ -349,7 +353,8 @@ function hyperlink_params_separate(string|int|float|bool|null $target, string|in
 	$pars = access_string($label);
 	if ($center)
 		echo "<br><center>";
-	echo "<a target='_blank' id='$id' href='$target?$params' $pars[1]>$pars[0]</a>\n";
+	echo "<a target='_blank' id='$id' href='".html_encode_attribute($target, false, output_encoding())
+		."?".html_encode_attribute($params, false, output_encoding())."' $pars[1]>$pars[0]</a>\n";
 	if ($center)
 		echo "</center>";
 }
@@ -381,7 +386,7 @@ function alt_table_row_color(int|string|null &$k, ?string $extra_class=null): vo
 
 function table_section_title(string|int|float|bool|null $msg, ?int $colspan=2): void
 {
-	echo "<tr><td colspan=$colspan class='tableheader'>$msg</td></tr>\n";
+	echo "<tr><td colspan=$colspan class='tableheader'>".html_encode($msg, false, output_encoding())."</td></tr>\n";
 }
 
 function table_header(array $labels, ?string $params=''): void
@@ -482,7 +487,8 @@ function tabbed_content_start(?string $name, ?array $tabs, ?string $dft=''): voi
 
 	$str .= "</ul>\n";
 	$str .= "<div class='spaceBox'></div>\n";
-	$str .= "<input type='hidden' name='$selname' value='$sel'>\n";
+	$str .= "<input type='hidden' name='".html_encode_attribute($selname, false, output_encoding())
+		."' value='".html_encode_attribute($sel, false, output_encoding())."'>\n";
 	$str .= "<div class='contentBox' id='$div'>\n";
 	echo $str;
 }

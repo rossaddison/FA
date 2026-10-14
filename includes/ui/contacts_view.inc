@@ -120,7 +120,7 @@ class contacts extends simple_crud {
 		email_row(_("E-mail:"), 'email', @$this->data['email'], 35, 55);
 
 		table_section(2);
-		table_section_title("&nbsp;");
+		table_section_title(nbsp());
 		textarea_row(_("Address:"), 'address', @$this->data['address'], 30, 4);
 		languages_list_row( _("Document Language:"), 'lang', @$this->data['lang'], _("Customer default"));
 
