@@ -22,7 +22,7 @@ function pager_link(string $link_text = '', string $url = '', string|bool|null $
 	return "<a href='$href'>" . $link_text . "</a>";
 }
 
-function navi_button(string $name = '', string|int|float|bool|null $value, string|int|float|bool|null $enabled=true, ?string $icon = null): string {
+function navi_button(string $name, string|int|float|bool|null $value, string|int|float|bool|null $enabled=true, ?string $icon = null): string {
 	global $path_to_root;
   	return "<button ". ((bool)$enabled ? '':'disabled')
   		." class=\"navibutton\" type=\"submit\""
@@ -40,7 +40,7 @@ function navi_button_cell(?string $name, ?string $value, string|int|float|bool|n
 //
 //    Sql paged table view. Call this function inside form.
 //
-function display_db_pager(object &$pager): bool {
+function display_db_pager(db_pager &$pager): bool {
     global	$path_to_root;
 
 	$pager->select_records();
