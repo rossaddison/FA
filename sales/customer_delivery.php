@@ -35,7 +35,7 @@ if ((bool) user_use_date_picker()) {
 }
 
 if (isset($_GET['ModifyDelivery'])) {
-	$_SESSION['page_title'] = sprintf(_("Modifying Delivery Note # %d."), $_GET['ModifyDelivery']);
+	$_SESSION['page_title'] = sprintf(_("Modifying Delivery Note # %d."), (int) get_scalar('ModifyDelivery'));
 	$help_context = "Modifying Delivery Note";
 	processing_start();
 } elseif (isset($_GET['OrderNumber'])) {
@@ -46,7 +46,7 @@ if (isset($_GET['ModifyDelivery'])) {
 page($_SESSION['page_title'], false, false, "", $js);
 
 if (isset($_GET['AddedID'])) {
-	$dispatch_no = $_GET['AddedID'];
+	$dispatch_no = (int) get_scalar('AddedID');
 
 	display_notification_centered(sprintf(_("Delivery # %d has been entered."),$dispatch_no));
 
@@ -70,7 +70,7 @@ if (isset($_GET['AddedID'])) {
 
 } elseif (isset($_GET['UpdatedID'])) {
 
-	$delivery_no = $_GET['UpdatedID'];
+	$delivery_no = (int) get_scalar('UpdatedID');
 
 	display_notification_centered(sprintf(_('Delivery Note # %d has been updated.'),$delivery_no));
 
@@ -177,7 +177,7 @@ function check_data(): bool
 	}
 
 	if (session_obj('Items')->trans_no==0) {
-		if (!refs()->is_valid($_POST['ref'], ST_CUSTDELIVERY)) {
+		if (!refs()->is_valid(post_scalar('ref'), ST_CUSTDELIVERY)) {
 			display_error(_("You must enter a reference."));
 			set_focus('ref');
 			return false;
@@ -217,16 +217,16 @@ function copy_to_cart(): void
 {
 	$cart = &$_SESSION['Items'];
 	/** @var Cart $cart */
-	$cart->ship_via = $_POST['ship_via'];
-	$cart->freight_cost = input_num('ChargeFreightCost');
-	$cart->document_date = $_POST['DispatchDate'];
-	$cart->due_date =  $_POST['due_date'];
-	$cart->Location = $_POST['Location'];
-	$cart->Comments = $_POST['Comments'];
-	$cart->dimension_id = $_POST['dimension_id'];
-	$cart->dimension2_id = $_POST['dimension2_id'];
+	$cart->ship_via = post_scalar('ship_via');
+	$cart->freight_cost = (float) input_num('ChargeFreightCost');
+	$cart->document_date = (string) post_scalar('DispatchDate');
+	$cart->due_date =  (string) $_POST['due_date'];
+	$cart->Location = (string) post_scalar('Location');
+	$cart->Comments = (string) post_scalar('Comments');
+	$cart->dimension_id = (int) $_POST['dimension_id'];
+	$cart->dimension2_id = (int) $_POST['dimension2_id'];
 	if ($cart->trans_no == 0)
-		$cart->reference = $_POST['ref'];
+		$cart->reference = (string) post_scalar('ref');
 
 }
 //------------------------------------------------------------------------------
@@ -255,8 +255,8 @@ function check_quantities(): int
 	foreach (session_obj('Items')->line_items as $line=>$itm) {
 		if (isset($_POST['Line'.$line])) {
 			if((bool)session_obj('Items')->trans_no) {
-				$min = $itm->qty_done;
-				$max = $itm->quantity;
+				$min = (float) $itm->qty_done;
+				$max = (float) $itm->quantity;
 			} else {
 				$min = 0;
 				// Fixing floating point problem in PHP.
@@ -265,7 +265,7 @@ function check_quantities(): int
 
 			if (check_num('Line'.$line, $min, $max)) {
 				session_obj('Items')->line_items[$line]->qty_dispatched =
-				  input_num('Line'.$line);
+				  (float) input_num('Line'.$line);
 			} else {
 				set_focus('Line'.$line);
 				$ok = 0;
@@ -273,7 +273,7 @@ function check_quantities(): int
 		}
 
 		if (isset($_POST['Line'.$line.'Desc'])) {
-			$line_desc = $_POST['Line'.$line.'Desc'];
+			$line_desc = (string) post_scalar('Line'.$line.'Desc');
 			if (strlen($line_desc) > 0) {
 				session_obj('Items')->line_items[$line]->item_description = $line_desc;
 			}
