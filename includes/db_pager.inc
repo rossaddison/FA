@@ -18,8 +18,8 @@ declare(strict_types=1);
 //	View definition you will find in the following file:
 include_once(dirname(__DIR__) . "/includes/ui/db_pager_view.inc");
 
-class db_pager {
-	/** @var string */
+final class db_pager {
+	/** @var string|array<string, mixed> */
 	var $sql = '';
 	/** @var string */
 	var $name;
@@ -62,7 +62,7 @@ class db_pager {
 	var $footer_class;
 
 	/**
-	 * @var array
+	 * @var array<array-key, array<array-key, mixed>>
 	 */
 	var $data = array();
 
@@ -142,7 +142,10 @@ class db_pager {
 	//  	array('select' => 'SUM(quantity)', 'from' => TB_PREF."stock_moves", 'group' => 'location')
 	//
 	//	$name is base name for pager controls
-	function __construct($sql, $name, $table = null, $page_len=0) 
+	/**
+	 * @param string|array<string, mixed> $sql
+	 */
+	function __construct(string|array $sql, string $name, ?string $table = null, int $page_len=0)
 	{
 		$this->width = "95%";
 		if ($page_len == 0) $page_len = user_query_size();
@@ -153,8 +156,11 @@ class db_pager {
 	//
 	//	Parse base sql select query	or use an associative array.
 	//
-	/** @return void */
-	function set_sql($sql)
+	/**
+	 * @param string|array<string, mixed> $sql
+	 * @return void
+	 */
+	function set_sql(string|array $sql)
 	{
 
 		if ($sql != $this->sql) {
@@ -202,10 +208,11 @@ class db_pager {
 	//	Set additional constraint on record set
 	//
 	/**
+	 * @param string|array<array-key, mixed>|null $where
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
-	function set_where($where = null)
+	function set_where(string|array|null $where = null)
 	{
 	 	if ($where) {
 	    	if (!is_array($where))
@@ -333,8 +340,11 @@ class db_pager {
 	//
 	//	Set column definitions
 	//  $flds: array( fldname1, fldname2=>type,...)
-	/** @return void */
-	function set_columns($flds)
+	/**
+	 * @param string|array<array-key, mixed> $flds
+	 * @return void
+	 */
+	function set_columns(string|array $flds)
 	{
 		$this->columns = array();
 		if (!is_array($flds)) {
@@ -501,7 +511,7 @@ class db_pager {
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
-	function set_marker($func, $notice='', $markercl='overduebg', $msgclass='overduefg' )
+	function set_marker(?string $func, string $notice='', string $markercl='overduebg', string $msgclass='overduefg' )
 	{
 		$this->marker = $func;
 		$this->marker_txt = $notice;
@@ -516,7 +526,7 @@ class db_pager {
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
-	function set_header($func, $headercl='inquirybg')
+	function set_header(?string $func, string $headercl='inquirybg')
 	{
 		$this->header_fun = $func;
 		$this->header_class = $headercl;
@@ -529,7 +539,7 @@ class db_pager {
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
-	function set_footer($func, $footercl='inquirybg')
+	function set_footer(?string $func, string $footercl='inquirybg')
 	{
 		$this->footer_fun = $func;
 		$this->footer_class = $footercl;
@@ -538,19 +548,20 @@ class db_pager {
 	//	Setter for table editors with inactive cell control.
 	//
 	/**
-	 * @param string|null $table
-	 * @param string|null $key
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
-	function set_inactive_ctrl($table, $key) {
+	function set_inactive_ctrl(?string $table, ?string $key) {
 		$this->inactive_ctrl = array('table'=>$table, 'key'=>$key);
 	}
 	//
 	//	Helper for display inactive control cells
 	//
-	/** @return ''|null */
-	function inactive_control_cell(&$row)
+	/**
+	 * @param array<array-key, mixed> $row
+	 * @return ''|null
+	 */
+	function inactive_control_cell(array &$row)
 	{
 		if ((bool)$this->inactive_ctrl) {
 				 
@@ -602,8 +613,12 @@ class db_pager {
 //  during display, but can be used in format handlers for 'spec' and 'insert' 
 //	type columns.
 
-/** @return db_pager */
-function &new_db_pager($name, $sql, $coldef, $table = null, $key = null, $page_len = 0)  {
+/**
+ * @param string|array<string, mixed> $sql
+ * @param string|array<array-key, mixed> $coldef
+ * @return db_pager
+ */
+function &new_db_pager(string $name, string|array $sql, string|array $coldef, ?string $table = null, ?string $key = null, int $page_len = 0)  {
 
     /** @var db_pager|null $existing_pager */
     $existing_pager = $_SESSION[$name] ?? null;
