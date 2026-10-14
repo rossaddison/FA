@@ -59,7 +59,8 @@ function months_between_dates(string|int|float|bool|null $start, string|int|floa
   return 12.0 * ((float)($y2 - $y1)) + $m2 - $m1;
 }
 
-function compute_gl_rows_for_depreciation(bool|array|null $item, string|array|null $no_months, string|int|float|bool|null $period): array {
+/** @param array<array-key, mixed> $item */
+function compute_gl_rows_for_depreciation(array $item, string|array|null $no_months, string|int|float|bool|null $period): array {
   $rows = array();
 
   $year = row_or_empty(get_current_fiscalyear());

@@ -53,9 +53,9 @@ function handle_submit(): void
   if (!check_data())
     return;
 
-  $item = get_item(post_scalar('stock_id'));
+  $item = row_or_empty(get_item(post_scalar('stock_id')));
 
-  $period = get_company_pref('depreciation_period'); 
+  $period = get_company_pref('depreciation_period');
   $gl_rows = compute_gl_rows_for_depreciation($item, $_POST['months'], $period);
 
   $trans_no = process_fixed_asset_depreciation(post_scalar('stock_id'), $gl_rows, $_POST['refline'], $_POST['memo_']);
@@ -92,7 +92,7 @@ check_db_has_depreciable_fixed_assets(_("There are no fixed assets that could be
 
 function show_gl_rows(): void {
 
-  $item = get_item(post_scalar('stock_id'));
+  $item = row_or_empty(get_item(post_scalar('stock_id')));
 
   hidden('stock_id');
   hidden('months');
