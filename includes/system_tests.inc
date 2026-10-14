@@ -22,6 +22,7 @@ $test_level = array(
 // test mysql server version
 function tst_mysql(): array 
 {
+	$test = array();
 	$test['descr'] = _('MySQL version'). ' >=4.1';
 	$test['type'] = 3;
 	$test['test'] = db_get_version();
@@ -37,6 +38,7 @@ function tst_mysql(): array
 /** @psalm-pure */
 function tst_phpmysql(): array 
 {
+	$test = array();
 	$test['descr'] = _('PHP MySQL extension');
 	$test['type'] = 3;
 	$test['result'] = db_extension_exists();
@@ -48,6 +50,7 @@ function tst_phpmysql(): array
 
 function tst_php(): array 
 {
+	$test = array();
 	$test['descr'] = _('PHP version').' >=8.5.0';
 	$test['type'] = 3;
 	$test['test'] = phpversion();
@@ -60,6 +63,7 @@ function tst_php(): array
 /** @psalm-pure */
 function tst_system(): array 
 {
+	$test = array();
 	$test['descr'] = _('Server system');
 	$test['type'] = 0;
 	$test['test'] = PHP_OS;
@@ -70,6 +74,7 @@ function tst_system(): array
 
 function tst_sessionpath(): array 
 {
+	$test = array();
 	$test['descr'] = _('Session save path');
 	$test['type'] = 0;
 	$test['test'] = session_save_path();
@@ -82,6 +87,7 @@ function tst_install(): array
 {
 	global $path_to_root;
 
+	$test = array();
 	$test['descr'] = _('Removed install wizard folder');
 	$test['type'] = 2;
 	$test['result'] = !is_dir($path_to_root.'/install');
@@ -93,6 +99,7 @@ function tst_install(): array
 
 function tst_browser(): array 
 {
+	$test = array();
 	$test['descr'] = _('Browser type');
 	$test['type'] = 0;
 	$test['test'] = $_SERVER['HTTP_USER_AGENT'];
@@ -104,6 +111,7 @@ function tst_browser(): array
 
 function tst_server(): array 
 {
+	$test = array();
 	$test['descr'] = _('Http server type');
 	$test['test'] = $_SERVER['SERVER_SOFTWARE'];
 	$test['type'] = 0;
@@ -116,6 +124,7 @@ function tst_server(): array
 /** @psalm-pure */
 function tst_gettext(): array 
 {
+	$test = array();
 	$test['descr'] = _('Native gettext');
 	$test['test'] = function_exists('gettext') ? _('Yes'): _('No');
 	$test['type'] = 1;
@@ -127,6 +136,7 @@ function tst_gettext(): array
 
 function tst_debug(): array 
 {
+	$test = array();
 	$test['descr'] = _('Debugging mode');
 	$test['type'] = 0;
 	$test['test'] = sysprefs()->go_debug ? _("Yes") : _("No");
@@ -140,6 +150,7 @@ function tst_logging(): array
 {
 	
 	$error_logfile = sysprefs()->error_logfile;
+	$test = array();
 	$test['descr'] = _('Error logging');
 	$test['type'] = 2;
 	// if error lgging is on, but log file does not exists try write
@@ -164,6 +175,7 @@ function tst_logging(): array
 function tst_dbversion(): array
 {
 	global $db_version;
+	$test = array();
 	$test['descr'] = _('Current database version');
 	$test['type'] = 3;
 	$test['test'] = get_company_pref('version_id');
@@ -183,6 +195,7 @@ function tst_subdirs(mixed $install=false): array
 
 	$comp_subdirs = array('images', 'pdf_files', 'backup','js_cache');
 
+	$test = array();
 	$test['descr'] = _('Company subdirectories consistency');
 	$test['type'] = 3;
 	$test['test'] = array(company_path().'/*');
@@ -206,7 +219,7 @@ function tst_subdirs(mixed $install=false): array
 				$test['comments'][] = sprintf(_("'%s' is not writeable"), $spath);
 			} else {
 				$dir = opendir($spath);
-				while (false !== ($fname = readdir($dir))) {
+				while ($dir !== false && false !== ($fname = readdir($dir))) {
 					// check only *.js files. Manually installed package can contain other
 					// non-writable files which are non-crucial for normal operations
 					if (preg_match('/.*(\.js)/', $fname) && !is_writable("$spath/$fname")) {
@@ -223,7 +236,8 @@ function tst_subdirs(mixed $install=false): array
 function tst_tmpdir(): array
 {
 	global $path_to_root;
-	
+
+	$test = array();
 	$test['descr'] = _('Temporary directory');
 	$test['type'] = 3;
 	$test['test'] = VARLIB_PATH;
@@ -236,6 +250,7 @@ function tst_langs(mixed $install): array
 {
 	global $installed_languages, $path_to_root, $GetText;
 
+	$test = array();
 	$test['descr'] = _('Language configuration consistency');
 	$test['type'] = 3;
 	$test['result'] = true;
@@ -291,6 +306,7 @@ function tst_config(mixed $install): array
 {
 	global $path_to_root;
 
+	$test = array();
 	$test['descr'] = _('Main config file');
 	$test['test'] = $path_to_root.'/config.php';
 	if ($install) {
@@ -312,6 +328,7 @@ function tst_dbconfig(mixed $install): array
 {
 	global $path_to_root;
 
+	$test = array();
 	$test['descr'] = _('Database auth file');
 	$test['test'] = $path_to_root.'/config_db.php';
 
@@ -335,7 +352,8 @@ function tst_extconfig(mixed $install): array
 	global $path_to_root, $db_connections;
 
 	$comps = $install ? array('0') : array_keys($db_connections);
-	
+
+	$test = array();
 	$test['descr'] = _('Extensions system');
 	$test['type'] = 3;
 	$fname =  $path_to_root.'/installed_extensions.php';
