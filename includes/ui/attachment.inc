@@ -15,7 +15,7 @@ include_once(dirname(__DIR__, 2) . '/includes/ui/simple_crud_class.inc');
 /*
 	View/Edit class for attachments
 */
-class attachments extends simple_crud {
+final class attachments extends simple_crud {
 	var $selected_id;
 	/** @var string|int|null */
 	var $entity;
@@ -42,13 +42,14 @@ class attachments extends simple_crud {
 	}
 
 	/** @return void */
+	#[\Override]
 	function list_view() {
 		global $path_to_root, $session_debtor_no, $session_supplier_id;
 		br();
 		if(isset($_POST['attachmentDownload'])){
 			$keys =  array_keys($_POST['attachmentDownload']);
 			$sql = "SELECT * FROM ".TB_PREF."attachments WHERE id = ".db_escape($keys[0]);
-			$row = db_fetch(db_select($sql), "Cannot retrieve attachment $keys[0]");
+			$row = db_fetch(db_select($sql, "Cannot retrieve attachment $keys[0]"));
 
 			
 			if ($row['unique_name'] != ""){
@@ -66,7 +67,7 @@ class attachments extends simple_crud {
 		if(isset($_POST['attachmentView'])){
 			$keys =  array_keys($_POST['attachmentView']);
 			$sql = "SELECT * FROM ".TB_PREF."attachments WHERE id = ".db_escape($keys[0]);
-			$row = db_fetch(db_select($sql), "Cannot retrieve attachment $keys[0]");
+			$row = db_fetch(db_select($sql, "Cannot retrieve attachment $keys[0]"));
 			
 			if ($row['unique_name'] != ""){
 
@@ -116,6 +117,7 @@ class attachments extends simple_crud {
 	}
 	
 	/** @return void */
+	#[\Override]
 	function editor_view(){
 		//global $Ajax;
 		br();
@@ -127,7 +129,7 @@ class attachments extends simple_crud {
 		
 		if($this->selected_id != null && $this->selected_id != "") {
 			$sql = "SELECT * FROM ".TB_PREF."attachments WHERE id = ".db_escape($this->selected_id);
-			$row = row_or_empty(db_fetch(db_select($sql), "Cannot retrieve attachment $this->selected_id"));
+			$row = row_or_empty(db_fetch(db_select($sql, "Cannot retrieve attachment $this->selected_id")));
 			$_POST['tran_date'] = sql2date($row['tran_date']);
 			$_POST['title'] = $row['description'];
 			$_POST['trans_no'] = $row['trans_no'];
@@ -162,6 +164,7 @@ class attachments extends simple_crud {
 	}
 
 	/** @return void */
+	#[\Override]
 	function _bottom_controls()	{
 		$title=false;
 		$async='default';
@@ -188,13 +191,14 @@ class attachments extends simple_crud {
     function _get_unique_name($selected_id) {
         if ($selected_id != null && $selected_id != "") {
             $sql = "SELECT * FROM ".TB_PREF."attachments WHERE id = ".db_escape($this->selected_id);
-            $row = row_or_empty(db_fetch(db_select($sql), "Cannot retrieve attachment $this->selected_id"));
+            $row = row_or_empty(db_fetch(db_select($sql, "Cannot retrieve attachment $this->selected_id")));
             return $row['unique_name'];
         }
             return null;
     }
 
 	/** @return void */
+	#[\Override]
 	function db_insert() {
 		$dat = $this->data;
 
@@ -240,6 +244,7 @@ class attachments extends simple_crud {
 	}
 
 	/** @return void */
+	#[\Override]
 	function db_update() {
 		$dat = $this->data;
 
@@ -290,8 +295,9 @@ class attachments extends simple_crud {
 	 * @psalm-external-mutation-free
 	 * @return bool
 	 */
+	#[\Override]
 	function insert_check() {
-		if (strlen($_POST['description']) == 0) {
+		if (strlen((string) post_scalar('description')) == 0) {
 			display_error(_("Description cannot be empty."));
 			set_focus('description');
 			return false;
@@ -300,6 +306,7 @@ class attachments extends simple_crud {
 	}
 
 	/** @return array<string, null|string>|false */
+	#[\Override]
 	function db_read() {
 		$sql = "SELECT * FROM ".TB_PREF."attachments WHERE id=".db_escape($this->selected_id);
 		$result = db_select($sql, "Could not get all data from ".TB_PREF."attachments table");
@@ -310,6 +317,7 @@ class attachments extends simple_crud {
 	 * @psalm-pure
 	 * @return true
 	 */
+	#[\Override]
 	function delete_check() {
 		return true;
 	}
@@ -317,9 +325,10 @@ class attachments extends simple_crud {
 	//	Delete all attachments for Customer / Supplier in current class/entity
 	//
 	/** @return false */
+	#[\Override]
 	function db_delete() {
 		$sql = "SELECT * FROM ".TB_PREF."attachments WHERE id = ".db_escape($this->selected_id);
-		$row = row_or_empty(db_fetch(db_select($sql), "Cannot retrieve attachment $this->selected_id"));
+		$row = row_or_empty(db_fetch(db_select($sql, "Cannot retrieve attachment $this->selected_id")));
 
 		$dir =  company_path()."/attachments";
 		if ($row['unique_name'] && file_exists($dir."/".$row['unique_name']))
