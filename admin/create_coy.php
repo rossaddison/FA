@@ -33,7 +33,7 @@ $selected_id = (int) $selected_id;
 */
 //---------------------------------------------------------------------------------------------
 #[\NoDiscard]
-function check_data(string|int|float|bool|array|null $selected_id): bool
+function check_data(int $selected_id): bool
 {
 	global $db_connections, $tb_pref_counter;
 
@@ -93,7 +93,7 @@ function remove_connection(string|int|float|bool|null $id) {
 }
 //---------------------------------------------------------------------------------------------
 
-function handle_submit(string|int|float|bool|null $selected_id): bool
+function handle_submit(int $selected_id): bool
 {
 	global $db_connections, $def_coy, $tb_pref_counter, $db,
 	    $comp_subdirs, $path_to_root, $Mode;
@@ -178,7 +178,7 @@ function handle_submit(string|int|float|bool|null $selected_id): bool
 
 //---------------------------------------------------------------------------------------------
 
-function handle_delete(string|int|float|bool|null $id): void
+function handle_delete(int $id): void
 {
 	global $def_coy, $db_connections, $comp_subdirs, $path_to_root, $Mode;
 
@@ -295,7 +295,7 @@ function display_companies(): void
 
 //---------------------------------------------------------------------------------------------
 
-function display_company_edit(string|int|float|bool|null $selected_id): void
+function display_company_edit(int $selected_id): void
 {
 	global $def_coy, $db_connections, $tb_pref_counter;
 
