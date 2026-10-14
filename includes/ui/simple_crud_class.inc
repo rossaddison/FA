@@ -99,7 +99,7 @@ class simple_crud {
 	/*
 		Input/output formatters - convert values between php/user domains.
 	*/
-	function _format_input($value, $fmt): mixed
+	function _format_input(string|int|float|bool|null $value, ?string $fmt): mixed
 	{
 		switch($fmt) {
 			case 'stock':
@@ -118,7 +118,7 @@ class simple_crud {
 		}
 	}
 	
-	function _format_output($value, $fmt): mixed
+	function _format_output(string|int|float|bool|null $value, ?string $fmt): mixed
 	{
 		switch($fmt) {
 			case 'price':
@@ -164,17 +164,14 @@ class simple_crud {
 	//
 	//	Set record for edition
 	//
-	/**
-	 * @param string|null $mode
-	 * @return void
-	 */
-	function _edit($mode)
+	/** @return void */
+	function _edit(?string $mode)
 	{
 		if ($this->Mode != $mode) {
 			if ($this->selected_id != $this->_none) {
 				$this->data = $this->db_read();
 			}
-			$this->set_posts($this->data);
+			$this->set_posts();
 		}
 		$this->Mode = $mode;
 	}
@@ -182,7 +179,7 @@ class simple_crud {
 	//	Update record after edition
 	//
 	/** @return void */
-	function _update($mode)
+	function _update(?string $mode)
 	{
 		$this->get_posts();
 		if ($this->update_check()) {
@@ -198,7 +195,7 @@ class simple_crud {
 	//	Add new record
 	//
 	/** @return void */
-	function _add($mode)
+	function _add(?string $mode)
 	{
 		$this->get_posts();
 		if ($this->insert_check()) {
@@ -276,7 +273,7 @@ class simple_crud {
 	//
 	
 	/** @return non-falsy-string */
-	function tool_button($name, $selected_id=null, $params='')
+	function tool_button(string $name, string|int|float|bool|null $selected_id=null, ?string $params='')
 	{
 		$b = $this->tool_buttons[$name];
 
@@ -338,7 +335,7 @@ class simple_crud {
 		if (!isset($_POST[$this->name.'Mode']))
 			$this->set_posts();
 
-		$Mode = $this->_check_mode(true);
+		$Mode = $this->_check_mode();
 		div_start($this->name.'_div');
 
 		if (array_key_exists($Mode, $this->pre_handlers)) {
