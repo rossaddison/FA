@@ -60,6 +60,7 @@ class hooks {
 			foreach($updates as $file => $update) {
 				$table = $update[0] ?? null;
 				$field = $update[1] ?? null;
+				/** @var array<string, string|int|float|bool|null>|null $properties */
 				$properties = $update[2] ?? null;
 
 				$ok = check_table($con['tbpref'], $table, $field, $properties) == 0;

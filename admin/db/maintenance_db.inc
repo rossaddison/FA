@@ -299,9 +299,10 @@ function write_lang(): bool
 function db_import(string|int|float|bool|null $filename, array $connection, string|int|float|bool|null $force=true, string|int|float|bool|null $init=true, string|int|float|bool|array|null $protect=false, string|int|float|bool|null $return_errors=false): array|string|bool
 {
 	global $db;
+	/** @var mysqli $db */
+	$db = $db;
 	$filename = (string) $filename;
-	$connection_tbpref_raw = $connection["tbpref"] ?? null;
-	$connection_tbpref = is_scalar($connection_tbpref_raw) ? (string) $connection_tbpref_raw : '';
+	$connection_tbpref = is_scalar($connection["tbpref"] ?? null) ? (string) $connection["tbpref"] : '';
 
 	$trail = sysprefs()->sql_trail;
 	sysprefs()->sql_trail = false;
@@ -349,9 +350,8 @@ function db_import(string|int|float|bool|null $filename, array $connection, stri
 	db_query("SET foreign_key_checks=0");
 	db_query("SET sql_mode=''");
 
-	$connection_collation = $connection['collation'] ?? null;
-	if (is_scalar($connection_collation))
-		db_set_collation($db, $connection_collation);
+	if (is_scalar($connection['collation'] ?? null))
+		db_set_collation($db, $connection['collation'] ?? null);
 
 	$check_line_len = false;
 
@@ -470,7 +470,6 @@ function db_import(string|int|float|bool|null $filename, array $connection, stri
 	fclose($f);
 	}
 /*/
-	/** @var mysqli $db */
 	$save_debug = sysprefs()->go_debug;
 	if ((bool)$return_errors)
 	{	// prevent errors display
@@ -535,6 +534,8 @@ function db_import(string|int|float|bool|null $filename, array $connection, stri
 function db_ungzip(?string $mode, ?string $path): array|string|false
 {
     $file_data = gzfile((string) $path);
+    if ($file_data === false)
+    	return false;
     // returns one string or an array of lines
     if ($mode != "lines")
     	return implode("",$file_data);
@@ -546,8 +547,10 @@ function db_ungzip(?string $mode, ?string $path): array|string|false
 /** @psalm-pure */
 function db_unzip(?string $mode, ?string $path): array|string|false
 {
-    $all = false;
-    $all = implode("", file((string) $path));
+    $lines = file((string) $path);
+    if ($lines === false)
+    	return false;
+    $all = implode("", $lines);
 
     // convert path to name of ziped file
     $filename = (string) preg_replace("/.*\//", "", (string) $path);
@@ -564,10 +567,10 @@ function db_unzip(?string $mode, ?string $path): array|string|false
 		$crc_bugfix = substr($all, 30, strlen($filename)+13);
         $crc_bugfix = substr(substr($crc_bugfix, 0, strlen($crc_bugfix) - 4), 
 				strlen($crc_bugfix) - 12 - 4);
-        $suffix = false;
+        $suffix = '';
         // convert hex to ascii
         for ($i=0; $i < 12; )
-        	$suffix .= chr($crc_bugfix[$i++] . $crc_bugfix[$i++] . $crc_bugfix[$i++]);
+        	$suffix .= chr((int) ($crc_bugfix[$i++] . $crc_bugfix[$i++] . $crc_bugfix[$i++]));
 
         // remove central directory information (we have always just one ziped file)
         $comp = substr($all, -(strlen($all) - 30 - strlen($filename)-13));
@@ -577,6 +580,9 @@ function db_unzip(?string $mode, ?string $path): array|string|false
         $comp = "x�" . $comp . $suffix;
         $file_data = gzuncompress($comp);
     }
+
+    if ($file_data === false)
+    	return false;
 
     // returns one string or an array of lines
     if ($mode != "lines")
@@ -598,7 +604,9 @@ function db_backup(array $conn, string|int|float|bool|null $ext='no', string|int
 	else
 		$filename = $conn_dbname . "_" . date("Ymd_Hi") . ".sql";
 
-	return db_export($conn, $path . clean_file_name($filename), $ext, $comm);
+	$cleaned_filename = clean_file_name($filename);
+	$cleaned_filename = is_string($cleaned_filename) ? $cleaned_filename : '';
+	return db_export($conn, (string) $path . $cleaned_filename, $ext, $comm);
 }
 // Generates a dump of $db database
 //
@@ -620,13 +628,13 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
     	$max_size = 1048576 * (int)ini_get("memory_limit");
     // set backupfile name
     if ($zip == "gzip")
-    	$backupfile = $filename . ".gz";
+    	$backupfile = (string) $filename . ".gz";
     elseif ($zip == "zip")
-    	$backupfile = $filename . ".zip";
+    	$backupfile = (string) $filename . ".zip";
     else
-    	$backupfile = $filename;
-    $company = $conn['name'] ?? null; // get_company_pref('coy_name');
-    $company = is_scalar($company) ? $company : null;
+    	$backupfile = (string) $filename;
+    // get_company_pref('coy_name');
+    $company = is_scalar($conn['name'] ?? null) ? $conn['name'] : null;
 
 	if (file_exists((string) $backupfile))	// prevent appends
 		unlink((string) $backupfile);
@@ -641,13 +649,13 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
     $out.="# ".sysprefs()->power_url."\n";
     $out.="# Company: ". @html_entity_decode((string) $company, ENT_QUOTES, session_obj('language')->encoding)."\n";
     $out.="# User: ".session_obj('wa_current_user')->name."\n\n";
-    $out.="# Compatibility: ".get_company_pref('version_id')."\n\n";
+    $out.="# Compatibility: ".(string) get_company_pref('version_id')."\n\n";
 
 	// write users comment
 	if ((bool)$comment)
 	{
 		$out .= "# Comment:\n";
-		$comment=preg_replace("'\n'","\n# ","# ".$comment);
+		$comment=preg_replace("'\n'","\n# ","# ".(string)$comment);
 		//$comment=str_replace("\n", "\n# ", $comment);
 		foreach(explode("\n",(string) $comment) as $line)
 			$out .= $line."\n";
@@ -662,23 +670,28 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
 	}
     // get auto_increment values and names of all tables
     $res = db_select("show table status");
+    /** @var array<int, array<string, string|null>> $all_tables */
     $all_tables = array();
     while($row = db_fetch($res))
     {
+		/** @var array<string, string|null> $row */
+		$row = $row;
 		if (($conn_tbpref == "" && !preg_match('/[0-9]+_/', (string) $row['Name'])) ||
 			($conn_tbpref != "" && strpos((string) $row['Name'], $conn_tbpref) === 0))
     		$all_tables[] = $row;
     }
         // get table structures
+	/** @var array<string, string> $table_sql */
 	$table_sql = array();
 	foreach ($all_tables as $table)
 	{
 		$res1 = db_select("SHOW CREATE TABLE `" . (string)$table['Name'] . "`");
 		$tmp = row_or_empty(db_fetch($res1));
-		$table_sql[$table['Name']] = $tmp["Create Table"];
+		$table_sql[(string) $table['Name']] = (string) ($tmp["Create Table"] ?? '');
 	}
 
 	// find foreign keys
+	/** @var array<string, array<int, string>> $fks */
 	$fks = array();
 	if (count($table_sql))
 	{
@@ -690,6 +703,8 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
 			{
 				$tmp_table = substr($tmp_table, $ref_pos + 12);
 				$ref_pos = strpos($tmp_table, "(");
+				if ($ref_pos === false)
+					break;
 				$fks[$tablenme][] = substr($tmp_table, 0, $ref_pos);
 			}
 		}
@@ -703,7 +718,7 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
 		foreach ($all_tables as $row)
 		{
 			if (!empty($row['Engine'])) {	//don't export views like tables
-				$tablename = $row['Name'];
+				$tablename = (string) $row['Name'];
 				$auto_incr[$tablename] = $row['Auto_increment'];
 	
 				$out.="\n\n";
@@ -800,7 +815,7 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
 		foreach ($all_tables as $row)
 		{
 			if (empty($row['Engine'])) {
-				$viewname = $row['Name'];
+				$viewname = (string) $row['Name'];
 				$out .= "\n\nDROP VIEW IF EXISTS `".$viewname."`;\n";
 				//db_get_view_schema() is in /includes/db/connect_db_mysqli.inc because it is mysql specific
 				if (NULL !== ($schema = db_get_view_schema($viewname)))
@@ -841,9 +856,9 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
 // orders the tables in $tables according to the constraints in $fks
 // $fks musst be filled like this: $fks[tablename][0]=needed_table1; $fks[tablename][1]=needed_table2; ...
 /**
- * @param array<array-key, array<array-key, mixed>> $tables
- * @param array<array-key, array<array-key, string>> $fks
- * @return array<array-key, array<array-key, mixed>>
+ * @param array<array-key, array<string, string|null>> $tables
+ * @param array<string, array<int, string>> $fks
+ * @return array<array-key, array<string, string|null>>
  */
 function order_sql_tables(array $tables, array $fks): array
 {
@@ -860,10 +875,11 @@ function order_sql_tables(array $tables, array $fks): array
 	 	$modified = false;
 	    foreach ($tables as $key=>$row)
 	    {
+	        $name = (string) $row['Name'];
 	        // delete from $tables and add to $new_tables
-	        if (isset($fks[$row['Name']]))
+	        if (isset($fks[$name]))
 	        {
-	        	foreach($fks[$row['Name']] as $needed)
+	        	foreach($fks[$name] as $needed)
 	        	{
 	            	// go to next table if not all needed tables exist in $existing
 	                if (!in_array($needed,$existing))
@@ -871,7 +887,7 @@ function order_sql_tables(array $tables, array $fks): array
 	            }
 	        }
             // delete from $tables and add to $new_tables
-	        $existing[] = $row['Name'];
+	        $existing[] = $name;
 			$new_tables[] = $row;
             prev($tables);
             unset($tables[$key]);
@@ -928,6 +944,8 @@ function save_to_file(?string $path, string|int|float|bool|null $zip, ?string $f
         $unc_len = strlen($fileData);
         $crc = crc32($fileData);
         $zdata = gzcompress($fileData);
+        if ($zdata === false)
+        	return false;
 
 		// extend stored file name with suffix
         // needed for decoding (because of crc bug)
@@ -1041,25 +1059,28 @@ function create_comp_dirs(string $comp_path, array $comp_subdirs): void
 //  $properties - optional properties of field defined by MySQL:
 //		'Type', 'Null', 'Key', 'Default', 'Extra'
 //
+/** @param ?array<string, string|int|float|bool|null> $properties */
 function check_table(string|int|float|bool|null $pref, string|int|float|bool|null $table, string|int|float|bool|null $field=null, ?array $properties=null): int
 {
-	$tables = @db_select("SHOW TABLES LIKE '".$pref.$table."'");
+	$tables = @db_select("SHOW TABLES LIKE '".(string)$pref.(string)$table."'");
 	if (!db_num_rows($tables))
 		return 1;		// no such table or error
 
-	$fields = @db_select("SHOW COLUMNS FROM ".$pref.$table);
-	if (!isset($field)) 
+	$fields = @db_select("SHOW COLUMNS FROM ".(string)$pref.(string)$table);
+	if (!isset($field))
 		return 0;		// table exists
 
-	while( $row = db_fetch_assoc($fields)) 
+	while( $row = db_fetch_assoc($fields))
 	{
-		if ($row['Field'] == $field) 
+		/** @var array<string, string|null> $row */
+		$row = $row;
+		if ($row['Field'] == $field)
 		{
-			if (!isset($properties)) 
+			if (!isset($properties))
 				return 0;
-			foreach($properties as $property => $value) 
+			foreach($properties as $property => $value)
 			{
-				if ($row[$property] != $value) 
+				if ($row[$property] != $value)
 					return 3;	// failed type/length check
 			}
 			return 0; // property check ok.
@@ -1074,6 +1095,8 @@ function check_table(string|int|float|bool|null $pref, string|int|float|bool|nul
 function update_config_var(string|int|float|bool|null $file, string|int|float|bool|null $variable, string|int|float|bool|null $value, string|int|float|bool|null $comment=''): bool
 {
 	$file = (string) $file;
+	$variable = (string) $variable;
+	$comment = (string) $comment;
 	if (!is_file($file) || !is_writeable($file))
 		return false;
 	$content = file_get_contents($file);
@@ -1084,7 +1107,7 @@ function update_config_var(string|int|float|bool|null $file, string|int|float|bo
 	$content = preg_replace($pattern, $strvalue, $content, -1, $result);
 	if (!(bool)$result)
 	{
-		$strvalue = ((bool)$comment ? "// $comment" : '') ."\n$strvalue\n";
+		$strvalue = ($comment !== '' ? "// $comment" : '') ."\n$strvalue\n";
 		$content = preg_replace('/\?>\s*/m', $strvalue, (string) $content, -1, $result);
 		if (!(bool)$result)
 			$content .= $strvalue;
