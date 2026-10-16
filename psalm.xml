@@ -120,5 +120,9 @@
         <file name="reporting/includes/fpdi/pdf_context.php"/>
         <file name="includes/JsHttpRequest.php"/>
         <file name="includes/lang/gettext.inc"/>
+        <!-- reporting/ as a whole is parked (ignoreFiles above), but FrontReport
+             is referenced as a type hint from several analysed files (e.g.
+             gl/inquiry/profit_loss.php, admin/print_profiles.php) -->
+        <file name="reporting/includes/pdf_report.inc"/>
     </stubs>
 </psalm>

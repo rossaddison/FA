@@ -56,15 +56,16 @@ if (isset($_GET["AccGrp"]))
 
 //----------------------------------------------------------------------------------------------------
 
-function display_type (?string $type, ?string $typename, string|int|float|bool|null $from, string|int|float|bool|FrontReport|null $to, string|int|float|bool|null $begin, string|int|float|bool|null $end, string|int|float|bool|array|FrontReport|null $compare, string|int|float|bool|array|null $convert,
-	string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2, string|int|float|bool|FrontReport|null $drilldown)
+/** @return array{0: float, 1: float} */
+function display_type (?string $type, ?string $typename, string|int|float|bool|null $from, string|int|float|bool|null $to, string|int|float|bool|null $begin, string|int|float|bool|null $end, string|int|float|bool|array|null $compare, int $convert,
+	string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2, string|int|float|bool|null $drilldown)
 {
 	global $path_to_root, $levelptr, $k;
 		
 	$code_per_balance = 0.0;
 	$code_acc_balance = 0.0;
-	$per_balance_total = 0;
-	$acc_balance_total = 0;
+	$per_balance_total = 0.0;
+	$acc_balance_total = 0.0;
 	unset($totals_arr);
 	$totals_arr = array();
 	
@@ -76,7 +77,7 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|n
 		$per_balance = get_gl_trans_from_to($from, $to, $account["account_code"], $dimension, $dimension2);
 
 		if ($compare == 2)
-			$acc_balance = get_budget_trans_from_to($begin, $end, $account["account_code"], $dimension, $dimension2);
+			$acc_balance = (float) get_budget_trans_from_to($begin, $end, $account["account_code"], $dimension, $dimension2);
 		else
 			$acc_balance = get_gl_trans_from_to($begin, $end, $account["account_code"], $dimension, $dimension2);
 		if (!$per_balance && !(bool)$acc_balance)
@@ -84,10 +85,10 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|n
 		
 		if ((bool)$drilldown && $levelptr == 0)
 		{
-			$url = "<a href='$path_to_root/gl/inquiry/gl_account_inquiry.php?TransFromDate=" 
-				. $from . "&TransToDate=" . $to . "&Dimension=" . $dimension . "&Dimension2=" . $dimension2 
-				. "&account=" . (string)$account['account_code'] . "'>" . (string)$account['account_code'] 
-				." ". (string)$account['account_name'] ."</a>";				
+			$url = "<a href='$path_to_root/gl/inquiry/gl_account_inquiry.php?TransFromDate="
+				. (string)$from . "&TransToDate=" . (string)$to . "&Dimension=" . (string)$dimension . "&Dimension2=" . (string)$dimension2
+				. "&account=" . (string)$account['account_code'] . "'>" . (string)$account['account_code']
+				." ". (string)$account['account_name'] ."</a>";
 				
 			start_row("class='stockmankobg'");
 			label_cell($url);
@@ -98,7 +99,7 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|n
 		}
 			
 		$code_per_balance += $per_balance;
-		$code_acc_balance += (float)$acc_balance;
+		$code_acc_balance += $acc_balance;
 	}
 
 	$levelptr = 1;
@@ -116,7 +117,7 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|n
 	//Display Type Summary if total is != 0 
 	if (($code_per_balance + $per_balance_total + $code_acc_balance + $acc_balance_total) != 0)
 	{
-		if ((bool)$drilldown && $type == $_POST["AccGrp"])
+		if ((bool)$drilldown && $type == post_scalar("AccGrp"))
 		{		
 			start_row("class='inquirybg fa-bold'");
 			label_cell(_('Total') . " " . $typename);
@@ -128,12 +129,12 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|n
 		//START Patch#1 : Display  only direct child types
 		$acctype1 = row_or_empty(get_account_type($type));
 		$parent1 = $acctype1["parent"];
-		if ((bool)$drilldown && $parent1 == $_POST["AccGrp"])
-		//END Patch#2		
+		if ((bool)$drilldown && $parent1 == post_scalar("AccGrp"))
+		//END Patch#2
 		//elseif ($drilldown && $type != $_POST["AccGrp"])
 		{	
-			$url = "<a href='$path_to_root/gl/inquiry/profit_loss.php?TransFromDate=" 
-				. $from . "&TransToDate=" . $to . "&Compare=" . $compare . "&Dimension=" . $dimension . "&Dimension2=" . $dimension2
+			$url = "<a href='$path_to_root/gl/inquiry/profit_loss.php?TransFromDate="
+				. (string)$from . "&TransToDate=" . (string)$to . "&Compare=" . (is_array($compare) ? '' : (string)$compare) . "&Dimension=" . (string)$dimension . "&Dimension2=" . (string)$dimension2
 				. "&AccGrp=" . $type ."'>" . $type . " " . $typename ."</a>";
 				
 			alt_table_row_color($k);
@@ -150,7 +151,10 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|n
 	return $totals_arr;
 }	
 	
-/** @return 0|999|float */
+/**
+ * @return 0|999|float
+ * @psalm-pure
+ */
 function Achieve(string|int|float|bool|null $d1, string|int|float|bool|null $d2)
 {
 	if ($d1 == 0 && $d2 == 0)
@@ -203,21 +207,21 @@ function display_profit_and_loss(string|int|array|null $compare): void
 	/** @var int|string $compare */
 	$compare = is_array($compare) || $compare === null ? 0 : $compare;
 
-	if (!isset($_POST['Dimension']))
-		$_POST['Dimension'] = 0;
-	if (!isset($_POST['Dimension2']))
-		$_POST['Dimension2'] = 0;
-	$dimension = $_POST['Dimension'];
-	$dimension2 = $_POST['Dimension2'];
+	$dimension = post_scalar('Dimension') ?? 0;
+	$dimension2 = post_scalar('Dimension2') ?? 0;
 
-	$from = $_POST['TransFromDate'];
-	$to = $_POST['TransToDate'];
-	
-	if (isset($_POST["AccGrp"]) && (strlen($_POST['AccGrp']) > 0))
+	$from = post_scalar('TransFromDate');
+	$to = post_scalar('TransToDate');
+
+	$accgrp = (string) (post_scalar('AccGrp') ?? '');
+	if (strlen($accgrp) > 0)
 		$drilldown = 1; // Deeper Level
 	else
 		$drilldown = 0; // Root level
-	
+
+	// defaults for an out-of-range $compare (e.g. a tampered form submission)
+	$begin = $from;
+	$end = $to;
 	if ($compare == 0 || $compare == 2)
 	{
 		$end = $to;
@@ -233,7 +237,7 @@ function display_profit_and_loss(string|int|array|null $compare): void
 		$begin = add_months($from, -12);
 		$end = add_months($to, -12);
 	}
-	
+
 	div_start('pl_tbl');
 
 	start_table(TABLESTYLE, "width='50%'");
@@ -254,8 +258,8 @@ function display_profit_and_loss(string|int|array|null $compare): void
 		$classresult = get_account_classes(false, 0);
 		while ($class = db_fetch($classresult))
 		{
-			$class_per_total = 0;
-			$class_acc_total = 0;
+			$class_per_total = 0.0;
+			$class_acc_total = 0.0;
 			$convert = get_class_type_convert($class["ctype"]); 		
 			
 			//Print Class Name	
@@ -274,8 +278,8 @@ function display_profit_and_loss(string|int|array|null $compare): void
 
 				if ($TypeTotal[0] != 0 || $TypeTotal[1] != 0 )
 				{
-					$url = "<a href='$path_to_root/gl/inquiry/profit_loss.php?TransFromDate=" 
-						. $from . "&TransToDate=" . $to . "&Compare=" . $compare . "&Dimension=" . $dimension . "&Dimension2=" . $dimension2
+					$url = "<a href='$path_to_root/gl/inquiry/profit_loss.php?TransFromDate="
+						. (string)$from . "&TransToDate=" . (string)$to . "&Compare=" . (string)$compare . "&Dimension=" . (string)$dimension . "&Dimension2=" . (string)$dimension2
 						. "&AccGrp=" . (string)$accounttype['id'] ."'>" . (string)$accounttype['id'] . " " . (string)$accounttype['name'] ."</a>";
 						
 					alt_table_row_color($k);
@@ -320,7 +324,7 @@ function display_profit_and_loss(string|int|array|null $compare): void
 		$convert = get_class_type_convert($class["ctype"]); 
 		
 		//Print Class Name	
-		table_section_title((string)$_POST["AccGrp"] . " " . get_account_type_name(post_scalar("AccGrp")),4);	
+		table_section_title($accgrp . " " . (string) (get_account_type_name($accgrp) ?? ''),4);
 		echo $tableheader;
 		
 		$classtotal = display_type($accounttype["id"], $accounttype["name"], $from, $to, $begin, $end, 
@@ -330,7 +334,7 @@ function display_profit_and_loss(string|int|array|null $compare): void
 		
 
 	end_table(); // outer table
-	hyperlink_params($_SERVER['PHP_SELF'], _("Back"), "TransFromDate=". $from . "&TransToDate=" . $to . "&Dimension=" . $dimension . "&Dimension2=" . $dimension2);
+	hyperlink_params($_SERVER['PHP_SELF'] ?? '', _("Back"), "TransFromDate=". (string)$from . "&TransToDate=" . (string)$to . "&Dimension=" . (string)$dimension . "&Dimension2=" . (string)$dimension2);
 	div_end();
 }
 
