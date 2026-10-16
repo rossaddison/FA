@@ -190,9 +190,9 @@ function ufmt_property(string $key, string|array $value): string|array|null
 
 	$prop = array();
 
-	if (!is_array($value))
-		$value = array($value);
-	foreach($value as $line) {
+	/** @var array<int, string> $lines */
+	$lines = is_array($value) ? $value : array($value);
+	foreach($lines as $line) {
 		$indexes = $sub_fields[$key];
 		$ret = array();
 		preg_match_all('/(["])(?:\\\\?+.)*?\1|[^"\s][\S]*/', $line, $match);
@@ -289,6 +289,7 @@ function get_control_file_impl(string $file, string|bool $index): array|null {
 //
 //	Save configuration data to control file.
 //
+/** @param array<array-key, array<string, mixed>> $list */
 function save_control_file(string|int|float|bool|null $fname, array $list, string|int|float|bool|null $zip=false): void
 {
 	$file = (bool)$zip ?  gzopen((string) $fname, 'wb') : fopen((string) $fname, 'wb');
@@ -298,19 +299,22 @@ function save_control_file(string|int|float|bool|null $fname, array $list, strin
 			if (is_array($value)) { // multiline value
 				if (is_array(reset($value))) { // lines have subfields
 					foreach($value as $i => $line) {
-		// Subfields containing white spaces or double quotes are doublequoted 
+						if (!is_array($line)) continue;
+		// Subfields containing white spaces or double quotes are doublequoted
 		// with " escaped with backslash.
-						foreach($line as $n => $subfield)
+						foreach($line as $n => $subfield) {
+							$subfield = (string) $subfield;
 							if (preg_match('/[\s"]/', $subfield)) {
-								$value[$i][$n] = 
-									'"'.strtr($subfield, array('"'=>'\\"')).'"';
-							}
+								$line[$n] = '"'.strtr($subfield, array('"'=>'\\"')).'"';
+							} else
+								$line[$n] = $subfield;
+						}
 						// Subfields are separated by white space.
-						$value[$i] = implode(' ', $value[$i]);
+						$value[$i] = implode(' ', $line);
 					}
 				}
 				// array elements on subsequent lines starting with white space
-				$value = implode("\n ", $value);
+				$value = implode("\n ", array_map('strval', $value));
 			}
 			(bool)$zip ? gzwrite($file, "$key: $value\n") : fwrite($file, "$key: $value\n");
 		}
@@ -723,6 +727,11 @@ function install_language(string|int|float|bool|null $pkg_name): bool
 	$pkg = get_pkg_or_list('language', $pkg_name);
 
 	if ($pkg !== null) {
+		// get_pkg_or_list() is called here with no $filter, so it always
+		// takes the "$p = $pkg;" branch internally and returns the raw
+		// control-file record shape, never the filter-mapped PkgListItem one
+		/** @var ControlRecord $pkg */
+		$pkg = $pkg;
 		$pkg_filename_raw = $pkg['Filename'] ?? null;
 		$pkg_filename = is_string($pkg_filename_raw) ? $pkg_filename_raw : '';
 		$pkg_language_raw = $pkg['Language'] ?? null;
@@ -748,12 +757,12 @@ function install_language(string|int|float|bool|null $pkg_name): bool
 			$pkg_path_raw = $pkg['InstallPath'] ?? null;
 			/** @var array<string, string|bool> $lang */
 			$lang = array(
-				'name' => is_scalar($pkg_name_raw) ? (string) $pkg_name_raw : '',
+				'name' => is_string($pkg_name_raw) ? $pkg_name_raw : '',
 				'package' => (string) ($pkg_package ?? ''),
 				'code' => (string) ($pkg_language ?? ''),
-				'encoding' => is_scalar($pkg_encoding_raw) ? (string) $pkg_encoding_raw : '',
-				'version' => is_scalar($pkg_version_raw) ? (string) $pkg_version_raw : '',
-				'path' => is_scalar($pkg_path_raw) ? (string) $pkg_path_raw : ''
+				'encoding' => is_string($pkg_encoding_raw) ? $pkg_encoding_raw : '',
+				'version' => is_string($pkg_version_raw) ? $pkg_version_raw : '',
+				'path' => is_string($pkg_path_raw) ? $pkg_path_raw : ''
 			);
 			if (($pkg['RTLDir'] ?? null) == 'yes')
 				$lang['rtl'] = true;
@@ -780,6 +789,9 @@ function install_extension(string|int|float|bool|null $pkg_name): bool
 	
 	$pkg = get_pkg_or_list(array('extension', 'theme', 'chart'), $pkg_name);
 	if ($pkg !== null) {
+		// no $filter passed, so always the raw control-file record shape
+		/** @var ControlRecord $pkg */
+		$pkg = $pkg;
 		$pkg_filename_raw = $pkg['Filename'] ?? null;
 		$pkg_filename = is_string($pkg_filename_raw) ? $pkg_filename_raw : '';
 		$pkg_package_raw = $pkg['Package'] ?? null;
