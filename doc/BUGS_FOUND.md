@@ -247,6 +247,27 @@ a stand-in for a boolean) reaching a native, strictly-typed parameter.
 
 ## Live crashes
 
+- **`manufacturing/work_order_entry.php`.** The `UPDATE_ITEM` handler (every
+  edit of an existing work order) called `can_process()` — a function this
+  file never defines and never includes a definition of. Psalm's
+  whole-project `allFunctionsGlobal` symbol table never flagged this as an
+  undefined-function call, because `can_process()` genuinely *is* declared
+  globally — independently, with different bodies, in roughly eight
+  unrelated entry-point files (`admin/gl_setup.php`,
+  `dimensions/dimension_entry.php`, `manufacturing/work_order_issue.php`,
+  etc.). None of those files are ever included by this one, so at runtime
+  this was a guaranteed "Call to undefined function can_process()" fatal
+  error on every single work order save-edit, full stop. This file already
+  defines its own validator for exactly this purpose,
+  `canProcessWorkOrderEntry()` — used correctly two lines above by the
+  `ADD_ITEM` handler, and whose own body already branches on "is this an
+  edit" via `isset($selected_id)`. Fixed by calling the right one. Found by
+  manually reading the file while typing `$selected_id`'s usages, not by
+  Psalm — a reminder that the project-wide function-name-collision
+  phenomenon (documented elsewhere in this file and in
+  PSALM_MIGRATION.md) can also hide a real undefined-function bug, not
+  just cause false-positive type mismatches.
+
 - **`admin/db/shipping_db.inc` — `add_shipper()` / `update_shipper()`.**
   Both declared their `$contact` parameter as `array`, but both callers
   (`admin/shipping_companies.php`) always passed `$_POST['contact']` — a
