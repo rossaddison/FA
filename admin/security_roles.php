@@ -23,6 +23,11 @@ include_once(dirname(__DIR__) . "/includes/ui.inc");
 include_once(dirname(__DIR__) . "/includes/access_levels.inc");
 include_once(dirname(__DIR__) . "/admin/db/security_db.inc");
 
+/** @var array<string, array{0: int, 1: string}> $security_areas */
+$security_areas = $security_areas;
+/** @var array<int, string> $security_sections */
+$security_sections = $security_sections;
+
 $new_role = get_post('role')=='' || get_post('cancel') || get_post('clone'); 
 //--------------------------------------------------------------------------------------------------
 // Following compare function is used for sorting areas 
@@ -30,22 +35,32 @@ $new_role = get_post('role')=='' || get_post('cancel') || get_post('clone');
 // is properly placed under related section regardless of 
 // unique extension number, with order inside sections preserved.
 //
-/** @psalm-pure */
-function comp_areas(string|int|float|bool|array|null $area1, string|int|float|bool|array|null $area2) 
+/**
+ * @param array{0: int, 1: string, 2: int} $area1
+ * @param array{0: int, 1: string, 2: int} $area2
+ * @psalm-pure
+ */
+function comp_areas(array $area1, array $area2): int
 {
 	$sec_comp = ($area1[0]&0xff00)-($area2[0]&0xff00);
 	return $sec_comp == 0 ? ($area1[2]-$area2[2]) : $sec_comp;
 }
 
-/** @psalm-pure */
+/**
+ * @param array<string, array{0: int, 1: string}> $areas
+ * @return array<string, array{0: int, 1: string, 2: int}>
+ * @psalm-pure
+ */
 function sort_areas(array $areas): array
 {
 	$old_order = 0;
+	/** @var array<string, array{0: int, 1: string, 2: int}> $ordered */
+	$ordered = array();
 	foreach($areas as $key => $area) {
-		$areas[$key][] = $old_order++;
+		$ordered[$key] = array($area[0], $area[1], $old_order++);
 	}
-	uasort($areas,'comp_areas');
-	return $areas;
+	uasort($ordered,'comp_areas');
+	return $ordered;
 }
 //--------------------------------------------------------------------------------------------------
 if (list_updated('role')) {
@@ -90,18 +105,16 @@ if (get_post('addupdate'))
 		$areas = array();
 		foreach($_POST as $p =>$val) {
 			if (substr($p,0,4) == 'Area' && $val == 1) {
-				$a = substr($p, 4);
+				$a = (int) substr($p, 4);
 				if (($a&~0xffff) && (($a&0xff00)<(99<<8))) {
 					$sections[] = $a&~0xff;	// add extended section for plugins
 				}
-				$areas[] = (int)$a;
+				$areas[] = $a;
 			}
 			if (substr($p,0,7) == 'Section' && $val == 1)
 				$sections[] = (int)substr($p, 7);
 		}
 //		$areas = sort_areas($areas);
-
-		$sections = array_values($sections);
 
      	if ($new_role) 
        	{
@@ -152,8 +165,9 @@ if (!isset($_POST['role']) || get_post('clone') || list_updated('role')) {
 		$_POST['description'] = $row['description'];
 		$_POST['name'] = $row['role'];
 		$_POST['inactive'] = $row['inactive'];
-		$access = $row['areas'];
-		$sections = $row['sections'];
+		$access = $row['areas'] ?? array();
+		$sections = $row['sections'] ?? array();
+		$sections = is_array($sections) ? $sections : array();
 	}
 	else {
 		$_POST['description'] = $_POST['name'] = '';
@@ -206,7 +220,7 @@ end_table(1);
 	foreach(sort_areas($security_areas) as $area =>$parms ) {
 		// system setup areas are accessable only for site admins i.e. 
 		// admins of first registered company
-		if (user_company() && (($parms[0]&0xff00) == SS_SADMIN)) continue;
+		if ((bool)user_company() && (($parms[0]&0xff00) == SS_SADMIN)) continue;
 		
 		$newsec = ($parms[0]>>8)&0xff;
 		$newext  = $parms[0]>>16;
