@@ -1,13 +1,13 @@
 # Live crashes found via real browser testing, from earlier narrowing passes
 
-Three real, user-facing crashes were found by clicking around a logged-in
+Four real, user-facing crashes were found by clicking around a logged-in
 session and screenshotting the errors — not by Psalm, and not by this
 session's own HTTP "live tests" either, which (until caught and corrected)
 were accidentally hitting FrontAccounting's login page instead of the real
-target pages. All three traced back to a parameter or class being narrowed
-too aggressively in an earlier Psalm cleanup pass, each for the same root
-reason: the narrowing only considered what Psalm could see, not everything
-that calls the code at runtime.
+target pages. All four traced back to a parameter, global, or class being
+narrowed too aggressively in an earlier Psalm cleanup pass, each for the
+same root reason: the narrowing only considered what Psalm could see, not
+everything that calls the code at runtime.
 
 ## 1. `display_profit_and_loss()` rejected a plain `int`
 
@@ -54,6 +54,40 @@ be `float`; it accumulates a running money total). `alt_table_row_color()`
 takes its counter *by reference* and only accepts `int|string|null`, so
 this was a guaranteed fatal on the very first row. Fixed by splitting the
 assignment: `$k = 0; $total_allocated = 0.0;`.
+
+## 4. `output_hidden()` crashed on every error page, from a global typed in the wrong file
+
+**Symptom:** any uncaught exception — `Uncaught TypeError: implode(): If
+argument #1 ($separator) is of type string, argument #2 ($array) must be of
+type array, null given in includes/ui/ui_controls.inc:71`, itself thrown
+from inside the exception handler while it tried to render the error page
+(`errors.inc` → `end_page()` → `hyperlink_back()` → `end_table()` →
+`output_hidden()`), so the user saw this crash instead of whatever the
+original error actually was.
+
+`$hidden_fields` is declared and initialized (`$hidden_fields = array();`)
+at the top level of `includes/ui/ui_input.inc`, but read via `global
+$hidden_fields;` from `output_hidden()` in the *different* file
+`includes/ui/ui_controls.inc`. The original code guarded every read with
+`if (is_array($hidden_fields))`. A psalm.xml global stub added for this
+pass (`array<int, string>`, non-nullable) made that guard look like dead
+code to Psalm, which was removed as a "cleanup". On a normal page load both
+files are always included before any of their functions run, so the guard
+never looked necessary. But when an exception is thrown early enough in
+the request — before `ui_input.inc`'s top-level code has executed —
+`output_hidden()` can still be called from the exception-handling path
+while `$hidden_fields` is genuinely still unset, which `global` surfaces as
+`null`, not an empty array. Fixed by restoring the `is_array()` guard and
+widening the stub to `array<int, string>|null` so Psalm stops suggesting
+its removal.
+
+This is the same bug class as #2 above (a global/class whose *real* set of
+callers is wider than what Psalm's static view suggests) but for a
+cross-file global's initialization order instead of a class hierarchy
+spanning an ignored directory — worth remembering together: removing a
+guard because a type stub says it's redundant is only safe once every
+caller, including rare error-handling paths that run before normal
+bootstrap completes, has actually been accounted for.
 
 ## Not a code bug: duplicate bank transaction demo data
 

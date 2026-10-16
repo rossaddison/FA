@@ -998,7 +998,7 @@ function stock_items_list(string|int|float|bool|null $name, string|int|float|boo
 		$sql .= " AND mb_flag!='F'";
 
 	if ((bool)$editkey)
-		set_editor('item', $name, $editkey);
+		set_editor('item', $name, (bool) $editkey);
 
 	$ret = combo_input($name, $selected_id, $sql, 'stock_id', 's.description',
 		array_merge(

@@ -65,10 +65,10 @@ function yiiMenuHeader(string $title, bool $noMenu, bool $isIndex): string
 					'href' => $path_to_root . '/index.php?application=' . (string)$application->id,
 				);
 				// access_string() answers " accesskey='X'"
-				if (preg_match("/accesskey='(.)'/", (string)$access[1], $key) === 1) {
+				if (preg_match("/accesskey='(.)'/", $access[1], $key) === 1) {
 					$attributes['accesskey'] = $key[1];
 				}
-				$tabs[] = array('attributes' => $attributes, 'label' => (string)$access[0]);
+				$tabs[] = array('attributes' => $attributes, 'label' => $access[0]);
 			}
 		}
 		$links = array(

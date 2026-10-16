@@ -51,7 +51,7 @@ function start_form(bool $multi=false, bool $dummy=false, string|int|float|bool|
 	if ($name != "")
 		$name = "name='".html_encode_attribute($name, false, output_encoding())."'";
 	if ($action == "")
-		$action = $_SERVER['PHP_SELF'];
+		$action = $_SERVER['PHP_SELF'] ?? '';
 	$action = html_encode_attribute($action, false, output_encoding());
 
 	if ($multi)
@@ -99,7 +99,7 @@ function check_csrf_token(): bool
 	if ($_SESSION['csrf_token'] != @$_POST['_token'])
 	{
 		display_error(_("Request from outside of this page is forbidden."));
-		error_log(_("CSRF attack detected from: ").(string)@$_SERVER['HTTP_HOST'].' ('.(string)@$_SERVER['HTTP_REFERER'].')');
+		error_log(_("CSRF attack detected from: ").($_SERVER['HTTP_HOST'] ?? '').' ('.($_SERVER['HTTP_REFERER'] ?? '').')');
 		return false;
 	}
 	return true;
@@ -167,6 +167,10 @@ function vertical_space(?string $params=''): void
 
 function meta_forward(string|int|float|bool|null $forward_to, ?string $params="", ?int $timeout=0, bool $return=false): void
 {
+	$forward_to = (string) $forward_to;
+	$params = (string) $params;
+	$timeout = (int) $timeout;
+
 	$forward_url = html_encode_attribute($forward_to, false, output_encoding())
 		."?".html_encode_attribute($params, false, output_encoding());
 	echo "<meta http-equiv='Refresh' content='".$timeout."; url=$forward_url'>\n";
@@ -183,7 +187,6 @@ function meta_forward(string|int|float|bool|null $forward_to, ?string $params=""
 // (for use in wiki help system), otherwise result is array of label 
 // with underlined hotkey letter and access property string.
 //
-/** @psalm-pure */
 /**
  * The attributes that stand in for an inline onclick/onchange. js/csp_actions.js runs the named action, so the page
  * needs no inline event attributes or javascript: URLs (a Content-Security-Policy without 'unsafe-inline' blocks them).
@@ -191,6 +194,7 @@ function meta_forward(string|int|float|bool|null $forward_to, ?string $params=""
  * @param string $action a name from fa_actions in js/csp_actions.js
  * @param array<int, mixed> $args data for the action (JSON, never code)
  * @param string $event 'action' (click) or 'change'
+ * @psalm-pure
  */
 function fa_action_attrs(string $action, array $args = array(), string $event = 'action'): string
 {
@@ -201,6 +205,10 @@ function fa_action_attrs(string $action, array $args = array(), string $event = 
 	return $attrs;
 }
 
+/**
+ * @return ($clean is true ? string : array{0: string, 1: string})
+ * @psalm-pure
+ */
 function access_string(string|int|float|bool|null $label, string|int|float|bool|null $clean=false): array|string
 {
 	$access = '';
@@ -253,7 +261,7 @@ function hyperlink_no_params(string|int|float|bool|null $target, string|int|floa
 	$id = default_focus();
 	$pars = access_string($label);
 	if ($target == '')
-		$target = $_SERVER['PHP_SELF'];
+		$target = $_SERVER['PHP_SELF'] ?? '';
 	if ($center)
 		echo "<br><center>";
 	echo "<a href='".html_encode_attribute($target, false, output_encoding())."' id='$id' $pars[1]>$pars[0]</a>\n";
@@ -268,22 +276,23 @@ function hyperlink_no_params_td(string|int|float|bool|null $target, string|int|f
 	echo "</td>\n";
 }
 
-/** @return null|scalar */
 /** @return string|int|float|bool|null */
 function viewer_link(string|int|float|bool|null $label, ?string $url='', ?string $class='', string|int|float|bool|null $id='',  string|bool|null $icon=null)
 {
 	global $path_to_root;
-	
+
+	$id = (string) $id;
+
 	if ($class != '')
 		$class = " class='$class'";
 
 	if ($id != '')
-		$class = " id='$id'";
+		$id = " id='$id'";
 
 	if ($url != "")
 	{
 		$pars = access_string($label);
-		if (user_graphic_links() && (bool)$icon)
+		if ((bool)user_graphic_links() && (bool)$icon)
 			$pars[0] = set_icon($icon, $pars[0]);
 		$preview_str = "<a target='_blank' $class $id href='$path_to_root/$url'".fa_action_attrs('open-window')."$pars[1]>$pars[0]</a>";
 	}
@@ -296,10 +305,11 @@ function menu_link(?string $url, string|int|float|bool|null $label, string|int|f
 {
 	global $path_to_root;
 
+	$url = (string) $url;
 	$id = default_focus($id);
 	$pars = access_string($label);
 
-	if ($url[0] != '/')
+	if ($url !== '' && $url[0] != '/')
 		$url = '/'.$url;
 	$url = $path_to_root.$url;
 
@@ -328,7 +338,7 @@ function hyperlink_params(?string $target, ?string $label, ?string $params, bool
 	
 	$pars = access_string($label);
 	if ($target == '')
-		$target = $_SERVER['PHP_SELF'];
+		$target = $_SERVER['PHP_SELF'] ?? '';
 	if ($center)
 		echo "<br><center>";
 	echo "<a id='$id' href='".html_encode_attribute($target, false, output_encoding())
@@ -370,6 +380,7 @@ function hyperlink_params_separate_td(string|int|float|bool|null $target, string
 
 function alt_table_row_color(int|string|null &$k, ?string $extra_class=null): void
 {
+	$k = (int) $k;
 	$classes = (bool)$extra_class ? array($extra_class) : array();
 	if ($k == 1)
 	{
@@ -422,7 +433,7 @@ $ajax_divs = array();
 function div_start(string|int|float|bool|null $id='', ?string $trigger=null, bool $non_ajax=false): void
 {
     global $ajax_divs;
-    /** @var array<int, array{0: mixed, 1: mixed}> $ajax_divs */
+    /** @var array<int, array{0: string|int|float|bool|null, 1: string|int|float|bool|null}> $ajax_divs */
 
 	if ($non_ajax) { // div for non-ajax elements
    		array_push($ajax_divs, array($id, null));
@@ -437,14 +448,14 @@ function div_start(string|int|float|bool|null $id='', ?string $trigger=null, boo
 function div_end(): void
 {
     global $ajax_divs;
-    /** @var array<int, array{0: mixed, 1: mixed}> $ajax_divs */
+    /** @var array<int, array{0: string|int|float|bool|null, 1: string|int|float|bool|null}> $ajax_divs */
 
 	output_hidden();
     if (count($ajax_divs))
     {
 		$div = array_pop($ajax_divs);
 		if ($div[1] !== null)
-			ajax()->addUpdate($div[1], $div[0], ob_get_flush());
+			ajax()->addUpdate((string) $div[1], $div[0] === null ? null : (string) $div[0], ob_get_flush());
     }
 	echo "</div>";
 }
@@ -457,7 +468,8 @@ function div_end(): void
 //		sel (hidden) name: _{$name}_sel
 // $tabs - array of tabs; string: tab title or array(tab_title, enabled_status)
 
-function tabbed_content_start(?string $name, ?array $tabs, ?string $dft=''): void {
+/** @param array<array-key, string|array{0: string, 1: mixed}> $tabs */
+function tabbed_content_start(string $name, array $tabs, ?string $dft=''): void {
 
     $selname = '_'.$name.'_sel';
 	$div = '_'.$name.'_div';
@@ -510,21 +522,21 @@ function tab_changed(string|int|float|bool|null $name): array|null
 /*
 	Check whether tab has been just switched on
 */
-function tab_opened(?string $name, ?string $tab): bool
+function tab_opened(string $name, ?string $tab): bool
 {
 	return (get_post('_'.$name.'_sel') != $tab) && (find_submit($name.'_', false) == $tab);
 }
 /*
 	Check whether tab has been just switched off
 */
-function tab_closed(?string $name, ?string $tab): bool
+function tab_closed(string $name, ?string $tab): bool
 {
 	return (get_post('_'.$name.'_sel') == $tab) && (find_submit($name.'_', false) != $tab);
 }
 /*
 	Check whether tab is visible on current page
 */
-function tab_visible(?string $name, ?string $tab): bool
+function tab_visible(string $name, ?string $tab): bool
 {
 	$new = find_submit($name.'_', false);
 	return (get_post('_'.$name.'_sel') == $tab && !(bool)$new) || $new==$tab;
@@ -554,11 +566,11 @@ $popup_editors = array(
 	$caller - optional function key code (available values F1-F12: 112-123,
 		true: default)
 */
-function set_editor(?string $type, string|int|float|bool|null $input, mixed $caller=true): void
+function set_editor(string $type, string|int|float|bool|null $input, bool $caller=true): void
 {
 	global $path_to_root, $Editors, $popup_editors, $Pagehelp;
 
-	$key = $caller===true ? $popup_editors[$type][1] : $caller;
+	$key = (int) ($caller===true ? $popup_editors[$type][1] : $caller);
 
 	$Editors[$key] = array( $path_to_root . $popup_editors[$type][0], $input, 
 		$popup_editors[$type][3], $popup_editors[$type][4]);
@@ -578,18 +590,20 @@ function set_editor(?string $type, string|int|float|bool|null $input, mixed $cal
 */
 function context_call(string|int|float|bool|null $call, string|array|null $ctx=''): void
 {
-	if (is_array($ctx)) 
+	$context = array();
+	if (is_array($ctx))
 	{
 		foreach($ctx as $postname)
 		{
-		 	$context[$postname] = get_post($postname);
+		 	$context[$postname] = get_post((string) $postname);
 		}
-	} else 
-		$context = isset($_SESSION[$ctx]) ? $_SESSION[$ctx] : null;
+	} else
+		$context = isset($_SESSION[(string) $ctx]) ? $_SESSION[(string) $ctx] : null;
 
-	array_unshift($_SESSION['Context'], array('name' => $ctx, 
+	$_SESSION['Context'] = $_SESSION['Context'] ?? array();
+	array_unshift($_SESSION['Context'], array('name' => $ctx,
 		'ctx' => $context,
-		'caller' => $_SERVER['PHP_SELF'],
+		'caller' => $_SERVER['PHP_SELF'] ?? '',
 		'ret' => array()));
 	meta_forward($call);
 }
@@ -597,20 +611,20 @@ function context_call(string|int|float|bool|null $call, string|array|null $ctx='
 	Restores context after external page call and
 	returns array of data passed by external page.
 */
-/** @return array<array-key, mixed>|false */
+/** @return array<array-key, mixed>|string|int|float|bool|null */
 function context_restore()
 {
-	if ( count($_SESSION['Context'])) {
-		if ($_SERVER['PHP_SELF'] == $_SESSION['Context'][0]['caller']) {
+	if ( count($_SESSION['Context'] ?? array())) {
+		if (($_SERVER['PHP_SELF'] ?? '') == $_SESSION['Context'][0]['caller']) {
 			$ctx = array_shift($_SESSION['Context']);
 			if ($ctx) {
 				if (is_array($ctx['ctx'])) {
-					foreach($ctx['ctx'] as $name => $val) 
+					foreach($ctx['ctx'] as $name => $val)
 					{
-						$_POST[$name] = $val;
+						$_POST[(string) $name] = $val;
 					}
 				} else
-					if ($ctx['name']!='')
+					if ($ctx['name']!='' && is_string($ctx['name']))
 						$_SESSION[$ctx['name']] = $ctx['ctx'];
 				return $ctx['ret'];
 			}
@@ -624,7 +638,7 @@ function context_restore()
 */
 function context_return(string|int|float|bool|null $ret): void
 {
-	if ( count($_SESSION['Context'])) {
+	if ( count($_SESSION['Context'] ?? array())) {
 		$ctx = &$_SESSION['Context'][0];
 		$ctx['ret'] = $ret;
 		meta_forward( $ctx['caller'] );
@@ -647,10 +661,11 @@ if (!isset($_SESSION['Context'])) {
 	Redirector for selector F4 calls.
 	$sel_editors is array of selname=>editor_page
 */
-function editor_redirect(string|int|float|bool|null $sel_editors, mixed $save_fun=''): void {
+/** @param array<string, string> $sel_editors */
+function editor_redirect(array $sel_editors, string $save_fun=''): void {
 	foreach ($sel_editors as $selname=>$editor)
 		if (isset($_POST['_'.$selname.'_editor'])) {
-			if (function_exists($save_fun))
+			if ($save_fun !== '' && function_exists($save_fun))
 				$save_fun();
 			unset($_POST['_'.$selname.'_editor']);
 			context_call($editor, array_keys($_POST));
@@ -659,11 +674,13 @@ function editor_redirect(string|int|float|bool|null $sel_editors, mixed $save_fu
 /*
 	Return procedure for selector F4 calls
 */
-function editor_return(array $vars, mixed $restore_fun=''): void {
-	if (function_exists($restore_fun))
+/** @param array<string, string> $vars */
+function editor_return(array $vars, string $restore_fun=''): void {
+	if ($restore_fun !== '' && function_exists($restore_fun))
 		$restore_fun();
 
-	if ($ret = context_restore()) {
+	$ret = context_restore();
+	if (is_array($ret)) {
 		foreach ($vars as $postname=>$retname)
 			if (isset($ret[$retname])) {
 				$_POST[$postname] = $ret[$retname];
