@@ -35,6 +35,8 @@ function page(string $title, ?bool $no_menu=false, bool $is_index=false, string 
 {
 
    	global $path_to_root, $page_security, $page_nested;
+	/** @var int $page_nested */
+	$page_nested = $page_nested;
 
 	if (++$page_nested) return;
 
@@ -47,7 +49,7 @@ function page(string $title, ?bool $no_menu=false, bool $is_index=false, string 
 //	error_box();
 	if($script_only) {
 		echo '<noscript>';
-		echo display_heading(_('This page is usable only with javascript enabled browsers.'));
+		display_heading(_('This page is usable only with javascript enabled browsers.'));
 		echo '</noscript>';
 		div_start('_page_body', null, true);
 	} else {
@@ -71,6 +73,8 @@ function end_page(bool|int|null $no_menu=false, bool $is_index=false, bool $fina
 
 function css_files_ensure_init(): void {
 	global $css_files, $path_to_root;
+	/** @var array<int, string>|null $css_files */
+	$css_files = $css_files;
 
 	if (!isset($css_files))
 	{
@@ -84,14 +88,17 @@ function css_files_ensure_init(): void {
 function add_css_file(string|int|float|bool|null $filename): void
 {
 	global $css_files;
+	/** @var array<int, string> $css_files */
+	$css_files = $css_files;
 	css_files_ensure_init();
-	$css_files[] = $filename;
+	$css_files[] = (string) $filename;
 }
 
 function cache_js_file(?string $fpath, string|bool|null $text): bool 
 {
 
 	if (!sysprefs()->go_debug) $text = js_compress($text);
+	$text = (string) $text;
 
     $file = force_open($fpath);
 	if (!$file) return false;
@@ -108,6 +115,7 @@ function cache_js_file(?string $fpath, string|bool|null $text): bool
  */
 function force_open(?string $fname)
 {
+	$fname = (string) $fname;
 	$file = pathinfo($fname);
 
 	$path = $fname[0] == '/' ? '/' : '';
@@ -129,8 +137,8 @@ function add_js_file(?string $filename): void
 	  global $js_static;
 
 	  $search = array_search($filename, $js_static);
-	  if ($search === false || $search === null) // php>4.2.0 returns null
-		$js_static[] = $filename;	
+	  if ($search === false)
+		$js_static[] = (string) $filename;
 }
 
 function add_js_ufile(?string $filename): void 
@@ -138,8 +146,8 @@ function add_js_ufile(?string $filename): void
 	  global $js_userlib;
 
 	  $search = array_search($filename, $js_userlib);
-	  if ($search === false || $search === null) // php>4.2.0 returns null
-		$js_userlib[] = $filename;
+	  if ($search === false)
+		$js_userlib[] = (string) $filename;
 }
 
 function add_js_source(string|int|float|bool|null $text): void 
@@ -147,8 +155,8 @@ function add_js_source(string|int|float|bool|null $text): void
 	  global $js_lib;
 
 	  $search = array_search($text, $js_lib);
-	  if ($search === false || $search === null) // php>4.2.0 returns null
-		$js_lib[] = $text;
+	  if ($search === false)
+		$js_lib[] = (string) $text;
 }
 
 /**
@@ -161,6 +169,7 @@ function add_js_source(string|int|float|bool|null $text): void
  */
 function js_compress(string|bool|null $sJS): string|null
 {
+	$sJS = (string) $sJS;
 	//remove windows cariage returns
 	$sJS = str_replace("\r","",$sJS);
 	
@@ -269,31 +278,31 @@ function js_compress(string|bool|null $sJS): string|null
 		$line = $lines[$i];
 	
 		//remove comments
-		$line = preg_replace("/\/\/(.*)/","",$line);
-	
+		$line = preg_replace("/\/\/(.*)/","",$line) ?? $line;
+
 		//strip leading and trailing whitespace
 		$line = trim($line);
-	
+
 		//remove all whitespace with a single space
-		$line = preg_replace("/\s+/"," ",$line);
-	
+		$line = preg_replace("/\s+/"," ",$line) ?? $line;
+
 		//remove any whitespace that occurs after/before an operator
-		$line = preg_replace("/\s*([!\}\{;,&=\|\-\+\*\/\)\(:])\s*/","\\1",$line);
-	
+		$line = preg_replace("/\s*([!\}\{;,&=\|\-\+\*\/\)\(:])\s*/","\\1",$line) ?? $line;
+
 		$lines[$i] = $line;
 	}
-	
+
 	//implode the lines
 	$sJS = implode("\n",$lines);
-	
+
 	//make sure there is a max of 1 \n after each line
-	$sJS = preg_replace("/[\n]+/","\n",$sJS);
-	
+	$sJS = preg_replace("/[\n]+/","\n",$sJS) ?? $sJS;
+
 	//strip out line breaks that immediately follow a semi-colon
-	$sJS = preg_replace("/;\n/",";",$sJS);
-	
+	$sJS = preg_replace("/;\n/",";",$sJS) ?? $sJS;
+
 	//curly brackets aren't on their own
-	$sJS = preg_replace("/[\n]*\{[\n]*/","{",$sJS);
+	$sJS = preg_replace("/[\n]*\{[\n]*/","{",$sJS) ?? $sJS;
 	
 	//finally loop through and replace all the literal strings:
 	for($i=0;$i<count($literal_strings);$i++) {
@@ -312,8 +321,9 @@ function check_write(string|int|float|bool|null $path): int
 {
 	if ($path == ''//|| $path == '.' || $path == '..'
 	) return 0;
+	$path = (string) $path;
 
-	return is_writable($path) ? (is_dir($path) ? 1 : -1) 
+	return is_writable($path) ? (is_dir($path) ? 1 : -1)
 		: (is_file($path) ? 0 : ($path == '.' || $path == '..' ? 0 : check_write(dirname($path))));
 }
 
@@ -324,7 +334,10 @@ function check_write(string|int|float|bool|null $path): int
 */
 function copy_files(array $flist, string|int|float|bool|null $from, string|int|float|bool|null $to, string|int|float|bool|null $strict=false): bool
 {
+	$from = (string) $from;
+	$to = (string) $to;
 	foreach ($flist as $file) {
+		$file = (string) $file;
 		if (file_exists($from.'/'.$file)) {
 			if (!copy_file($file, $from, $to))
 				return false;
@@ -341,6 +354,8 @@ function copy_files(array $flist, string|int|float|bool|null $from, string|int|f
 */
 function copy_file(string|int|float|bool|null $file, string|int|float|bool|null $from, string|int|float|bool|null $to): bool
 {
+	$file = (string) $file;
+	$to = (string) $to;
 
 	if (!is_dir(dirname($file=='.' ? $to : ($to.'/'.$file)))) {
 		if (!copy_file(dirname($file), null, $to))
@@ -352,7 +367,7 @@ function copy_file(string|int|float|bool|null $file, string|int|float|bool|null 
 	}
 	else {
 	//		error_log( 'skopiowanie '.$to.'/'.$file);
-		return @copy($from.'/'.$file, $to.'/'.$file);
+		return @copy((string)$from.'/'.$file, $to.'/'.$file);
 	}
 }
 /*
@@ -366,6 +381,7 @@ function copy_file(string|int|float|bool|null $file, string|int|float|bool|null 
 function find_custom_file(?string $rep): string|null
 {
 	global $installed_extensions, $path_to_root, $local_path_to_root;
+	$rep = (string) $rep;
 
 	// customized per company version
 	$path = company_path();
@@ -381,7 +397,7 @@ function find_custom_file(?string $rep): string|null
 	{
 		$extensions = $installed_extensions;
 		foreach ($extensions as $ext)
-			if (($ext['active'] && $ext['type'] == 'extension')) {
+			if ((!empty($ext['active']) && $ext['type'] == 'extension')) {
 				$path = $path_to_root.'/'.(string)$ext['path'];
 				$file = $path.$rep;
 				if (file_exists($file)) {
@@ -411,6 +427,7 @@ function find_custom_file(?string $rep): string|null
  * @psalm-taint-escape sql
  */
 function clean_file_name(string|int|float|bool|array|null $filename): array|string|null {
+    $filename = is_array($filename) ? array_map('strval', $filename) : (string) $filename;
     $filename = str_replace(chr(0), '', $filename);
     return preg_replace('/[^a-zA-Z0-9.\-_]/', '_', $filename);
 }
@@ -431,12 +448,12 @@ function generate_password(): string
 */
 function random_id(string|int|float|bool|null $strength = 128): string
 {
-	$n = (int) ceil($strength/8);
+	$n = (int) ceil((float)$strength/8);
 
 	if (function_exists('openssl_random_pseudo_bytes'))
 		$bin = openssl_random_pseudo_bytes($n, $cstrong); 	// openssl on php 5.3 and up
-	else if (file_exists('/dev/urandom'))
-		$bin = file_get_contents('/dev/urandom', false, null, -1, $n);  // linux std random device
+	else if (file_exists('/dev/urandom') && ($urandom = file_get_contents('/dev/urandom', false, null, -1, $n)) !== false)
+		$bin = $urandom;  // linux std random device
 	else {
 		$bin = '';
 		for($i=0; $i < $n; $i++)
