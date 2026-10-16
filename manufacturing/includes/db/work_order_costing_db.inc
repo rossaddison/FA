@@ -50,11 +50,14 @@ function delete_wo_costing(string|int|float|bool|null $trans_type, string|int|fl
 */
 function update_material_cost(?string $stock_id, string|int|float|bool|null $qty, string|int|float|bool|null $unit_cost, string|int|float|bool|null $date): void
 {
+	$qty = (float) $qty;
+	$unit_cost = (float) $unit_cost;
+	$date = (string) $date;
 
 	$item = row_or_empty(get_item($stock_id));
-	$avg_cost =  $item['material_cost'];
+	$avg_cost = (float) ($item['material_cost'] ?? 0);
 
-	$qoh = get_qoh_on_date($stock_id, null, $date);
+	$qoh = (float) get_qoh_on_date($stock_id, null, $date);
 
 	// unit_cost*qty is already posted on inventory GL
 /* 
@@ -76,7 +79,7 @@ function update_material_cost(?string $stock_id, string|int|float|bool|null $qty
 	{
 			$qty_delayed = min(-$qoh, $qty);
 	} else {
-			$qty_delayed = 0;
+			$qty_delayed = 0.0;
 	}
 	$qty_new = $qty - $qty_delayed;
 
@@ -97,7 +100,7 @@ function update_material_cost(?string $stock_id, string|int|float|bool|null $qty
 
 		$cart->reference = refs()->get_next(ST_COSTUPDATE, null, $cart->tran_date);
 
-		$cart->memo_ = sprintf(_("COGS changed from %s to %s for %d %s of '%s'"), $avg_cost, $unit_cost, $qty_delayed, $item['units'], $stock_id);
+		$cart->memo_ = sprintf(_("COGS changed from %s to %s for %d %s of '%s'"), $avg_cost, $unit_cost, $qty_delayed, $item['units'] ?? '', (string) $stock_id);
 
 		$cart->add_gl_item($item["cogs_account"], $item["dimension_id"], $item["dimension2_id"], -$diff);
 		$cart->add_gl_item($item["inventory_account"], 0, 0, $diff);
@@ -122,6 +125,9 @@ function add_wo_costs_journal(string|int|float|bool|null $wo_id, int|float|bool|
 //
 	global $wo_cost_types;
 
+	$amount = (float) $amount;
+	$date = (string) $date;
+
 	begin_transaction();
 
     $journal_id = get_next_trans_no(ST_JOURNAL);
@@ -131,7 +137,7 @@ function add_wo_costs_journal(string|int|float|bool|null $wo_id, int|float|bool|
     if (!(bool)$ref) $ref = refs()->get_next(ST_JOURNAL, null, $date);
 
 	add_gl_trans_std_cost(ST_JOURNAL, $journal_id, $date, $cr_acc,
-		$dim1, $dim2, $wo_cost_types[$cost_type], -$amount);
+		$dim1, $dim2, $wo_cost_types[(int) $cost_type], -$amount);
 
 	$is_bank_to = is_bank_account($cr_acc);
 	if ((bool)$is_bank_to)
@@ -143,7 +149,7 @@ function add_wo_costs_journal(string|int|float|bool|null $wo_id, int|float|bool|
 	add_journal(ST_JOURNAL, $journal_id, $amount, $date, get_company_currency(), $ref, '', 1, $date, $date);
 
 	add_gl_trans_std_cost(ST_JOURNAL, $journal_id, $date, $wo['wip_account'],
-		$dim1, $dim2,  $wo_cost_types[$cost_type], $amount);
+		$dim1, $dim2,  $wo_cost_types[(int) $cost_type], $amount);
 
 	$wo = row_or_empty(get_work_order($wo_id));
 	$wip = $wo['wip_account'];
@@ -165,43 +171,50 @@ function work_order_production_gl(string|int|float|bool|null $woid, ?string $sto
 {
 	global $SysPrefs, $path_to_root;
 
+	$quantity = (float) $quantity;
+	$date_ = (string) $date_;
+
 	$memo = "";
+	$loc = array();
+	$st_ids = array();
+	$st_names = array();
+	$st_num = array();
+	$st_reorder = array();
 	if (sysprefs()->loc_notification() == 1)
 	{
 		include_once(dirname(__DIR__, 3) . "/sales/includes/cart_class.inc");
 		include_once(dirname(__DIR__, 3) . "/inventory/includes/inventory_db.inc");
-		$st_ids = array();
-		$st_names = array();
-		$st_num = array();
-		$st_reorder = array();
 	}
-	
+
 	$result = get_wo_requirements($woid);
 
 	// credit all the components
 	$total_cost = 0.0;
-	while ($bom_item = db_fetch($result))
+	while ($bom_item = row_or_empty(db_fetch($result)))
 	{
+		$units_req = (float) $bom_item["units_req"];
+		$component_cost = (float) $bom_item["ComponentCost"];
+
 		if (sysprefs()->loc_notification() == 1 && is_inventory_item($bom_item['stock_id']))
 		{
-			$line = new line_details($bom_item['stock_id'], (float)$bom_item["units_req"] * $quantity, 0, 0, 0, 0, $bom_item['description']);
-			$loc = calculate_reorder_level($bom_item["loc_code"], $line, $st_ids, $st_names, $st_num, $st_reorder); 
+			$line = new line_details($bom_item['stock_id'], $units_req * $quantity, 0, 0, 0, 0, (string) $bom_item['description']);
+			$loc = calculate_reorder_level($bom_item["loc_code"], $line, $st_ids, $st_names, $st_num, $st_reorder);
 		}
-		update_wo_requirement_issued($bom_item['id'], (float)$bom_item["units_req"] * $quantity, $bom_item["ComponentCost"]);
+		update_wo_requirement_issued((string) $bom_item['id'], $units_req * $quantity, (string) $bom_item["ComponentCost"]);
 
 		// insert a -ve stock move for each item
 		add_stock_move(ST_MANURECEIVE, $bom_item["stock_id"], $rcv_no,
-			$bom_item["loc_code"], $date_, "", -$bom_item["units_req"] * $quantity, $bom_item["ComponentCost"], 0);
+			$bom_item["loc_code"], $date_, "", -$units_req * $quantity, $component_cost, 0);
 
 		if (!is_service($bom_item["mb_flag"]))
 			$ivaccount = $bom_item["inventory_account"];
 		else
 			$ivaccount = $bom_item["cogs_account"];
 
-		$memo = $date_.": ".(string)$bom_item["units_req"] ." * ".(string)$bom_item["description"];
+		$memo = $date_.": ".(string)$units_req ." * ".(string)$bom_item["description"];
 
 		$total_cost += (float)add_gl_trans_std_cost(ST_MANURECEIVE, $rcv_no, $date_, $ivaccount, 0, 0,
-			$memo, -$bom_item["ComponentCost"] * (float)$bom_item["units_req"] * $quantity);
+			$memo, -$component_cost * $units_req * $quantity);
 	}
 
 	$wo = row_or_empty(get_work_order($woid));
@@ -212,7 +225,7 @@ function work_order_production_gl(string|int|float|bool|null $woid, ?string $sto
 }
 
 /**
- * @return 0|null|string
+ * @return 0|string
  */
 function check_wo_costing(string|int|float|bool|null $type, string|int|float|bool|null $trans_no)
 {
@@ -223,7 +236,7 @@ function check_wo_costing(string|int|float|bool|null $type, string|int|float|boo
 		return 0;
 
 	$wo = row_or_empty(db_fetch($costs));
-	return $wo['workorder_id'];
+	return (string) $wo['workorder_id'];
 }
 
 function void_wo_costing(string|int|float|bool|null $wo_id): void
@@ -231,7 +244,7 @@ function void_wo_costing(string|int|float|bool|null $wo_id): void
 
 	$res = get_wo_costing($wo_id);
 
-	while($row = db_fetch($res))
+	while($row = row_or_empty(db_fetch($res)))
 	{
 		$is_bank_to = is_bank_account($row['account']);
 		if ((bool)$is_bank_to)
@@ -241,7 +254,7 @@ function void_wo_costing(string|int|float|bool|null $wo_id): void
 		$date = Today();
 		$type = $row['trans_type'];
 		$trans_no = $row['trans_no'];
-		$memo = sprintf(_("Voided WO #%s"), $wo_id);
+		$memo = sprintf(_("Voided WO #%s"), (string) $wo_id);
 		void_gl_trans($type, $trans_no, true);
 		add_audit_trail($type, $trans_no, $date, $memo);
 		add_voided_entry($type, $trans_no, $date, $memo);
