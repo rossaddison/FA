@@ -72,7 +72,7 @@ final class supp_trans
         /** @var string */
 	var $due_date;
 	
-        /** @var array<array-key, mixed> */
+        /** @var array<array-key, string|null> */
 	var $src_docs = array();		// source invoice for this credit note (if any)
 
 	/** @var string */
@@ -280,7 +280,7 @@ final class supp_trans
         foreach ($this->grn_items as $ln_itm)
         {
         	$items[] = $ln_itm->item_code;
-        	$prices[] =round( ((float)$ln_itm->this_quantity_inv * (float)$ln_itm->chg_price),
+        	$prices[] =round( ($ln_itm->this_quantity_inv * (float)$ln_itm->chg_price),
 				(int) user_price_dec());
         }
 
@@ -338,7 +338,7 @@ final class supp_trans
 			$tax_group = null;
 
 		foreach ($this->grn_items as $ln_itm)
-    		$total += round(((float)$ln_itm->this_quantity_inv * (float)$ln_itm->taxfree_charge_price($tax_group_id, $tax_group)),
+    		$total += round(($ln_itm->this_quantity_inv * (float)$ln_itm->taxfree_charge_price($tax_group_id, $tax_group)),
 			 (int) user_price_dec());
 
    		foreach ($this->gl_codes as $gl_line)
@@ -357,7 +357,7 @@ final class supp_trans
 		$total = 0.0;
 
 		foreach ($this->grn_items as $ln_itm)
-			$total += round((float)$ln_itm->this_quantity_inv * (float)$ln_itm->chg_price, (int) user_price_dec());
+			$total += round($ln_itm->this_quantity_inv * (float)$ln_itm->chg_price, (int) user_price_dec());
 
 		foreach ($this->gl_codes as $gl_line)
 		{

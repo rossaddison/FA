@@ -263,7 +263,7 @@ function add_supp_invoice(supp_trans &$supp_trans)
     foreach ($supp_trans->grn_items as $line_no => $entered_grn)
     {
     	// moved this line up to calculate the taxfree price.
-    	$taxfree_line = (get_tax_free_price_for_item($entered_grn->item_code, (float)$entered_grn->this_quantity_inv * (float)$entered_grn->chg_price,
+    	$taxfree_line = (get_tax_free_price_for_item($entered_grn->item_code, $entered_grn->this_quantity_inv * (float)$entered_grn->chg_price,
 			  $supp_trans->tax_group_id, (bool)$supp_trans->tax_included) ?? 0.0) - $net_diff; $net_diff = 0.0;
     	if ($trans_type == ST_SUPPCREDIT)
     	{
@@ -280,7 +280,7 @@ function add_supp_invoice(supp_trans &$supp_trans)
 
 		
 		$line_tax = get_full_price_for_item($entered_grn->item_code,
-			(float)$entered_grn->this_quantity_inv * (float)$entered_grn->chg_price, $supp_trans->tax_group_id, (bool)$supp_trans->tax_included) - $taxfree_line;
+			$entered_grn->this_quantity_inv * (float)$entered_grn->chg_price, $supp_trans->tax_group_id, (bool)$supp_trans->tax_included) - $taxfree_line;
 
 		$stock_gl_code = row_or_empty(get_stock_gl_code($entered_grn->item_code));
 
@@ -316,7 +316,7 @@ function add_supp_invoice(supp_trans &$supp_trans)
 			else
 			{
 				$ex_rate = get_exchange_rate_from_home_currency($supp_trans->currency, $old_date);
-				$old_value = get_tax_free_price_for_item($entered_grn->item_code, (float)$entered_grn->this_quantity_inv * $old_price,
+				$old_value = get_tax_free_price_for_item($entered_grn->item_code, $entered_grn->this_quantity_inv * $old_price,
 					  $supp_trans->tax_group_id, (bool)$supp_trans->tax_included);
 
 				$currency = get_supplier_currency($supp_trans->supplier_id);
@@ -327,7 +327,7 @@ function add_supp_invoice(supp_trans &$supp_trans)
 					$taxfree_line);
 
 				$mat_cost = update_average_material_cost(null, $entered_grn->item_code,
-					$diff/(float)$entered_grn->this_quantity_inv, $entered_grn->this_quantity_inv, null, true);
+					$diff/$entered_grn->this_quantity_inv, $entered_grn->this_quantity_inv, null, true);
 
 				//Add GL transaction for GRN Provision in case of difference
 				if ($diff != 0)
@@ -366,7 +366,7 @@ function add_supp_invoice(supp_trans &$supp_trans)
 		}
 		update_purchase_value($entered_grn->item_code, (float)$entered_grn->chg_price * (float)$ex_rate);
 		add_supp_invoice_item($trans_type, $invoice_id, $entered_grn->item_code,
-			$entered_grn->item_description, 0, 	$entered_grn->chg_price, $line_tax/(float)$entered_grn->this_quantity_inv,
+			$entered_grn->item_description, 0, 	$entered_grn->chg_price, $line_tax/$entered_grn->this_quantity_inv,
 			$entered_grn->this_quantity_inv, $entered_grn->id, $entered_grn->po_detail_item, "");
     } /* end of GRN postings */
 
@@ -729,6 +729,7 @@ function remove_not_invoice_item(string|int|null $id): void
     commit_transaction();
 }
 
+/** @return array<array-key, string|null> */
 function find_src_invoices(supp_trans $cart): array
 {
 	$invoices = $po_ids = array();

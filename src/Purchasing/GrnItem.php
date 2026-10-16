@@ -28,7 +28,7 @@ final class GrnItem
     /** @var float|int|string */
     public $prev_quantity_inv;
 
-    /** @var float|int|string */
+    /** @var float */
     public $this_quantity_inv;
 
     /** @var float|int|string */

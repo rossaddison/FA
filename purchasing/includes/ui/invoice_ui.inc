@@ -33,32 +33,26 @@ function copy_from_trans(supp_trans &$supp_trans): void
 
 function copy_to_trans(supp_trans &$supp_trans): void
 {
-	$supp_trans->Comments = is_string(get_post('Comments'))
-                ? get_post('Comments')
-                : (string) get_post('Comments');
-	$supp_trans->tran_date = is_string(get_post('tran_date'))
-                ? get_post('tran_date')
-                : (string) get_post('tran_date');
-	$supp_trans->due_date = is_string(get_post('due_date'))
-                ? get_post('due_date')
-                : (string) get_post('due_date');
-	$supp_trans->supp_reference = is_string(get_post('supp_reference'))
-                ? get_post('supp_reference')
-                : (string) get_post('supp_reference');
-	$supp_trans->reference = is_string(get_post('reference'))
-                ? get_post('reference')
-                : (string) get_post('reference');
-   	$supp_trans->dimension = is_string(get_post('dimension'))
-                ? get_post('dimension')
-                : (string) get_post('dimension');
-	$supp_trans->dimension2 =  is_string(@get_post('dimension2'))
-                ? @get_post('dimension2')
-                : (string) @get_post('dimension2');
-	$supp_trans->ex_rate = input_num('_ex_rate', null);
+	$comments = get_post('Comments');
+	$supp_trans->Comments = is_string($comments) ? $comments : '';
+	$tran_date = get_post('tran_date');
+	$supp_trans->tran_date = is_string($tran_date) ? $tran_date : '';
+	$due_date = get_post('due_date');
+	$supp_trans->due_date = is_string($due_date) ? $due_date : '';
+	$supp_reference = get_post('supp_reference');
+	$supp_trans->supp_reference = is_string($supp_reference) ? $supp_reference : '';
+	$reference = get_post('reference');
+	$supp_trans->reference = is_string($reference) ? $reference : '';
+	$dimension = get_post('dimension');
+   	$supp_trans->dimension = is_string($dimension) ? $dimension : 0;
+	$dimension2 = get_post('dimension2');
+	$supp_trans->dimension2 = is_string($dimension2) ? $dimension2 : 0;
+	$ex_rate = input_num('_ex_rate', null);
+	$supp_trans->ex_rate = $ex_rate === false ? null : $ex_rate;
 	$supp_trans->ov_amount = $supp_trans->ov_discount = 0; /* for starters */
-    if (isset($_POST['mantax'])) {
+    if (isset($_POST['mantax']) && is_array($_POST['mantax'])) {
 		foreach($_POST['mantax'] as $id => $tax) {
-	    	$supp_trans->tax_overrides[$id] = user_numeric($_POST['mantax'][$id]);
+	    	$supp_trans->tax_overrides[$id] = user_numeric($tax);
 	    	}
 	}
 	else
@@ -68,7 +62,7 @@ function copy_to_trans(supp_trans &$supp_trans): void
 	{
 		foreach ( $supp_trans->grn_items as $grn)
 		{
-			$supp_trans->ov_amount += round2(($grn->this_quantity_inv * $grn->chg_price),
+			$supp_trans->ov_amount += round2(($grn->this_quantity_inv * (float)$grn->chg_price),
 			  user_price_dec());
 		}
 	}
@@ -77,7 +71,7 @@ function copy_to_trans(supp_trans &$supp_trans): void
 		foreach ( $supp_trans->gl_codes as $gl_line)
 		{
 			if (!(bool)is_tax_account($gl_line->gl_code) || (bool)$supp_trans->tax_included)
-				$supp_trans->ov_amount += $gl_line->amount;
+				$supp_trans->ov_amount += (float)$gl_line->amount;
 		}
 	}
 }
@@ -99,7 +93,7 @@ function invoice_header(supp_trans &$supp_trans): void
 	{
 		$_POST['supplier_id'] = $supp_trans->supplier_id;
 		$supp = $supp_trans->supplier_name." - ".$supp_trans->currency;
-		label_row(_("Supplier:"), $supp.hidden('supplier_id', post_scalar('supplier_id'), false));
+		label_row(_("Supplier:"), $supp.(hidden('supplier_id', post_scalar('supplier_id'), false) ?? ''));
 	}
 	else
 	{
@@ -111,7 +105,7 @@ function invoice_header(supp_trans &$supp_trans): void
 		else
 			label_row(_("Supplier:"), $supp_trans->supplier_name
 			.((bool)$supp_trans->currency ? ' - '.$supp_trans->currency  : '')
-			.hidden('supplier_id', post_scalar('supplier_id'), false));
+			.(hidden('supplier_id', post_scalar('supplier_id'), false) ?? ''));
 	}
 	if ($supp_trans->supplier_id != $_POST['supplier_id'])
 	{
@@ -139,7 +133,7 @@ function invoice_header(supp_trans &$supp_trans): void
 
 	if (isset($_POST['_tran_date_changed'])) {
 		ajax()->activate('_ex_rate');
-		$supp_trans->tran_date = $_POST['tran_date'];
+		$supp_trans->tran_date = (string) post_scalar('tran_date');
 		get_duedate_from_terms($supp_trans);
 		$_POST['due_date'] = $supp_trans->due_date;
 		ajax()->activate('due_date');
@@ -147,9 +141,10 @@ function invoice_header(supp_trans &$supp_trans): void
 
     date_row(_("Due Date") . ":", 'due_date');
 
-    label_row(_("Terms:"), $supp_trans->terms['description']);
+    $terms = is_array($supp_trans->terms) ? $supp_trans->terms : array();
+    label_row(_("Terms:"), $terms['description'] ?? '');
 
-	if (get_company_pref('use_dimension'))
+	if ((bool)get_company_pref('use_dimension'))
 		dimensions_list_row(_('Dimension').':', 'dimension', null, true, _('Default'), false, 1);
 
 	if (get_company_pref('use_dimension') == 2)
@@ -210,10 +205,10 @@ function display_gl_controls(supp_trans &$supp_trans, string|int|float|bool|null
 {
 	$accs = row_or_empty(get_supplier_accounts($supp_trans->supplier_id));
     if (!isset($_POST['gl_code']))
-		$_POST['gl_code'] = $accs['purchase_account'] ? 
+		$_POST['gl_code'] = (bool)($accs['purchase_account'] ?? false) ?
 			$accs['purchase_account'] : get_company_pref('default_cogs_act');
 
-	alt_table_row_color($k);
+	alt_table_row_color((int) $k);
 	echo gl_all_accounts_list('gl_code', null, false, true);
 	$dim = get_company_pref('use_dimension');
 	if ($dim >= 1)
@@ -266,7 +261,8 @@ function display_gl_items(supp_trans &$supp_trans, string|int|float|bool|items_c
 			echo "<div class='fa-right'>";
 			echo _("Quick Entry:")."&nbsp;"; 
 			echo quick_entries_list('qid', null, QE_SUPPINV, true);
-			$qid = row_or_empty(get_quick_entry(get_post('qid')));
+			$qid_raw = get_post('qid');
+			$qid = row_or_empty(get_quick_entry(is_scalar($qid_raw) ? $qid_raw : null));
 			if (list_updated('qid')) {
 				unset($_POST['totamount']); // enable default
 				ajax()->activate('totamount');
@@ -275,6 +271,9 @@ function display_gl_items(supp_trans &$supp_trans, string|int|float|bool|items_c
 
 			$amount = input_num('totamount', $qid['base_amount']);
 			$dec = user_price_dec();
+			// input_num()/user_numeric() only ever return int|float|false - never a
+			// string with quote/HTML characters - so this is never actually tainted
+			/** @psalm-suppress TaintedHtml, TaintedTextWithQuotes confirmed safe, see above */
 			echo "<input class='amount' type='text' name='totamount' size='7' maxlength='12' dec='$dec' value='$amount'>&nbsp;";
 			submit('go', _("Go"), true, false, true);
 			echo "</div>";
@@ -372,7 +371,7 @@ function display_grn_items_for_selection(supp_trans &$supp_trans, string|int|flo
 	else
 	{ // only invoiced
 		if (isset($_POST['receive_begin']) && isset($_POST['receive_end']))
-			$result = get_grn_items(0, $supp_trans->supplier_id, false, true, 0, post_scalar('receive_begin'), post_scalar('receive_end'));
+			$result = get_grn_items(0, $supp_trans->supplier_id, false, true, 0, (string) post_scalar('receive_begin'), (string) post_scalar('receive_end'));
 		elseif ($supp_trans->src_docs)
 			$result = get_grn_items(0, $supp_trans->supplier_id, false, true, array_keys($supp_trans->src_docs));
 		else
@@ -398,7 +397,7 @@ function display_grn_items_for_selection(supp_trans &$supp_trans, string|int|flo
 
     	if ($grn_already_on_invoice == false)
     	{
-			alt_table_row_color($k);
+			alt_table_row_color((int) $k);
 
 			$n = $myrow["id"];
 			label_cell(get_trans_view_str(ST_SUPPRECEIVE, $myrow["grn_batch_id"]), "nowrap align='right'");
@@ -439,7 +438,7 @@ function display_grn_items_for_selection(supp_trans &$supp_trans, string|int|flo
     		if (($supp_trans->trans_type == ST_SUPPINVOICE) && session_obj('wa_current_user')->can_access('SA_GRNDELETE')) {	// Added 2008-10-18 by Joe Hunt. Special access rights needed.
         		submit_cells('void_item_id'.(string) $n, _("Remove"), '', _("WARNING! Be careful with removal. The operation is executed immediately and cannot be undone !!!"), true);
 				submit_js_confirm('void_item_id'.(string) $n,
-					sprintf(_('You are about to remove all yet non-invoiced items from delivery line #%d. This operation also irreversibly changes related order line. Do you want to continue ?'), $n));
+					sprintf(_('You are about to remove all yet non-invoiced items from delivery line #%d. This operation also irreversibly changes related order line. Do you want to continue ?'), (int) $n));
 			}
 			end_row();
     	}
@@ -545,6 +544,7 @@ function display_grn_items(supp_trans &$supp_trans, ?int $mode=0): int|float
 
 			$grn_batch = get_grn_batch_from_item($entered_grn->id);
     		label_cell(get_trans_view_str(ST_SUPPRECEIVE, $grn_batch), "nowrap align='right'");
+    		$row = array();
     		if ($mode == 1)
     		{
 //				label_cell($entered_grn->id);
@@ -566,13 +566,13 @@ function display_grn_items(supp_trans &$supp_trans, ?int $mode=0): int|float
 
 			if ($mode == 1)
 			{
-				delete_button_cell("Delete" . $entered_grn->id, _("Edit"), _('Edit document line'));
+				delete_button_cell("Delete" . (string) $entered_grn->id, _("Edit"), _('Edit document line'));
 				if (($supp_trans->trans_type == ST_SUPPINVOICE) && session_obj('wa_current_user')->can_access('SA_GRNDELETE'))	  
 					label_cell("");
 			}	
 			end_row();
 
-    		$total_grn_value += round2($entered_grn->chg_price * abs($entered_grn->this_quantity_inv),
+    		$total_grn_value += round2((float)$entered_grn->chg_price * abs($entered_grn->this_quantity_inv),
 			   user_price_dec());
 
     		$i++;
@@ -631,14 +631,15 @@ function get_duedate_from_terms(&$trans): void
 	{
 		$date = Today();
 	}
-	if ($trans->terms['day_in_following_month'])
+	$terms = is_array($trans->terms) ? $trans->terms : array();
+	if (!empty($terms['day_in_following_month']))
 	{ /*Its a day in the following month when due */
 		$trans->due_date =
-			add_days(end_month($date), $trans->terms["day_in_following_month"]);
+			add_days(end_month($date), is_scalar($terms["day_in_following_month"] ?? null) ? $terms["day_in_following_month"] : null);
 	}
 	else
 	{ /*Use the Days Before Due to add to the invoice date */
-		$trans->due_date = add_days($date, $trans->terms["days_before_due"]);
+		$trans->due_date = add_days($date, is_scalar($terms["days_before_due"] ?? null) ? $terms["days_before_due"] : null);
 	}
 }
 
