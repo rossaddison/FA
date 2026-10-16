@@ -40,7 +40,7 @@ if ((bool) user_use_date_picker())
 if (isset($_GET['ModifyOrderNumber']) && is_numeric($_GET['ModifyOrderNumber'])) {
 
 	$_SESSION['page_title'] = _($help_context = "Modify Purchase Order #") . $_GET['ModifyOrderNumber'];
-	create_new_po(ST_PURCHORDER, get_scalar('ModifyOrderNumber'));
+	create_new_po(ST_PURCHORDER, (string) get_scalar('ModifyOrderNumber'));
 	copy_from_cart();
 } elseif (isset($_GET['NewOrder'])) {
 
@@ -64,10 +64,10 @@ if (isset($_GET['ModifyOrderNumber']) && is_numeric($_GET['ModifyOrderNumber']))
 		$_SESSION['page_title'] = _($help_context = "Direct Purchase Invoice Entry");
 }
 
-page($_SESSION['page_title'] ?? _("Purchase Order Entry"), false, false, "", $js);
+page((string) ($_SESSION['page_title'] ?? _("Purchase Order Entry")), false, false, "", $js);
 
 if (isset($_GET['ModifyOrderNumber']))
-	check_is_editable(ST_PURCHORDER, get_scalar('ModifyOrderNumber'));
+	check_is_editable(ST_PURCHORDER, (string) get_scalar('ModifyOrderNumber'));
 
 if (!isset($_SESSION['PO']))
 {
@@ -86,8 +86,8 @@ check_db_has_suppliers(_("There are no suppliers defined in the system."));
 
 if (isset($_GET['AddedID'])) 
 {
-	$order_no = $_GET['AddedID'];
-	$trans_type = ST_PURCHORDER;	
+	$order_no = (string) get_scalar('AddedID');
+	$trans_type = ST_PURCHORDER;
 
 	if (!isset($_GET['Updated']))
 		display_notification_centered(_("Purchase Order has been entered"));
@@ -102,7 +102,7 @@ if (isset($_GET['AddedID']))
 	hyperlink_params($path_to_root . "/purchasing/po_receive_items.php", _("&Receive Items on this Purchase Order"), "PONumber=$order_no");
 
   // TODO, for fixed asset
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter &Another Purchase Order"), "NewOrder=yes");
+	hyperlink_params($_SERVER['PHP_SELF'] ?? '', _("Enter &Another Purchase Order"), "NewOrder=yes");
 	
 	hyperlink_no_params($path_to_root."/purchasing/inquiry/po_search.php", _("Select An &Outstanding Purchase Order"));
 	
@@ -113,7 +113,7 @@ if (isset($_GET['AddedID']))
 
 } elseif (isset($_GET['AddedGRN'])) {
 
-	$trans_no = $_GET['AddedGRN'];
+	$trans_no = (string) get_scalar('AddedGRN');
 	$trans_type = ST_SUPPRECEIVE;
 
 	display_notification_centered(_("Direct GRN has been entered"));
@@ -121,13 +121,13 @@ if (isset($_GET['AddedID']))
 	display_note(get_trans_view_str($trans_type, $trans_no, _("&View this GRN")), 0);
 
     $clearing_act = get_company_pref('grn_clearing_act');
-	if ($clearing_act)	
+	if ((bool)$clearing_act)
 		display_note(get_gl_view_str($trans_type, $trans_no, _("View the GL Journal Entries for this Delivery")), 1);
 
 	hyperlink_params("$path_to_root/purchasing/supplier_invoice.php",
 		_("Entry purchase &invoice for this receival"), "New=1");
 
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter &Another GRN"), "NewGRN=Yes");
+	hyperlink_params($_SERVER['PHP_SELF'] ?? '', _("Enter &Another GRN"), "NewGRN=Yes");
 	
 	hyperlink_params("$path_to_root/admin/attachments.php", _("Add an Attachment"), 
 		"filterType=$trans_type&trans_no=$trans_no");
@@ -136,7 +136,7 @@ if (isset($_GET['AddedID']))
 
 } elseif (isset($_GET['AddedPI'])) {
 
-	$trans_no = $_GET['AddedPI'];
+	$trans_no = (string) get_scalar('AddedPI');
 	$trans_type = ST_SUPPINVOICE;
 
 	display_notification_centered(_("Direct Purchase Invoice has been entered"));
@@ -148,7 +148,7 @@ if (isset($_GET['AddedID']))
 	hyperlink_params("$path_to_root/purchasing/supplier_payment.php", _("Entry supplier &payment for this invoice"),
 		"trans_type=$trans_type&PInvoice=".$trans_no);
 
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter &Another Direct Invoice"), "NewInvoice=Yes");
+	hyperlink_params($_SERVER['PHP_SELF'] ?? '', _("Enter &Another Direct Invoice"), "NewInvoice=Yes");
 	
 	hyperlink_params("$path_to_root/admin/attachments.php", _("Add an Attachment"), 
 		"filterType=$trans_type&trans_no=$trans_no");
@@ -180,6 +180,7 @@ function unset_form_variables(): void {
 
 function handle_delete_item(string|int|null $line_no): void
 {
+	$line_no = (int) $line_no;
 	if(session_obj('PO')->some_already_received($line_no) == 0)
 	{
 		session_obj('PO')->remove_from_order($line_no);
@@ -243,7 +244,7 @@ function check_data(): bool
 		return false;
 	}
 
-	$dec = get_qty_dec(post_scalar('stock_id'));
+	$dec = (int) get_qty_dec((string) post_scalar('stock_id'));
 	$min = 1.0 / (float)pow(10, $dec);
     if (!check_num('qty',$min))
     {
@@ -259,7 +260,7 @@ function check_data(): bool
 		set_focus('price');
 	   	return false;	   
     }
-    if (session_obj('PO')->trans_type == ST_PURCHORDER && !is_date(post_scalar('req_del_date'))){
+    if (session_obj('PO')->trans_type == ST_PURCHORDER && !is_date((string) post_scalar('req_del_date'))){
     		display_error(_("The date entered is in an invalid format."));
 		set_focus('req_del_date');
    		return false;    	 
@@ -272,23 +273,26 @@ function check_data(): bool
 
 function handle_update_item(): void
 {
-	$allow_update = check_data(); 
+	$allow_update = check_data();
+
+	$line_no = (int) post_scalar('line_no');
+	$qty = (float) input_num('qty');
 
 	if ($allow_update)
 	{
-		if (session_obj('PO')->line_items[$_POST['line_no']]->qty_inv > input_num('qty') ||
-			session_obj('PO')->line_items[$_POST['line_no']]->qty_received > input_num('qty'))
+		if (session_obj('PO')->line_items[$line_no]->qty_inv > $qty ||
+			session_obj('PO')->line_items[$line_no]->qty_received > $qty)
 		{
 			display_error(_("You are attempting to make the quantity ordered a quantity less than has already been invoiced or received.  This is prohibited.") .
 				"<br>" . _("The quantity received can only be modified by entering a negative receipt and the quantity invoiced can only be reduced by entering a credit note against this item."));
 			set_focus('qty');
 			return;
 		}
-	
-		session_obj('PO')->update_order_item($_POST['line_no'], input_num('qty'), input_num('price'),
-  			@$_POST['req_del_date'], $_POST['item_description'] );
+
+		session_obj('PO')->update_order_item($line_no, (int) $qty, (float) input_num('price'),
+  			(string) (post_scalar('req_del_date') ?? ''), (string) post_scalar('item_description'));
 		unset_form_variables();
-	}	
+	}
     line_start_focus();
 }
 
@@ -297,16 +301,17 @@ function handle_update_item(): void
 function handle_add_new_item(): void
 {
 	$allow_update = check_data();
-	
+	$stock_id = (string) post_scalar('stock_id');
+
 	if ($allow_update == true)
-	{ 
+	{
 		if (count(session_obj('PO')->line_items) > 0)
 		{
-		    foreach (session_obj('PO')->line_items as $order_item) 
+		    foreach (session_obj('PO')->line_items as $order_item)
 		    {
     			/* do a loop round the items on the order to see that the item
     			is not already on this order */
-   			    if (($order_item->stock_id == $_POST['stock_id'])) 
+   			    if ($order_item->stock_id == $stock_id)
    			    {
 					display_warning(_("The selected item is already on this order."));
 			    }
@@ -315,7 +320,7 @@ function handle_add_new_item(): void
 
 		if ($allow_update == true)
 		{
-			$result = get_short_info(post_scalar('stock_id'));
+			$result = get_short_info($stock_id);
 
 			if (db_num_rows($result) == 0)
 			{
@@ -324,15 +329,17 @@ function handle_add_new_item(): void
 
 			if ($allow_update)
 			{
-				session_obj('PO')->add_to_order (count(session_obj('PO')->line_items), $_POST['stock_id'], input_num('qty'), 
-					get_post('stock_id_text'), //$myrow["description"], 
-					input_num('price'), '', // $myrow["units"], (retrived in cart)
-					session_obj('PO')->trans_type == ST_PURCHORDER ? $_POST['req_del_date'] : '', 0, 0);
+				$stock_id_text_raw = get_post('stock_id_text');
+				$stock_id_text = is_string($stock_id_text_raw) ? $stock_id_text_raw : '';
+				session_obj('PO')->add_to_order (count(session_obj('PO')->line_items), $stock_id, (int) input_num('qty'),
+					$stock_id_text, //$myrow["description"],
+					(float) input_num('price'), '', // $myrow["units"], (retrived in cart)
+					session_obj('PO')->trans_type == ST_PURCHORDER ? (string) (post_scalar('req_del_date') ?? '') : '', 0, 0);
 
 				unset_form_variables();
 				$_POST['stock_id']	= "";
-	   		} 
-	   		else 
+	   		}
+	   		else
 	   		{
 			     display_error(_("The selected item does not exist or it is a kit part and therefore cannot be purchased."));
 		   	}
@@ -347,34 +354,35 @@ function handle_add_new_item(): void
 #[\NoDiscard]
 function can_commit(): bool
 {
-	if (!get_post('supplier_id')) 
+	if (!get_post('supplier_id'))
 	{
 		display_error(_("There is no supplier selected."));
 		set_focus('supplier_id');
 		return false;
-	} 
+	}
 
-	if (!is_date(post_scalar('OrderDate'))) 
+	$order_date = (string) post_scalar('OrderDate');
+	if (!is_date($order_date))
 	{
 		display_error(_("The entered order date is invalid."));
 		set_focus('OrderDate');
 		return false;
-	} 
-	if ((session_obj('PO')->trans_type == ST_SUPPRECEIVE || session_obj('PO')->trans_type == ST_SUPPINVOICE) 
-		&& !(bool)is_date_in_fiscalyear(post_scalar('OrderDate'))) {
+	}
+	if ((session_obj('PO')->trans_type == ST_SUPPRECEIVE || session_obj('PO')->trans_type == ST_SUPPINVOICE)
+		&& !(bool)is_date_in_fiscalyear($order_date)) {
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('OrderDate');
 		return false;
 	}
 
-	if ((session_obj('PO')->trans_type==ST_SUPPINVOICE) && !is_date(post_scalar('due_date'))) 
+	if ((session_obj('PO')->trans_type==ST_SUPPINVOICE) && !is_date((string) post_scalar('due_date')))
 	{
 		display_error(_("The entered due date is invalid."));
 		set_focus('due_date');
 		return false;
-	} 
+	}
 
-	if (!(bool)session_obj('PO')->order_no) 
+	if (!(bool)session_obj('PO')->order_no)
 	{
     	if (!check_reference(get_post('ref'), session_obj('PO')->trans_type))
     	{
@@ -383,16 +391,18 @@ function can_commit(): bool
     	}
 	}
 
-	if (session_obj('PO')->trans_type == ST_SUPPINVOICE && trim(get_post('supp_ref')) == false)
+	$supp_ref_raw = get_post('supp_ref');
+	$supp_ref = is_string($supp_ref_raw) ? $supp_ref_raw : '';
+	if (session_obj('PO')->trans_type == ST_SUPPINVOICE && trim($supp_ref) == false)
 	{
 		display_error(_("You must enter a supplier's invoice reference."));
 		set_focus('supp_ref');
 		return false;
 	}
-	if (session_obj('PO')->trans_type==ST_SUPPINVOICE 
-		&& is_reference_already_there(session_obj('PO')->supplier_id, get_post('supp_ref'), session_obj('PO')->order_no))
+	if (session_obj('PO')->trans_type==ST_SUPPINVOICE
+		&& is_reference_already_there(session_obj('PO')->supplier_id, $supp_ref, session_obj('PO')->order_no))
 	{
-		display_error(_("This invoice number has already been entered. It cannot be entered again.") . " (" . get_post('supp_ref') . ")");
+		display_error(_("This invoice number has already been entered. It cannot be entered again.") . " (" . $supp_ref . ")");
 		set_focus('supp_ref');
 		return false;
 	}
@@ -401,14 +411,14 @@ function can_commit(): bool
 		display_error(_("There is no delivery address specified."));
 		set_focus('delivery_address');
 		return false;
-	} 
+	}
 	if (get_post('StkLocation') == '')
 	{
 		display_error(_("There is no location specified to move any items into."));
 		set_focus('StkLocation');
 		return false;
-	} 
-	if (!db_has_currency_rates(session_obj('PO')->curr_code, post_scalar('OrderDate'), true))
+	}
+	if (!db_has_currency_rates(session_obj('PO')->curr_code, $order_date, true))
 		return false;
 	if (session_obj('PO')->order_has_items() == false)
 	{
@@ -429,26 +439,28 @@ function handle_commit_order(): void
 {
 	$cart = &$_SESSION['PO'];
 	/** @var purch_order $cart */
+	$cart = $cart;
 
 	if (can_commit()) {
 
 		copy_to_cart();
 		new_doc_date($cart->orig_order_date);
 		if ($cart->order_no == 0) { // new po/grn/invoice
-			$trans_no = add_direct_supp_trans($cart);
-			if ($trans_no) {
+			$trans_no_raw = add_direct_supp_trans($cart);
+			$trans_no = is_scalar($trans_no_raw) ? $trans_no_raw : null;
+			if ((bool)$trans_no) {
 				unset($_SESSION['PO']);
 				if ($cart->trans_type == ST_PURCHORDER)
-	 				meta_forward($_SERVER['PHP_SELF'], "AddedID=$trans_no");
+	 				meta_forward($_SERVER['PHP_SELF'] ?? '', "AddedID=$trans_no");
 				elseif ($cart->trans_type == ST_SUPPRECEIVE)
-					meta_forward($_SERVER['PHP_SELF'], "AddedGRN=$trans_no");
+					meta_forward($_SERVER['PHP_SELF'] ?? '', "AddedGRN=$trans_no");
 				else
-					meta_forward($_SERVER['PHP_SELF'], "AddedPI=$trans_no");
+					meta_forward($_SERVER['PHP_SELF'] ?? '', "AddedPI=$trans_no");
 			}
 		} else { // order modification
 			$order_no = update_po($cart);
 			unset($_SESSION['PO']);
-        	meta_forward($_SERVER['PHP_SELF'], "AddedID=$order_no&Updated=1");	
+        	meta_forward($_SERVER['PHP_SELF'] ?? '', "AddedID=$order_no&Updated=1");
 		}
 	}
 }
@@ -488,6 +500,7 @@ start_form();
 
 $order = &$_SESSION['PO'];
 /** @var purch_order $order */
+$order = $order;
 display_po_header($order);
 echo "<br>";
 
