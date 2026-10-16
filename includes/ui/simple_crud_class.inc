@@ -42,7 +42,7 @@ class simple_crud {
 	var $views;
 
 	/**
-	 * @var array<array-key, mixed>|object
+	 * @var array<array-key, mixed>|object|false
 	 */
 	var $data = array();
 
@@ -368,7 +368,7 @@ class simple_crud {
 	//
 	//	Update record in db after edition
 	//
-	/** @return void */
+	/** @return void|int|string|null */
 	function db_update()
 	{
 		$this->db_insert();
@@ -408,7 +408,6 @@ class simple_crud {
 	}
 
 	/**
-	 * @psalm-pure
 	 * @return bool
 	 */
 	function insert_check() {
@@ -416,12 +415,11 @@ class simple_crud {
 	}
 
 	/**
-	 * @psalm-mutation-free
-	 * @return true
+	 * @return bool
 	 */
-	function update_check() 
+	function update_check()
 	{
-		return $this->insert_check(); 
+		return $this->insert_check();
 	}
 
 	//

@@ -16,9 +16,10 @@ include_once(dirname(__DIR__, 2) . "/includes/db/crm_contacts_db.inc");
 /*
 	View/Edit class for contacts
 */
-class contacts extends simple_crud {
+final class contacts extends simple_crud {
+	/** @var string|int|null */
 	var $id;
-	/** @var array<array-key, mixed>|false */
+	/** @var array<array-key, mixed>|object|false */
 	var $data = array();
 	/** @var string|int|null */
 	var $entity;
@@ -48,6 +49,7 @@ class contacts extends simple_crud {
 	}
 
 	/** @return void */
+	#[\Override]
 	function list_view() {
 		br();
 
@@ -59,34 +61,36 @@ class contacts extends simple_crud {
 				"&nbsp;");
 
 			table_header($th);
-			$k = 0; 
+			$k = 0;
 
-			$last = $myrow = db_fetch($contacts);
+			/** @var array<string, null|string> $description */
+			$description = array();
+			$last = $myrow = row_or_empty(db_fetch($contacts));
 			while ($last)
 			{
-					
-				if (@$myrow['id'] != $last['id']) {
+
+				if (($myrow['id'] ?? null) != ($last['id'] ?? null)) {
 					alt_table_row_color($k);
 					label_cell(implode('<br>',$description));
-					label_cell($last["ref"]);
-					label_cell((string)$last["name"].' '.(string)$last["name2"]);
-					label_cell($last["phone"]);
-					label_cell($last["phone2"]);
-					label_cell($last["fax"]);
-					email_cell($last["email"]);
+					label_cell($last["ref"] ?? '');
+					label_cell(($last["name"] ?? '').' '.($last["name2"] ?? ''));
+					label_cell($last["phone"] ?? '');
+					label_cell($last["phone2"] ?? '');
+					label_cell($last["fax"] ?? '');
+					email_cell($last["email"] ?? '');
 
-				 	edit_button_cell("{$this->name}Edit[{$last['id']}]", _("Edit"));
+				 	edit_button_cell("{$this->name}Edit[".($last['id'] ?? '')."]", _("Edit"));
 
 					// delete button removes only category unless this is the last contact for this person
-					delete_button_cell("{$this->name}Delete[{$last['id']}]", _("Delete"));
+					delete_button_cell("{$this->name}Delete[".($last['id'] ?? '')."]", _("Delete"));
 					end_row();
 					$description = array();
 					$last = $myrow;
 				}
 
 				if ((bool)$myrow) {
-					$description[] = $myrow['description'];
-					$myrow = db_fetch($contacts);
+					$description[] = $myrow['description'] ?? null;
+					$myrow = row_or_empty(db_fetch($contacts));
 				}
 			}
 
@@ -95,58 +99,66 @@ class contacts extends simple_crud {
 	}
 	
 	/** @return void */
+	#[\Override]
 	function editor_view()
 	{
 		br();
+
+		/** @var array{contacts?: array<array-key, mixed>, ...<array-key, null|string>} $data */
+		$data = is_array($this->data) ? $this->data : array();
 
 		start_outer_table(TABLESTYLE);
 
 		table_section(1);
 		table_section_title(_("Contact data"));
 
-		text_row(_("First Name:"), 'name', @$this->data['name'], 35, 40);
-		text_row(_("Last Name:"), 'name2', @$this->data['name2'], 35, 40);
-		text_row(_("Reference:"), 'ref', @$this->data['ref'], 35, 40);
+		text_row(_("First Name:"), 'name', $data['name'] ?? null, 35, 40);
+		text_row(_("Last Name:"), 'name2', $data['name2'] ?? null, 35, 40);
+		text_row(_("Reference:"), 'ref', $data['ref'] ?? null, 35, 40);
 
-		crm_category_types_list_row(_("Contact active for:"), 'assgn', @$this->data['contacts'],
-			array('subclass' => @$this->sub_class,
-				'class' => @$this->class, 
+		crm_category_types_list_row(_("Contact active for:"), 'assgn', $data['contacts'] ?? null,
+			array('subclass' => $this->sub_class,
+				'class' => $this->class,
 				'multi' =>true)
 				);
 
-		text_row(_("Phone:"), 'phone', @$this->data['phone'], 32, 30);
-		text_row(_("Secondary Phone Number:"), 'phone2', @$this->data['phone2'], 32, 30);
-		text_row(_("Fax Number:"), 'fax', @$this->data['fax'], 32, 30);
-		email_row(_("E-mail:"), 'email', @$this->data['email'], 35, 55);
+		text_row(_("Phone:"), 'phone', $data['phone'] ?? null, 32, 30);
+		text_row(_("Secondary Phone Number:"), 'phone2', $data['phone2'] ?? null, 32, 30);
+		text_row(_("Fax Number:"), 'fax', $data['fax'] ?? null, 32, 30);
+		email_row(_("E-mail:"), 'email', $data['email'] ?? null, 35, 55);
 
 		table_section(2);
 		table_section_title(nbsp());
-		textarea_row(_("Address:"), 'address', @$this->data['address'], 30, 4);
-		languages_list_row( _("Document Language:"), 'lang', @$this->data['lang'], _("Customer default"));
+		textarea_row(_("Address:"), 'address', $data['address'] ?? null, 30, 4);
+		languages_list_row( _("Document Language:"), 'lang', $data['lang'] ?? null, _("Customer default"));
 
-		textarea_row(_("Notes:"), 'notes', @$this->data['notes'], 30, 4);
+		textarea_row(_("Notes:"), 'notes', $data['notes'] ?? null, 30, 4);
 		end_outer_table(1);
 	}
 
 	/** @return int|null|string */
+	#[\Override]
 	function db_insert() {
-			$dat = (array) $this->data;
-			return add_crm_person($dat['ref'], $dat['name'], $dat['name2'], $dat['address'],
-				$dat['phone'], $dat['phone2'], $dat['fax'], $dat['email'], $dat['lang'],
-				$dat['notes'], $dat['contacts'], $this->entity);
+			/** @var array{contacts?: array<array-key, mixed>, ...<array-key, null|string>} $dat */
+			$dat = is_array($this->data) ? $this->data : array();
+			return add_crm_person($dat['ref'] ?? null, $dat['name'] ?? null, $dat['name2'] ?? null, $dat['address'] ?? null,
+				$dat['phone'] ?? null, $dat['phone2'] ?? null, $dat['fax'] ?? null, $dat['email'] ?? null, $dat['lang'] ?? null,
+				$dat['notes'] ?? null, $dat['contacts'] ?? array(), $this->entity);
 	}
 
-	/** @return null|scalar */
+	/** @return string|int|float|bool|null */
+	#[\Override]
 	function db_update() {
+			$assgn = $_POST['assgn'] ?? null;
 			return update_crm_person($this->selected_id, post_scalar('ref'), post_scalar('name'), post_scalar('name2'),
-				post_scalar('address'), post_scalar('phone'), post_scalar('phone2'), post_scalar('fax'), post_scalar('email'), 
-				post_scalar('lang'), post_scalar('notes'), $_POST['assgn'], $this->entity, $this->class);
+				post_scalar('address'), post_scalar('phone'), post_scalar('phone2'), post_scalar('fax'), post_scalar('email'),
+				post_scalar('lang'), post_scalar('notes'), is_array($assgn) ? $assgn : array(), $this->entity, $this->class);
 	}
 
 	/**
-	 * @psalm-external-mutation-free
 	 * @return bool
 	 */
+	#[\Override]
 	function insert_check() {
                 $name = get_post('name');
 		if (!is_string($name) || $name === '') {
@@ -161,16 +173,17 @@ class contacts extends simple_crud {
 			set_focus('ref');
 			return false;
 		}
-                
-                if (count_array(@$_POST['assgn']) == 0) {
+
+                if (count_array($_POST['assgn'] ?? null) == 0) {
 			display_error(_("You have to select at least one category."));
 			set_focus('assgn');
 			return false;
 		}
-		return true; 
+		return true;
 	}
 
 	/** @return array{contacts: array<array-key, mixed>, ...<array-key, null|string>}|false */
+	#[\Override]
 	function db_read() {
 		return get_crm_person($this->selected_id);
 	}
@@ -179,6 +192,7 @@ class contacts extends simple_crud {
 	 * @psalm-pure
 	 * @return true
 	 */
+	#[\Override]
 	function delete_check() {
 		return true;
 	}
@@ -186,6 +200,7 @@ class contacts extends simple_crud {
 	//	Delete all contacts for person in current class/entity
 	//
 	/** @return bool|mysqli_result */
+	#[\Override]
 	function db_delete() {
 		if (delete_crm_contacts($this->selected_id, $this->class, $this->entity)) {
 			// if this is the last relation - delete contact data
