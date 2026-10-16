@@ -38,32 +38,36 @@ check_db_has_locations(("There are no inventory locations defined in the system.
 
 if (isset($_GET['trans_no']))
 {
-	$selected_id = $_GET['trans_no'];
+	$selected_id = (int) get_scalar('trans_no');
 }
 elseif(isset($_POST['selected_id']))
 {
-	$selected_id = $_POST['selected_id'];
+	$selected_id = (int) post_scalar('selected_id');
+}
+if (isset($selected_id)) {
+	/** @var int $selected_id */
+	$selected_id = $selected_id;
 }
 
 //---------------------------------------------------------------------------------------
 
 if (isset($_GET['AddedID']))
 {
-	$id = $_GET['AddedID'];
+	$id = (string) get_scalar('AddedID');
 	$stype = ST_WORKORDER;
 
 	display_notification_centered(_("The work order been added."));
 
     display_note(get_trans_view_str($stype, $id, _("View this Work Order")), 0, 1);
 
-	if ($_GET['type'] != WO_ADVANCED)
+	if (get_scalar('type') != WO_ADVANCED)
 	{
 		include_once(dirname(__DIR__) . "/reporting/includes/reporting.inc");
 
 		submenu_print(_("&Print This Work Order"), ST_WORKORDER, $id, 'prtopt');
 		submenu_print(_("&Email This Work Order"), ST_WORKORDER, $id, null, 1);
     	display_note(get_gl_view_str($stype, $id, _("View the GL Journal Entries for this Work Order")), 1);
-    	$ar = array('PARAM_0' => $_GET['date'], 'PARAM_1' => $_GET['date'], 'PARAM_2' => $stype, 'PARAM_3' => '',
+    	$ar = array('PARAM_0' => get_scalar('date'), 'PARAM_1' => get_scalar('date'), 'PARAM_2' => $stype, 'PARAM_3' => '',
     		'PARAM_4' => (user_def_print_orientation() == 1 ? 1 : 0)); 
     	display_note(print_link(_("Print the GL Journal Entries for this Work Order"), 702, $ar), 1);
 		hyperlink_params("$path_to_root/admin/attachments.php", _("Add an Attachment"), "filterType=$stype&trans_no=$id");
@@ -76,7 +80,7 @@ if (isset($_GET['AddedID']))
 
 if (isset($_GET['UpdatedID']))
 {
-	$id = $_GET['UpdatedID'];
+	$id = (string) get_scalar('UpdatedID');
 
 	display_notification_centered(_("The work order been updated."));
 	safe_exit();
@@ -86,7 +90,7 @@ if (isset($_GET['UpdatedID']))
 
 if (isset($_GET['DeletedID']))
 {
-	$id = $_GET['DeletedID'];
+	$id = (string) get_scalar('DeletedID');
 
 	display_notification_centered(_("Work order has been deleted."));
 	safe_exit();
@@ -96,7 +100,7 @@ if (isset($_GET['DeletedID']))
 
 if (isset($_GET['ClosedID']))
 {
-	$id = $_GET['ClosedID'];
+	$id = (string) get_scalar('ClosedID');
 
 	display_notification_centered(_("This work order has been closed. There can be no more issues against it.") . " #$id");
 	safe_exit();
@@ -104,13 +108,13 @@ if (isset($_GET['ClosedID']))
 
 //---------------------------------------------------------------------------------------
 
-function safe_exit(): void
+function safe_exit(): never
 {
 	global $path_to_root;
 
 	hyperlink_no_params("", _("Enter a new work order"));
 	hyperlink_no_params("search_work_orders.php", _("Select an existing work order"));
-	
+
 	display_footer_exit();
 }
 
@@ -143,7 +147,7 @@ function canProcessWorkOrderEntry(): bool
 		return false;
 	}
 
-	if (!is_date(post_scalar('date_')))
+	if (!is_date((string) post_scalar('date_')))
 	{
 		display_error( _("The date entered is in an invalid format."));
 		set_focus('date_');
@@ -182,7 +186,7 @@ function canProcessWorkOrderEntry(): bool
     		return false;
     	}
 
-        if (!sysprefs()->allow_negative_stock())
+        if (!(bool)sysprefs()->allow_negative_stock())
         {
         	if ($_POST['type'] == WO_ASSEMBLY)
         	{
@@ -220,7 +224,7 @@ function canProcessWorkOrderEntry(): bool
      }
      else
      {
-    	if (!is_date(post_scalar('RequDate')))
+    	if (!is_date((string) post_scalar('RequDate')))
     	{
 			set_focus('RequDate');
     		display_error( _("The date entered is in an invalid format."));
@@ -253,18 +257,19 @@ if (isset($_POST['ADD_ITEM']) && canProcessWorkOrderEntry())
 		post_scalar('RequDate'), post_scalar('memo_'), input_num('Costs'), post_scalar('cr_acc'), input_num('Labour'), post_scalar('cr_lab_acc'));
 
 	new_doc_date($_POST['date_']);
-	meta_forward($_SERVER['PHP_SELF'], "AddedID=$id&type=".(string)$_POST['type']."&date=".(string)$_POST['date_']);
+	meta_forward($_SERVER['PHP_SELF'] ?? '', "AddedID=".(string)$id."&type=".(string)post_scalar('type')."&date=".(string)post_scalar('date_'));
 }
 
 //-------------------------------------------------------------------------------------
 
-if (isset($_POST['UPDATE_ITEM']) && can_process())
+if (isset($_POST['UPDATE_ITEM']) && canProcessWorkOrderEntry())
 {
-
+	/** @var int $selected_id */
+	$selected_id = $selected_id;
 	update_work_order($selected_id, post_scalar('StockLocation'), input_num('quantity'),
 		post_scalar('stock_id'),  post_scalar('date_'), post_scalar('RequDate'), post_scalar('memo_'));
 	new_doc_date($_POST['date_']);
-	meta_forward($_SERVER['PHP_SELF'], "UpdatedID=$selected_id");
+	meta_forward($_SERVER['PHP_SELF'] ?? '', "UpdatedID=$selected_id");
 }
 
 //--------------------------------------------------------------------------------------
@@ -272,6 +277,8 @@ if (isset($_POST['UPDATE_ITEM']) && can_process())
 if (isset($_POST['delete']))
 {
 	//the link to delete a selected record was clicked instead of the submit button
+	/** @var int $selected_id */
+	$selected_id = $selected_id;
 
 	$cancel_delete = false;
 
@@ -289,7 +296,7 @@ if (isset($_POST['delete']))
 
 		// delete the actual work order
 		delete_work_order($selected_id, post_scalar('stock_id'), post_scalar('quantity'), post_scalar('date_'));
-		meta_forward($_SERVER['PHP_SELF'], "DeletedID=$selected_id");
+		meta_forward($_SERVER['PHP_SELF'] ?? '', "DeletedID=$selected_id");
 	}
 }
 
@@ -297,10 +304,12 @@ if (isset($_POST['delete']))
 
 if (isset($_POST['close']))
 {
+	/** @var int $selected_id */
+	$selected_id = $selected_id;
 
 	// update the closed flag in the work order
 	close_work_order($selected_id);
-	meta_forward($_SERVER['PHP_SELF'], "ClosedID=$selected_id");
+	meta_forward($_SERVER['PHP_SELF'] ?? '', "ClosedID=$selected_id");
 }
 
 //-------------------------------------------------------------------------------------
@@ -317,8 +326,11 @@ start_table(TABLESTYLE2);
 $existing_comments = "";
 
 $dec = 0;
+$myrow = array();
 if (isset($selected_id))
 {
+	/** @var int $selected_id */
+	$selected_id = $selected_id;
 	$myrow = get_work_order($selected_id, true);
 
 	if ($myrow === false)
@@ -358,7 +370,7 @@ if (isset($selected_id))
 	hidden('selected_id',  $selected_id);
 
 	label_row(_("Reference:"), post_scalar('wo_ref'));
-	label_row(_("Type:"), $wo_types_array[$_POST['type']]);
+	label_row(_("Type:"), $wo_types_array[(int) post_scalar('type')]);
 	hidden('type', $myrow["type"]);
 }
 else
@@ -389,16 +401,16 @@ else
 }
 
 if (!isset($_POST['quantity']))
-	$_POST['quantity'] = qty_format(1, $_POST['stock_id'], $dec);
+	$_POST['quantity'] = qty_format(1, post_scalar('stock_id'), $dec);
 else
-	$_POST['quantity'] = qty_format(post_scalar('quantity'), $_POST['stock_id'], $dec);
+	$_POST['quantity'] = qty_format(post_scalar('quantity'), post_scalar('stock_id'), $dec);
 	
 
 if (get_post('type') == WO_ADVANCED)
 {
     qty_row(_("Quantity Required:"), 'quantity', null, null, null, $dec);
     if ((bool)$_POST['released'])
-    	label_row(_("Quantity Manufactured:"), number_format($_POST['units_issued'], get_qty_dec(post_scalar('stock_id'))));
+    	label_row(_("Quantity Manufactured:"), number_format((float) post_scalar('units_issued'), (int) get_qty_dec((string) post_scalar('stock_id'))));
     date_row(_("Date") . ":", 'date_', '', true);
 	date_row(_("Date Required By") . ":", 'RequDate', '', null, sysprefs()->default_wo_required_by());
 }
@@ -411,7 +423,8 @@ else
 	if (!isset($_POST['Labour']) || list_updated('stock_id') || list_updated('type'))
 	{
 		$bank_act = row_or_empty(get_default_bank_account());
-		$item = row_or_empty(get_item(get_post('stock_id')));
+		$stock_id_raw = get_post('stock_id');
+		$item = row_or_empty(get_item(is_scalar($stock_id_raw) ? $stock_id_raw : null));
 		$_POST['Labour'] = price_format(get_post('type') == WO_ASSEMBLY ? $item['labour_cost'] : 0);
 		$_POST['cr_lab_acc'] = $bank_act['account_code'];
 		$_POST['Costs'] = price_format(get_post('type') == WO_ASSEMBLY ? $item['overhead_cost'] : 0);
