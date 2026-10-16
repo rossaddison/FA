@@ -67,6 +67,7 @@
         <var name="security_areas" type="array&lt;string, array{0: int, 1: string}&gt;"/>
         <var name="security_sections" type="array&lt;int, string&gt;"/>
         <var name="page_security" type="string|int|float|bool|null"/>
+        <var name="GetText" type="gettext_native_support"/>
     </globals>
     <projectFiles>
         <directory name="access"/>

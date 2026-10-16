@@ -15,10 +15,14 @@ $page_security = 'SA_CREATELANGUAGE';
 $path_to_root="..";
 include_once(dirname(__DIR__) . "/includes/session.inc");
 
+/** @var array<int, array<string, string|bool>> $installed_languages */
+$installed_languages = $installed_languages;
+
 include_once(dirname(__DIR__) . "/includes/packages.inc");
 include_once(dirname(__DIR__) . "/admin/db/maintenance_db.inc");
 include_once(dirname(__DIR__) . "/includes/ui.inc");
 
+$js = "";
 if (sysprefs()->use_popup_windows)
 	$js = get_js_open_window(900, 500);
 
@@ -61,17 +65,17 @@ function display_languages(): void
 	$langs = get_languages_list();
 	foreach ($langs as $pkg_name => $lng)
 	{
-		if ($lng == 'C') // skip default locale (aka no translation)
+		$lang = (string) ($lng['code'] ?? '');
+		if ($lang === 'C') // skip default locale (aka no translation)
 			continue;
 
-		$lang = $lng['code'];
-		$lang_name = $lng['name'];
-		$charset = $lng['encoding'];
-		$rtl = @$lng['rtl'] == 'yes' || @$lng['rtl'] === true;
-		$available = @$lng['available'];
-		$installed = @$lng['version'];
-		$id = @$lng['local_id'];
-		
+		$lang_name = (string) ($lng['name'] ?? '');
+		$charset = (string) ($lng['encoding'] ?? '');
+		$rtl = ($lng['rtl'] ?? null) == 'yes' || ($lng['rtl'] ?? null) === true;
+		$available = $lng['available'] ?? null;
+		$installed = $lng['version'] ?? null;
+		$id = $lng['local_id'] ?? null;
+
 		if ($lang == $currlang)
 			start_row("class='stockmankobg'");
 		else
@@ -82,35 +86,35 @@ function display_languages(): void
 		if (function_exists('gettext') && !$support && !get_post('DisplayAll') && $lang != 'C') continue;
 
 		label_cell($lang);
-		label_cell($available ? get_package_view_str($lang, $lang_name) : $lang_name);
+		label_cell((bool)$available ? get_package_view_str($lang, $lang_name) : $lang_name);
 		label_cell($charset);
 		label_cell($rtl ? _("Yes") : _("No"));
-		
-		label_cell($id === null ? _("None") :
-			($available && $installed ? $installed : _("Unknown")));
 
-		label_cell($available ? $available : _("None"));
+		label_cell($id === null ? _("None") :
+			(((bool)$available && (bool)$installed) ? (string) $installed : _("Unknown")));
+
+		label_cell((bool)$available ? (string) $available : _("None"));
 
 		label_cell($id === null ? '' :
 			radio(null, 'CurDflt', $id, $dflt_lang == $lang, true),
 			"align='center'");
-		
+
 		if (function_exists('gettext') && check_value('DisplayAll'))
 			label_cell($support ? _("Yes") :_("No"));
 
-		if (!$available && ($lang != 'C'))	// manually installed language
-			button_cell('Edit'.$id, _("Edit"), _('Edit non standard language configuration'), 
+		if (!(bool)$available && ($lang != 'C'))	// manually installed language
+			button_cell('Edit'.(string)$id, _("Edit"), _('Edit non standard language configuration'),
 				ICON_EDIT);
 		elseif (check_pkg_upgrade($installed, $available)) // outdated or not installed language in repo
-			button_cell('Update'.$pkg_name, (bool)$installed ? _("Update") : _("Install"),
+			button_cell('Update'.(string)$pkg_name, (bool)$installed ? _("Update") : _("Install"),
 				_('Upload and install latest language package'), ICON_DOWN);
 		else
 			label_cell('');
 
 		if (($id !== null) && ($lang != $currlang) && ($lang != 'C')) {
-			delete_button_cell('Delete'.$id, _('Delete'));
-			submit_js_confirm('Delete'.$id, 
-				sprintf(_("You are about to remove language \'%s\'.\nDo you want to continue ?"), 
+			delete_button_cell('Delete'.(string)$id, _('Delete'));
+			submit_js_confirm('Delete'.(string)$id,
+				sprintf(_("You are about to remove language \'%s\'.\nDo you want to continue ?"),
 					$lang_name));
 		} else
 			label_cell('');
@@ -138,8 +142,9 @@ function check_data(): bool
 		display_error(_("Language name, code nor encoding cannot be empty"));
 		return false;
 	}
-	$id = array_search_value(post_scalar('code'), $installed_languages, 'code');
-	if ($id !== null && $installed_languages[$id]['package'] != null) {
+	/** @var array-key|null $id */
+	$id = array_search_key(post_scalar('code'), $installed_languages, 'code');
+	if ($id !== null && ($installed_languages[(int)$id]['package'] ?? null) != null) {
 		display_error(_('Standard package for this language is already installed. If you want to install this language manually, uninstall standard language package first.'));
 		return false;
 	}
@@ -149,21 +154,25 @@ function check_data(): bool
 function handle_submit(string|int|float|bool|array|null $id): bool
 {
 	global $path_to_root, $installed_languages, $dflt_lang, $Mode;
+	$id = is_scalar($id) ? (int) $id : 0;
 
-	if ((bool)$_POST['dflt']) {
-			$dflt_lang = $_POST['code'];
+	$code_raw = clean_file_name(post_scalar('code'));
+	$code = is_string($code_raw) ? $code_raw : '';
+
+	if ((bool)post_scalar('dflt')) {
+			$dflt_lang = $code;
 	}
-	
-	$installed_languages[$id]['code'] = clean_file_name($_POST['code']);
-	$installed_languages[$id]['name'] = $_POST['name'];
-	$installed_languages[$id]['path'] = 'lang/' . clean_file_name(get_post('code'));
-	$installed_languages[$id]['encoding'] = $_POST['encoding'];
-	$installed_languages[$id]['rtl'] = (bool)$_POST['rtl'];
+
+	$installed_languages[$id]['code'] = $code;
+	$installed_languages[$id]['name'] = (string) post_scalar('name');
+	$installed_languages[$id]['path'] = 'lang/' . $code;
+	$installed_languages[$id]['encoding'] = (string) post_scalar('encoding');
+	$installed_languages[$id]['rtl'] = (bool)post_scalar('rtl');
 	$installed_languages[$id]['package'] = '';
 	$installed_languages[$id]['version'] = '';
 	if (!write_lang())
 		return false;
-	$directory = $path_to_root . "/lang/" . clean_file_name(get_post('code'));
+	$directory = $path_to_root . "/lang/" . $code;
 	if (!file_exists($directory))
 	{
 		mkdir($directory);
@@ -172,8 +181,8 @@ function handle_submit(string|int|float|bool|array|null $id): bool
 	if (is_uploaded_file($_FILES['uploadfile']['tmp_name']))
 	{
 		$file1 = $_FILES['uploadfile']['tmp_name'];
-		$code = preg_replace('/[^a-zA-Z_]/', '', $_POST['code']);
-		$file2 = $directory . "/LC_MESSAGES/$code.po";
+		$fcode = preg_replace('/[^a-zA-Z_]/', '', $code);
+		$file2 = $directory . "/LC_MESSAGES/$fcode.po";
 		if (file_exists($file2))
 			unlink($file2);
 		move_uploaded_file($file1, $file2);
@@ -181,8 +190,8 @@ function handle_submit(string|int|float|bool|array|null $id): bool
 	if (is_uploaded_file($_FILES['uploadfile2']['tmp_name']))
 	{
 		$file1 = $_FILES['uploadfile2']['tmp_name'];
-		$code = preg_replace('/[^a-zA-Z_]/', '', $_POST['code']);
-		$file2 = $directory . "/LC_MESSAGES/$code.mo";
+		$fcode = preg_replace('/[^a-zA-Z_]/', '', $code);
+		$file2 = $directory . "/LC_MESSAGES/$fcode.mo";
 		if (file_exists($file2))
 			unlink($file2);
 		move_uploaded_file($file1, $file2);
@@ -195,12 +204,13 @@ function handle_submit(string|int|float|bool|array|null $id): bool
 function display_language_edit(string|int|float|bool|null $selected_id): void
 {
 	global $installed_languages, $dflt_lang;
+	$selected_id = is_scalar($selected_id) ? (int) $selected_id : -1;
 
 	if ($selected_id == -1)
 		$n = count($installed_languages);
 	else
 		$n = $selected_id;
-	
+
 	start_form(true);
 
 	start_table(TABLESTYLE2);
@@ -239,9 +249,10 @@ function display_language_edit(string|int|float|bool|null $selected_id): void
 function handle_delete(string|int|float|bool|null $id): void
 {
 	global  $path_to_root, $installed_languages, $dflt_lang;
+	$id = is_scalar($id) ? (int) $id : 0;
 
 	$lang = $installed_languages[$id]['code'];
-	if ($installed_languages[$id]['package'])
+	if (!empty($installed_languages[$id]['package']))
 		if (!uninstall_package($installed_languages[$id]['package']))
 			return;
 			
@@ -257,7 +268,7 @@ function handle_delete(string|int|float|bool|null $id): void
 		return;
 
 	$dirname = "$path_to_root/lang/$lang";
-	if ($lang && is_dir($dirname)) {	// remove nonstadard language dir
+	if ((bool)$lang && is_dir($dirname)) {	// remove nonstadard language dir
 		flush_dir($dirname, true);
 		rmdir($dirname);
 	}
@@ -276,9 +287,11 @@ if ((bool)($id = find_submit('Update', false)))
 	install_language($id);
 
 if (get_post('_CurDflt_update') || (get_post('Refresh') && get_post('CurDflt', -1) != -1)) {
-	$new_lang = $installed_languages[get_post('CurDflt', 0)]['code'];
+	$curdflt_raw = get_post('CurDflt', 0);
+	$curdflt = is_scalar($curdflt_raw) ? (int) $curdflt_raw : 0;
+	$new_lang = $installed_languages[$curdflt]['code'] ?? null;
 	if ($new_lang != $dflt_lang) {
-		$dflt_lang = $new_lang;
+		$dflt_lang = (string) $new_lang;
 		write_lang();
 		ajax()->activate('lang_tbl');
 	}
