@@ -30,7 +30,7 @@ if ((bool) user_use_date_picker())
 page(_($help_context = "Trial Balance"), false, false, "", $js);
 
 $k = 0;
-$pdeb = $pcre = $cdeb = $ccre = $tdeb = $tcre = $pbal = $cbal = $tbal = 0;
+$pdeb = $pcre = $cdeb = $ccre = $tdeb = $tcre = $pbal = $cbal = $tbal = 0.0;
 
 //----------------------------------------------------------------------------------------------------
 // Ajax updates
@@ -82,9 +82,14 @@ function display_trial_balance(?string $type, ?string $typename): void
 	//Get Accounts directly under this group/type
 	$accounts = get_gl_accounts(null, null, $type);
 
-	$begin = get_fiscalyear_begin_for_date($_POST['TransFromDate']);
-	if (date1_greater_date2($begin, $_POST['TransFromDate']))
-		$begin = $_POST['TransFromDate'];
+	$trans_from_date = (string) post_scalar('TransFromDate');
+	$trans_to_date = (string) post_scalar('TransToDate');
+	$dimension = post_scalar('Dimension');
+	$dimension2 = post_scalar('Dimension2');
+
+	$begin = get_fiscalyear_begin_for_date($trans_from_date);
+	if (date1_greater_date2($begin, $trans_from_date))
+		$begin = $trans_from_date;
 	$begin = add_days($begin, -1);
 
 	$Apdeb=$pdeb;
@@ -105,7 +110,7 @@ function display_trial_balance(?string $type, ?string $typename): void
 			if (!check_value('GroupTotalOnly'))
 			{
 				start_row("class='inquirybg fa-bold'");
-				label_cell(_("Group")." - ".$type ." - ".$typename, "colspan=8");
+				label_cell(_("Group")." - ".(string)$type ." - ".(string)$typename, "colspan=8");
 				end_row();
 			}
 			$printtitle = 1;
@@ -113,23 +118,24 @@ function display_trial_balance(?string $type, ?string $typename): void
 
 		// FA doesn't really clear the closed year, therefore the brought forward balance includes all the transactions from the past, even though the balance is null.
 		// If we want to remove the balanced part for the past years, this option removes the common part from from the prev and tot figures.
+		$account_code = $account["account_code"] ?? '';
 		if (@sysprefs()->clear_trial_balance_opening)
 		{
-			$open = row_or_empty(get_balance($account["account_code"], post_scalar('Dimension'), post_scalar('Dimension2'), $begin,  $begin, false, true));
-			$offset = min($open['debit'], $open['credit']);
+			$open = row_or_empty(get_balance($account_code, $dimension, $dimension2, $begin,  $begin, false, true));
+			$offset = min((float)($open['debit'] ?? 0), (float)($open['credit'] ?? 0));
 		} else
-			$offset = 0;
+			$offset = 0.0;
 
-		$prev = row_or_empty(get_balance($account["account_code"], post_scalar('Dimension'), post_scalar('Dimension2'), $begin, $_POST['TransFromDate'], false, false));
-		$curr = row_or_empty(get_balance($account["account_code"], post_scalar('Dimension'), post_scalar('Dimension2'), $_POST['TransFromDate'], $_POST['TransToDate'], true, true));
-		$tot = row_or_empty(get_balance($account["account_code"], post_scalar('Dimension'), post_scalar('Dimension2'), $begin, $_POST['TransToDate'], false, true));
-		if (check_value("NoZero") && !$prev['balance'] && !$curr['balance'] && !$tot['balance'])
+		$prev = row_or_empty(get_balance($account_code, $dimension, $dimension2, $begin, $trans_from_date, false, false));
+		$curr = row_or_empty(get_balance($account_code, $dimension, $dimension2, $trans_from_date, $trans_to_date, true, true));
+		$tot = row_or_empty(get_balance($account_code, $dimension, $dimension2, $begin, $trans_to_date, false, true));
+		if (check_value("NoZero") && !(bool)($prev['balance'] ?? null) && !(bool)($curr['balance'] ?? null) && !(bool)($tot['balance'] ?? null))
 			continue;
 		if (!check_value('GroupTotalOnly'))
 		{
 			alt_table_row_color($k);
 
-			$url = "<a href='$path_to_root/gl/inquiry/gl_account_inquiry.php?TransFromDate=" . (string)$_POST["TransFromDate"] . "&TransToDate=" . (string)$_POST["TransToDate"] . "&account=" . (string)$account["account_code"] . "&Dimension=" . (string)$_POST["Dimension"] . "&Dimension2=" . (string)$_POST["Dimension2"] . "'>" . (string)$account["account_code"] . "</a>";
+			$url = "<a href='$path_to_root/gl/inquiry/gl_account_inquiry.php?TransFromDate=" . $trans_from_date . "&TransToDate=" . $trans_to_date . "&account=" . $account_code . "&Dimension=" . (string)$dimension . "&Dimension2=" . (string)$dimension2 . "'>" . $account_code . "</a>";
 
 			label_cell($url);
 			label_cell($account["account_name"]);
@@ -138,32 +144,32 @@ function display_trial_balance(?string $type, ?string $typename): void
 		{
 			if (!check_value('GroupTotalOnly'))
 			{
-				display_debit_or_credit_cells($prev['balance']);
-				display_debit_or_credit_cells($curr['balance']);
-				display_debit_or_credit_cells($tot['balance']);
+				display_debit_or_credit_cells($prev['balance'] ?? 0);
+				display_debit_or_credit_cells($curr['balance'] ?? 0);
+				display_debit_or_credit_cells($tot['balance'] ?? 0);
 			}
 		}
 		else
 		{
 			if (!check_value('GroupTotalOnly'))
 			{
-				amount_cell((float)$prev['debit']-(float)$offset);
-				amount_cell((float)$prev['credit']-(float)$offset);
-				amount_cell($curr['debit']);
-				amount_cell($curr['credit']);
-				amount_cell((float)$tot['debit']-(float)$offset);
-				amount_cell((float)$tot['credit']-(float)$offset);
+				amount_cell((float)($prev['debit'] ?? 0)-$offset);
+				amount_cell((float)($prev['credit'] ?? 0)-$offset);
+				amount_cell((float)($curr['debit'] ?? 0));
+				amount_cell((float)($curr['credit'] ?? 0));
+				amount_cell((float)($tot['debit'] ?? 0)-$offset);
+				amount_cell((float)($tot['credit'] ?? 0)-$offset);
 			}
-			$pdeb += $prev['debit'];
-			$pcre += $prev['credit'];
-			$cdeb += $curr['debit'];
-			$ccre += $curr['credit'];
-			$tdeb += $tot['debit'];
-			$tcre += $tot['credit'];
+			$pdeb += (float)($prev['debit'] ?? 0);
+			$pcre += (float)($prev['credit'] ?? 0);
+			$cdeb += (float)($curr['debit'] ?? 0);
+			$ccre += (float)($curr['credit'] ?? 0);
+			$tdeb += (float)($tot['debit'] ?? 0);
+			$tcre += (float)($tot['credit'] ?? 0);
 		}
-		$pbal += $prev['balance'];
-		$cbal += $curr['balance'];
-		$tbal += $tot['balance'];
+		$pbal += (float)($prev['balance'] ?? 0);
+		$cbal += (float)($curr['balance'] ?? 0);
+		$tbal += (float)($tot['balance'] ?? 0);
 		end_row();
 	}
 
@@ -175,21 +181,39 @@ function display_trial_balance(?string $type, ?string $typename): void
 		if (!$printtitle)
 		{
 			start_row("class='inquirybg fa-bold'");
-			label_cell(_("Group")." - ".$type ." - ".$typename, "colspan=8");
+			label_cell(_("Group")." - ".(string)$type ." - ".(string)$typename, "colspan=8");
 			end_row();
 			$printtitle = 1;
 
 		}
-		display_trial_balance($accounttype["id"], (string)$accounttype["name"].' ('.$typename.')');
+		display_trial_balance(is_scalar($accounttype["id"] ?? null) ? (string)$accounttype["id"] : null, (string)($accounttype["name"] ?? '').' ('.(string)$typename.')');
 	}
 
 	start_row("class='inquirybg fa-bold'");
 	if (!check_value('GroupTotalOnly'))
-		label_cell(_("Total") ." - ".$typename, "colspan=2");
+		label_cell(_("Total") ." - ".(string)$typename, "colspan=2");
 	else
-		label_cell(" - ".$typename, "colspan=2");
+		label_cell(" - ".(string)$typename, "colspan=2");
 
 
+	/** @var float $pdeb */
+	$pdeb = $pdeb;
+	/** @var float $pcre */
+	$pcre = $pcre;
+	/** @var float $cdeb */
+	$cdeb = $cdeb;
+	/** @var float $ccre */
+	$ccre = $ccre;
+	/** @var float $tdeb */
+	$tdeb = $tdeb;
+	/** @var float $tcre */
+	$tcre = $tcre;
+	/** @var float $pbal */
+	$pbal = $pbal;
+	/** @var float $cbal */
+	$cbal = $cbal;
+	/** @var float $tbal */
+	$tbal = $tbal;
 	if (!check_value('Balance'))
 	{
 		amount_cell($pdeb-$Apdeb );
@@ -215,7 +239,7 @@ gl_inquiry_controls();
 if (isset($_POST['TransFromDate']))
 {
 	$row = row_or_empty(get_current_fiscalyear());
-	if (date1_greater_date2($_POST['TransFromDate'], sql2date($row['end'])))
+	if (date1_greater_date2((string) post_scalar('TransFromDate'), sql2date($row['end'])))
 	{
 		display_error(_("The from date cannot be bigger than the fiscal year end."));
 		set_focus('TransFromDate');
@@ -258,14 +282,33 @@ while ($class = db_fetch($classresult))
 	$typeresult = get_account_types(false, $class['cid'], -1);
 	while ($accounttype=db_fetch($typeresult))
 	{
-		display_trial_balance($accounttype["id"], $accounttype["name"]);
+		display_trial_balance(is_scalar($accounttype["id"] ?? null) ? (string)$accounttype["id"] : null, is_scalar($accounttype["name"] ?? null) ? (string)$accounttype["name"] : null);
 	}
 }
 
+$trans_to_date_label = (string) post_scalar('TransToDate');
+/** @var float $pdeb */
+$pdeb = $pdeb;
+/** @var float $pcre */
+$pcre = $pcre;
+/** @var float $cdeb */
+$cdeb = $cdeb;
+/** @var float $ccre */
+$ccre = $ccre;
+/** @var float $tdeb */
+$tdeb = $tdeb;
+/** @var float $tcre */
+$tcre = $tcre;
+/** @var float $pbal */
+$pbal = $pbal;
+/** @var float $cbal */
+$cbal = $cbal;
+/** @var float $tbal */
+$tbal = $tbal;
 if (!check_value('Balance'))
 {
 	start_row("class='inquirybg fa-bold'");
-	label_cell(_("Total") ." - ".(string)$_POST['TransToDate'], "colspan=2");
+	label_cell(_("Total") ." - ".$trans_to_date_label, "colspan=2");
 	amount_cell($pdeb);
 	amount_cell($pcre);
 	amount_cell($cdeb);
@@ -275,7 +318,7 @@ if (!check_value('Balance'))
 	end_row();
 }
 start_row("class='inquirybg fa-bold'");
-label_cell(_("Ending Balance") ." - ".(string)$_POST['TransToDate'], "colspan=2");
+label_cell(_("Ending Balance") ." - ".$trans_to_date_label, "colspan=2");
 display_debit_or_credit_cells($pbal);
 display_debit_or_credit_cells($cbal);
 display_debit_or_credit_cells($tbal);
