@@ -29,12 +29,13 @@ function get_exchange_rate(string|int|float|bool|null $rate_id)
  */
 function get_date_exchange_rate(string|int|float|bool|null $curr_code, string|int|float|bool|array|null $date_)
 {
-	$date = date2sql($date_);
+	$date_ = is_array($date_) ? null : $date_;
+	$date = date2sql(is_scalar($date_) ? (string)$date_ : null);
 	$sql = "SELECT rate_buy
 			FROM ".TB_PREF."exchange_rates
 			WHERE curr_code=".db_escape($curr_code)
 				." AND date_='$date'";
-	$result = db_select($sql, "could not get exchange rate for $curr_code - $date_");
+	$result = db_select($sql, "could not get exchange rate for ".(string)$curr_code." - ".(string)$date_);
 
 	if(db_num_rows($result) == 0) 
 		return 0;
@@ -50,7 +51,7 @@ function get_date_exchange_rate(string|int|float|bool|null $curr_code, string|in
  */
 function get_last_exchange_rate(string|int|float|bool|null $curr_code, string|int|float|bool|null $date_)
 {
-	$date = date2sql($date_);
+	$date = date2sql((string) $date_);
 
 	$sql = "SELECT rate_buy, max(date_) as date_
 			FROM ".TB_PREF."exchange_rates
@@ -88,12 +89,12 @@ function add_exchange_rate(string|int|float|bool|null $curr_code, string|int|flo
 	if (is_company_currency($curr_code))
 		display_db_error("Exchange rates cannot be set for company currency", "", true);
 
-	$date = date2sql($date_);
-		
+	$date = date2sql(is_scalar($date_) ? (string)$date_ : null);
+
 	$sql = "INSERT INTO ".TB_PREF."exchange_rates (curr_code, date_, rate_buy, rate_sell)
 		VALUES (".db_escape($curr_code).", '$date', ".db_escape($buy_rate)
 		.", ".db_escape($sell_rate).")";
-	db_query($sql, "could not add exchange rate for $curr_code");
+	db_query($sql, "could not add exchange rate for ".(string)$curr_code);
 }
 
 //---------------------------------------------------------------------------------------------
@@ -145,6 +146,8 @@ function get_extern_rate(string|int|float|bool|null $curr_b, mixed $provider, st
 
 	$contents = '';
 	$proto = 'http://';
+	$filename = '';
+	$site = '';
 	$curr_a = get_company_pref('curr_default');
 	if ($provider == 'ECB')
     {
@@ -177,19 +180,21 @@ function get_extern_rate(string|int|float|bool|null $curr_b, mixed $provider, st
 	{
 		//$filename = "/converter/{$curr_b}/{$curr_a}/1";
         if ($date != Today())
-            $filename = "/exchange-rate-history/{$curr_b}-{$curr_a}-".date2sql($date);
+            $filename = "/exchange-rate-history/{$curr_b}-{$curr_a}-".date2sql(is_scalar($date) ? (string)$date : null);
         else
             $filename = "/converter/{$curr_b}-{$curr_a}";
   		$site = "exchange-rates.org";
 		$proto = 'https://';
 		$contents=file_get_contents($proto.$site.$filename);
 	}
-	if (!(bool)($contents ?? null)) {
+	if (!(bool)$contents) {
 		if (function_exists('curl_init'))
 		{	// first check with curl as we can set short timeout;
 			$retry = 1;
 	 		do {
 	       		$ch = curl_init();
+	       		if ($ch === false)
+	       			break;
     	   		curl_setopt ($ch, CURLOPT_URL, $proto.$site.$filename);
 	       		curl_setopt ($ch, CURLOPT_COOKIEJAR, VARLIB_PATH."/cookie.txt");
     	   		curl_setopt ($ch, CURLOPT_HEADER, 0);
@@ -209,22 +214,23 @@ function get_extern_rate(string|int|float|bool|null $curr_b, mixed $provider, st
 			$contents = url_get_contents($proto.$site.$filename);
 		}
 	}
+	$contents = (string) $contents;
 	$val = '';
 	if ($provider == 'ECB')
 	{
 		$contents = str_replace ("<Cube currency='USD'", " <Cube currency='EUR' rate='1'/> <Cube currency='USD'", $contents);
 		$from_mask = "|<Cube\s*currency=\'" . $curr_a . "\'\s*rate=\'([\d.,]*)\'\s*/>|i";
 		preg_match ( $from_mask, $contents, $out );
-		$val_a = isset($out[1]) ? $out[1] : 0;
+		$val_a = isset($out[1]) ? $out[1] : '0';
 		$val_a = str_replace ( ',', '', $val_a );
 		$to_mask = "|<Cube\s*currency=\'" . $curr_b . "\'\s*rate=\'([\d.,]*)\'\s*/>|i";
 		preg_match ( $to_mask, $contents, $out );
-		$val_b = isset($out[1]) ? $out[1] : 0;
+		$val_b = isset($out[1]) ? $out[1] : '0';
 		$val_b = str_replace ( ',', '', $val_b );
-		if ($val_b) 
+		if ((float)$val_b != 0.0)
 		{
-			$val = $val_a / $val_b;
-		} 
+			$val = (float)$val_a / (float)$val_b;
+		}
 		else 
 		{
 			$val = 0;
@@ -233,15 +239,15 @@ function get_extern_rate(string|int|float|bool|null $curr_b, mixed $provider, st
 	elseif ($provider == 'YAHOO')
 	{
 		$array = explode(',',$contents); // New operations for YAHOO. Safer.
-		$val = $array[1];
-		if ($val != 0)
+		$val = (float) ($array[1] ?? 0);
+		if ($val != 0.0)
 			$val = 1 / $val;
 	}
 	elseif ($provider == 'GOOGLE')
 	{
 		$data = preg_split('/\D\s(.*?)\s=\s/', $contents);
-		$array = explode(" ", $data[1]);
-		$exRate = $array[0];
+		$array = explode(" ", ($data !== false ? ($data[1] ?? '') : ''));
+		$exRate = $array[0] ?? '';
 
 		$val = str_replace (',', '', $exRate);
     }
@@ -272,10 +278,11 @@ function getInnerStr(string|bool|null $str, ?string $start, string|int|float|boo
 {
 	// $start must be the first occurrence
 	// $start must not be part of $end
-	$val = '';
+	$str = (string) $str;
+	$start = (string) $start;
 	$val = strstr($str, $start);
-	$val = trim($val);
+	$val = trim($val !== false ? $val : '');
 	$val = substr($val, strlen($start));
-	$val = strtok($val, $end);
-	return trim($val);
+	$val = strtok($val, (string) $end);
+	return trim($val !== false ? $val : '');
 }
