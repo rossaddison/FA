@@ -31,9 +31,9 @@ function find_submit(string|int|float|bool|null $prefix, string|int|float|bool|n
     $prefix = (string) $prefix;
     foreach($_POST as $postkey=>$postval )
     {
-		if (strpos((string) $postkey, $prefix) === 0)
+		if (strpos($postkey, $prefix) === 0)
 		{
-			$id = substr((string) $postkey, strlen($prefix));
+			$id = substr($postkey, strlen($prefix));
 			return (bool)$numeric ? (int)$id : $id;
 		}
     }
@@ -337,7 +337,7 @@ function button(string|int|float|bool|null $name, string|int|float|bool|null $va
 		$rel = " rel='".html_encode_attribute($value, false, output_encoding())."'";
 		$value = _("Select");
 	}
-	if (user_graphic_links() && (bool)$icon)
+	if ((bool) user_graphic_links() && (bool)$icon)
 	{
 		if ($value == _("Delete")) // Helper during implementation
 			$icon = ICON_DELETE;
@@ -391,8 +391,11 @@ function check_value(string|array $name): int|array
 {
     if (is_array($name)) {
         $ret = array();
-        foreach($name as $key)
-            $ret[$key] = (int) check_value($key);
+        foreach($name as $key) {
+            $v = check_value($key);
+            /** @var int $v */
+            $ret[$key] = $v;
+        }
         return $ret;
     } else
         return (!(bool)($_POST[$name] ?? null) ? 0 : 1);
@@ -450,7 +453,7 @@ function check_row(string|int|float|bool|null $label, string|int|float|bool|null
 function radio(?string $label, ?string $name, string|int|float|bool|null $value, ?bool $selected=null, bool $submit_on_change=false): string
 {
 	if (!isset($selected))
-		$selected = get_post($name) === (string)$value;
+		$selected = get_post((string) $name) === (string)$value;
 
 	return "<input type='radio' name='".html_encode_attribute($name, false, output_encoding())
 	    ."' value='".html_encode_attribute($value, false, output_encoding())."' ".($selected ? "checked":'')
@@ -473,11 +476,11 @@ function labelheader_cell(string|int|float|bool|null $label, ?string $params="")
 
 function label_cell(string|int|float|bool|null $label, ?string $params="", string|int|null $id=null): string|int|float|bool|null
 {
-
+	$params = (string) $params;
 	if(isset($id))
 	{
 	    $params .= " id='$id'";
-	    ajax()->addUpdate($id, $id, $label);
+	    ajax()->addUpdate((string) $id, (string) $id, $label);
 	}
 	echo "<td $params>$label</td>\n";
 
@@ -493,7 +496,7 @@ function email_cell(string|int|float|bool|null $label, ?string $params="", strin
 function amount_decimal_cell(string|int|float|bool|null $label, ?string $params="", string|int|null $id=null): void
 {
 	$dec = 0;
-	label_cell(price_decimal_format($label, $dec), "nowrap align=right ".$params, $id);
+	label_cell(price_decimal_format($label, $dec), "nowrap align=right ".(string) $params, $id);
 }
 
 function amount_cell(string|int|float|bool|null $label, ?bool $bold=false, string $params="", string|int|null $id=null): void
@@ -507,6 +510,7 @@ function amount_cell(string|int|float|bool|null $label, ?bool $bold=false, strin
 //JAM  Allow entered unit prices to be fractional
 function unit_amount_cell(string|int|float|bool|null $label, string|int|float|bool|null $bold=false, string|int|float|bool|null $params="", string|int|null $id=null): void
 {
+	$params = (string) $params;
 	if ((bool)$bold)
 		label_cell("<b>".price_format($label)."</b>", "nowrap align=right ".$params, $id);
 	else
@@ -564,7 +568,7 @@ function text_input(string|int|float|bool|null $name, string|int|float|bool|null
 {
 	$name = (string) $name;
 	if ($value === null)
-		$value = get_post($name);
+		$value = post_scalar($name);
 	$value = (string) $value;
 
 	return "<input $params type=\"text\" name=\"".html_encode_attribute($name, false, output_encoding())
@@ -590,7 +594,7 @@ function text_cells(string|int|float|bool|null $label, string|int|float|bool|nul
 	echo text_input($name, $value, $size, $max, $title, $inparams);
 
 	if ($post_label != "")
-		echo " " . $post_label;
+		echo " " . (string) $post_label;
 
 	echo "</td>\n";
 	ajax()->addUpdate($name, $name, $value);
@@ -624,7 +628,7 @@ function text_cells_ex(?string $label, string|int|float|bool|null $name, string|
 	 .((bool)$title ? " title='".html_encode_attribute($title, false, output_encoding())."'": '')." >";
 
 	if ((bool)$post_label)
-		echo " " . $post_label;
+		echo " " . (string) $post_label;
 
 	echo "</td>\n";
 	ajax()->addUpdate($name, $name, $_POST[$name]);
@@ -668,6 +672,7 @@ function email_row(string|int|float|bool|null $label, string|int|float|bool|null
 
 function email_row_ex(?string $label, ?string $name, ?int $size, ?int $max=null, string|int|float|bool|null $title=null, string|int|float|bool|null $value=null, string|int|float|bool|null $params=null, string|int|float|bool|null $post_label=null): void
 {
+	$name = (string) $name;
 	$rowLabel = html_encode($label, false, output_encoding());
 	if (get_post($name))
 		$rowLabel = "<a href='Mailto:".html_encode_attribute($_POST[$name], false, output_encoding())."'>"
@@ -679,10 +684,12 @@ function email_row_ex(?string $label, ?string $name, ?int $size, ?int $max=null,
 
 function link_row(?string $label, ?string $name, string|int|float|bool|null $value, ?int $size, ?int $max, string|int|float|bool|null $title=null, ?string $params="", ?string $post_label=""): void
 {
-	$val = get_post($name);
+	$name = (string) $name;
+	$val = post_scalar($name);
+	$val = $val === null ? null : (string) $val;
 	$rowLabel = html_encode($label, false, output_encoding());
-	if ($val) {
-		if (strpos((string) $val,'http://')===false)
+	if ($val !== null && $val !== '') {
+		if (strpos($val,'http://')===false)
 			$val = 'http://'.$val;
 		$rowLabel = "<a href='".html_encode_attribute($val, false, output_encoding())."' target='_blank'>"
 			.$rowLabel."</a>";
@@ -695,10 +702,11 @@ function link_row(?string $label, ?string $name, string|int|float|bool|null $val
 function link_row_ex(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $size, string|int|float|bool|null $max=null, string|int|float|bool|null $title=null, string|int|float|bool|null $value=null, string|int|float|bool|null $params=null, string|int|float|bool|null $post_label=null): void
 {
 	$name = (string) $name;
-	$val = get_post($name);
+	$val = post_scalar($name);
+	$val = $val === null ? null : (string) $val;
 	$rowLabel = html_encode($label, false, output_encoding());
-	if ($val) {
-		if (strpos((string) $val,'http://')===false)
+	if ($val !== null && $val !== '') {
+		if (strpos($val,'http://')===false)
 			$val = 'http://'.$val;
 		$rowLabel = "<a href='".html_encode_attribute($val, false, output_encoding())."' target='_blank'>"
 			.$rowLabel."</a>";
@@ -823,24 +831,29 @@ function ref_cells(?string $label, ?string $name, ?string $title=null, string|in
 			{
 				$_POST[$name] = $init;
 			} else {
+				$reflineIdRaw = $_POST[$name.'_list'] ?? null;
 				/** @var string|int|array<array-key, mixed>|null $reflineId */
-				$reflineId = is_array($_POST[$name.'_list'] ?? null) ? $_POST[$name.'_list'] : (string) ($_POST[$name.'_list'] ?? '');
+				$reflineId = is_array($reflineIdRaw) ? $reflineIdRaw : (string) ($reflineIdRaw ?? '');
 				$_POST[$name] = refs()->get_next($type, $reflineId, $context);
 			}
 			ajax()->addUpdate(true, $name, $_POST[$name]);
 		}
 
 		if (check_ui_refresh($name)) { // call context changed
+			$reflineIdRaw = $_POST[$name.'_list'] ?? null;
 			/** @var string|int|array<array-key, mixed>|null $reflineId */
-			$reflineId = is_array($_POST[$name.'_list'] ?? null) ? $_POST[$name.'_list'] : (string) ($_POST[$name.'_list'] ?? '');
-			$_POST[$name] = refs()->normalize($_POST[$name], $type, $context, $reflineId);
+			$reflineId = is_array($reflineIdRaw) ? $reflineIdRaw : (string) ($reflineIdRaw ?? '');
+			/** @var string|int|float|bool|null $refValue */
+			$refValue = is_array($_POST[$name] ?? null) ? null : ($_POST[$name] ?? null);
+			$_POST[$name] = refs()->normalize($refValue, $type, $context, $reflineId);
 			ajax()->addUpdate(true, $name, $_POST[$name]);
 		}
 
 		if (refs()->reflines->count($type)>1) {
 			if (list_updated($name.'_list')) {
+				$reflineIdRaw = $_POST[$name.'_list'] ?? null;
 				/** @var string|int|array<array-key, mixed>|null $reflineId */
-				$reflineId = is_array($_POST[$name.'_list'] ?? null) ? $_POST[$name.'_list'] : (string) ($_POST[$name.'_list'] ?? '');
+				$reflineId = is_array($reflineIdRaw) ? $reflineIdRaw : (string) ($reflineIdRaw ?? '');
 				$_POST[$name] = refs()->get_next($type, $reflineId, $context);
 				ajax()->addUpdate(true, $name, $_POST[$name]);
 			}
@@ -873,15 +886,16 @@ function ref_row(?string $label, ?string $name, ?string $title=null, string|int|
 
 //-----------------------------------------------------------------------------------
 
-function percent_row(?string $label, ?string $name, string|array|null $init=null): void
+function percent_row(?string $label, ?string $name, ?string $init=null): void
 {
-
+	$name = (string) $name;
 	if (!isset($_POST[$name]) || $_POST[$name]=="")
 	{
 		$_POST[$name] = $init == null ? '' : $init;
 	}
 
-	small_amount_row($label, $name, $_POST[$name], null, "%", user_percent_dec());
+	$value = post_scalar($name);
+	small_amount_row($label, $name, is_float($value) || is_bool($value) ? (string) $value : $value, null, "%", user_percent_dec());
 }
 
 function amount_cells_ex(string|int|float|bool|null $label, string|int|float|bool|null $name, ?int $size, ?int $max=null, string|int|float|bool|null $init=null, string|int|float|bool|null $params=null, string|int|float|bool|null $post_label=null, string|int|float|bool|null $dec=null): void
@@ -935,9 +949,9 @@ function amount_cells(string|int|float|bool|null $label, ?string $name, string|i
 function unit_amount_cells(?string $label, ?string $name, string|int|float|bool|null $init=null, ?string $params=null, string|int|float|bool|null $post_label=null, string|int|float|bool|null $dec=null): void
 {
 	if (!isset($dec))
-	  	$dec = user_price_dec()+2;
+	  	$dec = (int) user_price_dec()+2;
 
-	amount_cells_ex($label, $name, 15, 15, $init, $params, $post_label, $dec+2);
+	amount_cells_ex($label, $name, 15, 15, $init, $params, $post_label, (int) $dec+2);
 }
 
 function amount_row(string|int|float|bool|null $label, ?string $name, string|int|float|bool|null $init=null, ?string $params=null, string|int|float|bool|null $post_label=null, string|int|float|bool|null $dec=null): void
@@ -1004,12 +1018,12 @@ function small_qty_cells(string|int|float|bool|null $label, ?string $name, ?stri
 
 function textarea_cells(string|int|float|bool|null $label, string|int|float|bool|null $name, string|int|float|bool|null $value, string|int|float|bool|null $cols, string|int|float|bool|null $rows, ?int $max=255, ?string $title = null, ?string $params=""): void
 {
-
+	$name = (string) $name;
 	default_focus($name);
 	if ($label != null)
 		echo "<td $params>".html_encode($label, false, output_encoding())."</td>\n";
 	if ($value == null)
-		$value = (!isset($_POST[$name]) ? "" : $_POST[$name]);
+		$value = post_scalar($name) ?? "";
 	$value = (string) $value;
 	echo "<td><textarea name='".html_encode_attribute($name, false, output_encoding())
 	."' cols='".html_encode_attribute($cols, false, output_encoding())
@@ -1035,7 +1049,7 @@ function textarea_row(string|int|float|bool|null $label, string|int|float|bool|n
 //
 function inactive_control_cell(string|int|float|bool|null $id, string|int|float|bool|null $value, string|int|float|bool|null $table, string|int|float|bool|null $key): void
 {
-
+	$id = (string) $id;
 	$name = "Inactive". $id;
 	$value = (bool)$value ? 1:0;
 
@@ -1045,7 +1059,7 @@ function inactive_control_cell(string|int|float|bool|null $id, string|int|float|
 			update_record_status($id, !$value, $table, $key);
 		}
 		echo '<td align="center">'. checkbox(null, $name, $value, true, '')
- 			. hidden("LInact[$id]", $value, false) . '</td>';	
+ 			. (string) hidden("LInact[$id]", $value, false) . '</td>';
 	}
 }
 //
@@ -1056,7 +1070,7 @@ function inactive_control_row(array $th): void {
 		."<div class='fa-left'>"
 		. checkbox(null, 'show_inactive', null, true). _("Show also Inactive")
 		."</div><div class='fa-right'>"
-		. submit('Update', _('Update'), false, '', null)
+		. (string) submit('Update', _('Update'), false, '', null)
 		."</div></td></tr>";
 }
 //
@@ -1074,7 +1088,7 @@ function inactive_control_column(array &$th): void {
 function customer_credit_row(string|int|float|bool|array|null $customer, string|int|float|bool|null $credit, ?string $parms=''): void
 {
 	global $path_to_root;
-	
+	$customer = is_array($customer) ? '' : (string) $customer;
 	label_row( _("Current Credit:"),
 		"<a target='_blank' " . ($credit<0 ? 'class="redfg"' : '')
 		."href='$path_to_root/sales/inquiry/customer_inquiry.php?customer_id=".$customer."'"
@@ -1086,7 +1100,7 @@ function customer_credit_row(string|int|float|bool|array|null $customer, string|
 function supplier_credit_row(string|int|float|bool|null $supplier, string|int|float|bool|null $credit, ?string $parms=''): void
 {
 	global $path_to_root;
-	
+	$supplier = (string) $supplier;
 	label_row( _("Current Credit:"),
 		"<a target='_blank' " . ($credit<0 ? 'class="redfg"' : '')
 		."href='$path_to_root/purchasing/inquiry/supplier_inquiry.php?supplier_id=".$supplier."'"
@@ -1101,9 +1115,10 @@ function bank_balance_row(string|int|float|bool|null $bank_acc, ?string $parms='
 
 	$to = add_days(Today(), 1);
 	$bal = get_balance_before_for_bank_account($bank_acc, $to);
+	$bank_acc_str = (string) $bank_acc;
 	label_row( _("Bank Balance:"),
 		"<a target='_blank' " . ($bal<0 ? 'class="redfg"' : '')
-		."href='$path_to_root/gl/inquiry/bank_inquiry.php?bank_account=".$bank_acc."'"
+		."href='$path_to_root/gl/inquiry/bank_inquiry.php?bank_account=".$bank_acc_str."'"
 		."".fa_action_attrs('open-window')." >&nbsp;"
 		. price_format($bal)
 		."</a>", $parms);
