@@ -22,7 +22,7 @@ if (sysprefs()->use_popup_windows)
 if ((bool) user_use_date_picker())
 	$js .= get_js_date_picker();
 
-page(_($help_context = "Suppliers"), @$_REQUEST['popup'], false, "", $js);
+page(_($help_context = "Suppliers"), (bool) (@$_REQUEST['popup']), false, "", $js);
 
 include_once(dirname(__DIR__, 2) . "/includes/ui.inc");
 include_once(dirname(__DIR__, 2) . "/includes/ui/contacts_view.inc");
@@ -35,7 +35,7 @@ if (isset($_GET['supplier_id']))
 	$_POST['supplier_id'] = $_GET['supplier_id'];
 }
 
-$supplier_id = get_post('supplier_id', ''); 
+$supplier_id = post_scalar('supplier_id') ?? '';
 
 #[\NoDiscard]
 function canProcessSuppliers(): bool
@@ -45,14 +45,16 @@ function canProcessSuppliers(): bool
 
 	//first off validate inputs sensible
 
-	if (strlen($_POST['supp_name']) == 0 || $_POST['supp_name'] == "") 
+	$supp_name = (string) post_scalar('supp_name');
+	if (strlen($supp_name) == 0 || $supp_name == "")
 	{
 		display_error(_("The supplier name must be entered."));
 		set_focus('supp_name');
 		return false;
 	}
 
-	if (strlen($_POST['supp_ref']) == 0 || $_POST['supp_ref'] == "") 
+	$supp_ref = (string) post_scalar('supp_ref');
+	if (strlen($supp_ref) == 0 || $supp_ref == "")
 	{
 		display_error(_("The supplier short name must be entered."));
 		set_focus('supp_ref');
@@ -61,39 +63,64 @@ function canProcessSuppliers(): bool
 	return true;
 }
 
-function handle_submit(&$supplier_id): void
+function handle_submit_supplier(string|int|float|bool|null &$supplier_id): void
 {
 	global $path_to_root;
 	
 	if (!canProcessSuppliers())
 		return;
+
+	/** @psalm-pure */
+	$ns = function (string|int|float|bool|null $v): ?string {
+		return $v === null ? null : (string) $v;
+	};
+	$supp_name = $ns(post_scalar('supp_name'));
+	$supp_ref = $ns(post_scalar('supp_ref'));
+	$address = $ns(post_scalar('address'));
+	$supp_address = $ns(post_scalar('supp_address'));
+	$gst_no = $ns(post_scalar('gst_no'));
+	$website = $ns(post_scalar('website'));
+	$supp_account_no = $ns(post_scalar('supp_account_no'));
+	$bank_account = $ns(post_scalar('bank_account'));
+	$dimension_id = $ns(post_scalar('dimension_id'));
+	$dimension2_id = $ns(post_scalar('dimension2_id'));
+	$curr_code = $ns(post_scalar('curr_code'));
+	$payment_terms = $ns(post_scalar('payment_terms'));
+	$payable_account = $ns(post_scalar('payable_account'));
+	$purchase_account = $ns(post_scalar('purchase_account'));
+	$payment_discount_account = $ns(post_scalar('payment_discount_account'));
+	$notes = $ns(post_scalar('notes'));
+	$tax_group_id = $ns(post_scalar('tax_group_id'));
+	$tax_included_raw = check_value('tax_included');
+	$tax_included = is_array($tax_included_raw) ? 0 : $tax_included_raw;
+
 	begin_transaction();
-	if ($supplier_id) 
+	if ((bool) $supplier_id)
 	{
-		update_supplier(post_scalar('supplier_id'), post_scalar('supp_name'), post_scalar('supp_ref'), post_scalar('address'),
-			post_scalar('supp_address'), post_scalar('gst_no'),
-			post_scalar('website'), post_scalar('supp_account_no'), post_scalar('bank_account'), 
-			input_num('credit_limit', 0), post_scalar('dimension_id'), post_scalar('dimension2_id'), post_scalar('curr_code'),
-			post_scalar('payment_terms'), post_scalar('payable_account'), post_scalar('purchase_account'), post_scalar('payment_discount_account'),
-			post_scalar('notes'), post_scalar('tax_group_id'), check_value('tax_included'));
-		update_record_status(post_scalar('supplier_id'), $_POST['inactive'],
+		update_supplier($ns($supplier_id), $supp_name, $supp_ref, $address,
+			$supp_address, $gst_no,
+			$website, $supp_account_no, $bank_account,
+			input_num('credit_limit', 0), $dimension_id, $dimension2_id, $curr_code,
+			$payment_terms, $payable_account, $purchase_account, $payment_discount_account,
+			$notes, $tax_group_id, $tax_included);
+		update_record_status($supplier_id, post_scalar('inactive'),
 			'suppliers', 'supplier_id');
 
 		ajax()->activate('supplier_id'); // in case of status change
 		display_notification(_("Supplier has been updated."));
-	} 
-	else 
+	}
+	else
 	{
-		add_supplier(post_scalar('supp_name'), post_scalar('supp_ref'), post_scalar('address'), post_scalar('supp_address'),
-			post_scalar('gst_no'), post_scalar('website'), post_scalar('supp_account_no'), post_scalar('bank_account'), 
-			input_num('credit_limit',0), post_scalar('dimension_id'), post_scalar('dimension2_id'),
-			post_scalar('curr_code'), post_scalar('payment_terms'), post_scalar('payable_account'), post_scalar('purchase_account'),
-			post_scalar('payment_discount_account'), post_scalar('notes'), post_scalar('tax_group_id'), check_value('tax_included'));
+		add_supplier($supp_name, $supp_ref, $address, $supp_address,
+			$gst_no, $website, $supp_account_no, $bank_account,
+			input_num('credit_limit',0), $dimension_id, $dimension2_id,
+			$curr_code, $payment_terms, $payable_account, $purchase_account,
+			$payment_discount_account, $notes, $tax_group_id, $tax_included);
 
 		$supplier_id = $_POST['supplier_id'] = db_insert_id();
 
-		add_crm_person(post_scalar('supp_ref'), post_scalar('contact'), '', post_scalar('address'), 
-			post_scalar('phone'), post_scalar('phone2'), post_scalar('fax'), post_scalar('email'), 
+		add_crm_person($supp_ref, post_scalar('contact'), '', $address,
+			post_scalar('phone'), post_scalar('phone2'), post_scalar('fax'), post_scalar('email'),
 			post_scalar('rep_lang'), '');
 
 		add_crm_contact('supplier', 'general', $supplier_id, db_insert_id());
@@ -106,7 +133,7 @@ function handle_submit(&$supplier_id): void
 
 if (isset($_POST['submit'])) 
 {
-	handle_submit($supplier_id);
+	handle_submit_supplier($supplier_id);
 }
 
 if (isset($_POST['delete']) && $_POST['delete'] != "") 
@@ -132,19 +159,20 @@ if (isset($_POST['delete']) && $_POST['delete'] != "")
 		}
 
 	}
-	if ($cancel_delete == 0) 
+	if ($cancel_delete == 0)
 	{
-		delete_supplier(post_scalar('supplier_id'));
+		$deleted_supplier_id = post_scalar('supplier_id');
+		delete_supplier($deleted_supplier_id === null ? null : (string) $deleted_supplier_id);
 
 		unset($_SESSION['supplier_id']);
 		$supplier_id = '';
 		ajax()->activate('_page_body');
-		display_notification("#" . (string)$_POST['supplier_id'] . " " . _("Supplier has been deleted."));
+		display_notification("#" . (string) $deleted_supplier_id . " " . _("Supplier has been deleted."));
 	} //end if Delete supplier
 }
 
 //--------------------------------------------------------------------------------------------
-function supplier_settings(&$supplier_id): void
+function supplier_settings(string|int|float|bool|null &$supplier_id): void
 {
 	global $page_nested;
 	
@@ -152,7 +180,7 @@ function supplier_settings(&$supplier_id): void
 
 	table_section(1);
 
-	if ($supplier_id) 
+	if ((bool) $supplier_id)
 	{
 		//SupplierID exists - either passed when calling the form or from the form itself
 		$myrow = row_or_empty(get_supplier(post_scalar('supplier_id')));
@@ -207,7 +235,7 @@ function supplier_settings(&$supplier_id): void
 
 	text_row(_("GSTNo:"), 'gst_no', null, 42, 40);
 	link_row(_("Website:"), 'website', null, 35, 55);
-	if ($supplier_id && !is_new_supplier($supplier_id) && ((bool)key_in_foreign_table(post_scalar('supplier_id'), 'supp_trans', 'supplier_id') ||
+	if ((bool) $supplier_id && !is_new_supplier($supplier_id) && ((bool)key_in_foreign_table(post_scalar('supplier_id'), 'supp_trans', 'supplier_id') ||
 		(bool)key_in_foreign_table(post_scalar('supplier_id'), 'purch_orders', 'supplier_id'))) 
 	{
 		label_row(_("Supplier's Currency:"), post_scalar('curr_code'));
@@ -286,7 +314,7 @@ function supplier_settings(&$supplier_id): void
 	{
 		submit_center_first('submit', _("Update Supplier"), 
 		  _('Update supplier data'), $page_nested ? true : false);
-		submit_return('select', get_post('supplier_id'), _("Select this supplier and return to document entry."));
+		submit_return('select', post_scalar('supplier_id'), _("Select this supplier and return to document entry."));
 		submit_center_last('delete', _("Delete Supplier"), 
 		  _('Delete supplier data if have been never used'), true);
 	}
@@ -313,12 +341,12 @@ if (db_has_suppliers())
 		set_focus('supplier_id');
 	}
 } 
-else 
+else
 {
-	hidden('supplier_id', get_post('supplier_id'));
+	hidden('supplier_id', post_scalar('supplier_id'));
 }
 
-if (!$supplier_id)
+if (!(bool) $supplier_id)
 	unset($_POST['_tabs_sel']); // force settings tab for new customer
 
 tabbed_content_start('tabs', array(
@@ -335,7 +363,7 @@ tabbed_content_start('tabs', array(
 			supplier_settings($supplier_id); 
 			break;
 		case 'contacts':
-			$contacts = new contacts('contacts', $supplier_id, 'supplier');
+			$contacts = new contacts('contacts', is_int($supplier_id) || is_string($supplier_id) || $supplier_id === null ? $supplier_id : (string) $supplier_id, 'supplier');
 			$contacts->show();
 			break;
 		case 'transactions':
@@ -355,5 +383,5 @@ tabbed_content_start('tabs', array(
 br();
 tabbed_content_end();
 end_form();
-end_page(@$_REQUEST['popup']);
+end_page((bool) (@$_REQUEST['popup']));
 
