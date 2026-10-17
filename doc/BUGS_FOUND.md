@@ -371,6 +371,19 @@ a stand-in for a boolean) reaching a native, strictly-typed parameter.
   array generator) and `FrontReport::rectangle()` (the same primitive already
   used for picture placement elsewhere in the codebase).
 
+- **`includes/ui/ui_lists.inc` — `payment_services()`.** Built its options
+  list with `(object)array_combine(array_keys($payment_services),
+  array_keys($payment_services))` — casting the result to an `object` —
+  then passed that object straight into `array_selector()`, whose `$items`
+  parameter is strictly type-hinted `array`. This file declares
+  `strict_types=1`, so every call was a fatal `TypeError`, not a weak-typing
+  coercion. The function's one real call site
+  (`reporting/includes/reports_classes.inc`, a report parameter of the
+  "payment service" field type) made this a guaranteed crash whenever that
+  report field was rendered. The `(object)` cast serves no purpose here —
+  `array_combine()` already returns the plain array `array_selector()`
+  needs — so the fix is simply to drop it.
+
 ## Data-loss-adjacent: missing audit trail / dead success link
 
 - **`inventory/includes/db/items_trans_db.inc` — `stock_cost_update()`.**
