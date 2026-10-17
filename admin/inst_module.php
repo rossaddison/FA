@@ -16,9 +16,6 @@ $path_to_root="..";
 include_once(dirname(__DIR__) . "/includes/session.inc");
 include_once(dirname(__DIR__) . "/includes/packages.inc");
 
-/** @var string|int|float|bool|array<array-key, mixed>|null $selected_id */
-$selected_id = $selected_id;
-
 $js = "";
 if (sysprefs()->use_popup_windows) {
 	$js = get_js_open_window(900, 500);
@@ -31,6 +28,9 @@ include_once(dirname(__DIR__) . "/admin/db/maintenance_db.inc");
 include_once(dirname(__DIR__) . "/includes/ui.inc");
 
 simple_page_mode(true);
+
+/** @var string|int|float|bool|array<array-key, mixed>|null $selected_id */
+$selected_id = $selected_id;
 
 //---------------------------------------------------------------------------------------------
 function local_extension(string|int|null $id): bool

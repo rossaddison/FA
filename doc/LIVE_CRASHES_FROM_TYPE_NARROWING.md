@@ -1,13 +1,15 @@
 # Live crashes found via real browser testing, from earlier narrowing passes
 
-Four real, user-facing crashes were found by clicking around a logged-in
+Five real, user-facing crashes were found by clicking around a logged-in
 session and screenshotting the errors — not by Psalm, and not by this
 session's own HTTP "live tests" either, which (until caught and corrected)
 were accidentally hitting FrontAccounting's login page instead of the real
-target pages. All four traced back to a parameter, global, or class being
-narrowed too aggressively in an earlier Psalm cleanup pass, each for the
-same root reason: the narrowing only considered what Psalm could see, not
-everything that calls the code at runtime.
+target pages. The first four traced back to a parameter, global, or class
+being narrowed too aggressively in an earlier Psalm cleanup pass, each for
+the same root reason: the narrowing only considered what Psalm could see,
+not everything that calls the code at runtime. The fifth was a different
+but related mistake: asserting a global's type at a point in a script
+before anything had actually set it yet.
 
 ## 1. `display_profit_and_loss()` rejected a plain `int`
 
@@ -88,6 +90,29 @@ spanning an ignored directory — worth remembering together: removing a
 guard because a type stub says it's redundant is only safe once every
 caller, including rare error-handling paths that run before normal
 bootstrap completes, has actually been accounted for.
+
+## 5. `admin/inst_module.php` read `$selected_id` before anything set it
+
+**Symptom:** `Install/Activate extensions` page — `Undefined variable
+$selected_id in file: C:\wamp64\www\frontaccounting\admin\inst_module.php
+at line 20`, shown as a warning banner rather than a hard crash, but a real
+bug all the same.
+
+To quiet Psalm's "top-level script reads of a global-stubbed variable
+don't automatically pick up the stub" complaint (see `PSALM_MIGRATION.md`),
+a `/** @var ... */ $selected_id = $selected_id;` self-reassignment was
+added right after the file's `includes/session.inc`/`includes/packages.inc`
+includes - but `$selected_id` isn't actually set there. It's
+`includes/ui/ui_input.inc`'s `simple_page_mode()` (`global $Mode,
+$selected_id; ... $selected_id = get_post('selected_id', $default);`)
+that first assigns it, and this file doesn't call `simple_page_mode(true)`
+until several lines later. The self-reassignment ran on a genuinely unset
+variable. Fixed by moving the assertion to immediately after the
+`simple_page_mode(true);` call instead of before it. The lesson generalizes
+the same way as entry 4 above: adding a type assertion is a claim about
+the variable's state at that exact point in execution, and that claim
+needs checking against what actually runs before it, not just against
+where the variable is conceptually "global" from.
 
 ## Not a code bug: duplicate bank transaction demo data
 
