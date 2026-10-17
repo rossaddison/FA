@@ -242,7 +242,7 @@ function get_control_file_impl(string $file, string|bool $index): array|null {
 	$key = null; $value = '';
 	$line = '';
 	do {
-		$line = rtrim((string) $line);
+		$line = rtrim($line === false ? '' : $line);
 		if ($line !== '' && ctype_space($line[0])) { // continuation of multiline property
 			if (strlen(ltrim($line))) {
 				if (!is_array($value))
@@ -252,6 +252,7 @@ function get_control_file_impl(string $file, string|bool $index): array|null {
 			}
 		}
 		if ($key !== null && $key !== '') { // save previous property if any
+			/** @var string $key */
 			$pkg[$key] = ufmt_property($key, $value);
 		}
 		if (!strlen($line)) { // end of section
@@ -476,7 +477,7 @@ function get_pkg_or_list(string|int|float|bool|array|null $type = null, string|i
 				} elseif ($pkgname == ($pkg['Package'] ?? null)) {
 					//download package to temp directory
 					if ($download) {
-						$locname = $target_dir.$pkgFilename.'.pkg';
+						$locname = (string) $target_dir.$pkgFilename.'.pkg';
 						if (!url_copy($pkgfullname, $locname)) {
 							display_error(sprintf(_("Cannot download '%s' file." ), $pkgfullname));
 							return null;
@@ -532,10 +533,8 @@ function uninstall_package(string|int|float|bool|null $name): bool
 	if (!(bool)$name) return true; // not installed
 	$pkg = new package($name.'.pkg');
 	$pkg->uninstall();
-	if($name) {
-		flush_dir(PKG_CACHE_PATH.'/'.$name, true);
-		rmdir(PKG_CACHE_PATH.'/'.$name);
-	}
+	flush_dir(PKG_CACHE_PATH.'/'.$name, true);
+	rmdir(PKG_CACHE_PATH.'/'.$name);
 	return count($pkg->error)==0;
 }
 
@@ -581,11 +580,13 @@ function get_languages_list(): array
 	}
 	if ((bool)$pkgs)
 		ksort($pkgs);
+	/** @var array<array-key, PkgListItem> $pkgs */
+	$pkgs = $pkgs;
 	return $pkgs;
 }
 //---------------------------------------------------------------------------------------
 //
-//	Return merged list of available and installed extensions as a local 
+//	Return merged list of available and installed extensions as a local
 // configuration array supplemented with installed versions information.
 //
 function get_extensions_list(?string $type = null): array
@@ -678,6 +679,8 @@ function get_themes_list(): array
 	// TODO: Add other themes from themes directory
 	if ((bool)$pkgs)
 		ksort($pkgs);
+	/** @var array<array-key, PkgListItem> $pkgs */
+	$pkgs = $pkgs;
 	return $pkgs;
 }
 //---------------------------------------------------------------------------------------
@@ -715,6 +718,8 @@ function get_charts_list(): array
 	}
 	if ((bool)$pkgs)
 		ksort($pkgs);
+	/** @var array<array-key, PkgListItem> $pkgs */
+	$pkgs = $pkgs;
 	return $pkgs;
 }
 //---------------------------------------------------------------------------------------------
@@ -739,8 +744,8 @@ function install_language(string|int|float|bool|null $pkg_name): bool
 		$pkg_package_raw = $pkg['Package'] ?? null;
 		$pkg_package = is_scalar($pkg_package_raw) ? $pkg_package_raw : null;
 
-		/** @var array-key|null $i */
-		$i = array_search_key($pkg_language, $installed_languages, 'code');
+		$i_raw = array_search_key($pkg_language, $installed_languages, 'code');
+		$i = is_int($i_raw) ? $i_raw : (is_numeric($i_raw) ? (int) $i_raw : null);
 		if ($i === null)
 			$i = count($installed_languages);
 		else {	// remove another already installed package for this language
@@ -758,8 +763,8 @@ function install_language(string|int|float|bool|null $pkg_name): bool
 			/** @var array<string, string|bool> $lang */
 			$lang = array(
 				'name' => is_string($pkg_name_raw) ? $pkg_name_raw : '',
-				'package' => (string) ($pkg_package ?? ''),
-				'code' => (string) ($pkg_language ?? ''),
+				'package' => $pkg_package ?? '',
+				'code' => $pkg_language ?? '',
 				'encoding' => is_string($pkg_encoding_raw) ? $pkg_encoding_raw : '',
 				'version' => is_string($pkg_version_raw) ? $pkg_version_raw : '',
 				'path' => is_string($pkg_path_raw) ? $pkg_path_raw : ''
@@ -800,8 +805,8 @@ function install_extension(string|int|float|bool|null $pkg_name): bool
 		$package = new package(VARLIB_PATH."/".$pkg_filename.'.pkg');
 		$local_exts = get_company_extensions();
 		if ((bool) $package->install()) {
-			/** @var array-key|null $ext_id */
-			$ext_id = array_search_key($pkg_package, $local_exts, 'package');
+			$ext_id_raw = array_search_key($pkg_package, $local_exts, 'package');
+			$ext_id = is_int($ext_id_raw) ? $ext_id_raw : (is_numeric($ext_id_raw) ? (int) $ext_id_raw : null);
 			if ($ext_id === null)
 				$ext_id = $next_extension_id++;
 			else {	// remove another already installed package for this language
