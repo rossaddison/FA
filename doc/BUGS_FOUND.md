@@ -774,6 +774,44 @@ to their source.
   for the full trace, including why the fix holds across per-company table
   prefixes).
 
+- **`includes/db_pager.inc` — `db_pager::_sql_gen()`'s record-count query
+  ignored `set_where()`'s filter entirely.** The total-row-count query
+  (used to compute `max_page` for pagination) was built as
+  `"SELECT COUNT(*) FROM ($this->sql) tmp_count"` - wrapping the pager's
+  *original, unparsed* input SQL - while the actual per-page data query a
+  few lines later was built from `$select`/`$from`/`$where`/`$group`,
+  which *do* include any `set_where()`-added filter merged in just above
+  both branches. Any pager with an additional UI filter applied would
+  compute its page count against the *unfiltered* row count while only
+  ever displaying the *filtered* rows - wrong page counts, and genuine
+  matching rows past the (wrongly larger) last page silently inaccessible.
+  A second, independent bug in the same function compounded this for any
+  pager constructed with the array form of `$sql`
+  (`array('select' => ..., 'from' => ..., ...)` rather than a plain SQL
+  string): `$this->sql` is never reconstructed into a string for that
+  form, so interpolating it directly into the count query would silently
+  produce `SELECT COUNT(*) FROM (Array) tmp_count` - invalid SQL. Both
+  bugs were latent rather than live: `set_where()` itself turned out to
+  have zero real call sites anywhere in the codebase (see the next entry),
+  so no pager in production actually exercises either path today. Fixed
+  by building the count query's inner subquery from the same parsed
+  `$select`/`$from`/`$where`/`$group` the data query already uses, instead
+  of re-using `$this->sql`.
+
+- **`includes/db_pager.inc` — `db_pager::set_where()`.** Assigned its
+  `$where` parameter straight to `$this->extra_where` (declared
+  `array<int, string>`) without first checking it had gone through the
+  function's own array-wrapping logic - that logic only runs inside
+  `if ($where) { ... }`, so calling `set_where()` with no arguments (its
+  own documented default) or an empty/falsy value assigned `null`, `''`,
+  or `'0'` directly to a property every other method in the class
+  (`_sql_gen()`'s `count($this->extra_where)`, for one) assumes is always
+  an array. `count(null)` is a fatal `TypeError` on PHP 8+. Zero real call
+  sites exist for this method anywhere in the codebase today, so this
+  specific crash has never actually fired - fixed defensively (an `else`
+  branch defaulting to `array()`) since the method is clearly meant to be
+  usable.
+
 ## Encoding / output bugs
 
 - **`includes/ui/ui_lists.inc` — mojibake, two distinct causes.**

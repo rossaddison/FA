@@ -148,7 +148,7 @@ final class db_pager {
 	function __construct(string|array $sql, string $name, ?string $table = null, int $page_len=0)
 	{
 		$this->width = "95%";
-		if ($page_len == 0) $page_len = user_query_size();
+		if ($page_len == 0) $page_len = (int) user_query_size();
 		$this->name = $name;
 		$this->page_len = $page_len;
 	 	$this->set_sql($sql);
@@ -221,6 +221,8 @@ final class db_pager {
 		    if (count($where) == count($this->extra_where) &&
 				!count(array_diff($this->extra_where, $where)))
 				 return;
+		} else {
+			$where = array();
 		}
 		$this->extra_where = $where;
 		$this->ready = false;
@@ -243,7 +245,7 @@ final class db_pager {
 	//	in order asc->desc->none->asc
 	//
 	/**
-	 * @param string|int|null $col
+	 * @param int $col
 	 * @return true
 	 */
 	function sort_table(int $col)
@@ -252,7 +254,7 @@ final class db_pager {
 			$max_priority = 0;
 			foreach($this->columns as $id => $_col) {
 			if(!isset($_col['ord_priority'])) continue;
-				$max_priority = max($max_priority, $_col['ord_priority']);
+				$max_priority = max($max_priority, (int) $_col['ord_priority']);
 			};
 
 
@@ -282,7 +284,7 @@ final class db_pager {
 
 	    $result = db_query($sql, 'Error browsing database: '.$sql );
 
-	    if ($result) {
+	    if ($result instanceof mysqli_result) {
 		// setting field names for subsequent queries
 			$c = 0;
 		  	// add result field names to column defs for 
@@ -404,8 +406,11 @@ final class db_pager {
 		}
 		if ($where) $where = " WHERE ($where)";
 
-		if ($count)
-			return "SELECT COUNT(*) FROM ($this->sql) tmp_count";
+		if ($count) {
+			$inner = "$select FROM $from $where";
+			if ($group) $inner .= " GROUP BY $group";
+			return "SELECT COUNT(*) FROM ($inner) tmp_count";
+		}
 
 		$sql = "$select FROM $from $where";
 		if ($group) $sql.= " GROUP BY $group";
@@ -415,7 +420,7 @@ final class db_pager {
 		$columns = array();
 	    foreach ($this->columns as $col) {
 			if(isset($col['ord_priority'])) {
-				$columns[$col['ord_priority']] = $col;
+				$columns[(int) $col['ord_priority']] = $col;
 			}
 		}
 		krsort($columns);
@@ -454,11 +459,11 @@ final class db_pager {
 	    if ($this->ready == false ) {
 			$sql = $this->_sql_gen(true);
 			$result = db_query($sql, 'Error reading record set');
-			if ($result == false) 
+			if (!$result instanceof mysqli_result)
 				return false;
 			$row = db_fetch_row($result);
-			$this->rec_count = is_array($row) ? $row[0] : 0;
-;
+			$this->rec_count = is_array($row) && $row[0] !== null ? (int) $row[0] : 0;
+
 	  		$this->max_page = $this->page_len ?
 				ceil($this->rec_count/$this->page_len) : 0;
 		
@@ -489,11 +494,11 @@ final class db_pager {
 		$sort = find_submit($this->name.'_sort_', true);
 		if ((bool)$page) {
 			$this->change_page($page);
-			if ($page == 'next' && !$this->next_page ||
-				$page == 'last' && !$this->last_page)
+			if ($page == 'next' && $this->next_page === null ||
+				$page == 'last' && $this->last_page === null)
 					set_focus($this->name.'_page_prev');
-			if ($page == 'prev' && !$this->prev_page ||
-				$page == 'first' && !(bool)$this->first_page)
+			if ($page == 'prev' && $this->prev_page === null ||
+				$page == 'first' && $this->first_page === null)
 					set_focus($this->name.'_page_next');
 		} elseif ($sort != -1 && $sort !== null) {
 			$this->sort_table((int) $sort);
@@ -505,9 +510,9 @@ final class db_pager {
 	//	
 	/**
 	 * @param string|null $func
-	 * @param string|null $notice
-	 * @param string|null $markercl
-	 * @param string|null $msgclass
+	 * @param string $notice
+	 * @param string $markercl
+	 * @param string $msgclass
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -564,23 +569,25 @@ final class db_pager {
 	function inactive_control_cell(array &$row)
 	{
 		if ((bool)$this->inactive_ctrl) {
-				 
 
-			$key = $this->key ?
-				$this->key : $this->columns[0]['name'];		// TODO - support for complex keys
+
+			$key = $this->key !== null && $this->key !== '' ?
+				$this->key : (string) ($this->columns[0]['name'] ?? '');		// TODO - support for complex keys
+			/** @var string|int|float|bool|null $id */
 			$id = $row[$key];
+			$id = (string) $id;
 			$table = $this->main_tbl;
 			$name = "Inactive". $id;
 			$value = $row['inactive'] ? 1:0;
 
 			if (check_value('show_inactive')) {
-				if (isset($_POST['LInact'][$id]) && (get_post('_Inactive'.$id.'_update') || 
+				if (isset($_POST['LInact'][$id]) && (get_post('_Inactive'.$id.'_update') ||
 					get_post('Update')) && (check_value('Inactive'.$id) != $value)) {
 					update_record_status($id, !$value, $table, $key);
 					$value = !$value;
 				}
 				echo '<td align="center">'. checkbox(null, $name, $value, true, '')
- 				. hidden("LInact[$id]", $value, false) . '</td>';	
+ 				. (string) hidden("LInact[$id]", $value, false) . '</td>';
 			}
 		} else
 			return '';
@@ -623,7 +630,7 @@ function &new_db_pager(string $name, string|array $sql, string|array $coldef, ?s
     /** @var db_pager|null $existing_pager */
     $existing_pager = $_SESSION[$name] ?? null;
     if (isset($existing_pager) &&
-		 ($_SERVER['REQUEST_METHOD'] == 'GET' || $existing_pager->sql != $sql)) {
+		 (($_SERVER['REQUEST_METHOD'] ?? '') == 'GET' || $existing_pager->sql != $sql)) {
 		unset($_SESSION[$name]); // kill pager if sql has changed
 	}
 	if (!isset($_SESSION[$name])) {
@@ -643,6 +650,7 @@ function &new_db_pager(string $name, string|array $sql, string|array $coldef, ?s
 //
 function refresh_pager(?string $name): void
 {
-	if (isset($_SESSION[$name]))
+	$name = (string) $name;
+	if (isset($_SESSION[$name]) && $_SESSION[$name] instanceof db_pager)
 		$_SESSION[$name]->ready = false;
 }
