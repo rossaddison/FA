@@ -314,8 +314,7 @@ if (isset($_POST['Process']) && !check_trans())
 {
 	begin_transaction();
 
-	$pay_items = $pay_items_cart;
-	$new = $pay_items->order_id == 0;
+	$new = $pay_items_cart->order_id == 0;
 
 	$bank_account_scalar = post_scalar('bank_account');
 	$bank_account_str = $bank_account_scalar === null ? null : (string) $bank_account_scalar;
@@ -334,8 +333,8 @@ if (isset($_POST['Process']) && !check_trans())
 
 	/** @var array{0?: string|int|float|bool|null, 1?: string|int|float|bool|null} $trans */
 	$trans = row_or_empty(write_bank_transaction(
-		$pay_items->trans_type, $pay_items->order_id, $bank_account_str,
-		$pay_items, $date_str,
+		$pay_items_cart->trans_type, $pay_items_cart->order_id, $bank_account_str,
+		$pay_items_cart, $date_str,
 		$person_type_str, $person_id_str, (string) post_scalar('PersonDetailID'),
 		$ref_str, $memo_str, true, input_num('settled_amount', null)));
 
@@ -443,8 +442,8 @@ start_table(TABLESTYLE2, "width='90%'", 10);
 start_row();
 echo "<td>";
 display_gl_bank_items(session_obj('pay_items')->trans_type==ST_BANKPAYMENT ?
-	_("Payment Items"):_("Deposit Items"), $pay_items);
-gl_options_controls_bank($pay_items);
+	_("Payment Items"):_("Deposit Items"), $pay_items_cart);
+gl_options_controls_bank($pay_items_cart);
 echo "</td>";
 end_row();
 end_table(1);
