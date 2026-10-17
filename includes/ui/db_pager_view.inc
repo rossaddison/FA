@@ -15,7 +15,7 @@ function pager_link(string $link_text = '', string $url = '', string|bool|null $
 {
 	global $path_to_root;
 	
-	if (user_graphic_links() && (bool)$icon)
+	if ((bool) user_graphic_links() && (bool)$icon)
 		$link_text = set_icon($icon, $link_text);
 
 	$href = $path_to_root . $url;
@@ -32,7 +32,7 @@ function navi_button(string $name, string|int|float|bool|null $value, string|int
 }
 
 function navi_button_cell(?string $name, ?string $value, string|int|float|bool|null $enabled=true, ?string $align='left'): void {
-	label_cell(navi_button($name, $value, $enabled), "align='$align'");
+	label_cell(navi_button((string) $name, $value, $enabled), "align='$align'");
 }
 
 
@@ -56,8 +56,8 @@ function display_db_pager(db_pager &$pager): bool {
 			else {
 	  			$icon = (($col['ord'] == 'desc') ? 'sort_desc.gif' : 
 					($col['ord'] == 'asc' ? 'sort_asc.gif' : 'sort_none.gif'));
-				$headers[] = navi_button($pager->name.'_sort_'.$num_col, 
-					$col['head'], true, $icon);
+				$headers[] = navi_button($pager->name.'_sort_'.$num_col,
+					is_scalar($col['head'] ?? null) ? $col['head'] : (string) ($col['head'] ?? ''), true, $icon);
 			}
  		}
 	}
@@ -65,15 +65,16 @@ function display_db_pager(db_pager &$pager): bool {
     start_table(TABLESTYLE, "width='$pager->width'");
     table_header($headers);
 
-	if($pager->header_fun) {	// if set header handler
+	if($pager->header_fun !== null && $pager->header_fun !== '') {	// if set header handler
 		start_row("class='{$pager->header_class}'");
 		$fun = $pager->header_fun;
-		if (method_exists($pager, $fun)) { 
+		$h = array();
+		if (method_exists($pager, $fun)) {
 			$h = $pager->$fun($pager);
   		} elseif (function_exists($fun)) {
 			$h = $fun($pager);
 		}
-		
+
 		foreach($h as $c) {	 // draw header columns
 			$pars = isset($c[1]) ? $c[1] : '';
 			label_cell($c[0], $pars);
@@ -84,7 +85,7 @@ function display_db_pager(db_pager &$pager): bool {
 	$cc = 0; //row colour counter
    	foreach($pager->data as $line_no => $row) {	
 
-        if ($pager->row_fun) {
+        if ($pager->row_fun !== null && $pager->row_fun !== '') {
             if (function_exists($pager->row_fun)) {
                 $fn = $pager->row_fun;
                 $row = $fn($row);
@@ -92,7 +93,7 @@ function display_db_pager(db_pager &$pager): bool {
         }
 
 		$marker = $pager->marker;
-	    if ($marker && $marker($row)) 
+	    if ($marker !== null && $marker !== '' && $marker($row))
         	start_row("class='$pager->marker_class'");
 	    else	
 			alt_table_row_color($cc);
@@ -151,15 +152,16 @@ function display_db_pager(db_pager &$pager): bool {
 	}
 	//end of while loop
 
-	if($pager->footer_fun) {	// if set footer handler
+	if($pager->footer_fun !== null && $pager->footer_fun !== '') {	// if set footer handler
 		start_row("class='{$pager->footer_class}'");
 		$fun = $pager->footer_fun;
-		if (method_exists($pager, $fun)) { 
+		$h = array();
+		if (method_exists($pager, $fun)) {
 			$h = $pager->$fun($pager);
   		} elseif (function_exists($fun)) {
 			$h = $fun($pager);
 		}
-		
+
 		foreach($h as $c) {	 // draw footer columns
 			$pars = isset($c[1]) ? $c[1] : '';
 			label_cell($c[0], $pars);
@@ -177,7 +179,7 @@ function display_db_pager(db_pager &$pager): bool {
 		$but_pref = $pager->name.'_page_';
 	    start_table();
 		start_row();
-		if (@$pager->inactive_ctrl) 
+		if ((bool) $pager->inactive_ctrl)
 				submit('Update', _('Update'), true, '', null); // inactive update
 		navi_button_cell($but_pref.'first', _('First'), $pager->first_page, 'right');
 		navi_button_cell($but_pref.'prev', _('Prev'), $pager->prev_page,'right');
