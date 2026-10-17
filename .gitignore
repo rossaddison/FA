@@ -23,6 +23,5 @@ psalm_sweep_continue*.json
 scratch*.json
 !index.php
 vendor/
-composer.lock
 .psalm-cache/
 /nbproject/*
