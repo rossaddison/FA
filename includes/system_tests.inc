@@ -20,15 +20,15 @@ $test_level = array(
 );
 
 // test mysql server version
-function tst_mysql(): array 
+function tst_mysql(): array
 {
 	$test = array();
 	$test['descr'] = _('MySQL version'). ' >=4.1';
 	$test['type'] = 3;
-	$test['test'] = db_get_version();
+	$test['test'] = db_get_version() ?? '';
 	if (!($test['result'] = ($test['test']>='4.1'))) {
 		$db_str = explode('-', $test['test']);
-		$test['result'] = ($db_str[1] == 'MariaDB');
+		$test['result'] = (($db_str[1] ?? '') == 'MariaDB');
 	}
 	$test['comments'] = _('Upgrade MySQL server to version at least 4.1');
 
@@ -53,7 +53,8 @@ function tst_php(): array
 	$test = array();
 	$test['descr'] = _('PHP version').' >=8.5.0';
 	$test['type'] = 3;
-	$test['test'] = phpversion();
+	$phpversion = phpversion();
+	$test['test'] = $phpversion === false ? '' : $phpversion;
 	$test['result'] = version_compare($test['test'], '8.5.0', '>=');
 	$test['comments'] = _('Upgrade PHP to version at least 8.5.0');
 
@@ -102,7 +103,7 @@ function tst_browser(): array
 	$test = array();
 	$test['descr'] = _('Browser type');
 	$test['type'] = 0;
-	$test['test'] = $_SERVER['HTTP_USER_AGENT'];
+	$test['test'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
 	$test['result'] = true;
 	$test['comments'] = _('Any browser is supported');
 
@@ -113,7 +114,7 @@ function tst_server(): array
 {
 	$test = array();
 	$test['descr'] = _('Http server type');
-	$test['test'] = $_SERVER['SERVER_SOFTWARE'];
+	$test['test'] = $_SERVER['SERVER_SOFTWARE'] ?? '';
 	$test['type'] = 0;
 	$test['result'] = true;
 	$test['comments'] = _('Any server is supported');
@@ -154,9 +155,11 @@ function tst_logging(): array
 	$test['descr'] = _('Error logging');
 	$test['type'] = 2;
 	// if error lgging is on, but log file does not exists try write
-	if ($error_logfile && !is_file($error_logfile)) 
+	if ($error_logfile && !is_file($error_logfile))
 	{
-		@fclose(@fopen($error_logfile, 'w'));
+		$fh = @fopen($error_logfile, 'w');
+		if ($fh !== false)
+			@fclose($fh);
 	}
 	$test['result'] = @$error_logfile != '' && is_writable($error_logfile);
 	$test['test'] = @$error_logfile == '' ? _("Disabled") : $error_logfile;
@@ -278,22 +281,26 @@ function tst_langs(mixed $install): array
 	
 	foreach ($installed_languages as $lang) {
 
-		if ($lang['code'] == 'C') continue; // no translation (English)
-		$langs[] = $lang['code'];
+		$lang_code = (string) $lang['code'];
+		$lang_version = (string) ($lang['version'] ?? '');
+		$lang_encoding = (string) ($lang['encoding'] ?? '');
 
-		$file = $path_to_root.'/lang/'.$lang['code'].'/LC_MESSAGES/'.$lang['code'];
-		if (@$lang['version'])
-			$file .= '-'.$lang['version'];
+		if ($lang_code == 'C') continue; // no translation (English)
+		$langs[] = $lang_code;
+
+		$file = $path_to_root.'/lang/'.$lang_code.'/LC_MESSAGES/'.$lang_code;
+		if ($lang_version !== '')
+			$file .= '-'.$lang_version;
 		$file .= function_exists('gettext') ? '.mo' : '.po';
 
 		if (!is_file($file)) {
 			$test['result'] = false;
 			$test['comments'][] = sprintf( _('Missing %s translation file.'), $file);
 		}
-		if (!$GetText->check_support($lang['code'], $lang['encoding']))
+		if (!$GetText->check_support($lang_code, $lang_encoding))
 		{
 			$test['result'] = false;
-			$test['comments'][] = sprintf(_('Missing system locale: %s'), $lang['code'].".".$lang['encoding']);
+			$test['comments'][] = sprintf(_('Missing system locale: %s'), $lang_code.".".$lang_encoding);
 		};
 	}
 
@@ -374,13 +381,15 @@ function tst_extconfig(mixed $install): array
 			continue;
 		};
 	}
+	/** @var string $path_to_root */
+	$path_to_root = $path_to_root;
 	foreach(array('modules', 'modules/_cache', 'themes', 'sql') as $dir) {
 		$fname =  $path_to_root.'/'.$dir;
 		$test['test'][] = $fname;
 		$t = is_dir($fname) && is_writable($fname);
 		if (!$t)
 			$test['comments'][] = sprintf(_("'%s' is not writeable"), $fname);
-		$test['result'] &= $t;
+		$test['result'] = $test['result'] && $t;
 	}
 
 	foreach(array('Release', 'Themes', 'Languages', 'Extensions', 'Charts') as $file) {
@@ -388,7 +397,7 @@ function tst_extconfig(mixed $install): array
 		$t = !file_exists($fname) || is_writable($fname);
 		if (!$t)
 			$test['comments'][] = sprintf(_("'%s' is not writeable"), $fname);
-		$test['result'] &= $t;
+		$test['result'] = $test['result'] && $t;
 	}
 
 	if(!$test['result'])
@@ -396,7 +405,7 @@ function tst_extconfig(mixed $install): array
 
 	$fname = $path_to_root."/themes";
 	$themedir = opendir($fname);
-	while (false !== ($fname = readdir($themedir)))
+	while ($themedir !== false && false !== ($fname = readdir($themedir)))
 	{
 		if ($fname!='.' && $fname!='..' && is_dir($path_to_root.'/themes/'.$fname)
 			&& !in_array($fname, array('canvas', 'default', 'dropdown')))
@@ -404,13 +413,14 @@ function tst_extconfig(mixed $install): array
 			$test['test'][] = $fname;
 			$test['result'] = is_writable($path_to_root.'/themes/'.$fname);
 			if (!$test['result']) {
-				$test['comments'][] = 
+				$test['comments'][] =
 					sprintf(_("Non-standard theme directory '%s' is not writable"), $fname);
 				break;
 			}
 		}
 	}
-	closedir($themedir);
+	if ($themedir !== false)
+		closedir($themedir);
 
 	$test['test'][] = 'OpenSSL PHP extension';
 	if (!extension_loaded('openssl')) {
@@ -449,25 +459,26 @@ function display_system_tests(bool $install = false): bool
 	foreach ($system_tests as $test) 
 	{
 		alt_table_row_color($k);
+		/** @var array{descr: string, type: int, test: mixed, result: bool, comments?: array<int, string>|string} $result */
 		$result = $test($install);
-		if (!$result) continue;
-		
+
 		label_cell($result['descr']);
 		label_cell($test_level[$result['type']]);
 
-		$res = is_array(@$result['test']) ? implode('<br>', $result['test']) 
-			: $result['test'];
+		$res = is_array($result['test'])
+			? implode('<br>', array_map(fn($v) => is_scalar($v) || $v === null ? (string) $v : '', $result['test']))
+			: (string) $result['test'];
 		label_cell($res);
 
-		$comm = is_array(@$result['comments']) ? implode('<br>', $result['comments']) 
-			: @$result['comments'];
-		$color = ($result['result'] ? 'green': 
+		$comments = $result['comments'] ?? '';
+		$comm = is_array($comments) ? implode('<br>', $comments) : $comments;
+		$color = ($result['result'] ? 'green':
 			($result['type']==3 ? 'red' :
 			 ($result['type']==2 ? 'orange' : 'green')));
 		label_cell("<span class='fa-$color'>".
 			($result['result'] ? _('Ok') : '<b>'.$comm.'</b>').'</span>');
 		end_row();
-		$ret = $ret && (($result['result']!=0) || ($result['type'] < 3));
+		$ret = $ret && ($result['result'] || ($result['type'] < 3));
 	}
 	end_table();
 
