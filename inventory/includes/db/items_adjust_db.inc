@@ -11,7 +11,10 @@ declare(strict_types=1);
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-/** @return float|int */
+/**
+ * @param array<int, line_item> $items
+ * @return float|int
+ */
 function add_stock_adjustment(?array $items, string|null $location, string|null $date_, string|null $reference, string|null $memo_)
 {
 	global $SysPrefs, $path_to_root, $Refs;
@@ -24,21 +27,22 @@ function add_stock_adjustment(?array $items, string|null $location, string|null 
 
 	$adj_id = get_next_trans_no(ST_INVADJUST);
 
+	$loc = array();
+	$st_ids = array();
+	$st_names = array();
+	$st_num = array();
+	$st_reorder = array();
 	if (sysprefs()->loc_notification() == 1)
 	{
 		include_once(dirname(__DIR__, 3) . "/inventory/includes/inventory_db.inc");
-		$st_ids = array();
-		$st_names = array();
-		$st_num = array();
-		$st_reorder = array();
 	}
-	foreach ($items as $line_item)
+	foreach ($items ?? array() as $line_item)
 	{
 
-		if (sysprefs()->loc_notification() == 1 && $line_item->quantity < 0)
+		if (sysprefs()->loc_notification() == 1 && (float) $line_item->quantity < 0)
 		{
 			$tmp = $line_item->quantity;
-			$line_item->quantity = -$line_item->quantity;	// calculate_reorder_level expect positive qty
+			$line_item->quantity = -(float) $line_item->quantity;	// calculate_reorder_level expect positive qty
 			$loc = calculate_reorder_level($location, $line_item, $st_ids, $st_names, $st_num, $st_reorder);
 			$line_item->quantity = $tmp;
 		}
@@ -90,9 +94,12 @@ function get_stock_adjustment_items(string|int|float|bool|null $trans_no)
 function add_stock_adjustment_item(int|float|null $adj_id, string|int|float|bool|null $stock_id, string|int|float|bool|null $location, string|int|float|bool|null $date_, string|int|float|bool|null $reference,
 	string|int|float|bool|null $quantity, string|int|float|bool|null $standard_cost, string|int|float|bool|null $memo_): void
 {
+	$quantity = (float) $quantity;
+	$standard_cost = (float) $standard_cost;
+
 	$mb_flag = get_mb_flag($stock_id);
 
-    if (is_service($mb_flag))
+    if (is_string($mb_flag) && is_service($mb_flag))
     {
     	display_db_error("Cannot do inventory adjustment for Service item : $stock_id", "");
     }
@@ -111,11 +118,12 @@ function add_stock_adjustment_item(int|float|null $adj_id, string|int|float|bool
 	$inv_value = $standard_cost * $quantity;
 	$adj_value = $standard_cost * -($quantity);
 
+	$stock_gl_codes = array();
 	if (is_fixed_asset($mb_flag)) {
 		// get the initial value of the fixed assset.
 		$row = row_or_empty(get_fixed_asset_move($stock_id, ST_SUPPRECEIVE));
 		$inv_value = (float)$row['price'] * $quantity;
-		$adj_value = (-($row['price']) + $standard_cost) * $quantity;
+		$adj_value = (-(float)($row['price'] ?? 0) + $standard_cost) * $quantity;
 	}
 
 	if ($standard_cost > 0 || is_fixed_asset($mb_flag))
