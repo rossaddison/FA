@@ -33,18 +33,22 @@ if ((bool) user_use_date_picker())
 
 if (isset($_GET['NewPayment'])) {
 	$_SESSION['page_title'] = _($help_context = "Bank Account Payment Entry");
-	create_cart(ST_BANKPAYMENT, 0);
+	create_cart_bank(ST_BANKPAYMENT, 0);
 } else if(isset($_GET['NewDeposit'])) {
 	$_SESSION['page_title'] = _($help_context = "Bank Account Deposit Entry");
-	create_cart(ST_BANKDEPOSIT, 0);
+	create_cart_bank(ST_BANKDEPOSIT, 0);
 } else if(isset($_GET['ModifyPayment'])) {
-	$_SESSION['page_title'] = _($help_context = "Modify Bank Account Entry")." #".(string)$_GET['trans_no'];
-	create_cart(ST_BANKPAYMENT, get_scalar('trans_no'));
+	$trans_no_scalar = get_scalar('trans_no');
+	$trans_no_for_cart = is_int($trans_no_scalar) ? $trans_no_scalar : ($trans_no_scalar === null ? null : (string) $trans_no_scalar);
+	$_SESSION['page_title'] = _($help_context = "Modify Bank Account Entry")." #".(string) $trans_no_for_cart;
+	create_cart_bank(ST_BANKPAYMENT, $trans_no_for_cart);
 } else if(isset($_GET['ModifyDeposit'])) {
-	$_SESSION['page_title'] = _($help_context = "Modify Bank Deposit Entry")." #".(string)$_GET['trans_no'];
-	create_cart(ST_BANKDEPOSIT, get_scalar('trans_no'));
+	$trans_no_scalar = get_scalar('trans_no');
+	$trans_no_for_cart = is_int($trans_no_scalar) ? $trans_no_scalar : ($trans_no_scalar === null ? null : (string) $trans_no_scalar);
+	$_SESSION['page_title'] = _($help_context = "Modify Bank Deposit Entry")." #".(string) $trans_no_for_cart;
+	create_cart_bank(ST_BANKDEPOSIT, $trans_no_for_cart);
 }
-page($_SESSION['page_title'] ?? _("Bank Account Entry"), false, false, '', $js);
+page((string) ($_SESSION['page_title'] ?? _("Bank Account Entry")), false, false, '', $js);
 
 //-----------------------------------------------------------------------------------------------
 check_db_has_bank_accounts(_("There are no bank accounts defined in the system."));
@@ -60,6 +64,8 @@ if (!isset($_SESSION['pay_items']))
 	display_error(_("This page can only be opened to enter a new bank payment or deposit, or to modify an existing one."));
 	end_page(); exit;
 }
+/** @var items_cart $pay_items_cart */
+$pay_items_cart = $_SESSION['pay_items'];
 
 //----------------------------------------------------------------------------------------
 if (list_updated('PersonDetailID')) {
@@ -70,7 +76,7 @@ if (list_updated('PersonDetailID')) {
 }
 
 //--------------------------------------------------------------------------------------------------
-function line_start_focus(): void {
+function line_start_focus_bank(): void {
 
     unset($_POST['amount']);
     unset($_POST['dimension_id']);
@@ -92,9 +98,9 @@ if (isset($_GET['AddedID']))
 
 	display_note(get_gl_view_str($trans_type, $trans_no, _("&View the GL Postings for this Payment")));
 
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter Another &Payment"), "NewPayment=yes");
+	hyperlink_params($_SERVER['PHP_SELF'] ?? '', _("Enter Another &Payment"), "NewPayment=yes");
 
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter A &Deposit"), "NewDeposit=yes");
+	hyperlink_params($_SERVER['PHP_SELF'] ?? '', _("Enter A &Deposit"), "NewDeposit=yes");
 
 	hyperlink_params("$path_to_root/admin/attachments.php", _("Add an Attachment"), "filterType=$trans_type&trans_no=$trans_no");
 
@@ -110,9 +116,9 @@ if (isset($_GET['UpdatedID']))
 
 	display_note(get_gl_view_str($trans_type, $trans_no, _("&View the GL Postings for this Payment")));
 
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter Another &Payment"), "NewPayment=yes");
+	hyperlink_params($_SERVER['PHP_SELF'] ?? '', _("Enter Another &Payment"), "NewPayment=yes");
 
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter A &Deposit"), "NewDeposit=yes");
+	hyperlink_params($_SERVER['PHP_SELF'] ?? '', _("Enter A &Deposit"), "NewDeposit=yes");
 
 	display_footer_exit();
 }
@@ -126,9 +132,9 @@ if (isset($_GET['AddedDep']))
 
 	display_note(get_gl_view_str($trans_type, $trans_no, _("View the GL Postings for this Deposit")));
 
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter Another Deposit"), "NewDeposit=yes");
+	hyperlink_params($_SERVER['PHP_SELF'] ?? '', _("Enter Another Deposit"), "NewDeposit=yes");
 
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter A Payment"), "NewPayment=yes");
+	hyperlink_params($_SERVER['PHP_SELF'] ?? '', _("Enter A Payment"), "NewPayment=yes");
 
 	display_footer_exit();
 }
@@ -141,16 +147,16 @@ if (isset($_GET['UpdatedDep']))
 
 	display_note(get_gl_view_str($trans_type, $trans_no, _("&View the GL Postings for this Deposit")));
 
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter Another &Deposit"), "NewDeposit=yes");
+	hyperlink_params($_SERVER['PHP_SELF'] ?? '', _("Enter Another &Deposit"), "NewDeposit=yes");
 
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter A &Payment"), "NewPayment=yes");
+	hyperlink_params($_SERVER['PHP_SELF'] ?? '', _("Enter A &Payment"), "NewPayment=yes");
 
 	display_footer_exit();
 }
 
 //--------------------------------------------------------------------------------------------------
 
-function create_cart(string|int|null $type, string|int|null $trans_no): void
+function create_cart_bank(string|int|null $type, string|int|null $trans_no): void
 {
 
 	if (isset($_SESSION['pay_items']))
@@ -166,7 +172,7 @@ function create_cart(string|int|null $type, string|int|null $trans_no): void
 		$bank_trans = row_or_empty(db_fetch(get_bank_trans($type, $trans_no)));
 		$_POST['bank_account'] = $bank_trans["bank_act"];
 		$_POST['PayType'] = $bank_trans["person_type_id"];
-		$cart->reference = $bank_trans["ref"];
+		$cart->reference = $bank_trans["ref"] ?? '';
 
 		if ($bank_trans["person_type_id"] == PT_CUSTOMER)
 		{
@@ -189,24 +195,23 @@ function create_cart(string|int|null $type, string|int|null $trans_no): void
 		$cart->memo_ = get_comments_string($type, $trans_no);
 		$cart->tran_date = sql2date($bank_trans['trans_date']);
 
-		$cart->original_amount = $bank_trans['amount'];
+		$cart->original_amount = $bank_trans['amount'] ?? 0;
 		$result = get_gl_trans($type, $trans_no);
-		if ($result) {
-			while ($row = db_fetch($result)) {
-				if ((bool)is_bank_account($row['account'])) {
-					// date exchange rate is currenly not stored in bank transaction,
-					// so we have to restore it from original gl amounts
-					$ex_rate = (float)$bank_trans['amount']/(float)$row['amount'];
-				} else {
-					$cart->add_gl_item( $row['account'], $row['dimension_id'],
-						$row['dimension2_id'], $row['amount'], $row['memo_']);
-				}
+		$ex_rate = 1.0;
+		while ($row = db_fetch($result)) {
+			if ((bool)is_bank_account($row['account'])) {
+				// date exchange rate is currenly not stored in bank transaction,
+				// so we have to restore it from original gl amounts
+				$ex_rate = (float)$bank_trans['amount']/(float)$row['amount'];
+			} else {
+				$cart->add_gl_item( $row['account'], $row['dimension_id'],
+					$row['dimension2_id'], $row['amount'], $row['memo_']);
 			}
 		}
 
 		// apply exchange rate
 		foreach($cart->gl_items as $line_no => $line)
-			$cart->gl_items[$line_no]->amount *= $ex_rate;
+			$cart->gl_items[$line_no]->amount = (float) $cart->gl_items[$line_no]->amount * $ex_rate;
 
 	} else {
 		$cart->reference = refs()->get_next($cart->trans_type, null, $cart->tran_date);
@@ -241,9 +246,14 @@ function check_trans(): int
 		$input_error = 1;
 	}
 
-	$limit = get_bank_account_limit(post_scalar('bank_account'), post_scalar('date_'));
+	$bank_account_scalar = post_scalar('bank_account');
+	$bank_account_str = $bank_account_scalar === null ? null : (string) $bank_account_scalar;
+	$date_scalar = post_scalar('date_');
+	$date_str = $date_scalar === null ? null : (string) $date_scalar;
 
-	$amnt_chg = -session_obj('pay_items')->gl_items_total()-session_obj('pay_items')->original_amount;
+	$limit = get_bank_account_limit($bank_account_str, $date_str);
+
+	$amnt_chg = -session_obj('pay_items')->gl_items_total()-(float)session_obj('pay_items')->original_amount;
 
 	if ($limit !== null && floatcmp($limit, -$amnt_chg) < 0)
 	{
@@ -251,32 +261,32 @@ function check_trans(): int
 		set_focus('code_id');
 		$input_error = 1;
 	}
-	if ($trans = check_bank_account_history($amnt_chg, post_scalar('bank_account'), post_scalar('date_'))) {
+	if ($trans = check_bank_account_history($amnt_chg, $bank_account_str, $date_str)) {
 
 		if (isset($trans['trans_no'])) {
 			display_error(sprintf(_("The bank transaction would result in exceed of authorized overdraft limit for transaction: %s #%s on %s."),
-				$systypes_array[$trans['type']], $trans['trans_no'], sql2date($trans['trans_date'])));
+				$systypes_array[(int) $trans['type']], $trans['trans_no'], sql2date($trans['trans_date'] ?? null)));
 			set_focus('amount');
 			$input_error = 1;
-		}	
+		}
 	}
 	if (!check_reference($_POST['ref'], session_obj('pay_items')->trans_type, session_obj('pay_items')->order_id))
 	{
 		set_focus('ref');
 		$input_error = 1;
 	}
-	if (!is_date(post_scalar('date_')))
+	if (!is_date($date_str))
 	{
 		display_error(_("The entered date for the payment is invalid."));
 		set_focus('date_');
 		$input_error = 1;
 	}
-	elseif (!(bool)is_date_in_fiscalyear(post_scalar('date_')))
+	elseif (!(bool)is_date_in_fiscalyear($date_str))
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('date_');
 		$input_error = 1;
-	} 
+	}
 
 	if (get_post('PayType')==PT_CUSTOMER && (!get_post('person_id') || !get_post('PersonDetailID'))) {
 		display_error(_("You have to select customer and customer branch."));
@@ -287,7 +297,7 @@ function check_trans(): int
 		set_focus('person_id');
 		$input_error = 1;
 	}
-	if (!db_has_currency_rates(get_bank_account_currency(post_scalar('bank_account')), post_scalar('date_'), true))
+	if (!db_has_currency_rates(get_bank_account_currency($bank_account_str), $date_str, true))
 		$input_error = 1;
 
 	if (isset($_POST['settled_amount']) && in_array(get_post('PayType'), array(PT_SUPPLIER, PT_CUSTOMER)) && (input_num('settled_amount') <= 0)) {
@@ -302,20 +312,33 @@ if (isset($_POST['Process']) && !check_trans())
 {
 	begin_transaction();
 
-	$pay_items = &$_SESSION['pay_items'];
-	/** @var items_cart $pay_items */
+	$pay_items = $pay_items_cart;
 	$new = $pay_items->order_id == 0;
 
-	add_new_exchange_rate(get_bank_account_currency(post_scalar('bank_account')), get_post('date_'), input_num('_ex_rate'));
+	$bank_account_scalar = post_scalar('bank_account');
+	$bank_account_str = $bank_account_scalar === null ? null : (string) $bank_account_scalar;
+	$date_scalar = post_scalar('date_');
+	$date_str = $date_scalar === null ? null : (string) $date_scalar;
+	$person_type_scalar = post_scalar('PayType');
+	$person_type_str = $person_type_scalar === null ? null : (string) $person_type_scalar;
+	$person_id_scalar = post_scalar('person_id');
+	$person_id_str = $person_id_scalar === null ? null : (string) $person_id_scalar;
+	$ref_scalar = post_scalar('ref');
+	$ref_str = $ref_scalar === null ? null : (string) $ref_scalar;
+	$memo_scalar = post_scalar('memo_');
+	$memo_str = $memo_scalar === null ? null : (string) $memo_scalar;
 
+	add_new_exchange_rate(get_bank_account_currency($bank_account_str), get_post('date_'), input_num('_ex_rate'));
+
+	/** @var array{0?: string|int|float|bool|null, 1?: string|int|float|bool|null} $trans */
 	$trans = row_or_empty(write_bank_transaction(
-		$pay_items->trans_type, $pay_items->order_id, post_scalar('bank_account'),
-		$pay_items, post_scalar('date_'),
-		post_scalar('PayType'), post_scalar('person_id'), (string) post_scalar('PersonDetailID'),
-		post_scalar('ref'), post_scalar('memo_'), true, input_num('settled_amount', null)));
+		$pay_items->trans_type, $pay_items->order_id, $bank_account_str,
+		$pay_items, $date_str,
+		$person_type_str, $person_id_str, (string) post_scalar('PersonDetailID'),
+		$ref_str, $memo_str, true, input_num('settled_amount', null)));
 
-	$trans_type = $trans[0];
-   	$trans_no = $trans[1];
+	$trans_type = $trans[0] ?? null;
+   	$trans_no = $trans[1] ?? null;
 	new_doc_date($_POST['date_']);
 
 	session_obj('pay_items')->clear_items();
@@ -324,17 +347,17 @@ if (isset($_POST['Process']) && !check_trans())
 	commit_transaction();
 
 	if ($new)
-		meta_forward($_SERVER['PHP_SELF'], $trans_type==ST_BANKPAYMENT ?
+		meta_forward($_SERVER['PHP_SELF'] ?? '', $trans_type==ST_BANKPAYMENT ?
 			"AddedID=$trans_no" : "AddedDep=$trans_no");
 	else
-		meta_forward($_SERVER['PHP_SELF'], $trans_type==ST_BANKPAYMENT ?
+		meta_forward($_SERVER['PHP_SELF'] ?? '', $trans_type==ST_BANKPAYMENT ?
 			"UpdatedID=$trans_no" : "UpdatedDep=$trans_no");
 
 }
 
 //-----------------------------------------------------------------------------------------------
 
-function check_item_data(): bool
+function check_item_data_bank(): bool
 {
 	if (!check_num('amount', 0))
 	{
@@ -354,73 +377,72 @@ function check_item_data(): bool
 
 //-----------------------------------------------------------------------------------------------
 
-function handle_update_item(): void
+function handle_update_item_bank(): void
 {
 	$amount = ((float)(session_obj('pay_items')->trans_type==ST_BANKPAYMENT ? 1:-1)) * (float)input_num('amount');
-    if($_POST['UpdateItem'] != "" && check_item_data())
+    if($_POST['UpdateItem'] != "" && check_item_data_bank())
     {
     	session_obj('pay_items')->update_gl_item((string) post_scalar('Index'), post_scalar('code_id'),
     	    post_scalar('dimension_id'), post_scalar('dimension2_id'), $amount , post_scalar('LineMemo'));
     }
-	line_start_focus();
+	line_start_focus_bank();
 }
 
 //-----------------------------------------------------------------------------------------------
 
-function handle_delete_item(string|int|null $id): void
+function handle_delete_item_bank(string|int|null $id): void
 {
 	session_obj('pay_items')->remove_gl_item($id);
-	line_start_focus();
+	line_start_focus_bank();
 }
 
 //-----------------------------------------------------------------------------------------------
 
-function handle_new_item(): void
+function handle_new_item_bank(): void
 {
-	if (!check_item_data())
+	if (!check_item_data_bank())
 		return;
 	$amount = ((float)(session_obj('pay_items')->trans_type==ST_BANKPAYMENT ? 1:-1)) * (float)input_num('amount');
 
 	session_obj('pay_items')->add_gl_item(post_scalar('code_id'), post_scalar('dimension_id'),
 		post_scalar('dimension2_id'), $amount, post_scalar('LineMemo'));
-	line_start_focus();
+	line_start_focus_bank();
 }
 //-----------------------------------------------------------------------------------------------
 $id = find_submit('Delete');
 if ($id != -1)
-	handle_delete_item($id);
+	handle_delete_item_bank($id);
 
 if (isset($_POST['AddItem']))
-	handle_new_item();
+	handle_new_item_bank();
 
 if (isset($_POST['UpdateItem']))
-	handle_update_item();
+	handle_update_item_bank();
 
 if (isset($_POST['CancelItemChanges']) || isset($_POST['Index']))
-	line_start_focus();
+	line_start_focus_bank();
 
 if (isset($_POST['go']))
 {
-	display_quick_entries($_SESSION['pay_items'], post_scalar('person_id'), input_num('totamount'), 
+	display_quick_entries($pay_items_cart, post_scalar('person_id'), input_num('totamount'),
 		session_obj('pay_items')->trans_type==ST_BANKPAYMENT ? QE_PAYMENT : QE_DEPOSIT);
 	$_POST['totamount'] = price_format(0); ajax()->activate('totamount');
-	line_start_focus();
+	line_start_focus_bank();
 }
 //-----------------------------------------------------------------------------------------------
 
 start_form();
 
-$pay_items = &$_SESSION['pay_items'];
-/** @var items_cart $pay_items */
-
-display_bank_header($pay_items);
+/** @var items_cart $pay_items_cart */
+$pay_items_cart = $pay_items_cart;
+display_bank_header($pay_items_cart);
 
 start_table(TABLESTYLE2, "width='90%'", 10);
 start_row();
 echo "<td>";
 display_gl_bank_items(session_obj('pay_items')->trans_type==ST_BANKPAYMENT ?
 	_("Payment Items"):_("Deposit Items"), $pay_items);
-gl_options_controls($pay_items);
+gl_options_controls_bank($pay_items);
 echo "</td>";
 end_row();
 end_table(1);

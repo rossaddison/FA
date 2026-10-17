@@ -280,7 +280,7 @@ function gl_edit_item_controls(items_cart &$order, string|int|float|bool|null $d
 
 //---------------------------------------------------------------------------------
 
-function gl_options_controls(items_cart $order): void
+function gl_options_controls_bank(items_cart $order): void
 {
 	div_start('footer');
 	echo "<br><table align='center'>";
