@@ -411,6 +411,20 @@ their source.
   (`js/inserts.js`'s `save_focus()`/`js/utils.js`), so this is a pure
   security fix with no behavior change for legitimate values.
 
+- **`includes/dashboard.inc` — `dashboard()`.** `$sel_app` — read directly
+  from `$_GET['sel_app']`/`$_POST['sel_app']` in `admin/dashboard.php`, with
+  no validation beyond rejecting arrays — was echoed raw inside a
+  single-quoted JavaScript string literal in an inline `<script>` block
+  (`xhr.send('id='+id+'&'+el.id+'='+el.value+'&sel_app=$sel_app');`). Any
+  authenticated user could break out of the string literal via a crafted
+  `sel_app` value (e.g. `?sel_app='-alert(document.cookie)-'`) and execute
+  arbitrary JavaScript on the dashboard page. Same bug class and fix as the
+  `includes/page/footer.inc` entry above; used the `json_encode_for_script()`
+  helper that migration later added specifically for this pattern (JSON-encodes
+  with `JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP`, safe for
+  both the JS string literal and the surrounding `<script>` tag) rather than
+  interpolating the raw value.
+
 - **`includes/date_functions.inc` — `__date()`.** The shared low-level date
   formatter (used by `sql2date()` and effectively every date-display path in
   the app) cast `$month`/`$day` to `(int)` before formatting but never cast

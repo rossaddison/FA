@@ -47,11 +47,14 @@ div.square2 {
 function dashboard(string|int|float|bool|null $sel_app): void
 {
 	global  $style;
-	$waapp = isset($_SESSION['App']) ? $_SESSION['App']->get_application((string) $sel_app) : null;
+	/** @var front_accounting|null $fa_app */
+	$fa_app = $_SESSION['App'] ?? null;
+	$waapp = $fa_app !== null ? $fa_app->get_application((string) $sel_app) : null;
 	if ($waapp !== null && !session_obj('wa_current_user')->check_application_access($waapp))
 		return;
+	$sel_app_js = json_encode_for_script((string) $sel_app);
 	echo $style;
-	echo "<script".csp_nonce_attr()."> 
+	echo "<script".csp_nonce_attr().">
 	function chart_update(el, id)
 	{
 		var xhr = XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
@@ -66,7 +69,7 @@ function dashboard(string|int|float|bool|null $sel_app): void
 		}
 		xhr.open('POST', location.pathname, true);
 		xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-		xhr.send('id='+id+'&'+el.id+'='+el.value+'&sel_app=$sel_app');		
+		xhr.send('id='+id+'&'+el.id+'='+el.value+'&sel_app='+$sel_app_js);
 	}
 	</script>";
 	//check_for_overdue_recurrent_invoices();
@@ -168,6 +171,7 @@ function table_end(): void
 	echo "</td></tr></table>\n";
 }
 
+/** @param array<array-key, string|int|float|bool|null> $labels */
 function headers(array $labels): void
 {
 	echo "<tr>\n";
@@ -199,6 +203,8 @@ function display_customer_topten(): void
 	$title = customer_top($today, 10, 66, $pg);
 	$total = customer_aging($today, 66);
 	td('50%');
+	/** @var Chart $pg */
+	$pg = $pg;
 	source_graphic($today, $title[0], _("Customer"), $pg);
 	br(3);
 	echo "<div class='square square1'>"._('Sales Total')."<p class='span1'>";
@@ -236,6 +242,8 @@ function display_supplier_topten(): void
 	$title = supplier_top($today, 10, 66, $pg);
 	$total = supplier_aging($today, 66);
 	td('50%');
+	/** @var Chart $pg */
+	$pg = $pg;
 	source_graphic($today, $title[0], _("Supplier"), $pg);
 	br(3);
 	echo "<div class='square square2'>"._('Purchasable Total')."<p class='span1'>";
@@ -249,7 +257,7 @@ function display_supplier_topten(): void
 	table_end();
 }
 
-function display_stock_topten(?int $type=0): void
+function display_stock_topten(int $type=0): void
 {
 	if ($type == 0)
 	{
@@ -317,8 +325,10 @@ function display_stock_topten(?int $type=0): void
 		$source = _("Fixed Assets");
 	elseif ($type == 1)
 		$source = _("Manufacturing");
-	else	
+	else
 		$source = _("Items");
+	/** @var Chart $pg */
+	$pg = $pg;
 	source_graphic($today, $title[0], $source, $pg);
 	echo "<div class='square'><span>"._('Total Results')."<br />";
 	echo number_format2($title[3])."</div>";
@@ -353,6 +363,8 @@ function display_dimension_topten(): void
 	$today = calc_today();
 	$title = dimension_top($today, 5, 66, $pg);
 	td('50%');
+	/** @var Chart $pg */
+	$pg = $pg;
 	source_graphic($today, $title, _("Dimension"), $pg);
 	table_end();
 }	
@@ -378,6 +390,8 @@ function display_gl_info(): void
 		$pg->type = (int) post_scalar('select_g1');
 	table('100%', '50%');
 	$title = gl_top($today, 66, $pg);
+	/** @var Chart $pg */
+	$pg = $pg;
 	source_graphic($today, $title, _("Class"), $pg);
 	gl_month_performance($today, 66, 5);
 	td('50%');
@@ -409,16 +423,22 @@ function display_all(): void
 		$pg->type = (int) post_scalar('select_c2');
 	table('100%', '50%');
 	$title = customer_top($today, 3, 66, $pg);
+	/** @var Chart $pg */
+	$pg = $pg;
 	source_graphic($today, $title[0], _("Customer"), $pg);
 	$pg = new Chart('horizontalBar', 's2');
 	if (isset($_POST['select_s2']))
 		$pg->type = (int) post_scalar('select_s2');
 	$title = supplier_top($today, 3, 66, $pg);
+	/** @var Chart $pg */
+	$pg = $pg;
 	source_graphic($today, $title[0], _("Supplier"), $pg);
 	$pg = new Chart('bar', 'i2');
 	if (isset($_POST['select_i2']))
 		$pg->type = (int) post_scalar('select_i2');
 	$title = stock_top($today, 3, 66, 0, $pg);
+	/** @var Chart $pg */
+	$pg = $pg;
 	source_graphic($today, $title[0], _("Items"), $pg);
 	td('50%');
 	dimension_top($today, 3, 66);
@@ -426,13 +446,16 @@ function display_all(): void
 	if (isset($_POST['select_d2']))
 		$pg->type = (int) post_scalar('select_d2');
 	$title = gl_top($today, 66, $pg);
+	/** @var Chart $pg */
+	$pg = $pg;
 	source_graphic($today, $title, _("Class"), $pg);
 	stock_top($today, 3, 66, 2);
 	stock_top($today, 3, 66, 1);
 	table_end();
 }
 
-function customer_top(?string $today, ?int $limit=10, string|int|null $width='33', ?Chart &$pg=null): array
+/** @return array{0: string, 1: float} */
+function customer_top(?string $today, int $limit=10, string|int|null $width='33', ?Chart &$pg=null): array
 {
 	$begin = date2sql(begin_fiscalyear());
 	$today = date2sql($today);
@@ -454,7 +477,7 @@ function customer_top(?string $today, ?int $limit=10, string|int|null $width='33
 	{
 		$sales += round((float) $myrow['total']);
 		alt_table_row_color($k);
-		$name = (string)$myrow["debtor_no"]." ".htmlspecialchars_decode($myrow["name"]);
+		$name = (string)$myrow["debtor_no"]." ".htmlspecialchars_decode((string) $myrow["name"]);
 		label_cell($name);
 		amount_cell($myrow['total']);
 		if ($pg != null)
@@ -473,7 +496,8 @@ function customer_top(?string $today, ?int $limit=10, string|int|null $width='33
 	return array($title, $sales);
 }
 
-function supplier_top(?string $today, ?int $limit=10, string|int|null $width='33', ?Chart &$pg=null): array
+/** @return array{0: string, 1: float} */
+function supplier_top(?string $today, int $limit=10, string|int|null $width='33', ?Chart &$pg=null): array
 {
 	$begin = date2sql(begin_fiscalyear());
 	$today = date2sql($today);
@@ -491,12 +515,12 @@ function supplier_top(?string $today, ?int $limit=10, string|int|null $width='33
 	check_page_security('SA_SUPPTRANSVIEW');
 	$k = 0; //row colour counter
 	$names = $totals = array();
-	$total = 0;
+	$total = 0.0;
 	while ($myrow = db_fetch($result))
 	{
-		$total += $myrow['total'];
+		$total += (float) $myrow['total'];
 		alt_table_row_color($k);
-		$name = (string)$myrow["supplier_id"]." ".htmlspecialchars_decode($myrow["supp_name"]);
+		$name = (string)$myrow["supplier_id"]." ".htmlspecialchars_decode((string) $myrow["supp_name"]);
 		label_cell($name);
 		amount_cell($myrow['total']);
 		if ($pg != null)
@@ -515,7 +539,8 @@ function supplier_top(?string $today, ?int $limit=10, string|int|null $width='33
 	return array($title, $total);
 }
 
-function stock_top(?string $today, ?int $limit=10, string|int|null $width='33', ?int $type=0, ?Chart &$pg=null): array
+/** @return array{0: string, 1: float, 2: float, 3: float} */
+function stock_top(?string $today, int $limit=10, string|int|null $width='33', int $type=0, ?Chart &$pg=null): array
 {
 	if ($type == 2)
 		$sec = 'SA_ASSETSANALYTIC';
@@ -566,14 +591,14 @@ function stock_top(?string $today, ?int $limit=10, string|int|null $width='33', 
 	$sales = $cost = $res = 0.0;
 	while ($myrow = db_fetch($result))
 	{
-		$sales += $myrow['total'];
+		$sales += (float) $myrow['total'];
 		if ($type == 0)
 		{
-			$cost += $myrow['costs'];
+			$cost += (float) $myrow['costs'];
 			$res += (((float)$myrow['total'] - (float)$myrow['costs']));
 		}
 		alt_table_row_color($k);
-		$name = $myrow["description"];
+		$name = (string) $myrow["description"];
 		label_cell($name);
 		amount_cell($myrow['total']);
 		if ($type == 0)
@@ -601,14 +626,14 @@ function stock_top(?string $today, ?int $limit=10, string|int|null $width='33', 
 		if ($type == 0)
 		{
 			$pg->addSerie(_('Costs'), $costs);
-			$pg->addSerie(_('Results'), $results, 8);
+			$pg->addSerie(_('Results'), $results, 'spline');
 		}
 	}
 	end_table(2);
 	return array($title, $sales, $cost, $res);
 }
 
-function dimension_top(?string $today, ?int $limit=10, string|int|null $width='33', ?Chart &$pg=null): string
+function dimension_top(?string $today, int $limit=10, string|int|null $width='33', ?Chart &$pg=null): string
 {
 	$begin = date2sql(begin_fiscalyear());
 	$today = date2sql($today);
@@ -703,17 +728,17 @@ function gl_top(?string $today, string|int|null $width='33', ?Chart &$pg=null): 
 	return $title;
 }
 
-function gl_week_performance(?string $today, string|int|null $width="33", ?int $weeks=4): void
+function gl_week_performance(?string $today, string|int|null $width="33", int $weeks=4): void
 {
 	
 	$pg = new Chart('bar', 'g3');
 	if (isset($_POST['select_g3']))
 		$pg->type = (int) post_scalar('select_g3');
 	if (isset($_POST['per_g3']))
-		$weeks = (int) $_POST['per_g3'];
+		$weeks = is_array($_POST['per_g3']) ? $weeks : (int) $_POST['per_g3'];
 	$begin = date2sql(begin_fiscalyear());
 	$today1 = date2sql($today);
-	$sep = sysprefs()->dateseps[user_date_sep()];
+	$sep = sysprefs()->dateseps[(int) user_date_sep()];
 	$sql = "SELECT week_name, sales, costs 
 		FROM(SELECT DATE_FORMAT(tran_date, '%X{$sep}%V') AS week_name, 
 			SUM(IF(c.ctype = 4, amount * -1, 0)) AS sales, 
@@ -742,16 +767,16 @@ function gl_week_performance(?string $today, string|int|null $width="33", ?int $
 	source_graphic($today, $title, _("Week"), $pg, _("Weeks"), $weeks);
 }
 
-function gl_month_performance(?string $today, string|int|null $width="33", ?int $months=5): void
+function gl_month_performance(?string $today, string|int|null $width="33", int $months=5): void
 {
 	$pg = new Chart('bar', 'g4');
 	if (isset($_POST['select_g4']))
 		$pg->type = (int) post_scalar('select_g4');
 	if (isset($_POST['per_g4']))
-		$months = (int) $_POST['per_g4'];
+		$months = is_array($_POST['per_g4']) ? $months : (int) $_POST['per_g4'];
 	$begin = date2sql(begin_fiscalyear());
 	$today1 = date2sql($today);
-	$sep = sysprefs()->dateseps[user_date_sep()];
+	$sep = sysprefs()->dateseps[(int) user_date_sep()];
 	$sql = "SELECT month_name, sales, costs 
 		FROM(SELECT DATE_FORMAT(tran_date, '%Y{$sep}%m') AS month_name, 
 			SUM(IF(c.ctype = 4, amount * -1, 0)) AS sales, 
@@ -786,7 +811,7 @@ function customer_aging(?string $today, string|int|null $width="33"): float
 	if (isset($_POST['select_c3']))
 		$pg->type = (int) post_scalar('select_c3');
 	$today1 = date2sql($today);
-	$past1 = get_company_pref('past_due_days');
+	$past1 = (int) get_company_pref('past_due_days');
 	$past2 = 2 * $past1;
 
 	$sign = "IF(`type` IN(".implode(',',  array(ST_CUSTCREDIT,ST_CUSTPAYMENT,ST_BANKDEPOSIT))."), -1, 1)";
@@ -806,7 +831,7 @@ function customer_aging(?string $today, string|int|null $width="33"): float
 			WHERE
 					debtor.payment_terms = terms.terms_indicator
 	 			AND debtor.credit_status = credit_status.id";
-		$sql .= " AND ABS(IF(trans.prep_amount, trans.prep_amount, ABS(trans.ov_amount) + trans.ov_gst + trans.ov_freight + trans.ov_freight_tax + trans.ov_discount) - trans.alloc) > ".FLOAT_COMP_DELTA;
+		$sql .= " AND ABS(IF(trans.prep_amount, trans.prep_amount, ABS(trans.ov_amount) + trans.ov_gst + trans.ov_freight + trans.ov_freight_tax + trans.ov_discount) - trans.alloc) > ".(string) FLOAT_COMP_DELTA;
     $result = db_select($sql,"The customer details could not be retrieved");
 
     $row = row_or_empty(db_fetch($result));
@@ -839,7 +864,7 @@ function customer_balance(?string $today)
     $sql = "SELECT Sum($value) AS Balance
 			FROM ".TB_PREF."debtors_master debtor
 				 LEFT JOIN ".TB_PREF."debtor_trans trans ON trans.tran_date <= '$today' AND debtor.debtor_no = trans.debtor_no AND trans.type <> ".ST_CUSTDELIVERY."
-			WHERE ABS(trans.ov_amount + trans.ov_gst + trans.ov_freight + trans.ov_freight_tax + trans.ov_discount) - trans.alloc > ".FLOAT_COMP_DELTA;
+			WHERE ABS(trans.ov_amount + trans.ov_gst + trans.ov_freight + trans.ov_freight_tax + trans.ov_discount) - trans.alloc > ".(string) FLOAT_COMP_DELTA;
     $result = db_select($sql,"The customer details could not be retrieved");
     $row = row_or_empty(db_fetch($result));
 	return $row[0] ?? '0';
@@ -851,7 +876,7 @@ function supplier_aging(?string $today, string|int|null $width="33"): float
 	if (isset($_POST['select_s3']))
 		$pg->type = (int) post_scalar('select_s3');
 	$today1 = date2sql($today);
-	$past1 = get_company_pref('past_due_days');
+	$past1 = (int) get_company_pref('past_due_days');
 	$past2 = 2 * $past1;
 	// removed - debtor_trans.alloc from all summations
    	$value = "IF (trans.type=".ST_SUPPINVOICE." OR trans.type=".ST_BANKDEPOSIT.", 
@@ -864,8 +889,8 @@ function supplier_aging(?string $today, string|int|null $width="33"): float
 				Sum(IF ((TO_DAYS('$today1') - TO_DAYS($due)) > $past2,$value,0)) AS Overdue2
 			FROM ".TB_PREF."suppliers supp
 			 LEFT JOIN ".TB_PREF."supp_trans trans ON supp.supplier_id = trans.supplier_id AND trans.tran_date <= '$today1'
-			AND ABS(trans.ov_amount + trans.ov_gst + trans.ov_discount) > ".FLOAT_COMP_DELTA."
-			AND ABS(trans.ov_amount + trans.ov_gst + trans.ov_discount) - trans.alloc > ".FLOAT_COMP_DELTA;
+			AND ABS(trans.ov_amount + trans.ov_gst + trans.ov_discount) > ".(string) FLOAT_COMP_DELTA."
+			AND ABS(trans.ov_amount + trans.ov_gst + trans.ov_discount) - trans.alloc > ".(string) FLOAT_COMP_DELTA;
     $result = db_select($sql,"The supplier details could not be retrieved");
 
     $row = row_or_empty(db_fetch($result));
@@ -898,8 +923,8 @@ function supplier_balance(?string $today)
 			FROM ".TB_PREF."suppliers supplier, ".TB_PREF."supp_trans trans
 				WHERE supplier.supplier_id = trans.supplier_id
 			AND trans.tran_date <= '$today'
-			AND ABS(trans.ov_amount + trans.ov_gst + trans.ov_discount) > ".FLOAT_COMP_DELTA."
-			AND ABS(trans.ov_amount + trans.ov_gst + trans.ov_discount) - trans.alloc > ".FLOAT_COMP_DELTA;
+			AND ABS(trans.ov_amount + trans.ov_gst + trans.ov_discount) > ".(string) FLOAT_COMP_DELTA."
+			AND ABS(trans.ov_amount + trans.ov_gst + trans.ov_discount) - trans.alloc > ".(string) FLOAT_COMP_DELTA;
     $result = db_select($sql,"The supplier details could not be retrieved");
     $row = row_or_empty(db_fetch($result));
 	return $row[0] ?? '0';
@@ -913,7 +938,7 @@ function cash_flow(?string $today): void
 	if (isset($_POST['select_g5']))
 		$pg->type = (int) post_scalar('select_g5');
 	if (isset($_POST['per_g5']))
-		$months = (int) $_POST['per_g5'];
+		$months = is_array($_POST['per_g5']) ? $months : (int) $_POST['per_g5'];
 	if (!(bool)is_date_in_fiscalyear($today))
 		$today = end_fiscalyear();
 	$today1 = begin_month($today);
@@ -923,6 +948,8 @@ function cash_flow(?string $today): void
 		list($yr, $mo, $da) = jalali_to_gregorian($yr, $mo, $da);
 	elseif ($date_system == 2)
 		list($yr, $mo, $da) = islamic_to_gregorian($yr, $mo, $da);
+	$mo = (int) $mo;
+	$yr = (int) $yr;
 
 	$date = array();
 
@@ -930,10 +957,10 @@ function cash_flow(?string $today): void
 		$date[$i] = date('Y-m-d',mktime(0,0,0,$mo + $i,1,$yr));
 
 	$result = get_bank_accounts();
-	$total =  array_fill(0, $months, 0);
-	$balance = array_fill(0, $months, 0);
+	$total =  array_fill(0, $months, 0.0);
+	$balance = array_fill(0, $months, 0.0);
 	while ($account=db_fetch($result))
-	{ 
+	{
 		$sql = "SELECT";
 		for ($i = 0; $i < $months; $i++)
 			$sql .= " SUM(CASE WHEN trans_date < '$date[$i]' THEN amount ELSE 0 END) AS per0".($i+1).",";
@@ -944,7 +971,7 @@ function cash_flow(?string $today): void
 		$bal = row_or_empty(db_fetch($res));
 		$is_home = is_company_currency($account['bank_curr_code']);
 		for ($i = 1; $i <= $months; $i++)
-			$balance[$i - 1] = $bal['per0'.$i];
+			$balance[$i - 1] = (float) $bal['per0'.$i];
 		for ($i = 0; $i < $months; $i++)
 		{
 			if (!$is_home)
@@ -952,7 +979,7 @@ function cash_flow(?string $today): void
 			$total[$i] += $balance[$i];
 		}
 	}
-	$sep = sysprefs()->dateseps[user_date_sep()];
+	$sep = sysprefs()->dateseps[(int) user_date_sep()];
 	for ($i = 0; $i < $months; $i++)
 	{
 		$y = substr($date[$i], 0, 4);
@@ -967,7 +994,7 @@ function cash_flow(?string $today): void
 	source_graphic($today, $title, _("Month"), $pg, _("Months"), $months);
 }
 
-function source_graphic(string|int|float|bool|null $today, string|int|float|bool|null $title, ?string $x_axis, ?Chart $pg, ?string $per = '', string|int|bool|array|null $num = false): void
+function source_graphic(string|int|float|bool|null $today, string|int|float|bool|null $title, ?string $x_axis, Chart $pg, ?string $per = '', string|int|bool|array|null $num = false): void
 {
 	if ((bool)($per ?? null))
 		div_start($pg->id);
@@ -1009,7 +1036,7 @@ function customer_trans(?string $today): void
 			".TB_PREF."cust_branch as branch
 		WHERE debtor.debtor_no = trans.debtor_no AND trans.branch_code = branch.branch_code
 			AND trans.type = ".ST_SALESINVOICE." AND (trans.ov_amount + trans.ov_gst + trans.ov_freight 
-			+ trans.ov_freight_tax + trans.ov_discount - trans.alloc) > ".FLOAT_COMP_DELTA." 
+			+ trans.ov_freight_tax + trans.ov_discount - trans.alloc) > ".(string) FLOAT_COMP_DELTA." 
 			AND DATEDIFF('$today', trans.due_date) > 0 ORDER BY days DESC";
 	$result = db_select($sql);
 	$title = db_num_rows($result) . _(" overdue Sales Invoices");
@@ -1038,14 +1065,15 @@ function customer_trans(?string $today): void
 	end_table(2);
 }
 
-function calculate_next_invoice(?array $myrow): string
+/** @param array<array-key, mixed> $myrow */
+function calculate_next_invoice(array $myrow): string
 {
 	if ($myrow["last_sent"] == '0000-00-00')
-		$next = sql2date($myrow["begin"]);
+		$next = sql2date((string) $myrow["begin"]);
 	else
-		$next = sql2date($myrow["last_sent"]);
-	$next = add_months($next, $myrow['monthly']);
-	$next = add_days($next, $myrow['days']);
+		$next = sql2date((string) $myrow["last_sent"]);
+	$next = add_months($next, (string) $myrow['monthly']);
+	$next = add_days($next, (string) $myrow['days']);
 	return add_days($next,-1);
 }
 
@@ -1094,7 +1122,7 @@ function supplier_trans(?string $today): void
 		FROM ".TB_PREF."supp_trans as trans, ".TB_PREF."suppliers as s 
 		WHERE s.supplier_id = trans.supplier_id
 			AND trans.type = ".ST_SUPPINVOICE." AND (ABS(trans.ov_amount + trans.ov_gst + 
-				trans.ov_discount) - trans.alloc) > ".FLOAT_COMP_DELTA." ORDER BY days DESC";
+				trans.ov_discount) - trans.alloc) > ".(string) FLOAT_COMP_DELTA." ORDER BY days DESC";
 	$result = db_select($sql);
 	$title = db_num_rows($result) . _(" unpaid Purchase Invoices");
 	display_title($title);
@@ -1237,7 +1265,7 @@ function get_num_overdue_sales()
 	$sql = "SELECT COUNT(trans.trans_no) 	
 		FROM ".TB_PREF."debtor_trans as trans
 		WHERE trans.type = ".ST_SALESINVOICE." AND (trans.ov_amount + trans.ov_gst + trans.ov_freight 
-			+ trans.ov_freight_tax + trans.ov_discount - trans.alloc) > ".FLOAT_COMP_DELTA." 
+			+ trans.ov_freight_tax + trans.ov_discount - trans.alloc) > ".(string) FLOAT_COMP_DELTA." 
 			AND DATEDIFF('$today', trans.due_date) > 0";
 	$result = db_select($sql);
     $row = row_or_empty(db_fetch($result));
@@ -1285,7 +1313,7 @@ function get_num_overdue_purch()
 {
 	$today = date2sql(calc_today());
 
-	$sql = "SELECT COUNT(*) FROM ".TB_PREF."supp_trans WHERE (ov_amount+ov_discount+ov_gst - alloc) > ".FLOAT_COMP_DELTA." AND DATEDIFF('$today', due_date) > 0";
+	$sql = "SELECT COUNT(*) FROM ".TB_PREF."supp_trans WHERE (ov_amount+ov_discount+ov_gst - alloc) > ".(string) FLOAT_COMP_DELTA." AND DATEDIFF('$today', due_date) > 0";
 	$result = db_select($sql, "Fail in count purch invoices");
     $row = row_or_empty(db_fetch($result));
 	return $row[0] ?? '0';
@@ -1471,6 +1499,7 @@ function get_dim_closed()
 	return $row[0] ?? '0';
 }
 
+/** @return array{0: float, 1: float} */
 function get_dim_total(): array
 {
 	$begin = date2sql(begin_fiscalyear());
@@ -1487,9 +1516,9 @@ function get_dim_total(): array
 	$result = db_select($sql, "Transactions could not be calculated");
 	while ($row = db_fetch($result))
 	{
-		$bal += $row['balance'];
-		$res += $row['result'];
-	}	
+		$bal += (float) $row['balance'];
+		$res += (float) $row['result'];
+	}
 	return array(round($bal), round($res));	
 }
 	
@@ -1502,7 +1531,7 @@ function get_today_deposits(?string $today)
 	$sql="SELECT SUM(gl.amount) FROM ".TB_PREF."gl_trans gl, ".TB_PREF."bank_accounts ba 
 		WHERE gl.account = ba.account_code AND gl.tran_date = '$today' AND gl.amount > 0.0";
 	$result = db_query($sql, "could not retrieve today deposits");
-	if ($result == false)
+	if (!($result instanceof mysqli_result))
 		return 0;
 	else
 	{
@@ -1517,10 +1546,10 @@ function get_today_deposits(?string $today)
 function get_today_payments(?string $today)
 {
 	$today= date2sql($today);
-	$sql="SELECT SUM(gl.amount) FROM ".TB_PREF."gl_trans gl, ".TB_PREF."bank_accounts ba 
+	$sql="SELECT SUM(gl.amount) FROM ".TB_PREF."gl_trans gl, ".TB_PREF."bank_accounts ba
 		WHERE gl.account = ba.account_code AND gl.tran_date = '$today' AND gl.amount < 0.0";
 	$result = db_query($sql, "could not retrieve today deposits");
-	if ($result == false)
+	if (!($result instanceof mysqli_result))
 		return 0;
 	else
 	{
@@ -1555,19 +1584,19 @@ function get_num_languages(): int
 function get_database_size(): string
 {
 	global $db_connections;
-	$c = user_company();
+	$c = (int) user_company();
 	$dbase = $db_connections[$c]['dbname'];
 	$tb_pref = $db_connections[$c]['tbpref'];
 	$sql = "SHOW TABLE STATUS FROM $dbase";
 	if (!empty($tb_pref))
 		$sql .= " LIKE '{$tb_pref}%'";
 	$result = db_select($sql, "could not get database size");
-    $size = 0;
+    $size = 0.0;
     while ($row = db_fetch($result)) {
-		$size += $row['Data_length'];
-		$size += $row['Index_length'];
+		$size += (float) $row['Data_length'];
+		$size += (float) $row['Index_length'];
     }
-	return number_format2(((float)$size / 1024.0 / 1024.0), 2).' MB';
+	return number_format2($size / 1024.0 / 1024.0, 2).' MB';
 }
 
 function calc_today(): string
