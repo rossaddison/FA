@@ -900,6 +900,21 @@ to their source.
   `$langCode`/`$encoding` with an explicit `ISO-8859-1` fallback before
   either reaches `strtoupper()` or the `GetText` calls.
 
+- **`includes/ui/ui_view.inc` — `display_quick_entries()`.** Decided which
+  GL-posting method to call by checking `$type != QE_SUPPINV`, not by
+  checking the actual class of `$cart` (declared `items_cart|supp_trans`) -
+  calling `$cart->add_gl_item()` (only declared on `items_cart`) whenever
+  `$type` wasn't `QE_SUPPINV`, regardless of what `$cart` actually was.
+  `supp_trans` is a `final class` and has no `add_gl_item()` method at all,
+  so a `supp_trans` cart passed with any other `$type` would fatal with
+  "Call to undefined method supp_trans::add_gl_item()". Every one of this
+  function's four current call sites happens to keep `$cart`'s class and
+  `$type` in sync (the only `supp_trans` caller always passes
+  `QE_SUPPINV`), so this has never actually crashed - but nothing enforces
+  that pairing. Fixed by branching on `$cart instanceof supp_trans`
+  directly instead of `$type`, which cannot pick the wrong method
+  regardless of what `$type` is.
+
 ## Missing feature (implemented, not just guarded)
 
 - **`includes/ui/attachment.inc` — no attachment size limit.** `db_insert()`

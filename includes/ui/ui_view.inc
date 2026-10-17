@@ -45,7 +45,7 @@ function get_supplier_trans_view_str(string|int|float|bool|null $type, string|in
 /** @return null|scalar */
 function get_gl_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $label="", bool $force=false, ?string $class='', ?string $id='')
 {
-	if (!$force && !user_show_gl_info())
+	if (!$force && !(bool) user_show_gl_info())
 		return "";
 
 	$icon = false;
@@ -93,6 +93,8 @@ function get_customer_trans_view_str(string|int|float|bool|null $type, string|in
 		return null;
 
   if(!is_array($trans_no)) $trans_no = array($trans_no);
+  /** @var array<int, string|int|float|bool|null> $trans_no */
+  $trans_no = $trans_no;
 
   $lbl = $label;
   $preview_str = '';
@@ -272,9 +274,12 @@ function check_ui_refresh(?string $name=null): bool
 {
 	$bt = debug_backtrace();
 	if (!(bool)$name)
-		$name = $bt[1]['function'];
-	$old = @$_SESSION['ui_context'][$name];
-	$new = $_SESSION['ui_context'][$name] = $bt[1]['args'];
+		$name = $bt[1]['function'] ?? 'unknown';
+	/** @var array<string, mixed> $ui_context */
+	$ui_context = $_SESSION['ui_context'] ?? array();
+	$old = $ui_context[$name] ?? null;
+	$new = $ui_context[$name] = $bt[1]['args'] ?? array();
+	$_SESSION['ui_context'] = $ui_context;
 	return ($new != $old);
 }
 
@@ -312,7 +317,7 @@ function exchange_rate_display(string|int|float|bool|null $from_currency, string
 			if (!(bool)$rate) {	// retry from remote service
 				$row = row_or_empty(get_currency($currency));
 
- 				if ($row['auto_update']) // autoupdate means use remote service & store exrate on first transaction.
+ 				if ((bool) $row['auto_update']) // autoupdate means use remote service & store exrate on first transaction.
  				{
  					$rate = retrieve_exrate($currency, $date_);
 					if (!$rate)
@@ -371,7 +376,7 @@ function is_voided_display(string|int|float|bool|null $type, string|int|float|bo
 function comments_display_row(string|int|null $type, string|int|float|bool|null $id): void
 {
 	$comments = get_comments($type, $id);
-	if ($comments and db_num_rows($comments))
+	if (db_num_rows($comments))
 	{
 		echo "<tr><td colspan=15>";
     	while ($comment = db_fetch($comments))
@@ -404,7 +409,7 @@ function view_stock_status(string|int|float|bool|null $stock_id, string|int|floa
 	global $path_to_root;
 	$stock_id_attr = html_encode_attribute($stock_id, false, output_encoding());
 	if ((bool)$description)
-		$preview_str = "<a target='_blank' href='$path_to_root/inventory/inquiry/stock_status.php?stock_id=$stock_id_attr&popup=1'".fa_action_attrs('open-window')." >". (user_show_codes()? html_encode($stock_id, false, output_encoding()) . " - ":"") . html_encode($description, false, output_encoding())."</a>";
+		$preview_str = "<a target='_blank' href='$path_to_root/inventory/inquiry/stock_status.php?stock_id=$stock_id_attr&popup=1'".fa_action_attrs('open-window')." >". ((bool) user_show_codes() ? html_encode($stock_id, false, output_encoding()) . " - ":"") . html_encode($description, false, output_encoding())."</a>";
 	else
 		$preview_str = "<a target='_blank' href='$path_to_root/inventory/inquiry/stock_status.php?stock_id=$stock_id_attr&popup=1'".fa_action_attrs('open-window')." >".html_encode($stock_id, false, output_encoding())."</a>";
 	if($echo)
@@ -440,6 +445,8 @@ function display_debit_or_credit_cells(string|int|float|bool|null $value, bool $
 
 function display_customer_trans_tax_details(bool|mysqli_result $tax_items, ?int $columns): void
 {
+	if (!($tax_items instanceof mysqli_result))
+		return;
 
 	$first = true;
     while ($tax_item = db_fetch($tax_items))
@@ -475,12 +482,15 @@ function display_customer_trans_tax_details(bool|mysqli_result $tax_items, ?int 
 
 function display_supp_trans_tax_details(bool|mysqli_result $tax_items, ?int $columns): void
 {
+	if (!($tax_items instanceof mysqli_result))
+		return;
+
     while ($tax_item = db_fetch($tax_items))
     {
      	if (!(bool)$tax_item['amount'])
      		continue;
 
-    	$tax = number_format2(abs($tax_item['amount']),user_price_dec());
+    	$tax = number_format2(abs((float) $tax_item['amount']),user_price_dec());
     	if ((bool)$tax_item['included_in_price'])
         	label_row(_("Included") . " " . (string)$tax_item['tax_type_name'] . " (" . (string)$tax_item['rate'] . "%) "
         		. ": $tax", '', "colspan=$columns align=right", "align=right");
@@ -501,21 +511,24 @@ function display_edit_tax_items(array $taxes, ?int $columns, string|int|float|bo
 
     foreach ($taxes as $taxitem)
 	{
-		$amount = isset($taxitem['Override']) ? $taxitem['Override'] : $taxitem['Value'];
-		if ($taxitem['Value'] != 0){
+		$tax_value = $taxitem['Value'] ?? 0;
+		$tax_type_id = $taxitem['tax_type_id'] ?? '';
+		$tax_type_name = $taxitem['tax_type_name'] ?? '';
+		$amount = isset($taxitem['Override']) ? $taxitem['Override'] : $tax_value;
+		if ($tax_value != 0){
 			if ($editable) {
-				if (!isset($_POST['mantax['.(string)$taxitem['tax_type_id'].']']))
-					$_POST['mantax['.(string)$taxitem['tax_type_id'].']'] = price_format($amount);
+				if (!isset($_POST['mantax['.(string)$tax_type_id.']']))
+					$_POST['mantax['.(string)$tax_type_id.']'] = price_format($amount);
 				start_row();
 				if ((bool)$tax_included) {
 					$colspan = (int) $columns - 1;
-					label_cell(_("Included") . " " . (string)$taxitem['tax_type_name'].":",
+					label_cell(_("Included") . " " . (string)$tax_type_name.":",
 						"colspan={$colspan} align='right'");
-					amount_cells(null, 'mantax['.(string)$taxitem['tax_type_id'].']',
+					amount_cells(null, 'mantax['.(string)$tax_type_id.']',
 						null, "colspan=$columns align=right", '<td></td>', user_price_dec());
 				} else {
-					label_cell($taxitem['tax_type_name'], "colspan=$columns align='right'");
-					amount_cells(null, 'mantax['.(string)$taxitem['tax_type_id'].']',
+					label_cell($tax_type_name, "colspan=$columns align='right'");
+					amount_cells(null, 'mantax['.(string)$tax_type_id.']',
 						null, "colspan=$columns align=right", null, user_price_dec());
 					$total +=  round2($amount, user_price_dec());
 				}
@@ -523,17 +536,17 @@ function display_edit_tax_items(array $taxes, ?int $columns, string|int|float|bo
 					label_cell('', "colspan ='$rightspan'");
 				end_row();
 			} else {
-				$value = number_format2($taxitem['Value'],user_price_dec());
+				$value = number_format2($tax_value,user_price_dec());
 				if ((bool)$tax_included)
 				{
-					label_row(_("Included") . " " . (string)$taxitem['tax_type_name']
+					label_row(_("Included") . " " . (string)$tax_type_name
 						. " " . $value , "", "colspan=$columns align=right", "align=right", $rightspan);
 				}
 				else
 				{
-					label_row($taxitem['tax_type_name'],
+					label_row($tax_type_name,
 						$value, "colspan=$columns align=right", "align=right", $rightspan);
-					$total +=  round2($taxitem['Value'], user_price_dec());
+					$total +=  round2($tax_value, user_price_dec());
 				}
 			}
 		}
@@ -557,7 +570,7 @@ function display_allocations(bool|mysqli_result $alloc_result, string|int|float|
 {
 	global $systypes_array;
 
-	if (!$alloc_result || db_num_rows($alloc_result) == 0)
+	if (!($alloc_result instanceof mysqli_result) || db_num_rows($alloc_result) == 0)
 		return;
 
     display_heading2($title);
@@ -574,7 +587,7 @@ function display_allocations(bool|mysqli_result $alloc_result, string|int|float|
     {
     	alt_table_row_color($k);
 
-    	label_cell($systypes_array[$alloc_row['type']]);
+    	label_cell($systypes_array[(int) $alloc_row['type']]);
     	label_cell(get_trans_view_str($alloc_row['type'],$alloc_row['trans_no']));
     	label_cell(sql2date($alloc_row['tran_date']));
     	$alloc_row['Total'] = round2($alloc_row['Total'], user_price_dec());
@@ -647,6 +660,7 @@ function display_allocations_to(?int $person_type, string|int|float|bool|null $p
  */
 function display_quick_entries(&$cart, string|int|float|bool|null $id, int|float|bool|null $base, ?string $type, string|array|null $descr=''): int
 {
+	$descr = is_array($descr) ? '' : (string) $descr;
 	$bank_amount = 0;
 
 	if (!isset($id) || $id == null || $id == "")
@@ -688,15 +702,15 @@ function display_quick_entries(&$cart, string|int|float|bool|null $id, int|float
 			$qe_amount = is_scalar($qe_amount) ? $qe_amount : 0;
 			$qe_descr = $qe_line['descr'];
 			$qe_descr = is_scalar($qe_descr) ? $qe_descr : '';
-			if ($type != QE_SUPPINV)
-				$cart->add_gl_item($qe_code, $qe_dim1, $qe_dim2, $qe_amount, $qe_descr);
-			else if ($cart instanceof supp_trans)
+			if ($cart instanceof supp_trans)
 			{
 				$acc_name = get_gl_account_name($qe_code);
 				$cart->add_gl_codes_to_trans($qe_code,
 					$acc_name, $qe_dim1,
 					$qe_dim2, $qe_amount, $qe_descr);
 			}
+			else
+				$cart->add_gl_item($qe_code, $qe_dim1, $qe_dim2, $qe_amount, $qe_descr);
 		}
 	}
 	return $bank_amount;
@@ -705,7 +719,7 @@ function display_quick_entries(&$cart, string|int|float|bool|null $id, int|float
 //--------------------------------------------------------------------------------------
 
 /**
- * @return array<array-key, array{code: string|int|float|bool|null, name: string|int|float|bool|null, dim1: string|int|float|bool|null, dim2: string|int|float|bool|null, amount: string|int|float|bool|null, descr: string|int|float|bool|null}>|int
+ * @return array<array-key, array{code: string|int|float|bool|null, name: string|int|float|bool|null, dim1: string|int|float|bool|null, dim2: string|int|float|bool|null, amount: string|int|float|bool|null, descr: string|int|float|bool|null}>|-1|0
  */
 function quickentry_calculate(int|float|bool|null $base, string|int|float|bool|null $id, string|int|float|bool|null $taxgroup=null, string|int|float|bool|null $date=null): array|int
 {
@@ -781,14 +795,14 @@ function quickentry_calculate(int|float|bool|null $base, string|int|float|bool|n
 					$part = (float) $qe_line['amount']; $base -= $part;
 					break;
 				case "%":	// store acc*amount% to GL account
-					$part = round2($base * (float) $qe_line['amount'] / 100, user_price_dec());
+					$part = round2($base * (float) $qe_line['amount'] / 100.0, user_price_dec());
 					break;
 				case "%+":	// ditto & increase base amount
-					$part = round2($base * (float) $qe_line['amount'] / 100, user_price_dec());
+					$part = round2($base * (float) $qe_line['amount'] / 100.0, user_price_dec());
 					$base += $part;
 					break;
 				case "%-":	// ditto & reduce base amount
-					$part = round2($base * (float) $qe_line['amount'] / 100, user_price_dec());
+					$part = round2($base * (float) $qe_line['amount'] / 100.0, user_price_dec());
 					$base -= $part;
 					break;
 				case "t": // post taxes calculated on base amount
@@ -796,14 +810,14 @@ function quickentry_calculate(int|float|bool|null $base, string|int|float|bool|n
 				case "t-": // ditto & reduce base amount
 					if ($first)
 					{
-						$taxbase = $base/((float)$totrate+100.0);
+						$taxbase = $base/($totrate+100.0);
 						$first = false;
 					}
 
 					if (substr((string) $qe_line['action'],0,1) != 'T')
 						$part = $taxbase;
 					else
-						$part = $base/100;
+						$part = $base/100.0;
 
 					$item_tax = row_or_empty(get_tax_type($qe_line['dest_id']));
 					//if ($type == QE_SUPPINV && substr($qe_line['action'],0,1) != 'T')
@@ -812,11 +826,11 @@ function quickentry_calculate(int|float|bool|null $base, string|int|float|bool|n
 						$rates = 0.0;
 						$res = get_tax_group_rates($taxgroup);
 						while ($row = db_fetch($res))
-							$rates += $row['rate'];
+							$rates += (float) ($row['rate'] ?? 0);
 						if ($rates == 0)
 							continue 2;
 					}
-					$tax = round2((float)$part * (float)$item_tax['rate'],  user_price_dec());
+					$tax = round2($part * (float)$item_tax['rate'],  user_price_dec());
 					if ($tax == 0) continue 2;
 					$gl_code = ($type == QE_DEPOSIT || ($type == QE_JOURNAL && $base < 0)) 
 						? $item_tax['sales_gl_code'] : $item_tax['purchasing_gl_code'];
@@ -850,7 +864,7 @@ function quickentry_calculate(int|float|bool|null $base, string|int|float|bool|n
 /** @psalm-pure */
 function _number_to_words(int|float|null $number): string
 {
-    $number = (float) $number;
+    $number = abs((float) $number);
     $Bn = floor($number / 1000000000.0); /* Billions (giga) */
     $number -= ($Bn * 1000000000.0); 
     $Gn = floor($number / 1000000.0);  /* Millions (mega) */ 
@@ -860,7 +874,7 @@ function _number_to_words(int|float|null $number): string
     $Hn = floor($number / 100.0);      /* Hundreds (hecto) */ 
     $number -= $Hn * 100.0; 
     $Dn = floor($number / 10.0);       /* Tens (deca) */ 
-    $n = $number % 10;               /* Ones */
+    $n = (int) $number % 10;               /* Ones */
 
     $res = ""; 
 
@@ -884,13 +898,13 @@ function _number_to_words(int|float|null $number): string
     { 
         if (!empty($res)) 
             $res .= " and "; 
-        if ($Dn < 2) 
-            $res .= $ones[$Dn * 10.0 + $n]; 
-        else 
-        { 
-            $res .= $tens[$Dn]; 
-            if ($n) 
-                $res .= "-" . $ones[$n]; 
+        if ($Dn < 2)
+            $res .= $ones[(int) ($Dn * 10.0 + (float) $n)];
+        else
+        {
+            $res .= $tens[(int) $Dn];
+            if ($n)
+                $res .= "-" . $ones[abs($n) % 10];
         } 
     } 
 
@@ -899,12 +913,12 @@ function _number_to_words(int|float|null $number): string
     return $res; 
 } 
 
-function price_in_words(string|int|float|bool|null $amount, mixed $document=0)
+function price_in_words(string|int|float|bool|null $amount, mixed $document=0): string
 {
 	// use local price_in_words() if the hook is defined
 	$price = hook_price_in_words($amount, $document);
-	if ($price) 
-		return $price;
+	if ($price)
+		return (string) $price;
 
 	// Only usefor Remittance and Receipts as default
 	if (!($document == ST_SUPPAYMENT || $document == ST_CUSTPAYMENT || $document == ST_CHEQUE))
@@ -912,7 +926,7 @@ function price_in_words(string|int|float|bool|null $amount, mixed $document=0)
 	if ($amount < 0 || $amount > 999999999999)
 		return "";
 	$amount = (float) $amount;
-	$dec = user_price_dec();
+	$dec = (int) user_price_dec();
 	if ($dec > 0)
 	{
 		$divisor = pow(10, $dec);
@@ -1050,7 +1064,7 @@ function get_js_date_picker(): string
 	$date_system = sysprefs()->date_system;
 	$dateseps = sysprefs()->dateseps;
 	$how = user_date_format();				// 0 = us/ca, 1 = eu, au, nz, 2 = jp, sw
-	$sep = $dateseps[user_date_sep()];		// date separator
+	$sep = $dateseps[(int) user_date_sep()];		// date separator
 	$wstart = (($date_system == 1 || $date_system == 2 || $date_system == 3) ? 6 : ($how == 0 || $how == 3 ? 0 : 1));	// weekstart (sun = 0, mon = 1)
 	$months = array(_("January"),_("February"),_("March"),_("April"),_("May"),_("June"),_("July"),_("August"),_("September"),_("October"),_("November"),_("December"));
 	$wdays = array(_("Su"),_("Mo"),_("Tu"),_("We"),_("Th"),_("Fr"),_("Sa"));
@@ -1213,7 +1227,7 @@ function CC() {
       Math.floor(((epyear * 682) - 110) / 2816) + (epyear - 1) * 365 +
       Math.floor(epbase / 2820) * 1029983 + (1948320.5 - 1);
 ";
-	elseif ($date_system == 2)
+	else
 		$js .= "
 	var t;
 	t = Math.floor((11 * year + 3) / 30) + 354 * year + 30 * month -
@@ -1589,13 +1603,14 @@ function payment_link(string|int|float|bool|null $name, array $options): string|
 {
 	global $payment_services;
 
+	/** @var array<string, string> $payment_services */
 	$name = (string) $name;
-	$link = @$payment_services[$name];
+	$link = $payment_services[$name] ?? null;
 
-	if (!$link) return null;
+	if ($link === null || $link === '') return null;
 
 	$patterns = array();
-	foreach ($options as $id => $option)
+	foreach (array_keys($options) as $id)
 		$patterns['<'.$id.'>'] = urlencode((string) $options[$id]);
 
 	// Handle XUMM and XRPL style payment services that require a bank account lookup
@@ -1659,11 +1674,11 @@ function payment_link(string|int|float|bool|null $name, array $options): string|
 			if ($exchange_rate == 0.0) $exchange_rate = 1.0;
 
 			// Divide the amount by the exchange rate for XRP
-			$options['amount'] /= $exchange_rate;
+			$options['amount'] = ((float) ($options['amount'] ?? 0)) / $exchange_rate;
 
 			// Round/format amount to 2 decimal places for XUMM XRP links
 			// Use dot as decimal separator and ensure two digits after decimal
-			$options['amount'] = number_format((float)$options['amount'], 2, '.', '');
+			$options['amount'] = number_format($options['amount'], 2, '.', '');
 		}
         // For XRPL USD links, use amount as is (no conversion)
         
@@ -1716,10 +1731,10 @@ function company_logo_on_view(): void
 
 	$logo = company_path() . "/images/" . (string)sysprefs()->prefs['coy_logo'];
 	$nl = 1;
-	if (!empty(sysprefs()->prefs['company_logo_report']) && sysprefs()->prefs['coy_logo'] != '' && file_exists($logo))
+	$size = getimagesize($logo);
+	if (!empty(sysprefs()->prefs['company_logo_report']) && sysprefs()->prefs['coy_logo'] != '' && file_exists($logo) && $size !== false)
 	{
-		$size = getimagesize($logo);
-		$height = $size[0] > 150 ? $size[1] * 150 / $size[0] : 30; 
+		$height = $size[0] > 150 ? $size[1] * 150 / $size[0] : 30;
 		$text = "<img src='$logo' height=$height>";
 	}
 	else
