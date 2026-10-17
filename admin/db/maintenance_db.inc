@@ -350,6 +350,8 @@ function db_import(string|int|float|bool|null $filename, array $connection, stri
 	db_query("SET foreign_key_checks=0");
 	db_query("SET sql_mode=''");
 
+	/** @var mysqli $db */
+	$db = $db;
 	if (is_scalar($connection['collation'] ?? null))
 		db_set_collation($db, $connection['collation'] ?? null);
 
@@ -458,6 +460,8 @@ function db_import(string|int|float|bool|null $filename, array $connection, stri
 			$encoding = 'latin1'; // standard encoding on mysql client
 	}
 
+	/** @var mysqli $db */
+	$db = $db;
 	db_set_charset($db, $encoding);
 
 /*/	{ 	// for debugging purposes
@@ -514,6 +518,8 @@ function db_import(string|int|float|bool|null $filename, array $connection, stri
 	db_query("SET foreign_key_checks=1");
 	if ($delimiter != ';') db_query("delimiter ;"); // just for any case
 
+	/** @var mysqli $db */
+	$db = $db;
 	db_set_charset($db, $old_encoding); // restore connection encoding
 
 	if (count($sql_errors)) {

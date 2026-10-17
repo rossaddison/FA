@@ -27,6 +27,7 @@
         <var name="Refs" type="references"/>
         <var name="systypes_array" type="array&lt;int, string&gt;"/>
         <var name="db" type="mysqli"/>
+        <var name="sql_queries" type="string"/>
         <var name="_POST" type="array&lt;string, string|int|float|bool|null|array&lt;array-key, string|int|float|bool|null|array&lt;array-key, string|int|float|bool|null&gt;&gt;&gt;"/>
         <var name="selected_id" type="string|int|float|bool|array&lt;array-key, mixed&gt;|null"/>
         <var name="Mode" type="string"/>

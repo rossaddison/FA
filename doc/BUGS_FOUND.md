@@ -928,6 +928,19 @@ to their source.
   attachments) - not merely a `strict_types` coercion edge case. Added an
   `is_array($mod)` guard before the call.
 
+- **`includes/db/connect_db_mysqli.inc` — `db_set_charset()`.** Declared
+  `$db` as its own first parameter, then immediately shadowed it with
+  `global $db;` inside the function body - silently discarding whatever
+  connection the caller explicitly passed in and always operating on the
+  global connection instead. Currently harmless only because both of this
+  function's two real call sites (`admin/db/maintenance_db.inc`) happen to
+  pass the global `$db` right back to it; a future caller passing a
+  genuinely different connection (the whole reason this function takes
+  `$db` as a parameter rather than reading the global itself, like its
+  sibling `db_set_encoding()` does) would have that argument silently
+  ignored. Removed the shadowing `global` statement so the parameter is
+  actually used.
+
 ## Missing feature (implemented, not just guarded)
 
 - **`includes/ui/attachment.inc` — no attachment size limit.** `db_insert()`

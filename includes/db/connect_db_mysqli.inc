@@ -28,11 +28,14 @@ function set_global_connection(string|int|float|bool|null $company=-1): mysqli|f
 
 	session_obj('wa_current_user')->cur_con = $company;
 
-	$connection = $db_connections[$company];
+	$connection = $db_connections[(int) $company];
 
 	$db = mysqli_connect($connection["host"], $connection["dbuser"], $connection["dbpassword"], "",
 		(bool)($connection["port"] ?? null) ? (int) $connection["port"] : 3306); // default port in mysql is 3306
-		
+	if (!$db instanceof mysqli) {
+		throw new RuntimeException('set_global_connection(): could not connect to the database for company ' . (string) $company);
+	}
+
 	mysqli_select_db($db, $connection["dbname"]);
 	///// From mysqli release 5.6.6 the sql_mode is no longer empty as it was prior to
 	///// this release. Just for safety we make it empty for all 5.6 release and higher.
@@ -52,7 +55,7 @@ function db_query(string $sql, ?string $err_msg=null): mysqli_result|bool
 	global $db, $sql_queries, $db_connections, $db_last_inserted_id;
 
 	// set current db prefix
-	$comp = isset(session_obj('wa_current_user')->cur_con) ? session_obj('wa_current_user')->cur_con : 0;
+	$comp = isset(session_obj('wa_current_user')->cur_con) ? (int) session_obj('wa_current_user')->cur_con : 0;
 	$cur_prefix = @$db_connections[$comp]['tbpref'];
 	$sql = str_replace(TB_PREF, $cur_prefix, $sql);
 
@@ -75,7 +78,7 @@ function db_query(string $sql, ?string $err_msg=null): mysqli_result|bool
 
 	db_profile($sql);
 
-	if(sysprefs()->sql_trail) {
+	if((bool) sysprefs()->sql_trail) {
 		$db_last_inserted_id = mysqli_insert_id($db);	// preserve in case trail insert is done
 		if (sysprefs()->select_trail || (strstr($sql, 'SELECT') === false)) {
 			mysqli_query($db, "INSERT INTO ".$cur_prefix."sql_trail
@@ -88,7 +91,7 @@ function db_query(string $sql, ?string $err_msg=null): mysqli_result|bool
 	if ($err_msg != null || sysprefs()->go_debug) {
 		$exit = $err_msg != null;
 		if (function_exists('xdebug_call_file'))
-			$err_msg = '<br>At file '.xdebug_call_file().':'.xdebug_call_line().':<br>'.$err_msg;
+			$err_msg = '<br>At file '.xdebug_call_file().':'.xdebug_call_line().':<br>'.(string) $err_msg;
 		check_db_error($err_msg, $sql, $exit);
 	}
 	return $result;
@@ -156,14 +159,14 @@ function db_fetch(mysqli_result $result): array|false
 }
 
 /** @psalm-pure */
-function db_seek(&$result,mixed $record): bool
+function db_seek(mysqli_result &$result, int $record): bool
 {
 	return mysqli_data_seek($result, $record);
 }
 
 function db_free_result(bool|mysqli_result $result): void
 {
-	if ($result)
+	if ($result instanceof mysqli_result)
 		mysqli_free_result($result);
 }
 
@@ -223,7 +226,7 @@ function db_insert_id(): int|string
 {
 	global $db_last_inserted_id, $db;
 
-	return sysprefs()->sql_trail ? $db_last_inserted_id : mysqli_insert_id($db);
+	return (bool) sysprefs()->sql_trail ? $db_last_inserted_id : mysqli_insert_id($db);
 }
 
 function db_num_affected_rows(): int|string
@@ -235,11 +238,11 @@ function db_num_affected_rows(): int|string
 /** @psalm-pure */
 function db_field_name(mysqli_result $result, string|int|float|bool|null $n): string
 {
-    $fieldinfo = mysqli_fetch_field_direct($result, $n);
-    return $fieldinfo->name;
+    $fieldinfo = mysqli_fetch_field_direct($result, (int) $n);
+    return $fieldinfo === false ? '' : $fieldinfo->name;
 }
 
-function db_set_collation(mixed $db, string|int|float|bool|null $fa_collation): bool|mysqli_result
+function db_set_collation(mysqli $db, string|int|float|bool|null $fa_collation): bool|mysqli_result
 {
 	return mysqli_query($db, "ALTER DATABASE COLLATE ".get_mysql_collation($fa_collation));
 }
@@ -248,22 +251,33 @@ function db_set_collation(mixed $db, string|int|float|bool|null $fa_collation): 
 	Create database for FA company. If database already exists,
 	just set collation to be sure nothing weird will happen later.
 */
-function db_create_db(mixed $connection): int|mysqli|false
+/** @param array<string, mixed> $connection */
+function db_create_db(array $connection): int|mysqli|false
 {
 	global $db;
 
-	$db = mysqli_connect($connection["host"], $connection["dbuser"], $connection["dbpassword"], "",
-		!empty($connection["port"]) ? $connection["port"] : 3306); // default port in mysql is 3306
+	$host = $connection["host"] === null ? null : (string) $connection["host"];
+	$dbuser = $connection["dbuser"] === null ? null : (string) $connection["dbuser"];
+	$dbpassword = $connection["dbpassword"] === null ? null : (string) $connection["dbpassword"];
+	$dbname = (string) $connection["dbname"];
+	/** @var string|int|float|bool|null $collation */
+	$collation = is_array($connection["collation"] ?? null) ? null : ($connection["collation"] ?? null);
 
-	if (!mysqli_select_db($db, $connection["dbname"]))
+	$db = mysqli_connect($host, $dbuser, $dbpassword, "",
+		!empty($connection["port"]) ? (int) $connection["port"] : 3306); // default port in mysql is 3306
+	if (!$db instanceof mysqli) {
+		return false;
+	}
+
+	if (!mysqli_select_db($db, $dbname))
 	{
-		$sql = "CREATE DATABASE IF NOT EXISTS `" . str_replace('`', '``', (string)$connection["dbname"]) . "`"
-			. " DEFAULT COLLATE '" . get_mysql_collation($connection["collation"]) . "'";
+		$sql = "CREATE DATABASE IF NOT EXISTS `" . str_replace('`', '``', $dbname) . "`"
+			. " DEFAULT COLLATE '" . get_mysql_collation($collation) . "'";
 
-		if (!mysqli_query($db, $sql) || !mysqli_select_db($db, $connection["dbname"]))
+		if (!mysqli_query($db, $sql) || !mysqli_select_db($db, $dbname))
 			return 0;
 	} else {
-		if (!db_set_collation($db, $connection["collation"]))
+		if (!db_set_collation($db, $collation))
 		{
 			return 0;
 		}
@@ -271,12 +285,13 @@ function db_create_db(mixed $connection): int|mysqli|false
 	return $db;
 }
 
-function db_drop_db(mixed $connection): bool|mysqli_result
+/** @param array<string, string> $connection */
+function db_drop_db(array $connection): bool|mysqli_result
 {
+	global $db;
 
 	if ($connection["tbpref"] == "")
 	{
-		global $db;
 		$sql = "DROP DATABASE IF EXISTS `" . str_replace('`', '``', (string)$connection["dbname"]) . "`";
 		return mysqli_query($db, $sql);
 	}
@@ -289,7 +304,7 @@ function db_drop_db(mixed $connection): bool|mysqli_result
         // get table structures
 		foreach ($all_tables as $table)
 		{
-			if (strpos($table['Name'], $connection["tbpref"]) === 0)
+			if (strpos((string) $table['Name'], $connection["tbpref"]) === 0)
 				db_query("DROP TABLE `".(string)$table['Name'] . "`");
 		}
 		//deleting the tables, how??
@@ -297,11 +312,11 @@ function db_drop_db(mixed $connection): bool|mysqli_result
 	}
 }
 
-function db_close(string|int|float|bool|null $dbase = null): bool
+function db_close(?mysqli $dbase = null): bool
 {
 	global $db;
-	
-	if (!(bool)$dbase)
+
+	if ($dbase === null)
 		$dbase = $db;
 	return mysqli_close($dbase);
 }
@@ -312,11 +327,11 @@ function db_extension_exists(): bool
 	return function_exists('mysqli_connect');
 }
 
-function db_escape_function(string|int|float|bool|null $string)
+function db_escape_function(string|int|float|bool|null $string): string
 {
 	global $db;
-	
-	return (mysqli_real_escape_string($db, $string));
+
+	return (mysqli_real_escape_string($db, (string) $string));
 }
 
 /*
@@ -330,7 +345,7 @@ function db_set_encoding(?string $ui_encoding=null): void
 	if (!isset($ui_encoding))
 	{
 		$lang = array_search_value($dflt_lang, $installed_languages, 'code');
-		$ui_encoding = strtoupper($lang['encoding']);
+		$ui_encoding = strtoupper((string) ($lang !== null ? ($lang['encoding'] ?? '') : ''));
 	}
 
 	if ((bool)($mysql_enc = get_mysql_encoding_name($ui_encoding)))
@@ -343,9 +358,7 @@ function db_get_charset(mysqli $db): string
 	return mysqli_character_set_name($db);
 }
 
-function db_set_charset(mixed $db, ?string $charset): bool
+function db_set_charset(mysqli $db, string $charset): bool
 {
-	global $db;
-
 	return mysqli_set_charset($db, $charset);
 }
