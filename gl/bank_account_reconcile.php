@@ -36,7 +36,8 @@ page(_($help_context = "Reconcile Bank Account"), false, false, "", $js);
 check_db_has_bank_accounts(_("There are no bank accounts defined in the system."));
 
 function check_date(): bool {
-	if (!is_date(get_post('reconcile_date'))) {
+	$reconcile_date_scalar = post_scalar('reconcile_date');
+	if (!is_date($reconcile_date_scalar === null ? null : (string) $reconcile_date_scalar)) {
 		display_error(_("Invalid reconcile date format"));
 		set_focus('reconcile_date');
 		return false;
@@ -54,37 +55,39 @@ function rec_checkbox(array $row): string
 	$value = $row['reconciled'] != '';
 
 // save also in hidden field for testing during 'Reconcile'
-	return is_closed_trans($row['type'], $row['trans_no']) ? "--" : checkbox(null, $name, $value, true, _('Reconcile this transaction'))
- 		. hidden($hidden, $value, false);
+	return is_closed_trans((string) $row['type'], (string) $row['trans_no']) ? "--" : checkbox(null, $name, $value, true, _('Reconcile this transaction'))
+ 		. (hidden($hidden, $value, false) ?? '');
 }
 
 /** @return string */
-function systype_name(string|int|float|bool|array $dummy, string|int|float|bool|null $type)
+function systype_name_bar(string|int|float|bool|array $dummy, string|int|float|bool|null $type)
 {
 	global $systypes_array;
-	
-	return $systypes_array[$type];
+
+	return $systypes_array[(int) $type];
 }
 
-function trans_view(array $trans)
+/** @return non-empty-scalar|null */
+function trans_view_bar(array $trans)
 {
-	return get_trans_view_str($trans["type"], $trans["trans_no"]);
+	return get_trans_view_str((string) $trans["type"], (string) $trans["trans_no"]);
 }
 
-function gl_view(array $row)
+/** @return null|scalar */
+function gl_view_bar(array $row)
 {
-	return get_gl_view_str($row["type"], $row["trans_no"]);
+	return get_gl_view_str((string) $row["type"], (string) $row["trans_no"]);
 }
 
-function fmt_debit(array $row): string
+function fmt_debit_bar(array $row): string
 {
-	$value = $row["amount"];
+	$value = (float) $row["amount"];
 	return $value>=0 ? price_format($value) : '';
 }
 
-function fmt_credit(array $row): string
+function fmt_credit_bar(array $row): string
 {
-	$value = -$row["amount"];
+	$value = -(float) $row["amount"];
 	return $value>0 ? price_format($value) : '';
 }
 
@@ -93,14 +96,17 @@ function fmt_credit(array $row): string
  */
 function fmt_person(array $trans)
 {
-	return get_counterparty_name($trans["type"], $trans["trans_no"]);
+	return get_counterparty_name((string) $trans["type"], (string) $trans["trans_no"]);
 }
 
-/** @psalm-pure */
+/**
+ * @param array<string, string|int|float|bool|null> $row
+ * @psalm-pure
+ * @return string|int|float|bool|null
+ */
 function fmt_memo(array $row)
 {
-	$value = $row["memo_"];
-	return $value;
+	return $row["memo_"] ?? null;
 }
 
 function update_data(): void
@@ -115,21 +121,24 @@ function update_data(): void
 //
 function change_tpl_flag(string|int|float|bool|null $reconcile_id): bool
 {
+	$reconcile_id_str = (string) $reconcile_id;
 
-	if (!check_date() 
-		&& check_value("rec_".$reconcile_id)) // temporary fix
+	if (!check_date()
+		&& check_value("rec_".$reconcile_id_str)) // temporary fix
 		return false;
 
 	if (get_post('bank_date')=='')	// new reconciliation
 		ajax()->activate('bank_date');
 
-	$_POST['bank_date'] = date2sql(get_post('reconcile_date'));
-	$reconcile_value = check_value("rec_".$reconcile_id) 
+	$reconcile_date_scalar = post_scalar('reconcile_date');
+	$_POST['bank_date'] = date2sql($reconcile_date_scalar === null ? null : (string) $reconcile_date_scalar);
+	$reconcile_value = check_value("rec_".$reconcile_id_str)
 						? ("'".$_POST['bank_date'] ."'") : 'NULL';
-	
-	update_reconciled_values($reconcile_id, $reconcile_value, post_scalar('reconcile_date'),
-		input_num('end_balance'), post_scalar('bank_account'));
-		
+
+	$bank_account_scalar = post_scalar('bank_account');
+	update_reconciled_values($reconcile_id, $reconcile_value, $reconcile_date_scalar === null ? null : (string) $reconcile_date_scalar,
+		input_num('end_balance'), $bank_account_scalar === null ? null : (string) $bank_account_scalar);
+
 	ajax()->activate('reconciled');
 	ajax()->activate('difference');
 	return true;
@@ -137,18 +146,21 @@ function change_tpl_flag(string|int|float|bool|null $reconcile_id): bool
 
 function set_tpl_flag(string|int|float|bool|null $reconcile_id): void
 {
+	$reconcile_id_str = (string) $reconcile_id;
 
-	if (check_value("rec_".$reconcile_id))
+	if (check_value("rec_".$reconcile_id_str))
 		return;
 
 	if (get_post('bank_date')=='')	// new reconciliation
 		ajax()->activate('bank_date');
 
-	$_POST['bank_date'] = date2sql(get_post('reconcile_date'));
+	$reconcile_date_scalar = post_scalar('reconcile_date');
+	$_POST['bank_date'] = date2sql($reconcile_date_scalar === null ? null : (string) $reconcile_date_scalar);
 	$reconcile_value =  ("'".$_POST['bank_date'] ."'");
-	
-	update_reconciled_values($reconcile_id, $reconcile_value, post_scalar('reconcile_date'),
-		input_num('end_balance'), post_scalar('bank_account'));
+
+	$bank_account_scalar = post_scalar('bank_account');
+	update_reconciled_values($reconcile_id, $reconcile_value, $reconcile_date_scalar === null ? null : (string) $reconcile_date_scalar,
+		input_num('end_balance'), $bank_account_scalar === null ? null : (string) $bank_account_scalar);
 		
 	ajax()->activate('reconciled');
 	ajax()->activate('difference');
@@ -169,26 +181,27 @@ if (list_updated('bank_date')) {
 	update_data();
 }
 if (get_post('_reconcile_date_changed')) {
-	$_POST['bank_date'] = check_date() ? date2sql(get_post('reconcile_date')) : '';
+	$reconcile_date_scalar = post_scalar('reconcile_date');
+	$_POST['bank_date'] = check_date() ? date2sql($reconcile_date_scalar === null ? null : (string) $reconcile_date_scalar) : '';
     ajax()->activate('bank_date');
 	update_data();
 }
 
 $id = find_submit('_rec_');
-if ($id != -1) 
+if ($id != -1)
 	change_tpl_flag($id);
 
 
-if (isset($_POST['last']) && isset($_POST['Reconcile'])) {
+if (isset($_POST['last']) && is_array($_POST['last']) && isset($_POST['Reconcile'])) {
 	set_focus('bank_date');
 	foreach($_POST['last'] as $id => $value)
-		if ($value != check_value('rec_'.$id))
+		if ($value != check_value('rec_'.(string) $id))
 			if(!change_tpl_flag($id)) break;
 
     ajax()->activate('_page_body');
 }
 
-if (isset($_POST['last']) && isset($_POST['ReconcileAll'])) {
+if (isset($_POST['last']) && is_array($_POST['last']) && isset($_POST['ReconcileAll'])) {
 	set_focus('bank_date');
 	foreach($_POST['last'] as $id => $value)
 		set_tpl_flag($id);
@@ -202,13 +215,21 @@ start_table(TABLESTYLE_NOBORDER);
 start_row();
 bank_accounts_list_cells(_("Account:"), 'bank_account', null, true);
 
-bank_reconciliation_list_cells(_("Bank Statement:"), get_post('bank_account'),
+$bank_account_scalar = post_scalar('bank_account');
+$bank_account_str = $bank_account_scalar === null ? null : (string) $bank_account_scalar;
+$reconcile_date_scalar = post_scalar('reconcile_date');
+$reconcile_date_str = $reconcile_date_scalar === null ? null : (string) $reconcile_date_scalar;
+$bank_date_scalar = post_scalar('bank_date');
+$bank_date_str = $bank_date_scalar === null ? null : (string) $bank_date_scalar;
+
+bank_reconciliation_list_cells(_("Bank Statement:"), $bank_account_str,
 	'bank_date', null, true, _("New"));
 end_row();
 end_table();
 
-$result = get_max_reconciled(get_post('reconcile_date'), post_scalar('bank_account'));
+$result = get_max_reconciled($reconcile_date_str, $bank_account_str);
 
+$total = 0;
 if (($row = db_fetch($result)) !== false) {
 	$_POST["reconciled"] = price_format((float)$row["end_balance"]-(float)$row["beg_balance"]);
 	$total = $row["total"];
@@ -219,12 +240,12 @@ if (($row = db_fetch($result)) !== false) {
 		if (get_post('bank_date')) {
 			// if it is the last updated bank statement retrieve ending balance
 
-			$row = row_or_empty(get_ending_reconciled(post_scalar('bank_account'), post_scalar('bank_date')));
+			$row = row_or_empty(get_ending_reconciled($bank_account_str, $bank_date_str));
 			if($row) {
 				$_POST["end_balance"] = price_format($row["ending_reconcile_balance"]);
 			}
 		}
-	} 
+	}
 }
 
 echo "<hr>";
@@ -237,17 +258,17 @@ $th = array(_("Reconcile Date"), _("Beginning<br>Balance"),
 table_header($th);
 start_row();
 
-date_cells("", "reconcile_date", _('Date of bank statement to reconcile'), 
+date_cells("", "reconcile_date", _('Date of bank statement to reconcile'),
 	get_post('bank_date')=='', 0, 0, 0, null, true);
 
 amount_cells_ex("", "beg_balance", 15);
 
 amount_cells_ex("", "end_balance", 15);
 
-$reconciled = input_num('reconciled');
+$reconciled = (float) input_num('reconciled');
 $difference = (float)input_num("end_balance") - (float)input_num("beg_balance") - $reconciled;
 
-amount_cell($total);
+amount_cell((float) $total);
 amount_cell($reconciled, false, '', "reconciled");
 amount_cell($difference, false, '', "difference");
 
@@ -260,22 +281,23 @@ echo "<hr>";
 if (!isset($_POST['bank_account']))
     $_POST['bank_account'] = "";
 
-$sql = get_sql_for_bank_account_reconcile(get_post('bank_account'), get_post('reconcile_date'));
+$bank_account_scalar2 = post_scalar('bank_account');
+$sql = get_sql_for_bank_account_reconcile($bank_account_scalar2 === null ? null : (string) $bank_account_scalar2, $reconcile_date_str);
 
 $act = row_or_empty(get_bank_account(post_scalar("bank_account")));
 display_heading((string)$act['bank_account_name']." - ".(string)$act['bank_curr_code']);
 
 	$cols =
 	array(
-		_("Type") => array('fun'=>'systype_name', 'ord'=>''),
-		_("#") => array('fun'=>'trans_view', 'ord'=>''),
-		_("Reference"), 
+		_("Type") => array('fun'=>'systype_name_bar', 'ord'=>''),
+		_("#") => array('fun'=>'trans_view_bar', 'ord'=>''),
+		_("Reference"),
 		_("Date") => 'date',
-		_("Debit") => array('align'=>'right', 'fun'=>'fmt_debit'), 
-		_("Credit") => array('align'=>'right','insert'=>true, 'fun'=>'fmt_credit'), 
-	    _("Person/Item") => array('fun'=>'fmt_person'), 
+		_("Debit") => array('align'=>'right', 'fun'=>'fmt_debit_bar'),
+		_("Credit") => array('align'=>'right','insert'=>true, 'fun'=>'fmt_credit_bar'),
+	    _("Person/Item") => array('fun'=>'fmt_person'),
 		_("Memo") => array('fun'=>'fmt_memo'),
-		array('insert'=>true, 'fun'=>'gl_view'),
+		array('insert'=>true, 'fun'=>'gl_view_bar'),
 		"X"=>array('insert'=>true, 'fun'=>'rec_checkbox')
 	   );
 	$table =& new_db_pager('trans_tbl', $sql, $cols);
