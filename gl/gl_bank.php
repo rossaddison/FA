@@ -56,7 +56,7 @@ check_db_has_bank_accounts(_("There are no bank accounts defined in the system."
 if (isset($_GET['ModifyDeposit']) || isset($_GET['ModifyPayment']))
 	check_is_editable(session_obj('pay_items')->trans_type, session_obj('pay_items')->order_id);
 
-if (!isset($_SESSION['pay_items']))
+if (!app_session()->has('pay_items'))
 {
 	// reached without any of the New*/Modify* requests above, and nothing already in the
 	// session from an earlier request on this page (the normal form post-back relies on that
@@ -64,8 +64,10 @@ if (!isset($_SESSION['pay_items']))
 	display_error(_("This page can only be opened to enter a new bank payment or deposit, or to modify an existing one."));
 	end_page(); exit;
 }
-/** @var items_cart $pay_items_cart */
-$pay_items_cart = $_SESSION['pay_items'];
+// pilot use of the typed session facade (src/Session/SessionInterface.php): getTyped()
+// both gives Psalm a real items_cart type (no manual @var assertion needed) and throws
+// at runtime if this key is ever anything else, instead of silently trusting it.
+$pay_items_cart = app_session()->getTyped('pay_items', items_cart::class);
 
 //----------------------------------------------------------------------------------------
 if (list_updated('PersonDetailID')) {

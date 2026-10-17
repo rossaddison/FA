@@ -16,6 +16,25 @@ define('SECURE_ONLY', false); // if you really need also http (unsecure) access 
 
 require_once dirname(__DIR__) . '/vendor/autoload.php'; // composer packages (e.g. yiisoft/html) used unconditionally, not just by the optional Yii layout
 
+/**
+ * Project-wide accessor for the typed session facade (src/Session/SessionInterface.php) -
+ * a thin, incrementally-adoptable wrapper over the live $_SESSION superglobal,
+ * not a replacement for it. See that interface's own docblock for the
+ * reasoning. Mirrors session_obj()'s existing "one global accessor function"
+ * shape (includes/prefs/sysprefs.inc) rather than introducing a DI container.
+ *
+ * @psalm-external-mutation-free
+ */
+function app_session(): \FrontAccounting\Session\SessionInterface
+{
+	/** @var \FrontAccounting\Session\SessionInterface|null $instance */
+	static $instance = null;
+	if ($instance === null) {
+		$instance = new \FrontAccounting\Session\NativeSession();
+	}
+	return $instance;
+}
+
 final class SessionManager
 {
    	/**
