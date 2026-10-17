@@ -812,6 +812,24 @@ to their source.
   branch defaulting to `array()`) since the method is clearly meant to be
   usable.
 
+- **`gl/includes/db/gl_db_banking.inc` — `write_bank_transaction()`.**
+  After the `foreach ($items->gl_items as $gl_item)` loop that posts each
+  line item's own GL entry, the function posts one final *balancing* GL
+  entry against the bank's own account - but built its dimension
+  arguments from `$gl_item->dimension_id`/`$gl_item->dimension2_id`,
+  reusing whatever object the `foreach` loop variable happened to be left
+  pointing at (PHP doesn't scope `foreach` variables to the loop body) -
+  silently tagging every bank payment's and deposit's balancing entry
+  with the *last* line item's dimension instead of no dimension at all
+  (this bank-balance posting isn't tied to any one line item, the same
+  way the sibling `add_gl_balance()` call elsewhere in this file for bank
+  transfers takes no dimension arguments whatsoever). This runs on every
+  real bank payment/deposit with at least one GL line - not an edge case.
+  A cart with zero GL line items (if ever reachable) would instead read
+  `$gl_item` completely undefined. Fixed by passing `null, null` for this
+  posting's dimensions, matching the no-dimension convention used for the
+  equivalent balancing entry elsewhere in this file.
+
 ## Encoding / output bugs
 
 - **`includes/ui/ui_lists.inc` — mojibake, two distinct causes.**
