@@ -10,7 +10,13 @@ declare(strict_types=1);
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-//$colors = array('#008cc9','#4db625','#ef5500','#eef100','#05c6e6', '#5ee66a'); // Current in Use 	 
+// json_encode_for_script() (used below in dashboard()) lives in includes/page/footer.inc,
+// which is normally only include_once'd from end_page() - too late for dashboard(), which
+// callers (e.g. admin/dashboard.php) can invoke before end_page() ever runs. include_once
+// here instead of relying on load order.
+include_once(dirname(__DIR__) . "/includes/page/footer.inc");
+
+//$colors = array('#008cc9','#4db625','#ef5500','#eef100','#05c6e6', '#5ee66a'); // Current in Use
 $colors = Chart::$palette;
 $align = session_obj('language')->dir == 'rtl' ? 'right' : 'left';
 $style = "<style".csp_nonce_attr().">
