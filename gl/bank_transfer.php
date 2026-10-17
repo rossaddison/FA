@@ -40,16 +40,16 @@ check_db_has_bank_accounts(_("There are no bank accounts defined in the system."
 
 //----------------------------------------------------------------------------------------
 
-if (isset($_GET['AddedID'])) 
+if (isset($_GET['AddedID']))
 {
-	$trans_no = $_GET['AddedID'];
+	$trans_no = get_scalar('AddedID');
 	$trans_type = ST_BANKTRANSFER;
 
    	display_notification_centered( _("Transfer has been entered"));
 
 	display_note(get_gl_view_str($trans_type, $trans_no, _("&View the GL Journal Entries for this Transfer")));
 
-   	hyperlink_no_params($_SERVER['PHP_SELF'], _("Enter &Another Transfer"));
+   	hyperlink_no_params($_SERVER['PHP_SELF'] ?? '', _("Enter &Another Transfer"));
 
 	display_footer_exit();
 }
@@ -70,23 +70,23 @@ function gl_payment_controls(string|int|float|bool|null $trans_no): void
 			if (db_num_rows($result) != 2)
 				display_db_error("Bank transfer does not contain two records");
 
-			$trans1 = db_fetch($result);
-			$trans2 = db_fetch($result);
+			$trans1 = row_or_empty(db_fetch($result));
+			$trans2 = row_or_empty(db_fetch($result));
 
-			if ($trans1["amount"] < 0) {
+			if ((float)($trans1["amount"] ?? 0) < 0) {
 				$from_trans = $trans1; // from trans is the negative one
 				$to_trans = $trans2;
 			} else {
 			$from_trans = $trans2;
 				$to_trans = $trans1;
 			}
-			$_POST['DatePaid'] = sql2date($to_trans['trans_date']);
+			$_POST['DatePaid'] = sql2date((string) $to_trans['trans_date']);
 			$_POST['ref'] = $to_trans['ref'];
 			$_POST['memo_'] = get_comments_string($to_trans['type'], $trans_no);
 			$_POST['FromBankAccount'] = $from_trans['bank_act'];
 			$_POST['ToBankAccount'] = $to_trans['bank_act'];
 			$_POST['target_amount'] = price_format($to_trans['amount']);
-			$_POST['amount'] = price_format(-$from_trans['amount']);
+			$_POST['amount'] = price_format(-(float)($from_trans['amount'] ?? 0));
 			$_POST['dimension_id'] = $to_trans['dimension_id'];
 			$_POST['dimension2_id'] = $to_trans['dimension2_id'];
 		} else {
@@ -166,17 +166,19 @@ function gl_payment_controls(string|int|float|bool|null $trans_no): void
 
 //----------------------------------------------------------------------------------------
 
-function check_valid_entries(string|int|float|bool|null $trans_no): bool
+function check_valid_entries_bt(string|int|float|bool|null $trans_no): bool
 {
 	global $systypes_array;
-	
-	if (!is_date(post_scalar('DatePaid'))) 
+
+	$date_paid_scalar = post_scalar('DatePaid');
+	$date_paid_str = $date_paid_scalar === null ? null : (string) $date_paid_scalar;
+	if (!is_date($date_paid_str))
 	{
 		display_error(_("The entered date is invalid."));
 		set_focus('DatePaid');
 		return false;
 	}
-	if (!(bool)is_date_in_fiscalyear(post_scalar('DatePaid')))
+	if (!(bool)is_date_in_fiscalyear($date_paid_str))
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('DatePaid');
@@ -195,42 +197,49 @@ function check_valid_entries(string|int|float|bool|null $trans_no): bool
 		return false;
 	}
 
-	$limit = get_bank_account_limit(post_scalar('FromBankAccount'), post_scalar('DatePaid'));
+	$from_account_scalar = post_scalar('FromBankAccount');
+	$from_account_str = $from_account_scalar === null ? null : (string) $from_account_scalar;
+
+	$limit = get_bank_account_limit($from_account_str, $date_paid_str);
 
 	$amnt_tr = (float)input_num('charge') + (float)input_num('amount');
 
+	$to_account_post = $_POST['ToBankAccount'] ?? null;
+	$to_account_str = is_array($to_account_post) ? '' : (string) $to_account_post;
+	$to_account_post = is_array($to_account_post) ? $to_account_post : $to_account_str;
+
 	$problemTransaction = null;
 	if ((bool)$trans_no) {
-		$problemTransaction = check_bank_transfer( $trans_no, post_scalar('FromBankAccount'), $_POST['ToBankAccount'], post_scalar('DatePaid'),
+		$problemTransaction = check_bank_transfer( $trans_no, $from_account_str, $to_account_post, $date_paid_str,
 			$amnt_tr, input_num('target_amount', $amnt_tr));
 
 	if ($problemTransaction != null	) {
 		if (!array_key_exists('trans_no', $problemTransaction)) {
 			display_error(sprintf(
 				_("This bank transfer change would result in exceeding authorized overdraft limit (%s) of the account '%s'"),
-				price_format(-$problemTransaction['amount']), $problemTransaction['bank_account_name']
+				price_format(-(float)($problemTransaction['amount'] ?? 0)), $problemTransaction['bank_account_name'] ?? ''
 			));
 		} else {
 			display_error(sprintf(
 				_("This bank transfer change would result in exceeding authorized overdraft limit on '%s' for transaction: %s #%s on %s."),
-				$problemTransaction['bank_account_name'], $systypes_array[$problemTransaction['type']],
-				$problemTransaction['trans_no'], sql2date($problemTransaction['trans_date'])
+				$problemTransaction['bank_account_name'] ?? '', $systypes_array[(int) ($problemTransaction['type'] ?? 0)],
+				$problemTransaction['trans_no'] ?? '', sql2date($problemTransaction['trans_date'] ?? null)
 			));
 		}
 		set_focus('amount');
 		return false;
 		}
 	} else {
-		if (null != ($problemTransaction = check_bank_account_history(-$amnt_tr, post_scalar('FromBankAccount'), post_scalar('DatePaid')))) {
+		if (null != ($problemTransaction = check_bank_account_history(-$amnt_tr, $from_account_str, $date_paid_str))) {
 			if (!array_key_exists('trans_no', $problemTransaction)) {
 				display_error(sprintf(
 					_("This bank transfer would result in exceeding authorized overdraft limit of the account (%s)"),
-					price_format(-$problemTransaction['amount'])
+					price_format(-(float)($problemTransaction['amount'] ?? 0))
 				));
 			} else {
 				display_error(sprintf(
 					_("This bank transfer would result in exceeding authorized overdraft limit for transaction: %s #%s on %s."),
-					$systypes_array[$problemTransaction['type']], $problemTransaction['trans_no'], sql2date($problemTransaction['trans_date'])
+					$systypes_array[(int) ($problemTransaction['type'] ?? 0)], $problemTransaction['trans_no'] ?? '', sql2date($problemTransaction['trans_date'] ?? null)
 				));
 			}
 			set_focus('amount');
@@ -244,18 +253,18 @@ function check_valid_entries(string|int|float|bool|null $trans_no): bool
 		set_focus('charge');
 		return false;
 	}
-	if (isset($_POST['charge']) && input_num('charge') > 0 && get_bank_charge_account(post_scalar('FromBankAccount')) == '') {
+	if (isset($_POST['charge']) && input_num('charge') > 0 && get_bank_charge_account($from_account_str) == '') {
 		display_error(_("The Bank Charge Account has not been set in System and General GL Setup."));
 		set_focus('charge');
 		return false;
 	}
 
-	if (!check_reference($_POST['ref'], ST_BANKTRANSFER, $trans_no)) {
+	if (!check_reference(post_scalar('ref'), ST_BANKTRANSFER, $trans_no)) {
 		set_focus('ref');
 		return false;
 	}
 
-	if ($_POST['FromBankAccount'] == $_POST['ToBankAccount']) 
+	if ($from_account_str == $to_account_str)
 	{
 		display_error(_("The source and destination bank accouts cannot be the same."));
 		set_focus('ToBankAccount');
@@ -274,10 +283,10 @@ function check_valid_entries(string|int|float|bool|null $trans_no): bool
 		return false;
 	}
 
-	if (!db_has_currency_rates(get_bank_account_currency(post_scalar('FromBankAccount')), post_scalar('DatePaid')))
+	if (!db_has_currency_rates(get_bank_account_currency($from_account_str), $date_paid_str))
 		return false;
 
-	if (!db_has_currency_rates(get_bank_account_currency(post_scalar('ToBankAccount')), post_scalar('DatePaid')))
+	if (!db_has_currency_rates(get_bank_account_currency($to_account_str), $date_paid_str))
 		return false;
 
     return true;
@@ -287,31 +296,44 @@ function check_valid_entries(string|int|float|bool|null $trans_no): bool
 
 function bank_transfer_handle_submit(): void
 {
-	$trans_no = array_key_exists('_trans_no', $_POST) ?  $_POST['_trans_no'] : null;
+	$from_account = post_scalar('FromBankAccount');
+	$from_account = $from_account === null ? null : (string) $from_account;
+	$to_account = post_scalar('ToBankAccount');
+	$to_account = $to_account === null ? null : (string) $to_account;
+	$date_paid = post_scalar('DatePaid');
+	$date_paid = $date_paid === null ? null : (string) $date_paid;
+	$ref = post_scalar('ref');
+	$ref = $ref === null ? null : (string) $ref;
+	$memo = post_scalar('memo_');
+	$memo = $memo === null ? null : (string) $memo;
+	$dim1 = post_scalar('dimension_id');
+	$dim1 = $dim1 === null ? null : (string) $dim1;
+	$dim2 = post_scalar('dimension2_id');
+	$dim2 = $dim2 === null ? null : (string) $dim2;
+
+	$trans_no = post_scalar('_trans_no');
 	if ((bool)$trans_no) {
-		$trans_no = update_bank_transfer($trans_no, post_scalar('FromBankAccount'), post_scalar('ToBankAccount'), post_scalar('DatePaid'),	input_num('amount'), 
-			post_scalar('ref'), post_scalar('memo_'), post_scalar('dimension_id'), post_scalar('dimension2_id'), input_num('charge'), input_num('target_amount'));
+		$trans_no = (string) $trans_no;
+		$trans_no = update_bank_transfer($trans_no, $from_account, $to_account, $date_paid, input_num('amount'),
+			$ref, $memo, $dim1, $dim2, input_num('charge'), input_num('target_amount'));
 	} else {
-		new_doc_date($_POST['DatePaid']);
-		$trans_no = add_bank_transfer(post_scalar('FromBankAccount'), post_scalar('ToBankAccount'), post_scalar('DatePaid'), input_num('amount'), post_scalar('ref'), 
-			post_scalar('memo_'), post_scalar('dimension_id'), post_scalar('dimension2_id'), input_num('charge'), input_num('target_amount'));
+		new_doc_date(post_scalar('DatePaid'));
+		$trans_no = add_bank_transfer($from_account, $to_account, $date_paid, input_num('amount'), $ref,
+			$memo, $dim1, $dim2, input_num('charge'), input_num('target_amount'));
 	}
 
-	meta_forward($_SERVER['PHP_SELF'], "AddedID=$trans_no");
+	meta_forward($_SERVER['PHP_SELF'] ?? '', "AddedID=$trans_no");
 }
 
 //----------------------------------------------------------------------------------------
 
-$trans_no = '';
-if (!$trans_no && isset($_POST['_trans_no'])) {
-	$trans_no = $_POST['_trans_no'];
-}
-if (!(bool)$trans_no && isset($_GET['trans_no'])) {
-	$trans_no = $_GET["trans_no"];
+$trans_no = post_scalar('_trans_no');
+if (!(bool)$trans_no) {
+	$trans_no = get_scalar('trans_no');
 }
 
 if (isset($_POST['submit'])) {
-    if (check_valid_entries($trans_no) == true) {
+    if (check_valid_entries_bt($trans_no) == true) {
         bank_transfer_handle_submit();
 	}
 }
