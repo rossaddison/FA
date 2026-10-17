@@ -15,7 +15,7 @@ declare(strict_types=1);
 //
 class simple_crud {
 	/**
-	 * @var null|string
+	 * @var string
 	 */
 	var $name;
 	/** @var string */
@@ -47,22 +47,22 @@ class simple_crud {
 	var $data = array();
 
 	/**
-	 * @var array|null
+	 * @var array<array-key, string|array{post?: string, fld?: string, dflt?: mixed, fmt?: string}>|null
 	 */
 	var $fields;
-	/** @var array<array-key, mixed> */
+	/** @var array<string, array{0: string, 1: string, 2: string, 3: string}> */
 	var $tool_buttons = array();
+	/** @var array<array-key, mixed>|null */
 	var $options;
 	/** @var int */
 	var $dec = 0;
 	//
 	//
 	/**
-	 * @param array<array-key, mixed>|null $fields
-	 * @param string|null $name
+	 * @param array<array-key, string|array{post?: string, fld?: string, dflt?: mixed, fmt?: string}>|null $fields
 	 * @psalm-mutation-free
 	 */
-	function __construct($name, $fields = null)
+	function __construct(string $name, $fields = null)
 	{
 		$this->name = $name;
 		$this->pre_handlers = array(
@@ -103,7 +103,7 @@ class simple_crud {
 	{
 		switch($fmt) {
 			case 'stock':
-				$this->dec = get_qty_dec($value);
+				$this->dec = (int) get_qty_dec($value === null ? null : (string) $value);
 				return $value;
 			case 'price':
 			case 'qty':
@@ -128,9 +128,9 @@ class simple_crud {
 			case 'number':
 				return number_format2($value);
 			case 'percent':
-				return percent_format($value*100);
+				return percent_format(((float) $value)*100.0);
 			case 'stock':
-				$this->dec = get_qty_dec($value); // retrieve dec for use in later qty fields
+				$this->dec = (int) get_qty_dec($value === null ? null : (string) $value); // retrieve dec for use in later qty fields
 			case 'text':
 			case 'date':
 			default:
@@ -138,7 +138,7 @@ class simple_crud {
 		}
 	}
 
-	function _check_mode(): mixed
+	function _check_mode(): string
 	{
 
 		// list controls lookup
@@ -148,15 +148,15 @@ class simple_crud {
 				ajax()->activate($this->name.'_div');
 				$post_val = $_POST[$this->name.$m];
 				$val = is_array($post_val) ? key($post_val) : null;
-				$this->selected_id = $val!==null ? @quoted_printable_decode($val) : $this->_none;
-				return $m;
+				$this->selected_id = $val!==null ? @quoted_printable_decode((string) $val) : $this->_none;
+				return (string) $m;
 			}
 		}
 		$mod = get_post($this->name.'Mode', '');
-		if ($mod) {
-			$val = @key($mod);
-			$this->selected_id = $val!==null ? @quoted_printable_decode($val) : $this->_none;
-			return $mod[$val];
+		if (is_array($mod) && $mod) {
+			$val = key($mod);
+			$this->selected_id = @quoted_printable_decode((string) $val);
+			return (string) $mod[$val];
 		}
 		return '';
 	}
@@ -165,7 +165,7 @@ class simple_crud {
 	//	Set record for edition
 	//
 	/** @return void */
-	function _edit(?string $mode)
+	function _edit(string $mode)
 	{
 		if ($this->Mode != $mode) {
 			if ($this->selected_id != $this->_none) {
@@ -179,11 +179,11 @@ class simple_crud {
 	//	Update record after edition
 	//
 	/** @return void */
-	function _update(?string $mode)
+	function _update(string $mode)
 	{
 		$this->get_posts();
 		if ($this->update_check()) {
-			if ($this->db_update()) {
+			if ((bool) $this->db_update()) {
 				$this->selected_id = $this->_none;
 				$this->Mode = '';
 				return;
@@ -195,7 +195,7 @@ class simple_crud {
 	//	Add new record
 	//
 	/** @return void */
-	function _add(?string $mode)
+	function _add(string $mode)
 	{
 		$this->get_posts();
 		if ($this->insert_check()) {
@@ -286,14 +286,17 @@ class simple_crud {
 	/** @return void */
 	function set_posts()
 	{
+		if ($this->fields === null) return;
 		foreach($this->fields as $name => $fmt) {
 			if (is_int($name)) {
+				/** @var string $fmt */
 				$name = $fmt;
 				$fmt = array();
 			}
 			if (is_string($fmt)) {
 			    $fmt = array('fmt' => $fmt);
 			}
+			/** @var string $name */
 			$post = isset($fmt['post']) ? $fmt['post'] : $name;
 			$fld = isset($fmt['fld']) ? $fmt['fld'] : $name;
 
@@ -309,18 +312,21 @@ class simple_crud {
 	//
 	/** @return void */
 	function get_posts() {
+		if ($this->fields === null) return;
 		foreach ($this->fields as $name => $fmt) {
 			if (is_int($name)) {
+				/** @var string $fmt */
 				$name = $fmt;
 				$fmt = array();
 			}
 			if (is_string($fmt)) {
 			    $fmt = array('fmt' => $fmt);
 			}
+			/** @var string $name */
 			$post = isset($fmt['post']) ? $fmt['post'] : $name;
 			$fld = isset($fmt['fld']) ? $fmt['fld'] : $name;
 
-			$value = $this->_format_input(@$_POST[$post], @$fmt['fmt']);
+			$value = $this->_format_input(post_scalar($post), $fmt['fmt'] ?? null);
 			if (is_array($this->data))
 				$this->data[$fld] = $value;
 			else
@@ -401,7 +407,7 @@ class simple_crud {
 	}
 
 
-	/** @return true */
+	/** @return bool */
 	function delete_check() {
 		display_notification(__FUNCTION__. ' is not defined...');
 		return true; 

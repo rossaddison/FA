@@ -915,6 +915,19 @@ to their source.
   directly instead of `$type`, which cannot pick the wrong method
   regardless of what `$type` is.
 
+- **`includes/ui/simple_crud_class.inc` — `simple_crud::_check_mode()`.**
+  Read the editor's Mode hidden field with `get_post($this->name.'Mode', '')`
+  and, if the result was truthy, called `key($mod)` on it unconditionally.
+  That hidden field is always rendered as an array (`name="{prefix}Mode[{id}]"`,
+  via `hidden()` further down in the same class), so `$mod` is normally an
+  array - but `get_post()`'s return type genuinely includes plain strings,
+  and nothing stopped a request from posting a non-array value for that
+  exact field name instead. `key()` has never accepted a non-array,
+  non-object argument in any PHP version, so that would be a fatal
+  TypeError on every CRUD editor built on this class (contacts,
+  attachments) - not merely a `strict_types` coercion edge case. Added an
+  `is_array($mod)` guard before the call.
+
 ## Missing feature (implemented, not just guarded)
 
 - **`includes/ui/attachment.inc` — no attachment size limit.** `db_insert()`

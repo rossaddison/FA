@@ -28,7 +28,7 @@ final class attachments extends simple_crud {
 	var $class;
 	
 	/**
-	 * @param string|null $name
+	 * @param string $name
 	 * @param string|null $class
 	 * @psalm-mutation-free
 	 */
