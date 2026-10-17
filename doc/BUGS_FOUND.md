@@ -50,6 +50,18 @@ a stand-in for a boolean) reaching a native, strictly-typed parameter.
   from `db_fetch()` come back as strings, and `round()`'s first parameter is
   `int|float`. Cast each to `(float)`.
 
+- **`admin/inst_module.php`.** `$js` was only assigned inside
+  `if (sysprefs()->use_popup_windows) { $js = get_js_open_window(900, 500); }`,
+  then passed unconditionally to `page()`'s 5th parameter, `string $js=""`.
+  With popup windows off (a normal, legitimate preference setting, not an
+  edge case), `$js` is undefined at that point - `global`/plain variable
+  reads of an undefined variable become `null`, and passing `null` to a
+  native `string` parameter is a `TypeError` under `strict_types=1`. Every
+  visit to this page (Install/Activate extensions) with that preference off
+  would crash immediately on load. Fixed by initializing `$js = "";`
+  unconditionally before the conditional block, matching the parameter's
+  own default.
+
 - **`includes/current_user.inc` — `round2()`.** `$decimals` is typed
   `string|int|float|bool|null` (matching the broad `user_*_dec()` family
   that feeds it) but was passed straight to `round()`'s `int $precision`
@@ -629,6 +641,15 @@ to their source.
   correctly in `includes/yii/menu.inc`.
 
 ## Data-correctness bugs
+
+- **`admin/inst_module.php` — `display_extensions()`.** The "Installed"
+  column's fallback-to-"Unknown" check was
+  `$installed && ($installed != '-' || $installed != '')` — for any single
+  string value, at least one of `!= '-'` / `!= ''` is always true (a value
+  can't equal both at once), so the inner condition was a tautology and the
+  intended exclusion of the `'-'` placeholder (used elsewhere in this same
+  file as the "not actually installed" sentinel) never took effect. Fixed
+  `||` to `&&`.
 
 - **`includes/packages.inc` — `pkg_prop()`.** The localized-value branch
   checked `isset($pkg[$property.'-'.user_language()])` but then read

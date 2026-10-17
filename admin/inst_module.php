@@ -16,6 +16,10 @@ $path_to_root="..";
 include_once(dirname(__DIR__) . "/includes/session.inc");
 include_once(dirname(__DIR__) . "/includes/packages.inc");
 
+/** @var string|int|float|bool|array<array-key, mixed>|null $selected_id */
+$selected_id = $selected_id;
+
+$js = "";
 if (sysprefs()->use_popup_windows) {
 	$js = get_js_open_window(900, 500);
 }
@@ -33,6 +37,7 @@ function local_extension(string|int|null $id): bool
 {
 	global $next_extension_id, $Ajax, $path_to_root;
 
+	$id = (string) $id;
 	$exts = get_company_extensions();
 	$exts[$next_extension_id++] = array(
 			'package' => $id,
@@ -44,14 +49,15 @@ function local_extension(string|int|null $id): bool
 			'active' => false
 	);
 
-	$local_module_path = $path_to_root.'/modules/'.clean_file_name($id);
+	$cleaned_id = clean_file_name($id);
+	$local_module_path = $path_to_root.'/modules/'.(is_array($cleaned_id) ? '' : (string) $cleaned_id);
 	$local_config_file = $local_module_path.'/_init/config';
 	$local_hook_file = $local_module_path.'/hooks.php';
 
 	if (file_exists($local_config_file)) {
 		$ctrl = get_control_file($local_config_file);
-		if (key_exists('Name', $ctrl)) $exts[$next_extension_id-1]['name'] = $ctrl['Name'];
-		if (key_exists('Version', $ctrl)) $exts[$next_extension_id-1]['version'] = $ctrl['Version'];
+		if ($ctrl !== null && key_exists('Name', $ctrl)) $exts[$next_extension_id-1]['name'] = $ctrl['Name'];
+		if ($ctrl !== null && key_exists('Version', $ctrl)) $exts[$next_extension_id-1]['version'] = $ctrl['Version'];
 	}
 	if (file_exists($local_hook_file)) {
 		include_once($local_hook_file);
@@ -68,14 +74,15 @@ function local_extension(string|int|null $id): bool
 	return true;
 }
 
-function handle_delete(string|int|float|bool|null $id): bool
+function handle_delete_ext(string|int|float|bool|null $id): bool
 {
 	global $path_to_root;
-	
+
+	$id = (int) $id;
 	$extensions = get_company_extensions();
 	$ext = $extensions[$id];
 	if ($ext['version'] != '-') {
-		if (!uninstall_package($ext['package']))
+		if (!uninstall_package((string) $ext['package']))
 			return false;
 	} else {
 		@include_once($path_to_root.'/'.(string)$ext['path'].'/hooks.php');
@@ -95,10 +102,11 @@ function handle_delete(string|int|float|bool|null $id): bool
 //
 // Display list of all extensions - installed and available from repository
 //
+/** @param array<array-key, array<string, mixed>> $mods */
 function display_extensions(array $mods): void
 {
 	global $installed_extensions;
-	
+
 	div_start('ext_tbl');
 	start_table(TABLESTYLE);
 
@@ -109,21 +117,22 @@ function display_extensions(array $mods): void
 
 	foreach($mods as $pkg_name => $ext)
 	{
-		$available = @$ext['available'];
-		$installed = @$ext['version'];
-		$id = @$ext['local_id'];
+		$available = isset($ext['available']) ? (string) $ext['available'] : '';
+		$installed = isset($ext['version']) ? (string) $ext['version'] : '';
+		$id = isset($ext['local_id']) ? (string) $ext['local_id'] : null;
+		$name = (string) $ext['name'];
 
 		alt_table_row_color($k);
 
-		label_cell($available ? get_package_view_str($pkg_name, $ext['name']) : $ext['name']);
+		label_cell($available ? get_package_view_str($pkg_name, $name) : $name);
 
 		label_cell($id === null ? _("None") :
-			(($installed && ($installed != '-' || $installed != '')) ? $installed : _("Unknown")));
+			(($installed && ($installed != '-' && $installed != '')) ? $installed : _("Unknown")));
 		label_cell($available ? $available : _("Unknown"));
 
 		if (!$available && $ext['type'] == 'extension')	{// third-party plugin
 			if (!$installed)
-				button_cell('Local'.(string)$ext['package'], _("Install"), _('Install third-party extension.'), 
+				button_cell('Local'.(string)$ext['package'], _("Install"), _('Install third-party extension.'),
 					ICON_DOWN);
 			else
 				label_cell('');
@@ -135,9 +144,9 @@ function display_extensions(array $mods): void
 
 		if ($id !== null) {
 			delete_button_cell('Delete'.$id, _('Delete'));
-			submit_js_confirm('Delete'.$id, 
-				sprintf(_("You are about to remove package \'%s\'.\nDo you want to continue ?"), 
-					$ext['name']));
+			submit_js_confirm('Delete'.$id,
+				sprintf(_("You are about to remove package \'%s\'.\nDo you want to continue ?"),
+					$name));
 		} else
 			label_cell('');
 
@@ -166,10 +175,12 @@ function company_extensions(string|array|null $id): void
 	foreach($mods as $key => $ins) {
 		foreach($exts as $ext)
 			if ($ext['name'] == $ins['name']) {
-				$mods[$key]['active'] = @$ext['active'];
+				$mods[$key]['active'] = isset($ext['active']) ? (bool) $ext['active'] : false;
 				continue 2;
 			}
 	}
+	/** @var array<array-key, array<array-key, string|int|float|bool|null>> $mods */
+	$mods = $mods;
 	$mods = array_natsort($mods, null, 'name');
 	table_header($th);
 	$k = 0;
@@ -181,7 +192,7 @@ function company_extensions(string|array|null $id): void
 		label_cell($mod['version']);
 		label_cell($mod['path']);
 
-		check_cells(null, 'Active'.$i, @$mod['active'] ? 1:0, 
+		check_cells(null, 'Active'.$i, (bool) @$mod['active'] ? 1:0,
 			false, false, "align='center'");
 
 		end_row();
@@ -192,9 +203,12 @@ function company_extensions(string|array|null $id): void
 }
 
 //---------------------------------------------------------------------------------------------
+/** @var string|int|float|bool|array<array-key, mixed>|null $selected_id */
+$selected_id = $selected_id;
 if ($Mode == 'Delete')
 {
-	handle_delete($selected_id);
+	if (!is_array($selected_id))
+		handle_delete_ext($selected_id);
 	$Mode = 'RESET';
 }
 
@@ -204,27 +218,29 @@ if (get_post('Refresh')) {
 
 	$result = true;
 	foreach($exts as $i => $ext) {
-		if ($ext['package'] && ($ext['active'] ^ check_value('Active'.$i))) 
+		$active_check = check_value('Active'.$i);
+		$active_check = is_array($active_check) ? 0 : $active_check;
+		if ($ext['package'] && ((int) $ext['active'] ^ $active_check))
 		{
-			if (check_value('Active'.$i) && !check_src_ext_version($ext['version']))
+			if ($active_check && !check_src_ext_version((string) $ext['version']))
 			{
 				display_warning(sprintf(_("Package '%s' is incompatible with current application version and cannot be activated.\n")
-					. _("Check Install/Activate page for newer package version."), $ext['name']));
+					. _("Check Install/Activate page for newer package version."), (string) $ext['name']));
 				continue;
 			}
-			$activated = activate_hooks($ext['package'], $comp, !$ext['active']);	// change active state
+			$activated = activate_hooks((string) $ext['package'], $comp, !$ext['active']);	// change active state
 
 			if ($activated !== null)
-				$result &= $activated;
+				$result = $result && (bool) $activated;
 			if ((bool)$activated || ($activated === null))
-				$exts[$i]['active'] = check_value('Active'.$i);
+				$exts[$i]['active'] = $active_check;
 		}
 	}
 	write_extensions($exts, get_post('extset'));
 	if (get_post('extset') == user_company())
 		$installed_extensions = $exts;
 	
-	if(!(bool)$result) {
+	if(!$result) {
 		display_error(_('Status change for some extensions failed.'));
 		ajax()->activate('ext_tbl'); // refresh settings display
 	}else
@@ -259,8 +275,10 @@ if ($set == -1)
 	$mods = get_extensions_list('extension');
 	if (!$mods)
 		display_note(_("No optional extension module is currently available."));
-	else
+	else {
+		/** @var array<array-key, array<string, mixed>> $mods */
 		display_extensions($mods);
+	}
 } else 
 	company_extensions($set);
 
