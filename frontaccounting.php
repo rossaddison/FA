@@ -12,46 +12,54 @@ declare(strict_types=1);
 ***********************************************************************/
 if (!isset($path_to_root) || isset($_GET['path_to_root']) || isset($_POST['path_to_root']))
 	die("Restricted access");
-	include_once($path_to_root . '/applications/application.php');
-	include_once($path_to_root . '/applications/customers.php');
-	include_once($path_to_root . '/applications/suppliers.php');
-	include_once($path_to_root . '/applications/inventory.php');
-	include_once($path_to_root . '/applications/fixed_assets.php');
-	include_once($path_to_root . '/applications/manufacturing.php');
-	include_once($path_to_root . '/applications/dimensions.php');
-	include_once($path_to_root . '/applications/generalledger.php');
-	include_once($path_to_root . '/applications/setup.php');
-	include_once($path_to_root . '/installed_extensions.php');
+	include_once(__DIR__ . '/applications/application.php');
+	include_once(__DIR__ . '/applications/customers.php');
+	include_once(__DIR__ . '/applications/suppliers.php');
+	include_once(__DIR__ . '/applications/inventory.php');
+	include_once(__DIR__ . '/applications/fixed_assets.php');
+	include_once(__DIR__ . '/applications/manufacturing.php');
+	include_once(__DIR__ . '/applications/dimensions.php');
+	include_once(__DIR__ . '/applications/generalledger.php');
+	include_once(__DIR__ . '/applications/setup.php');
+	include_once(__DIR__ . '/installed_extensions.php');
 
-	class front_accounting
+	final class front_accounting
 	{
-		var $user;
-		var $settings;
+		/** @var mixed */
+		var $user = null;
+		/** @var mixed */
+		var $settings = null;
 		/** @var array<string, application> */
-		var $applications;
-		var $selected_application;
+		var $applications = array();
+		/** @var mixed */
+		var $selected_application = null;
+		/** @var mixed */
 		var $renderer = null;
 
 		/**
-		 * @var menu
+		 * @var menu|null
 		 */
-		var $menu;
+		var $menu = null;
 
-		function add_application($app): void
+		/** @psalm-external-mutation-free */
+		function add_application(application $app): void
 		{
-			if ($app->enabled) // skip inactive modules
-				$this->applications[$app->id] = $app;
+			if ((bool)$app->enabled) // skip inactive modules
+				$this->applications[(string) $app->id] = $app;
 		}
-		function get_application($id): ?application
+		/** @psalm-mutation-free */
+		function get_application(string $id): ?application
 		{
 			 if (isset($this->applications[$id]))
 				return $this->applications[$id];
 			 return null;
 		}
+		/** @psalm-mutation-free */
 		function get_selected_application(): ?application
 		{
-			if (isset($this->selected_application))
-				 return $this->applications[$this->selected_application];
+			$selected_id = is_scalar($this->selected_application) ? (string) $this->selected_application : null;
+			if ($selected_id !== null && isset($this->applications[$selected_id]))
+				 return $this->applications[$selected_id];
 			foreach ($this->applications as $application)
 				return $application;
 			return null;
@@ -60,6 +68,9 @@ if (!isset($path_to_root) || isset($_GET['path_to_root']) || isset($_POST['path_
 		{
 			global $path_to_root;
 
+			// TaintedInclude on this line: confirmed safe, see doc/BUGS_FOUND.md
+			// (Psalm doesn't honor @psalm-suppress for this finding here - tried both
+			// statement- and method-level placement; see doc/PSALM_UPSTREAM_LIMITATIONS.md)
 			include_once($path_to_root . "/themes/".user_theme()."/renderer.php");
 
 			$this->init();
@@ -82,9 +93,9 @@ if (!isset($path_to_root) || isset($_GET['path_to_root']) || isset($_POST['path_
 			$this->add_application(new customers_app());
 			$this->add_application(new suppliers_app());
 			$this->add_application(new inventory_app());
-			if (get_company_pref('use_manufacturing'))
+			if ((bool)get_company_pref('use_manufacturing'))
 				$this->add_application(new manufacturing_app());
-			if (get_company_pref('use_fixed_assets'))
+			if ((bool)get_company_pref('use_fixed_assets'))
 			    $this->add_application(new assets_app());
 			$this->add_application(new dimensions_app());
 			$this->add_application(new general_ledger_app());

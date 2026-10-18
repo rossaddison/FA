@@ -639,6 +639,32 @@ to their source.
   comment already documenting exactly this concern) - confirmed safe, no
   change needed.
 
+- **`frontaccounting.php` — `front_accounting::display()`'s dynamic theme
+  include.** `include_once($path_to_root . "/themes/".user_theme()."/renderer.php")`
+  is flagged `TaintedInclude` because `user_theme()` ultimately traces back
+  to `post_scalar('theme')` in `admin/display_prefs.php` - the same
+  provenance already investigated for the analogous `TaintedHtml` findings
+  on `user_theme()`-into-`<img src>` sites elsewhere in this codebase (see
+  TAINTEDHTML_VENDOR_CLASS_LIMITATION.md). Checked the write path again
+  specifically for path-traversal, not just HTML injection:
+  `admin/display_prefs.php` runs the posted value through
+  `clean_file_name()` (`@psalm-taint-escape file`-annotated, replaces
+  anything outside `[a-zA-Z0-9.\-_]` with `_`) *before* it's ever persisted
+  to the user's stored preference, which structurally rules out `/` or `..`
+  reaching this include regardless of whether the real UI only offers a
+  fixed dropdown. Psalm can't see across the preference's DB/session
+  round-trip, the same documented gap this migration already decided not
+  to blanket-suppress for `TaintedFile`/`TaintedSSRF` (see
+  PSALM_MIGRATION.md's "via a database round-trip" section) - so this is
+  spot-checked and confirmed safe here specifically, not silenced as a
+  category. `@psalm-suppress TaintedInclude` does not actually suppress
+  this specific finding here (tried both statement- and method-level
+  placement, confirmed via rescan neither drops it from the report, unlike
+  the identical-pattern `@psalm-suppress TaintedFile` annotations in
+  `admin/db/maintenance_db.inc` which do work) - see
+  PSALM_UPSTREAM_LIMITATIONS.md. Left as a plain comment pointing back to
+  this entry instead; the finding itself remains in the Psalm count.
+
 ## Broken access control
 
 - **`includes/dashboard.inc` — `dashboard()`.** The per-app dashboard access

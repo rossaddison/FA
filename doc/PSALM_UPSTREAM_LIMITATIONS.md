@@ -92,6 +92,35 @@ ships in a Psalm release, re-run the isolated test from
 don't assume the shipped behavior matches the draft PR's description
 exactly.
 
+## `@psalm-suppress TaintedInclude` doesn't suppress on at least one confirmed-safe sink
+
+No upstream issue number found/filed for this one yet - noted here from a
+direct isolated test, not a citation.
+
+**Symptom:** `frontaccounting.php`'s `display()` has a `TaintedInclude`
+finding on `include_once($path_to_root . "/themes/".user_theme()."/renderer.php")`
+that a `@psalm-suppress TaintedInclude ...` annotation does not remove from
+the project's Psalm report, confirmed via two full `--no-cache` rescans -
+one with the annotation directly above the `include_once` statement, one
+with it moved to the enclosing `display()` method's own docblock. Both
+left the exact same `TaintedInclude` entry in the report, at the same
+line. This is not a project-config issue: the identical
+`@psalm-suppress TaintedFile confirmed safe, ...` pattern on
+`admin/db/maintenance_db.inc`'s `create_comp_dirs()` (four occurrences, see
+BUGS_FOUND.md's "Path traversal / arbitrary file write" section) reliably
+suppresses those findings in the same rescans - so plain `@psalm-suppress`
+handling isn't broken project-wide, just seemingly not honored for this
+specific `TaintedInclude` sink in this case.
+
+**Where this hit us:** the dynamically-loaded theme renderer include - see
+BUGS_FOUND.md's "Path traversal / arbitrary file write" section for why
+it's confirmed safe despite the finding.
+
+**Workaround:** none found. Left as a plain explanatory comment instead of
+a suppression; the finding stays in the project's Psalm count, which is
+why this file's post-cleanup count (see its commit message) is one higher
+than it would otherwise be.
+
 ## For contrast: an upstream issue that *was* already fixed
 
 **[vimeo/psalm#11381](https://github.com/vimeo/psalm/issues/11381)** —
