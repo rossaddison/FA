@@ -31,9 +31,10 @@ if ((bool) user_use_date_picker())
 //----------------------------------------------------------------------------------------
 
 if (isset($_GET['ModifyCredit'])) {
-    check_is_editable(ST_SUPPCREDIT, get_scalar('ModifyCredit'));
-    $_SESSION['page_title'] = sprintf( _("Modifying Supplier Credit # %d"), $_GET['ModifyCredit']);
-    $_SESSION['supp_trans'] = new supp_trans(ST_SUPPCREDIT, $_GET['ModifyCredit']);
+    $modify_credit = get_scalar('ModifyCredit');
+    check_is_editable(ST_SUPPCREDIT, $modify_credit);
+    $_SESSION['page_title'] = sprintf( _("Modifying Supplier Credit # %d"), (string) ($modify_credit ?? ''));
+    $_SESSION['supp_trans'] = new supp_trans(ST_SUPPCREDIT, $modify_credit === null ? null : (string) $modify_credit);
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -49,8 +50,9 @@ if (isset($_GET['New']))
 
 	if (isset($_GET['invoice_no']))
 	{
-		$_SESSION['supp_trans'] = new supp_trans(ST_SUPPINVOICE, $_GET['invoice_no']);
-		session_obj('supp_trans')->src_docs = array( $_GET['invoice_no'] => session_obj('supp_trans')->supp_reference);
+		$invoice_no_get = get_scalar('invoice_no');
+		$_SESSION['supp_trans'] = new supp_trans(ST_SUPPINVOICE, $invoice_no_get === null ? null : (string) $invoice_no_get);
+		session_obj('supp_trans')->src_docs = array( (string) $invoice_no_get => session_obj('supp_trans')->supp_reference);
 
 
 		session_obj('supp_trans')->trans_type = ST_SUPPCREDIT;
@@ -66,7 +68,7 @@ if (isset($_GET['New']))
 		$_SESSION['supp_trans'] = new supp_trans(ST_SUPPCREDIT);
 	}
 }
-page($_SESSION['page_title'] ?? _("Supplier Credit Note"), false, false, "", $js);
+page((string) ($_SESSION['page_title'] ?? _("Supplier Credit Note")), false, false, "", $js);
 
 if (!isset($_SESSION['supp_trans']))
 {
@@ -79,11 +81,14 @@ if (!isset($_SESSION['supp_trans']))
 
 check_db_has_suppliers(_("There are no suppliers defined in the system."));
 
+/** @var supp_trans $trans */
+$trans = $_SESSION['supp_trans'];
+
 //---------------------------------------------------------------------------------------------------------------
 
-if (isset($_GET['AddedID'])) 
+if (isset($_GET['AddedID']))
 {
-	$invoice_no = $_GET['AddedID'];
+	$invoice_no = get_scalar('AddedID');
 	$trans_type = ST_SUPPCREDIT;
 
 
@@ -93,7 +98,7 @@ if (isset($_GET['AddedID']))
 
 	display_note(get_gl_view_str($trans_type, $invoice_no, _("View the GL Journal Entries for this Credit Note")), 1);
 
-    hyperlink_params($_SERVER['PHP_SELF'], _("Enter Another Credit Note"), "New=1");
+    hyperlink_params($_SERVER['PHP_SELF'] ?? '', _("Enter Another Credit Note"), "New=1");
 	hyperlink_params("$path_to_root/admin/attachments.php", _("Add an Attachment"), "filterType=$trans_type&trans_no=$invoice_no");
 
 	display_footer_exit();
@@ -132,8 +137,10 @@ if (isset($_POST['AddGLCodeToTrans'])) {
 
 	ajax()->activate('gl_items');
 	$input_error = false;
+	$gl_act_name = null;
+	$gl_code = post_scalar('gl_code');
 
-	$result = get_gl_account_info(post_scalar('gl_code'));
+	$result = get_gl_account_info($gl_code === null ? null : (string) $gl_code);
 	if (db_num_rows($result) == 0)
 	{
 		display_error(_("The account code entered is not a valid code, this line cannot be added to the transaction."));
@@ -152,7 +159,7 @@ if (isset($_POST['AddGLCodeToTrans'])) {
 		}
 	}
 
-	if (!is_tax_gl_unique(get_post('gl_code'))) {
+	if (!is_tax_gl_unique($gl_code === null ? null : (string) $gl_code)) {
    		display_error(_("Cannot post to GL account used by more than one tax type."));
 		set_focus('gl_code');
    		$input_error = true;
@@ -160,9 +167,9 @@ if (isset($_POST['AddGLCodeToTrans'])) {
 
 	if ($input_error == false)
 	{
-		session_obj('supp_trans')->add_gl_codes_to_trans($_POST['gl_code'], $gl_act_name,
-			$_POST['dimension_id'], $_POST['dimension2_id'], 
-			input_num('amount'), $_POST['memo_']);
+		session_obj('supp_trans')->add_gl_codes_to_trans($gl_code, $gl_act_name,
+			post_scalar('dimension_id'), post_scalar('dimension2_id'),
+			input_num('amount'), post_scalar('memo_'));
 		reset_tax_input();
 		set_focus('gl_code');
 	}
@@ -214,16 +221,19 @@ function check_data(): bool
 		return false;
 	}
 
-	if (trim(get_post('supp_reference')) == false)
+	$supp_reference = get_post('supp_reference');
+	if (trim(is_array($supp_reference) ? '' : $supp_reference) == false)
 	{
 		display_error(_("You must enter a supplier's invoice reference."));
 		set_focus('supp_reference');
 		return false;
 	}
 
-	if (is_reference_already_there(session_obj('supp_trans')->supplier_id, post_scalar('supp_reference'), session_obj('supp_trans')->trans_no))
+	$supp_reference_scalar = post_scalar('supp_reference');
+	$credit_trans_no = session_obj('supp_trans')->trans_no;
+	if (is_reference_already_there(session_obj('supp_trans')->supplier_id, $supp_reference_scalar === null ? null : (string) $supp_reference_scalar, is_array($credit_trans_no) ? null : $credit_trans_no))
 	{ 	/*Transaction reference already entered */
-		display_error(_("This invoice number has already been entered. It cannot be entered again.") . " (" . (string)$_POST['supp_reference'] . ")");
+		display_error(_("This invoice number has already been entered. It cannot be entered again.") . " (" . (is_array($supp_reference) ? '' : $supp_reference) . ")");
 		set_focus('supp_reference');
 		return false;
 	}
@@ -258,12 +268,12 @@ function handle_commit_credit_note(): void
 	if (!check_data())
 		return;
 
-	$invoice_no = add_supp_invoice($_SESSION['supp_trans']);
+	$invoice_no = add_supp_invoice($trans);
 
     session_obj('supp_trans')->clear_items();
     unset($_SESSION['supp_trans']);
 
-	meta_forward($_SERVER['PHP_SELF'], "AddedID=$invoice_no");
+	meta_forward($_SERVER['PHP_SELF'] ?? '', "AddedID=$invoice_no");
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -273,7 +283,7 @@ if (isset($_POST['PostCreditNote']))
 	handle_commit_credit_note();
 }
 
-function check_item_data(string|int|null $n): bool
+function check_item_data_credit(string|int|null $n): bool
 {
 
 	if (!check_num('This_QuantityCredited'.(string) $n, 0))
@@ -295,16 +305,22 @@ function check_item_data(string|int|null $n): bool
 
 function commit_item_data(string|int|null $n): void
 {
-	if (check_item_data())
+	if (check_item_data_credit($n))
 	{
+            $po_detail_item = get_post('po_detail_item'.(string) $n);
+            $item_code = get_post('item_code'.(string) $n);
+            $item_description = get_post('item_description'.(string) $n);
+            $qty_recd = get_post('qty_recd'.(string) $n);
+            $prev_quantity_inv = get_post('prev_quantity_inv'.(string) $n);
+            $order_price = get_post('order_price'.(string) $n);
             session_obj('supp_trans')->add_grn_to_trans($n,
-            get_post('po_detail_item'.(string) $n),
-            get_post('item_code'.(string) $n),
-            get_post('item_description'.(string) $n),
-            get_post('qty_recd'.(string) $n),
-            get_post('prev_quantity_inv'.(string) $n),
+            is_array($po_detail_item) ? null : $po_detail_item,
+            is_array($item_code) ? null : $item_code,
+            is_array($item_description) ? null : $item_description,
+            is_array($qty_recd) ? null : $qty_recd,
+            is_array($prev_quantity_inv) ? null : $prev_quantity_inv,
             input_num('This_QuantityCredited'.(string) $n),
-            get_post('order_price'.(string) $n),
+            is_array($order_price) ? null : $order_price,
             input_num('ChgPrice'.(string) $n));
             reset_tax_input();
 	}
@@ -358,28 +374,28 @@ if (isset($_POST['RefreshInquiry']))
 if (isset($_POST['go']))
 {
 	ajax()->activate('gl_items');
-	display_quick_entries($_SESSION['supp_trans'], post_scalar('qid'), input_num('totamount'), QE_SUPPINV);
+	display_quick_entries($trans, post_scalar('qid'), input_num('totamount'), QE_SUPPINV);
 	$_POST['totamount'] = price_format(0); ajax()->activate('totamount');
 	reset_tax_input();
 }
+/** @var supp_trans $trans */
+$trans = $trans;
 
 
 //--------------------------------------------------------------------------------------------------
 
 start_form();
 
-/** @var supp_trans $trans */
-$trans = $_SESSION['supp_trans'];
 invoice_header($trans);
 if ($_POST['supplier_id']=='')
 	display_error('No supplier found for entered search text');
 else {
-	display_grn_items($_SESSION['supp_trans'], 1);
+	display_grn_items($trans, 1);
 
-	display_gl_items($_SESSION['supp_trans'], 1);
+	display_gl_items($trans, 1);
 
 	div_start('inv_tot');
-	invoice_totals($_SESSION['supp_trans']);
+	invoice_totals($trans);
 	div_end();
 }
 
