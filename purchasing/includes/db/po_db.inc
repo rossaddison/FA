@@ -72,12 +72,16 @@ function add_po(purch_order &$po_obj)
 	begin_transaction();
 	hook_db_prewrite($po_obj, ST_PURCHORDER);
 
+     $order_date = date2sql($po_obj->orig_order_date);
+     if ($order_date == "")
+     	$order_date = "0000-00-00";
+
      /*Insert to purchase order header record */
-     $sql = "INSERT INTO ".TB_PREF."purch_orders (supplier_id, Comments, ord_date, reference, 
+     $sql = "INSERT INTO ".TB_PREF."purch_orders (supplier_id, Comments, ord_date, reference,
      	requisition_no, into_stock_location, delivery_address, total, tax_included, prep_amount) VALUES(";
      $sql .= db_escape($po_obj->supplier_id) . "," .
          db_escape($po_obj->Comments) . ",'" .
-         date2sql($po_obj->orig_order_date) . "', " .
+         $order_date . "', " .
 		 db_escape($po_obj->reference) . ", " .
          db_escape($po_obj->supp_ref) . ", " .
          db_escape($po_obj->Location) . ", " .
@@ -101,9 +105,12 @@ function add_po(purch_order &$po_obj)
 				$po_line->item_description = $data['supplier_description'];
       	}
 		$sql = "INSERT INTO ".TB_PREF."purch_order_details (order_no, item_code, description, delivery_date,	unit_price,	quantity_ordered) VALUES (";
+		$req_del_date = date2sql($po_line->req_del_date);
+		if ($req_del_date == "")
+			$req_del_date = "0000-00-00";
 		$sql .= $po_obj->order_no . ", " . db_escape($po_line->stock_id). "," .
 		db_escape($po_line->item_description). ",'" .
-		date2sql($po_line->req_del_date) . "'," .
+		$req_del_date . "'," .
 		db_escape($po_line->price) . ", " .
 		db_escape($po_line->quantity). ")";
 		db_query($sql, "One of the purchase order detail records could not be inserted");
@@ -127,11 +134,15 @@ function update_po(purch_order &$po_obj)
 	begin_transaction();
 	hook_db_prewrite($po_obj, ST_PURCHORDER);
 
+    $order_date = date2sql($po_obj->orig_order_date);
+    if ($order_date == "")
+    	$order_date = "0000-00-00";
+
     /*Update the purchase order header with any changes */
     $sql = "UPDATE ".TB_PREF."purch_orders SET Comments=" . db_escape($po_obj->Comments) . ",
 		requisition_no= ". db_escape( $po_obj->supp_ref). ",
 		into_stock_location=" . db_escape($po_obj->Location). ",
-		ord_date='" . date2sql($po_obj->orig_order_date) . "',
+		ord_date='" . $order_date . "',
 		delivery_address=" . db_escape($po_obj->delivery_address).",
 		total=". db_escape($po_obj->get_trans_total()).",
 		prep_amount=". db_escape($po_obj->prep_amount).",
@@ -152,13 +163,16 @@ function update_po(purch_order &$po_obj)
 			if ($data !== false && $data['supplier_description'] != "")
 				$po_line->item_description = $data['supplier_description'];
       	}
-    	$sql = "INSERT INTO ".TB_PREF."purch_order_details (po_detail_item, order_no, item_code, 
+    	$req_del_date = date2sql($po_line->req_del_date);
+    	if ($req_del_date == "")
+    		$req_del_date = "0000-00-00";
+    	$sql = "INSERT INTO ".TB_PREF."purch_order_details (po_detail_item, order_no, item_code,
     		description, delivery_date, unit_price, quantity_ordered, quantity_received) VALUES ("
 			.db_escape($po_line->po_detail_rec ? $po_line->po_detail_rec : 0). ","
 			.$po_obj->order_no . ","
 			.db_escape($po_line->stock_id). ","
 			.db_escape($po_line->item_description). ",'"
-			.date2sql($po_line->req_del_date) . "',"
+			.$req_del_date . "',"
 			.db_escape($po_line->price) . ", "
 			.db_escape($po_line->quantity) . ", "
 			.db_escape($po_line->qty_received) . ")";

@@ -21,6 +21,8 @@ function write_supp_trans(string|int|float|bool|null $type, ?int $trans_no, stri
 {
 	$new = $trans_no==0;
 	$date = date2sql((string) $date_);
+	if ($date == "")
+		$date = "0000-00-00";
 	if ($due_date == "")
 		$due_date = "0000-00-00";
 	else

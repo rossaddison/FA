@@ -16,6 +16,8 @@ function add_supp_allocation(string|int|float|bool|null $amount, string|int|floa
 	string|int|float|bool|null $trans_type_to, string|int|float|bool|null $trans_no_to, string|int|float|bool|null $person_id, string|int|float|bool|null $date_): void
 {
 	$date = date2sql($date_ === null ? null : (string) $date_);
+	if ($date == "")
+		$date = "0000-00-00";
 	$sql = "INSERT INTO ".TB_PREF."supp_allocations (
 		amt, date_alloc,
 		trans_type_from, trans_no_from, trans_no_to, trans_type_to, person_id)

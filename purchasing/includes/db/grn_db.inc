@@ -227,6 +227,8 @@ function add_grn(purch_order &$po)
 function add_grn_batch(string|int|float|bool|null $po_number, string|int|float|bool|null $supplier_id, string|int|float|bool|null $reference, string|int|float|bool|null $location, string|int|float|bool|null $date_, string|int|float|bool|null $rate): int|string
 {
     $date = date2sql($date_);
+    if ($date == "")
+        $date = "0000-00-00";
 
     $sql = "INSERT INTO ".TB_PREF."grn_batch (purch_order_no, delivery_date, supplier_id, reference, loc_code, rate)
 			VALUES (".db_escape($po_number).", ".db_escape($date).", "

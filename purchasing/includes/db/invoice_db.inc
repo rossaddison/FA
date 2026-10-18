@@ -128,7 +128,7 @@ function get_diff_in_home_currency(string|int|float|bool|null $supplier, ?string
 	return $diff;
 }
 //----------------------------------------------------------------------------------------
-/** @return array<array-key, mixed>|null|scalar */
+/** @return float|int|null */
 #[\NoDiscard]
 function add_supp_invoice(supp_trans &$supp_trans)
 {
