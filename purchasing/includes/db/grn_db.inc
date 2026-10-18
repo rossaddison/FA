@@ -12,7 +12,7 @@ declare(strict_types=1);
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 //------------------- update average material cost ---------------------
-/** @return null|scalar */
+/** @return float */
 function update_average_material_cost(
     string|int|float|bool|null $supplier,
     string|int|float|bool|null $stock_id,
@@ -26,16 +26,17 @@ function update_average_material_cost(
     // save a couple of db calls like get_supplier()
 
     $qty = (float) $qty;
+    $price = (float) $price;
 
     $supp = row_or_empty(get_supplier($supplier));
     if ($supplier != null) {
         $currency = $supp['curr_code'];
-        if ($supp['tax_included']) {
-            $price = get_tax_free_price_for_item(
-                $stock_id,
+        if ((bool) $supp['tax_included']) {
+            $price = (float) get_tax_free_price_for_item(
+                (string) $stock_id,
                 $price,
                 $supp['tax_group_id'],
-                $supp['tax_included']
+                (int) $supp['tax_included']
             );
         }
     } else {
@@ -60,11 +61,11 @@ function update_average_material_cost(
     $sql = "SELECT mb_flag, material_cost FROM ".TB_PREF."stock_master WHERE stock_id=".db_escape($stock_id);
     $result = db_select($sql);
     $myrow = row_or_empty(db_fetch($result));
-    $material_cost = $myrow['material_cost'];
+    $material_cost = (float) $myrow['material_cost'];
 
     $cost_adjust = false;
 
-    $qoh = get_qoh_on_date($stock_id);
+    $qoh = (float) get_qoh_on_date($stock_id);
 
     if ($adj_only) {
         if ($qoh > .0000000001) { // avoid very small values
@@ -75,7 +76,7 @@ function update_average_material_cost(
             if ($qoh + $qty >= 0) {
                 $cost_adjust = true;
             }
-            $qoh = 0;
+            $qoh = 0.0;
         }
         if ($qoh + $qty > .0000000001) { // avoid very small values
             $material_cost = ($qoh * $material_cost + $qty * $price_in_home_currency) /	($qoh + $qty);
@@ -106,7 +107,7 @@ function add_grn(purch_order &$po)
 
     if (!is_company_currency($po->curr_code)) {
         if (!$po->ex_rate) {
-            $po->ex_rate = get_date_exchange_rate($po->curr_code, $date_);
+            $po->ex_rate = (float) get_date_exchange_rate($po->curr_code, $date_);
         } else {
             add_new_exchange_rate($po->curr_code, $date_, $po->ex_rate);
         }
@@ -117,18 +118,16 @@ function add_grn(purch_order &$po)
     $grn = add_grn_batch($po->order_no, $po->supplier_id, $po->reference, $po->Location, $date_, $po->ex_rate);
 
     $clearing_act = get_company_pref('grn_clearing_act');
-    if ($clearing_act) {	// otherwise GRN clearing account is not used
-        $total = 0;
-    }
+    $total = 0.0; // only used when $clearing_act is truthy, but always initialized to avoid an undefined variable
     foreach ($po->line_items as $line_no => $order_line) {
-        if ($order_line->receive_qty != 0 && $order_line->receive_qty != "" && isset($order_line->receive_qty)) {
+        if ($order_line->receive_qty != 0 && $order_line->receive_qty != "") {
             $stock_gl_code = row_or_empty(get_stock_gl_code($order_line->stock_id));
 
             /*Update sales_order_details for the new quantity received and the standard cost used for postings to GL
               and recorded in the stock movements for FIFO/LIFO stocks valuations*/
             //------------------- update average material cost and clearing account --------------------------------
             if (is_inventory_item($order_line->stock_id)) {
-                if ($clearing_act) {
+                if ((bool) $clearing_act) {
                     $total += add_gl_trans_supplier(
                         ST_SUPPRECEIVE,
                         $grn,
@@ -155,7 +154,7 @@ function add_grn(purch_order &$po)
             if ($order_line->qty_received == 0) {
                 /*This must be the first receipt of goods against this line */
                 /*Need to get the standard cost as it is now so we can process GL jorunals later*/
-                $order_line->standard_cost = get_unit_cost($order_line->stock_id);
+                $order_line->standard_cost = (float) get_unit_cost($order_line->stock_id);
             }
             // Update the purchase data table
             add_or_update_purchase_data(
@@ -167,9 +166,9 @@ function add_grn(purch_order &$po)
 
             /*Need to insert a grn item */ // also need to check for over-receive.(within allowance)
             if ((float)$order_line->receive_qty + (float)$order_line->qty_received > $order_line->quantity) {
-                $order_line->quantity = (float)$order_line->receive_qty + (float)$order_line->qty_received;
+                $order_line->quantity = (int) ((float)$order_line->receive_qty + (float)$order_line->qty_received);
             }
-            $grn_item = add_grn_detail_item(
+            $grn_item = (int) add_grn_detail_item(
                 $grn,
                 $order_line->po_detail_rec,
                 $order_line->stock_id,
@@ -191,13 +190,13 @@ function add_grn(purch_order &$po)
                 "",
                 $order_line->receive_qty,
                 $order_line->standard_cost,
-                $order_line->taxfree_charge_value($po) / $order_line->receive_qty
+                (float) $order_line->taxfree_charge_value($po) / (float) $order_line->receive_qty
             );
 
         } /*quantity received is != 0 */
     } /*end of order_line loop */
 
-    if ($clearing_act && $total != 0.0) {
+    if ((bool) $clearing_act && $total != 0.0) {
         $accs = row_or_empty(get_supplier_accounts($po->supplier_id));
         $total += add_gl_trans_supplier(
             ST_SUPPRECEIVE,
@@ -226,7 +225,7 @@ function add_grn(purch_order &$po)
 #[\NoDiscard]
 function add_grn_batch(string|int|float|bool|null $po_number, string|int|float|bool|null $supplier_id, string|int|float|bool|null $reference, string|int|float|bool|null $location, string|int|float|bool|null $date_, string|int|float|bool|null $rate): int|string
 {
-    $date = date2sql($date_);
+    $date = date2sql(is_scalar($date_) ? (string) $date_ : null);
     if ($date == "")
         $date = "0000-00-00";
 
@@ -273,7 +272,7 @@ function add_grn_detail_item(
 /**
  * @return null|string
  */
-function get_grn_batch_from_item(mixed $item)
+function get_grn_batch_from_item(string|int|float|bool|null $item)
 {
     $sql = "SELECT grn_batch_id FROM ".TB_PREF."grn_items WHERE id=".db_escape($item);
     $result = db_select($sql, "Could not retreive GRN batch id");
@@ -367,14 +366,15 @@ function get_grn_items(
                 .TB_PREF."stock_master stock_item,"
                 .TB_PREF."grn_items grn_item ";
 
+    $inv_cond = "";
     if ($invoice_no != 0) {
         $sql .= " LEFT JOIN ".TB_PREF."supp_invoice_items invoice_item ON ";
 
         $inv_cond = "invoice_item.supp_trans_type=".ST_SUPPINVOICE." AND invoice_item.supp_trans_no ";
         if (is_array($invoice_no)) {
-            $inv_cond .= " IN (".implode(',', $invoice_no) . ")";
+            $inv_cond .= " IN (".implode(',', array_map('intval', $invoice_no)) . ")";
         } else {
-            $inv_cond .= " = $invoice_no";
+            $inv_cond .= " = ".db_escape($invoice_no);
         }
         $sql .= "($inv_cond) AND grn_item.id=invoice_item.grn_item_id";
     }
@@ -435,7 +435,7 @@ function get_grn_item_detail(string|int|null $grn_item_no)
 
 //----------------------------------------------------------------------------------------
 
-function read_grn_items_to_order(mixed $grn_batch, purch_order &$order): void
+function read_grn_items_to_order(string|int|float|bool|null $grn_batch, purch_order &$order): void
 {
     $result = get_grn_items($grn_batch);
 
@@ -453,9 +453,9 @@ function read_grn_items_to_order(mixed $grn_batch, purch_order &$order): void
 
             $order->add_to_order(
                 $order->lines_on_order,
-                $myrow["item_code"],
+                $myrow["item_code"] ?? '',
                 (int) $myrow["qty_recd"],
-                $myrow["description"],
+                $myrow["description"] ?? '',
                 (float) $myrow["unit_price"],
                 $units,
                 sql2date($myrow["req_del_date"]),
@@ -476,11 +476,11 @@ function read_grn(string|null $grn_batch, purch_order &$order): void
 {
     $sql = "SELECT *	FROM ".TB_PREF."grn_batch WHERE id=".db_escape($grn_batch);
 
-    $result = db_query($sql, "The grn sent is not valid");
+    $result = db_select($sql, "The grn sent is not valid");
 
     $row = row_or_empty(db_fetch($result));
     $po_number = $row["purch_order_no"];
-    $order->ex_rate = $row["rate"];
+    $order->ex_rate = (float) $row["rate"];
 
     $result = read_po_header($po_number, $order);
 
@@ -488,8 +488,8 @@ function read_grn(string|null $grn_batch, purch_order &$order): void
 
         $order->trans_type = ST_SUPPRECEIVE;
         $order->orig_order_date = sql2date($row["delivery_date"]);
-        $order->Location = $row["loc_code"];
-        $order->reference = $row["reference"];
+        $order->Location = $row["loc_code"] ?? '';
+        $order->reference = $row["reference"] ?? '';
 
         read_grn_items_to_order($grn_batch, $order);
     }
@@ -511,7 +511,7 @@ function get_po_grns(string|int|float|bool|null $po_number)
 
 //----------------------------------------------------------------------------------------------------------
 
-function exists_grn(mixed $grn_batch): bool
+function exists_grn(string|int|float|bool|null $grn_batch): bool
 {
     $sql = "SELECT id FROM ".TB_PREF."grn_batch WHERE id=".db_escape($grn_batch);
     $result = db_select($sql, "Cannot retreive a grn");
@@ -521,7 +521,7 @@ function exists_grn(mixed $grn_batch): bool
 
 //----------------------------------------------------------------------------------------------------------
 
-function exists_grn_on_invoices(mixed $grn_batch): bool
+function exists_grn_on_invoices(string|int|float|bool|null $grn_batch): bool
 {
     $sql = "SELECT inv.id
 		FROM ".TB_PREF."supp_invoice_items inv,"
@@ -536,7 +536,7 @@ function exists_grn_on_invoices(mixed $grn_batch): bool
 
 //----------------------------------------------------------------------------------------------------------
 
-function void_grn(mixed $grn_batch): bool
+function void_grn(string|int|float|bool|null $grn_batch): bool
 {
     // if this grn is references on any invoices/credit notes, then it
     // can't be voided

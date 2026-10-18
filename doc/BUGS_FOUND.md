@@ -565,6 +565,19 @@ it, not a flaw in the escaping function itself.
   interpolated raw into `AND supp.supplier_id = $supplier_id`. Fixed with
   `db_escape()`.
 
+- **`purchasing/includes/db/grn_db.inc` — `get_grn_items()`.** The scalar
+  branch of its `$invoice_no` handling interpolated the value raw into
+  `invoice_item.supp_trans_no = $invoice_no` with no `db_escape()` at all
+  (the sibling array branch at least passed its elements through
+  `implode()`, just without casting them, fixed alongside this as a
+  separate `MixedArgumentTypeCoercion` finding). Traced call sites all
+  currently pass an internal transaction id (`$supp_trans->trans_no`) or
+  a hardcoded `0`, so not confirmed exploitable from request input today,
+  but hardened with `db_escape()` on the scalar path and
+  `array_map('intval', ...)` on the array path regardless, since this is
+  exactly the unescaped-interpolation pattern this section documents
+  elsewhere.
+
 - **`sales/includes/db/sales_delivery_db.inc` — `adjust_shipping_charge()`.**
   Both `$trans_no` and `$delivery->customer_id` (the latter traceable back to
   `$_POST['customer_id']` via `Cart::set_customer()`) were concatenated raw
