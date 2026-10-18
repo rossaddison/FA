@@ -24,7 +24,7 @@ $validator_types = array(
 abstract class record_set {
 	/** @var string|array<int, string> */
 	var $key;			// unique key fields
-	/** @var array<array-key, mixed> */
+	/** @var array<array-key, string|array{post?: string, fld?: string, dflt?: mixed, fmt?: string}> */
 	var $fields;		// other fields
 	/** @var string */
 	var $name;			// table name (without prefix)
@@ -50,7 +50,7 @@ abstract class record_set {
 
 	/**
 	 * @param string $name
-	 * @param array<array-key, mixed> $fields
+	 * @param array<array-key, string|array{post?: string, fld?: string, dflt?: mixed, fmt?: string}> $fields
 	 * @param string|array<int, string> $key
 	 * @param string|array<array-key, string>|null $subset
 	 * @psalm-mutation-free
@@ -241,7 +241,7 @@ abstract class record_set {
 	//
 	/**
 	 * @param string|int|array<array-key, mixed>|null $key
-	 * @return mixed
+	 * @return array<array-key, mixed>|false|null
 	 * @psalm-impure
 	 */
 	function get($key=null)
@@ -317,7 +317,7 @@ class data_set extends record_set {
 
 	/**
 	 * @param string $name
-	 * @param array<array-key, mixed> $fields
+	 * @param array<array-key, string|array{post?: string, fld?: string, dflt?: mixed, fmt?: string}> $fields
 	 * @param string|array<int, string> $key
 	 * @param string|array<array-key, string>|null $subset
 	 * @psalm-mutation-free
@@ -376,7 +376,8 @@ class data_set extends record_set {
 	{
 		$fields = array();
 		foreach($this->fields as $fld)
-			$fields[] = '`'.$fld.'`';
+			if (!is_array($fld))
+				$fields[] = '`'.$fld.'`';
 		$sql = "SELECT ".implode(',', $fields)." FROM ".TB_PREF.$this->name;
 
 		if ((bool)$where)

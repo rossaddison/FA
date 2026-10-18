@@ -997,6 +997,21 @@ to their source.
   ignored. Removed the shadowing `global` statement so the parameter is
   actually used.
 
+- **`includes/ui/class.crud_view.inc` — `user_view::get_fields_views()`.**
+  Its sibling functions `set_output()` and `get_input()` both normalize a
+  `$this->fields` entry before using it as an array: if the entry isn't
+  int-keyed (a plain field name) and isn't already an array, they wrap it
+  as `array('fmt' => $fmt)`. `get_fields_views()` is missing that same
+  `elseif (!is_array($fmt)) ...` branch, so a shorthand format entry (e.g.
+  `fa_reflines`'s own `'default' => 'check'` in
+  `includes/ui/class.reflines_crud.inc`) reaches `@$fmt['fmt']` with `$fmt`
+  still a plain string - accessing a string offset with a non-numeric key
+  is a fatal `TypeError` ("Cannot access offset of type string on
+  string") on PHP 8, not a suppressible warning the leading `@` would
+  catch. Currently unreachable only because nothing in this codebase calls
+  `get_fields_views()` yet. Added the missing normalization branch to
+  match its siblings.
+
 ## Missing feature (implemented, not just guarded)
 
 - **`includes/ui/attachment.inc` — no attachment size limit.** `db_insert()`

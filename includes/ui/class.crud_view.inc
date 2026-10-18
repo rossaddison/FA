@@ -11,7 +11,7 @@ declare(strict_types=1);
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-include_once $path_to_root.'/includes/db/class.data_set.inc';
+include_once dirname(__DIR__) . '/db/class.data_set.inc';
 
 /*
 	TODO: for php5:
@@ -25,7 +25,7 @@ class user_view {
 
 	/** @var array<array-key, mixed>|false|null */
 	var	$data; 		// data in php format
-	/** @var array<array-key, mixed> */
+	/** @var array<array-key, string|array{post?: string, fld?: string, dflt?: mixed, fmt?: string}> */
 	var $fields = array();	// input fields format descriptions
 	/** @var array<string, string> */
 	var $errors = array();
@@ -103,7 +103,7 @@ class user_view {
 			case 'percent':
 				return percent_format((float)$value*100.0);
 			case 'check':
-				return !empty($value);
+				return (bool) $value;
 			case 'stock':
 				$this->dec = (int) get_qty_dec(is_string($value) ? $value : null); // retrieve dec for use in following qty fields
 			case 'text':
@@ -171,15 +171,17 @@ class user_view {
 				$fmt = array();
 			} elseif (!is_array($fmt))
 				$fmt = array('fmt' => $fmt);
+			/** @var string $name */
+			$name = is_array($name) ? '' : $name;
 
 			$post = $prefix.(isset($fmt['post']) ? $fmt['post'] : $name);
 
 			$fld = isset($fmt['fld']) ? $fmt['fld'] : $name;
 
-			$value = (is_array($this->data) && isset($this->data[$fld])) ? $this->data[$fld] : @$fmt['dflt'];
+			$value = (is_array($this->data) && isset($this->data[$fld])) ? $this->data[$fld] : ($fmt['dflt'] ?? null);
 
 			if (isset($value)) {
-				$fmt_val = @$fmt['fmt'];
+				$fmt_val = $fmt['fmt'] ?? null;
 				$output[$post] = $this->_format_output(is_scalar($value) ? $value : null, is_string($fmt_val) ? $fmt_val : null);
 			}
 		}
@@ -204,7 +206,7 @@ class user_view {
     		{
 				if (strpos((string) $postkey, $this->name) === 0)
 				{
-					$id = substr($postkey, strlen($this->name));
+					$id = substr((string) $postkey, strlen($this->name));
 					$input[$id] = $postval;
 				}
 				unset($input[$postkey]);
@@ -217,17 +219,19 @@ class user_view {
 				$fmt = array(); // default format
 			} elseif (!is_array($fmt))
 				$fmt = array('fmt' => $fmt);
+			/** @var string $name */
+			$name = is_array($name) ? '' : $name;
 			$post = isset($fmt['post']) ? $fmt['post'] : $name; // input name (default to field name)
 			$fld = isset($fmt['fld']) ? $fmt['fld'] : $name;	// input value (default to field name)
 
 
 //			if ($all || array_key_exists($post, $input))
 //			{
-				if (@$fmt['fmt'] == 'check')
+				if (($fmt['fmt'] ?? null) == 'check')
 					$value = (bool)(@$input[$post]) ? 1 : 0;
 				else {
 					$in_val = @$input[$post];
-					$fmt_val = @$fmt['fmt'];
+					$fmt_val = $fmt['fmt'] ?? null;
 					$value = $this->_format_input(is_scalar($in_val) ? $in_val : null, is_string($fmt_val) ? $fmt_val : null);
 				}
 
@@ -262,12 +266,15 @@ class user_view {
 			if (is_int($name)) {
 				$name = $fmt;
 				$fmt = array();
-			}
+			} elseif (!is_array($fmt))
+				$fmt = array('fmt' => $fmt);
+			/** @var string $name */
+			$name = is_array($name) ? '' : $name;
 			$post = isset($fmt['post']) ? $fmt['post'] : $name;
 			$fld = isset($fmt['fld']) ? $fmt['fld'] : $name;
 
 			$cell_val = @$input[$post];
-			$fmt_val = @$fmt['fmt'];
+			$fmt_val = $fmt['fmt'] ?? null;
 			$this->_format_cells(is_scalar($cell_val) ? $cell_val : null, is_string($fmt_val) ? $fmt_val : null, $mode);
 
 			$view[$fld] = null;
@@ -305,7 +312,7 @@ class simple_crud_view extends user_view {
 	var $views = array();
 	/** @var array<array-key, mixed>|false|null */
 	var $data = array();
-	/** @var array<array-key, mixed> */
+	/** @var array<array-key, string|array{post?: string, fld?: string, dflt?: mixed, fmt?: string}> */
 	var $fields;
 	/** @var array<string, array<int, string|bool|null>> */
 	var $tool_buttons = array();
@@ -390,10 +397,10 @@ class simple_crud_view extends user_view {
 	{
 		$this->pre_handlers[$name] = $handler;
 
-		if ($but_value)
+		if ((bool) $but_value)
 			$this->tool_buttons[$name] = array($but_value, $but_title, $but_icon, $aspect);
 
-		if ($view)
+		if ((bool) $view)
 			$this->_add_mode($name, $view);
 	}
 
@@ -414,17 +421,17 @@ class simple_crud_view extends user_view {
 		// Restore previous mode/key (obsolete for views stored in session)
 
 		$mod = get_post($this->name.'Mode', $this->Mode);
-		$new_mode = $mod;
+		$new_mode = is_array($mod) ? '' : $mod;
 		if ((bool)$mod) {
 			if (is_array($mod)) {
 				$val = key($mod);
 				$this->selected_id = @quoted_printable_decode((string) $val);
-				$new_mode = $mod[$val];
+				$new_mode = (string) ($mod[$val] ?? '');
 			} else {
 				$this->selected_id = $this->_none;
 			}
 		}
-		$this->Mode = (string) $new_mode;
+		$this->Mode = $new_mode;
 	}
 
 	/** @return ''|'RESET'|key-of<array<array-key, mixed>> */
