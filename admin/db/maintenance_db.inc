@@ -295,7 +295,10 @@ function write_lang(): bool
 		$protect - protect users/roles 
 		$return_errors - return errors instead of display them
 */
-/** @param array<string, mixed> $connection */
+/**
+ * @param array<string, mixed> $connection
+ * @return array<int, array{0: string, 1: int}>|string|bool
+ */
 function db_import(string|int|float|bool|null $filename, array $connection, string|int|float|bool|null $force=true, string|int|float|bool|null $init=true, string|int|float|bool|array|null $protect=false, string|int|float|bool|null $return_errors=false): array|string|bool
 {
 	global $db;

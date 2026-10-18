@@ -27,6 +27,7 @@ class fa_patch {
 
 	/** @var int|string */
 	var $cur_company = 0;
+	/** @var false|null|string */
 	var $backup;				// pre-upgrade backup filename
 	/** @var string|false */
 	var $save_log = false;		// ini_set('error_log', ...) previous value, restored after upgrade
@@ -39,13 +40,13 @@ class fa_patch {
 	 */
 	var	$max_upgrade_time = 300;
 	/** @var array<int, array<string, string>> */
-	var $companies = null;
+	var $companies = array();
 
 	function __construct()
 	{
-		global $path_to_root, $db_connections;
+		global $db_connections;
 
-		include $path_to_root."/config_db.php";
+		include dirname(__DIR__, 2) . "/config_db.php";
 
 		$this->companies = $db_connections;
 	}
@@ -62,7 +63,7 @@ class fa_patch {
 	{
 		if ($type == 'Error')
 			$this->errors[] = $msg;
-		error_log(sprintf('[%s] %s', $type, $msg));
+		error_log(sprintf('[%s] %s', $type ?? 'Error', (string) ($msg ?? '')));
 		return false;
 	}
 
@@ -81,21 +82,21 @@ class fa_patch {
 
 		while($role = db_fetch($roles))
 		{
-			$role['areas'] = explode(';', $role['areas']);
-			$role['sections'] = explode(';', $role['sections']);
+			$role['areas'] = array_map('intval', explode(';', $role['areas'] ?? ''));
+			$role['sections'] = array_map('intval', explode(';', $role['sections'] ?? ''));
 			foreach($sec_updates as $has => $add)
 			{
-				if (in_array($security_areas[$has][0], $role['areas']))
+				if (in_array($security_areas[(string) $has][0], $role['areas']))
 				{
 					$sections = array();
 					foreach($add as $area)
 					{
-						$role['areas'][] = $security_areas[$area][0];
-						$role['sections'][] = $security_areas[$area][0]&~0xff;
+						$role['areas'][] = $security_areas[(string) $area][0];
+						$role['sections'][] = $security_areas[(string) $area][0]&~0xff;
 					}
 					sort($role['areas']);
-					update_security_role($role['id'], $role['role'], $role['description'], 
-						array_values($role['sections']), array_values($role['areas']));
+					update_security_role($role['id'], $role['role'], $role['description'],
+						$role['sections'], $role['areas']);
 				}
 			}
 		}
@@ -115,10 +116,11 @@ class fa_patch {
 
 		$fixed = false;
 		foreach($mods as $key => $ins) {
+			$ins_version = $ins['version'] ?? null;
 			foreach($exts as $ext)
-				if ($ext['name'] == $ins['name'] && (!check_src_ext_version($ins['version']))) {
+				if ($ext['name'] == $ins['name'] && (!check_src_ext_version(is_scalar($ins_version) ? $ins_version : null))) {
 					$mods[$key]['active'] = false;
-					$this->log_error(sprintf(_("Uncompatible extension '%s' disabled for company %d."), $ins['name'], $this->cur_company), 'Notice');
+					$this->log_error(sprintf(_("Uncompatible extension '%s' disabled for company %d."), (string) ($ins['name'] ?? ''), $this->cur_company), 'Notice');
 					$fixed = true;
 					continue 2;
 				}
@@ -147,7 +149,7 @@ class fa_patch {
 		$cur_ver = get_company_pref('version_id');
 		if ($cur_ver != $this->previous)
 			return $this->log_error(sprintf(_("Cannot upgrade company %s: database version is incompatible ('%s' instead of '%s')."),
-				$this->cur_company, $cur_ver, $this->previous));
+				$this->cur_company, (string) ($cur_ver ?? ''), $this->previous));
 
 		$this->update_extensions();	// disable uncompatible extensions
 
@@ -157,10 +159,10 @@ class fa_patch {
 		if (!$this->sql)
 			return true;	// skip security backup if database content is not changed
 
-		$this->backup = db_backup($this->companies[$this->cur_company], 'no', 'Security backup before upgrade',
+		$this->backup = db_backup($this->companies[(int) $this->cur_company], 'no', 'Security backup before upgrade',
 			sysprefs()->backup_dir($this->cur_company));
 
-		if (!$this->backup)
+		if (!(bool)$this->backup)
 		  return $this->log_error(_("Security backup failed."));
 
 		$this->log_error(sprintf(_("Security backup in file %s done."), $this->backup), 'Info');
@@ -177,11 +179,8 @@ class fa_patch {
 
 		if ($this->sql != '')	// perform basic upgrade operations defined in sql file
 		{
-			$result = true;
-
-			if ($result === true)
-				$result = db_import($path_to_root. '/sql/'.$this->sql, $this->companies[$company],
-					$force,	true, false, true);
+			$result = db_import($path_to_root. '/sql/'.$this->sql, $this->companies[(int) $company],
+				$force,	true, false, true);
 
 			if ($result !== true)
 			{
@@ -213,13 +212,13 @@ class fa_patch {
 
 		if ($result !== true)
 		{
-			if ($this->backup)
+			if ((bool)$this->backup)
 			{
 				if (!set_global_connection($this->cur_company)) // reset connection to clear encoding
 					return $this->log_error(_("Cannot connect to company database for database restore."));
 
 				set_time_limit($this->max_upgrade_time);
-				$result = db_import($this->backup, $this->companies[$this->cur_company], true, false);
+				$result = db_import($this->backup, $this->companies[(int) $this->cur_company], true, false);
 				if ((bool)$result)
 					$this->log_error(_("Upgrade failed. Original database content restored successfully."), 'Info');
 				else
@@ -259,8 +258,11 @@ class fa_patch {
 		This procedure is performed after basic sql upgrade script is run.
 	*/
 	/**
-	 * @psalm-pure
-	 * @return true
+	 * Base no-op is pure, but this is a hook real upgrade subclasses override
+	 * with side-effecting, possibly-failing logic (see e.g. sql/alter2.4.php's
+	 * install(), which can return false via update_workorders()) - declared
+	 * bool, not true, to match what overrides actually need to return.
+	 * @return bool
 	 */
 	function install(string|int $company, bool $force=false)
 	{
@@ -295,8 +297,12 @@ class fa_patch {
 		This function is run after successfull switching to target database connection.
     */
 	/**
-	 * @psalm-pure
-	 * @return true
+	 * Base no-op is pure, but this is a hook real upgrade subclasses override
+	 * with checks that can genuinely fail (see e.g. sql/alter2.2.php's
+	 * prepare(), which returns isset($security_groups) || ... and can be
+	 * false) - declared bool, not true, to match what overrides actually
+	 * need to return.
+	 * @return bool
 	 */
 	function prepare()
     {
@@ -308,6 +314,10 @@ class fa_patch {
 /*
 	Return databases status info.
 */
+/**
+ * @param array<int, array<string, string>> $connections
+ * @return array<int, array<string, mixed>>
+ */
 function get_site_status(array $connections): array
 {
 
@@ -318,7 +328,7 @@ function get_site_status(array $connections): array
 			$info[$i]['status'] = set_global_connection($i) !== false;
 
 			$info[$i]['name'] = $conn['name'];
-			$info[$i]['table_set'] = (string)$conn['host'].'/'.(string)$conn['dbname'].':'.(string)$conn['tbpref'].'*';
+			$info[$i]['table_set'] = $conn['host'].'/'.$conn['dbname'].':'.$conn['tbpref'].'*';
 			if ($info[$i]['status'])
 			{
 				$info[$i]['version'] = get_company_pref('version_id');
