@@ -16,6 +16,7 @@ $before_box = ''; // temporary container for output html data before error box
 #
 #   Wrapper for trigger_error
 #
+/** @param 256|512|1024 $error_level one of E_USER_ERROR|E_USER_WARNING|E_USER_NOTICE - the only values any real caller passes */
 function fa_trigger_error(string|int|float|bool|null $msg, int $error_level=E_USER_NOTICE): void
 {
     if ($error_level==E_USER_ERROR) {
@@ -38,22 +39,23 @@ function get_backtrace(bool $html = false, ?int $skip=0): string
 		if ($html) $str .= '</td><td>';
 		if (isset($tr['type'])) {
 	 		if($tr['type'] == '::') {
-				$str .= $tr['class'].'::';
+				$str .= ($tr['class'] ?? '').'::';
 			} else if($tr['type'] == '->') {
-				$str .= '('.$tr['class'].' Object)'.'->';
+				$str .= '('.($tr['class'] ?? '').' Object)'.'->';
 			}
 		}
 		$str .= $tr['function'].'(';
-		
-		if(isset($tr['args']) && is_array($tr['args'])) {
+
+		if(isset($tr['args'])) {
+			/** @var array<array-key, string> $args */
 			$args = array();
 			foreach($tr['args'] as $n=>$a) {
-				if (is_object($tr['args'][$n]))
-					$args[$n] = "(".get_class($tr['args'][$n])." Object)";
-				elseif (is_array($tr['args'][$n]))
-					$args[$n] = "(Array[".count($tr['args'][$n])."])";
+				if (is_object($a))
+					$args[$n] = "(".get_class($a)." Object)";
+				elseif (is_array($a))
+					$args[$n] = "(Array[".count($a)."])";
 				else
-					$args[$n] = "'".$tr['args'][$n]."'";
+					$args[$n] = "'".(string) $a."'";
 			}
 			$str .= implode(',',$args);
 		}
@@ -96,14 +98,14 @@ function error_handler(int $errno, string $errstr, string $file = '', int $line 
 		else if ($errno&~E_NOTICE && $errstr != '') { // log all not displayed messages 
 			$user = @session_obj('wa_current_user')->loginname;
 			$context = isset($SysPrefs) && !$SysPrefs->db_ok ? '[before upgrade]' : '';
-			error_log(user_company() . ":$user:". basename($file) .":$line:$context $errstr");
+			error_log((string) user_company() . ":$user:". basename($file) .":$line:$context $errstr");
 		}
 	}
 	
     return true;
 }
 
-function exception_handler(mixed $exception): void
+function exception_handler(\Throwable $exception): void
 {
 	error_handler(E_ERROR, sprintf(_("Unhandled exception [%s]: %s."), $exception->getCode(), $exception->getMessage()),
 		 $exception->getFile(), $exception->getLine());
@@ -114,6 +116,8 @@ function exception_handler(mixed $exception): void
 // FIX center is unused now
 function fmt_errors(string|int|float|bool|null $center=false): string {
     global $messages, $path_to_root, $SysPrefs;
+    /** @var array<int, array{0: int, 1: string|int|float|bool|null, 2: string|null, 3: int|null, 4?: array|string}> $messages */
+    $messages = $messages;
 
   	$msg_class = array(
   		E_USER_ERROR => 'err_msg',
@@ -125,14 +129,15 @@ function fmt_errors(string|int|float|bool|null $center=false): string {
 
   	if (count($messages)) {
 		foreach($messages as $cnt=>$msg) {
-			if ($SysPrefs->go_debug && $msg[0]>E_USER_NOTICE)
-		 		$msg[0] = E_ERROR;
+			// $msg itself is never mutated (it keeps its precise psalm.xml-declared shape that way);
+			// a possible debug-mode severity override lives in this separate local instead.
+			$msg_level = $SysPrefs->go_debug && $msg[0]>E_USER_NOTICE ? E_ERROR : $msg[0];
 
-			if ($msg[0]>$type) continue;
+			if ($msg_level>$type) continue;
 
-			if ($msg[0]<$type) { 
-				if ($msg[0] == E_USER_WARNING) {
-					$type = E_USER_WARNING; // user warnings 
+			if ($msg_level<$type) {
+				if ($msg_level == E_USER_WARNING) {
+					$type = E_USER_WARNING; // user warnings
 					$content = ''; 			// clean notices when we have errors
 				} else  {
 					$type = E_USER_ERROR; 	// php or user errors
@@ -140,12 +145,17 @@ function fmt_errors(string|int|float|bool|null $center=false): string {
 				}
 			}
 
-	    	$str = $msg[1];
-			if (!in_array($msg[0], array(E_USER_NOTICE, E_USER_ERROR, E_USER_WARNING)) && $msg[2] != null)
-		  		$str .= ' '._('in file').': '.$msg[2].' '._('at line ').$msg[3];
+	    	$str = (string) $msg[1];
+			if (!in_array($msg_level, array(E_USER_NOTICE, E_USER_ERROR, E_USER_WARNING)) && $msg[2] != null)
+		  		$str .= ' '._('in file').': '.$msg[2].' '._('at line ').(string) $msg[3];
 
-			if ($SysPrefs->go_debug>1 && $type!=E_USER_NOTICE && $type!=E_USER_WARNING)
-		  		$str .= '<br>'.$msg[4];
+			if ($SysPrefs->go_debug>1 && $type!=E_USER_NOTICE && $type!=E_USER_WARNING) {
+				$msg4 = $msg[4] ?? '';
+				// $msg[4] is always get_backtrace()'s string return, or an empty array() when
+				// go_debug<=1 at the time it was captured (see error_handler() above) - the array
+				// case is therefore always empty in practice.
+				$str .= '<br>'.(is_array($msg4) ? '' : $msg4);
+			}
 			$content .= ($cnt ? '<hr>' : '').$str;
 		}
 		$class = $msg_class[$type];
@@ -194,23 +204,25 @@ function display_db_error(string|int|float|bool|null $msg, string|array|null $sq
 
 	$warning = $msg==null;
 	$db_error = db_error_no();
-	
+	/** @var mysqli $db */
+	$db = $db;
+
 	if($warning)
 		$str = "<b>" . _("Debug mode database warning:") . "</b><br>";
 	else
 		$str = "<b>" . _("DATABASE ERROR :") . "</b> $msg<br>";
-	
-	if ($db_error != 0) 
+
+	if ($db_error != 0)
 	{
 		$str .= "error code : " . $db_error . "<br>";
 		$str .= "error message : " . db_error_msg($db) . "<br>";
 	}
-	
-	if ($SysPrefs->debug == 1) 
-	{
-		$cur_prefix = $db_connections[session_obj('wa_current_user')->cur_con]['tbpref'];
 
-		$str .= "sql that failed was : ".str_replace(TB_PREF, $cur_prefix, (string) $sql_statement)."<br>";
+	if ($SysPrefs->debug == 1)
+	{
+		$cur_prefix = $db_connections[(int) session_obj('wa_current_user')->cur_con]['tbpref'];
+
+		$str .= "sql that failed was : ".str_replace(TB_PREF, $cur_prefix, is_array($sql_statement) ? implode(', ', array_map('strval', $sql_statement)) : (string) $sql_statement)."<br>";
 	}
 	
 	$str .= "<br><br>";
