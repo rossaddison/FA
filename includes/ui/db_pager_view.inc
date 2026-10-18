@@ -18,7 +18,7 @@ function pager_link(string $link_text = '', string $url = '', string|bool|null $
 	if ((bool) user_graphic_links() && (bool)$icon)
 		$link_text = set_icon($icon, $link_text);
 
-	$href = $path_to_root . $url;
+	$href = (string) $path_to_root . $url;
 	return "<a href='$href'>" . $link_text . "</a>";
 }
 
@@ -52,12 +52,12 @@ function display_db_pager(db_pager &$pager): bool {
 		// record status control column is displayed only when control checkbox is on
     	if (isset($col['head']) && ($col['type']!='inactive' || get_post('show_inactive'))) {
 			if (!isset($col['ord']))
-				$headers[] = $col['head'];
+				$headers[] = (string) $col['head'];
 			else {
-	  			$icon = (($col['ord'] == 'desc') ? 'sort_desc.gif' : 
+	  			$icon = (($col['ord'] == 'desc') ? 'sort_desc.gif' :
 					($col['ord'] == 'asc' ? 'sort_asc.gif' : 'sort_none.gif'));
 				$headers[] = navi_button($pager->name.'_sort_'.$num_col,
-					is_scalar($col['head'] ?? null) ? $col['head'] : (string) ($col['head'] ?? ''), true, $icon);
+					(string) $col['head'], true, $icon);
 			}
  		}
 	}
@@ -70,14 +70,16 @@ function display_db_pager(db_pager &$pager): bool {
 		$fun = $pager->header_fun;
 		$h = array();
 		if (method_exists($pager, $fun)) {
+			/** @var array<int, array<int, string|int|float|bool|null>> $h */
 			$h = $pager->$fun($pager);
   		} elseif (function_exists($fun)) {
+			/** @var array<int, array<int, string|int|float|bool|null>> $h */
 			$h = $fun($pager);
 		}
 
 		foreach($h as $c) {	 // draw header columns
-			$pars = isset($c[1]) ? $c[1] : '';
-			label_cell($c[0], $pars);
+			$pars = isset($c[1]) ? (string) $c[1] : '';
+			label_cell($c[0] ?? '', $pars);
 		}
 		end_row();
 	}
@@ -88,6 +90,7 @@ function display_db_pager(db_pager &$pager): bool {
         if ($pager->row_fun !== null && $pager->row_fun !== '') {
             if (function_exists($pager->row_fun)) {
                 $fn = $pager->row_fun;
+                /** @var array<array-key, mixed> $row */
                 $row = $fn($row);
             }
         }
@@ -98,14 +101,17 @@ function display_db_pager(db_pager &$pager): bool {
 	    else	
 			alt_table_row_color($cc);
 	    foreach ($pager->columns as $k=>$col) {
-		   $coltype = $col['type'];
-		   $cell = isset($col['name']) ? $row[$col['name']] : '';
+		   $coltype = (string) $col['type'];
+		   /** @var string|int|float|bool|null $cell */
+		   $cell = isset($col['name']) ? $row[(string) $col['name']] : '';
 
 		   if (isset($col['fun'])) { // use data input function if defined
-		    $fun = $col['fun']; 
-		    if (method_exists($pager, $fun)) { 
+		    $fun = (string) $col['fun'];
+		    if (method_exists($pager, $fun)) {
+				/** @var string|int|float|bool|null $cell */
 				$cell = $pager->$fun($row, $cell);
   			} elseif (function_exists($fun)) {
+				/** @var string|int|float|bool|null $cell */
 				$cell = $fun($row, $cell);
 			} else
 				$cell = '';
@@ -116,10 +122,10 @@ function display_db_pager(db_pager &$pager): bool {
 		    case 'date':
 		  	  label_cell(sql2date($cell), "align='center' nowrap"); break;
 		    case 'dstamp':	// time stamp displayed as date
-		  	  label_cell(sql2date(substr($cell, 0, 10)), "align='center' nowrap"); break;
+		  	  label_cell(sql2date(substr((string) $cell, 0, 10)), "align='center' nowrap"); break;
 		    case 'tstamp':	// time stamp - FIX user format
-		  	  label_cell(sql2date(substr($cell, 0, 10)).
-			  ' '. substr($cell, 10), "align='center'"); break;
+		  	  label_cell(sql2date(substr((string) $cell, 0, 10)).
+			  ' '. substr((string) $cell, 10), "align='center'"); break;
 		    case 'percent':
 		  	  percent_cell($cell); break;
 		    case 'amount':
@@ -131,7 +137,7 @@ function display_db_pager(db_pager &$pager): bool {
 			  if ($cell=='')
 			  	label_cell('');
 			  else
-		  	  	qty_cell($cell, false, isset($col['dec']) ? $col['dec'] : null); break;
+		  	  	qty_cell($cell, false, isset($col['dec']) ? (string) $col['dec'] : null); break;
 			case 'email':
 				email_cell($cell,isset( $col['align']) ? "align='" . (string)$col['align'] . "'" : null);
 				break;
@@ -157,14 +163,16 @@ function display_db_pager(db_pager &$pager): bool {
 		$fun = $pager->footer_fun;
 		$h = array();
 		if (method_exists($pager, $fun)) {
+			/** @var array<int, array<int, string|int|float|bool|null>> $h */
 			$h = $pager->$fun($pager);
   		} elseif (function_exists($fun)) {
+			/** @var array<int, array<int, string|int|float|bool|null>> $h */
 			$h = $fun($pager);
 		}
 
 		foreach($h as $c) {	 // draw footer columns
-			$pars = isset($c[1]) ? $c[1] : '';
-			label_cell($c[0], $pars);
+			$pars = isset($c[1]) ? (string) $c[1] : '';
+			label_cell($c[0] ?? '', $pars);
 		}
 		end_row();
 	}
