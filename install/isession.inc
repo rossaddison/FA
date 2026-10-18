@@ -43,7 +43,9 @@ function html_cleanup(array &$parms): void
 		if (is_array($value))
 			html_cleanup($parms[$name]);
 		else
-			$parms[$name] = html_specials_encode($value);
+                    if (is_scalar($value) || $value === null) {
+                        $parms[$name] = html_specials_encode($value);
+                    }
 	}
 	reset($parms); // needed for direct key() usage later throughout the sources
 }
@@ -57,8 +59,11 @@ function check_page_security(string|int|float|bool|null $page_security): void
 */
 function cache_invalidate(?string $filename): void
 {
-    if (function_exists('opcache_invalidate')) // OpCode extension
+    if (function_exists('opcache_invalidate') 
+       && (is_string($filename) && strlen($filename) > 0)) {
+        // OpCode extension
         opcache_invalidate($filename);
+       }
 }
 //============================================================================
 if (!isset($path_to_root))

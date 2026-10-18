@@ -48,7 +48,7 @@ page($_SESSION['page_title'], false, false, "", $js);
 //-----------------------------------------------------------------------------
 
 if (isset($_GET['AddedID'])) {
-	$credit_no = $_GET['AddedID'];
+	$credit_no = (string) $_GET['AddedID'];
 	$trans_type = ST_CUSTCREDIT;
 
 	display_notification_centered(_("Credit Note has been processed"));
@@ -65,7 +65,7 @@ if (isset($_GET['AddedID'])) {
 	display_footer_exit();
 
 } elseif (isset($_GET['UpdatedID'])) {
-	$credit_no = $_GET['UpdatedID'];
+	$credit_no = (string) $_GET['UpdatedID'];
 	$trans_type = ST_CUSTCREDIT;
 
 	display_notification_centered(_("Credit Note has been updated"));

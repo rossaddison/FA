@@ -324,7 +324,7 @@ function commit_item_data(string|int|null $n): void
 
 //-----------------------------------------------------------------------------------------
 
-$id = find_submit('grn_item_id');
+$id = (int) find_submit('grn_item_id');
 if ($id != -1)
 {
 	commit_item_data($id);
@@ -336,15 +336,14 @@ if (isset($_POST['InvGRNAll']))
     {
 		if (strpos($postkey, "qty_recd") === 0)
 		{
-			$id = substr($postkey, strlen("qty_recd"));
-			$id = (int)$id;
+			$id = (int) substr($postkey, strlen("qty_recd"));
 			commit_item_data($id);
 		}
     }
 }	
 
 //--------------------------------------------------------------------------------------------------
-$id3 = find_submit('Delete');
+$id3 = (int) find_submit('Delete');
 if ($id3 != -1)
 {
 	session_obj('supp_trans')->remove_grn_from_trans($id3);
@@ -352,7 +351,7 @@ if ($id3 != -1)
 	reset_tax_input();
 }
 
-$id4 = find_submit('Delete2');
+$id4 = (int) find_submit('Delete2');
 if ($id4 != -1)
 {
 	session_obj('supp_trans')->remove_gl_codes_from_trans($id4);
@@ -361,7 +360,7 @@ if ($id4 != -1)
 	ajax()->activate('gl_items');
 }
 
-$id5 = find_submit('Edit');
+$id5 = (int) find_submit('Edit');
 if ($id5 != -1)
 {
     $_POST['gl_code'] = session_obj('supp_trans')->gl_codes[$id5]->gl_code;
@@ -378,7 +377,7 @@ if ($id5 != -1)
 $id2 = -1;
 if (session_obj('wa_current_user')->can_access('SA_GRNDELETE'))
 {
-	$id2 = find_submit('void_item_id');
+	$id2 = (int) find_submit('void_item_id');
 	if ($id2 != -1) 
 	{
 		remove_not_invoice_item($id2);

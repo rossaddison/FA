@@ -311,7 +311,7 @@ function get_short_info(string|null $stock_id)
 	$sql = "SELECT description, units, mb_flag
 		FROM ".TB_PREF."stock_master WHERE stock_id = ".db_escape($stock_id);
 
-	return db_select($sql,"The stock details for " . $stock_id . " could not be retrieved");
+	return db_select($sql,"The stock details for " . ($stock_id ?? '') . " could not be retrieved");
 }
 
 /**
@@ -347,10 +347,10 @@ function get_sql_for_po_search_completed(string|null $from, string|null $to, str
 		AND location.loc_code = porder.into_stock_location ";
 
 	if ($supplier_id != ALL_TEXT)
-		$sql .= "AND supplier.supplier_id=".$supplier_id." ";
+		$sql .= "AND supplier.supplier_id=". ($supplier_id ?? '')." ";
 	if ($order_number != "")
 	{
-		$sql .= "AND porder.reference LIKE ".db_escape('%'. $order_number . '%');
+		$sql .= "AND porder.reference LIKE ".db_escape('%'. ($order_number ?? ''). '%');
 	}
 	else
 	{

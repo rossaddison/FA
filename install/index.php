@@ -165,8 +165,14 @@ function install_connect_db() {
 
 function do_install(): bool {
 
-	global $path_to_root, $db_connections, $def_coy, $installed_extensions, $tb_pref_counter,
-		$dflt_lang, $installed_languages;
+	/** @var string $path_to_root */
+        global $path_to_root;
+        global $db_connections;
+        global $def_coy;
+        global $installed_extensions;
+        global $tb_pref_counter;
+        global $dflt_lang;
+        global $installed_languages;
 
 	/** @var string $coa */
 	$coa = $_SESSION['inst_set']['coa'];
