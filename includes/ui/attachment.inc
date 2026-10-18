@@ -16,20 +16,21 @@ include_once(dirname(__DIR__, 2) . '/includes/ui/simple_crud_class.inc');
 	View/Edit class for attachments
 */
 final class attachments extends simple_crud {
-	var $selected_id;
-	/** @var string|int|null */
+	/** @var string|int|float|bool|null */
 	var $entity;
-	/** @var string|int|null */
+	/** @var string|int|float|bool|null */
 	var $sub_class;
 
 	/**
 	 * @var null|string
 	 */
 	var $class;
-	
+
 	/**
 	 * @param string $name
+	 * @param string|int|float|bool|null $id
 	 * @param string|null $class
+	 * @param string|int|float|bool|null $subclass
 	 * @psalm-mutation-free
 	 */
 	function __construct($name, $id, $class, $subclass=null) {
@@ -47,14 +48,15 @@ final class attachments extends simple_crud {
 		global $path_to_root, $session_debtor_no, $session_supplier_id;
 		br();
 		if(isset($_POST['attachmentDownload'])){
-			$keys =  array_keys($_POST['attachmentDownload']);
-			$sql = "SELECT * FROM ".TB_PREF."attachments WHERE id = ".db_escape($keys[0]);
-			$row = db_fetch(db_select($sql, "Cannot retrieve attachment $keys[0]"));
+			$keys =  array_keys(is_array($_POST['attachmentDownload']) ? $_POST['attachmentDownload'] : array());
+			$key = $keys[0] ?? null;
+			$sql = "SELECT * FROM ".TB_PREF."attachments WHERE id = ".db_escape($key);
+			$row = row_or_empty(db_fetch(db_select($sql, "Cannot retrieve attachment $key")));
 
-			
+
 			if ($row['unique_name'] != ""){
 				if(in_ajax()) {
-					ajax()->redirect($path_to_root.'/admin/attachments.php?dl='.$keys[0]);
+					ajax()->redirect($path_to_root.'/admin/attachments.php?dl='.(string) ($key ?? ''));
 				} else {
 		    		Header("Content-type: 'application/octet-stream' ");
 			    	//header('Content-Length: '.$row['filesize']);
@@ -65,13 +67,14 @@ final class attachments extends simple_crud {
 			}
 		}
 		if(isset($_POST['attachmentView'])){
-			$keys =  array_keys($_POST['attachmentView']);
-			$sql = "SELECT * FROM ".TB_PREF."attachments WHERE id = ".db_escape($keys[0]);
-			$row = db_fetch(db_select($sql, "Cannot retrieve attachment $keys[0]"));
-			
+			$keys =  array_keys(is_array($_POST['attachmentView']) ? $_POST['attachmentView'] : array());
+			$key = $keys[0] ?? null;
+			$sql = "SELECT * FROM ".TB_PREF."attachments WHERE id = ".db_escape($key);
+			$row = row_or_empty(db_fetch(db_select($sql, "Cannot retrieve attachment $key")));
+
 			if ($row['unique_name'] != ""){
 
-				ajax()->redirect($path_to_root.'/admin/attachments.php?vw='.$keys[0]);	
+				ajax()->redirect($path_to_root.'/admin/attachments.php?vw='.(string) ($key ?? ''));
 				/*if(in_ajax()) {
 					
 				} else {					
@@ -83,12 +86,12 @@ final class attachments extends simple_crud {
 				}*/
 			}
 		}
-		$filters = array('trans_no' => $this->entity, 'type_no' => (isset($_GET['type_no']) ? $_GET['type_no'] : ST_CUSTOMER)); // default ST_CUSTOMER
+		$filters = array('trans_no' => $this->entity, 'type_no' => get_scalar('type_no') ?? ST_CUSTOMER); // default ST_CUSTOMER
 
-		if($session_debtor_no || $session_supplier_id)
+		if((bool)$session_debtor_no || (bool)$session_supplier_id)
 			$filters['visible'] = 1;
 
-		$sql = "SELECT * FROM ".TB_PREF."attachments WHERE trans_no=".db_escape($this->entity)." AND type_no = ".db_escape(isset($_GET['type_no']) ? $_GET['type_no'] : ST_CUSTOMER);
+		$sql = "SELECT * FROM ".TB_PREF."attachments WHERE trans_no=".db_escape($this->entity)." AND type_no = ".db_escape(get_scalar('type_no') ?? ST_CUSTOMER);
 		$result = db_select($sql, "Could not get data from ".TB_PREF."attachments table");
 		$attachments = Array();
 		while($row = db_fetch_assoc($result))
@@ -127,10 +130,11 @@ final class attachments extends simple_crud {
 		table_section(1);
 		table_section_title(_("Attachment Detail"));
 		
+		$row = array();
 		if($this->selected_id != null && $this->selected_id != "") {
 			$sql = "SELECT * FROM ".TB_PREF."attachments WHERE id = ".db_escape($this->selected_id);
 			$row = row_or_empty(db_fetch(db_select($sql, "Cannot retrieve attachment $this->selected_id")));
-			$_POST['tran_date'] = sql2date($row['tran_date']);
+			$_POST['tran_date'] = sql2date($row['tran_date'] ?? null);
 			$_POST['title'] = $row['description'];
 			$_POST['trans_no'] = $row['trans_no'];
 		} else {
@@ -138,25 +142,27 @@ final class attachments extends simple_crud {
 			$_POST['tran_date'] = Today();
 		}
 
-		$type_no= $_GET['type_no'];
+		$type_no = get_scalar('type_no');
 
-		
+
 		if($type_no==ST_CUSTOMER) // 5
 			$id_word = _("Customer ID");
 		elseif($type_no==ST_SUPPLIER) // 6
 			$id_word = _("Supplier ID");
-		elseif($type_no==ST_ITEM) 
+		elseif($type_no==ST_ITEM)
 			$id_word = _("Item ID");
-		elseif($type_no==ST_FIXEDASSET) 
+		elseif($type_no==ST_FIXEDASSET)
 			$id_word = _("Fixed Asset ID");
-		elseif($type_no==ST_BANKACCOUNT) 
+		elseif($type_no==ST_BANKACCOUNT)
 			$id_word = _("Bank Account ID");
+		else
+			$id_word = _("ID");
 
-		label_row(_($id_word), post_scalar('trans_no'));	
+		label_row(_($id_word), post_scalar('trans_no'));
 		date_row(_("Date"), 'tran_date');
 		text_row_ex(_("Doc Title").':', 'description', 60, 60);
 		if ((bool)$this->selected_id)
-			label_row(_("File:"), sprintf(_("%s [%s bytes]"), $row['filename'], $row['filesize']));
+			label_row(_("File:"), sprintf(_("%s [%s bytes]"), $row['filename'] ?? '', $row['filesize'] ?? ''));
 		file_row( ((bool)$this->selected_id ? _("File change") : _("Select file")) . ":", 'file_attachment_name', 'file_attachment_name');
 		hidden('type_no', get_scalar('type_no'));
 		end_outer_table(1);	
@@ -188,10 +194,10 @@ final class attachments extends simple_crud {
 	}
 
     /** @return null|string */
-    function _get_unique_name($selected_id) {
-        if ($selected_id != null && $selected_id != "") {
-            $sql = "SELECT * FROM ".TB_PREF."attachments WHERE id = ".db_escape($this->selected_id);
-            $row = row_or_empty(db_fetch(db_select($sql, "Cannot retrieve attachment $this->selected_id")));
+    function _get_unique_name(string $selected_id) {
+        if ($selected_id != "") {
+            $sql = "SELECT * FROM ".TB_PREF."attachments WHERE id = ".db_escape($selected_id);
+            $row = row_or_empty(db_fetch(db_select($sql, "Cannot retrieve attachment $selected_id")));
             return $row['unique_name'];
         }
             return null;
@@ -200,6 +206,7 @@ final class attachments extends simple_crud {
 	/** @return void */
 	#[\Override]
 	function db_insert() {
+		/** @var array<array-key, mixed>|false $dat */
 		$dat = $this->data;
 
 		if (isset($_FILES['file_attachment_name']) && $_FILES['file_attachment_name']['name'] <> '') {
@@ -227,13 +234,14 @@ final class attachments extends simple_crud {
 
 				$actual_file_nam = $_FILES['file_attachment_name']['name'];
 				$result  =  move_uploaded_file($_FILES['file_attachment_name']['tmp_name'], $filename);
+				$tran_date = post_scalar('tran_date');
 				$sql = "INSERT INTO ".TB_PREF."attachments (trans_no, type_no, `description`, `filename`, unique_name, tran_date, `filesize`, `filetype`) VALUES ("
 					   . db_escape($this->entity) . ","
-					   . db_escape($dat['type_no']) . ","
+					   . db_escape(is_array($dat) && is_scalar($dat['type_no'] ?? null) ? $dat['type_no'] : null) . ","
 					   . db_escape(post_scalar('description')) . ","
 					   . db_escape($actual_file_nam) . ","
 					   . db_escape($attachment_file_name) . ","
-					   . db_escape(date2sql(post_scalar('tran_date'))) . ","
+					   . db_escape(date2sql($tran_date === null ? null : (string) $tran_date)) . ","
 					   . db_escape($filesize) . ","
 					   . db_escape($filetype) . ")";
 				if(db_query($sql, 'Could not add Attachment'))
@@ -246,9 +254,14 @@ final class attachments extends simple_crud {
 	/** @return void */
 	#[\Override]
 	function db_update() {
+		/** @var array<array-key, mixed>|false $dat */
 		$dat = $this->data;
 
 		$upload_file = "";
+		$actual_file_nam = null;
+		$filesize = null;
+		$filetype = null;
+		$run_update = true;
 		if (isset($_FILES['file_attachment_name']) && $_FILES['file_attachment_name']['name'] != '') {
 			$result = $_FILES['file_attachment_name']['error'];
 			$upload_file = 'Yes';
@@ -261,24 +274,30 @@ final class attachments extends simple_crud {
 			if (!in_array($ftype, array('JPG','PNG','GIF', 'PDF', 'DOC', 'ODT')))
 			{
 				display_error(_('Only graphics,pdf,doc and odt files are supported.'));
+				$run_update = false;
 			} elseif ($_FILES['file_attachment_name']['size'] > (sysprefs()->max_image_size * 1024)) {
 				display_error(_('The file size is over the maximum allowed. The maximum size allowed in KB is') . ' ' . sysprefs()->max_image_size);
+				$run_update = false;
 			} else {
 				$filesize = $_FILES['file_attachment_name']['size'];
 				$filetype = $_FILES['file_attachment_name']['type'];
 
 				$unique_name = $this->_get_unique_name($this->selected_id);
-				if ($unique_name) {
+				if ((bool)$unique_name) {
 					$filename = $attach_dir."/".$unique_name;
 
 					$actual_file_nam = $_FILES['file_attachment_name']['name'];
 					$result  =  move_uploaded_file($_FILES['file_attachment_name']['tmp_name'], $filename);
                 }
+			}
+		}
+		if ($run_update) {
+			$tran_date = post_scalar('tran_date');
 			$sql = "UPDATE ".TB_PREF."attachments SET "
 					. "trans_no = " . db_escape($this->entity) . ","
-					. "type_no = " . db_escape($dat['type_no']) . ","
+					. "type_no = " . db_escape(is_array($dat) && is_scalar($dat['type_no'] ?? null) ? $dat['type_no'] : null) . ","
 					. "`description` = " . db_escape(post_scalar('description')) . ","
-					. "tran_date = " . db_escape(date2sql(post_scalar('tran_date')));
+					. "tran_date = " . db_escape(date2sql($tran_date === null ? null : (string) $tran_date));
 			if ($upload_file == 'Yes')
 				$sql .=  ", `filename` = " . db_escape($actual_file_nam) . ","
 					. "`filesize` = " . db_escape($filesize) . ","
@@ -287,12 +306,10 @@ final class attachments extends simple_crud {
 
 			if(db_query($sql, "Could not Update Attachment $this->selected_id"))
 				display_notification(_("The Selected Attachment $this->selected_id Updated Successfully"));
-			}
 		}
 	}
 
 	/**
-	 * @psalm-external-mutation-free
 	 * @return bool
 	 */
 	#[\Override]
@@ -331,7 +348,7 @@ final class attachments extends simple_crud {
 		$row = row_or_empty(db_fetch(db_select($sql, "Cannot retrieve attachment $this->selected_id")));
 
 		$dir =  company_path()."/attachments";
-		if ($row['unique_name'] && file_exists($dir."/".$row['unique_name']))
+		if ((bool)$row['unique_name'] && file_exists($dir."/".$row['unique_name']))
 			unlink($dir."/".$row['unique_name']);
 
 		$sql = "DELETE FROM ".TB_PREF."attachments WHERE id = ".db_escape($this->selected_id);

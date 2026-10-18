@@ -681,6 +681,32 @@ to their source.
 
 ## Data-correctness bugs
 
+- **`includes/ui/attachment.inc` — `attachments::db_update()`.** The entire
+  `UPDATE` statement - and its execution - was nested inside the
+  "a new file was uploaded and passed validation" branch of the function,
+  rather than running unconditionally with the file columns only
+  conditionally appended (which is what the surrounding code's own
+  `if ($upload_file == 'Yes') $sql .= ...` clearly intended). Net effect:
+  editing an existing attachment's description or date *without* also
+  re-uploading a file ran no SQL at all - no error, no notification, the
+  edit screen just silently discarded the change. Found by contrasting
+  this function's structure with its sibling `db_insert()`, where the same
+  nesting is actually correct (a brand new attachment genuinely requires a
+  file, with its own explicit `else display_error("No Attachment File
+  Selected")` for the missing-file case) - `db_update()` had no such
+  justification and no fallback branch at all for "no new file" instead of
+  silently no-op'ing. Fixed by hoisting the `UPDATE`/`db_query()` out to run
+  whenever the optional file (if any) is absent or valid, tracked via a new
+  `$run_update` flag that only trips `false` on an actual file-validation
+  failure. While restructuring, also fixed a related latent bug the new
+  structure made easy to see: `$actual_file_nam`/`$filesize`/`$filetype`
+  were only ever assigned inside the nested `if ($unique_name) { ... }`
+  check, but read unconditionally whenever `$upload_file == 'Yes'` - if a
+  valid file was uploaded but `_get_unique_name()` came back empty (no
+  existing attachment row, or one with an empty `unique_name` column), the
+  query would reference undefined variables. Initialized all three to
+  `null` up front.
+
 - **`admin/inst_module.php` — `display_extensions()`.** The "Installed"
   column's fallback-to-"Unknown" check was
   `$installed && ($installed != '-' || $installed != '')` — for any single
