@@ -81,6 +81,7 @@ final class package extends gzip_file {
 
 		$this->set_options(array('overwrite' => 1));
 		$this->extract_files(); // extract package in cache directory
+		/** @var string|null $basedir_raw */
 		$basedir_raw = $this->options['basedir'] ?? null;
 		$cachepath = is_string($basedir_raw) ? $basedir_raw : '';
 		/** @var ControlRecord $ctrl */
@@ -108,6 +109,7 @@ final class package extends gzip_file {
 		$dpackage->extract_files(); //install package in target directory
 
 		$dummy = null;
+		/** @psalm-suppress MixedAssignment hook_invoke()'s whole point is to return an arbitrary hook's result; only null-or-truthy is checked here */
 		$install = hook_invoke($ctrl_package, 'install_extension', $dummy);
 		if (!($install===null || $install))
 			$success = 0;
@@ -126,6 +128,7 @@ final class package extends gzip_file {
 
 		$success = 1;
 
+		/** @var string|null $basedir_raw */
 		$basedir_raw = $this->options['basedir'] ?? null;
 		$cachepath = is_string($basedir_raw) ? $basedir_raw : '';
 		/** @var ControlRecord $ctrl */
@@ -150,6 +153,7 @@ final class package extends gzip_file {
 		}
 
 		$dummy = null;
+		/** @psalm-suppress MixedAssignment hook_invoke()'s whole point is to return an arbitrary hook's result; only null-or-truthy is checked here */
 		$uninstall = hook_invoke($ctrl_package, 'uninstall_extension', $dummy);
 		if (!($uninstall===null || $uninstall))
 			$success = 0;
@@ -296,13 +300,18 @@ function save_control_file(string|int|float|bool|null $fname, array $list, strin
 	$file = (bool)$zip ?  gzopen((string) $fname, 'wb') : fopen((string) $fname, 'wb');
 	if ($file === false) return;
 	foreach($list as $section) {
+		// $section's values are genuinely heterogeneous control-file field values
+		// (plain scalars or nested multiline/subfield arrays) by design
+		/** @psalm-suppress MixedAssignment */
 		foreach($section as $key => $value) {
 			if (is_array($value)) { // multiline value
 				if (is_array(reset($value))) { // lines have subfields
+					/** @psalm-suppress MixedAssignment */
 					foreach($value as $i => $line) {
 						if (!is_array($line)) continue;
 		// Subfields containing white spaces or double quotes are doublequoted
 		// with " escaped with backslash.
+						/** @psalm-suppress MixedAssignment */
 						foreach($line as $n => $subfield) {
 							$subfield = (string) $subfield;
 							if (preg_match('/[\s"]/', $subfield)) {
@@ -311,10 +320,12 @@ function save_control_file(string|int|float|bool|null $fname, array $list, strin
 								$line[$n] = $subfield;
 						}
 						// Subfields are separated by white space.
+						/** @psalm-suppress MixedArgumentTypeCoercion elements are always strings by this point (set in the loop just above), Psalm can't see through the per-index mutations */
 						$value[$i] = implode(' ', $line);
 					}
 				}
 				// array elements on subsequent lines starting with white space
+				/** @psalm-suppress MixedArgument elements are always scalar control-file field values by this point */
 				$value = implode("\n ", array_map('strval', $value));
 			}
 			(bool)$zip ? gzwrite($file, "$key: $value\n") : fwrite($file, "$key: $value\n");
@@ -329,13 +340,17 @@ function save_control_file(string|int|float|bool|null $fname, array $list, strin
 //
 function pkg_prop(array|null $pkg, string|int|float|bool|null $property, string|int|float|bool|null $lang=false): mixed
 {
+	if ($pkg === null)
+		return null;
 
+	/** @psalm-suppress MixedAssignment this function's own return type is mixed -- $pkg's value type is intentionally unconstrained */
 	if ((bool)$lang && isset($pkg[(string)$property.'-'.user_language()]))
-		$prop = @$pkg[(string)$property.'-'.user_language()];
+		$prop = $pkg[(string)$property.'-'.user_language()];
 	else
-		$prop = @$pkg[(string)$property];
+		$prop = $pkg[(string)$property] ?? null;
 
-	return is_array($prop) ? implode("\n ",$prop): $prop;
+	/** @psalm-suppress MixedArgument elements are scalar control-file field values by design */
+	return is_array($prop) ? implode("\n ",array_map('strval', $prop)): $prop;
 }
 //
 //	Retrieve list of packages from repository and return as table ($pkgname==null),
@@ -456,7 +471,7 @@ function get_pkg_or_list(string|int|float|bool|array|null $type = null, string|i
 			$pkgfullname = $repo.'/'.$pkgPath."/".$pkgFilename.'.pkg';
 			if (!isset($type) || in_array($pkg['Type'] ?? null, $type)) {
 				$p = array();
-				if (!(bool)($filter ?? null))
+				if ($filter === null || count($filter) === 0)
 					$p = $pkg;
 				else {
 					foreach($filter as $field => $key) {
@@ -467,13 +482,13 @@ function get_pkg_or_list(string|int|float|bool|array|null $type = null, string|i
 						// positional int index as if it were a source field name,
 						// which $pkg is never keyed by - always a no-op/undefined read.
 						if (is_int($field))
-							$p[$key] = $pkg[$key] ?? null;
+							$p[$key] = $pkg[(string) $key] ?? null;
 						else
 							$p[$key] = $pkg[$field] ?? null;
 					}
 				}
 				if ($pkgname == null) {
-					$Packages[(bool)$outkey ? $outkey : $name] = $p;
+					$Packages[(bool)$outkey ? (string) $outkey : $name] = $p;
 				} elseif ($pkgname == ($pkg['Package'] ?? null)) {
 					//download package to temp directory
 					if ($download) {
@@ -563,6 +578,7 @@ function get_languages_list(): array
 	// add/update languages already installed
 	//
 	foreach($installed_languages as $id => $l) {
+		/** @var array<int, array-key> $list */
 		$list = array_search_keys($l['code'] ?? null, $pkgs, 'code');	// get all packages with this code
 		foreach ($list as $name) {
 			if (($l['encoding'] ?? null) == ($pkgs[$name]['encoding'] ?? null)) {	// if the same encoding
@@ -639,6 +655,7 @@ function get_extensions_list(?string $type = null): array
 	foreach($installed as $extno => $ext) {
 		if (!in_array($ext['type'] ?? null, $type)) continue;
 		$ext['local_id'] = $extno;
+		/** @var string|int|float|bool|null $ext_package */
 		$ext_package = $ext['package'] ?? null;
 //		if (!isset($pkgs[$ext['package']]) || $ext['package'] == '')
 //			$pkgs[] = $ext;
@@ -670,6 +687,7 @@ function get_themes_list(): array
 	$local = get_company_extensions();
 
 	foreach($local as $extno => $ext) {
+		/** @var string|int|float|bool|null $ext_package */
 		$ext_package = $ext['package'] ?? null;
 		if ((is_string($ext_package) || is_int($ext_package)) && isset($pkgs[$ext_package])) {
 			$ext['local_id'] = $extno;
@@ -710,6 +728,7 @@ function get_charts_list(): array
 	foreach($local as $extno => $ext) {
 		if (($ext['type'] ?? null) != 'chart') continue;
 		$ext['local_id'] = $extno;
+		/** @var string|int|float|bool|null $ext_package */
 		$ext_package = $ext['package'] ?? null;
 		if (!is_string($ext_package) || $ext_package === '' || !isset($pkgs[$ext_package]))
 			$pkgs[] = $ext;
@@ -744,6 +763,7 @@ function install_language(string|int|float|bool|null $pkg_name): bool
 		$pkg_package_raw = $pkg['Package'] ?? null;
 		$pkg_package = is_scalar($pkg_package_raw) ? $pkg_package_raw : null;
 
+		/** @var string|int|float|bool|null $i_raw */
 		$i_raw = array_search_key($pkg_language, $installed_languages, 'code');
 		$i = is_int($i_raw) ? $i_raw : (is_numeric($i_raw) ? (int) $i_raw : null);
 		if ($i === null)
@@ -805,11 +825,13 @@ function install_extension(string|int|float|bool|null $pkg_name): bool
 		$package = new package(VARLIB_PATH."/".$pkg_filename.'.pkg');
 		$local_exts = get_company_extensions();
 		if ((bool) $package->install()) {
+			/** @var string|int|float|bool|null $ext_id_raw */
 			$ext_id_raw = array_search_key($pkg_package, $local_exts, 'package');
 			$ext_id = is_int($ext_id_raw) ? $ext_id_raw : (is_numeric($ext_id_raw) ? (int) $ext_id_raw : null);
 			if ($ext_id === null)
 				$ext_id = $next_extension_id++;
 			else {	// remove another already installed package for this language
+				/** @var string|int|float|bool|null $old_pkg */
 				$old_pkg = $installed_extensions[$ext_id]['package'] ?? null;
 				if (is_scalar($old_pkg) && (bool) $old_pkg)
 					uninstall_package($old_pkg);
@@ -829,14 +851,17 @@ function install_extension(string|int|float|bool|null $pkg_name): bool
 			$local_exts[$ext_id] = $ext;
 			$ret = update_extensions($local_exts);
 
+			/** @var string|int|float|bool|null $ext_path_raw */
 			$ext_path_raw = $ext['path'];
 			$ext_path = is_string($ext_path_raw) ? $ext_path_raw : '';
+			/** @var string|int|float|bool|null $ext_package_raw */
 			$ext_package_raw = $ext['package'];
 			$ext_package_scalar = is_scalar($ext_package_raw) ? $ext_package_raw : null;
-			if (($ext['active'] == true) && file_exists($path_to_root.'/'.$ext_path.'/hooks.php'))
+			if (($ext['active'] == true) && file_exists((string) $path_to_root.'/'.$ext_path.'/hooks.php'))
 			{
 				// we need to include the new hooks file to activate extension
-				include_once($path_to_root.'/'.$ext_path.'/hooks.php');
+				/** @psalm-suppress UnresolvableInclude this is a deliberately dynamic plugin-activation hook load */
+				include_once((string) $path_to_root.'/'.$ext_path.'/hooks.php');
 				/** @var array<int, array<string, string>> $db_connections */
 				foreach($db_connections as $comp => $db)
 					activate_hooks($ext_package_scalar, $comp);
