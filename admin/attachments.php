@@ -24,7 +24,7 @@ include_once(dirname(__DIR__) . "/admin/db/transactions_db.inc");
 include_once(dirname(__DIR__) . "/inventory/includes/db/items_db.inc");
 
 if (isset($_GET['vw']))
-	$view_id = $_GET['vw'];
+	$view_id = is_array($_GET['vw']) ? null : $_GET['vw'];
 else
 	$view_id = find_submit('view');
 if ($view_id != -1)
@@ -33,19 +33,19 @@ if ($view_id != -1)
 	if ($row['filename'] != "")
 	{
 		if(in_ajax()) {
-			ajax()->popup((string)$_SERVER['PHP_SELF'].'?vw='.$view_id);
+			ajax()->popup(($_SERVER['PHP_SELF'] ?? '').'?vw='.(string) $view_id);
 		} else {
-			$type = str_replace(["\r", "\n"], '', ($row['filetype']) ? $row['filetype'] : 'application/octet-stream');
+			$type = str_replace(["\r", "\n"], '', ((bool)$row['filetype']) ? $row['filetype'] : 'application/octet-stream');
     		header("Content-type: ".$type);
     		header('Content-Length: '.(string)$row['filesize']);
  			header("Content-Disposition: inline");
 	    	echo file_get_contents(company_path(). "/attachments/".(string)$row['unique_name']);
     		exit();
 		}
-	}	
+	}
 }
 if (isset($_GET['dl']))
-	$download_id = $_GET['dl'];
+	$download_id = is_array($_GET['dl']) ? null : $_GET['dl'];
 else
 	$download_id = find_submit('download');
 
@@ -55,16 +55,16 @@ if ($download_id != -1)
 	if ($row['filename'] != "")
 	{
 		if(in_ajax()) {
-			ajax()->redirect((string)$_SERVER['PHP_SELF'].'?dl='.$download_id);
+			ajax()->redirect(($_SERVER['PHP_SELF'] ?? '').'?dl='.(string) $download_id);
 		} else {
-			$type = str_replace(["\r", "\n"], '', ($row['filetype']) ? $row['filetype'] : 'application/octet-stream');
+			$type = str_replace(["\r", "\n"], '', ((bool)$row['filetype']) ? $row['filetype'] : 'application/octet-stream');
     		header("Content-type: ".$type);
 	    	header('Content-Length: '.(string)$row['filesize']);
     		header('Content-Disposition: attachment; filename="'.str_replace(["\r", "\n", '"'], '', (string)$row['filename']).'"');
     		echo file_get_contents(company_path()."/attachments/".(string)$row['unique_name']);
 	    	exit();
 		}
-	}	
+	}
 }
 
 $js = "";
@@ -109,8 +109,10 @@ if ($Mode == 'ADD_ITEM' || $Mode == 'UPDATE_ITEM')
 			mkdir ($dir,0777);
 			$index_file = "<?php\nheader(\"Location: ../index.php\");\n";
 			$fp = fopen($dir."/index.php", "w");
-			fwrite($fp, $index_file);
-			fclose($fp);
+			if ($fp !== false) {
+				fwrite($fp, $index_file);
+				fclose($fp);
+			}
 		}
 
 		$filesize = $_FILES['filename']['size'];
@@ -118,12 +120,13 @@ if ($Mode == 'ADD_ITEM' || $Mode == 'UPDATE_ITEM')
 
 		// file name compatible with POSIX
 		// protect against directory traversal
+		$att_id = is_scalar($selected_id) ? $selected_id : null;
 		if ($Mode == 'UPDATE_ITEM')
 		{
-		    $row = row_or_empty(get_attachment($selected_id));
+		    $row = row_or_empty(get_attachment($att_id));
 		    if ($row['filename'] == "")
         		exit();
-			$unique_name = $row['unique_name'];
+			$unique_name = $row['unique_name'] ?? '';
 			if ($filename && file_exists($dir."/".$unique_name))
 				unlink($dir."/".$unique_name);
 		}
@@ -141,7 +144,7 @@ if ($Mode == 'ADD_ITEM' || $Mode == 'UPDATE_ITEM')
 		}
 		else
 		{
-			update_attachment($selected_id, post_scalar('filterType'), post_scalar('trans_no'), post_scalar('description'),
+			update_attachment($att_id, post_scalar('filterType'), post_scalar('trans_no'), post_scalar('description'),
 				$filename, $unique_name, $filesize, $filetype); 
 			display_notification(_("Attachment has been updated.")); 
 		}
@@ -153,11 +156,12 @@ if ($Mode == 'ADD_ITEM' || $Mode == 'UPDATE_ITEM')
 
 if ($Mode == 'Delete')
 {
-	$row = row_or_empty(get_attachment($selected_id));
+	$att_id = is_scalar($selected_id) ? $selected_id : null;
+	$row = row_or_empty(get_attachment($att_id));
 	$dir =  company_path()."/attachments";
 	if (file_exists($dir."/".(string)$row['unique_name']))
 		unlink($dir."/".(string)$row['unique_name']);
-	delete_attachment($selected_id);	
+	delete_attachment($att_id);
 	display_notification(_("Attachment has been deleted.")); 
 	reset_form();
 }
@@ -202,12 +206,16 @@ function viewing_controls(): void
 
 }
 
-function trans_view(array $trans)
+/**
+ * @param array<string, null|string> $trans
+ */
+function trans_view(array $trans): ?string
 {
 	if ($trans['type_no']==ST_SUPPLIER || $trans['type_no']==ST_CUSTOMER || $trans['type_no']==ST_ITEM ||
 		$trans['type_no']==ST_FIXEDASSET || $trans['type_no']==ST_BANKACCOUNT)
 		return $trans['id'];
-	return get_trans_view_str($trans["type_no"], $trans["trans_no"]);
+	$result = get_trans_view_str($trans["type_no"], $trans["trans_no"]);
+	return $result === null ? null : (string) $result;
 }
 
 function edit_link(array $row): string
@@ -266,7 +274,7 @@ viewing_controls();
 $type = get_post('filterType');
 $trans_no = get_post('trans_no');
 
-display_rows(is_array($type) ? null : (string) $type, is_array($trans_no) ? null : (string) $trans_no);
+display_rows(is_array($type) ? null : $type, is_array($trans_no) ? null : $trans_no);
 
 br(2);
 
@@ -274,17 +282,18 @@ start_table(TABLESTYLE2);
 
 if ($selected_id != -1)
 {
+	$att_id = is_scalar($selected_id) ? $selected_id : null;
 	if ($Mode == 'Edit')
 	{
-		$row = row_or_empty(get_attachment($selected_id));
+		$row = row_or_empty(get_attachment($att_id));
 		$_POST['trans_no']  = $row["trans_no"];
 		$_POST['description']  = $row["description"];
 		hidden('trans_no', $row['trans_no']);
 		hidden('unique_name', $row['unique_name']);
 		if ($type != ST_SUPPLIER && $type != ST_CUSTOMER && $type != ST_ITEM && $type != ST_BANKACCOUNT)
 			label_row(_("Transaction #"), $row['trans_no']);
-	}	
-	hidden('selected_id', $selected_id);
+	}
+	hidden('selected_id', $att_id);
 }
 else {
 	if ($type != ST_SUPPLIER && $type != ST_CUSTOMER && $type != ST_ITEM && $type != ST_FIXEDASSET && $type != ST_BANKACCOUNT)

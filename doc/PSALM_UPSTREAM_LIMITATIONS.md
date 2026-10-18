@@ -92,6 +92,43 @@ ships in a Psalm release, re-run the isolated test from
 don't assume the shipped behavior matches the draft PR's description
 exactly.
 
+## A `psalm.xml` `<globals>`-declared variable resists local narrowing under its own name
+
+No upstream issue number found/filed for this one yet - noted here from a
+direct isolated test, not a citation.
+
+**Symptom:** `admin/attachments.php` reads the `selected_id` global
+(declared in `psalm.xml` as `string|int|float|bool|array<array-key,
+mixed>|null`) and passes it to several functions requiring
+`string|int|float|bool|null` (no array). The usual narrowing idiom used
+successfully elsewhere this migration -
+`$selected_id = is_scalar($selected_id) ? $selected_id : null;` (either
+inline at each call site or as a single reassignment near the top of the
+script) - left every one of those call sites still flagged
+`MixedArgument ... cannot be mixed|null`, confirmed across three separate
+full-project `--no-cache` rescans (inline ternary, top-of-file
+reassignment via `is_array()` negation, top-of-file reassignment via
+`is_scalar()`). Assigning the exact same narrowing expression to a
+brand-new local variable name instead (`$att_id = is_scalar($selected_id)
+? $selected_id : null;`, then using `$att_id` at the call sites) resolved
+every one of them in the next rescan, with no other code change. The
+narrowing logic itself was never the problem - only reusing the
+`<globals>`-declared name for the narrowed value was.
+
+**Where this hit us:** `admin/attachments.php`'s `get_attachment()`/
+`update_attachment()`/`delete_attachment()`/`hidden()` call sites keyed
+on `selected_id`. Likely affects any `psalm.xml`-declared global reused
+as its own narrowed name, not just this one - `gl/manage/bank_accounts.php`
+earlier this session worked around the same global (there as the source
+for a differently-named local, `$bank_id`) without ever hitting this,
+which in hindsight is consistent with this theory rather than a
+counterexample.
+
+**Workaround:** narrow a `psalm.xml`-declared global into a differently-
+named local variable before passing it anywhere Psalm needs the narrower
+type; don't reassign the global's own name and expect the narrowing to
+stick.
+
 ## `@psalm-suppress TaintedInclude` doesn't suppress on at least one confirmed-safe sink
 
 No upstream issue number found/filed for this one yet - noted here from a

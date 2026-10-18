@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 //----------------------------------------------------------------------------------------
 
-function add_attachment(string|bool|null $filterType, string|bool|null $trans_no, string|bool|null $description,
+function add_attachment(string|int|float|bool|null $filterType, string|int|float|bool|null $trans_no, string|int|float|bool|null $description,
 	?string $filename, ?string $unique_name, ?int $filesize, ?string $filetype): void
 {
 	$date = date2sql(Today());
@@ -26,7 +26,7 @@ function add_attachment(string|bool|null $filterType, string|bool|null $trans_no
 }
 //----------------------------------------------------------------------------------------
 
-function update_attachment(string|int|float|bool|null $selected_id, string|bool|null $filterType, string|bool|null $trans_no, string|bool|null $description,
+function update_attachment(string|int|float|bool|null $selected_id, string|int|float|bool|null $filterType, string|int|float|bool|null $trans_no, string|int|float|bool|null $description,
 	?string $filename, ?string $unique_name, ?int $filesize, ?string $filetype): void
 {
 	$date = date2sql(Today());
