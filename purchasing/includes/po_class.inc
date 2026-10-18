@@ -289,7 +289,7 @@ final class purch_order
 	function get_trans_total() {
 		
 		$total = 0.0;
-		$dec = user_price_dec();
+		$dec = (int) user_price_dec();
                 $items = [];
                 $prices = [];
 		foreach ($this->line_items as $ln_itm) {
@@ -394,9 +394,9 @@ final class po_line_details
 		$this->req_del_date = $req_del_date;
 		$this->price = $prc;
 		$this->units = $uom;
-		$this->tax_type = $item_row["tax_type_id"];
-		$this->tax_type_name = $item_row["tax_type_name"];
-		$this->units = $item_row["units"];
+		$this->tax_type = isset($item_row["tax_type_id"]) ? (int) $item_row["tax_type_id"] : -1;
+		$this->tax_type_name = $item_row["tax_type_name"] ?? '';
+		$this->units = $item_row["units"] ?? $uom;
 		$this->qty_received = $qty_recd;
 		$this->qty_inv = $qty_inv;
 		$this->receive_qty = 0;	/*initialise these last two only */
