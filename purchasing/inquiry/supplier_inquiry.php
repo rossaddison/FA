@@ -39,21 +39,22 @@ if (isset($_GET['ToDate'])){
 
 //------------------------------------------------------------------------------------------------
 
-function display_supplier_summary(bool|array|null $supplier_record): void
+/** @param array<array-key, null|string>|false|null $supplier_record */
+function display_supplier_summary($supplier_record): void
 {
-	$past1 = get_company_pref('past_due_days');
+	$past1 = (int) get_company_pref('past_due_days');
 	$past2 = 2 * $past1;
 	$nowdue = "1-" . (string) $past1 . " " . _('Days');
 	$pastdue1 = (string) ($past1 + 1) . "-" . (string) $past2 . " " . _('Days');
 	$pastdue2 = _('Over') . " " . (string) $past2 . " " . _('Days');
-	
+
 
     start_table(TABLESTYLE, "width='80%'");
     $th = array(_("Currency"), _("Terms"), _("Current"), $nowdue,
     	$pastdue1, $pastdue2, _("Total Balance"));
 
 	table_header($th);
-	if ($supplier_record != false)
+	if (is_array($supplier_record))
 	{
 	    start_row();
 		label_cell($supplier_record["curr_code"]);
@@ -72,20 +73,29 @@ function display_supplier_summary(bool|array|null $supplier_record): void
 function systype_name(string|int|float|bool|array $dummy, string|int|float|bool|null $type)
 {
 	global $systypes_array;
-	return $systypes_array[$type];
+	return $systypes_array[(int) $type];
 }
 
-function trans_view(array $trans)
+/** @param array<string, null|string> $trans */
+function trans_view_supplier_inquiry(array $trans): ?string
 {
-	return get_trans_view_str($trans["type"], $trans["trans_no"]);
+	$result = get_trans_view_str($trans["type"], $trans["trans_no"]);
+	return $result === null ? null : (string) $result;
 }
 
-function due_date(array $row)
+/**
+ * @param array<string, null|string> $row
+ * @psalm-pure
+ */
+function due_date_supplier_inquiry(array $row): ?string
 {
 	return ($row["type"]== ST_SUPPINVOICE) || ($row["type"]== ST_SUPPCREDIT) ? $row["due_date"] : '';
 }
 
-/** @return null|scalar */
+/**
+ * @param array<string, null|string> $row
+ * @return null|scalar
+ */
 function gl_view(array $row)
 {
 	if ($row['type'] == ST_SUPPRECEIVE && (bool)get_voided_entry(ST_SUPPRECEIVE, $row['trans_no']))
@@ -93,6 +103,7 @@ function gl_view(array $row)
 	return get_gl_view_str($row["type"], $row["trans_no"]);
 }
 
+/** @param array<string, null|string> $row */
 function credit_link(array $row): string
 {
 	global $page_nested;
@@ -106,25 +117,31 @@ function credit_link(array $row): string
 			: '';
 }
 
+/** @param array<string, null|string> $row */
 function fmt_amount(array $row): string
 {
 	$value = $row["TotalAmount"];
 	return price_format($value);
 }
 
-/** @return non-empty-string|null */
+/**
+ * @param array<string, null|string> $row
+ * @return non-empty-string|null
+ */
 function prt_link(array $row)
 {
-  	if ($row['type'] == ST_SUPPAYMENT || $row['type'] == ST_BANKPAYMENT || $row['type'] == ST_SUPPCREDIT) 
+  	if ($row['type'] == ST_SUPPAYMENT || $row['type'] == ST_BANKPAYMENT || $row['type'] == ST_SUPPCREDIT)
  		return print_document_link((string)$row['trans_no']."-".(string)$row['type'], _("Print Remittance"), true, ST_SUPPAYMENT, ICON_PRINT);
 }
 
+/** @param array<string, null|string> $row */
 function check_overdue(array $row): bool
 {
 	return $row['OverDue'] == 1
-		&& ((float)abs($row["TotalAmount"]) - (float)$row["Allocated"] != 0);
+		&& (abs((float)$row["TotalAmount"]) - (float)$row["Allocated"] != 0);
 }
 
+/** @param array<string, null|string> $row */
 function edit_link(array $row): string
 {
 	global $page_nested;
@@ -166,7 +183,8 @@ div_start('totals_tbl');
 
 if ($_POST['supplier_id'] != "" && $_POST['supplier_id'] != ALL_TEXT)
 {
-	$supplier_record = get_supplier_details(get_post('supplier_id'), get_post('TransToDate'), true);
+	$inq_to_date = get_post('TransToDate');
+	$supplier_record = get_supplier_details(get_post('supplier_id'), is_array($inq_to_date) ? null : $inq_to_date, true);
     display_supplier_summary($supplier_record);
 }
 div_end();
@@ -178,16 +196,22 @@ if (get_post('RefreshInquiry') || list_updated('filterType'))
 
 //------------------------------------------------------------------------------------------------
 
-$sql = get_sql_for_supplier_inquiry(get_post('filterType'), get_post('TransAfterDate'), get_post('TransToDate'), get_post('supplier_id'));
+$inq_after_date = get_post('TransAfterDate');
+$inq_to_date = get_post('TransToDate');
+$inq_supplier_id = get_post('supplier_id');
+$sql = get_sql_for_supplier_inquiry(get_post('filterType'),
+	is_array($inq_after_date) ? null : $inq_after_date,
+	is_array($inq_to_date) ? null : $inq_to_date,
+	is_array($inq_supplier_id) ? null : $inq_supplier_id);
 
 $cols = array(
 			_("Type") => array('fun'=>'systype_name', 'ord'=>''), 
-			_("#") => array('fun'=>'trans_view', 'ord'=>'', 'align'=>'right'), 
+			_("#") => array('fun'=>'trans_view_supplier_inquiry', 'ord'=>'', 'align'=>'right'),
 			_("Reference"), 
 			_("Supplier"),
 			_("Supplier's Reference"), 
 			_("Date") => array('name'=>'tran_date', 'type'=>'date', 'ord'=>'desc'), 
-			_("Due Date") => array('type'=>'date', 'fun'=>'due_date'), 
+			_("Due Date") => array('type'=>'date', 'fun'=>'due_date_supplier_inquiry'),
 			_("Currency") => array('align'=>'center'),
 			_("Amount") => array('align'=>'right', 'fun'=>'fmt_amount'), 
 			_("Balance") => array('align'=>'right', 'type'=>'amount'),
