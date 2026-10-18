@@ -32,9 +32,12 @@ function get_demand_qty(string|int|float|bool|null $stock_id, string|int|float|b
 	return $row['QtyDemand'];
 }
 
-$bom_list = array(); 
+/** @var array<array-key, array<int, array{0: string|int|float|bool|null, 1: string|int|float|bool|null, 2: string|int|float|bool|null}>> $bom_list */
+$bom_list = array();
+/** @var array<array-key, null|string>|null $qoh_stock */
 $qoh_stock = NULL;
 
+/** @return array<array-key, null|string> */
 function load_stock_levels(string|int|float|bool|null $location): array
 {
 	$date = date2sql(Today());
@@ -49,7 +52,7 @@ function load_stock_levels(string|int|float|bool|null $location): array
 
 	$result = db_select($sql, "QOH calculation failed");
 	while ($row = db_fetch($result))
-		$qoh_stock[$row[0]] = $row[1];
+		$qoh_stock[(string) $row[0]] = $row[1];
 
 	return $qoh_stock;
 }
@@ -58,49 +61,47 @@ function load_stock_levels(string|int|float|bool|null $location): array
 function stock_demand_manufacture(string|int|float|bool|null $stock_id, string|int|float|bool|null $qty, string|int|float|bool|null $demand_id, string|int|float|bool|null $location, string|int|float|bool|null $level=0): float
 {
 	global $bom_list, $qoh_stock;
-	/** @var array<array-key, mixed>|null $qoh_stock */
+	/** @var array<array-key, null|string>|null $qoh_stock */
 
 	$demand = 0.0;
 	if ($level > 10) {
 		display_warning("BOM Too many Manufacturing levels deep $level");
 		return $demand;
 	}
+	$stock_key = (string) $stock_id;
 	// Load all stock levels (stock moves) into $qoh_stock
 	if ($qoh_stock == NULL)
 		$qoh_stock = load_stock_levels($location);
 
-	if (empty($qoh_stock[$stock_id]))
-		$stock_qty = 0;
-	else
-		$stock_qty = $qoh_stock[$stock_id];
+	$stock_qty = (float) ($qoh_stock[$stock_key] ?? 0);
 
 	if ($qty <= $stock_qty)
 		return $demand;
-	$bom = @$bom_list[$stock_id];
+	$bom = $bom_list[$stock_key] ?? null;
 	if ($bom == NULL) {
 		$sql = "SELECT parent, component, quantity FROM "
 			.TB_PREF."bom WHERE parent = ".db_escape($stock_id);
 		if ($location != "") $sql .= " AND loc_code = ".db_escape($location);
 		$result = db_select($sql, "Could not search bom");
 		$bom = array();
-		// Even if we get no results, remember that fact 
-		$bom[] = array($stock_id, '', 0); 
+		// Even if we get no results, remember that fact
+		$bom[] = array($stock_id, '', 0);
 		while ($row = db_fetch_row($result)) {
 			$bom[] = array($row[0], $row[1], $row[2]);
 		}
 		db_free_result($result);
-		$bom_list[$stock_id] = $bom;
+		$bom_list[$stock_key] = $bom;
 	}
 	$len = count($bom);
 	$i = 0;
 	while ($i < $len) {
 		$row = $bom[$i];
-		$i++; 
+		$i++;
 		// Ignore the dummy entry
 		if ($row[1] == '') continue;
-		$q = $qty * $row[2];
+		$q = (float) $qty * (float) ($row[2] ?? 0);
 		if ($row[1] == $demand_id) $demand += $q;
-		$demand += stock_demand_manufacture($row[1], $q, $demand_id, $location, $level+1);
+		$demand += stock_demand_manufacture($row[1], $q, $demand_id, $location, (float) $level + 1.0);
 	}
 	return $demand;
 }
@@ -155,9 +156,6 @@ function get_on_porder_qty(string|int|float|bool|null $stock_id, string|null $lo
 	return $qoo;
 }
 
-/**
- * @return float(0)|null|string
- */
 function get_on_worder_qty(string|int|float|bool|null $stock_id, string|null $location): float|null|string
 {
  	$qoo = 0.0;
@@ -189,17 +187,17 @@ function add_bom(string|int|float|bool|null $selected_parent, string|null $compo
 	$sql = "INSERT INTO ".TB_PREF."bom (parent, component, workcentre_added, loc_code, quantity)
 		VALUES (".db_escape($selected_parent).", ".db_escape($component) . ","
 		.db_escape($workcentre_added) . ", ".db_escape($loc_code) . ", "
-		. (float)$quantity . ")";
+		. (string) (float)$quantity . ")";
 
 	db_query($sql,"check failed");
 }
 //--------------------------------------------------------------------------------------
 
-function update_bom(string|int|float|bool|null $selected_parent, mixed $selected_component, string|null $workcentre_added, string|null $loc_code, int|float|bool|null $quantity): void
+function update_bom(string|int|float|bool|null $selected_parent, string|int|float|bool|null $selected_component, string|null $workcentre_added, string|null $loc_code, int|float|bool|null $quantity): void
 {
 	$sql = "UPDATE ".TB_PREF."bom SET workcentre_added=".db_escape($workcentre_added)
 	 . ",loc_code=".db_escape($loc_code) . ",
-		quantity= " . (float)$quantity . "
+		quantity= " . (string) (float)$quantity . "
 		WHERE parent=".db_escape($selected_parent) . "
 		AND id=".db_escape($selected_component);
 	check_db_error("Could not update this bom component", $sql);
@@ -216,7 +214,7 @@ function delete_bom(string|int|float|bool|null $selected_id): void
 /**
  * @return mysqli_result
  */
-function get_bom(mixed $item)
+function get_bom(string|int|float|bool|null $item)
 {
 	$sql = "SELECT bom.*, loc.location_name,
 		centre.name AS WorkCentreDescription,
@@ -252,7 +250,7 @@ function get_component_from_bom(string|int|float|bool|null $selected_id)
 }
 //--------------------------------------------------------------------------------------
 
-function has_bom(mixed $item): bool
+function has_bom(string|int|float|bool|null $item): bool
 {
     $result = get_bom($item);
     
@@ -283,21 +281,18 @@ function check_for_recursive_bom(string|int|float|bool|null $ultimate_parent, st
 	ie the bom is recursive otherwise false ie 0 */
 
 	$sql = "SELECT component FROM ".TB_PREF."bom WHERE parent=".db_escape($component_to_check);
-	$result = db_query($sql,"could not check recursive bom");
+	$result = db_select($sql,"could not check recursive bom");
 
-	if ($result)
+	while ($myrow = db_fetch_row($result))
 	{
-		while ($myrow = db_fetch_row($result))
+		if ($myrow[0] == $ultimate_parent)
 		{
-			if ($myrow[0] == $ultimate_parent)
-			{
-				return 1;
-			}
+			return 1;
+		}
 
-			if (check_for_recursive_bom($ultimate_parent, $myrow[0]))
-			{
-				return 1;
-			}
+		if (check_for_recursive_bom($ultimate_parent, $myrow[0]))
+		{
+			return 1;
 		}
 	}
 

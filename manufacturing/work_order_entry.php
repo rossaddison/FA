@@ -162,7 +162,7 @@ function canProcessWorkOrderEntry(): bool
 	// only check bom and quantites if quick assembly
 	if (!($_POST['type'] == WO_ADVANCED))
 	{
-        if (!has_bom($_POST['stock_id']))
+        if (!has_bom(post_scalar('stock_id')))
         {
         	display_error(_("The selected item to manufacture does not have a bom."));
 			set_focus('stock_id');
@@ -191,7 +191,7 @@ function canProcessWorkOrderEntry(): bool
         	if ($_POST['type'] == WO_ASSEMBLY)
         	{
         		// check bom if assembling
-                $result = get_bom($_POST['stock_id']);
+                $result = get_bom(post_scalar('stock_id'));
 
             	while ($bom_item = db_fetch($result))
             	{

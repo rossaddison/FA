@@ -58,7 +58,8 @@ function canProcessWorkOrderRelease(array $myrow): bool
     // We don't need to stop the user to release it if it's and advanced order.
     // The user know what he is doing.
 
-    if (!has_bom($myrow['stock_id']) && $myrow['type'] != WO_ADVANCED)
+    $wo_stock_id = $myrow['stock_id'] ?? null;
+    if (!has_bom(is_scalar($wo_stock_id) ? $wo_stock_id : null) && $myrow['type'] != WO_ADVANCED)
 	{
 		display_error(_("This Work Order cannot be released. The selected item to manufacture does not have a bom."));
 		set_focus('stock_id');

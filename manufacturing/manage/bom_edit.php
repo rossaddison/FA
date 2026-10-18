@@ -90,7 +90,7 @@ function copy_bom_items(string|int|float|bool|null $stock_id, string|int|float|b
  
 //--------------------------------------------------------------------------------------------------
 
-function on_submit(string|int|float|bool|null $selected_parent, mixed $selected_component=-1): void
+function on_submit(string|int|float|bool|null $selected_parent, string|int|float|bool|null $selected_component=-1): void
 {
 	if (!check_num('quantity', 0))
 	{
@@ -187,8 +187,10 @@ end_form();
 if (get_post('stock_id') != '')
 { //Parent Item selected so display bom or edit component
 	$selected_parent = $_POST['stock_id'];
-	if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
-		on_submit($selected_parent, $selected_id);
+	if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') {
+		$bom_component_id = is_scalar($selected_id) ? $selected_id : null;
+		on_submit($selected_parent, $bom_component_id);
+	}
 	//--------------------------------------------------------------------------------------
 
 start_form();
