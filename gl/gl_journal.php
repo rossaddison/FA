@@ -40,7 +40,7 @@ if (isset($_GET['ModifyGL'])) {
 page($_SESSION['page_title'], false, false,'', $js);
 //--------------------------------------------------------------------------------------------------
 
-function line_start_focus(): void {
+function line_start_focus_journal(): void {
 
   unset($_POST['Index']);
   ajax()->activate('tabs');
@@ -60,7 +60,7 @@ if (isset($_GET['AddedID']))
     display_note(get_gl_view_str($trans_type, $trans_no, _("&View this Journal Entry")));
 
 	reset_focus();
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter &New Journal Entry"), "NewJournal=Yes");
+	hyperlink_params($_SERVER['PHP_SELF'] ?? '', _("Enter &New Journal Entry"), "NewJournal=Yes");
 
 	hyperlink_params("$path_to_root/admin/attachments.php", _("Add an Attachment"), "filterType=$trans_type&trans_no=$trans_no");
 
@@ -74,7 +74,7 @@ if (isset($_GET['AddedID']))
 
     display_note(get_gl_view_str($trans_type, $trans_no, _("&View this Journal Entry")));
 
-   	hyperlink_no_params($path_to_root."/gl/inquiry/journal_inquiry.php", _("Return to Journal &Inquiry"));
+   	hyperlink_no_params((string) $path_to_root."/gl/inquiry/journal_inquiry.php", _("Return to Journal &Inquiry"));
 
 	display_footer_exit();
 }
@@ -82,7 +82,7 @@ if (isset($_GET['AddedID']))
 
 if (isset($_GET['NewJournal']))
 {
-	create_cart(0,0);
+	create_cart_journal(0,0);
 }
 elseif (isset($_GET['ModifyGL']))
 {
@@ -93,7 +93,10 @@ elseif (isset($_GET['ModifyGL']))
 		hyperlink_params("$path_to_root/gl/gl_journal.php", _("Entry &New Journal Entry"), "NewJournal=Yes");
 		display_footer_exit();
 	}
-	create_cart(get_scalar('trans_type'), get_scalar('trans_no'));
+	$gl_type = get_scalar('trans_type');
+	$gl_trans_no = get_scalar('trans_no');
+	create_cart_journal(is_float($gl_type) || is_bool($gl_type) ? (string) $gl_type : $gl_type,
+		is_float($gl_trans_no) || is_bool($gl_trans_no) ? (string) $gl_trans_no : $gl_trans_no);
 }
 
 if (!isset($_SESSION['journal_items']))
@@ -105,7 +108,7 @@ if (!isset($_SESSION['journal_items']))
 	display_footer_exit();
 }
 
-function create_cart(string|int|null $type=0, string|int|null $trans_no=0): void
+function create_cart_journal(string|int|null $type=0, string|int|null $trans_no=0): void
 {
 
 	if (isset($_SESSION['journal_items']))
@@ -119,25 +122,25 @@ function create_cart(string|int|null $type=0, string|int|null $trans_no=0): void
 
 	if ((bool)$trans_no) {
 		$header = row_or_empty(get_journal($type, $trans_no));
-		$cart->event_date = sql2date($header['event_date']);
-		$cart->doc_date = sql2date($header['doc_date']);
-		$cart->tran_date = sql2date($header['tran_date']);
-		$cart->currency = $header['currency'];
-		$cart->rate = $header['rate'];
-		$cart->source_ref = $header['source_ref'];
+		$cart->event_date = sql2date($header['event_date'] ?? '');
+		$cart->doc_date = sql2date($header['doc_date'] ?? '');
+		$cart->tran_date = sql2date($header['tran_date'] ?? '');
+		$cart->currency = $header['currency'] ?? '';
+		$cart->rate = $header['rate'] ?? 1;
+		$cart->source_ref = $header['source_ref'] ?? '';
 
 		$result = get_gl_trans($type, $trans_no);
 
-		if ($result) {
-			while ($row = db_fetch($result)) {
-				$curr_amount = $cart->rate ? round((float)$row['amount']/$cart->rate, session_obj('wa_current_user')->prefs->price_dec()) : $row['amount'];
-				if ((bool)$curr_amount)
-					$cart->add_gl_item($row['account'], $row['dimension_id'], $row['dimension2_id'], 
-						$curr_amount, $row['memo_'], '', $row['person_id']);
-			}
+		$rate = (float) $cart->rate;
+		$dec = (int) session_obj('wa_current_user')->prefs->price_dec();
+		while ($row = db_fetch($result)) {
+			$curr_amount = $rate ? round((float)$row['amount']/$rate, $dec) : (float) $row['amount'];
+			if ((bool)$curr_amount)
+				$cart->add_gl_item($row['account'], $row['dimension_id'], $row['dimension2_id'],
+					$curr_amount, $row['memo_'], '', $row['person_id']);
 		}
 		$cart->memo_ = get_comments_string($type, $trans_no);
-		$cart->reference = $header['reference'];
+		$cart->reference = $header['reference'] ?? '';
 		// update net_amounts from tax register
 
 		// retrieve tax details
@@ -180,18 +183,20 @@ function create_cart(string|int|null $type=0, string|int|null $trans_no=0): void
 	$_POST['currency'] = $cart->currency;
 	$_POST['_ex_rate'] = exrate_format($cart->rate);
 	$_POST['source_ref'] = $cart->source_ref;
-	if (isset($cart->tax_info['net_amount']) || (!(bool)$trans_no && get_company_pref('default_gl_vat')))
+	if (isset($cart->tax_info['net_amount']) || (!(bool)$trans_no && (bool)get_company_pref('default_gl_vat')))
 		$_POST['taxable_trans'] = true;
 	$_SESSION['journal_items'] = &$cart;
 }
 
 function update_tax_info(): void
 {
+	$journal_items = session_obj('journal_items');
+	if (!isset($journal_items->tax_info) || list_updated('tax_category'))
+		$journal_items->tax_info = $journal_items->collect_tax_info();
 
-	if (!isset(session_obj('journal_items')->tax_info) || list_updated('tax_category'))
-		session_obj('journal_items')->tax_info = session_obj('journal_items')->collect_tax_info();
-
-	foreach (session_obj('journal_items')->tax_info as $name => $value)
+	/** @var array{net_amount?: array<array-key, float>, net_amount_ex?: float, person_id?: null|scalar, person_type?: int, rate?: array<array-key, float>, tax_date?: string, tax_group?: null|scalar, tax_in?: array<array-key, float>, tax_out?: array<array-key, float>, tax_reg?: int} $tax_info */
+	$tax_info = $journal_items->tax_info;
+	foreach ($tax_info as $name => $value)
 		if (is_array($value))
 		{
 			foreach ($value as $id => $amount)
@@ -200,7 +205,7 @@ function update_tax_info(): void
 			}
 		} else
 			$_POST[$name] = $value;
-	$_POST['tax_date'] = (bool)session_obj('journal_items')->order_id ? session_obj('journal_items')->tax_info['tax_date'] : $_POST['date_'];
+	$_POST['tax_date'] = (bool)$journal_items->order_id ? ($tax_info['tax_date'] ?? '') : $_POST['date_'];
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -220,25 +225,28 @@ if (isset($_POST['Process']))
 		$input_error = 1;
 	}
 
-	if (!is_date(post_scalar('date_'))) 
+	$date_ = post_scalar('date_');
+	if (!is_date($date_ === null ? null : (string) $date_))
 	{
 		display_error(_("The entered date is invalid."));
 		set_focus('date_');
 		$input_error = 1;
-	} 
+	}
 	elseif (!(bool)is_date_in_fiscalyear(post_scalar('date_'))) 
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('date_');
 		$input_error = 1;
 	} 
-	if (!is_date(post_scalar('event_date'))) 
+	$event_date = post_scalar('event_date');
+	if (!is_date($event_date === null ? null : (string) $event_date))
 	{
 		display_error(_("The entered date is invalid."));
 		set_focus('event_date');
 		$input_error = 1;
 	}
-	if (!is_date(post_scalar('doc_date'))) 
+	$doc_date = post_scalar('doc_date');
+	if (!is_date($doc_date === null ? null : (string) $doc_date))
 	{
 		display_error(_("The entered date is invalid."));
 		set_focus('doc_date');
@@ -259,12 +267,13 @@ if (isset($_POST['Process']))
 
 	if (get_post('_tabs_sel') == 'tax')
 	{
-		if (!is_date(post_scalar('tax_date')))
+		$tax_date = post_scalar('tax_date');
+		if (!is_date($tax_date === null ? null : (string) $tax_date))
 		{
 			display_error(_("The entered date is invalid."));
 			set_focus('tax_date');
 			$input_error = 1;
-		} 
+		}
 		elseif (!(bool)is_date_in_fiscalyear(post_scalar('tax_date')))
 		{
 			display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
@@ -286,7 +295,7 @@ if (isset($_POST['Process']))
 			$net_amount = 0.0;
 			while ($tax = db_fetch($taxes))
 			{
-				$tax_id = $tax['id'];
+				$tax_id = (string) $tax['id'];
 				$net_amount += (float)input_num('net_amount_'.$tax_id);
 			}
 			// in case no tax account used we have to guss tax register on customer/supplier used.
@@ -310,17 +319,17 @@ if (isset($_POST['Process']))
 	$cart = $cart;
 	$new = $cart->order_id == 0;
 
-	$cart->reference = $_POST['ref'];
-	$cart->tran_date = $_POST['date_'];
-	$cart->doc_date = $_POST['doc_date'];
-	$cart->event_date = $_POST['event_date'];
-	$cart->source_ref = $_POST['source_ref'];
+	$cart->reference = (string) (post_scalar('ref') ?? '');
+	$cart->tran_date = (string) (post_scalar('date_') ?? '');
+	$cart->doc_date = (string) (post_scalar('doc_date') ?? '');
+	$cart->event_date = (string) (post_scalar('event_date') ?? '');
+	$cart->source_ref = (string) (post_scalar('source_ref') ?? '');
 	if (isset($_POST['memo_']))
-		$cart->memo_ = $_POST['memo_'];
+		$cart->memo_ = (string) (post_scalar('memo_') ?? '');
 
-	$cart->currency = $_POST['currency'];
+	$cart->currency = (string) (post_scalar('currency') ?? '');
 	if ($cart->currency != get_company_pref('curr_default'))
-		$cart->rate = input_num('_ex_rate');
+		$cart->rate = (float) input_num('_ex_rate');
 
 	if (check_value('taxable_trans'))
 	{
@@ -351,14 +360,14 @@ if (isset($_POST['Process']))
 	new_doc_date($_POST['date_']);
 	unset($_SESSION['journal_items']);
 	if($new)
-		meta_forward($_SERVER['PHP_SELF'], "AddedID=$trans_no");
+		meta_forward($_SERVER['PHP_SELF'] ?? '', "AddedID=$trans_no");
 	else
-		meta_forward($_SERVER['PHP_SELF'], "UpdatedID=$trans_no");
+		meta_forward($_SERVER['PHP_SELF'] ?? '', "UpdatedID=$trans_no");
 }
 
 //-----------------------------------------------------------------------------------------------
 
-function check_item_data(): bool
+function check_item_data_journal(): bool
 {
 
 	if (!get_post('code_id')) {
@@ -375,21 +384,21 @@ function check_item_data(): bool
 	   		return false;
 	   	}
 	}
-	if (isset($_POST['dimension_id']) && $_POST['dimension_id'] != 0 && dimension_is_closed(post_scalar('dimension_id'))) 
+	if (isset($_POST['dimension_id']) && $_POST['dimension_id'] != 0 && dimension_is_closed((string) (post_scalar('dimension_id') ?? '')))
 	{
 		display_error(_("Dimension is closed."));
 		set_focus('dimension_id');
 		return false;
 	}
 
-	if (isset($_POST['dimension2_id']) && $_POST['dimension2_id'] != 0 && dimension_is_closed(post_scalar('dimension2_id'))) 
+	if (isset($_POST['dimension2_id']) && $_POST['dimension2_id'] != 0 && dimension_is_closed((string) (post_scalar('dimension2_id') ?? '')))
 	{
 		display_error(_("Dimension is closed."));
 		set_focus('dimension2_id');
 		return false;
 	}
 
-	if (!(input_num('AmountDebit')!=0 ^ input_num('AmountCredit')!=0) )
+	if (!((int)(input_num('AmountDebit')!=0) ^ (int)(input_num('AmountCredit')!=0)) )
 	{
 		display_error(_("You must enter either a debit amount or a credit amount."));
 		set_focus('AmountDebit');
@@ -426,9 +435,9 @@ function check_item_data(): bool
 
 //-----------------------------------------------------------------------------------------------
 
-function handle_update_item(): void
+function handle_update_item_journal(): void
 {
-    if($_POST['UpdateItem'] != "" && check_item_data())
+    if($_POST['UpdateItem'] != "" && check_item_data_journal())
     {
     	if (input_num('AmountDebit') > 0)
     		$amount = input_num('AmountDebit');
@@ -438,24 +447,24 @@ function handle_update_item(): void
     	session_obj('journal_items')->update_gl_item((string) post_scalar('Index'), post_scalar('code_id'),
     	    post_scalar('dimension_id'), post_scalar('dimension2_id'), $amount, post_scalar('LineMemo'), '', get_post('person_id'));
     	unset(session_obj('journal_items')->tax_info);
-		line_start_focus();
+		line_start_focus_journal();
     }
 }
 
 //-----------------------------------------------------------------------------------------------
 
-function handle_delete_item(string|int|null $id): void
+function handle_delete_item_journal(string|int|null $id): void
 {
 	session_obj('journal_items')->remove_gl_item($id);
    	unset(session_obj('journal_items')->tax_info);
-	line_start_focus();
+	line_start_focus_journal();
 }
 
 //-----------------------------------------------------------------------------------------------
 
-function handle_new_item(): void
+function handle_new_item_journal(): void
 {
-	if (!check_item_data())
+	if (!check_item_data_journal())
 		return;
 
 	if (input_num('AmountDebit') > 0)
@@ -466,7 +475,7 @@ function handle_new_item(): void
 	session_obj('journal_items')->add_gl_item(post_scalar('code_id'), post_scalar('dimension_id'),
 		post_scalar('dimension2_id'), $amount, post_scalar('LineMemo'), '', get_post('person_id'));
   	unset(session_obj('journal_items')->tax_info);
-	line_start_focus();
+	line_start_focus_journal();
 }
 
 //-----------------------------------------------------------------------------------------------
@@ -480,7 +489,7 @@ if (isset($_POST['_taxable_trans_update']))
 
 if (tab_closed('tabs', 'gl'))
 {
-	session_obj('journal_items')->memo_ = $_POST['memo_'];
+	session_obj('journal_items')->memo_ = (string) (post_scalar('memo_') ?? '');
 }
  elseif (tab_closed('tabs', 'tax'))
 {
@@ -508,26 +517,29 @@ if (tab_opened('tabs', 'gl'))
 
 $id = find_submit('Delete');
 if ($id != -1)
-	handle_delete_item($id);
+	handle_delete_item_journal($id);
 
 if (isset($_POST['AddItem'])) 
-	handle_new_item();
+	handle_new_item_journal();
 
 if (isset($_POST['UpdateItem'])) 
-	handle_update_item();
+	handle_update_item_journal();
 	
 if (isset($_POST['CancelItemChanges']))
-	line_start_focus();
+	line_start_focus_journal();
 
 $journal_items = &$_SESSION['journal_items'];
 /** @var items_cart $journal_items */
+$journal_items = $journal_items;
 
 if (isset($_POST['go']))
 {
 	display_quick_entries($journal_items, post_scalar('quick'), input_num('totamount'), QE_JOURNAL, get_post('aux_info'));
 	$_POST['totamount'] = price_format(0); ajax()->activate('totamount');
-	line_start_focus();
+	line_start_focus_journal();
 }
+/** @var items_cart $journal_items */
+$journal_items = $journal_items;
 
 if (list_updated('tax_category'))
 {
