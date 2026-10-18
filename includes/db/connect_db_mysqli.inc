@@ -187,6 +187,9 @@ function db_escape(string|int|float|bool|null $value = "", ?bool $nullify = fals
 {
 	global $db;
 
+	if (is_bool($value))
+		$value = $value ? '1' : '0';
+
 	$value = @html_entity_decode((string) $value, ENT_QUOTES, session_obj('language')->encoding=='iso-8859-2' ? 'ISO-8859-1' : session_obj('language')->encoding);
 	$value = html_specials_encode($value);
 

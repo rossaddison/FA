@@ -681,6 +681,35 @@ to their source.
 
 ## Data-correctness bugs
 
+- **`includes/db/connect_db_mysqli.inc` — `db_escape()`.** Caught live, not
+  by Psalm: a real "Incorrect integer value: '' for column 'tax_included'"
+  MySQL error reported while testing `purchasing/po_entry_items.php`'s
+  Direct Purchase Invoice Entry flow. `db_escape()`'s very first line does
+  `(string) $value` on its whole, widely-typed `string|int|float|bool|null
+  $value` parameter before anything else - and in PHP, `(string) false` is
+  `""` while `(string) true` is `"1"`. The function's next step treats any
+  value that is now an empty string as "null/unset" and emits the SQL
+  literal `''` for it (or `NULL` if `$nullify` is set) - so a genuine
+  boolean `false` passed in for a tinyint/boolean column (here,
+  `supp_trans::tax_included`, ultimately sourced from a `purch_order`
+  property a nearby setter assigns directly from a `bool` parameter) was
+  indistinguishable from "nothing was passed" and got written as `''`
+  instead of `'0'`. `true` happened to survive by the same accident that
+  broke `false` - `(string) true` is `"1"`, a non-empty string, so it took
+  the normal quoted-string path and produced `'1'`, which MySQL silently
+  coerces into the correct integer for a numeric column. Only the `false`
+  case was ever broken, which is exactly why this had gone unnoticed:
+  every `true` write looked completely fine. On a server running without
+  strict SQL mode (this codebase's own `set_global_connection()` explicitly
+  sets `STRICT_ALL_TABLES` for every connection, but a differently-configured
+  server wouldn't), MySQL would have silently coerced `''` into `0` for an
+  int column instead of rejecting it outright - meaning this is not just a
+  crash risk here, but a believable silent-data-corruption vector for any
+  other `db_escape(false)` call site across the whole codebase that writes
+  to a numeric column, on any install not already running strict mode.
+  Fixed by converting `bool` to `'1'`/`'0'` explicitly before the string
+  cast runs, so `false` round-trips exactly like `true` already did.
+
 - **`includes/ui/attachment.inc` — `attachments::db_update()`.** The entire
   `UPDATE` statement - and its execution - was nested inside the
   "a new file was uploaded and passed validation" branch of the function,
