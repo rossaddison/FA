@@ -35,7 +35,7 @@ else {
 }
 
 
-page($_SESSION['page_title'], @$_REQUEST['popup'], false, "", $js);
+page($_SESSION['page_title'], (bool) ($_REQUEST['popup'] ?? null), false, "", $js);
 
 include_once(dirname(__DIR__, 2) . "/includes/date_functions.inc");
 include_once(dirname(__DIR__, 2) . "/includes/ui.inc");
@@ -50,7 +50,7 @@ $new_item = get_post('stock_id')=='' || get_post('cancel') || get_post('clone');
 //------------------------------------------------------------------------------------
 function set_edit(string|int|float|bool|null $stock_id): void
 {
-	$_POST = array_merge($_POST, get_item($stock_id));
+	$_POST = array_merge($_POST, row_or_empty(get_item($stock_id)));
 
 	$_POST['depreciation_rate'] = number_format2(post_scalar('depreciation_rate'), 1);
 	$_POST['depreciation_factor'] = number_format2(post_scalar('depreciation_factor'), 1);
@@ -61,28 +61,30 @@ function set_edit(string|int|float|bool|null $stock_id): void
 
 function del_image(string|int|float|bool|array|null $stock_id): bool
 {
+	$stock_id = is_array($stock_id) ? null : $stock_id;
 	foreach (array('jpg', 'png', 'gif') as $ext) {
-		$filename = company_path().'/images/'.item_img_name($stock_id).".".$ext;
+		$filename = company_path().'/images/'.(string) item_img_name($stock_id).".".$ext;
 		if (file_exists($filename) && !unlink($filename))
 			return false;
 	}
 	return true;
 }
 
-function show_image(string|int|float|array|null $stock_id): void
+function show_image(string|int|float|bool|array|null $stock_id): void
 {
+	$stock_id = is_array($stock_id) ? null : $stock_id;
 
 	$check_remove_image = false;
 	$stock_img_link = _("No image");
 
-	if ((bool)(@$stock_id))
+	if ((bool)$stock_id)
 		foreach (array('jpg', 'png', 'gif') as $ext)
 		{
-			$file = company_path().'/images/'.item_img_name($stock_id). ".$ext";
+			$file = company_path().'/images/'.(string) item_img_name($stock_id). ".$ext";
 			if (file_exists($file)) {
 				// rand() call is necessary here to avoid caching problems.
 				$check_remove_image = true; // fixme
-				$stock_img_link = "<img id='item_img' alt = '[".$stock_id.".$ext"."]' src='".$file."?nocache=".rand()."'"
+				$stock_img_link = "<img id='item_img' alt = '[".(string) $stock_id.".$ext"."]' src='".$file."?nocache=".rand()."'"
 					." height='".sysprefs()->pic_height."' border='0'>";
 				break;
 			}
@@ -125,7 +127,8 @@ if (isset($_FILES['pic']) && $_FILES['pic']['name'] != '')
 	{
 		mkdir($filename);
 	}	
-	$filename .= "/".item_img_name($stock_id).(substr(trim($_FILES['pic']['name']), strrpos($_FILES['pic']['name'], '.')));
+	$dotpos = strrpos($_FILES['pic']['name'], '.');
+	$filename .= "/".(string) item_img_name($stock_id).($dotpos === false ? '' : substr(trim($_FILES['pic']['name']), $dotpos));
 
   if ($_FILES['pic']['error'] == UPLOAD_ERR_INI_SIZE) {
     display_error(_('The file size is over the maximum allowed.'));
@@ -136,10 +139,11 @@ if (isset($_FILES['pic']) && $_FILES['pic']['name'] != '')
 		$upload_file ='No';
   }
 	
-	//But check for the worst 
-	if ((list($width, $height, $type, $attr) = getimagesize($_FILES['pic']['tmp_name'])) !== false)
-		$imagetype = $type;
-	else
+	//But check for the worst
+	$imginfo = getimagesize($_FILES['pic']['tmp_name']);
+	if ($imginfo !== false) {
+		[$width, $height, $imagetype, $attr] = $imginfo;
+	} else
 		$imagetype = false;
 
 	if ($imagetype != IMAGETYPE_GIF && $imagetype != IMAGETYPE_JPEG && $imagetype != IMAGETYPE_PNG)
@@ -171,7 +175,8 @@ if (isset($_FILES['pic']) && $_FILES['pic']['name'] != '')
 	if ($upload_file == 'Yes')
 	{
 		$result  =  move_uploaded_file($_FILES['pic']['tmp_name'], $filename);
-		if ($msg = check_image_file($filename)) {
+		$msg = (string) check_image_file($filename);
+		if ($msg != '') {
 			display_error($msg);
 			unlink($filename);
 			$upload_file ='No';
@@ -266,8 +271,11 @@ if (isset($_POST['addupdate']))
 		if (check_value('del_image'))
 			del_image(post_scalar('NewStockID'));
 		
-		if (!$new_item) 
+		if (!$new_item)
 		{ /*so its an existing one */
+			$no_sale_val = check_value('no_sale');
+			$editable_val = check_value('editable');
+			$no_purchase_val = check_value('no_purchase');
 			update_item(post_scalar('NewStockID'), post_scalar('description'),
 				post_scalar('long_description'), post_scalar('category_id'),
 				post_scalar('tax_type_id'), post_scalar('units'),
@@ -275,7 +283,7 @@ if (isset($_POST['addupdate']))
 				post_scalar('inventory_account'), post_scalar('cogs_account'),
 				post_scalar('adjustment_account'), post_scalar('wip_account'),
 				post_scalar('dimension_id'), post_scalar('dimension2_id'),
-				check_value('no_sale'), check_value('editable'), check_value('no_purchase'),
+				is_array($no_sale_val) ? 0 : $no_sale_val, is_array($editable_val) ? 0 : $editable_val, is_array($no_purchase_val) ? 0 : $no_purchase_val,
 				post_scalar('depreciation_method'), input_num('depreciation_rate'), input_num('depreciation_factor'), post_scalar('depreciation_start'),
 				post_scalar('fa_class_id'));
 
@@ -290,13 +298,16 @@ if (isset($_POST['addupdate']))
 		else 
 		{ //it is a NEW part
 
+			$no_sale_val = check_value('no_sale');
+			$editable_val = check_value('editable');
+			$no_purchase_val = check_value('no_purchase');
 			add_item(post_scalar('NewStockID'), post_scalar('description'),
 				post_scalar('long_description'), post_scalar('category_id'), post_scalar('tax_type_id'),
 				post_scalar('units'), get_post('fixed_asset') ? 'F' : post_scalar('mb_flag'), post_scalar('sales_account'),
 				post_scalar('inventory_account'), post_scalar('cogs_account'),
 				post_scalar('adjustment_account'), post_scalar('wip_account'),
 				post_scalar('dimension_id'), post_scalar('dimension2_id'),
-				check_value('no_sale'), check_value('editable'), check_value('no_purchase'),
+				is_array($no_sale_val) ? 0 : $no_sale_val, is_array($editable_val) ? 0 : $editable_val, is_array($no_purchase_val) ? 0 : $no_purchase_val,
 				post_scalar('depreciation_method'), input_num('depreciation_rate'), input_num('depreciation_factor'), post_scalar('depreciation_start'),
 				post_scalar('fa_class_id'));
 
@@ -351,7 +362,7 @@ if (isset($_POST['delete']) && strlen((string) post_scalar('delete')) > 1)
 	}
 }
 
-function item_settings(&$stock_id, bool $new_item): void 
+function item_settings(string|int|float|bool|null &$stock_id, bool $new_item): void
 {
 	global $path_to_root, $page_nested, $depreciation_methods;
 
@@ -366,7 +377,7 @@ function item_settings(&$stock_id, bool $new_item): void
 	{
 		$tmpCodeID=null;
 		$post_label = null;
-		if (!empty(sysprefs()->prefs['barcodes_on_stock']))
+		if ((bool) (sysprefs()->prefs['barcodes_on_stock'] ?? null))
 		{
 			$post_label = '<button class="ajaxsubmit" type="submit" aspect=\'default\'  name="generateBarcode"  id="generateBarcode" value="Generate Barcode EAN8"> '._("Generate EAN-8 Barcode").' </button>';
 			if (isset($_POST['generateBarcode']))
@@ -420,7 +431,7 @@ function item_settings(&$stock_id, bool $new_item): void
 		|| check_usage(post_scalar('stock_id'),false);
 
 	// show inactive item tax type in selector only if already set.
-  item_tax_types_list_row(_("Item Tax Type:"), 'tax_type_id', null, !$new_item && item_type_inactive((string) post_scalar('tax_type_id')));
+  item_tax_types_list_row(_("Item Tax Type:"), 'tax_type_id', null, !$new_item && (bool) item_type_inactive((string) post_scalar('tax_type_id')));
 
 	if (!get_post('fixed_asset'))
 		stock_item_types_list_row(_("Item Type:"), 'mb_flag', null, $fresh_item);
@@ -466,7 +477,7 @@ function item_settings(&$stock_id, bool $new_item): void
 
 		// do not allow to change the depreciation start after this item has been depreciated
 		if ($new_item || $_POST['depreciation_start'] == $_POST['depreciation_date'])
-			date_row(_("Depreciation Start").':', 'depreciation_start', null, null, 1 - date('j'));
+			date_row(_("Depreciation Start").':', 'depreciation_start', null, null, 1 - (int) date('j'));
 		else {
 			hidden('depreciation_start');
 			label_row(_("Depreciation Start").':', post_scalar('depreciation_start'));
@@ -522,7 +533,7 @@ function item_settings(&$stock_id, bool $new_item): void
 
 	file_row(_("Image File (.jpg)") . ":", 'pic', 'pic'); // fixme: png/gif
 
-	show_image(@$_POST['NewStockID']);
+	show_image(post_scalar('NewStockID'));
 
 	record_status_list_row(_("Item status:"), 'inactive');
 	if (get_post('fixed_asset')) {
@@ -531,7 +542,7 @@ function item_settings(&$stock_id, bool $new_item): void
 			hidden('material_cost');
 			hidden('purchase_cost');
 			label_row(_("Initial Value").":", price_format(post_scalar('purchase_cost')), "", "align='right'");
-			label_row(_("Depreciations").":", price_format((float)$_POST['purchase_cost'] - (float)$_POST['material_cost']), "", "align='right'");
+			label_row(_("Depreciations").":", price_format((float) post_scalar('purchase_cost') - (float) post_scalar('material_cost')), "", "align='right'");
 			label_row(_("Current Value").':', price_format(post_scalar('material_cost')), "", "align='right'");
 		}
 	}
@@ -547,7 +558,7 @@ function item_settings(&$stock_id, bool $new_item): void
 	{
 		submit_center_first('addupdate', _("Update Item"), '', 
 			$page_nested ? true : 'default');
-		submit_return('select', get_post('stock_id'), 
+		submit_return('select', post_scalar('stock_id'),
 			_("Select this items and return to document entry."));
 		submit('clone', _("Clone This Item"), true, '', true);
 		submit('delete', _("Delete This Item"), true, '', true);
@@ -585,7 +596,7 @@ else
 div_start('details');
 
 $stock_id = post_scalar('stock_id');
-if (!$stock_id)
+if (!(bool) $stock_id)
 	unset($_POST['_tabs_sel']); // force settings tab for new customer
 
 $tabs = (get_post('fixed_asset'))
@@ -667,7 +678,7 @@ end_form();
 
 //------------------------------------------------------------------------------------
 
-end_page(@$_REQUEST['popup']);
+end_page((bool) ($_REQUEST['popup'] ?? null));
 
 function generateBarcode(): string {
 	$tmpBarcodeID = "";
@@ -699,7 +710,7 @@ function generateBarcode(): string {
 		$query = "SELECT stock_id FROM ".TB_PREF."stock_master WHERE stock_id='" . $tmpBarcodeID . "'";
 		$arr_stock = row_or_empty(db_fetch(db_select($query)));
   
-		if (  !$arr_stock || !$arr_stock['stock_id'] ) {
+		if (  !$arr_stock || !(bool) $arr_stock['stock_id'] ) {
 			return $tmpBarcodeID;
 		}
 		display_error("Rejected: $tmpBarcodeID");
