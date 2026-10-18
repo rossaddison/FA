@@ -333,8 +333,11 @@ function update_reconciled_values(string|int|float|bool|null $reconcile_id, ?str
 
   	db_query($sql, "Can't change reconciliation status");
 	// save last reconcilation status (date, end balance)
+    $reconcile_date_sql = date2sql($reconcile_date);
+    if ($reconcile_date_sql == "")
+        $reconcile_date_sql = "0000-00-00";
     $sql2 = "UPDATE ".TB_PREF."bank_accounts SET last_reconciled_date='"
-			.date2sql($reconcile_date)."',
+			.$reconcile_date_sql."',
     	    ending_reconcile_balance=".(string)(float)$end_balance."
 			WHERE id=".db_escape($bank_account);
 

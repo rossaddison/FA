@@ -20,6 +20,8 @@ function add_bank_trans(string|int|float|bool|null $type, string|int|float|bool|
 	string|int|float|bool|null $amount, string|int|float|bool|null $person_type_id, string|int|float|bool|null $person_id, string|int|float|bool|null $currency="", string|int|float|bool|null $err_msg="", ?int $rate=0): void
 {
 	$sqlDate = date2sql($date_);
+	if ($sqlDate == "")
+		$sqlDate = "0000-00-00";
 
 	// convert $amount to the bank's currency
 	if ($currency != "")

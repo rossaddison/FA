@@ -911,6 +911,48 @@ to their source.
   posting's dimensions, matching the no-dimension convention used for the
   equivalent balancing entry elsewhere in this file.
 
+- **`date2sql()` empty-string chain — live crash on Direct Purchase Invoice
+  Entry with a non-company currency.** `includes/date_functions.inc`'s
+  `date2sql(?string $date_): string` intentionally returns `""` for a
+  null/empty input — that's documented, correct behavior — but roughly two
+  dozen call sites across `admin/db/`, `dimensions/includes/`,
+  `gl/includes/db/`, `includes/db/`, `inventory/includes/db/`,
+  `manufacturing/includes/db/`, `purchasing/includes/db/` and
+  `sales/includes/db/` embedded the result directly into a SQL
+  INSERT/UPDATE value position (or a WHERE-clause date comparison — see
+  below) without checking for the empty case first, so any call with a
+  genuinely missing date threw a fatal "Incorrect DATE value: ''" under
+  MySQL's `STRICT_ALL_TABLES` mode (`set_global_connection()` enables this
+  for every connection in this codebase). Hit live, repeatedly, while
+  testing `purchasing/po_entry_items.php?NewInvoice=Yes` (Direct Purchase
+  Invoice Entry) for a supplier in a non-company currency — each fix
+  revealed the next function in the call chain
+  (`add_po` → `add_grn` → `add_new_exchange_rate`/`add_exchange_rate` →
+  `add_gl_trans_supplier` → `add_gl_trans` → `add_supp_invoice` →
+  `add_trans_tax_details`, plus the unrelated-looking sibling functions in
+  each of those files). Fixed by adding the standard guard immediately
+  after every `date2sql()` call found this way:
+  `if ($date == "") $date = "0000-00-00";`.
+
+  **The specific bug that was actually blocking this test case, and the
+  reason an earlier assumption had to be corrected:** both a prior
+  investigation pass and a delegated search initially dismissed every
+  WHERE-clause usage of `date2sql()`'s result as "safe", on the theory that
+  MySQL's strict mode only rejects malformed values in an INSERT/UPDATE
+  value position, not a comparison. That assumption is wrong.
+  `gl/includes/db/gl_db_rates.inc`'s `get_last_exchange_rate()` has
+  `WHERE ... AND date_ <= '$date'`, and with `$date === ''` this throws the
+  identical 1525 error — confirmed by temporarily wrapping
+  `mysqli_query()` in `includes/db/connect_db_mysqli.inc`'s `db_query()` in
+  a try/catch to log the exact failing SQL (the error otherwise propagates
+  as a `mysqli_sql_exception` before any post-call `mysqli_errno()` check
+  can see it, since PHP 8.1+'s default `mysqli_report()` mode throws
+  directly on query failure). MySQL still has to cast a string literal to
+  `DATE` to evaluate a comparison, and that cast fails under strict mode
+  exactly like an INSERT would. Any `date2sql()` result used in a
+  WHERE-clause comparison anywhere in this codebase should be treated as
+  equally at risk as one used in an INSERT/UPDATE, not exempted.
+
 ## Encoding / output bugs
 
 - **`includes/ui/ui_lists.inc` — mojibake, two distinct causes.**

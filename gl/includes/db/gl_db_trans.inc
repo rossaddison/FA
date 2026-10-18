@@ -22,6 +22,8 @@ function add_gl_trans(string|int|float|bool|null $type, string|int|float|bool|nu
 {
 
 	$date = date2sql($date_);
+	if ($date == "")
+		$date = "0000-00-00";
 	if ($currency != null)
 	{
 		if ($rate == 0)
@@ -404,6 +406,8 @@ function exists_gl_budget(string|int|null $date_, string|int|float|bool|null $ac
 function add_update_gl_budget_trans(string|int|float|bool|null $date_, string|int|float|bool|null $account, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2, int|float|bool|null $amount): void
 {
 	$date = date2sql($date_);
+	if ($date == "")
+		$date = "0000-00-00";
 
 	if (exists_gl_budget($date, $account, $dimension, $dimension2))
 		$sql = "UPDATE ".TB_PREF."budget_trans SET amount=".db_escape($amount)
@@ -489,11 +493,15 @@ function add_trans_tax_details(string|int|float|bool|null $trans_type, string|in
 		$reg_type = in_array($trans_type, array(ST_SUPPINVOICE, ST_SUPPCREDIT)) ? TR_INPUT
 				: (in_array($trans_type, array(ST_SALESINVOICE, ST_CUSTCREDIT)) ? TR_OUTPUT : null);
 
-	$sql = "INSERT INTO ".TB_PREF."trans_tax_details 
+	$tax_tran_date = date2sql($tran_date);
+	if ($tax_tran_date == "")
+		$tax_tran_date = "0000-00-00";
+
+	$sql = "INSERT INTO ".TB_PREF."trans_tax_details
 		(trans_type, trans_no, tran_date, tax_type_id, rate, ex_rate,
 			included_in_price, net_amount, amount, memo, reg_type)
 		VALUES (".db_escape($trans_type)."," . db_escape($trans_no).",'"
-				.date2sql($tran_date)."',"
+				.$tax_tran_date."',"
 				.(int)($tax_id).","
 				.(float)($rate).","
 				.(float)($ex_rate).",".((bool)$included ? 1:0).","

@@ -31,6 +31,8 @@ function get_date_exchange_rate(string|int|float|bool|null $curr_code, string|in
 {
 	$date_ = is_array($date_) ? null : $date_;
 	$date = date2sql(is_scalar($date_) ? (string)$date_ : null);
+	if ($date == "")
+		$date = "0000-00-00";
 	$sql = "SELECT rate_buy
 			FROM ".TB_PREF."exchange_rates
 			WHERE curr_code=".db_escape($curr_code)
@@ -52,6 +54,8 @@ function get_date_exchange_rate(string|int|float|bool|null $curr_code, string|in
 function get_last_exchange_rate(string|int|float|bool|null $curr_code, string|int|float|bool|null $date_)
 {
 	$date = date2sql((string) $date_);
+	if ($date == "")
+		$date = "0000-00-00";
 
 	$sql = "SELECT rate_buy, max(date_) as date_
 			FROM ".TB_PREF."exchange_rates
@@ -75,7 +79,9 @@ function update_exchange_rate(string|null $curr_code, string|null $date_, int|fl
 		display_db_error("Exchange rates cannot be set for company currency", "", true);
 			
 	$date = date2sql($date_);
-		
+	if ($date == "")
+		$date = "0000-00-00";
+
 	$sql = "UPDATE ".TB_PREF."exchange_rates SET rate_buy=$buy_rate, rate_sell=".db_escape($sell_rate)
 	." WHERE curr_code=".db_escape($curr_code)." AND date_='$date'";
 				
@@ -90,6 +96,8 @@ function add_exchange_rate(string|int|float|bool|null $curr_code, string|int|flo
 		display_db_error("Exchange rates cannot be set for company currency", "", true);
 
 	$date = date2sql(is_scalar($date_) ? (string)$date_ : null);
+	if ($date == "")
+		$date = "0000-00-00";
 
 	$sql = "INSERT INTO ".TB_PREF."exchange_rates (curr_code, date_, rate_buy, rate_sell)
 		VALUES (".db_escape($curr_code).", '$date', ".db_escape($buy_rate)
