@@ -11,14 +11,14 @@ declare(strict_types=1);
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 /**
- * @return 0|non-falsy-string
+ * @return 0|non-empty-string
  */
 function get_qoh_on_date(string|int|float|bool|null $stock_id, string|int|float|bool|null $location=null, string|int|float|bool|array|null $date_=null): int|string
 {
     if ($date_ == null || is_array($date_))
         $date_ = Today();
 
-     $date = date2sql($date_);
+     $date = date2sql((string) $date_);
      $sql = "SELECT SUM(qty)
      	FROM ".TB_PREF."stock_moves st
    		LEFT JOIN ".TB_PREF."voided v ON st.type=v.type AND st.trans_no=v.id
@@ -34,7 +34,7 @@ function get_qoh_on_date(string|int|float|bool|null $stock_id, string|int|float|
     $myrow = row_or_empty(db_fetch_row($result));
 
     $qoh =  $myrow[0];
-		return $qoh ? $qoh : 0;
+		return $qoh === null || $qoh === '' || $qoh === '0' ? 0 : $qoh;
 }
 
 /**
@@ -44,7 +44,7 @@ function get_qoh_on_date(string|int|float|bool|null $stock_id, string|int|float|
 *
 *	$delta_qty - tested change in stock qty at $date.
 *	$date - check date; when set to null checks all the stock history.
-* @return array<array-key, null|string>|false|null
+* @return array<array-key, null|string>|null
 **/
 
 function check_negative_stock(string|int|float|bool|null $stock_id, string|int|float|bool|null $delta_qty, string|int|float|bool|null $location=null, string|int|float|bool|array|null $date=null)
@@ -56,7 +56,7 @@ function check_negative_stock(string|int|float|bool|null $stock_id, string|int|f
 	if (!isset($date) || is_array($date))
 		$date = Today();
 
-	$date = date2sql($date);
+	$date = date2sql((string) $date);
 
 	// check stock status on date
     $sql = "SELECT SUM(qty) qty, '$date' tran_date FROM ".TB_PREF."stock_moves
@@ -67,7 +67,7 @@ function check_negative_stock(string|int|float|bool|null $stock_id, string|int|f
         $sql .= " AND loc_code = ".db_escape($location);
 
     $result = db_select($sql, "QOH calculation failed");
-    $qos = db_fetch_assoc($result);
+    $qos = row_or_empty(db_fetch_assoc($result));
 
 	// check also all stock changes after the date to avoid negative stock in future
 	$sql = TB_PREF."stock_moves WHERE stock_id=".db_escape($stock_id) . " AND tran_date > '$date'";
@@ -160,7 +160,7 @@ function is_inventory_item(string|int|float|bool|null $stock_id): bool
  */
 function last_negative_stock_begin_date(string|int|float|bool|null $stock_id, string|int|float|bool|null $to)
 {
-	$to = date2sql($to);
+	$to = date2sql(is_scalar($to) ? (string) $to : null);
 	$sql ="SET @q = 0";
 	db_query($sql);
 	$sql = "SET @flag = 0";
@@ -207,13 +207,13 @@ function last_negative_stock_trans_id(string|int|float|bool|null $stock_id, stri
 	
 	$result = db_select($sql, "The query on stock moves failed.");
 	
-	$qty = 0;
+	$qty = 0.0;
 	$flag = 0;
 	$negative_trans_id = -1;
 	
 	while ($myrow = db_fetch($result))
 	{
-		$qty += $myrow['qty'];
+		$qty += (float) ($myrow['qty'] ?? 0);
 		if ($qty < 0 && $flag == 0)
 		{
 			$flag = 1;
@@ -236,8 +236,8 @@ function last_negative_stock_trans_id(string|int|float|bool|null $stock_id, stri
  */
 function get_deliveries_between(string|int|float|bool|null $stock_id, string|int|float|bool|null $from, string|int|float|bool|null $to): false|array
 {
-	$from = date2sql($from);
-	$to = date2sql($to);
+	$from = date2sql(is_scalar($from) ? (string) $from : null);
+	$to = date2sql(is_scalar($to) ? (string) $to : null);
 	$sql = "SELECT SUM(-qty), SUM(-qty*standard_cost) FROM ".TB_PREF."stock_moves
 		WHERE type=".ST_CUSTDELIVERY." AND stock_id=".db_escape($stock_id)." AND
 			tran_date>='$from' AND tran_date<='$to' GROUP BY stock_id";
@@ -275,8 +275,8 @@ function get_deliveries_from_trans(string|int|float|bool|null $stock_id, ?string
 	$result = db_select($sql, "The deliveries could not be updated");
 	$qoh = row_or_empty(db_fetch_row($result));
 
-	$qty = $row[0] - $qoh[0]; //QOH prior to -ve stock is subtracted
-	$final_cost = $row[1] - $qoh[0]*$cost[0];
+	$qty = (float) ($row[0] ?? 0) - (float) ($qoh[0] ?? 0); //QOH prior to -ve stock is subtracted
+	$final_cost = (float) ($row[1] ?? 0) - (float) ($qoh[0] ?? 0) * (float) ($cost[0] ?? 0);
 	
 	return array($qty,$final_cost); 
 }
@@ -344,12 +344,12 @@ function adjust_deliveries(string|int|float|bool|null $stock_id, string|int|floa
 		$new_cost = -round2($new_sales_cost-$new_purchase_cost,$dec);
 
 		$cart = new items_cart(ST_COSTUPDATE);
-		$cart->tran_date = $cart->doc_date = $cart->event_date = $to;
+		$cart->tran_date = $cart->doc_date = $cart->event_date = is_scalar($to) ? (string) $to : '';
 		if (!(bool)is_date_in_fiscalyear($cart->tran_date))
 			$cart->tran_date = end_fiscalyear();
 		$cart->reference = refs()->get_next(ST_COSTUPDATE, null, $cart->tran_date);
 
-		$cart->memo_ = _("Cost was ") . $old_cost. _(" changed to ") . $new_cost . _(" for item ")."'$stock_id'";
+		$cart->memo_ = _("Cost was ") . (string) $old_cost. _(" changed to ") . (string) $new_cost . _(" for item ")."'$stock_id'";
 
 		$cart->add_gl_item($stock_gl_code["cogs_account"], $stock_gl_code["dimension_id"], $stock_gl_code["dimension2_id"], $diff);
 		$cart->add_gl_item($stock_gl_code["inventory_account"], 0, 0, -$diff);
@@ -398,14 +398,15 @@ function handle_negative_inventory(string|int|float|bool|null $stock_id, string|
 {
 	//If negative adjustment result in negative or zero inventory
 	//then difference should be adjusted
-	$qoh = get_qoh_on_date($stock_id);
+	$qoh = (float) get_qoh_on_date($stock_id);
+	$quantity = (float) $quantity;
 
 	if ($qoh + $quantity <= 0 && $qoh > 0) //Positive inventory turning zero/negative
 	{
 
 		$id = get_next_trans_no(ST_JOURNAL);
-		$ref = refs()->get_next(ST_JOURNAL, null, $date_);
-		$diff = round((float)$qoh*(float)get_unit_cost($stock_id) + $quantity*$standard_cost, (int) user_price_dec());
+		$ref = refs()->get_next(ST_JOURNAL, null, is_scalar($date_) ? (string) $date_ : null);
+		$diff = round($qoh*(float)get_unit_cost(is_scalar($stock_id) ? (string) $stock_id : null) + $quantity*(float)$standard_cost, (int) user_price_dec());
 
 		if ($diff != 0)
 		{
@@ -443,7 +444,7 @@ function handle_negative_inventory(string|int|float|bool|null $stock_id, string|
 function add_stock_move(?int $type, string|int|float|bool|null $stock_id, string|int|float|bool|null $trans_no, string|int|float|bool|null $location,
     string|int|float|bool|null $date_, string|int|float|bool|null $reference, string|int|float|bool|null $quantity, string|int|float|bool|null $std_cost, string|int|float|bool|null $price=0): int|string
 {
-	$date = date2sql($date_);
+	$date = date2sql(is_scalar($date_) ? (string) $date_ : null);
 	if ($date == "")
 		$date = "0000-00-00";
 
