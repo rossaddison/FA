@@ -48,7 +48,7 @@ function check_data(): bool
 
 //---------------------------------------------------------------------------------------------
 
-function handle_submit(): void
+function handle_submit_process_depreciation(): void
 {
   if (!check_data())
     return;
@@ -66,7 +66,7 @@ function handle_submit(): void
 //---------------------------------------------------------------------------------------------
 
 if (get_post('process'))
-  handle_submit();
+  handle_submit_process_depreciation();
 
 //---------------------------------------------------------------------------------------------
 

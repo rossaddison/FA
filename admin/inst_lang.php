@@ -151,7 +151,7 @@ function check_data(): bool
 	return true;
 }
 
-function handle_submit(string|int|float|bool|array|null $id): bool
+function handle_submit_inst_lang(string|int|float|bool|array|null $id): bool
 {
 	global $path_to_root, $installed_languages, $dflt_lang, $Mode;
 	$id = is_scalar($id) ? (int) $id : 0;
@@ -276,11 +276,13 @@ function handle_delete(string|int|float|bool|null $id): void
 
 //---------------------------------------------------------------------------------------------
 
+$lang_id = is_scalar($selected_id) ? $selected_id : null;
+
 if ($Mode == 'Delete')
-	handle_delete($selected_id);
+	handle_delete($lang_id);
 
 if ($Mode == 'ADD_ITEM' || $Mode == 'UPDATE_ITEM')
-	if (check_data() && handle_submit($selected_id))
+	if (check_data() && handle_submit_inst_lang($lang_id))
 		$Mode = 'RESET';
 
 if ((bool)($id = find_submit('Update', false)))
@@ -303,7 +305,7 @@ if (get_post('_DisplayAll_update')) {
 //---------------------------------------------------------------------------------------------
 
 if (isset($_GET['popup']) || get_post('Add') || $Mode == 'Edit' || $Mode == 'ADD_ITEM' || $Mode == 'UPDATE_ITEM') {
-	display_language_edit($selected_id);
+	display_language_edit($lang_id);
 } else
 	display_languages();
 

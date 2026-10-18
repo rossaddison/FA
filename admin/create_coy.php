@@ -93,7 +93,7 @@ function remove_connection(string|int|float|bool|null $id) {
 }
 //---------------------------------------------------------------------------------------------
 
-function handle_submit(int $selected_id): bool
+function handle_submit_create_coy(int $selected_id): bool
 {
 	global $db_connections, $def_coy, $tb_pref_counter, $db,
 	    $comp_subdirs, $path_to_root, $Mode;
@@ -367,7 +367,7 @@ function display_company_edit(int $selected_id): void
 //---------------------------------------------------------------------------------------------
 
 if (($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') && check_data($selected_id))
-	handle_submit($selected_id);
+	handle_submit_create_coy($selected_id);
 
 if ($Mode == 'Delete')
 	handle_delete($selected_id);

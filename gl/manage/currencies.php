@@ -57,10 +57,10 @@ function check_data(): bool
 
 //---------------------------------------------------------------------------------------------
 
-function handle_submit()
+function handle_submit_currencies(): ?bool
 {
 	global $selected_id, $Mode;
-	
+
 	if (!check_data())
 		return false;
 		
@@ -77,8 +77,9 @@ function handle_submit()
 		add_currency(post_scalar('Abbreviation'), post_scalar('Symbol'), post_scalar('CurrencyName'), 
 			post_scalar('country'), post_scalar('hundreds_name'), check_value('auto_update'));
 		display_notification(_('New currency has been added'));
-	}	
+	}
 	$Mode = 'RESET';
+	return null;
 }
 
 //---------------------------------------------------------------------------------------------
@@ -222,7 +223,7 @@ function display_currency_edit(string|int|float|bool|null $selected_id): void
 //---------------------------------------------------------------------------------------------
 
 if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') 
-	handle_submit();
+	handle_submit_currencies();
 
 //--------------------------------------------------------------------------------------------- 
 

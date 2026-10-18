@@ -62,7 +62,7 @@ function check_data(): bool
 
 //---------------------------------------------------------------------------------------------
 
-function handle_submit(): void
+function handle_submit_revaluate_currencies(): void
 {
 	if (!check_data())
 		return;
@@ -102,7 +102,7 @@ function clear_data(): void
 //---------------------------------------------------------------------------------------------
 
 if (get_post('submit'))
-	handle_submit();
+	handle_submit_revaluate_currencies();
 
 //---------------------------------------------------------------------------------------------
 

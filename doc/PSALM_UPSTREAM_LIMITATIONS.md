@@ -124,6 +124,20 @@ for a differently-named local, `$bank_id`) without ever hitting this,
 which in hindsight is consistent with this theory rather than a
 counterexample.
 
+Confirmed again independently in `admin/inst_lang.php`, while resolving
+an unrelated `handle_submit()` cross-file name collision there: narrowing
+and reassigning `$selected_id` to its own name
+(`$selected_id = is_scalar($selected_id) ? (int) $selected_id : -1;`,
+placed right after `simple_page_mode(true)`) left `handle_submit_inst_lang()`'s
+and `display_language_edit()`'s call sites still flagged `MixedArgument`/
+`PossiblyInvalidArgument`, confirmed via a full `--no-cache` rescan.
+Switching to a differently-named local (`$lang_id = is_scalar($selected_id)
+? $selected_id : null;`, used at all three call sites instead of
+`$selected_id`) resolved all three findings in the very next rescan, no
+other change. Same root cause, same fix, independently rediscovered -
+reinforces this is a general property of the global's *name*, not
+something specific to `admin/attachments.php`.
+
 **Workaround:** narrow a `psalm.xml`-declared global into a differently-
 named local variable before passing it anywhere Psalm needs the narrower
 type; don't reassign the global's own name and expect the narrowing to

@@ -59,7 +59,7 @@ function check_data(): bool
 	return true;
 }
 
-function handle_submit()
+function handle_submit_fiscalyears(): ?bool
 {
 	global $selected_id, $Mode;
 
@@ -92,6 +92,7 @@ function handle_submit()
 		display_notification(_('New fiscal year has been added'));
 	}
 	$Mode = 'RESET';
+	return null;
 }
 
 //---------------------------------------------------------------------------------------------
@@ -229,7 +230,7 @@ function display_fiscalyear_edit(string|int|float|bool|null $selected_id): void
 
 if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 {
-	handle_submit();
+	handle_submit_fiscalyears();
 }
 
 //---------------------------------------------------------------------------------------------

@@ -54,7 +54,7 @@ function check_data(string|int|float|bool|array|null $selected_id): bool
 
 //---------------------------------------------------------------------------------------------
 
-function handle_submit()
+function handle_submit_exchange_rates(): ?bool
 {
 	global $selected_id;
 
@@ -76,6 +76,7 @@ function handle_submit()
 
 	$selected_id = '';
 	clear_data();
+	return null;
 }
 
 //---------------------------------------------------------------------------------------------
@@ -170,7 +171,7 @@ function clear_data(): void
 //---------------------------------------------------------------------------------------------
 
 if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') 
-	handle_submit();
+	handle_submit_exchange_rates();
 
 //---------------------------------------------------------------------------------------------
 

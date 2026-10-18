@@ -60,7 +60,7 @@ function check_data(): bool
 
 //---------------------------------------------------------------------------------------------
 
-function handle_submit(): void
+function handle_submit_close_period(): void
 {
 	if (!check_data())
 		return;
@@ -85,7 +85,7 @@ function clear_data(): void
 //---------------------------------------------------------------------------------------------
 
 if (get_post('submit'))
-	handle_submit();
+	handle_submit_close_period();
 else
 	display_note(_("Using this feature you can prevent entering new transactions <br>
 	and disable edition of already entered transactions up to specified date.<br>
