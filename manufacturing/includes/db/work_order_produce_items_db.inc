@@ -25,6 +25,8 @@ function work_order_produce(string|int|float|bool|null $woid, string|int|float|b
 	$product = row_or_empty(get_work_order($woid));
 
     $date = date2sql((string) $date_);
+    if ($date == "")
+        $date = "0000-00-00";
 
     $sql = "INSERT INTO ".TB_PREF."wo_manufacture (workorder_id, reference, quantity, date_)
 		VALUES (".db_escape($woid).", ".db_escape($ref).", ".db_escape($quantity)

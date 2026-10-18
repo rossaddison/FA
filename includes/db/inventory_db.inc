@@ -444,6 +444,8 @@ function add_stock_move(?int $type, string|int|float|bool|null $stock_id, string
     string|int|float|bool|null $date_, string|int|float|bool|null $reference, string|int|float|bool|null $quantity, string|int|float|bool|null $std_cost, string|int|float|bool|null $price=0): int|string
 {
 	$date = date2sql($date_);
+	if ($date == "")
+		$date = "0000-00-00";
 
 	$sql = "INSERT INTO ".TB_PREF."stock_moves (stock_id, trans_no, type, loc_code,
 		tran_date, reference, qty, standard_cost, price) VALUES ("

@@ -45,8 +45,11 @@ function update_item(string|int|float|bool|null $stock_id, string|int|float|bool
 		$sql .= ", mb_flag=".db_escape($mb_flag);
 
 	if (isset($depreciation_start)) {
-		$sql .= ", depreciation_start='".date2sql($depreciation_start)."'"
-			.", depreciation_date='".date2sql($depreciation_start)."'";
+		$depreciation_start_sql = date2sql($depreciation_start);
+		if ($depreciation_start_sql == "")
+			$depreciation_start_sql = "0000-00-00";
+		$sql .= ", depreciation_start='".$depreciation_start_sql."'"
+			.", depreciation_date='".$depreciation_start_sql."'";
 	}
 
 	$sql .= " WHERE stock_id=".db_escape($stock_id);
@@ -63,6 +66,12 @@ function add_item(string|int|float|bool|null $stock_id, string|int|float|bool|nu
 	string|int|float|bool|null $depreciation_method='D', string|int|float|bool|null $depreciation_rate=100,  string|int|float|bool|null $depreciation_factor=1, string|int|float|bool|array|null $depreciation_start=null,
 	string|int|float|bool|null $fa_class_id=null): void
 {
+	$add_item_dep_sql = "0000-00-00";
+	if (isset($depreciation_start)) {
+		$add_item_dep_sql = date2sql($depreciation_start);
+		if ($add_item_dep_sql == "")
+			$add_item_dep_sql = "0000-00-00";
+	}
 	$sql = "INSERT INTO ".TB_PREF."stock_master (stock_id, description, long_description, category_id,
 		tax_type_id, units, mb_flag, sales_account, inventory_account, cogs_account,
 		adjustment_account, wip_account, dimension_id, dimension2_id, no_sale, no_purchase, editable,
@@ -79,7 +88,7 @@ function add_item(string|int|float|bool|null $stock_id, string|int|float|bool|nu
 		.db_escape($no_purchase).","
 		.db_escape($editable).","
 		.db_escape($depreciation_method).",".db_escape($depreciation_rate).",".db_escape($depreciation_factor)
-		.(isset($depreciation_start) ? ",'".date2sql($depreciation_start)."','".date2sql($depreciation_start)."',".db_escape($fa_class_id) : "")
+		.(isset($depreciation_start) ? ",'".$add_item_dep_sql."','".$add_item_dep_sql."',".db_escape($fa_class_id) : "")
 		.")";
 
 	db_query($sql, "The item could not be added");

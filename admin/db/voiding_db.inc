@@ -153,6 +153,8 @@ function get_voided_entry(string|int|float|bool|null $type, string|int|float|boo
 function add_voided_entry(string|int|float|bool|null $type, string|int|float|bool|null $type_no, string|int|float|bool|null $date_, string|null $memo_): void
 {
 	$date = date2sql((string) $date_);
+	if ($date == "")
+		$date = "0000-00-00";
 	$sql = "INSERT INTO ".TB_PREF."voided (type, id, date_, memo_)
 		VALUES (".db_escape($type).", ".db_escape($type_no).", "
 		.db_escape($date).", ".db_escape($memo_).")";

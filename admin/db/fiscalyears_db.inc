@@ -17,7 +17,11 @@ require_once(dirname(__DIR__, 2) . "/admin/db/attachments_db.inc");
 function add_fiscalyear(string|null $from_date, string|null $to_date, string|null $closed): void
 {
 	$from = date2sql($from_date);
+	if ($from == "")
+		$from = "0000-00-00";
 	$to = date2sql($to_date);
+	if ($to == "")
+		$to = "0000-00-00";
 
 	$sql = "INSERT INTO ".TB_PREF."fiscal_year (begin, end, closed)
 		VALUES (".db_escape($from).",".db_escape($to).", ".db_escape($closed).")";

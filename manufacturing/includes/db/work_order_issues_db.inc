@@ -23,9 +23,12 @@ function add_work_order_issue(string|int|float|bool|null $woid, string|null $ref
 	$args->trans_no = 0;
 	hook_db_prewrite($args, ST_MANUISSUE);
 
+	$issue_date = date2sql($date_);
+	if ($issue_date == "")
+		$issue_date = "0000-00-00";
 	$sql = "INSERT INTO ".TB_PREF."wo_issues (workorder_id, reference, issue_date, loc_code, workcentre_id)
 		VALUES (".db_escape($woid).", ".db_escape($ref).", '" .
-		date2sql($date_) . "', ".db_escape($location).", ".db_escape($workcentre).")";
+		$issue_date . "', ".db_escape($location).", ".db_escape($workcentre).")";
 	db_query($sql,"The work order issue could not be added");
 
 	$number = db_insert_id();

@@ -31,7 +31,11 @@ function add_work_order(string|int|float|bool|null $wo_ref, string|int|float|boo
 		$required_by = $date_;
 
 	$date = date2sql((string) $date_);
+	if ($date == "")
+		$date = "0000-00-00";
 	$required = date2sql((string) $required_by);
+	if ($required == "")
+		$required = "0000-00-00";
 	$sql = "INSERT INTO ".TB_PREF."workorders (wo_ref, loc_code, units_reqd, stock_id,
 		type, date_, required_by)
     	VALUES (".db_escape($wo_ref).", ".db_escape($loc_code).", "
@@ -83,7 +87,11 @@ function update_work_order(string|int|float|bool|null $woid, string|int|float|bo
 	hook_db_prewrite($args, ST_WORKORDER);
 
 	$date = date2sql((string) $date_);
+	if ($date == "")
+		$date = "0000-00-00";
 	$required = date2sql((string) $required_by);
+	if ($required == "")
+		$required = "0000-00-00";
 
 	$sql = "UPDATE ".TB_PREF."workorders SET loc_code=".db_escape($loc_code).",
 		units_reqd=".db_escape($units_reqd).", stock_id=".db_escape($stock_id).",
@@ -191,6 +199,8 @@ function release_work_order(string|int|float|bool|null $woid, string|int|float|b
 	$stock_id = $myrow["stock_id"];
 
 	$date = date2sql((string) $releaseDate);
+	if ($date == "")
+		$date = "0000-00-00";
 
 	$sql = "UPDATE ".TB_PREF."workorders SET released_date='$date',
 		released=1 WHERE id = ".db_escape($woid);

@@ -17,7 +17,11 @@ function add_dimension(string|int|float|bool|null $reference, string|int|float|b
 	begin_transaction();
 
 	$date = date2sql((string) $date_);
+	if ($date == "")
+		$date = "0000-00-00";
 	$duedate = date2sql((string) $due_date);
+	if ($duedate == "")
+		$duedate = "0000-00-00";
 
 	$sql = "INSERT INTO ".TB_PREF."dimensions (reference, name, type_, date_, due_date)
 		VALUES (".db_escape($reference).", ".db_escape($name).", ".db_escape($type_)
@@ -40,7 +44,11 @@ function update_dimension(string|int|float|bool|null $id, string|int|float|bool|
 	begin_transaction();
 
 	$date = date2sql((string) $date_);
+	if ($date == "")
+		$date = "0000-00-00";
 	$duedate = date2sql((string) $due_date);
+	if ($duedate == "")
+		$duedate = "0000-00-00";
 
 	$sql = "UPDATE ".TB_PREF."dimensions SET name=".db_escape($name).",
 		type_ = ".db_escape($type_).",

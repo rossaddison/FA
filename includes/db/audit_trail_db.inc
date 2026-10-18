@@ -17,6 +17,8 @@ function add_audit_trail(string|int|float|bool|null $trans_type, string|int|floa
 	begin_transaction();
 
 	$date = date2sql(is_array($trans_date) ? null : (string) $trans_date);
+	if ($date == "")
+		$date = "0000-00-00";
 	$sql = "INSERT INTO ".TB_PREF."audit_trail"
 		. " (type, trans_no, user, gl_date, description, stamp)
 			VALUES(".db_escape($trans_type).", ".db_escape($trans_no).","
