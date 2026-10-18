@@ -172,6 +172,44 @@ a suppression; the finding stays in the project's Psalm count, which is
 why this file's post-cleanup count (see its commit message) is one higher
 than it would otherwise be.
 
+## `$_SERVER`'s inferred array shape is non-deterministic between scans
+
+No upstream issue number found/filed for this one yet - noted here from a
+direct isolated test, not a citation.
+
+**Symptom:** two back-to-back `--no-cache` full-project rescans of the
+exact same, unchanged committed code produce a different set of
+`PossiblyUndefinedArrayOffset` findings on `$_SERVER[...]` reads (`HTTPS`,
+`SERVER_NAME`, `PHP_SELF`, `HTTP_USER_AGENT`, and others), scattered across
+dozens of unrelated files. Confirmed this isn't caused by code changes:
+diffing two reports taken moments apart, with nothing in between, still
+shows ~50 of these findings appearing/disappearing. Inspecting the
+reported array shape directly shows why - it includes a *literal* key
+like `REQUEST_TIME?: int<1792358928, max>`, an actual Unix timestamp
+baked into the type. Psalm is inferring `$_SERVER`'s shape from the real
+`$_SERVER` superglobal of the CLI process running Psalm itself, not from a
+fixed stub - so the set of keys considered "known present" shifts with
+whatever the OS/webserver/CLI environment happened to populate at the
+moment that specific `psalm.bat` invocation started.
+
+**Where this hit us:** first noticed while verifying
+`inventory/manage/items.php`'s Psalm cleanup commit - a `check_value()`
+signature change was wrongly suspected of rippling into unrelated files
+like `access/login.php` and `admin/inst_chart.php` purely because of a
+batch of these findings appearing in the diff; re-running the scan without
+that change present reproduced the same findings, proving they were never
+related.
+
+**Workaround:** when diffing two Psalm reports to check for regressions,
+exclude any finding whose message contains `$_SERVER` before comparing -
+otherwise this noise will look like a real regression (or mask one) at
+random. There is no way to make the array shape stable short of stubbing
+`$_SERVER` explicitly in `psalm.xml`, which hasn't been attempted since
+the existing per-file `post_scalar()`/`get_post()` idiom already avoids
+reading `$_SERVER` unguarded in application code - only a handful of
+low-level files (`access/login.php`, session bootstrap code) touch it
+directly, and they predate this migration's Psalm pass.
+
 ## For contrast: an upstream issue that *was* already fixed
 
 **[vimeo/psalm#11381](https://github.com/vimeo/psalm/issues/11381)** —
