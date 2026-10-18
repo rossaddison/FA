@@ -372,10 +372,10 @@ final class items_cart
 				if ($tax_info['person_type'] == PT_CUSTOMER)
 				{
 					$branch = row_or_empty(get_default_branch($gl->person_id));
-					$tax_info['tax_group'] = $branch['tax_group_id'];
+					$tax_info['tax_group'] = $branch['tax_group_id'] ?? null;
 				} else {
 					$supplier = row_or_empty(get_supplier($gl->person_id));
-					$tax_info['tax_group'] = $supplier['tax_group_id'];
+					$tax_info['tax_group'] = $supplier['tax_group_id'] ?? null;
 				}
 				$subledger_sum += (float)$gl->amount;
 			} elseif ($tax_id = is_tax_account($gl->code_id))
