@@ -88,112 +88,139 @@ function can_process(): bool
 
 //--------------------------------------------------------------------------------------------
 
-function handle_submit(string|int|float|bool|null &$selected_id): void
+function handle_submit_customer(string|int|float|bool|null &$selected_id): bool
 {
-	global $path_to_root;
+    global $path_to_root;
 
-	if (!can_process())
-		return;
+    if (!can_process()) {
+        return false;
+    }
 
-	if ((bool) $selected_id)
-	{
-		update_customer(
-                        (string) post_scalar('customer_id'),
-                        (string) post_scalar('CustName'),
-                        (string) post_scalar('cust_ref'),
-                        (string) post_scalar('address'),
-			(string) post_scalar('tax_id'),
-                        (string) post_scalar('curr_code'),
-                        (string) post_scalar('dimension_id'),
-                        (string) post_scalar('dimension2_id'),
-			(string) post_scalar('credit_status'),
-                        (string) post_scalar('payment_terms'),
-                        (float)input_num('discount') / 100.0,
-                        (float)input_num('pymt_discount') / 100.0,
-			input_num('credit_limit'),
-                        (string) post_scalar('sales_type'),
-                        (string) post_scalar('notes'));
+    if ((bool) $selected_id) {
+        update_customer(
+            (string) post_scalar('customer_id'),
+            (string) post_scalar('CustName'),
+            (string) post_scalar('cust_ref'),
+            (string) post_scalar('address'),
+            (string) post_scalar('tax_id'),
+            (string) post_scalar('curr_code'),
+            (string) post_scalar('dimension_id'),
+            (string) post_scalar('dimension2_id'),
+            (string) post_scalar('credit_status'),
+            (string) post_scalar('payment_terms'),
+            (float) input_num('discount') / 100.0,
+            (float) input_num('pymt_discount') / 100.0,
+            input_num('credit_limit'),
+            (string) post_scalar('sales_type'),
+            (string) post_scalar('notes')
+        );
 
-		update_record_status(post_scalar('customer_id'), $_POST['inactive'],
-			'debtors_master', 'debtor_no');
+        update_record_status(
+            post_scalar('customer_id'),
+            $_POST['inactive'],
+            'debtors_master',
+            'debtor_no'
+        );
 
-		ajax()->activate('customer_id'); // in case of status change
-		display_notification(_("Customer has been updated."));
-	} 
-	else 
-	{ 	//it is a new customer
+        ajax()->activate('customer_id');
+        display_notification(_("Customer has been updated."));
+    } else {
+        // It is a new customer.
+        begin_transaction();
 
-		begin_transaction();
-		add_customer(
-                        (string) post_scalar('CustName'),
-                        (string) post_scalar('cust_ref'),
-                        (string) post_scalar('address'),
-			(string) post_scalar('tax_id'),
-                        (string) post_scalar('curr_code'),
-                        (string) post_scalar('dimension_id'),
-                        (string) post_scalar('dimension2_id'),
-			(string) post_scalar('credit_status'),
-                        (string) post_scalar('payment_terms'),
-                        (float)input_num('discount') / 100.0,
-                        (float)input_num('pymt_discount') / 100.0,
-			input_num('credit_limit'),
-                        (string) post_scalar('sales_type'),
-                        (string) post_scalar('notes'));
+        add_customer(
+            (string) post_scalar('CustName'),
+            (string) post_scalar('cust_ref'),
+            (string) post_scalar('address'),
+            (string) post_scalar('tax_id'),
+            (string) post_scalar('curr_code'),
+            (string) post_scalar('dimension_id'),
+            (string) post_scalar('dimension2_id'),
+            (string) post_scalar('credit_status'),
+            (string) post_scalar('payment_terms'),
+            (float) input_num('discount') / 100.0,
+            (float) input_num('pymt_discount') / 100.0,
+            input_num('credit_limit'),
+            (string) post_scalar('sales_type'),
+            (string) post_scalar('notes')
+        );
 
-		$selected_id = $_POST['customer_id'] = db_insert_id();
+        $selected_id = $_POST['customer_id'] = db_insert_id();
 
-		if (isset(sysprefs()->auto_create_branch) && sysprefs()->auto_create_branch == 1)
-		{
-			/** @var string $selected_id */
-			$selected_id = $selected_id;
-        	add_branch(
-                        $selected_id,
-                        (string) post_scalar('CustName'),
-                        (string) post_scalar('cust_ref'),
-                        (string) post_scalar('address'),
-                        (string) post_scalar('salesman'),
-                        (string) post_scalar('area'),
-                        (string) post_scalar('tax_group_id'),
-                        '',
-                        get_company_pref('default_sales_discount_act'),
-                        get_company_pref('debtors_act'),
-                        get_company_pref('default_prompt_payment_act'),
-                        (string) post_scalar('location'),
-                        (string) post_scalar('address'),
-                        0,
-                        (string) post_scalar('ship_via'),
-                        (string) post_scalar('notes'),
-                        (string) post_scalar('bank_account'));
-                
-        	$selected_branch = db_insert_id();
-        
-		add_crm_person(
-                        post_scalar('cust_ref'),
-                        post_scalar('CustName'),
-                        '',
-                        post_scalar('address'),
-                        post_scalar('phone'),
-                        post_scalar('phone2'),
-                        post_scalar('fax'),
-                        post_scalar('email'), '', '');
-			$pers_id = db_insert_id();
-			add_crm_contact('cust_branch',
-                                'general', $selected_branch, $pers_id);
-			add_crm_contact('customer',
-                                'general', $selected_id, $pers_id);
-		}
-		commit_transaction();
+        if (
+            isset(sysprefs()->auto_create_branch)
+            && sysprefs()->auto_create_branch == 1
+        ) {
+            add_branch(
+                (string) $selected_id,
+                (string) post_scalar('CustName'),
+                (string) post_scalar('cust_ref'),
+                (string) post_scalar('address'),
+                (string) post_scalar('salesman'),
+                (string) post_scalar('area'),
+                (string) post_scalar('tax_group_id'),
+                '',
+                get_company_pref('default_sales_discount_act'),
+                get_company_pref('debtors_act'),
+                get_company_pref('default_prompt_payment_act'),
+                (string) post_scalar('location'),
+                (string) post_scalar('address'),
+                0,
+                (string) post_scalar('ship_via'),
+                (string) post_scalar('notes'),
+                (string) post_scalar('bank_account')
+            );
 
-		display_notification(_("A new customer has been added."));
+            $selected_branch = db_insert_id();
 
-		if (isset(sysprefs()->auto_create_branch)
-                        && sysprefs()->auto_create_branch == 1) {
-			display_notification(_("A default Branch has been"
-                        . " automatically created, please check default Branch"
-                        . " values by using link below."));
-                }
-		ajax()->activate('_page_body');
-	}
+            add_crm_person(
+                post_scalar('cust_ref'),
+                post_scalar('CustName'),
+                '',
+                post_scalar('address'),
+                post_scalar('phone'),
+                post_scalar('phone2'),
+                post_scalar('fax'),
+                post_scalar('email'),
+                '',
+                ''
+            );
+
+            $pers_id = db_insert_id();
+
+            add_crm_contact(
+                'cust_branch',
+                'general',
+                $selected_branch,
+                $pers_id
+            );
+
+            add_crm_contact(
+                'customer',
+                'general',
+                $selected_id,
+                $pers_id
+            );
+        }
+
+        commit_transaction();
+
+        display_notification(_("A new customer has been added."));
+
+        if (
+            isset(sysprefs()->auto_create_branch)
+            && sysprefs()->auto_create_branch == 1
+        ) {
+            display_notification(
+                _("A default Branch has been automatically created, "
+                . "please check default Branch values by using link below.")
+            );
+        }
+
+        ajax()->activate('_page_body');
+    }
+
+    return true;
 }
 //--------------------------------------------------------------------------------------------
 
@@ -201,11 +228,11 @@ if (isset($_POST['submit']))
 {
 	/** @var string $selected_id */
 	$selected_id = $selected_id;
-	handle_submit($selected_id);
+	handle_submit_customer($selected_id);
 }
-//-------------------------------------------------------------------------------------------- 
+//--------------------------------------------------------------------------------------------
 
-if (isset($_POST['delete'])) 
+if (isset($_POST['delete']))
 {
 
 	$cancel_delete = 0;
@@ -253,8 +280,9 @@ if (isset($_POST['delete']))
 		ajax()->activate('_page_body');
 	} //end if Delete Customer
 }
+//--------------------------------------------------------------------------------------------
 
-function customer_settings(string|int|float|bool|null $selected_id): void 
+function customer_settings(string|int|float|bool|null $selected_id): void
 {
 	global $path_to_root, $page_nested;
 	
