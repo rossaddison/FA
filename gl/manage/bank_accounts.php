@@ -32,9 +32,11 @@ if (isset($_GET['bank_id']))
 	$_POST['bank_id'] = $_GET['bank_id'];
 }
 
-$bank_id = get_post('bank_id', ''); 
+$bank_id = get_post('bank_id', '');
 if ($selected_id != -1)
-	$bank_id = $selected_id;
+	$bank_id = is_scalar($selected_id) ? $selected_id : null;
+/** @var string|int|float|bool|null $bank_id */
+$bank_id = is_array($bank_id) ? null : $bank_id;
 
 //-----------------------------------------------------------------------------------
 
@@ -44,39 +46,57 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 	//initialise no input errors assumed initially before we test
 	$input_error = 0;
 
+	$account_code = post_scalar('account_code');
+	$account_type = post_scalar('account_type');
+	$account_type = $account_type === null ? null : (string) $account_type;
+	$bank_account_name = post_scalar('bank_account_name');
+	$bank_account_name = $bank_account_name === null ? null : (string) $bank_account_name;
+	$bank_name = post_scalar('bank_name');
+	$bank_name = $bank_name === null ? null : (string) $bank_name;
+	$bank_account_number = post_scalar('bank_account_number');
+	$bank_account_number = $bank_account_number === null ? null : (string) $bank_account_number;
+	$bank_address = post_scalar('bank_address');
+	$bank_address = $bank_address === null ? null : (string) $bank_address;
+	$bank_curr_code = post_scalar('BankAccountCurrency');
+	$bank_curr_code = $bank_curr_code === null ? null : (string) $bank_curr_code;
+	$dflt_curr_act = post_scalar('dflt_curr_act');
+	$dflt_curr_act = $dflt_curr_act === null ? null : (string) $dflt_curr_act;
+	$bank_charge_act = post_scalar('bank_charge_act');
+	$bank_charge_act = $bank_charge_act === null ? null : (string) $bank_charge_act;
+
 	//first off validate inputs sensible
-	if (strlen($_POST['bank_account_name']) == 0) 
+	if (strlen($bank_account_name ?? '') == 0)
 	{
 		$input_error = 1;
 		display_error(_("The bank account name cannot be empty."));
 		set_focus('bank_account_name');
-	} 
-	if ($Mode=='ADD_ITEM' && (gl_account_in_bank_accounts(get_post('account_code')) 
-			|| (bool)key_in_foreign_table(get_post('account_code'), 'gl_trans', 'account'))) {
+	}
+	if ($Mode=='ADD_ITEM' && (gl_account_in_bank_accounts(is_string($account_code) ? $account_code : null)
+			|| (bool)key_in_foreign_table($account_code, 'gl_trans', 'account'))) {
 		$input_error = 1;
 		display_error(_("The GL account selected is already in use or has transactions. Select another empty GL account."));
 		set_focus('account_code');
 	}
 	if ($input_error != 1)
 	{
-    	if ($bank_id) 
+    	if ((bool)$bank_id)
     	{
-    		
-    		update_bank_account($bank_id, post_scalar('account_code'),
-				post_scalar('account_type'), post_scalar('bank_account_name'), 
-				post_scalar('bank_name'), post_scalar('bank_account_number'), 
-    			post_scalar('bank_address'), post_scalar('BankAccountCurrency'),
-    			post_scalar('dflt_curr_act'), post_scalar('bank_charge_act'));
+
+    		update_bank_account($bank_id, $account_code,
+				$account_type, $bank_account_name,
+				$bank_name, $bank_account_number,
+    			$bank_address, $bank_curr_code,
+    			$dflt_curr_act, $bank_charge_act);
 			ajax()->activate('bank_id'); // in case of status change
 			display_notification(_('Bank account has been updated'));
-    	} 
-    	else 
+    	}
+    	else
     	{
-    
-    		add_bank_account(post_scalar('account_code'), post_scalar('account_type'), 
-				post_scalar('bank_account_name'), post_scalar('bank_name'), 
-    			post_scalar('bank_account_number'), post_scalar('bank_address'), 
-				post_scalar('BankAccountCurrency'), post_scalar('dflt_curr_act'), post_scalar('bank_charge_act'));
+
+    		add_bank_account($account_code, $account_type,
+				$bank_account_name, $bank_name,
+    			$bank_account_number, $bank_address,
+				$bank_curr_code, $dflt_curr_act, $bank_charge_act);
 			$bank_id = $_POST['bank_id'] = db_insert_id();
 			display_notification(_('New bank account has been added'));
   			ajax()->activate('_page_body');
@@ -91,7 +111,7 @@ elseif( $Mode == 'Delete')
 	$cancel_delete = 0;
 	// PREVENT DELETES IF DEPENDENT RECORDS IN 'bank_trans'
 
-	if ((bool)key_in_foreign_table($bank_id, 'bank_trans', 'bank_act') || (bool)key_in_foreign_table(get_post('account_code'), 'gl_trans', 'account'))
+	if ((bool)key_in_foreign_table($bank_id, 'bank_trans', 'bank_act') || (bool)key_in_foreign_table(post_scalar('account_code'), 'gl_trans', 'account'))
 	{
 		$cancel_delete = 1;
 		display_error(_("Cannot delete this bank account because transactions have been created using this account."));
@@ -140,7 +160,7 @@ while ($myrow = db_fetch($result))
 	alt_table_row_color($k);
 
     label_cell($myrow["bank_account_name"], "nowrap");
-	label_cell($bank_account_types[$myrow["account_type"]], "nowrap");
+	label_cell($bank_account_types[(int) $myrow["account_type"]], "nowrap");
     label_cell($myrow["bank_curr_code"], "nowrap");
     label_cell((string)$myrow["account_code"] . " " . (string)$myrow["account_name"], "nowrap");
     label_cell($myrow["bank_name"], "nowrap");
@@ -192,7 +212,7 @@ function bank_account_settings(string|int|float|bool|null $bank_id): void
 
 	if ($is_used) 
 	{
-		label_row(_("Account Type:"), $bank_account_types[$_POST['account_type']]);
+		label_row(_("Account Type:"), $bank_account_types[(int) post_scalar('account_type')]);
 		hidden('account_type');
 	} 
 	else 
@@ -269,4 +289,4 @@ tabbed_content_end();
 
 end_form();
 
-end_page(@$_REQUEST['popup']);
+end_page((bool) @$_REQUEST['popup']);
