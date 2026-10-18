@@ -22,6 +22,11 @@ function add_sales_order(Cart &$order)
 	hook_db_prewrite($order, $order->trans_type);
 	$order_no = get_next_trans_no($order->trans_type);
 	$del_date = date2sql($order->due_date);
+	if ($del_date == "")
+		$del_date = "0000-00-00";
+	$doc_date = date2sql($order->document_date);
+	if ($doc_date == "")
+		$doc_date = "0000-00-00";
 	$order_type = 0; // this is default on new order
 	$total = $order->get_trans_total();
 	$sql = "INSERT INTO ".TB_PREF."sales_orders (order_no, type, debtor_no, trans_type, branch_code, customer_ref, reference, comments, ord_date,
@@ -31,8 +36,8 @@ function add_sales_order(Cart &$order)
 		 ", " .db_escape($order->trans_type) . "," .db_escape($order->Branch) . ", ".
 			db_escape($order->cust_ref) .",". 
 			db_escape($order->reference) .",". 
-			db_escape($order->Comments) .",'" . 
-			date2sql($order->document_date) . "', " .
+			db_escape($order->Comments) .",'" .
+			$doc_date . "', " .
 			db_escape($order->sales_type) . ", " .
 			db_escape($order->ship_via)."," . 
 			db_escape($order->deliver_to) . "," .
@@ -134,7 +139,11 @@ function update_sales_order(Cart $order): void
 	global $SysPrefs, $path_to_root, $Refs;
 
 	$del_date = date2sql($order->due_date);
+	if ($del_date == "")
+		$del_date = "0000-00-00";
 	$ord_date = date2sql($order->document_date);
+	if ($ord_date == "")
+		$ord_date = "0000-00-00";
 	// this is the update (not insert) path -- the caller only reaches it once $order->trans_no
 	// is no longer the "0 for new" sentinel, so it is the array (num=>version) form here
 	/** @var array<int, int> $trans_no */

@@ -76,6 +76,8 @@ function write_customer_trans(string|int|float|bool|null $trans_type, string|int
 		$rate = get_exchange_rate_from_home_currency($curr, $date_);
 
 	$SQLDate = date2sql($date_ === null ? null : (string) $date_);
+	if ($SQLDate == "")
+		$SQLDate = "0000-00-00";
 	if ($due_date == "")
 		$SQLDueDate = "0000-00-00";
 	else

@@ -14,26 +14,38 @@ declare(strict_types=1);
 function add_recurrent_invoice(string|int|float|bool|null $description, string|int|float|bool|null $order_no, int|float|bool|null $debtor_no, int|float|bool|null $group_no, int|float|bool $days, int|float|bool $monthly,
 	string|int|float|bool|null $begin, string|int|float|bool|null $end): void
 {
+	$begin_sql = date2sql($begin === null ? null : (string) $begin);
+	if ($begin_sql == "")
+		$begin_sql = "0000-00-00";
+	$end_sql = date2sql($end === null ? null : (string) $end);
+	if ($end_sql == "")
+		$end_sql = "0000-00-00";
 	$sql = "INSERT INTO ".TB_PREF."recurrent_invoices (description, order_no, debtor_no,
 		group_no, days, monthly, begin, end, last_sent) VALUES (".db_escape($description) . ", "
 		.db_escape($order_no).", ".db_escape($debtor_no).", "
 		.db_escape($group_no).", ". (string) $days.", ". (string) $monthly.", '"
-		.date2sql($begin === null ? null : (string) $begin)."', '".date2sql($end === null ? null : (string) $end)."', '0000-00-00')";
+		.$begin_sql."', '".$end_sql."', '0000-00-00')";
    	db_query($sql,"The recurrent invoice could not be added");
 }
 
 function update_recurrent_invoice(string|int|float|bool|null $selected_id, string|int|float|bool|null $description, string|int|float|bool|null $order_no, int|float|bool|null $debtor_no, int|float|bool|null $group_no, int|float|bool $days, int|float|bool $monthly,
 	string|int|float|bool|null $begin, string|int|float|bool|null $end): void
 {
-	$sql = "UPDATE ".TB_PREF."recurrent_invoices SET 
-		description=".db_escape($description).", 
-		order_no=".db_escape($order_no).", 
-		debtor_no=".db_escape($debtor_no).", 
-		group_no=".db_escape($group_no).", 
-		days=". (string) $days.", 
-		monthly=". (string) $monthly.", 
-		begin='".date2sql($begin === null ? null : (string) $begin)."',
-		end='".date2sql($end === null ? null : (string) $end)."'
+	$begin_sql = date2sql($begin === null ? null : (string) $begin);
+	if ($begin_sql == "")
+		$begin_sql = "0000-00-00";
+	$end_sql = date2sql($end === null ? null : (string) $end);
+	if ($end_sql == "")
+		$end_sql = "0000-00-00";
+	$sql = "UPDATE ".TB_PREF."recurrent_invoices SET
+		description=".db_escape($description).",
+		order_no=".db_escape($order_no).",
+		debtor_no=".db_escape($debtor_no).",
+		group_no=".db_escape($group_no).",
+		days=". (string) $days.",
+		monthly=". (string) $monthly.",
+		begin='".$begin_sql."',
+		end='".$end_sql."'
 		WHERE id = ".db_escape($selected_id);
    	db_query($sql,"The recurrent invoice could not be updated");
 }
@@ -41,6 +53,8 @@ function update_recurrent_invoice(string|int|float|bool|null $selected_id, strin
 function update_last_sent_recurrent_invoice(string|int|float|bool|null $id, string|int|float|bool|array|null $date): void
 {
 	$date = date2sql(is_array($date) ? null : (string) $date);
+	if ($date == "")
+		$date = "0000-00-00";
 	$sql = "UPDATE ".TB_PREF."recurrent_invoices SET last_sent='$date' WHERE id=".db_escape($id);
 
    	db_query($sql,"The recurrent invoice could not be updated");
