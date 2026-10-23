@@ -69,7 +69,11 @@ to 19 times, `display_type` 8 times, `getPeriods`, `get_open_balance`,
 `print_gl_rows`, `add_to_order`, `trans_view` (6 declarations, 2 with an
 explicit `?string` return type and 4 without, producing
 `LessSpecificReturnStatement` on whichever lack one, depending on which
-declaration Psalm picks as canonical), and others) — also `check_data()` and
+declaration Psalm picks as canonical), `view_link` (9+ declarations
+across `admin/`, `dimensions/`, `gl/`, `manufacturing/`, `purchasing/`,
+`sales/`, with wildly different signatures — `array $row`,
+`array $trans`, `(string|int|float|bool|array $dummy, ...$order_no)`
+— and inconsistent return types), and others) — also `check_data()` and
 `handle_delete()`, declared with 0 params in most `admin/manage/*.php`-style
 CRUD pages but with a real `int $id` param in `admin/create_coy.php` (and
 `check_data()` with `string|int|float|bool|array|null $selected_id` in

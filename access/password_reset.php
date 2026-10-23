@@ -10,7 +10,10 @@ declare(strict_types=1);
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-	if (!isset($path_to_root) || isset($_GET['path_to_root']) || isset($_POST['path_to_root']))
+	// checked via $GLOBALS rather than isset($path_to_root) so this doesn't depend on
+	// psalm.xml's non-nullable stub for the global, which only describes its value once a
+	// calling page script has set it, not whether it's been set at all
+	if (!array_key_exists('path_to_root', $GLOBALS) || isset($_GET['path_to_root']) || isset($_POST['path_to_root']))
 		die(_("Restricted access"));
 	include_once(dirname(__DIR__) . "/includes/ui.inc");
 	include_once(dirname(__DIR__) . "/includes/page/header.inc");
@@ -50,6 +53,7 @@ function defaultCompany()
 	
 	div_start('_page_body');
 	br();br();
+	/** @var array<string, string|int|float|bool|null>|null $timeout */
 	$timeout = $_SESSION['timeout'] ?? null;
 	$uri_val = is_array($timeout) ? ($timeout['uri'] ?? null) : null;
 	$timeout_uri = is_scalar($uri_val) ? $uri_val : null;
@@ -66,7 +70,8 @@ function defaultCompany()
 
 	text_row(_("Email"), "email_entry_field", "", 20, 30);
 
-    $coy =  user_company();
+    $company = user_company();
+    $coy = is_scalar($company) ? $company : null;
     if (!isset($coy))
         $coy = $def_coy;
     if (!@sysprefs()->text_company_selection) {
