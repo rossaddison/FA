@@ -966,6 +966,24 @@ to their source.
   WHERE-clause comparison anywhere in this codebase should be treated as
   equally at risk as one used in an INSERT/UPDATE, not exempted.
 
+- **`gl/includes/db/gl_db_trans.inc` — six more unguarded WHERE-clause
+  occurrences, found during Psalm cleanup rather than live testing.**
+  `get_gl_transactions()`, `get_balance()`, `delete_gl_budget_trans()`,
+  `get_only_budget_trans_from_to()`, `get_tax_summary()`, and
+  `get_sql_for_journal_inquiry()` all built a `tran_date >= '$x' AND
+  tran_date <= '$y'`-shaped WHERE clause directly from `date2sql()`'s
+  result, unconditionally, with no `if ($x == "") $x = "0000-00-00";`
+  fallback and no surrounding `if ($original_param != "")` guard either
+  — unlike several sibling functions in the same file
+  (`get_gl_balance_from_to()`, `get_gl_trans_from_to()`,
+  `get_budget_trans_from_to()`) which already guard correctly by
+  checking the *original* un-converted parameter before appending the
+  clause at all. Any of these six reached with a genuinely empty/null
+  date (e.g. an inquiry page's optional date-range filter left blank)
+  would hit the identical "Incorrect DATE value: ''" crash documented
+  above. Fixed with the same `"0000-00-00"` fallback used throughout
+  this file's already-correct functions.
+
 ## Encoding / output bugs
 
 - **`includes/ui/ui_lists.inc` — mojibake, two distinct causes.**

@@ -21,7 +21,7 @@ function add_gl_trans(string|int|float|bool|null $type, string|int|float|bool|nu
 	string|int|float|bool|null $amount, string|int|float|bool|null $currency=null, string|int|float|bool|null $person_type_id=null, string|int|float|bool|null $person_id=null,	string|int|float|bool|null $err_msg="", string|int|float|bool|null $rate=0): float
 {
 
-	$date = date2sql($date_);
+	$date = date2sql(is_scalar($date_) ? (string) $date_ : null);
 	if ($date == "")
 		$date = "0000-00-00";
 	if ($currency != null)
@@ -29,8 +29,8 @@ function add_gl_trans(string|int|float|bool|null $type, string|int|float|bool|nu
 		if ($rate == 0)
 			$amount_in_home_currency = to_home_currency($amount, $currency, $date_);
 		else
-			$amount_in_home_currency = round2($amount * $rate,  user_price_dec());
-	}		
+			$amount_in_home_currency = round2((float) $amount * (float) $rate,  user_price_dec());
+	}
 	else
 		$amount_in_home_currency = round2($amount, user_price_dec());
 	if ($dimension == null || $dimension < 0)
@@ -42,7 +42,7 @@ function add_gl_trans(string|int|float|bool|null $type, string|int|float|bool|nu
 		if ($memo_ == "" || $memo_ == null)
 			$memo_ = session_obj('wa_current_user')->username;
 		else
-			$memo_ = session_obj('wa_current_user')->username . " - " . $memo_;
+			$memo_ = session_obj('wa_current_user')->username . " - " . (string) $memo_;
 	}
 	if (!(bool)is_subledger_account($account) || $account==get_company_pref('grn_clearing_act'))
 		$person_id = $person_type_id = null;
@@ -68,7 +68,7 @@ function add_gl_trans(string|int|float|bool|null $type, string|int|float|bool|nu
 	if ($err_msg == "")
 		$err_msg = "The GL transaction could not be inserted";
 
-	db_query($sql, $err_msg);
+	db_query($sql, is_scalar($err_msg) ? (string) $err_msg : null);
 	return $amount_in_home_currency;
 }
 
@@ -98,7 +98,7 @@ function add_gl_balance(string|int|float|bool|null $type, string|int|float|bool|
 
 	if ($amount != 0.0)
 	{
-		error_log(sprintf( _("Rounding error %s encountered for trans_type:%s,trans_no:%s"), $amount, $type, $trans_id));
+		error_log(sprintf( _("Rounding error %s encountered for trans_type:%s,trans_no:%s"), $amount, (string) ($type ?? ''), (string) ($trans_id ?? '')));
 		return add_gl_trans($type, $trans_id, $date_, get_company_pref('exchange_diff_act'), 0, 0, "",
 			$amount, null, $person_type_id, $person_id, "The balanced GL transaction could not be inserted");
 	} else
@@ -116,7 +116,12 @@ function get_gl_transactions(string|null $from_date, string|int|float|bool|array
 {
 
     $from = date2sql($from_date);
-    $to = date2sql($to_date);
+    if ($from == "")
+        $from = "0000-00-00";
+    $to = date2sql(is_scalar($to_date) ? (string) $to_date : null);
+    if ($to == "")
+        $to = "0000-00-00";
+    $memo_str = is_array($memo) ? '' : (string) $memo;
 
     $sql = "SELECT gl.*, j.event_date, j.doc_date, a.gl_seq, u.user_id, st.supp_reference, gl.person_id subcode,
             IFNULL(IFNULL(sup.supp_name, debt.name), bt.person_id) as person_name, 
@@ -174,8 +179,8 @@ function get_gl_transactions(string|null $from_date, string|int|float|bool|array
     if ($amount_max != null)
         $sql .= " AND ABS(gl.amount) <= ABS(".db_escape($amount_max).")";
 
-    if ((bool)$memo)
-        $sql .= " AND (gl.memo_ LIKE ". db_escape("%$memo%") . " OR c.memo_ LIKE " . db_escape("%$memo%") . ")";
+    if ((bool)$memo_str)
+        $sql .= " AND (gl.memo_ LIKE ". db_escape("%$memo_str%") . " OR c.memo_ LIKE " . db_escape("%$memo_str%") . ")";
 
     $sql .= " GROUP BY counter";
 
@@ -290,11 +295,12 @@ function get_gl_wo_productions(string|int|float|bool|null $trans_id, bool $all_g
 
 function get_gl_balance_from_to(?string $from_date, string|int|float|bool|array|null $to_date, string|array|null $account, string|int|float|bool|null $dimension=0, string|int|float|bool|null $dimension2=0): float
 {
+	$account_str = is_array($account) ? null : $account;
 	$from = date2sql($from_date);
-	$to = date2sql($to_date);
+	$to = date2sql(is_scalar($to_date) ? (string) $to_date : null);
 
     $sql = "SELECT SUM(amount) FROM ".TB_PREF."gl_trans
-		WHERE account=".db_escape($account);
+		WHERE account=".db_escape($account_str);
 	if ($from_date != "")
 		$sql .= "  AND tran_date > '$from'";
 	if ($to_date != "")
@@ -304,7 +310,7 @@ function get_gl_balance_from_to(?string $from_date, string|int|float|bool|array|
 	if ($dimension2 != 0)
   		$sql .= " AND dimension2_id = ".($dimension2<0 ? 0 : db_escape($dimension2));
 
-	$result = db_select($sql, "The starting balance for account $account could not be calculated");
+	$result = db_select($sql, "The starting balance for account $account_str could not be calculated");
 
 	$row = row_or_empty(db_fetch_row($result));
 	return round2($row[0], user_price_dec());
@@ -314,8 +320,8 @@ function get_gl_balance_from_to(?string $from_date, string|int|float|bool|array|
 
 function get_gl_trans_from_to(string|int|float|bool|null $from_date, string|int|float|bool|null $to_date, string|int|float|bool|null $account, string|int|float|bool|null $dimension=0, string|int|float|bool|null $dimension2=0): float
 {
-	$from = date2sql($from_date);
-	$to = date2sql($to_date);
+	$from = date2sql(is_scalar($from_date) ? (string) $from_date : null);
+	$to = date2sql(is_scalar($to_date) ? (string) $to_date : null);
 
     $sql = "SELECT SUM(amount) FROM ".TB_PREF."gl_trans
 		WHERE account=".db_escape($account);
@@ -340,10 +346,14 @@ function get_gl_trans_from_to(string|int|float|bool|null $from_date, string|int|
  */
 function get_balance(?string $account, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2, string|int|float|bool|array|null $from, string|int|float|bool|array|null $to, bool $from_incl=true, bool $to_incl=true) 
 {
-	$from_date = date2sql($from);
-	$to_date = date2sql($to);
+	$from_date = date2sql(is_scalar($from) ? (string) $from : null);
+	if ($from_date == "")
+		$from_date = "0000-00-00";
+	$to_date = date2sql(is_scalar($to) ? (string) $to : null);
+	if ($to_date == "")
+		$to_date = "0000-00-00";
 
-	$sql = "SELECT	SUM(IF(amount >= 0, amount, 0)) as debit, 
+	$sql = "SELECT	SUM(IF(amount >= 0, amount, 0)) as debit,
 					SUM(IF(amount < 0, -amount, 0)) as credit,
 					SUM(amount) as balance 
 		FROM ".TB_PREF."gl_trans trans,"
@@ -372,8 +382,8 @@ function get_balance(?string $account, string|int|float|bool|null $dimension, st
 function get_budget_trans_from_to(string|int|float|bool|null $from_date, string|int|float|bool|null $to_date, string|int|float|bool|null $account, string|int|float|bool|null $dimension=0, string|int|float|bool|null $dimension2=0)
 {
 
-	$from = date2sql($from_date);
-	$to = date2sql($to_date);
+	$from = date2sql(is_scalar($from_date) ? (string) $from_date : null);
+	$to = date2sql(is_scalar($to_date) ? (string) $to_date : null);
 
 	$sql = "SELECT SUM(amount)
 		FROM ".TB_PREF."budget_trans
@@ -405,7 +415,7 @@ function exists_gl_budget(string|int|null $date_, string|int|float|bool|null $ac
 
 function add_update_gl_budget_trans(string|int|float|bool|null $date_, string|int|float|bool|null $account, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2, int|float|bool|null $amount): void
 {
-	$date = date2sql($date_);
+	$date = date2sql(is_scalar($date_) ? (string) $date_ : null);
 	if ($date == "")
 		$date = "0000-00-00";
 
@@ -426,7 +436,9 @@ function add_update_gl_budget_trans(string|int|float|bool|null $date_, string|in
 
 function delete_gl_budget_trans(string|int|float|bool|null $date_, string|int|float|bool|null $account, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2): void
 {
-	$date = date2sql($date_);
+	$date = date2sql(is_scalar($date_) ? (string) $date_ : null);
+	if ($date == "")
+		$date = "0000-00-00";
 
 	$sql = "DELETE FROM ".TB_PREF."budget_trans WHERE account=".db_escape($account)
 	." AND dimension_id=".db_escape($dimension)
@@ -441,8 +453,12 @@ function delete_gl_budget_trans(string|int|float|bool|null $date_, string|int|fl
 function get_only_budget_trans_from_to(string|int|float|bool|null $from_date, string|int|float|bool|null $to_date, string|int|float|bool|null $account, string|int|float|bool|null $dimension=0, string|int|float|bool|null $dimension2=0)
 {
 
-	$from = date2sql($from_date);
-	$to = date2sql($to_date);
+	$from = date2sql(is_scalar($from_date) ? (string) $from_date : null);
+	if ($from == "")
+		$from = "0000-00-00";
+	$to = date2sql(is_scalar($to_date) ? (string) $to_date : null);
+	if ($to == "")
+		$to = "0000-00-00";
 
 	$sql = "SELECT SUM(amount) FROM ".TB_PREF."budget_trans
 		WHERE account=".db_escape($account)
@@ -493,7 +509,7 @@ function add_trans_tax_details(string|int|float|bool|null $trans_type, string|in
 		$reg_type = in_array($trans_type, array(ST_SUPPINVOICE, ST_SUPPCREDIT)) ? TR_INPUT
 				: (in_array($trans_type, array(ST_SALESINVOICE, ST_CUSTCREDIT)) ? TR_OUTPUT : null);
 
-	$tax_tran_date = date2sql($tran_date);
+	$tax_tran_date = date2sql(is_scalar($tran_date) ? (string) $tran_date : null);
 	if ($tax_tran_date == "")
 		$tax_tran_date = "0000-00-00";
 
@@ -503,8 +519,8 @@ function add_trans_tax_details(string|int|float|bool|null $trans_type, string|in
 		VALUES (".db_escape($trans_type)."," . db_escape($trans_no).",'"
 				.$tax_tran_date."',"
 				.(int)($tax_id).","
-				.(float)($rate).","
-				.(float)($ex_rate).",".((bool)$included ? 1:0).","
+				.(string)(float)($rate).","
+				.(string)(float)($ex_rate).",".((bool)$included ? 1:0).","
 				.db_escape($net_amount).","
 				.db_escape($amount).",".db_escape($memo).",".db_escape($reg_type, true).")";
 
@@ -557,7 +573,11 @@ function clear_trans_tax_details(string|int|float|bool|null $type, string|int|fl
 function get_tax_summary(string|null $from, string|null $to, bool $also_zero_purchases=false)
 {
 	$fromdate = date2sql($from);
+	if ($fromdate == "")
+		$fromdate = "0000-00-00";
 	$todate = date2sql($to);
+	if ($todate == "")
+		$todate = "0000-00-00";
 
 	$sql = "SELECT 
 				SUM(IF(trans_type=".ST_CUSTCREDIT.",-1,1)*
@@ -669,14 +689,16 @@ function get_sql_for_journal_inquiry(string|int|null $filter, string|null $from,
                  AND (bt.person_id != '' AND !ISNULL(bt.person_id))
          LEFT JOIN ".TB_PREF."debtor_trans dt ON dt.type=gl.type AND gl.type_no=dt.trans_no AND gl.person_id=dt.debtor_no AND gl.person_type_id=2
          LEFT JOIN ".TB_PREF."supp_trans st ON st.type=gl.type AND gl.type_no=st.trans_no AND gl.person_id=st.supplier_id AND gl.person_type_id=3
-         WHERE gl.tran_date >= '" . date2sql($from) . "'
-        AND gl.tran_date <= '" . date2sql($to) . "'
+         WHERE gl.tran_date >= '" . ((date2sql($from) == "") ? "0000-00-00" : date2sql($from)) . "'
+        AND gl.tran_date <= '" . ((date2sql($to) == "") ? "0000-00-00" : date2sql($to)) . "'
         AND gl.amount!=0";
-    if ((bool)$ref) {
-        $sql .= " AND refs.reference LIKE ". db_escape("%$ref%");
+    $ref_str = is_array($ref) ? '' : (string) $ref;
+    $memo_str = is_array($memo) ? '' : (string) $memo;
+    if ((bool)$ref_str) {
+        $sql .= " AND refs.reference LIKE ". db_escape("%$ref_str%");
     }
-    if ((bool)$memo) {
-        $sql .= " AND com.memo_ LIKE ". db_escape("%$memo%");
+    if ((bool)$memo_str) {
+        $sql .= " AND com.memo_ LIKE ". db_escape("%$memo_str%");
     }
     if ($filter != -1) {
         $sql .= " AND gl.type=".db_escape($filter);
