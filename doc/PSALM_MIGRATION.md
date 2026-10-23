@@ -66,7 +66,12 @@ are declared more than once across `reporting/` and `gl/` (`getTransactions` up
 to 19 times, `display_type` 8 times, `getPeriods`, `get_open_balance`,
 `get_bank_balance_to`, `get_bank_transactions`, `get_supp_inv_reference`,
 `getTaxTransactions`, `fetch_items`, `trans_qty`, `get_domestic_price`,
-`print_gl_rows`, `add_to_order`, and others). Psalm resolves a call against
+`print_gl_rows`, `add_to_order`, and others) — also `check_data()` and
+`handle_delete()`, declared with 0 params in most `admin/manage/*.php`-style
+CRUD pages but with a real `int $id` param in `admin/create_coy.php` (and
+`check_data()` with `string|int|float|bool|array|null $selected_id` in
+`gl/manage/exchange_rates.php`), producing `TooManyArguments` on the
+otherwise-correct 1-argument calls in those two files. Psalm resolves a call against
 whichever declaration it picks, which is not necessarily the one actually
 executed at that call site, producing false `TooManyArguments`/
 `TooFewArguments`/`UndefinedProperty`-style noise. **Policy: never touch these

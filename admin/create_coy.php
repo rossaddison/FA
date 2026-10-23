@@ -65,7 +65,7 @@ function check_data(int $selected_id): bool
 					display_error(_("This database settings are already used by another company."));
 					return false;
 				}
-				if (($_POST['tbpref'] == 0) ^ ($con['tbpref'] == ''))
+				if (($_POST['tbpref'] == 0) !== ($con['tbpref'] == ''))
 				{
 					display_error(_("You cannot have table set without prefix together with prefixed sets in the same database."));
 					return false;
@@ -81,7 +81,7 @@ function check_data(int $selected_id): bool
 /**
  * @return bool|mysqli_result
  */
-function remove_connection(string|int|float|bool|null $id) {
+function remove_connection(int $id) {
 	global $db_connections;
 
 	$err = db_drop_db($db_connections[$id]);
@@ -108,42 +108,43 @@ function handle_submit_create_coy(int $selected_id): bool
 	if (check_value('def'))
 		$def_coy = $selected_id;
 
-	$db_connections[$selected_id]['name'] = $_POST['name'];
+	$db_connections[$selected_id]['name'] = (string) post_scalar('name');
 	if ($new) {
-		$db_connections[$selected_id]['host'] = $_POST['host'];
-		$db_connections[$selected_id]['port'] = $_POST['port'];
-		$db_connections[$selected_id]['dbuser'] = $_POST['dbuser'];
-		$db_connections[$selected_id]['dbpassword'] = html_entity_decode($_POST['dbpassword'], ENT_QUOTES, 
+		$db_connections[$selected_id]['host'] = (string) post_scalar('host');
+		$db_connections[$selected_id]['port'] = (string) post_scalar('port');
+		$db_connections[$selected_id]['dbuser'] = (string) post_scalar('dbuser');
+		$db_connections[$selected_id]['dbpassword'] = html_entity_decode((string) post_scalar('dbpassword'), ENT_QUOTES,
 			session_obj('language')->encoding=='iso-8859-2' ? 'ISO-8859-1' : session_obj('language')->encoding);
-		$db_connections[$selected_id]['dbname'] = $_POST['dbname'];
-		$db_connections[$selected_id]['collation'] = $_POST['collation'];
-		if (is_numeric($_POST['tbpref']))
+		$db_connections[$selected_id]['dbname'] = (string) post_scalar('dbname');
+		$db_connections[$selected_id]['collation'] = (string) post_scalar('collation');
+		if (is_numeric(post_scalar('tbpref')))
 		{
-			$db_connections[$selected_id]['tbpref'] = $_POST['tbpref'] == 1 ?
+			$db_connections[$selected_id]['tbpref'] = post_scalar('tbpref') == 1 ?
 			  $tb_pref_counter."_" : '';
 		}
-		else if ($_POST['tbpref'] != "")
-			$db_connections[$selected_id]['tbpref'] = $_POST['tbpref'];
+		else if (post_scalar('tbpref') != "")
+			$db_connections[$selected_id]['tbpref'] = (string) post_scalar('tbpref');
 		else
 			$db_connections[$selected_id]['tbpref'] = "";
 
 		$conn = $db_connections[$selected_id];
 		if (($db = db_create_db($conn)) === false)
 		{
-			display_error(_("Error creating Database: ") . (string)$conn['dbname'] . _(", Please create it manually"));
+			display_error(_("Error creating Database: ") . $conn['dbname'] . _(", Please create it manually"));
 			$error = true;
 		} else {
-			if (strncmp(db_get_version(), "5.6", 3) >= 0) 
+			if (strncmp((string) db_get_version(), "5.6", 3) >= 0)
 				db_query("SET sql_mode = ''");
-			if (!(bool)db_import($path_to_root.'/sql/'.clean_file_name(get_post('coa')), $conn, $selected_id)) {
+			$coa_file = clean_file_name(post_scalar('coa'));
+			if (!(bool)db_import("$path_to_root/sql/" . (is_array($coa_file) ? '' : (string) $coa_file), $conn, $selected_id)) {
 				display_error(_('Cannot create new company due to bugs in sql file.'));
 				$error = true;
-			} 
+			}
 			else
 			{
 				if (!isset($_POST['admpassword']) || $_POST['admpassword'] == "")
 					$_POST['admpassword'] = "password";
-				update_admin_password($conn, md5($_POST['admpassword']));
+				update_admin_password($conn, md5((string) post_scalar('admpassword')));
 			}
 		}
 		if ($error) {
@@ -154,11 +155,11 @@ function handle_submit_create_coy(int $selected_id): bool
 	$error = write_config_db($new);
 
 	if ($error == -1)
-		display_error(_("Cannot open the configuration file - ") . $path_to_root . "/config_db.php");
+		display_error(_("Cannot open the configuration file - ") . "$path_to_root/config_db.php");
 	else if ($error == -2)
-		display_error(_("Cannot write to the configuration file - ") . $path_to_root . "/config_db.php");
+		display_error(_("Cannot write to the configuration file - ") . "$path_to_root/config_db.php");
 	else if ($error == -3)
-		display_error(_("The configuration file ") . $path_to_root . "/config_db.php" . _(" is not writable. Change its permissions so it is, then re-run the operation."));
+		display_error(_("The configuration file ") . "$path_to_root/config_db.php" . _(" is not writable. Change its permissions so it is, then re-run the operation."));
 	if ($error != 0)
 	{
 		return false;
@@ -192,9 +193,9 @@ function handle_delete(int $id): void
 		}
 	}
 	// make sure config file is writable
-	if (!is_writeable($path_to_root . "/config_db.php"))
+	if (!is_writeable("$path_to_root/config_db.php"))
 	{
-		display_error(_("The configuration file ") . $path_to_root . "/config_db.php" . _(" is not writable. Change its permissions so it is, then re-run the operation."));
+		display_error(_("The configuration file ") . "$path_to_root/config_db.php" . _(" is not writable. Change its permissions so it is, then re-run the operation."));
 		return;
 	}
 	// rename directory to temporary name to ensure all
@@ -214,7 +215,7 @@ function handle_delete(int $id): void
 		}
 	}
 	$err = remove_connection($id);
-	if ($err == 0)
+	if ($err === false)
 		display_error(_("Error removing Database: ") . $id . _(", please remove it manually"));
 
 	if ($def_coy == $id)
@@ -222,11 +223,11 @@ function handle_delete(int $id): void
 
 	$error = write_config_db();
 	if ($error == -1)
-		display_error(_("Cannot open the configuration file - ") . $path_to_root . "/config_db.php");
+		display_error(_("Cannot open the configuration file - ") . "$path_to_root/config_db.php");
 	else if ($error == -2)
-		display_error(_("Cannot write to the configuration file - ") . $path_to_root . "/config_db.php");
+		display_error(_("Cannot write to the configuration file - ") . "$path_to_root/config_db.php");
 	else if ($error == -3)
-		display_error(_("The configuration file ") . $path_to_root . "/config_db.php" . _(" is not writable. Change its permissions so it is, then re-run the operation."));
+		display_error(_("The configuration file ") . "$path_to_root/config_db.php" . _(" is not writable. Change its permissions so it is, then re-run the operation."));
 	if ($error != 0) {
 		@rename($tmpname, $cdir);
 		return;
@@ -322,7 +323,7 @@ function display_company_edit(int $selected_id): void
 		$_POST['tbpref'] = $tb_pref_counter."_";
 
 		// Use current settings as default
-		$conn = $db_connections[user_company()];
+		$conn = $db_connections[(int) user_company()];
 		$_POST['name'] = '';
 		$_POST['host']  = $conn['host'];
 		$_POST['port']  = isset($conn['port']) ? $conn['port'] : '';
@@ -383,8 +384,11 @@ if ($Mode == 'RESET')
 start_form();
 
 	display_companies();
-	display_company_edit($selected_id);
-	submit_add_or_update_center($selected_id == -1, '', 'upgrade');
+	// $selected_id is the shared psalm.xml global; narrowing it under its own name doesn't
+	// stick for Psalm's cross-call-site analysis, so pass it through a differently-named local
+	$coy_id = (int) $selected_id;
+	display_company_edit($coy_id);
+	submit_add_or_update_center($coy_id == -1, '', 'upgrade');
 
 end_form();
 
