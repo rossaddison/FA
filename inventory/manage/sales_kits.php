@@ -61,10 +61,17 @@ function display_kit_items(string|int|float|bool|null $selected_kit): void
 
 //--------------------------------------------------------------------------------------------------
 
-/** @return 0|array<array-key, mixed>|null|string */
+/** @return 0|null|string */
 function update_kit(string|null $selected_kit, string|int|float|bool|null $component_id)
 {
 	global $Mode;
+
+	$description = post_scalar('description');
+	$kit_code = post_scalar('kit_code');
+	$kit_code_str = $kit_code === null ? null : (string) $kit_code;
+	$component = post_scalar('component');
+	$component_str = $component === null ? null : (string) $component;
+	$category = post_scalar('category');
 
 	if (!check_num('quantity', 0))
 	{
@@ -72,7 +79,7 @@ function update_kit(string|null $selected_kit, string|int|float|bool|null $compo
 		set_focus('quantity');
 		return 0;
 	}
-   	elseif (get_post('description') == '')
+   	elseif ($description == '')
    	{
       	display_error( _("Item code description cannot be empty."));
 		set_focus('description');
@@ -81,12 +88,12 @@ function update_kit(string|null $selected_kit, string|int|float|bool|null $compo
 	elseif ($component_id == -1)	// adding new component to alias/kit with optional kit creation
 	{
 		if ($selected_kit == '') { // New kit/alias definition
-			if (get_post('kit_code') == '') {
+			if ($kit_code == '') {
 	    	  	display_error( _("Kit/alias code cannot be empty."));
 				set_focus('kit_code');
 				return 0;
 			}
-			$kit = get_item_kit(get_post('kit_code'));
+			$kit = get_item_kit($kit_code);
     		if (db_num_rows($kit)) {
 			  	$input_error = 1;
     	  		display_error( _("This item code is already assigned to stock item or sale kit."));
@@ -96,33 +103,33 @@ function update_kit(string|null $selected_kit, string|int|float|bool|null $compo
 		}
    	}
 
-	if (check_item_in_kit($component_id, $selected_kit, get_post('component'), true)) {
+	if (check_item_in_kit($component_id, $selected_kit, $component_str, true)) {
 		display_error(_("The selected component contains directly or on any lower level the kit under edition. Recursive kits are not allowed."));
 		set_focus('component');
 		return 0;
 	}
 
 		/*Now check to see that the component is not already in the kit */
-	if (check_item_in_kit($component_id, $selected_kit, get_post('component'))) {
+	if (check_item_in_kit($component_id, $selected_kit, $component_str)) {
 		display_error(_("The selected component is already in this kit. You can modify it's quantity but it cannot appear more than once in the same kit."));
 		set_focus('component');
 		return 0;
 	}
-	if ($component_id == -1) { // new component in alias/kit 
+	if ($component_id == -1) { // new component in alias/kit
 		if ($selected_kit == '') {
-			$selected_kit = get_post('kit_code');
+			$selected_kit = $kit_code_str;
 			$msg = _("New alias code has been created.");
 		}
 		 else
 			$msg =_("New component has been added to selected kit.");
 
-		add_item_code($selected_kit, get_post('component'), get_post('description'),
-			 get_post('category'), input_num('quantity'), 0);
+		add_item_code($selected_kit, $component, $description,
+			 $category, input_num('quantity'), 0);
 		display_notification($msg);
 
 	} else { // update component
 		$props = row_or_empty(get_kit_props($selected_kit));
-		update_item_code($component_id, $selected_kit, get_post('component'),
+		update_item_code($component_id, $selected_kit, $component,
 			$props['description'], $props['category_id'], input_num('quantity'), 0);
 		display_notification(_("Component of selected kit has been updated."));
 	}
@@ -135,14 +142,24 @@ function update_kit(string|null $selected_kit, string|int|float|bool|null $compo
 //--------------------------------------------------------------------------------------------------
 
 if (get_post('update_name')) {
-	update_kit_props(get_post('item_code'), get_post('description'), get_post('category'));
+	$upd_item_code = post_scalar('item_code');
+	$upd_description = post_scalar('description');
+	$upd_category = post_scalar('category');
+	update_kit_props(
+		$upd_item_code === null ? null : (string) $upd_item_code,
+		$upd_description === null ? null : (string) $upd_description,
+		$upd_category === null ? null : (string) $upd_category
+	);
 	display_notification(_('Kit common properties has been updated'));
 	ajax()->activate('_page_body');
 }
 
 if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 {
-	if ($selected_kit = update_kit(get_post('item_code'), $selected_id))
+	$kit_item_code = post_scalar('item_code');
+	$kit_item_code_str = $kit_item_code === null ? null : (string) $kit_item_code;
+	$kit_component_id = is_scalar($selected_id) ? $selected_id : null;
+	if ((bool) ($selected_kit = update_kit($kit_item_code_str, $kit_component_id)))
 		$_POST['item_code'] = $selected_kit;
 }
 
@@ -152,7 +169,7 @@ if ($Mode == 'Delete')
 	// if selected kit is not included in any other kit. 
 	// 
 	$other_kits = get_where_used(post_scalar('item_code'));
-	$num_kits = db_num_rows($other_kits);
+	$num_kits = (int) db_num_rows($other_kits);
 
 	$kit = get_item_kit(post_scalar('item_code'));
 	if ((db_num_rows($kit) == 1) && $num_kits) {
@@ -161,13 +178,14 @@ if ($Mode == 'Delete')
 			.':<br>';
 
 		while($num_kits--) {
-			$kit = db_fetch($other_kits);
-			$msg .= "'".$kit[0]."'";
+			$other_kit_row = db_fetch($other_kits);
+			if ($other_kit_row === false) break;
+			$msg .= "'".($other_kit_row[0] ?? '')."'";
 			if ($num_kits) $msg .= ',';
 		}
 		display_error($msg);
 	} else {
-		delete_item_code($selected_id);
+		delete_item_code(is_scalar($selected_id) ? $selected_id : null);
 		display_notification(_("The component item has been deleted from this bom"));
 		$Mode = 'RESET';
 	}
@@ -186,7 +204,7 @@ start_form();
 echo "<center>" . _("Select a sale kit:") . "&nbsp;";
 echo sales_kits_list('item_code', null, _('New kit'), true);
 echo "</center><br>";
-$props = get_kit_props(post_scalar('item_code'));
+$props = row_or_empty(get_kit_props(post_scalar('item_code')));
 
 if (list_updated('item_code')) {
 	if (get_post('item_code') == '')
@@ -194,7 +212,7 @@ if (list_updated('item_code')) {
 	ajax()->activate('_page_body');
 }
 
-$selected_kit = $_POST['item_code'];
+$selected_kit = post_scalar('item_code');
 //----------------------------------------------------------------------------------
 if (get_post('item_code') == '') {
 // New sales kit entry
@@ -216,26 +234,28 @@ if (get_post('item_code') == '') {
 	start_table(TABLESTYLE2);
 }
 
+	$kit_component_id = is_scalar($selected_id) ? $selected_id : null;
 	if ($Mode == 'Edit') {
-		$myrow = row_or_empty(get_item_code($selected_id));
+		$myrow = row_or_empty(get_item_code($kit_component_id));
 		$_POST['component'] = $myrow["stock_id"];
 		$_POST['quantity'] = number_format2($myrow["quantity"], get_qty_dec($myrow["stock_id"]));
 	}
-	hidden("selected_id", $selected_id);
+	hidden("selected_id", $kit_component_id);
 	
 	sales_local_items_list_row(_("Component:"),'component', null, false, true);
 
 	if (get_post('item_code') == '') { // new kit/alias
 		if ($Mode!='ADD_ITEM' && $Mode!='UPDATE_ITEM') {
-			$_POST['description'] = is_array($props) ? $props['description'] : '';
-			$_POST['category'] = is_array($props) ? $props['category_id'] : '';
+			$_POST['description'] = $props['description'] ?? '';
+			$_POST['category'] = $props['category_id'] ?? '';
 		}
 		text_row(_("Description:"), 'description', null, 50, 200);
 		stock_categories_list_row(_("Category:"), 'category', null);
 	}
-	$res = row_or_empty(get_item_edit_info(get_post('component')));
-	$dec =  $res["decimals"] == '' ? 0 : $res["decimals"];
-	$units = $res["units"] == '' ? _('kits') : $res["units"];
+	$component_for_info = post_scalar('component');
+	$res = row_or_empty(get_item_edit_info($component_for_info === null ? null : (string) $component_for_info));
+	$dec =  $res["decimals"] == '' ? 0 : (int) $res["decimals"];
+	$units = $res["units"] == '' ? _('kits') : (string) $res["units"];
 	if (list_updated('component')) 
 	{
 		$_POST['quantity'] = number_format2(1, $dec);
