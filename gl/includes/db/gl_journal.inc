@@ -159,7 +159,7 @@ function write_journal_entries(&$cart)
 	}
 
 	$trans_id = $cart->order_id = get_next_trans_no($trans_type);
-	if ($old_no)
+	if ((bool) $old_no)
 	{
 		$aid = 0;
 		$aid = has_attachment($trans_type, $old_no);

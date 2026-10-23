@@ -186,7 +186,7 @@ function display_trial_balance(?string $type, ?string $typename): void
 			$printtitle = 1;
 
 		}
-		display_trial_balance(is_scalar($accounttype["id"] ?? null) ? (string)$accounttype["id"] : null, (string)($accounttype["name"] ?? '').' ('.(string)$typename.')');
+		display_trial_balance(is_scalar($accounttype["id"] ?? null) ? $accounttype["id"] : null, ($accounttype["name"] ?? '').' ('.(string)$typename.')');
 	}
 
 	start_row("class='inquirybg fa-bold'");

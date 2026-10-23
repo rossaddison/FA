@@ -65,7 +65,9 @@ function canProcessGlAccountTypes(string|int|float|bool|array|null $selected_id)
 if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') 
 {
 
-	if (canProcessGlAccountTypes($selected_id)) 
+	/** @var int|string $selected_id */
+	$selected_id = $selected_id;
+	if (canProcessGlAccountTypes($selected_id))
 	{
 
     	if ($selected_id != "") 

@@ -95,7 +95,7 @@ function write_sales_delivery(Cart &$delivery,string|int|float|bool|null $bo_pol
 		/* add delivery details for all lines */
 		write_customer_trans_detail_item(ST_CUSTDELIVERY, $delivery_no, $delivery_line->stock_id,
 			$delivery_line->item_description, $delivery_line->qty_dispatched,
-			$delivery_line->line_price(), $qty ? $line_tax/(float)$qty : 0,
+			$delivery_line->line_price(), (bool) $qty ? $line_tax/(float)$qty : 0,
 			$delivery_line->discount_percent, $delivery_line->standard_cost, $delivery_line->src_id,
 			(bool)$trans_no ? $delivery_line->id : 0);
 
