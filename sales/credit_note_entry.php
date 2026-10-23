@@ -286,18 +286,17 @@ if (isset($_POST['CancelItemChanges']))
 if (!processing_active()) {
 	handle_new_credit(0);
 }
+if (!isset($_SESSION['Items'])) {
+	// defensive fallback for what Psalm can't trace through handle_new_credit()'s own
+	// assignment above; a real request always has Items set by this point
+	$_SESSION['Items'] = new Cart(ST_CUSTCREDIT, 0);
+}
 
 //-----------------------------------------------------------------------------
 
 start_form();
 hidden('cart_id');
 
-/**
- * @psalm-suppress PossiblyUndefinedArrayOffset the preceding
- *   if (!processing_active()) { handle_new_credit(0); } unconditionally sets
- *   $_SESSION['Items'] on that branch; the other branch relies on it already
- *   having been set by processing_start() earlier in this same request
- */
 $items = &$_SESSION['Items'];
 /** @var Cart $items */
 

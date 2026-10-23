@@ -458,7 +458,7 @@ foreach (session_obj('Items')->line_items as $line=>$ln_itm) {
 		if ((bool) ($check = check_negative_stock($ln_itm->stock_id, (float)$ln_itm->qty_done-(float)$ln_itm->qty_dispatched, post_scalar('Location'), $_POST['DispatchDate'])))
 			$qty = $check['qty'];
 
-		/** @psalm-suppress MixedAssignment hook_get_dispatchable_quantity()'s whole point is to return an arbitrary hook's result (a quantity, 'skip', or [quantity, css class]) */
+		/** @var string|array<int, mixed>|bool|null $q_class a well-behaved dispatchable-quantity hook returns 'skip', a [quantity, css class] pair, or a plain truthy/falsy quantity (see hooks::default_get_dispatchable_quantity()) */
 		$q_class =  hook_get_dispatchable_quantity($ln_itm, $_POST['Location'], $_POST['DispatchDate'], $qty);
 
 		// Skip line if needed

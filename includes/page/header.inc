@@ -21,9 +21,10 @@ function help_url(mixed $context=null): string
 	$country = session_obj('language')->code;
 	$clean = 0;
 	
-	/** @psalm-suppress RedundantCondition $help_context may legitimately never have been
-	 *   set by the current page script -- psalm.xml's stub only describes its type once set */
-	$has_help_context = isset($help_context);
+	// $help_context may legitimately never have been set by the current page script; check via
+	// $GLOBALS rather than isset($help_context) so this doesn't depend on psalm.xml's stub type
+	// for the global (which only describes its type once set, not whether it exists at all)
+	$has_help_context = array_key_exists('help_context', $GLOBALS);
 	if ($context!=null)
 	{
 		$help_page_url = is_scalar($context) ? (string) $context : '';
@@ -34,15 +35,13 @@ function help_url(mixed $context=null): string
 	} else // main menu
 	{
 		$app_id = $_SESSION['sel_app'] ?? '';
-		/**
-		 * @var front_accounting $fa
-		 * @psalm-suppress PossiblyUndefinedArrayOffset help_url() is only reachable from
-		 *   post-login menu rendering, by which point includes/session.inc has already set
-		 *   $_SESSION['App'] -- Psalm can't see across that earlier include boundary
-		 */
-		$fa = $_SESSION['App'];
+		// help_url() is only reachable from post-login menu rendering, by which point
+		// includes/session.inc has already set $_SESSION['App'] -- the null fallback below is
+		// purely defensive for the case Psalm can't rule out across that include boundary
+		$fa = $_SESSION['App'] ?? null;
+		if (!($fa instanceof front_accounting)) $fa = null;
 		// fall back to the default tab if the stored app id is stale (e.g. a removed/inactivated extension)
-		$application = $fa->get_application($app_id) ?? $fa->get_application('orders');
+		$application = $fa === null ? null : ($fa->get_application($app_id) ?? $fa->get_application('orders'));
 		$help_page_url = $application?->help_context ?? '';
 		$clean = 1;
 	}
@@ -166,27 +165,31 @@ function page_header(string|int|float|bool|null $title, string|int|float|bool|nu
 	{
 		$no_menu = false;
 	}
-	/** @psalm-suppress RedundantCondition is_object() narrows $_SESSION['App'] away from the
-	 *   mixed branch its declared type picks up by being an unsealed array's optional key */
-	if (isset($_SESSION["App"]) && is_object($_SESSION["App"]) && isset($_SESSION["App"]->selected_application) &&
-		$_SESSION["App"]->selected_application != "")
-		$sel_app = is_scalar($_SESSION["App"]->selected_application) ? (string) $_SESSION["App"]->selected_application : '';
+	// $fa is a plain non-front_accounting object here only if $_SESSION['App'] genuinely isn't
+	// set yet -- real pages always have it by this point, but the instanceof check below
+	// narrows this properly without relying on psalm.xml's $_SESSION stub (which can't rule
+	// out $_SESSION['App'] being written with a different type somewhere else in the project)
+	$fa = $_SESSION["App"] ?? null;
+	if (!($fa instanceof front_accounting)) $fa = null;
+	if ($fa !== null && isset($fa->selected_application) && $fa->selected_application != "")
+		$sel_app = is_scalar($fa->selected_application) ? (string) $fa->selected_application : '';
 	elseif (isset($_SESSION["sel_app"]) && $_SESSION["sel_app"] != "")
-		$sel_app = $_SESSION["sel_app"];
+		$sel_app = is_scalar($_SESSION["sel_app"]) ? (string) $_SESSION["sel_app"] : '';
 	else
 		$sel_app = user_startup_tab();
 	$_SESSION["sel_app"] = $sel_app;
 
-	// When startup tab for current user was set to already 
+	// When startup tab for current user was set to already
 	// removed/inactivated extension module select Sales tab as default.
-	/** @psalm-suppress RedundantCondition see justification above */
-	if (isset($_SESSION["App"]) && is_object($_SESSION["App"]))
-		$_SESSION["App"]->selected_application =
-			isset($_SESSION["App"]->applications[$sel_app]) ? $sel_app : 'orders';
+	if ($fa !== null)
+		$fa->selected_application =
+			isset($fa->applications[$sel_app]) ? $sel_app : 'orders';
 
 	$page_header_args = func_get_args();
-	/** @psalm-suppress RedundantCondition psalm.xml's non-nullable stub for $db_connections describes its value type once config.php has defined it, not whether it exists yet pre-installation -- this isset() guards that real gap */
-	if(isset($db_connections))	// skip before installation
+	// Checked via $GLOBALS rather than isset($db_connections) so this doesn't depend on
+	// psalm.xml's non-nullable stub for the global, which only describes its value once
+	// config.php has defined it, not whether it exists yet pre-installation
+	if (array_key_exists('db_connections', $GLOBALS))	// skip before installation
 		hook_invoke_all('pre_header', $page_header_args);
 
 	$encoding = session_obj('language')->encoding;

@@ -138,7 +138,7 @@ function retrieve_exrate(string|int|float|bool|null $curr_b, string|int|float|bo
 	$xchg_rate_provider = ((isset(sysprefs()->xr_providers) && isset(sysprefs()->dflt_xr_provider)) 
 		? sysprefs()->xr_providers[sysprefs()->dflt_xr_provider] : 'ECB');
 
-	/** @psalm-suppress MixedAssignment hook_retrieve_exrate()'s whole point is to return an arbitrary hook's result */
+	/** @var string|int|float|bool|null $rate a well-behaved exchange-rate hook returns a numeric value or null/false */
 	$rate = hook_retrieve_exrate($curr_b, $date);
 	if (is_numeric($rate))
 		return $rate;

@@ -19,12 +19,10 @@ declare(strict_types=1);
 	include_once("includes/session.inc");
 
 	add_access_extensions();
-	/**
-	 * @var front_accounting $app
-	 * @psalm-suppress PossiblyUndefinedArrayOffset includes/session.inc, included just above,
-	 *   unconditionally sets $_SESSION['App'] -- Psalm can't see across that include boundary
-	 */
-	$app = $_SESSION["App"];
+	// includes/session.inc, included just above, unconditionally sets $_SESSION['App'] --
+	// the ?? fallback is purely defensive for what Psalm can't see across that include boundary
+	$app = $_SESSION["App"] ?? new front_accounting();
+	if (!($app instanceof front_accounting)) $app = new front_accounting();
 	if (isset($_GET['application']))
 		$app->selected_application = $_GET['application'];
 
