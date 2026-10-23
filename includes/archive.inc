@@ -92,7 +92,8 @@ class archive
 	}
 
 	/**
-	 * @param array<array-key, mixed>|null $options
+	 * @param array<array-key, string|int|float|bool|null>|null $options every real caller
+	 *   (includes/packages.inc) only ever passes scalar option values
 	 * @return void
 	 * @psalm-external-mutation-free
 	 */
@@ -101,18 +102,18 @@ class archive
 		if (is_array($options))
 			foreach ($options as $key => $value)
 				$this->options[(string) $key] = $value;
-		if (!empty ($this->options['basedir']))
+		if (is_scalar($this->options['basedir'] ?? null) && (string) $this->options['basedir'] !== '')
 		{
 			$this->options['basedir'] = str_replace("\\", "/", (string) $this->options['basedir']);
 			$this->options['basedir'] = (string) preg_replace("/\/+/", "/", $this->options['basedir']);
 			$this->options['basedir'] = (string) preg_replace("/\/$/", "", $this->options['basedir']);
 		}
-		if (!empty ($this->options['name']))
+		if (is_scalar($this->options['name'] ?? null) && (string) $this->options['name'] !== '')
 		{
 			$this->options['name'] = str_replace("\\", "/", (string) $this->options['name']);
 //			$this->options['name'] = preg_replace("/\/+/", "/", $this->options['name']);
 		}
-		if (!empty ($this->options['prepend']))
+		if (is_scalar($this->options['prepend'] ?? null) && (string) $this->options['prepend'] !== '')
 		{
 			$this->options['prepend'] = str_replace("\\", "/", (string) $this->options['prepend']);
 			$this->options['prepend'] = (string) preg_replace("/^(\.*\/+)+/", "", $this->options['prepend']);
