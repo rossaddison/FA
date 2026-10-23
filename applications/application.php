@@ -20,7 +20,8 @@ define('MENU_UPDATE', 'menu_update');
 define('MENU_SETTINGS', 'menu_settings');
 define('MENU_SYSTEM', 'menu_system');
 
-    class menu_item
+    /** @psalm-immutable */
+    final class menu_item
 	{
 		/**
 		 * @var null|string
@@ -44,7 +45,8 @@ define('MENU_SYSTEM', 'menu_system');
 		}
 	}
 
-	class menu 
+	/** @psalm-external-mutation-free */
+	final class menu
 	{
 		/**
 		 * @var null|string
@@ -78,7 +80,8 @@ define('MENU_SYSTEM', 'menu_system');
 		
 	}
 
-	class app_function 
+	/** @psalm-immutable */
+	final class app_function
 	{
 		/** @var string */
 		var $label;
@@ -88,12 +91,12 @@ define('MENU_SYSTEM', 'menu_system');
 		var $access;
         /** @var string */
         var $category;
-		
+
 		/**
 		 * @psalm-mutation-free
 		 * @return app_function
 		 */
-		function __construct($label,$link,$access='SA_OPEN',$category='')
+		function __construct(string $label, string $link, string $access='SA_OPEN', string $category='')
 		{
 			$this->label = $label;
 			$this->link = $link;
@@ -102,7 +105,7 @@ define('MENU_SYSTEM', 'menu_system');
 		}
 	}
 
-	class module 
+	final class module
 	{
 		/**
 		 * @var null|string
@@ -120,19 +123,19 @@ define('MENU_SYSTEM', 'menu_system');
 		 * @psalm-mutation-free
 		 * @return module
 		 */
-		function __construct($name,$icon = null) 
+		function __construct(?string $name, ?string $icon = null)
 		{
 			$this->name = $name;
 			$this->icon = $icon;
 			$this->lappfunctions = array();
 			$this->rappfunctions = array();
 		}
-		
+
 		/**
 		 * @psalm-external-mutation-free
 		 * @return app_function
 		 */
-		function add_lapp_function($label,$link="",$access='SA_OPEN',$category='')
+		function add_lapp_function(string $label, string $link="", string $access='SA_OPEN', string $category='')
 		{
 			$appfunction = new app_function($label,$link,$access,$category);
 			$this->lappfunctions[] = $appfunction;
@@ -143,7 +146,7 @@ define('MENU_SYSTEM', 'menu_system');
 		 * @psalm-external-mutation-free
 		 * @return app_function
 		 */
-		function add_rapp_function($label,$link="",$access='SA_OPEN',$category='')
+		function add_rapp_function(string $label, string $link="", string $access='SA_OPEN', string $category='')
 		{
 			$appfunction = new app_function($label,$link,$access,$category);
 			$this->rappfunctions[] = $appfunction;
@@ -176,7 +179,7 @@ define('MENU_SYSTEM', 'menu_system');
 		 * @param string|null $name
 		 * @psalm-mutation-free
 		 */
-		function __construct($id, $name, $enabled=true) 
+		function __construct(?string $id, ?string $name, bool|int $enabled=true)
 		{
 			$this->id = $id;
 			$this->name = $name;
@@ -189,7 +192,7 @@ define('MENU_SYSTEM', 'menu_system');
 		 * @psalm-external-mutation-free
 		 * @return module
 		 */
-		function add_module($name, $icon = null) 
+		function add_module(?string $name, ?string $icon = null)
 		{
 			$module = new module($name,$icon);
 			$this->modules[] = $module;
@@ -198,30 +201,30 @@ define('MENU_SYSTEM', 'menu_system');
 		
 		/**
 		 * @param int|null $level
-		 * @param string|null $label
-		 * @param string|null $link
-		 * @param string|null $access
-		 * @param string|null $category
+		 * @param string $label
+		 * @param string $link
+		 * @param string $access
+		 * @param string $category
 		 * @psalm-mutation-free
 		 * @return void
 		 */
-		function add_lapp_function($level, $label,$link="",$access='SA_OPEN',$category='')
+		function add_lapp_function(?int $level, string $label, string $link="", string $access='SA_OPEN', string $category='')
 		{
-			$this->modules[$level]->lappfunctions[] = new app_function($label, $link, $access, $category);
+			$this->modules[(int) $level]->lappfunctions[] = new app_function($label, $link, $access, $category);
 		}
-		
+
 		/**
 		 * @param int|null $level
-		 * @param string|null $label
-		 * @param string|null $link
-		 * @param string|null $access
-		 * @param string|null $category
+		 * @param string $label
+		 * @param string $link
+		 * @param string $access
+		 * @param string $category
 		 * @psalm-mutation-free
 		 * @return void
 		 */
-		function add_rapp_function($level, $label,$link="",$access='SA_OPEN',$category='')
+		function add_rapp_function(?int $level, string $label, string $link="", string $access='SA_OPEN', string $category='')
 		{
-			$this->modules[$level]->rappfunctions[] = new app_function($label, $link, $access, $category);
+			$this->modules[(int) $level]->rappfunctions[] = new app_function($label, $link, $access, $category);
 		}
 		
 		/** @return void */
@@ -236,7 +239,7 @@ define('MENU_SYSTEM', 'menu_system');
 		 * @psalm-pure
 		 * @return string
 		 */
-		function report_class_url($class)
+		function report_class_url(string $class)
 		{
 			return "reporting/reports_main.php?Class=".$class;
 		}
