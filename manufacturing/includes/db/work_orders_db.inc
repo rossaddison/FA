@@ -66,7 +66,7 @@ function add_work_order(string|int|float|bool|null $wo_ref, string|int|float|boo
 		if ($type == WO_UNASSEMBLY)
 			$units_reqd = -$units_reqd;
 
-		$ref = refs()->get_next(ST_MANURECEIVE, null, $date_);
+		$ref = refs()->get_next(ST_MANURECEIVE, null, $date_ === null ? null : (string) $date_);
 		work_order_produce($woid, $ref, $units_reqd, $date_, '', true);
 	}
 
@@ -280,10 +280,10 @@ function void_work_order(string|int|float|bool|null $woid): void
 
 	$work_order = row_or_empty(get_work_order($woid));
 
-	if ($work_order['closed'])
+	if ((bool) $work_order['closed'])
 		reopen_work_order($woid);
 
-	if ($work_order['units_issued'])
+	if ((bool) $work_order['units_issued'])
 	{
 		$prods = get_work_order_productions($woid);
 		while ($prod = db_fetch($prods))

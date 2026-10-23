@@ -106,7 +106,7 @@ function check_recurrent_invoice_description(string|int|float|bool|null $descrip
 
 	$result = db_select($sql,"could not check recurrent invoice");
 	$row = row_or_empty(db_fetch($result));
-	return !$row[0];
+	return !(bool) $row[0];
 }
 
 /**
@@ -180,7 +180,7 @@ function check_recurrent_invoice_prices(string|int|null $id): int
 	{
 		$details = get_sales_order_details($inv['order_no'], ST_SALESORDER);
 		while($line = db_fetch($details))
-			if ($curr['curr_code'] != $template['curr_code'] && !get_price($line['stk_code'], $curr['curr_code'], $template['sales_type_id']))
+			if ($curr['curr_code'] != $template['curr_code'] && !(bool) get_price($line['stk_code'], $curr['curr_code'], $template['sales_type_id']))
 			{
 				display_error(sprintf(_("Unknown %s price for '%s' in pricelist '%s'"), (string) $curr['curr_code'], (string) $line['stk_code'], (string) $template['sales_type']));
 				$errors++;
@@ -196,5 +196,5 @@ function check_sales_order_type(string|int|float|bool|null $order_no): bool
 {
 	$myrow = row_or_empty(get_sales_order_header($order_no, ST_SALESORDER));
 
-	return !$myrow['prepaid'];
+	return !(bool) $myrow['prepaid'];
 }

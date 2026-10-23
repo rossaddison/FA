@@ -277,6 +277,8 @@ function check_ui_refresh(?string $name=null): bool
 		$name = $bt[1]['function'] ?? 'unknown';
 	/** @var array<string, mixed> $ui_context */
 	$ui_context = $_SESSION['ui_context'] ?? array();
+	// $old is genuinely mixed: this caches an arbitrary debug_backtrace() args list per
+	// caller, so its real type can't be narrowed without misrepresenting that
 	$old = $ui_context[$name] ?? null;
 	$new = $ui_context[$name] = $bt[1]['args'] ?? array();
 	$_SESSION['ui_context'] = $ui_context;
@@ -916,8 +918,9 @@ function _number_to_words(int|float|null $number): string
 function price_in_words(string|int|float|bool|null $amount, mixed $document=0): string
 {
 	// use local price_in_words() if the hook is defined
+	/** @var string|int|float|bool|null $price a well-behaved hook returns the words as a string, or a falsy value to fall through to the default below */
 	$price = hook_price_in_words($amount, $document);
-	if ($price)
+	if ((bool) $price)
 		return (string) $price;
 
 	// Only usefor Remittance and Receipts as default
@@ -1732,7 +1735,7 @@ function company_logo_on_view(): void
 	$logo = company_path() . "/images/" . (string)sysprefs()->prefs['coy_logo'];
 	$nl = 1;
 	$size = getimagesize($logo);
-	if (!empty(sysprefs()->prefs['company_logo_report']) && sysprefs()->prefs['coy_logo'] != '' && file_exists($logo) && $size !== false)
+	if ((bool) (sysprefs()->prefs['company_logo_report'] ?? false) && sysprefs()->prefs['coy_logo'] != '' && file_exists($logo) && $size !== false)
 	{
 		$height = $size[0] > 150 ? $size[1] * 150 / $size[0] : 30;
 		$text = "<img src='$logo' height=$height>";

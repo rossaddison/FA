@@ -101,10 +101,15 @@ final class sys_prefs extends stdClass
 		global $path_to_root;
 
 		// retrieve set system wide preferences
+		// UnresolvableInclude below is just Psalm being unable to statically resolve a
+		// dynamic path, not a tainted-input finding -- $path_to_root is a fixed,
+		// admin-controlled constant, never user input
 		include $path_to_root.'/config.default.php';
 		if (file_exists($path_to_root.'/config.php'))
 			include $path_to_root.'/config.php';
 
+		// config.default.php/config.php can set any preference to any type, so $value is
+		// genuinely mixed here by design -- not narrowable without misrepresenting that
 		foreach(get_defined_vars() as $name => $value)
 			$this->$name = $value;
 

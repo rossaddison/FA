@@ -51,7 +51,7 @@ $overdue_items = false;
 foreach ($purchase_order->line_items as $stock_item)
 {
 
-	$line_total = (float)$stock_item->qty_received * (float)$stock_item->price;
+	$line_total = (float)$stock_item->qty_received * $stock_item->price;
 
 	// if overdue and outstanding quantities, then highlight as so
 	if (date1_greater_date2($purchase_order->orig_order_date, $stock_item->req_del_date))
@@ -67,7 +67,7 @@ foreach ($purchase_order->line_items as $stock_item)
 	label_cell($stock_item->stock_id);
 	label_cell($stock_item->item_description);
 	label_cell($stock_item->req_del_date, "nowrap align=right");
-	$dec = (int) get_qty_dec((string) $stock_item->stock_id);
+	$dec = (int) get_qty_dec($stock_item->stock_id);
 	qty_cell($stock_item->qty_received, false, $dec);
 	label_cell($stock_item->units);
 	amount_decimal_cell($stock_item->price);
@@ -82,6 +82,7 @@ $display_sub_tot = number_format2($total,user_price_dec());
 label_row(_("Sub Total"), $display_sub_tot,
 	"align=right colspan=6", "nowrap align=right", 1);
 
+/** @var array<array-key, array{Net?: null|scalar, Value?: null|scalar, Override?: null|scalar, included_in_price?: null|scalar, purchasing_gl_code?: null|scalar, rate?: null|scalar, sales_gl_code?: null|scalar, tax_type_id?: array-key, tax_type_name?: null|scalar, ...<array-key, null|scalar>}> $taxes */
 $taxes = $purchase_order->get_taxes();
 $tax_total = display_edit_tax_items($taxes, 6, $purchase_order->tax_included, 1);
 

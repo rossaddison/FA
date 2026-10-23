@@ -238,11 +238,11 @@ function check_data(): bool
 		return false;
 	}
 
-	if (!sysprefs()->allow_negative_stock()) {
+	if (!(bool) sysprefs()->allow_negative_stock()) {
 		foreach (session_obj('supp_trans')->grn_items as $n => $item) {
 			if (is_inventory_item($item->item_code))
 			{
-				if (check_negative_stock($item->item_code, -$item->this_quantity_inv, null, session_obj('supp_trans')->tran_date))
+				if ((bool) check_negative_stock($item->item_code, -$item->this_quantity_inv, null, session_obj('supp_trans')->tran_date))
 				{
 					$stock = row_or_empty(get_item($item->item_code));
 					display_error(_("The return cannot be processed because there is an insufficient quantity for item:") .
@@ -261,6 +261,7 @@ function check_data(): bool
 
 function handle_commit_credit_note(): void
 {
+	if (!isset($_SESSION['supp_trans'])) return;
 	/** @var supp_trans $trans */
 	$trans = $_SESSION['supp_trans'];
 	copy_to_trans($trans);
