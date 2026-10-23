@@ -30,7 +30,7 @@ page(_($help_context = "Receive Purchase Order Items"), false, false, "", $js);
 
 if (isset($_GET['AddedID']))
 {
-	$grn = $_GET['AddedID'];
+	$grn = get_scalar('AddedID');
 	$trans_type = ST_SUPPRECEIVE;
 
 	display_notification_centered(_("Purchase Order Delivery has been processed"));
@@ -38,7 +38,7 @@ if (isset($_GET['AddedID']))
 	display_note(get_trans_view_str($trans_type, $grn, _("&View this Delivery")));
 	
     $clearing_act = get_company_pref('grn_clearing_act');
-	if ($clearing_act)	
+	if ((bool) $clearing_act)
 		display_note(get_gl_view_str($trans_type, $grn, _("View the GL Journal Entries for this Delivery")), 1);
 
 	hyperlink_params("$path_to_root/purchasing/supplier_invoice.php", _("Entry purchase &invoice for this receival"), "New=1");
@@ -84,10 +84,10 @@ function display_po_receive_items(): void
 
  			if (!isset($_POST['Update']) && !isset($_POST['ProcessGoodsReceived']) && $ln_itm->receive_qty == 0)
     	  	{   //If no quantites yet input default the balance to be received
-    	    	$ln_itm->receive_qty = $qty_outstanding;
+    	    	$ln_itm->receive_qty = (int) $qty_outstanding;
     		}
 
-    		$line_total = ((float)$ln_itm->receive_qty * (float)$ln_itm->price);
+    		$line_total = ((float)$ln_itm->receive_qty * $ln_itm->price);
     		$total += $line_total;
 
 			label_cell($ln_itm->stock_id);
@@ -117,11 +117,14 @@ function display_po_receive_items(): void
 	$display_sub_total = price_format($total/* + input_num('freight_cost')*/);
 
 	label_row(_("Sub-total"), $display_sub_total, "colspan=$colspan align=right","align=right");
-	$taxes = session_obj('PO')->get_taxes(input_num('freight_cost'), true);
-	
+	$taxes = session_obj('PO')->get_taxes((float) input_num('freight_cost'), true);
+
+	/**
+	 * @var array<array-key, array{Net?: null|scalar, Value?: null|scalar, Override?: null|scalar, included_in_price?: null|scalar, purchasing_gl_code?: null|scalar, rate?: null|scalar, sales_gl_code?: null|scalar, tax_type_id?: array-key, tax_type_name?: null|scalar, ...<array-key, null|scalar>}> $taxes
+	 */
 	$tax_total = display_edit_tax_items($taxes, $colspan, session_obj('PO')->tax_included);
 
-	$display_total = price_format(($total + (float)input_num('freight_cost') + $tax_total));
+	$display_total = price_format(($total + (float)input_num('freight_cost') + (float) $tax_total));
 
 	start_row();
 	label_cells(_("Amount Total"), $display_total, "colspan=$colspan align='right'","align='right'");
@@ -174,7 +177,7 @@ function canProcessPoReceiveItems(): bool
     	return false;
 	}
 
-	if (!is_date(post_scalar('DefaultReceivedDate')))
+	if (!is_date((string) post_scalar('DefaultReceivedDate')))
 	{
 		display_error(_("The entered date is invalid."));
 		set_focus('DefaultReceivedDate');
@@ -207,7 +210,7 @@ function canProcessPoReceiveItems(): bool
 	foreach (session_obj('PO')->line_items as $order_line)
 	{
 	  	if ((float)$order_line->receive_qty+(float)$order_line->qty_received >
-	  		$order_line->quantity * (1+ (sysprefs()->over_receive_allowance() / 100)))
+	  		(float) $order_line->quantity * (1.0 + ((float) sysprefs()->over_receive_allowance() / 100.0)))
 	  	{
 			$delivery_qty_too_large = 1;
 			break;
@@ -221,7 +224,7 @@ function canProcessPoReceiveItems(): bool
     }
     elseif ($delivery_qty_too_large == 1)
     {
-    	display_error(_("Entered quantities cannot be greater than the quantity entered on the purchase order including the allowed over-receive percentage") . " (" . sysprefs()->over_receive_allowance() ."%)."
+    	display_error(_("Entered quantities cannot be greater than the quantity entered on the purchase order including the allowed over-receive percentage") . " (" . (string) sysprefs()->over_receive_allowance() ."%)."
     		. "<br>" .
     	 	_("Modify the ordered items on the purchase order if you wish to increase the quantities."));
     	return false;
@@ -257,12 +260,14 @@ function process_receive_po(): void
 		display_footer_exit();
 	}
 	
+	if (!isset($_SESSION['PO']))
+		return;
 	$grn = &$_SESSION['PO'];
 	/** @var purch_order $grn */
-	$grn->orig_order_date = $_POST['DefaultReceivedDate'];
-	$grn->reference = $_POST['ref'];
-	$grn->Location = $_POST['Location'];
-	$grn->ex_rate = input_num('_ex_rate', null);
+	$grn->orig_order_date = (string) post_scalar('DefaultReceivedDate');
+	$grn->reference = (string) post_scalar('ref');
+	$grn->Location = (string) post_scalar('Location');
+	$grn->ex_rate = (float) input_num('_ex_rate', null);
 
 	$grn_no = add_grn($grn);
 
@@ -277,7 +282,8 @@ function process_receive_po(): void
 
 if (isset($_GET['PONumber']) && $_GET['PONumber'] > 0 && !isset($_POST['Update']))
 {
-	create_new_po(ST_PURCHORDER, get_scalar('PONumber'));
+	$po_number_scalar = get_scalar('PONumber');
+	create_new_po(ST_PURCHORDER, $po_number_scalar === null ? null : (string) $po_number_scalar);
 	session_obj('PO')->trans_type = ST_SUPPRECEIVE;
 	session_obj('PO')->reference = refs()->get_next(ST_SUPPRECEIVE, null,
 		array('date' => Today(), 'supplier' => session_obj('PO')->supplier_id));
@@ -295,17 +301,19 @@ if (isset($_POST['Update']) || isset($_POST['ProcessGoodsReceived']))
 	{
 	 if( ((float)$line->quantity - (float)$line->qty_received)>0) {
 		$_POST[$line->line_no] = max($_POST[$line->line_no], 0);
-		if (!check_num($line->line_no))
+		if (!check_num((string) $line->line_no))
 			$_POST[$line->line_no] = number_format2(0, get_qty_dec($line->stock_id));
 
 		if (!isset($_POST['DefaultReceivedDate']) || $_POST['DefaultReceivedDate'] == "")
 			$_POST['DefaultReceivedDate'] = new_doc_date();
 
-		session_obj('PO')->line_items[$line->line_no]->receive_qty = input_num($line->line_no);
+		session_obj('PO')->line_items[$line->line_no]->receive_qty = (int) input_num((string) $line->line_no);
 
-		if (isset($_POST[$line->stock_id . "Desc"]) && strlen($_POST[$line->stock_id . "Desc"]) > 0)
+		$desc_key = $line->stock_id . "Desc";
+		$desc_val = $_POST[$desc_key] ?? null;
+		if (is_string($desc_val) && strlen($desc_val) > 0)
 		{
-			session_obj('PO')->line_items[$line->line_no]->item_description = $_POST[$line->stock_id . "Desc"];
+			session_obj('PO')->line_items[$line->line_no]->item_description = $desc_val;
 		}
 	 }
 	}
@@ -323,7 +331,8 @@ if (isset($_POST['ProcessGoodsReceived']))
 
 start_form();
 
-edit_grn_summary($_SESSION['PO'], true);
+$po_summary = session_obj('PO');
+edit_grn_summary($po_summary);
 display_heading(_("Items to Receive"));
 display_po_receive_items();
 
