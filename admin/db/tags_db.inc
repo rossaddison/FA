@@ -150,7 +150,7 @@ function delete_tag(string|int|float|bool|null $id): void
 function add_tag_associations(string|int|float|bool|null $recordid, array $tagids): void
 {
 	foreach($tagids as $tagid) {
-		if (!$tagid) continue;
+		if (!(bool) $tagid) continue;
 		$sql = "INSERT INTO ".TB_PREF."tag_associations (record_id, tag_id)
 			VALUES (".db_escape($recordid).", ".db_escape($tagid).")";
 

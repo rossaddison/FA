@@ -70,7 +70,7 @@ function update_printer_profile(string|int|float|bool|null $name, ?array $dest):
 			."(profile, report, printer) VALUES ("
 			.db_escape($name).","
 			.db_escape($rep).","
-			.db_escape($printer ? $printer: null, true).")";
+			.db_escape((bool) $printer ? $printer: null, true).")";
 		} else {
 			$sql = "DELETE FROM ".TB_PREF."print_profiles WHERE ("
 				."report=" . db_escape($rep)

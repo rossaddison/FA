@@ -37,7 +37,7 @@ final class language
 		global $dflt_lang;
 
 		$this->name = (string) $name;
-		$this->code = (string) ($code ? $code : ($dflt_lang ? $dflt_lang : 'C'));
+		$this->code = (string) ((bool) $code ? $code : ($dflt_lang ? $dflt_lang : 'C'));
 		$this->encoding = (string) $encoding;
 		$this->dir = $dir;
 	}

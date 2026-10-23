@@ -19,7 +19,11 @@ declare(strict_types=1);
 	Debugging info level also determined by settings in PHP.ini
 	if $debug=1 show debugging info, dont show if $debug=0 */
 
-if (!isset($path_to_root) || isset($_GET['path_to_root']) || isset($_POST['path_to_root']))
+// checked via $GLOBALS rather than isset($path_to_root) so this doesn't depend on
+// psalm.xml's non-nullable stub for the global, which only describes its value once a
+// calling page script has set it, not whether it's been set at all (the actual point of
+// this guard: block direct access to this file)
+if (!array_key_exists('path_to_root', $GLOBALS) || isset($_GET['path_to_root']) || isset($_POST['path_to_root']))
 	die("Restricted access");
 
 	// Server time zone. Since php 5.3.0 time zone have to be set either here or in server php ini file

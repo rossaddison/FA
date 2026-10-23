@@ -15,11 +15,11 @@ declare(strict_types=1);
 //	sys types defines to enable inclusion after every language change
 //	(which happens for multilanguage bulk reports)
 //
-global $systypes_array, $bank_account_types, $bank_transfer_types, 
-	$payment_person_types, $wo_types_array, $wo_cost_types, $class_types,
-	$quick_actions, $quick_entry_types, $stock_types, $tag_types, $bank_owner;
-
-$systypes_array = array (
+// Writing through $GLOBALS instead of using `global` + a plain assignment, since this file
+// is also included from inside a method (reporting/includes/class.pdf.inc), where a bare
+// `global $x;` here would be needed for $x to reach the real global scope, but `global` used
+// at this file's own top level (Psalm can't tell which case applies) is otherwise a no-op.
+$GLOBALS['systypes_array'] = array (
 	ST_JOURNAL => _("Journal Entry"),
 	ST_BANKPAYMENT => _("Bank Payment"),
 	ST_BANKDEPOSIT => _("Bank Deposit"),
@@ -83,14 +83,14 @@ $type_shortcuts = array(
 //----------------------------------------------------------------------------------
 //		Bank transaction types
 //
-$bank_account_types = array (
+$GLOBALS['bank_account_types'] = array (
 	BT_TRANSFER => _("Savings Account"),
 		_("Chequing Account"),
 		_("Credit Account"),
 		_("Cash Account")
 	);
 
-$bank_transfer_types = array(
+$GLOBALS['bank_transfer_types'] = array(
 	BT_TRANSFER => _("Transfer"),
 			_("Cheque"),
 			_("Credit"),
@@ -101,7 +101,7 @@ $bank_transfer_types = array(
 //	Payment types
 //
 
-$payment_person_types = array (
+$GLOBALS['payment_person_types'] = array (
 	PT_MISC => _("Miscellaneous"),
 				_("Work Order"),
 				_("Customer"),
@@ -112,13 +112,13 @@ $payment_person_types = array (
 //----------------------------------------------------------------------------------
 //	Manufacturing types
 //
-$wo_types_array = array (
+$GLOBALS['wo_types_array'] = array (
 	WO_ASSEMBLY => _("Assemble"),
 	WO_UNASSEMBLY => _("Unassemble"),
 	WO_ADVANCED => _("Advanced Manufacture")
 	);
 
-$wo_cost_types = array(
+$GLOBALS['wo_cost_types'] = array(
 	WO_LABOUR => _("Labour Cost"),
 	WO_OVERHEAD => _("Overhead Cost"),
 	WO_MATERIALS => _("Materials")
@@ -127,7 +127,7 @@ $wo_cost_types = array(
 //----------------------------------------------------------------------------------
 //	GL account classes
 //
-$class_types = array(
+$GLOBALS['class_types'] = array(
 	CL_ASSETS => _("Assets"),
 	CL_LIABILITIES => _("Liabilities"),
 	CL_EQUITY => _("Equity"),
@@ -139,7 +139,7 @@ $class_types = array(
 //----------------------------------------------------------------------------------
 //	Quick entry types
 //
-$quick_actions = array(
+$GLOBALS['quick_actions'] = array(
 	'=' => _('Remainder'), // post current base amount to GL account
 	'a' => _('Amount'), // post amount to GL account
 	'a+' => _('Amount, increase base'), // post amount to GL account and increase base
@@ -155,7 +155,7 @@ $quick_actions = array(
 	't-' => _('Taxes included, reduce base') // ditto & reduce base amount
 );
 
-$quick_entry_types = array(
+$GLOBALS['quick_entry_types'] = array(
 	QE_DEPOSIT => _("Bank Deposit"),
 	QE_PAYMENT => _("Bank Payment"),
 	QE_JOURNAL => _("Journal Entry"),
@@ -173,7 +173,7 @@ $depreciation_methods = array(
 
 //----------------------------------------------------------------------------------
 // Types of stock items
-$stock_types = array(
+$GLOBALS['stock_types'] = array(
 	'M' => _("Manufactured"),
 	'B' => _("Purchased"),
 	'D' => _("Service")
@@ -181,7 +181,7 @@ $stock_types = array(
 
 //----------------------------------------------------------------------------------
 
-$tag_types = array (
+$GLOBALS['tag_types'] = array (
 	TAG_ACCOUNT   => _("Account"),
 	TAG_DIMENSION => _("Dimension")
 );

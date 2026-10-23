@@ -44,10 +44,11 @@ $selected_id = is_array($selected_id) ? null : $selected_id;
 
 //------------------------------------------------------------------------------------
 
+/** @param array<array-key, null|string> $myrow */
 #[\NoDiscard]
 function canProcessWorkOrderRelease(array $myrow): bool
 {
-	if ($myrow['released'])
+	if ((bool) $myrow['released'])
 	{
 		display_error(_("This work order has already been released."));
 		set_focus('released');

@@ -27,12 +27,13 @@ function can_process(): bool
 {
 
 	$cur_password = (string) post_scalar('cur_password');
+	/** @var bool|null $Auth_Result a well-behaved external-auth hook returns bool, or null to fall through to the standard method */
 	$Auth_Result = hook_authenticate(session_obj('wa_current_user')->username, $cur_password);
 
 	if (!isset($Auth_Result))	// if not used external login: standard method
 		$Auth_Result = get_user_auth(session_obj('wa_current_user')->username, md5($cur_password));
 
-	if (!(bool)$Auth_Result)
+	if (!$Auth_Result)
    	{
   		display_error( _("Invalid password entered."));
 		set_focus('cur_password');
