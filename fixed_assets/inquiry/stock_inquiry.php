@@ -52,16 +52,22 @@ if(get_post('RefreshInquiry'))
 	ajax()->activate('totals_tbl');
 }
 
-/** @return null|scalar */
+/**
+ * @param array<string, string|null> $row
+ * @return null|scalar
+ */
 function gl_view(array $row)
 {
-  	$row = get_fixed_asset_move($row['stock_id'], ST_JOURNAL);
+  	$move = get_fixed_asset_move($row['stock_id'], ST_JOURNAL);
 
-	return get_gl_view_str(ST_JOURNAL, $row["trans_no"]);
+	return get_gl_view_str(ST_JOURNAL, $move === false ? null : $move["trans_no"]);
 }
 
-/** @return array{disposal_date: null|string, disposal_no: null|string, disposal_type: null|string, purchase_date: null|string, purchase_no: null|string, ...<array-key, mixed>}|false */
-function fa_prepare_row(array|false|null $row) {
+/**
+ * @param array<string, string|null> $row
+ * @return array{disposal_date: null|string, disposal_no: null|string, disposal_type: null|string, purchase_date: null|string, purchase_no: null|string, ...<string, null|string>}
+ */
+function fa_prepare_row(array $row) {
   	$purchase = get_fixed_asset_purchase($row['stock_id']);
   	if ($purchase !== false) {
     	$row['purchase_date'] = $purchase['tran_date'];
@@ -86,7 +92,10 @@ function fa_prepare_row(array|false|null $row) {
   	return $row;
 }
 
-/** @return null|scalar */
+/**
+ * @param array<string, string|null> $row
+ * @return null|scalar
+ */
 function fa_link(array $row)
 {
   	$url = "inventory/manage/items.php?FixedAsset=1&stock_id=".(string)$row['stock_id'];
@@ -94,16 +103,22 @@ function fa_link(array $row)
   	return viewer_link($row['stock_id'], $url);
 }
 
-/** @return string|null */
+/**
+ * @param array<string, string|null> $row
+ * @return string
+ */
 function depr_method_title(array $row) {
   	global $depreciation_methods;
-  	return $depreciation_methods[$row['depreciation_method']];
+  	return $depreciation_methods[(string) $row['depreciation_method']];
 }
 
-/** @psalm-pure */
+/**
+ * @param array<string, string|null> $row
+ * @psalm-pure
+ */
 function depr_par(array $row): string {
 	if ($row['depreciation_method'] == 'D')
-		return (float)$row['depreciation_rate']*(float)$row['depreciation_factor'].'%';
+		return (string)((float)$row['depreciation_rate']*(float)$row['depreciation_factor']).'%';
 	elseif ($row['depreciation_method'] == 'N')
 		return (string)$row['depreciation_rate'].' '._('years'
 		);
@@ -123,7 +138,10 @@ function status_title(array $row): string {
 
 }
 
-/** @return null|scalar */
+/**
+ * @param array<string, string|null> $row
+ * @return null|scalar
+ */
 function purchase_link(array $row)
 {
 
@@ -133,7 +151,10 @@ function purchase_link(array $row)
   	return get_supplier_trans_view_str(ST_SUPPINVOICE, $row["purchase_no"], sql2date($row["purchase_date"]));
 }
 
-/** @return null|scalar */
+/**
+ * @param array<string, string|null> $row
+ * @return null|scalar
+ */
 function disposal_link(array $row)
 {
   	if ($row['disposal_date'] === NULL)
@@ -149,6 +170,7 @@ function disposal_link(array $row)
   	}
 }
 
+/** @param array<string, string|null> $row */
 function amount_link(array $row): string
 {
     return price_format($row['purchase_cost']);
@@ -159,6 +181,7 @@ function depr_link(array $row): string
     return price_format((float)$row['purchase_cost'] - (float)$row['material_cost']);
 }
 
+/** @param array<string, string|null> $row */
 function balance_link(array $row): string
 {
     return price_format($row['material_cost']);
