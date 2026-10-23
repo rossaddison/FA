@@ -280,6 +280,18 @@ a stand-in for a boolean) reaching a native, strictly-typed parameter.
   PSALM_MIGRATION.md) can also hide a real undefined-function bug, not
   just cause false-positive type mismatches.
 
+- **`gl/manage/gl_account_classes.php`.** The `ADD_ITEM`/`UPDATE_ITEM`
+  handler called `canProcessGlAccountClasses()`, but this file's own
+  validator was declared `canPocessGlAccountClasses()` — a typo missing
+  the "r", not a collision with some other file's function. Since no
+  function of that exact (correctly-spelled) name exists anywhere in the
+  project, Psalm's `UndefinedFunction` caught this one directly (unlike
+  the `can_process()` case below, where the collision table hid an
+  identical symptom). Every Add/Update submission on this page was a
+  guaranteed "Call to undefined function" fatal error. Fixed the typo to
+  match the call site and every sibling `canProcessXxx()` name elsewhere
+  in this codebase.
+
 - **`admin/db/shipping_db.inc` — `add_shipper()` / `update_shipper()`.**
   Both declared their `$contact` parameter as `array`, but both callers
   (`admin/shipping_companies.php`) always passed `$_POST['contact']` — a

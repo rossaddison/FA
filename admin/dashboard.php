@@ -16,6 +16,10 @@ declare(strict_types=1);
 	include_once(dirname(__DIR__) . "/includes/ui.inc");
 	include_once(dirname(__DIR__) . "/includes/data_checks.inc");
 	include_once(dirname(__DIR__) . "/reporting/includes/class.graphic.inc");
+	// TaintedInclude/UnresolvableInclude here are the same confirmed-safe, unfixable-in-Psalm
+	// finding already investigated for the identical user_theme()-driven dynamic include
+	// pattern in frontaccounting.php and includes/page/header.inc (see doc/BUGS_FOUND.md's
+	// "Path traversal / arbitrary file write" section)
 	if (file_exists("$path_to_root/themes/".user_theme()."/dashboard.inc"))
 		include_once("$path_to_root/themes/".user_theme()."/dashboard.inc"); // yse theme dashboard.inc
 	else

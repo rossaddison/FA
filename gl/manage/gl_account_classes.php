@@ -25,7 +25,7 @@ simple_page_mode(false);
 //-----------------------------------------------------------------------------------
 
 #[\NoDiscard]
-function canPocessGlAccountClasses(): bool 
+function canProcessGlAccountClasses(): bool
 {
 
 	if (strlen(trim((string) post_scalar('id'))) == 0)
@@ -93,7 +93,7 @@ function can_delete(string|int|float|bool|array|null $selected_id): bool
 if ($Mode == 'Delete')
 {
 
-	if (can_delete($selected_id))
+	if (can_delete(is_array($selected_id) ? '' : (string) $selected_id))
 	{
 		/** @var int|string $selected_id */
 		$selected_id = $selected_id;

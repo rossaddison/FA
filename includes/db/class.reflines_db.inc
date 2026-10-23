@@ -169,7 +169,7 @@ final class reflines_db extends data_set {
 
 		/** @var ReflineData */
 		$data = $data ?? array();
-		if (!empty($data['default']))
+		if ((bool) ($data['default'] ?? false))
 			return (bool) $this->_set_as_default(db_insert_id(), $data['trans_type'] ?? null);
 		return true;
 	}
@@ -186,7 +186,7 @@ final class reflines_db extends data_set {
 
 		/** @var ReflineData */
 		$data = $data ?? array();
-		if (!empty($data['default']))
+		if ((bool) ($data['default'] ?? false))
 			return (bool) $this->_set_as_default($key, $data['trans_type'] ?? null);
 		return true;
 	}

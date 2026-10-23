@@ -34,7 +34,7 @@ function create_recurrent_invoices(?string $customer_id, ?string $branch_id, ?st
 
 	$doc = new Cart(ST_SALESORDER, array($order_no));
 
-	if (!empty(sysprefs()->prefs['dim_on_recurrent_invoice']))
+	if ((bool) (sysprefs()->prefs['dim_on_recurrent_invoice'] ?? false))
 		$doc->trans_type = ST_SALESINVOICE;
 
 	get_customer_details_to_order($doc, $customer_id, $branch_id);
@@ -53,13 +53,12 @@ function create_recurrent_invoices(?string $customer_id, ?string $branch_id, ?st
 		$memo .= "\n" . $doc->Comments;
 	$doc->Comments = $memo;
 
-	foreach ($doc->line_items as $line_no=>$item) {
-		$line = &$doc->line_items[$line_no];
-		$new_price = get_price($line->stock_id, $doc->customer_currency,
+	foreach ($doc->line_items as $item) {
+		$new_price = get_price($item->stock_id, $doc->customer_currency,
 			$doc->sales_type, $doc->price_factor, $doc->document_date);
 		if ($new_price != 0)	// use template price if no price is currently set for the item.
-			$line->price = $new_price;
-	}	
+			$item->price = $new_price;
+	}
 	$cart = $doc;
 	$cart->trans_type = ST_SALESINVOICE;
 	$cart->reference = refs()->get_next($cart->trans_type);

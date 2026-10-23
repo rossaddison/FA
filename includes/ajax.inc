@@ -201,6 +201,7 @@ final class Ajax extends JsHttpRequest {
 		foreach ($this->aCommands as $idx => $com) {
 // If we should reload whole page content ignore all commands but the update.
 // This is page repost equivalent, although header and footer are not reloaded.
+			/** @var bool|string|null $why _addCommand()'s $trigger param, which is the only thing ever stored under this key */
 			$why = $com['why'];
 		  	if ($why !== true && !isset($this->triggers[is_string($why) ? $why : ''])) {
 				unset($this->aCommands[$idx]);

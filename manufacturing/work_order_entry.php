@@ -201,7 +201,7 @@ function canProcessWorkOrderEntry(): bool
 
                 		$quantity = (float)$bom_item["quantity"] * (float)input_num('quantity');
 
-                        if (check_negative_stock($bom_item["component"], -$quantity, $bom_item["loc_code"], $_POST['date_']))
+                        if ((bool) check_negative_stock($bom_item["component"], -$quantity, $bom_item["loc_code"], $_POST['date_']))
                 		{
                 			display_error(_("The work order cannot be processed because there is an insufficient quantity for component:") .
                 				" " . (string)$bom_item["component"] . " - " .  (string)$bom_item["description"] . ".  " . _("Location:") . " " . (string)$bom_item["location_name"]);
@@ -214,7 +214,7 @@ function canProcessWorkOrderEntry(): bool
         	elseif ($_POST['type'] == WO_UNASSEMBLY)
         	{
         		// if unassembling, check item to unassemble
-                if (check_negative_stock(post_scalar('stock_id'), -input_num('quantity'), post_scalar('StockLocation'), $_POST['date_']))
+                if ((bool) check_negative_stock(post_scalar('stock_id'), -input_num('quantity'), post_scalar('StockLocation'), $_POST['date_']))
         		{
         			display_error(_("The selected item cannot be unassembled because there is insufficient stock."));
 					return false;

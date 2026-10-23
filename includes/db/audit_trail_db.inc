@@ -125,7 +125,7 @@ function close_transactions(string|null $todate): int {
 function get_journal_number(string|int|float|bool|null $type, string|int|float|bool|null $trans_no): int|false|string {
 
 	$cdate = get_company_pref('gl_closing_date');
-	if (!$cdate)
+	if (!(bool) $cdate)
 		return false;
 
 // FIXME: gl_date can be badly entered for some transactions due to bug in previous FA versions 
@@ -139,7 +139,7 @@ function get_journal_number(string|int|float|bool|null $type, string|int|float|b
 	if (db_num_rows($res))
 	{
 		$myrow =row_or_empty(db_fetch($res));
-		return $myrow['gl_seq'] ? $myrow['gl_seq'] : 0;
+		return (bool) $myrow['gl_seq'] ? $myrow['gl_seq'] : 0;
 	}
 	return "-";
 }

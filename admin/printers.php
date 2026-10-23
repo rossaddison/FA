@@ -27,13 +27,13 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 	$error = 0;
 
-	if (empty($_POST['name']))
+	if ((string) post_scalar('name') === '')
 	{
 		$error = 1;
 		display_error( _("Printer name cannot be empty."));
 		set_focus('name');
-	} 
-	elseif (empty($_POST['host'])) 
+	}
+	elseif ((string) post_scalar('host') === '')
 	{
 		display_notification_centered( _("You have selected printing to server at user IP."));
 	} 
