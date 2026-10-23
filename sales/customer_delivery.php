@@ -43,7 +43,7 @@ if (isset($_GET['ModifyDelivery'])) {
 	processing_start();
 }
 
-page($_SESSION['page_title'], false, false, "", $js);
+page((string) ($_SESSION['page_title'] ?? ''), false, false, "", $js);
 
 if (isset($_GET['AddedID'])) {
 	$dispatch_no = (int) get_scalar('AddedID');
@@ -82,9 +82,9 @@ if (isset($_GET['AddedID'])) {
 	display_note(print_document_link($delivery_no, _("E&mail as Packing Slip"), true, ST_CUSTDELIVERY, false, "printlink", "", 1, 1), 1);
 
 	if (!isset($_GET['prepaid']))
-		hyperlink_params($path_to_root . "/sales/customer_invoice.php", _("Confirm Delivery and Invoice"), "DeliveryNumber=$delivery_no");
+		hyperlink_params("$path_to_root/sales/customer_invoice.php", _("Confirm Delivery and Invoice"), "DeliveryNumber=$delivery_no");
 
-	hyperlink_params($path_to_root . "/sales/inquiry/sales_deliveries_view.php", _("Select A Different Delivery"), "OutstandingOnly=1");
+	hyperlink_params("$path_to_root/sales/inquiry/sales_deliveries_view.php", _("Select A Different Delivery"), "OutstandingOnly=1");
 
 	display_footer_exit();
 }
@@ -93,17 +93,17 @@ if (isset($_GET['AddedID'])) {
 if (isset($_GET['OrderNumber']) && $_GET['OrderNumber'] > 0) {
 
 	$ord = new Cart(ST_SALESORDER, $_GET['OrderNumber'], true);
-	if ($ord->is_prepaid())
+	if ((bool) $ord->is_prepaid())
 		check_deferred_income_act(_("You have to set Deferred Income Account in GL Setup to entry prepayment invoices."));
 
 	if ($ord->count_items() == 0) {
-		hyperlink_params($path_to_root . "/sales/inquiry/sales_orders_view.php",
+		hyperlink_params("$path_to_root/sales/inquiry/sales_orders_view.php",
 			_("Select a different sales order to delivery"), "OutstandingOnly=1");
 		echo "<br><center><b>" . _("This order has no items. There is nothing to delivery.") .
 			"</center></b>";
 		display_footer_exit();
 	} else if (!$ord->is_released()) {
-		hyperlink_params($path_to_root . "/sales/inquiry/sales_orders_view.php",_("Select a different sales order to delivery"),
+		hyperlink_params("$path_to_root/sales/inquiry/sales_orders_view.php",_("Select a different sales order to delivery"),
 			"OutstandingOnly=1");
 		echo "<br><center><b>"._("This prepayment order is not yet ready for delivery due to insufficient amount received.")
 			."</center></b>";
@@ -120,8 +120,8 @@ if (isset($_GET['OrderNumber']) && $_GET['OrderNumber'] > 0) {
 	check_is_editable(ST_CUSTDELIVERY, get_scalar('ModifyDelivery'));
 	$_SESSION['Items'] = new Cart(ST_CUSTDELIVERY,$_GET['ModifyDelivery']);
 
-	if (!session_obj('Items')->prepaid && session_obj('Items')->count_items() == 0) {
-		hyperlink_params($path_to_root . "/sales/inquiry/sales_orders_view.php",
+	if (!(bool) session_obj('Items')->prepaid && session_obj('Items')->count_items() == 0) {
+		hyperlink_params("$path_to_root/sales/inquiry/sales_orders_view.php",
 			_("Select a different delivery"), "OutstandingOnly=1");
 		echo "<br><center><b>" . _("This delivery has all items invoiced. There is nothing to modify.") .
 			"</center></b>";
@@ -158,7 +158,7 @@ if (isset($_GET['OrderNumber']) && $_GET['OrderNumber'] > 0) {
 function check_data(): bool
 {
 
-	if (!isset($_POST['DispatchDate']) || !is_date(post_scalar('DispatchDate')))	{
+	if (!isset($_POST['DispatchDate']) || !is_date((string) post_scalar('DispatchDate')))	{
 		display_error(_("The entered date of delivery is invalid."));
 		set_focus('DispatchDate');
 		return false;
@@ -170,7 +170,7 @@ function check_data(): bool
 		return false;
 	}
 
-	if (!isset($_POST['due_date']) || !is_date(post_scalar('due_date')))	{
+	if (!isset($_POST['due_date']) || !is_date((string) post_scalar('due_date')))	{
 		display_error(_("The entered dead-line for invoice is invalid."));
 		set_focus('due_date');
 		return false;
@@ -204,7 +204,7 @@ function check_data(): bool
 
 	copy_to_cart();
 
-	if (!sysprefs()->allow_negative_stock() && ($low_stock = session_obj('Items')->check_qoh()))
+	if (!(bool) sysprefs()->allow_negative_stock() && (bool) ($low_stock = session_obj('Items')->check_qoh()))
 	{
 		display_error(_("This document cannot be processed because there is insufficient quantity for items marked."));
 		return false;
@@ -215,16 +215,18 @@ function check_data(): bool
 //------------------------------------------------------------------------------
 function copy_to_cart(): void
 {
+	if (!isset($_SESSION['Items']))
+		return;
 	$cart = &$_SESSION['Items'];
 	/** @var Cart $cart */
 	$cart->ship_via = post_scalar('ship_via');
 	$cart->freight_cost = (float) input_num('ChargeFreightCost');
 	$cart->document_date = (string) post_scalar('DispatchDate');
-	$cart->due_date =  (string) $_POST['due_date'];
+	$cart->due_date =  (string) post_scalar('due_date');
 	$cart->Location = (string) post_scalar('Location');
 	$cart->Comments = (string) post_scalar('Comments');
-	$cart->dimension_id = (int) $_POST['dimension_id'];
-	$cart->dimension2_id = (int) $_POST['dimension2_id'];
+	$cart->dimension_id = (int) input_num('dimension_id');
+	$cart->dimension2_id = (int) input_num('dimension2_id');
 	if ($cart->trans_no == 0)
 		$cart->reference = (string) post_scalar('ref');
 
@@ -233,6 +235,8 @@ function copy_to_cart(): void
 
 function copy_from_cart(): void
 {
+	if (!isset($_SESSION['Items']))
+		return;
 	$cart = &$_SESSION['Items'];
 	/** @var Cart $cart */
 	$_POST['ship_via'] = $cart->ship_via;
@@ -284,7 +288,7 @@ function check_quantities(): int
 
 //------------------------------------------------------------------------------
 
-if (isset($_POST['process_delivery']) && check_data()) {
+if (isset($_POST['process_delivery']) && check_data() && isset($_SESSION['Items'])) {
 	$dn = &$_SESSION['Items'];
 	/** @var Cart $dn */
 
@@ -307,7 +311,7 @@ if (isset($_POST['process_delivery']) && check_data()) {
 	}
 	else
 	{
-		$is_prepaid = $dn->is_prepaid() ? "&prepaid=Yes" : '';
+		$is_prepaid = (bool) $dn->is_prepaid() ? "&prepaid=Yes" : '';
 
 		processing_end();
 		if ($newdelivery) {
@@ -364,7 +368,7 @@ label_cell(_("Shipping Company"), "class='tableheader2'");
 shippers_list_cells(null, 'ship_via', $_POST['ship_via']);
 
 // set this up here cuz it's used to calc qoh
-if (!isset($_POST['DispatchDate']) || !is_date(post_scalar('DispatchDate'))) {
+if (!isset($_POST['DispatchDate']) || !is_date((string) post_scalar('DispatchDate'))) {
 	$_POST['DispatchDate'] = new_doc_date();
 	if (!(bool)is_date_in_fiscalyear(post_scalar('DispatchDate'))) {
 		$_POST['DispatchDate'] = end_fiscalyear();
@@ -379,7 +383,7 @@ echo "</td><td>";// outer table
 
 start_table(TABLESTYLE, "width='90%'");
 
-if (!isset($_POST['due_date']) || !is_date(post_scalar('due_date'))) {
+if (!isset($_POST['due_date']) || !is_date((string) post_scalar('due_date'))) {
 	$_POST['due_date'] = get_invoice_duedate(session_obj('Items')->payment, post_scalar('DispatchDate'));
 }
 customer_credit_row(session_obj('Items')->customer_id, session_obj('Items')->credit, "class='tableheader2'");
@@ -441,7 +445,7 @@ foreach (session_obj('Items')->line_items as $line=>$ln_itm) {
 	}
 	// if it's a non-stock item (eg. service) don't show qoh
 	$row_classes = null;
-	if (has_stock_holding($ln_itm->mb_flag) && $ln_itm->qty_dispatched) {
+	if (has_stock_holding($ln_itm->mb_flag) && (bool) $ln_itm->qty_dispatched) {
 		// It's a stock : call get_dispatchable_quantity hook  to get which quantity to preset in the
 		// quantity input box. This allows for example a hook to modify the default quantity to what's dispatchable
 		// (if there is not enough in hand), check at other location or other order people etc ...
@@ -451,9 +455,10 @@ foreach (session_obj('Items')->line_items as $line=>$ln_itm) {
 		// (but anyway dispatch is checked again later before transaction is saved)
 
 		$qty = $ln_itm->qty_dispatched;
-		if ($check = check_negative_stock($ln_itm->stock_id, (float)$ln_itm->qty_done-(float)$ln_itm->qty_dispatched, post_scalar('Location'), $_POST['DispatchDate']))
+		if ((bool) ($check = check_negative_stock($ln_itm->stock_id, (float)$ln_itm->qty_done-(float)$ln_itm->qty_dispatched, post_scalar('Location'), $_POST['DispatchDate'])))
 			$qty = $check['qty'];
 
+		/** @psalm-suppress MixedAssignment hook_get_dispatchable_quantity()'s whole point is to return an arbitrary hook's result (a quantity, 'skip', or [quantity, css class]) */
 		$q_class =  hook_get_dispatchable_quantity($ln_itm, $_POST['Location'], $_POST['DispatchDate'], $qty);
 
 		// Skip line if needed
@@ -464,10 +469,10 @@ foreach (session_obj('Items')->line_items as $line=>$ln_itm) {
 		}
 	}
 
-	alt_table_row_color($k, $row_classes);
+	alt_table_row_color($k, is_string($row_classes) ? $row_classes : null);
 	view_stock_status_cell($ln_itm->stock_id);
 
-	if ($ln_itm->descr_editable)
+	if ((bool) $ln_itm->descr_editable)
 		text_cells(null, 'Line'.$line.'Desc', $ln_itm->item_description, 30, 50);
 	else
 		label_cell($ln_itm->item_description);
@@ -511,10 +516,10 @@ $display_sub_total = price_format((float)$inv_items_total + (float)input_num('Ch
 
 label_row(_("Sub-total"), $display_sub_total, "colspan=$colspan align=right","align=right");
 
-$taxes = session_obj('Items')->get_taxes(input_num('ChargeFreightCost'));
+$taxes = session_obj('Items')->get_taxes((float) input_num('ChargeFreightCost'));
 $tax_total = display_edit_tax_items($taxes, $colspan, session_obj('Items')->tax_included);
 
-$display_total = price_format(((float)$inv_items_total + (float)input_num('ChargeFreightCost') + $tax_total));
+$display_total = price_format(((float)$inv_items_total + (float)input_num('ChargeFreightCost') + (float) $tax_total));
 
 label_row(_("Amount Total"), $display_total, "colspan=$colspan align=right","align=right");
 
