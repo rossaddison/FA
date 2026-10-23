@@ -39,8 +39,9 @@ if(isset($_GET['NewCredit'])) {
 	$_SESSION['page_title'] = _($help_context = "Customer Credit Note");
 	handle_new_credit(0);
 } elseif (isset($_GET['ModifyCredit'])) {
-	$_SESSION['page_title'] = sprintf(_("Modifying Customer Credit Note #%d"), $_GET['ModifyCredit']);
-	handle_new_credit($_GET['ModifyCredit']);
+	$modify_credit = is_scalar($_GET['ModifyCredit']) ? (int) $_GET['ModifyCredit'] : 0;
+	$_SESSION['page_title'] = sprintf(_("Modifying Customer Credit Note #%d"), $modify_credit);
+	handle_new_credit($modify_credit);
 	$help_context = "Modifying Customer Credit Note";
 }
 
@@ -56,13 +57,13 @@ check_db_has_customer_branches(_("There are no customers, or there are no custom
 
 if (list_updated('branch_id')) {
 	// when branch is selected via external editor also customer can change
-	$br = row_or_empty(get_branch(get_post('branch_id')));
+	$br = row_or_empty(get_branch((string) post_scalar('branch_id')));
 	$_POST['customer_id'] = $br['debtor_no'];
 	ajax()->activate('customer_id');
 }
 
 if (isset($_GET['AddedID'])) {
-	$credit_no = $_GET['AddedID'];
+	$credit_no = is_scalar($_GET['AddedID']) ? (int) $_GET['AddedID'] : 0;
 	$trans_type = ST_CUSTCREDIT;
 
 	display_notification_centered(sprintf(_("Credit Note # %d has been processed"),$credit_no));
@@ -74,7 +75,7 @@ if (isset($_GET['AddedID'])) {
 
 	display_note(get_gl_view_str($trans_type, $credit_no, _("View the GL &Journal Entries for this Credit Note")));
 
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter Another &Credit Note"), "NewCredit=yes");
+	hyperlink_params($_SERVER['PHP_SELF'] ?? '', _("Enter Another &Credit Note"), "NewCredit=yes");
 
 	hyperlink_params("$path_to_root/admin/attachments.php", _("Add an Attachment"), "filterType=$trans_type&trans_no=$credit_no");
 
@@ -93,24 +94,26 @@ function line_start_focus(): void {
 
 function copy_to_cn(): void
 {
+	if (!isset($_SESSION['Items'])) return;
 	$cart = &$_SESSION['Items'];
 	/** @var Cart $cart */
-	$cart->Comments = $_POST['CreditText'];
-	$cart->document_date = $_POST['OrderDate'];
-	$cart->freight_cost = input_num('ChargeFreightCost');
-	$cart->Location = (isset($_POST["Location"]) ? $_POST["Location"] : "");
-	$cart->sales_type = $_POST['sales_type_id'];
+	$cart->Comments = (string) post_scalar('CreditText');
+	$cart->document_date = (string) post_scalar('OrderDate');
+	$cart->freight_cost = (float) input_num('ChargeFreightCost');
+	$cart->Location = (string) post_scalar('Location');
+	$cart->sales_type = post_scalar('sales_type_id');
 	if ($cart->trans_no == 0)
-		$cart->reference = $_POST['ref'];
-	$cart->ship_via = $_POST['ShipperID'];
-	$cart->dimension_id = $_POST['dimension_id'];
-	$cart->dimension2_id = $_POST['dimension2_id'];
+		$cart->reference = (string) post_scalar('ref');
+	$cart->ship_via = post_scalar('ShipperID');
+	$cart->dimension_id = (int) input_num('dimension_id');
+	$cart->dimension2_id = (int) input_num('dimension2_id');
 }
 
 //-----------------------------------------------------------------------------
 
 function copy_from_cn(): void
 {
+	if (!isset($_SESSION['Items'])) return;
 	$cart = &$_SESSION['Items'];
 	/** @var Cart $cart */
 	$_POST['CreditText'] = $cart->Comments;
@@ -163,14 +166,14 @@ function canProcessCreditNoteEntry(): bool
 		return false;
 	}
 	if(session_obj('Items')->trans_no == 0) {
-	    if (!refs()->is_valid($_POST['ref'], ST_CUSTCREDIT)) {
+	    if (!refs()->is_valid(post_scalar('ref'), ST_CUSTCREDIT)) {
 			display_error( _("You must enter a reference."));
 			set_focus('ref');
 			$input_error = 1;
 		}
 	}
 
-	if (!is_date(post_scalar('OrderDate'))) {
+	if (!is_date((string) post_scalar('OrderDate'))) {
 		display_error(_("The entered date for the credit note is invalid."));
 		set_focus('OrderDate');
 		$input_error = 1;
@@ -196,7 +199,7 @@ if (isset($_POST['ProcessCredit']) && canProcessCreditNoteEntry()) {
 		$_POST['WriteOffGLCode'] = 0;
 	}
 	copy_to_cn();
-	$credit_no = session_obj('Items')->write($_POST['WriteOffGLCode']);
+	$credit_no = session_obj('Items')->write((int) input_num('WriteOffGLCode'));
 	if ($credit_no == -1)
 	{
 		display_error(_("The entered reference is already in use."));
@@ -206,7 +209,7 @@ if (isset($_POST['ProcessCredit']) && canProcessCreditNoteEntry()) {
 	{
 		new_doc_date(session_obj('Items')->document_date);
 		processing_end();
-		meta_forward($_SERVER['PHP_SELF'], "AddedID=$credit_no");
+		meta_forward($_SERVER['PHP_SELF'] ?? '', "AddedID=$credit_no");
 	}
 } /*end of process credit note */
 
@@ -237,7 +240,7 @@ function check_item_data(): bool
 function handle_update_item(): void
 {
 	if ($_POST['UpdateItem'] != "" && check_item_data()) {
-		session_obj('Items')->update_cart_item($_POST['line_no'], input_num('qty'),
+		session_obj('Items')->update_cart_item((int) input_num('line_no'), input_num('qty'),
 			input_num('price'), (float)input_num('Disc') / 100.0);
 	}
     line_start_focus();
@@ -259,7 +262,8 @@ function handle_new_item(): void
 	if (!check_item_data())
 		return;
 
-	add_to_order($_SESSION['Items'], post_scalar('stock_id'), input_num('qty'),
+	if (!isset($_SESSION['Items'])) return;
+	add_to_order($_SESSION['Items'], (string) post_scalar('stock_id'), input_num('qty'),
 		input_num('price'), (float)input_num('Disc') / 100.0);
     line_start_focus();
 }
@@ -288,6 +292,12 @@ if (!processing_active()) {
 start_form();
 hidden('cart_id');
 
+/**
+ * @psalm-suppress PossiblyUndefinedArrayOffset the preceding
+ *   if (!processing_active()) { handle_new_credit(0); } unconditionally sets
+ *   $_SESSION['Items'] on that branch; the other branch relies on it already
+ *   having been set by processing_start() earlier in this same request
+ */
 $items = &$_SESSION['Items'];
 /** @var Cart $items */
 
