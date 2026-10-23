@@ -300,10 +300,12 @@ class simple_crud {
 			$post = isset($fmt['post']) ? $fmt['post'] : $name;
 			$fld = isset($fmt['fld']) ? $fmt['fld'] : $name;
 
+			// $value is genuinely mixed: this generic CRUD base displays whatever field
+			// shape each concrete subclass's own $this->data happens to hold
 			$value = $this->selected_id == $this->_none ? (isset($fmt['dflt']) ? $fmt['dflt'] : null) :
 				(is_array($this->data) ? $this->data[$fld]: $this->data->$fld);
 
-			$_POST[$post] = $this->_format_output($value, isset($fmt['fmt']) ? $fmt['fmt'] : null);
+			$_POST[$post] = $this->_format_output(is_scalar($value) ? $value : null, isset($fmt['fmt']) ? $fmt['fmt'] : null);
 		}
 	}
 	//--------------------------
@@ -326,6 +328,8 @@ class simple_crud {
 			$post = isset($fmt['post']) ? $fmt['post'] : $name;
 			$fld = isset($fmt['fld']) ? $fmt['fld'] : $name;
 
+			// $value is genuinely mixed: _format_input() exists precisely to convert a
+			// posted scalar into whatever type each concrete subclass's field expects
 			$value = $this->_format_input(post_scalar($post), $fmt['fmt'] ?? null);
 			if (is_array($this->data))
 				$this->data[$fld] = $value;

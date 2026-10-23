@@ -20,7 +20,8 @@ declare(strict_types=1);
  */
 function json_encode_for_script(mixed $value): string
 {
-	return json_encode($value, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?: 'null';
+	$encoded = json_encode($value, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+	return $encoded === false ? 'null' : $encoded;
 }
 
 function page_footer(string|int|float|bool|null $no_menu=false, bool $is_index=false): void
@@ -30,6 +31,11 @@ function page_footer(string|int|float|bool|null $no_menu=false, bool $is_index=f
 	$page_header_args = func_get_args();
 	hook_invoke_all('pre_footer', $page_header_args);
 
+	// TaintedInclude/UnresolvableInclude/UndefinedClass/MixedMethodCall here are the same
+	// confirmed-safe, unfixable-in-Psalm finding already investigated for the identical
+	// user_theme()-driven dynamic include pattern in frontaccounting.php and
+	// includes/page/header.inc (see doc/BUGS_FOUND.md's "Path traversal / arbitrary file
+	// write" section)
 	include_once($path_to_root."/themes/".user_theme()."/renderer.php");
 	$rend = new renderer();
 	$rend->menu_footer($no_menu, $is_index);

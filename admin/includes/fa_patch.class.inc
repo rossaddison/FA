@@ -71,7 +71,9 @@ class fa_patch {
 		Selectively extends access to selected security areas/sections.
 	*/
 	/**
-	 * @param array<array-key, array<array-key, mixed>> $sec_updates
+	 * @param array<array-key, array<array-key, string>> $sec_updates every real caller (the
+	 *   sql/alter*.php subclasses, outside Psalm's project scope) passes a hardcoded array of
+	 *   security-area constant-name strings
 	 * @return true
 	 */
 	function update_security_roles(array $sec_updates)
@@ -91,8 +93,8 @@ class fa_patch {
 					$sections = array();
 					foreach($add as $area)
 					{
-						$role['areas'][] = $security_areas[(string) $area][0];
-						$role['sections'][] = $security_areas[(string) $area][0]&~0xff;
+						$role['areas'][] = $security_areas[$area][0];
+						$role['sections'][] = $security_areas[$area][0]&~0xff;
 					}
 					sort($role['areas']);
 					update_security_role($role['id'], $role['role'], $role['description'],
@@ -116,6 +118,8 @@ class fa_patch {
 
 		$fixed = false;
 		foreach($mods as $key => $ins) {
+			// get_company_extensions() deliberately types each entry's values as mixed --
+			// extension metadata is author-supplied, already guarded with is_scalar() below
 			$ins_version = $ins['version'] ?? null;
 			foreach($exts as $ext)
 				if ($ext['name'] == $ins['name'] && (!check_src_ext_version(is_scalar($ins_version) ? $ins_version : null))) {
@@ -358,6 +362,10 @@ function get_installers(): array
 			if (!is_dir($patchdir . $fname) && ($fname != 'index.php')
 				&& stristr($fname, '.php') != false && $fname[0] != '.')
 			{
+				// UnresolvableInclude: this is the real discovery mechanism for every
+				// sql/alter*.php upgrade script -- $fname comes from readdir() on a fixed,
+				// admin-controlled directory, never user input, so genuinely not resolvable
+				// statically, not a security concern
 				/** @var fa_patch|null $install */
 				$install = null;
 				include_once($patchdir . $fname);
