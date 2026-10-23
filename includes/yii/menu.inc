@@ -51,10 +51,17 @@ function yiiMenuHeader(string $title, bool $noMenu, bool $isIndex): string
 		'links' => array(),
 	);
 	if (!$noMenu) {
-		/** @var front_accounting $app */
+		/**
+		 * @var front_accounting $app
+		 * @psalm-suppress PossiblyUndefinedArrayOffset menu rendering only runs post-login,
+		 *   by which point includes/session.inc/includes/page/header.inc have already set
+		 *   both $_SESSION['App'] and $_SESSION['sel_app'] -- Psalm can't see across that
+		 *   earlier-request-lifecycle boundary
+		 */
 		$app = $_SESSION['App'];
 		$user = session_obj('wa_current_user');
-		$selected = (string)$_SESSION['sel_app'];
+		/** @psalm-suppress PossiblyUndefinedArrayOffset see justification above */
+		$selected = $_SESSION['sel_app'];
 		$icon = 'fa-icon14'; // css/fa-inline.css
 		$tabs = array();
 		foreach ($app->applications as $application) {

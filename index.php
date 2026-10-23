@@ -19,7 +19,11 @@ declare(strict_types=1);
 	include_once("includes/session.inc");
 
 	add_access_extensions();
-	/** @var front_accounting $app */
+	/**
+	 * @var front_accounting $app
+	 * @psalm-suppress PossiblyUndefinedArrayOffset includes/session.inc, included just above,
+	 *   unconditionally sets $_SESSION['App'] -- Psalm can't see across that include boundary
+	 */
 	$app = $_SESSION["App"];
 	if (isset($_GET['application']))
 		$app->selected_application = $_GET['application'];

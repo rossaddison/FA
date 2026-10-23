@@ -31,6 +31,7 @@
         <var name="cur_error_level" type="int"/>
         <var name="_POST" type="array&lt;string, string|int|float|bool|null|array&lt;array-key, string|int|float|bool|null|array&lt;array-key, string|int|float|bool|null&gt;&gt;&gt;"/>
         <var name="selected_id" type="string|int|float|bool|array&lt;array-key, mixed&gt;|null"/>
+        <var name="help_context" type="string"/>
         <var name="Mode" type="string"/>
         <var name="page_nested" type="int"/>
         <var name="form_nested" type="int"/>
@@ -60,7 +61,7 @@
         <var name="tax_algorithms" type="array&lt;int, string&gt;"/>
         <var name="bank_owner_types" type="array&lt;int, string&gt;"/>
         <var name="supported_collations" type="array&lt;string, string&gt;"/>
-        <var name="_SESSION" type="array{wa_current_user?: current_user, Items?: Cart, supp_trans?: supp_trans, alloc?: allocation, language?: language, SysPrefs?: sys_prefs, transfer_items?: items_cart, issue_items?: items_cart, adj_items?: items_cart, pay_items?: items_cart, journal_items?: items_cart, View?: Cart, PO?: purch_order, Context?: array&lt;int, array{name: mixed, ctx: mixed, caller: string, ret: array&lt;array-key,mixed&gt;|string|int|float|bool|null}&gt;, ...&lt;string, mixed&gt;}"/>
+        <var name="_SESSION" type="array{wa_current_user?: current_user, Items?: Cart, supp_trans?: supp_trans, alloc?: allocation, language?: language, SysPrefs?: sys_prefs, transfer_items?: items_cart, issue_items?: items_cart, adj_items?: items_cart, pay_items?: items_cart, journal_items?: items_cart, View?: Cart, PO?: purch_order, App?: front_accounting, sel_app?: string, Context?: array&lt;int, array{name: mixed, ctx: mixed, caller: string, ret: array&lt;array-key,mixed&gt;|string|int|float|bool|null}&gt;, ...&lt;string, mixed&gt;}"/>
         <var name="db_connections" type="array&lt;int, array&lt;string, string&gt;&gt;"/>
         <var name="repo_auth" type="array{scheme?: string, login?: string, pass?: string, host?: string, path?: string, branch?: string}"/>
         <var name="hooks" type="array&lt;string, hooks&gt;|null"/>

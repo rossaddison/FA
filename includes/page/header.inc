@@ -21,20 +21,29 @@ function help_url(mixed $context=null): string
 	$country = session_obj('language')->code;
 	$clean = 0;
 	
+	/** @psalm-suppress RedundantCondition $help_context may legitimately never have been
+	 *   set by the current page script -- psalm.xml's stub only describes its type once set */
+	$has_help_context = isset($help_context);
 	if ($context!=null)
 	{
-		$help_page_url = $context;
+		$help_page_url = is_scalar($context) ? (string) $context : '';
 	}
-	elseif (isset($help_context))
+	elseif ($has_help_context)
 	{
 		$help_page_url = $help_context;
 	} else // main menu
 	{
-		$app = $_SESSION['sel_app'];
+		$app_id = $_SESSION['sel_app'] ?? '';
+		/**
+		 * @var front_accounting $fa
+		 * @psalm-suppress PossiblyUndefinedArrayOffset help_url() is only reachable from
+		 *   post-login menu rendering, by which point includes/session.inc has already set
+		 *   $_SESSION['App'] -- Psalm can't see across that earlier include boundary
+		 */
+		$fa = $_SESSION['App'];
 		// fall back to the default tab if the stored app id is stale (e.g. a removed/inactivated extension)
-		if (!isset($_SESSION['App']->applications[$app]))
-			$app = 'orders';
-		$help_page_url = $_SESSION['App']->applications[$app]->help_context;
+		$application = $fa->get_application($app_id) ?? $fa->get_application('orders');
+		$help_page_url = $application?->help_context ?? '';
 		$clean = 1;
 	}
 
@@ -45,7 +54,7 @@ function help_url(mixed $context=null): string
 		$help_page_url = access_string($help_page_url, true);
 
 	return html_specials_encode(
-		sysprefs()->help_base_url
+		(string) sysprefs()->help_base_url
 		.urlencode(strtr(ucwords($help_page_url), array(' '=>'', '/'=>'', '&'=>'And')))
 		.'&ctxhelp=1&lang='.$country);
 }
@@ -156,9 +165,11 @@ function page_header(string|int|float|bool|null $title, string|int|float|bool|nu
 	{
 		$no_menu = false;
 	}
+	/** @psalm-suppress RedundantCondition is_object() narrows $_SESSION['App'] away from the
+	 *   mixed branch its declared type picks up by being an unsealed array's optional key */
 	if (isset($_SESSION["App"]) && is_object($_SESSION["App"]) && isset($_SESSION["App"]->selected_application) &&
 		$_SESSION["App"]->selected_application != "")
-		$sel_app = $_SESSION["App"]->selected_application;
+		$sel_app = is_scalar($_SESSION["App"]->selected_application) ? (string) $_SESSION["App"]->selected_application : '';
 	elseif (isset($_SESSION["sel_app"]) && $_SESSION["sel_app"] != "")
 		$sel_app = $_SESSION["sel_app"];
 	else
@@ -167,11 +178,13 @@ function page_header(string|int|float|bool|null $title, string|int|float|bool|nu
 
 	// When startup tab for current user was set to already 
 	// removed/inactivated extension module select Sales tab as default.
+	/** @psalm-suppress RedundantCondition see justification above */
 	if (isset($_SESSION["App"]) && is_object($_SESSION["App"]))
-		$_SESSION["App"]->selected_application = 
+		$_SESSION["App"]->selected_application =
 			isset($_SESSION["App"]->applications[$sel_app]) ? $sel_app : 'orders';
 
 	$page_header_args = func_get_args();
+	/** @psalm-suppress RedundantCondition psalm.xml's non-nullable stub for $db_connections describes its value type once config.php has defined it, not whether it exists yet pre-installation -- this isset() guards that real gap */
 	if(isset($db_connections))	// skip before installation
 		hook_invoke_all('pre_header', $page_header_args);
 
@@ -189,8 +202,10 @@ function page_header(string|int|float|bool|null $title, string|int|float|bool|nu
 	{
 		echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n";
 		echo "<html dir='" . session_obj('language')->dir . "' >\n";
-		echo "<head profile=\"http://www.w3.org/2005/10/profile\"><title>$title</title>";
-		if (strpos($_SERVER['HTTP_USER_AGENT'], 'Trident/7.0; rv:11.0') != -1) // IE 11 doesn't work with input file type in form.
+		echo "<head profile=\"http://www.w3.org/2005/10/profile\"><title>" . html_encode($title) . "</title>";
+		// bug: this used to compare against -1 (strpos()'s "not found" is false, not -1), so the
+		// compat meta tag below was being echoed for every browser, not just the intended IE11 one
+		if (strpos($_SERVER['HTTP_USER_AGENT'] ?? '', 'Trident/7.0; rv:11.0') !== false) // IE 11 doesn't work with input file type in form.
 			echo "<meta http-equiv='X-UA-Compatible' content='IE=10'>\n";
 		echo "<meta http-equiv='Content-type' content='text/html; charset=$encoding'>";
 		echo "<link href='$path_to_root/themes/default/images/favicon.ico' rel='icon' type='image/x-icon'> \n";
@@ -206,7 +221,13 @@ function page_header(string|int|float|bool|null $title, string|int|float|bool|nu
 			echo "<body onload=\"$onload\">";
 	}
 
-	include_once($path_to_root . "/themes/$theme/renderer.php");
+	// TaintedInclude/UnresolvableInclude/UndefinedClass/MixedMethodCall here are the same
+	// confirmed-safe, unfixable-in-Psalm finding already investigated for the identical
+	// $path_to_root."/themes/".user_theme()."/renderer.php" pattern in frontaccounting.php
+	// (see doc/BUGS_FOUND.md's "Path traversal / arbitrary file write" section) -- user_theme()
+	// is sanitized through clean_file_name() before it's ever persisted, so this can't actually
+	// escape the themes/ directory regardless of what Psalm can see across the session round-trip.
+	include_once("$path_to_root/themes/$theme/renderer.php");
 	$rend = new renderer();
 	$rend->menu_header($title, $no_menu, $is_index);
 	error_box();

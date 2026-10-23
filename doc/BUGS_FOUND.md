@@ -519,6 +519,17 @@ their source.
   closed even though the primitives themselves stay deliberately
   unescaping.
 
+- **`includes/page/header.inc` — `page_header()`.** `<title>$title</title>`
+  interpolated the page title raw with no escaping. `$title` traces back to
+  `$_SESSION['page_title']` in several files, at least one of which builds
+  it by concatenating a raw `$_GET` value with no escaping
+  (`purchasing/po_entry_items.php`:
+  `_($help_context = "Modify Purchase Order #") . $_GET['ModifyOrderNumber']`)
+  — a crafted `ModifyOrderNumber` could break out of the `<title>` tag and
+  inject arbitrary markup, and `page_header()` runs on nearly every page in
+  the application. Same bug class as the other entries in this section.
+  Fixed with `html_encode()`.
+
 ## SQL injection
 
 Found by chasing Psalm's `TaintedSql` findings to their source. `db_escape()`
@@ -1033,6 +1044,18 @@ Found by chasing Psalm's `TaintedSSRF`/`TaintedFile` findings in
   `profile_id` selection) instead of the unrelated name field.
 
 ## Encoding / output bugs
+
+- **`includes/page/header.inc` — `page_header()`.** The IE11-compatibility
+  check compared `strpos()`'s result against `-1` instead of `false` --
+  `strpos($ua, $needle) != -1` is true for every possible result
+  (`strpos()` returns `false` or a 0-based position on a match, never
+  `-1`), so the `<meta http-equiv='X-UA-Compatible' content='IE=10'>` tag
+  was being echoed on every single page load for every browser, not just
+  the IE11 user agent the comment next to it says it's meant for. Found
+  while routing the same line's `$_SERVER['HTTP_USER_AGENT']` read through
+  a `PossiblyUndefinedArrayOffset`/`PossiblyNullArgument` Psalm fix and
+  noticing the comparison itself couldn't ever be false. Fixed to
+  `!== false`.
 
 - **`includes/ui/ui_lists.inc` — mojibake, two distinct causes.**
   (1) `nbsp()` needed `mb_convert_encoding()` to the session's actual
