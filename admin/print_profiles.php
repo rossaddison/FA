@@ -19,34 +19,37 @@ include(dirname(__DIR__) . "/includes/ui.inc");
 
 page(_($help_context = "Printing Profiles"));
 
-$selected_id = get_post('profile_id','');
+$profile_id = (string) (post_scalar('profile_id') ?? '');
 
 //-------------------------------------------------------------------------------------------------
 // Returns array of defined reports
 //
-function get_reports() {
+/** @return array<int|string, string> */
+function get_reports(): array {
 	global $path_to_root;
 
-	if (sysprefs()->go_debug || !isset($_SESSION['reports'])) {	
+	if (sysprefs()->go_debug || !isset($_SESSION['reports'])) {
 	// to save time, store in session.
 		$paths = array (
-			$path_to_root.'/reporting/',
+			"$path_to_root/reporting/",
 			company_path(). '/reporting/');
 		$reports = array( '' => _('Default printing destination'));
 
 		foreach($paths as $dirno => $path) {
 			$repdir = opendir($path);
+			if ($repdir === false) continue;
 			while(false !== ($fname = readdir($repdir)))
 			{
-				// reports have filenames in form rep(repid).php 
+				// reports have filenames in form rep(repid).php
 				// where repid must contain at least one digit (reports_main.php is not ;)
-				if (is_file($path.$fname) 
+				if (is_file($path.$fname)
 					&& preg_match('/rep(.*[0-9]+.*)[.]php/', $fname, $match))
 				{
 					$repno = $match[1];
 					$title = '';
 
 					$line = file_get_contents($path.$fname);
+					if ($line === false) continue;
 					if (preg_match('/.*(FrontReport\()\s*_\([\'"]([^\'"]*)/', $line, $match)) {
 						$title = trim($match[2]);
 					}
@@ -62,7 +65,9 @@ function get_reports() {
 		ksort($reports);
 		$_SESSION['reports'] = $reports;
 	}
-	return $_SESSION['reports'];
+	/** @var array<int|string, string> $reports */
+	$reports = $_SESSION['reports'];
+	return $reports;
 }
 
 function clear_form(): void 
@@ -87,27 +92,27 @@ if ( get_post('submit'))
 
 	$error = 0;
 
-	if ($_POST['profile_id'] == '' && empty($_POST['name']))
+	if ($_POST['profile_id'] == '' && (string) post_scalar('name') === '')
 	{
 		$error = 1;
 		display_error( _("Printing profile name cannot be empty."));
 		set_focus('name');
-	} 
+	}
 
 	if (!$error)
 	{
-		$prof = array('' => get_post('Prn')); // store default value/profile name
+		$prof = array('' => post_scalar('Prn')); // store default value/profile name
 		foreach (get_reports() as $rep => $descr) {
-			$val = get_post('Prn'.$rep);
+			$val = post_scalar('Prn'.$rep);
 			$prof[$rep] = $val;
 		}
 		if ($_POST['profile_id']=='')
 			$_POST['profile_id'] = get_post('name');
-		
+
 		update_printer_profile(post_scalar('profile_id'), $prof);
-		if ($selected_id == '') {
-			display_notification_centered(_('New printing profile has been created')); 
-			clear_form($selected_id);
+		if ($profile_id == '') {
+			display_notification_centered(_('New printing profile has been created'));
+			clear_form();
 		} else {
 			display_notification_centered(_('Printing profile has been updated'));
 		}
@@ -116,8 +121,8 @@ if ( get_post('submit'))
 
 if(get_post('delete'))
 {
- 	if (!check_delete(get_post('name'))) {
-		delete_printer_profile($selected_id);
+ 	if (!(bool) check_delete($profile_id)) {
+		delete_printer_profile($profile_id);
 		display_notification(_('Selected printing profile has been deleted'));
 		clear_form();
  	}
@@ -134,16 +139,17 @@ print_profiles_list_row(_('Select printing profile'). ':', 'profile_id', null,
 end_table();
 echo '<hr>';
 start_table();
-if (get_post('profile_id') == '')
+if ($profile_id == '')
 	text_row(_("Printing Profile Name").':', 'name', null, 30, 30);
 else
-	label_cells(_("Printing Profile Name").':', get_post('profile_id'));
+	label_cells(_("Printing Profile Name").':', $profile_id);
 end_table(1);
 
-$result = get_print_profile(get_post('profile_id'));
+$result = get_print_profile($profile_id);
 $prints = array();
 while ($myrow = db_fetch($result)) {
-	$prints[$myrow['report']] = $myrow['printer'];
+	if ($myrow['report'] !== null)
+		$prints[$myrow['report']] = $myrow['printer'];
 }
 
 start_table(TABLESTYLE);

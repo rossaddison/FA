@@ -1014,6 +1014,24 @@ Found by chasing Psalm's `TaintedSSRF`/`TaintedFile` findings in
   above. Fixed with the same `"0000-00-00"` fallback used throughout
   this file's already-correct functions.
 
+- **`admin/print_profiles.php` — the delete-profile handler.** The
+  "is this profile still in use?" safety check,
+  `check_delete(get_post('name'))`, checked the wrong field.
+  `'name'` is the free-text input only rendered when *creating* a new
+  profile (`profile_id == ''`); when deleting an *existing* profile
+  that input isn't even in the form, so `get_post('name')` always came
+  back `''`, and `check_delete()` returns `0` (short-circuits as
+  "safe") for an empty name. Net effect: the
+  `key_in_foreign_table($name, 'users', 'print_profile')` check never
+  actually ran for a real deletion — any print profile could be
+  deleted even while still assigned to a user via
+  `users.print_profile`, leaving that column dangling. Found while
+  typing the selected profile's id through to `delete_printer_profile()`
+  for an unrelated Psalm `MixedArgument` fix and noticing `check_delete()`
+  was called with a completely different field one line above it.
+  Fixed by checking the actual profile being deleted (the page's
+  `profile_id` selection) instead of the unrelated name field.
+
 ## Encoding / output bugs
 
 - **`includes/ui/ui_lists.inc` — mojibake, two distinct causes.**
