@@ -14,7 +14,7 @@ final class dimensions_app extends application
 {
 	function __construct()
 	{
-		$dim = get_company_pref('use_dimension');
+		$dim = (int) get_company_pref('use_dimension');
 		parent::__construct("proj", _($this->help_context = "&Dimensions"), $dim);
 
 		if ($dim > 0)
