@@ -287,7 +287,16 @@ function add_access_extensions(): void
 	global $security_areas, $security_sections, $installed_extensions;
 
 	foreach($installed_extensions as $extid => $ext) {
-		$accext = hook_invoke($ext['package'], 'install_access', $dummy);
+		/** @var string|int|float|bool|null $ext_package */
+		$ext_package = $ext['package'] ?? null;
+		$dummy = null;
+		/**
+		 * @var array{
+		 *     0: array<string, array{0: int, 1: string}>,
+		 *     1: array<int, string>
+		 * }|null $accext
+		 */
+		$accext = hook_invoke(is_scalar($ext_package) ? $ext_package : null, 'install_access', $dummy);
 		if ($accext == null) continue;
 
 		$scode = 100;
@@ -322,14 +331,16 @@ function add_access_extensions(): void
 
 function check_edit_access(string|int|float|bool|null $name): bool
 {
+	/** @var array<string, string|int|float|bool|null>|null $input_security */
 	global $input_security;
 
-	$access = @$input_security[$name];
+	$security = $input_security ?? array();
+	$access = $security[(string) $name] ?? null;
 
-	if (!$access)
-		$access = @$input_security['']; // default access level
+	if (!(bool) $access)
+		$access = $security[''] ?? null; // default access level
 
-	if (!$access)
+	if (!(bool) $access)
 		return true; // if constraint is not defined edit access is allowed
 
 	return  user_check_access($access);
@@ -337,21 +348,21 @@ function check_edit_access(string|int|float|bool|null $name): bool
 /*
 	Returns POST value or null if edit access to $name control is forbidden.
 */
-function access_post(string|int|float|bool|null $name, mixed $dflt=null)
+function access_post(string|int|float|bool|null $name, mixed $dflt=null): mixed
 {
 	if (!check_edit_access($name))
 		return $dflt;
 	else
-		return get_post($name, $dflt);
+		return get_post($name === null ? '' : (string) $name, $dflt);
 }
 
 /*
 	Returns numeric input value or null if edit access to $name control is forbidden.
 */
-function access_num(string|int|float|bool|null $name, mixed $dflt=null)
+function access_num(string|int|float|bool|null $name, mixed $dflt=null): mixed
 {
 	if (!check_edit_access($name))
 		return $dflt;
 	else
-		return input_num($name, $dflt);
+		return input_num($name === null ? null : (string) $name, $dflt);
 }
