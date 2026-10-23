@@ -138,6 +138,7 @@ function send_scripts(): void
 
     echo $js;
 }
+include_once(dirname(__DIR__, 2) . "/includes/ui/ui_lists.inc");
 include_once(dirname(__DIR__, 2) . "/includes/yii/layout.inc");
 
 function page_header(string|int|float|bool|null $title, string|int|float|bool|null $no_menu=false, string|int|float|bool|null $is_index=false, string|int|float|bool|null $onload="", string|int|float|bool|null $js="", string|int|float|bool|null $css=''): void
