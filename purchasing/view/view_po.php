@@ -56,7 +56,7 @@ $overdue_items = false;
 foreach ($purchase_order->line_items as $stock_item)
 {
 
-	$line_total = (float)$stock_item->quantity * (float)$stock_item->price;
+	$line_total = (float)$stock_item->quantity * $stock_item->price;
 
 	// if overdue and outstanding quantities, then highlight as so
 	if (((float)$stock_item->quantity - (float)$stock_item->qty_received > 0)	&&
@@ -89,6 +89,7 @@ $display_sub_tot = number_format2($total,user_price_dec());
 label_row(_("Sub Total"), $display_sub_tot,
 	"align=right colspan=6", "nowrap align=right",2);
 
+/** @var array<array-key, array{Net?: null|scalar, Value?: null|scalar, Override?: null|scalar, included_in_price?: null|scalar, purchasing_gl_code?: null|scalar, rate?: null|scalar, sales_gl_code?: null|scalar, tax_type_id?: array-key, tax_type_name?: null|scalar, ...<array-key, null|scalar>}> $taxes */
 $taxes = $purchase_order->get_taxes();
 $tax_total = display_edit_tax_items($taxes, 6, $purchase_order->tax_included,2);
 

@@ -75,14 +75,12 @@ final class user_prefs
 	{
 		if ($user == null) {
 			// set default values, used before login
-			global $dflt_lang;
-
 			$this->date_sep = sysprefs()->dflt_date_sep;
 			$this->date_format = sysprefs()->dflt_date_fmt;
 			$this->tho_sep = 0;
 			$this->dec_sep = 0;
 			$this->price_dec = 2;
-			$this->language = $dflt_lang;
+			$this->language = (string) $GLOBALS['dflt_lang'];
 			$this->theme = 'default';
 			$this->transaction_days = -30;
 			$this->save_report_selections = 0;
@@ -92,7 +90,6 @@ final class user_prefs
 			$this->startup_tab = "orders";
 
 		} else {
-			global $path_to_root;
 			$this->language = (string) $user["language"];
 			session_obj('language')->set_language($this->language);
 
@@ -130,7 +127,7 @@ final class user_prefs
 			$this->def_print_destination = @$user['def_print_destination'];
 			$this->def_print_orientation = @$user['def_print_orientation'];
 
-			if (!file_exists("$path_to_root/themes/$this->theme"))
+			if (!file_exists((string) $GLOBALS['path_to_root']."/themes/$this->theme"))
 				$this->theme = "default";
 		}
 	}

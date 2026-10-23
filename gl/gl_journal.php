@@ -493,17 +493,15 @@ if (tab_closed('tabs', 'gl'))
 }
  elseif (tab_closed('tabs', 'tax'))
 {
-	$cart = &$_SESSION['journal_items'];
-	/** @var items_cart $cart */
-	$cart = $cart;
-	$cart->tax_info['tax_date'] = is_array($_POST['tax_date']) ? '' : (string) $_POST['tax_date'];
-	//$cart->tax_info['tax_group'] = $_POST['tax_group'];
+	$tax_cart = session_obj('journal_items');
+	$tax_cart->tax_info['tax_date'] = is_array($_POST['tax_date']) ? '' : (string) $_POST['tax_date'];
+	//$tax_cart->tax_info['tax_group'] = $_POST['tax_group'];
 	$taxes = get_all_tax_types();
 	while ($tax = db_fetch($taxes))
 	{
 		$tax_id = (string) $tax['id'];
-		$cart->tax_info['net_amount'][$tax_id] = (float) input_num('net_amount_'.$tax_id);
-		$cart->tax_info['rate'][$tax_id] = (float) $tax['rate'];
+		$tax_cart->tax_info['net_amount'][$tax_id] = (float) input_num('net_amount_'.$tax_id);
+		$tax_cart->tax_info['rate'][$tax_id] = (float) $tax['rate'];
 	}
 }
 if (tab_opened('tabs', 'gl'))
@@ -528,9 +526,7 @@ if (isset($_POST['UpdateItem']))
 if (isset($_POST['CancelItemChanges']))
 	line_start_focus_journal();
 
-$journal_items = &$_SESSION['journal_items'];
-/** @var items_cart $journal_items */
-$journal_items = $journal_items;
+$journal_items = session_obj('journal_items');
 
 if (isset($_POST['go']))
 {

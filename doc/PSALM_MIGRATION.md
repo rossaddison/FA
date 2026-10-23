@@ -66,7 +66,10 @@ are declared more than once across `reporting/` and `gl/` (`getTransactions` up
 to 19 times, `display_type` 8 times, `getPeriods`, `get_open_balance`,
 `get_bank_balance_to`, `get_bank_transactions`, `get_supp_inv_reference`,
 `getTaxTransactions`, `fetch_items`, `trans_qty`, `get_domestic_price`,
-`print_gl_rows`, `add_to_order`, and others) — also `check_data()` and
+`print_gl_rows`, `add_to_order`, `trans_view` (6 declarations, 2 with an
+explicit `?string` return type and 4 without, producing
+`LessSpecificReturnStatement` on whichever lack one, depending on which
+declaration Psalm picks as canonical), and others) — also `check_data()` and
 `handle_delete()`, declared with 0 params in most `admin/manage/*.php`-style
 CRUD pages but with a real `int $id` param in `admin/create_coy.php` (and
 `check_data()` with `string|int|float|bool|array|null $selected_id` in

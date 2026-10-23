@@ -141,9 +141,10 @@ final class contacts extends simple_crud {
 	function db_insert() {
 			/** @var array{contacts?: array<array-key, mixed>, ...<array-key, null|string>} $dat */
 			$dat = is_array($this->data) ? $this->data : array();
+			$contacts = $dat['contacts'] ?? null;
 			return add_crm_person($dat['ref'] ?? null, $dat['name'] ?? null, $dat['name2'] ?? null, $dat['address'] ?? null,
 				$dat['phone'] ?? null, $dat['phone2'] ?? null, $dat['fax'] ?? null, $dat['email'] ?? null, $dat['lang'] ?? null,
-				$dat['notes'] ?? null, $dat['contacts'] ?? array(), $this->entity);
+				$dat['notes'] ?? null, is_array($contacts) ? $contacts : array(), $this->entity);
 	}
 
 	/** @return string|int|float|bool|null */

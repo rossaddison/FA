@@ -208,6 +208,9 @@ final class attachments extends simple_crud {
 	function db_insert() {
 		/** @var array<array-key, mixed>|false $dat */
 		$dat = $this->data;
+		/** @var string|int|float|bool|null $type_no_raw */
+		$type_no_raw = is_array($dat) ? ($dat['type_no'] ?? null) : null;
+		$type_no = is_scalar($type_no_raw) ? $type_no_raw : null;
 
 		if (isset($_FILES['file_attachment_name']) && $_FILES['file_attachment_name']['name'] <> '') {
 
@@ -237,7 +240,7 @@ final class attachments extends simple_crud {
 				$tran_date = post_scalar('tran_date');
 				$sql = "INSERT INTO ".TB_PREF."attachments (trans_no, type_no, `description`, `filename`, unique_name, tran_date, `filesize`, `filetype`) VALUES ("
 					   . db_escape($this->entity) . ","
-					   . db_escape(is_array($dat) && is_scalar($dat['type_no'] ?? null) ? $dat['type_no'] : null) . ","
+					   . db_escape($type_no) . ","
 					   . db_escape(post_scalar('description')) . ","
 					   . db_escape($actual_file_nam) . ","
 					   . db_escape($attachment_file_name) . ","
@@ -256,6 +259,9 @@ final class attachments extends simple_crud {
 	function db_update() {
 		/** @var array<array-key, mixed>|false $dat */
 		$dat = $this->data;
+		/** @var string|int|float|bool|null $type_no_raw */
+		$type_no_raw = is_array($dat) ? ($dat['type_no'] ?? null) : null;
+		$type_no = is_scalar($type_no_raw) ? $type_no_raw : null;
 
 		$upload_file = "";
 		$actual_file_nam = null;
@@ -295,7 +301,7 @@ final class attachments extends simple_crud {
 			$tran_date = post_scalar('tran_date');
 			$sql = "UPDATE ".TB_PREF."attachments SET "
 					. "trans_no = " . db_escape($this->entity) . ","
-					. "type_no = " . db_escape(is_array($dat) && is_scalar($dat['type_no'] ?? null) ? $dat['type_no'] : null) . ","
+					. "type_no = " . db_escape($type_no) . ","
 					. "`description` = " . db_escape(post_scalar('description')) . ","
 					. "tran_date = " . db_escape(date2sql($tran_date === null ? null : (string) $tran_date));
 			if ($upload_file == 'Yes')
