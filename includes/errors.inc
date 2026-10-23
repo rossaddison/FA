@@ -49,6 +49,8 @@ function get_backtrace(bool $html = false, ?int $skip=0): string
 		if(isset($tr['args'])) {
 			/** @var array<array-key, string> $args */
 			$args = array();
+			// $a is genuinely mixed: debug_backtrace()'s own 'args' entries are whatever the
+			// real call site passed, of any type -- not narrowable without misrepresenting that
 			foreach($tr['args'] as $n=>$a) {
 				if (is_object($a))
 					$args[$n] = "(".get_class($a)." Object)";
@@ -86,7 +88,10 @@ function error_handler(int $errno, string $errstr, string $file = '', int $line 
 		}
 	}
 
-	$bt = isset($SysPrefs) && $SysPrefs->go_debug>1 ? get_backtrace(true, 1) : array();
+	// checked via $GLOBALS rather than isset($SysPrefs) so this doesn't depend on
+	// psalm.xml's non-nullable stub for the global, which only describes its value once
+	// it's been set, not whether it exists yet (error_handler() can fire very early)
+	$bt = array_key_exists('SysPrefs', $GLOBALS) && $SysPrefs->go_debug>1 ? get_backtrace(true, 1) : array();
 
 	// error_reporting!=cur_error_level when messages are set off with @ 
 	if ($cur_error_level == error_reporting()) {
@@ -97,7 +102,7 @@ function error_handler(int $errno, string $errstr, string $file = '', int $line 
 		}
 		else if ($errno&~E_NOTICE && $errstr != '') { // log all not displayed messages 
 			$user = @session_obj('wa_current_user')->loginname;
-			$context = isset($SysPrefs) && !$SysPrefs->db_ok ? '[before upgrade]' : '';
+			$context = array_key_exists('SysPrefs', $GLOBALS) && !$SysPrefs->db_ok ? '[before upgrade]' : '';
 			error_log((string) user_company() . ":$user:". basename($file) .":$line:$context $errstr");
 		}
 	}
@@ -185,7 +190,9 @@ function error_box(): void {
 function end_flush(): void {
 	global $Ajax;
 
-	if (isset($Ajax))
+	// checked via $GLOBALS rather than isset($Ajax) so this doesn't depend on psalm.xml's
+	// non-nullable stub for the global, which only describes its value once it's been set
+	if (array_key_exists('Ajax', $GLOBALS))
 		$Ajax->run();
 
  	 // on some (but not all) php versions zlib extension adds 1 additional level of buffering, 
@@ -198,6 +205,11 @@ function end_flush(): void {
 	cancel_transaction();
 }
 
+/**
+ * @param array<array-key, string|int|float|bool|null>|string|null $sql_statement every real
+ *   caller passes a plain SQL string; the array form exists for a multi-statement caller to
+ *   pass each one as a scalar fragment
+ */
 function display_db_error(string|int|float|bool|null $msg, string|array|null $sql_statement=null, bool $exit=true): void
 {
 	global $db, $SysPrefs, $db_connections;
@@ -249,6 +261,7 @@ function frindly_db_error(?int $db_error): bool
 	return false;
 }
 
+/** @param array<array-key, string|int|float|bool|null>|string|null $sql_statement */
 function check_db_error(string|int|float|bool|null $msg, string|array|null $sql_statement, bool $exit_if_error=true, bool $rollback_if_error=true): int
 {
 	global $db, $SysPrefs;

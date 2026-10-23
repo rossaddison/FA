@@ -11,7 +11,10 @@ declare(strict_types=1);
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
 
-/** @return false|float|int */
+/**
+ * @param list<array{date: string, value: float}>|null $gl_rows
+ * @return false|float|int
+ */
 function process_fixed_asset_depreciation(string|null $stock_id, ?array $gl_rows, string|array|null $refline, string|array|null $memo_)
 {
 
@@ -33,10 +36,8 @@ function process_fixed_asset_depreciation(string|null $stock_id, ?array $gl_rows
 
   $value_of_change = 0.0;
   foreach ($gl_rows ?? [] as $row) {
-    $raw_value = $row['value'] ?? null;
-    $row_value = is_scalar($raw_value) ? $raw_value : 0;
-    $raw_date = $row['date'] ?? null;
-    $row_date = is_scalar($raw_date) ? $raw_date : null;
+    $row_value = $row['value'];
+    $row_date = $row['date'];
     $value_of_change += round2($row_value, user_price_dec());
 
     $cart->add_gl_item($stock_gl_code["adjustment_account"],

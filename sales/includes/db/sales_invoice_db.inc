@@ -129,7 +129,7 @@ function write_sales_invoice(&$invoice)
 
 		write_customer_trans_detail_item(ST_SALESINVOICE, $invoice_no, $invoice_line->stock_id,
 			$invoice_line->item_description, $invoice_line->qty_dispatched,
-			$invoice_line->line_price(), $qty ? $line_tax/(float)$qty : 0, $invoice_line->discount_percent,
+			$invoice_line->line_price(), (bool) $qty ? $line_tax/(float)$qty : 0, $invoice_line->discount_percent,
 			$invoice_line->standard_cost, $invoice_line->src_id,
 			(bool)$trans_no ? $invoice_line->id : 0);
 
@@ -208,7 +208,7 @@ function write_sales_invoice(&$invoice)
 	if ($trans_no == 0) {
 		refs()->save(ST_SALESINVOICE, $invoice_no, $invoice->reference, null);
 		$pos = $invoice->pos;
-		if ($invoice->payment_terms['cash_sale'] && $pos && $pos['pos_account']) {
+		if ((bool) $invoice->payment_terms['cash_sale'] && (bool) $pos && (bool) $pos['pos_account']) {
 			$amount = (float)$items_total + (float)$items_added_tax + (float)$invoice->freight_cost
 				+ (float)$freight_added_tax;
 			if ($amount != 0) {
@@ -332,7 +332,7 @@ function prepaid_invoice_remainder(mixed $order): int|string
 			." AND so.payment_terms=pt.terms_indicator";
 			
 	$result = row_or_empty(db_fetch(db_select($sql, "cannot find final invoice value")));
-	return $result[0] ? $result[0] : 0;
+	return (bool) $result[0] ? $result[0] : 0;
 }
 
 

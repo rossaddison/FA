@@ -178,6 +178,8 @@ class user_view {
 
 			$fld = isset($fmt['fld']) ? $fmt['fld'] : $name;
 
+			// $value is genuinely mixed: this generic CRUD base displays whatever field
+			// shape each concrete subclass's $this->data/$this->fields happen to hold
 			$value = (is_array($this->data) && isset($this->data[$fld])) ? $this->data[$fld] : ($fmt['dflt'] ?? null);
 
 			if (isset($value)) {

@@ -68,7 +68,10 @@ function months_between_dates(string|int|float|bool|null $start, string|int|floa
   return 12.0 * ((float)($y2 - $y1)) + (float) $m2 - (float) $m1;
 }
 
-/** @param array<array-key, mixed> $item */
+/**
+ * @param array<array-key, mixed> $item
+ * @return list<array{date: string, value: float}>
+ */
 function compute_gl_rows_for_depreciation(array $item, string|array|null $no_months, string|int|float|bool|null $period): array {
   $rows = array();
 
