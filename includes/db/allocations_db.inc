@@ -46,7 +46,9 @@ function get_payments_for(string|int|float|bool|null $trans_no, string|int|float
 //
 function allocate_payment(string|int|float|bool|null $type_from, string|int|float|bool|null $no_from, string|int|float|bool|null $type_to, string|int|float|bool|null $no_to, string|int|float|bool|null $person_id, string|int|float|bool|null $amount, string|int|float|bool|null $date): void
 {
-	$date = date2sql($date); // FIXME types
+	$date = date2sql(is_scalar($date) ? (string) $date : null);
+	if ($date == "")
+		$date = "0000-00-00";
 	if (in_array($type_to, array(ST_SALESORDER, ST_CUSTCREDIT, ST_CUSTDELIVERY, ST_SALESINVOICE)))
 		$allocations = 'cust_allocations';
 	else
@@ -83,10 +85,11 @@ function reallocate_payments(string|int|float|bool|null $trans_no, ?int $trans_t
 
 	foreach($allocs as $alloc)
 	{
-		$amount = min($alloc['amt'], $max_alloc);
+		/** @var array<string, string|null> $alloc */
+		$amount = min((float) $alloc['amt'], (float) $max_alloc);
 		$remainder = (float)$alloc['amt'] - $amount;
 
-		$max_alloc = floatcmp($max_alloc, $amount) > 0 ? $max_alloc-$amount : 0;
+		$max_alloc = floatcmp($max_alloc, $amount) > 0 ? (float) $max_alloc - $amount : 0;
 
 		$same_to =  $trans_type == $alloc['trans_type_to'] && $trans_no == $alloc['trans_no_to'];
 
