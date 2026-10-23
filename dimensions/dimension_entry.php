@@ -31,19 +31,23 @@ page(_($help_context = "Dimension Entry"), false, false, "", $js);
 
 if (isset($_GET['trans_no']))
 {
-	$selected_id = $_GET['trans_no'];
-} 
+	$selected_id = is_scalar($_GET['trans_no']) ? (int) $_GET['trans_no'] : -1;
+}
 elseif(isset($_POST['selected_id']))
 {
-	$selected_id = $_POST['selected_id'];
+	$selected_id = (int) post_scalar('selected_id');
 }
 else
 	$selected_id = -1;
+// $selected_id is the shared psalm.xml global; narrowing it under its own name doesn't
+// stick for Psalm's cross-call-site analysis, so the rest of this script reads it through
+// this differently-named local instead (can_process() still reads the global directly)
+$dim_id = $selected_id;
 //---------------------------------------------------------------------------------------
 
-if (isset($_GET['AddedID'])) 
+if (isset($_GET['AddedID']))
 {
-	$id = $_GET['AddedID'];
+	$id = is_scalar($_GET['AddedID']) ? $_GET['AddedID'] : '';
 
 	display_notification_centered(_("The dimension has been entered."));
 
@@ -52,9 +56,9 @@ if (isset($_GET['AddedID']))
 
 //---------------------------------------------------------------------------------------
 
-if (isset($_GET['UpdatedID'])) 
+if (isset($_GET['UpdatedID']))
 {
-	$id = $_GET['UpdatedID'];
+	$id = is_scalar($_GET['UpdatedID']) ? $_GET['UpdatedID'] : '';
 
 	display_notification_centered(_("The dimension has been updated."));
 	safe_exit();
@@ -62,9 +66,9 @@ if (isset($_GET['UpdatedID']))
 
 //---------------------------------------------------------------------------------------
 
-if (isset($_GET['DeletedID'])) 
+if (isset($_GET['DeletedID']))
 {
-	$id = $_GET['DeletedID'];
+	$id = is_scalar($_GET['DeletedID']) ? $_GET['DeletedID'] : '';
 
 	display_notification_centered(_("The dimension has been deleted."));
 	safe_exit();
@@ -72,9 +76,9 @@ if (isset($_GET['DeletedID']))
 
 //---------------------------------------------------------------------------------------
 
-if (isset($_GET['ClosedID'])) 
+if (isset($_GET['ClosedID']))
 {
-	$id = $_GET['ClosedID'];
+	$id = is_scalar($_GET['ClosedID']) ? $_GET['ClosedID'] : '';
 
 	display_notification_centered(_("The dimension has been closed. There can be no more changes to it.") . " #$id");
 	safe_exit();
@@ -82,9 +86,9 @@ if (isset($_GET['ClosedID']))
 
 //---------------------------------------------------------------------------------------
 
-if (isset($_GET['ReopenedID'])) 
+if (isset($_GET['ReopenedID']))
 {
-	$id = $_GET['ReopenedID'];
+	$id = is_scalar($_GET['ReopenedID']) ? $_GET['ReopenedID'] : '';
 
 	display_notification_centered(_("The dimension has been re-opened. ") . " #$id");
 	safe_exit();
@@ -97,8 +101,8 @@ function safe_exit(): void
 	global $path_to_root, $id;
 
 	hyperlink_no_params("", _("Enter a &new dimension"));
-	hyperlink_no_params($path_to_root . "/dimensions/inquiry/search_dimensions.php", _("&Select an existing dimension"));
-    hyperlink_no_params($path_to_root . "/admin/attachments.php?filterType=40&trans_no=$id", _("&Add Attachment"));
+	hyperlink_no_params("$path_to_root/dimensions/inquiry/search_dimensions.php", _("&Select an existing dimension"));
+    hyperlink_no_params("$path_to_root/admin/attachments.php?filterType=40&trans_no=$id", _("&Add Attachment"));
 
 	display_footer_exit();
 }
@@ -119,21 +123,21 @@ function can_process(): bool
     	}
 	}
 
-	if (strlen($_POST['name']) == 0) 
+	if (strlen((string) post_scalar('name')) == 0)
 	{
 		display_error( _("The dimension name must be entered."));
 		set_focus('name');
 		return false;
 	}
 
-	if (!is_date(post_scalar('date_')))
+	if (!is_date((string) post_scalar('date_')))
 	{
 		display_error( _("The date entered is in an invalid format."));
 		set_focus('date_');
 		return false;
 	}
 
-	if (!is_date(post_scalar('due_date')))
+	if (!is_date((string) post_scalar('due_date')))
 	{
 		display_error( _("The required by date entered is in an invalid format."));
 		set_focus('due_date');
@@ -145,72 +149,72 @@ function can_process(): bool
 
 //-------------------------------------------------------------------------------------
 
-if (isset($_POST['ADD_ITEM']) || isset($_POST['UPDATE_ITEM'])) 
+if (isset($_POST['ADD_ITEM']) || isset($_POST['UPDATE_ITEM']))
 {
-	if (!isset($_POST['dimension_tags']))
-		$_POST['dimension_tags'] = array();
-		
-	if (can_process()) 
+	/** @var array<array-key, string|int|float|bool|null> $dimension_tags */
+	$dimension_tags = is_array($_POST['dimension_tags'] ?? null) ? $_POST['dimension_tags'] : array();
+
+	if (can_process())
 	{
 
-		if ($selected_id == -1) 
+		if ($dim_id == -1)
 		{
 			$id = add_dimension(post_scalar('ref'), post_scalar('name'), post_scalar('type_'), post_scalar('date_'), post_scalar('due_date'), post_scalar('memo_'));
-			add_tag_associations($id, $_POST['dimension_tags']);
-			meta_forward($_SERVER['PHP_SELF'], "AddedID=$id");
-		} 
-		else 
+			add_tag_associations($id, $dimension_tags);
+			meta_forward($_SERVER['PHP_SELF'] ?? '', "AddedID=$id");
+		}
+		else
 		{
 
-			update_dimension($selected_id, post_scalar('name'), post_scalar('type_'), post_scalar('date_'), post_scalar('due_date'), post_scalar('memo_'));
-			update_tag_associations(TAG_DIMENSION, $selected_id, $_POST['dimension_tags']);
+			update_dimension($dim_id, post_scalar('name'), post_scalar('type_'), post_scalar('date_'), post_scalar('due_date'), post_scalar('memo_'));
+			update_tag_associations(TAG_DIMENSION, $dim_id, $dimension_tags);
 
-			meta_forward($_SERVER['PHP_SELF'], "UpdatedID=$selected_id");
+			meta_forward($_SERVER['PHP_SELF'] ?? '', "UpdatedID=$dim_id");
 		}
 	}
 }
 
 //--------------------------------------------------------------------------------------
 
-if (isset($_POST['delete'])) 
+if (isset($_POST['delete']))
 {
 
 	$cancel_delete = false;
 
 	// can't delete it there are productions or issues
-	if (dimension_has_payments($selected_id) || dimension_has_deposits($selected_id))
+	if (dimension_has_payments($dim_id) || dimension_has_deposits($dim_id))
 	{
 		display_error(_("This dimension cannot be deleted because it has already been processed."));
 		set_focus('ref');
 		$cancel_delete = true;
 	}
 
-	if ($cancel_delete == false) 
+	if ($cancel_delete == false)
 	{ //ie not cancelled the delete as a result of above tests
 
 		// delete
-		delete_dimension($selected_id);
-		delete_tag_associations(TAG_DIMENSION,$selected_id, true);
-		meta_forward($_SERVER['PHP_SELF'], "DeletedID=$selected_id");
+		delete_dimension($dim_id);
+		delete_tag_associations(TAG_DIMENSION,$dim_id, true);
+		meta_forward($_SERVER['PHP_SELF'] ?? '', "DeletedID=$dim_id");
 	}
 }
 
 //-------------------------------------------------------------------------------------
 
-if (isset($_POST['close'])) 
+if (isset($_POST['close']))
 {
 
 	// update the closed flag
-	close_dimension($selected_id);
-	meta_forward($_SERVER['PHP_SELF'], "ClosedID=$selected_id");
+	close_dimension($dim_id);
+	meta_forward($_SERVER['PHP_SELF'] ?? '', "ClosedID=$dim_id");
 }
 
-if (isset($_POST['reopen'])) 
+if (isset($_POST['reopen']))
 {
 
 	// update the closed flag
-	reopen_dimension($selected_id);
-	meta_forward($_SERVER['PHP_SELF'], "ReopenedID=$selected_id");
+	reopen_dimension($dim_id);
+	meta_forward($_SERVER['PHP_SELF'] ?? '', "ReopenedID=$dim_id");
 }
 //-------------------------------------------------------------------------------------
 
@@ -218,9 +222,9 @@ start_form();
 
 start_table(TABLESTYLE2);
 
-if ($selected_id != -1)
+if ($dim_id != -1)
 {
-	$myrow = get_dimension($selected_id, true);
+	$myrow = get_dimension($dim_id, true);
 
 	if ($myrow === false) 
 	{
@@ -241,19 +245,19 @@ if ($selected_id != -1)
 	$_POST['type_'] = $myrow["type_"];
 	$_POST['date_'] = sql2date($myrow["date_"]);
 	$_POST['due_date'] = sql2date($myrow["due_date"]);
-	$_POST['memo_'] = get_comments_string(ST_DIMENSION, $selected_id);
-	
- 	$tags_result = get_tags_associated_with_record(TAG_DIMENSION, $selected_id);
+	$_POST['memo_'] = get_comments_string(ST_DIMENSION, $dim_id);
+
+ 	$tags_result = get_tags_associated_with_record(TAG_DIMENSION, $dim_id);
  	$tagids = array();
- 	while ($tag = db_fetch($tags_result)) 
+ 	while ($tag = db_fetch($tags_result))
  	 	$tagids[] = $tag['id'];
- 	$_POST['dimension_tags'] = $tagids;	
+ 	$_POST['dimension_tags'] = $tagids;
 
 	hidden('ref', post_scalar('ref'));
 
 	label_row(_("Dimension Reference:"), post_scalar('ref'));
 
-	hidden('selected_id', $selected_id);
+	hidden('selected_id', $dim_id);
 } 
 else 
 {
@@ -280,11 +284,11 @@ end_table(1);
 if (isset($_POST['closed']) && $_POST['closed'] == 1)
 	display_note(_("This Dimension is closed."), 0, 0, "class='currentfg'");
 
-if ($selected_id != -1) 
+if ($dim_id != -1)
 {
 	echo "<br>";
 	submit_center_first('UPDATE_ITEM', _("Update"), _('Save changes to dimension'), 'default');
-	if ($_POST['closed'] == 1)
+	if (($_POST['closed'] ?? 0) == 1)
 		submit('reopen', _("Re-open This Dimension"), true, _('Mark this dimension as re-opened'), true);
 	else	
 		submit('close', _("Close This Dimension"), true, _('Mark this dimension as closed'), true);
