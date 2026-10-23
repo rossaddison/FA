@@ -678,6 +678,36 @@ to their source.
   PSALM_UPSTREAM_LIMITATIONS.md. Left as a plain comment pointing back to
   this entry instead; the finding itself remains in the Psalm count.
 
+## Server-side request forgery (SSRF) / unsanitized outbound requests
+
+Found by chasing Psalm's `TaintedSSRF`/`TaintedFile` findings in
+`gl/includes/db/gl_db_rates.inc` to their source.
+
+- **`get_extern_rate()`.** Its YAHOO/GOOGLE/BLOOMBERG/EXCHANGE-RATES.ORG
+  branches splice `$curr_b` (and the company's default currency,
+  `$curr_a`) straight into an outbound request URL/path with no
+  validation, then hand it to `file_get_contents()`/`curl`. `$curr_b`
+  traces back to `gl/manage/exchange_rates.php`'s
+  `retrieve_exrate(post_scalar('curr_abrev'), ...)` - `curr_abrev` is
+  read raw from `$_POST` with no check against the real currency list
+  before reaching this code, even though `0_currencies.curr_abrev` is a
+  `char(3)` column (letters only). An authenticated user with
+  `SA_EXCHANGERATE` access could inject arbitrary path/query segments
+  into the request sent to `download.finance.yahoo.com`,
+  `www.google.com`, `www.bloomberg.com` or `exchange-rates.org`. Fixed
+  by adding `sanitize_currency_code()`
+  (`@psalm-taint-escape ssrf`/`@psalm-taint-escape file`-annotated,
+  matching the existing `clean_file_name()` pattern documented above
+  under "Path traversal / arbitrary file write"), which strips anything
+  but letters before `curr_b`/`curr_a` are used to build any of these
+  URLs - the single choke point for every provider branch, rather than
+  patching each one individually. (First attempt quoted the tag as
+  `@psalm-taint-escape 'ssrf'`; Psalm's own parser takes the tag's
+  argument verbatim with no quote-stripping, so the quoted form
+  silently failed to match the `ssrf`/`file` taint-kind names until
+  the quotes came off - not an upstream bug, just the tag's actual,
+  unquoted syntax.)
+
 ## Broken access control
 
 - **`includes/dashboard.inc` — `dashboard()`.** The per-app dashboard access

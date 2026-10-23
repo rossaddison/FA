@@ -138,6 +138,7 @@ function retrieve_exrate(string|int|float|bool|null $curr_b, string|int|float|bo
 	$xchg_rate_provider = ((isset(sysprefs()->xr_providers) && isset(sysprefs()->dflt_xr_provider)) 
 		? sysprefs()->xr_providers[sysprefs()->dflt_xr_provider] : 'ECB');
 
+	/** @psalm-suppress MixedAssignment hook_retrieve_exrate()'s whole point is to return an arbitrary hook's result */
 	$rate = hook_retrieve_exrate($curr_b, $date);
 	if (is_numeric($rate))
 		return $rate;
@@ -145,18 +146,23 @@ function retrieve_exrate(string|int|float|bool|null $curr_b, string|int|float|bo
 }
 //-----------------------------------------------------------------------------
 
-function get_extern_rate(string|int|float|bool|null $curr_b, mixed $provider, string|int|float|bool|null $date): float|int|string 
+function get_extern_rate(string|int|float|bool|null $curr_b, mixed $provider, string|int|float|bool|null $date): float|int|string
 {
 	global	$path_to_root;
 
 	if ($date != Today())	// no historical rates available
 		return 0;
 
+	// curr_a/curr_b are spliced straight into the outbound request URL/path below for
+	// several providers, and $curr_b can originate from unvalidated user input
+	// (gl/manage/exchange_rates.php's curr_abrev POST field) -- 0_currencies.curr_abrev
+	// is a char(3) column, so strip anything that isn't a letter before building any URL.
+	$curr_b = sanitize_currency_code($curr_b);
 	$contents = '';
 	$proto = 'http://';
 	$filename = '';
 	$site = '';
-	$curr_a = get_company_pref('curr_default');
+	$curr_a = sanitize_currency_code(get_company_pref('curr_default'));
 	if ($provider == 'ECB')
     {
         $filename = "/stats/eurofxref/eurofxref-daily.xml";
@@ -216,7 +222,7 @@ function get_extern_rate(string|int|float|bool|null $curr_b, mixed $provider, st
 				// due to resolver bug in some curl versions (e.g. 7.15.5) 
 				// try again for constant IP.
 				if (isset($site_ip))
-		   			$site=$site_ip;
+		   			$site = (string) $site_ip;
 	   		} while( ($contents == '') && $retry--);
 		} else {
 			$contents = url_get_contents($proto.$site.$filename);
@@ -249,7 +255,7 @@ function get_extern_rate(string|int|float|bool|null $curr_b, mixed $provider, st
 		$array = explode(',',$contents); // New operations for YAHOO. Safer.
 		$val = (float) ($array[1] ?? 0);
 		if ($val != 0.0)
-			$val = 1 / $val;
+			$val = 1.0 / $val;
 	}
 	elseif ($provider == 'GOOGLE')
 	{
@@ -281,8 +287,21 @@ function get_sql_for_exchange_rates(string|null $curr): string
 	return $sql;	 
 }
 
+/**
+ * Currency codes (0_currencies.curr_abrev) are always char(3) letters-only;
+ * several get_extern_rate() providers splice the code straight into an
+ * outbound request URL, so this strips anything else before that happens.
+ * @psalm-pure
+ * @psalm-taint-escape ssrf
+ * @psalm-taint-escape file
+ */
+function sanitize_currency_code(string|int|float|bool|null $code): string
+{
+	return preg_replace('/[^A-Za-z]/', '', (string) $code) ?? '';
+}
+
 /** @psalm-pure */
-function getInnerStr(string|bool|null $str, ?string $start, string|int|float|bool|null $end): string 
+function getInnerStr(string|bool|null $str, ?string $start, string|int|float|bool|null $end): string
 {
 	// $start must be the first occurrence
 	// $start must not be part of $end
