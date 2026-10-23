@@ -116,7 +116,10 @@ final class items_cart
 		return false;
 	}
 
-	/** @return line_item|null */
+	/**
+	 * @psalm-mutation-free
+	 * @return line_item|null
+	 */
 	function find_cart_item(string|int|float|bool|null $stock_id)
 	{
 		foreach($this->line_items as $line_no=>$line) {
@@ -164,7 +167,7 @@ final class items_cart
 
 		$low_stock = array();
 
-    	if (!sysprefs()->allow_negative_stock())
+    	if (!(bool) sysprefs()->allow_negative_stock())
     	{
 			foreach ($this->line_items as $line_no => $line_item)
 				if (has_stock_holding($line_item->mb_flag) || is_fixed_asset($line_item->mb_flag))
@@ -176,7 +179,7 @@ final class items_cart
 					if ($quantity >= 0)
 						continue;
 
-					if (check_negative_stock($line_item->stock_id, $quantity, $location, $date_))
+					if ((bool) check_negative_stock($line_item->stock_id, $quantity, $location, $date_))
 						$low_stock[] = $line_item->stock_id;
     			}
 		}
@@ -221,7 +224,7 @@ final class items_cart
 		{
 			$this->gl_items[$index]->person_type_id = $gl_type > 0 ? PT_CUSTOMER : PT_SUPPLIER;
 			$data = row_or_empty(get_subaccount_data($code_id, $person_id));
-			$this->gl_items[$index]->person_name = (string) ($data['name'] ?? '');
+			$this->gl_items[$index]->person_name = $data['name'] ?? '';
 			$this->gl_items[$index]->branch_id = $data['id'] ?? null;
 		} else
 		{
@@ -244,7 +247,7 @@ final class items_cart
 	 */
 	function remove_gl_item(string|int|null $index)
 	{
-		array_splice($this->gl_items, $index, 1);
+		array_splice($this->gl_items, (int) $index, 1);
 	}
 
 	/**
@@ -360,11 +363,11 @@ final class items_cart
 
 		$tax_info['tax_date'] = $this->tran_date;
 		$vat_percent = get_company_pref('partial_vat_percent');
-		$factor = $vat_percent && ($this->vat_category == VC_PARTIAL) ? (float) $vat_percent/100 : 1;
+		$factor = (bool) $vat_percent && ($this->vat_category == VC_PARTIAL) ? (float) $vat_percent / 100.0 : 1.0;
 
 		foreach($this->gl_items as $gl)
 		{
-            if ($person_type = is_subledger_account($gl->code_id))
+            if ((bool) ($person_type = is_subledger_account($gl->code_id)))
 			{
 				$tax_info['person_type'] = $person_type < 0 ? PT_SUPPLIER : PT_CUSTOMER;
 				$tax_info['person_id'] = $gl->person_id;
@@ -378,7 +381,7 @@ final class items_cart
 					$tax_info['tax_group'] = $supplier['tax_group_id'] ?? null;
 				}
 				$subledger_sum += (float)$gl->amount;
-			} elseif ($tax_id = is_tax_account($gl->code_id))
+			} elseif ((bool) ($tax_id = is_tax_account($gl->code_id)))
 			{
 				$tax_type = row_or_empty(get_tax_type($tax_id));
 				$tax_rate = is_scalar($tax_type['rate'] ?? null) ? (float) $tax_type['rate'] : 0.0;
@@ -416,7 +419,7 @@ final class items_cart
 		$net_amount = $tax_info['net_amount'] ?? array();
 		if (count_array($net_amount))	// guess exempt sales/purchase if any tax has been found
 		{
-			$ex_net = abs($net_sum) - array_sum($net_amount);
+			$ex_net = abs($net_sum) - (float) array_sum($net_amount);
 			if ($ex_net != 0)
 				$tax_info['net_amount_ex'] = $ex_net;
 		}
@@ -441,14 +444,14 @@ final class items_cart
 	function reduce_gl()
 	{
 		/* reduce additional postings */
-		/** @var array<array-key, mixed> $codes */
+		/** @var array<array-key, array<array-key, array<array-key, array<array-key, array<array-key, int>>>>> $codes */
 		$codes = array();
 		foreach($this->gl_items as $n => $gl)
 		{
-			$person_id = is_scalar($gl->person_id) ? $gl->person_id : '';
+			$person_id = (string) $gl->person_id;
 			$prev = $codes[$gl->code_id][$person_id][$gl->dimension_id][$gl->dimension2_id][$gl->reference] ?? null;
 			if (isset($prev)) { // add amount to previous line for the same gl_code dims and memo
-				$this->gl_items[$prev]->amount += (float)$gl->amount;
+				$this->gl_items[$prev]->amount = (float) $this->gl_items[$prev]->amount + (float) $gl->amount;
 				if ($this->gl_items[$prev]->amount == 0) // discard if overall amount==0
 				{
 					unset($this->gl_items[$prev], $codes[$gl->code_id][$person_id][$gl->dimension_id][$gl->dimension2_id][$gl->reference]);
@@ -472,7 +475,7 @@ final class items_cart
 		{
 			$this->add_gl_item(get_company_pref($delta>0 ? 'rounding_db_act' : 'rounding_cr_act'),
 				0, 0, -$delta, '');
-			error_log(sprintf( _("Rounding error %s encountered for trans_type:%s,trans_no:%s"), $delta, $this->trans_type, $this->order_id));
+			error_log(sprintf( _("Rounding error %s encountered for trans_type:%s,trans_no:%s"), $delta, $this->trans_type, (string) ($this->order_id ?? '')));
 		}
 
 		$bank_trans = $supp_trans = $cust_trans = array();
@@ -487,10 +490,10 @@ final class items_cart
 
 			// post to first found bank account using given gl acount code.
 			$is_bank_to = is_bank_account($gl->code_id);
-	    	if ($is_bank_to && (get_bank_account_currency($is_bank_to) == $this->currency)) // do not register exchange variations in bank trans
+	    	if ((bool) $is_bank_to && (get_bank_account_currency($is_bank_to) == $this->currency)) // do not register exchange variations in bank trans
     		{
     			if (!isset($bank_trans[$is_bank_to]))
-    				$bank_trans[$is_bank_to] = 0;
+    				$bank_trans[$is_bank_to] = 0.0;
 
 	    		$bank_trans[$is_bank_to] += (float)$gl->amount;
     		} elseif ((bool)$gl->person_id)
@@ -501,9 +504,9 @@ final class items_cart
 				// collect per counterparty amounts (in case more than one posting was done to the account),
 				// do not post exchange variations to AR/AP (journal in not customer/supplier currency)
 	    		if ($gl->person_type_id==PT_SUPPLIER && (get_supplier_currency($gl->person_id) == $this->currency || $this->currency != $home_currency))
-	   				$supp_trans[$person_id] = ($supp_trans[$person_id] ?? 0) + (float)$gl->amount;
+	   				$supp_trans[$person_id] = ($supp_trans[$person_id] ?? 0.0) + (float)$gl->amount;
     			elseif ($gl->person_type_id==PT_CUSTOMER && (get_customer_currency(null, $gl->branch_id) == $this->currency || $this->currency != $home_currency))
-	   				$cust_trans[$branch_id] = ($cust_trans[$branch_id] ?? 0) + (float)$gl->amount;
+	   				$cust_trans[$branch_id] = ($cust_trans[$branch_id] ?? 0.0) + (float)$gl->amount;
     		}
 
 		}
@@ -562,7 +565,7 @@ final class items_cart
 					continue;
 
 				$rate = $tax_info['rate'][$tax_id] ?? 0.0;
-				$tax_nominal = $rate/100*$net;
+				$tax_nominal = $rate/100.0*$net;
 				add_trans_tax_details($this->trans_type, $this->order_id,
 					$tax_id, $rate, 0, $tax_nominal, $net, $this->rate,
 					$this->tran_date,
@@ -662,7 +665,7 @@ final class gl_item
 	{
 		//echo "adding $index, $code_id, $dimension_id, $amount, $reference<br>";
 
-		if ($act_descr == null && $code_id)
+		if ($act_descr == null && (bool) $code_id)
 			$this->description = (string) get_gl_account_name($code_id);
 		else
 			$this->description = (string) $act_descr;
@@ -674,7 +677,7 @@ final class gl_item
 		{
 			$this->person_type_id = $gl_type > 0 ? PT_CUSTOMER : PT_SUPPLIER;
 			$data = row_or_empty(get_subaccount_data($code_id, $person_id));
-			$this->person_name = (string) ($data['name'] ?? '');
+			$this->person_name = $data['name'] ?? '';
 			$this->branch_id = $data['id'] ?? null;
 		}
 		$this->dimension_id = is_int($dimension_id) || is_string($dimension_id) ? $dimension_id : (int) $dimension_id;
