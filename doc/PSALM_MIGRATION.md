@@ -73,7 +73,10 @@ declaration Psalm picks as canonical), `due_date` (`sales/inquiry/customer_alloc
 `purchasing/inquiry/supplier_allocation_inquiry.php`, different bodies —
 confirmed by adding a native return type to one and watching
 MissingReturnType turn into MixedReturnStatement in the other),
-`view_link` (9+ declarations
+`order_link` (`sales/inquiry/sales_orders_view.php` vs
+`sales/inquiry/customer_allocation_inquiry.php`, same symptom —
+narrowing one's return type from `null|string` to `string` surfaced a
+new `NullableReturnStatement` in the other), `view_link` (9+ declarations
 across `admin/`, `dimensions/`, `gl/`, `manufacturing/`, `purchasing/`,
 `sales/`, with wildly different signatures — `array $row`,
 `array $trans`, `(string|int|float|bool|array $dummy, ...$order_no)`
@@ -114,6 +117,24 @@ computes a narrowed *expression* for that one call without altering
 Because full-project scans are also subject to the cache noise below, verify
 a fix like this with `--no-cache` and by diffing the unrelated collision
 files' own counts before/after, not just the overall total.
+
+**Code defined in an excluded directory, called from a scanned one.**
+`psalm.xml`'s `<projectFiles>` excludes `reporting/` and `modules/`
+entirely, and `sql/` isn't listed at all. A scanned file that calls a
+function only declared in one of those (e.g.
+`sales/inquiry/sales_orders_view.php`'s `prt_link()` calling
+`reporting/includes/reporting.inc`'s `print_document_link()`) gets
+treated as calling something with no known signature at all, which can
+surface as `InvalidReturnType` ("not all code paths return") on the
+*caller* even though the callee is simple and always returns. Likewise
+a class only ever extended from `sql/` (`admin/includes/fa_patch.class.inc`'s
+`fa_patch`, extended by all 5 `sql/alter*.php` upgrade scripts) gets
+flagged `ClassMustBeFinal` ("never extended") since Psalm genuinely
+never sees those extensions. Neither is fixable from the scanned side
+— confirmed safe by reading the excluded file directly, then left as
+noise rather than force-"fixed" (finalizing `fa_patch` would be a real,
+breaking bug: a fatal "Cannot extend final class" the next time any of
+those upgrade scripts run).
 
 **Dynamic `$_SESSION[$key]` access against a shaped array type.** `psalm.xml`
 declares `$_SESSION` as a shaped array mapping specific literal keys to

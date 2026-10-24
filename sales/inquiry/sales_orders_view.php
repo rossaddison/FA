@@ -20,7 +20,7 @@ include_once(dirname(__DIR__, 2) . "/reporting/includes/reporting.inc");
 
 $page_security = 'SA_SALESTRANSVIEW';
 
-set_page_security( @$_POST['order_view_mode'],
+set_page_security( post_scalar('order_view_mode'),
 	array(	'OutstandingOnly' => 'SA_SALESDELIVERY',
 			'InvoiceTemplates' => 'SA_SALESINVOICE',
 			'DeliveryTemplates' => 'SA_SALESDELIVERY',
@@ -152,6 +152,9 @@ function delivery_link(array $row): string
 	"/sales/sales_order_entry.php?NewDelivery=" .(string)$row['order_no'], ICON_DOC);
 }
 
+// order_link() is a function-name collision with sales/inquiry/customer_allocation_inquiry.php's
+// own order_link() (different body) -- per doc/PSALM_MIGRATION.md's collision policy, this
+// function's own signature is left untouched rather than risking a cross-file ripple
 function order_link(array $row): null|string
 {
   return pager_link( _("Sales Order"),
