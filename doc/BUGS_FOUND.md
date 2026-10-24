@@ -259,6 +259,46 @@ a stand-in for a boolean) reaching a native, strictly-typed parameter.
 
 ## Live crashes
 
+- **`includes/page/header.inc` — `help_url()`, plus three more
+  functions with the identical latent bug.** Reported live by the user
+  ("ucwords(): Argument #1 ($string) must be of type string, null
+  given"). Earlier in this same Psalm cleanup, `isset($global_var)`
+  guards on a handful of globals were replaced with
+  `array_key_exists('name', $GLOBALS)` specifically to stop depending
+  on psalm.xml's non-nullable stub type for those globals (which made
+  the `isset()` look redundant to Psalm even though the variable could
+  genuinely be unset). But in every one of these functions, a `global
+  $var;` statement for that same variable ran *earlier in the same
+  function body* — and PHP's `global $x;` auto-vivifies
+  `$GLOBALS['x']` to `null` as a side effect of creating the
+  reference binding, even when `$x` never existed in global scope
+  before. So the `array_key_exists()` check that ran afterward was
+  always `true`, regardless of whether the calling page had actually
+  set the variable. In `help_url()`, this meant any page that never
+  sets `$help_context` fell into the "has context" branch with
+  `$help_page_url = null`, crashing `ucwords(null)` under PHP 8.1+'s
+  deprecation-turned-error for passing `null` to a non-nullable
+  internal function parameter. The identical broken pattern — found
+  while fixing this one and checking every other place the same
+  `array_key_exists($GLOBALS)` idiom had been used — was also present,
+  unfixed and never yet live-tested, in `error_handler()`'s
+  `$SysPrefs` check (would have crashed as "Call to a member function
+  go_debug() on null" the first time a PHP warning fired before
+  `$SysPrefs` was set), `end_flush()`'s `$Ajax` check (same, "call to
+  a member function run() on null"), and `page_header()`'s
+  `$db_connections` check (would have run `hook_invoke_all()` even
+  pre-installation, the exact case that guard exists to skip). Fixed
+  by capturing `array_key_exists()` into a plain bool *before* the
+  `global` statement runs in each function, reading the global's value
+  only through that captured flag afterward; `help_url()` also dropped
+  its own `global $help_context;` entirely in favor of reading
+  `$GLOBALS['help_context']` directly throughout. This bug class is
+  invisible to Psalm itself — it's purely about PHP's `global`-binding
+  side effects, not types — so any future `isset($x)` →
+  `array_key_exists('x', $GLOBALS)` conversion for a Psalm finding
+  needs the same check: does a `global $x;` for that variable run
+  earlier in the same function?
+
 - **`manufacturing/work_order_entry.php`.** The `UPDATE_ITEM` handler (every
   edit of an existing work order) called `can_process()` — a function this
   file never defines and never includes a definition of. Psalm's
