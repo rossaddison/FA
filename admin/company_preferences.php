@@ -34,7 +34,7 @@ if (isset($_POST['update']) && $_POST['update'] != "")
 		set_focus('login_tout');
 		$input_error = 1;
 	}
-	if (strlen($_POST['coy_name'])==0)
+	if (strlen((string) post_scalar('coy_name'))==0)
 	{
 		$input_error = 1;
 		display_error(_("The company name must be entered."));
@@ -86,7 +86,8 @@ if (isset($_POST['update']) && $_POST['update'] != "")
 		{
 			mkdir($filename);
 		}
-		$filename .= "/".clean_file_name($_FILES['pic']['name']);
+		$cleaned_pic_name = clean_file_name($_FILES['pic']['name']);
+		$filename .= "/".(is_array($cleaned_pic_name) ? '' : (string) $cleaned_pic_name);
 
 		 //But check for the worst
 		if (!in_array( substr($filename,-4), array('.jpg','.JPG','.png','.PNG')))
@@ -121,7 +122,9 @@ if (isset($_POST['update']) && $_POST['update'] != "")
 				display_error(_('Error uploading logo file'));
 				$input_error = 1;
 			} else {
-				$msg = check_image_file($filename);
+				// check_image_file() lives in reporting/includes/tcpdf.php, excluded from
+				// Psalm's project scan, so its real string-only return type is invisible here
+				$msg = (string) check_image_file($filename);
 				if ( $msg) {
 					display_error( $msg);
 					unlink($filename);
@@ -132,7 +135,8 @@ if (isset($_POST['update']) && $_POST['update'] != "")
 	}
 	if (check_value('del_coy_logo'))
 	{
-		$filename = company_path()."/images/".clean_file_name($_POST['coy_logo']);
+		$cleaned_coy_logo = clean_file_name(post_scalar('coy_logo'));
+		$filename = company_path()."/images/".(is_array($cleaned_coy_logo) ? '' : (string) $cleaned_coy_logo);
 		if (file_exists($filename))
 		{
 			$result = unlink($filename);
@@ -144,7 +148,7 @@ if (isset($_POST['update']) && $_POST['update'] != "")
 		}
 		$_POST['coy_logo'] = "";
 	}
-	if ($_POST['add_pct'] == "")
+	if (!isset($_POST['add_pct']) || $_POST['add_pct'] == "")
 		$_POST['add_pct'] = -1;
 	if ($_POST['round_to'] <= 0)
 		$_POST['round_to'] = 1;
@@ -161,7 +165,8 @@ if (isset($_POST['update']) && $_POST['update'] != "")
 				'suppress_tax_rates', 'use_manufacturing', 'use_fixed_assets'))
 		);
 
-		session_obj('wa_current_user')->timeout = $_POST['login_tout'];
+		$login_tout = post_scalar('login_tout');
+		session_obj('wa_current_user')->timeout = is_int($login_tout) || is_string($login_tout) ? $login_tout : (string) $login_tout;
 		display_notification_centered(_("Company setup has been updated."));
 		set_focus('coy_name');
 		ajax()->activate('_page_body');
