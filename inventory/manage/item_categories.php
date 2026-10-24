@@ -43,7 +43,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 	//initialise no input errors assumed initially before we test
 	$input_error = 0;
 
-	if (strlen($_POST['description']) == 0) 
+	if (strlen((string) post_scalar('description')) == 0)
 	{
 		$input_error = 1;
 		display_error(_("The item category description cannot be empty."));
@@ -52,24 +52,28 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 	if ($input_error !=1)
 	{
-    	if ($selected_id != -1) 
+    	$no_sale = check_value('no_sale');
+    	$no_sale = is_array($no_sale) ? 0 : $no_sale;
+    	$no_purchase = check_value('no_purchase');
+    	$no_purchase = is_array($no_purchase) ? 0 : $no_purchase;
+    	if ($selected_id != -1)
     	{
-		    update_item_category($selected_id, post_scalar('description'),
-				post_scalar('tax_type_id'),	post_scalar('sales_account'), 
-				post_scalar('cogs_account'), post_scalar('inventory_account'), 
+		    update_item_category(is_array($selected_id) ? '' : (string) $selected_id, post_scalar('description'),
+				post_scalar('tax_type_id'),	post_scalar('sales_account'),
+				post_scalar('cogs_account'), post_scalar('inventory_account'),
 				post_scalar('adjustment_account'), post_scalar('wip_account'),
 				post_scalar('units'), post_scalar('mb_flag'),	post_scalar('dim1'),	post_scalar('dim2'),
-				check_value('no_sale'), check_value('no_purchase'));
+				$no_sale, $no_purchase);
 			display_notification(_('Selected item category has been updated'));
-    	} 
-    	else 
+    	}
+    	else
     	{
 		    add_item_category(post_scalar('description'),
-				post_scalar('tax_type_id'),	post_scalar('sales_account'), 
-				post_scalar('cogs_account'), post_scalar('inventory_account'), 
-				post_scalar('adjustment_account'), post_scalar('wip_account'), 
-				post_scalar('units'), post_scalar('mb_flag'),	post_scalar('dim1'),	
-				post_scalar('dim2'),	check_value('no_sale'), check_value('no_purchase'));
+				post_scalar('tax_type_id'),	post_scalar('sales_account'),
+				post_scalar('cogs_account'), post_scalar('inventory_account'),
+				post_scalar('adjustment_account'), post_scalar('wip_account'),
+				post_scalar('units'), post_scalar('mb_flag'),	post_scalar('dim1'),
+				post_scalar('dim2'),	$no_sale, $no_purchase);
 			display_notification(_('New item category has been added'));
     	}
 		$Mode = 'RESET';
@@ -82,13 +86,13 @@ if ($Mode == 'Delete')
 {
 
 	// PREVENT DELETES IF DEPENDENT RECORDS IN 'stock_master'
-	if ((bool)key_in_foreign_table($selected_id, 'stock_master', 'category_id'))
+	if ((bool)key_in_foreign_table(is_array($selected_id) ? '' : (string) $selected_id, 'stock_master', 'category_id'))
 	{
 		display_error(_("Cannot delete this item category because items have been created using this item category."));
-	} 
-	else 
+	}
+	else
 	{
-		delete_item_category($selected_id);
+		delete_item_category(is_array($selected_id) ? '' : (string) $selected_id);
 		display_notification(_('Selected item category has been deleted'));
 	}
 	$Mode = 'RESET';
@@ -138,7 +142,7 @@ while ($myrow = db_fetch($result))
 	label_cell($myrow["tax_name"]);
 	label_cell($myrow["dflt_units"], "align=center");
 	if (!$fixed_asset)
-		label_cell($stock_types[$myrow["dflt_mb_flag"]]);
+		label_cell($stock_types[$myrow["dflt_mb_flag"] ?? '']);
 	label_cell($myrow["dflt_sales_act"], "align=center");
 	label_cell($myrow["dflt_inventory_act"], "align=center");
 	label_cell($myrow["dflt_cogs_act"], "align=center");
@@ -163,7 +167,7 @@ if ($selected_id != -1)
 {
  	if ($Mode == 'Edit') {
 		//editing an existing item category
-		$myrow = row_or_empty(get_item_category($selected_id));
+		$myrow = row_or_empty(get_item_category(is_array($selected_id) ? '' : (string) $selected_id));
 
 		$_POST['category_id'] = $myrow["category_id"];
 		$_POST['description']  = $myrow["description"];
@@ -180,7 +184,7 @@ if ($selected_id != -1)
 		$_POST['no_sale']  = $myrow["dflt_no_sale"];
 		$_POST['no_purchase']  = $myrow["dflt_no_purchase"];
 	} 
-	hidden('selected_id', $selected_id);
+	hidden('selected_id', is_array($selected_id) ? '' : (string) $selected_id);
 	hidden('category_id');
 } else if ($Mode != 'CLONE') {
 		$_POST['long_description'] = '';
@@ -229,7 +233,8 @@ check_row(_("Exclude from purchases:"), 'no_purchase');
 
 gl_all_accounts_list_row(_("Sales Account:"), 'sales_account', $_POST['sales_account']);
 
-if (is_service(post_scalar('mb_flag')))
+$post_mb_flag = post_scalar('mb_flag');
+if (is_service(is_scalar($post_mb_flag) ? (string) $post_mb_flag : null))
 {
 	gl_all_accounts_list_row(_("C.O.G.S. Account:"), 'cogs_account', $_POST['cogs_account']);
 	hidden('inventory_account', post_scalar('inventory_account'));
