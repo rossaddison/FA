@@ -131,7 +131,7 @@ function gl_view(array $row)
 {
 	if (!isset($row['type']))
 		$row['type'] = $_POST['filterType'];
-	return get_gl_view_str($row["type"], $row["trans_no"]);
+	return get_gl_view_str($row["type"], (int) $row["trans_no"]);
 }
 
 /** @psalm-pure */

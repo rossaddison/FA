@@ -83,12 +83,12 @@ function person_link(array $row)
 
 function view_link(array $row) 
 {
-	return get_trans_view_str($row["trans_type"], $row["trans_no"]);
+	return get_trans_view_str($row["trans_type"], (int) $row["trans_no"]);
 }
 
 function gl_link(array $row) 
 {
-	return get_gl_view_str($row["trans_type"], $row["trans_no"]);
+	return get_gl_view_str($row["trans_type"], (int) $row["trans_no"]);
 }
 
 function edit_link(array $row): string
@@ -98,11 +98,11 @@ function edit_link(array $row): string
 	if ($row['trans_type'] == ST_SALESINVOICE)
 	{
 		$myrow = row_or_empty(get_customer_trans($row["trans_no"], $row["trans_type"]));
-		if ($myrow['alloc'] != $myrow['Total'] || get_voided_entry(ST_SALESINVOICE, $row["trans_no"]) !== false)
+		if ($myrow['alloc'] != $myrow['Total'] || get_voided_entry(ST_SALESINVOICE, (int) $row["trans_no"]) !== false)
 			$ok = false;
 	}
 	
-	return $ok ? trans_editor_link( $row["trans_type"], $row["trans_no"]) : '--';
+	return $ok ? trans_editor_link( $row["trans_type"], (int) $row["trans_no"]) : '--';
 }
 
 /** @psalm-pure */

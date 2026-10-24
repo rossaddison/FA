@@ -100,7 +100,7 @@ function gl_view(array $row)
 {
 	if ($row['type'] == ST_SUPPRECEIVE && (bool)get_voided_entry(ST_SUPPRECEIVE, $row['trans_no']))
 		return set_icon(ICON_REMOVE, _("Voided."));
-	return get_gl_view_str($row["type"], $row["trans_no"]);
+	return get_gl_view_str($row["type"], (int) $row["trans_no"]);
 }
 
 /** @param array<string, null|string> $row */
