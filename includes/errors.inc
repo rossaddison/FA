@@ -73,6 +73,9 @@ function get_backtrace(bool $html = false, ?int $skip=0): string
 //    display in message box.
 
 function error_handler(int $errno, string $errstr, string $file = '', int $line = 0, array $errcontext = array()): bool {
+    // captured before `global $SysPrefs;` below, which would otherwise auto-vivify
+    // $GLOBALS['SysPrefs'] to null and make every check against it always true
+    $sysprefs_set = array_key_exists('SysPrefs', $GLOBALS);
     global $messages, $SysPrefs, $cur_error_level;
 
 	// skip well known warnings we don't care about.
@@ -88,10 +91,7 @@ function error_handler(int $errno, string $errstr, string $file = '', int $line 
 		}
 	}
 
-	// checked via $GLOBALS rather than isset($SysPrefs) so this doesn't depend on
-	// psalm.xml's non-nullable stub for the global, which only describes its value once
-	// it's been set, not whether it exists yet (error_handler() can fire very early)
-	$bt = array_key_exists('SysPrefs', $GLOBALS) && $SysPrefs->go_debug>1 ? get_backtrace(true, 1) : array();
+	$bt = $sysprefs_set && $SysPrefs->go_debug>1 ? get_backtrace(true, 1) : array();
 
 	// error_reporting!=cur_error_level when messages are set off with @ 
 	if ($cur_error_level == error_reporting()) {
@@ -102,7 +102,7 @@ function error_handler(int $errno, string $errstr, string $file = '', int $line 
 		}
 		else if ($errno&~E_NOTICE && $errstr != '') { // log all not displayed messages 
 			$user = @session_obj('wa_current_user')->loginname;
-			$context = array_key_exists('SysPrefs', $GLOBALS) && !$SysPrefs->db_ok ? '[before upgrade]' : '';
+			$context = $sysprefs_set && !$SysPrefs->db_ok ? '[before upgrade]' : '';
 			error_log((string) user_company() . ":$user:". basename($file) .":$line:$context $errstr");
 		}
 	}
@@ -188,11 +188,12 @@ function error_box(): void {
 	Helper to avoid sparse log notices.
 */
 function end_flush(): void {
+	// captured before `global $Ajax;` below, which would otherwise auto-vivify
+	// $GLOBALS['Ajax'] to null and make this check always true
+	$ajax_set = array_key_exists('Ajax', $GLOBALS);
 	global $Ajax;
 
-	// checked via $GLOBALS rather than isset($Ajax) so this doesn't depend on psalm.xml's
-	// non-nullable stub for the global, which only describes its value once it's been set
-	if (array_key_exists('Ajax', $GLOBALS))
+	if ($ajax_set)
 		$Ajax->run();
 
  	 // on some (but not all) php versions zlib extension adds 1 additional level of buffering, 

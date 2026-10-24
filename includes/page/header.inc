@@ -16,22 +16,22 @@ declare(strict_types=1);
 function help_url(mixed $context=null): string
 {
 
-	global $help_context;
-
 	$country = session_obj('language')->code;
 	$clean = 0;
-	
-	// $help_context may legitimately never have been set by the current page script; check via
-	// $GLOBALS rather than isset($help_context) so this doesn't depend on psalm.xml's stub type
-	// for the global (which only describes its type once set, not whether it exists at all)
-	$has_help_context = array_key_exists('help_context', $GLOBALS);
+
+	// $help_context may legitimately never have been set by the current page script; checked
+	// against $GLOBALS directly (never bound via `global $help_context;`, which would itself
+	// auto-vivify $GLOBALS['help_context'] to null and make this check always true) so this
+	// doesn't depend on psalm.xml's stub type for the global, which only describes its type
+	// once set, not whether it exists at all
+	$has_help_context = array_key_exists('help_context', $GLOBALS) && $GLOBALS['help_context'] !== null;
 	if ($context!=null)
 	{
 		$help_page_url = is_scalar($context) ? (string) $context : '';
 	}
 	elseif ($has_help_context)
 	{
-		$help_page_url = $help_context;
+		$help_page_url = is_scalar($GLOBALS['help_context']) ? (string) $GLOBALS['help_context'] : '';
 	} else // main menu
 	{
 		$app_id = $_SESSION['sel_app'] ?? '';
@@ -143,6 +143,9 @@ include_once(dirname(__DIR__, 2) . "/includes/yii/layout.inc");
 function page_header(string|int|float|bool|null $title, string|int|float|bool|null $no_menu=false, string|int|float|bool|null $is_index=false, string|int|float|bool|null $onload="", string|int|float|bool|null $js="", string|int|float|bool|null $css=''): void
 {
 	// titles and screen header
+	// captured before `global $db_connections;` below, which would otherwise auto-vivify
+	// $GLOBALS['db_connections'] to null and make the pre-install check below always true
+	$db_connections_set = array_key_exists('db_connections', $GLOBALS);
 	global $path_to_root, $SysPrefs, $db_connections;
 
 	if (in_ajax() || isset($_POST['REP_ID']))
@@ -186,10 +189,7 @@ function page_header(string|int|float|bool|null $title, string|int|float|bool|nu
 			isset($fa->applications[$sel_app]) ? $sel_app : 'orders';
 
 	$page_header_args = func_get_args();
-	// Checked via $GLOBALS rather than isset($db_connections) so this doesn't depend on
-	// psalm.xml's non-nullable stub for the global, which only describes its value once
-	// config.php has defined it, not whether it exists yet pre-installation
-	if (array_key_exists('db_connections', $GLOBALS))	// skip before installation
+	if ($db_connections_set)	// skip before installation
 		hook_invoke_all('pre_header', $page_header_args);
 
 	$encoding = session_obj('language')->encoding;
