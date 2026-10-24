@@ -99,12 +99,12 @@ if (isset($_GET['AddedID']))
 
 	display_note(print_document_link($order_no, _("&Email This Order"), true, $trans_type, false, "printlink", "", 1));
 
-	hyperlink_params($path_to_root . "/purchasing/po_receive_items.php", _("&Receive Items on this Purchase Order"), "PONumber=$order_no");
+	hyperlink_params("$path_to_root/purchasing/po_receive_items.php", _("&Receive Items on this Purchase Order"), "PONumber=$order_no");
 
   // TODO, for fixed asset
 	hyperlink_params($_SERVER['PHP_SELF'] ?? '', _("Enter &Another Purchase Order"), "NewOrder=yes");
-	
-	hyperlink_no_params($path_to_root."/purchasing/inquiry/po_search.php", _("Select An &Outstanding Purchase Order"));
+
+	hyperlink_no_params("$path_to_root/purchasing/inquiry/po_search.php", _("Select An &Outstanding Purchase Order"));
 	
 	hyperlink_params("$path_to_root/admin/attachments.php", _("Add an Attachment"), 
 		"filterType=$trans_type&trans_no=$order_no");
@@ -216,9 +216,9 @@ function handle_cancel_po(): void
 		unset($_SESSION['PO']);
 
     	if ($fixed_asset)
-			meta_forward($path_to_root.'/index.php','application=assets');
+			meta_forward("$path_to_root/index.php",'application=assets');
 		else
-			meta_forward($path_to_root.'/index.php','application=AP');
+			meta_forward("$path_to_root/index.php",'application=AP');
 	}
 
 	session_obj('PO')->clear_items();
@@ -226,7 +226,7 @@ function handle_cancel_po(): void
 
 	display_notification(_("This purchase order has been cancelled."));
 
-	hyperlink_params($path_to_root . "/purchasing/po_entry_items.php", _("Enter a new purchase order"), "NewOrder=Yes");
+	hyperlink_params("$path_to_root/purchasing/po_entry_items.php", _("Enter a new purchase order"), "NewOrder=Yes");
 	echo "<br>";
 
 	end_page();
@@ -437,6 +437,7 @@ function can_commit(): bool
 
 function handle_commit_order(): void
 {
+	if (!isset($_SESSION['PO'])) return;
 	$cart = &$_SESSION['PO'];
 	/** @var purch_order $cart */
 	$cart = $cart;
