@@ -77,7 +77,11 @@ abstract class record_set {
 		$this->errors[(string) $field] = $msg;
 
 		// save db errors for debugging purposes
-		if (db_error_no()) $this->debug[] = db_error_msg($db);
+		if (db_error_no()) {
+			/** @var mysqli $db */
+			$conn = $db;
+			$this->debug[] = db_error_msg($conn);
+		}
 
 		return false;
 	}
@@ -313,6 +317,10 @@ abstract class record_set {
 
 }
 
+// Several MixedAssignment findings below ($val/$fld/$value from $key/$data) are genuinely
+// mixed by design: this is a generic SQL CRUD layer whose $key/$data shapes vary per concrete
+// table, already guarded with is_scalar()/db_escape() before anything reaches a query --
+// not narrowable here without misrepresenting the real, intentionally-generic contract.
 class data_set extends record_set {
 
 	/**
