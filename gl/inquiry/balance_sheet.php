@@ -114,6 +114,7 @@ function display_type_bs (?string $type, ?string $typename, string|int|float|boo
 				. (string)$from . "&TransToDate=" . (string)$to . "&Dimension=" . (string)$dimension . "&Dimension2=" . (string)$dimension2
 				. "&AccGrp=" . $type ."'>" . $type . " " . $typename ."</a>";
 
+			/** @var int $k */
 			alt_table_row_color($k);
 			label_cell($url);
 			amount_cell(($acctstotal + $typestotal) * $convert);
@@ -191,6 +192,7 @@ function display_balance_sheet(): void
 					$url = "<a href='$path_to_root/gl/inquiry/balance_sheet.php?TransFromDate="
 						. $from . "&TransToDate=" . (string)$to . "&Dimension=" . (string)$dimension . "&Dimension2=" . (string)$dimension2
 						. "&AccGrp=" . (string)$accounttype['id'] ."'>" . (string)$accounttype['id']." ".(string)$accounttype['name'] ."</a>";
+					/** @var int $k */
 					alt_table_row_color($k);
 					label_cell($url);
 					amount_cell($TypeTotal * $convert);

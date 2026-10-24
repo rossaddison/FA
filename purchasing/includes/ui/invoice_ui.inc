@@ -208,7 +208,8 @@ function display_gl_controls(supp_trans &$supp_trans, string|int|float|bool|null
 		$_POST['gl_code'] = (bool)($accs['purchase_account'] ?? false) ?
 			$accs['purchase_account'] : get_company_pref('default_cogs_act');
 
-	alt_table_row_color((int) $k);
+	$k = (int) $k;
+	alt_table_row_color($k);
 	echo gl_all_accounts_list('gl_code', null, false, true);
 	$dim = get_company_pref('use_dimension');
 	if ($dim >= 1)
@@ -397,7 +398,8 @@ function display_grn_items_for_selection(supp_trans &$supp_trans, string|int|flo
 
     	if ($grn_already_on_invoice == false)
     	{
-			alt_table_row_color((int) $k);
+			$k = (int) $k;
+			alt_table_row_color($k);
 
 			$n = $myrow["id"];
 			label_cell(get_trans_view_str(ST_SUPPRECEIVE, $myrow["grn_batch_id"]), "nowrap align='right'");

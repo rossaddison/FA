@@ -124,6 +124,34 @@ Because full-project scans are also subject to the cache noise below, verify
 a fix like this with `--no-cache` and by diffing the unrelated collision
 files' own counts before/after, not just the overall total.
 
+**A `psalm.xml` `<globals>` stub does not survive a by-reference call to a
+widely-typed shared function.** `$k` (the ubiquitous row-colour-counter
+global used via `global $k;` then `alt_table_row_color($k)` in dozens of
+`*.php` pages) produced `MixedArgument` on that call in some files but not
+others. Adding `<var name="k" type="int"/>` to `<globals>` had **zero**
+measurable effect on any finding, anywhere — confirmed by two independent
+full-project `--no-cache` diffs. Root cause:
+`alt_table_row_color(int|string|null &$k, ...)` takes `$k` **by reference**
+with a deliberately wide declared parameter type (the function immediately
+does `$k = (int) $k;` internally, but that narrowing is invisible to the
+*caller's* copy of the type). After any call through this by-reference
+parameter — including a *recursive* call, as in `gl/inquiry/balance_sheet.php`'s
+`display_type_bs()` calling itself before its own `alt_table_row_color($k)`
+— Psalm widens the caller's `$k` back to the parameter's full declared
+union, overriding whatever the global stub said. A `@param-out int $k`
+docblock on `alt_table_row_color()` itself (telling Psalm the guaranteed
+post-call type, independent of the input type) *also* had zero effect.
+**What actually worked:** an inline `/** @var int $k */` immediately before
+each affected call site (the same file-local narrowing idiom used
+elsewhere in this doc) — this resolved both `gl/inquiry/balance_sheet.php`
+findings and both `gl/inquiry/profit_loss.php` findings with zero
+regressions. Chasing this also turned up a real, confirmed live crash
+(not a type nitpick): two call sites in `purchasing/includes/ui/invoice_ui.inc`
+passed `(int) $k` instead of plain `$k` into this same by-reference
+parameter, which is a fatal "could not be passed by reference" error on
+every PHP version that's ever enforced by-reference call semantics — see
+`doc/BUGS_FOUND.md`'s "Live crashes" section.
+
 **Code defined in an excluded directory, called from a scanned one.**
 `psalm.xml`'s `<projectFiles>` excludes `reporting/` and `modules/`
 entirely, and `sql/` isn't listed at all. A scanned file that calls a

@@ -259,6 +259,26 @@ a stand-in for a boolean) reaching a native, strictly-typed parameter.
 
 ## Live crashes
 
+- **`purchasing/includes/ui/invoice_ui.inc` — `display_gl_controls()` /
+  `display_grn_items_for_selection()`.** Both called
+  `alt_table_row_color((int) $k)` — but `alt_table_row_color()`'s
+  first parameter is declared by reference (`int|string|null &$k`),
+  and PHP has never allowed passing the result of an expression
+  (a cast, here) by reference: it's not a variable the callee can
+  bind to. Confirmed directly (not just inferred from Psalm) —
+  `php -r` reproduction throws `Error: ... could not be passed by
+  reference` under PHP 8.5 every time either line runs, i.e. on
+  every direct purchase invoice entry that reaches the supplier GL
+  account controls, and on every GRN-based invoice entry that reaches
+  the "available GRN items" selection list. The same file has the
+  *correct* pattern twice more (`alt_table_row_color($k)`, no cast,
+  two other call sites) — these two were the odd ones out, most
+  likely from an earlier Psalm pass adding a cast to satisfy a type
+  mismatch without noticing the by-reference parameter. Fixed by
+  moving the cast to its own statement first (`$k = (int) $k;`) and
+  passing the now-plain-variable `$k` by reference, which satisfies
+  both PHP's by-reference requirement and the original type concern.
+
 - **`includes/page/header.inc` — `help_url()`, plus three more
   functions with the identical latent bug.** Reported live by the user
   ("ucwords(): Argument #1 ($string) must be of type string, null
