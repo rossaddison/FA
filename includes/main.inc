@@ -88,9 +88,9 @@ function css_files_ensure_init(): void {
 function add_css_file(string|int|float|bool|null $filename): void
 {
 	global $css_files;
+	css_files_ensure_init();
 	/** @var array<int, string> $css_files */
 	$css_files = $css_files;
-	css_files_ensure_init();
 	$css_files[] = (string) $filename;
 }
 
@@ -141,19 +141,24 @@ function add_js_file(?string $filename): void
 		$js_static[] = (string) $filename;
 }
 
-function add_js_ufile(?string $filename): void 
+function add_js_ufile(?string $filename): void
 {
 	  global $js_userlib;
 
+	  // Psalm sees $js_userlib's top-level initializer (an empty array) and infers $search
+	  // as always false from that alone -- it doesn't track the real runtime case where
+	  // earlier calls to this same function already pushed entries onto it this request
 	  $search = array_search($filename, $js_userlib);
 	  if ($search === false)
 		$js_userlib[] = (string) $filename;
 }
 
-function add_js_source(string|int|float|bool|null $text): void 
+function add_js_source(string|int|float|bool|null $text): void
 {
 	  global $js_lib;
 
+	  // same Psalm limitation as add_js_ufile() above: it only sees $js_lib's empty
+	  // top-level initializer, not the entries earlier calls this request may have added
 	  $search = array_search($text, $js_lib);
 	  if ($search === false)
 		$js_lib[] = (string) $text;
@@ -167,7 +172,7 @@ function add_js_source(string|int|float|bool|null $text): void
  * Warning: Fails on RegExp with quotes - use new RegExp() in this case.
  * @psalm-pure
  */
-function js_compress(string|bool|null $sJS): string|null
+function js_compress(string|bool|null $sJS): string
 {
 	$sJS = (string) $sJS;
 	//remove windows cariage returns
@@ -203,8 +208,9 @@ function js_compress(string|bool|null $sJS): string|null
 			//look for start of quote
 			if(!$inQuote && !$inComment)
 			{
-				//is this character a quote or a comment
-				if(($c=="\"" || $c=="'") && !$inComment && !$inNormalComment)
+				//is this character a quote or a comment ($inComment is always false here,
+				//guaranteed by the enclosing !$inQuote && !$inComment check above)
+				if(($c=="\"" || $c=="'") && !$inNormalComment)
 				{
 					$inQuote = true;
 					$inComment = false;
@@ -332,12 +338,14 @@ function check_write(string|int|float|bool|null $path): int
 	also removes files from the $to which 
 	does not exists in $from directory but arelisted in $flist.
 */
+/**
+ * @param array<array-key, string> $flist
+ */
 function copy_files(array $flist, string|int|float|bool|null $from, string|int|float|bool|null $to, string|int|float|bool|null $strict=false): bool
 {
 	$from = (string) $from;
 	$to = (string) $to;
 	foreach ($flist as $file) {
-		$file = (string) $file;
 		if (file_exists($from.'/'.$file)) {
 			if (!copy_file($file, $from, $to))
 				return false;
@@ -398,7 +406,7 @@ function find_custom_file(?string $rep): string|null
 		$extensions = $installed_extensions;
 		foreach ($extensions as $ext)
 			if ((!empty($ext['active']) && $ext['type'] == 'extension')) {
-				$path = $path_to_root.'/'.(string)$ext['path'];
+				$path = (string) $path_to_root.'/'.(string)$ext['path'];
 				$file = $path.$rep;
 				if (file_exists($file)) {
 					set_include_path($path.PATH_SEPARATOR.get_include_path());
@@ -408,7 +416,7 @@ function find_custom_file(?string $rep): string|null
 			}
 	}
 	// standard location
-	$file = $path_to_root.$rep;
+	$file = (string) $path_to_root.$rep;
 	if (file_exists($file))
 		return $file;
 
@@ -427,7 +435,7 @@ function find_custom_file(?string $rep): string|null
  * @psalm-taint-escape sql
  */
 function clean_file_name(string|int|float|bool|array|null $filename): array|string|null {
-    $filename = is_array($filename) ? array_map('strval', $filename) : (string) $filename;
+    $filename = is_array($filename) ? array_map(fn($v) => is_scalar($v) || $v === null ? (string) $v : '', $filename) : (string) $filename;
     $filename = str_replace(chr(0), '', $filename);
     return preg_replace('/[^a-zA-Z0-9.\-_]/', '_', $filename);
 }
@@ -448,7 +456,7 @@ function generate_password(): string
 */
 function random_id(string|int|float|bool|null $strength = 128): string
 {
-	$n = (int) ceil((float)$strength/8);
+	$n = (int) ceil((float)$strength/8.0);
 
 	if (function_exists('openssl_random_pseudo_bytes'))
 		$bin = openssl_random_pseudo_bytes($n, $cstrong); 	// openssl on php 5.3 and up
