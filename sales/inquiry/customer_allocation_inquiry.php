@@ -84,13 +84,16 @@ function view_link(array $trans)
 	return get_trans_view_str((string) $trans["type"], (string) $trans["trans_no"]);
 }
 
+// due_date() is a function-name collision with purchasing/inquiry/supplier_allocation_inquiry.php's
+// own due_date() (different body) -- per doc/PSALM_MIGRATION.md's collision policy, this
+// function's own signature is left untouched rather than risking a cross-file ripple
 function due_date(array $row)
 {
 	return $row["type"] == ST_SALESINVOICE ? $row["due_date"] : '';
 }
 
 /** @psalm-pure */
-function fmt_balance(array $row)
+function fmt_balance(array $row): float
 {
 	return ($row["type"] == ST_JOURNAL && $row["TotalAmount"] < 0 ? -(float)$row["TotalAmount"] : (float)$row["TotalAmount"]) - (float)$row["Allocated"];
 }

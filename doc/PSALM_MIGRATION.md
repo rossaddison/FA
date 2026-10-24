@@ -69,7 +69,11 @@ to 19 times, `display_type` 8 times, `getPeriods`, `get_open_balance`,
 `print_gl_rows`, `add_to_order`, `trans_view` (6 declarations, 2 with an
 explicit `?string` return type and 4 without, producing
 `LessSpecificReturnStatement` on whichever lack one, depending on which
-declaration Psalm picks as canonical), `view_link` (9+ declarations
+declaration Psalm picks as canonical), `due_date` (`sales/inquiry/customer_allocation_inquiry.php` vs
+`purchasing/inquiry/supplier_allocation_inquiry.php`, different bodies —
+confirmed by adding a native return type to one and watching
+MissingReturnType turn into MixedReturnStatement in the other),
+`view_link` (9+ declarations
 across `admin/`, `dimensions/`, `gl/`, `manufacturing/`, `purchasing/`,
 `sales/`, with wildly different signatures — `array $row`,
 `array $trans`, `(string|int|float|bool|array $dummy, ...$order_no)`
