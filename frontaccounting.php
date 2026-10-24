@@ -10,7 +10,11 @@ declare(strict_types=1);
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
-if (!isset($path_to_root) || isset($_GET['path_to_root']) || isset($_POST['path_to_root']))
+// checked via $GLOBALS rather than isset($path_to_root) so this doesn't depend on
+// psalm.xml's non-nullable stub for the global, which only describes its value once a
+// calling page script has set it, not whether it's been set at all. Safe here (no `global`
+// statement for $path_to_root precedes this -- top-level script scope only)
+if (!array_key_exists('path_to_root', $GLOBALS) || isset($_GET['path_to_root']) || isset($_POST['path_to_root']))
 	die("Restricted access");
 	include_once(__DIR__ . '/applications/application.php');
 	include_once(__DIR__ . '/applications/customers.php');
