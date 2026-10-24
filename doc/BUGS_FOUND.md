@@ -571,6 +571,25 @@ their source.
   closed even though the primitives themselves stay deliberately
   unescaping.
 
+- **`includes/ui/ui_msgs.inc` — `display_heading()`, `display_heading2()`,
+  `display_note()`.** Same genuine "accept caller-supplied HTML, verbatim,
+  by design" category as `label_cell()`/`amount_cells_ex()` above, not
+  force-fixed for the same reason: confirmed via grep that real call sites
+  across the codebase rely on it, pervasively — `display_note()` in
+  particular is routinely called with a pre-built `<a href='...'>` anchor
+  from `get_trans_view_str()`/`get_gl_view_str()`/`print_link()`
+  (`manufacturing/work_order_*.php` and many others), and
+  `admin/print_profiles.php`/various `class='...'` style attributes are
+  passed through `display_note()`'s own `$extra` parameter the same way.
+  Auto-escaping would break every one of these. Left deliberately
+  unescaping; callers that build these strings from genuinely
+  attacker-influenced data are the real place to fix this, not the shared
+  passthrough primitive — none were found reachable from unauthenticated
+  or low-privilege input in the sampling done here, but this file's own
+  3 functions were not individually audited caller-by-caller the way
+  `ui_input.inc`'s were above, so treat this as a documented, deliberate
+  design choice rather than an exhaustive clearance.
+
 - **`includes/page/header.inc` — `page_header()`.** `<title>$title</title>`
   interpolated the page title raw with no escaping. `$title` traces back to
   `$_SESSION['page_title']` in several files, at least one of which builds
