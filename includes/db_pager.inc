@@ -625,7 +625,7 @@ final class db_pager {
  * @param string|array<array-key, mixed> $coldef
  * @return db_pager
  */
-function &new_db_pager(string $name, string|array $sql, string|array $coldef, ?string $table = null, ?string $key = null, int $page_len = 0)  {
+function new_db_pager(string $name, string|array $sql, string|array $coldef, ?string $table = null, ?string $key = null, int $page_len = 0): db_pager  {
 
     /** @var db_pager|null $existing_pager */
     $existing_pager = $_SESSION[$name] ?? null;

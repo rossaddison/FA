@@ -306,7 +306,7 @@ $cols = array(
 	if (!(bool)(@$_REQUEST['popup'])) {
 		$cols[' '] = 'skip';
 	}
-$table =& new_db_pager('branch_tbl', $sql, $cols, 'cust_branch');
+$table = new_db_pager('branch_tbl', $sql, $cols, 'cust_branch');
 $table->set_inactive_ctrl('cust_branch', 'branch_code');
 
 display_db_pager($table);

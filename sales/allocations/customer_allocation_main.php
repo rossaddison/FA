@@ -112,7 +112,7 @@ if (isset($_POST['customer_id'])) {
 	$cols[_("Currency")] = 'skip';
 }
 
-$table =& new_db_pager('alloc_tbl', $sql, $cols);
+$table = new_db_pager('alloc_tbl', $sql, $cols);
 $table->set_marker('check_settled', _("Marked items are settled."), 'settledbg', 'settledfg');
 
 $table->width = "75%";

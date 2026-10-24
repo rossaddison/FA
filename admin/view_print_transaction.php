@@ -139,7 +139,7 @@ function handle_search(): void
 			array_remove($cols, 1);
 		}
 
-		$table =& new_db_pager('transactions', $sql, $cols);
+		$table = new_db_pager('transactions', $sql, $cols);
 		$table->width = "40%";
 		display_db_pager($table);
 	}

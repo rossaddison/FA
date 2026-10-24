@@ -138,7 +138,7 @@ if($_POST['filterType'] == ST_SUPPINVOICE) //add the payment column if shown sup
 	$cols[_("Supplier's Reference")] = array('fun'=>'invoice_supp_reference', 'align'=>'center');
 }
 
-$table =& new_db_pager('journal_tbl', $sql, $cols);
+$table = new_db_pager('journal_tbl', $sql, $cols);
 
 $table->width = "80%";
 

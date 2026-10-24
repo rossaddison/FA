@@ -300,7 +300,7 @@ display_heading((string)$act['bank_account_name']." - ".(string)$act['bank_curr_
 		array('insert'=>true, 'fun'=>'gl_view_bar'),
 		"X"=>array('insert'=>true, 'fun'=>'rec_checkbox')
 	   );
-	$table =& new_db_pager('trans_tbl', $sql, $cols);
+	$table = new_db_pager('trans_tbl', $sql, $cols);
 
 	$table->width = "80%";
 	display_db_pager($table);

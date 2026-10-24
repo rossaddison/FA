@@ -49,7 +49,7 @@ $sql = get_sql_for_where_used(is_array($stock_id_filter) ? null : $stock_id_filt
 	_("Quantity Required")
 	);
 
-$table =& new_db_pager('usage_table', $sql, $cols);
+$table = new_db_pager('usage_table', $sql, $cols);
 
 $table->width = "80%";
 display_db_pager($table);

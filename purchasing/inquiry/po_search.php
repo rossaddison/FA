@@ -153,7 +153,7 @@ if (get_post('StockLocation') != ALL_TEXT) {
 	$cols[_("Location")] = 'skip';
 }
 
-$table =& new_db_pager('orders_tbl', $sql, $cols);
+$table = new_db_pager('orders_tbl', $sql, $cols);
 $table->set_marker('check_overdue', _("Marked orders have overdue items."));
 
 $table->width = "80%";

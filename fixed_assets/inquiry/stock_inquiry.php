@@ -216,7 +216,7 @@ $cols = array(
 //------------------------------------------------------------------------------------------------
 
 /*show a table of the transactions returned by the sql */
-$table =& new_db_pager('fixed_assets_tbl', $sql, $cols);
+$table = new_db_pager('fixed_assets_tbl', $sql, $cols);
 
 $table->width = "85%";
 $table->row_fun = "fa_prepare_row";

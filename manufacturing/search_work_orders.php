@@ -182,7 +182,7 @@ $cols = array(
 	array('insert'=>true, 'fun'=> 'prt_link')
 );
 
-$table =& new_db_pager('orders_tbl', $sql, $cols);
+$table = new_db_pager('orders_tbl', $sql, $cols);
 $table->set_marker('check_overdue', _("Marked orders are overdue."));
 
 $table->width = "90%";

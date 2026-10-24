@@ -262,7 +262,7 @@ if ($_POST['customer_id'] != ALL_TEXT) {
 if ($_POST['filterType'] != '2')
 	$cols[_("Balance")] = 'skip';
 
-$table =& new_db_pager('trans_tbl', $sql, $cols);
+$table = new_db_pager('trans_tbl', $sql, $cols);
 $table->set_marker('check_overdue', _("Marked items are overdue."));
 
 $table->width = "85%";

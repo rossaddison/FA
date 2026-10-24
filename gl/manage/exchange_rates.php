@@ -216,7 +216,7 @@ $cols = array(
 	array('insert'=>true, 'fun'=>'edit_link'),
 	array('insert'=>true, 'fun'=>'del_link'),
 );
-$table =& new_db_pager('orders_tbl', $sql, $cols);
+$table = new_db_pager('orders_tbl', $sql, $cols);
 
 if (is_company_currency(get_post('curr_abrev')))
 {

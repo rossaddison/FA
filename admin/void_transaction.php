@@ -198,7 +198,7 @@ function voiding_controls()
 		_("Select") => array('insert'=>true, 'fun'=>'select_link')
 	);
 
-	$table =& new_db_pager('transactions', $sql, $cols);
+	$table = new_db_pager('transactions', $sql, $cols);
 	$table->set_marker('is_selected', _("Marked transactions will be voided.")); //Added by Faisal
 
 	$table->width = "40%";

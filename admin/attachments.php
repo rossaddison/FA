@@ -256,7 +256,7 @@ function display_rows(string|null $type, string|null $trans_no): void
 	    	array('insert'=>true, 'fun'=>'delete_link')
 	    );	
 
-	$table =& new_db_pager('trans_tbl', $sql, $cols);
+	$table = new_db_pager('trans_tbl', $sql, $cols);
 
 	$table->width = "60%";
 

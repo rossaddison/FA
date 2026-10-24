@@ -161,7 +161,7 @@ if (get_post('StockLocation') != ALL_TEXT) {
 
 //---------------------------------------------------------------------------------------------------
 
-$table =& new_db_pager('orders_tbl', $sql, $cols);
+$table = new_db_pager('orders_tbl', $sql, $cols);
 
 $table->width = "80%";
 

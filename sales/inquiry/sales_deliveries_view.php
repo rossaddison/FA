@@ -218,7 +218,7 @@ if (isset($_SESSION['Batch']))
 
 /** @var array<array-key, mixed> $cols */
 $cols = $cols;
-$table =& new_db_pager('deliveries_tbl', $sql, $cols);
+$table = new_db_pager('deliveries_tbl', $sql, $cols);
 $table->set_marker('check_overdue', _("Marked items are overdue."));
 
 //$table->width = "92%";
