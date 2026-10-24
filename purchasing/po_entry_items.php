@@ -156,7 +156,7 @@ if (isset($_GET['AddedID']))
 	display_footer_exit();	
 }
 
-if ((bool)session_obj('PO')->fixed_asset)
+if (session_obj('PO')->fixed_asset)
   check_db_has_purchasable_fixed_assets(_("There are no purchasable fixed assets defined in the system."));
 else
   check_db_has_purchasable_items(_("There are no purchasable inventory items defined in the system."));

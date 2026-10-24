@@ -50,9 +50,15 @@ final class purch_order
 	var $credit = 0.0;
 	/** @var string|int|float|bool|null */
 	var $tax_group_id ;
-	/** @var array<array-key, mixed>|null */
+	/**
+	 * @var array<array-key, array{tax_type_id: array-key, tax_type_name?: scalar|null,
+	 *   sales_gl_code?: scalar|null, purchasing_gl_code?: scalar|null, rate: scalar|null,
+	 *   included_in_price?: scalar|null, Value?: scalar|null, Net?: scalar|null,
+	 *   ...<array-key, scalar|null>}>|null
+	 *   matches taxes/tax_calc.inc's own TaxItem shape (get_tax_for_items()'s expected input)
+	 */
 	var $tax_group_array = null; // saves db queries
-	/** @var int */
+	/** @var bool|int */
 	var $tax_included = 0; // type of prices
 	/** @var string */
 	var $terms = '';
@@ -69,7 +75,7 @@ final class purch_order
 	var $reference = '';
 
 	/**
-	 * @var array
+	 * @var array<array-key, int|float|false>|null
 	 */
 	var $tax_overrides = array();		// array of taxes manually inserted during sales invoice entry (direct invoice)
 	
@@ -86,7 +92,7 @@ final class purch_order
 	var $prepayments = array();
 
 	/**
-	 * @var false
+	 * @var bool
 	 */
 	var $fixed_asset = false;
 
@@ -268,16 +274,15 @@ final class purch_order
 
     	// Adjustment for swiss franken, we always have 5 rappen = 1/20 franken
 	    if ($this->curr_code == 'CHF') {
-			$val = $taxes['1']['Value'];
-			$val1 = (floatval((intval(round(($val*20),0)))/20));
+			$val = (float) ($taxes['1']['Value'] ?? 0);
+			$val1 = (floatval((intval(round(($val*20.0),0)))/20));
 			$taxes['1']['Value'] = $val1;
 		}
-		foreach($this->tax_overrides as $id => $value) // add values entered manually
-		{
-                    /*
-                     *  float $value
-                     */
-                    $taxes[$id]['Override'] = $value;
+		if ($this->tax_overrides !== null) {
+			foreach($this->tax_overrides as $id => $value) // add values entered manually
+			{
+				$taxes[$id]['Override'] = $value;
+			}
 		}
 		return $taxes;
 	}
@@ -294,7 +299,7 @@ final class purch_order
                 $prices = [];
 		foreach ($this->line_items as $ln_itm) {
 			$items[] = $ln_itm->stock_id;
-			$value = round((float)$ln_itm->quantity * (float)$ln_itm->price, $dec);
+			$value = round((float)$ln_itm->quantity * $ln_itm->price, $dec);
 			$prices[] =$value;
 			$total += $value;
 		}
@@ -422,7 +427,7 @@ final class po_line_details
 	function taxfree_charge_value(purch_order $po)
 	{
 	    return get_tax_free_price_for_item($this->stock_id,
-                (float)$this->receive_qty*(float)$this->price,
+                (float)$this->receive_qty*$this->price,
 	    $po->tax_group_id, $po->tax_included, $po->tax_group_array);
 	}
 }

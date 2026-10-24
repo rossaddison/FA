@@ -33,8 +33,10 @@ function copy_from_cart(): void
 	$_POST['cash_account'] = $cart->cash_account;
     $_POST['dimension'] = $cart->dimension;
     $_POST['dimension2'] = $cart->dimension2;
-    foreach($cart->tax_overrides as $id => $value)
-	    $_POST['mantax'][$id] = price_format($value);
+    if ($cart->tax_overrides !== null) {
+	    foreach($cart->tax_overrides as $id => $value)
+		    $_POST['mantax'][$id] = price_format($value);
+    }
 }
 
 function copy_to_cart(): void
