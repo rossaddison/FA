@@ -132,6 +132,9 @@ final class references
 					display_warning(sprintf(_("Missing refline context data: '%s'"), $refline_placeholders[$ph]));
 					$out .= $ph; // debug
 				} else {
+					// $context's values are genuinely mixed by design (date string, customer/
+					// branch/supplier ids, location, pos, ...) -- validated with is_scalar()
+					// immediately below before any use
 					$ctx_date = $context['date'] ?? null;
 					$ctx_date = is_scalar($ctx_date) ? $ctx_date : null;
 					switch ($ph)
@@ -356,6 +359,8 @@ final class references
 
  		$context['pos'] = session_obj('wa_current_user')->pos;
 
+		// $context's values are genuinely mixed by design, same as _parse_next() above --
+		// validated with is_scalar()/is_string() immediately below before any use
 		$ctx_date = $context['date'] ?? null;
 		$ctx_date = is_string($ctx_date) ? $ctx_date : null;
 		if (is_date($ctx_date))
