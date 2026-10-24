@@ -187,7 +187,7 @@ final class Ajax extends JsHttpRequest {
 	  	if ($this->isActive() && ($trigger !== false)) {
 
 			$aAttributes['why'] = $trigger;
-			$aAttributes['data'] = $mData;
+			$aAttributes['data'] = $mData; // $mData is genuinely mixed: generic AJAX command payload, shape varies per command type
 			$this->aCommands[] = $aAttributes;
 	  	}
 	}

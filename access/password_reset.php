@@ -72,8 +72,10 @@ function defaultCompany()
 
     $company = user_company();
     $coy = is_scalar($company) ? $company : null;
-    if (!isset($coy))
+    if (!isset($coy)) {
+        /** @var int|string $def_coy */
         $coy = $def_coy;
+    }
     if (!@sysprefs()->text_company_selection) {
         echo "<tr><td>"._("Company")."</td><td><select name='company_login_name'>\n";
         for ($i = 0; $i < count($db_connections); $i++)

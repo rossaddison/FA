@@ -58,8 +58,9 @@ function yiiMenuHeader(string $title, bool $noMenu, bool $isIndex): string
 		$app = $_SESSION['App'] ?? new front_accounting();
 		if (!($app instanceof front_accounting)) $app = new front_accounting();
 		$user = session_obj('wa_current_user');
-		$selected = $_SESSION['sel_app'] ?? null;
-		if (!is_string($selected)) $selected = '';
+		/** @var string|null $sess_sel_app */
+		$sess_sel_app = $_SESSION['sel_app'] ?? null;
+		$selected = is_string($sess_sel_app) ? $sess_sel_app : '';
 		$icon = 'fa-icon14'; // css/fa-inline.css
 		$tabs = array();
 		foreach ($app->applications as $application) {

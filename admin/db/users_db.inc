@@ -72,7 +72,7 @@ function update_user_prefs(string|int|float|bool|null $id, mixed $prefs)
 {
 	$sql = "UPDATE ".TB_PREF."users SET ";
 	$sets = array();
-	foreach($prefs as $name => $value) {
+	foreach($prefs as $name => $value) { // $value is genuinely mixed: caller-supplied pref value of varying type, validated below
 		if (!is_string($name) || !preg_match('/^[a-z_][a-z0-9_]*$/i', $name))
 			continue; // column name must be a safe identifier, never attacker-controlled data
 		$sets[] = $name.'='. db_escape(is_scalar($value) ? $value : null);

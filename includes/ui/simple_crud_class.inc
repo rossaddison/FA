@@ -378,7 +378,7 @@ class simple_crud {
 	//
 	//	Update record in db after edition
 	//
-	/** @return void|int|string|null */
+	/** @return void|string|int|float|bool|null */
 	function db_update()
 	{
 		$this->db_insert();
