@@ -45,7 +45,7 @@ function update_item(string|int|float|bool|null $stock_id, string|int|float|bool
 		$sql .= ", mb_flag=".db_escape($mb_flag);
 
 	if (isset($depreciation_start)) {
-		$depreciation_start_sql = date2sql($depreciation_start);
+		$depreciation_start_sql = date2sql(is_scalar($depreciation_start) ? (string) $depreciation_start : null);
 		if ($depreciation_start_sql == "")
 			$depreciation_start_sql = "0000-00-00";
 		$sql .= ", depreciation_start='".$depreciation_start_sql."'"
@@ -68,7 +68,7 @@ function add_item(string|int|float|bool|null $stock_id, string|int|float|bool|nu
 {
 	$add_item_dep_sql = "0000-00-00";
 	if (isset($depreciation_start)) {
-		$add_item_dep_sql = date2sql($depreciation_start);
+		$add_item_dep_sql = date2sql(is_scalar($depreciation_start) ? (string) $depreciation_start : null);
 		if ($add_item_dep_sql == "")
 			$add_item_dep_sql = "0000-00-00";
 	}
@@ -184,7 +184,7 @@ function item_in_foreign_codes(string|int|float|bool|null $stock_id): string
 	if ($msg == '') {
 
 		$kits = get_where_used($stock_id);
-		$num_kits = db_num_rows($kits);
+		$num_kits = (int) db_num_rows($kits);
 		if ($num_kits) {
 			$msg = _("This item cannot be deleted because some code aliases 
 				or foreign codes was entered for it, or there are kits defined 
@@ -193,7 +193,7 @@ function item_in_foreign_codes(string|int|float|bool|null $stock_id): string
 
 			while($num_kits--) {
 				$kit = row_or_empty(db_fetch($kits));
-				$msg .= "'".$kit[0]."'";
+				$msg .= "'".(string) $kit[0]."'";
 				if ($num_kits) $msg .= ',';
 			}
 
@@ -207,15 +207,17 @@ function item_in_foreign_codes(string|int|float|bool|null $stock_id): string
  */
 function get_items_search(string|array|null $description, string|int|float|bool|null $type)
 {
+	$post_description_raw = get_post("description");
+	$post_description = is_array($post_description_raw) ? '' : $post_description_raw;
 
 	$sql = "SELECT COUNT(i.item_code) AS kit, i.item_code, i.description, c.description category
 		FROM ".TB_PREF."stock_master s, ".TB_PREF."item_codes i
 			LEFT JOIN ".TB_PREF."stock_category c ON i.category_id=c.category_id
 		WHERE i.stock_id=s.stock_id
 			AND !i.inactive AND !s.inactive
-			AND (  i.item_code LIKE " . db_escape("%" . $description. "%") . " OR 
-				i.description LIKE " . db_escape("%" . get_post("description"). "%") . " OR 
-				c.description LIKE " . db_escape("%" . get_post("description"). "%") . ") ";
+			AND (  i.item_code LIKE " . db_escape("%" . (is_array($description) ? '' : (string) $description) . "%") . " OR
+				i.description LIKE " . db_escape("%" . $post_description . "%") . " OR
+				c.description LIKE " . db_escape("%" . $post_description . "%") . ") ";
 
 	switch ($type) {
 		case "sales":
@@ -231,8 +233,8 @@ function get_items_search(string|array|null $description, string|int|float|bool|
 			$sql .= " AND mb_flag <> 'D' AND mb_flag <> 'F' AND  i.item_code=i.stock_id";
 			break;
 		case "component":
-			$parent = $_GET['parent'];
-			$sql .= " AND  i.item_code=i.stock_id AND i.stock_id <> ".db_escape($parent)." AND mb_flag <> 'F' ";
+			$parent = $_GET['parent'] ?? null;
+			$sql .= " AND  i.item_code=i.stock_id AND i.stock_id <> ".db_escape(is_scalar($parent) ? $parent : null)." AND mb_flag <> 'F' ";
 			break;
 		case "kits":
 			$sql .= " AND !i.is_foreign AND i.item_code!=i.stock_id AND mb_flag <> 'F'";
@@ -247,7 +249,7 @@ function get_items_search(string|array|null $description, string|int|float|bool|
 	else
 		$limit = 10;
 
-	$sql .= " GROUP BY i.item_code ORDER BY i.description LIMIT 0,".(int)($limit);
+	$sql .= " GROUP BY i.item_code ORDER BY i.description LIMIT 0,".$limit;
 
 	return db_select($sql, "Failed in retreiving item list.");
 }
