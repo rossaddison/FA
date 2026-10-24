@@ -147,8 +147,11 @@ class fa_patch {
 		$this->save_log = ini_set('error_log', VARLOG_PATH.'/upgrade.'.$this->cur_company.'.log');
 		$this->log_error(sprintf(_("Upgrade started for company %s."), $this->cur_company), 'Info');
 
-		if (!set_global_connection($this->cur_company))
+		try {
+			set_global_connection($this->cur_company);
+		} catch (RuntimeException) {
 			return $this->log_error(_("Cannot connect to company database."));
+		}
 
 		$cur_ver = get_company_pref('version_id');
 		if ($cur_ver != $this->previous)
@@ -218,8 +221,11 @@ class fa_patch {
 		{
 			if ((bool)$this->backup)
 			{
-				if (!set_global_connection($this->cur_company)) // reset connection to clear encoding
+				try { // reset connection to clear encoding
+					set_global_connection($this->cur_company);
+				} catch (RuntimeException) {
 					return $this->log_error(_("Cannot connect to company database for database restore."));
+				}
 
 				set_time_limit($this->max_upgrade_time);
 				$result = db_import($this->backup, $this->companies[(int) $this->cur_company], true, false);
@@ -329,7 +335,12 @@ function get_site_status(array $connections): array
 
 		foreach($connections as $i => $conn)
 		{
-			$info[$i]['status'] = set_global_connection($i) !== false;
+			try {
+				set_global_connection($i);
+				$info[$i]['status'] = true;
+			} catch (RuntimeException) {
+				$info[$i]['status'] = false;
+			}
 
 			$info[$i]['name'] = $conn['name'];
 			$info[$i]['table_set'] = $conn['host'].'/'.$conn['dbname'].':'.$conn['tbpref'].'*';

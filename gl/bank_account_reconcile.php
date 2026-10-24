@@ -131,9 +131,13 @@ function change_tpl_flag(string|int|float|bool|null $reconcile_id): bool
 		ajax()->activate('bank_date');
 
 	$reconcile_date_scalar = post_scalar('reconcile_date');
-	$_POST['bank_date'] = date2sql($reconcile_date_scalar === null ? null : (string) $reconcile_date_scalar);
+	$bank_date_sql = date2sql($reconcile_date_scalar === null ? null : (string) $reconcile_date_scalar);
+	$_POST['bank_date'] = $bank_date_sql;
+	// read back from the local $bank_date_sql, not $_POST['bank_date'], so Psalm's taint
+	// tracker sees this as date2sql()'s own @psalm-taint-escape sql output rather than a
+	// fresh (and here, already-reassigned-safe) read of the $_POST superglobal
 	$reconcile_value = check_value("rec_".$reconcile_id_str)
-						? ("'".$_POST['bank_date'] ."'") : 'NULL';
+						? ("'".$bank_date_sql ."'") : 'NULL';
 
 	$bank_account_scalar = post_scalar('bank_account');
 	update_reconciled_values($reconcile_id, $reconcile_value, $reconcile_date_scalar === null ? null : (string) $reconcile_date_scalar,
@@ -155,8 +159,9 @@ function set_tpl_flag(string|int|float|bool|null $reconcile_id): void
 		ajax()->activate('bank_date');
 
 	$reconcile_date_scalar = post_scalar('reconcile_date');
-	$_POST['bank_date'] = date2sql($reconcile_date_scalar === null ? null : (string) $reconcile_date_scalar);
-	$reconcile_value =  ("'".$_POST['bank_date'] ."'");
+	$bank_date_sql = date2sql($reconcile_date_scalar === null ? null : (string) $reconcile_date_scalar);
+	$_POST['bank_date'] = $bank_date_sql;
+	$reconcile_value =  ("'".$bank_date_sql ."'");
 
 	$bank_account_scalar = post_scalar('bank_account');
 	update_reconciled_values($reconcile_id, $reconcile_value, $reconcile_date_scalar === null ? null : (string) $reconcile_date_scalar,

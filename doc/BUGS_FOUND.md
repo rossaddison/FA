@@ -694,6 +694,85 @@ it, not a flaw in the escaping function itself.
   a `preg_match('/^[a-z_][a-z0-9_]*$/i', $name)` identifier whitelist,
   skipping any key that doesn't match.
 
+- **`gl/bank_account_reconcile.php` — `change_tpl_flag()` / `set_tpl_flag()`.**
+  Both built `$reconcile_value` by re-reading `$_POST['bank_date']`
+  immediately after assigning it the output of `date2sql()` (itself
+  `@psalm-taint-escape sql`-annotated and genuinely safe), e.g.
+  `$_POST['bank_date'] = date2sql(...); $reconcile_value = "'".$_POST['bank_date']."'";`.
+  Not exploitable — the value actually embedded is always
+  `date2sql()`'s own sanitized output, never raw request input — but
+  Psalm's taint model treats any `$_POST[...]` *read* as tainted by
+  default regardless of an intervening reassignment to that same key,
+  so the de-tainted status from the `date2sql()` call didn't carry
+  through the subsequent superglobal re-read. Fixed by keeping the
+  sanitized value in a local variable (`$bank_date_sql`) and reading
+  that instead of re-reading `$_POST['bank_date']`, which both
+  resolves the finding and is clearer than mutating `$_POST` to pass
+  a value to the very next line.
+
+- **Investigated, not a bug: `inventory/includes/db/items_locations_db.inc` —
+  `set_reorder_level()`.** Psalm's taint graph traces a long, convoluted
+  path from `$_GET` through `html_cleanup()`/`html_specials_encode()`
+  in an entirely unrelated page (`inventory/manage/item_units.php`'s
+  inactive-checkbox handling) merging through the shared, generically-
+  typed `get_post()`/`input_num()` helpers into this function's
+  `$reorder_level` parameter, which is interpolated directly into
+  `"...SET reorder_level = $reorder_level"` with no `db_escape()`
+  (unlike `$stock_id`/`$loc_code` two lines below, which do use it).
+  Confirmed safe regardless of that trace: `$reorder_level` is declared
+  `int|float|bool|null` — a native parameter type — and this file has
+  `declare(strict_types=1)`, so PHP itself throws a `TypeError` before
+  the function body ever runs if anything other than one of those
+  types is passed; a string (let alone one containing SQL
+  metacharacters) can never reach the interpolation. Left as-is; the
+  taint trace is a type-level artifact of two unrelated pages sharing
+  generic helper functions, not a real data-flow path.
+
+- **`purchasing/includes/db/po_db.inc` — `update_po()`.** The header
+  `UPDATE` statement's `WHERE` clause concatenated
+  `$po_obj->order_no` with no `db_escape()` —
+  `" WHERE order_no = " . $po_obj->order_no` — while the very next
+  statement (the matching `DELETE FROM ... purch_order_details`) and
+  every other value in the same `UPDATE` correctly escapes it. Not
+  just theoretical: `purch_order::$order_no` is declared `@var int`
+  but has no *native* type (`var $order_no;`), so PHP never enforces
+  it, and `purchasing/includes/ui/po_ui.inc`'s `create_new_po()`
+  assigns it directly from its own `string|int|null $trans_no`
+  parameter — traced back to `purchasing/po_entry_items.php`'s
+  `create_new_po(ST_PURCHORDER, (string) get_scalar('ModifyOrderNumber'))`,
+  a `$_GET`/`$_POST` value with no numeric validation anywhere in the
+  chain. Fixed the sink (`db_escape($po_obj->order_no)`, matching the
+  sibling `DELETE`) and the source (`create_new_po()` now assigns
+  `(int) $trans_no` instead of the raw value, both places it writes
+  `$cart->order_no`).
+
+- **`sales/includes/db/cust_trans_db.inc` — `get_customer_trans()`.**
+  The `ST_CUSTPAYMENT`/`ST_BANKDEPOSIT` branch's extra `bank_trans`
+  join condition interpolated `$trans_type` raw —
+  `"AND ".TB_PREF."bank_trans.type=$trans_type"` — nine lines below
+  the same variable correctly escaped for the main `trans.type=` clause
+  (`db_escape($trans_type)`). Traced from `$_GET['trans_no']`/
+  `$_GET['trans_type']` in `sales/view/view_sales_order.php`'s
+  `new Cart($_GET['trans_type'], $_GET['trans_no'])` through
+  `Cart::read()` → `read_sales_trans()` → here. Fixed to match the
+  sibling clause.
+
+- **`sales/includes/db/sales_order_db.inc` — five call sites across
+  `add_sales_order_details()`, `update_sales_order_details()`, and
+  `update_sales_order()`.** Same shape as the finding above, repeated:
+  every *other* value in each of these `INSERT`/`UPDATE`/`DELETE`
+  statements correctly used `db_escape()`, but `$order->trans_type`
+  (and, in two spots, `$order_no` itself) used a bare `(string)` cast
+  or no escaping at all instead — e.g.
+  `$sql .= (string) $order_no . ",". (string) $order->trans_type`,
+  `order_no=$order_no, trans_type=".(string) $order->trans_type`,
+  `"AND trans_type=".(string) $order->trans_type`. `Cart::$trans_type`/
+  the `$order_no` passed to these functions both trace back to raw
+  `$_GET['trans_type']`/`$_GET['trans_no']` via
+  `new Cart($_GET['trans_type'], $_GET['trans_no'])` in
+  `sales/view/view_sales_order.php`. All five fixed to `db_escape(...)`,
+  matching every sibling value already correct in the same statements.
+
 **Process note:** `db_escape()`, `clean_file_name()`, `html_specials_encode()`
 (both copies — `includes/session.inc` and `install/isession.inc`), and
 `date2sql()` were also missing `@psalm-taint-escape` annotations despite
@@ -1145,6 +1224,28 @@ Found by chasing Psalm's `TaintedSSRF`/`TaintedFile` findings in
   would hit the identical "Incorrect DATE value: ''" crash documented
   above. Fixed with the same `"0000-00-00"` fallback used throughout
   this file's already-correct functions.
+
+- **`admin/includes/fa_patch.class.inc` — three call sites of
+  `set_global_connection()`.** Earlier in this same Psalm cleanup pass,
+  `includes/db/connect_db_mysqli.inc`'s `set_global_connection()` was
+  changed from returning `false` on a failed connection to throwing a
+  `RuntimeException` instead (to satisfy a narrower return type), but
+  none of its callers were updated to match. These three sites —
+  `apply_patch()`'s upgrade-start connection, the same function's
+  post-failure restore-connection reset, and `get_site_status()`'s
+  per-company status loop — all still checked `!set_global_connection(...)`
+  or `... !== false`, which can now never be reached: a failed
+  connection throws before the comparison ever runs. The first two
+  would have surfaced immediately as an uncaught exception instead of
+  the intended friendly "Cannot connect to company database" message;
+  the third, `get_site_status()`, is the more serious one — iterating
+  every configured company to report each one's live status — a
+  single unreachable company would have thrown and aborted the whole
+  loop, silently losing the status of every company after it in the
+  list, with no indication which one failed. Fixed by wrapping each
+  call in `try`/`catch (RuntimeException)`, restoring the original
+  graceful-degradation behavior under the function's current
+  throw-based contract.
 
 - **`admin/print_profiles.php` — the delete-profile handler.** The
   "is this profile still in use?" safety check,

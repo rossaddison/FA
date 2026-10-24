@@ -78,8 +78,8 @@ function calculate_reorder_level(string|int|float|bool|null $location, line_item
 		FROM ".TB_PREF."loc_stock stock,"
 			.TB_PREF."locations loc
 		WHERE stock.loc_code=loc.loc_code
-		AND stock.stock_id = '" . (string) $line->stock_id . "'
-		AND stock.loc_code = '" . (string) $location . "'";
+		AND stock.stock_id = ".db_escape($line->stock_id)."
+		AND stock.loc_code = ".db_escape($location);
 	$res = db_select($sql,"a location could not be retreived");
 	$loc = db_fetch($res);
 	if ($loc !== false && $loc['email'] != "")

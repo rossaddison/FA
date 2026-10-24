@@ -82,11 +82,11 @@ function create_new_po(?int $trans_type, string|int|null $trans_no): void
 	$cart->due_date = $cart->orig_order_date = $_POST['OrderDate'];
 
 	$cart->trans_type = $trans_type;
-	$cart->order_no = $trans_no;
+	$cart->order_no = (int) $trans_no;
 	/*read in all the selected order into the Items cart  */
 	if ((bool)$trans_no) {
 		read_po($trans_no, $cart);
-		$cart->order_no = $trans_no;
+		$cart->order_no = (int) $trans_no;
 	} else
 		$cart->reference = refs()->get_next($trans_type, null,
 			array('supplier_id' => $cart->supplier_id, 'date' => get_post('OrderDate')));

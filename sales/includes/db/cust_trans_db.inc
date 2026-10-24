@@ -202,7 +202,7 @@ function get_customer_trans(string|int|float|bool|null $trans_id, string|int|flo
 	if ($trans_type == ST_CUSTPAYMENT || $trans_type == ST_BANKDEPOSIT) {
 		// it's a payment so also get the bank account
 		$sql .= " AND ".TB_PREF."bank_trans.trans_no =".db_escape($trans_id)."
-			AND ".TB_PREF."bank_trans.type=$trans_type
+			AND ".TB_PREF."bank_trans.type=".db_escape($trans_type)."
 			AND ".TB_PREF."bank_trans.amount != 0
 			AND ".TB_PREF."bank_accounts.id=".TB_PREF."bank_trans.bank_act ";
 	}

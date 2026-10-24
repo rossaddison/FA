@@ -147,7 +147,7 @@ function update_po(purch_order &$po_obj)
 		total=". db_escape($po_obj->get_trans_total()).",
 		prep_amount=". db_escape($po_obj->prep_amount).",
 		tax_included=". db_escape($po_obj->tax_included);
-    $sql .= " WHERE order_no = " . $po_obj->order_no;
+    $sql .= " WHERE order_no = " . db_escape($po_obj->order_no);
 	db_query($sql, "The purchase order could not be updated");
 
 	$sql = "DELETE FROM ".TB_PREF."purch_order_details WHERE order_no="

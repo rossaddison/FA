@@ -15,7 +15,7 @@ define('SQL_MODE', 'STRICT_ALL_TABLES'); // prevents SQL injection with silent f
 
 $db_last_inserted_id = 0;
 
-function set_global_connection(string|int|float|bool|null $company=-1): mysqli|false
+function set_global_connection(string|int|float|bool|null $company=-1): mysqli
 {
 	global $db, $path_to_root, $db_connections, $SysPrefs;
 
@@ -45,6 +45,7 @@ function set_global_connection(string|int|float|bool|null $company=-1): mysqli|f
 	db_query("SET sql_mode = '".SQL_MODE."'");
 	/////
 	sysprefs()->refresh();
+	/** @var mysqli $db */
 	return $db;
 }
 
@@ -196,19 +197,16 @@ function db_escape(string|int|float|bool|null $value = "", ?bool $nullify = fals
   	//reset default if second parameter is skipped
 	$nullify = ($nullify === null) ? (false) : ($nullify);
 
-  	//check for null/unset/empty strings
-	if ((!isset($value)) || (is_null($value)) || ($value === "")) {
+  	//check for empty strings ($value is unconditionally a non-null string by this point,
+	//thanks to the (string) cast + html_entity_decode()/html_specials_encode() calls above,
+	//so the is_string()/is_numeric() branching this used to have here was all dead code)
+	if ($value === "") {
 		$value = ($nullify) ? ("NULL") : ("''");
 	} else {
-		if (is_string($value)) {
-			$value = "'" . mysqli_real_escape_string($db, $value) . "'";
-      		//value is a string and should be quoted; 
-		} else if (!is_numeric($value)) {
-			//value is not a string nor numeric
-			display_error("ERROR: incorrect data type send to sql query");
-			echo '<br><br>';
-			exit();
-		}
+		// mysqli_real_escape_string() has no declared return type in the vendored Psalm
+		// stub (vendor/vimeo/psalm/stubs/CoreGenericFunctions.phpstub), so Psalm sees its
+		// result as mixed; it always genuinely returns a string per PHP's own docs
+		$value = "'" . (string) mysqli_real_escape_string($db, $value) . "'";
 	}
 	return $value;
 }
@@ -295,7 +293,7 @@ function db_drop_db(array $connection): bool|mysqli_result
 
 	if ($connection["tbpref"] == "")
 	{
-		$sql = "DROP DATABASE IF EXISTS `" . str_replace('`', '``', (string)$connection["dbname"]) . "`";
+		$sql = "DROP DATABASE IF EXISTS `" . str_replace('`', '``', $connection["dbname"]) . "`";
 		return mysqli_query($db, $sql);
 	}
 	else
@@ -334,7 +332,8 @@ function db_escape_function(string|int|float|bool|null $string): string
 {
 	global $db;
 
-	return (mysqli_real_escape_string($db, (string) $string));
+	// same untyped-vendor-stub situation as db_escape() above
+	return (string) mysqli_real_escape_string($db, (string) $string);
 }
 
 /*

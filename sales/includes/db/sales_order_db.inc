@@ -69,7 +69,7 @@ function add_sales_order(Cart &$order)
 			$loc = calculate_reorder_level($order->Location, $line, $st_ids, $st_names, $st_num, $st_reorder);
 
 		$sql = "INSERT INTO ".TB_PREF."sales_order_details (order_no, trans_type, stk_code, description, unit_price, quantity, discount_percent) VALUES (";
-		$sql .= (string) $order_no . ",". (string) $order->trans_type .
+		$sql .= db_escape($order_no) . ",". db_escape($order->trans_type) .
 				",".db_escape($line->stock_id).", "
 				.db_escape($line->item_description).", $line->price,
 				$line->quantity,
@@ -179,7 +179,7 @@ function update_sales_order(Cart $order): void
 		total = ". db_escape($total). ",
 		prep_amount = ". db_escape($order->prep_amount) ."
 	 WHERE order_no=" . db_escape($order_no) ."
-	 AND trans_type=".(string) $order->trans_type." AND version=".$version;
+	 AND trans_type=".db_escape($order->trans_type)." AND version=".$version;
 	db_query($sql, "order Cannot be Updated, this can be concurrent edition conflict");
 
 	$id_tokeep = array();
@@ -188,7 +188,7 @@ function update_sales_order(Cart $order): void
 	}
 	$id_list = implode(', ', $id_tokeep);
 	
-	$sql = "DELETE FROM ".TB_PREF."sales_order_details WHERE order_no =" . db_escape($order_no) . " AND trans_type=".(string) $order->trans_type;
+	$sql = "DELETE FROM ".TB_PREF."sales_order_details WHERE order_no =" . db_escape($order_no) . " AND trans_type=".db_escape($order->trans_type);
 	$sql .= " AND id NOT IN ($id_list)";
 
 	db_query($sql, "Old order Cannot be Deleted");
@@ -211,7 +211,7 @@ function update_sales_order(Cart $order): void
 			$sql = "INSERT INTO ".TB_PREF."sales_order_details
 			 (order_no, trans_type, stk_code,  description, unit_price, quantity,
 			  discount_percent, qty_sent)
-			 VALUES (".$order_no . ",".(string) $order->trans_type.","
+			 VALUES (".db_escape($order_no) . ",".db_escape($order->trans_type).","
 				  .db_escape($line->stock_id) . ","
 				  .db_escape($line->item_description) . ", "
 				  .db_escape($line->price) . ", "
@@ -221,8 +221,8 @@ function update_sales_order(Cart $order): void
 		else
 		$sql = "UPDATE ".TB_PREF."sales_order_details
 			SET id=".db_escape($line->id).",
-				order_no=$order_no,
-				trans_type=".(string) $order->trans_type.",
+				order_no=".db_escape($order_no).",
+				trans_type=".db_escape($order->trans_type).",
 				stk_code=".db_escape($line->stock_id).",
 				description=".db_escape($line->item_description).",
 				unit_price=".db_escape($line->price).",
