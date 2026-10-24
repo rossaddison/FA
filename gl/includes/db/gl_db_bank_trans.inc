@@ -190,7 +190,8 @@ function void_bank_trans(string|int|float|bool|null $type, string|int|float|bool
 **/
 function check_bank_account_history(string|int|float|bool|null $delta_amount, string|null $bank_account, string|null $date=null, mixed $user=null, int|float|null $balance_offset = 0)
 {
-	if ($delta_amount >= 0 && isset($date))
+	$delta_amount = $delta_amount ?? 0.00;
+        if ($delta_amount >= 0 && isset($date))
 		 return null;	// amount increase is always safe
 
 	$balance = (bool)$date ? get_bank_account_limit($bank_account, $date, $user) : 0;
@@ -198,8 +199,8 @@ function check_bank_account_history(string|int|float|bool|null $delta_amount, st
 	if (!isset($balance) && isset($date))
 		return null;	// unlimited account
 
-	$balance += (float)$balance_offset;
-	if (floatcmp($balance, -$delta_amount) < 0)
+        $balance = (float) $balance + (float) $balance_offset;
+        if (floatcmp($balance, -$delta_amount) < 0)
 		return array('amount' => $balance + $delta_amount, 'trans_date'=> date2sql($date));
 
 	$balance += $delta_amount;

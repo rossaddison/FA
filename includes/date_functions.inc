@@ -20,7 +20,10 @@ this can be a string either "d/m/Y" for UK/Australia/New Zealand dates or
 
 */
 
-function __date(string|int|float|bool|null $year, string|int|float|bool|null $month, string|int|float|bool|null $day): string
+function __date(
+    string|int|float|bool|null $year,
+    string|int|float|bool|null $month,
+    string|int|float|bool|null $day): string
 {
 	global $tmonths;
 	

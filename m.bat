@@ -41,7 +41,7 @@ goto menu
 
 :psalm
 echo Running PHP Psalm...
-php vendor/bin/psalm
+php vendor/bin/psalm --no-cache
 pause
 goto menu
 
