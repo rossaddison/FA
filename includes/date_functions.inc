@@ -26,7 +26,12 @@ function __date(string|int|float|bool|null $year, string|int|float|bool|null $mo
 	
 	$how = user_date_format();
 	$date_sep = user_date_sep();
-	$sep = sysprefs()->dateseps[is_scalar($date_sep) ? (int) $date_sep : 0];
+	// Psalm sees sysprefs()->dateseps as always indexable to a non-null string (it only
+	// knows the 4-element literal initializer, not that $date_sep could be out of that
+	// range at runtime) and flags the ?? '/' fallback as redundant -- kept anyway as a
+	// genuine runtime guard against a corrupted/out-of-range stored preference.
+	$sep = (sysprefs()->dateseps[is_scalar($date_sep) ?
+            (int) $date_sep : 0]) ?? '/';
 	$year = (int)$year;
 	$day = (int)$day;
 	$month = (int)$month;

@@ -54,6 +54,8 @@ function display_type_bs (?string $type, ?string $typename, string|int|float|boo
 {
 	global $path_to_root, $levelptr, $k;
 
+        
+        
 	$acctstotal = 0.0;
 	$typestotal = 0.0;
 

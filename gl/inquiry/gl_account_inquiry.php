@@ -179,7 +179,7 @@ function show_results(): void
 
     	alt_table_row_color($k);
 
-    	$running_total += $myrow["amount"];
+    	$running_total +=(float) $myrow["amount"];
 
     	$trandate = sql2date($myrow["tran_date"]);
 

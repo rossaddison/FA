@@ -100,7 +100,7 @@ while ($myrow = db_fetch($result))
 
 	alt_table_row_color($k);
 
-	$running_total += $myrow["amount"];
+	$running_total +=(float) $myrow["amount"];
 
 	$trandate = sql2date($myrow["trans_date"]);
 	label_cell($systypes_array[$myrow["type"]]);
@@ -119,9 +119,9 @@ while ($myrow = db_fetch($result))
 
 	end_row();
  	if ($myrow["amount"] > 0 ) 
- 		$debit += $myrow["amount"];
+ 		$debit +=(float) $myrow["amount"];
  	else 
- 		$credit += $myrow["amount"];
+ 		$credit +=(float) $myrow["amount"];
 
 	if ($j == 12)
 	{

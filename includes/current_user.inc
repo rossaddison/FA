@@ -577,11 +577,11 @@ function user_date_display(): void
   	}
 }
 
-/** @return null|scalar */
+/** @return scalar */
 function user_date_sep()
 {
 
-	return isset(session_obj('wa_current_user')->prefs->date_sep) ? session_obj('wa_current_user')->prefs->date_sep() : sysprefs()->dflt_date_sep;
+	return (isset(session_obj('wa_current_user')->prefs->date_sep) ? session_obj('wa_current_user')->prefs->date_sep() : sysprefs()->dflt_date_sep) ?? '/' ;
 }
 
 function user_tho_sep(): int
