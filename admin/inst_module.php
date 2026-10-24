@@ -50,7 +50,7 @@ function local_extension(string|int|null $id): bool
 	);
 
 	$cleaned_id = clean_file_name($id);
-	$local_module_path = $path_to_root.'/modules/'.(is_array($cleaned_id) ? '' : (string) $cleaned_id);
+	$local_module_path = "$path_to_root/modules/".(is_array($cleaned_id) ? '' : (string) $cleaned_id);
 	$local_config_file = $local_module_path.'/_init/config';
 	$local_hook_file = $local_module_path.'/hooks.php';
 
@@ -64,8 +64,13 @@ function local_extension(string|int|null $id): bool
 
 	}
 	$hooks_class = 'hooks_'.$id;
+	// every real modules/*/hooks.php declares `class hooks_<id> extends hooks` (the base
+	// class in includes/hooks.inc) -- class_exists(..., false) (autoloading off) only matches
+	// a class the include_once above just defined, so this can't instantiate an arbitrary
+	// already-autoloadable class
 	if (class_exists($hooks_class, false)) {
 		$hooks = new $hooks_class;
+		/** @var hooks $hooks */
 		$hooks->install_extension(false);
 	}
 	ajax()->activate('ext_tbl'); // refresh settings display
@@ -85,10 +90,11 @@ function handle_delete_ext(string|int|float|bool|null $id): bool
 		if (!uninstall_package((string) $ext['package']))
 			return false;
 	} else {
-		@include_once($path_to_root.'/'.(string)$ext['path'].'/hooks.php');
+		@include_once("$path_to_root/".(string)$ext['path']."/hooks.php");
 		$hooks_class = 'hooks_'.(string)$ext['package'];
 		if (class_exists($hooks_class)) {
 			$hooks = new $hooks_class;
+			/** @var hooks $hooks */
 			$hooks->uninstall_extension(false);
 		}
 	}
@@ -228,6 +234,8 @@ if (get_post('Refresh')) {
 					. _("Check Install/Activate page for newer package version."), (string) $ext['name']));
 				continue;
 			}
+			// activate_hooks() is declared mixed by design -- it returns whatever the
+			// extension's own install_extension()/uninstall_extension() hook returns
 			$activated = activate_hooks((string) $ext['package'], $comp, !$ext['active']);	// change active state
 
 			if ($activated !== null)

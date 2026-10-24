@@ -790,6 +790,33 @@ Found by chasing Psalm's `TaintedSSRF`/`TaintedFile` findings in
   the quotes came off - not an upstream bug, just the tag's actual,
   unquoted syntax.)
 
+- **`admin/inst_module.php` — `local_extension()` / `handle_delete_ext()`.**
+  Investigated, not fixed — a dynamic class name
+  (`'hooks_'.$id`/`'hooks_'.$ext['package']`, `$id` ultimately from
+  `find_submit('Local', ...)`, i.e. a submit-button-encoded `$_POST`
+  value) is instantiated with `new $hooks_class` and its
+  `install_extension()`/`uninstall_extension()` method called — Psalm's
+  `TaintedCallable` flags this correctly as attacker-influenced class
+  instantiation. Confirmed bounded rather than exploitable as a generic
+  object-injection/RCE primitive: `local_extension()`'s gate,
+  `class_exists($hooks_class, false)`, explicitly disables autoloading,
+  so it can only match a class the preceding
+  `include_once($local_hook_file)` just defined from
+  `modules/<clean_file_name($id)>/hooks.php` — a path already sanitized
+  through `clean_file_name()` before touching the filesystem. An
+  attacker would need to already be able to drop a file at that
+  sanitized path, at which point they have a stronger primitive
+  (arbitrary PHP file write) than this class-instantiation step could
+  ever grant on its own. `handle_delete_ext()`'s equivalent gate,
+  `class_exists($hooks_class)` (default `true` for autoloading), is
+  slightly looser in principle, but `$ext['package']` there comes from
+  `get_company_extensions()` (DB/config-stored, not raw request data),
+  not from the current request directly. This requires `SA_CREATEMODULES`
+  admin-level access either way. Left as-is — tightening the second
+  gate to match the first (`class_exists($hooks_class, false)`) would be
+  a reasonable future hardening, but wasn't made here since it's a
+  behavior change beyond this sweep's scope, not a type fix.
+
 ## Broken access control
 
 - **`includes/dashboard.inc` — `dashboard()`.** The per-app dashboard access
