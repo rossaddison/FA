@@ -80,7 +80,13 @@ new `NullableReturnStatement` in the other), `view_link` (9+ declarations
 across `admin/`, `dimensions/`, `gl/`, `manufacturing/`, `purchasing/`,
 `sales/`, with wildly different signatures — `array $row`,
 `array $trans`, `(string|int|float|bool|array $dummy, ...$order_no)`
-— and inconsistent return types), and others) — also `check_data()` and
+— and inconsistent return types), `alloc_link` (4 declarations across
+`purchasing/inquiry/`, `purchasing/allocations/`, `sales/allocations/`,
+`sales/inquiry/` — 2 with a native `: string` return type, 2 without;
+the un-typed `sales/inquiry/customer_allocation_inquiry.php` copy's own
+`@return null|string` docblock is wider than its body's actual
+`string`-only return, producing `LessSpecificReturnType` — left alone
+for the same reason as `trans_view`/`view_link`), and others) — also `check_data()` and
 `handle_delete()`, declared with 0 params in most `admin/manage/*.php`-style
 CRUD pages but with a real `int $id` param in `admin/create_coy.php` (and
 `check_data()` with `string|int|float|bool|array|null $selected_id` in
