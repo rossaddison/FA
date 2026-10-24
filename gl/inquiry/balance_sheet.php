@@ -77,7 +77,7 @@ function display_type_bs (?string $type, ?string $typename, string|int|float|boo
 
             start_row("class='stockmankobg'");
             label_cell($url);
-            amount_cell(($net_balance) * $convert);
+            amount_cell(($net_balance) * (float) $convert);
             end_row();
         }
 
@@ -100,8 +100,8 @@ function display_type_bs (?string $type, ?string $typename, string|int|float|boo
 		if ((bool)$drilldown && $type == post_scalar("AccGrp"))
 		{
 			start_row("class='inquirybg fa-bold'");
-			label_cell(_('Total') . " " . $typename);
-			amount_cell(($acctstotal + $typestotal) * $convert);
+			label_cell(_('Total') . " " . (string) $typename);
+			amount_cell(($acctstotal + $typestotal) * (float) $convert);
 			end_row();
 		}
 		//START Patch#1 : Display  only direct child types
@@ -112,12 +112,12 @@ function display_type_bs (?string $type, ?string $typename, string|int|float|boo
 		{
 			$url = "<a href='$path_to_root/gl/inquiry/balance_sheet.php?TransFromDate="
 				. (string)$from . "&TransToDate=" . (string)$to . "&Dimension=" . (string)$dimension . "&Dimension2=" . (string)$dimension2
-				. "&AccGrp=" . $type ."'>" . $type . " " . $typename ."</a>";
+				. "&AccGrp=" . (string) $type ."'>" . (string) $type . " " . (string) $typename ."</a>";
 
 			/** @var int $k */
 			alt_table_row_color($k);
 			label_cell($url);
-			amount_cell(($acctstotal + $typestotal) * $convert);
+			amount_cell(($acctstotal + $typestotal) * (float) $convert);
 			end_row();
 		}
 	}
@@ -142,8 +142,8 @@ function inquiry_controls(): void
 
 function display_balance_sheet(): void
 {
-	global $path_to_root;
-	
+	global $path_to_root, $levelptr;
+
 	$to = post_scalar('TransToDate');
 	$from = get_fiscalyear_begin_for_date($to);
 
@@ -195,7 +195,7 @@ function display_balance_sheet(): void
 					/** @var int $k */
 					alt_table_row_color($k);
 					label_cell($url);
-					amount_cell($TypeTotal * $convert);
+					amount_cell($TypeTotal * (float) $convert);
 					end_row();
 				}
 				$classclose += $TypeTotal;
@@ -204,7 +204,7 @@ function display_balance_sheet(): void
 			//Print Class Summary
 			start_row("class='inquirybg fa-bold'");
 			label_cell(_('Total') . " " . (string)$class["class_name"]);
-			amount_cell($classclose * $convert);
+			amount_cell($classclose * (float) $convert);
 			end_row();		
 			
 			if ($ctype == CL_EQUITY)
@@ -222,7 +222,7 @@ function display_balance_sheet(): void
 		}
 		
 		if ($lconvert == 1)
-			$calculateclose *= -1;
+			$calculateclose *= -1.0;
 		//Final Report Summary
 		$url = "<a href='$path_to_root/gl/inquiry/profit_loss.php?TransFromDate="
 				. $from."&TransToDate=".(string)$to . "&Dimension=" . (string)$dimension . "&Dimension2=" . (string)$dimension2
@@ -240,10 +240,9 @@ function display_balance_sheet(): void
 	}
 	else //Drill Down
 	{
-		//Level Pointer : Global variable defined in order to control display of root 
-		global $levelptr;
+		//Level Pointer : Global variable defined in order to control display of root
 		$levelptr = 0;
-		
+
 		$accounttype = row_or_empty(get_account_type(post_scalar("AccGrp")));
 		$classid = $accounttype["class_id"];
 		$class = row_or_empty(get_account_class($classid));
