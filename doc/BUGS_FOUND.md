@@ -833,6 +833,29 @@ Found by chasing Psalm's `TaintedSSRF`/`TaintedFile` findings in
 
 ## Data-correctness bugs
 
+- **`purchasing/includes/purchasing_db.inc` — `add_direct_supp_trans()`.**
+  Found via Psalm's `TooManyArguments` on the call to
+  `supp_trans::add_grn_to_trans()`, which takes 11 parameters
+  (9 required + `$std_cost_unit`/`$gl_code` optional) but was being passed
+  12 positional arguments — a stray `true` landed in the `$std_cost_unit`
+  slot, pushing the real `get_unit_cost($line->stock_id)` call into
+  `$gl_code` instead, and leaving a trailing `''` with nothing left to
+  bind to (PHP silently drops extra positional arguments rather than
+  erroring). Confirmed inert rather than exploitable: neither
+  `GrnItem::$std_cost_unit` nor `::$gl_code` on the in-memory object built
+  by this specific call is ever read back anywhere in the direct-invoice
+  write path (`add_supp_invoice()`'s own `grn_items` loop in
+  `purchasing/includes/db/invoice_db.inc` only touches
+  `item_code`/`this_quantity_inv`/`chg_price`/`id`/`po_detail_item` on
+  each entry) — the persisted `std_cost_unit` DB column for a GRN comes
+  from a completely separate code path in `purchasing/includes/db/grn_db.inc`.
+  Removed the stray argument so `$std_cost_unit` actually receives the
+  unit cost it was clearly meant to (cast from `get_unit_cost()`'s
+  `false|null|string` return via `is_numeric($unit_cost) ? (float)
+  $unit_cost : null`) and `$gl_code` gets its intended `''` default —
+  correct now even though currently still unread for this flow, in case
+  a future change starts consuming either field.
+
 - **`includes/db/connect_db_mysqli.inc` — `db_escape()`.** Caught live, not
   by Psalm: a real "Incorrect integer value: '' for column 'tax_included'"
   MySQL error reported while testing `purchasing/po_entry_items.php`'s

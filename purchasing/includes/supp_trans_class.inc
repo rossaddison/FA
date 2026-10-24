@@ -164,7 +164,7 @@ final class supp_trans
 	 * @param int|float|bool|null $this_quantity_inv
 	 * @param float|int|string|bool|null $order_price
 	 * @param string|int|float|bool|null $chg_price
-	 * @param int|bool|null $std_cost_unit
+	 * @param float|int|bool|null $std_cost_unit
 	 * @param string|int|bool|null $gl_code
 	 * @return 1
 	 */

@@ -113,7 +113,7 @@ function add_or_update_purchase_data(
 {
 	$data = get_purchase_data($supplier_id, $stock_id);
 
-	$description = substr($description, 0, 50); // FIXME: temporary constraint to avoid db errors on long descriptions, see [0005170]
+	$description = substr((string) $description, 0, 50); // FIXME: temporary constraint to avoid db errors on long descriptions, see [0005170]
 	if ($data === false)
 	{
 		$sql = "INSERT INTO ".TB_PREF."purch_data (supplier_id, stock_id, price, suppliers_uom,
@@ -140,16 +140,16 @@ function get_po_prepayments(supp_trans $supp_trans): array
 	$allocations = array();
 	$line_ids = array();
 	foreach($supp_trans->grn_items as $item)
-		if ($item->po_detail_item)
+		if ((int) $item->po_detail_item !== 0)
 			$line_ids[] = $item->po_detail_item;
 
 	if (!count($line_ids))
 		return $allocations;
 
 	$sql = "SELECT DISTINCT allocs.*
-		FROM ".TB_PREF."supp_allocations allocs 
+		FROM ".TB_PREF."supp_allocations allocs
 			LEFT JOIN ".TB_PREF."purch_order_details line ON line.order_no=allocs.trans_no_to AND trans_type_to=".ST_PURCHORDER."
-		WHERE line.po_detail_item IN(".implode(',', array_values($line_ids)).")";
+		WHERE line.po_detail_item IN(".implode(',', $line_ids).")";
 
 	$result = db_select($sql, "Cannot retrieve po prepayments");
 
@@ -215,16 +215,17 @@ function add_direct_supp_trans(purch_order $cart)
 	$inv->ov_amount = $inv->ov_gst = $inv->ov_discount = 0;
 	$total = 0.0;
 		foreach($cart->line_items as $key => $line) {
+		$unit_cost = get_unit_cost($line->stock_id);
 		$inv->add_grn_to_trans($line->grn_item_id, $line->po_detail_rec, $line->stock_id,
 			$line->item_description, $line->receive_qty, 0, $line->receive_qty,
-			$line->price, $line->price, true, get_unit_cost($line->stock_id), '');
-		$total += round2(($line->receive_qty * $line->price), user_price_dec());
+			$line->price, $line->price, is_numeric($unit_cost) ? (float) $unit_cost : null, '');
+		$total += round2(((float) $line->receive_qty * $line->price), user_price_dec());
 	}
 	$inv->tax_overrides = $cart->tax_overrides;
 	if (!(bool)$inv->tax_included) {
 		$taxes = $inv->get_taxes($inv->tax_group_id, 0, false);
 		foreach( $taxes as $taxitem) {
-			$total += isset($taxitem['Override']) ? $taxitem['Override'] : $taxitem['Value'];
+			$total += (float) (isset($taxitem['Override']) ? $taxitem['Override'] : $taxitem['Value']);
 		}
 	}
 	$inv->currency = $cart->curr_code;
@@ -234,7 +235,7 @@ function add_direct_supp_trans(purch_order $cart)
 
 	if ((bool)$cart->cash_account) {
 		$pmt_no = write_supp_payment(0, $inv->supplier_id, $cart->cash_account,	$inv->tran_date, refs()->get_next(ST_SUPPAYMENT, null, $inv->tran_date), 
-			$total, 0, _('Payment for:').$inv->supp_reference .' ('.$type_shortcuts[ST_SUPPINVOICE].$inv_no.')' . ' ' . $cart->Comments, 0, 0, $cart->dimension, $cart->dimension2);
+			$total, 0, _('Payment for:').$inv->supp_reference .' ('.$type_shortcuts[ST_SUPPINVOICE].(string) $inv_no.')' . ' ' . $cart->Comments, 0, 0, $cart->dimension, $cart->dimension2);
 		add_supp_allocation($total, ST_SUPPAYMENT, $pmt_no, ST_SUPPINVOICE, $inv_no, $inv->supplier_id, $inv->tran_date);
 		update_supp_trans_allocation(ST_SUPPINVOICE, $inv_no, $inv->supplier_id);
 		update_supp_trans_allocation(ST_SUPPAYMENT, $pmt_no, $inv->supplier_id);
