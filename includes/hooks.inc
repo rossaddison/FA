@@ -27,7 +27,8 @@ declare(strict_types=1);
  * psalm.xml's ignoreFiles). Marking a base class final when a real module
  * extends it has already broken this codebase once before (Cart, see
  * doc/LIVE_CRASHES_FROM_TYPE_NARROWING.md) - same bug class, don't repeat it.
- * @psalm-suppress ClassMustBeFinal
+ * Left as an accepted, visible ClassMustBeFinal finding rather than
+ * suppressed, per this project's standing no-@psalm-suppress policy.
  */
 class hooks {
 	/** @var string|null */
@@ -326,9 +327,11 @@ function install_hooks(string|int|float|bool|null $lang_code=null): void
 		$hook_class = 'hooks_'.$code;
 		/**
 		 * @var class-string<hooks> $hook_class
-		 * @psalm-suppress UnsafeInstantiation extension/locale hook classes are
-		 * plain data holders with no constructor of their own - trusted by design,
-		 * same as every other dynamic class-name lookup in this file.
+		 * UnsafeInstantiation left as an accepted, visible finding (no @psalm-suppress,
+		 * per this project's standing policy): extension/locale hook classes are plain
+		 * data holders with no constructor of their own, trusted by design, but hooks
+		 * can't be marked final (see its own class docblock), so Psalm can't rule out
+		 * an unsafe subclass constructor through this dynamic class-name lookup.
 		 */
 		$hooks[$code] = new $hook_class;
 		$hooks[$code]->path = "/lang/" . $lang_code . "/locale.inc";
@@ -342,7 +345,8 @@ function install_hooks(string|int|float|bool|null $lang_code=null): void
 			if ((bool)($ext['active'] ?? false) && class_exists($hook_class)) {
 				/**
 				 * @var class-string<hooks> $hook_class
-				 * @psalm-suppress UnsafeInstantiation see install_hooks()'s other instantiation above
+				 * UnsafeInstantiation left as an accepted, visible finding -- same
+				 * reasoning as install_hooks()'s other instantiation above.
 				 */
 				$hooks[$package] = new $hook_class;
 				$ext_path = $ext['path'] ?? null;
@@ -367,7 +371,8 @@ function activate_hooks(string|int|float|bool|null $ext, string|int|float|bool|a
 		if (class_exists($hookclass)) {
 			/**
 			 * @var class-string<hooks> $hookclass
-			 * @psalm-suppress UnsafeInstantiation see install_hooks()'s instantiation for why
+			 * UnsafeInstantiation left as an accepted, visible finding -- same
+			 * reasoning as install_hooks()'s instantiation above.
 			 */
 			$hook = new $hookclass;
 		} else
@@ -580,8 +585,8 @@ function hook_price_in_words(string|int|float|bool|null $amount, mixed $document
 //
 function hook_session_start(string|array|null $company): mixed
 {
+	global $SessionManager;
 	if (class_exists('fa_session_manager')) {
-		global $SessionManager;
 		$SessionManager = new fa_session_manager($company);
 		return $SessionManager->installed;
 	}
