@@ -100,7 +100,7 @@ if (isset($_GET['AddedID'])) {
 
 	$remove_dn = get_scalar('RemoveDN');
 	for($line_no = 0; $line_no < count(session_obj('Items')->line_items); $line_no++) {
-		$line = &session_obj('Items')->line_items[$line_no];
+		$line = session_obj('Items')->line_items[$line_no];
 		if ($line->src_no == $remove_dn) {
 			$line->quantity = $line->qty_done;
 			$line->qty_dispatched=0;
@@ -109,6 +109,9 @@ if (isset($_GET['AddedID'])) {
 	unset($line);
 
     // Remove also src_doc delivery note
+    // $sources must stay a real reference (unlike the $line case above): src_docs is a
+    // plain array property, not an object, so unset() below needs the reference to
+    // propagate back into the session Cart -- Psalm can't trace this (UnsupportedReferenceUsage)
     $sources = &session_obj('Items')->src_docs;
     if (is_array($sources) && $remove_dn !== null)
     	unset($sources[(string) $remove_dn]);
@@ -164,7 +167,7 @@ if ( (isset($_GET['DeliveryNumber']) && ((float) get_scalar('DeliveryNumber') > 
 	{
 		$payments = array(get_cust_allocation(get_scalar('AllocationNumber')));
 
-		if (!$payments[0] || ($payments[0]['trans_type_to'] != ST_SALESORDER))
+		if ($payments[0] === false || ($payments[0]['trans_type_to'] != ST_SALESORDER))
 		{
 			display_error(_("Please select correct Sales Order Prepayment to be invoiced and try again."));
 			display_footer_exit();
@@ -195,7 +198,7 @@ elseif (!processing_active()) {
 
 	end_page();
 	exit;
-} elseif (!isset($_POST['process_invoice']) && (!session_obj('Items')->is_prepaid() && !check_quantities())) {
+} elseif (!isset($_POST['process_invoice']) && (!(bool) session_obj('Items')->is_prepaid() && !check_quantities())) {
 	display_error(_("Selected quantity cannot be less than quantity credited nor more than quantity not invoiced yet."));
 }
 
@@ -266,7 +269,7 @@ function copy_to_cart(): void
 	$cart->Comments = (string) post_scalar('Comments');
 	$cart->due_date = (string) post_scalar('due_date');
 	$pos = $cart->pos;
-	if ($pos && ((bool)$pos['cash_sale'] || (bool)$pos['credit_sale']) && isset($_POST['payment'])) {
+	if (is_array($pos) && count($pos) > 0 && ((bool)$pos['cash_sale'] || (bool)$pos['credit_sale']) && isset($_POST['payment'])) {
 		$cart->payment = post_scalar('payment');
 		$cart->payment_terms = (array) get_payment_terms(post_scalar('payment'));
 	}
@@ -336,7 +339,7 @@ function check_data(): bool
 	}
 
 	if (session_obj('Items')->trans_no == 0) {
-		if (!refs()->is_valid($_POST['ref'], ST_SALESINVOICE)) {
+		if (!refs()->is_valid(post_scalar('ref'), ST_SALESINVOICE)) {
 			display_error(_("You must enter a reference."));
 			set_focus('ref');
 			return false;
@@ -411,7 +414,7 @@ if(list_updated('payment')) {
 	ajax()->activate('options');
 	if ((bool)$order->payment_terms['cash_sale']) {
 		$pos = $order->pos;
-		if ($pos) {
+		if (is_array($pos) && count($pos) > 0) {
 			$_POST['Location'] = $order->Location = $pos['pos_location'];
 			$order->location_name = $pos['location_name'];
 		}
@@ -459,7 +462,7 @@ if ($dim > 0)
 label_cells(_("Customer"), session_obj('Items')->customer_name, "class='tableheader2'");
 label_cells(_("Branch"), get_branch_name(session_obj('Items')->Branch), "class='tableheader2'");
 $items_pos = session_obj('Items')->pos;
-if ($items_pos && ((bool)$items_pos['credit_sale'] || (bool)$items_pos['cash_sale'])) {
+if (is_array($items_pos) && count($items_pos) > 0 && ((bool)$items_pos['credit_sale'] || (bool)$items_pos['cash_sale'])) {
 	$paymcat = !(bool)$items_pos['cash_sale'] ? PM_CREDIT :
 		(!(bool)$items_pos['credit_sale'] ? PM_CASH : PM_ANY);
 	label_cells(_("Payment terms:"), sale_payment_list('payment', $paymcat),
@@ -634,7 +637,7 @@ if (!isset($_POST['ChargeFreightCost']) || $_POST['ChargeFreightCost'] == "") {
 }
 
 $accumulate_shipping = get_company_pref('accumulate_shipping');
-if ($is_batch_invoice && $accumulate_shipping) {
+if ($is_batch_invoice && (bool) $accumulate_shipping) {
 	$items_src_docs = session_obj('Items')->src_docs;
 	set_delivery_shipping_sum(is_array($items_src_docs) ? array_keys($items_src_docs) : array());
 }
