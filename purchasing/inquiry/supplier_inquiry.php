@@ -79,8 +79,7 @@ function systype_name(string|int|float|bool|array $dummy, string|int|float|bool|
 /** @param array<string, null|string> $trans */
 function trans_view_supplier_inquiry(array $trans): ?string
 {
-	$result = get_trans_view_str($trans["type"], $trans["trans_no"]);
-	return $result === null ? null : (string) $result;
+	return get_trans_view_str($trans["type"], $trans["trans_no"]);
 }
 
 /**

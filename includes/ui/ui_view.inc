@@ -15,7 +15,7 @@ include_once(dirname(__DIR__, 2) . "/includes/types.inc");
 
 //--------------------------------------------------------------------------------------
 
-/** @return null|scalar */
+/** @return string|null */
 function get_supplier_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $label="", bool $icon=false, 
 	?string $class='', string|int|float|bool|null $id='')
 {
@@ -37,7 +37,7 @@ function get_supplier_trans_view_str(string|int|float|bool|null $type, string|in
 	if ($label == "")
 		$label = $trans_no;
 
-	return viewer_link($label, $viewer, $class, $id,  $icon);
+	return (string) viewer_link($label, $viewer, $class, $id,  $icon);
 }
 
 //--------------------------------------------------------------------------------------
@@ -113,7 +113,7 @@ function get_customer_trans_view_str(string|int|float|bool|null $type, string|in
 
 //--------------------------------------------------------------------------------------
 
-/** @return null|scalar */
+/** @return string|null */
 function get_banking_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $label="", 
 	bool $icon=false, ?string $class='', string|int|float|bool|null $id='')
 {
@@ -129,13 +129,13 @@ function get_banking_trans_view_str(string|int|float|bool|null $type, string|int
 	else
 		return null;
 
-	return viewer_link($label, "gl/view/$viewer?trans_no=$trans_no", 
+	return (string) viewer_link($label, "gl/view/$viewer?trans_no=$trans_no",
 		$class, $id,  $icon);
 }
 
 //--------------------------------------------------------------------------------------
 
-/** @return null|scalar */
+/** @return string|null */
 function get_inventory_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $label="", 
 	bool $icon=false, ?string $class='', string|int|float|bool|null $id='')
 {
@@ -152,12 +152,12 @@ function get_inventory_trans_view_str(string|int|float|bool|null $type, string|i
 	if ($label == "")
 		$label = $trans_no;
 
-	return viewer_link($label, $viewer, $class, $id,  $icon);
+	return (string) viewer_link($label, $viewer, $class, $id,  $icon);
 }
 
 //--------------------------------------------------------------------------------------
 
-/** @return null|scalar */
+/** @return string|null */
 function get_manufacturing_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $label="", 
 	bool $icon=false, ?string $class='', string|int|float|bool|null $id='')
 {
@@ -177,12 +177,12 @@ function get_manufacturing_trans_view_str(string|int|float|bool|null $type, stri
 	if ($label == "")
 		$label = $trans_no;
 
-	return viewer_link($label, $viewer, $class, $id,  $icon);
+	return (string) viewer_link($label, $viewer, $class, $id,  $icon);
 }
 
 //--------------------------------------------------------------------------------------
 
-/** @return null|scalar */
+/** @return string|null */
 function get_dimensions_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $label="", bool $icon=false, 
 	?string $class='', string|int|float|bool|null $id='')
 {
@@ -194,12 +194,12 @@ function get_dimensions_trans_view_str(string|int|float|bool|null $type, string|
 	if ($label == "")
 		$label = $trans_no;
 
-	return viewer_link($label, $viewer, $class, $id,  $icon);
+	return (string) viewer_link($label, $viewer, $class, $id,  $icon);
 }
 /*
 	Journal entry or cost update postings link
 */
-/** @return null|scalar */
+/** @return string|null */
 function get_journal_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $label="", bool $icon=false, 
 	?string $class='', string|int|float|bool|null $id='')
 {
@@ -211,7 +211,7 @@ function get_journal_trans_view_str(string|int|float|bool|null $type, string|int
 	if ($label == "")
 		$label = $trans_no;
 
-	return viewer_link($label, $viewer, $class, $id,  $icon);
+	return (string) viewer_link($label, $viewer, $class, $id,  $icon);
 }
 
 //--------------------------------------------------------------------------------------
@@ -230,7 +230,7 @@ function get_package_view_str(string|int|float|bool|null $pkg, string|int|float|
 
 //--------------------------------------------------------------------------------------
 
-/** @return non-empty-scalar|null */
+/** @return string|null */
 function get_trans_view_str(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $label="", bool $icon=false,
 	?string $class='', string|int|float|bool|null $id='')
 {

@@ -214,8 +214,7 @@ function trans_view(array $trans): ?string
 	if ($trans['type_no']==ST_SUPPLIER || $trans['type_no']==ST_CUSTOMER || $trans['type_no']==ST_ITEM ||
 		$trans['type_no']==ST_FIXEDASSET || $trans['type_no']==ST_BANKACCOUNT)
 		return $trans['id'];
-	$result = get_trans_view_str($trans["type_no"], $trans["trans_no"]);
-	return $result === null ? null : (string) $result;
+	return get_trans_view_str($trans["type_no"], $trans["trans_no"]);
 }
 
 function edit_link(array $row): string
