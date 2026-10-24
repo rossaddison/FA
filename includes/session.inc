@@ -359,6 +359,8 @@ function html_specials_encode(string|int|float|bool|null $str): string
 
 function html_cleanup(array &$parms): void
 {
+	// $value is genuinely mixed: this sanitizes the real $_GET/$_POST/$_REQUEST/$_SERVER
+	// superglobals in place, whose values are arbitrary by nature
 	foreach($parms as $name => &$value) {
 		if (is_array($value))
 			html_cleanup($value);
@@ -385,7 +387,12 @@ function login_timeout(): void
 	}
 }
 //============================================================================
-if (!isset($path_to_root))
+// checked via $GLOBALS rather than isset($path_to_root) so this doesn't depend on
+// psalm.xml's non-nullable stub for the global, which only describes its value once a
+// calling page script has set it, not whether it's been set at all. Safe here (no `global`
+// statement for $path_to_root precedes this -- this file is only ever included at true
+// top-level script scope, never from inside a function/method)
+if (!array_key_exists('path_to_root', $GLOBALS))
 {
 	$path_to_root = ".";
 }
@@ -476,7 +483,11 @@ if (sysprefs()->login_delay > 0 && file_exists(VARLIB_PATH."/faillog.php"))
 	include_once(VARLIB_PATH."/faillog.php");
 
 // Page Initialisation
-if (isset($dflt_lang) && isset($installed_languages))
+// checked via $GLOBALS rather than isset() so this doesn't depend on psalm.xml's non-nullable
+// stubs for these globals, which only describe their value once config_db.php (written during
+// installation) has defined them, not whether they exist yet pre-installation. Safe here (no
+// `global` statement for either precedes this -- top-level script scope only)
+if (array_key_exists('dflt_lang', $GLOBALS) && array_key_exists('installed_languages', $GLOBALS))
 {
 	$session_language = $_SESSION['language'] ?? null;
 	if (!isset($_SESSION['wa_current_user']) || !session_obj('wa_current_user')->logged_in()
