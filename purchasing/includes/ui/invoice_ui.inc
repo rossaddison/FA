@@ -24,9 +24,12 @@ function copy_from_trans(supp_trans &$supp_trans): void
     $_POST['dimension2'] = $supp_trans->dimension2;
 
 	$_POST['_ex_rate'] = $supp_trans->ex_rate;
-	if (isset($supp_trans->tax_overrides))
+	if (isset($supp_trans->tax_overrides)) {
+	    if (!isset($_POST['mantax']) || !is_array($_POST['mantax']))
+	        $_POST['mantax'] = array();
 	    foreach($supp_trans->tax_overrides as $id => $value)
 		    $_POST['mantax'][$id] = price_format($value);
+	}
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -52,7 +55,7 @@ function copy_to_trans(supp_trans &$supp_trans): void
 	$supp_trans->ov_amount = $supp_trans->ov_discount = 0; /* for starters */
     if (isset($_POST['mantax']) && is_array($_POST['mantax'])) {
 		foreach($_POST['mantax'] as $id => $tax) {
-	    	$supp_trans->tax_overrides[$id] = user_numeric($tax);
+	    	$supp_trans->tax_overrides[$id] = user_numeric(is_array($tax) ? null : $tax);
 	    	}
 	}
 	else
@@ -62,7 +65,7 @@ function copy_to_trans(supp_trans &$supp_trans): void
 	{
 		foreach ( $supp_trans->grn_items as $grn)
 		{
-			$supp_trans->ov_amount += round2(($grn->this_quantity_inv * (float)$grn->chg_price),
+			$supp_trans->ov_amount = (float) $supp_trans->ov_amount + round2(($grn->this_quantity_inv * (float)$grn->chg_price),
 			  user_price_dec());
 		}
 	}
@@ -71,7 +74,7 @@ function copy_to_trans(supp_trans &$supp_trans): void
 		foreach ( $supp_trans->gl_codes as $gl_line)
 		{
 			if (!(bool)is_tax_account($gl_line->gl_code) || (bool)$supp_trans->tax_included)
-				$supp_trans->ov_amount += (float)$gl_line->amount;
+				$supp_trans->ov_amount = (float) $supp_trans->ov_amount + (float)$gl_line->amount;
 		}
 	}
 }
@@ -142,7 +145,10 @@ function invoice_header(supp_trans &$supp_trans): void
     date_row(_("Due Date") . ":", 'due_date');
 
     $terms = is_array($supp_trans->terms) ? $supp_trans->terms : array();
-    label_row(_("Terms:"), $terms['description'] ?? '');
+    // $terms_description is genuinely mixed: $supp_trans->terms's own declared shape marks
+    // 'description' as mixed by design, guarded with is_scalar() immediately below
+    $terms_description = $terms['description'] ?? '';
+    label_row(_("Terms:"), is_scalar($terms_description) ? $terms_description : '');
 
 	if ((bool)get_company_pref('use_dimension'))
 		dimensions_list_row(_('Dimension').':', 'dimension', null, true, _('Default'), false, 1);
@@ -272,9 +278,9 @@ function display_gl_items(supp_trans &$supp_trans, string|int|float|bool|items_c
 
 			$amount = input_num('totamount', $qid['base_amount']);
 			$dec = user_price_dec();
-			// input_num()/user_numeric() only ever return int|float|false - never a
-			// string with quote/HTML characters - so this is never actually tainted
-			/** @psalm-suppress TaintedHtml, TaintedTextWithQuotes confirmed safe, see above */
+			// TaintedHtml/TaintedTextWithQuotes here are accepted: input_num()/user_numeric()
+			// only ever return int|float|false - never a string with quote/HTML characters -
+			// so this is never actually tainted, per this project's standing no-suppress policy
 			echo "<input class='amount' type='text' name='totamount' size='7' maxlength='12' dec='$dec' value='$amount'>&nbsp;";
 			submit('go', _("Go"), true, false, true);
 			echo "</div>";
@@ -564,7 +570,7 @@ function display_grn_items(supp_trans &$supp_trans, ?int $mode=0): int|float
             }
 			qty_cell(abs($entered_grn->this_quantity_inv), true, $dec);
 			amount_decimal_cell($entered_grn->chg_price);
-			amount_cell( round2((float)$entered_grn->chg_price * (float)abs($entered_grn->this_quantity_inv), user_price_dec()), true);
+			amount_cell( round2((float)$entered_grn->chg_price * abs($entered_grn->this_quantity_inv), user_price_dec()), true);
 
 			if ($mode == 1)
 			{
@@ -634,14 +640,18 @@ function get_duedate_from_terms(&$trans): void
 		$date = Today();
 	}
 	$terms = is_array($trans->terms) ? $trans->terms : array();
+	// $day_in_following_month/$days_before_due are genuinely mixed, same reason as
+	// $terms_description above -- both guarded with is_scalar() immediately below
 	if (!empty($terms['day_in_following_month']))
 	{ /*Its a day in the following month when due */
+		$day_in_following_month = $terms["day_in_following_month"] ?? null;
 		$trans->due_date =
-			add_days(end_month($date), is_scalar($terms["day_in_following_month"] ?? null) ? $terms["day_in_following_month"] : null);
+			add_days(end_month($date), is_scalar($day_in_following_month) ? $day_in_following_month : null);
 	}
 	else
 	{ /*Use the Days Before Due to add to the invoice date */
-		$trans->due_date = add_days($date, is_scalar($terms["days_before_due"] ?? null) ? $terms["days_before_due"] : null);
+		$days_before_due = $terms["days_before_due"] ?? null;
+		$trans->due_date = add_days($date, is_scalar($days_before_due) ? $days_before_due : null);
 	}
 }
 
