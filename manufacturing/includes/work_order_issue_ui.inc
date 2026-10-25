@@ -19,7 +19,7 @@ function add_to_issue(items_cart &$order, string|array|null $new_item, int|float
 {
     $stock_id = is_array($new_item) ? null : $new_item;
     if ($order->find_cart_item($stock_id))
-         display_error(_("For Part :") . $new_item . " " . "This item is already on this issue.  You can change the quantity issued of the existing line if necessary.");
+         display_error(_("For Part :") . (string) $stock_id . " " . "This item is already on this issue.  You can change the quantity issued of the existing line if necessary.");
 	else
          $order->add_to_cart (count($order->line_items), $stock_id, $new_item_qty, $standard_cost);
 }
@@ -40,6 +40,7 @@ function display_issue_items(?string $title, items_cart &$order): void
 //	$total = 0;
 	$k = 0;  //row colour counter
 
+	$low_stock = array();
 	if (count($order->line_items))
 		$low_stock = $order->check_qoh(post_scalar('Location'), post_scalar('date_'), !(bool)$_POST['IssueType']);
 	$id = find_submit('Edit');
@@ -76,7 +77,7 @@ function display_issue_items(?string $title, items_cart &$order): void
 		issue_edit_item_controls($order);
 
     end_table();
-	if (@$low_stock)
+	if ($low_stock)
 		display_note(_("Marked items have insufficient quantities in stock as on day of issue."), 0, 1, "class='stockmankofg'");
 	div_end();
 }
@@ -90,15 +91,16 @@ function issue_edit_item_controls(items_cart &$order, string|int|float|bool|null
 	$id = find_submit('Edit');
 	if ($line_no != -1 && $line_no == $id)
 	{
-		$_POST['stock_id'] = $order->line_items[$id]->stock_id;
-		$_POST['qty'] = qty_format($order->line_items[$id]->quantity, 
-			$order->line_items[$id]->stock_id, $dec);
-		$std_cost = $order->line_items[$id]->standard_cost;
-		$_POST['units'] = $order->line_items[$id]->units;
+		$line_item_id = (int) $id;
+		$_POST['stock_id'] = $order->line_items[$line_item_id]->stock_id;
+		$_POST['qty'] = qty_format($order->line_items[$line_item_id]->quantity,
+			$order->line_items[$line_item_id]->stock_id, $dec);
+		$std_cost = $order->line_items[$line_item_id]->standard_cost;
+		$_POST['units'] = $order->line_items[$line_item_id]->units;
 
 		hidden('stock_id', post_scalar('stock_id'));
 		label_cell(post_scalar('stock_id'));
-		label_cell($order->line_items[$id]->item_description);
+		label_cell($order->line_items[$line_item_id]->item_description);
 	    ajax()->activate('items_table');
 	}
 	else
@@ -113,20 +115,23 @@ function issue_edit_item_controls(items_cart &$order, string|int|float|bool|null
 			    ajax()->activate('std_cost');
 		}
 
-    	$item_info = row_or_empty(get_item_edit_info(post_scalar('stock_id')));
+		$stock_id_post = post_scalar('stock_id');
+    	$item_info = row_or_empty(get_item_edit_info(is_string($stock_id_post) ? $stock_id_post : null));
 
    		$dec = $item_info["decimals"];
-   		$_POST['qty'] =	number_format2(0, $dec);
+   		$_POST['qty'] =	number_format2(0, is_int($dec) || is_string($dec) ? $dec : 0);
 		$std_cost = $item_info["material_cost"];
 		$_POST['units'] = $item_info["units"];
 	}
 
-	qty_cells(null, 'qty', post_scalar('qty'), null, null, $dec);
+	$qty_post = post_scalar('qty');
+	qty_cells(null, 'qty', is_string($qty_post) ? $qty_post : null, null, null, is_scalar($dec) ? $dec : null);
 	label_cell(post_scalar('units'), '', 'units');
 
 	//amount_cells(null, 'std_cost', $_POST['std_cost']);
-	hidden('std_cost', $std_cost);
-	amount_cell($std_cost);
+	$std_cost_scalar = is_scalar($std_cost) ? $std_cost : null;
+	hidden('std_cost', $std_cost_scalar);
+	amount_cell($std_cost_scalar);
 
 	if ($id != -1)
 	{
