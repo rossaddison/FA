@@ -71,14 +71,21 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 	{
      	if ($Mode == 'ADD_ITEM') 
        	{
-			add_item_purchasing_data(post_scalar('supplier_id'), post_scalar('stock_id'), input_num('price',0),
-				post_scalar('suppliers_uom'), input_num('conversion_factor'), post_scalar('supplier_description'));
+			$supplier_id_post = post_scalar('supplier_id');
+			$stock_id_post = post_scalar('stock_id');
+			$suppliers_uom_post = post_scalar('suppliers_uom');
+			$supplier_description_post = post_scalar('supplier_description');
+			add_item_purchasing_data(is_string($supplier_id_post) ? $supplier_id_post : null, is_string($stock_id_post) ? $stock_id_post : null, input_num('price',0),
+				is_string($suppliers_uom_post) ? $suppliers_uom_post : null, input_num('conversion_factor'), is_string($supplier_description_post) ? $supplier_description_post : null);
     		display_notification(_("This supplier purchasing data has been added."));
-       	} 
+       	}
        	else
        	{
-       		update_item_purchasing_data($selected_id, post_scalar('stock_id'), input_num('price',0),
-       			post_scalar('suppliers_uom'), input_num('conversion_factor'), post_scalar('supplier_description'));
+       		$stock_id_post = post_scalar('stock_id');
+       		$suppliers_uom_post = post_scalar('suppliers_uom');
+       		$supplier_description_post = post_scalar('supplier_description');
+       		update_item_purchasing_data(is_scalar($selected_id) ? $selected_id : null, is_string($stock_id_post) ? $stock_id_post : null, input_num('price',0),
+       			is_string($suppliers_uom_post) ? $suppliers_uom_post : null, input_num('conversion_factor'), is_string($supplier_description_post) ? $supplier_description_post : null);
     	  	display_notification(_("Supplier purchasing data has been updated."));
        	}
 		$Mode = 'RESET';
@@ -89,7 +96,8 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 if ($Mode == 'Delete')
 {
-	delete_item_purchasing_data($selected_id, post_scalar('stock_id'));
+	$stock_id_post = post_scalar('stock_id');
+	delete_item_purchasing_data(is_scalar($selected_id) ? $selected_id : null, is_string($stock_id_post) ? $stock_id_post : null);
 	display_notification(_("The purchasing data item has been sucessfully deleted."));
 	$Mode = 'RESET';
 }
@@ -109,9 +117,12 @@ if (list_updated('stock_id'))
 	ajax()->activate('price_table');
 //--------------------------------------------------------------------------------------------------
 
-$action = $_SERVER['PHP_SELF'];
+$action = $_SERVER['PHP_SELF'] ?? '';
 if ($page_nested)
-	$action .= "?stock_id=".get_post('stock_id');
+{
+	$stock_id_for_action = get_post('stock_id');
+	$action .= "?stock_id=".(is_scalar($stock_id_for_action) ? $stock_id_for_action : '');
+}
 start_form(false, false, $action);
 
 if (!isset($_POST['stock_id']))
@@ -186,9 +197,11 @@ else
 //-----------------------------------------------------------------------------------------------
 
 $dec2 = 6;
+$supp_name = null;
 if ($Mode =='Edit')
 {
-	$myrow = row_or_empty(get_item_purchasing_data($selected_id, post_scalar('stock_id')));
+	$stock_id_post = post_scalar('stock_id');
+	$myrow = row_or_empty(get_item_purchasing_data(is_scalar($selected_id) ? $selected_id : null, is_scalar($stock_id_post) ? $stock_id_post : null));
 
     $supp_name = $myrow["supp_name"];
     $_POST['price'] = price_decimal_format($myrow["price"], $dec2);
@@ -198,7 +211,7 @@ if ($Mode =='Edit')
 }
 
 br();
-hidden('selected_id', $selected_id);
+hidden('selected_id', is_scalar($selected_id) ? $selected_id : null);
 
 start_table(TABLESTYLE2);
 
@@ -213,7 +226,7 @@ else
 	$_POST['price'] = $_POST['suppliers_uom'] = $_POST['conversion_factor'] = $_POST['supplier_description'] = "";
 }
 echo "<tr>";
-unit_amount_cells(_("Price"), 'price', null, '', get_supplier_currency($selected_id));
+unit_amount_cells(_("Price"), 'price', null, '', get_supplier_currency(is_scalar($selected_id) ? $selected_id : null));
 echo "</tr>\n";
 
 text_row(_("Suppliers Unit of Measure:"), 'suppliers_uom', null, 50, 51);
