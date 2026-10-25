@@ -26,7 +26,6 @@ check_db_has_bom_stock_items(_("There are no manufactured or kit items defined i
 check_db_has_workcentres(_("There are no work centres defined in the system. BOMs require at least one work centre be defined."));
 
 simple_page_mode(true);
-$selected_component = $selected_id;
 //--------------------------------------------------------------------------------------------------
 
 if (isset($_GET['stock_id']))
@@ -101,7 +100,11 @@ function on_submit(string|int|float|bool|null $selected_parent, string|int|float
 
 	if ($selected_component != -1)
 	{
-		update_bom($selected_parent, $selected_component, post_scalar('workcentre_added'), post_scalar('loc_code'),
+		$workcentre_added_post = post_scalar('workcentre_added');
+		$loc_code_post = post_scalar('loc_code');
+		update_bom($selected_parent, $selected_component,
+			is_string($workcentre_added_post) ? $workcentre_added_post : null,
+			is_string($loc_code_post) ? $loc_code_post : null,
 			input_num('quantity'));
 		display_notification(_('Selected component has been updated'));
 		$Mode = 'RESET';
@@ -114,15 +117,21 @@ function on_submit(string|int|float|bool|null $selected_parent, string|int|float
 		component form */
 
 		//need to check not recursive bom component of itself!
-		if (!check_for_recursive_bom($selected_parent, post_scalar('component')))
+		$component_post = post_scalar('component');
+		$component_str = is_string($component_post) ? $component_post : null;
+		$workcentre_added_post = post_scalar('workcentre_added');
+		$workcentre_added_str = is_string($workcentre_added_post) ? $workcentre_added_post : null;
+		$loc_code_post = post_scalar('loc_code');
+		$loc_code_str = is_string($loc_code_post) ? $loc_code_post : null;
+		if (!check_for_recursive_bom($selected_parent, $component_str))
 		{
 
 			/*Now check to see that the component is not already on the bom */
-			if (!is_component_already_on_bom(post_scalar('component'), post_scalar('workcentre_added'),
-				post_scalar('loc_code'), $selected_parent))
+			if (!is_component_already_on_bom($component_str, $workcentre_added_str,
+				$loc_code_str, $selected_parent))
 			{
-				add_bom($selected_parent, post_scalar('component'), post_scalar('workcentre_added'),
-					post_scalar('loc_code'), input_num('quantity'));
+				add_bom($selected_parent, $component_str, $workcentre_added_str,
+					$loc_code_str, input_num('quantity'));
 				display_notification(_("A new component part has been added to the bill of material for this item."));
 				$Mode = 'RESET';
 			}
@@ -144,7 +153,7 @@ function on_submit(string|int|float|bool|null $selected_parent, string|int|float
 
 if ($Mode == 'Delete')
 {
-	delete_bom($selected_id);
+	delete_bom(is_scalar($selected_id) ? $selected_id : null);
 
 	display_notification(_("The component item has been deleted from this bom"));
 	$Mode = 'RESET';
@@ -187,6 +196,7 @@ end_form();
 if (get_post('stock_id') != '')
 { //Parent Item selected so display bom or edit component
 	$selected_parent = $_POST['stock_id'];
+	$selected_parent = is_scalar($selected_parent) ? $selected_parent : null;
 	if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') {
 		$bom_component_id = is_scalar($selected_id) ? $selected_id : null;
 		on_submit($selected_parent, $bom_component_id);
@@ -204,7 +214,7 @@ start_form();
 	{
  		if ($Mode == 'Edit') {
 			//editing a selected component from the link to the line item
-			$myrow = row_or_empty(get_component_from_bom($selected_id));
+			$myrow = row_or_empty(get_component_from_bom(is_scalar($selected_id) ? $selected_id : null));
 
 			$_POST['loc_code'] = $myrow["loc_code"];
 			$_POST['component'] = $myrow["component"]; // by Tom Moulton
@@ -212,7 +222,7 @@ start_form();
 			$_POST['quantity'] = number_format2($myrow["quantity"], get_qty_dec($myrow["component"]));
 			label_row(_("Component:"), (string)$myrow["component"] . " - " . (string)$myrow["description"]);
 		}
-		hidden('selected_id', $selected_id);
+		hidden('selected_id', is_scalar($selected_id) ? $selected_id : null);
 	}
 	else
 	{
@@ -232,7 +242,8 @@ start_form();
 
 	locations_list_row(_("Location to Draw From:"), 'loc_code', null);
 	workcenter_list_row(_("Work Centre Added:"), 'workcentre_added', null);
-	$dec = get_qty_dec(get_post('component'));
+	$component_for_dec = get_post('component');
+	$dec = get_qty_dec(is_string($component_for_dec) ? $component_for_dec : null);
 	$_POST['quantity'] = number_format2(input_num('quantity',1), $dec);
 	qty_row(_("Quantity:"), 'quantity', null, null, null, $dec);
 
