@@ -27,7 +27,8 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 	$input_error = 0;
 
-	if (strlen($_POST['description']) == 0) 
+	$description_check = post_scalar('description');
+	if (strlen(is_string($description_check) ? $description_check : '') == 0)
 	{
 		$input_error = 1;
 		display_error(_("Category description cannot be empty."));
@@ -36,36 +37,44 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 	if ($input_error != 1)
 	{
-    	if ($selected_id != -1) 
+		$type_post = get_post('type');
+		$subtype_post = get_post('subtype');
+		$name_post = get_post('name');
+		$description_post = get_post('description');
+		$type_str = is_string($type_post) ? $type_post : null;
+		$subtype_str = is_string($subtype_post) ? $subtype_post : null;
+		$name_str = is_string($name_post) ? $name_post : null;
+		$description_str = is_string($description_post) ? $description_post : null;
+    	if ($selected_id != -1)
     	{
-    		update_crm_category($selected_id, get_post('type'), get_post('subtype'), 
-    			get_post('name'), get_post('description'));
+    		update_crm_category(is_array($selected_id) ? '' : (string) $selected_id, $type_str, $subtype_str,
+    			$name_str, $description_str);
 			$note = _('Selected contact category has been updated');
-    	} 
-    	else 
+    	}
+    	else
     	{
-    		add_crm_category(get_post('type'), get_post('subtype'), get_post('name'),
-    			get_post('description'));
+    		add_crm_category($type_str, $subtype_str, $name_str,
+    			$description_str);
 			$note = _('New contact category has been added');
     	}
 
 		display_notification($note);
 		$Mode = 'RESET';
 	}
-} 
+}
 
 if ($Mode == 'Delete')
 {
 	$cancel_delete = 0;
 
-	if ((bool)is_crm_category_used($selected_id))
+	if ((bool)is_crm_category_used(is_array($selected_id) ? '' : (string) $selected_id))
 	{
 		$cancel_delete = 1;
 		display_error(_("Cannot delete this category because there are contacts related to it."));
-	} 
-	if ($cancel_delete == 0) 
+	}
+	if ($cancel_delete == 0)
 	{
-		delete_crm_category($selected_id);
+		delete_crm_category(is_array($selected_id) ? '' : (string) $selected_id);
 
 		display_notification(_('Category has been deleted'));
 	}
@@ -119,21 +128,22 @@ end_table(1);
 //-------------------------------------------------------------------------------------------------
 start_table(TABLESTYLE2);
 
-if ($selected_id != -1) 
+$edit_row = array();
+if ($selected_id != -1)
 {
  	if ($Mode == 'Edit') {
 		//editing an existing area
-		$myrow = row_or_empty(get_crm_category($selected_id));
+		$edit_row = row_or_empty(get_crm_category(is_array($selected_id) ? '' : (string) $selected_id));
 
-		$_POST['name']  = $myrow["name"];
-		$_POST['type']  = $myrow["type"];
-		$_POST['subtype']  = $myrow["action"];
-		$_POST['description']  = $myrow["description"];
+		$_POST['name']  = $edit_row["name"];
+		$_POST['type']  = $edit_row["type"];
+		$_POST['subtype']  = $edit_row["action"];
+		$_POST['description']  = $edit_row["description"];
 	}
-	hidden("selected_id", $selected_id);
-} 
+	hidden("selected_id", is_array($selected_id) ? '' : (string) $selected_id);
+}
 
-if ($Mode == 'Edit' && $myrow['system']) {
+if ($Mode == 'Edit' && ($edit_row['system'] ?? false)) {
 	label_row(_("Contact Category Type:"), post_scalar('type'));
 	label_row(_("Contact Category Subtype:"), post_scalar('subtype'));
 } else {

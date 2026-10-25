@@ -977,6 +977,24 @@ Found by chasing Psalm's `TaintedSSRF`/`TaintedFile` findings in
   correct now even though currently still unread for this flow, in case
   a future change starts consuming either field.
 
+- **`admin/crm_categories.php`.** Found via Psalm's
+  `PossiblyUndefinedGlobalVariable` on `$myrow['system']`. The list-display
+  loop (`while ($myrow = db_fetch($result))`) and the "fetch the record
+  being edited" block below it both used the same `$myrow` variable name.
+  The edit-fetch only reassigns `$myrow` when `$selected_id != -1`; if
+  `$Mode == 'Edit'` were ever reached with `$selected_id == -1` (an edit
+  requested with no row actually selected), `$myrow['system']` a few lines
+  later would read whichever row the list loop happened to leave behind
+  (the last one displayed, or `false` if the list was empty) instead of
+  the record actually being edited — silently showing or hiding the
+  "system category" read-only fields based on the wrong row, or hitting
+  `false['system']` if the category list was empty. Not reachable through
+  the normal UI (every real "Edit" link sets `selected_id` first), but a
+  real bug waiting for a future change to this page or a crafted request
+  to trigger it. Fixed by giving the edit-fetch its own `$edit_row`
+  variable, decoupled from the list loop's `$myrow`, defaulting to an
+  empty array so the later check is always well-defined.
+
 - **`includes/db/connect_db_mysqli.inc` — `db_escape()`.** Caught live, not
   by Psalm: a real "Incorrect integer value: '' for column 'tax_included'"
   MySQL error reported while testing `purchasing/po_entry_items.php`'s
