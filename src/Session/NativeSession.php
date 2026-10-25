@@ -40,7 +40,7 @@ final class NativeSession implements SessionInterface
     #[\Override]
     public function getTyped(string $key, string $type): object
     {
-        /** @psalm-suppress MixedAssignment get()'s whole point is to return an untyped value for this method to narrow */
+        // get()'s whole point is to return an untyped value for this method to narrow
         $value = $this->get($key);
         if (!$value instanceof $type) {
             throw new \RuntimeException(sprintf(
@@ -56,7 +56,7 @@ final class NativeSession implements SessionInterface
     #[\Override]
     public function set(string $key, mixed $value): void
     {
-        /** @psalm-suppress MixedAssignment set()'s whole point is accepting an arbitrary value to store */
+        // set()'s whole point is accepting an arbitrary value to store
         $_SESSION[$key] = $value;
     }
 
