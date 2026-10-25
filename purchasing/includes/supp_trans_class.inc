@@ -19,11 +19,24 @@ use FrontAccounting\Purchasing\GrnItem;
 use FrontAccounting\Purchasing\GlCodes;
 
 /**
- * @psalm-suppress PropertyNotSetInConstructor supplier_name/tax_description/
- * Comments/tran_date/due_date/supp_reference/reference/ov_gst/currency/
- * dimension/dimension2 are always populated by __construct()'s call to
- * read(), via read_supp_invoice()/read_supplier_details_to_trans() - both
- * external functions Psalm can't trace property assignment through.
+ * PropertyNotSetInConstructor on supplier_name/tax_description/Comments/
+ * tran_date/due_date/supp_reference/reference/ov_gst/currency/dimension/
+ * dimension2 is accepted, left visible rather than suppressed per this
+ * project's standing no-@psalm-suppress policy. __construct()'s call to
+ * read() only populates them when $trans_no is truthy (an existing
+ * transaction); `new supp_trans(ST_SUPPINVOICE)` with no $trans_no (a
+ * brand-new invoice, the common case in purchasing/supplier_invoice.php)
+ * leaves them unset at construction time. Traced where each real caller
+ * fills them in instead: purchasing/includes/ui/invoice_ui.inc's
+ * copy_to_trans() copies Comments/tran_date/due_date/supp_reference/
+ * reference/dimension/dimension2 from $_POST, and the same file's page-
+ * rendering code calls read_supplier_details_to_trans() (populating
+ * supplier_name/tax_description/currency) whenever the posted supplier_id
+ * changes; purchasing/view/view_supp_invoice.php and view_supp_credit.php
+ * construct with no $trans_no too but call read_supp_invoice() directly
+ * immediately afterward (populating ov_gst and the rest) before any
+ * property is read. Psalm can't trace any of this across file/function
+ * boundaries, but it is not an actual uninitialized-property bug.
  */
 final class supp_trans
 {
