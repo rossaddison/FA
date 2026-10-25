@@ -50,7 +50,7 @@ function display_bank_header(items_cart &$order): void
 		ajax()->activate('footer');
 	}
     payment_person_types_list_row( $payment ? _("Pay To:"):_("From:"),
-		 'PayType', $_POST['PayType'], true);
+		 'PayType', is_string($_POST['PayType']) || is_array($_POST['PayType']) ? $_POST['PayType'] : null, true);
     switch ($_POST['PayType'])
     {
 		case PT_MISC :
@@ -73,7 +73,8 @@ function display_bank_header(items_cart &$order): void
 				$_POST['PersonDetailID'] = ANY_NUMERIC;
         		hidden('PersonDetailID');
         	}
-        	$trans = get_customer_habit(post_scalar('person_id')); // take care of customers on hold
+        	$person_id_post = post_scalar('person_id');
+        	$trans = get_customer_habit(is_string($person_id_post) ? $person_id_post : null); // take care of customers on hold
         	if (is_array($trans) && $trans['dissallow_invoices'] != 0)
         	{
         		if ($payment)
@@ -88,14 +89,15 @@ function display_bank_header(items_cart &$order): void
 
 		case PT_QUICKENTRY :
 			quick_entries_list_row(_("Type").":", 'person_id', null, ($payment ? QE_PAYMENT : QE_DEPOSIT), true);
-			$qid = row_or_empty(get_quick_entry(get_post('person_id')));
+			$person_id_post = get_post('person_id');
+			$qid = row_or_empty(get_quick_entry(is_scalar($person_id_post) ? $person_id_post : null));
 			if (list_updated('person_id')) {
 				unset($_POST['totamount']); // enable default
 				ajax()->activate('footer');
 				ajax()->activate('totamount');
 			}
 			amount_row((string)$qid['base_desc'].":", 'totamount', price_format($qid['base_amount']),
-				 null, "&nbsp;&nbsp;".submit('go', _("Go"), false, false, true));
+				 null, "&nbsp;&nbsp;".(string) submit('go', _("Go"), false, false, true));
 			break;	
     }
 
@@ -103,10 +105,12 @@ function display_bank_header(items_cart &$order): void
 
 	if (!(bool)$order->order_id && !get_post('bank_account'))
 	{
+		$person_id_post = post_scalar('person_id');
+		$person_id_str = is_string($person_id_post) ? $person_id_post : null;
 		if ($_POST['PayType'] == PT_CUSTOMER)
-			$_POST['bank_account'] = get_default_customer_bank_account(post_scalar('person_id'));
-		elseif ($_POST['PayType'] == PT_SUPPLIER)	
-			$_POST['bank_account'] = get_default_supplier_bank_account(post_scalar('person_id'));
+			$_POST['bank_account'] = get_default_customer_bank_account($person_id_str);
+		elseif ($_POST['PayType'] == PT_SUPPLIER)
+			$_POST['bank_account'] = get_default_supplier_bank_account($person_id_str);
 		else
 			unset($_POST['bank_account']);
 	}		
@@ -138,7 +142,7 @@ function display_gl_bank_items(string|int|float|bool|supp_trans|null $title, ite
 
 	$dim = get_company_pref('use_dimension');
 	$colspan = ($dim == 2 ? 4 : ($dim == 1 ? 3 : 2));
-	display_heading($title);
+	display_heading(is_scalar($title) ? $title : null);
 
     div_start('items_table');
 	start_table(TABLESTYLE, "width='95%'");
@@ -153,13 +157,13 @@ function display_gl_bank_items(string|int|float|bool|supp_trans|null $title, ite
 		$th = array(_("Account Code"), _("Account Description"),
 			_("Amount"), _("Memo"), "");
 
-	if ((bool)($order->gl_items ?? null)) $th[] = ''; // gl_items is null until the first line is added
+	if ((bool) $order->gl_items) $th[] = ''; // extra column once at least one line has been added
 
 	table_header($th);
 	$k = 0;  //row colour counter
 
 	$id = find_submit('Edit');
-	foreach (($order->gl_items ?? array()) as $line => $item)
+	foreach ($order->gl_items as $line => $item)
 	{
 		if ($id != $line)
 		{
@@ -209,11 +213,11 @@ function gl_edit_item_controls(items_cart &$order, string|int|float|bool|null $d
 	$id = find_submit('Edit');
 	if ($Index != -1 && $Index == $id)
 	{
-		$item = $order->gl_items[$Index];
+		$item = $order->gl_items[(int) $Index];
 		$_POST['code_id'] = $item->code_id;
 		$_POST['dimension_id'] = $item->dimension_id;
 		$_POST['dimension2_id'] = $item->dimension2_id;
-		$_POST['amount'] = price_format(abs($item->amount));
+		$_POST['amount'] = price_format(abs((float) $item->amount));
 		$_POST['description'] = $item->description;
 		$_POST['LineMemo'] = $item->reference;
 
@@ -286,14 +290,20 @@ function gl_options_controls_bank(items_cart $order): void
 	echo "<br><table align='center'>";
 
 	$type = get_post('PayType');
-	$bank_curr = get_bank_account_currency(get_post('bank_account'));
-	$person_curr = $type == PT_CUSTOMER ? get_customer_currency(get_post('person_id')) 
-		: ($type == PT_SUPPLIER ? get_supplier_currency(get_post('person_id')) : $bank_curr);
+	$bank_account_post = get_post('bank_account');
+	$person_id_post = get_post('person_id');
+	$date_post = get_post('date_');
+	$bank_account_scalar = is_scalar($bank_account_post) ? $bank_account_post : null;
+	$person_id_scalar = is_scalar($person_id_post) ? $person_id_post : null;
+	$date_scalar = is_scalar($date_post) ? $date_post : null;
+	$bank_curr = get_bank_account_currency($bank_account_scalar);
+	$person_curr = $type == PT_CUSTOMER ? get_customer_currency($person_id_scalar)
+		: ($type == PT_SUPPLIER ? get_supplier_currency($person_id_scalar) : $bank_curr);
 
 	if ($person_curr != $bank_curr)
 	{
 		$_POST['settled_amount'] =
-			price_format(abs($order->gl_items_total() / get_exchange_rate_from_to($bank_curr, $person_curr, get_post('date_'))));
+			price_format(abs($order->gl_items_total() / (float) get_exchange_rate_from_to($bank_curr, $person_curr, $date_scalar)));
 		amount_row($type == PT_CUSTOMER ? _("Settled AR Amount:") :  _("Settled AP Amount:"),
 			 'settled_amount', null, null, $person_curr, user_price_dec());
 	}
