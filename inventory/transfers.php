@@ -37,7 +37,8 @@ if (isset($_GET['NewTransfer'])) {
 		$_SESSION['page_title'] = _($help_context = "Inventory Location Transfers");
 	}
 }
-page($_SESSION['page_title'], false, false, "", $js);
+$page_title = $_SESSION['page_title'] ?? '';
+page(is_string($page_title) ? $page_title : '', false, false, "", $js);
 
 //-----------------------------------------------------------------------------------------------
 
@@ -57,9 +58,9 @@ if (isset($_GET['AddedID']))
   $itm = row_or_empty($transfer_items_result instanceof mysqli_result ? db_fetch($transfer_items_result) : false);
 
   if (is_fixed_asset($itm['mb_flag']))
-	  hyperlink_params($_SERVER['PHP_SELF'], _("Enter &Another Fixed Assets Transfer"), "NewTransfer=1&FixedAsset=1");
+	  hyperlink_params($_SERVER['PHP_SELF'] ?? '', _("Enter &Another Fixed Assets Transfer"), "NewTransfer=1&FixedAsset=1");
   else
-	  hyperlink_params($_SERVER['PHP_SELF'], _("Enter &Another Inventory Transfer"), "NewTransfer=1");
+	  hyperlink_params($_SERVER['PHP_SELF'] ?? '', _("Enter &Another Inventory Transfer"), "NewTransfer=1");
 
 	display_footer_exit();
 }
@@ -107,7 +108,7 @@ if (isset($_POST['Process']))
 		set_focus('ref');
 		$input_error = 1;
 	} 
-	elseif (!is_date(post_scalar('AdjDate'))) 
+	elseif (!is_date(is_string($x = post_scalar('AdjDate')) ? $x : null))
 	{
 		display_error(_("The entered transfer date is invalid."));
 		set_focus('AdjDate');
@@ -125,7 +126,7 @@ if (isset($_POST['Process']))
 		set_focus('FromStockLocation');
 		$input_error = 1;
 	}
-	elseif (!sysprefs()->allow_negative_stock())
+	elseif (!(bool) sysprefs()->allow_negative_stock())
 	{
 		$low_stock = $tr->check_qoh(post_scalar('FromStockLocation'), post_scalar('AdjDate'), true);
 
@@ -145,14 +146,19 @@ if (isset($_POST['Process']))
 if (isset($_POST['Process']))
 {
 
+	$from_loc_post = post_scalar('FromStockLocation');
+	$to_loc_post = post_scalar('ToStockLocation');
+	$adj_date_post = post_scalar('AdjDate');
+	$ref_post = post_scalar('ref');
+	$memo_post = post_scalar('memo_');
 	$trans_no = add_stock_transfer(session_obj('transfer_items')->line_items,
-		post_scalar('FromStockLocation'), post_scalar('ToStockLocation'),
-		post_scalar('AdjDate'), post_scalar('ref'), post_scalar('memo_'));
+		is_string($from_loc_post) ? $from_loc_post : null, is_string($to_loc_post) ? $to_loc_post : null,
+		is_string($adj_date_post) ? $adj_date_post : null, is_string($ref_post) ? $ref_post : null, is_string($memo_post) ? $memo_post : null);
 	new_doc_date($_POST['AdjDate']);
 	session_obj('transfer_items')->clear_items();
 	unset($_SESSION['transfer_items']);
 
-   	meta_forward($_SERVER['PHP_SELF'], "AddedID=$trans_no");
+   	meta_forward($_SERVER['PHP_SELF'] ?? '', "AddedID=$trans_no");
 } /*end of process credit note */
 
 //-----------------------------------------------------------------------------------------------
@@ -229,12 +235,14 @@ if (isset($_GET['NewTransfer']) || !isset($_SESSION['transfer_items']))
 //-----------------------------------------------------------------------------------------------
 start_form();
 
-display_order_header($_SESSION['transfer_items']);
+/** @var items_cart $transfer_items */
+$transfer_items = $_SESSION['transfer_items'];
+display_order_header($transfer_items);
 
 start_table(TABLESTYLE, "width='70%'", 10);
 start_row();
 echo "<td>";
-display_transfer_items(_("Items"), $_SESSION['transfer_items']);
+display_transfer_items(_("Items"), $transfer_items);
 transfer_options_controls();
 echo "</td>";
 end_row();
