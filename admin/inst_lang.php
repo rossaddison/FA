@@ -62,6 +62,13 @@ function display_languages(): void
 	$k = 0;
 
 	// get list of all (available and installed) langauges
+	// $available/$installed/$id/$support below are genuinely mixed by design:
+	// get_languages_list()'s own @return docblock types this as PkgListItem, a
+	// @psalm-type alias defined in includes/packages.inc, but that alias isn't
+	// resolvable from this file without a class to @psalm-import-type from --
+	// tried re-declaring the same shape inline here instead (confirmed via
+	// rescan: zero effect, reverted), each field is guarded with is_scalar()/
+	// cast immediately below before any use
 	$langs = get_languages_list();
 	foreach ($langs as $pkg_name => $lng)
 	{
@@ -96,7 +103,7 @@ function display_languages(): void
 		label_cell((bool)$available ? (string) $available : _("None"));
 
 		label_cell($id === null ? '' :
-			radio(null, 'CurDflt', $id, $dflt_lang == $lang, true),
+			radio(null, 'CurDflt', is_scalar($id) ? $id : null, $dflt_lang == $lang, true),
 			"align='center'");
 
 		if (function_exists('gettext') && check_value('DisplayAll'))
@@ -105,7 +112,7 @@ function display_languages(): void
 		if (!(bool)$available && ($lang != 'C'))	// manually installed language
 			button_cell('Edit'.(string)$id, _("Edit"), _('Edit non standard language configuration'),
 				ICON_EDIT);
-		elseif (check_pkg_upgrade($installed, $available)) // outdated or not installed language in repo
+		elseif (check_pkg_upgrade(is_scalar($installed) ? $installed : null, is_scalar($available) ? $available : null)) // outdated or not installed language in repo
 			button_cell('Update'.(string)$pkg_name, (bool)$installed ? _("Update") : _("Install"),
 				_('Upload and install latest language package'), ICON_DOWN);
 		else
@@ -172,7 +179,7 @@ function handle_submit_inst_lang(string|int|float|bool|array|null $id): bool
 	$installed_languages[$id]['version'] = '';
 	if (!write_lang())
 		return false;
-	$directory = $path_to_root . "/lang/" . $code;
+	$directory = (string) $path_to_root . "/lang/" . $code;
 	if (!file_exists($directory))
 	{
 		mkdir($directory);
@@ -291,6 +298,12 @@ if ((bool)($id = find_submit('Update', false)))
 if (get_post('_CurDflt_update') || (get_post('Refresh') && get_post('CurDflt', -1) != -1)) {
 	$curdflt_raw = get_post('CurDflt', 0);
 	$curdflt = is_scalar($curdflt_raw) ? (int) $curdflt_raw : 0;
+	// $installed_languages is pinned to array<int, array<string, string|bool>> at the top
+	// of this file, but handle_submit_inst_lang() (called earlier in this same request)
+	// assigns into it through `global $installed_languages`, which widens Psalm's inferred
+	// type for every later read of the same global in this file -- the same global-variable
+	// type-narrowing-doesn't-survive-a-later-write pattern already documented in
+	// doc/PSALM_MIGRATION.md, not a real bug
 	$new_lang = $installed_languages[$curdflt]['code'] ?? null;
 	if ($new_lang != $dflt_lang) {
 		$dflt_lang = (string) $new_lang;
