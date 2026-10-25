@@ -675,10 +675,8 @@ function handle_new_item(): void
 	    // chain); Psalm's global function table instead matches it against an
 	    // unrelated items_cart-typed, 4-arg collision elsewhere. Documented,
 	    // known noise - see doc/PSALM_MIGRATION.md's "Global function name collisions".
-	    /**
-	     * @psalm-suppress TooManyArguments
-	     * @psalm-suppress InvalidArgument
-	     */
+	    // Left as an accepted, visible finding rather than suppressed, per this
+	    // project's standing no-@psalm-suppress policy.
 	    add_to_order($cart, $stockId, input_num('qty'),
  	        input_num('price'),
                 (float)input_num('Disc') / 100.0,
