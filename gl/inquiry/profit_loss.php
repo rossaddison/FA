@@ -66,7 +66,6 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|n
 	$code_acc_balance = 0.0;
 	$per_balance_total = 0.0;
 	$acc_balance_total = 0.0;
-	unset($totals_arr);
 	$totals_arr = array();
 	
 	//Get Accounts directly under this group/type
@@ -92,8 +91,8 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|n
 				
 			start_row("class='stockmankobg'");
 			label_cell($url);
-			amount_cell($per_balance * $convert);
-			amount_cell($acc_balance * $convert);
+			amount_cell($per_balance * (float) $convert);
+			amount_cell($acc_balance * (float) $convert);
 			amount_cell(Achieve($per_balance, $acc_balance));
 			end_row();
 		}
@@ -120,9 +119,9 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|n
 		if ((bool)$drilldown && $type == post_scalar("AccGrp"))
 		{		
 			start_row("class='inquirybg fa-bold'");
-			label_cell(_('Total') . " " . $typename);
-			amount_cell(($code_per_balance + $per_balance_total) * $convert);
-			amount_cell(($code_acc_balance + $acc_balance_total) * $convert);
+			label_cell(_('Total') . " " . (string) $typename);
+			amount_cell(($code_per_balance + $per_balance_total) * (float) $convert);
+			amount_cell(($code_acc_balance + $acc_balance_total) * (float) $convert);
 			amount_cell(Achieve(($code_per_balance + $per_balance_total), ($code_acc_balance + $acc_balance_total)));
 			end_row();
 		}
@@ -135,13 +134,13 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|n
 		{	
 			$url = "<a href='$path_to_root/gl/inquiry/profit_loss.php?TransFromDate="
 				. (string)$from . "&TransToDate=" . (string)$to . "&Compare=" . (is_array($compare) ? '' : (string)$compare) . "&Dimension=" . (string)$dimension . "&Dimension2=" . (string)$dimension2
-				. "&AccGrp=" . $type ."'>" . $type . " " . $typename ."</a>";
+				. "&AccGrp=" . (string) $type ."'>" . (string) $type . " " . (string) $typename ."</a>";
 
 			/** @var int $k */
 			alt_table_row_color($k);
 			label_cell($url);
-			amount_cell(($code_per_balance + $per_balance_total) * $convert);
-			amount_cell(($code_acc_balance + $acc_balance_total) * $convert);
+			amount_cell(($code_per_balance + $per_balance_total) * (float) $convert);
+			amount_cell(($code_acc_balance + $acc_balance_total) * (float) $convert);
 			amount_cell(Achieve(($code_per_balance + $per_balance_total), ($code_acc_balance + $acc_balance_total)));
 			end_row();
 		}
@@ -203,7 +202,7 @@ function inquiry_controls(): void
 
 function display_profit_and_loss(string|int|array|null $compare): void
 {
-	global $path_to_root, $compare_types;
+	global $path_to_root, $compare_types, $levelptr;
 
 	/** @var int|string $compare */
 	$compare = is_array($compare) || $compare === null ? 0 : $compare;
@@ -286,8 +285,8 @@ function display_profit_and_loss(string|int|array|null $compare): void
 					/** @var int $k */
 					alt_table_row_color($k);
 					label_cell($url);
-					amount_cell($TypeTotal[0] * $convert);
-					amount_cell($TypeTotal[1] * $convert);
+					amount_cell($TypeTotal[0] * (float) $convert);
+					amount_cell($TypeTotal[1] * (float) $convert);
 					amount_cell(Achieve($TypeTotal[0], $TypeTotal[1]));
 					end_row();
 				}
@@ -297,8 +296,8 @@ function display_profit_and_loss(string|int|array|null $compare): void
 			
 			start_row("class='inquirybg fa-bold'");
 			label_cell(_('Total') . " " . (string)$class["class_name"]);
-			amount_cell($class_per_total * $convert);
-			amount_cell($class_acc_total * $convert);
+			amount_cell($class_per_total * (float) $convert);
+			amount_cell($class_acc_total * (float) $convert);
 			amount_cell(Achieve($class_per_total, $class_acc_total));
 			end_row();			
 			
@@ -308,16 +307,15 @@ function display_profit_and_loss(string|int|array|null $compare): void
 		
 		start_row("class='inquirybg fa-bold'");
 		label_cell(_('Calculated Return'));
-		amount_cell((float)$salesper *(float)(-1));
-		amount_cell((float)$salesacc * (float)(-1));
+		amount_cell($salesper * -1.0);
+		amount_cell($salesacc * -1.0);
 		amount_cell(achieve($salesper, $salesacc));
 		end_row();		
 
 	}
-	else 
+	else
 	{
-		//Level Pointer : Global variable defined in order to control display of root 
-		global $levelptr;
+		//Level Pointer : Global variable defined in order to control display of root
 		$levelptr = 0;
 		
 		$accounttype = row_or_empty(get_account_type(post_scalar("AccGrp")));
