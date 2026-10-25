@@ -36,7 +36,8 @@ if (isset($_GET['NewAdjustment'])) {
 		$_SESSION['page_title'] = _($help_context = "Item Adjustments Note");
 	}
 }
-page($_SESSION['page_title'], false, false, "", $js);
+$page_title = $_SESSION['page_title'] ?? '';
+page(is_string($page_title) ? $page_title : '', false, false, "", $js);
 
 //-----------------------------------------------------------------------------------------------
 
@@ -53,7 +54,7 @@ if (isset($_GET['AddedID']))
     display_note(get_trans_view_str($trans_type, $trans_no, _("&View this disposal")));
 
     display_note(get_gl_view_str($trans_type, $trans_no, _("View the GL &Postings for this Disposal")), 1, 0);
-	  hyperlink_params($_SERVER['PHP_SELF'], _("Enter &Another Disposal"), "NewAdjustment=1&FixedAsset=1");
+	  hyperlink_params($_SERVER['PHP_SELF'] ?? '', _("Enter &Another Disposal"), "NewAdjustment=1&FixedAsset=1");
   }
   else {
     display_notification_centered(_("Items adjustment has been processed"));
@@ -61,7 +62,7 @@ if (isset($_GET['AddedID']))
 
     display_note(get_gl_view_str($trans_type, $trans_no, _("View the GL &Postings for this Adjustment")), 1, 0);
 
-	  hyperlink_params($_SERVER['PHP_SELF'], _("Enter &Another Adjustment"), "NewAdjustment=1");
+	  hyperlink_params($_SERVER['PHP_SELF'] ?? '', _("Enter &Another Adjustment"), "NewAdjustment=1");
   }
 
 	hyperlink_params("$path_to_root/admin/attachments.php", _("Add an Attachment"), "filterType=$trans_type&trans_no=$trans_no");
@@ -114,7 +115,8 @@ function canProcessInventoryAdjustments(): bool
 		return false;
 	}
 
-	if (!is_date(post_scalar('AdjDate'))) 
+	$adj_date_check = post_scalar('AdjDate');
+	if (!is_date(is_string($adj_date_check) ? $adj_date_check : null))
 	{
 		display_error(_("The entered date for the adjustment is invalid."));
 		set_focus('AdjDate');
@@ -126,7 +128,7 @@ function canProcessInventoryAdjustments(): bool
 		set_focus('AdjDate');
 		return false;
 	}
-	elseif (!sysprefs()->allow_negative_stock())
+	elseif (!(bool) sysprefs()->allow_negative_stock())
 	{
 		$low_stock = $adj->check_qoh(post_scalar('StockLocation'), post_scalar('AdjDate'));
 
@@ -146,16 +148,21 @@ if (isset($_POST['Process']) && canProcessInventoryAdjustments()){
 
   $fixed_asset = session_obj('adj_items')->fixed_asset; 
 
+	$location_post = post_scalar('StockLocation');
+	$adj_date_post = post_scalar('AdjDate');
+	$ref_post = post_scalar('ref');
+	$memo_post = post_scalar('memo_');
 	$trans_no = add_stock_adjustment(session_obj('adj_items')->line_items,
-		post_scalar('StockLocation'), post_scalar('AdjDate'),	post_scalar('ref'), post_scalar('memo_'));
+		is_string($location_post) ? $location_post : null, is_string($adj_date_post) ? $adj_date_post : null,
+		is_string($ref_post) ? $ref_post : null, is_string($memo_post) ? $memo_post : null);
 	new_doc_date($_POST['AdjDate']);
 	session_obj('adj_items')->clear_items();
 	unset($_SESSION['adj_items']);
 
   if ((bool)$fixed_asset)
-   	meta_forward($_SERVER['PHP_SELF'], "AddedID=$trans_no&FixedAsset=1");
+   	meta_forward($_SERVER['PHP_SELF'] ?? '', "AddedID=$trans_no&FixedAsset=1");
   else
-   	meta_forward($_SERVER['PHP_SELF'], "AddedID=$trans_no");
+   	meta_forward($_SERVER['PHP_SELF'] ?? '', "AddedID=$trans_no");
 
 } /*end of process credit note */
 
@@ -249,11 +256,13 @@ if ((bool)session_obj('adj_items')->fixed_asset) {
 	$button_title = _("Process Adjustment");
 }
 
-display_order_header($_SESSION['adj_items']);
+/** @var items_cart $adj_items */
+$adj_items = $_SESSION['adj_items'];
+display_order_header($adj_items);
 
 start_outer_table(TABLESTYLE, "width='70%'", 10);
 
-display_adjustment_items($items_title, $_SESSION['adj_items']);
+display_adjustment_items($items_title, $adj_items);
 adjustment_options_controls();
 
 end_outer_table(1, false);
