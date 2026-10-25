@@ -32,19 +32,22 @@ simple_page_mode(true);
 #[\NoDiscard]
 function check_data(): bool
 {
-	if (!is_date(post_scalar('from_date')) || is_date_in_fiscalyears($_POST['from_date']))
+	$from_date_post = post_scalar('from_date');
+	if (!is_date(is_string($from_date_post) ? $from_date_post : null) || is_date_in_fiscalyears($_POST['from_date']))
 	{
 		display_error( _("Invalid BEGIN date in fiscal year."));
 		set_focus('from_date');
 		return false;
 	}
-	if (!is_date(post_scalar('to_date')) || is_date_in_fiscalyears($_POST['to_date']))
+	$to_date_post = post_scalar('to_date');
+	if (!is_date(is_string($to_date_post) ? $to_date_post : null) || is_date_in_fiscalyears($_POST['to_date']))
 	{
 		display_error( _("Invalid END date in fiscal year."));
 		set_focus('to_date');
 		return false;
 	}
-	if (!check_begin_end_date($_POST['from_date'], $_POST['to_date']))
+	if (!check_begin_end_date(is_string($_POST['from_date']) || is_array($_POST['from_date']) ? $_POST['from_date'] : null,
+		is_string($_POST['to_date']) || is_array($_POST['to_date']) ? $_POST['to_date'] : null))
 	{
 		display_error( _("Invalid BEGIN or END date in fiscal year."));
 		set_focus('from_date');
@@ -68,27 +71,32 @@ function handle_submit_fiscalyears(): ?bool
 	{
 		if ($_POST['closed'] == 1)
 		{
-			if (check_years_before(post_scalar('from_date'), false))
+			$from_date_check = post_scalar('from_date');
+			if (check_years_before(is_string($from_date_check) ? $from_date_check : null, false))
 			{
 				display_error( _("Cannot CLOSE this year because there are open fiscal years before"));
 				set_focus('closed');
 				return false;
 			}	
-			$ok = close_year($selected_id);
-		}	
+			$ok = close_year(is_scalar($selected_id) ? $selected_id : null);
+		}
 		else
-			open_year($selected_id);
+			open_year(is_scalar($selected_id) ? $selected_id : null);
 		if ($ok)
 		{
-   			update_fiscalyear($selected_id, post_scalar('closed'));
+			$closed_post = post_scalar('closed');
+   			update_fiscalyear(is_scalar($selected_id) ? $selected_id : null, is_string($closed_post) ? $closed_post : null);
 			display_notification(_('Selected fiscal year has been updated'));
-		}	
+		}
 	}
 	else
 	{
 		if (!check_data())
 			return false;
-   		add_fiscalyear(post_scalar('from_date'), post_scalar('to_date'), post_scalar('closed'));
+		$from_date_add = post_scalar('from_date');
+		$to_date_add = post_scalar('to_date');
+		$closed_add = post_scalar('closed');
+   		add_fiscalyear(is_string($from_date_add) ? $from_date_add : null, is_string($to_date_add) ? $to_date_add : null, is_string($closed_add) ? $closed_add : null);
 		display_notification(_('New fiscal year has been added'));
 	}
 	$Mode = 'RESET';
@@ -118,9 +126,9 @@ function handle_delete(): void
 {
 	global $selected_id, $Mode;
 
-	if (check_can_delete($selected_id)) {
+	if (check_can_delete(is_scalar($selected_id) ? $selected_id : null)) {
 	//only delete if used in neither customer or supplier, comp prefs, bank trans accounts
-		delete_this_fiscalyear($selected_id);
+		delete_this_fiscalyear(is_scalar($selected_id) ? $selected_id : null);
 		display_notification(_('Selected fiscal year has been deleted'));
 	}
 	$Mode = 'RESET';
@@ -237,8 +245,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 if ($Mode == 'Delete')
 {
-	global $selected_id;
-	handle_delete($selected_id);
+	handle_delete();
 }
 
 if ($Mode == 'RESET')
@@ -251,7 +258,7 @@ display_fiscalyears();
 
 echo '<br>';
 
-display_fiscalyear_edit($selected_id);
+display_fiscalyear_edit(is_scalar($selected_id) ? $selected_id : null);
 
 //---------------------------------------------------------------------------------------------
 
