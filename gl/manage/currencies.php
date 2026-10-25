@@ -27,25 +27,25 @@ simple_page_mode(false);
 #[\NoDiscard]
 function check_data(): bool
 {
-	if (strlen($_POST['Abbreviation']) == 0) 
+	if (strlen((string) post_scalar('Abbreviation')) == 0)
 	{
 		display_error( _("The currency abbreviation must be entered."));
 		set_focus('Abbreviation');
 		return false;
-	} 
-	elseif (strlen($_POST['CurrencyName']) == 0) 
+	}
+	elseif (strlen((string) post_scalar('CurrencyName')) == 0)
 	{
 		display_error( _("The currency name must be entered."));
 		set_focus('CurrencyName');
-		return false;		
-	} 
-	elseif (strlen($_POST['Symbol']) == 0) 
+		return false;
+	}
+	elseif (strlen((string) post_scalar('Symbol')) == 0)
 	{
 		display_error( _("The currency symbol must be entered."));
 		set_focus('Symbol');
-		return false;		
-	} 
-	elseif (strlen($_POST['hundreds_name']) == 0) 
+		return false;
+	}
+	elseif (strlen((string) post_scalar('hundreds_name')) == 0)
 	{
 		display_error( _("The hundredths name must be entered."));
 		set_focus('hundreds_name');
@@ -64,18 +64,31 @@ function handle_submit_currencies(): ?bool
 	if (!check_data())
 		return false;
 		
-	if ($selected_id != "") 
+	$abbrev_post = post_scalar('Abbreviation');
+	$abbrev_str = is_string($abbrev_post) ? $abbrev_post : null;
+	$symbol_post = post_scalar('Symbol');
+	$symbol_str = is_string($symbol_post) ? $symbol_post : null;
+	$currency_name_post = post_scalar('CurrencyName');
+	$currency_name_str = is_string($currency_name_post) ? $currency_name_post : null;
+	$country_post = post_scalar('country');
+	$country_str = is_string($country_post) ? $country_post : null;
+	$hundreds_name_post = post_scalar('hundreds_name');
+	$hundreds_name_str = is_string($hundreds_name_post) ? $hundreds_name_post : null;
+	$auto_update_check = check_value('auto_update');
+	$auto_update_int = is_int($auto_update_check) ? $auto_update_check : null;
+
+	if ($selected_id != "")
 	{
 
-		update_currency(post_scalar('Abbreviation'), post_scalar('Symbol'), post_scalar('CurrencyName'), 
-			post_scalar('country'), post_scalar('hundreds_name'), check_value('auto_update'));
+		update_currency($abbrev_str, $symbol_str, $currency_name_str,
+			$country_str, $hundreds_name_str, $auto_update_int);
 		display_notification(_('Selected currency settings has been updated'));
-	} 
-	else 
+	}
+	else
 	{
 
-		add_currency(post_scalar('Abbreviation'), post_scalar('Symbol'), post_scalar('CurrencyName'), 
-			post_scalar('country'), post_scalar('hundreds_name'), check_value('auto_update'));
+		add_currency($abbrev_str, $symbol_str, $currency_name_str,
+			$country_str, $hundreds_name_str, $auto_update_int);
 		display_notification(_('New currency has been added'));
 	}
 	$Mode = 'RESET';
@@ -124,9 +137,9 @@ function check_can_delete(string|int|float|bool|null $curr): bool
 function handle_delete(): void
 {
 	global $selected_id, $Mode;
-	if (check_can_delete($selected_id)) {
+	if (check_can_delete(is_scalar($selected_id) ? $selected_id : null)) {
 	//only delete if used in neither customer or supplier, comp prefs, bank trans accounts
-		delete_currency($selected_id);
+		delete_currency(is_scalar($selected_id) ? $selected_id : null);
 		display_notification(_('Selected currency has been deleted'));
 	}
 	$Mode = 'RESET';
@@ -214,7 +227,8 @@ function display_currency_edit(string|int|float|bool|null $selected_id): void
 	text_row_ex(_("Currency Name:"), 'CurrencyName', 20);
 	text_row_ex(_("Hundredths Name:"), 'hundreds_name', 15);	
 	text_row_ex(_("Country:"), 'country', 40);	
-	check_row(_("Automatic exchange rate update:"), 'auto_update', get_post('auto_update'));
+	$auto_update_post = get_post('auto_update');
+	check_row(_("Automatic exchange rate update:"), 'auto_update', is_scalar($auto_update_post) ? $auto_update_post : null);
 	end_table(1);
 
 	submit_add_or_update_center($selected_id == '', '', 'both');
@@ -242,7 +256,7 @@ if ($Mode == 'RESET')
 start_form();
 display_currencies();
 
-display_currency_edit($selected_id);
+display_currency_edit(is_scalar($selected_id) ? $selected_id : null);
 end_form();
 //---------------------------------------------------------------------------------------------
 
