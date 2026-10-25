@@ -71,7 +71,7 @@ function submit_add_or_update_center2(bool $add=true, string|bool|null $title=fa
 function canProcessGlQuickEntries(): bool 
 {
 
-	if (strlen($_POST['description']) == 0) 
+	if (strlen((string) post_scalar('description')) == 0)
 	{
 		display_error( _("The Quick Entry description cannot be empty."));
 		set_focus('description');
@@ -84,7 +84,7 @@ function canProcessGlQuickEntries(): bool
 		set_focus('base_desc');
 		return false;
 	}
-	if (!$bal_type && strlen($_POST['base_desc']) == 0) 
+	if (!$bal_type && strlen((string) post_scalar('base_desc')) == 0)
 	{
 		display_error( _("The base amount description cannot be empty."));
 		set_focus('base_desc');
@@ -102,16 +102,18 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 	if (canProcessGlQuickEntries()) 	
 	{	
 
-		if ($selected_id != -1) 
+		$bal_type_post = get_post('bal_type', 0);
+		$bal_type_scalar = is_string($bal_type_post) || is_int($bal_type_post) ? $bal_type_post : null;
+		if ($selected_id != -1)
 		{
-			update_quick_entry($selected_id, post_scalar('description'), post_scalar('type'),
-				 input_num('base_amount'), post_scalar('base_desc'), get_post('bal_type', 0), post_scalar('usage'));
+			update_quick_entry(is_scalar($selected_id) ? $selected_id : null, post_scalar('description'), post_scalar('type'),
+				 input_num('base_amount'), post_scalar('base_desc'), $bal_type_scalar, post_scalar('usage'));
 			display_notification(_('Selected quick entry has been updated'));
-		} 
-		else 
+		}
+		else
 		{
-			add_quick_entry(post_scalar('description'), post_scalar('type'), 
-				input_num('base_amount'), post_scalar('base_desc'), get_post('bal_type', 0), post_scalar('usage'));
+			add_quick_entry(post_scalar('description'), post_scalar('type'),
+				input_num('base_amount'), post_scalar('base_desc'), $bal_type_scalar, post_scalar('usage'));
 			display_notification(_('New quick entry has been added'));
 		}
 		$Mode = 'RESET';
@@ -124,16 +126,18 @@ if ($Mode2=='ADD_ITEM2' || $Mode2=='UPDATE_ITEM2')
    		display_error(_("You must select GL account."));
 		set_focus('dest_id');
 	}
-	elseif ($selected_id2 != -1) 
+	elseif ($selected_id2 != -1)
 	{
-		update_quick_entry_line($selected_id2, $selected_id, post_scalar('actn'), post_scalar('dest_id'), input_num('amount', 0), 
-			post_scalar('dimension_id'), post_scalar('dimension2_id'), get_post('memo'));
+		$memo_post = get_post('memo');
+		update_quick_entry_line(is_scalar($selected_id2) ? $selected_id2 : null, is_scalar($selected_id) ? $selected_id : null, post_scalar('actn'), post_scalar('dest_id'), input_num('amount', 0),
+			post_scalar('dimension_id'), post_scalar('dimension2_id'), is_string($memo_post) ? $memo_post : null);
 		display_notification(_('Selected quick entry line has been updated'));
-	} 
-	else 
+	}
+	else
 	{
-		add_quick_entry_line($selected_id, post_scalar('actn'), post_scalar('dest_id'), input_num('amount', 0), 
-			post_scalar('dimension_id'), post_scalar('dimension2_id'), get_post('memo'));
+		$memo_post = get_post('memo');
+		add_quick_entry_line(is_scalar($selected_id) ? $selected_id : null, post_scalar('actn'), post_scalar('dest_id'), input_num('amount', 0),
+			post_scalar('dimension_id'), post_scalar('dimension2_id'), is_string($memo_post) ? $memo_post : null);
 		display_notification(_('New quick entry line has been added'));
 	}
 	$Mode2 = 'RESET2';
@@ -143,9 +147,9 @@ if ($Mode2=='ADD_ITEM2' || $Mode2=='UPDATE_ITEM2')
 
 if ($Mode == 'Delete')
 {
-	if (!has_quick_entry_lines($selected_id))
+	if (!has_quick_entry_lines(is_scalar($selected_id) ? $selected_id : null))
 	{
-		delete_quick_entry($selected_id);
+		delete_quick_entry(is_scalar($selected_id) ? $selected_id : null);
 		display_notification(_('Selected quick entry has been deleted'));
 		$Mode = 'RESET';
 	}
@@ -166,7 +170,7 @@ if (find_submit('BEd') != -1 || get_post('ADD_ITEM2')) {
 
 if ($Mode2 == 'BDel')
 {
-	delete_quick_entry_line($selected_id2);
+	delete_quick_entry_line(is_scalar($selected_id2) ? $selected_id2 : null);
 	display_notification(_('Selected quick entry line has been deleted'));
 	$Mode2 = 'RESET2';
 }
@@ -197,7 +201,7 @@ $k = 0;
 while ($myrow = db_fetch($result)) 
 {
 	alt_table_row_color($k);
-	$type_text = $quick_entry_types[$myrow["type"]];
+	$type_text = $quick_entry_types[(int) $myrow["type"]];
 	label_cell($myrow['description']);
 	label_cell($type_text);
 	label_cell($myrow['usage']);
@@ -216,7 +220,7 @@ if ($selected_id != -1)
 {
 	if ($Mode == 'Edit') // changed by Joe 2010-11-09
 	{
-		$myrow = row_or_empty(get_quick_entry($selected_id));
+		$myrow = row_or_empty(get_quick_entry(is_scalar($selected_id) ? $selected_id : null));
 
 		$_POST['id']  = $myrow["id"];
 		$_POST['description']  = $myrow["description"];
@@ -224,10 +228,10 @@ if ($selected_id != -1)
 		$_POST['base_desc']  = $myrow["base_desc"];
 		$_POST['usage']  = $myrow["usage"];
 		$_POST['bal_type']  = $myrow["bal_type"];
-		$_POST['base_amount']  = $myrow["bal_type"] ?
+		$_POST['base_amount']  = (bool) $myrow["bal_type"] ?
 			$myrow["base_amount"] : price_format($myrow["base_amount"]);
-	}	
-	hidden('selected_id', $selected_id);
+	}
+	hidden('selected_id', is_scalar($selected_id) ? $selected_id : null);
 } 
 
 text_row_ex(_("Description").':', 'description', 50, 60);
@@ -262,8 +266,8 @@ div_end();
 
 if ($selected_id != -1)
 {
-	display_heading(_("Quick Entry Lines") . " - " . (string)$_POST['description']);
-	$result = get_quick_entry_lines($selected_id);
+	display_heading(_("Quick Entry Lines") . " - " . (is_scalar($_POST['description']) ? (string) $_POST['description'] : ''));
+	$result = get_quick_entry_lines(is_scalar($selected_id) ? $selected_id : null);
 
 	start_table(TABLESTYLE2);
 	$dim = get_company_pref('use_dimension');
@@ -280,9 +284,9 @@ if ($selected_id != -1)
 	{
 		alt_table_row_color($k);
 		
-		label_cell($quick_actions[$myrow['action']]);
+		label_cell($quick_actions[is_scalar($myrow['action']) ? $myrow['action'] : '']);
 
-		$act_type = strtolower(substr($myrow['action'], 0, 1));
+		$act_type = strtolower(substr(is_scalar($myrow['action']) ? $myrow['action'] : '', 0, 1));
 
 		if ($act_type == 't') 
 		{
@@ -317,7 +321,7 @@ if ($selected_id != -1)
 	 	if ($Mode2 == 'BEd') 
 	 	{
 			//editing an existing status code
-			$myrow = row_or_empty(get_quick_entry_line($selected_id2));
+			$myrow = row_or_empty(get_quick_entry_line(is_scalar($selected_id2) ? $selected_id2 : null));
 
 			$_POST['id']  = $myrow["id"];
 			$_POST['dest_id']  = $myrow["dest_id"];
@@ -333,7 +337,8 @@ if ($selected_id != -1)
 	if (list_updated('actn'))
 		ajax()->activate('edit_line');
 
-	$actn = strtolower(substr($_POST['actn'],0,1));
+	$actn_post = $_POST['actn'] ?? '';
+	$actn = strtolower(substr(is_scalar($actn_post) ? (string) $actn_post : '',0,1));
 
 	if ($actn == 't') 
 	{
@@ -364,8 +369,8 @@ if ($selected_id != -1)
 		hidden('dimension_id', 0);
 	div_end();
 	
-	hidden('selected_id', $selected_id);
-	hidden('selected_id2', $selected_id2);
+	hidden('selected_id', is_scalar($selected_id) ? $selected_id : null);
+	hidden('selected_id2', is_scalar($selected_id2) ? $selected_id2 : null);
 
 	submit_add_or_update_center2($selected_id2 == -1, '', true);
 
