@@ -19,41 +19,43 @@ page(_($help_context = "Users"));
 
 include_once(dirname(__DIR__) . "/includes/date_functions.inc");
 include_once(dirname(__DIR__) . "/includes/ui.inc");
-
 include_once(dirname(__DIR__) . "/admin/db/users_db.inc");
 
 simple_page_mode(true);
-//-------------------------------------------------------------------------------------------------
 
 #[\NoDiscard]
-function can_process(string|int|float|bool|array|null $new): bool 
+function canProcessUser(string|int|float|bool|array|null $new): bool
 {
+    $msg = "The user login entered must be at least 4 characters long.";
+    
+    $userId = (is_string($uId = post_scalar('user_id')) ? $uId : '');
+        
+    $password = (is_string($pw = post_scalar('password')) ? $pw : '');
+            	
+    if (strlen($password) < 4)
+    {
+	display_error( _($msg));
+	set_focus('user_id');
+	return false;
+    }
 
-	if (strlen($_POST['user_id']) < 4)
-	{
-		display_error( _("The user login entered must be at least 4 characters long."));
-		set_focus('user_id');
-		return false;
-	}
-
-	if (!(bool)$new && ($_POST['password'] != ""))
-	{
-    	if (strlen($_POST['password']) < 4)
+    if (!(bool)$new && ($password != ""))
+    {
+    	if (strlen($password) < 4)
     	{
-    		display_error( _("The password entered must be at least 4 characters long."));
-			set_focus('password');
-    		return false;
+            display_error( _($msg));
+            set_focus('password');
+            return false;
     	}
-
-    	if (strstr($_POST['password'], $_POST['user_id']) != false)
+        if (strstr($password, $userId) !== false)
     	{
-    		display_error( _("The password cannot contain the user login."));
-			set_focus('password');
-    		return false;
+            display_error( _("The password cannot contain the user login."));
+            set_focus('password');
+            return false;
     	}
-	}
+    }
 
-	return true;
+    return true;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -61,24 +63,29 @@ function can_process(string|int|float|bool|array|null $new): bool
 if (($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') && check_csrf_token())
 {
 
-	if (can_process($Mode == 'ADD_ITEM'))
-	{
-    	if ($selected_id != -1) 
+    if (canProcessUser($Mode == 'ADD_ITEM')) {
+        $password = (is_string($pw = post_scalar('password')) ? $pw : '');
+            
+    	if ($selected_id !== -1 && (is_scalar($selected_id)))
     	{
     		update_user_prefs($selected_id,
     			get_post(array('user_id', 'real_name', 'phone', 'email', 'role_id', 'language',
 					'print_profile', 'rep_popup' => 0, 'pos')));
 
-    		if ($_POST['password'] != "")
-    			update_user_password($selected_id, post_scalar('user_id'), md5($_POST['password']));
-
-    		display_notification_centered(_("The selected user has been updated."));
-    	} 
-    	else 
-    	{
-    		add_user(post_scalar('user_id'), post_scalar('real_name'), md5($_POST['password']),
+    	    if ($password != "") {
+    		update_user_password($selected_id, post_scalar('user_id'), md5($password));
+            }
+    	    display_notification_centered(_("The selected user has been updated."));
+    	} else {
+    		$checkValueRepPopup = check_value('rep_popup');
+                
+                if (!(is_int($checkValueRepPopup))) {
+                    $checkValueRepPopup = null;
+                }
+                
+                add_user(post_scalar('user_id'), post_scalar('real_name'), md5($password),
 				post_scalar('phone'), post_scalar('email'), post_scalar('role_id'), post_scalar('language'),
-				post_scalar('print_profile'), check_value('rep_popup'), $_POST['pos']);
+				post_scalar('print_profile'), $checkValueRepPopup, $_POST['pos']);
 			$id = db_insert_id();
 			// use current user display preferences as start point for new user
 			$prefs = session_obj('wa_current_user')->prefs->get_all();
@@ -89,23 +96,25 @@ if (($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') && check_csrf_token())
 			display_notification_centered(_("A new user has been added."));
     	}
 		$Mode = 'RESET';
-	}
+    }
 }
 
 //-------------------------------------------------------------------------------------------------
 
 if ($Mode == 'Delete' && check_csrf_token())
 {
-	$cancel_delete = 0;
-    if ((bool)key_in_foreign_table($selected_id, 'audit_trail', 'user'))
+    $cancel_delete = 0;
+    if (is_scalar($selected_id) && (bool)key_in_foreign_table($selected_id, 'audit_trail', 'user'))
     {
         $cancel_delete = 1;
         display_error(_("Cannot delete this user because entries are associated with this user."));
     }
-    if ($cancel_delete == 0) 
+    if ($cancel_delete == 0)
     {
-    	delete_user($selected_id);
-    	display_notification_centered(_("User has been deleted."));
+    	if (is_scalar($selected_id)) {
+            delete_user($selected_id);
+            display_notification_centered(_("User has been deleted."));
+        }
     } //end if Delete group
     $Mode = 'RESET';
 }
@@ -133,34 +142,37 @@ $k = 0; //row colour counter
 
 while ($myrow = db_fetch($result)) 
 {
-
 	alt_table_row_color($k);
-
+        $myRowLastVisitDate = $myrow["last_visit_date"] ?? '';
+        $strToTimeLastVisitDate = strtotime($myRowLastVisitDate);
 	$time_format = (user_date_format() == 0 ? "h:i a" : "H:i");
-	$last_visit_date = sql2date($myrow["last_visit_date"]). " " . 
-		date($time_format, strtotime($myrow["last_visit_date"]));
+	$lastVisitDate = $strToTimeLastVisitDate !== false ?
+            sql2date($myRowLastVisitDate). " " .
+                date($time_format, $strToTimeLastVisitDate) : '';
 
 	/*The security_headings array is defined in config.php */
-	$not_me = strcasecmp($myrow["user_id"], session_obj('wa_current_user')->username);
+	$not_me = strcasecmp($myrow["user_id"] ?? '', session_obj('wa_current_user')->username);
 
 	label_cell($myrow["user_id"]);
 	label_cell($myrow["real_name"]);
 	label_cell($myrow["phone"]);
 	email_cell($myrow["email"]);
-	label_cell($last_visit_date, "nowrap");
+	label_cell($lastVisitDate, "nowrap");
 	label_cell($myrow["role"]);
 	
-    if ($not_me)
-		inactive_control_cell($myrow["id"], $myrow["inactive"], 'users', 'id');
-	elseif (check_value('show_inactive'))
-		label_cell('');
+    if ($not_me) {
+	inactive_control_cell($myrow["id"], $myrow["inactive"], 'users', 'id');
+    } elseif (check_value('show_inactive')) {
+        label_cell('');
+    }
 
-	edit_button_cell("Edit".(string)$myrow["id"], _("Edit"));
-    if ($not_me)
- 		delete_button_cell("Delete".(string)$myrow["id"], _("Delete"));
-	else
-		label_cell('');
-	end_row();
+    edit_button_cell("Edit".(string)$myrow["id"], _("Edit"));
+    if ($not_me) {
+ 	delete_button_cell("Delete".(string)$myrow["id"], _("Delete"));
+    } else {
+        label_cell('');
+    }
+    end_row();
 
 } //END WHILE LIST LOOP
 
@@ -170,7 +182,7 @@ end_table(1);
 start_table(TABLESTYLE2);
 
 $_POST['email'] = "";
-if ($selected_id != -1) 
+if ($selected_id !== -1 && is_int($selected_id))
 {
   	if ($Mode == 'Edit') {
 		//editing an existing User
