@@ -66,14 +66,16 @@ function handle_new_order(): void
 	}
 
      $_SESSION['issue_items'] = new items_cart(ST_MANUISSUE);
-     session_obj('issue_items')->order_id = $_GET['trans_no'];
+     $trans_no = $_GET['trans_no'];
+     session_obj('issue_items')->order_id = is_array($trans_no) ? null : $trans_no;
 }
 
 //-----------------------------------------------------------------------------------------------
 #[\NoDiscard]
 function can_process(): bool
 {
-	if (!is_date(post_scalar('date_')))
+	$date_post = post_scalar('date_');
+	if (!is_date(is_string($date_post) ? $date_post : null))
 	{
 		display_error(_("The entered date for the issue is invalid."));
 		set_focus('date_');
@@ -105,11 +107,21 @@ if (isset($_POST['Process']) && can_process())
 {
 
 	// insufficient-quantity validation happens above via can_process()'s check_qoh()
+	$ref = post_scalar('ref');
+	$issue_type = $_POST['IssueType'] ?? null;
+	$location = post_scalar('Location');
+	$workcentre = post_scalar('WorkCentre');
+	$memo = post_scalar('memo_');
 	add_work_order_issue(session_obj('issue_items')->order_id,
-		post_scalar('ref'), $_POST['IssueType'], session_obj('issue_items')->line_items,
-		post_scalar('Location'), post_scalar('WorkCentre'), post_scalar('date_'), post_scalar('memo_'));
+		is_string($ref) ? $ref : null,
+		is_array($issue_type) || is_string($issue_type) ? $issue_type : null,
+		session_obj('issue_items')->line_items,
+		is_string($location) ? $location : null,
+		is_string($workcentre) ? $workcentre : null,
+		post_scalar('date_'),
+		is_string($memo) ? $memo : null);
 
-	meta_forward($_SERVER['PHP_SELF'], "AddedID=".(string)session_obj('issue_items')->order_id);
+	meta_forward($_SERVER['PHP_SELF'] ?? '', "AddedID=".(string)session_obj('issue_items')->order_id);
 
 } /*end of process credit note */
 
@@ -162,8 +174,10 @@ function handle_new_item(): void
 	if (!check_item_data())
 		return;
 
-	add_to_issue($_SESSION['issue_items'], $_POST['stock_id'], input_num('qty'),
-		 input_num('std_cost'));
+	$issue_cart = session_obj('issue_items');
+	$stock_id = $_POST['stock_id'] ?? null;
+	add_to_issue($issue_cart, is_array($stock_id) || is_string($stock_id) ? $stock_id : null,
+		input_num('qty'), input_num('std_cost'));
 	line_start_focus();
 }
 
@@ -198,7 +212,8 @@ start_form();
 
 start_table(TABLESTYLE, "width='90%'", 10);
 echo "<tr><td>";
-display_issue_items(_("Items to Issue"), $_SESSION['issue_items']);
+$issue_cart = session_obj('issue_items');
+display_issue_items(_("Items to Issue"), $issue_cart);
 issue_options_controls();
 echo "</td></tr>";
 
