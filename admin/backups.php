@@ -22,18 +22,21 @@ if (get_post('view')) {
 	if (!get_post('backups')) {
 		display_error(_('Select backup file first.'));
 	} else {
-		$filename = sysprefs()->backup_dir() . clean_file_name(get_post('backups'));
+		$backups_clean = clean_file_name(get_post('backups'));
+		$filename = sysprefs()->backup_dir() . (is_scalar($backups_clean) ? $backups_clean : '');
 		if (in_ajax()) 
 			ajax()->popup( $filename );
 		else {
 			header('Content-type: text/plain');
-			header('Content-Length: '.filesize($filename));
+			header('Content-Length: '.(string) filesize($filename));
 			header("Content-Disposition: inline; filename=".basename($filename));
 			if (substr($filename, -3, 3) == '.gz')
 				header("Content-Encoding: gzip");
 
-			if (substr($filename, -4, 4) == '.zip')
-				echo db_unzip('', $filename);
+			if (substr($filename, -4, 4) == '.zip') {
+				$unzipped = db_unzip('', $filename);
+				echo is_array($unzipped) ? '' : $unzipped;
+			}
 			else
 				readfile($filename);
 			exit();
@@ -43,7 +46,8 @@ if (get_post('view')) {
 
 if (get_post('download')) {
 	if (get_post('backups')) {
-		download_file(sysprefs()->backup_dir().clean_file_name(get_post('backups')));
+		$backups_clean2 = clean_file_name(get_post('backups'));
+		download_file(sysprefs()->backup_dir().(is_scalar($backups_clean2) ? $backups_clean2 : ''));
 		exit;
 	} else
 		display_error(_("Select backup file first."));
@@ -73,7 +77,7 @@ function generate_backup(array $conn, string|null $ext='no', string|null $comm='
 {
 
 	$filename = db_backup($conn, $ext, $comm, sysprefs()->backup_dir());
-	if ($filename)
+	if ((bool) $filename)
 		display_notification(_("Backup successfully generated."). ' '
 			. _("Filename") . ": " . $filename);
 	else
@@ -90,9 +94,11 @@ function get_backup_file_combo(): string
 	$ar_files = array();
     default_focus('backups');
     $dh = opendir(sysprefs()->backup_dir());
-	while (($file = readdir($dh)) !== false)
-		$ar_files[] = $file;
-	closedir($dh);
+	if ($dh !== false) {
+		while (($file = readdir($dh)) !== false)
+			$ar_files[] = $file;
+		closedir($dh);
+	}
 
     rsort($ar_files);
 	$opt_files = "";
@@ -124,26 +130,29 @@ function compress_list_row(?string $label, ?string $name, string|int|float|bool|
 
 function download_file(?string $filename): bool
 {
-    if (!(bool)($filename ?? null) || !file_exists($filename))
+    if ($filename === null || $filename === '' || !file_exists($filename))
     {
 		display_error(_('Select backup file first.'));
         return false;
     }
     $saveasname = basename($filename);
     header('Content-type: application/octet-stream');
-   	header('Content-Length: '.filesize($filename));
+   	header('Content-Length: '.(string) filesize($filename));
    	header('Content-Disposition: attachment; filename="'.$saveasname.'"');
     readfile($filename);
 
     return true;
 }
 
-$conn = $db_connections[user_company()];
+$conn = $db_connections[(int) user_company()];
 $backup_name = clean_file_name(get_post('backups'));
+$backup_name = is_scalar($backup_name) ? $backup_name : '';
 $backup_path = sysprefs()->backup_dir() . $backup_name;
 
 if (get_post('creat')) {
-	generate_backup($conn, get_post('comp'), get_post('comments'));
+	$comp_post = get_post('comp');
+	$comments_post = get_post('comments');
+	generate_backup($conn, is_scalar($comp_post) ? $comp_post : null, is_scalar($comments_post) ? $comments_post : null);
 	ajax()->activate('backups');
 	sysprefs()->refresh(); // re-read system setup
 };
@@ -213,7 +222,7 @@ table_section_title(_("Backup scripts maintenance"));
 
 	submit_row('deldump', _("Delete Backup"), false, '','', true);
 	// don't use 'delete' name or IE js errors appear
-	submit_js_confirm('deldump', sprintf(_("You are about to remove selected backup file.\nDo you want to continue ?")));
+	submit_js_confirm('deldump', _("You are about to remove selected backup file.\nDo you want to continue ?"));
 	end_table();
 	echo "</td>";
 	end_row();
