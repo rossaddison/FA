@@ -13,7 +13,7 @@ declare(strict_types=1);
 include_once $path_to_root.'/includes/db/class.reflines_db.inc';
 include_once $path_to_root.'/includes/ui/class.crud_view.inc';
 
-class fa_reflines extends simple_crud_view {
+final class fa_reflines extends simple_crud_view {
 
 	function __construct()
 	{
@@ -30,7 +30,8 @@ class fa_reflines extends simple_crud_view {
 	}
 
 	/** @return bool */
-	function list_view($Mode)
+	#[\Override]
+	function list_view(?string $Mode)
 	{
 		global $systypes_array;
 
@@ -44,15 +45,17 @@ class fa_reflines extends simple_crud_view {
 		table_header($th);
 
 		$k = 0;
-		$data = $this->data_set->get_all(check_value('show_inactive') ? null : '!inactive', array('trans_type', 'prefix'));
+		/** @var reflines_db $data_set */
+		$data_set = $this->data_set;
+		$data = $data_set->get_all(check_value('show_inactive') ? null : '!inactive', array('trans_type', 'prefix'));
 
-		if (!$data) return false;
+		if (!($data instanceof mysqli_result)) return false;
 
 		while ($rec = db_fetch($data))
 		{
    			alt_table_row_color($k);
 
-			label_cell($systypes_array[$rec['trans_type']]);
+			label_cell($systypes_array[(int) $rec['trans_type']]);
 			label_cell($rec['prefix']);
 			label_cell($rec['pattern']);
 			label_cell((bool)$rec['default'] ? _("Yes") : _("No"));
@@ -62,9 +65,9 @@ class fa_reflines extends simple_crud_view {
 				label_cell('');
 			else
 				inactive_control_cell($rec["id"], $rec["inactive"], 'reflines', 'id');
-			if ($this->options['update'])
+			if ((bool) $this->options['update'])
 				echo $this->tool_button('Edit', $rec['id']);
-			if ($this->options['delete']) {
+			if ((bool) $this->options['delete']) {
 				echo $this->tool_button('Delete', $rec['id']);
 			}
 			end_row();
@@ -77,7 +80,8 @@ class fa_reflines extends simple_crud_view {
 	}
 
 	/** @return void */
-	function editor_view($Mode)
+	#[\Override]
+	function editor_view(?string $Mode)
 	{
 		global $systypes_array;
 
@@ -96,9 +100,10 @@ class fa_reflines extends simple_crud_view {
 			systypes_list_row(_("Transaction Type:"), $this->name.'trans_type');
 			$prefix = text_input($this->name.'prefix', null, 5, 30);
 		} else {
-			label_row(_("Transaction Type:"), $systypes_array[get_post($this->name.'trans_type')]);
+			label_row(_("Transaction Type:"), $systypes_array[(int) get_post($this->name.'trans_type')]);
 			hidden($this->name.'trans_type');
-			$prefix = get_post($this->name.'prefix') . hidden($this->name.'prefix');
+			$prefix_post = get_post($this->name.'prefix');
+			$prefix = (is_string($prefix_post) ? $prefix_post : '') . (hidden($this->name.'prefix') ?? '');
 		}
 
 		label_row(_("Reference Pattern:"), $prefix . text_input($this->name.'pattern', null, 30, 60));
@@ -116,7 +121,8 @@ class fa_reflines extends simple_crud_view {
 	}
 
 	/** @return void */
-	function show($Mode=null)
+	#[\Override]
+	function show(?string $Mode=null)
 	{
 		parent::show($Mode);
 	}
