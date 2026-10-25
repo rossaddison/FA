@@ -94,8 +94,10 @@ end_form();
 
 set_global_stock_item($_POST['stock_id']);
 
-$before_date = date2sql(post_scalar('BeforeDate'));
-$after_date = date2sql(post_scalar('AfterDate'));
+$before_date_post = post_scalar('BeforeDate');
+$after_date_post = post_scalar('AfterDate');
+$before_date = date2sql(is_string($before_date_post) ? $before_date_post : null);
+$after_date = date2sql(is_string($after_date_post) ? $after_date_post : null);
 $display_location = !$_POST['StockLocation'];
 
 $result = get_stock_movements(post_scalar('stock_id'), post_scalar('StockLocation'),
@@ -112,22 +114,24 @@ array_push($th, _("Date"), _("Detail"), _("Quantity In"), _("Quantity Out"), _("
 
 table_header($th);
 
-$before_qty = get_qoh_on_date(post_scalar('stock_id'), post_scalar('StockLocation'), add_days(post_scalar('AfterDate'), -1));
+$before_qty = (float) get_qoh_on_date(post_scalar('stock_id'), post_scalar('StockLocation'), add_days(post_scalar('AfterDate'), -1));
 
 $after_qty = $before_qty;
 
 start_row("class='inquirybg'");
 $header_span = $display_location ? 6 : 5;
-label_cell("<b>"._("Quantity on hand before") . " " . (string)$_POST['AfterDate']."</b>", "align=center colspan=$header_span");
+$after_date_display = $_POST['AfterDate'] ?? null;
+label_cell("<b>"._("Quantity on hand before") . " " . (is_array($after_date_display) ? '' : (string) $after_date_display)."</b>", "align=center colspan=$header_span");
 label_cell("&nbsp;", "colspan=2");
-$dec = get_qty_dec(post_scalar('stock_id'));
+$stock_id_post = post_scalar('stock_id');
+$dec = get_qty_dec(is_string($stock_id_post) ? $stock_id_post : null);
 qty_cell($before_qty, false, $dec);
 end_row();
 
 $j = 1;
 $k = 0; //row colour counter
 
-$total_in = 0;
+$total_in = 0.0;
 $total_out = 0.0;
 
 while ($myrow = db_fetch($result))
@@ -137,22 +141,23 @@ while ($myrow = db_fetch($result))
 
 	$trandate = sql2date($myrow["tran_date"]);
 
-	if (get_post('fixed_asset') == 1 && isset($fa_systypes_array[$myrow["type"]]))
-		$type_name = $fa_systypes_array[$myrow["type"]];
+	$type_offset = (int) $myrow["type"];
+	if (get_post('fixed_asset') == 1 && isset($fa_systypes_array[$type_offset]))
+		$type_name = $fa_systypes_array[$type_offset];
 	else
-		$type_name = $systypes_array[$myrow["type"]];
+		$type_name = $systypes_array[$type_offset];
 
 	if ($myrow["qty"] > 0)
 	{
 		$quantity_formatted = number_format2($myrow["qty"], $dec);
-		$total_in += $myrow["qty"];
+		$total_in += (float) $myrow["qty"];
 	}
 	else
 	{
 		$quantity_formatted = number_format2(-$myrow["qty"], $dec);
 		$total_out += (float)(-$myrow["qty"]);
 	}
-	$after_qty += $myrow["qty"];
+	$after_qty += (float) $myrow["qty"];
 
 	label_cell($type_name);
 
@@ -183,7 +188,8 @@ while ($myrow = db_fetch($result))
 }
 
 start_row("class='inquirybg'");
-label_cell("<b>"._("Quantity on hand after") . " " . (string)$_POST['BeforeDate']."</b>", "align=center colspan=$header_span");
+$before_date_display = $_POST['BeforeDate'] ?? null;
+label_cell("<b>"._("Quantity on hand after") . " " . (is_array($before_date_display) ? '' : (string) $before_date_display)."</b>", "align=center colspan=$header_span");
 qty_cell($total_in, false, $dec);
 qty_cell($total_out, false, $dec);
 qty_cell($after_qty, false, $dec);
