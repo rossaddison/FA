@@ -162,7 +162,6 @@ function write_extensions(?array $extensions=null, string|int|float|bool|array|n
 	// var_export()'d content below is written to a PHP source file via
 	// fwrite() further down, never echoed as an HTTP response - not an HTML
 	// sink, so TaintedHtml doesn't apply here.
-	/** @psalm-suppress TaintedHtml */
 	$msg .= "\$installed_extensions = ". var_export($extensions, true);
 	$msg .= ";\n";
 	// Cast to int before using in the path: $company must always be a plain
@@ -1043,18 +1042,14 @@ function create_comp_dirs(string $comp_path, array $comp_subdirs): void
 {
 		$index = "<?php\nheader(\"Location: ../index.php\");\n";
 	    $cdir = $comp_path;
-	    /** @psalm-suppress TaintedFile confirmed safe, see doc/BUGS_FOUND.md */
 	    @mkdir($cdir);
-		/** @psalm-suppress TaintedFile confirmed safe, see doc/BUGS_FOUND.md */
 		$f = @fopen("$cdir/index.php", "wb");
 		@fwrite($f, $index);
 		@fclose($f);
 
 	    foreach($comp_subdirs as $dir)
 	    {
-			/** @psalm-suppress TaintedFile confirmed safe, see doc/BUGS_FOUND.md */
 			@mkdir($cdir.'/'.$dir);
-			/** @psalm-suppress TaintedFile confirmed safe, see doc/BUGS_FOUND.md */
 			$f = @fopen("$cdir/$dir/index.php", "wb");
 			@fwrite($f, $index);
 			@fclose($f);
