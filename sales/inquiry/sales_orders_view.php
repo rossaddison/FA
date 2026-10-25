@@ -94,7 +94,7 @@ function check_overdue(array $row): bool|int
 			&& ($row['TotDelivered'] < $row['TotQuantity']));
 }
 
-function view_link(string|int|float|bool|array $dummy, string|int|float|bool|null $order_no): string
+function view_link(string|int|float|bool|array $dummy, string|int|float|bool|null $order_no): ?string
 {
 	global $trans_type;
 	return  get_customer_trans_view_str($trans_type, $order_no);
@@ -155,7 +155,7 @@ function delivery_link(array $row): string
 // order_link() is a function-name collision with sales/inquiry/customer_allocation_inquiry.php's
 // own order_link() (different body) -- per doc/PSALM_MIGRATION.md's collision policy, this
 // function's own signature is left untouched rather than risking a cross-file ripple
-function order_link(array $row): null|string
+function order_link(array $row): string
 {
   return pager_link( _("Sales Order"),
 	"/sales/sales_order_entry.php?NewQuoteToSalesOrder=" .(string)$row['order_no'], ICON_DOC);
