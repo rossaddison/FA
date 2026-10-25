@@ -64,7 +64,7 @@ if (isset($_GET["stock_id"]))
 
 //--------------------------------------------------------------------------------------
 
-start_form(false, false, (string)$_SERVER['PHP_SELF'] ."?outstanding_only=$outstanding_only");
+start_form(false, false, ($_SERVER['PHP_SELF'] ?? '') ."?outstanding_only=$outstanding_only");
 
 start_table(TABLESTYLE_NOBORDER);
 start_row();
@@ -92,8 +92,9 @@ end_table();
 //-----------------------------------------------------------------------------
 function check_overdue(array $row): bool
 {
-	return (!(bool)$row["closed"] 
-		&& date_diff2(Today(), sql2date($row["required_by"]), "d") > 0);
+	$required_by = $row["required_by"];
+	return (!(bool)$row["closed"]
+		&& date_diff2(Today(), sql2date(is_scalar($required_by) ? $required_by : null), "d") > 0);
 }
 
 function view_link(string|int|float|bool|array $dummy, string|int|float|bool|null $order_no)
@@ -103,21 +104,24 @@ function view_link(string|int|float|bool|array $dummy, string|int|float|bool|nul
 
 function view_stock(array $row): string
 {
-	return view_stock_status($row["stock_id"], $row["description"], false);
+	$stock_id = $row["stock_id"];
+	$description = $row["description"];
+	return view_stock_status(is_scalar($stock_id) ? $stock_id : null, is_scalar($description) ? $description : null, false);
 }
 
 /** @return string */
 function wo_type_name(string|int|float|bool|array $dummy, string|int|float|bool|null $type)
 {
 	global $wo_types_array;
-	
-	return $wo_types_array[$type];
+
+	return $wo_types_array[(int) $type];
 }
 
 function edit_link(array $row)
 {
+	$id = $row["id"];
 	return  (bool)$row['closed'] ? '<i>'._('Closed').'</i>' :
-		trans_editor_link(ST_WORKORDER, $row["id"]);
+		trans_editor_link(ST_WORKORDER, is_scalar($id) ? $id : null);
 }
 
 function release_link(array $row): string
@@ -145,23 +149,30 @@ function costs_link(array $row): string
 			"/manufacturing/work_order_costs.php?trans_no=" .(string)$row["id"]);
 }
 
+/** @return null|scalar */
 function view_gl_link(array $row)
 {
-	return get_gl_view_str(ST_WORKORDER, $row['id']);
+	$id = $row['id'];
+	return get_gl_view_str(ST_WORKORDER, is_scalar($id) ? $id : null);
 }
 
 /** @return non-empty-string|null */
 function prt_link(array $row)
 {
-	return print_document_link($row['id'], _("Print"), true, ST_WORKORDER, ICON_PRINT);
+	$id = $row['id'];
+	return print_document_link(is_scalar($id) || is_array($id) ? $id : null, _("Print"), true, ST_WORKORDER, ICON_PRINT);
 }
 
 function dec_amount(array $row, string|int|float|bool|null $amount): string
 {
-	return number_format2($amount, $row['decimals']);
+	$decimals = $row['decimals'];
+	return number_format2($amount, is_int($decimals) || is_string($decimals) ? $decimals : 0);
 }
 
-$sql = get_sql_for_work_orders($outstanding_only, get_post('SelectedStockItem'), get_post('StockLocation'),
+$selected_stock_item = get_post('SelectedStockItem');
+$stock_location = get_post('StockLocation');
+$sql = get_sql_for_work_orders($outstanding_only, is_string($selected_stock_item) ? $selected_stock_item : null,
+	is_scalar($stock_location) ? $stock_location : null,
 	get_post('OrderId'), get_post('OrderNumber'), check_value('OverdueOnly'));
 
 $cols = array(
