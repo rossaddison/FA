@@ -418,6 +418,9 @@ include_once(dirname(__DIR__) . "/includes/prefs/sysprefs.inc");
 include_once(dirname(__DIR__) . "/includes/hooks.inc");
 //
 // include all extensions hook files.
+// UnresolvableInclude here is just Psalm being unable to statically resolve a
+// dynamic path, not a tainted-input finding -- $ext_path comes from the
+// installed_extensions config, not user input
 //
 foreach ($installed_extensions as $ext)
 {
@@ -479,6 +482,9 @@ header("Cache-control: private");
 
 get_text_init();
 
+// UnresolvableInclude here is just Psalm being unable to statically resolve a
+// dynamic path, not a tainted-input finding -- VARLIB_PATH is a fixed,
+// admin-controlled constant, never user input
 if (sysprefs()->login_delay > 0 && file_exists(VARLIB_PATH."/faillog.php"))
 	include_once(VARLIB_PATH."/faillog.php");
 
@@ -539,6 +545,9 @@ if (!defined('FA_LOGOUT_PHP_FILE')){
 
 	login_timeout();
 
+	// UnresolvableInclude here is just Psalm being unable to statically resolve a
+	// dynamic path, not a tainted-input finding -- user_company() resolves to one
+	// of this install's own configured company directories, not arbitrary user input
 	if (!(bool)session_obj('wa_current_user')->old_db && file_exists($path_to_root . '/company/'.(string) user_company().'/installed_extensions.php'))
 		include($path_to_root . '/company/'.(string) user_company().'/installed_extensions.php');
 
