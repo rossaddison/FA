@@ -17,9 +17,19 @@ declare(strict_types=1);
 //-----------------------------------------------------------------------------------
 
 /**
- * @psalm-suppress PropertyNotSetInConstructor person_curr/date_/currency are
- * always populated by __construct()'s call to read(), but through branches
- * Psalm can't trace property assignment through.
+ * PropertyNotSetInConstructor on person_curr/date_/currency is accepted,
+ * left visible rather than suppressed per this project's standing
+ * no-@psalm-suppress policy: person_curr is set by set_person() (called
+ * from __construct() whenever $person_id is truthy) or by read()'s
+ * $trans_no-truthy branch; date_/currency are only set by that same
+ * read() branch, which doesn't run for a brand-new, not-yet-saved
+ * payment/credit (trans_no=0 -- a real, common construction, e.g.
+ * `new allocation(ST_SUPPAYMENT, 0, $supplier_id)` in
+ * purchasing/supplier_payment.php). Every real caller that goes on to
+ * call write() sets ->date_ (and ->currency, for bank-currency payments)
+ * directly beforehand (confirmed in purchasing/supplier_payment.php and
+ * sales/customer_payments.php) -- a caller-enforced invariant Psalm can't
+ * see across file boundaries, not an actual uninitialized-property bug.
  */
 final class allocation
 {
