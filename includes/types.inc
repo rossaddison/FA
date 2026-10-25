@@ -73,7 +73,8 @@ $document_child_types = array(
 function get_child_type(string|int|float|bool|null $type): int
 {
 	global $document_child_types;
-	return isset($document_child_types[$type]) ? $document_child_types[$type] : 0;
+	$type_offset = (int) $type;
+	return isset($document_child_types[$type_offset]) ? $document_child_types[$type_offset] : 0;
 }
 
 function get_parent_type(string|int|float|bool|null $type): int
@@ -110,7 +111,7 @@ define('PT_DIMESION', 5);
 //
 define('VC_PARTIAL', 1);
 
-function payment_person_currency(string|int|float|bool|null $type, string|int|float|bool|null $person_id)  {
+function payment_person_currency(string|int|float|bool|null $type, string|int|float|bool|null $person_id): string|int|float|bool|null  {
 	switch ($type)
 	{
 		case PT_MISC :
@@ -129,8 +130,11 @@ function payment_person_currency(string|int|float|bool|null $type, string|int|fl
 	}
 }
 
-function payment_person_name(string|int|float|bool|null $type, string|int|float|bool|null $person_id, bool $full=true) {
+function payment_person_name(string|int|float|bool|null $type, string|int|float|bool|null $person_id, bool $full=true): string|int|float|bool|null {
 	global $payment_person_types;
+
+	$type_offset = (int) $type;
+	$person_id_scalar = is_scalar($person_id) ? $person_id : null;
 
 	switch ($type)
 	{
@@ -138,14 +142,15 @@ function payment_person_name(string|int|float|bool|null $type, string|int|float|
 			return $person_id;
 		case PT_QUICKENTRY :
 			$qe = row_or_empty(get_quick_entry($person_id));
-			return ($full ? $payment_person_types[$type] . " ":"") . (string)$qe["description"];
+			return ($full ? $payment_person_types[$type_offset] . " ":"") . (string)$qe["description"];
 		case PT_WORKORDER :
-			global $wo_cost_types;
-			return (!$full ? _('Work Order').' '.$person_id : get_trans_view_str(ST_WORKORDER, $person_id, _('Work Order').' '.$person_id));
+			return (!$full ? _('Work Order').' '.(string) $person_id : get_trans_view_str(ST_WORKORDER, $person_id, _('Work Order').' '.(string) $person_id));
 		case PT_CUSTOMER :
-			return ($full ?$payment_person_types[$type] . " ":"") . sprintf("[%05s] %s", $person_id, get_customer_name($person_id));
+			$customer_name = get_customer_name($person_id);
+			return ($full ?$payment_person_types[$type_offset] . " ":"") . sprintf("[%05s] %s", $person_id_scalar ?? '', is_scalar($customer_name) ? $customer_name : '');
 		case PT_SUPPLIER :
-			return ($full ? $payment_person_types[$type] . " ":"") . sprintf("[%05s] %s", $person_id, get_supplier_name($person_id));
+			$supplier_name = get_supplier_name($person_id);
+			return ($full ? $payment_person_types[$type_offset] . " ":"") . sprintf("[%05s] %s", $person_id_scalar ?? '', is_scalar($supplier_name) ? $supplier_name : '');
 		default :
 			return '';
 	}
