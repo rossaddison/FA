@@ -203,6 +203,7 @@ class user_view {
 		if (!isset($input))
 			$input = $_POST;
 
+		// $postval is genuinely mixed: $input defaults to $_POST, arbitrary per-request data
 		if ($this->name)	// strip view name prefix
 		    foreach($input as $postkey=>$postval )
     		{
@@ -232,6 +233,7 @@ class user_view {
 				if (($fmt['fmt'] ?? null) == 'check')
 					$value = (bool)(@$input[$post]) ? 1 : 0;
 				else {
+					// $in_val is genuinely mixed: same reason as $postval above
 					$in_val = @$input[$post];
 					$fmt_val = $fmt['fmt'] ?? null;
 					$value = $this->_format_input(is_scalar($in_val) ? $in_val : null, is_string($fmt_val) ? $fmt_val : null);
@@ -275,6 +277,7 @@ class user_view {
 			$post = isset($fmt['post']) ? $fmt['post'] : $name;
 			$fld = isset($fmt['fld']) ? $fmt['fld'] : $name;
 
+			// $cell_val is genuinely mixed: same reason as get_input()'s $postval above
 			$cell_val = @$input[$post];
 			$fmt_val = $fmt['fmt'] ?? null;
 			$this->_format_cells(is_scalar($cell_val) ? $cell_val : null, is_string($fmt_val) ? $fmt_val : null, $mode);

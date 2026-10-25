@@ -64,8 +64,9 @@ function local_extension(string|int|null $id): bool
 
 	}
 	$hooks_class = 'hooks_'.$id;
-	// every real modules/*/hooks.php declares `class hooks_<id> extends hooks` (the base
-	// class in includes/hooks.inc) -- class_exists(..., false) (autoloading off) only matches
+	// MixedMethodCall/TaintedCallable here are a confirmed-safe pattern: every real
+	// modules/*/hooks.php declares `class hooks_<id> extends hooks` (the base class in
+	// includes/hooks.inc) -- class_exists(..., false) (autoloading off) only matches
 	// a class the include_once above just defined, so this can't instantiate an arbitrary
 	// already-autoloadable class
 	if (class_exists($hooks_class, false)) {
@@ -90,6 +91,11 @@ function handle_delete_ext(string|int|float|bool|null $id): bool
 		if (!uninstall_package((string) $ext['package']))
 			return false;
 	} else {
+		// UnresolvableInclude/MixedMethodCall/TaintedCallable here are the same
+		// confirmed-safe pattern as local_extension() above: $ext['path']/$ext['package']
+		// come from this install's own stored get_company_extensions() config for an
+		// already-installed extension, not raw per-request user text, and class_exists()
+		// only matches a class the include_once just above actually defined
 		@include_once("$path_to_root/".(string)$ext['path']."/hooks.php");
 		$hooks_class = 'hooks_'.(string)$ext['package'];
 		if (class_exists($hooks_class)) {
