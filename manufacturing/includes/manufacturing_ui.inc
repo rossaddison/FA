@@ -34,7 +34,7 @@ function display_bom(string|int|float|bool|null $item_check): void
         $j = 1;
         $k = 0; //row colour counter
 
-        $total_cost = 0;
+        $total_cost = 0.0;
 
         while ($myrow = db_fetch($result))
         {
@@ -49,7 +49,7 @@ function display_bom(string|int|float|bool|null $item_check): void
 			amount_cell($myrow["ProductCost"]);
 			amount_cell($myrow["ComponentCost"]);
 			end_row();
-        	$total_cost += $myrow["ComponentCost"];
+        	$total_cost += (float) $myrow["ComponentCost"];
 
         	$j++;
         	if ($j == 12)
@@ -62,7 +62,7 @@ function display_bom(string|int|float|bool|null $item_check): void
 		$item = row_or_empty(get_item($item_check));
 		if ($item['labour_cost'] != 0)
 		{
-			$total_cost += $item['labour_cost'];
+			$total_cost += (float) $item['labour_cost'];
 			alt_table_row_color($k);
 	        label_cells(_("Standard Labour Cost"), number_format2($item['labour_cost'],user_price_dec()),
     	    	"colspan=6 align=left", "class=odd_row nowrap align=right");
@@ -70,7 +70,7 @@ function display_bom(string|int|float|bool|null $item_check): void
 		}
 		if ($item['overhead_cost'] != 0)
 		{
-			$total_cost += $item['overhead_cost'];
+			$total_cost += (float) $item['overhead_cost'];
 			alt_table_row_color($k);
 	        label_cells(_("Standard Overhead Cost"), number_format2($item['overhead_cost'],user_price_dec()),
     	    	"colspan=6 align=left", "nowrap align=right");
@@ -120,8 +120,8 @@ function display_wo_requirements(string|int|float|bool|null $woid, ?string $quan
 			if ($show_qoh)
 				$qoh = get_qoh_on_date($myrow["stock_id"], $myrow["loc_code"], $date);
 
-			if ($show_qoh && ((float)$myrow["units_req"] * $quantity > $qoh) &&
-				!sysprefs()->allow_negative_stock())
+			if ($show_qoh && ((float)$myrow["units_req"] * (float) $quantity > $qoh) &&
+				!(bool) sysprefs()->allow_negative_stock())
 			{
 				// oops, we don't have enough of one of the component items
 				start_row("class='stockmankobg'");
@@ -130,7 +130,7 @@ function display_wo_requirements(string|int|float|bool|null $woid, ?string $quan
 			else
 				alt_table_row_color($k);
 
-        	if (user_show_codes())
+        	if ((bool) user_show_codes())
         		label_cell((string)$myrow["stock_id"]. " - " . (string)$myrow["description"]);
         	else
         		label_cell($myrow["description"]);
@@ -139,7 +139,7 @@ function display_wo_requirements(string|int|float|bool|null $woid, ?string $quan
 			label_cell($myrow["WorkCentreDescription"]);
 			$dec = get_qty_dec($myrow["stock_id"]);
             qty_cell($myrow["units_req"], false, $dec);
-			qty_cell((float)$myrow["units_req"] * $quantity, false, $dec);
+			qty_cell((float)$myrow["units_req"] * (float) $quantity, false, $dec);
             qty_cell($myrow["units_issued"], false, $dec);
 			if ($show_qoh)
 				qty_cell($qoh, false, $dec);
@@ -176,14 +176,14 @@ function display_wo_productions(string|int|float|bool|null $woid): void
         table_header($th);
 
         $k = 0; //row colour counter
-		$total_qty = 0;
+		$total_qty = 0.0;
 
         while ($myrow = db_fetch($result))
         {
 
 			alt_table_row_color($k);
 
-			$total_qty += $myrow['quantity'];
+			$total_qty += (float) $myrow['quantity'];
 
         	label_cell(get_trans_view_str(ST_MANURECEIVE, $myrow["id"]));
 			label_cell($myrow['reference']);
@@ -260,7 +260,7 @@ function display_wo_payments(string|int|float|bool|null $woid): void
 			alt_table_row_color($k);
 
         	label_cell(get_gl_view_str( $myrow["trans_type"], $myrow["trans_no"], $myrow["trans_no"]));
-        	label_cell($wo_cost_types[$myrow['cost_type']]);
+        	label_cell($wo_cost_types[(int) $myrow['cost_type']]);
         	$date = sql2date($myrow["tran_date"]);
         	label_cell($date);
 			amount_cell($myrow['amount']);
@@ -302,7 +302,7 @@ function display_wo_details(string|int|float|bool|null $woid, bool $suppress_vie
 	else
 		label_cell(get_trans_view_str(ST_WORKORDER, $myrow["id"]));
 	label_cell($myrow["wo_ref"]);
-	label_cell($wo_types_array[$myrow["type"]]);
+	label_cell($wo_types_array[(int) $myrow["type"]]);
 	view_stock_status_cell($myrow["stock_id"], $myrow["StockItemName"]);
 	label_cell($myrow["location_name"]);
 	label_cell(sql2date($myrow["date_"]));
@@ -353,7 +353,7 @@ function display_wo_details_quick(string|int|float|bool|null $woid, bool $suppre
 	else
 		label_cell(get_trans_view_str(ST_WORKORDER, $myrow["id"]));
 	label_cell($myrow["wo_ref"]);
-	label_cell($wo_types_array[$myrow["type"]]);
+	label_cell($wo_types_array[(int) $myrow["type"]]);
 	view_stock_status_cell($myrow["stock_id"], $myrow["StockItemName"]);
 	label_cell($myrow["location_name"]);
 	label_cell(sql2date($myrow["date_"]));
