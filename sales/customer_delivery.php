@@ -315,9 +315,9 @@ if (isset($_POST['process_delivery']) && check_data() && isset($_SESSION['Items'
 
 		processing_end();
 		if ($newdelivery) {
-			meta_forward($_SERVER['PHP_SELF'], "AddedID=$delivery_no$is_prepaid");
+			meta_forward($_SERVER['PHP_SELF'] ?? '', "AddedID=$delivery_no$is_prepaid");
 		} else {
-			meta_forward($_SERVER['PHP_SELF'], "UpdatedID=$delivery_no$is_prepaid");
+			meta_forward($_SERVER['PHP_SELF'] ?? '', "UpdatedID=$delivery_no$is_prepaid");
 		}
 	}
 }
