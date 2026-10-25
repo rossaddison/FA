@@ -38,7 +38,8 @@ if (isset($_GET['trans_no']) && $_GET['trans_no'] != "")
 
 if (isset($_GET['AddedID']))
 {
-	$id = $_GET['AddedID'];
+	$id_raw = $_GET['AddedID'];
+	$id = is_array($id_raw) ? null : $id_raw;
 	$stype = ST_WORKORDER;
 
 	display_notification(_("The additional cost has been entered."));
@@ -78,19 +79,22 @@ function canProcessWorkOrderCosts(array $wo_details): bool
 		return false;
 	}
 
-	if (!is_date(post_scalar('date_')))
+	$date_post = post_scalar('date_');
+	$date_post_str = is_string($date_post) ? $date_post : null;
+	if (!is_date($date_post_str))
 	{
 		display_error(_("The entered date is invalid."));
 		set_focus('date_');
 		return false;
 	}
-	elseif (!(bool)is_date_in_fiscalyear(post_scalar('date_')))
+	elseif (!(bool)is_date_in_fiscalyear($date_post))
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('date_');
 		return false;
 	}
-	if (date_diff2(sql2date($wo_details["released_date"]), post_scalar('date_'), "d") > 0)
+	$released_date = $wo_details["released_date"];
+	if (date_diff2(sql2date(is_scalar($released_date) ? $released_date : null), $date_post_str, "d") > 0)
 	{
 		display_error(_("The additional cost date cannot be before the release date of the work order."));
 		set_focus('date_');
@@ -104,14 +108,14 @@ function canProcessWorkOrderCosts(array $wo_details): bool
 
 if (isset($_POST['process']) && canProcessWorkOrderCosts($wo_details) == true)
 {
-	$date = $_POST['date_'];
-	$memo = $_POST['memo'];
-	$ref  = $_POST['ref'];
+	$date = post_scalar('date_');
+	$memo = post_scalar('memo');
+	$ref  = post_scalar('ref');
 
-	add_wo_costs_journal(post_scalar('selected_id'), input_num('costs'), post_scalar('PaymentType'), 
+	add_wo_costs_journal(post_scalar('selected_id'), input_num('costs'), post_scalar('PaymentType'),
 		post_scalar('cr_acc'), $date, post_scalar('dim1'), post_scalar('dim2'), $memo, $ref);
 
-	meta_forward($_SERVER['PHP_SELF'], "AddedID=".(string)$_POST['selected_id']);
+	meta_forward($_SERVER['PHP_SELF'] ?? '', "AddedID=".(string) post_scalar('selected_id'));
 }
 
 //-------------------------------------------------------------------------------------
@@ -136,6 +140,8 @@ br();
 date_row(_("Date:"), 'date_');
 ref_row(_("Reference:"), 'ref', '');
 
+/** @var array<int, string> $wo_cost_types */
+$wo_cost_types = $wo_cost_types;
 yesno_list_row(_("Type:"), 'PaymentType', null,	$wo_cost_types[WO_OVERHEAD], $wo_cost_types[WO_LABOUR], true);
 if (list_updated('PaymentType'))
 	ajax()->activate('costs');
