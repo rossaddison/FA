@@ -103,7 +103,7 @@ function show_results(): void
 	if (!isset($_POST["account"]))
 		$_POST["account"] = null;
 
-	$act_name = (bool)$_POST["account"] ? get_gl_account_name(post_scalar("account")) : "";
+	$act_name = (bool)$_POST["account"] ? (get_gl_account_name(post_scalar("account")) ?? "") : "";
 	$dim = get_company_pref('use_dimension');
 
     /*Now get the transactions  */
@@ -111,14 +111,19 @@ function show_results(): void
     	$_POST['Dimension'] = 0;
     if (!isset($_POST['Dimension2']))
     	$_POST['Dimension2'] = 0;
-	$result = get_gl_transactions(post_scalar('TransFromDate'), $_POST['TransToDate'], -1,
-    	post_scalar("account"), post_scalar('Dimension'), post_scalar('Dimension2'), null,
-    	input_num('amount_min'), input_num('amount_max'), null, null, $_POST['Memo']);
+	$trans_from_date_post = post_scalar('TransFromDate');
+	$dimension_post = post_scalar('Dimension');
+	$dimension2_post = post_scalar('Dimension2');
+	$memo_post = $_POST['Memo'] ?? null;
+	$result = get_gl_transactions(is_string($trans_from_date_post) ? $trans_from_date_post : null, $_POST['TransToDate'], -1,
+    	post_scalar("account"), is_int($dimension_post) || is_string($dimension_post) ? $dimension_post : 0,
+    	is_int($dimension2_post) || is_string($dimension2_post) ? $dimension2_post : 0, null,
+    	input_num('amount_min'), input_num('amount_max'), null, null, is_array($memo_post) || is_string($memo_post) ? $memo_post : '');
 
 	$colspan = ($dim == 2 ? "7" : ($dim == 1 ? "6" : "5"));
 
 	if ($_POST["account"] != null)
-		display_heading($_POST["account"]. "&nbsp;&nbsp;&nbsp;".$act_name);
+		display_heading((string) post_scalar("account"). "&nbsp;&nbsp;&nbsp;".$act_name);
 
 	// Only show balances if an account is specified AND we're not filtering by amounts
 	$show_balances = $_POST["account"] != null && 
@@ -156,14 +161,18 @@ function show_results(): void
 		$begin = get_fiscalyear_begin_for_date($_POST['TransFromDate']);
 		if (date1_greater_date2($begin, $_POST['TransFromDate']))
 			$begin = $_POST['TransFromDate'];
-		$begin = add_days($begin, -1);
+		$begin = add_days(is_scalar($begin) ? $begin : null, -1);
 	}
 
-	$bfw = 0;
+	$bfw = 0.0;
 	if ($show_balances) {
-	    $bfw = get_gl_balance_from_to($begin, $_POST['TransFromDate'], $_POST["account"], post_scalar('Dimension'), post_scalar('Dimension2'));
+		$account_post = $_POST["account"] ?? null;
+	    $bfw = get_gl_balance_from_to($begin, $_POST['TransFromDate'],
+	    	is_array($account_post) || is_string($account_post) ? $account_post : null,
+	    	post_scalar('Dimension'), post_scalar('Dimension2'));
     	start_row("class='inquirybg'");
-    	label_cell("<b>"._("Opening Balance")." - ".(string)$_POST['TransFromDate']."</b>", "colspan=$colspan");
+    	$trans_from_date_display = $_POST['TransFromDate'] ?? null;
+    	label_cell("<b>"._("Opening Balance")." - ".(is_array($trans_from_date_display) ? '' : (string) $trans_from_date_display)."</b>", "colspan=$colspan");
     	display_debit_or_credit_cells($bfw, true);
     	label_cell("");
     	label_cell("");
@@ -183,19 +192,20 @@ function show_results(): void
 
     	$trandate = sql2date($myrow["tran_date"]);
 
-    	label_cell($systypes_array[$myrow["type"]]);
+    	label_cell($systypes_array[(int) $myrow["type"]]);
 		label_cell(get_gl_view_str($myrow["type"], $myrow["type_no"], $myrow["type_no"], true));
 		label_cell(get_trans_view_str($myrow["type"],$myrow["type_no"],$myrow['reference']));
     	label_cell($trandate);
     	
     	if ($_POST["account"] == null)
-    	    label_cell((string)$myrow["account"] . ' ' . get_gl_account_name($myrow["account"]));
+    	    label_cell((string)$myrow["account"] . ' ' . (get_gl_account_name($myrow["account"]) ?? ''));
     	
 		if ($dim >= 1)
 			label_cell(get_dimension_string($myrow['dimension_id'], true));
 		if ($dim > 1)
 			label_cell(get_dimension_string($myrow['dimension2_id'], true));
-		label_cell(payment_person_name($myrow["person_type_id"],$myrow["person_id"]));
+		$person_name = payment_person_name($myrow["person_type_id"],$myrow["person_id"]);
+		label_cell(is_scalar($person_name) ? $person_name : null);
 		display_debit_or_credit_cells($myrow["amount"]);
 		if ($show_balances)
 		    amount_cell($running_total);
@@ -219,7 +229,8 @@ function show_results(): void
 
 	if ($show_balances) {
     	start_row("class='inquirybg'");
-    	label_cell("<b>" . _("Ending Balance") ." - ".(string)$_POST['TransToDate']. "</b>", "colspan=$colspan");
+    	$trans_to_date_display = $_POST['TransToDate'] ?? null;
+    	label_cell("<b>" . _("Ending Balance") ." - ".(is_array($trans_to_date_display) ? '' : (string) $trans_to_date_display). "</b>", "colspan=$colspan");
     	display_debit_or_credit_cells($running_total, true);
     	label_cell("");
     	label_cell("");
