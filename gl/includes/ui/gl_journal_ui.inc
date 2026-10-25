@@ -33,7 +33,9 @@ function display_general_journal_order_header(items_cart &$Order): void
 	currencies_list_row(_('Currency:'), 'currency', null, true);
  	if (list_updated('currency'))
 		unset($_POST['_ex_rate']);
-	exchange_rate_display(get_company_pref('curr_default'), get_post('currency'), get_post('date_'), true);
+	$currency_post = get_post('currency');
+	$date_post = get_post('date_');
+	exchange_rate_display(get_company_pref('curr_default'), is_scalar($currency_post) ? $currency_post : null, is_scalar($date_post) ? $date_post : null, true);
 
 	if (list_updated('currency'))
 		$Order->clear_items();
@@ -48,7 +50,8 @@ function display_general_journal_order_header(items_cart &$Order): void
 		table_section(3);
 	}
 
-	ref_row(_("Reference:"), 'ref', null, get_post('ref'), false, ST_JOURNAL, get_post('date_'));
+	$ref_post = get_post('ref');
+	ref_row(_("Reference:"), 'ref', null, is_scalar($ref_post) ? $ref_post : null, false, ST_JOURNAL, get_post('date_'));
 	hidden('ref_original');
 
 	if ($qes !== false)
@@ -57,7 +60,8 @@ function display_general_journal_order_header(items_cart &$Order): void
 		quick_entries_list_row(_("Quick Entry").":", 'quick', null, QE_JOURNAL, true);
 
 		start_row();
-		$qid = row_or_empty(get_quick_entry(get_post('quick')));
+		$quick_post = get_post('quick');
+		$qid = row_or_empty(get_quick_entry(is_scalar($quick_post) ? $quick_post : null));
 		if (list_updated('quick')) {
 			unset($_POST['totamount']); // enable default
 		ajax()->activate('totamount');
@@ -65,15 +69,16 @@ function display_general_journal_order_header(items_cart &$Order): void
 		end_row();
 		if ($qid['bal_type'] == 1)
 		{
-			$accname = get_gl_account_name($qid['base_desc']);
+			$base_desc = $qid['base_desc'];
+			$accname = get_gl_account_name(is_scalar($base_desc) ? $base_desc : null);
 			label_row(($qid['base_amount'] == 0 ? _("Yearly") : _("Monthly")) . " ". _("balance from account")." ".
-				(string)$qid['base_desc']." ".$accname."&nbsp;&nbsp;".submit('go', _("Go"), false, false, true),'', "colspan=2");
+				(string)$qid['base_desc']." ".(is_scalar($accname) ? (string) $accname : '')."&nbsp;&nbsp;".(string) submit('go', _("Go"), false, false, true),'', "colspan=2");
 		}
 		else
 		{
 			text_row(_('Additional info:'), 'aux_info', null, 35, 255);
 			amount_row((string)$qid['base_desc'].":", 'totamount', price_format($qid['base_amount']),
-		 		null, "&nbsp;&nbsp;".submit('go', _("Go"), false, false, true));
+		 		null, "&nbsp;&nbsp;".(string) submit('go', _("Go"), false, false, true));
 		}
 
 	}
@@ -84,7 +89,7 @@ function display_general_journal_order_header(items_cart &$Order): void
             $result = get_bank_trans(ST_JOURNAL, $Order->order_id);
             $row = row_or_empty(db_fetch($result));
             if ($row
-                && $row['reconciled']) {
+                && (bool) $row['reconciled']) {
                 check_row(_('Reconciled:'), 'reconciled', 1, true);
                 hidden('reconciled_date', $row['reconciled']);
             }
@@ -99,12 +104,13 @@ function display_gl_journal_items(string|int|float|bool|supp_trans|null $title, 
 {
 	global $path_to_root;
 
-	display_heading($title);
+	display_heading(is_scalar($title) ? $title : null);
 
 	$dim = get_company_pref('use_dimension');
 
 	$id = find_submit('Edit');
-	$sub_type = is_subledger_account(get_post('code_id'));
+	$code_id_post = get_post('code_id');
+	$sub_type = is_subledger_account(is_scalar($code_id_post) ? $code_id_post : null);
 	$has_subaccounts = $order->has_sub_accounts();
 
     div_start('items_table');
@@ -136,7 +142,7 @@ function display_gl_journal_items(string|int|float|bool|supp_trans|null $title, 
 		{
     		alt_table_row_color($k);
 
-			$acc = $item->code_id . ($item->person_id ? sprintf(' %05d', $item->person_id) : '');
+			$acc = $item->code_id . ((bool) $item->person_id ? sprintf(' %05d', (int) $item->person_id) : '');
 			label_cells($acc, $item->description);
 
 		if ((bool)$sub_type || $has_subaccounts)
@@ -148,14 +154,14 @@ function display_gl_journal_items(string|int|float|bool|supp_trans|null $title, 
    				label_cell(get_dimension_string($item->dimension2_id, true));
     		if ($item->amount > 0)
     		{
-    			amount_cell(abs($item->amount));
+    			amount_cell(abs((float) $item->amount));
     			label_cell("");
     		}
     		else
     		{
     			label_cell("");
-    			amount_cell(abs($item->amount));
-    		}	
+    			amount_cell(abs((float) $item->amount));
+    		}
 			label_cell($item->reference);
 
 			edit_button_cell("Edit$line", _("Edit"),
@@ -167,7 +173,7 @@ function display_gl_journal_items(string|int|float|bool|supp_trans|null $title, 
 		else
 		{
 			$person_id = $item->person_id;
-			gl_edit_item_controls($order, $dim, is_array($person_id) || is_string($person_id) || $person_id === null ? $person_id : (string) $person_id, $line);
+			gl_edit_item_controls($order, $dim, is_string($person_id) || $person_id === null ? $person_id : (string) $person_id, $line);
 		}
 	}
 
@@ -202,7 +208,7 @@ function gl_edit_item_controls(items_cart &$order, string|int|float|bool|null $d
 	if ($Index != -1 && $Index == $id)
 	{
 	    // Modifying an existing row
-		$item = $order->gl_items[$Index];
+		$item = $order->gl_items[(int) $Index];
 		if (!isset($continue))
 		{
 			$_POST['code_id'] = $item->code_id;
@@ -217,19 +223,20 @@ function gl_edit_item_controls(items_cart &$order, string|int|float|bool|null $d
 			else
 			{
 				$_POST['AmountDebit'] = "";
-				$_POST['AmountCredit'] = price_format(abs($item->amount));
+				$_POST['AmountCredit'] = price_format(abs((float) $item->amount));
 			}
 			$_POST['description'] = $item->description;
 			$_POST['LineMemo'] = $item->reference;
 		}
-		hidden('Index', $id);
+		hidden('Index', is_scalar($id) ? $id : null);
 		$skip_bank = !session_obj('wa_current_user')->can_access('SA_BANKJOURNAL');
 		echo gl_all_accounts_list('code_id', null, $skip_bank, true, _('[Select account]'), true, false, false);
 
-		if ((bool)is_subledger_account(get_post('code_id')))
+		$code_id_post = get_post('code_id');
+		if ((bool)is_subledger_account(is_scalar($code_id_post) ? $code_id_post : null))
 		{	// for home currency postings show all customers
 			$sel_cur = get_post('currency', $order->currency);
-			subledger_list_cells(null, 'person_id', get_post('code_id'), null);
+			subledger_list_cells(null, 'person_id', is_string($code_id_post) ? $code_id_post : null, null);
 		} elseif ($order->has_sub_accounts())
 			label_cell('');
 		if ($dim >= 1) 
@@ -246,7 +253,8 @@ function gl_edit_item_controls(items_cart &$order, string|int|float|bool|null $d
 		{
 			// for home currency postings show all customers
 			$sel_cur = get_post('currency', $order->currency);
-			subledger_list_cells(null, 'person_id', get_post('code_id'), null);
+			$code_id_post2 = get_post('code_id');
+			subledger_list_cells(null, 'person_id', is_string($code_id_post2) ? $code_id_post2 : null, null);
 		}
 		elseif ($order->has_sub_accounts())
 			label_cell('');
