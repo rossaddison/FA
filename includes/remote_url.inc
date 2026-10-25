@@ -17,13 +17,22 @@ declare(strict_types=1);
 */
 function url_get_contents(?string $url, ?int $timeout=10): string|false|null
 {
+	if ($url === null)
+		return null;
+
 	// get the host name and url path
 	$parsedUrl = parse_url($url);
+	if ($parsedUrl === false)
+		return null;
 
-	if (@$parsedUrl['scheme'] == 'file')
-		return file_get_contents($parsedUrl['path']);
+	if (($parsedUrl['scheme'] ?? null) == 'file') {
+		$file_path = $parsedUrl['path'] ?? null;
+		return $file_path === null ? null : file_get_contents($file_path);
+	}
 
-	$host = $parsedUrl['host'];
+	$host = $parsedUrl['host'] ?? null;
+	if ($host === null)
+		return null;
 
 	if (isset($parsedUrl['path'])) {
 		$path = $parsedUrl['path'];
@@ -37,7 +46,7 @@ function url_get_contents(?string $url, ?int $timeout=10): string|false|null
 	}
 
 	if (isset($parsedUrl['port'])) {
-		$port = (int) $parsedUrl['port'];
+		$port = $parsedUrl['port'];
 	} else {
 		// most sites use port 80
 		$port = 80;
@@ -53,7 +62,7 @@ function url_get_contents(?string $url, ?int $timeout=10): string|false|null
 		fputs($fp, "GET $path HTTP/1.0\r\n" .
 			"Host: $host\r\n".
 			(isset($parsedUrl['pass']) ? "Authorization: Basic ".
-				base64_encode((string)$parsedUrl['user'].':'.$parsedUrl['pass'])."\r\n" : '').
+				base64_encode((string)($parsedUrl['user'] ?? '').':'.$parsedUrl['pass'])."\r\n" : '').
 			"User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.0.3) Gecko/20060426 Firefox/1.5.0.3\r\n" .
 			"Accept: */*\r\n" .
 			"Accept-Language: en-us,en;q=0.5\r\n" .
@@ -64,11 +73,15 @@ function url_get_contents(?string $url, ?int $timeout=10): string|false|null
 		// retrieve the response from the remote server
 
 		$response = stream_get_contents($fp);
+		if ($response === false)
+			return null;
 
 		if (!(bool)strpos($response, "200 OK\r\n"))
 			return null;
 		// strip the headers
 		$pos = strpos($response, "\r\n\r\n");
+		if ($pos === false)
+			return null;
 
 		$response = substr($response, $pos + 4);
 	}
@@ -79,8 +92,11 @@ function url_get_contents(?string $url, ?int $timeout=10): string|false|null
 
 function url_copy(?string $from, ?string $to, ?int $timeout=10): bool
 {
+	if ($to === null)
+		return false;
 	$f = fopen($to, 'wb');
-	if (!$f || !(bool)fwrite($f, url_get_contents($from, $timeout)))
+	$contents = url_get_contents($from, $timeout);
+	if (!$f || $contents === false || $contents === null || !(bool)fwrite($f, $contents))
 		return false;
 	fclose($f);
 	return true;

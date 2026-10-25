@@ -1571,6 +1571,26 @@ Found by chasing Psalm's `TaintedSSRF`/`TaintedFile` findings in
   guard, matching the function's own existing `@return ...|false`
   docblock.
 
+- **`includes/remote_url.inc` — `url_get_contents()`/`url_copy()`.** Every
+  failure path in this hand-rolled HTTP client fed a `false`/`null` value
+  straight into a native function with a non-nullable `string` parameter,
+  turning an expected, documented failure (`url_get_contents()`'s own
+  return type is `string|false|null`) into a fatal `TypeError` instead:
+  `parse_url()` returning `false` on a malformed URL was read from with
+  `$parsedUrl['host']` etc. unguarded; a `file://` URL with no path reached
+  `file_get_contents(null)`; a host-less URL reached `fsockopen(null, ...)`;
+  `stream_get_contents()` returning `false` on a read error reached
+  `strpos(false, ...)`; `strpos()` returning `false` (headers not found)
+  reached `substr($response, false + 4)`; and — the one most likely to
+  actually fire, since `url_copy()`'s three real callers
+  (`includes/packages.inc`'s package-manager download routines) call it
+  specifically to fetch repository data that can legitimately 404 or
+  time out — `url_copy()` passed `url_get_contents()`'s result straight
+  into `fwrite()` with no check that the fetch succeeded, so a failed
+  download crashed instead of making `url_copy()` return `false` the way
+  its own signature promises. Added an explicit guard at every one of
+  these points instead of chasing each one individually.
+
 ## Missing feature (implemented, not just guarded)
 
 - **`includes/ui/attachment.inc` — no attachment size limit.** `db_insert()`
