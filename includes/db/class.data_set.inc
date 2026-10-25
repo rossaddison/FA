@@ -246,6 +246,11 @@ abstract class record_set {
 	/**
 	 * @param string|int|array<array-key, mixed>|null $key
 	 * @return array<array-key, mixed>|false|null
+	 * MissingPureAnnotation suggests @psalm-mutation-free instead of @psalm-impure, but this
+	 * method is overridden below by data_set::get() (and in other concrete subclasses) with
+	 * versions that do real DB I/O -- marking the base method pure would make those overrides
+	 * an LSP violation Psalm can't see today but would surface the moment any one of them
+	 * loses its own @psalm-impure. Keeping this one impure too avoids that trap.
 	 * @psalm-impure
 	 */
 	function get($key=null)
