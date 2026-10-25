@@ -224,6 +224,10 @@ final class db_pager {
 		} else {
 			$where = array();
 		}
+		// MixedPropertyTypeCoercion here is accepted: $where's own generic array shape
+		// can't be narrowed to extra_where's array<int, string> without misrepresenting
+		// this method's documented, general-purpose contract -- see doc/BUGS_FOUND.md's
+		// db_pager::set_where() entry for the real bug already found and fixed here
 		$this->extra_where = $where;
 		$this->ready = false;
 	}
@@ -258,6 +262,9 @@ final class db_pager {
 			};
 
 
+	    // $ord is genuinely mixed: $columns is declared array<int, array<string, mixed>>
+	    // by design -- set_columns() below normalizes whatever shape each pager definition
+	    // passes into this generic per-column config array
 	    $ord = $this->columns[$col]['ord'];
   		$this->columns[$col]['ord_priority']  = $max_priority+1; // set priority , higher than anything else
 	    $ord = ($ord == '') ? 'asc' : (($ord == 'asc') ? 'desc' : '');
@@ -348,6 +355,10 @@ final class db_pager {
 	 */
 	function set_columns(string|array $flds)
 	{
+		// $coldef/$c/$h are genuinely mixed: $flds accepts whatever shape each pager
+		// definition across the codebase passes (bare name, name=>type, name=>array of
+		// options, ...), and this loop's own job is to normalize all of those into the
+		// uniform array<string, mixed> $columns entries used everywhere else in this class
 		$this->columns = array();
 		if (!is_array($flds)) {
 			$flds = array($flds);
