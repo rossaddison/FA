@@ -67,7 +67,7 @@ if (!isset($_POST['bank_account'])) { // first page call
 	if (isset($_GET['PInvoice'])) {
 		$supp = isset($_POST['supplier_id']) ? $_POST['supplier_id'] : null;
 		//  get date and supplier
-		$inv = get_supp_trans(get_scalar('PInvoice'), get_scalar('trans_type'), $supp);
+		$inv = get_supp_trans(get_scalar('PInvoice'), get_scalar('trans_type'), is_scalar($supp) ? $supp : null);
 		if ((bool)$inv) {
 			session_obj('alloc')->person_id = $_POST['supplier_id'] = $inv['supplier_id'];
 			session_obj('alloc')->read();
@@ -75,7 +75,7 @@ if (!isset($_POST['bank_account'])) { // first page call
 			$_POST['memo_'] = $inv['supp_reference'];
 			foreach(session_obj('alloc')->allocs as $line => $trans) {
 				if ($trans->type == $_GET['trans_type'] && $trans->type_no == $_GET['PInvoice']) {
-					$un_allocated = (float)abs($trans->amount) - (float)$trans->amount_allocated;
+					$un_allocated = abs((float)$trans->amount) - (float)$trans->amount_allocated;
 					session_obj('alloc')->amount = session_obj('alloc')->allocs[$line]->current_allocated = $un_allocated;
 					$_POST['amount'] = $_POST['amount'.$line] = price_format($un_allocated);
 					break;
@@ -87,7 +87,7 @@ if (!isset($_POST['bank_account'])) { // first page call
 	}
 }
 if (isset($_GET['AddedID'])) {
-	$payment_id = $_GET['AddedID'];
+	$payment_id = is_scalar($_GET['AddedID']) ? $_GET['AddedID'] : '';
 
    	display_notification_centered( _("Payment has been sucessfully entered"));
 
@@ -97,7 +97,9 @@ if (isset($_GET['AddedID'])) {
 	submenu_view(_("View this Payment"), ST_SUPPAYMENT, $payment_id);
     display_note(get_gl_view_str(ST_SUPPAYMENT, $payment_id, _("View the GL &Journal Entries for this Payment")), 0, 1);
 
-	submenu_option(_("Enter another supplier &payment"), "/purchasing/supplier_payment.php?supplier_id=".(string)$_POST['supplier_id']);
+	$supplier_id_for_menu = $_POST['supplier_id'] ?? null;
+	$supplier_id_for_menu = is_scalar($supplier_id_for_menu) ? (string) $supplier_id_for_menu : '';
+	submenu_option(_("Enter another supplier &payment"), "/purchasing/supplier_payment.php?supplier_id=".$supplier_id_for_menu);
 
 	submenu_option(_("Enter &Supplier Invoice"), "/purchasing/supplier_invoice.php?New=1");
 	submenu_option(_("Enter direct &Invoice"), "/purchasing/po_entry_items.php?NewInvoice=Yes");
@@ -190,7 +192,8 @@ function check_inputs(): bool
 	}
 
 
-   	if (!is_date(post_scalar('DatePaid')))
+   	$date_paid_post = post_scalar('DatePaid');
+   	if (!is_date(is_string($date_paid_post) ? $date_paid_post : null))
    	{
 		display_error(_("The entered date is invalid."));
 		set_focus('DatePaid');
@@ -203,7 +206,8 @@ function check_inputs(): bool
 		return false;
 	}
 
-	$limit = get_bank_account_limit(post_scalar('bank_account'), post_scalar('DatePaid'));
+	$bank_account_post = post_scalar('bank_account');
+	$limit = get_bank_account_limit(is_int($bank_account_post) || is_string($bank_account_post) ? $bank_account_post : null, is_int($date_paid_post) || is_string($date_paid_post) ? $date_paid_post : null);
 
 	if (($limit !== null) && (floatcmp($limit, input_num('amount')) < 0))
 	{
@@ -218,7 +222,7 @@ function check_inputs(): bool
 		return false;
 	}
 
-	if (!db_has_currency_rates(get_supplier_currency(post_scalar('supplier_id')), post_scalar('DatePaid'), true))
+	if (!db_has_currency_rates(get_supplier_currency(post_scalar('supplier_id')), is_int($date_paid_post) || is_string($date_paid_post) ? $date_paid_post : null, true))
 		return false;
 
 	session_obj('alloc')->amount = -input_num('amount');
@@ -233,13 +237,15 @@ function check_inputs(): bool
 
 function handle_add_payment(): void
 {
+	$memo_post = post_scalar('memo_');
 	$payment_id = write_supp_payment(0, post_scalar('supplier_id'), post_scalar('bank_account'),
-		post_scalar('DatePaid'), post_scalar('ref'), input_num('amount'),	input_num('discount'), post_scalar('memo_'), 
+		post_scalar('DatePaid'), post_scalar('ref'), input_num('amount'),	input_num('discount'), is_string($memo_post) ? $memo_post : null,
 		input_num('charge'), input_num('bank_amount', input_num('amount')), post_scalar('dimension_id'), post_scalar('dimension2_id'));
 	new_doc_date($_POST['DatePaid']);
 
 	session_obj('alloc')->trans_no = $payment_id;
-	session_obj('alloc')->date_ = $_POST['DatePaid'];
+	$date_paid_for_alloc = $_POST['DatePaid'];
+	session_obj('alloc')->date_ = is_scalar($date_paid_for_alloc) ? (string) $date_paid_for_alloc : '';
 	session_obj('alloc')->write();
 
    	unset($_POST['bank_account']);
@@ -250,7 +256,9 @@ function handle_add_payment(): void
    	unset($_POST['discount']);
    	unset($_POST['ProcessSuppPayment']);
 
-	meta_forward($_SERVER['PHP_SELF'], "AddedID=$payment_id&supplier_id=".(string)$_POST['supplier_id']);
+	$supplier_id_for_forward = $_POST['supplier_id'] ?? null;
+	$supplier_id_for_forward = is_scalar($supplier_id_for_forward) ? (string) $supplier_id_for_forward : '';
+	meta_forward($_SERVER['PHP_SELF'] ?? '', "AddedID=$payment_id&supplier_id=".$supplier_id_for_forward);
 }
 
 //----------------------------------------------------------------------------------------
@@ -278,7 +286,8 @@ start_form();
 
 	if (list_updated('supplier_id')) {
 		$_POST['amount'] = price_format(0);
-		session_obj('alloc')->person_id = get_post('supplier_id');
+		$supplier_id_post = get_post('supplier_id');
+		session_obj('alloc')->person_id = is_scalar($supplier_id_post) ? $supplier_id_post : null;
 		ajax()->activate('amount');
 	} elseif (list_updated('bank_account'))
 		ajax()->activate('alloc_tbl');
@@ -293,7 +302,8 @@ start_form();
 
 	if (!list_updated('bank_account') && !get_post('__ex_rate_changed'))
 	{
-		$_POST['bank_account'] = get_default_supplier_payment_bank_account(post_scalar('supplier_id'), post_scalar('DatePaid'));
+		$date_paid_post2 = post_scalar('DatePaid');
+		$_POST['bank_account'] = get_default_supplier_payment_bank_account(post_scalar('supplier_id'), is_string($date_paid_post2) ? $date_paid_post2 : null);
 	} else
 	{
 		$_POST['amount'] = price_format(0);
@@ -314,10 +324,12 @@ start_form();
 	table_section(3);
 
 	$comp_currency = get_company_currency();
-	$supplier_currency = session_obj('alloc')->set_person($_POST['supplier_id'], PT_SUPPLIER);
+	$supplier_id_for_person = $_POST['supplier_id'] ?? null;
+	$supplier_currency = session_obj('alloc')->set_person(is_scalar($supplier_id_for_person) ? $supplier_id_for_person : null, PT_SUPPLIER);
 	if (!$supplier_currency)
 			$supplier_currency = $comp_currency;
-	session_obj('alloc')->currency = $bank_currency = get_bank_account_currency(post_scalar('bank_account'));
+	$bank_currency = (string) get_bank_account_currency(post_scalar('bank_account'));
+	session_obj('alloc')->currency = $bank_currency;
 
 	if ($bank_currency != $supplier_currency) 
 	{
