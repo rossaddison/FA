@@ -23,10 +23,22 @@ include_once(dirname(__DIR__, 2) . "/inventory/includes/inventory_db.inc");
 include_once(dirname(__DIR__, 2) . "/taxes/tax_calc.inc");
 
 /**
- * @psalm-suppress PropertyNotSetInConstructor document_date/due_date/reference/
- * Comments/tax_group_name are always populated by __construct()'s call to
- * read(), but through branches (read_sales_order()/read_sales_trans(), or the
- * "new document" branch) that Psalm can't trace property assignment through.
+ * PropertyNotSetInConstructor on document_date/due_date/reference/Comments/
+ * tax_group_name is accepted, left visible rather than suppressed per this
+ * project's standing no-@psalm-suppress policy. document_date/due_date/
+ * reference genuinely are set unconditionally by __construct()'s call to
+ * read(), in either its "read old transaction" branch
+ * (read_sales_order()/read_sales_trans()) or its "new document" branch
+ * (confirmed by reading read()'s own body) - Psalm just can't trace
+ * property assignment through either. Comments and tax_group_name are not:
+ * every real caller that builds a new cart and goes on to write() it sets
+ * ->Comments from posted form data first (confirmed in
+ * sales/sales_order_entry.php, sales/customer_invoice.php,
+ * sales/customer_delivery.php, sales/credit_note_entry.php,
+ * sales/customer_credit_invoice.php), and ->tax_group_name is set by
+ * set_branch() whenever a customer/branch is selected in the UI - a
+ * caller-enforced invariant Psalm can't see across file boundaries, not
+ * an actual uninitialized-property bug.
  *
  * Do NOT mark this class final. Psalm's ClassMustBeFinal suggests it because
  * nothing in the scanned tree extends Cart - but modules/import_transactions/
@@ -34,7 +46,8 @@ include_once(dirname(__DIR__, 2) . "/taxes/tax_calc.inc");
  * is deliberately out of Psalm's scope (see psalm.xml's ignoreFiles). Marking
  * this final broke that module's real, live "class X cannot extend final
  * class Cart" fatal error - confirmed via screenshot of the actual crash.
- * @psalm-suppress ClassMustBeFinal
+ * Left as an accepted, visible ClassMustBeFinal finding rather than
+ * suppressed, per this project's standing no-@psalm-suppress policy.
  */
 class Cart
 {
