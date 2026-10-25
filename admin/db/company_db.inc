@@ -13,15 +13,21 @@ declare(strict_types=1);
 /*
 	Update main or gl company setup.
 */
-function update_company_prefs(string|int|float|bool|array|null $params): bool
+/**
+ * @param array<array-key, mixed> $params
+ */
+function update_company_prefs(array $params): bool
 {
 	$sql = "UPDATE ".TB_PREF."sys_prefs SET value = ";
+	// $value is genuinely mixed: every real caller passes either a literal array of
+	// scalar preference values, or get_post(array(...))'s own array-mode result, which
+	// is itself mixed by design -- guarded with db_escape() immediately below
 	foreach($params as $name => $value) {
 		if (!db_query($sql. db_escape($value). " WHERE name=".db_escape($name),
 			 "The company prefferences could not be updated "))
 			return false;
 		// update cached value
-		$_SESSION['SysPrefs']->prefs[$name] = $value;
+		sysprefs()->prefs[$name] = $value;
 	}
 	return true;
 }
@@ -44,11 +50,8 @@ function get_company_pref(?string $prefs = null)
 
 	$all = sysprefs()->prefs;
 
-	if ((bool)$prefs && is_string($prefs))
+	if ((bool)$prefs)
 		return @$all[$prefs];
-
-	if (!is_array($all))
-		$all = array();
 
 	return $all;
 }
@@ -81,7 +84,7 @@ function get_base_sales_type()
 function get_company_extensions(string|int|float|bool|array|null $id = -1): array {
 	global $path_to_root;
 
-	$file = $path_to_root.($id == -1 ? '' : '/company/'.(int)$id).'/installed_extensions.php';
+	$file = $path_to_root.($id == -1 ? '' : '/company/'.(int)(is_array($id) ? 0 : $id)).'/installed_extensions.php';
 	/** @var array<int, array<string, mixed>> $installed_extensions */
 	$installed_extensions = array();
 	if (is_file($file)) {
@@ -173,12 +176,16 @@ function key_in_foreign_table(string|int|float|bool|null $id, string|array|null 
 		$tables = array($tables);
 
 	$sqls = array();
+	// $tbl/$key are genuinely mixed by design: $tables deliberately accepts either a
+	// plain list of table names (int keys) or a table-name => foreign-key-field map
+	// (string keys), per this function's own doc comment above -- every real caller
+	// today only uses the plain-list form, but the map form is intentional, not dead
 	foreach ($tables as $tbl => $key) {
 		if (is_numeric($tbl)) {
 			$tbl = $key;
 			$key = $stdkey;
 		}
-		$sqls[] = "(SELECT COUNT(*) as cnt FROM `".TB_PREF."$tbl` WHERE `$key`=".db_escape($id).")\n";
+		$sqls[] = "(SELECT COUNT(*) as cnt FROM `".TB_PREF.(string)$tbl."` WHERE `".(string)$key."`=".db_escape($id).")\n";
 	}
 
 	$sql = "SELECT sum(cnt) FROM (". implode(' UNION ', $sqls).") as counts";
