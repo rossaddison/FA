@@ -642,7 +642,7 @@ function get_duedate_from_terms(&$trans): void
 	$terms = is_array($trans->terms) ? $trans->terms : array();
 	// $day_in_following_month/$days_before_due are genuinely mixed, same reason as
 	// $terms_description above -- both guarded with is_scalar() immediately below
-	if (!empty($terms['day_in_following_month']))
+	if ((bool) ($terms['day_in_following_month'] ?? false))
 	{ /*Its a day in the following month when due */
 		$day_in_following_month = $terms["day_in_following_month"] ?? null;
 		$trans->due_date =
