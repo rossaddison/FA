@@ -1533,6 +1533,18 @@ Found by chasing Psalm's `TaintedSSRF`/`TaintedFile` findings in
   `get_fields_views()` yet. Added the missing normalization branch to
   match its siblings.
 
+- **`admin/db/maintenance_db.inc` — `create_comp_dirs()`.** `$f = @fopen(...)`
+  followed immediately by `@fwrite($f, ...)` / `@fclose($f)` with no check
+  that `fopen()` actually succeeded. `fopen()` returns `false` on failure
+  (permissions, disk full, missing parent directory), and `@` only
+  suppresses warnings/notices — it does nothing to stop the fatal `TypeError`
+  from passing `false` where PHP's internal `fwrite()`/`fclose()` expect a
+  real `resource`. Currently unreachable only as long as every
+  `mkdir($cdir)` call right before it succeeds; a failed company-directory
+  creation (its one real caller is `admin/create_coy.php`) would crash here
+  instead of failing gracefully. Added an explicit `$f !== false` guard
+  around both write/close pairs.
+
 ## Missing feature (implemented, not just guarded)
 
 - **`includes/ui/attachment.inc` — no attachment size limit.** `db_insert()`

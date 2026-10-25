@@ -343,7 +343,8 @@ function db_import(string|int|float|bool|null $filename, array $connection, stri
 	// than the variable-variable ${$table}[] the parse loop used to write
 	// through) so Psalm can actually trace what ends up in each one
 	/** @var array<string, array<int, array{0: string, 1: int}>> $buckets */
-	$buckets = array('set_names' => array(), 'data_queries' => array(), 'drop_queries' => array(), 'table_queries' => array());
+	$buckets = array('set_names' => array(), 'data_queries' => array(),
+            'drop_queries' => array(), 'table_queries' => array());
 	$sql_errors = array();
 
 	$old_encoding = db_get_charset($db);
@@ -353,20 +354,20 @@ function db_import(string|int|float|bool|null $filename, array $connection, stri
 	db_query("SET sql_mode=''");
 
 	/** @var mysqli $db */
-	$db = $db;
-	if (is_scalar($connection['collation'] ?? null))
-		db_set_collation($db, $connection['collation'] ?? null);
-
+	$dbMsqli = $db;
+	db_set_collation($dbMsqli, (string) $connection['collation'] ?: 'utf8mb3_unicode_ci');
+        
 	$check_line_len = false;
-
-	// uncompress gziped backup files
-	if ((bool)strpos($filename, ".gz") || (bool)strpos($filename, ".GZ"))
-	{	$lines = db_ungzip("lines", $filename);
-		$check_line_len = true;
-	} elseif ((bool)strpos($filename, ".zip") || (bool)strpos($filename, ".ZIP"))
-		$lines = db_unzip("lines", $filename);
-	else
-		$lines = file("". $filename);
+        // uncompress gziped backup files
+	if ((bool) strpos($filename, ".gz") || (bool)strpos($filename, ".GZ"))
+	{
+            $lines = db_ungzip("lines", $filename);
+	    $check_line_len = true;
+	} elseif ((bool) strpos($filename, ".zip") || (bool)strpos($filename, ".ZIP")) {
+	    $lines = db_unzip("lines", $filename);
+        } else {
+	    $lines = file("". $filename);
+        }
 	/** @var array<int, string> $lines */
 	$lines = is_array($lines) ? $lines : array();
 
@@ -462,9 +463,7 @@ function db_import(string|int|float|bool|null $filename, array $connection, stri
 			$encoding = 'latin1'; // standard encoding on mysql client
 	}
 
-	/** @var mysqli $db */
-	$db = $db;
-	db_set_charset($db, $encoding);
+	db_set_charset($dbMsqli, $encoding);
 
 /*/	{ 	// for debugging purposes
 	global $path_to_root;
@@ -487,7 +486,7 @@ function db_import(string|int|float|bool|null $filename, array $connection, stri
 		if (!db_query($drop_query[0]))
 		{
 			if (!in_array(db_error_no(), $ignored_mysql_errors) || !(bool)$force)
-				$sql_errors[] = array(db_error_msg($db), $drop_query[1]);
+				$sql_errors[] = array(db_error_msg($dbMsqli), $drop_query[1]);
 		}
 	}
 
@@ -497,7 +496,7 @@ function db_import(string|int|float|bool|null $filename, array $connection, stri
 		if (!db_query($table_query[0]))
 		{
 			if (!in_array(db_error_no(), $ignored_mysql_errors) || !(bool)$force) {
-				$sql_errors[] = array(db_error_msg($db), $table_query[1]);
+				$sql_errors[] = array(db_error_msg($dbMsqli), $table_query[1]);
 			}
 		}
 	}
@@ -508,7 +507,7 @@ function db_import(string|int|float|bool|null $filename, array $connection, stri
 		if (!db_query($data_query[0]))
 		{
 			if (!in_array(db_error_no(),$ignored_mysql_errors) || !(bool)$force)
-				$sql_errors[] = array(db_error_msg($db), $data_query[1]);
+				$sql_errors[] = array(db_error_msg($dbMsqli), $data_query[1]);
 		}
 	}
 
@@ -520,9 +519,7 @@ function db_import(string|int|float|bool|null $filename, array $connection, stri
 	db_query("SET foreign_key_checks=1");
 	if ($delimiter != ';') db_query("delimiter ;"); // just for any case
 
-	/** @var mysqli $db */
-	$db = $db;
-	db_set_charset($db, $old_encoding); // restore connection encoding
+	db_set_charset($dbMsqli, $old_encoding); // restore connection encoding
 
 	if (count($sql_errors)) {
 		if ((bool)$return_errors)
@@ -616,11 +613,11 @@ function db_backup(array $conn, string|int|float|bool|null $ext='no', string|int
 	$cleaned_filename = is_string($cleaned_filename) ? $cleaned_filename : '';
 	return db_export($conn, (string) $path . $cleaned_filename, $ext, $comm);
 }
-// Generates a dump of $db database
+// Generates a dump of $dbMsqli database
 //
 /**
  * @param array<string, mixed> $conn
- * @return false|null|string
+ * @return false|string
  */
 function db_export(array $conn, ?string $filename, string|int|float|bool|null $zip='no', string|int|float|bool|null $comment='')
 {
@@ -642,10 +639,10 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
     else
     	$backupfile = (string) $filename;
     // get_company_pref('coy_name');
-    $company = is_scalar($conn['name'] ?? null) ? $conn['name'] : null;
+    $company = is_scalar($conn['name'] ?? null) ? (string) $conn['name'] : null;
 
-	if (file_exists((string) $backupfile))	// prevent appends
-		unlink((string) $backupfile);
+	if (file_exists($backupfile))	// prevent appends
+		unlink($backupfile);
 
     $conn_dbname = is_scalar($conn["dbname"] ?? null) ? (string) $conn["dbname"] : '';
     $conn_host = is_scalar($conn["host"] ?? null) ? (string) $conn["host"] : '';
@@ -695,7 +692,7 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
 	{
 		$res1 = db_select("SHOW CREATE TABLE `" . (string)$table['Name'] . "`");
 		$tmp = row_or_empty(db_fetch($res1));
-		$table_sql[(string) $table['Name']] = (string) ($tmp["Create Table"] ?? '');
+		$table_sql[(string) $table['Name']] = ($tmp["Create Table"] ?? '');
 	}
 
 	// find foreign keys
@@ -725,7 +722,7 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
 	{
 		foreach ($all_tables as $row)
 		{
-			if (!empty($row['Engine'])) {	//don't export views like tables
+			if ((bool) ($row['Engine'] ?? null)) {	//don't export views like tables
 				$tablename = (string) $row['Name'];
 				$auto_incr[$tablename] = $row['Auto_increment'];
 	
@@ -822,7 +819,7 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
 		//process views last so all tables have been created before views are created
 		foreach ($all_tables as $row)
 		{
-			if (empty($row['Engine'])) {
+			if (!(bool) ($row['Engine'] ?? null)) {
 				$viewname = (string) $row['Name'];
 				$out .= "\n\nDROP VIEW IF EXISTS `".$viewname."`;\n";
 				//db_get_view_schema() is in /includes/db/connect_db_mysqli.inc because it is mysql specific
@@ -1044,15 +1041,19 @@ function create_comp_dirs(string $comp_path, array $comp_subdirs): void
 	    $cdir = $comp_path;
 	    @mkdir($cdir);
 		$f = @fopen("$cdir/index.php", "wb");
-		@fwrite($f, $index);
-		@fclose($f);
+		if ($f !== false) {
+			fwrite($f, $index);
+			fclose($f);
+		}
 
 	    foreach($comp_subdirs as $dir)
 	    {
 			@mkdir($cdir.'/'.$dir);
 			$f = @fopen("$cdir/$dir/index.php", "wb");
-			@fwrite($f, $index);
-			@fclose($f);
+			if ($f !== false) {
+				fwrite($f, $index);
+				fclose($f);
+			}
 	    }
 }
 
@@ -1114,7 +1115,7 @@ function update_config_var(string|int|float|bool|null $file, string|int|float|bo
 		$strvalue = ($comment !== '' ? "// $comment" : '') ."\n$strvalue\n";
 		$content = preg_replace('/\?>\s*/m', $strvalue, (string) $content, -1, $result);
 		if (!(bool)$result)
-			$content .= $strvalue;
+			$content = ((string) $content) . $strvalue;
 	}
 
 	return file_put_contents($file, (string) $content)!=false;
