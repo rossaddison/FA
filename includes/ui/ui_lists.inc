@@ -345,13 +345,16 @@ $opts = array(		// default options
 	$edit = false;
 	$pname = false;
 	$contact_row = null;
-	if (($type === "customer" || $type === "supplier") && !empty(sysprefs()->prefs['shortname_name_in_list']))
+	if (($type === "customer" || $type === "supplier") && (bool) (sysprefs()->prefs['shortname_name_in_list'] ?? false))
 		$pname = true;
 	$format = $opts['format'];
 	$category = $opts['category'];
 	$result = db_select($sql);
 	while ($contact_row = db_fetch($result)) {
 		$value = $contact_row[0];
+		// $descr/$first_opt are genuinely mixed: either a raw DB column value or
+		// whatever a caller-supplied $format callback returns, passed straight into
+		// html_encode()'s own mixed $content parameter below
 		$descr = $format==null ?  $contact_row[1] :
 			call_user_func($format, $contact_row, $pname);
 		$sel = '';
@@ -396,7 +399,7 @@ $opts = array(		// default options
 		$first_id = $spec_id;
 		$first_opt = $spec_option;
 		$sel = $found===false ? 'selected' : '';
-		$optclass = is_array($contact_row) && ($contact_row['inactive'] ?? false) ? "class='inactive'" : '';
+		$optclass = is_array($contact_row) && (bool) ($contact_row['inactive'] ?? false) ? "class='inactive'" : '';
 		$selector = "<option $sel value='".html_encode_attribute($first_id, false, output_encoding())."'>".html_encode($first_opt, false, output_encoding())."</option>\n"
 			. $selector;
 	}
@@ -592,6 +595,9 @@ $opts = array(		// default options
 	}
 
 	// ------ make selector ----------
+	// $descr/$first_opt are genuinely mixed: $items is a caller-supplied
+	// value=>label map whose label type varies per caller, passed straight into
+	// html_encode()'s own mixed $content parameter below
 	$selector = $first_opt = '';
 	$first_id = false;
 	$found = false;
@@ -690,7 +696,7 @@ function add_edit_combo(?string $type): string
 function supplier_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $spec_option=false, bool $submit_on_change=false,
 	int|bool|array|null $all=false, bool $editkey = false)
 {
-	if (!empty(sysprefs()->prefs['shortname_name_in_list']))
+	if ((bool) (sysprefs()->prefs['shortname_name_in_list'] ?? false))
 		$sql = "SELECT supplier_id, supp_ref, supp_name, curr_code, inactive FROM ".TB_PREF."suppliers ";
 	else	
 		$sql = "SELECT supplier_id, supp_ref, curr_code, inactive FROM ".TB_PREF."suppliers ";
@@ -711,7 +717,7 @@ function supplier_list(string|int|float|bool|null $name, string|int|float|bool|a
 		'spec_id' => ALL_TEXT,
 		'select_submit'=> $submit_on_change,
 		'async' => false,
-		'sel_hint' => $mode ? _('Press Space tab to filter by name fragment') :
+		'sel_hint' => (bool) $mode ? _('Press Space tab to filter by name fragment') :
 		_('Select supplier'),
 		'show_inactive'=>$all,
 		'editlink' => $editkey ? add_edit_combo('supplier') : false
@@ -744,7 +750,7 @@ function supplier_list_row(?string $label, ?string $name, string|int|float|bool|
 function customer_list(string|int|float|bool|null $name, string|int|float|bool|array|null $selected_id=null, string|int|float|bool|null $spec_option=false, bool $submit_on_change=false, 
 	int|bool|array|null $show_inactive=false, bool $editkey = false)
 {
-	if (!empty(sysprefs()->prefs['shortname_name_in_list']))
+	if ((bool) (sysprefs()->prefs['shortname_name_in_list'] ?? false))
 		$sql = "SELECT debtor_no, debtor_ref, name, curr_code, inactive FROM ".TB_PREF."debtors_master ";
 	else	
 		$sql = "SELECT debtor_no, debtor_ref, curr_code, inactive FROM ".TB_PREF."debtors_master ";
@@ -766,7 +772,7 @@ function customer_list(string|int|float|bool|null $name, string|int|float|bool|a
 		'spec_id' => ALL_TEXT,
 		'select_submit'=> $submit_on_change,
 		'async' => false,
-		'sel_hint' => $mode ? _('Press Space tab to filter by name fragment; F2 - entry new customer') :
+		'sel_hint' => (bool) $mode ? _('Press Space tab to filter by name fragment; F2 - entry new customer') :
 		_('Select customer'),
 		'show_inactive' => $show_inactive,
 		'editlink' => $editkey ? add_edit_combo('customer') : false
@@ -1033,7 +1039,7 @@ function stock_items_list(string|int|float|bool|null $name, string|int|float|boo
 
 function _format_stock_items(array $row): string
 {
-	return (user_show_codes() ?  ((string) $row[0] . nbsp() . "-" . nbsp()) : "") . (string) $row[1];
+	return ((bool) user_show_codes() ?  ((string) $row[0] . nbsp() . "-" . nbsp()) : "") . (string) $row[1];
 }
 
 function stock_items_list_cells(string|int|float|bool|null $label, ?string $name, string|int|float|bool|array|null $selected_id=null, string|bool|null $all_option=false, 
