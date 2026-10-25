@@ -28,7 +28,7 @@ if (sysprefs()->use_popup_windows)
 	$js .= get_js_open_window(800, 500);
 if ((bool) user_use_date_picker())
 	$js .= get_js_date_picker();
-page(_($help_context = "Bank Account Inquiry"), isset($_GET['bank_account']) && !isset($_GET['TransAfterDate']), false, "", $js, false, "", true);
+page(_($help_context = "Bank Account Inquiry"), isset($_GET['bank_account']) && !isset($_GET['TransAfterDate']), false, "", $js, false, "");
 
 check_db_has_bank_accounts(_("There are no bank accounts defined in the system."));
 
@@ -78,11 +78,12 @@ $th = array(_("Type"), _("#"), _("Reference"), _("Date"),
 	_("Debit"), _("Credit"), _("Balance"), _("Person/Item"), _("Memo"), "", "");
 table_header($th);
 
-$bfw = get_balance_before_for_bank_account(post_scalar('bank_account'), post_scalar('TransAfterDate'));
+$bfw = (float) get_balance_before_for_bank_account(post_scalar('bank_account'), post_scalar('TransAfterDate'));
 
-$credit = $debit = 0;
+$credit = $debit = 0.0;
 start_row("class='inquirybg fa-bold'");
-label_cell(_("Opening Balance")." - ".(string)$_POST['TransAfterDate'], "colspan=4");
+$trans_after_date = $_POST['TransAfterDate'] ?? null;
+label_cell(_("Opening Balance")." - ".(is_array($trans_after_date) ? '' : (string) $trans_after_date), "colspan=4");
 display_debit_or_credit_cells($bfw);
 label_cell("");
 label_cell("", "colspan=4");
@@ -103,14 +104,15 @@ while ($myrow = db_fetch($result))
 	$running_total +=(float) $myrow["amount"];
 
 	$trandate = sql2date($myrow["trans_date"]);
-	label_cell($systypes_array[$myrow["type"]]);
+	label_cell($systypes_array[(int) $myrow["type"]]);
 	label_cell(get_trans_view_str($myrow["type"],$myrow["trans_no"]));
 	label_cell(get_trans_view_str($myrow["type"],$myrow["trans_no"],$myrow['ref']));
 	label_cell($trandate);
 	display_debit_or_credit_cells($myrow["amount"]);
 	amount_cell($running_total);
 
-	label_cell(payment_person_name($myrow["person_type_id"],$myrow["person_id"]));
+	$person_name = payment_person_name($myrow["person_type_id"],$myrow["person_id"]);
+	label_cell(is_scalar($person_name) ? $person_name : null);
 
 	label_cell(get_comments_string($myrow["type"], $myrow["trans_no"]));
 	label_cell(get_gl_view_str($myrow["type"], $myrow["trans_no"]));
@@ -133,11 +135,12 @@ while ($myrow = db_fetch($result))
 //end of while loop
 
 start_row("class='inquirybg fa-bold'");
-label_cell(_("Ending Balance")." - ". (string)$_POST['TransToDate'], "colspan=4");
+$trans_to_date = $_POST['TransToDate'] ?? null;
+label_cell(_("Ending Balance")." - ". (is_array($trans_to_date) ? '' : (string) $trans_to_date), "colspan=4");
 amount_cell($debit);
 amount_cell(-$credit);
 //display_debit_or_credit_cells($running_total);
-amount_cell((float)$debit+(float)$credit);
+amount_cell($debit+$credit);
 label_cell("", "colspan=4");
 end_row();
 end_table(2);
