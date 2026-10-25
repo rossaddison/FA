@@ -214,7 +214,7 @@ final class db_pager {
 	 */
 	function set_where(string|array|null $where = null)
 	{
-	 	if ($where) {
+	 	if ((bool) $where) {
 	    	if (!is_array($where))
 			  $where = array($where);
 
