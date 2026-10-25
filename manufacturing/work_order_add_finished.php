@@ -39,7 +39,8 @@ if (isset($_GET['trans_no']) && $_GET['trans_no'] != "")
 if (isset($_GET['AddedID']))
 {
 	include_once(dirname(__DIR__) . "/reporting/includes/reporting.inc");
-	$id = $_GET['AddedID'];
+	$id_raw = $_GET['AddedID'];
+	$id = is_array($id_raw) ? null : $id_raw;
 	$stype = ST_WORKORDER;
 
 	display_notification(_("The manufacturing process has been entered."));
@@ -86,19 +87,22 @@ function canProcessWorkOrderAddFinished(array $wo_details): bool
 		return false;
 	}
 
-	if (!is_date(post_scalar('date_')))
+	$date_post = post_scalar('date_');
+	$date_post_str = is_string($date_post) ? $date_post : null;
+	if (!is_date($date_post_str))
 	{
 		display_error(_("The entered date is invalid."));
 		set_focus('date_');
 		return false;
 	}
-	elseif (!(bool)is_date_in_fiscalyear(post_scalar('date_')))
+	elseif (!(bool)is_date_in_fiscalyear($date_post))
 	{
 		display_error(_("The entered date is out of fiscal year or is closed for further data entry."));
 		set_focus('date_');
 		return false;
 	}
-	if (date_diff2(sql2date($wo_details["released_date"]), post_scalar('date_'), "d") > 0)
+	$released_date = $wo_details["released_date"];
+	if (date_diff2(sql2date(is_scalar($released_date) ? $released_date : null), $date_post_str, "d") > 0)
 	{
 		display_error(_("The production date cannot be before the release date of the work order."));
 		set_focus('date_');
@@ -114,7 +118,9 @@ function canProcessWorkOrderAddFinished(array $wo_details): bool
 	// if unassembling we need to check the qoh
 	if (($_POST['ProductionType'] == 0) && !sysprefs()->allow_negative_stock())
 	{
-		if (check_negative_stock($wo_details["stock_id"], -input_num('quantity'), $wo_details["loc_code"], $_POST['date_']))
+		$stock_id = $wo_details["stock_id"];
+		$loc_code = $wo_details["loc_code"];
+		if (check_negative_stock(is_scalar($stock_id) ? $stock_id : null, -input_num('quantity'), is_scalar($loc_code) ? $loc_code : null, $_POST['date_']))
 		{
 			display_error(_("The unassembling cannot be processed because there is insufficient stock."));
 			set_focus('quantity');
@@ -162,10 +168,12 @@ if ((isset($_POST['Process']) || isset($_POST['ProcessAndClose']))
 	if ($_POST['ProductionType'] == 0)
 		$_POST['quantity'] = -$_POST['quantity'];
 
-	 $id = work_order_produce(post_scalar('selected_id'), post_scalar('ref'), input_num('quantity'),
+	 work_order_produce(post_scalar('selected_id'), post_scalar('ref'), input_num('quantity'),
 			post_scalar('date_'), post_scalar('memo_'), $close_wo);
 
-	meta_forward($_SERVER['PHP_SELF'], "AddedID=".(string)$_POST['selected_id']."&date=".(string)$_POST['date_']);
+	$selected_id_post = $_POST['selected_id'] ?? null;
+	$date_post_fwd = $_POST['date_'] ?? null;
+	meta_forward($_SERVER['PHP_SELF'] ?? '', "AddedID=".(is_array($selected_id_post) ? '' : (string) $selected_id_post)."&date=".(is_array($date_post_fwd) ? '' : (string) $date_post_fwd));
 }
 
 //-------------------------------------------------------------------------------------
