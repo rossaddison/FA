@@ -10,15 +10,20 @@ declare(strict_types=1);
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
+	// TypeDoesNotContainNull here is a Psalm artifact: psalm.xml stubs $path_to_root as always
+	// a set string, but that's only true once it's been set by the normal include chain -- this
+	// guard exists specifically to catch someone requesting this file directly, bypassing that
+	// chain entirely, which is exactly the case the stub can't model
 	if (!isset($path_to_root) || isset($_GET['path_to_root']) || isset($_POST['path_to_root']))
 		die(_("Restricted access"));
 	include_once(dirname(__DIR__) . "/includes/ui.inc");
 	include_once(dirname(__DIR__) . "/includes/page/header.inc");
 
+	$user_company = user_company();
 	$js = "<script".csp_nonce_attr()." language='JavaScript' type='text/javascript'>
 function defaultCompany()
 {
-	document.forms[0].company_login_name.options[".user_company()."].selected = true;
+	document.forms[0].company_login_name.options[".(string) $user_company."].selected = true;
 }
 </script>";
 
@@ -80,7 +85,8 @@ function defaultCompany()
 	
 	div_start('_page_body');
 	br();br();
-	start_form(false, false, $_SESSION['timeout']['uri'], "loginform");
+	$timeout_uri = $_SESSION['timeout']['uri'] ?? null;
+	start_form(false, false, is_scalar($timeout_uri) ? $timeout_uri : null, "loginform");
 	start_table(false, "class='login'");
 
 	start_row();
@@ -97,7 +103,11 @@ function defaultCompany()
 
 	$value = (bool)$login_timeout ? session_obj('wa_current_user')->loginname : (sysprefs()->allow_demo_mode ? "demouser":"");
 
-	$allow = SECURE_ONLY !== true ? true : ((bool)($_SERVER['HTTPS'] ?? null) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_NAME'] === "localhost";
+	// RedundantCondition here is a Psalm artifact, not a bug: SECURE_ONLY is defined as the
+	// literal `false` in includes/session.inc (allConstantsGlobal resolves it to that value for
+	// analysis), but it's deliberately admin-editable to true/null for a stricter deployment --
+	// same allConstantsGlobal caveat already documented for TB_PREF in doc/DATA_FLOW_ARCHITECTURE.md
+	$allow = SECURE_ONLY !== true ? true : ((bool)($_SERVER['HTTPS'] ?? null) && ($_SERVER['HTTPS'] ?? null) !== 'off') || ($_SERVER['SERVER_NAME'] ?? '') === "localhost";
 
 	if ($allow) {
 
@@ -111,8 +121,15 @@ function defaultCompany()
 			hidden('company_login_name', user_company());
 		} else {
 			$coy =  user_company();
-			if (!isset($coy))
+			if (!isset($coy)) {
+				/** @var int|string $def_coy */
+				$def_coy = $def_coy;
 				$coy = $def_coy;
+			}
+			// RedundantCondition here is a Psalm artifact: psalm.xml stubs $db_connections as
+			// always a non-null array, but that only describes its value once config_db.php
+			// (written during install) has actually been loaded -- same defensive-isset pattern
+			// already documented in includes/session.inc for the identical reason
 			if (isset($db_connections)) {
 				if (!@sysprefs()->text_company_selection) {
 					echo "<tr><td>"._("Company")."</td><td><select name='company_login_name'>\n";
@@ -133,11 +150,16 @@ function defaultCompany()
 	label_cell($demo_text, "colspan=2 align='center' id='log_msg'");
 	end_row();
 	end_table(1);
-	echo "<input type='hidden' id=ui_mode name='ui_mode' value='".!fallback_mode()."' >\n";
+	echo "<input type='hidden' id=ui_mode name='ui_mode' value='".(string)(!fallback_mode())."' >\n";
 	if ($allow) {
 		echo "<center><input type='submit' value='&nbsp;&nbsp;"._("Login -->")."&nbsp;&nbsp;' name='SubmitUser'"
 			."".fa_action_attrs(in_ajax() ? 'retry' : 'set-fullmode')."".(isset($blocked) ? " disabled" : '')." ></center>\n";
 	}		
+	// $_SESSION['timeout'] is always set immediately before this file is include()'d
+	// (includes/session.inc, right before `include(.../access/login.php)`), so the possibly-
+	// undefined-offset concern here is a Psalm include-boundary artifact, not a real bug.
+	// $p/$val/$v below are genuinely mixed: 'post' is a verbatim copy of $_POST, resent as-is
+	// with the login form so the original request isn't lost on a session timeout
 	foreach($_SESSION['timeout']['post'] as $p => $val) {
 		// add all request variables to be resend together with login data
 		if (!in_array($p, array('ui_mode', 'user_name_entry_field', 
