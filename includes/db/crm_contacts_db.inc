@@ -37,7 +37,7 @@ function add_crm_person(string|int|float|bool|null $ref, string|int|float|bool|n
 	$ret = db_query($sql, "Can't insert crm person");
 	$id = db_insert_id();
 	if ($ret && (bool)$cat_ids) {
-		if(!update_person_contacts($id, $cat_ids, $entity))
+		if(!update_person_contacts($id, $cat_ids, is_scalar($entity) ? $entity : null))
 			return null;
 	}
 	commit_transaction();
@@ -65,7 +65,7 @@ function update_crm_person(string|int|float|bool|null $id, string|int|float|bool
 
 	$ret = db_query($sql, "Can't update crm person");
 	if ($ret) {
-		if(!update_person_contacts($id, $cat_ids, $entity, $type))
+		if(!update_person_contacts($id, $cat_ids, is_scalar($entity) ? $entity : null, $type))
 			return null;
 	}
 	commit_transaction();
@@ -105,8 +105,8 @@ function get_crm_persons(string|int|float|bool|null $type=null, string|int|float
 	if ((bool)$action) 
 		$sel[] = 't.action='.db_escape($action);
 
-	if ($entity) 
-		$sel[] = 'r.entity_id='.db_escape($entity);
+	if ($entity)
+		$sel[] = 'r.entity_id='.db_escape(is_scalar($entity) ? $entity : null);
 
 	if ((bool)$person)
 		$sel[] = 'r.person_id='.db_escape($person);
@@ -136,6 +136,8 @@ function get_crm_person(string|int|float|bool|null $id)
 	$res = db_select($sql, "Can't get crm persons");
 
 	$person = db_fetch($res);
+	if ($person === false)
+		return false;
 	$person['contacts'] = get_person_contacts($id);
 
 	return $person;
@@ -172,7 +174,7 @@ function update_person_contacts(string|int|float|bool|null $id, array $cat_ids, 
 	$ret = db_query($sql, "Can't delete person contacts");
 
 	if($ret && count($cat_ids)) {
-		$cat_ids = array_map('db_escape', $cat_ids);
+		$cat_ids = array_map(fn($v) => db_escape(is_scalar($v) ? $v : null), $cat_ids);
 		$sql = "INSERT INTO ".TB_PREF."crm_contacts (person_id,type,action,entity_id)
 			SELECT ".db_escape($id).",t.type, t.action,".db_escape($entity_id, true)."
 			FROM ".TB_PREF."crm_categories t WHERE t.id=".implode(' OR t.id=', $cat_ids);
@@ -188,7 +190,7 @@ function delete_entity_contacts(?string $class, mixed $entity): void
 {
 	// cleanup
 	$res = get_crm_persons($class, null, $entity, null, true);
-	delete_crm_contacts(null, $class, $entity);
+	delete_crm_contacts(null, $class, is_scalar($entity) ? $entity : null);
 	while($person = db_fetch($res)) {
 		$rels = get_person_contacts($person['id']);
 		if (count($rels) == 0) {
@@ -302,6 +304,7 @@ function delete_crm_contacts(string|int|float|bool|null $person_id = null, strin
 {
 	$sql = "DELETE FROM ".TB_PREF."crm_contacts WHERE ";
 
+	$where = array();
 	if ((bool)$person_id)
 		$where[] = 'person_id='.db_escape($person_id);
 	if ((bool)$type)
@@ -327,9 +330,9 @@ function get_crm_contact(string|int|float|bool|null $id)
 		.TB_PREF."crm_contacts r WHERE r.type=t.type AND r.action=t.action AND r.person_id=p.id"
 		." AND r.id=".db_escape($id);
 	$ret = db_query($sql, "Can't get crm contact");
-	if($ret)
-		return 	db_fetch($ret, "Can't fetch contact data");
-	return $ret;
+	if($ret instanceof mysqli_result)
+		return 	db_fetch($ret);
+	return false;
 }
 
 /*

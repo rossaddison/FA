@@ -1545,6 +1545,32 @@ Found by chasing Psalm's `TaintedSSRF`/`TaintedFile` findings in
   instead of failing gracefully. Added an explicit `$f !== false` guard
   around both write/close pairs.
 
+- **`includes/db/crm_contacts_db.inc` — `delete_crm_contacts()`.** Built its
+  `WHERE` clause entirely out of `$where[] = ...` pushes inside four `if
+  ((bool)$param)` checks, with `$where` never initialized beforehand. If
+  every one of its four params (`$person_id`/`$type`/`$entity_id`/`$action`,
+  all defaulting to `null`) is falsy, `$where` stays completely undefined
+  and the final `implode(' AND ', $where)` receives `null` instead of an
+  array — a `TypeError`, not a warning, under `declare(strict_types=1)`.
+  Its two real callers (`includes/db/crm_contacts_db.inc`'s own
+  `delete_entity_contacts()`, and `includes/ui/contacts_view.inc`'s
+  `contacts_view::_delete_item()`) both happen to always pass at least one
+  genuinely truthy argument today, so this hasn't fired yet, but nothing
+  guarantees that for every future caller. Initialized `$where = array();`
+  before the four checks.
+
+- **`includes/db/crm_contacts_db.inc` — `get_crm_person()`.** `$person =
+  db_fetch($res); $person['contacts'] = ...;` with no check that
+  `db_fetch()` (declared `array|false`) actually returned an array —
+  assigning an array offset on `false` still "works" today via PHP's
+  deprecated auto-vivification of `false` into an array (a
+  `E_DEPRECATED` notice since PHP 8.1, slated to become a fatal `TypeError`
+  in a future major version), silently returning a one-key
+  `['contacts' => [...]]` array instead of the documented `false` on a
+  lookup miss. Added an explicit `if ($person === false) return false;`
+  guard, matching the function's own existing `@return ...|false`
+  docblock.
+
 ## Missing feature (implemented, not just guarded)
 
 - **`includes/ui/attachment.inc` — no attachment size limit.** `db_insert()`
