@@ -478,6 +478,20 @@ a stand-in for a boolean) reaching a native, strictly-typed parameter.
   `inventory/inquiry/stock_movements.php`) and are worth the same fix
   whenever Psalm's sweep reaches them.
 
+- **`fixed_assets/process_depreciation.php` — `show_gl_controls()`.**
+  `next_depreciation_date()` (`fixed_assets/includes/depreciation.inc`)
+  returns `int|false`, returning `false` whenever `strtotime()` can't
+  parse the selected fixed asset's `depreciation_date` (e.g. an asset
+  that's never had one set). The result was passed straight into two
+  `date()` calls, whose second parameter is `?int` under this file's own
+  `strict_types=1`. Confirmed directly via a standalone repro: `date('F',
+  false)` throws `TypeError: ... must be of type ?int, false given` every
+  time. Reachable simply by selecting any fixed asset with an unset or
+  unparseable depreciation date on this page — a guaranteed crash, not an
+  edge case. Fixed by falling back to `time()` when `next_depreciation_date()`
+  returns `false`, since the result only ever feeds a display label
+  ("Starting from month: ...").
+
 ## Data-loss-adjacent: missing audit trail / dead success link
 
 - **`inventory/includes/db/items_trans_db.inc` — `stock_cost_update()`.**

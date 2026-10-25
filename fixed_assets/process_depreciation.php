@@ -56,11 +56,22 @@ function handle_submit_process_depreciation(): void
   $item = row_or_empty(get_item(post_scalar('stock_id')));
 
   $period = get_company_pref('depreciation_period');
-  $gl_rows = compute_gl_rows_for_depreciation($item, $_POST['months'], $period);
+  $months_post = $_POST['months'] ?? null;
+  $months_guard = is_array($months_post) || is_string($months_post) ? $months_post : null;
+  $gl_rows = compute_gl_rows_for_depreciation($item, $months_guard, $period);
 
-  $trans_no = process_fixed_asset_depreciation(post_scalar('stock_id'), $gl_rows, $_POST['refline'], $_POST['memo_']);
+  $stock_id_post = post_scalar('stock_id');
+  $refline_post = $_POST['refline'] ?? null;
+  $memo_post = $_POST['memo_'] ?? null;
+  $trans_no = process_fixed_asset_depreciation(
+    is_string($stock_id_post) ? $stock_id_post : null,
+    $gl_rows,
+    is_array($refline_post) || is_string($refline_post) ? $refline_post : null,
+    is_array($memo_post) || is_string($memo_post) ? $memo_post : null);
 
-  meta_forward($_SERVER['PHP_SELF'], "AddedID=".$trans_no);
+  // process_fixed_asset_depreciation() can return false (write_journal_entries() failed);
+  // "AddedID=" with nothing after it is the accurate representation of that today
+  meta_forward($_SERVER['PHP_SELF'] ?? '', "AddedID=".(is_numeric($trans_no) ? (string) $trans_no : ''));
 }
 
 //---------------------------------------------------------------------------------------------
@@ -72,14 +83,15 @@ if (get_post('process'))
 
 if (isset($_GET['AddedID'])) 
 {
-  $trans_no = $_GET['AddedID'];
+  $trans_no_get = $_GET['AddedID'];
+  $trans_no = is_array($trans_no_get) ? null : $trans_no_get;
   $trans_type = ST_JOURNAL;
 
   display_notification(_("The fixed asset has been depreciated for this year"));
 
   display_note(get_gl_view_str($trans_type, $trans_no, _("View the GL &Postings for this Depreciation")), 1, 0);
 
-  hyperlink_no_params($_SERVER['PHP_SELF'], _("Depreciate &Another Fixed Asset"));
+  hyperlink_no_params($_SERVER['PHP_SELF'] ?? '', _("Depreciate &Another Fixed Asset"));
 
 	display_footer_exit();
 }
@@ -105,15 +117,16 @@ function show_gl_rows(): void {
   table_header($th);
   $k = 0; //row colour counter
 
-  $period = get_company_pref('depreciation_period'); 
-  $gl_rows = compute_gl_rows_for_depreciation($item, $_POST['months'], $period);
+  $period = get_company_pref('depreciation_period');
+  $months_post2 = $_POST['months'] ?? null;
+  $gl_rows = compute_gl_rows_for_depreciation($item, is_array($months_post2) || is_string($months_post2) ? $months_post2 : null, $period);
 
   foreach($gl_rows as $myrow)
   {
     alt_table_row_color($k);
     label_cell($item['stock_id']);
     label_cell($myrow["date"]);
-    label_cell((string)$item['cogs_account'].' '.get_gl_account_name($item["cogs_account"]));
+    label_cell((string)$item['cogs_account'].' '.(get_gl_account_name($item["cogs_account"]) ?? ''));
     amount_cell($myrow["value"]);
     label_cell("");
     end_row();
@@ -121,7 +134,7 @@ function show_gl_rows(): void {
     alt_table_row_color($k);
     label_cell($item['stock_id']);
     label_cell($myrow["date"]);
-    label_cell((string)$item["adjustment_account"].' '.get_gl_account_name($item["adjustment_account"]));
+    label_cell((string)$item["adjustment_account"].' '.(get_gl_account_name($item["adjustment_account"]) ?? ''));
     label_cell("");
     amount_cell($myrow["value"]);
     end_row();
@@ -161,6 +174,13 @@ function show_gl_controls(): void {
     $_POST['date'] = Today();
 
   $start = next_depreciation_date($myrow['depreciation_date']);
+  // next_depreciation_date() returns false when strtotime() can't parse
+  // depreciation_date (e.g. an asset with no depreciation_date set yet);
+  // date() is strictly ?int under strict_types, so passing false straight
+  // through is a real TypeError crash, confirmed via a standalone repro.
+  // Falling back to the current time keeps this a display label only.
+  if ($start === false)
+    $start = time();
   $start_text =  _(date('F', $start)).' '.date('Y', $start);
 
   //date_row(_("Starting from month").":", 'depreciation_start', '', null, 0, 0, 0, null, true);
@@ -173,7 +193,7 @@ function show_gl_controls(): void {
     label_row(_("Period").":", '1 year');
     hidden ('months');
   }
-  refline_list_row(_("Reference line:"), 'refline', ST_JOURNAL, null, false, true);
+  refline_list_row(_("Reference line:"), 'refline', ST_JOURNAL, null, false);
   textarea_row(_("Memo:"), 'memo_', null, 40, 4);
 
   end_table(1);
