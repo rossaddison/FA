@@ -67,11 +67,12 @@ class archive
 	/**
 	 * Overridden by tar_file with a real, impure implementation (writes to
 	 * $this->archive, mutates $this->error); base class is never used
-	 * standalone, so not marked pure.
+	 * standalone, so not marked pure. MissingPureAnnotation still fires here
+	 * (this stub body alone looks pure) and is left as an accepted, visible
+	 * finding rather than suppressed, per this project's standing
+	 * no-@psalm-suppress policy.
 	 * @return 0|1
 	 * @psalm-impure
-	 * @psalm-suppress MissingPureAnnotation this stub body looks pure in isolation,
-	 *   but its one real override is genuinely impure - see above
 	 */
 	function create_tar()
 	{
@@ -80,11 +81,11 @@ class archive
 
 	/**
 	 * Overridden by package (via gzip_file) with a real, impure gzip-writing
-	 * implementation; base class is never used standalone, so not marked pure.
+	 * implementation; base class is never used standalone, so not marked
+	 * pure. Same accepted MissingPureAnnotation leftover as create_tar()
+	 * above.
 	 * @return 0|1
 	 * @psalm-impure
-	 * @psalm-suppress MissingPureAnnotation this stub body looks pure in isolation,
-	 *   but its one real override is genuinely impure (file I/O) - see above
 	 */
 	function create_pkg()
 	{
@@ -548,9 +549,10 @@ class tar_file extends archive
 	}
 
 	/**
+	 * fopen() is real, impure file I/O - not actually mutation-free despite
+	 * Psalm's heuristic suggestion here.
 	 * @return false|resource
-	 * @psalm-suppress MissingPureAnnotation fopen() is real, impure file I/O -
-	 *   not actually mutation-free despite Psalm's heuristic suggestion here
+	 * @psalm-impure
 	 */
 	function open_archive()
 	{
@@ -601,8 +603,12 @@ class gzip_file extends tar_file
 	/**
 	 * gzopen() is real, impure file I/O - not actually mutation-free despite
 	 * the annotation this override previously (incorrectly) carried.
+	 * MissingPureAnnotation still fires despite @psalm-impure (unlike the
+	 * base fopen() version above, which Psalm's own stubs already know is
+	 * impure) and is left as an accepted, visible finding rather than
+	 * suppressed, per this project's standing no-@psalm-suppress policy.
 	 * @return false|resource
-	 * @psalm-suppress MissingPureAnnotation see above - not actually pure
+	 * @psalm-impure
 	 */
 	#[\Override]
 	function open_archive()
