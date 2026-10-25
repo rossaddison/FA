@@ -23,7 +23,7 @@ function add_work_order_issue(string|int|float|bool|null $woid, string|null $ref
 	$args->trans_no = 0;
 	hook_db_prewrite($args, ST_MANUISSUE);
 
-	$issue_date = date2sql($date_);
+	$issue_date = date2sql(is_string($date_) ? $date_ : null);
 	if ($issue_date == "")
 		$issue_date = "0000-00-00";
 	$sql = "INSERT INTO ".TB_PREF."wo_issues (workorder_id, reference, issue_date, loc_code, workcentre_id)
@@ -37,12 +37,14 @@ function add_work_order_issue(string|int|float|bool|null $woid, string|null $ref
 
 	$wo = row_or_empty(get_work_order($woid));
 
-	foreach ($items as $item)
+	foreach (($items ?? array()) as $item)
 	{
+		/** @var line_item $item */
+		$item = $item;
 		if ((bool)$to_work_order)	// otherwise it is material return to inventory
 			$item->quantity = -$item->quantity;
 
-		$unit_cost = get_unit_cost($item->stock_id);
+		$unit_cost = get_unit_cost((string) $item->stock_id);
 		// insert a -ve stock move for each item
 		add_stock_move(ST_MANUISSUE, $item->stock_id, $number,
 			$location, $date_, $memo_, -$item->quantity, $unit_cost);
@@ -54,8 +56,8 @@ function add_work_order_issue(string|int|float|bool|null $woid, string|null $ref
 
 		db_query($sql,"A work order issue item could not be added");
 
-		$unit_cost = get_unit_cost($item->stock_id);
-		$issue_cost = $unit_cost * $item->quantity;
+		$unit_cost = get_unit_cost((string) $item->stock_id);
+		$issue_cost = (float) $unit_cost * (float) $item->quantity;
 
         $stockitem = row_or_empty(get_item($item->stock_id));
 
@@ -66,7 +68,7 @@ function add_work_order_issue(string|int|float|bool|null $woid, string|null $ref
 			$ivaccount = $stockitem["cogs_account"];
 
         $total_cost += (float)add_gl_trans_std_cost(ST_MANUISSUE, $number, $date_, $ivaccount, 0, 0,
-                $date_.": "._("Issue of")." ".(string)$stockitem["description"], -$issue_cost);
+                (string) $date_.": "._("Issue of")." ".(string)$stockitem["description"], -$issue_cost);
 	}
 
     $stockitem = row_or_empty(get_item($wo['stock_id']));
@@ -74,7 +76,7 @@ function add_work_order_issue(string|int|float|bool|null $woid, string|null $ref
    	$wip_account = $stockitem["wip_account"];
 
     add_gl_trans_std_cost(ST_MANUISSUE, $number, $date_, $wip_account,
-        0, 0, $date_.": "._("Issue to")." ".(string)$stockitem["description"], -$total_cost);
+        0, 0, (string) $date_.": "._("Issue to")." ".(string)$stockitem["description"], -$total_cost);
 
 	if ((bool)$memo_)
 		add_comments(ST_MANUISSUE, $number, $date_, $memo_);
@@ -171,7 +173,7 @@ function check_void_wo_issue(string|int|float|bool|null $issue_no)
 {
 	$issue = row_or_empty(get_work_order_issue($issue_no));
 
-	return $issue['closed'] ? $issue['workorder_id'] : 0;
+	return (bool) ($issue['closed'] ?? null) ? $issue['workorder_id'] : 0;
 }
 
 //--------------------------------------------------------------------------------------
@@ -185,7 +187,7 @@ function void_work_order_issue(string|int|float|bool|null $type_no): void
 	if ($void_entry)
 		return;
 
-	if (check_void_wo_issue($type_no))
+	if ((bool) check_void_wo_issue($type_no))
 		return;
 
 	// FIXME update issued material cost
