@@ -29,11 +29,11 @@ if (sysprefs()->use_popup_windows)
 page(_($help_context = "View or Print Transactions"), false, false, "", $js);
 
 //----------------------------------------------------------------------------------------
-function view_link(array $trans)
+function view_link(array $trans): ?string
 {
 	if (!isset($trans['type']))
 		$trans['type'] = $_POST['filterType'];
-	return get_trans_view_str($trans["type"], $trans["trans_no"]);
+	return get_trans_view_str(is_scalar($trans["type"]) ? $trans["type"] : null, is_scalar($trans["trans_no"]) ? $trans["trans_no"] : null);
 }
 
 /** @return non-empty-string|null */
@@ -41,28 +41,30 @@ function prt_link(array $row)
 {
 	if (!isset($row['type']))
 		$row['type'] = $_POST['filterType'];
-  	if ($row['type'] == ST_PURCHORDER || $row['type'] == ST_SALESORDER || $row['type'] == ST_SALESQUOTE || 
+	$type = is_scalar($row['type']) ? $row['type'] : null;
+	$trans_no = is_scalar($row['trans_no']) ? $row['trans_no'] : null;
+  	if ($row['type'] == ST_PURCHORDER || $row['type'] == ST_SALESORDER || $row['type'] == ST_SALESQUOTE ||
   		$row['type'] == ST_WORKORDER)
- 		return print_document_link($row['trans_no'], _("Print"), true, $row['type'], ICON_PRINT);
- 	else	
-		return print_document_link((string)$row['trans_no']."-".(string)$row['type'], _("Print"), true, $row['type'], ICON_PRINT);
+ 		return print_document_link($trans_no, _("Print"), true, $type, ICON_PRINT);
+ 	else
+		return print_document_link(((string) $trans_no)."-".((string) $type), _("Print"), true, $type, ICON_PRINT);
 }
 
-function gl_view(array $row)
+function gl_view(array $row): string|int|float|bool|null
 {
 	if (!isset($row['type']))
 		$row['type'] = $_POST['filterType'];
-	return get_gl_view_str($row["type"], (int) $row["trans_no"]);
+	return get_gl_view_str(is_scalar($row["type"]) ? $row["type"] : null, (int) $row["trans_no"]);
 }
 
-function date_view(array $row)
+function date_view(array $row): string|int|float|bool|null
 {
-	return $row['trans_date'];
+	return is_scalar($row['trans_date']) ? $row['trans_date'] : null;
 }
 
-function ref_view(array $row)
+function ref_view(array $row): string|int|float|bool|null
 {
-	return $row['ref'];
+	return is_scalar($row['ref']) ? $row['ref'] : null;
 }
 
 function viewing_controls(): void
@@ -115,8 +117,8 @@ function handle_search(): void
 {
 	if (check_valid_entries()==true)
 	{
-		$trans_ref = false;
-		$sql = get_sql_for_view_transactions(get_post('filterType'), get_post('FromTransNo'), get_post('ToTransNo'), $trans_ref);
+		$trans_ref = null;
+		$sql = get_sql_for_view_transactions(post_scalar('filterType'), post_scalar('FromTransNo'), post_scalar('ToTransNo'), $trans_ref);
 		if ($sql == "")
 			return;
 
@@ -135,7 +137,7 @@ function handle_search(): void
 		if(!$print_out) {
 			array_remove($cols, 3);
 		}
-		if(!$trans_ref) {
+		if(!(bool) $trans_ref) {
 			array_remove($cols, 1);
 		}
 
