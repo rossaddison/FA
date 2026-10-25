@@ -57,7 +57,11 @@ $mb_flag = get_mb_flag(post_scalar('stock_id'));
 $kitset_or_service = false;
 
 div_start('status_tbl');
-if (is_service($mb_flag))
+// get_mb_flag() returns -1 for a stock_id with no matching row (includes/db/inventory_db.inc) --
+// is_service() is declared ?string under declare(strict_types=1), so passing that -1 through
+// directly is a real TypeError crash, not just a Psalm type mismatch (confirmed via a standalone
+// repro); -1 isn't a service, so treat it as the non-service case rather than pass it as a string.
+if (is_service(is_string($mb_flag) ? $mb_flag : null))
 {
 	display_note(_("This is a service and cannot have a stock holding, only the total quantity on outstanding sales orders is shown."), 0, 1);
 	$kitset_or_service = true;
@@ -77,7 +81,10 @@ else
 		_("Demand"), _("Available"), _("On Order"));
 }
 table_header($th);
-$dec = get_qty_dec(post_scalar('stock_id'));
+// post_scalar() is declared string|int|float|bool|null, but get_qty_dec() is ?string under
+// declare(strict_types=1) -- guard the same way as get_mb_flag()'s result above
+$stock_id_scalar = post_scalar('stock_id');
+$dec = get_qty_dec(is_string($stock_id_scalar) ? $stock_id_scalar : null);
 $j = 1;
 $k = 0; //row colour counter
 
@@ -86,15 +93,15 @@ while ($myrow = db_fetch($loc_details))
 
 	alt_table_row_color($k);
 
-	$demand_qty = get_demand_qty(post_scalar('stock_id'), $myrow["loc_code"]);
+	$demand_qty = (float) get_demand_qty(post_scalar('stock_id'), $myrow["loc_code"]);
 	$demand_qty += get_demand_asm_qty(post_scalar('stock_id'), $myrow["loc_code"]);
 
-	$qoh = get_qoh_on_date(post_scalar('stock_id'), $myrow["loc_code"]);
+	$qoh = (float) get_qoh_on_date(post_scalar('stock_id'), $myrow["loc_code"]);
 
 	if ($kitset_or_service == false)
 	{
-		$qoo = get_on_porder_qty(post_scalar('stock_id'), $myrow["loc_code"]);
-		$qoo += get_on_worder_qty(post_scalar('stock_id'), $myrow["loc_code"]);
+		$qoo = (float) get_on_porder_qty(post_scalar('stock_id'), $myrow["loc_code"]);
+		$qoo += (float) get_on_worder_qty(post_scalar('stock_id'), $myrow["loc_code"]);
 		label_cell($myrow["location_name"]);
 		qty_cell($qoh, false, $dec);
         qty_cell($myrow["reorder_level"], false, $dec);

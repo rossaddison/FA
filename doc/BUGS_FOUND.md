@@ -456,6 +456,28 @@ a stand-in for a boolean) reaching a native, strictly-typed parameter.
   `array_combine()` already returns the plain array `array_selector()`
   needs — so the fix is simply to drop it.
 
+- **`inventory/inquiry/stock_status.php`.** `get_mb_flag()`
+  (`includes/db/inventory_db.inc`) returns the sentinel `-1` when the
+  given `stock_id` has no matching row in `stock_master`, but
+  `is_service()` is declared `?string`, and this file declares
+  `strict_types=1`. Confirmed directly — a standalone repro passing
+  `-1` to a `?string`-typed function under `strict_types=1` throws
+  `TypeError: ... must be of type ?string, int given` every time.
+  Reachable whenever this page is viewed for a `stock_id` that's been
+  deleted (or otherwise doesn't exist) while still referenced by the
+  "last selected stock item" session value or a stale URL/bookmark.
+  Fixed by guarding with `is_string($mb_flag) ? $mb_flag : null` at the
+  call site — `-1` isn't a service, so this preserves the intended
+  behavior rather than just suppressing the crash. The same file also
+  had `get_qty_dec(post_scalar('stock_id'))` with the identical
+  strict-type mismatch (`post_scalar()` returns
+  `string|int|float|bool|null`, `get_qty_dec()` wants `?string`) —
+  guarded the same way. Two sibling files share this exact
+  `get_qty_dec(post_scalar(...))` pattern verbatim
+  (`purchasing/includes/ui/po_ui.inc`,
+  `inventory/inquiry/stock_movements.php`) and are worth the same fix
+  whenever Psalm's sweep reaches them.
+
 ## Data-loss-adjacent: missing audit trail / dead success link
 
 - **`inventory/includes/db/items_trans_db.inc` — `stock_cost_update()`.**
