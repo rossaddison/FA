@@ -20,7 +20,7 @@ function add_to_order(items_cart &$order, string|array|null $new_item, int|float
     $stock_id = is_array($new_item) ? null : $new_item;
     $cost = is_array($standard_cost) ? null : $standard_cost;
     if ($order->find_cart_item($stock_id))
-         display_error(_("For Part :") . $new_item . " " . "This item is already on this document. You can change the quantity on the existing line if necessary.");
+         display_error(_("For Part :") . (string) $stock_id . " " . "This item is already on this document. You can change the quantity on the existing line if necessary.");
 	else
          $order->add_to_cart (count($order->line_items), $stock_id, $new_item_qty, $cost);
 }
@@ -139,7 +139,7 @@ function display_adjustment_items(?string $title, items_cart &$order): void
 
 //---------------------------------------------------------------------------------
 
-function adjustment_edit_item_controls(items_cart &$order, string|int|float|bool|null $line_no=-1): void
+function adjustment_edit_item_controls(items_cart &$order, int $line_no=-1): void
 {
 	start_row();
 
@@ -175,9 +175,13 @@ function adjustment_edit_item_controls(items_cart &$order, string|int|float|bool
 
    	$item_info = row_or_empty(get_item_edit_info((string) post_scalar('stock_id')));
    	if ($item_info) {
-		$dec = $item_info['decimals'];
-		$_POST['std_cost'] = price_decimal_format($item_info["material_cost"], $dec2);
-		$_POST['units'] = $item_info["units"];
+		// $material_cost/$units are genuinely mixed: $item_info is an untyped DB row,
+		// guarded with is_scalar() immediately below before any use
+		$dec = (int) (is_scalar($item_info['decimals']) ? $item_info['decimals'] : 0);
+		$material_cost = $item_info["material_cost"];
+		$_POST['std_cost'] = price_decimal_format(is_scalar($material_cost) ? $material_cost : null, $dec2);
+		$units = $item_info["units"];
+		$_POST['units'] = is_scalar($units) ? $units : null;
 	} else
 		$dec = 0;
 	if ($order->fixed_asset) {
