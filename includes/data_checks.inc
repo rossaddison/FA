@@ -49,17 +49,17 @@ function db_has_currency_rates(string|int|float|bool|null $currency, string|int|
 {
 	global $path_to_root;
 
-	$date = date2sql($date_);
+	$date = date2sql(is_string($date_) ? $date_ : null);
 
 	if (is_company_currency($currency))
 		return 1;
 	$ret = check_empty_result("SELECT COUNT(*) FROM ".TB_PREF."exchange_rates WHERE curr_code = '$currency' && date_ <= '$date'");
-	if ($ret == 0 && $msg)
+	if (!$ret && $msg)
 	{
 		$link = $path_to_root . "/gl/manage/exchange_rates.php?curr_abrev="
 			. urlencode((string) $currency) . "&date_=" . urlencode((string) $date_);
 		display_error(sprintf(_("Cannot retrieve exchange rate for currency %s as of %s. Please add exchange rate manually on %sExchange Rates page%s."),
-					 $currency, $date_, "<a href='$link'>", "</a>"), true);
+					 (string) $currency, (string) $date_, "<a href='$link'>", "</a>"), true);
 	}
 	return $ret;
 }
@@ -574,7 +574,7 @@ function check_db_has_tags(string|int|float|bool|null $type, string|int|float|bo
 
 function check_empty_result(?string $sql): bool
 {
-	$result = db_select($sql, "could not do check empty query");	
+	$result = db_select($sql ?? '', "could not do check empty query");
 	
 	$myrow = db_fetch_row($result);
 	return is_array($myrow) ? $myrow[0] > 0 : false;
@@ -584,9 +584,10 @@ function check_empty_result(?string $sql): bool
 //	Return 1 if number has proper form and is within <min, max> range
 //
 function check_int(string|int|float|bool|null $postname, string|int|float|bool|null $min=null, string|int|float|bool|null $max=null): int {
-	if(!isset($_POST[$postname]))
+	$postname_str = is_string($postname) ? $postname : '';
+	if(!isset($_POST[$postname_str]))
 	  return 0;
-    $num = input_num($postname);
+    $num = input_num($postname_str);
     if(!is_int($num)) 
 	  return 0;
     if (isset($min) && ($num<$min)) 
@@ -620,7 +621,7 @@ function check_is_closed(string|int|float|bool|null $type, string|int|float|bool
     if (($type_no > 0) && is_closed_trans($type, $type_no))
     {
     	if (!(bool)$msg)
-    		$msg = sprintf(_("%s #%s is closed for further edition."), $systypes_array[$type], $type_no);
+    		$msg = sprintf(_("%s #%s is closed for further edition."), $systypes_array[(int) $type], is_scalar($type_no) ? $type_no : '');
 	   	display_error($msg, true);
 		display_footer_exit();
 	}
@@ -646,7 +647,7 @@ function check_deferred_income_act(?string $msg): void
 {
 	global $path_to_root;
 
-    if (!get_company_pref('deferred_income_act')) 
+    if (!(bool) get_company_pref('deferred_income_act'))
     {
     	display_error($msg, true);
 		display_footer_exit();
@@ -657,9 +658,9 @@ function check_is_editable(string|int|float|bool|array|null $trans_type, string|
 {
 	if (!session_obj('wa_current_user')->can_access('SA_EDITOTHERSTRANS'))
 	{
-		$audit = get_audit_trail_last($trans_type, $trans_no);
+		$audit = row_or_empty(get_audit_trail_last($trans_type, $trans_no));
 
-		if (session_obj('wa_current_user')->user != $audit['user'])
+		if (session_obj('wa_current_user')->user != ($audit['user'] ?? null))
 		{
 	    	if (!(bool)$msg)
 		    	$msg = '<b>'._("You have no edit access to transactions created by other users.").'</b>';
@@ -668,17 +669,20 @@ function check_is_editable(string|int|float|bool|array|null $trans_type, string|
 		}
 	}
 	if (!in_array($trans_type, array(ST_SALESORDER, ST_SALESQUOTE, ST_PURCHORDER, ST_WORKORDER)))
-		check_is_closed($trans_type, $trans_no, $msg);
+		check_is_closed(is_scalar($trans_type) ? $trans_type : null, $trans_no, $msg);
 }
 
 function check_reference(string|int|float|bool|array|null $reference, string|int|float|bool|null $trans_type, string|int|float|bool|array|null $trans_no=0, mixed $context=null, string|int|float|bool|null $line=null): bool
 {
 
-	if (!refs()->is_valid($reference, $trans_type, $context, $line))
+	$reference_scalar = is_scalar($reference) ? $reference : null;
+	$context_valid = is_string($context) || is_array($context) ? $context : null;
+	$line_valid = is_string($line) || is_int($line) ? $line : null;
+	if (!refs()->is_valid($reference_scalar, $trans_type, $context_valid, $line_valid))
 	{
 		display_error(_("The entered reference is invalid.")); return false;
 	}
-	elseif (!refs()->is_new_reference($reference, $trans_type, $trans_no))
+	elseif (!refs()->is_new_reference($reference_scalar, $trans_type, is_scalar($trans_no) ? $trans_no : null))
 	{
 		display_error( _("The entered reference is already in use.")); return false;
 	}
@@ -689,7 +693,8 @@ function check_sys_pref(string|int|float|bool|null $name, string|int|float|bool|
 {
 	global $path_to_root;
 
-	if (get_company_pref($name) === $empty)
+	$name_str = is_string($name) ? $name : null;
+	if (get_company_pref($name_str) === $empty)
 	{
 		display_error(menu_link("/admin/gl_setup.php", $msg), true);
 		display_footer_exit();

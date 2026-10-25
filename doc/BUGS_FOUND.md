@@ -966,6 +966,22 @@ Found by chasing Psalm's `TaintedSSRF`/`TaintedFile` findings in
   `check_application_access()` on it, matching the pattern already used
   correctly in `includes/yii/menu.inc`.
 
+- **`includes/data_checks.inc` — `check_is_editable()`.** `$audit =
+  get_audit_trail_last($trans_type, $trans_no);` with no check that a
+  row was actually found — `get_audit_trail_last()` (`includes/db/
+  audit_trail_db.inc`) returns `array|false`, defaulting to `false`
+  whenever the transaction has no audit trail entry yet (e.g. a
+  brand-new transaction never edited before). Reading `$audit['user']`
+  off `false` silently evaluates to `null` (a warning, not fatal), so
+  `session_obj('wa_current_user')->user != $audit['user']` compared
+  the current user's id against `null` — true for basically every
+  real user id, which meant the "no edit access to transactions
+  created by other users" block fired for the *wrong* reason on any
+  transaction with no audit history, incorrectly denying a user edit
+  access to their own just-created record instead of allowing it.
+  Wrapped with `row_or_empty()` and compared against `$audit['user']
+  ?? null` explicitly.
+
 ## Data-correctness bugs
 
 - **`purchasing/includes/purchasing_db.inc` — `add_direct_supp_trans()`.**
