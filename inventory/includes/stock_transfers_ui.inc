@@ -24,7 +24,7 @@ function add_to_order(items_cart &$order, string|null $new_item, string|int|floa
 		if ($order->find_cart_item($item_stock_id))
 			display_error(_("For Part :") . (string)$item['stock_id'] . " " . "This item is already on this document. You can change the quantity on the existing line if necessary.");
 		else
-			$order->add_to_cart (count($order->line_items), $item_stock_id, $new_item_qty * (float)$item['quantity'], is_array($standard_cost) ? null : $standard_cost);
+			$order->add_to_cart (count($order->line_items), $item_stock_id, (float) $new_item_qty * (float)$item['quantity'], is_array($standard_cost) ? null : $standard_cost);
 	}
 }
 
@@ -110,13 +110,14 @@ function transfer_edit_item_controls(items_cart &$order, string|int|float|bool|n
 	$id = find_submit('Edit');
 	if ($line_no != -1 && $line_no == $id)
 	{
-		$_POST['stock_id'] = $order->line_items[$id]->stock_id;
-		$_POST['qty'] = qty_format($order->line_items[$id]->quantity, $order->line_items[$id]->stock_id, $dec);
-		$_POST['units'] = $order->line_items[$id]->units;
+		$line_item_id = (int) $id;
+		$_POST['stock_id'] = $order->line_items[$line_item_id]->stock_id;
+		$_POST['qty'] = qty_format($order->line_items[$line_item_id]->quantity, $order->line_items[$line_item_id]->stock_id, $dec);
+		$_POST['units'] = $order->line_items[$line_item_id]->units;
 
 		hidden('stock_id', post_scalar('stock_id'));
 		label_cell(post_scalar('stock_id'));
-		label_cell($order->line_items[$id]->item_description);
+		label_cell($order->line_items[$line_item_id]->item_description);
 	    ajax()->activate('items_table');
 	}
 	else
@@ -131,18 +132,21 @@ function transfer_edit_item_controls(items_cart &$order, string|int|float|bool|n
 			ajax()->activate('qty');
 		}
 
-    	$item_info = row_or_empty(get_item_edit_info(post_scalar('stock_id')));
+		$stock_id_post = post_scalar('stock_id');
+    	$item_info = row_or_empty(get_item_edit_info(is_string($stock_id_post) ? $stock_id_post : null));
 
 		$dec = $item_info['decimals'];
-   		$_POST['qty'] = number_format2(0, $dec);
+   		$_POST['qty'] = number_format2(0, is_int($dec) || is_string($dec) ? $dec : 0);
 		$_POST['units'] = $item_info["units"];
 	}
 
 	if ($order->fixed_asset) {
 		hidden('qty', 1);
 		qty_cell(1, false, 0);
-	} else
-		small_qty_cells(null, 'qty', post_scalar('qty'), null, null, $dec);
+	} else {
+		$qty_post = post_scalar('qty');
+		small_qty_cells(null, 'qty', is_string($qty_post) ? $qty_post : null, null, null, is_scalar($dec) ? $dec : null);
+	}
 
 	label_cell(post_scalar('units'), '', 'units');
 
