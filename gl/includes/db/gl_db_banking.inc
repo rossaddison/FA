@@ -439,7 +439,7 @@ function write_bank_transaction(string|int|float|bool|null $trans_type, string|i
     	// we need to add a customer transaction record
 		// convert to customer currency
 		if (!isset($settled_amount)) // leaved for backward/ext compatibility
-			$cust_amount = (float) exchange_from_to(abs($total_amount), $currency, get_customer_currency($person_id), $date_);
+			$cust_amount = exchange_from_to(abs($total_amount), $currency, get_customer_currency($person_id), $date_);
 		else
 			$cust_amount = (float) $settled_amount;
 
@@ -456,7 +456,7 @@ function write_bank_transaction(string|int|float|bool|null $trans_type, string|i
     	// we need to add a supplier transaction record
 		// convert to supp currency
 		if (!isset($settled_amount)) // leaved for for backward/ext compatibility
-			$supp_amount = (float) exchange_from_to(abs($total_amount), $currency, get_supplier_currency($person_id), $date_);
+			$supp_amount = exchange_from_to(abs($total_amount), $currency, get_supplier_currency($person_id), $date_);
 		else
 			$supp_amount = (float) $settled_amount;
 

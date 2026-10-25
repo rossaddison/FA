@@ -31,7 +31,6 @@ function get_company_currency()
 
 //----------------------------------------------------------------------------------
 
-/** @return float(1)|null|string */
 function get_exchange_rate_from_home_currency(string|int|float|bool|null $currency_code, string|int|float|bool|null $date_): float|null|string
 {
 	global $path_to_root;
@@ -49,7 +48,7 @@ function get_exchange_rate_from_home_currency(string|int|float|bool|null $curren
 			. urlencode((string) $currency_code) . "&date_=" . urlencode((string) $date_);
 		display_error(
 			sprintf(_("Cannot retrieve exchange rate for currency %s as of %s. Please add exchange rate manually on %sExchange Rates page%s."),
-				 $currency_code, $date_, "<a href='$link'>", "</a>"));
+				 (string) $currency_code, (string) $date_, "<a href='$link'>", "</a>"));
 		return 1.000;
 	}
 
@@ -60,7 +59,7 @@ function get_exchange_rate_from_home_currency(string|int|float|bool|null $curren
 
 function get_exchange_rate_to_home_currency(string|int|float|bool|null $currency_code, string|int|float|bool|null $date_): float
 {
-	return 1 / (float) get_exchange_rate_from_home_currency($currency_code, $date_);
+	return 1.0 / (float) get_exchange_rate_from_home_currency($currency_code, $date_);
 }
 
 //----------------------------------------------------------------------------------
@@ -68,7 +67,7 @@ function get_exchange_rate_to_home_currency(string|int|float|bool|null $currency
 function to_home_currency(string|int|float|bool|null $amount, string|int|float|bool|null $currency_code, string|int|float|bool|null $date_): float
 {
 	$ex_rate = get_exchange_rate_to_home_currency($currency_code, $date_);
-	return round2($amount / $ex_rate,  user_price_dec());
+	return round2((float) $amount / $ex_rate,  user_price_dec());
 }
 
 //----------------------------------------------------------------------------------
@@ -96,10 +95,10 @@ function get_exchange_rate_from_to(string|int|float|bool|null $from_curr_code, s
 
 //--------------------------------------------------------------------------------
 
-function exchange_from_to(int|float|null $amount, ?string $from_curr_code, string|int|float|bool|null $to_curr_code, string|int|float|bool|null $date_)
+function exchange_from_to(int|float|null $amount, ?string $from_curr_code, string|int|float|bool|null $to_curr_code, string|int|float|bool|null $date_): float
 {
 	$ex_rate = get_exchange_rate_from_to($from_curr_code, $to_curr_code, $date_);
-	return $amount / $ex_rate;
+	return (float) $amount / (float) $ex_rate;
 }
 
 //--------------------------------------------------------------------------------
@@ -131,8 +130,8 @@ function exchange_variation(string|int|float|bool|null $pyt_type, string|int|flo
 	}
 	if (is_company_currency($curr))
 		return;
-	$inv_amt = round2($amount * (float)$trans['rate'], user_price_dec()); 
-	$pay_amt = round2($amount * (float)$pyt_trans['rate'], user_price_dec());
+	$inv_amt = round2((float) $amount * (float)$trans['rate'], user_price_dec());
+	$pay_amt = round2((float) $amount * (float)$pyt_trans['rate'], user_price_dec());
 	if ($inv_amt != $pay_amt)
 	{
 		$diff = $inv_amt - $pay_amt;
@@ -143,13 +142,13 @@ function exchange_variation(string|int|float|bool|null $pyt_type, string|int|flo
 		$exc_var_act = get_company_pref('exchange_diff_act');
 		if (date1_greater_date2($date, $pyt_date))
 		{
-			$memo = $systypes_array[$pyt_type]." ".$pyt_no;
+			$memo = (string) ($systypes_array[(int) $pyt_type] ?? '')." ".(string) $pyt_no;
 			add_gl_trans($type, $trans_no, $date, $ar_ap_act, 0, 0, $memo, -$diff, null, $person_type, $person_id);
 			add_gl_trans($type, $trans_no, $date, $exc_var_act, 0, 0, $memo, $diff, null, $person_type, $person_id);
 		}
 		else
 		{
-			$memo = $systypes_array[$type]." ".$trans_no;
+			$memo = (string) ($systypes_array[(int) $type] ?? '')." ".(string) $trans_no;
 			add_gl_trans($pyt_type, $pyt_no, $pyt_date, $ar_ap_act, 0, 0, $memo, -$diff, null, $person_type, $person_id);
 			add_gl_trans($pyt_type, $pyt_no, $pyt_date, $exc_var_act, 0, 0, $memo, $diff, null, $person_type, $person_id);
 		}
