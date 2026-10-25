@@ -111,39 +111,39 @@ function exist_transaction(string|null $type, string|null $type_no): bool
 	return true;
 }
 
-function view_link(array $trans)
+function view_link(array $trans): ?string
 {
 	if (!isset($trans['type']))
 		$trans['type'] = $_POST['filterType'];
-	return get_trans_view_str($trans["type"], $trans["trans_no"]);
+	return get_trans_view_str(is_scalar($trans["type"]) ? $trans["type"] : null, is_scalar($trans["trans_no"]) ? $trans["trans_no"] : null);
 }
 
 function select_link(array $row): string
 {
 	if (!isset($row['type']))
 		$row['type'] = $_POST['filterType'];
-	if (!(bool)is_date_in_fiscalyear($row['trans_date'], true))
+	if (!(bool)is_date_in_fiscalyear(is_scalar($row['trans_date']) ? $row['trans_date'] : null, true))
 		return _("N/A");
   	return button('Edit'.(string)$row["trans_no"], _("Select"), _("Select"), ICON_EDIT);
 }
 
-function gl_view(array $row)
+function gl_view(array $row): string|int|float|bool|null
 {
 	if (!isset($row['type']))
 		$row['type'] = $_POST['filterType'];
-	return get_gl_view_str($row["type"], (int) $row["trans_no"]);
+	return get_gl_view_str(is_scalar($row["type"]) ? $row["type"] : null, (int) $row["trans_no"]);
 }
 
 /** @psalm-pure */
-function date_view(array $row)
+function date_view(array $row): string|int|float|bool|null
 {
-	return $row['trans_date'];
+	return is_scalar($row['trans_date']) ? $row['trans_date'] : null;
 }
 
 /** @psalm-pure */
-function ref_view(array $row)
+function ref_view(array $row): string|int|float|bool|null
 {
-	return $row['ref'];
+	return is_scalar($row['ref']) ? $row['ref'] : null;
 }
 
 /** @return bool */
@@ -185,8 +185,8 @@ function voiding_controls()
 	end_row();
     end_table(1);
     
-	$trans_ref = false;
-	$sql = get_sql_for_view_transactions(get_post('filterType'), get_post('FromTransNo'), get_post('ToTransNo'), $trans_ref);
+	$trans_ref = null;
+	$sql = get_sql_for_view_transactions(post_scalar('filterType'), post_scalar('FromTransNo'), post_scalar('ToTransNo'), $trans_ref);
 	if ($sql == "")
 		return;
 
@@ -208,15 +208,15 @@ function voiding_controls()
 
 	if ($selected_id != -1)
 	{
-		hidden('trans_no', $selected_id);
-		hidden('selected_id', $selected_id);
+		hidden('trans_no', is_scalar($selected_id) ? $selected_id : null);
+		hidden('selected_id', is_scalar($selected_id) ? $selected_id : null);
 	}
 	else
 	{
 		hidden('trans_no', '');
 		$_POST['memo_'] = '';
-	}	
-    label_row(_("Transaction #:"), ($selected_id==-1?'':$selected_id));
+	}
+    label_row(_("Transaction #:"), ($selected_id==-1?'':(is_scalar($selected_id) ? $selected_id : null)));
 
     date_row(_("Voiding Date:"), 'date_');
 
@@ -228,7 +228,9 @@ function voiding_controls()
     	submit_center('ProcessVoiding', _("Void Transaction"), true, '', 'default');
     else 
     {
- 		if (!exist_transaction(post_scalar('filterType'),post_scalar('trans_no')))
+ 		$filter_type_post = post_scalar('filterType');
+ 		$trans_no_post = post_scalar('trans_no');
+ 		if (!exist_transaction(is_string($filter_type_post) ? $filter_type_post : null, is_string($trans_no_post) ? $trans_no_post : null))
  		{
 			display_error(_("The entered transaction does not exist or cannot be voided."));
 			unset($_POST['trans_no']);
@@ -243,7 +245,7 @@ function voiding_controls()
                 if (db_num_rows($result) > 0) {
                     while ($myrow = db_fetch($result)) {
                         if (is_inventory_item($myrow["item_code"])) {
-                            if (check_negative_stock($myrow["item_code"], -$myrow["qty_recd"], null, $_POST['date_'])) {
+                            if ((bool) check_negative_stock($myrow["item_code"], -$myrow["qty_recd"], null, $_POST['date_'])) {
                                 $stock = row_or_empty(get_item($myrow["item_code"]));
                                 display_error(_("The void cannot be processed because there is an insufficient quantity for item:") .
                                     " " . (string)$stock['stock_id'] . " - " . (string)$stock['description'] . " - " .
@@ -255,7 +257,7 @@ function voiding_controls()
                     }
                 }
             }
-       		display_warning(_("Are you sure you want to void this transaction ? This action cannot be undone."), 0, 1);
+       		display_warning(_("Are you sure you want to void this transaction ? This action cannot be undone."), 0);
    			br();
     		submit_center_first('ConfirmVoiding', _("Proceed"), '', true);
     		submit_center_last('CancelVoiding', _("Cancel"), '', 'cancel');
@@ -275,7 +277,8 @@ function check_valid_entries(): bool
 		set_focus('trans_no');
 		return false;
 	}
-	if (!is_date(post_scalar('date_')))
+	$date_post = post_scalar('date_');
+	if (!is_date(is_string($date_post) ? $date_post : null))
 	{
 		display_error(_("The entered date is invalid."));
 		set_focus('date_');
@@ -315,8 +318,9 @@ function handle_void_transaction(): void
 			return;
 		}
 
+		$memo_post = post_scalar('memo_');
 		$msg = void_transaction(post_scalar('filterType'), post_scalar('trans_no'),
-			post_scalar('date_'), post_scalar('memo_'));
+			post_scalar('date_'), is_string($memo_post) ? $memo_post : null);
 
 		if (!(bool)$msg) 
 		{
