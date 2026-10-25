@@ -25,7 +25,7 @@ simple_page_mode(true);
 //	Helper to translate record content to more intuitive form
 //
 /** @psalm-pure */
-function term_days(bool|array|null $myrow)
+function term_days(array $myrow): string|int|float|bool|null
 {
 	return $myrow["day_in_following_month"] != 0 ? $myrow["day_in_following_month"] :
 		$myrow["days_before_due"];
@@ -35,7 +35,7 @@ function term_days(bool|array|null $myrow)
  * @return 1|2|3|4
  * @psalm-pure
  */
-function term_type(bool|array|null $myrow): int
+function term_type(array $myrow): int
 {
 	if ($myrow["day_in_following_month"] != 0)
 		return PTT_FOLLOWING;
@@ -58,7 +58,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 		display_error( _("The number of days or the day in the following month must be numeric."));
 		set_focus('DayNumber');
 	} 
-	elseif (strlen($_POST['terms']) == 0) 
+	elseif (strlen((string) post_scalar('terms')) == 0)
 	{
 		$input_error = 1;
 		display_error( _("The Terms description must be entered."));
@@ -80,7 +80,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
     	if ($selected_id != -1) 
     	{
-    		update_payment_terms($selected_id, $from_now, post_scalar('terms'), $days); 
+    		update_payment_terms(is_scalar($selected_id) ? $selected_id : null, $from_now, post_scalar('terms'), $days);
  			$note = _('Selected payment terms have been updated');
     	} 
     	else 
@@ -97,20 +97,21 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 if ($Mode == 'Delete')
 {
 	// PREVENT DELETES IF DEPENDENT RECORDS IN debtors_master
-	if ((bool)key_in_foreign_table($selected_id, 'debtors_master', 'payment_terms'))
+	$selected_id_scalar = is_scalar($selected_id) ? $selected_id : null;
+	if ((bool)key_in_foreign_table($selected_id_scalar, 'debtors_master', 'payment_terms'))
 	{
 		display_error(_("Cannot delete this payment term, because customer accounts have been created referring to this term."));
-	} 
-	else 
+	}
+	else
 	{
-		if ((bool)key_in_foreign_table($selected_id, 'suppliers', 'payment_terms'))
+		if ((bool)key_in_foreign_table($selected_id_scalar, 'suppliers', 'payment_terms'))
 		{
 			display_error(_("Cannot delete this payment term, because supplier accounts have been created referring to this term"));
-		} 
-		else 
+		}
+		else
 		{
 			//only delete if used in neither customer or supplier accounts
-			delete_payment_terms($selected_id);
+			delete_payment_terms($selected_id_scalar);
 			display_notification(_('Selected payment terms have been deleted'));
 		}
 	}
@@ -169,13 +170,13 @@ if ($selected_id != -1)
 {
 	if ($Mode == 'Edit') {
 		//editing an existing payment terms
-		$myrow = get_payment_terms($selected_id);
+		$myrow = row_or_empty(get_payment_terms(is_scalar($selected_id) ? $selected_id : null));
 
 		$_POST['terms']  = $myrow["terms"];
 		$_POST['DayNumber'] = term_days($myrow);
 		$_POST['type'] = term_type($myrow);
 	}
-	hidden('selected_id', $selected_id);
+	hidden('selected_id', is_scalar($selected_id) ? $selected_id : null);
 }
 
 text_row(_("Terms Description:"), 'terms', null, 40, 40);
