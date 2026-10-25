@@ -19,7 +19,7 @@ declare(strict_types=1);
 function add_bank_trans(string|int|float|bool|null $type, string|int|float|bool|null $trans_no, string|int|float|bool|null $bank_act, string|int|float|bool|null $ref, string|int|float|bool|null $date_,
 	string|int|float|bool|null $amount, string|int|float|bool|null $person_type_id, string|int|float|bool|null $person_id, string|int|float|bool|null $currency="", string|int|float|bool|null $err_msg="", ?int $rate=0): void
 {
-	$sqlDate = date2sql($date_);
+	$sqlDate = date2sql(is_string($date_) ? $date_ : null);
 	if ($sqlDate == "")
 		$sqlDate = "0000-00-00";
 
@@ -27,11 +27,11 @@ function add_bank_trans(string|int|float|bool|null $type, string|int|float|bool|
 	if ($currency != "")
 	{
     	$bank_account_currency = get_bank_account_currency($bank_act);
-    	if ($rate == 0)
+    	if ($rate === null || $rate == 0)
     		$to_bank_currency = get_exchange_rate_from_to($currency, $bank_account_currency, $date_);
     	else
     		$to_bank_currency = 1 / $rate;
-    	$amount_bank = ($amount / $to_bank_currency);
+    	$amount_bank = ((float) $amount) / ((float) $to_bank_currency);
 	}
 	else
 		$amount_bank = $amount;
@@ -47,7 +47,7 @@ function add_bank_trans(string|int|float|bool|null $type, string|int|float|bool|
 	if ($err_msg == "")
 		$err_msg = "The bank transaction could not be inserted";
 
-	db_query($sql, $err_msg);
+	db_query($sql, is_string($err_msg) ? $err_msg : null);
 }
 
 //----------------------------------------------------------------------------------------
@@ -102,10 +102,10 @@ function get_bank_trans(string|int|float|bool|null $type, string|int|float|bool|
  */
 function get_bank_trans_for_bank_account(string|int|float|bool|null $bank_account, string|int|float|bool|null $from, string|int|float|bool|null $to)
 {
-	$from = date2sql($from);
-	$to = date2sql($to);
-	$sql = "SELECT t.* 
-		FROM ".TB_PREF."bank_trans t 
+	$from = date2sql(is_string($from) ? $from : null);
+	$to = date2sql(is_string($to) ? $to : null);
+	$sql = "SELECT t.*
+		FROM ".TB_PREF."bank_trans t
 			LEFT JOIN ".TB_PREF."voided v ON t.type=v.type AND t.trans_no=v.id
 		WHERE t.bank_act = ".db_escape($bank_account) . "
 			AND ISNULL(v.date_)
@@ -114,7 +114,7 @@ function get_bank_trans_for_bank_account(string|int|float|bool|null $bank_accoun
 			AND amount != 0
 		ORDER BY trans_date, t.id";
 
-	return db_select($sql,"The transactions for '" . $bank_account . "' could not be retrieved");
+	return db_select($sql,"The transactions for '" . (string) $bank_account . "' could not be retrieved");
 }
 
 //----------------------------------------------------------------------------------------
@@ -124,7 +124,7 @@ function get_bank_trans_for_bank_account(string|int|float|bool|null $bank_accoun
  */
 function get_balance_before_for_bank_account(string|int|float|bool|null $bank_account, string|int|float|bool|null $from)
 {
-	$from = date2sql($from);
+	$from = date2sql(is_string($from) ? $from : null);
 	$sql = "SELECT SUM(amount)
 		FROM ".TB_PREF."bank_trans
 		WHERE bank_act=".db_escape($bank_account) . "
@@ -190,7 +190,7 @@ function void_bank_trans(string|int|float|bool|null $type, string|int|float|bool
 **/
 function check_bank_account_history(string|int|float|bool|null $delta_amount, string|null $bank_account, string|null $date=null, mixed $user=null, int|float|null $balance_offset = 0)
 {
-	$delta_amount = $delta_amount ?? 0.00;
+	$delta_amount = (float) ($delta_amount ?? 0.00);
         if ($delta_amount >= 0 && isset($date))
 		 return null;	// amount increase is always safe
 
@@ -218,7 +218,7 @@ function check_bank_account_history(string|int|float|bool|null $delta_amount, st
 	$history = db_select($sql, "cannot retrieve cash account history");
 
 	while ($trans = db_fetch($history)) {
-		$balance += $trans['amount'];
+		$balance += (float) (is_scalar($trans['amount']) ? $trans['amount'] : 0);
 		if (round2($balance, user_price_dec()) < 0)
 		{
 			$trans['amount'] = $balance;
