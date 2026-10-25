@@ -54,7 +54,7 @@ end_row();
 start_row();
 ref_cells(_("Memo:"), 'Memo', '',null, _('Enter memo fragment or leave empty'));
 users_list_cells(_("User:"), 'userid', null, false);
-if (get_company_pref('use_dimension') && isset($_POST['dimension'])) // display dimension only, when started in dimension mode
+if ((bool) get_company_pref('use_dimension') && isset($_POST['dimension'])) // display dimension only, when started in dimension mode
 	dimensions_list_cells(_('Dimension:'), 'dimension', null, true, null, true);
 check_cells( _("Show closed:"), 'AlsoClosed', null);
 submit_cells('Search', _("Search"), '', '', 'default');
@@ -62,9 +62,9 @@ end_row();
 end_table();
 
 /** @psalm-pure */
-function journal_pos(array $row)
+function journal_pos(array $row): string
 {
-	return (bool)$row['gl_seq'] ? $row['gl_seq'] : '-';
+	return (bool)$row['gl_seq'] ? (string) $row['gl_seq'] : '-';
 }
 
 /** @return string */
@@ -76,19 +76,19 @@ function systype_name(string|int|float|bool|array $dummy, string|int|float|bool|
 	return $systypes_array[(int) $type];
 }
 
-function person_link(array $row) 
+function person_link(array $row): string|int|float|bool|null
 {
-    return payment_person_name($row["person_type_id"],$row["person_id"]);
+    return payment_person_name(is_scalar($row["person_type_id"]) ? $row["person_type_id"] : null, is_scalar($row["person_id"]) ? $row["person_id"] : null);
 }
 
-function view_link(array $row) 
+function view_link(array $row): ?string
 {
-	return get_trans_view_str($row["trans_type"], (int) $row["trans_no"]);
+	return get_trans_view_str(is_scalar($row["trans_type"]) ? $row["trans_type"] : null, (int) $row["trans_no"]);
 }
 
-function gl_link(array $row) 
+function gl_link(array $row): string|int|float|bool|null
 {
-	return get_gl_view_str($row["trans_type"], (int) $row["trans_no"]);
+	return get_gl_view_str(is_scalar($row["trans_type"]) ? $row["trans_type"] : null, (int) $row["trans_no"]);
 }
 
 function edit_link(array $row): string
@@ -97,22 +97,28 @@ function edit_link(array $row): string
 	$ok = true;
 	if ($row['trans_type'] == ST_SALESINVOICE)
 	{
-		$myrow = row_or_empty(get_customer_trans($row["trans_no"], $row["trans_type"]));
+		$myrow = row_or_empty(get_customer_trans(is_scalar($row["trans_no"]) ? $row["trans_no"] : null, is_scalar($row["trans_type"]) ? $row["trans_type"] : null));
 		if ($myrow['alloc'] != $myrow['Total'] || get_voided_entry(ST_SALESINVOICE, (int) $row["trans_no"]) !== false)
 			$ok = false;
 	}
-	
-	return $ok ? trans_editor_link( $row["trans_type"], (int) $row["trans_no"]) : '--';
+
+	return $ok ? trans_editor_link( is_scalar($row["trans_type"]) ? $row["trans_type"] : null, (int) $row["trans_no"]) : '--';
 }
 
 /** @psalm-pure */
-function invoice_supp_reference(array $row)
+function invoice_supp_reference(array $row): string|int|float|bool|null
 {
-	return $row['supp_reference'];
+	return is_scalar($row['supp_reference']) ? $row['supp_reference'] : null;
 }
 
-$sql = get_sql_for_journal_inquiry(get_post('filterType', -1), get_post('FromDate'),
-	get_post('ToDate'), get_post('Ref'), get_post('Memo'), check_value('AlsoClosed'), get_post('userid'));
+$filter_type_post = get_post('filterType', -1);
+$from_date_post = get_post('FromDate');
+$to_date_post = get_post('ToDate');
+$userid_post = get_post('userid');
+$sql = get_sql_for_journal_inquiry(is_string($filter_type_post) || is_int($filter_type_post) ? $filter_type_post : null,
+	is_string($from_date_post) ? $from_date_post : null,
+	is_string($to_date_post) ? $to_date_post : null, get_post('Ref'), get_post('Memo'), check_value('AlsoClosed'),
+	is_string($userid_post) ? $userid_post : null);
 
 $cols = array(
 	_("#") => array('fun'=>'journal_pos', 'align'=>'center'), 
