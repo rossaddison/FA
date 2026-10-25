@@ -26,18 +26,22 @@ function add_stock_transfer(mixed $Items, string|null $location_from, string|nul
 
 	$transfer_id = get_next_trans_no(ST_LOCTRANSFER);
 
-	if (sysprefs()->loc_notification() == 1)
+	$loc_notification = sysprefs()->loc_notification() == 1;
+	$loc = null;
+	$st_ids = array();
+	$st_names = array();
+	$st_num = array();
+	$st_reorder = array();
+	if ($loc_notification)
 	{
 		include_once(dirname(__DIR__, 3) . "/inventory/includes/inventory_db.inc");
-		$st_ids = array();
-		$st_names = array();
-		$st_num = array();
-		$st_reorder = array();
 	}
 	foreach ($Items as $line_item)
 	{
-		if (sysprefs()->loc_notification() == 1)
-			$loc = calculate_reorder_level($location_from, $line_item, $st_ids, $st_names, $st_num, $st_reorder); 
+		/** @var line_details|line_item $line_item */
+		$line_item = $line_item;
+		if ($loc_notification)
+			$loc = calculate_reorder_level($location_from, $line_item, $st_ids, $st_names, $st_num, $st_reorder);
 		add_stock_transfer_item($transfer_id, $line_item->stock_id, $location_from,
 			$location_to, $date_, $reference, $line_item->quantity);
 	}
