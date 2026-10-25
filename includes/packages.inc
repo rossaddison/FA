@@ -109,7 +109,8 @@ final class package extends gzip_file {
 		$dpackage->extract_files(); //install package in target directory
 
 		$dummy = null;
-		/** @psalm-suppress MixedAssignment hook_invoke()'s whole point is to return an arbitrary hook's result; only null-or-truthy is checked here */
+		// hook_invoke()'s whole point is to return an arbitrary hook's result;
+		// only null-or-truthy is checked here
 		$install = hook_invoke($ctrl_package, 'install_extension', $dummy);
 		if (!($install===null || $install))
 			$success = 0;
@@ -153,7 +154,8 @@ final class package extends gzip_file {
 		}
 
 		$dummy = null;
-		/** @psalm-suppress MixedAssignment hook_invoke()'s whole point is to return an arbitrary hook's result; only null-or-truthy is checked here */
+		// hook_invoke()'s whole point is to return an arbitrary hook's result;
+		// only null-or-truthy is checked here
 		$uninstall = hook_invoke($ctrl_package, 'uninstall_extension', $dummy);
 		if (!($uninstall===null || $uninstall))
 			$success = 0;
@@ -301,17 +303,15 @@ function save_control_file(string|int|float|bool|null $fname, array $list, strin
 	if ($file === false) return;
 	foreach($list as $section) {
 		// $section's values are genuinely heterogeneous control-file field values
-		// (plain scalars or nested multiline/subfield arrays) by design
-		/** @psalm-suppress MixedAssignment */
+		// (plain scalars or nested multiline/subfield arrays) by design -- same
+		// reason for $value/$line/$subfield in the nested loops below
 		foreach($section as $key => $value) {
 			if (is_array($value)) { // multiline value
 				if (is_array(reset($value))) { // lines have subfields
-					/** @psalm-suppress MixedAssignment */
 					foreach($value as $i => $line) {
 						if (!is_array($line)) continue;
 		// Subfields containing white spaces or double quotes are doublequoted
 		// with " escaped with backslash.
-						/** @psalm-suppress MixedAssignment */
 						foreach($line as $n => $subfield) {
 							$subfield = (string) $subfield;
 							if (preg_match('/[\s"]/', $subfield)) {
@@ -319,13 +319,14 @@ function save_control_file(string|int|float|bool|null $fname, array $list, strin
 							} else
 								$line[$n] = $subfield;
 						}
-						// Subfields are separated by white space.
-						/** @psalm-suppress MixedArgumentTypeCoercion elements are always strings by this point (set in the loop just above), Psalm can't see through the per-index mutations */
+						// Subfields are separated by white space. Elements are always
+						// strings by this point (set in the loop just above), Psalm
+						// can't see through the per-index mutations.
 						$value[$i] = implode(' ', $line);
 					}
 				}
-				// array elements on subsequent lines starting with white space
-				/** @psalm-suppress MixedArgument elements are always scalar control-file field values by this point */
+				// array elements on subsequent lines starting with white space;
+				// elements are always scalar control-file field values by this point
 				$value = implode("\n ", array_map('strval', $value));
 			}
 			(bool)$zip ? gzwrite($file, "$key: $value\n") : fwrite($file, "$key: $value\n");
@@ -343,13 +344,14 @@ function pkg_prop(array|null $pkg, string|int|float|bool|null $property, string|
 	if ($pkg === null)
 		return null;
 
-	/** @psalm-suppress MixedAssignment this function's own return type is mixed -- $pkg's value type is intentionally unconstrained */
+	// this function's own return type is mixed -- $pkg's value type is
+	// intentionally unconstrained; elements are scalar control-file field
+	// values by design
 	if ((bool)$lang && isset($pkg[(string)$property.'-'.user_language()]))
 		$prop = $pkg[(string)$property.'-'.user_language()];
 	else
 		$prop = $pkg[(string)$property] ?? null;
 
-	/** @psalm-suppress MixedArgument elements are scalar control-file field values by design */
 	return is_array($prop) ? implode("\n ",array_map('strval', $prop)): $prop;
 }
 //
@@ -859,8 +861,9 @@ function install_extension(string|int|float|bool|null $pkg_name): bool
 			$ext_package_scalar = is_scalar($ext_package_raw) ? $ext_package_raw : null;
 			if (($ext['active'] == true) && file_exists((string) $path_to_root.'/'.$ext_path.'/hooks.php'))
 			{
-				// we need to include the new hooks file to activate extension
-				/** @psalm-suppress UnresolvableInclude this is a deliberately dynamic plugin-activation hook load */
+				// we need to include the new hooks file to activate extension --
+				// UnresolvableInclude here is a deliberately dynamic plugin-activation
+				// hook load, not a tainted-input finding
 				include_once((string) $path_to_root.'/'.$ext_path.'/hooks.php');
 				/** @var array<int, array<string, string>> $db_connections */
 				foreach($db_connections as $comp => $db)
