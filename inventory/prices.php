@@ -54,9 +54,11 @@ if (!isset($_POST['curr_abrev']))
 }
 
 //---------------------------------------------------------------------------------------------------
-$action = $_SERVER['PHP_SELF'];
-if ($page_nested)
-	$action .= "?stock_id=".get_post('stock_id');
+$action = $_SERVER['PHP_SELF'] ?? '';
+if ($page_nested) {
+	$stock_id_post = get_post('stock_id');
+	$action .= "?stock_id=".(is_array($stock_id_post) ? '' : $stock_id_post);
+}
 start_form(false, false, $action);
 
 if (!isset($_POST['stock_id']))
@@ -74,8 +76,11 @@ set_global_stock_item($_POST['stock_id']);
 
 //----------------------------------------------------------------------------------------------------
 
-if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') 
+if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 {
+
+	$sales_type_id_post = post_scalar('sales_type_id');
+	$sales_type_id = is_string($sales_type_id_post) ? $sales_type_id_post : null;
 
 	if (!check_num('price', 0))
 	{
@@ -83,7 +88,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 		display_error( _("The price entered must be numeric."));
 		set_focus('price');
 	}
-   	elseif ($Mode == 'ADD_ITEM' && (bool)get_stock_price_type_currency(post_scalar('stock_id'), post_scalar('sales_type_id'), post_scalar('curr_abrev')))
+   	elseif ($Mode == 'ADD_ITEM' && (bool)get_stock_price_type_currency(post_scalar('stock_id'), $sales_type_id, post_scalar('curr_abrev')))
    	{
       	$input_error = 1;
       	display_error( _("The sales pricing for this item, sales type and currency has already been added."));
@@ -93,10 +98,10 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 	if ($input_error != 1)
 	{
 
-    	if ($selected_id != -1) 
+    	if ($selected_id != -1)
 		{
 			//editing an existing price
-			update_item_price($selected_id, post_scalar('sales_type_id'),
+			update_item_price(is_array($selected_id) ? '' : (string) $selected_id, $sales_type_id,
 			post_scalar('curr_abrev'), input_num('price'));
 
 			$msg = _("This price has been updated.");
@@ -104,7 +109,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 		else
 		{
 
-			add_item_price(post_scalar('stock_id'), post_scalar('sales_type_id'),
+			add_item_price(post_scalar('stock_id'), $sales_type_id,
 			    post_scalar('curr_abrev'), input_num('price'));
 
 			$msg = _("The new price has been added.");
@@ -120,7 +125,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 if ($Mode == 'Delete')
 {
 	//the link to delete a selected record was clicked
-	delete_item_price($selected_id);
+	delete_item_price(is_array($selected_id) ? '' : (string) $selected_id);
 	display_notification(_("The selected price has been deleted."));
 	$Mode = 'RESET';
 }
@@ -180,13 +185,13 @@ echo "<br>";
 
 if ($Mode == 'Edit')
 {
-	$myrow = row_or_empty(get_stock_price($selected_id));
+	$myrow = row_or_empty(get_stock_price(is_array($selected_id) ? '' : (string) $selected_id));
 	$_POST['curr_abrev'] = $myrow["curr_abrev"];
 	$_POST['sales_type_id'] = $myrow["sales_type_id"];
 	$_POST['price'] = price_format($myrow["price"]);
 }
 
-hidden('selected_id', $selected_id);
+hidden('selected_id', is_array($selected_id) ? '' : (string) $selected_id);
 
 div_start('price_details');
 start_table(TABLESTYLE2);
@@ -196,8 +201,8 @@ currencies_list_row(_("Currency:"), 'curr_abrev', null, true);
 sales_types_list_row(_("Sales Type:"), 'sales_type_id', null, true);
 
 if (!isset($_POST['price'])) {
-	$_POST['price'] = price_format(get_kit_price(get_post('stock_id'), 
-		get_post('curr_abrev'),	get_post('sales_type_id')));
+	$_POST['price'] = price_format(get_kit_price(post_scalar('stock_id'),
+		post_scalar('curr_abrev'),	post_scalar('sales_type_id')));
 }
 
 $kit = row_or_empty(get_item_code_dflts(post_scalar('stock_id')));
