@@ -33,7 +33,9 @@ if (isset($_POST['add']) || isset($_POST['delete']))
 {
 	begin_transaction();
 
-	for ($i = 0, $da = $_POST['begin']; date1_greater_date2($_POST['end'], $da); $i++)
+	$da = $_POST['begin'] ?? null;
+	$da = is_scalar($da) ? $da : null;
+	for ($i = 0; date1_greater_date2($_POST['end'] ?? null, $da); $i++)
 	{
 		if (isset($_POST['add']))
 			add_update_gl_budget_trans($da, post_scalar('account'), post_scalar('dim1'), post_scalar('dim2'), input_num('amount'.$i));
@@ -93,7 +95,8 @@ if (db_has_gl_accounts())
 	else
 		$th = array(_("Period"), _("Amount"), _("Last Year"));
 	table_header($th);
-	$year = $_POST['fyear'];
+	$year = $_POST['fyear'] ?? null;
+	$year = is_scalar($year) ? $year : null;
 	if (get_post('update') == '') {
 		$fyear = row_or_empty(get_fiscalyear($year));
 		$_POST['begin'] = sql2date($fyear['begin']);
@@ -102,7 +105,9 @@ if (db_has_gl_accounts())
 	hidden('begin');
 	hidden('end');
 	$total = $btotal = $ltotal = 0.0;
-	for ($i = 0, $date_ = $_POST['begin']; date1_greater_date2($_POST['end'], $date_); $i++)
+	$date_ = $_POST['begin'] ?? null;
+	$date_ = is_scalar($date_) ? $date_ : null;
+	for ($i = 0; date1_greater_date2($_POST['end'] ?? null, $date_); $i++)
 	{
 		start_row();
 		if (get_post('update') == '')
@@ -115,7 +120,7 @@ if (db_has_gl_accounts())
 		{
 			$d = get_budget_trans_from_to($date_, $date_, post_scalar('account'), post_scalar('dim1'), post_scalar('dim2'));
 			label_cell(number_format2($d, 0), "nowrap align=right");
-			$btotal += $d;
+			$btotal += (float) $d;
 		}
 		$lamount = get_gl_trans_from_to(add_years($date_, -1), add_years(end_month($date_), -1), post_scalar('account'), post_scalar('dim1'), post_scalar('dim2'));
 		$total += (float)input_num('amount'.$i);
