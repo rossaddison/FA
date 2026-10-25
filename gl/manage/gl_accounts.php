@@ -41,11 +41,11 @@ if (isset($_POST['_AccountList_update']))
 
 if (isset($_POST['selected_account']))
 {
-	$selected_account = $_POST['selected_account'];
-} 
+	$selected_account = is_array($_POST['selected_account']) ? "" : $_POST['selected_account'];
+}
 elseif (isset($_GET['selected_account']))
 {
-	$selected_account = $_GET['selected_account'];
+	$selected_account = is_array($_GET['selected_account']) ? "" : $_GET['selected_account'];
 }
 else
 	$selected_account = "";
@@ -56,19 +56,19 @@ if (isset($_POST['add']) || isset($_POST['update']))
 
 	$input_error = 0;
 
-	if (strlen(trim($_POST['account_code'])) == 0) 
+	if (strlen(trim((string) post_scalar('account_code'))) == 0)
 	{
 		$input_error = 1;
 		display_error( _("The account code must be entered."));
 		set_focus('account_code');
-	} 
-	elseif (strlen(trim($_POST['account_name'])) == 0) 
+	}
+	elseif (strlen(trim((string) post_scalar('account_name'))) == 0)
 	{
 		$input_error = 1;
 		display_error( _("The account name cannot be empty."));
 		set_focus('account_name');
-	} 
-	elseif (!sysprefs()->accounts_alpha() && !preg_match("/^[0-9.]+$/",$_POST['account_code'])) // we only allow 0-9 and a dot
+	}
+	elseif (!sysprefs()->accounts_alpha() && !preg_match("/^[0-9.]+$/", (string) post_scalar('account_code'))) // we only allow 0-9 and a dot
 	{
 	    $input_error = 1;
 	    display_error( _("The account code must be numeric."));
@@ -77,10 +77,12 @@ if (isset($_POST['add']) || isset($_POST['update']))
 	if ($input_error != 1)
 	{
 		if (sysprefs()->accounts_alpha() == 2)
-			$_POST['account_code'] = strtoupper($_POST['account_code']);
+			$_POST['account_code'] = strtoupper((string) post_scalar('account_code'));
 
 		if (!isset($_POST['account_tags']))
 			$_POST['account_tags'] = array();
+		/** @var array<array-key, string|int|float|bool|null> $account_tags */
+		$account_tags = is_array($_POST['account_tags']) ? $_POST['account_tags'] : array();
 
     	if ((bool)$selected_account) 
 		{
@@ -92,8 +94,8 @@ if (isset($_POST['add']) || isset($_POST['update']))
 				post_scalar('account_type'), post_scalar('account_code2'))) {
 				update_record_status(post_scalar('account_code'), $_POST['inactive'],
 					'chart_master', 'account_code');
-				update_tag_associations(TAG_ACCOUNT, post_scalar('account_code'), 
-					$_POST['account_tags']);
+				update_tag_associations(TAG_ACCOUNT, post_scalar('account_code'),
+					$account_tags);
 				ajax()->activate('account_code'); // in case of status change
 				display_notification(_("Account data has been updated."));
 			}
@@ -103,9 +105,9 @@ if (isset($_POST['add']) || isset($_POST['update']))
     		if (add_gl_account(post_scalar('account_code'), post_scalar('account_name'), 
 				post_scalar('account_type'), post_scalar('account_code2')))
 				{
-					add_tag_associations(post_scalar('account_code'), $_POST['account_tags']);
+					add_tag_associations(post_scalar('account_code'), $account_tags);
 					display_notification(_("New account has been added."));
-					$selected_account = $_POST['AccountList'] = $_POST['account_code'];
+					$selected_account = $_POST['AccountList'] = post_scalar('account_code');
 				}
 			else
                  display_error(_("Account not added, possible duplicate Account Code."));
@@ -183,7 +185,7 @@ function can_delete(string|int|float|bool|null $selected_account): bool
 if (isset($_POST['delete'])) 
 {
 
-	if (can_delete($selected_account))
+	if (can_delete((string) $selected_account))
 	{
 		delete_gl_account($selected_account);
 		$selected_account = $_POST['AccountList'] = '';
