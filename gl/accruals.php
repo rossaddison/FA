@@ -39,7 +39,8 @@ if (!isset($_POST['freq']))
 if (isset($_POST['go']) || isset($_POST['show']))
 {
 	$input_error = 0;
-	if (!is_date(post_scalar('date_')))
+	$date_post = post_scalar('date_');
+	if (!is_date(is_string($date_post) ? $date_post : null))
 	{
 		display_error(_("The entered date is invalid."));
 		set_focus('date_');
@@ -95,13 +96,15 @@ if (isset($_POST['go']) || isset($_POST['show']))
 			if (get_post('memo_') != "")
 				$memo = post_scalar('memo_');
 			else
-				$memo = sprintf(_("Accruals for %s"), $amount);
+				$memo = sprintf(_("Accruals for %s"), $amount === false ? 0 : $amount);
+			// hoisted so it's set on both branches below -- the per-period loop further down
+			// reads $dim under the identical isset($_POST['go']) condition tested here
+			$dim = get_company_pref('use_dimension');
 			if (isset($_POST['go']))
 				begin_transaction();
 			else
 			{
 				start_table(TABLESTYLE);
-				$dim = get_company_pref('use_dimension');
 
 				$first_cols = array(_("Date"), _("Account"));
 				if ($dim == 2)
@@ -144,7 +147,7 @@ if (isset($_POST['go']) || isset($_POST['show']))
 				{
 					$cart = new items_cart(ST_JOURNAL);
 					$cart->memo_ = (string) $memo;
-					$cart->reference = refs()->get_next(ST_JOURNAL, null, $date);
+					$cart->reference = refs()->get_next(ST_JOURNAL, null, (string) $date);
 					$cart->tran_date = $cart->doc_date = $cart->event_date = (string) $date;
 					$cart->add_gl_item(post_scalar('acc_act'), 0, 0, -$am0, $cart->reference);
 					$cart->add_gl_item(post_scalar('res_act'), post_scalar('dimension_id'),
@@ -156,7 +159,8 @@ if (isset($_POST['go']) || isset($_POST['show']))
 				{
 					alt_table_row_color($k);
 					label_cell($date);
-					label_cell((string)$_POST['acc_act'] . " " . get_gl_account_name(post_scalar('acc_act')));
+					$acc_act = post_scalar('acc_act');
+					label_cell((string) $acc_act . " " . (get_gl_account_name($acc_act) ?? ''));
 					if ($dim > 0)
 						label_cell("");
 					if ($dim > 1)
@@ -165,11 +169,14 @@ if (isset($_POST['go']) || isset($_POST['show']))
 					label_cell($memo);
 					alt_table_row_color($k);
 					label_cell($date);
-					label_cell((string)$_POST['res_act'] . " " . get_gl_account_name(post_scalar('res_act')));
+					$res_act = post_scalar('res_act');
+					label_cell((string) $res_act . " " . (get_gl_account_name($res_act) ?? ''));
+					$dimension_id = post_scalar('dimension_id');
+					$dimension2_id = post_scalar('dimension2_id');
 					if ($dim > 0)
-						label_cell(get_dimension_string(post_scalar('dimension_id'), true));
+						label_cell(get_dimension_string(is_int($dimension_id) || is_string($dimension_id) ? $dimension_id : null, true));
 					if ($dim > 1)
-						label_cell(get_dimension_string(post_scalar('dimension2_id'), true));
+						label_cell(get_dimension_string(is_int($dimension2_id) || is_string($dimension2_id) ? $dimension2_id : null, true));
 					display_debit_or_credit_cells($am0);
 					label_cell($memo);
 				}
@@ -222,7 +229,9 @@ if ($dim >= 1)
 if ($dim > 1)
 	dimensions_list_row(_("Dimension")." 2", 'dimension2_id', null, true, " ", false, 2);
 
-$url = "gl/view/accrual_trans.php?act=".get_post('acc_act')."&date=".get_post('date_');
+$url_acc_act = get_post('acc_act');
+$url_date = get_post('date_');
+$url = "gl/view/accrual_trans.php?act=".(is_array($url_acc_act) ? '' : $url_acc_act)."&date=".(is_array($url_date) ? '' : $url_date);
 amount_row(_("Amount"), 'amount', null, null, viewer_link(_("Search Amount"), $url, "", "", ICON_VIEW));
 
 frequency_list_row(_("Frequency"), 'freq', null);
