@@ -10,6 +10,10 @@ declare(strict_types=1);
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
     See the License here <http://www.gnu.org/licenses/gpl-3.0.html>.
 ***********************************************************************/
+// UnresolvableInclude on both lines below is a Psalm artifact, not a vulnerability:
+// $path_to_root is a server-side bootstrap global, never attacker-controlled, just not
+// statically resolvable because it's a plain variable rather than a __DIR__-relative
+// expression Psalm's analysis can fold at scan time.
 include_once $path_to_root.'/includes/db/class.reflines_db.inc';
 include_once $path_to_root.'/includes/ui/class.crud_view.inc';
 
@@ -100,7 +104,8 @@ final class fa_reflines extends simple_crud_view {
 			systypes_list_row(_("Transaction Type:"), $this->name.'trans_type');
 			$prefix = text_input($this->name.'prefix', null, 5, 30);
 		} else {
-			label_row(_("Transaction Type:"), $systypes_array[(int) get_post($this->name.'trans_type')]);
+			$trans_type_post = get_post($this->name.'trans_type');
+			label_row(_("Transaction Type:"), $systypes_array[(int) (is_scalar($trans_type_post) ? $trans_type_post : 0)]);
 			hidden($this->name.'trans_type');
 			$prefix_post = get_post($this->name.'prefix');
 			$prefix = (is_string($prefix_post) ? $prefix_post : '') . (hidden($this->name.'prefix') ?? '');

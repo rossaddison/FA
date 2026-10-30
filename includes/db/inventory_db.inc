@@ -90,7 +90,7 @@ function check_negative_stock(string|int|float|bool|null $stock_id, string|int|f
 //--------------------------------------------------------------------------------------
 
 /**
- * @return array<array-key, mixed|null|string>|false
+ * @return array<array-key, string|int|null>|false
  */
 function get_item_edit_info(string|null $stock_id)
 {

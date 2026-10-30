@@ -19,6 +19,7 @@ function add_to_order(items_cart &$order, string|null $new_item, string|int|floa
 {
 	$kit = get_item_kit($new_item);
 	foreach($kit as $item) {
+		/** @var array<string, string|null> $item */
 		$item_stock_id = $item['stock_id'];
 		$item_stock_id = is_scalar($item_stock_id) ? $item_stock_id : null;
 		if ($order->find_cart_item($item_stock_id))

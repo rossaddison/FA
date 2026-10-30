@@ -77,6 +77,9 @@ function systype_name(string|int|float|bool|array $dummy, string|int|float|bool|
 	return $systypes_array[(int) $type];
 }
 
+// view_link() is a function-name collision (9+ declarations across admin/,
+// dimensions/, gl/, manufacturing/, purchasing/, sales/ with wildly different
+// signatures) -- per doc/PSALM_MIGRATION.md's collision policy, left as-is.
 function view_link(array $trans)
 {
 	$type = $trans["type"];
@@ -84,6 +87,9 @@ function view_link(array $trans)
 	return get_trans_view_str(is_scalar($type) ? $type : null, is_scalar($trans_no) ? $trans_no : null);
 }
 
+// due_date() is a function-name collision with
+// sales/inquiry/customer_allocation_inquiry.php's own due_date() (different
+// body) -- per doc/PSALM_MIGRATION.md's collision policy, left as-is.
 function due_date(array $row)
 {
 	return (($row["type"] == ST_SUPPINVOICE) || ($row["type"]== ST_SUPPCREDIT))

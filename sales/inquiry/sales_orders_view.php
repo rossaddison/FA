@@ -94,12 +94,17 @@ function check_overdue(array $row): bool|int
 			&& ($row['TotDelivered'] < $row['TotQuantity']));
 }
 
+// view_link() is a function-name collision (9+ declarations across admin/,
+// dimensions/, gl/, manufacturing/, purchasing/, sales/ with wildly different
+// signatures) -- per doc/PSALM_MIGRATION.md's collision policy, left as-is.
 function view_link(string|int|float|bool|array $dummy, string|int|float|bool|null $order_no): ?string
 {
 	global $trans_type;
 	return  get_customer_trans_view_str($trans_type, $order_no);
 }
 
+// prt_link() is a function-name collision (8 declarations, most without a
+// native return type) -- per doc/PSALM_MIGRATION.md's collision policy, left as-is.
 function prt_link(array $row): null|string
 {
 	global $trans_type;
