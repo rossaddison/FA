@@ -63,6 +63,9 @@ function check_overdue(array $row): bool
 		&& (abs((float)$row["TotalAmount"]) - (float)$row["Allocated"] != 0));
 }
 
+// order_link() is a function-name collision with sales/inquiry/sales_orders_view.php's
+// own order_link() (different body) -- per doc/PSALM_MIGRATION.md's collision policy,
+// this function's own signature is left untouched rather than risking a cross-file ripple
 /** @return null|string */
 function order_link(array $row)
 {
@@ -79,6 +82,9 @@ function systype_name(string|int|float|bool|array $dummy, string|int|float|bool|
 	return $systypes_array[(int) $type];
 }
 
+// view_link() is a function-name collision (9+ declarations across admin/,
+// dimensions/, gl/, manufacturing/, purchasing/, sales/ with wildly different
+// signatures) -- per doc/PSALM_MIGRATION.md's collision policy, left as-is.
 function view_link(array $trans)
 {
 	return get_trans_view_str((string) $trans["type"], (string) $trans["trans_no"]);
@@ -98,6 +104,8 @@ function fmt_balance(array $row): float
 	return ($row["type"] == ST_JOURNAL && $row["TotalAmount"] < 0 ? -(float)$row["TotalAmount"] : (float)$row["TotalAmount"]) - (float)$row["Allocated"];
 }
 
+// alloc_link() is a function-name collision (4 declarations across
+// sales/inquiry/) -- per doc/PSALM_MIGRATION.md's collision policy, left as-is.
 /**
  * @return null|string
  */

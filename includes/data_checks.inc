@@ -621,7 +621,7 @@ function check_is_closed(string|int|float|bool|null $type, string|int|float|bool
     if (($type_no > 0) && is_closed_trans($type, $type_no))
     {
     	if (!(bool)$msg)
-    		$msg = sprintf(_("%s #%s is closed for further edition."), $systypes_array[(int) $type], is_scalar($type_no) ? $type_no : '');
+    		$msg = sprintf(_("%s #%s is closed for further edition."), $systypes_array[(int) $type], (string) $type_no);
 	   	display_error($msg, true);
 		display_footer_exit();
 	}
@@ -658,7 +658,7 @@ function check_is_editable(string|int|float|bool|array|null $trans_type, string|
 {
 	if (!session_obj('wa_current_user')->can_access('SA_EDITOTHERSTRANS'))
 	{
-		$audit = row_or_empty(get_audit_trail_last($trans_type, $trans_no));
+		$audit = row_or_empty(get_audit_trail_last(is_array($trans_type) ? null : $trans_type, $trans_no));
 
 		if (session_obj('wa_current_user')->user != ($audit['user'] ?? null))
 		{
