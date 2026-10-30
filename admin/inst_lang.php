@@ -259,8 +259,10 @@ function handle_delete(string|int|float|bool|null $id): void
 	$id = is_scalar($id) ? (int) $id : 0;
 
 	$lang = $installed_languages[$id]['code'];
-	if (!empty($installed_languages[$id]['package']))
-		if (!uninstall_package($installed_languages[$id]['package']))
+	$package = $installed_languages[$id]['package'] ?? null;
+	$package = is_string($package) ? $package : null;
+	if ($package !== null && $package !== '')
+		if (!uninstall_package($package))
 			return;
 			
 	if ($lang == $dflt_lang ) { 
