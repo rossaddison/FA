@@ -70,6 +70,9 @@ if ($wo_details === false)
 
 //--------------------------------------------------------------------------------------------------
 
+/**
+ * @param array<array-key, null|string> $wo_details
+ */
 #[\NoDiscard]
 function canProcessWorkOrderAddFinished(array $wo_details): bool
 {
@@ -116,11 +119,11 @@ function canProcessWorkOrderAddFinished(array $wo_details): bool
 		return false;
 	}
 	// if unassembling we need to check the qoh
-	if (($_POST['ProductionType'] == 0) && !sysprefs()->allow_negative_stock())
+	if (($_POST['ProductionType'] == 0) && !(bool)sysprefs()->allow_negative_stock())
 	{
 		$stock_id = $wo_details["stock_id"];
 		$loc_code = $wo_details["loc_code"];
-		if (check_negative_stock(is_scalar($stock_id) ? $stock_id : null, -input_num('quantity'), is_scalar($loc_code) ? $loc_code : null, $_POST['date_']))
+		if ((bool)check_negative_stock(is_scalar($stock_id) ? $stock_id : null, -input_num('quantity'), is_scalar($loc_code) ? $loc_code : null, $_POST['date_']))
 		{
 			display_error(_("The unassembling cannot be processed because there is insufficient stock."));
 			set_focus('quantity');
@@ -129,7 +132,7 @@ function canProcessWorkOrderAddFinished(array $wo_details): bool
 	}
 
 	// if production we need to check the qoh of the wo requirements
-	if (($_POST['ProductionType'] == 1) && !sysprefs()->allow_negative_stock())
+	if (($_POST['ProductionType'] == 1) && !(bool)sysprefs()->allow_negative_stock())
 	{
     	$err = false;
     	$result = get_wo_requirements(post_scalar('selected_id'));
@@ -138,7 +141,7 @@ function canProcessWorkOrderAddFinished(array $wo_details): bool
 			if ($row['mb_flag'] == 'D') // service, non stock
 				continue;
 
-			if (check_negative_stock($row["stock_id"], (float)(-$row['units_req']) * (float)input_num('quantity'), $row["loc_code"], $_POST['date_']))
+			if ((bool)check_negative_stock($row["stock_id"], (float)(-$row['units_req']) * (float)input_num('quantity'), $row["loc_code"], $_POST['date_']))
 			{
     			display_error( _("The production cannot be processed because a required item would cause a negative inventory balance :") .
     				" " . (string)$row['stock_id'] . " - " .  (string)$row['description']);

@@ -91,6 +91,14 @@ function handle_new_order(): void
 
 //-----------------------------------------------------------------------------------------------
 
+// PossiblyUndefinedArrayOffset on $_SESSION['transfer_items'] below and at its other
+// uses in this file is a Psalm artifact, not a bug: it's always set by
+// handle_new_order() during this same page's own earlier GET-mode load (see the
+// isset()/NewTransfer check further down), before any POST that reads it can occur -
+// Psalm can't trace that across the GET/POST request-response cycle.
+// add_to_order() below is also a function-name collision (3 declarations: this file's
+// local one taking items_cart, and sales/includes/ui/sales_order_ui.inc's taking Cart) -
+// per doc/PSALM_MIGRATION.md's collision policy, left untouched.
 if (isset($_POST['Process']))
 {
 

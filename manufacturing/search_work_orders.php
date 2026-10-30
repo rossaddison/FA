@@ -90,6 +90,12 @@ end_row();
 end_table();
 
 //-----------------------------------------------------------------------------
+// check_overdue()/edit_link() below are function-name collisions (many
+// declarations across admin/, dimensions/, gl/, purchasing/, sales/ with
+// different bodies) -- per doc/PSALM_MIGRATION.md's collision policy, their
+// shared `array $row` (no value type) signature is intentionally left as-is;
+// every value read from $row in this file is already narrowed with
+// is_scalar()/(bool) immediately before use.
 function check_overdue(array $row): bool
 {
 	$required_by = $row["required_by"];
@@ -97,6 +103,9 @@ function check_overdue(array $row): bool
 		&& date_diff2(Today(), sql2date(is_scalar($required_by) ? $required_by : null), "d") > 0);
 }
 
+// view_link() is a function-name collision (9+ declarations across admin/,
+// dimensions/, gl/, manufacturing/, purchasing/, sales/ with wildly different
+// signatures) -- per doc/PSALM_MIGRATION.md's collision policy, left as-is.
 function view_link(string|int|float|bool|array $dummy, string|int|float|bool|null $order_no)
 {
 	return get_trans_view_str(ST_WORKORDER, $order_no);
@@ -156,6 +165,8 @@ function view_gl_link(array $row)
 	return get_gl_view_str(ST_WORKORDER, is_scalar($id) ? $id : null);
 }
 
+// prt_link() is a function-name collision (8 declarations, most without a
+// native return type) -- per doc/PSALM_MIGRATION.md's collision policy, left as-is.
 /** @return non-empty-string|null */
 function prt_link(array $row)
 {

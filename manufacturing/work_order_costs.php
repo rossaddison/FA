@@ -69,6 +69,9 @@ if ($wo_details === false)
 
 //--------------------------------------------------------------------------------------------------
 
+/**
+ * @param array<array-key, null|string> $wo_details
+ */
 #[\NoDiscard]
 function canProcessWorkOrderCosts(array $wo_details): bool
 {
