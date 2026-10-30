@@ -13,7 +13,7 @@ declare(strict_types=1);
 require_once(dirname(__DIR__, 3) . "/admin/db/attachments_db.inc");
 // ------------------------------------------------------------------------------
 
-function get_supplier_details_to_order(?purch_order &$order, int $supplier_id): void
+function get_supplier_details_to_order(purch_order &$order, int $supplier_id): void
 {
 	$sql = "SELECT curr_code, supp_name, tax_group_id, supp.tax_included, dimension_id, dimension2_id,
 			supp.credit_limit - Sum((ov_amount + ov_gst + ov_discount)) as cur_credit,
@@ -40,13 +40,13 @@ function get_supplier_details_to_order(?purch_order &$order, int $supplier_id): 
 	$_POST['dimension'] = $myrow["dimension_id"];
 	$_POST['dimension2'] = $myrow["dimension2_id"];
 
-	$order->set_supplier($supplier_id, $myrow["supp_name"], $myrow["curr_code"],
+	$order->set_supplier($supplier_id, (string) $myrow["supp_name"], (string) $myrow["curr_code"],
 		(int) $myrow["tax_group_id"], (bool) $myrow["tax_included"]);
 }
 
 //----------------------------------------------------------------------------------------
 
-function delete_po(mixed $po): void
+function delete_po(int $po): void
 {
 
 	begin_transaction();
@@ -93,7 +93,7 @@ function add_po(purch_order &$po_obj)
 	db_query($sql, "The purchase order header record could not be inserted");
 
      /*Get the auto increment value of the order number created from the sql above */
-     $po_obj->order_no = db_insert_id();
+     $po_obj->order_no = (int) db_insert_id();
 
      /*Insert the purchase order detail records */
      foreach ($po_obj->line_items as $line_no => $po_line)
@@ -101,7 +101,7 @@ function add_po(purch_order &$po_obj)
      	if (!$po_line->descr_editable)
      	{
 			$data = get_purchase_data($po_obj->supplier_id, $po_line->stock_id);
-			if ($data !== false && $data['supplier_description'] != "")
+			if ($data !== false && $data['supplier_description'] !== null && $data['supplier_description'] !== "")
 				$po_line->item_description = $data['supplier_description'];
       	}
 		$sql = "INSERT INTO ".TB_PREF."purch_order_details (order_no, item_code, description, delivery_date,	unit_price,	quantity_ordered) VALUES (";
@@ -160,7 +160,7 @@ function update_po(purch_order &$po_obj)
     	if (!$po_line->descr_editable)
      	{
 			$data = get_purchase_data($po_obj->supplier_id, $po_line->stock_id);
-			if ($data !== false && $data['supplier_description'] != "")
+			if ($data !== false && $data['supplier_description'] !== null && $data['supplier_description'] !== "")
 				$po_line->item_description = $data['supplier_description'];
       	}
     	$req_del_date = date2sql($po_line->req_del_date);
@@ -168,7 +168,7 @@ function update_po(purch_order &$po_obj)
     		$req_del_date = "0000-00-00";
     	$sql = "INSERT INTO ".TB_PREF."purch_order_details (po_detail_item, order_no, item_code,
     		description, delivery_date, unit_price, quantity_ordered, quantity_received) VALUES ("
-			.db_escape($po_line->po_detail_rec ? $po_line->po_detail_rec : 0). ","
+			.db_escape((bool)$po_line->po_detail_rec ? $po_line->po_detail_rec : 0). ","
 			.$po_obj->order_no . ","
 			.db_escape($po_line->stock_id). ","
 			.db_escape($po_line->item_description). ",'"
@@ -220,9 +220,9 @@ function read_po_header(string|int|float|bool|null $order_no, purch_order &$orde
       	$myrow = row_or_empty(db_fetch($result));
 
       	$order->trans_type = ST_PURCHORDER;
-      	$order->order_no = $order_no;
+      	$order->order_no = (int) $order_no;
 
-      	$order->set_supplier((int) $myrow["supplier_id"], $myrow["supp_name"], $myrow["curr_code"],
+      	$order->set_supplier((int) $myrow["supplier_id"], (string) $myrow["supp_name"], (string) $myrow["curr_code"],
       		(int) $myrow['tax_group_id'], (bool) $myrow["tax_included"]);
 
 		$order->credit = get_current_supp_credit($order->supplier_id);
@@ -234,7 +234,7 @@ function read_po_header(string|int|float|bool|null $order_no, purch_order &$orde
       	$order->reference = $myrow["reference"] ?? '';
       	$order->delivery_address = $myrow["delivery_address"] ?? '';
       	$order->alloc = $myrow["alloc"];
-      	$order->prep_amount = $myrow["prep_amount"] ?? 0.00;
+      	$order->prep_amount = (float) ($myrow["prep_amount"] ?? 0.0);
       	$order->prepayments = get_payments_for($order_no, ST_PURCHORDER, $myrow["supplier_id"]);
 
       	return true;
@@ -279,8 +279,8 @@ function read_po_items(string|int|float|bool|null $order_no, purch_order &$order
                 $units = $myrow["units"];
             }
 
-            if ($order->add_to_order($order->lines_on_order, (string) ($myrow["item_code"] ?? ''),
-            	(int) $myrow["quantity_ordered"], (string) ($myrow["description"] ?? ''),
+            if ($order->add_to_order($order->lines_on_order, $myrow["item_code"] ?? '',
+            	(int) $myrow["quantity_ordered"], $myrow["description"] ?? '',
             	(float) $myrow["unit_price"],$units, sql2date($myrow["delivery_date"]),
             	(int) $myrow["qty_invoiced"], (int) $myrow["quantity_received"])) {
 				$order->line_items[$order->lines_on_order-1]->po_detail_rec = $myrow["po_detail_item"];
@@ -362,9 +362,10 @@ function get_sql_for_po_search_completed(string|null $from, string|null $to, str
 
 	if ($supplier_id != ALL_TEXT)
 		$sql .= "AND supplier.supplier_id=". (string) ($supplier_id ?? '')." ";
-	if ($order_number != "")
+	$order_number_str = is_array($order_number) ? '' : ($order_number ?? '');
+	if ($order_number_str !== "")
 	{
-		$sql .= "AND porder.reference LIKE ".db_escape('%'. (string) ($order_number ?? ''). '%');
+		$sql .= "AND porder.reference LIKE ".db_escape('%'. $order_number_str. '%');
 	}
 	else
 	{

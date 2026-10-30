@@ -60,7 +60,7 @@ final class purch_order
 	var $tax_group_array = null; // saves db queries
 	/** @var bool|int */
 	var $tax_included = 0; // type of prices
-	/** @var string */
+	/** @var array{description?: mixed, days_before_due?: mixed, day_in_following_month?: mixed}|string|int|float|bool|null */
 	var $terms = '';
 	/** @var float */
 	var $ex_rate = 0.0;
@@ -80,7 +80,7 @@ final class purch_order
 	var $tax_overrides = array();		// array of taxes manually inserted during sales invoice entry (direct invoice)
 	
 	/**
-	 * @var int
+	 * @var float
 	 */
 	var $prep_amount = 0; // prepayment required
 	/** @var float|int|string|null */
