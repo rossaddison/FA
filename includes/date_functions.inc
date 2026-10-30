@@ -28,13 +28,7 @@ function __date(
 	global $tmonths;
 	
 	$how = user_date_format();
-	$date_sep = user_date_sep();
-	// Psalm sees sysprefs()->dateseps as always indexable to a non-null string (it only
-	// knows the 4-element literal initializer, not that $date_sep could be out of that
-	// range at runtime) and flags the ?? '/' fallback as redundant -- kept anyway as a
-	// genuine runtime guard against a corrupted/out-of-range stored preference.
-	$sep = (sysprefs()->dateseps[is_scalar($date_sep) ?
-            (int) $date_sep : 0]) ?? '/';
+	$sep = sysprefs()->dateseps[(int) user_date_sep()];
 	$year = (int)$year;
 	$day = (int)$day;
 	$month = (int)$month;
@@ -66,11 +60,7 @@ function is_date(?string $date_): int
 	if ($date_ === null || $date_ === "")
 		return 0;
 	$how = user_date_format();
-	$date_sep = user_date_sep();
-	// Same genuine runtime guard as __date() above: user_date_sep()'s own docblock
-	// claims an always-scalar return, but this defends against a corrupted/out-of-range
-	// stored preference at runtime.
-	$sep = sysprefs()->dateseps[is_scalar($date_sep) ? (int) $date_sep : 0];
+	$sep = sysprefs()->dateseps[(int) user_date_sep()];
 	if ($sep === '')
 		$sep = '/';
 
@@ -544,7 +534,7 @@ provided that both dates are after 1970. Also only works for dates up to the yea
 		case "s":
 			return $difference;
 		case "y":
-			return (int)((float)$difference / ((24 * 60 * 60 * 365.25)));
+			return (int)((float)$difference / ((24.0 * 60.0 * 60.0 * 365.25)));
 		default:
 			Return 0;
 	}
@@ -668,8 +658,8 @@ function jalali_to_gregorian(string|int|float|bool|null $j_y, string|int|float|b
       	$g_day_no %= 365;
    	}
 
-   	for ($i = 0; $g_day_no >= $g_days_in_month[$i] + ($i == 1 && $leap); $i++)
-      	$g_day_no -= $g_days_in_month[$i] + ($i == 1 && $leap);
+   	for ($i = 0; $g_day_no >= $g_days_in_month[$i] + (int)($i == 1 && $leap); $i++)
+      	$g_day_no -= $g_days_in_month[$i] + (int)($i == 1 && $leap);
    	$gm = $i + 1;
    	$gd = $g_day_no + 1;
 
@@ -689,13 +679,13 @@ function gregorian_to_islamic(string|int|float|bool|null $g_y, string|int|float|
 	if (($y > 1582) || (($y == 1582) && ($m > 10)) || (($y == 1582) &&
 		($m == 10) && ($d > 14)))
 	{
-		$jd = (float)((int)((1461.0 * ($y + 4800.0 + (int)(($m - 14.0) / 12.0)))/ 4.0)) +
-			(float)((int)((367.0 * ($m - 2.0 - 12.0 * ((int)(($m - 14.0) / 12.0)))) / 12.0)) -
-			(float)(int)((3.0 * ((int)((($y + 4900.0 + (int)((($m - 14.0)) / 12.0))) / 100.0))) / 4.0) + $d - 32075.0;
+		$jd = (float)((int)((1461.0 * ($y + 4800.0 + (float)(int)(($m - 14.0) / 12.0)))/ 4.0)) +
+			(float)((int)((367.0 * ($m - 2.0 - 12.0 * (float)((int)(($m - 14.0) / 12.0)))) / 12.0)) -
+			(float)(int)((3.0 * (float)((int)((($y + 4900.0 + (float)(int)((($m - 14.0)) / 12.0))) / 100.0))) / 4.0) + $d - 32075.0;
 	}
 	else
 	{
-		$jd = 367.0 * $y - (float)(int)(((7.0 * (($y + 5001.0 + (int)((($m - 9.0)) / 7.0))))) / 4.0) +
+		$jd = 367.0 * $y - (float)(int)(((7.0 * (($y + 5001.0 + (float)(int)((($m - 9.0)) / 7.0))))) / 4.0) +
 			(float)(int)(((275.0 * $m)) / 9.0) + $d + 1729777.0;
 	}
 	$l = $jd - 1948440.0 + 10632.0;
@@ -707,7 +697,7 @@ function gregorian_to_islamic(string|int|float|bool|null $g_y, string|int|float|
 		(float)(int)($j / 16.0) * (float)(int)((15238.0 * $j) / 43.0) + 29.0;
 	$m = (int)(((24.0 * $l)) / 709.0);
 	$d = $l - (float)((int)((709 * $m) / 24));
-	$y = (int) (30 * $n + $j - 30);
+	$y = (int) (30.0 * (float) $n + $j - 30.0);
 	return array($y, $m, (int) $d);
 }
 
@@ -728,7 +718,7 @@ function islamic_to_gregorian(string|int|float|bool|null $i_y, string|int|float|
 		$n = (int)(((4.0 * $l)) / 146097.0);
 		$l = $l - (float)((int)((146097 * $n + 3) / 4));
 		$i = (int)(((4000.0 * (($l + 1.0)))) / 1461001.0);
-		$l = $l - (float)((int)((1461.0 * $i) / 4.0)) + 31.0;
+		$l = $l - (float)((int)((1461.0 * (float) $i) / 4.0)) + 31.0;
 		$j = (int)(((80.0 * $l)) / 2447.0);
 		$d = $l - (float)((int)((2447 * $j) / 80));
 		$l= (int)($j / 11);
@@ -741,7 +731,7 @@ function islamic_to_gregorian(string|int|float|bool|null $i_y, string|int|float|
 		$k = (int)((($j - 1.0)) / 1461.0);
 		$l = $j - (float)(1461 * $k);
 		$n = (int)((($l - 1.0)) / 365.0) - (int)($l / 1461.0);
-		$i = $l - (365.0 * $n) + 30.0;
+		$i = $l - (365.0 * (float) $n) + 30.0;
 		$j = (int)(((80.0 * $i)) / 2447.0);
 		$d = $i - (float)((int)((2447 * $j) / 80));
 		$i = (int)($j / 11);
