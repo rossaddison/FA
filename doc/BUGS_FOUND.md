@@ -259,6 +259,19 @@ a stand-in for a boolean) reaching a native, strictly-typed parameter.
 
 ## Live crashes
 
+- **`includes/db/crm_contacts_db.inc` — `delete_crm_category()`.**
+  Reported live by the user: deleting any non-system contact category
+  from `admin/crm_categories.php` threw `Unhandled exception [1064]:
+  You have an error in your SQL syntax ... near 'system=0 AND id=...'`.
+  `system` became a reserved word in MySQL 8.0, so the unquoted
+  `WHERE system=0 AND id=...` clause is invalid on MySQL 8+ even
+  though it (presumably) worked on older MySQL/MariaDB — the column
+  itself has always been named `` `system` `` (backtick-quoted) in
+  every `CREATE TABLE` for `crm_categories` across `sql/*.sql`, so
+  this `DELETE` was the only place in the codebase referencing it
+  unquoted. Fixed by backtick-quoting it to match: `` WHERE `system`=0
+  AND id=... ``.
+
 - **`purchasing/includes/ui/invoice_ui.inc` — `display_gl_controls()` /
   `display_grn_items_for_selection()`.** Both called
   `alt_table_row_color((int) $k)` — but `alt_table_row_color()`'s

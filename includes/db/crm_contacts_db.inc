@@ -228,7 +228,7 @@ function update_crm_category(string|int|float|bool|null $selected_id, string|nul
 function delete_crm_category(string|int|float|bool|null $selected_id): void
 {
 	// preserve system categories
-	$sql="DELETE FROM ".TB_PREF."crm_categories WHERE system=0 AND id=".db_escape($selected_id);
+	$sql="DELETE FROM ".TB_PREF."crm_categories WHERE `system`=0 AND id=".db_escape($selected_id);
 	db_query($sql,"could not delete crm category");
 }
 
