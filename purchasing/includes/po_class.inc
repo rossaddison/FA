@@ -87,7 +87,7 @@ final class purch_order
 	var $alloc; // sum of payments allocated
 
 	/**
-	 * @var array
+	 * @var array<array-key, array<array-key, string|null>>
 	 */
 	var $prepayments = array();
 

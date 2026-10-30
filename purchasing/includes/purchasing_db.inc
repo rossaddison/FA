@@ -134,6 +134,9 @@ function add_or_update_purchase_data(
 	return true;
 }
 
+/**
+ * @return array<array-key, array<array-key, string|null>>
+ */
 function get_po_prepayments(supp_trans $supp_trans): array
 {
 	// collect purchase order line ids

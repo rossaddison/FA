@@ -81,7 +81,7 @@ function allocate_payment(string|int|float|bool|null $type_from, string|int|floa
 //  $free_remainder should be true if old allacations should be freed when not allocated to new transaction.
 //
 /**
- * @param array<array-key, array<string, string|null>> $allocs
+ * @param array<array-key, array<array-key, string|null>> $allocs
  */
 function reallocate_payments(string|int|float|bool|null $trans_no, ?int $trans_type, string|int|float|bool|null $alloc_date, string|int|float|bool|null $max_alloc, array $allocs, string|int|float|bool|null $person_id, bool $free_remainder=true): void
 {
