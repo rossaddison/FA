@@ -418,6 +418,10 @@ class simple_crud {
 	}
 
 	/**
+	 * Base no-op is pure, but this is a hook real subclasses override with
+	 * side-effecting logic (see e.g. includes/ui/attachment.inc's
+	 * insert_check(), which calls display_error()/set_focus()) - not
+	 * annotated @psalm-pure here to avoid misrepresenting those overrides.
 	 * @return bool
 	 */
 	function insert_check() {
@@ -425,6 +429,7 @@ class simple_crud {
 	}
 
 	/**
+	 * Same reasoning as insert_check() above.
 	 * @return bool
 	 */
 	function update_check()
