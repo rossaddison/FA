@@ -139,6 +139,12 @@ function write_extensions(?array $extensions=null, string|int|float|bool|array|n
 	if (!isset($extensions)) {
 		$extensions = $installed_extensions;
 	}
+	// TypeDoesNotContainNull here is a Psalm artifact, not a bug: psalm.xml stubs
+	// $next_extension_id as always int, but that only describes its value once the
+	// generated extensions config file has actually set it -- a fresh install (or a
+	// manually edited config missing the line) genuinely leaves this global unset,
+	// same defensive-isset pattern already documented elsewhere in this file for
+	// $db_connections/$path_to_root
 	if (!isset($next_extension_id)) {
 		$next_extension_id = 1;
 	}

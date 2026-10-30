@@ -24,7 +24,10 @@ simple_page_mode(true);
 //------------------------------
 //	Helper to translate record content to more intuitive form
 //
-/** @psalm-pure */
+/**
+ * @param array<array-key, null|string> $myrow
+ * @psalm-pure
+ */
 function term_days(array $myrow): string|int|float|bool|null
 {
 	return $myrow["day_in_following_month"] != 0 ? $myrow["day_in_following_month"] :
@@ -32,6 +35,7 @@ function term_days(array $myrow): string|int|float|bool|null
 }
 
 /**
+ * @param array<array-key, null|string> $myrow
  * @return 1|2|3|4
  * @psalm-pure
  */

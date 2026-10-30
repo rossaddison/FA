@@ -51,6 +51,12 @@ function set_global_connection(string|int|float|bool|null $company=-1): mysqli
 
 //DB wrapper functions to change only once for whole application
 
+// TaintedSql here is the expected final sink for every SQL statement in the
+// codebase (thousands of call sites) -- db_escape() is applied at individual
+// call sites, not here. See doc/BUGS_FOUND.md's "SQL injection" section: this
+// is exactly how that whole class of real bugs was found and fixed, by
+// chasing this sink's TaintedSql finding back to each caller that skipped
+// db_escape(). What remains here is the sink itself, not a new leak.
 function db_query(string $sql, ?string $err_msg=null): mysqli_result|bool
 {
 	global $db, $sql_queries, $db_connections, $db_last_inserted_id;
