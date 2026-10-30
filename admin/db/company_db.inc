@@ -20,14 +20,17 @@ function update_company_prefs(array $params): bool
 {
 	$sql = "UPDATE ".TB_PREF."sys_prefs SET value = ";
 	// $value is genuinely mixed: every real caller passes either a literal array of
-	// scalar preference values, or get_post(array(...))'s own array-mode result, which
-	// is itself mixed by design -- guarded with db_escape() immediately below
+	// scalar preference values, or get_post(array(...))'s own array-mode result, whose
+	// per-field values can themselves be arrays (e.g. a manipulated "field[]=x" submission)
+	// -- db_escape() only accepts a scalar, so that case is skipped rather than passed through
 	foreach($params as $name => $value) {
+		if (!is_scalar($value) && $value !== null)
+			continue;
 		if (!db_query($sql. db_escape($value). " WHERE name=".db_escape($name),
 			 "The company prefferences could not be updated "))
 			return false;
 		// update cached value
-		sysprefs()->prefs[$name] = $value;
+		sysprefs()->prefs[(string) $name] = $value;
 	}
 	return true;
 }
@@ -190,7 +193,7 @@ function key_in_foreign_table(string|int|float|bool|null $id, string|array|null 
 
 	$sql = "SELECT sum(cnt) FROM (". implode(' UNION ', $sqls).") as counts";
 
-	$result = db_select($sql, "check relations for ".implode(',',$tables)." failed");
+	$result = db_select($sql, "check relations for ".implode(',', array_map(fn($t): string => is_scalar($t) ? (string) $t : '', $tables))." failed");
 	$count =  row_or_empty(db_fetch($result));
 
 	return $count[0];

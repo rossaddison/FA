@@ -614,9 +614,11 @@ if (!defined('FA_LOGOUT_PHP_FILE')){
 			/** @var string|int|float|bool|null $company_login_name */
 			$company_login_name = $_POST["company_login_name"] ?? null;
 			$company_login_name = is_int($company_login_name) || is_string($company_login_name) ? $company_login_name : null;
+			$loginname_post = $_POST["user_name_entry_field"] ?? null;
+			$password_post = $_POST["password"] ?? null;
 			$succeed = $company_login_name !== null && isset($db_connections[$company_login_name]) &&
 				session_obj('wa_current_user')->login($company_login_name,
-				$_POST["user_name_entry_field"], $_POST["password"]);
+				is_string($loginname_post) ? $loginname_post : '', is_string($password_post) ? $password_post : '');
 			// select full vs fallback ui mode on login
 			session_obj('wa_current_user')->ui_mode = (int) ($_POST['ui_mode'] ?? 0);
 			/** @var array{uri?: string, post?: mixed}|null $timeout */
