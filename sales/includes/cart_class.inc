@@ -77,9 +77,9 @@ class Cart
 	var $src_date;			// src document date (for info only)
 
 	/** @var string */
-	var $document_date;
+	var $document_date = '';
 	/** @var string */
-	var $due_date;
+	var $due_date = '';
 	/** @var string|int|float|bool|null */
 	var $sales_type; // set to the customer's sales type
 	/** @var string|null */
@@ -92,34 +92,34 @@ class Cart
 	/** @var float|int|string|null */
 	var $default_discount; // set to the customer's discount %
 	/** @var string|null */
-	var $customer_name;
+	var $customer_name = '';
 	/** @var string|int|bool|null */
 	var $customer_id;
 	/** @var string|int|bool|null */
 	var $Branch;
 	/** @var string|null */
-	var $email;
+	var $email = '';
 
 	/** @var string|null */
-	var $deliver_to;
+	var $deliver_to = '';
 	/** @var string|null */
-	var $delivery_address;
+	var $delivery_address = '';
 	/** @var string|null */
-	var $phone;
+	var $phone = '';
 
 	/** @var string|null */
-	var $cust_ref;
+	var $cust_ref = '';
 	/** @var string */
-	var $reference;
+	var $reference = '';
 
 	/**
 	 * @var string
 	 */
-	var $Comments;
+	var $Comments = '';
 	/** @var string|null */
-	var $Location;
+	var $Location = '';
 	/** @var string|null */
-	var $location_name;
+	var $location_name = '';
 
 	/**
 	 * @var (int|string)|null
@@ -134,7 +134,7 @@ class Cart
 	/** @var string|int|bool|null */
 	var $tax_group_id;
 	/** @var string */
-	var $tax_group_name;
+	var $tax_group_name = '';
 	/** @var array<array-key, mixed>|null */
 	var $tax_group_array = null; // saves db queries
 	/** @var float|int|string|null */
@@ -145,7 +145,7 @@ class Cart
 	/** @var string|int|float|bool|null */
 	var $cash_account;
 	/** @var string|int|bool|null */
-	var $account_name;
+	var $account_name = '';
 	/** @var int|float|bool|null */
 	var $cash_discount;	// not used as of FA 2.1
 	/** @var int|string|null */

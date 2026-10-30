@@ -131,25 +131,30 @@ start_table(TABLESTYLE2);
 $edit_row = array();
 if ($selected_id != -1)
 {
- 	if ($Mode == 'Edit') {
-		//editing an existing area
-		$edit_row = row_or_empty(get_crm_category(is_array($selected_id) ? '' : (string) $selected_id));
+    if ($Mode == 'Edit') {
+        //editing an existing area
+        $edit_row = row_or_empty(get_crm_category(is_array($selected_id) ? '' : (string) $selected_id));
 
-		$_POST['name']  = $edit_row["name"];
-		$_POST['type']  = $edit_row["type"];
-		$_POST['subtype']  = $edit_row["action"];
-		$_POST['description']  = $edit_row["description"];
-	}
-	hidden("selected_id", is_array($selected_id) ? '' : (string) $selected_id);
+        $_POST['name']  = $edit_row["name"];
+        $_POST['type']  = $edit_row["type"];
+        $_POST['subtype']  = $edit_row["action"];
+        $_POST['description']  = $edit_row["description"];
+        $_POST['system']  = $edit_row["system"] ?? 1;
+    }
+    hidden("selected_id", is_array($selected_id) ? '' : (string) $selected_id);
 }
 
-if ($Mode == 'Edit' && ($edit_row['system'] ?? false)) {
-	label_row(_("Contact Category Type:"), post_scalar('type'));
-	label_row(_("Contact Category Subtype:"), post_scalar('subtype'));
+// table crm_catgories field system default 0 (false) not nullable
+$editRowSystem = (bool) post_scalar('system');
+if ($Mode == 'Edit' && $editRowSystem) {
+    // system (protected) category: only show label, not an editable text box
+    label_row(_("Contact Category Type:"), post_scalar('type'));
+    label_row(_("Contact Category Subtype:"), post_scalar('subtype'));
 } else {
-//	crm_category_type_list_row(_("Contact Category Type:"), 'type', null, _('Other'));
-	text_row_ex(_("Contact Category Type:"), 'type', 30); 
-	text_row_ex(_("Contact Category Subtype:"), 'subtype', 30); 
+    // crm_category_type_list_row(_("Contact Category Type:"), 'type', null, _('Other'));
+    // show text box for editing
+    text_row_ex(_("Contact Category Type:"), 'type', 30); 
+    text_row_ex(_("Contact Category Subtype:"), 'subtype', 30); 
 }
 
 text_row_ex(_("Category Short Name:"), 'name', 30); 

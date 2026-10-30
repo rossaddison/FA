@@ -54,7 +54,7 @@ final class supp_trans
 	
         /** @var string */
 	
-        var $supplier_name;
+        var $supplier_name = '';
 	/** @var array{description?: mixed, days_before_due?: mixed, day_in_following_month?: mixed}|string|int|float|bool|null */
 	var $terms;
 	
@@ -62,7 +62,7 @@ final class supp_trans
 	var $ex_rate;
 	
 	/** @var string */
-	var $tax_description;
+	var $tax_description = '';
 	
         /** @var string|int|float|bool|null */
 	var $tax_group_id;
@@ -77,22 +77,22 @@ final class supp_trans
 	var $trans_no;
 
 	/** @var string */
-	var $Comments;
+	var $Comments = '';
 	
         /** @var string */
-	var $tran_date;
+	var $tran_date = '';
 	
         /** @var string */
-	var $due_date;
+	var $due_date = '';
 	
         /** @var array<array-key, string|null> */
 	var $src_docs = array();		// source invoice for this credit note (if any)
 
 	/** @var string */
-	var $supp_reference;
+	var $supp_reference = '';
 	
         /** @var string */
-	var $reference;
+	var $reference = '';
 
 	/**
 	 * @var float|int|string|null

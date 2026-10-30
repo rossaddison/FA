@@ -40,7 +40,7 @@ final class user_prefs
 	/** @var string|int|float|bool|null */
 	var $dec_sep;
 	/** @var string */
-	var $theme;
+	var $theme = 'default';
 	/** @var string|int|float|bool|null */
 	var $print_profile;
 	/** @var string|int|float|bool|null */
@@ -104,7 +104,7 @@ final class user_prefs
 			$this->date_sep = $user["date_sep"];
 			$this->tho_sep = $user["tho_sep"];
 			$this->dec_sep = $user["dec_sep"];
-			$this->theme = (string) $user["theme"];
+			$this->theme = (string) ($user["theme"] ?? 'default');
 			$this->pagesize = $user["page_size"];
 			$this->show_hints = $user["show_hints"];
 			$this->print_profile = $user["print_profile"];

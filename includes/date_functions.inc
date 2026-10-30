@@ -63,10 +63,13 @@ function is_date(?string $date_): int
 {
 	global $tmonths;
 
-	if ($date_ == null || $date_ == "")
+	if ($date_ === null || $date_ === "")
 		return 0;
 	$how = user_date_format();
 	$date_sep = user_date_sep();
+	// Same genuine runtime guard as __date() above: user_date_sep()'s own docblock
+	// claims an always-scalar return, but this defends against a corrupted/out-of-range
+	// stored preference at runtime.
 	$sep = sysprefs()->dateseps[is_scalar($date_sep) ? (int) $date_sep : 0];
 	if ($sep === '')
 		$sep = '/';
@@ -688,12 +691,12 @@ function gregorian_to_islamic(string|int|float|bool|null $g_y, string|int|float|
 	{
 		$jd = (float)((int)((1461.0 * ($y + 4800.0 + (int)(($m - 14.0) / 12.0)))/ 4.0)) +
 			(float)((int)((367.0 * ($m - 2.0 - 12.0 * ((int)(($m - 14.0) / 12.0)))) / 12.0)) -
-			(float)(int)((3.0 * ((int)((((float)$y + 4900.0 + (int)(((float)($m - 14.0)) / 12.0))) / 100.0))) / 4.0) + $d - 32075.0;
+			(float)(int)((3.0 * ((int)((($y + 4900.0 + (int)((($m - 14.0)) / 12.0))) / 100.0))) / 4.0) + $d - 32075.0;
 	}
 	else
 	{
-		$jd = 367.0 * (float)$y - (float)(int)(((7.0 * (((float)$y + 5001.0 + (int)(((float)($m - 9.0)) / 7.0))))) / 4.0) +
-			(float)(int)(((float)(275.0 * $m)) / 9.0) + $d + 1729777.0;
+		$jd = 367.0 * $y - (float)(int)(((7.0 * (($y + 5001.0 + (int)((($m - 9.0)) / 7.0))))) / 4.0) +
+			(float)(int)(((275.0 * $m)) / 9.0) + $d + 1729777.0;
 	}
 	$l = $jd - 1948440.0 + 10632.0;
 	$n = (int)((($l - 1.0)) / 10631.0);
@@ -718,7 +721,7 @@ function islamic_to_gregorian(string|int|float|bool|null $i_y, string|int|float|
 	$m = (float) $i_m;
 	$d = (float) $i_d;
 
-	$jd = (float)((int)((11.0 * $y + 3.0) / 30.0)) + (float)(354.0 * $y) + 30.0 * $m - (float)(int)(((float)($m - 1.0)) / 2.0) + $d + 1948440.0 - 385.0;
+	$jd = (float)((int)((11.0 * $y + 3.0) / 30.0)) + (354.0 * $y) + 30.0 * $m - (float)(int)((($m - 1.0)) / 2.0) + $d + 1948440.0 - 385.0;
 	if ($jd > 2299160)
 	{
 		$l = $jd + 68569.0;

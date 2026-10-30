@@ -142,13 +142,13 @@ function exchange_variation(string|int|float|bool|null $pyt_type, string|int|flo
 		$exc_var_act = get_company_pref('exchange_diff_act');
 		if (date1_greater_date2($date, $pyt_date))
 		{
-			$memo = (string) ($systypes_array[(int) $pyt_type] ?? '')." ".(string) $pyt_no;
+			$memo = ($systypes_array[(int) $pyt_type] ?? '')." ".(string) $pyt_no;
 			add_gl_trans($type, $trans_no, $date, $ar_ap_act, 0, 0, $memo, -$diff, null, $person_type, $person_id);
 			add_gl_trans($type, $trans_no, $date, $exc_var_act, 0, 0, $memo, $diff, null, $person_type, $person_id);
 		}
 		else
 		{
-			$memo = (string) ($systypes_array[(int) $type] ?? '')." ".(string) $trans_no;
+			$memo = ($systypes_array[(int) $type] ?? '')." ".(string) $trans_no;
 			add_gl_trans($pyt_type, $pyt_no, $pyt_date, $ar_ap_act, 0, 0, $memo, -$diff, null, $person_type, $person_id);
 			add_gl_trans($pyt_type, $pyt_no, $pyt_date, $exc_var_act, 0, 0, $memo, $diff, null, $person_type, $person_id);
 		}

@@ -122,9 +122,9 @@ function defaultCompany()
 		} else {
 			$coy =  user_company();
 			if (!isset($coy)) {
-				/** @var int|string $def_coy */
-				$def_coy = $def_coy;
-				$coy = $def_coy;
+			    /** @var int|string $def_coy */
+			    $def_coy = $def_coy;
+			    $coy = $def_coy;
 			}
 			// RedundantCondition here is a Psalm artifact: psalm.xml stubs $db_connections as
 			// always a non-null array, but that only describes its value once config_db.php
@@ -134,7 +134,11 @@ function defaultCompany()
 				if (!@sysprefs()->text_company_selection) {
 					echo "<tr><td>"._("Company")."</td><td><select name='company_login_name'>\n";
 					for ($i = 0; $i < count($db_connections); $i++)
-						echo "<option value=$i ".($i==$coy ? 'selected':'') .">" . $db_connections[$i]["name"] . "</option>";
+						echo "<option value=$i " .
+                                                ($i==$coy ? 'selected':'') .
+                                                ">" .
+                                                $db_connections[$i]["name"] .
+                                                "</option>";
 					echo "</select>\n";
 					echo "</td></tr>";
 				} else {
@@ -162,8 +166,8 @@ function defaultCompany()
 	// with the login form so the original request isn't lost on a session timeout
 	foreach($_SESSION['timeout']['post'] as $p => $val) {
 		// add all request variables to be resend together with login data
-		if (!in_array($p, array('ui_mode', 'user_name_entry_field', 
-			'password', 'SubmitUser', 'company_login_name'))) 
+		if (!in_array($p, array('ui_mode', 'user_name_entry_field',
+			'password', 'SubmitUser', 'company_login_name')))
 			if (!is_array($val))
 				echo "<input type='hidden' name='$p' value='$val'>";
 			else

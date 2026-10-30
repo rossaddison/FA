@@ -72,7 +72,7 @@ function display_general_journal_order_header(items_cart &$Order): void
 			$base_desc = $qid['base_desc'];
 			$accname = get_gl_account_name(is_scalar($base_desc) ? $base_desc : null);
 			label_row(($qid['base_amount'] == 0 ? _("Yearly") : _("Monthly")) . " ". _("balance from account")." ".
-				(string)$qid['base_desc']." ".(is_scalar($accname) ? (string) $accname : '')."&nbsp;&nbsp;".(string) submit('go', _("Go"), false, false, true),'', "colspan=2");
+				(string)$qid['base_desc']." ".(is_scalar($accname) ? $accname : '')."&nbsp;&nbsp;".(string) submit('go', _("Go"), false, false, true),'', "colspan=2");
 		}
 		else
 		{

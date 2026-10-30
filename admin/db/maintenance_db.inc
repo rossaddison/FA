@@ -598,9 +598,13 @@ function db_unzip(?string $mode, ?string $path): array|string|false
 
 /**
  * @param array<string, mixed> $conn
- * @return false|null|string
+ * @return false|string
  */
-function db_backup(array $conn, string|int|float|bool|null $ext='no', string|int|float|bool|null $comm='', string|int|float|bool|null $path='')
+function db_backup(
+        array $conn,
+        string|int|float|bool|null $ext='no',
+        string|int|float|bool|null $comm='',
+        string|int|float|bool|null $path='')
 {
 	$conn_dbname = is_scalar($conn['dbname'] ?? null) ? (string) $conn['dbname'] : '';
 	$conn_tbpref = is_scalar($conn['tbpref'] ?? null) ? (string) $conn['tbpref'] : '';
@@ -613,18 +617,18 @@ function db_backup(array $conn, string|int|float|bool|null $ext='no', string|int
 	$cleaned_filename = is_string($cleaned_filename) ? $cleaned_filename : '';
 	return db_export($conn, (string) $path . $cleaned_filename, $ext, $comm);
 }
-// Generates a dump of $dbMsqli database
-//
+
 /**
  * @param array<string, mixed> $conn
  * @return false|string
  */
-function db_export(array $conn, ?string $filename, string|int|float|bool|null $zip='no', string|int|float|bool|null $comment='')
+function db_export(
+        array $conn, ?string $filename,
+        string|int|float|bool|null $zip='no',
+        string|int|float|bool|null $comment='')
 {
 
-	global $version;
-
-    $error = false;
+    global $version;
     $auto_incr = array();
     // set max string size before writing to file
     $max_size = 1048576 * 2; // 2 MB
@@ -716,135 +720,121 @@ function db_export(array $conn, ?string $filename, string|int|float|bool|null $z
 	}
 	// order $all_tables
 	$all_tables = order_sql_tables($all_tables, $fks);
+	
+        foreach ($all_tables as $row)
+        {
+            if ((bool) ($row['Engine'] ?? null)) {	//don't export views like tables
+                    $tablename = (string) $row['Name'];
+                    $auto_incr[$tablename] = $row['Auto_increment'];
 
-	// as long as no error occurred
-	if (!$error)
-	{
-		foreach ($all_tables as $row)
-		{
-			if ((bool) ($row['Engine'] ?? null)) {	//don't export views like tables
-				$tablename = (string) $row['Name'];
-				$auto_incr[$tablename] = $row['Auto_increment'];
-	
-				$out.="\n\n";
-				// export tables
-				$out.="### Structure of table `".$tablename."` ###\n\n";
-	
-				$out.="DROP TABLE IF EXISTS `".$tablename."`;\n\n";
-				$out.=$table_sql[$tablename];
-	
-				$out.=" ;";
-				$out.="\n\n";
-	
-				// export data
-				if (!$error)
-				{
-					$out.="### Data of table `".$tablename."` ###\n";
-	
-					// check if field types are NULL or NOT NULL
-					$res3 = db_select("SHOW COLUMNS FROM `" . $tablename . "`");
-	
-					$field_null = array();
-					for ($j = 0; $j < db_num_rows($res3); $j++)
-					{
-						$row3 = row_or_empty(db_fetch($res3));
-						$field_null[] = $row3[2]=='YES' && $row3[4]===null;
-					}
-	
-					$res2 = db_select("SELECT * FROM `" . $tablename . "`");
-					$maxinsert = 0;
-					$insert = '';
-					for ($j = 0; $j < db_num_rows($res2); $j++)
-					{
-						$row2 = row_or_empty(db_fetch_row($res2));
-						$values = '(';
-						for ($k = 0; $k < $nf = db_num_fields($res2); $k++)
-						{
-							$values .= db_escape($row2[$k], $field_null[$k]);
-							if ($k < ($nf - 1))
-								$values .= ', ';
-						}
-						$values .= ')';
-						$len = strlen($values);
-						if ($maxinsert < $len+1)
-						{
-							$maxinsert = EXPORT_MAX_INSERT;
-							if ($insert)
-							{
-								$out .= $insert .';'; // flush insert query
-								$insert = '';
-							}
-						}
-	
-						if ($insert == '')
-						{
-							$insert = "\nINSERT INTO `" . $tablename . "` VALUES\n";
-							$maxinsert -= strlen($insert);
-						} else {
-							$insert .= ",\n";
-						}
-	
-						$maxinsert -= $len;
-						$insert .= $values;
-	
-						// if saving is successful, then empty $out, else set error flag
-						if (strlen($out) > $max_size && $zip != "zip")
-						{
-							if (save_to_file($backupfile, $zip, $out))
-								$out = "";
-							else
-								$error = true;
-						}
-					}
-					if ($insert)
-						$out .= $insert. ';';
-				// an error occurred! Try to delete file and return error status
-				}
-				elseif ($error)
-				{
-					@unlink($backupfile);
-					return false;
-				}
-	
-				// if saving is successful, then empty $out, else set error flag
-				if (strlen($out) > $max_size && $zip != "zip")
-				{
-					if (save_to_file($backupfile, $zip, $out))
-						$out= "";
-					else
-						$error = true;
-				}
-			}	//end if Engine set (not a view)
-		}
-		//process views last so all tables have been created before views are created
-		foreach ($all_tables as $row)
-		{
-			if (!(bool) ($row['Engine'] ?? null)) {
-				$viewname = (string) $row['Name'];
-				$out .= "\n\nDROP VIEW IF EXISTS `".$viewname."`;\n";
-				//db_get_view_schema() is in /includes/db/connect_db_mysqli.inc because it is mysql specific
-				if (NULL !== ($schema = db_get_view_schema($viewname)))
-				{
-					$out .= "CREATE VIEW `".$viewname."` AS ".$schema.";\n\n";
-					if (!save_to_file($backupfile, $zip, $out)) $error = true;
-					else $out = "";
-				}
-				else $error = true;
-				
-				if ($error) {
-					@unlink($backupfile);
-					return false;
-				}
-			}
-		}
+                    $out.="\n\n";
+                    // export tables
+                    $out.="### Structure of table `".$tablename."` ###\n\n";
 
-	// an error occurred! Try to delete file and return error status
-	}
-	else
-	{
-		@unlink($backupfile);
-		return false;
-	}
+                    $out.="DROP TABLE IF EXISTS `".$tablename."`;\n\n";
+                    $out.=$table_sql[$tablename];
+
+                    $out.=" ;";
+                    $out.="\n\n";
+
+
+                            $out.="### Data of table `".$tablename."` ###\n";
+
+                            // check if field types are NULL or NOT NULL
+                            $res3 = db_select("SHOW COLUMNS FROM `" . $tablename . "`");
+
+                            $field_null = array();
+                            for ($j = 0; $j < db_num_rows($res3); $j++)
+                            {
+                                    $row3 = row_or_empty(db_fetch($res3));
+                                    $field_null[] = $row3[2]=='YES' && $row3[4]===null;
+                            }
+
+                            $res2 = db_select("SELECT * FROM `" . $tablename . "`");
+                            $maxinsert = 0;
+                            $insert = '';
+                            for ($j = 0; $j < db_num_rows($res2); $j++)
+                            {
+                                    $row2 = row_or_empty(db_fetch_row($res2));
+                                    $values = '(';
+                                    for ($k = 0; $k < $nf = db_num_fields($res2); $k++)
+                                    {
+                                            $values .= db_escape($row2[$k], $field_null[$k]);
+                                            if ($k < ($nf - 1))
+                                                    $values .= ', ';
+                                    }
+                                    $values .= ')';
+                                    $len = strlen($values);
+                                    if ($maxinsert < $len+1)
+                                    {
+                                            $maxinsert = EXPORT_MAX_INSERT;
+                                            if ($insert)
+                                            {
+                                                    $out .= $insert .';'; // flush insert query
+                                                    $insert = '';
+                                            }
+                                    }
+
+                                    if ($insert == '')
+                                    {
+                                            $insert = "\nINSERT INTO `" . $tablename . "` VALUES\n";
+                                            $maxinsert -= strlen($insert);
+                                    } else {
+                                            $insert .= ",\n";
+                                    }
+
+                                    $maxinsert -= $len;
+                                    $insert .= $values;
+
+                                    // if saving is successful, then empty $out, else set error flag
+                                    if (strlen($out) > $max_size && $zip != "zip")
+                                    {
+                                            if (save_to_file($backupfile, $zip, $out)) {
+                                                    $out = "";
+                                            } else {
+                                                @unlink($backupfile);
+                                                return false;
+                                            }
+                                    }
+                            }
+                            if ($insert) {  $out .= $insert. ';';}
+                    // an error occurred! Try to delete file and return error status
+                    }
+
+                    // if saving is successful, then empty $out, else set error flag
+                    if (strlen($out) > $max_size && $zip != "zip")
+                    {
+                            if (save_to_file($backupfile, $zip, $out)) {
+                                    $out= "";
+                            } else {
+                                @unlink($backupfile);
+                                return false;
+                            }
+                    }
+        }	//end if Engine set (not a view)
+        
+        //process views last so all tables have been created before views are created
+        foreach ($all_tables as $row)
+        {
+            if (!(bool) ($row['Engine'] ?? null)) {
+                $viewname = (string) $row['Name'];
+                $out .= "\n\nDROP VIEW IF EXISTS `".$viewname."`;\n";
+                //db_get_view_schema() is in /includes/db/connect_db_mysqli.inc because it is mysql specific
+                if (NULL !== ($schema = db_get_view_schema($viewname)))
+                {
+                        $out .= "CREATE VIEW `".$viewname."` AS ".$schema.";\n\n";
+                        if (!save_to_file($backupfile, $zip, $out)) {
+                            @unlink($backupfile);
+                            return false;
+                        } else {
+                            $out = "";
+                        }
+                } else {
+                    @unlink($backupfile);
+                    return false;
+                }
+            }
+        }
 
 	if (save_to_file($backupfile, $zip, $out))
 	{

@@ -53,7 +53,7 @@ if (get_post('Upgrade'))
 $i = find_submit('Clear');
 if ($i != -1)
 {
-  unlink(VARLOG_PATH.'/upgrade.'.$i.'.log');
+  unlink(VARLOG_PATH.'/upgrade.'. (string) $i.'.log');
   ajax()->activate('_page_body');
 }
 if (get_post('_select_comp_update'))
@@ -80,12 +80,12 @@ foreach($site_status as $i => $comp)
 
 	label_cell($comp['version'], 'align=center' .($status ? '':' class=redfg')/*, 'class='.( $status ? 'ok' : 'error')*/);
 
-	$log = VARLOG_PATH.'/upgrade.'.$i.'.log';
+	$log = VARLOG_PATH.'/upgrade.'. (string) $i.'.log';
 	if (file_exists($log))
 	{
 		label_cell(viewer_link(_('View log'), "admin/view/view_upgrade_log.php?id=$i", null, $i, 'log.png')
-		  .button('Clear'.$i, _('Clear'), _('Clear log'), ICON_DELETE), 'align=center');
-		submit_js_confirm('Clear'.$i, _("Do you really want to clear this upgrade log?"));
+		  .button('Clear'. (string) $i, _('Clear'), _('Clear log'), ICON_DELETE), 'align=center');
+		submit_js_confirm('Clear'. (string) $i, _("Do you really want to clear this upgrade log?"));
 	} else
 		label_cell('-', 'align=center');
 

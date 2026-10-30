@@ -71,7 +71,7 @@ function check_paths(): void
 
 /**
  * @param array<string, mixed> $conn
- * @return false|null|string
+ * @return false|string
  */
 function generate_backup(array $conn, string|null $ext='no', string|null $comm='')
 {

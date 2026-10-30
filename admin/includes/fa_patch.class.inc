@@ -14,6 +14,13 @@ include_once(dirname(__DIR__, 2) . "/includes/packages.inc");
 //
 //	Utility class contains basic database upgrade routines.
 //
+// Do NOT mark this class final. Psalm's ClassMustBeFinal suggests it because
+// nothing in the scanned tree extends fa_patch - but sql/alter2.1.php through
+// sql/alter2.4rc1.php all do (class fa2_1 extends fa_patch, etc.), and sql/ is
+// deliberately out of Psalm's scope (see psalm.xml's ignoreFiles). Marking a
+// base class final when real subclasses extend it is a fatal error for every
+// one of those upgrade scripts - same bug class as hooks.inc's own
+// "Do NOT mark this class final" comment, don't repeat it here.
 class fa_patch {
 	/** @var string */
 	var $previous = '';		// previous database version

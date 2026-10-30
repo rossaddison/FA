@@ -25,7 +25,7 @@ if (!array_key_exists('path_to_root', $GLOBALS) || isset($_GET['path_to_root']) 
 	include_once(__DIR__ . '/applications/dimensions.php');
 	include_once(__DIR__ . '/applications/generalledger.php');
 	include_once(__DIR__ . '/applications/setup.php');
-	include_once(__DIR__ . '/installed_extensions.php');
+	include_once(__DIR__ . '/installed_extensions.php');        
 
 	final class front_accounting
 	{

@@ -228,13 +228,13 @@ function read_po_header(string|int|float|bool|null $order_no, purch_order &$orde
 		$order->credit = get_current_supp_credit($order->supplier_id);
 
       	$order->orig_order_date = sql2date($myrow["ord_date"]);
-      	$order->Comments = $myrow["comments"];
-      	$order->Location = $myrow["into_stock_location"];
-      	$order->supp_ref = $myrow["requisition_no"];
-      	$order->reference = $myrow["reference"];
-      	$order->delivery_address = $myrow["delivery_address"];
+      	$order->Comments = $myrow["comments"] ?? '';
+      	$order->Location = $myrow["into_stock_location"] ?? '';
+      	$order->supp_ref = $myrow["requisition_no"] ?? '';
+      	$order->reference = $myrow["reference"] ?? '';
+      	$order->delivery_address = $myrow["delivery_address"] ?? '';
       	$order->alloc = $myrow["alloc"];
-      	$order->prep_amount = $myrow["prep_amount"];
+      	$order->prep_amount = $myrow["prep_amount"] ?? 0.00;
       	$order->prepayments = get_payments_for($order_no, ST_PURCHORDER, $myrow["supplier_id"]);
 
       	return true;
@@ -279,8 +279,8 @@ function read_po_items(string|int|float|bool|null $order_no, purch_order &$order
                 $units = $myrow["units"];
             }
 
-            if ($order->add_to_order($order->lines_on_order, $myrow["item_code"],
-            	(int) $myrow["quantity_ordered"],$myrow["description"],
+            if ($order->add_to_order($order->lines_on_order, (string) ($myrow["item_code"] ?? ''),
+            	(int) $myrow["quantity_ordered"], (string) ($myrow["description"] ?? ''),
             	(float) $myrow["unit_price"],$units, sql2date($myrow["delivery_date"]),
             	(int) $myrow["qty_invoiced"], (int) $myrow["quantity_received"])) {
 				$order->line_items[$order->lines_on_order-1]->po_detail_rec = $myrow["po_detail_item"];
@@ -361,10 +361,10 @@ function get_sql_for_po_search_completed(string|null $from, string|null $to, str
 		AND location.loc_code = porder.into_stock_location ";
 
 	if ($supplier_id != ALL_TEXT)
-		$sql .= "AND supplier.supplier_id=". ($supplier_id ?? '')." ";
+		$sql .= "AND supplier.supplier_id=". (string) ($supplier_id ?? '')." ";
 	if ($order_number != "")
 	{
-		$sql .= "AND porder.reference LIKE ".db_escape('%'. ($order_number ?? ''). '%');
+		$sql .= "AND porder.reference LIKE ".db_escape('%'. (string) ($order_number ?? ''). '%');
 	}
 	else
 	{
@@ -418,7 +418,7 @@ function get_sql_for_po_search(string|null $from, string|null $to, string|int|fl
 
 	if ($order_number != "")
 	{
-		$sql .= "AND porder.reference LIKE ".db_escape('%'. $order_number . '%');
+		$sql .= "AND porder.reference LIKE ".db_escape('%'. (string) $order_number . '%');
 	}
 	else
 	{

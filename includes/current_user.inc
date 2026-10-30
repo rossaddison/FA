@@ -17,18 +17,18 @@ if (!defined('TB_PREF')) {
 }
 //--------------------------------------------------------------------------
 
-class current_user
+final class current_user
 {
 	/** @var int|string */
 	var $user = 0;
 	/** @var string */
-	var $loginname;
+	var $loginname = '';
 	/** @var string */
-	var $username;
+	var $username = '';
 	/** @var string */
-	var $name;
+	var $name = '';
 	/** @var string */
-	var $email;
+	var $email = '';
 	/** @var string|int|float|bool|null */
 	var $company; // user's company
 	/** @var string|int|float|bool|null */
@@ -93,17 +93,16 @@ class current_user
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
-	function set_company($company)
+	function set_company(int $company)
 	{
-		$this->company = (int)$company;
+		$this->company = $company;
 	}
 
-	/** @return bool */
-	function login($company, $loginname, $password)
+	function login(mixed $company, string $loginname, string $password): bool
 	{
 		global $security_areas, $security_groups, $security_headings, $path_to_root, $dflt_lang;
 
-		$this->set_company($company);
+		$this->set_company((int) $company);
 	    $this->logged = false;
 
 		set_global_connection($company);
@@ -438,7 +437,7 @@ function get_qty_dec(?string $stock_id=null): int|string
 		$dec = get_unit_dec($stock_id);
 	if ($stock_id == null || $dec == -1 || $dec == null)
 		$dec = user_qty_dec();
-	return is_int($dec) || is_string($dec) ? $dec : (int)($dec ?? 0);
+	return is_int($dec) || is_string($dec) ? $dec : ($dec ?? 0);
 }
 //-------------------------------------------------------------------
 //
@@ -558,7 +557,7 @@ function user_date_display(): void
  	if (isset($_SESSION["wa_current_user"])) {
   		$fmt = session_obj('wa_current_user')->prefs->date_display();
  	} else {
-  		$sep = user_date_sep();
+  		$sep = (string) user_date_sep();
   		$user_date_fmt = user_date_format();
   		switch ($user_date_fmt) {
    			case 0:
@@ -600,8 +599,7 @@ function user_dec_sep(): int
 	return (int) session_obj('wa_current_user')->prefs->dec_sep();
 }
 
-/** @return string */
-function user_theme()
+function user_theme() : string
 {
 	return isset($_SESSION["wa_current_user"]) ? session_obj('wa_current_user')->prefs->get_theme() : 'default';
 }
@@ -707,8 +705,8 @@ function add_user_js_data(): void {
 	  . "loadtxt: '"._('Requesting data...')."',\n"
 	  . "date: '".Today()."',\n"	// server date
 	  . "datesys: ".sysprefs()->date_system.",\n"
-	  . "datefmt: ".user_date_format().",\n"
-	  . "datesep: '".sysprefs()->dateseps[user_date_sep()]."',\n"
+	  . "datefmt: ". (string) user_date_format().",\n"
+	  . "datesep: '".sysprefs()->dateseps[(string) user_date_sep()]."',\n"
 	  . "ts: '$ts',\n"
 	  . "ds: '$ds',\n"
 	  . "pdec : " . user_price_dec() . "}\n";
@@ -725,7 +723,7 @@ function user_js_cache(string|int|float|bool|null $id=null): string
 
 	if (!$id)
 		$id = 0; // before login
-	return $path_to_root.'/company/'.user_company().'/js_cache/'.$id;
+	return $path_to_root.'/company/'. (string) user_company().'/js_cache/'. (string) $id;
 }
 
 //--------------------------------------------------------------------------
@@ -862,7 +860,7 @@ function company_path(string|int|float|bool|null $comp=null): string
 
 	// if path is relative, set current path_to_root
 	return ($comp_path[0]=='.' ? $path_to_root.'/'.basename($comp_path) : $comp_path)
-			. '/'.$comp;
+			. '/'. (string) $comp;
 }
 
 function is_admin_company(): bool
