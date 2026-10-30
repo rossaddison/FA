@@ -333,7 +333,7 @@ class fa_patch {
 */
 /**
  * @param array<int, array<string, string>> $connections
- * @return array<int, array<string, mixed>>
+ * @return array<int, array{status: bool, name: string, table_set: string, version?: string|int|float|bool|null}>
  */
 function get_site_status(array $connections): array
 {

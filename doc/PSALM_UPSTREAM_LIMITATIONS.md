@@ -210,6 +210,59 @@ reading `$_SERVER` unguarded in application code - only a handful of
 low-level files (`access/login.php`, session bootstrap code) touch it
 directly, and they predate this migration's Psalm pass.
 
+## Resolving a `mixed` variable's type can make Psalm start taint-analyzing a whole class, rippling findings into unrelated files
+
+No upstream issue number found/filed for this one yet - noted here from a
+direct isolated test (A/B rescans toggling one change at a time), not a
+citation.
+
+**Symptom:** `admin/inst_upgrade.php` looks up an installer object from an
+`array` (`get_installers()`'s untyped return) and calls methods on it
+(`$patch->upgrade_company(...)`, `$patch->errors`, `$patch->show_params(...)`).
+Left untyped, `$patch` is `mixed`, producing the expected
+`MixedAssignment`/`MixedMethodCall`/`MixedPropertyFetch`/`MixedArgument`
+findings in that one file. Giving `get_installers()` a concrete
+`@return array<string, fa_patch>` docblock - the obvious, otherwise-correct
+fix, and the same "widen the real upstream producer" technique that
+successfully resolved several other MixedAssignment findings elsewhere in
+this migration (see the `get_item_edit_info()`/`get_work_order()` entries in
+this project's commit history) - resolves those findings in
+`inst_upgrade.php` as expected, but *also* adds ~16 new `TaintedFile`
+findings in two files with zero textual relationship to `inst_upgrade.php`
+or `fa_patch`: `admin/db/maintenance_db.inc` (2 -> 18) and
+`admin/backups.php` (0 -> 4). A local `/** @var fa_patch|null $patch */`
+annotation at the call site instead of touching the shared declaration
+produces the identical ripple - confirmed by testing both independently.
+
+**Root cause (inferred, not confirmed against Psalm's source):** Psalm's
+taint analysis is whole-program and sink-driven. While `$patch` is `mixed`,
+Psalm has no reason to analyze inside `fa_patch`'s own method bodies for
+taint propagation. Once `$patch`'s type resolves to the concrete class
+`fa_patch`, Psalm starts treating calls through it as real method calls
+worth tracing, which pulls `fa_patch`'s method bodies (`pre_install()`,
+`update_security_roles()`, etc.) into the active taint graph. Those methods
+call ordinary shared helpers (`db_select`, `write_extensions`,
+`get_company_extensions`, ...) that `maintenance_db.inc`/`backups.php` also
+call - and Psalm's taint sinks are tracked per-function across the whole
+project, not scoped per calling file, so taint sources newly discovered
+through `fa_patch`'s methods surface as new findings in every other file
+that shares those same sink functions.
+
+**Confirmed not the `$_SERVER`-style scan noise above:** re-ran each
+configuration twice; the exact same counts reproduced both times for every
+variant tested (untyped: 597 project-wide; `get_installers()` typed: 614;
+local `@var` only: 601; both together: 604). This is a real, deterministic
+causal effect of the type information itself, not environment-dependent
+inference drift.
+
+**Workaround:** left `$patch`/`get_installers()`'s return deliberately
+untyped (`mixed`), with a comment at the two call sites in
+`admin/inst_upgrade.php` explaining why, rather than chasing the type fix
+that looks correct in isolation but costs more overall. The "possibly
+undefined array offset" findings this leaves on `$installers`/`$site_status`
+lookups are themselves intentional - an unrecognized company id or version
+yields no `$patch`, already handled by the `if ($patch)` checks that follow.
+
 ## For contrast: an upstream issue that *was* already fixed
 
 **[vimeo/psalm#11381](https://github.com/vimeo/psalm/issues/11381)** —
