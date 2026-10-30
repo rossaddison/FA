@@ -318,33 +318,31 @@ function handle_add_new_item(): void
 		    } /* end of the foreach loop to look for pre-existing items of the same code */
 		}
 
-		if ($allow_update == true)
+		// $allow_update is still true here -- unchanged since the outer check above
+		$result = get_short_info($stock_id);
+
+		if (db_num_rows($result) == 0)
 		{
-			$result = get_short_info($stock_id);
+			$allow_update = false;
+		}
 
-			if (db_num_rows($result) == 0)
-			{
-				$allow_update = false;
-			}
+		if ($allow_update)
+		{
+			$stock_id_text_raw = get_post('stock_id_text');
+			$stock_id_text = is_string($stock_id_text_raw) ? $stock_id_text_raw : '';
+			session_obj('PO')->add_to_order (count(session_obj('PO')->line_items), $stock_id, (int) input_num('qty'),
+				$stock_id_text, //$myrow["description"],
+				(float) input_num('price'), '', // $myrow["units"], (retrived in cart)
+				session_obj('PO')->trans_type == ST_PURCHORDER ? (string) (post_scalar('req_del_date') ?? '') : '', 0, 0);
 
-			if ($allow_update)
-			{
-				$stock_id_text_raw = get_post('stock_id_text');
-				$stock_id_text = is_string($stock_id_text_raw) ? $stock_id_text_raw : '';
-				session_obj('PO')->add_to_order (count(session_obj('PO')->line_items), $stock_id, (int) input_num('qty'),
-					$stock_id_text, //$myrow["description"],
-					(float) input_num('price'), '', // $myrow["units"], (retrived in cart)
-					session_obj('PO')->trans_type == ST_PURCHORDER ? (string) (post_scalar('req_del_date') ?? '') : '', 0, 0);
-
-				unset_form_variables();
-				$_POST['stock_id']	= "";
-	   		}
-	   		else
-	   		{
-			     display_error(_("The selected item does not exist or it is a kit part and therefore cannot be purchased."));
-		   	}
-
-		} /* end of if not already on the order and allow input was true*/
+			unset_form_variables();
+			$_POST['stock_id']	= "";
+   		}
+   		else
+   		{
+		     display_error(_("The selected item does not exist or it is a kit part and therefore cannot be purchased."));
+	   	}
+		/* end of if not already on the order and allow input was true*/
     }
 	line_start_focus();
 }

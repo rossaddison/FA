@@ -12,8 +12,11 @@ declare(strict_types=1);
 ***********************************************************************/
 //-------------------------------------------------------------------------------------------------------------
 
-/** @return float|int */
-function add_stock_transfer(mixed $Items, string|null $location_from, string|null $location_to, string|null $date_, string|null $reference, string|null $memo_)
+/**
+ * @param array<int, line_item> $Items
+ * @return float|int
+ */
+function add_stock_transfer(array $Items, string|null $location_from, string|null $location_to, string|null $date_, string|null $reference, string|null $memo_)
 {
 	global $SysPrefs, $path_to_root, $Refs;
 
@@ -38,8 +41,6 @@ function add_stock_transfer(mixed $Items, string|null $location_from, string|nul
 	}
 	foreach ($Items as $line_item)
 	{
-		/** @var line_details|line_item $line_item */
-		$line_item = $line_item;
 		if ($loc_notification)
 			$loc = calculate_reorder_level($location_from, $line_item, $st_ids, $st_names, $st_num, $st_reorder);
 		add_stock_transfer_item($transfer_id, $line_item->stock_id, $location_from,

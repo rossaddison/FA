@@ -12,6 +12,9 @@ declare(strict_types=1);
 ***********************************************************************/
 //--------------------------------------------------------------------------------------
 
+/**
+ * @param array<int, line_item>|null $items
+ */
 function add_work_order_issue(string|int|float|bool|null $woid, string|null $ref, string|array|null $to_work_order, ?array $items, string|null $location, string|null $workcentre,
 	string|int|float|bool|null $date_, string|null $memo_): void
 {
@@ -39,8 +42,6 @@ function add_work_order_issue(string|int|float|bool|null $woid, string|null $ref
 
 	foreach (($items ?? array()) as $item)
 	{
-		/** @var line_item $item */
-		$item = $item;
 		if ((bool)$to_work_order)	// otherwise it is material return to inventory
 			$item->quantity = -$item->quantity;
 

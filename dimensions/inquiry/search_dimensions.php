@@ -97,7 +97,9 @@ $dim = get_company_pref('use_dimension');
 /** @return null|scalar */
 function view_link(array $row)
 {
-	return get_dimensions_trans_view_str(ST_DIMENSION, $row["id"]);
+	$id = $row["id"] ?? null;
+	$id = is_scalar($id) ? $id : null;
+	return get_dimensions_trans_view_str(ST_DIMENSION, $id);
 }
 
 /**

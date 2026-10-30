@@ -206,7 +206,7 @@ if (!isset($_POST['price'])) {
 }
 
 $kit = row_or_empty(get_item_code_dflts(post_scalar('stock_id')));
-$units = $kit ? $kit["units"] : '';
+$units = $kit ? ($kit["units"] ?? '') : '';
 small_amount_row(_("Price:"), 'price', null, '', _('per') .' '.$units);
 
 end_table(1);

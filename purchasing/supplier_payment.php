@@ -298,7 +298,7 @@ start_form();
 	  ajax()->activate('alloc_tbl');
 	}
 
-	set_global_supplier($_POST['supplier_id']);
+	set_global_supplier(post_scalar('supplier_id'));
 
 	if (!list_updated('bank_account') && !get_post('__ex_rate_changed'))
 	{

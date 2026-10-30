@@ -98,7 +98,7 @@ $before_date_post = post_scalar('BeforeDate');
 $after_date_post = post_scalar('AfterDate');
 $before_date = date2sql(is_string($before_date_post) ? $before_date_post : null);
 $after_date = date2sql(is_string($after_date_post) ? $after_date_post : null);
-$display_location = !$_POST['StockLocation'];
+$display_location = !(bool) post_scalar('StockLocation');
 
 $result = get_stock_movements(post_scalar('stock_id'), post_scalar('StockLocation'),
 	post_scalar('BeforeDate'), post_scalar('AfterDate'));
