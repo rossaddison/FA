@@ -147,10 +147,10 @@ function payment_person_name(string|int|float|bool|null $type, string|int|float|
 			return (!$full ? _('Work Order').' '.(string) $person_id : get_trans_view_str(ST_WORKORDER, $person_id, _('Work Order').' '.(string) $person_id));
 		case PT_CUSTOMER :
 			$customer_name = get_customer_name($person_id);
-			return ($full ?$payment_person_types[$type_offset] . " ":"") . sprintf("[%05s] %s", $person_id_scalar ?? '', is_scalar($customer_name) ? $customer_name : '');
+			return ($full ?$payment_person_types[$type_offset] . " ":"") . sprintf("[%05s] %s", (string) ($person_id_scalar ?? ''), is_string($customer_name) ? $customer_name : '');
 		case PT_SUPPLIER :
 			$supplier_name = get_supplier_name($person_id);
-			return ($full ? $payment_person_types[$type_offset] . " ":"") . sprintf("[%05s] %s", $person_id_scalar ?? '', is_scalar($supplier_name) ? $supplier_name : '');
+			return ($full ? $payment_person_types[$type_offset] . " ":"") . sprintf("[%05s] %s", (string) ($person_id_scalar ?? ''), is_string($supplier_name) ? $supplier_name : '');
 		default :
 			return '';
 	}
