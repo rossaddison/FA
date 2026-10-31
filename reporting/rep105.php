@@ -33,7 +33,7 @@ print_order_status_list();
 //----------------------------------------------------------------------------------------------------
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function GetSalesOrders(string|null $from, string|null $to, string|int|null $category=0, string|null $location=null, string|int|array|null $backorder=0)
 {
@@ -79,14 +79,14 @@ function print_order_status_list(): void
 {
 	global $path_to_root;
 
-	$from = $_POST['PARAM_0'];
-	$to = $_POST['PARAM_1'];
-	$category = $_POST['PARAM_2'];
-	$location = $_POST['PARAM_3'];
-	$backorder = $_POST['PARAM_4'];
-	$comments = $_POST['PARAM_5'];
-	$orientation = $_POST['PARAM_6'];
-	$destination = $_POST['PARAM_7'];
+	$from = post_scalar('PARAM_0');
+	$to = post_scalar('PARAM_1');
+	$category = post_scalar('PARAM_2');
+	$location = post_scalar('PARAM_3');
+	$backorder = post_scalar('PARAM_4');
+	$comments = post_scalar('PARAM_5');
+	$orientation = post_scalar('PARAM_6');
+	$destination = post_scalar('PARAM_7');
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
@@ -100,7 +100,7 @@ function print_order_status_list(): void
 	if ($category == 0)
 		$cat = _('All');
 	else
-		$cat = get_category_name($category);
+		$cat = get_category_name((string) $category);
 	if ($location == null)
 		$loc = _('All');
 	else
@@ -137,9 +137,9 @@ function print_order_status_list(): void
 
 	$rep->NewPage();
 	$orderno = 0;
-	$grand_total = 0;
+	$grand_total = 0.0;
 
-	$result = GetSalesOrders($from, $to, $category, $location, $backorder);
+	$result = GetSalesOrders((string) $from, (string) $to, (int) $category, $location === null ? null : (string) $location, (string) $backorder);
 	while ($myrow=db_fetch($result))
 	{
 		$rep->NewLine(0, 2, false);
@@ -160,7 +160,7 @@ function print_order_status_list(): void
 			$rep->NewLine(1);
 			$rep->AmountCol(6, 7, $myrow['total']);
 			$rep->NewLine(1);
-			$grand_total += $myrow['total'];		
+			$grand_total += (float) $myrow['total'];
 			$orderno = $myrow['order_no'];
 		}
 		$rep->TextCol(0, 1,	$myrow['stk_code']);
