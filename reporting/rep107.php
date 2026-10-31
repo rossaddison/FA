@@ -207,7 +207,7 @@ function print_invoices(): void
 				$rep->TextCol($c++, $c,	$myrow2['stock_id'], -2);
 				$oldrow = $rep->row;
 				$rep->TextColLines($c++, $c, $myrow2['StockDescription'], -2);
-				if (!empty(sysprefs()->prefs['long_description_invoice']) && (bool)($myrow2['StockLongDescription'] ?? null))
+				if ((bool) (sysprefs()->prefs['long_description_invoice'] ?? false) && (bool)($myrow2['StockLongDescription'] ?? null))
 				{
 					$c--;
 					$rep->TextColLines($c++, $c, $myrow2['StockLongDescription'], -2);

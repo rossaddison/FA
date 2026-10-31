@@ -215,7 +215,7 @@ function print_stock_check(): void
 		$short = _('No');
 		$available = _('Available');
 	}
-	$barcodes = !empty(sysprefs()->prefs['barcodes_on_stock']);
+	$barcodes = (bool) (sysprefs()->prefs['barcodes_on_stock'] ?? false);
 	/** @var array{position: string, stretch: bool, fitwidth: bool, cellfitalign: string, border: bool, padding: int, fgcolor: array<int, int>, bgcolor: bool, text: bool, font: string, fontsize: int, stretchtext: int} $style */
 	$style = array();
 	if ((bool)$no_zeros) $nozeros = _('Yes');
@@ -345,7 +345,7 @@ function print_stock_check(): void
 					foreach ($bcode as $v)
 					{
 						$bw = (float) $v['w'] * $xres;
-						if ($v['t'])
+						if ((bool) $v['t'])
 							$rep->rectangle($xpos, $bar_y, $bw, $bar_h, 'F', null, $style['fgcolor']);
 						$xpos += $bw;
 					}

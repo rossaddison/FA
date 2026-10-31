@@ -52,7 +52,7 @@ function print_sales_quotations(): void
 	$orientation = ((bool)$orientation ? 'L' : 'P');
 	$dec = user_price_dec();
 
-	$pictures = sysprefs()->print_item_images_on_quote();
+	$pictures = (bool) sysprefs()->print_item_images_on_quote();
 	// If you want a larger image, then increase pic_height f.i.
 	// $SysPrefs->pic_height += 25;
 	
@@ -119,7 +119,7 @@ function print_sales_quotations(): void
 			$rep->TextCol(0, 1,	$myrow2['stk_code'], -2);
 			$oldrow = $rep->row;
 			$rep->TextColLines(1, 2, $myrow2['description'], -2);
-			if (!empty(sysprefs()->prefs['long_description_invoice']) && (bool)($myrow2['long_description'] ?? null))
+			if ((bool) (sysprefs()->prefs['long_description_invoice'] ?? false) && (bool)($myrow2['long_description'] ?? null))
 				$rep->TextColLines(1, 2, $myrow2['long_description'], -2);
 			$newrow = $rep->row;
 			$rep->row = $oldrow;
