@@ -207,7 +207,6 @@ function fa_action_attrs(string $action, array $args = array(), string $event = 
 
 /**
  * @return ($clean is true ? string : array{0: string, 1: string})
- * @psalm-pure
  */
 function access_string(string|int|float|bool|null $label, string|int|float|bool|null $clean=false): array|string
 {
@@ -217,12 +216,17 @@ function access_string(string|int|float|bool|null $label, string|int|float|bool|
 
 	if (preg_match('/(.*)&([a-zA-Z0-9])(.*)/', $label, $slices))
 	{
-		$label = (bool)$clean ? $slices[1].$slices[2].$slices[3] :
-			$slices[1].'<u>'.$slices[2].'</u>'.$slices[3];
-		$access = " accesskey='".strtoupper($slices[2])."'";
+		$before = html_encode(str_replace('&&', '&', $slices[1]));
+		$key = html_encode($slices[2]);
+		$after = html_encode(str_replace('&&', '&', $slices[3]));
+		$label = (bool)$clean ? $before.$key.$after :
+			$before.'<u>'.$key.'</u>'.$after;
+		$access = " accesskey='".html_encode_attribute(strtoupper($slices[2]))."'";
 	}
-	
-	$label = str_replace( '&&', '&', $label);
+	else
+	{
+		$label = html_encode(str_replace('&&', '&', $label));
+	}
 
 	return (bool)$clean ? $label : array($label, $access);
 }
@@ -264,7 +268,7 @@ function hyperlink_no_params(string|int|float|bool|null $target, string|int|floa
 		$target = $_SERVER['PHP_SELF'] ?? '';
 	if ($center)
 		echo "<br><center>";
-	echo "<a href='".html_encode_attribute($target, false, output_encoding())."' id='$id' $pars[1]>$pars[0]</a>\n";
+	echo "<a href='".html_encode_attribute($target, false, output_encoding())."' id='".html_encode_attribute($id)."' $pars[1]>$pars[0]</a>\n";
 	if ($center)
 		echo "</center>";
 }
@@ -313,7 +317,7 @@ function menu_link(?string $url, string|int|float|bool|null $label, string|int|f
 		$url = '/'.$url;
 	$url = $path_to_root.$url;
 
-	return "<a href='$url' class='menu_option' id='$id' $pars[1]>$pars[0]</a>";
+	return "<a href='$url' class='menu_option' id='".html_encode_attribute($id)."' $pars[1]>$pars[0]</a>";
 }
 
 function submenu_option(?string $title, ?string $url, string|int|float|bool|null $id=null): void
@@ -341,7 +345,7 @@ function hyperlink_params(?string $target, ?string $label, ?string $params, bool
 		$target = $_SERVER['PHP_SELF'] ?? '';
 	if ($center)
 		echo "<br><center>";
-	echo "<a id='$id' href='".html_encode_attribute($target, false, output_encoding())
+	echo "<a id='".html_encode_attribute($id)."' href='".html_encode_attribute($target, false, output_encoding())
 		."?".html_encode_attribute($params, false, output_encoding())."'$pars[1]>$pars[0]</a>\n";
 	if ($center)
 		echo "</center>";
@@ -363,7 +367,7 @@ function hyperlink_params_separate(string|int|float|bool|null $target, string|in
 	$pars = access_string($label);
 	if ($center)
 		echo "<br><center>";
-	echo "<a target='_blank' id='$id' href='".html_encode_attribute($target, false, output_encoding())
+	echo "<a target='_blank' id='".html_encode_attribute($id)."' href='".html_encode_attribute($target, false, output_encoding())
 		."?".html_encode_attribute($params, false, output_encoding())."' $pars[1]>$pars[0]</a>\n";
 	if ($center)
 		echo "</center>";
@@ -392,7 +396,7 @@ function alt_table_row_color(int|string|null &$k, ?string $extra_class=null): vo
 		array_push($classes, 'evenrow');
 		$k++;
 	}
-	echo "<tr class='".implode(' ', $classes)."'>\n";
+	echo "<tr class='".html_encode_attribute(implode(' ', $classes))."'>\n";
 }
 
 function table_section_title(string|int|float|bool|null $msg, ?int $colspan=2): void
