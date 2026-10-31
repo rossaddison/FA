@@ -16,6 +16,7 @@ $path_to_root="..";
 include_once(dirname(__DIR__) . "/includes/session.inc");
 include_once(dirname(__DIR__) . "/includes/packages.inc");
 
+$js = "";
 if (sysprefs()->use_popup_windows) {
 	$js = get_js_open_window(900, 500);
 }
@@ -31,11 +32,14 @@ include_once(dirname(__DIR__) . "/includes/ui.inc");
 if ((bool)($id = find_submit('Delete', false)))
 {
 	$extensions = get_company_extensions();
-	if (($extensions[$id]['type']=='chart') && uninstall_package($extensions[$id]['package'])) {
+	$id = (int) $id;
+	$package = $extensions[$id]['package'] ?? null;
+	$package = is_scalar($package) ? $package : null;
+	if (($extensions[$id]['type']=='chart') && $package !== null && $package !== '' && uninstall_package($package)) {
 		unset($extensions[$id]);
 		if (update_extensions($extensions)) {
 			display_notification(_("Selected chart has been successfully deleted"));
-			meta_forward($_SERVER['PHP_SELF']);
+			meta_forward($_SERVER['PHP_SELF'] ?? '');
 		}
 	}
 }
@@ -69,31 +73,36 @@ start_form(true);
 		table_header($th);
 		foreach($mods as $pkg_name => $ext)
 		{
-			$available = @$ext['available'];
-			$installed = @$ext['version'];
-			$id = @$ext['local_id'];
-			$encoding = @$ext['encoding'];
+			// $available/$installed/$id/$encoding below are genuinely mixed by design:
+			// get_charts_list()'s own @return docblock types this as PkgListItem, same
+			// reasoning as admin/inst_lang.php's identical get_languages_list() loop --
+			// each field is guarded with is_scalar()/cast immediately below before any use
+			$ext_name = (string) ($ext['name'] ?? '');
+			$available = $ext['available'] ?? null;
+			$installed = $ext['version'] ?? null;
+			$id = $ext['local_id'] ?? null;
+			$encoding = $ext['encoding'] ?? null;
 
 			alt_table_row_color($k);
 
-			label_cell($available ? get_package_view_str($pkg_name, $ext['name']) : $ext['name']);
+			label_cell((bool)$available ? get_package_view_str($pkg_name, $ext_name) : $ext_name);
 
 			label_cell($id === null ? _("None") :
-				($available && $installed ? $installed : _("Unknown")));
-			label_cell($available ? $available : _("None"));
-			label_cell($encoding ? $encoding : _("Unknown"));
+				(((bool)$available && (bool)$installed) ? (string) $installed : _("Unknown")));
+			label_cell((bool)$available ? (string) $available : _("None"));
+			label_cell((bool)$encoding ? (string) $encoding : _("Unknown"));
 
-			if ($available && check_pkg_upgrade($installed, $available)) // outdated or not installed theme in repo
+			if ((bool)$available && check_pkg_upgrade(is_scalar($installed) ? $installed : null, is_scalar($available) ? $available : null)) // outdated or not installed theme in repo
 				button_cell('Update'.$pkg_name, (bool)$installed ? _("Update") : _("Install"),
 					_('Upload and install latest extension package'), ICON_DOWN);
 			else
 				label_cell('');
 
 			if ($id !== null) {
-				delete_button_cell('Delete'.$id, _('Delete'));
-				submit_js_confirm('Delete'.$id, 
-					sprintf(_("You are about to remove package \'%s\'.\nDo you want to continue ?"), 
-						$ext['name']));
+				delete_button_cell('Delete'.(string)$id, _('Delete'));
+				submit_js_confirm('Delete'.(string)$id,
+					sprintf(_("You are about to remove package \'%s\'.\nDo you want to continue ?"),
+						$ext_name));
 			} else
 				label_cell('');
 
