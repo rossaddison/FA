@@ -36,19 +36,22 @@ if ((bool) user_use_date_picker()) {
 }
 
 if (isset($_GET['ModifyCredit'])) {
-	$_SESSION['page_title'] = sprintf(_("Modifying Credit Invoice # %d."), $_GET['ModifyCredit']);
+	$modify_credit = $_GET['ModifyCredit'] ?? null;
+	$_SESSION['page_title'] = sprintf(_("Modifying Credit Invoice # %d."), is_numeric($modify_credit) ? (int) $modify_credit : 0);
 	$help_context = "Modifying Credit Invoice";
 	processing_start();
 } elseif (isset($_GET['InvoiceNumber'])) {
 	$_SESSION['page_title'] = _($help_context = "Credit all or part of an Invoice");
 	processing_start();
 }
-page($_SESSION['page_title'], false, false, "", $js);
+$page_title = $_SESSION['page_title'] ?? '';
+page(is_string($page_title) ? $page_title : '', false, false, "", $js);
 
 //-----------------------------------------------------------------------------
 
 if (isset($_GET['AddedID'])) {
-	$credit_no = (string) $_GET['AddedID'];
+	$added_id = $_GET['AddedID'] ?? null;
+	$credit_no = is_scalar($added_id) ? $added_id : '';
 	$trans_type = ST_CUSTCREDIT;
 
 	display_notification_centered(_("Credit Note has been processed"));
@@ -65,7 +68,8 @@ if (isset($_GET['AddedID'])) {
 	display_footer_exit();
 
 } elseif (isset($_GET['UpdatedID'])) {
-	$credit_no = (string) $_GET['UpdatedID'];
+	$updated_id = $_GET['UpdatedID'] ?? null;
+	$credit_no = is_scalar($updated_id) ? $updated_id : '';
 	$trans_type = ST_CUSTCREDIT;
 
 	display_notification_centered(_("Credit Note has been updated"));
@@ -88,7 +92,8 @@ if (isset($_GET['AddedID'])) {
 function canProcessCustomerCreditInvoices(): bool
 {
 
-	if (!is_date(post_scalar('CreditDate'))) {
+	$credit_date_check = post_scalar('CreditDate');
+	if (!is_date(is_string($credit_date_check) ? $credit_date_check : null)) {
 		display_error(_("The entered date is invalid."));
 		set_focus('CreditDate');
 		return false;
@@ -99,7 +104,8 @@ function canProcessCustomerCreditInvoices(): bool
 	}
 
     if (session_obj('Items')->trans_no==0) {
-		if (!refs()->is_valid($_POST['ref'], ST_CUSTCREDIT)) {
+		$ref_post = $_POST['ref'] ?? null;
+		if (!refs()->is_valid(is_scalar($ref_post) ? $ref_post : null, ST_CUSTCREDIT)) {
 			display_error(_("You must enter a reference."));
 			set_focus('ref');
 			return false;
@@ -145,9 +151,10 @@ function check_quantities(): int
 			continue; // this line was fully credited/removed
 		}
 		if (isset($_POST['Line'.$line_no])) {
-			if (check_num('Line'.$line_no, 0, $itm->quantity)) {
+			if (check_num('Line'.$line_no, 0, is_numeric($itm->quantity) ? (float) $itm->quantity : null)) {
+				$qty_dispatched = input_num('Line'.$line_no);
 				session_obj('Items')->line_items[$line_no]->qty_dispatched =
-				  input_num('Line'.$line_no);
+				  $qty_dispatched === false ? 0 : $qty_dispatched;
 			}
 			else {
 				$ok = 0;
@@ -156,6 +163,7 @@ function check_quantities(): int
 
 		if (isset($_POST['Line'.$line_no.'Desc'])) {
 			$line_desc = $_POST['Line'.$line_no.'Desc'];
+			$line_desc = is_scalar($line_desc) ? (string) $line_desc : '';
 			if (strlen($line_desc) > 0) {
 				session_obj('Items')->line_items[$line_no]->item_description = $line_desc;
 			}
@@ -167,23 +175,27 @@ function check_quantities(): int
 
 function copy_to_cart(): void
 {
-	$cart = &$_SESSION['Items'];
-	/** @var Cart $cart */
-	$cart->ship_via = $_POST['ShipperID'];
-	$cart->freight_cost = input_num('ChargeFreightCost');
-	$cart->document_date =  $_POST['CreditDate'];
+	$cart = session_obj('Items');
+	$ship_via = $_POST['ShipperID'] ?? null;
+	$cart->ship_via = is_scalar($ship_via) ? $ship_via : null;
+	$freight_cost = input_num('ChargeFreightCost');
+	$cart->freight_cost = $freight_cost === false ? 0 : $freight_cost;
+	$credit_date = $_POST['CreditDate'] ?? null;
+	$cart->document_date = is_scalar($credit_date) ? (string) $credit_date : '';
 	$post_location = post_scalar('Location');
 	$cart->Location = $post_location === null ? "" : (string) $post_location;
-	$cart->Comments = $_POST['CreditText'];
-	if (session_obj('Items')->trans_no == 0)
-		$cart->reference = $_POST['ref'];
+	$credit_text = $_POST['CreditText'] ?? null;
+	$cart->Comments = is_scalar($credit_text) ? (string) $credit_text : '';
+	if (session_obj('Items')->trans_no == 0) {
+		$ref = $_POST['ref'] ?? null;
+		$cart->reference = is_scalar($ref) ? (string) $ref : '';
+	}
 }
 //-----------------------------------------------------------------------------
 
 function copy_from_cart(): void
 {
-	$cart = &$_SESSION['Items'];
-	/** @var Cart $cart */
+	$cart = session_obj('Items');
 	$_POST['ShipperID'] = $cart->ship_via;
 	$_POST['ChargeFreightCost'] = price_format($cart->freight_cost);
 	$_POST['CreditDate']= $cart->document_date;
@@ -201,19 +213,20 @@ if (isset($_POST['ProcessCredit']) && canProcessCustomerCreditInvoices()) {
 		$_POST['WriteOffGLCode'] = 0;
 
 	copy_to_cart();
-	if ($new_credit) 
+	if ($new_credit)
 		new_doc_date(session_obj('Items')->document_date);
-	$credit_no = session_obj('Items')->write($_POST['WriteOffGLCode']);
+	$write_off_gl = $_POST['WriteOffGLCode'] ?? 0;
+	$credit_no = session_obj('Items')->write(is_scalar($write_off_gl) ? (int) $write_off_gl : 0);
 	if ($credit_no == -1)
 	{
 		display_error(_("The entered reference is already in use."));
 		set_focus('ref');
-	} elseif($credit_no) {
+	} elseif((bool)$credit_no) {
 		processing_end();
 		if ($new_credit) {
-			meta_forward($_SERVER['PHP_SELF'], "AddedID=$credit_no");
+			meta_forward($_SERVER['PHP_SELF'] ?? '', "AddedID=$credit_no");
 		} else {
-			meta_forward($_SERVER['PHP_SELF'], "UpdatedID=$credit_no");
+			meta_forward($_SERVER['PHP_SELF'] ?? '', "UpdatedID=$credit_no");
 		}
 	}
 }
@@ -221,11 +234,17 @@ if (isset($_POST['ProcessCredit']) && canProcessCustomerCreditInvoices()) {
 //-----------------------------------------------------------------------------
 
 if (isset($_POST['Location'])) {
-	session_obj('Items')->Location = $_POST['Location'];
+	$post_location2 = $_POST['Location'];
+	session_obj('Items')->Location = is_scalar($post_location2) ? (string) $post_location2 : null;
 }
 
 //-----------------------------------------------------------------------------
 
+// display_credit_items() is a function-name collision with
+// sales/includes/ui/sales_credit_ui.inc's own display_credit_items($title, &$order)
+// (different signature and body) -- per doc/PSALM_MIGRATION.md's collision policy,
+// left as-is: this file never includes sales_credit_ui.inc (only
+// sales/credit_note_entry.php does), so the two never coexist in the same request
 function display_credit_items(): void
 {
     start_form();
@@ -250,7 +269,8 @@ function display_credit_items(): void
 	} else {
 		label_cells(_("Reference"), session_obj('Items')->reference, "class='tableheader2'");
 	}
-    label_cells(_("Crediting Invoice"), get_customer_trans_view_str(ST_SALESINVOICE, array_keys(session_obj('Items')->src_docs)), "class='tableheader2'");
+    $src_docs = session_obj('Items')->src_docs;
+    label_cells(_("Crediting Invoice"), get_customer_trans_view_str(ST_SALESINVOICE, array_keys(is_array($src_docs) ? $src_docs : array())), "class='tableheader2'");
 
 	if (!isset($_POST['ShipperID'])) {
 		$_POST['ShipperID'] = session_obj('Items')->ship_via;
@@ -313,19 +333,29 @@ function display_credit_items(): void
 	$colspan = 7;
 	start_row();
 	label_cell(_("Credit Shipping Cost"), "colspan=$colspan align=right");
-	small_amount_cells(null, "ChargeFreightCost", price_format(get_post('ChargeFreightCost',0)));
+	$charge_freight_post = get_post('ChargeFreightCost',0);
+	small_amount_cells(null, "ChargeFreightCost", price_format(is_scalar($charge_freight_post) ? $charge_freight_post : 0));
 	end_row();
 
     $inv_items_total = session_obj('Items')->get_items_total_dispatch();
 
-    $display_sub_total = price_format((float)$inv_items_total + (float)input_num(post_scalar('ChargeFreightCost')));
+    // input_num() takes a $_POST field NAME, not an already-fetched value -- these two
+    // calls previously passed post_scalar('ChargeFreightCost')'s VALUE as the name,
+    // so input_num() looked up $_POST[<that value>] instead of $_POST['ChargeFreightCost'],
+    // which (almost) never matches and silently fell back to its 0 default, zeroing out
+    // the freight cost in both the displayed sub-total and the tax calculation below
+    // regardless of what was actually entered -- a real bug, fixed by calling it the
+    // same way the (correct) final total calculation below already does
+    $freight_cost = input_num('ChargeFreightCost');
+    $freight_cost = $freight_cost === false ? 0 : $freight_cost;
+    $display_sub_total = price_format((float)$inv_items_total + (float)$freight_cost);
     label_row(_("Sub-total"), $display_sub_total, "colspan=$colspan align=right", "align=right");
 
-    $taxes = session_obj('Items')->get_taxes(input_num(post_scalar('ChargeFreightCost')));
+    $taxes = session_obj('Items')->get_taxes($freight_cost);
 
     $tax_total = display_edit_tax_items($taxes, $colspan, session_obj('Items')->tax_included);
 
-    $display_total = price_format(((float)$inv_items_total + (float)input_num('ChargeFreightCost') + $tax_total));
+    $display_total = price_format(((float)$inv_items_total + (float)$freight_cost + (float) $tax_total));
 
     label_row(_("Credit Note Total"), $display_total, "colspan=$colspan align=right", "align=right");
 

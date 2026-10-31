@@ -1018,6 +1018,31 @@ Found by chasing Psalm's `TaintedSSRF`/`TaintedFile` findings in
 
 ## Data-correctness bugs
 
+- **`sales/customer_credit_invoice.php` — `display_credit_items()`'s
+  sub-total/tax calculation.** Found via Psalm's `ArgumentTypeCoercion` on
+  `input_num(post_scalar('ChargeFreightCost'))`. `input_num(?string
+  $postname, ...)` takes a `$_POST` field *name* and looks the value up
+  itself internally (`$_POST[$postname]`); this call instead passed
+  `post_scalar('ChargeFreightCost')` — the already-fetched *value* — as that
+  name, at two of the three call sites computing this page's displayed
+  totals. So `input_num()` looked up `$_POST[<freight cost value just
+  entered>]`, which essentially never exists, and silently fell back to its
+  default of `0` — the displayed "Sub-total" row and the tax amount passed
+  to `Cart::get_taxes()` both always used a freight cost of `0` regardless
+  of what the user actually entered, while the final "Credit Note Total"
+  row (the one real call a few lines below, correctly using
+  `input_num('ChargeFreightCost')`) used the real value. Net effect: the
+  displayed sub-total was always wrong when a shipping cost was entered,
+  and sales tax was computed without including the shipping cost in the
+  taxable amount, understating tax on every credit note with a non-zero
+  freight charge. Confirmed against the correct, working pattern already
+  used for the identical field in the sibling credit-note page
+  (`sales/includes/ui/sales_credit_ui.inc`'s own tax/sub-total block, which
+  reads `post_scalar('ChargeFreightCost')` directly, never through
+  `input_num()`). Fixed by computing the freight cost once with the correct
+  `input_num('ChargeFreightCost')` call and reusing that single value for
+  the sub-total, the tax calculation, and the final total.
+
 - **`purchasing/includes/purchasing_db.inc` — `add_direct_supp_trans()`.**
   Found via Psalm's `TooManyArguments` on the call to
   `supp_trans::add_grn_to_trans()`, which takes 11 parameters
