@@ -132,7 +132,7 @@ function display_type_rep708 (?string $type, ?string $typename, int|string|null 
 			$rep->Line($rep->row);
 			$rep->NewLine();		
 		}
-		display_type_rep708($accounttype["id"], (string)$accounttype["name"].' ('.$typename.')', $dec, $rep, $from, $to, $zero, $balances, $dimension, $dimension2);
+		display_type_rep708($accounttype["id"], (string)$accounttype["name"].' ('.(string) $typename.')', $dec, $rep, $from, $to, $zero, $balances, $dimension, $dimension2);
 	}
 }
 
@@ -146,17 +146,6 @@ function print_trial_balance(): void
 {
 	global $path_to_root;
 	global $pdeb, $pcre, $cdeb, $ccre, $tdeb, $tcre, $pbal, $cbal, $tbal;
-	/**
-	 * @var float $pdeb
-	 * @var float $pcre
-	 * @var float $cdeb
-	 * @var float $ccre
-	 * @var float $tdeb
-	 * @var float $tcre
-	 * @var float $pbal
-	 * @var float $cbal
-	 * @var float $tbal
-	 */
 
 	$dim = get_company_pref('use_dimension');
 	$dimension = $dimension2 = 0;
@@ -261,6 +250,25 @@ function print_trial_balance(): void
 	$rep->Line($rep->row);
 	$rep->NewLine();
 	$rep->Font('bold');
+
+	/** @var float $pdeb */
+	$pdeb = $pdeb;
+	/** @var float $pcre */
+	$pcre = $pcre;
+	/** @var float $cdeb */
+	$cdeb = $cdeb;
+	/** @var float $ccre */
+	$ccre = $ccre;
+	/** @var float $tdeb */
+	$tdeb = $tdeb;
+	/** @var float $tcre */
+	$tcre = $tcre;
+	/** @var float $pbal */
+	$pbal = $pbal;
+	/** @var float $cbal */
+	$cbal = $cbal;
+	/** @var float $tbal */
+	$tbal = $tbal;
 
 	if ($balances == 0)
 	{
