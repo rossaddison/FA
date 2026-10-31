@@ -710,7 +710,7 @@ function gl_top(?string $today, string|int|null $width='33', ?Chart &$pg=null): 
 			$total += round((float) $myrow['total']);
 			if ($pg != null)
 			{
-				$names[] = $myrow['class_name'];
+				$names[] = (string) $myrow['class_name'];
 				$totals[] = round(abs((float) $myrow['total']));
 			}	
 		}	
@@ -761,7 +761,7 @@ function gl_week_performance(?string $today, string|int|null $width="33", int $w
 	$week_names = $sales = $costs = $results = array();
 	while ($myrow = db_fetch($result))
 	{
-		$week_names[] = $myrow['week_name']; 
+		$week_names[] = (string) $myrow['week_name'];
 		$sales[] = round((float) $myrow['sales']);
 		$costs[] = round((float) $myrow['costs']);
 		$results[] = round((float)$myrow['sales'] - (float)$myrow['costs']);
@@ -799,7 +799,7 @@ function gl_month_performance(?string $today, string|int|null $width="33", int $
 	$month_names = $sales = $costs = $results = array();
 	while ($myrow = db_fetch($result))
 	{
-		$month_names[] = $myrow['month_name']; 
+		$month_names[] = (string) $myrow['month_name'];
 		$sales[] = round((float) $myrow['sales']);
 		$costs[] = round((float) $myrow['costs']);
 		$results[] = round((float)$myrow['sales'] - (float)$myrow['costs']);

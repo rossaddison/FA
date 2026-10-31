@@ -240,12 +240,7 @@ if (isset($_POST['Location'])) {
 
 //-----------------------------------------------------------------------------
 
-// display_credit_items() is a function-name collision with
-// sales/includes/ui/sales_credit_ui.inc's own display_credit_items($title, &$order)
-// (different signature and body) -- per doc/PSALM_MIGRATION.md's collision policy,
-// left as-is: this file never includes sales_credit_ui.inc (only
-// sales/credit_note_entry.php does), so the two never coexist in the same request
-function display_credit_items(): void
+function display_credit_items_customer_credit_invoice(): void
 {
     start_form();
 	hidden('cart_id');
@@ -403,7 +398,7 @@ if (get_post('Update'))
 }
 //-----------------------------------------------------------------------------
 
-display_credit_items();
+display_credit_items_customer_credit_invoice();
 display_credit_options();
 
 echo "<br><center>";
