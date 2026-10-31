@@ -25,7 +25,7 @@ include(dirname(__DIR__) . "/includes/ui.inc");
 include(dirname(__DIR__) . "/includes/system_tests.inc");
 include(dirname(__DIR__) . "/admin/db/maintenance_db.inc");
 include(dirname(__DIR__) . "/includes/packages.inc");
-if (file_exists($path_to_root . "/installed_extensions.php"))
+if (file_exists((string) $path_to_root . "/installed_extensions.php"))
 	include(dirname(__DIR__) . "/installed_extensions.php");
 //-------------------------------------------------------------------------------------------------
 
@@ -33,7 +33,7 @@ function subpage_title(?string $txt): void
 {
 	global $path_to_root;
 	
-	echo '<center><img src="'.$path_to_root.'/themes/default/images/logo_frontaccounting.png" width="250" height="50" alt="Logo" >
+	echo '<center><img src="'.(string) $path_to_root.'/themes/default/images/logo_frontaccounting.png" width="250" height="50" alt="Logo" >
 		</center>';
 
 	$page_raw = @$_POST['Page'];
@@ -61,8 +61,7 @@ function display_coas(): void
 	 *     available?: string|int|float|bool|null,
 	 *     Descr?: string|int|float|bool|array<array-key, string>|null,
 	 *     encoding?: string|int|float|bool|null,
-	 *     local_id?: array-key,
-	 *     ...<array-key, mixed>
+	 *     local_id?: array-key
 	 * }> $charts
 	 */
 	$charts = get_charts_list();
@@ -101,8 +100,7 @@ function display_langs(): void
 	 *     available?: string|int|float|bool|null,
 	 *     Descr?: string|int|float|bool|array<array-key, string>|null,
 	 *     encoding?: string|int|float|bool|null,
-	 *     local_id?: array-key,
-	 *     ...<array-key, mixed>
+	 *     local_id?: array-key
 	 * }> $langs
 	 */
 	$langs = get_languages_list();
@@ -174,10 +172,9 @@ function do_install(): bool {
         global $dflt_lang;
         global $installed_languages;
 
-	/** @var string $coa */
-	$coa = $_SESSION['inst_set']['coa'];
 	/** @var array<string, mixed> $inst_set */
 	$inst_set = $_SESSION['inst_set'];
+	$coa = (string) ($inst_set['coa'] ?? '');
 	if ((bool)install_connect_db() && (bool)db_import($path_to_root.'/sql/'.$coa, $inst_set)) {
 		$con = $inst_set;
 		$table_prefix = (string) $con['tbpref'];
@@ -195,8 +192,7 @@ function do_install(): bool {
 		 'dbpassword' => (string) $con['dbpassword'],
 		));
 
-		/** @var current_user $wa_current_user */
-		$wa_current_user = $_SESSION['wa_current_user'];
+		$wa_current_user = session_obj('wa_current_user');
 		$wa_current_user->cur_con = 0;
 
 		update_company_prefs(array('coy_name'=>$con['name']));
@@ -225,7 +221,7 @@ function do_install(): bool {
 			return false;
 		}
 		// update default language
-		if (file_exists($path_to_root . "/lang/installed_languages.inc"))
+		if (file_exists((string) $path_to_root . "/lang/installed_languages.inc"))
 			include_once(dirname(__DIR__) . "/lang/installed_languages.inc");
 		$dflt_lang = $_POST['lang'];
 		write_lang();
@@ -250,14 +246,16 @@ if (!isset($_SESSION['inst_set'])) { // default settings
 	$_SESSION['inst_set'] = $default_inst_set;
 }
 
-if (!@$_POST['Tests'])
+if (!(bool) ($_POST['Tests'] ?? null))
 	$_POST['Page'] = 1; // set to start page
 
 if (isset($_POST['back']) && (@$_POST['Page']>1)) {
 	if ($_POST['Page'] == 5)
 		$_POST['Page'] = 2;
-	else
-		$_POST['Page']--;
+	else {
+		$post_page = $_POST['Page'] ?? null;
+		$_POST['Page'] = (is_numeric($post_page) ? (int) $post_page : 1) - 1;
+	}
 }
 elseif (isset($_POST['continue'])) {
 	$_POST['Page'] = 2;
@@ -280,8 +278,7 @@ elseif (isset($_POST['db_test'])) {
 		set_focus('dbname');
 	}
 	else {
-		/** @var language $lang */
-		$lang = $_SESSION['language'];
+		$lang = session_obj('language');
 		/** @var array<string, mixed> $inst_set */
 		$inst_set = $_SESSION['inst_set'];
 		$_SESSION['inst_set'] = array_merge($inst_set, array(
@@ -290,7 +287,7 @@ elseif (isset($_POST['db_test'])) {
 			'dbuser' => $_POST['dbuser'],
 			'dbpassword' => @html_entity_decode(is_scalar($_POST['dbpassword']) ? (string) $_POST['dbpassword'] : '', ENT_QUOTES, $lang->encoding=='iso-8859-2' ? 'ISO-8859-1' : $lang->encoding),
 			'dbname' => $_POST['dbname'],
-			'tbpref' => $_POST['tbpref'] ? '0_' : '',
+			'tbpref' => (bool) ($_POST['tbpref'] ?? null) ? '0_' : '',
 			'sel_langs' => check_value('sel_langs'),
 			'sel_coas' => check_value('sel_coas'),
 			'collation' => $_POST['collation'],
@@ -300,7 +297,7 @@ elseif (isset($_POST['db_test'])) {
 				(check_value('sel_coas') ? 4 : 5);
 		}
 	}
-	if (!file_exists($path_to_root . "/lang/installed_languages.inc")) {
+	if (!file_exists((string) $path_to_root . "/lang/installed_languages.inc")) {
 		$installed_languages = array (
 			0 => array ('code' => 'C', 'name' => 'English', 'encoding' => 'iso-8859-1'));
 			$dflt_lang = 'C';
@@ -334,7 +331,7 @@ elseif(get_post('install_coas'))
 				$ret = false;
 		}
 	if ($ret) {
-		if (file_exists($path_to_root . '/installed_extensions.php'))
+		if (file_exists((string) $path_to_root . '/installed_extensions.php'))
 			include(dirname(__DIR__) . '/installed_extensions.php');
 		$_POST['Page'] = 5;
 	}
@@ -377,7 +374,10 @@ elseif(get_post('install_coas'))
 if (list_updated('inst_lang')) {
 	/** @var array<string, array{name: string, code: string, encoding: string, rtl?: bool}> $inst_langs */
 	$inst_lang_sel = get_post('inst_lang');
-	$_SESSION['inst_set']['inst_lang'] = $inst_lang_sel;
+	/** @var array<string, mixed> $inst_set */
+	$inst_set = $_SESSION['inst_set'];
+	$inst_set['inst_lang'] = $inst_lang_sel;
+	$_SESSION['inst_set'] = $inst_set;
 	ajax()->setEncoding($inst_langs[is_scalar($inst_lang_sel) ? $inst_lang_sel : '']['encoding']);
 	ajax()->activate('welcome');
 }
@@ -391,7 +391,10 @@ start_form();
 			start_table();
 			/** @var array<string, mixed> $inst_set */
 			$inst_set = $_SESSION['inst_set'];
-			$cur_inst_lang = @$inst_set['inst_lang'];
+			// $inst_set's values are genuinely mixed by design -- this session-stored wizard
+			// state array holds many different field shapes (host/port/booleans/language code),
+			// guarded with is_scalar() immediately below before any use
+			$cur_inst_lang = $inst_set['inst_lang'] ?? null;
 			instlang_list_row(_("Select install wizard language:"), 'inst_lang',
 				is_scalar($cur_inst_lang) ? $cur_inst_lang : null);
 			end_table(1);
@@ -411,6 +414,7 @@ start_form();
 			if (!isset($_POST['host'])) {
 				/** @var array<string, mixed> $inst_set */
 				$inst_set = $_SESSION['inst_set'];
+				// $val is genuinely mixed, same reason as $cur_inst_lang above
 				foreach($inst_set as $name => $val)
 					$_POST[$name] = $val;
 			}
@@ -453,6 +457,7 @@ start_form();
 			if (!isset($_POST['name'])) {
 				/** @var array<string, mixed> $inst_set */
 				$inst_set = $_SESSION['inst_set'];
+				// $val is genuinely mixed, same reason as the case '2' branch above
 				foreach($inst_set as $name => $val)
 					$_POST[$name] = $val;
 				set_focus('name');
@@ -466,10 +471,8 @@ start_form();
 			start_table(TABLESTYLE);
 			text_row_ex(_("Company Name:"), 'name', 30);
 			text_row_ex(_("Admin Login:"), 'admin', 30);
-			$post_pass = @$_POST['pass'];
-			$post_repass = @$_POST['repass'];
-			password_row(_("Admin Password:"), 'pass', is_scalar($post_pass) ? $post_pass : null);
-			password_row(_("Reenter Password:"), 'repass', is_scalar($post_repass) ? $post_repass : null);
+			password_row(_("Admin Password:"), 'pass', post_scalar('pass'));
+			password_row(_("Reenter Password:"), 'repass', post_scalar('repass'));
 			coa_list_row(_("Select Chart of Accounts:"), 'coa');
 			languages_list_row(_("Select Default Language:"), 'lang');
 			end_table(1);
