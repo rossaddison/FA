@@ -35,7 +35,7 @@ print_inventory_sales();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions_rep304(string|int|array|null $category, string|array|null $location, string|array|null $fromcust, string|null $from, string|null $to, string|array|null $show_service)
+function getTransactions_rep304(string|int|null $category, string|null $location, string|null $fromcust, string|null $from, string|null $to, string|null $show_service)
 {
 	$from = date2sql($from);
 	$to = date2sql($to);
@@ -156,7 +156,7 @@ function print_inventory_sales(): void
 	$total1 = $grandtotal1 = 0.0;
 	$total2 = $grandtotal2 = 0.0;
 	$catt = '';
-	while ($trans=db_fetch($res))
+	while ($res instanceof mysqli_result && ($trans=db_fetch($res)))
 	{
 		if ($catt != $trans['cat_description'])
 		{
