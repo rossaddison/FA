@@ -145,11 +145,11 @@ function print_link(?string $link_text, ?int $rep, ?array $pars = array(), ?stri
 	string|bool|null $icon=false, ?string $class='printlink', ?string $id=''): string
 {
 	global $path_to_root;
-	$url = $dir == '' ?  $path_to_root.'/reporting/prn_redirect.php?' : $dir;
+	$url = ($dir == '' || $dir === null) ?  $path_to_root.'/reporting/prn_redirect.php?' : $dir;
 
 	$id = default_focus($id);
 	$parm = array();
-	foreach($pars as $par => $val) {
+	foreach($pars ?? array() as $par => $val) {
 		if ($val != "")
 			$parm[] = "$par=".urlencode((string) $val);
 	}
@@ -186,10 +186,14 @@ An example of usage will be in the reporting/rep110.php file at near the end jus
 
 /** @psalm-pure */
 function parse_notes_params(string|int|float|bool|null $str, string|int|float|bool|null $sep=" ", string|int|float|bool|null $delim="#"): array {
-    $str_params = explode($sep, $str);
+    $sep_str = (string) $sep;
+    if ($sep_str === '') $sep_str = ' ';
+    $str_params = explode($sep_str, (string) $str);
     $param_array=Array('notes' => '');
+    $delim_str = (string) $delim;
+    if ($delim_str === '') $delim_str = '#';
     foreach ($str_params AS $str_param) {
-        $param_set=explode($delim, trim($str_param));
+        $param_set=explode($delim_str, trim($str_param));
         $key = (array_key_exists(0, $param_set) ? trim($param_set[0]) : '');
         $val = (array_key_exists(1, $param_set) ? trim($param_set[1]) : '');
         if (strlen($key) > 0 && strlen($val) > 0) {
