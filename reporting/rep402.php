@@ -35,7 +35,7 @@ print_work_order_listing();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions_rep402(string|int|array|null $items, string|array|null $open_only, string|array|null $location)
+function getTransactions_rep402(string|int|null $items, string|int|null $open_only, string|int|null $location)
 {
 	$sql = "SELECT
 		workorder.id,
@@ -175,7 +175,7 @@ function print_work_order_listing(): void
     $rep->NewPage();
 
 	$res = getTransactions_rep402((string) $item, (string) $open_only, (string) $location);
-	while ($trans=db_fetch($res))
+	while ($res instanceof mysqli_result && ($trans=db_fetch($res)))
 	{
 		$rep->TextCol(0, 1, $wo_types_array[(int) $trans['type']]);
 		$rep->TextCol(1, 2, $trans['id'], -1);

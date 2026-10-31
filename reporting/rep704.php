@@ -178,8 +178,8 @@ function print_GL_transactions(): void
 					$rep->TextCol(4, 5,	get_dimension_string((int) $myrow['dimension_id']));
 				if ($dim > 1)
 					$rep->TextCol(5, 6,	get_dimension_string((int) $myrow['dimension2_id']));
-				$txt = payment_person_name($myrow["person_type_id"],$myrow["person_id"], false);
-				$memo = $myrow['memo_'];
+				$txt = (string) payment_person_name($myrow["person_type_id"],$myrow["person_id"], false);
+				$memo = (string) $myrow['memo_'];
 				if ($txt != "")
 				{
 					if ($memo != "")

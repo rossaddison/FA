@@ -34,7 +34,7 @@ print_bill_of_material();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions_rep401(string|int|array|null $from, string|array|null $to)
+function getTransactions_rep401(string|int|null $from, string|int|null $to)
 {
 	$sql = "SELECT bom.parent,
 			bom.component,
@@ -91,7 +91,7 @@ function print_bill_of_material(): void
 
 	$res = getTransactions_rep401((string) $frompart, (string) $topart);
 	$parent = '';
-	while ($trans=db_fetch($res))
+	while ($res instanceof mysqli_result && ($trans=db_fetch($res)))
 	{
 		if ($parent != $trans['parent'])
 		{

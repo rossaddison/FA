@@ -71,7 +71,7 @@ function display_type_rep708 (?string $type, ?string $typename, int|string|null 
 		$curr = row_or_empty(get_balance((string) $account["account_code"], is_array($dimension) ? null : $dimension, $dimension2, $from, $to, true, true));
 		$tot = row_or_empty(get_balance((string) $account["account_code"], is_array($dimension) ? null : $dimension, $dimension2, $begin, $to, false, true));
 
-		if ($zero == 0 && !$prev['balance'] && !$curr['balance'] && !$tot['balance'])
+		if ($zero == 0 && !(float) $prev['balance'] && !(float) $curr['balance'] && !(float) $tot['balance'])
 			continue;
 		$rep->TextCol(0, 1, $account['account_code']);
 		$rep->TextCol(1, 2,	$account['account_name']);

@@ -33,7 +33,7 @@ print_supplier_balances();
 /**
  * @return array<array-key, null|string>|false
  */
-function get_open_balance(?string $supplier_id, string|array|null $to)
+function get_open_balance(?string $supplier_id, string|null $to)
 {
     $to = date2sql($to);
 
@@ -254,7 +254,7 @@ function print_supplier_balances(): void
 	$rep->TextCol(0, 3,	_('Grand Total'));
 	$rep->fontSize -= 2;
 	if ((bool)$show_balance)
-		$grandtotal[3] = (float)$grandtotal[0] - (float)$grandtotal[1];
+		$grandtotal[3] = $grandtotal[0] - $grandtotal[1];
 	for ($i = 0; $i < 4; $i++)
 		$rep->AmountCol($i + 4, $i + 5,$grandtotal[$i], $dec);
 	$rep->Line($rep->row  - 4.0);
