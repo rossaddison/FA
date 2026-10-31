@@ -33,7 +33,7 @@ print_outstanding_GRN();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(string|int|array|null $fromsupp)
+function getTransactions_rep204(string|int|array|null $fromsupp)
 {
 	$sql = "SELECT grn.id,
 			order_no,
@@ -106,7 +106,7 @@ function print_outstanding_GRN(): void
 	$Tot_Val=0.0;
 	$Supplier = '';
 	$SuppTot_Val=0.0;
-	$res = getTransactions((string) $fromsupp);
+	$res = getTransactions_rep204((string) $fromsupp);
 
 	While ($GRNs = db_fetch($res))
 	{

@@ -34,7 +34,7 @@ print_audit_trail();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(string|int|array|null $from, string|array|null $to, string|array|null $type, string|array|null $user)
+function getTransactions_rep710(string|int|array|null $from, string|array|null $to, string|array|null $type, string|array|null $user)
 {
 	$fromdate = date2sql($from) . " 00:00:00";
 	$todate = date2sql($to). " 23:59.59";
@@ -101,7 +101,7 @@ function print_audit_trail(): void
     $rep->Info($params, $cols, $headers, $aligns);
     $rep->NewPage();
 
-    $trans = getTransactions((string) $from, (string) $to, (string) $systype, (string) $user);
+    $trans = getTransactions_rep710((string) $from, (string) $to, (string) $systype, (string) $user);
 
 	$tot_amount = 0.0;
     while ($myrow=db_fetch($trans))

@@ -33,7 +33,7 @@ print_dimension_summary();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(string|int|array|null $from, string|array|null $to)
+function getTransactions_rep501(string|int|array|null $from, string|array|null $to)
 {
 	$sql = "SELECT *
 		FROM
@@ -104,7 +104,7 @@ function print_dimension_summary(): void
     $rep->Info($params, $cols, $headers, $aligns);
     $rep->NewPage();
 
-	$res = getTransactions((string) $fromdim, (string) $todim);
+	$res = getTransactions_rep501((string) $fromdim, (string) $todim);
 	if (!($res instanceof mysqli_result))
 		return;
 	while ($trans=db_fetch($res))

@@ -49,7 +49,7 @@ function get_supplier_details_for_report()
 /**
  * @return null|string
  */
-function getTransactions(string|int|array|null $supplier_id, string|array|null $date)
+function getTransactions_rep205(string|int|array|null $supplier_id, string|array|null $date)
 {
 	$date = date2sql($date);
 
@@ -124,7 +124,7 @@ function print_supplier_details_listing(): void
 		$printsupplier = true;
 		if ($more != '' || $less != '')
 		{
-			$turnover = (float) getTransactions($myrow['supplier_id'], (string) $from);
+			$turnover = (float) getTransactions_rep205($myrow['supplier_id'], (string) $from);
 			if ($more != 0.0 && $turnover <= $more)
 				$printsupplier = false;
 			if ($less != 0.0 && $turnover >= $less)

@@ -62,7 +62,7 @@ function get_open_balance(?string $supplier_id, string|array|null $to)
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(string|int|array|null $supplier_id, string|array|null $from, string|array|null $to)
+function getTransactions_rep206(string|int|array|null $supplier_id, string|array|null $from, string|array|null $to)
 {
     $from = date2sql($from);
     $to = date2sql($to);
@@ -165,7 +165,7 @@ function print_supplier_balances(): void
         $init[3] = $init[1] - $init[0];
         $accumulate += $init[3];
 
-        $res = getTransactions($myrow['supplier_id'], $from, $to);
+        $res = getTransactions_rep206($myrow['supplier_id'], $from, $to);
         if (!($res instanceof mysqli_result))
             continue;
 

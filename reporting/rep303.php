@@ -136,7 +136,7 @@ function barcode_check(?string $code, bool $return_value = false, bool $get_type
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(string|int|array|null $category, string|array|null $location, string|null $item_like)
+function getTransactions_rep303(string|int|array|null $category, string|array|null $location, string|null $item_like)
 {
 	$sql = "SELECT item.category_id,
 			category.description AS cat_description,
@@ -273,7 +273,7 @@ function print_stock_check(): void
     $rep->Info($params, $cols, $headers, $aligns);
     $rep->NewPage();
 
-	$res = getTransactions((string) $category, (string) $location, $like);
+	$res = getTransactions_rep303((string) $category, (string) $location, $like);
 	if (!($res instanceof mysqli_result))
 		return;
 	$catt = '';

@@ -33,7 +33,7 @@ print_payment_report();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(string|int|array|null $supplier, string|null $date)
+function getTransactions_rep203(string|int|array|null $supplier, string|null $date)
 {
 	$date = date2sql($date);
 	$dec = user_price_dec();
@@ -127,7 +127,7 @@ function print_payment_report(): void
 	{
 		if (!$convert && $currency != $myrow['curr_code']) continue;
 
-		$res = getTransactions($myrow['supplier_id'], $to);
+		$res = getTransactions_rep203($myrow['supplier_id'], $to);
 		if (!($res instanceof mysqli_result))
 			continue;
 		if ((bool)$no_zeros && db_num_rows($res)==0) continue;

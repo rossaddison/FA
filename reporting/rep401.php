@@ -34,7 +34,7 @@ print_bill_of_material();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(string|int|array|null $from, string|array|null $to)
+function getTransactions_rep401(string|int|array|null $from, string|array|null $to)
 {
 	$sql = "SELECT bom.parent,
 			bom.component,
@@ -89,7 +89,7 @@ function print_bill_of_material(): void
     $rep->Info($params, $cols, $headers, $aligns);
     $rep->NewPage();
 
-	$res = getTransactions((string) $frompart, (string) $topart);
+	$res = getTransactions_rep401((string) $frompart, (string) $topart);
 	$parent = '';
 	while ($trans=db_fetch($res))
 	{

@@ -92,7 +92,7 @@ function get_contacts_for_branch(?string $branch): array
 /**
  * @return null|string
  */
-function getTransactions(string|int|null $debtorno, string|null $branchcode, string|null $date)
+function getTransactions_rep103(string|int|null $debtorno, string|null $branchcode, string|null $date)
 {
 	$date = date2sql($date);
 
@@ -187,7 +187,7 @@ function print_customer_details_listing(): void
 		$printcustomer = true;
 		if ($more != '' || $less != '')
 		{
-			$turnover = (float) getTransactions($myrow['debtor_no'], (string) $myrow['branch_code'], (string) $from);
+			$turnover = (float) getTransactions_rep103($myrow['debtor_no'], (string) $myrow['branch_code'], (string) $from);
 			if ($more != 0.0 && $turnover <= $more)
 				$printcustomer = false;
 			if ($less != 0.0 && $turnover >= $less)

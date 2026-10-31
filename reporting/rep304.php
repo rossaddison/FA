@@ -35,7 +35,7 @@ print_inventory_sales();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(string|int|array|null $category, string|array|null $location, string|array|null $fromcust, string|null $from, string|null $to, string|array|null $show_service)
+function getTransactions_rep304(string|int|array|null $category, string|array|null $location, string|array|null $fromcust, string|null $from, string|null $to, string|array|null $show_service)
 {
 	$from = date2sql($from);
 	$to = date2sql($to);
@@ -151,7 +151,7 @@ function print_inventory_sales(): void
     $rep->Info($params, $cols, $headers, $aligns);
     $rep->NewPage();
 
-	$res = getTransactions((string) $category, (string) $location, (string) $fromcust, $from, $to, (string) $show_service);
+	$res = getTransactions_rep304((string) $category, (string) $location, (string) $fromcust, $from, $to, (string) $show_service);
 	$total = $grandtotal = 0.0;
 	$total1 = $grandtotal1 = 0.0;
 	$total2 = $grandtotal2 = 0.0;

@@ -61,7 +61,7 @@ function get_open_balance(?string $supplier_id, string|array|null $to)
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(string|int|null $supplier_id, string|null $from, string|null $to)
+function getTransactions_rep201(string|int|null $supplier_id, string|null $from, string|null $to)
 {
 	$from = date2sql($from);
 	$to = date2sql($to);
@@ -172,7 +172,7 @@ function print_supplier_balances(): void
 		}
 		else
 			$init[3] = round2(($bal != false ? (float) $bal['OutStanding'] : 0.0)*$rate, $dec);
-		$res = getTransactions($myrow['supplier_id'], $from, $to);
+		$res = getTransactions_rep201($myrow['supplier_id'], $from, $to);
 		if (!($res instanceof mysqli_result))
 			continue;
 		if ((bool)$no_zeros && db_num_rows($res) == 0) continue;

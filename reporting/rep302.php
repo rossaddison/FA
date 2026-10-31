@@ -35,7 +35,7 @@ print_inventory_planning();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(string|int|array|null $category, string|array|null $location)
+function getTransactions_rep302(string|int|array|null $category, string|array|null $location)
 {
 	$sql = "SELECT item.category_id,
 			category.description AS cat_description,
@@ -146,7 +146,7 @@ function print_inventory_planning(): void
     $rep->Info($params, $cols, $headers, $aligns);
     $rep->NewPage();
 
-	$res = getTransactions((string) $category, (string) $location);
+	$res = getTransactions_rep302((string) $category, (string) $location);
 	$catt = '';
 	while ($trans=db_fetch($res))
 	{

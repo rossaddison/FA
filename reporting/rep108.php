@@ -36,7 +36,7 @@ print_statements();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(string|int|null $debtorno, string|array|null $show_also_allocated)
+function getTransactions_rep108(string|int|null $debtorno, string|array|null $show_also_allocated)
 {
 	$date = date('Y-m-d');
 
@@ -116,7 +116,7 @@ function print_statements(): void
 
 		$myrow['order_'] = "";
 
-		$TransResult = getTransactions($myrow['debtor_no'], (string) $show_also_allocated);
+		$TransResult = getTransactions_rep108($myrow['debtor_no'], (string) $show_also_allocated);
 		if (!($TransResult instanceof mysqli_result))
 			continue;
 		$baccount = row_or_empty(get_default_bank_account($myrow['curr_code']));

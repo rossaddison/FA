@@ -101,7 +101,7 @@ function getAverageCost(?string $stock_id, string|null $location, string|null $t
 /**
  * @return bool|mysqli_result
  */
-function getTransactions(string|int|array|null $category, string|array|null $location, string|array|null $date)
+function getTransactions_rep301(string|int|array|null $category, string|array|null $location, string|array|null $date)
 {
 	$date = date2sql($date);
 
@@ -196,7 +196,7 @@ function print_inventory_valuation_report(): void
     $rep->Info($params, $cols, $headers, $aligns);
     $rep->NewPage();
 
-	$res = getTransactions((string) $category, (string) $location, $date);
+	$res = getTransactions_rep301((string) $category, (string) $location, $date);
 	$total = $grandtotal = 0.0;
 	$catt = '';
 	while ($trans=db_fetch($res))
