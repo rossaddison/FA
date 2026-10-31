@@ -111,7 +111,7 @@ function print_receipts(): void
 				continue;
 			}
 			$res = get_bank_trans($j, $i);
-			$baccount = db_fetch($res);
+			$baccount = row_or_empty(db_fetch($res));
 			$params['bankaccount'] = $baccount['bank_act'];
 
 			if ($email == 1)
@@ -132,11 +132,11 @@ function print_receipts(): void
 
 			$doctype = ST_CUSTPAYMENT;
 
-			$total_allocated = 0;
+			$total_allocated = 0.0;
 			$rep->TextCol(0, 4,	_("As advance / full / part / payment towards:"), -2);
 			$rep->NewLine(2);
 
-			while ($myrow2=db_fetch($result))
+			while ($result instanceof mysqli_result && ($myrow2=db_fetch($result)))
 			{
 				$rep->TextCol(0, 1,	$systypes_array[(int) $myrow2['type']], -2);
 				$rep->TextCol(1, 2,	$myrow2['reference'], -2);
@@ -146,7 +146,7 @@ function print_receipts(): void
 				$rep->AmountCol(5, 6, (float)$myrow2['Total'] - (float)$myrow2['alloc'], $dec, -2);
 				$rep->AmountCol(6, 7, $myrow2['amt'], $dec, -2);
 
-				$total_allocated += $myrow2['amt'];
+				$total_allocated += (float) $myrow2['amt'];
 				$rep->NewLine(1);
 				if ($rep->row < $rep->bottomMargin + (15.0 * $rep->lineHeight))
 					$rep->NewPage();
