@@ -139,7 +139,7 @@ function inventory_movements(): void
 	$result = fetch_items((string) $category);
 
 	$catgor = '';
-	while ($myrow=db_fetch($result))
+	while ($result instanceof mysqli_result && ($myrow=db_fetch($result)))
 	{
 		if ($catgor != $myrow['description'])
 		{

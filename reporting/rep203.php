@@ -33,7 +33,7 @@ print_payment_report();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions_rep203(string|int|array|null $supplier, string|null $date)
+function getTransactions_rep203(string|int|null $supplier, string|null $date)
 {
 	$date = date2sql($date);
 	$dec = user_price_dec();

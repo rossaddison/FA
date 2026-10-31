@@ -214,7 +214,7 @@ function print_invoices(): void
 				}
 				$newrow = $rep->row;
 				$rep->row = $oldrow;
-				if ($Net != 0.0 || !is_service($myrow2['mb_flag']) || !sysprefs()->no_zero_lines_amount())
+				if ($Net != 0.0 || !is_service($myrow2['mb_flag']) || !(bool) sysprefs()->no_zero_lines_amount())
 				{
 					$rep->TextCol($c++, $c,	$DisplayQty, -2);
 					$rep->TextCol($c++, $c,	$myrow2['units'], -2);

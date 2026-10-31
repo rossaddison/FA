@@ -129,7 +129,7 @@ function print_deliveries(): void
 				$rep->TextColLines(1, 2, $myrow2['StockDescription'], -2);
 				$newrow = $rep->row;
 				$rep->row = $oldrow;
-				if ($Net != 0.0  || !is_service($myrow2['mb_flag']) || !sysprefs()->no_zero_lines_amount())
+				if ($Net != 0.0  || !is_service($myrow2['mb_flag']) || !(bool) sysprefs()->no_zero_lines_amount())
 				{
 					$rep->TextCol(2, 3,	$DisplayQty, -2);
 					$rep->TextCol(3, 4,	$myrow2['units'], -2);
