@@ -356,6 +356,12 @@ class data_set extends record_set {
 		$sql = "SELECT * FROM ".TB_PREF.$this->name." WHERE ";
 		$where = (bool)$this->subset ? (array)$this->subset : array();
 
+		// $val/$fld/$value in this method and in get_all()/update()/delete()/insert()
+		// below are genuinely mixed by design: this is a generic ORM base class, and
+		// $key/$data's element values are whatever each concrete subclass's own table
+		// row shape happens to be. Each one is guarded with is_scalar() immediately
+		// before being handed to db_escape(), so an array/object value becomes a safe
+		// null rather than reaching the query.
 		if (is_array($this->key)) {
 			foreach($this->key as $fld)
 				if (is_array($key) && isset($key[$fld])) {
