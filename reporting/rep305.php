@@ -35,9 +35,9 @@ print_grn_valuation();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions_rep305(string|int|array|null $from, string|array|null $to)
+function getTransactions_rep305(string|int|null $from, string|null $to)
 {
-	$from = date2sql($from);
+	$from = date2sql((string) $from);
 	$to = date2sql($to);
 
 	$sql = "SELECT grn.id batch_no,
@@ -69,7 +69,7 @@ function getTransactions_rep305(string|int|array|null $from, string|array|null $
 /**
  * @return bool|mysqli_result
  */
-function getSuppInvDetails(?string $grn_item_id)
+function getSuppInvDetails(string $grn_item_id)
 {
 	$sql = "SELECT
 			inv_line.supp_trans_no inv_no,
@@ -130,7 +130,8 @@ function print_grn_valuation(): void
 	$res = getTransactions_rep305($from, $to);
 	$total = $qtotal = $grandtotal = 0.0;
 	$stock_id = '';
-	while ($trans=db_fetch($res))
+	$qdec = 0;
+	while ($res instanceof mysqli_result && ($trans=db_fetch($res)))
 	{
 		if ($stock_id != $trans['item_code'])
 		{
@@ -157,7 +158,7 @@ function print_grn_valuation(): void
 		if ((bool)$trans['quantity_inv'])
 		{
 			$suppinv = getSuppInvDetails((string) $trans['grn_item_id']);
-			while ($inv=db_fetch($suppinv))
+			while ($suppinv instanceof mysqli_result && ($inv=db_fetch($suppinv)))
 			{
 				$inv['inv_price'] = (float) $inv['inv_price'] * (float) $inv['rate'];
 				$rep->TextCol(4, 5, $inv['inv_no']);
