@@ -562,6 +562,29 @@ a stand-in for a boolean) reaching a native, strictly-typed parameter.
 Found by chasing Psalm's `TaintedHtml`/`TaintedTextWithQuotes` findings to
 their source.
 
+- **`access/login.php`'s session-timeout POST-replay loop.** NOT found via
+  a Psalm taint finding — Psalm never flagged this one. `includes/session.inc`
+  stores the entire raw `$_POST` superglobal verbatim in
+  `$_SESSION['timeout']['post']` on a session timeout, and `access/login.php`
+  replays every field back as a hidden input so the original request isn't
+  lost: `echo "<input type='hidden' name='$p' value='$val'>";` with zero
+  escaping on either the field name or value, both fully attacker-controlled.
+  A crafted POST field name/value like `fieldname" onmouseover="alert(1)`
+  breaks straight out of the attribute. Invisible to Psalm because
+  `$_SESSION['timeout']['post']` is read back as untyped `mixed` — no stub
+  models a dynamic session key's contents, so there's no typed value for
+  taint tracking to follow. This file already had an explanatory comment
+  confirming its *other* Psalm findings on this exact loop (Mixed*/possibly-
+  undefined-offset) were accepted false positives — this escaping gap was a
+  separate, unflagged issue hiding in the same few lines, found only by
+  manually tracing `$_SESSION['timeout']['post']` back to its
+  `'post' => $_POST` assignment. Fixed with `html_encode_attribute()` on both
+  the name and value, in both the scalar and array-value (`name[]`) branches.
+  Same general lesson as the `reports_classes.inc` entry below this document's
+  intro implies: a file's own Psalm listing being clean (or, here, fully
+  explained) doesn't mean a dynamically-typed data path through it is safe —
+  it may mean Psalm's taint tracking never reached it at all.
+
 - **`includes/page/footer.inc` — `page_footer()`.** `get_post('_focus')` (a
   raw, completely unsanitized `$_POST` read) was echoed directly inside a
   single-quoted JavaScript string literal in a `<script>` block —
