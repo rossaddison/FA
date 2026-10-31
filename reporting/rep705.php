@@ -81,8 +81,12 @@ function getPeriods(string|int|float|bool|null $yr, string|int|float|bool|null $
 
 //----------------------------------------------------------------------------------------------------
 
-function display_type_rep705 (?string $type, ?string $typename, string|int|float|bool|null $yr, string|int|float|bool|array|FrontReport|null $mo, string|int|float|bool|array|null $convert, int|string|null &$dec, FrontReport &$rep, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2,
-								mixed $tags, string|int|float|bool|FrontReport|null $thousands): array
+/**
+ * @param array<array-key, string|int|float|bool|null>|int|string|null $tags
+ * @return array<int, float>
+ */
+function display_type_rep705 (?string $type, ?string $typename, string|int|float|bool|null $yr, string|int|float|bool|null $mo, string|int|float|bool|array|null $convert, int|string|null &$dec, FrontReport &$rep, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2,
+								array|int|string|null $tags, string|int|float|bool|null $thousands): array
 {
 	$ctotal = array(1 => 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0);
 	$total = array(1 => 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0);
@@ -161,7 +165,7 @@ function display_type_rep705 (?string $type, ?string $typename, string|int|float
 		$rep->row += 6.0;
 		$rep->Line($rep->row);
 		$rep->NewLine();
-		$rep->TextCol(0, 2,	_('Total') . " " . $typename);
+		$rep->TextCol(0, 2,	_('Total') . " " . (string) $typename);
 		for ($i = 1; $i <= 13; $i++)
 			$rep->AmountCol($i + 1, $i + 2, ($total[$i] + $ctotal[$i]) * $convert_f, $dec);
 		$rep->NewLine();
@@ -187,7 +191,7 @@ function print_annual_expense_breakdown(): void
 		$year = post_scalar('PARAM_0');
 		$dimension = post_scalar('PARAM_1');
 		$dimension2 = post_scalar('PARAM_2');
-		/** @var string|int|array<array-key, mixed>|null $tags */
+		/** @var string|int|array<array-key, string|int|float|bool|null>|null $tags */
 		$tags = (isset($_POST['PARAM_3']) ? $_POST['PARAM_3'] : -1);
 		$comments = post_scalar('PARAM_4');
 		$orientation = post_scalar('PARAM_5');
@@ -311,6 +315,7 @@ function print_annual_expense_breakdown(): void
  	if (user_pagesize() == 'A4')
  	{
  		// Portrait, so adjust columns for A4, 30 pts narrower than Letter
+ 		/** @var array<int, int> $cols */
  		for ($i = 2; $i < sizeof($cols); $i++)
  			$cols[$i] -= 30;
  	}
