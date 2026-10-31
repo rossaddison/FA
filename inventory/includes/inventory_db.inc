@@ -114,14 +114,14 @@ function send_reorder_email(array|bool|null $loc, array $st_ids, array $st_names
 	$loc = is_array($loc) ? $loc : array();
 	require_once(dirname(__DIR__, 2) . "/reporting/includes/class.mail.inc");
 	$company = get_company_prefs();
-	$mail = new email($company['coy_name'], $company['email']);
+	$mail = new email((string) $company['coy_name'], is_scalar($company['email']) ? (string) $company['email'] : null);
 	$subject = _("Stocks below Re-Order Level at ") . (string)$loc['location_name'];
 	$msg = "\n";
 	for ($i = 0; $i < count($st_ids); $i++)
 		$msg .= (string) $st_ids[$i] . " " . (string) $st_names[$i] . ", " . _("Re-Order Level") . ": " . (string) $st_reorder[$i] . ", " . _("Below") . ": " . (string) $st_num[$i] . "\n";
 	$msg .= "\n" . _("Please reorder") . "\n\n";
 	$msg .= (string) $company['coy_name'];
-	$mail->to($loc['location_name'], $loc['email']);
+	$mail->to(is_scalar($loc['location_name']) ? (string) $loc['location_name'] : null, is_scalar($loc['email']) ? (string) $loc['email'] : null);
 	$mail->subject($subject);
 	$mail->text($msg);
 	return $mail->send();
