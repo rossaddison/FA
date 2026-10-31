@@ -21,13 +21,13 @@ define('RC_BANKING', 5);
 define('RC_GL', 6);
 define('RC_FIXEDASSETS', 7);
 
-class BoxReports
+final class BoxReports
 {
-	/** @var array<array-key, string|null> */
+	/** @var array<int, string|null> */
 	var $ar_classes; // report class names
 	/** @var array<int, array<int, Report>> */
 	var $ar_reports = array();
-	/** @var array<int, callable> */
+	/** @var array<int, callable(string, string): string> */
 	var $ctrl_handlers = array();
 
 	/** @psalm-mutation-free */
@@ -52,10 +52,10 @@ class BoxReports
 	}
 
 	/**
-	 * @param int|null $class
-	 * @param int|null $id
+	 * @param int $class
+	 * @param int $id
 	 * @param string|null $rep_name
-	 * @param array<array-key, mixed>|null $params
+	 * @param array<string, string>|null $params
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -106,9 +106,10 @@ class BoxReports
 			foreach($this->ar_reports[$class_id] as $rep_id => $report)
 			{
 				$acc = access_string($report->name);
+				$rep_id_str = (string) $report->id;
 				$st_reports .= "<tr><td><a class='repopts_link ". (@$_REQUEST['REP_ID'] == $report->id ? 'fa-bold' : 'fa-normal')."'"
-					." href='".$_SERVER['PHP_SELF']."?Class=$class_id&REP_ID=$report->id'"
-					." id='".$id = default_focus()."'"
+					." href='".($_SERVER['PHP_SELF'] ?? '')."?Class=$class_id&REP_ID=$rep_id_str'"
+					." id='".$id = (string) default_focus()."'"
 					."$acc[1]>$acc[0]</a><tr><td>\n";
 
 				if (@$_REQUEST['REP_ID'] == $report->id) {
@@ -117,16 +118,16 @@ class BoxReports
 
 				if (isset($_REQUEST['REP_ID']) && $_REQUEST['REP_ID']==$report->id) {
 					// parameters form
-					$action = $_SERVER['PHP_SELF'];
+					$action = $_SERVER['PHP_SELF'] ?? '';
 					$st_params = "<table><tr><td>\n"
 						. "<form method='POST' action='$action' target='_blank'>\n";
-					$st_params .= submit('Rep'.$report->id,  
+					$st_params .= (submit('Rep'.$rep_id_str,
 						_("Display: ") . access_string($report->name, true),
-						false, '', sysprefs()->pdf_debug ? false : 'default process popup') . hidden('REP_ID', $report->id, false).'<br><br>';
-					$st_params .= $this->getOptions($report->get_controls(), $report->id);
-					$st_params .= "\n<input type=hidden name='Class' value=".$cur_class.">"
+						false, '', sysprefs()->pdf_debug ? false : 'default process popup') ?? '') . (hidden('REP_ID', $report->id, false) ?? '').'<br><br>';
+					$st_params .= $this->getOptions($report->get_controls(), $report->id ?? 0);
+					$st_params .= "\n<input type=hidden name='Class' value=".(string) $cur_class.">"
 						."\n</form></td></tr></table>\n";
-					set_focus('Rep'.$report->id);
+					set_focus('Rep'.$rep_id_str);
 					ajax()->addUpdate(true, 'rep_form', $st_params);
 				}
 			}
@@ -146,7 +147,7 @@ class BoxReports
 	}
 
 	/**
-	 * @param array<array-key, mixed>|null $controls
+	 * @param array<string, string>|null $controls
 	 * @param int $id
 	 * @return string
 	 */
@@ -168,8 +169,17 @@ class BoxReports
 				if (($id == 102 || $id == 202) && $cnt == 3) // set default Show Also Allocated to Yes in aged reports 2014-09-19 Joe Hunt
 					$_POST['PARAM_'.$cnt] = 1;
 				
-				if (isset($_COOKIE['select'][$id][$cnt])) // saved parameters 2010-10-06 Joe Hunt
-					$_POST['PARAM_'.$cnt] = $_COOKIE['select'][$id][$cnt];
+				/** @var array<array-key, array<array-key, string>> $cookieSelect */
+				$cookieSelect = $_COOKIE['select'] ?? array();
+				if (isset($cookieSelect[$id][$cnt])) { // saved parameters 2010-10-06 Joe Hunt
+					// Unlike $_GET/$_POST/$_REQUEST/$_SERVER, $_COOKIE is never run through
+					// html_cleanup() (see doc/DATA_FLOW_ARCHITECTURE.md's "Known gap"), and this
+					// value is copied straight into $_POST, which every downstream report
+					// parameter control trusts as already-safe. Encode it the same way
+					// html_cleanup() encodes everything else, so a forged/attacker-set cookie
+					// can't carry an unescaped payload into the form it's redisplayed in.
+					$_POST['PARAM_'.$cnt] = html_specials_encode($cookieSelect[$id][$cnt]);
+				}
 				$ctrl = $this->get_ctrl('PARAM_'.$cnt, $type);
 			}
 			if ($ctrl != '')  {
@@ -188,7 +198,7 @@ class BoxReports
 	//	Register additional control handler
 	// $handle - name of global function f($name, $type) returning html code for control
 	/**
-	 * @param callable $handler
+	 * @param callable(string, string): string $handler
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -199,7 +209,7 @@ class BoxReports
 	//	Returns html code for input control $name of type $type 
 	//
 	/**
-	 * @param string|null $name
+	 * @param string $name
 	 * @param string|null $type
 	 */
 	function get_ctrl($name, $type): string
@@ -249,8 +259,10 @@ class BoxReports
 							}
 						}
 					}
-					else // saved parameters
-						$date = $_POST[$name];
+					else { // saved parameters
+						$posted = $_POST[$name] ?? null;
+						$date = is_scalar($posted) ? (string) $posted : '';
+					}
 					$st = "<input type='text' name='$name' value='$date'>";
 					if ((bool) user_use_date_picker())
 					{
@@ -301,7 +313,8 @@ class BoxReports
 					return "<input type='text' name='$name'>";
 
 				case 'TEXTBOX':
-					$value = (isset($_POST[$name]) ? $_POST[$name] : "");
+					$posted = $_POST[$name] ?? null;
+					$value = is_scalar($posted) ? (string) $posted : "";
 					return "<textarea rows=4 cols=30 maxlength=130 name='$name'>$value</textarea>";
 
 				case 'ACCOUNTS': // not used
@@ -510,7 +523,8 @@ class BoxReports
 	}
 }
 
-class Report
+/** @psalm-external-mutation-free */
+final class Report
 {
 	/**
 	 * @var int|null
@@ -521,15 +535,15 @@ class Report
 	 * @var null|string
 	 */
 	var $name;
-	/** @var array<array-key, mixed>|null */
+	/** @var array<string, string>|null */
 	var $ar_params;
-	/** @var array<array-key, mixed>|null */
+	/** @var array<string, string>|null */
 	var $controls;
 
 	/**
 	 * @param int|null $id
 	 * @param string|null $name
-	 * @param array<array-key, mixed>|null $ar_params
+	 * @param array<string, string>|null $ar_params
 	 * @psalm-mutation-free
 	 */
 	function __construct($id, $name, $ar_params = null)
@@ -540,22 +554,22 @@ class Report
 	}
 
 	/**
-	 * @param array<array-key, mixed>|null $ar_params
+	 * @param array<string, string>|null $ar_params
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
 	function set_controls($ar_params) {
 		$this->controls = $ar_params;
 	}
-	
+
 	/**
 	 * @psalm-mutation-free
-	 * @return array<array-key, mixed>|null
+	 * @return array<string, string>|null
 	 */
 	function get_controls() {
 		return $this->controls;
 	}
-	
+
 }
 
 //------------------------------------------------------------------------------------------------
@@ -583,14 +597,14 @@ function gl_systypes_list(string|int|float|bool|null $name, string|int|float|boo
 function add_custom_reports(BoxReports &$reports): void
 {
 	global $installed_extensions, $path_to_root;
-	
+
 	// include reports installed inside extension modules
 	if (count($installed_extensions) > 0)
 	{
 		$extensions = $installed_extensions;
 		foreach ($extensions as $ext)
 			if (($ext['active'] && $ext['type'] == 'extension')) {
-				$file = $path_to_root.'/'.(string)$ext['path']."/reporting/reports_custom.php";
+				$file = (string) $path_to_root.'/'.(string)$ext['path']."/reporting/reports_custom.php";
 				if (file_exists($file)) {
 					set_ext_domain($ext['path']);
 					include_once($file);
