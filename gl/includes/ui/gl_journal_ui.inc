@@ -173,12 +173,12 @@ function display_gl_journal_items(string|int|float|bool|supp_trans|null $title, 
 		else
 		{
 			$person_id = $item->person_id;
-			gl_edit_item_controls($order, $dim, is_string($person_id) || $person_id === null ? $person_id : (string) $person_id, $line);
+			gl_edit_item_controls_gl_journal($order, $dim, is_string($person_id) || $person_id === null ? $person_id : (string) $person_id, $line);
 		}
 	}
 
 	if ($id == -1)
-		gl_edit_item_controls($order, $dim, $sub_type === 0 ? null : $sub_type);
+		gl_edit_item_controls_gl_journal($order, $dim, $sub_type === 0 ? null : $sub_type);
 
 	if ($order->count_gl_items()) 
 	{
@@ -197,7 +197,7 @@ function display_gl_journal_items(string|int|float|bool|supp_trans|null $title, 
 
 //---------------------------------------------------------------------------------
 
-function gl_edit_item_controls(items_cart &$order, string|int|float|bool|null $dim, array|string|null $sub_accounts, string|int|float|bool|null $Index=null): void
+function gl_edit_item_controls_gl_journal(items_cart &$order, string|int|float|bool|null $dim, array|string|null $sub_accounts, string|int|float|bool|null $Index=null): void
 {
 	start_row();
 

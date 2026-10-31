@@ -192,13 +192,15 @@ a stand-in for a boolean) reaching a native, strictly-typed parameter.
   and `$item->person_id` is `string|int|float|bool|null` (passed for an
   existing line being edited). The parameter is only ever read as
   `(bool)$sub_accounts` inside the function, so both are behavior-preserving
-  fixes at the call site rather than a signature change: `gl_edit_item_controls`
-  collides with a different 3-parameter function of the same name in
-  `gl/includes/ui/gl_bank_ui.inc` (the documented name-collision class),
-  so per policy the signature itself is off-limits. Hit on
+  fixes at the call site rather than a signature change. Hit on
   `gl/gl_journal.php?NewJournal=Yes` for the `$sub_type` case; the
   `$item->person_id` case is the same bug on the "edit an existing journal
   line" path, not yet triggered by testing but fixed alongside it.
+  `gl_edit_item_controls` originally collided with a different 3-parameter
+  function of the same name in `gl/includes/ui/gl_bank_ui.inc`; later
+  resolved by renaming both to `gl_edit_item_controls_gl_journal()`/
+  `gl_edit_item_controls_gl_bank()`, same as the other collisions resolved
+  elsewhere in this sweep.
 
 - **`admin/print_profiles.php` — `get_reports()`.** `closedir();` called with
   no argument — PHP 8.0 deprecated the implicit "last opened resource"

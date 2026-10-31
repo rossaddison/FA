@@ -189,12 +189,12 @@ function display_gl_bank_items(string|int|float|bool|supp_trans|null $title, ite
 		}
 		else
 		{
-			gl_edit_item_controls($order, $dim, $line);
+			gl_edit_item_controls_gl_bank($order, $dim, $line);
 		}
 	}
 
 	if ($id == -1)
-		gl_edit_item_controls($order, $dim);
+		gl_edit_item_controls_gl_bank($order, $dim);
 
 	if ($order->count_gl_items())
 		label_row(_("Total"), number_format2(abs($order->gl_items_total()), user_price_dec()),"colspan=" . $colspan . " align=right", "align=right",3);
@@ -205,7 +205,7 @@ function display_gl_bank_items(string|int|float|bool|supp_trans|null $title, ite
 
 //---------------------------------------------------------------------------------
 
-function gl_edit_item_controls(items_cart &$order, string|int|float|bool|null $dim, string|int|float|bool|null $Index=null): void
+function gl_edit_item_controls_gl_bank(items_cart &$order, string|int|float|bool|null $dim, string|int|float|bool|null $Index=null): void
 {
 	$payment = $order->trans_type == ST_BANKPAYMENT;
 
