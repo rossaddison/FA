@@ -29,7 +29,7 @@ declare(strict_types=1);
  * Lots of fixes for FA
 */
 
-class email
+final class email
 {
     /** @var array<int, string> */
     var $to = array();
@@ -67,18 +67,18 @@ class email
 	 */
 	var $add_params = "";
 	
-    function __construct($name, $mail)
+    function __construct(string $name, string|null $mail)
     {
-        $this->boundary = md5(uniqid(time()));
+        $this->boundary = md5(uniqid((string) time()));
 		$this->headers['From'] = $this->encode($name)." <$mail>";
 
 		$bcc = get_company_pref('bcc_email');
 		if ($bcc)
-			$this->bcc[] = $bcc;
+			$this->bcc[] = (string) $bcc;
     }
 
     /** @return string */
-    function encode($txt)
+    function encode(string|null $txt)
     {
 
         $opts = array('input-charset' => session_obj('language')->encoding,
@@ -87,7 +87,8 @@ class email
             'linebreak-chars'=>'\n',
             'scheme' => 'Q',
         );
-        return substr(iconv_mime_encode('', $txt, $opts), 2);
+        $encoded = iconv_mime_encode('', (string) $txt, $opts);
+        return $encoded === false ? '' : substr($encoded, 2);
     }
 
     //
@@ -96,28 +97,28 @@ class email
     // Don't use this form unless all the mail addresses are encoded in ASCII
     //
     /** @return void */
-    function to($name, $mail='')
+    function to(string|null $name, string|null $mail='')
     {
-    	$this->to[] = $mail=='' ? $name : ($this->encode($name)." <$mail>");
+    	$this->to[] = $mail=='' ? (string) $name : ($this->encode($name)." <$mail>");
     }
 
     /** @return void */
-    function cc($name, $mail='')
+    function cc(string|null $name, string|null $mail='')
     {
-    	$this->cc[] = $mail=='' ? $name : ($this->encode($name)." <$mail>");
+    	$this->cc[] = $mail=='' ? (string) $name : ($this->encode($name)." <$mail>");
     }
 
     /** @return void */
-    function bcc($name='', $mail='')
+    function bcc(string|null $name='', string|null $mail='')
     {
-    	$this->bcc[] = $mail=='' ? $name : ($this->encode($name)." <$mail>");
+    	$this->bcc[] = $mail=='' ? (string) $name : ($this->encode($name)." <$mail>");
     }
 
     /**
      * @psalm-external-mutation-free
      * @return void
      */
-    function attachment($file, $filename=null)
+    function attachment(string $file, string|null $filename=null)
     {
     	if (!isset($filename))
     		$filename = $file;
@@ -143,27 +144,27 @@ class email
         $this->body = "--$this->boundary\n";
 	    $this->body .= "Content-Type: text/plain; charset=\"{$this->charset}\"\n";
 	    $this->body .= "Content-Transfer-Encoding: 8bit\n\n";
-	    $this->body .= $text."\n";
+	    $this->body .= ((string) $text)."\n";
     }
 
     /**
      * @psalm-external-mutation-free
      * @return void
      */
-    function html($html)
+    function html(string|null $html)
     {
         $this->body = "--$this->boundary\n";
 	    $this->body .= "Content-Type: text/html; charset=\"{$this->charset}\"\n";
 	    $this->body .= "Content-Transfer-Encoding: quoted-printable\n\n";
-	    $this->body .= "<html><body>\n".$html."\n</body></html>\n";
+	    $this->body .= "<html><body>\n".((string) $html)."\n</body></html>\n";
     }
 
 	/**
-	 * @param string|null $filename
+	 * @param string $filename
 	 * @psalm-pure
 	 * @return 'application/pdf'|'application/unknown'|'application/vnd.ms-excel'|'application/x-gzip'|'application/x-tar'|'application/x-tar-gz'|'application/x-zip-compressed'|'text/html'
 	 */
-	function mime_type($filename)
+	function mime_type(string $filename)
 	{
 		$file = basename($filename, '.zip');
 		if ($filename == $file . '.zip') return 'application/x-zip-compressed';
@@ -203,12 +204,17 @@ class email
         {
             foreach ($this->attachment as $filename => $fname)
             {
-                $file = fread(fopen($fname, "r"), filesize($fname));
+                $handle = fopen($fname, "r");
+				$size = filesize($fname);
+				$file = ($handle === false || $size === false) ? false : fread($handle, $size);
 				$this->body .= "--".$this->boundary."\n";
 				$this->body .= "Content-Type: " .$this->mime_type(basename($filename)). "; name=\"".basename($fname)."\"\n";
 				$this->body .= "Content-Transfer-Encoding: base64\n";
 				$this->body .= "Content-Disposition: attachment; filename=\"".$filename."\"\n\n";
-				$this->body .= chunk_split(base64_encode($file),"72","\n");
+				if ($file !== false) {
+					$encoded = base64_encode($file);
+					$this->body .= chunk_split($encoded, 72, "\n");
+				}
             }
         }
 		$this->body .= "--".$this->boundary."--\n";
