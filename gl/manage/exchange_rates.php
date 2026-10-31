@@ -81,7 +81,7 @@ function handle_submit_exchange_rates(): ?bool
 
 //---------------------------------------------------------------------------------------------
 
-function handle_delete(): void
+function handle_delete_exchange_rates(): void
 {
 	global $selected_id;
 
@@ -176,7 +176,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 //---------------------------------------------------------------------------------------------
 
 if ($Mode == 'Delete')
-	handle_delete();
+	handle_delete_exchange_rates();
 
 
 //---------------------------------------------------------------------------------------------

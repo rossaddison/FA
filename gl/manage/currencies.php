@@ -134,7 +134,7 @@ function check_can_delete(string|int|float|bool|null $curr): bool
 
 //---------------------------------------------------------------------------------------------
 
-function handle_delete(): void
+function handle_delete_currencies(): void
 {
 	global $selected_id, $Mode;
 	if (check_can_delete(is_scalar($selected_id) ? $selected_id : null)) {
@@ -242,7 +242,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 //--------------------------------------------------------------------------------------------- 
 
 if ($Mode == 'Delete')
-	handle_delete();
+	handle_delete_currencies();
 
 //---------------------------------------------------------------------------------------------
 if ($Mode == 'RESET')

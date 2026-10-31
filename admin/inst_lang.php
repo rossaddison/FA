@@ -253,7 +253,7 @@ function display_language_edit(string|int|float|bool|null $selected_id): void
 	end_form();
 }
 
-function handle_delete(string|int|float|bool|null $id): void
+function handle_delete_inst_lang(string|int|float|bool|null $id): void
 {
 	global  $path_to_root, $installed_languages, $dflt_lang;
 	$id = is_scalar($id) ? (int) $id : 0;
@@ -288,7 +288,7 @@ function handle_delete(string|int|float|bool|null $id): void
 $lang_id = is_scalar($selected_id) ? $selected_id : null;
 
 if ($Mode == 'Delete')
-	handle_delete($lang_id);
+	handle_delete_inst_lang($lang_id);
 
 if ($Mode == 'ADD_ITEM' || $Mode == 'UPDATE_ITEM')
 	if (check_data() && handle_submit_inst_lang($lang_id))

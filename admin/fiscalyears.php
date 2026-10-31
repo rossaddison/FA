@@ -122,7 +122,7 @@ function check_can_delete(string|int|float|bool|null $selected_id): bool
 	return true;
 }
 
-function handle_delete(): void
+function handle_delete_fiscalyears(): void
 {
 	global $selected_id, $Mode;
 
@@ -245,7 +245,7 @@ if ($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM')
 
 if ($Mode == 'Delete')
 {
-	handle_delete();
+	handle_delete_fiscalyears();
 }
 
 if ($Mode == 'RESET')

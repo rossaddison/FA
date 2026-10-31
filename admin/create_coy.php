@@ -179,7 +179,7 @@ function handle_submit_create_coy(int $selected_id): bool
 
 //---------------------------------------------------------------------------------------------
 
-function handle_delete(int $id): void
+function handle_delete_create_coy(int $id): void
 {
 	global $def_coy, $db_connections, $comp_subdirs, $path_to_root, $Mode;
 
@@ -371,7 +371,7 @@ if (($Mode=='ADD_ITEM' || $Mode=='UPDATE_ITEM') && check_data($selected_id))
 	handle_submit_create_coy($selected_id);
 
 if ($Mode == 'Delete')
-	handle_delete($selected_id);
+	handle_delete_create_coy($selected_id);
 
 if ($Mode == 'RESET')
 {
