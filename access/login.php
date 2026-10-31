@@ -163,16 +163,22 @@ function defaultCompany()
 	// (includes/session.inc, right before `include(.../access/login.php)`), so the possibly-
 	// undefined-offset concern here is a Psalm include-boundary artifact, not a real bug.
 	// $p/$val/$v below are genuinely mixed: 'post' is a verbatim copy of $_POST, resent as-is
-	// with the login form so the original request isn't lost on a session timeout
+	// with the login form so the original request isn't lost on a session timeout.
+	// Both the field name and value are fully attacker-controlled (verbatim $_POST from
+	// the timed-out request) and are replayed here with no escaping at all -- a crafted
+	// POST field name/value such as `fieldname" onmouseover="alert(1)` breaks straight out
+	// of the hidden input's attributes. html_encode_attribute() both.
 	foreach($_SESSION['timeout']['post'] as $p => $val) {
 		// add all request variables to be resend together with login data
 		if (!in_array($p, array('ui_mode', 'user_name_entry_field',
 			'password', 'SubmitUser', 'company_login_name')))
 			if (!is_array($val))
-				echo "<input type='hidden' name='$p' value='$val'>";
+				echo "<input type='hidden' name='".html_encode_attribute($p, false, output_encoding())
+					."' value='".html_encode_attribute($val, false, output_encoding())."'>";
 			else
 				foreach($val as $i => $v)
-					echo "<input type='hidden' name='{$p}[$i]' value='$v'>";
+					echo "<input type='hidden' name='".html_encode_attribute("{$p}[$i]", false, output_encoding())
+						."' value='".html_encode_attribute($v, false, output_encoding())."'>";
 	}
 	end_form(1);
 	ajax()->addFocusElement(true, 'password');
