@@ -438,7 +438,7 @@ final class Chart
 	function display($save="")
 	{
 		$this->encoding = strtoupper(session_obj('language')->encoding);
-		$this->title_height			= (!empty($this->title)) ? (float) $this->tsize + 15.0 : 0.0;
+		$this->title_height			= ((bool) $this->title) ? (float) $this->tsize + 15.0 : 0.0;
 		$this->bar_width			= ($this->type == 1) ? 20.0 : 15.0;
 		$this->space_between_dots	= 40.0;
 		$this->higher_value			= 0.0;
@@ -523,7 +523,7 @@ final class Chart
 		/** @var int|string|false $c_bg_lines */
 		$c_bg_lines = $this->color['bg_lines'];
 		// Draw title
-		if (!empty($this->title))
+		if ((bool) $this->title)
 		{
 			if ($this->stream == 'svg')
 			{
@@ -1104,12 +1104,12 @@ final class Chart
 			$beta[$i] = ($F - $A * $beta[$i - 1]) / $z;
 		}
 		for ($i = $n - 2; $i > 0; --$i)
-			$splines[$i]['c'] = $alpha[$i] * (float)$splines[$i + 1]['c'] + $beta[$i];
+			$splines[$i]['c'] = $alpha[$i] * $splines[$i + 1]['c'] + $beta[$i];
 		for ($i = $n - 1; $i > 0; --$i)
 		{
 			$h_i = $cx[$i] - $cx[$i - 1];
-			$splines[$i]['d'] = ((float)$splines[$i]['c'] - (float)$splines[$i - 1]['c']) / $h_i;
-			$splines[$i]['b'] = $h_i * (2.0 * (float)$splines[$i]['c'] + (float)$splines[$i - 1]['c']) / 6.0 + ($cy[$i] - $cy[$i - 1]) / $h_i;
+			$splines[$i]['d'] = ($splines[$i]['c'] - $splines[$i - 1]['c']) / $h_i;
+			$splines[$i]['b'] = $h_i * (2.0 * $splines[$i]['c'] + $splines[$i - 1]['c']) / 6.0 + ($cy[$i] - $cy[$i - 1]) / $h_i;
 		}
 		for ($x = $minx; $x <= $maxx; $x += (float) $step)
 		{
@@ -1134,8 +1134,8 @@ final class Chart
 					$s = $splines[(int) round($j)];
 				}
 			}
-			$dx = ($x - (float) $s['x']);
-			$p1[(int) $x] = (float)$s['a'] + ((float)$s['b'] + ((float)$s['c'] / 2.0 + (float)$s['d'] * $dx / 6.0) * $dx) * $dx;
+			$dx = ($x - $s['x']);
+			$p1[(int) $x] = $s['a'] + ($s['b'] + ($s['c'] / 2.0 + $s['d'] * $dx / 6.0) * $dx) * $dx;
 		}
 		return $p1;
 	}
@@ -1261,7 +1261,7 @@ final class Chart
 	{
 		$cs = $this->num_labels + 1;
 		$html = "<table cellspacing='0' width='{$this->width}' class='fa-chart-table'>\n";
-		if (!empty($this->title))
+		if ((bool) $this->title)
 			$html .= "<tr><th colspan=$cs class='fa-center'><h3>$this->title</th><tr>\n";
 		$html .= "<tr><th class='fa-th-line'>#</th>"; 
 		for ($i = 0; $i < $this->num_labels; $i++)
@@ -1444,7 +1444,7 @@ final class Chart
 		$legend_y1 = $garea_y1;
 		$height += ($garea_height + 40.0);
 		$garea_y2 = $garea_y1 + $garea_height;
-		$legend_y2 = $legend_y1 + (float)$this->legend_box_height;
+		$legend_y2 = $legend_y1 + $this->legend_box_height;
 		$this->height = $height;
 		$this->graphic_area_height = $garea_height;
 		$this->graphic_area_y1 = $garea_y1;
@@ -1516,7 +1516,7 @@ final class Chart
 			$value_len = (float) $this->string_width(number_format((float) $this->max_value), $this->size);
 			$total_len = $label_len + $value_len;
 			$total_len = max($total_len, (float)$x2-(float)$x1);
-			if (!empty($this->axis_x)) // Only first serie [0]
+			if ((bool) $this->axis_x) // Only first serie [0]
 			{
 				if ($this->stream == 'svg')
 					$svg->text(((((float)$x1+(float)$x1+$total_len)/2.0) - ((float) strlen($this->axis_x)*7.0/2.0)), $y, $this->axis_x." (".$this->series[0]['label'].")", $this->size, $c_title, false, $this->align);
@@ -1805,7 +1805,7 @@ final class Chart
 		}
 
 		// Handling ev. RTL languages
-		if ($alt)
+		if ((bool) $alt)
 		{
 			if ($this->encoding == 'UTF-8' && $this->dir == 'rtl')
 				$alt_len = 18;
@@ -1854,8 +1854,8 @@ final class Chart
 	 */
 	function _controlPoint($curr, $prev, $next, $reverse = false)
 	{
-		$p = $prev ? $prev : $curr;
-		$n = $next ? $next : $curr;
+		$p = $prev !== false ? $prev : $curr;
+		$n = $next !== false ? $next : $curr;
 		if ($p === false || $n === false || $curr === false)
 			return array(0.0, 0.0);
 		$smooth = 0.2;
@@ -1944,16 +1944,16 @@ final class SVG
 	function circle($x, $y, $r, $bcolor=false, $line_width=1, $color=false, $style=false, $tooltip=false)
 	{
 		$this->svg .= "<circle cx=\"$x\" cy=\"$y\" r=\"$r\"";
-		if (!empty($line_width))
+		if ((bool) $line_width)
 			$this->svg .= " stroke-width=\"$line_width\"";
-		if (!empty($bcolor))
+		if ((bool) $bcolor)
 			$this->svg .= " stroke=\"$bcolor\"";
-		if (empty($color))
+		if (!(bool) $color)
 			$color = "none";
 		$this->svg .= " fill=\"$color\"";
-		if (!empty($style))
+		if ((bool) $style)
 			$this->svg .= " $style";
-		if (!empty($tooltip))
+		if ((bool) $tooltip)
 			$this->svg .= "><title>$tooltip</title></circle>\n";
 		else
 			$this->svg .= " />\n";
@@ -1974,16 +1974,16 @@ final class SVG
 	function rect($x1, $y1, $x2, $y2, $bcolor=false, $line_width=1, $color=false, $style=false, $tooltip=false)
 	{
 		$this->svg .= "<rect x=\"$x1\" y=\"$y1\" width=\"$x2\" height=\"$y2\"";
-		if (!empty($line_width))
+		if ((bool) $line_width)
 			$this->svg .= " stroke-width=\"$line_width\"";
-		if (!empty($bcolor))
+		if ((bool) $bcolor)
 			$this->svg .= " stroke=\"$bcolor\"";
-		if (empty($color))
+		if (!(bool) $color)
 			$color = "none";
 		$this->svg .= " fill=\"$color\"";
-		if (!empty($style))
+		if ((bool) $style)
 			$this->svg .= " $style";
-		if (!empty($tooltip))
+		if ((bool) $tooltip)
 			$this->svg .= "><title>$tooltip</title></rect>\n";
 		else
 			$this->svg .= " />\n";
@@ -2004,16 +2004,16 @@ final class SVG
 	function line($x1, $y1, $x2, $y2, $bcolor=false, $line_width=1, $color=false, $style=false, $tooltip=false)
 	{
 		$this->svg .= "<line x1=\"$x1\" y1=\"$y1\" x2=\"$x2\" y2=\"$y2\"";
-		if (!empty($line_width))
+		if ((bool) $line_width)
 			$this->svg .= " stroke-width=\"$line_width\"";
-		if (!empty($bcolor))
+		if ((bool) $bcolor)
 			$this->svg .= " stroke=\"$bcolor\"";
-		if (empty($color))
+		if (!(bool) $color)
 			$color = "none";
 		$this->svg .= " fill=\"$color\"";
-		if (!empty($style))
+		if ((bool) $style)
 			$this->svg .= " $style";
-		if (!empty($tooltip))
+		if ((bool) $tooltip)
 			$this->svg .= "><title>$tooltip</title></line>\n";
 		else
 			$this->svg .= " />\n";
@@ -2031,16 +2031,16 @@ final class SVG
 	function polygon($p, $bcolor=false, $line_width=1, $color=false, $style=false, $tooltip=false)
 	{
 		$this->svg .= "<polygon points=\"$p\"";
-		if (!empty($line_width))
+		if ((bool) $line_width)
 			$this->svg .= " stroke-width=\"$line_width\"";
-		if (!empty($bcolor))
+		if ((bool) $bcolor)
 			$this->svg .= " stroke=\"$bcolor\"";
-		if (empty($color))
+		if (!(bool) $color)
 			$color = "none";
 		$this->svg .= " fill=\"$color\"";
-		if (!empty($style))
+		if ((bool) $style)
 			$this->svg .= " $style";
-		if (!empty($tooltip))
+		if ((bool) $tooltip)
 			$this->svg .= "><title>$tooltip</title></polygon>\n";
 		else
 			$this->svg .= " />\n";
@@ -2058,16 +2058,16 @@ final class SVG
 	function polyline($p, $bcolor=false, $line_width=1, $color=false, $style=false, $tooltip=false)
 	{
 		$this->svg .= "<polyline points=\"$p\"";
-		if (!empty($line_width))
+		if ((bool) $line_width)
 			$this->svg .= " stroke-width=\"$line_width\"";
-		if (!empty($bcolor))
+		if ((bool) $bcolor)
 			$this->svg .= " stroke=\"$bcolor\"";
-		if (empty($color))
+		if (!(bool) $color)
 			$color = "none";
 		$this->svg .= " fill=\"$color\"";
-		if (!empty($style))
+		if ((bool) $style)
 			$this->svg .= " $style";
-		if (!empty($tooltip))
+		if ((bool) $tooltip)
 			$this->svg .= "><title>$tooltip</title></polyline>\n";
 		else
 			$this->svg .= " />\n";
@@ -2085,16 +2085,16 @@ final class SVG
 	function path($d, $bcolor=false, $line_width=1, $color=false, $style=false, $tooltip=false)
 	{
 		$this->svg .= "<path d=\"$d\"";
-		if (!empty($line_width))
+		if ((bool) $line_width)
 			$this->svg .= " stroke-width=\"$line_width\"";
-		if (!empty($bcolor))
+		if ((bool) $bcolor)
 			$this->svg .= " stroke=\"$bcolor\"";
-		if (empty($color))
+		if (!(bool) $color)
 			$color = "none";
 		$this->svg .= " fill=\"$color\"";
-		if (!empty($style))
+		if ((bool) $style)
 			$this->svg .= " $style";
-		if (!empty($tooltip))
+		if ((bool) $tooltip)
 			$this->svg .= "><title>$tooltip</title></path>\n";
 		else
 			$this->svg .= " />\n";
@@ -2114,15 +2114,15 @@ final class SVG
 	function text($x, $y, $text, $size=false, $color=false, $style=false, $align=false, $angle=false) // align start, middle, end.
 	{
 		$this->svg .= "<text x=\"$x\" y=\"$y\"";
-		if (!empty($color))
+		if ((bool) $color)
 			$this->svg .= " fill=\"$color\"";
-		if (!empty($size))
+		if ((bool) $size)
 			$this->svg .= " font-size=\"$size\"";
-		if (!empty($style))
+		if ((bool) $style)
 			$this->svg .= " $style";
-		if (!empty($align))
+		if ((bool) $align)
 			$this->svg .= " text-anchor=\"$align\"";
-		if (!empty($angle))
+		if ((bool) $angle)
 			$this->svg .= " transform=\"rotate($angle $x $y)\"";
 		$this->svg .= ">$text</text>\n";
 	}
