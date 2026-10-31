@@ -110,7 +110,7 @@ function print_remittances(): void
 				continue;
 			}
 			$res = get_bank_trans($j, $i);
-			$baccount = db_fetch($res);
+			$baccount = row_or_empty(db_fetch($res));
 			$params['bankaccount'] = $baccount['bank_act'];
 
 			if ($email == 1)
@@ -131,11 +131,11 @@ function print_remittances(): void
 
 			$doctype = ST_SUPPAYMENT;
 
-			$total_allocated = 0;
+			$total_allocated = 0.0;
 			$rep->TextCol(0, 4,	_("As advance / full / part / payment towards:"), -2);
 			$rep->NewLine(2);
 
-			while ($myrow2=db_fetch($result))
+			while ($result instanceof mysqli_result && ($myrow2=db_fetch($result)))
 			{
 				$rep->TextCol(0, 1,	$systypes_array[(int) $myrow2['type']], -2);
 				$rep->TextCol(1, 2,	$myrow2['supp_reference'], -2);
@@ -145,7 +145,7 @@ function print_remittances(): void
 				$rep->AmountCol(5, 6, (float)$myrow2['Total'] - (float)$myrow2['alloc'], $dec, -2);
 				$rep->AmountCol(6, 7, $myrow2['amt'], $dec, -2);
 
-				$total_allocated += $myrow2['amt'];
+				$total_allocated += (float) $myrow2['amt'];
 				$rep->NewLine(1);
 				if ($rep->row < $rep->bottomMargin + (15.0 * $rep->lineHeight))
 					$rep->NewPage();
@@ -163,15 +163,15 @@ function print_remittances(): void
 			$rep->AmountCol(6, 7, $total_allocated, $dec, -2);
 			$rep->NewLine();
 			$rep->TextCol(3, 6, _("Left to Allocate"), -2);
-			$myrow['Total'] *= -1;
-			$myrow['ov_discount'] *= -1;
-			$rep->AmountCol(6, 7, (float)$myrow['Total'] + (float)$myrow['ov_discount'] - $total_allocated, $dec, -2);
-			if (floatcmp($myrow['ov_discount'], 0))
+			$myrow['Total'] = (float) $myrow['Total'] * -1.0;
+			$myrow['ov_discount'] = (float) $myrow['ov_discount'] * -1.0;
+			$rep->AmountCol(6, 7, $myrow['Total'] + $myrow['ov_discount'] - $total_allocated, $dec, -2);
+			if (floatcmp($myrow['ov_discount'], 0.0))
 			{
 				$rep->NewLine();
 				$rep->TextCol(3, 6, _("Discount"), - 2);
 				$rep->AmountCol(6, 7, -$myrow['ov_discount'], $dec, -2);
-			}	
+			}
 
 			$rep->NewLine();
 			$rep->Font('bold');
