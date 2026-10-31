@@ -66,7 +66,7 @@ function getTransactions_rep302(string|int|array|null $category, string|array|nu
 /**
  * @return array<array-key, null|string>|false
  */
-function getPeriods(string|int|float|bool|null $stockid, string|int|float|bool|null $location)
+function getPeriods_rep302(string|int|float|bool|null $stockid, string|int|float|bool|null $location)
 {
 	$date5 = date('Y-m-d');
 	$date4 = date('Y-m-d',mktime(0,0,0,(int) date('m'),1,(int) date('Y')));
@@ -148,7 +148,7 @@ function print_inventory_planning(): void
 
 	$res = getTransactions_rep302((string) $category, (string) $location);
 	$catt = '';
-	while ($trans=db_fetch($res))
+	while ($res instanceof mysqli_result && ($trans=db_fetch($res)))
 	{
 		if ($catt != $trans['cat_description'])
 		{
@@ -170,7 +170,7 @@ function print_inventory_planning(): void
 		$custqty += get_demand_asm_qty($trans['stock_id'], $loc_code);
 		$suppqty = (float) get_on_porder_qty($trans['stock_id'], $loc_code);
 		$suppqty += (float) get_on_worder_qty($trans['stock_id'], $loc_code);
-		$period = row_or_empty(getPeriods($trans['stock_id'], $trans['loc_code']));
+		$period = row_or_empty(getPeriods_rep302($trans['stock_id'], $trans['loc_code']));
 		$rep->NewLine();
 		$dec = get_qty_dec($trans['stock_id']);
 		$rep->TextCol(0, 1, $trans['stock_id']);

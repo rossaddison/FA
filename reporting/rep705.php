@@ -36,7 +36,7 @@ print_annual_expense_breakdown();
 /**
  * @return array<array-key, null|string>|false
  */
-function getPeriods(string|int|float|bool|null $yr, string|int|float|bool|null $mo, ?string $account, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2, string|int|float|bool|null $thousands)
+function getPeriods_rep705(string|int|float|bool|null $yr, string|int|float|bool|null $mo, ?string $account, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2, string|int|float|bool|null $thousands)
 {
 	$yr = (int) $yr;
 	$mo = (int) $mo;
@@ -104,7 +104,7 @@ function display_type_rep705 (?string $type, ?string $typename, string|int|float
 			if (!is_record_in_tags($tags, TAG_ACCOUNT, $account['account_code']))
 				continue;
 		}	
-		$bal = row_or_empty(getPeriods($yr, $mo, $account["account_code"], $dimension, $dimension2, $thousands));
+		$bal = row_or_empty(getPeriods_rep705($yr, $mo, $account["account_code"], $dimension, $dimension2, $thousands));
 		if (!$bal['per01'] && !$bal['per02'] && !$bal['per03'] && !$bal['per04'] &&	!$bal['per05'] && 
 			!$bal['per06'] && !$bal['per07'] && !$bal['per08'] && !$bal['per09'] && !$bal['per10'] && 
 			!$bal['per11'] && !$bal['per12'])
