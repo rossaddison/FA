@@ -83,6 +83,7 @@ final class current_user
 		$this->loginname = $this->username = $this->name = "";
 		$this->company = array_key_exists('def_coy', $GLOBALS) ? $def_coy : 0;
 		$this->logged = false;
+		$this->timeout = 0;
 
 		$this->prefs = new user_prefs();
 	}
