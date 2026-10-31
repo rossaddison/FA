@@ -28,7 +28,7 @@ include_once(dirname(__DIR__) . "/gl/includes/gl_db.inc");
 
 //----------------------------------------------------------------------------------------------------
 
-function display_type_rep701 (?string $type, ?string $typename, int|string|null &$dec, FrontReport &$rep, string|int|float|bool|array|null $showbalance, string|int|float|bool|array|null $level): void
+function display_type_rep701 (?string $type, ?string $typename, int|string|null &$dec, FrontReport &$rep, string|int|float|bool|null $showbalance, int $level): void
 {
 	$printtitle = 0; //Flag for printing type name
 	$prefix = '';
@@ -42,14 +42,14 @@ function display_type_rep701 (?string $type, ?string $typename, int|string|null 
 		if (!$printtitle)
 		{
 			$prefix = '';
-			for ($sp=1; $sp<=(is_array($level) ? 0 : (int) $level); $sp++)
+			for ($sp=1; $sp<=$level; $sp++)
 			{
 				$prefix .= '         ';
 			}
 			$printtitle = 1;
 			$rep->row -= 4.0;
 			$rep->TextCol(0, 1, $type);
-			$rep->TextCol(1, 4, $prefix.$typename);
+			$rep->TextCol(1, 4, $prefix.(string) $typename);
 			$rep->row -= 4.0;
 			$rep->Line($rep->row);
 			$rep->NewLine();		
@@ -85,7 +85,7 @@ function display_type_rep701 (?string $type, ?string $typename, int|string|null 
 			$rep->NewLine();		
 		}
 		$nextlevel = $level + 1;
-		display_type_rep701($accounttype["id"], (string)$accounttype["name"].' ('.$typename.')', $dec, $rep, $showbalance, $nextlevel);
+		display_type_rep701($accounttype["id"], (string)$accounttype["name"].' ('.(string) $typename.')', $dec, $rep, $showbalance, $nextlevel);
 	}
 }
 
