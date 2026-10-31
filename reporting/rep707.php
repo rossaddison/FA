@@ -29,7 +29,14 @@ include_once(dirname(__DIR__) . "/admin/db/tags_db.inc");
 
 //----------------------------------------------------------------------------------------------------
 
-function display_type_rep707 (?string $type, ?string $typename, string|int|float|bool|array|null $from, string|int|float|bool|array|FrontReport|null $to, string|int|float|bool|null $begin, string|int|float|bool|array|null $end, string|int|float|bool|array|FrontReport|null $compare, string|int|float|bool|array|null $convert, int|string|null &$dec, int|string|null &$pdec, FrontReport &$rep, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2, mixed $tags, object &$pg, mixed $graphics, array &$labels, array &$serie1, array &$serie2): array
+/**
+ * @param array<array-key, string|int|float|bool|null>|int|string|null $tags
+ * @param array<int, string> $labels
+ * @param array<int, float> $serie1
+ * @param array<int, float> $serie2
+ * @return array{0: float, 1: float}
+ */
+function display_type_rep707 (?string $type, ?string $typename, string|int|float|bool|null $from, string|int|float|bool|null $to, string|int|float|bool|null $begin, string|int|float|bool|null $end, string|int|float|bool|null $compare, string|int|float|bool|array|null $convert, int|string|null &$dec, int|string|null &$pdec, FrontReport &$rep, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2, array|int|string|null $tags, Chart &$pg, mixed $graphics, array &$labels, array &$serie1, array &$serie2): array
 {
 	$convert_f = is_array($convert) ? 0.0 : (float) $convert;
 	$code_per_balance = 0.0;
@@ -115,13 +122,13 @@ function display_type_rep707 (?string $type, ?string $typename, string|int|float
 		$rep->row += 6.0;
 		$rep->Line($rep->row);
 		$rep->NewLine();
-		$rep->TextCol(0, 2,	_('Total') . " " . $typename);
+		$rep->TextCol(0, 2,	_('Total') . " " . (string) $typename);
 		$rep->AmountCol(2, 3, ($code_per_balance + $per_balance_total) * $convert_f, $dec);
 		$rep->AmountCol(3, 4, ($code_acc_balance + $acc_balance_total) * $convert_f, $dec);
-		$rep->AmountCol(4, 5, Achieve(($code_per_balance + $per_balance_total), ($code_acc_balance + $acc_balance_total)), $pdec);		
+		$rep->AmountCol(4, 5, Achieve(($code_per_balance + $per_balance_total), ($code_acc_balance + $acc_balance_total)), $pdec);
 		if ($graphics)
 		{
-			$labels[] = $typename;
+			$labels[] = (string) $typename;
 			$serie1[] = abs($code_per_balance + $per_balance_total);
 			$serie2[] = abs($code_acc_balance + $acc_balance_total);
 		}
@@ -195,6 +202,7 @@ function print_profit_and_loss_statement(): void
 		$orientation = post_scalar('PARAM_7');
 		$destination = post_scalar('PARAM_8');
 	}
+	/** @var array<array-key, string|int|float|bool|null>|string|int|float|bool|null $tags */
 	if (!is_array($tags))
 	{
 		if (is_bool($tags) || is_float($tags))
@@ -314,8 +322,8 @@ function print_profit_and_loss_statement(): void
 		$rep->NewLine();
 		$rep->Font('bold');
 		$rep->TextCol(0, 2,	_('Total') . " " . (string)$class["class_name"]);
-		$rep->AmountCol(2, 3, $class_per_total * $convert, $dec);
-		$rep->AmountCol(3, 4, $class_acc_total * $convert, $dec);
+		$rep->AmountCol(2, 3, $class_per_total * (float) $convert, $dec);
+		$rep->AmountCol(3, 4, $class_acc_total * (float) $convert, $dec);
 		$rep->AmountCol(4, 5, Achieve($class_per_total, $class_acc_total), $pdec);
 		$rep->Font();
 		$rep->NewLine(2);	
@@ -326,8 +334,8 @@ function print_profit_and_loss_statement(): void
 	
 	$rep->Font('bold');	
 	$rep->TextCol(0, 2,	_('Calculated Return'));
-	$rep->AmountCol(2, 3, (float)$salesper *(float)(-1), $dec); // always convert
-	$rep->AmountCol(3, 4, (float)$salesacc * (float)(-1), $dec);
+	$rep->AmountCol(2, 3, $salesper * -1.0, $dec); // always convert
+	$rep->AmountCol(3, 4, $salesacc * -1.0, $dec);
 	$rep->AmountCol(4, 5, Achieve($salesper, $salesacc), $pdec);
 	$rep->Font();
 	$rep->NewLine();
