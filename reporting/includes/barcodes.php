@@ -88,7 +88,11 @@ class TCPDFBarcode {
 	
 	/** 
 	 * Return an array representations of barcode.
- 	 * @return array
+	 * Note: can genuinely be false -- setBarcode() falls through to an
+	 * undefined $arrcode (coerced to null, not false) on an unrecognized
+	 * $type, and explicitly sets false in a dead branch that gets
+	 * immediately overwritten; callers should not assume array.
+ 	 * @return array|false|null
 	 */
 	function getBarcodeArray() {
 		return $this->barcode_array;

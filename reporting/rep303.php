@@ -52,12 +52,8 @@ function barcode_check(?string $code, bool $return_value = false, bool $get_type
 	 * If false it will return only what is needed UPC -> 12 / EAN -> 13 / 
 	 */
 
-	//Filter UPC coupon codes
-	/*
-	 * If true it will return false on UPC coupon codes
-	 * Type will always return UPC coupon code
-	 */
-	$skip_coupon_codes = true;
+	//Filter UPC coupon codes: always returns false on UPC coupon codes
+	//(type will always return UPC coupon code)
 
 	//Trims parsed string to remove unwanted whitespace or characters
 	$code = trim((string) $code);
@@ -107,7 +103,7 @@ function barcode_check(?string $code, bool $return_value = false, bool $get_type
 			}
 			else
 			{
-				if ($skip_coupon_codes && substr($code, 6, 1) == 5)
+				if (substr($code, 6, 1) == 5)
 					return false;
 				return substr($code, ($return_value ? -14 : -12));
 			}
@@ -136,7 +132,7 @@ function barcode_check(?string $code, bool $return_value = false, bool $get_type
 /**
  * @return bool|mysqli_result
  */
-function getTransactions_rep303(string|int|array|null $category, string|array|null $location, string|null $item_like)
+function getTransactions_rep303(string|int|null $category, string|null $location, string|null $item_like)
 {
 	$sql = "SELECT item.category_id,
 			category.description AS cat_description,
@@ -325,7 +321,7 @@ function print_stock_check(): void
 		if ((bool)$pictures || $barcodes)
 		{
 			$rep->NewLine();
-			if ($rep->row - sysprefs()->pic_height < $rep->bottomMargin)
+			if ($rep->row - (float) sysprefs()->pic_height < $rep->bottomMargin)
 				$rep->NewPage();
 			$firstcol = 1;	
 			$adjust = false;
@@ -336,15 +332,17 @@ function print_stock_check(): void
 				$barcode = substr($barcode, 0, 8); // EAN 8 Check digit is auto computed and barcode printed
 				$barcodeobj = new TCPDFBarcode($barcode, 'EAN8');
 				$arrcode = $barcodeobj->getBarcodeArray();
-				if ($arrcode !== false)
+				if (is_array($arrcode))
 				{
 					// draw each bar as a filled rectangle; TCPDFBarcode's own write1DBarcode()
 					// isn't usable here since it belongs to a different, unused PDF base class
 					$xres = 1.2;
 					$bar_h = (float) sysprefs()->pic_height;
 					$bar_y = $rep->row - $bar_h;
-					$xpos = (float) $rep->cols[$firstcol] + (float) $style['padding'];
-					foreach ($arrcode['bcode'] as $v)
+					$xpos = $rep->cols[$firstcol] + (float) $style['padding'];
+					/** @var array<int, array{w: float|int, t: bool|int}> $bcode */
+					$bcode = $arrcode['bcode'];
+					foreach ($bcode as $v)
 					{
 						$bw = (float) $v['w'] * $xres;
 						if ($v['t'])
@@ -357,14 +355,14 @@ function print_stock_check(): void
 			if ((bool)$pictures)
 			{
 				$adjust = true;
-				$image = company_path() . '/images/' . item_img_name($trans['stock_id']) . '.jpg';
+				$image = company_path() . '/images/' . (string) item_img_name($trans['stock_id']) . '.jpg';
 				if (file_exists($image))
 				{
-					$rep->AddImage($image, $rep->cols[$firstcol], $rep->row - sysprefs()->pic_height, 0, sysprefs()->pic_height);
+					$rep->AddImage($image, $rep->cols[$firstcol], $rep->row - (float) sysprefs()->pic_height, 0, (float) sysprefs()->pic_height);
 				}
 			}
 			if ($adjust)
-				$rep->row -= sysprefs()->pic_height;
+				$rep->row -= (float) sysprefs()->pic_height;
 		}
 	}
 	$rep->Line($rep->row - 4.0);
