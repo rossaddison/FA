@@ -53,7 +53,7 @@ function fetch_items(string|int|null $category=0)
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_kits(string|int|null $category=0)
 {
@@ -141,7 +141,7 @@ function print_price_listing(): void
 
 	$catgor = '';
 	$_POST['sales_type_id'] = $salestype;
-	while ($myrow=db_fetch($result))
+	while ($result instanceof mysqli_result && ($myrow=db_fetch($result)))
 	{
 		if ($catgor != $myrow['description'])
 		{
@@ -161,9 +161,9 @@ function print_price_listing(): void
 		$rep->AmountCol(3, 4, $price, $dec);
 		if ((bool)$showGP)
 		{
-			$price2 = get_price($myrow['stock_id'], $home_curr, $salestype);
+			$price2 = (float) get_price($myrow['stock_id'], $home_curr, $salestype);
 			if ($price2 != 0.0)
-				$disp = ($price2 - (float)$myrow['Standardcost']) * 100 / $price2;
+				$disp = ($price2 - (float)$myrow['Standardcost']) * 100.0 / $price2;
 			else
 				$disp = 0.0;
 			$rep->TextCol(4, 5,	number_format2($disp, user_percent_dec()) . " %");
@@ -171,14 +171,14 @@ function print_price_listing(): void
 		if ((bool)$pictures)
 		{
 			$image = company_path(). "/images/"
-				. item_img_name($myrow['stock_id']) . ".jpg";
+				. (string) item_img_name($myrow['stock_id']) . ".jpg";
 			if (file_exists($image))
 			{
 				$rep->NewLine();
-				if ($rep->row - sysprefs()->pic_height < $rep->bottomMargin)
+				if ($rep->row - (float) sysprefs()->pic_height < $rep->bottomMargin)
 					$rep->NewPage();
-				$rep->AddImage($image, $rep->cols[1], $rep->row - sysprefs()->pic_height, 0, sysprefs()->pic_height);
-				$rep->row -= sysprefs()->pic_height;
+				$rep->AddImage($image, $rep->cols[1], $rep->row - (float) sysprefs()->pic_height, 0, (float) sysprefs()->pic_height);
+				$rep->row -= (float) sysprefs()->pic_height;
 				$rep->NewLine();
 			}
 		}
