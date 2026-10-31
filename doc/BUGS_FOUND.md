@@ -259,6 +259,27 @@ a stand-in for a boolean) reaching a native, strictly-typed parameter.
 
 ## Live crashes
 
+- **`install/isession.inc` — `html_specials_encode()`.** Confirmed live via
+  a direct curl request to `install/index.php`: `Uncaught TypeError:
+  htmlspecialchars(): Argument #1 ($string) must be of type string, float
+  given in install/isession.inc on line 37` — the installer crashed outright
+  on its very first request, before rendering anything. The function was
+  declared `string|int|float|bool|null $str` but passed `$str` straight into
+  `htmlspecialchars()`, which only accepts `string`, with no cast. The
+  equivalent, already-correct function in `includes/session.inc` (the
+  post-install runtime session bootstrap) already does `htmlspecialchars((string)
+  $str, ...)` — this install-time twin had drifted out of sync and never got
+  the same fix. Fixed by matching it: cast to `(string)` at the call site, and
+  while there, switched `$_SESSION['language']` reads to the already-existing
+  `session_obj('language')` accessor (same reasoning `includes/session.inc`
+  already documents: Psalm forgets a `$_SESSION` key's type after any
+  function call, so pages read session objects through this typed
+  accessor). Re-tested after the fix: the installer now proceeds past this
+  point (confirmed via the same curl request no longer showing this crash,
+  advancing to a later, unrelated Yiisoft-autoload issue in
+  `includes/ui/ui_lists.inc` — out of scope for this fix, not investigated
+  further).
+
 - **`includes/db/crm_contacts_db.inc` — `delete_crm_category()`.**
   Reported live by the user: deleting any non-system contact category
   from `admin/crm_categories.php` threw `Unhandled exception [1064]:

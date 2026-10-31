@@ -18,13 +18,13 @@ function output_html(string|int|float|bool|null $text): string
 	global $before_box, $messages;
 	// Fatal errors are not send to error_handler,
 	// so we must check the output
-	if ((bool)$text && preg_match('/\bFatal error(<.*?>)?:(.*)/i', $text, $m)) {
+	if ((bool)$text && preg_match('/\bFatal error(<.*?>)?:(.*)/i', (string) $text, $m)) {
 		ajax()->aCommands = array();  // Don't update page via ajax on errors
-		$text = preg_replace('/\bFatal error(<.*?>)?:(.*)/i','', $text);
+		$text = preg_replace('/\bFatal error(<.*?>)?:(.*)/i','', (string) $text);
 		$messages[] = array(E_ERROR, $m[2], null, null);
 	}
 	ajax()->run();
-	return  in_ajax() ? fmt_errors() : ($before_box.fmt_errors().$text);
+	return  in_ajax() ? fmt_errors() : ($before_box.fmt_errors().(string) $text);
 }
 
 //-----------------------------------------------------------------------------
@@ -32,24 +32,28 @@ function output_html(string|int|float|bool|null $text): string
 /** @psalm-taint-escape html */
 function html_specials_encode(string|int|float|bool|null $str): string
 {
-	/** @var language $lang */
-	$lang = $_SESSION['language'];
-	return htmlspecialchars($str, ENT_QUOTES, $lang->encoding=='iso-8859-2' ? 'ISO-8859-1' : $lang->encoding);
+	$lang = session_obj('language');
+	return htmlspecialchars((string) $str, ENT_QUOTES, $lang->encoding=='iso-8859-2' ? 'ISO-8859-1' : $lang->encoding);
 }
 
 function html_cleanup(array &$parms): void
 {
-	foreach($parms as $name => $value) {
+	// $value is genuinely mixed: this sanitizes the real $_GET/$_POST/$_REQUEST/$_SERVER
+	// superglobals in place, whose values are arbitrary by nature -- same as the
+	// equivalent includes/session.inc::html_cleanup()
+	foreach($parms as $name => &$value) {
 		if (is_array($value))
-			html_cleanup($parms[$name]);
+			html_cleanup($value);
 		else
-                    if (is_scalar($value) || $value === null) {
-                        $parms[$name] = html_specials_encode($value);
-                    }
+			$value = html_specials_encode(is_scalar($value) ? $value : null);
 	}
+	unset($value);
 	reset($parms); // needed for direct key() usage later throughout the sources
 }
 
+/** @psalm-mutation-free install-time stub; the real check_page_security()
+ * (includes/session.inc) only exists once a full app session is available,
+ * which isn't the case during installation */
 function check_page_security(string|int|float|bool|null $page_security): void
 {
 }
@@ -66,7 +70,11 @@ function cache_invalidate(?string $filename): void
        }
 }
 //============================================================================
-if (!isset($path_to_root))
+// checked via $GLOBALS rather than isset() so this doesn't depend on psalm.xml's
+// non-nullable stub for $path_to_root, which only describes its value once some
+// earlier script in the request has actually set it -- not whether it exists yet
+// this early in the install bootstrap chain (same pattern as includes/session.inc)
+if (!array_key_exists('path_to_root', $GLOBALS))
 {
 	$path_to_root = ".";
 }
@@ -98,6 +106,7 @@ $_SESSION['SysPrefs'] = new sys_prefs();
 /** @var sys_prefs $SysPrefs */
 $SysPrefs = &$_SESSION['SysPrefs'];
 
+/** @var array<string, array{name: string, code: string, encoding: string, rtl?: bool}> $inst_langs */
 $inst_langs = array(
   'C' => array ( 'name' => 'English',	'code' => 'C',		'encoding' => 'iso-8859-1'),
   'ar_EG' => array ( 'name' => 'Arabic',	'code' => 'ar_EG',	'encoding' => 'utf-8', 'rtl' => true),
@@ -134,23 +143,27 @@ $Ajax = new Ajax();
 
 get_text_init();
 
-$i_lang = isset($_POST['inst_lang']) ? $_POST['inst_lang'] : 
- 	(isset($_SESSION['inst_set']['inst_lang']) ? $_SESSION['inst_set']['inst_lang'] : 'C');
+$i_lang = $_POST['inst_lang'] ?? ($_SESSION['inst_set']['inst_lang'] ?? 'C');
+$i_lang = is_scalar($i_lang) ? $i_lang : 'C';
 
 // Page Initialisation
-if (!isset($_SESSION['language']) || !method_exists($_SESSION['language'], 'set_language')
-	|| $_SESSION['language']->code != $i_lang) 
+$session_language = isset($_SESSION['language']) ? session_obj('language') : null;
+if (!isset($session_language) || !method_exists($session_language, 'set_language')
+	|| $session_language->code != $i_lang)
 {
 	$l = array_search_value($i_lang, $inst_langs,  'code');
-	$_SESSION['language'] = new language($l['name'], $l['code'], $l['encoding'],
-	 @isset($l['rtl']) ? 'rtl' : 'ltr');
+	$l = is_array($l) ? $l : array();
+	$_SESSION['language'] = new language($l['name'] ?? null, $l['code'] ?? null, $l['encoding'] ?? null,
+	 (isset($l['rtl']) && $l['rtl'] === true) ? 'rtl' : 'ltr');
 
 }
-if (!isset($installed_languages))
+// checked via $GLOBALS rather than isset() -- same bootstrap-default reasoning as
+// $path_to_root above
+if (!array_key_exists('installed_languages', $GLOBALS))
 	$installed_languages = array();
 
-$_SESSION['language']->set_language($_SESSION['language']->code);
-$GetText->add_domain( $_SESSION['language']->code, $path_to_root."/install/lang");
+session_obj('language')->set_language(session_obj('language')->code);
+$GetText->add_domain( session_obj('language')->code, $path_to_root."/install/lang");
 
 include_once(dirname(__DIR__) . "/version.php");
 include_once(dirname(__DIR__) . "/includes/main.inc");
@@ -173,7 +186,9 @@ if (!isset($_SESSION["wa_current_user"]))
 
 html_cleanup($_GET);
 html_cleanup($_POST);
+/** @var array<array-key, mixed> $_REQUEST */
 html_cleanup($_REQUEST);
+/** @var array<array-key, mixed> $_SERVER */
 html_cleanup($_SERVER);
 
 // POST vars cleanup needed for direct reuse.
