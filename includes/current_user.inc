@@ -74,10 +74,14 @@ final class current_user
 
 	function __construct()
 	{
+		// checked via $GLOBALS rather than isset() so this doesn't depend on psalm.xml's
+		// non-nullable stub for $def_coy, which only describes its value once config_db.php
+		// (written during installation) has defined it, not whether it exists yet
+		// pre-installation -- same pattern as includes/session.inc's equivalent check
 		global $def_coy;
-		
+
 		$this->loginname = $this->username = $this->name = "";
-		$this->company = isset($def_coy)? $def_coy : 0;
+		$this->company = array_key_exists('def_coy', $GLOBALS) ? $def_coy : 0;
 		$this->logged = false;
 
 		$this->prefs = new user_prefs();
@@ -105,14 +109,15 @@ final class current_user
 		$this->set_company((int) $company);
 	    $this->logged = false;
 
-		set_global_connection($company);
-		$lang = &$_SESSION['language'];
-		$lang->set_language(session_obj('language')->code);
+		set_global_connection(is_scalar($company) ? $company : null);
+		session_obj('language')->set_language(session_obj('language')->code);
 		db_set_encoding(session_obj('language')->encoding);
 
 		// Use external authentication source if any.
 		// Keep in mind you need to have user data set for $loginname
 		// in FA users table anyway to successfully log in.
+		// $Auth_Result is genuinely mixed by design: hook_authenticate() is an
+		// extension point whose real return type is up to each hook implementation
 		$Auth_Result = hook_authenticate($loginname, $password);
 
 		if (!isset($Auth_Result))	// if not used: standard method
@@ -123,20 +128,26 @@ final class current_user
 
 		if ((bool)$Auth_Result)
 		{
-			$myrow = get_user_by_login($loginname);
-			if ($myrow['language'] != $dflt_lang)
+			$myrow = row_or_empty(get_user_by_login($loginname));
+			$myrow_language = $myrow['language'] ?? null;
+			if ($myrow_language != $dflt_lang)
 			{	 // refresh language and user data
- 				$lang->set_language($myrow['language']);
+ 				session_obj('language')->set_language(is_scalar($myrow_language) ? $myrow_language : null);
 				db_set_encoding(session_obj('language')->encoding);
-				$myrow = get_user_by_login($loginname);
+				$myrow = row_or_empty(get_user_by_login($loginname));
 			}
 
 			$this->old_db = isset($myrow["full_access"]);
 			if (! (bool)(@$myrow["inactive"])) {
-				if ($this->old_db) { 
+				if ($this->old_db) {
 					// Transition code:
 					// db was not yet upgraded after source update to v.2.2
 					// give enough access for admin user to continue upgrade
+					// $security_groups is deliberately left untyped (no psalm.xml global
+					// stub): it's a pre-2.2 config.php legacy array that only exists on a
+					// database never upgraded past that version, used nowhere else of
+					// value, not worth the global-stub ripple risk already documented in
+					// doc/PSALM_UPSTREAM_LIMITATIONS.md for exactly this kind of change
 					if (!isset($security_groups) || !isset($security_headings)) {
 						echo "<center><br><br><font size='5' color='red'><b>";
 						echo _('Before software upgrade you have to include old $security_groups and $security_headings arrays from old config.php file to the new one.');
@@ -145,7 +156,8 @@ final class current_user
 						exit;
 					}
 	        	    $this->access = $myrow["full_access"];
-	        	    if (in_array(20, $security_groups[$this->access])) {
+	        	    $access_key = is_scalar($this->access) ? $this->access : null;
+	        	    if (in_array(20, $security_groups[$access_key] ?? array())) {
 						// temporary access for admin users
 						$this->role_set = array();
 						$this->role_set[] = $security_areas['SA_SOFTWAREUPGRADE'][0];
@@ -159,21 +171,27 @@ final class current_user
 					$this->role_set = array();
 	        	    $this->access = $myrow["role_id"];
 					// store area codes available for current user role
-					$role = row_or_empty(get_security_role($this->access));
-					if (!$role) 
+					$role = row_or_empty(get_security_role(is_scalar($this->access) ? $this->access : null));
+					if (!$role)
 						return false;
-					foreach( $role['areas'] as $code )
+					/** @var list<string> $role_areas */
+					$role_areas = $role['areas'] ?? array();
+					/** @var list<string> $role_sections */
+					$role_sections = $role['sections'] ?? array();
+					foreach( $role_areas as $code )
 						// filter only area codes for enabled security sections
-						if (in_array($code&~0xff, $role['sections'])) 
+						if (in_array(((int) $code)&~0xff, $role_sections))
 							$this->role_set[] = $code;
 	        	}
-        	    $this->name = $myrow["real_name"];
+        	    $this->name = is_scalar($myrow["real_name"]) ? $myrow["real_name"] : '';
         	    $this->pos = $myrow["pos"];
         	    $this->loginname = $loginname;
         	    $this->username = $this->loginname;
         	    $this->prefs = new user_prefs($myrow);
-        	    $this->user = @$myrow["id"];
-                $this->email = @$myrow["email"];
+        	    $user_id = $myrow["id"] ?? null;
+        	    $this->user = is_scalar($user_id) ? $user_id : 0;
+                $myrow_email = $myrow["email"] ?? null;
+                $this->email = is_scalar($myrow_email) ? $myrow_email : '';
 		    	update_user_visitdate($this->username);
 		    	$this->logged = true;
 		    	$this->login_attempt=0;
@@ -186,9 +204,9 @@ final class current_user
 	}
 
 	/** @return bool */
-	function reset_password($company, $email) {
+	function reset_password(int|string $company, string|int|float|bool|null $email) {
 
-		$this->set_company($company);
+		$this->set_company((int) $company);
 		$this->logged = false;
 
 		set_global_connection();
@@ -201,14 +219,14 @@ final class current_user
 			$hash = md5($password);
 
 			update_user_password($user['id'], $user['user_id'], $hash);
-			
+
 			$sender = get_company_pref('email');
-			if (empty($sender))
+			if (!(bool) $sender)
 				$header = "";
 			else
 				$header = "From: $sender";
 
-			mail($email, _("New password for")." ".sysprefs()->app_title, $password, $header);
+			mail((string) $email, _("New password for")." ".sysprefs()->app_title, $password, $header);
 
 			return true;
 		}
@@ -221,40 +239,45 @@ final class current_user
 		global $security_groups;
 		if ($this->old_db) {
 			// notification after upgrade from pre-2.2 version
-			return isset($security_groups) && is_array(@$security_groups[$this->access]);
+			$access_key = is_scalar($this->access) ? $this->access : null;
+			return isset($security_groups) && is_array($security_groups[$access_key] ?? null);
 		} else
 			return !isset($security_groups) && is_array($this->role_set);
 	}
 
 	/** @return bool */
-	function can_access($sec_area)
+	function can_access(string|int|float|bool|null $sec_area)
 	{
 		global $security_groups, $security_areas;
 		if (isset($security_groups)) {
+			// $security_groups is the same deliberately-untyped pre-2.2 legacy array
+			// documented in login() above
+			$access_key = is_scalar($this->access) ? $this->access : null;
 			return is_admin_company() &&
-				in_array(20, $security_groups[$this->access]);
+				in_array(20, $security_groups[$access_key] ?? array());
 		}
 
-		if ($sec_area === 'SA_OPEN') 
+		if ($sec_area === 'SA_OPEN')
 			return true;
-		if ($sec_area === 'SA_DENIED' || $sec_area === '') 
+		if ($sec_area === 'SA_DENIED' || $sec_area === '')
 			return false;
 
-		$code = $security_areas[$sec_area][0];
+		$area_key = is_scalar($sec_area) ? (string) $sec_area : '';
+		$code = $security_areas[$area_key][0] ?? null;
 
 		// only first registered company has site admin privileges
-		return $code && is_array($this->role_set) && in_array($code, $this->role_set)
+		return (bool) $code && is_array($this->role_set) && in_array($code, $this->role_set)
 			&& ($this->company == 0 || (($code&~0xff) != SS_SADMIN));
 	}
 
 	/** @return bool */
-	function can_access_page($page_level)
+	function can_access_page(string|int|float|bool|null $page_level)
 	{
 		return $this->can_access($page_level);
 	}
 
 	/** @return bool */
-	function check_application_access($waapp)
+	function check_application_access(application $waapp)
 	{
 		if (!$this->hide_inaccessible_menu_items())
 		{
@@ -274,7 +297,7 @@ final class current_user
 	}
 
 	/** @return bool */
-	function check_module_access($module)
+	function check_module_access(module $module)
 	{
 
 		if (!$this->hide_inaccessible_menu_items())
@@ -324,7 +347,7 @@ final class current_user
 	}
 
 	/** @return false|mysqli */
-	function set_db_connection($id = -1)
+	function set_db_connection(string|int|float|bool|null $id = -1)
 	{
 		return set_global_connection($id);
 	}
@@ -337,7 +360,7 @@ final class current_user
 	{
 
 		if (!sysprefs()->allow_demo_mode) {
-			update_user_prefs($this->user, $prefs);
+			update_user_prefs($this->user, is_array($prefs) ? $prefs : array());
 		}
 
 		$this->prefs = new user_prefs(get_user($this->user));
@@ -423,7 +446,7 @@ function price_decimal_format(string|int|float|bool|null $number, int|string|nul
 // 2008-06-15. Added extra parameter $stock_id and reference for $dec
 //--------------------------------------------------------------------
 function qty_format(string|int|float|bool|null $number, string|int|float|bool|null $stock_id, int|string|null &$dec): string {
-	$dec = get_qty_dec($stock_id);
+	$dec = get_qty_dec(is_string($stock_id) ? $stock_id : null);
     return number_format2($number, $dec);
 }
 
@@ -437,7 +460,7 @@ function get_qty_dec(?string $stock_id=null): int|string
 		$dec = get_unit_dec($stock_id);
 	if ($stock_id == null || $dec == -1 || $dec == null)
 		$dec = user_qty_dec();
-	return is_int($dec) || is_string($dec) ? $dec : ($dec ?? 0);
+	return $dec;
 }
 //-------------------------------------------------------------------
 //
@@ -469,8 +492,9 @@ function user_numeric(string|int|float|bool|null $input): int|float|false {
     if (!is_numeric($num))
 	  	return false;
     $num = (float)$num;
-    if ($num == (int)$num)
-	  	return (int)$num;
+    $int_num = (int) $num;
+    if ($num == $int_num)
+	  	return $int_num;
     else
 	  	return $num;
 }
@@ -557,7 +581,12 @@ function user_date_display(): void
  	if (isset($_SESSION["wa_current_user"])) {
   		$fmt = session_obj('wa_current_user')->prefs->date_display();
  	} else {
-  		$sep = (string) user_date_sep();
+  		// was (string) user_date_sep() -- that casts the *preference index* (0/1/2/3)
+  		// straight to a string and uses it as the separator itself, instead of looking
+  		// up the actual separator character from sysprefs()->dateseps, the way every
+  		// other caller of user_date_sep() in this codebase does (and the way the real
+  		// user_prefs::date_display() this function falls back from already does)
+  		$sep = sysprefs()->dateseps[(int) user_date_sep()] ?? '/';
   		$user_date_fmt = user_date_format();
   		switch ($user_date_fmt) {
    			case 0:
@@ -706,7 +735,7 @@ function add_user_js_data(): void {
 	  . "date: '".Today()."',\n"	// server date
 	  . "datesys: ".sysprefs()->date_system.",\n"
 	  . "datefmt: ". (string) user_date_format().",\n"
-	  . "datesep: '".sysprefs()->dateseps[(string) user_date_sep()]."',\n"
+	  . "datesep: '".(sysprefs()->dateseps[(int) user_date_sep()] ?? '/')."',\n"
 	  . "ts: '$ts',\n"
 	  . "ds: '$ds',\n"
 	  . "pdec : " . user_price_dec() . "}\n";
@@ -721,6 +750,10 @@ function user_js_cache(string|int|float|bool|null $id=null): string
 	if (!(bool)$id)
 		$id = @session_obj('wa_current_user')->user;
 
+	// DocblockTypeContradiction below is a Psalm false positive: current_user::$user
+	// is declared int|string (session_obj()'s own type for this key), but genuinely
+	// defaults to int 0 (falsy) before a real login happens -- this check is real and
+	// necessary, not dead code
 	if (!$id)
 		$id = 0; // before login
 	return $path_to_root.'/company/'. (string) user_company().'/js_cache/'. (string) $id;
@@ -728,11 +761,14 @@ function user_js_cache(string|int|float|bool|null $id=null): string
 
 //--------------------------------------------------------------------------
 
-/** @return string|int|float|bool */
+/** @return int|string */
 function session_timeout()
 {
 	$tout = @get_company_pref('login_tout'); // mask warning for db ver. 2.2
-	return $tout ? $tout : ini_get('session.gc_maxlifetime');
+	if ((bool) $tout && (is_int($tout) || is_string($tout)))
+		return $tout;
+	$gc_maxlifetime = ini_get('session.gc_maxlifetime');
+	return $gc_maxlifetime === false ? 0 : $gc_maxlifetime;
 }
 
 //-----------------------------------------------------------------------------
@@ -748,12 +784,12 @@ function array_insert(array &$array, ?int $index, string|array|null $elements): 
 }
 
 /** @psalm-mutation-free */
-function array_remove(array &$array, ?int $index, ?int $len=1): void
+function array_remove(array &$array, int $index, ?int $len=1): void
 {
 	array_splice($array, $index, $len);
 }
 
-function array_substitute(array &$array, ?int $index, ?int $len, ?string $elements): void
+function array_substitute(array &$array, int $index, ?int $len, ?string $elements): void
 {
 	array_splice($array, $index, $len);
 	array_insert($array, $index, $elements);
@@ -761,7 +797,10 @@ function array_substitute(array &$array, ?int $index, ?int $len, ?string $elemen
 
 function array_append(array &$array, ?array $elements): void
 {
-	foreach($elements as $key => $el) {
+	// $key/$el are genuinely mixed by design: this generic array-builder helper's one
+	// real caller (sales/inquiry/sales_orders_view.php) passes column-definition arrays
+	// mixing plain strings and nested 'insert'/'fun' arrays
+	foreach($elements ?? array() as $key => $el) {
 		if(is_int($key))
 			$array[] = $el;
 		else
@@ -772,8 +811,8 @@ function array_append(array &$array, ?array $elements): void
 //	Search $needle in $haystack or in $haystack[][$valuekey]
 //	returns $needle found or null.
 //
-/** @psalm-pure */
 /**
+ * @psalm-pure
  * @template T
  * @param array<array-key, T>|null $haystack
  * @return T|null
@@ -794,7 +833,10 @@ function array_search_value(string|int|float|bool|null $needle, ?array $haystack
 //	Search $needle in $haystack or in $haystack[][$valuekey]
 //	returns array of keys of $haystack elements found
 //
-/** @psalm-pure */
+/**
+ * @psalm-pure
+ * @return array<int, array-key>
+ */
 function array_search_keys(string|int|float|bool|null $needle, ?array $haystack, ?string $valuekey=null): array
 {
 	$keys = array();
@@ -812,19 +854,24 @@ function array_search_keys(string|int|float|bool|null $needle, ?array $haystack,
 //	Find first (single) $needle in $haystack or in $haystack[][$valuekey]
 //	returns $haystack element found or null
 //
-/** @psalm-pure */
+/**
+ * @psalm-pure
+ * @return array-key|null
+ */
 function array_search_key(string|int|float|bool|null $needle, ?array $haystack, ?string $valuekey=null)
 {
 	$keys = array_search_keys($needle, $haystack, $valuekey);
-	return @$keys[0];
+	return $keys[0] ?? null;
 }
 
 // Recalculate report columns if orientation is landscape.
 function recalculate_cols(array &$cols): void
 {
 	$factor = (user_pagesize() == "A4" ? 1.4 : 1.3);
+	// $col is genuinely mixed: shared by ~50 report files' own differently-shaped
+	// column-width arrays, guarded with is_numeric() immediately below before use
 	foreach($cols as $key => $col)
-		$cols[$key] = intval($col * $factor); 
+		$cols[$key] = intval((float) (is_numeric($col) ? $col : 0) * $factor);
 }
 
 function flush_dir(string $path, string|int|float|bool|null $wipe = false): void

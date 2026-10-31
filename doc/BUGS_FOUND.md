@@ -1018,6 +1018,24 @@ Found by chasing Psalm's `TaintedSSRF`/`TaintedFile` findings in
 
 ## Data-correctness bugs
 
+- **`includes/current_user.inc` — `user_date_display()`'s fallback-mode
+  date separator.** Found by reading the function next to every other
+  caller of `user_date_sep()` in the codebase (`includes/date_functions.inc`,
+  `includes/dashboard.inc`, `includes/ui/ui_view.inc`,
+  `reporting/includes/excel_report.inc`, and `user_prefs::date_display()`
+  itself) while chasing an `InvalidArrayOffset` Psalm finding a few lines
+  away. `user_date_sep()` returns a *preference index* (0/1/2/3 selecting
+  `/`, `.`, `-`, or ` `), never the separator character itself — every real
+  caller looks the character up via `sysprefs()->dateseps[(int)
+  user_date_sep()]`. This one line instead did
+  `$sep = (string) user_date_sep();` and used the raw index directly as the
+  separator, so a date formatted through this code path (the no-logged-in-
+  user fallback branch of `user_date_display()`, used e.g. before login
+  completes) would render as `m0d0Y` instead of `m/d/Y` for the default
+  preference. Fixed to look the character up the same way
+  `user_prefs::date_display()` (the branch this one falls back from) already
+  does.
+
 - **`sales/customer_credit_invoice.php` — `display_credit_items()`'s
   sub-total/tax calculation.** Found via Psalm's `ArgumentTypeCoercion` on
   `input_num(post_scalar('ChargeFreightCost'))`. `input_num(?string

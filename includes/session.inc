@@ -574,9 +574,10 @@ if (!defined('FA_LOGOUT_PHP_FILE')){
         /** @var string|int|float|bool|null $company_login_name */
         $company_login_name = $_POST["company_login_name"] ?? null;
         $company_login_name = is_int($company_login_name) || is_string($company_login_name) ? $company_login_name : null;
+        $email_entry_post = $_POST["email_entry_field"] ?? null;
         $_succeed = $company_login_name !== null && isset($db_connections[$company_login_name]) &&
           session_obj('wa_current_user')->reset_password($company_login_name,
-          $_POST["email_entry_field"]);
+          is_scalar($email_entry_post) ? $email_entry_post : null);
         if ($_succeed)
         {
           password_reset_success();
