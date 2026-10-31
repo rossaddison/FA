@@ -19,6 +19,7 @@ include_once(dirname(__DIR__) . "/includes/packages.inc");
 include_once(dirname(__DIR__) . "/admin/db/maintenance_db.inc");
 include_once(dirname(__DIR__) . "/includes/ui.inc");
 
+$js = "";
 if (sysprefs()->use_popup_windows) {
 	$js = get_js_open_window(900, 500);
 }
@@ -26,21 +27,26 @@ page(_($help_context = "Install Themes"), false, false, '', $js);
 
 //---------------------------------------------------------------------------------------------
 
-if (((bool)($id = find_submit('Delete', false))) && isset($installed_extensions[$id])
-	&& clean_user_themes($installed_extensions[$id]['package']))
+$id = find_submit('Delete', false);
+$id = is_scalar($id) ? (int) $id : 0;
+$installed_theme_package = $installed_extensions[$id]['package'] ?? null;
+$installed_theme_package = is_scalar($installed_theme_package) ? $installed_theme_package : null;
+if ((bool)$id && isset($installed_extensions[$id])
+	&& clean_user_themes($installed_theme_package))
 {
 	$extensions = get_company_extensions();
-	$theme = $extensions[$id]['package'];
-	$path = $extensions[$id]['path'];
+	$theme = $extensions[$id]['package'] ?? null;
+	$theme = is_scalar($theme) ? $theme : null;
+	$path = (string) ($extensions[$id]['path'] ?? '');
 
-	if (uninstall_package($theme)) {
-		$dirname = $path_to_root.'/'.$path;
+	if ($theme !== null && uninstall_package($theme)) {
+		$dirname = (string) $path_to_root.'/'.$path;
 		flush_dir($dirname, true);
 		rmdir($dirname);
 		unset($extensions[$id]);
 		if (update_extensions($extensions)) {
 			display_notification(_("Selected theme has been successfully deleted"));
-			meta_forward($_SERVER['PHP_SELF']);
+			meta_forward($_SERVER['PHP_SELF'] ?? '');
 		}
 	}
 }
@@ -67,29 +73,34 @@ start_form(true);
 
 		foreach($mods as $pkg_name => $ext)
 		{
-			$available = @$ext['available'];
-			$installed = @$ext['version'];
-			$id = @$ext['local_id'];
+			// $available/$installed/$id below are genuinely mixed by design:
+			// get_themes_list()'s own @return docblock types this as PkgListItem, same
+			// reasoning as admin/inst_lang.php's identical get_languages_list() loop --
+			// each field is guarded with is_scalar()/cast immediately below before any use
+			$ext_name = (string) ($ext['name'] ?? '');
+			$available = $ext['available'] ?? null;
+			$installed = $ext['version'] ?? null;
+			$id = $ext['local_id'] ?? null;
 
 			alt_table_row_color($k);
 
-			label_cell($available ? get_package_view_str($pkg_name, $ext['name']) : $ext['name']);
+			label_cell((bool)$available ? get_package_view_str($pkg_name, $ext_name) : $ext_name);
 
 			label_cell($id === null ? _("None") :
-				($available && $installed ? $installed : _("Unknown")));
-			label_cell($available ? $available : _("None"));
+				(((bool)$available && (bool)$installed) ? (string) $installed : _("Unknown")));
+			label_cell((bool)$available ? (string) $available : _("None"));
 
-			if ($available && check_pkg_upgrade($installed, $available)) // outdated or not installed theme in repo
+			if ((bool)$available && check_pkg_upgrade(is_scalar($installed) ? $installed : null, is_scalar($available) ? $available : null)) // outdated or not installed theme in repo
 				button_cell('Update'.$pkg_name, (bool)$installed ? _("Update") : _("Install"),
 					_('Upload and install latest extension package'), ICON_DOWN, 'process');
 			else
 				label_cell('');
 
 			if ($id !== null) {
-				delete_button_cell('Delete'.$id, _('Delete'));
-				submit_js_confirm('Delete'.$id, 
-					sprintf(_("You are about to remove package \'%s\'.\nDo you want to continue ?"), 
-						$ext['name']));
+				delete_button_cell('Delete'.(string)$id, _('Delete'));
+				submit_js_confirm('Delete'.(string)$id,
+					sprintf(_("You are about to remove package \'%s\'.\nDo you want to continue ?"),
+						$ext_name));
 			} else
 				label_cell('');
 
