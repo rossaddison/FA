@@ -35,7 +35,7 @@ print_inventory_purchase();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions_rep306(string|int|array|null $category, string|array|null $location, string|array|null $fromsupp, string|null $item, string|null $from, string|null $to)
+function getTransactions_rep306(string|int|null $category, string|null $location, string|null $fromsupp, string|null $item, string|null $from, string|null $to)
 {
 	$from = date2sql($from);
 	$to = date2sql($to);
@@ -170,7 +170,8 @@ function print_inventory_purchase(): void
 	$total = $total_supp = $grandtotal = 0.0;
 	$total_qty = 0.0;
 	$catt = $stock_description = $stock_id = $supplier_name = '';
-	while ($trans=db_fetch($res))
+	$trans = null;
+	while ($res instanceof mysqli_result && ($trans=db_fetch($res)))
 	{
 		if ($stock_description != $trans['description'])
 		{
