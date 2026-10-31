@@ -12,11 +12,23 @@ declare(strict_types=1);
 ***********************************************************************/
 /*
 	Retrieve value of POST variable(s).
-	For $name passed as array $dflt is not used, 
+	For $name passed as array $dflt is not used,
 	default values can be passed as values with non-numeric keys instead.
 	If some field have user formatted numeric value, pass float default value to
 	convert automatically to POSIX.
 */
+// The remaining Psalm findings on this function (its own declared conditional
+// return type not matching its body, plus a knock-on "0 is always falsy" at
+// start_form()'s $form_nested check below -- the same "resolving a mixed type
+// ripples findings into unrelated code" Psalm behaviour documented in
+// doc/PSALM_UPSTREAM_LIMITATIONS.md) are deliberately left as-is. get_post() is
+// the oldest, widest-reaching raw $_POST accessor in the app (hundreds of call
+// sites); doc/BUGS_FOUND.md already lists several real bugs caused by callers
+// trusting an over-specific type narrowed from this function, and
+// post_scalar() exists specifically as the safer, narrowly-typed alternative
+// for new code. Attempting to make this particular conditional type
+// Psalm-sound risks exactly that class of regression project-wide for a
+// legacy accessor that is, by design, this dynamic.
 /**
  * @template T
  * @param string|array<array-key, mixed> $name
