@@ -128,8 +128,8 @@ final class Chart
 	var $max_label;
 	/** @var string */
 	var $max_legend_str = '';
-	/** @var int|float */
-	var $legend_box_height = 0;
+	/** @var float */
+	var $legend_box_height = 0.0;
 	/** @var string|null */
 	var $stream = 'svg'; // stream = 'svg', 'png', 'jpg' or 'gif'
 
@@ -333,7 +333,7 @@ final class Chart
 	}
 
 	/**
-	 * @param array<array-key, mixed>|null $labels
+	 * @param array<int, string> $labels
 	 * @psalm-external-mutation-free
 	 * @return void
 	 */
@@ -344,7 +344,7 @@ final class Chart
 
 	/**
 	 * @param string|null $label
-	 * @param array<int, int|float>|null $data
+	 * @param array<int, int|float> $data
 	 * @param string|bool|null $type
 	 * @param bool $fill
 	 * @psalm-external-mutation-free
@@ -422,7 +422,10 @@ final class Chart
 		$this->out_dir = $dir;
 	}
 
-	/** @return bool */
+	/**
+	 * @psalm-mutation-free
+	 * @return bool
+	 */
 	function isEmpty()
 	{
 		return (!isset($this->series[0]['data']) || count($this->series[0]['data']) == 0);
@@ -463,7 +466,7 @@ final class Chart
 			{
 				if ($this->series[$j]['data'][$i] > $this->max_value)
 					$this->max_value = $this->series[$j]['data'][$i];
-				$this->sum_total[$j] += $this->series[$j]['data'][$i];
+				$this->sum_total[$j] += (float) $this->series[$j]['data'][$i];
 			}
 		}
 		$this->max_value = number_format(round((float) $this->max_value, 1), 1, ".", "");
@@ -620,6 +623,9 @@ final class Chart
 				imageline($img, (int) round((float)$this->graphic_area_x1+$this->higher_value_size), (int) round($this->graphic_area_y1), (int) round((float)$this->graphic_area_x1+$this->higher_value_size), (int) round($this->graphic_area_y2), (int) $c_bg_lines);
 				$this->_imagestring($img, $this->size, (((float)$this->graphic_area_x1+$this->higher_value_size) - ((float) $this->string_width($this->higher_value, $this->size)/2.0)), ((float)$this->graphic_area_y2+2.0), $this->higher_value_str, $c_axis_values);
 			}
+			// $alt deliberately carries its value across iterations (it's a label-offset
+			// flag reset only once, in the loop init); Psalm's LoopInvalidation is a false
+			// positive here.
 			for ($i = 1, $alt = 15; $i < 10; $i++)
 			{
 				$dec_x = (float) number_format(round((float)$i * (($this->higher_value_size	 / 10.0)), 1), 1, ".", "");
@@ -788,7 +794,7 @@ final class Chart
 								{
 									if ($this->series[$j]['type'] == 4) // normal line
 										$path .= " L".(string)$p[$ix][0].",".(string)$p[$ix][1];
-									elseif ($this->series[$j]['type'] == 8) // spline
+									else // spline (type is guaranteed 4 or 8 here)
 										$path .= $this->_splineCommand($p[$ix], $ix, $p);
 								}
 							}
@@ -1055,6 +1061,7 @@ final class Chart
 	 * @param int|null $step
 	 * @param int|null $minx
 	 * @param int|null $maxx
+	 * @psalm-pure
 	 * @return array<int, float>|false
 	 */
 	function imageSpline($p, $step = 1, $minx = -1, $maxx = -1)
@@ -1078,10 +1085,8 @@ final class Chart
 		$n = count($cx);
 		for ($i = 0; $i < $n; ++$i)
 		{
-			$splines[$i]['x'] = $cx[$i];
-			$splines[$i]['a'] = $cy[$i];
+			$splines[$i] = array('x' => $cx[$i], 'a' => $cy[$i], 'b' => 0.0, 'c' => 0.0, 'd' => 0.0);
 		}
-		$splines[0]['c'] = $splines[$n - 1]['c'] = 0.0;
 		/** @var array<int, float> $alpha */
 		$alpha = array(0 => 0.0);
 		/** @var array<int, float> $beta */
@@ -1109,6 +1114,7 @@ final class Chart
 		for ($x = $minx; $x <= $maxx; $x += (float) $step)
 		{
 			$n = count($splines);
+			assert($n > 0); // guaranteed by the count($p) < 4 check above
 			if ($x <= $splines[0]['x'])	 {
 				$s = $splines[1];
 			} else {
@@ -2131,7 +2137,6 @@ final class SVG
 	}
 	/**
 	 * @param string|null $s
-	 * @psalm-external-mutation-free
 	 * @return void
 	 */
 	function style($s='')
