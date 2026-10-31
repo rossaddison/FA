@@ -105,9 +105,9 @@ function display_type_rep705 (?string $type, ?string $typename, string|int|float
 				continue;
 		}	
 		$bal = row_or_empty(getPeriods_rep705($yr, $mo, $account["account_code"], $dimension, $dimension2, $thousands));
-		if (!$bal['per01'] && !$bal['per02'] && !$bal['per03'] && !$bal['per04'] &&	!$bal['per05'] && 
-			!$bal['per06'] && !$bal['per07'] && !$bal['per08'] && !$bal['per09'] && !$bal['per10'] && 
-			!$bal['per11'] && !$bal['per12'])
+		if (!(float) $bal['per01'] && !(float) $bal['per02'] && !(float) $bal['per03'] && !(float) $bal['per04'] &&	!(float) $bal['per05'] &&
+			!(float) $bal['per06'] && !(float) $bal['per07'] && !(float) $bal['per08'] && !(float) $bal['per09'] && !(float) $bal['per10'] &&
+			!(float) $bal['per11'] && !(float) $bal['per12'])
 			continue;
 	
 		//Print Type Title if it has at least one non-zero account	
