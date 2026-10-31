@@ -57,10 +57,10 @@ function getTransactions_rep108(string|int|null $debtorno, string|array|null $sh
             ON trans.order_=ord.order_no
         WHERE tran_date <= '$date' AND debtor_no = ".db_escape($debtorno)."
 			AND trans.type <> ".ST_CUSTDELIVERY." AND ISNULL(v.date_)
-			AND ABS(ABS(ov_amount) + ov_gst + ov_freight + ov_freight_tax + ov_discount) > ". FLOAT_COMP_DELTA;
+			AND ABS(ABS(ov_amount) + ov_gst + ov_freight + ov_freight_tax + ov_discount) > ". (string) FLOAT_COMP_DELTA;
 	
   	if (!(bool)$show_also_allocated)
-		$sql .= " AND ABS(IF(prep_amount, prep_amount, ABS(ov_amount) + ov_gst + ov_freight + ov_freight_tax + ov_discount) - alloc) > ". FLOAT_COMP_DELTA;
+		$sql .= " AND ABS(IF(prep_amount, prep_amount, ABS(ov_amount) + ov_gst + ov_freight + ov_freight_tax + ov_discount) - alloc) > ". (string) FLOAT_COMP_DELTA;
 	$sql .= " ORDER BY tran_date";
 
     return db_query($sql,"No transactions were returned");
@@ -94,7 +94,7 @@ function print_statements(): void
 	$params = array('comments' => $comments);
 
 	$cur = get_company_pref('curr_default');
-	$PastDueDays1 = get_company_pref('past_due_days');
+	$PastDueDays1 = (int) get_company_pref('past_due_days');
 	$PastDueDays2 = 2 * $PastDueDays1;
 
     if ($orientation == 'L')
@@ -107,7 +107,6 @@ function print_statements(): void
 		$sql .= " ORDER by name";
 	$result = db_select($sql, "The customers could not be retrieved");
 
-	/** @var FrontReport $rep */
 	while ($myrow=db_fetch($result))
 	{
 		if ($currency != ALL_TEXT && $myrow['curr_code'] != $currency) {
@@ -134,6 +133,7 @@ function print_statements(): void
 		}
 
 		$contacts = get_customer_contacts($myrow['debtor_no'], 'invoice');
+		/** @var FrontReport $rep */
 		$rep->currency = ($cur == null ? "USD" : (string) $cur);
 		$rep->Font();
 		$rep->Info($params, $cols, null, $aligns);
@@ -194,13 +194,15 @@ function print_statements(): void
             if (($CustomerRecord["Balance"]) != ((float)$CustomerRecord["Balance"] - (float)$CustomerRecord["Due"]))
                 $rep->End($email, _("Statement") . " " . _("as of") . " " . sql2date((string) $myrow['tran_date']) . " " . _("from") . " " . htmlspecialchars_decode((string) get_company_pref('coy_name')));
             else
-                display_notification(sprintf(_("Customer %s has no overdue debits. No e-mail is sent."), $myrow["DebtorName"]));       
+                display_notification(sprintf(_("Customer %s has no overdue debits. No e-mail is sent."), (string) $myrow["DebtorName"]));
         }
 	}
 
     if (!isset($rep))
         display_notification(_("No customers with outstanding balances found"));
-	else if ($email == 0)
+	else if ($email == 0) {
+		/** @var FrontReport $rep */
 		$rep->End();
+	}
 }
 
