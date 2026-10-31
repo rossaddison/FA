@@ -106,7 +106,7 @@ function print_bank_transactions_reconcile(): void
 
 	$trans = get_bank_transactions($from, $to, (string) $account['id']);
 
-	$rows = db_num_rows($trans);
+	$rows = $trans instanceof mysqli_result ? db_num_rows($trans) : 0;
 	if ($prev_balance != 0.0 || $rows != 0)
 	{
 		$rep->Font('bold');
@@ -125,24 +125,25 @@ function print_bank_transactions_reconcile(): void
 		if ($rows > 0)
 		{
 			
-			while ($myrow=db_fetch($trans))
+			while ($trans instanceof mysqli_result && ($myrow=db_fetch($trans)))
 			{
-				$total += (float) $myrow['amount'];
+				$amount = (float) $myrow['amount'];
+				$total += $amount;
 
 				$rep->TextCol(0, 1, $systypes_array[(int) $myrow["type"]]);
 				$rep->TextCol(1, 2,	$myrow['trans_no']);
 				$rep->TextCol(2, 3,	$myrow['ref']);
 				$rep->DateCol(3, 4,	$myrow["trans_date"], true);
 				$rep->TextCol(4, 5,	payment_person_name($myrow["person_type_id"],$myrow["person_id"], false));
-				if ($myrow['amount'] > 0.0)
+				if ($amount > 0.0)
 				{
-					$rep->AmountCol(5, 6, abs($myrow['amount']), $dec);
-					$total_debit += (float)abs($myrow['amount']);
+					$rep->AmountCol(5, 6, abs($amount), $dec);
+					$total_debit += abs($amount);
 				}
 				else
 				{
-					$rep->AmountCol(6, 7, abs($myrow['amount']), $dec);
-					$total_credit += (float)abs($myrow['amount']);
+					$rep->AmountCol(6, 7, abs($amount), $dec);
+					$total_credit += abs($amount);
 				}
 				$rep->AmountCol(7, 8, $total, $dec);
 				if ((bool)$myrow["reconciled"] && $myrow["reconciled"] != '0000-00-00')
