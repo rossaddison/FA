@@ -15,7 +15,7 @@ include_once(dirname(__DIR__, 2) . "/includes/ui/items_cart.inc");
 
 //--------------------------------------------------------------------------------
 
-function add_to_order(items_cart &$order, string|array|null $new_item, int|float|bool|null $new_item_qty, string|int|float|bool|array|null $standard_cost): void
+function add_to_order_item_adjustments(items_cart &$order, string|array|null $new_item, int|float|bool|null $new_item_qty, string|int|float|bool|array|null $standard_cost): void
 {
     $stock_id = is_array($new_item) ? null : $new_item;
     $cost = is_array($standard_cost) ? null : $standard_cost;

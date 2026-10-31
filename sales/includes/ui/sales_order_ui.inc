@@ -13,7 +13,7 @@ declare(strict_types=1);
 include_once(dirname(__DIR__, 3) . "/sales/includes/cart_class.inc");
 
 //--------------------------------------------------------------------------------
-function add_to_order(
+function add_to_order_sales(
     Cart &$order,
     string|null $new_item,
     string|int|float|bool|null $new_item_qty,
@@ -56,7 +56,7 @@ function add_to_order(
 
 		if (!(bool)$item['is_foreign'] && $item['item_code'] != $item['stock_id'])
 		{	// this is sales kit - recurse 
-			add_to_order($order, $item['stock_id'], $new_item_qty*(float)$item['quantity'],
+			add_to_order_sales($order, $item['stock_id'], $new_item_qty*(float)$item['quantity'],
 				$item_price, $discount);
 		}
 		else

@@ -96,9 +96,6 @@ function handle_new_order(): void
 // handle_new_order() during this same page's own earlier GET-mode load (see the
 // isset()/NewTransfer check further down), before any POST that reads it can occur -
 // Psalm can't trace that across the GET/POST request-response cycle.
-// add_to_order() below is also a function-name collision (3 declarations: this file's
-// local one taking items_cart, and sales/includes/ui/sales_order_ui.inc's taking Cart) -
-// per doc/PSALM_MIGRATION.md's collision policy, left untouched.
 if (isset($_POST['Process']))
 {
 
@@ -209,7 +206,7 @@ function handle_new_item(): void
 {
 	if (!isset($_POST['std_cost']))
    		$_POST['std_cost'] = 0;
-	add_to_order($_SESSION['transfer_items'], post_scalar('stock_id'), input_num('qty'), $_POST['std_cost']);
+	add_to_order_stock_transfers($_SESSION['transfer_items'], post_scalar('stock_id'), input_num('qty'), $_POST['std_cost']);
 	unset($_POST['stock_id']);
 	line_start_focus();
 }

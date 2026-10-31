@@ -263,7 +263,7 @@ function handle_new_item(): void
 		return;
 
 	if (!isset($_SESSION['Items'])) return;
-	add_to_order($_SESSION['Items'], (string) post_scalar('stock_id'), input_num('qty'),
+	add_to_order_sales($_SESSION['Items'], (string) post_scalar('stock_id'), input_num('qty'),
 		input_num('price'), (float)input_num('Disc') / 100.0);
     line_start_focus();
 }

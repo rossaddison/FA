@@ -101,9 +101,6 @@ function handle_new_order(): void
 // handle_new_order() during this same page's own earlier GET-mode load (see the
 // isset()/NewAdjustment check further down), before any POST that reads it can
 // occur - Psalm can't trace that across the GET/POST request-response cycle.
-// add_to_order() below is also a function-name collision (3 declarations: this
-// file's local one taking items_cart, and sales/includes/ui/sales_order_ui.inc's
-// taking Cart) - per doc/PSALM_MIGRATION.md's collision policy, left untouched.
 #[\NoDiscard]
 function canProcessInventoryAdjustments(): bool
 {
@@ -218,7 +215,7 @@ function handle_delete_item(string|int|null $id): void
 
 function handle_new_item(): void
 {
-	add_to_order($_SESSION['adj_items'], post_scalar('stock_id'), 
+	add_to_order_item_adjustments($_SESSION['adj_items'], post_scalar('stock_id'),
 	input_num('qty'), input_num('std_cost'));
 	line_start_focus();
 }
