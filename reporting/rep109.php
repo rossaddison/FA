@@ -199,11 +199,11 @@ function print_sales_orders(): void
 
 		$rep->NewLine();
 
-		$DisplayTotal = number_format2((float)$myrow["freight_cost"] + (float)$SubTotal, $dec);
+		$DisplayTotal = number_format2((float)$myrow["freight_cost"] + $SubTotal, $dec);
 		$rep->Font('bold');
 		$rep->TextCol(3, 6, _("TOTAL ORDER VAT INCL."), - 2);
 		$rep->TextCol(6, 7,	$DisplayTotal, -2);
-		$words = price_in_words((float)$myrow["freight_cost"] + (float)$SubTotal, ST_SALESORDER);
+		$words = price_in_words((float)$myrow["freight_cost"] + $SubTotal, ST_SALESORDER);
 		if ($words != "")
 		{
 			$rep->NewLine(1);

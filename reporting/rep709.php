@@ -32,9 +32,9 @@ include_once(dirname(__DIR__) . "/gl/includes/gl_db.inc");
 print_tax_report();
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
-function getTaxTransactions(string|null $from, string|null $to)
+function getTaxTransactions_rep709(string|null $from, string|null $to)
 {
 	$fromdate = date2sql($from);
 	$todate = date2sql($to);
@@ -69,7 +69,7 @@ function getTaxTransactions(string|null $from, string|null $to)
 }
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function getTaxTypes()
 {
@@ -144,7 +144,7 @@ function print_tax_report(): void
 	
 	$totalnet = 0.0;
 	$totaltax = 0.0;
-	$transactions = getTaxTransactions($from, $to);
+	$transactions = getTaxTransactions_rep709($from, $to);
 
 	while ($trans=db_fetch($transactions))
 	{

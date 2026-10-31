@@ -34,7 +34,7 @@ print_sales_summary_report();
 /**
  * @return bool|mysqli_result
  */
-function getTaxTransactions(string|null $from, string|null $to, string|array|null $tax_id)
+function getTaxTransactions_rep114(string|null $from, string|null $to, string|array|null $tax_id)
 {
 	$fromdate = date2sql($from);
 	$todate = date2sql($to);
@@ -61,7 +61,7 @@ function getTaxes(?string $type, ?string $trans_no)
 		FROM ".TB_PREF."trans_tax_details WHERE trans_type=".db_escape($type)." AND trans_no=".db_escape($trans_no)." GROUP BY included_in_price";
 
     $result = db_query($sql,"No transactions were returned");
-    if ($result !== false)
+    if ($result instanceof mysqli_result)
     	return db_fetch($result);
     else
     	return null;
@@ -112,7 +112,7 @@ function print_sales_summary_report(): void
 	
 	$totalnet = 0.0;
 	$totaltax = 0.0;
-	$transactions = getTaxTransactions((string) $from, (string) $to, (string) $tax_id);
+	$transactions = getTaxTransactions_rep114((string) $from, (string) $to, (string) $tax_id);
 
 	$rep->TextCol(0, 4, _('Balances in Home Currency'));
 	$rep->NewLine(2);
@@ -120,7 +120,7 @@ function print_sales_summary_report(): void
 	$custno = 0;
 	$tax = $total = 0.0;
 	$custname = $tax_id = "";
-	while ($trans=db_fetch($transactions))
+	while ($transactions instanceof mysqli_result && ($trans=db_fetch($transactions)))
 	{
 		if ($custno != $trans['debtor_no'])
 		{
