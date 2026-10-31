@@ -135,13 +135,13 @@ function print_sales_quotations(): void
 			
 			if ($pictures)
 			{
-				$image = company_path(). "/images/" . item_img_name($myrow2['stk_code']) . ".jpg";
+				$image = company_path(). "/images/" . (string) item_img_name($myrow2['stk_code']) . ".jpg";
 				if (file_exists($image))
 				{
-					if ($rep->row - sysprefs()->pic_height < $rep->bottomMargin)
+					if ($rep->row - (float) sysprefs()->pic_height < $rep->bottomMargin)
 						$rep->NewPage();
-					$rep->AddImage($image, $rep->cols[1], $rep->row - sysprefs()->pic_height, 0, sysprefs()->pic_height);
-					$rep->row -= sysprefs()->pic_height;
+					$rep->AddImage($image, $rep->cols[1], $rep->row - (float) sysprefs()->pic_height, 0, (float) sysprefs()->pic_height);
+					$rep->row -= (float) sysprefs()->pic_height;
 					$rep->NewLine();
 				}
 			}
@@ -214,11 +214,11 @@ function print_sales_quotations(): void
 
 		$rep->NewLine();
 
-		$DisplayTotal = number_format2((float)$myrow["freight_cost"] + (float)$SubTotal, $dec);
+		$DisplayTotal = number_format2((float)$myrow["freight_cost"] + $SubTotal, $dec);
 		$rep->Font('bold');
 		$rep->TextCol(3, 6, _("TOTAL ORDER VAT INCL."), - 2);
 		$rep->TextCol(6, 7,	$DisplayTotal, -2);
-		$words = price_in_words((float)$myrow["freight_cost"] + (float)$SubTotal, ST_SALESQUOTE);
+		$words = price_in_words((float)$myrow["freight_cost"] + $SubTotal, ST_SALESQUOTE);
 		if ($words != "")
 		{
 			$rep->NewLine(1);
