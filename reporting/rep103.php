@@ -31,7 +31,7 @@ include_once(dirname(__DIR__) . "/gl/includes/gl_db.inc");
 print_customer_details_listing();
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_customer_details_for_report(string|int|null $area=0, string|int|null $salesid=0)
 {
@@ -75,6 +75,7 @@ function get_customer_details_for_report(string|int|null $area=0, string|int|nul
     return db_select($sql,"No transactions were returned");
 }
 
+/** @return list<array<array-key, string|null>> */
 function get_contacts_for_branch(?string $branch): array
 {
 	$sql = "SELECT p.*, r.action, r.type, CONCAT(r.type,'.',r.action) as ext_type 
@@ -167,7 +168,7 @@ function print_customer_details_listing(): void
     				    1 => array('text' => _('Activity Since'), 	'from' => $from, 		'to' => ''),
     				    2 => array('text' => _('Sales Areas'), 		'from' => $sarea, 		'to' => ''),
     				    3 => array('text' => _('Sales Folk'), 		'from' => $salesfolk, 	'to' => ''),
-    				    4 => array('text' => _('Activity'), 		'from' => $morestr, 	'to' => $lessstr . " " . get_company_pref("curr_default")));
+    				    4 => array('text' => _('Activity'), 		'from' => $morestr, 	'to' => $lessstr . " " . (string) get_company_pref("curr_default")));
 
     $rep = new FrontReport(_('Customer Details Listing'), "CustomerDetailsListing", user_pagesize(), 9, $orientation);
     if ($orientation == 'L')
@@ -227,9 +228,9 @@ function print_customer_details_listing(): void
 			$rep->NewLine();
 			$adr = $myrow['address'] != NULL ? Explode("\n", $myrow['address']) : array();
 			if ($myrow['br_post_address'] == '')
-				$adr2 = Explode("\n", $myrow['br_address']);
+				$adr2 = Explode("\n", $myrow['br_address'] ?? '');
 			else
-				$adr2 = Explode("\n", $myrow['br_post_address']);
+				$adr2 = Explode("\n", $myrow['br_post_address'] ?? '');
 			$count1 = count($adr);
 			$count2 = count($adr2);
 			$count1 = max($count1, $count2);
@@ -280,8 +281,8 @@ function print_customer_details_listing(): void
 				$rep->NewLine();
 				if (isset($adr[$i]))
 					$rep->TextCol(0, 1, $adr[$i]);
-				if ($i == 3 && isset($contacts[0]) && isset($contacts[0]['email']))	
-					$rep->TextCol(2, 3, _('Email') . ": " . (string)$contacts[0]['email']);
+				if ($i == 3 && isset($contacts[0]) && isset($contacts[0]['email']))
+					$rep->TextCol(2, 3, _('Email') . ": " . $contacts[0]['email']);
 				if (isset($adr2[$i]))
 					$rep->TextCol(3, 4, $adr2[$i]);
 			}	
