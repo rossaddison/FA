@@ -206,7 +206,10 @@ function handle_new_item(): void
 {
 	if (!isset($_POST['std_cost']))
    		$_POST['std_cost'] = 0;
-	add_to_order_stock_transfers($_SESSION['transfer_items'], post_scalar('stock_id'), input_num('qty'), $_POST['std_cost']);
+	$tr = &$_SESSION['transfer_items'];
+	/** @var items_cart $tr */
+	$stock_id = post_scalar('stock_id');
+	add_to_order_stock_transfers($tr, is_scalar($stock_id) ? (string) $stock_id : null, input_num('qty'), $_POST['std_cost']);
 	unset($_POST['stock_id']);
 	line_start_focus();
 }

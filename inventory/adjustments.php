@@ -215,7 +215,10 @@ function handle_delete_item(string|int|null $id): void
 
 function handle_new_item(): void
 {
-	add_to_order_item_adjustments($_SESSION['adj_items'], post_scalar('stock_id'),
+	$adj = &$_SESSION['adj_items'];
+	/** @var items_cart $adj */
+	$stock_id = post_scalar('stock_id');
+	add_to_order_item_adjustments($adj, is_scalar($stock_id) ? (string) $stock_id : null,
 	input_num('qty'), input_num('std_cost'));
 	line_start_focus();
 }
