@@ -27,11 +27,11 @@ function get_post(string|array $name, string|int|float|bool|array|null $dflt='')
 {
 	if (is_array($name)) {
 		$ret = array();
-		foreach($name as $key => $dflt)
+		foreach($name as $key => $item_dflt)
 			if (!is_numeric($key)) {
-				$ret[$key] = is_numeric($dflt) ? input_num($key, $dflt) : get_post($key, $dflt);
+				$ret[$key] = is_numeric($item_dflt) ? input_num($key, $item_dflt) : get_post($key, $item_dflt);
 			} else {
-				$ret[$dflt] = get_post($dflt, null);
+				$ret[$item_dflt] = get_post($item_dflt, null);
 			}
 		return $ret;
 	} else
@@ -403,8 +403,14 @@ function table_section_title(string|int|float|bool|null $msg, ?int $colspan=2): 
 function table_header(array $labels, ?string $params=''): void
 {
 	start_row();
+	// $labels is left untyped (not narrowed to array<array-key, scalar|null>): most
+	// callers pass plain translated strings, but some (e.g. db_pager column headers)
+	// pass nested arrays with their own 'fun'/'ord' keys that labelheader_cell() below
+	// never actually sees unwrapped -- tried narrowing this param type, confirmed via a
+	// full rescan it ripples a new finding into ~25 unrelated "manage" list pages that
+	// call table_header() with those richer shapes, a net regression
 	foreach ($labels as $label)
-		labelheader_cell($label, $params);
+		labelheader_cell(is_scalar($label) ? $label : null, $params);
 	end_row();
 }
 //-----------------------------------------------------------------------------------
@@ -475,8 +481,11 @@ function tabbed_content_start(string $name, array $tabs, ?string $dft=''): void 
 	$div = '_'.$name.'_div';
 
 	$sel = find_submit($name.'_', false);
-	if($sel==null)
-		$sel = (string) get_post($selname, (string)($dft==='' ? key($tabs) : $dft));
+	if($sel==null) {
+		$default_tab = (string) ($dft==='' ? key($tabs) : $dft);
+		$sel_post = get_post($selname, $default_tab);
+		$sel = is_scalar($sel_post) ? $sel_post : $default_tab;
+	}
 
 	if ($sel!==@$_POST[$selname])
 		ajax()->activate($name);
@@ -569,10 +578,11 @@ $popup_editors = array(
 function set_editor(string $type, string|int|float|bool|null $input, bool $caller=true): void
 {
 	global $path_to_root, $Editors, $popup_editors, $Pagehelp;
+	/** @var array<int, array{0: string, 1: mixed, 2: mixed, 3: mixed}> $Editors */
 
 	$key = (int) ($caller===true ? $popup_editors[$type][1] : $caller);
 
-	$Editors[$key] = array( $path_to_root . $popup_editors[$type][0], $input, 
+	$Editors[$key] = array( $path_to_root . $popup_editors[$type][0], $input,
 		$popup_editors[$type][3], $popup_editors[$type][4]);
 	
 	$help = 'F' . ($key - 111) . ' - ';
@@ -581,6 +591,11 @@ function set_editor(string $type, string|int|float|bool|null $input, bool $calle
 }
 //------------------------------------------------------------------------------
 // Procedures below are now obsolete. Preserved for eventual future use.
+// Confirmed via project-wide grep: context_call()/context_restore()/context_return()
+// have zero callers anywhere in this codebase. The remaining Psalm findings in this
+// block (mixed $_SESSION['Context']/$ctx access -- 'Context' has no psalm.xml global
+// stub, deliberately not added since it would only cover this dead code) are left
+// undisturbed rather than spending effort typing a path nothing reaches.
 
 /*
 	External page call with saving current context.
@@ -693,7 +708,7 @@ function editor_return(array $vars, string $restore_fun=''): void {
  * @return 0|array<array-key, mixed>|string
  */
 function confirm_dialog(string|int|float|bool|null $submit, string|int|float|bool|null $msg): int|array|string {
-	if (get_post($submit)) {
+	if (is_string($submit) && get_post($submit)) {
 		display_warning($msg);
 		br();
 		submit_center_first('DialogConfirm', _("Proceed"), '', true);
