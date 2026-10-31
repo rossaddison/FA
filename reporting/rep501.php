@@ -33,7 +33,7 @@ print_dimension_summary();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions_rep501(string|int|array|null $from, string|array|null $to)
+function getTransactions_rep501(string|int|null $from, string|int|null $to)
 {
 	$sql = "SELECT *
 		FROM

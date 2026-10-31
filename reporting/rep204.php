@@ -33,7 +33,7 @@ print_outstanding_GRN();
 /**
  * @return bool|mysqli_result
  */
-function getTransactions_rep204(string|int|array|null $fromsupp)
+function getTransactions_rep204(string|int|null $fromsupp)
 {
 	$sql = "SELECT grn.id,
 			order_no,
@@ -108,7 +108,7 @@ function print_outstanding_GRN(): void
 	$SuppTot_Val=0.0;
 	$res = getTransactions_rep204((string) $fromsupp);
 
-	While ($GRNs = db_fetch($res))
+	While ($res instanceof mysqli_result && ($GRNs = db_fetch($res)))
 	{
 		$dec2 = get_qty_dec($GRNs['item_code']);
 		if ($Supplier != $GRNs['supplier_id'])

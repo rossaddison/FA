@@ -63,7 +63,7 @@ function get_open_balance(?string $debtorno, string|null $to)
 /**
  * @return bool|mysqli_result
  */
-function get_transactions(?string $debtorno, string|null $from, string|null $to)
+function get_transactions_rep101(?string $debtorno, string|null $from, string|null $to)
 {
 	$from = date2sql($from);
 	$to = date2sql($to);
@@ -194,7 +194,7 @@ function print_customer_balances(): void
 		else
 			$init[3] = round2(($bal != false ? (float) $bal['OutStanding'] : 0.0)*$rate, $dec);
 
-		$res = get_transactions($myrow['debtor_no'], $from, $to);
+		$res = get_transactions_rep101($myrow['debtor_no'], $from, $to);
 		if (!($res instanceof mysqli_result))
 			continue;
 		if ((bool)$no_zeros && db_num_rows($res) == 0) continue;
