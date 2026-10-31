@@ -107,9 +107,10 @@ final class BoxReports
 			{
 				$acc = access_string($report->name);
 				$rep_id_str = (string) $report->id;
+				$id = (string) default_focus();
 				$st_reports .= "<tr><td><a class='repopts_link ". (@$_REQUEST['REP_ID'] == $report->id ? 'fa-bold' : 'fa-normal')."'"
 					." href='".($_SERVER['PHP_SELF'] ?? '')."?Class=$class_id&REP_ID=$rep_id_str'"
-					." id='".$id = (string) default_focus()."'"
+					." id='".html_encode_attribute($id)."'"
 					."$acc[1]>$acc[0]</a><tr><td>\n";
 
 				if (@$_REQUEST['REP_ID'] == $report->id) {
@@ -125,7 +126,7 @@ final class BoxReports
 						_("Display: ") . access_string($report->name, true),
 						false, '', sysprefs()->pdf_debug ? false : 'default process popup') ?? '') . (hidden('REP_ID', $report->id, false) ?? '').'<br><br>';
 					$st_params .= $this->getOptions($report->get_controls(), $report->id ?? 0);
-					$st_params .= "\n<input type=hidden name='Class' value=".(string) $cur_class.">"
+					$st_params .= "\n<input type=hidden name='Class' value='".html_encode_attribute((string) $cur_class)."'>"
 						."\n</form></td></tr></table>\n";
 					set_focus('Rep'.$rep_id_str);
 					ajax()->addUpdate(true, 'rep_form', $st_params);
@@ -263,13 +264,13 @@ final class BoxReports
 						$posted = $_POST[$name] ?? null;
 						$date = is_scalar($posted) ? (string) $posted : '';
 					}
-					$st = "<input type='text' name='$name' value='$date'>";
+					$st = "<input type='text' name='$name' value='".html_encode_attribute($date)."'>";
 					if ((bool) user_use_date_picker())
 					{
 						$calc_image = (file_exists("$path_to_root/themes/".user_theme()."/images/cal.gif")) ? 
 							"$path_to_root/themes/".user_theme()."/images/cal.gif" : "$path_to_root/themes/default/images/cal.gif";
 						$st .= "<a href='#'".fa_action_attrs('date-picker-form', array($name)).">"
-						. "	<img src='$calc_image' class='fa-icon16' alt='"._('Click Here to Pick up the date')."'></a>\n";
+						. "	<img src='".html_encode_attribute($calc_image)."' class='fa-icon16' alt='"._('Click Here to Pick up the date')."'></a>\n";
 					}	
 					return $st;
 					break;
@@ -315,7 +316,7 @@ final class BoxReports
 				case 'TEXTBOX':
 					$posted = $_POST[$name] ?? null;
 					$value = is_scalar($posted) ? (string) $posted : "";
-					return "<textarea rows=4 cols=30 maxlength=130 name='$name'>$value</textarea>";
+					return "<textarea rows=4 cols=30 maxlength=130 name='$name'>".html_encode($value)."</textarea>";
 
 				case 'ACCOUNTS': // not used
 					return gl_account_types_list($name, null, _("No Account Group Filter"), true);
