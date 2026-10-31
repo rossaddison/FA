@@ -71,12 +71,12 @@ function print_salesman_list(): void
 {
 	global $path_to_root;
 
-	$from = $_POST['PARAM_0'];
-	$to = $_POST['PARAM_1'];
-	$summary = $_POST['PARAM_2'];
-	$comments = $_POST['PARAM_3'];
-	$orientation = $_POST['PARAM_4'];
-	$destination = $_POST['PARAM_5'];
+	$from = post_scalar('PARAM_0');
+	$to = post_scalar('PARAM_1');
+	$summary = post_scalar('PARAM_2');
+	$comments = post_scalar('PARAM_3');
+	$orientation = post_scalar('PARAM_4');
+	$destination = post_scalar('PARAM_5');
 	if ((bool)$destination)
 		include_once(dirname(__DIR__) . "/reporting/includes/excel_report.inc");
 	else
@@ -117,9 +117,9 @@ function print_salesman_list(): void
 	$salesman = 0;
 	$subtotal = $total = $subprov = $provtotal = 0.0;
 
-	$result = GetSalesmanTrans($from, $to);
+	$result = GetSalesmanTrans((string) $from, (string) $to);
 
-	while ($myrow=db_fetch($result))
+	while ($result instanceof mysqli_result && ($myrow=db_fetch($result)))
 	{
 		$rep->NewLine(0, 2, false);
 		if ($salesman != $myrow['salesman_code'])
@@ -147,13 +147,13 @@ function print_salesman_list(): void
 			$subtotal = 0.0;
 			$subprov = 0.0;
 		}
-		$rate = $myrow['rate'];
+		$rate = (float) $myrow['rate'];
 		$amt = (float)$myrow['InvoiceTotal'] * $rate;
 		if ($myrow['provision2'] == 0)
-			$prov = (float)$myrow['provision'] * (float)$amt / 100.0;
+			$prov = (float)$myrow['provision'] * $amt / 100.0;
 		else {
 			$amt1 = min($amt, max(0, (float)$myrow['break_pt']-$subtotal));
-			$amt2 = (float)$amt - (float)$amt1;
+			$amt2 = $amt - (float)$amt1;
 
 			$prov = (float)$amt1*(float)$myrow['provision']/100.0 + $amt2*(float)$myrow['provision2']/100.0;
 		}
@@ -168,7 +168,7 @@ function print_salesman_list(): void
 			$rep->AmountCol(6, 7, $prov, $dec);
 			$rep->NewLine();
 		}
-		$subtotal += (float)$amt;
+		$subtotal += $amt;
 		$subprov += $prov;
 	}
 	if ($salesman != 0)
