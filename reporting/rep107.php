@@ -29,7 +29,7 @@ include_once(dirname(__DIR__) . "/sales/includes/sales_db.inc");
 
 //----------------------------------------------------------------------------------------------------
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
 function get_invoice_range(?string $from, ?string $to, string|bool|null $currency=false)
 {
@@ -181,7 +181,7 @@ function print_invoices(): void
 				}
 
 				if (count($prepayments) > ($show_this_payment ? 0 : 1))
-					$summary_start_row += (count($prepayments)) * $rep->lineHeight;
+					$summary_start_row += ((float) count($prepayments)) * $rep->lineHeight;
 				else
 					unset($prepayments);
 			}
@@ -246,18 +246,19 @@ function print_invoices(): void
 				$rep->TextCol(0, 3,	str_pad('', 150, '_'));
 				$rep->cols[2] -= 20.0;
 				$rep->aligns[2] = 'right';
-				$rep->NewLine(); $c = 0; $tot_pym=0;
+				$rep->NewLine(); $c = 0; $tot_pym=0.0;
 				$rep->TextCol(0, 3,	str_pad('', 150, '_'));
 				$rep->TextCol($c++, $c, _("Date"));
 				$rep->TextCol($c++, $c,	_("Invoice reference"));
 				$rep->TextCol($c++, $c,	_("Amount"));
 
+				/** @var array<int, array<string, string|null>> $prepayments */
 				foreach ($prepayments as $invoice)
 				{
 					if ($show_this_payment || ($invoice['reference'] != $myrow['reference']))
 					{
 						$rep->NewLine();
-						$c = 0; $tot_pym += $invoice['prep_amount'];
+						$c = 0; $tot_pym += (float) $invoice['prep_amount'];
 						$rep->TextCol($c++, $c,	sql2date($invoice['tran_date']));
 						$rep->TextCol($c++, $c,	$invoice['reference']);
 						$rep->TextCol($c++, $c, number_format2($invoice['prep_amount'], $dec));
@@ -349,7 +350,7 @@ function print_invoices(): void
 			$rep->Font();
 			if ($email == 1)
 			{
-				$rep->End($email, sprintf(_("Invoice %s from %s"), $myrow['reference'], htmlspecialchars_decode(get_company_pref('coy_name'))));
+				$rep->End($email, sprintf(_("Invoice %s from %s"), (string) $myrow['reference'], htmlspecialchars_decode((string) get_company_pref('coy_name'))));
 			}
 	}
 	if ($email == 0)
