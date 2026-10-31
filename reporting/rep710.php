@@ -32,11 +32,11 @@ include_once(dirname(__DIR__) . "/includes/ui/ui_view.inc");
 print_audit_trail();
 
 /**
- * @return bool|mysqli_result
+ * @return mysqli_result
  */
-function getTransactions_rep710(string|int|array|null $from, string|array|null $to, string|array|null $type, string|array|null $user)
+function getTransactions_rep710(string|int|null $from, string|null $to, string|null $type, string|null $user)
 {
-	$fromdate = date2sql($from) . " 00:00:00";
+	$fromdate = date2sql((string) $from) . " 00:00:00";
 	$todate = date2sql($to). " 23:59.59";
 
 	$sql = "SELECT a.*, 
