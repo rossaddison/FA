@@ -254,7 +254,18 @@ final class purch_order
 	/**
          * @param float $shipping_cost
          * @param bool $receival
-         * @return array
+         * @return array<array-key, array{
+         *     tax_type_id?: array-key|scalar|null,
+         *     tax_type_name?: scalar|null,
+         *     sales_gl_code?: scalar|null,
+         *     purchasing_gl_code?: scalar|null,
+         *     rate?: scalar|null,
+         *     included_in_price?: scalar|null,
+         *     Value: float,
+         *     Net?: scalar|null,
+         *     Override?: scalar|null,
+         *     ...<array-key, scalar|null>
+         * }>
          */
 	function get_taxes(?float $shipping_cost=null, bool $receival=false): array
 	{
@@ -340,13 +351,13 @@ final class po_line_details
 	/** @var string */
 	var $tax_type_name = '';
 
-	/** @var int */
+	/** @var float|int */
 	var $quantity = 0;		// current/entry quantity of PO line
 	/** @var int */
 	var $qty_inv = 0;	// quantity already invoiced against this line
 
 	/**
-	 * @var int
+	 * @var float|int
 	 */
 	var $receive_qty = 0;	// current/entry GRN quantity
 	/** @var float|int|string */

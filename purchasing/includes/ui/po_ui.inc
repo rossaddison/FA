@@ -16,8 +16,7 @@ include_once(dirname(__DIR__, 3) . "/purchasing/includes/purchasing_db.inc");
 
 function copy_from_cart(): void
 {
-	$cart = &$_SESSION['PO'];
-	/** @var purch_order $cart */
+	$cart = session_obj('PO');
 
 	$_POST['supplier_id'] = $cart->supplier_id;
 	$_POST['OrderDate'] = $cart->orig_order_date;
@@ -34,6 +33,7 @@ function copy_from_cart(): void
     $_POST['dimension'] = $cart->dimension;
     $_POST['dimension2'] = $cart->dimension2;
     if ($cart->tax_overrides !== null) {
+	    $_POST['mantax'] = array();
 	    foreach($cart->tax_overrides as $id => $value)
 		    $_POST['mantax'][$id] = price_format($value);
     }
@@ -41,35 +41,48 @@ function copy_from_cart(): void
 
 function copy_to_cart(): void
 {
-	$cart = &$_SESSION['PO'];
-	/** @var purch_order $cart */
+	$cart = session_obj('PO');
 
-	$cart->supplier_id = get_post('supplier_id');
-	$cart->orig_order_date = get_post('OrderDate');
+	$supplier_id = get_post('supplier_id');
+	$cart->supplier_id = is_scalar($supplier_id) ? $supplier_id : null;
+	$order_date = get_post('OrderDate');
+	$cart->orig_order_date = is_scalar($order_date) ? $order_date : '';
 	if ($cart->trans_type == ST_SUPPINVOICE)
 	{
-		$cart->due_date = get_post('due_date');
-		$cart->cash_account = get_post('cash_account');
+		$due_date = get_post('due_date');
+		$cart->due_date = is_scalar($due_date) ? $due_date : '';
+		$cash_account = get_post('cash_account');
+		$cart->cash_account = is_scalar($cash_account) ? $cash_account : null;
 	}
-	$cart->reference = get_post('ref');
-	$cart->supp_ref = get_post('supp_ref');
-	$cart->Comments = get_post('Comments');
-	$cart->Location = get_post('StkLocation');
-	$cart->delivery_address = get_post('delivery_address');
-   	$cart->dimension = @get_post('dimension');
-	$cart->dimension2 =  @get_post('dimension2');
-	$cart->prep_amount = input_num('prep_amount', 0);
-	$cart->ex_rate = input_num('_ex_rate', null);
+	$ref = get_post('ref');
+	$cart->reference = is_scalar($ref) ? $ref : '';
+	$supp_ref = get_post('supp_ref');
+	$cart->supp_ref = is_scalar($supp_ref) ? $supp_ref : '';
+	$comments = get_post('Comments');
+	$cart->Comments = is_scalar($comments) ? $comments : '';
+	$location = get_post('StkLocation');
+	$cart->Location = is_scalar($location) ? $location : '';
+	$delivery_address = get_post('delivery_address');
+	$cart->delivery_address = is_scalar($delivery_address) ? $delivery_address : '';
+	$dimension = @get_post('dimension');
+	$cart->dimension = is_scalar($dimension) ? $dimension : '';
+	$dimension2 = @get_post('dimension2');
+	$cart->dimension2 = is_scalar($dimension2) ? $dimension2 : '';
+	$prep_amount = input_num('prep_amount', 0);
+	$cart->prep_amount = (float) ($prep_amount === false ? 0 : $prep_amount);
+	$ex_rate = input_num('_ex_rate', null);
+	$cart->ex_rate = (float) ($ex_rate === false || $ex_rate === null ? 0 : $ex_rate);
 
-    if (isset($_POST['mantax'])) {
+    if (isset($_POST['mantax']) && is_array($_POST['mantax'])) {
 		foreach($_POST['mantax'] as $id => $tax) {
-			$cart->tax_overrides[$id] = user_numeric($_POST['mantax'][$id]); }
+			$cart->tax_overrides[$id] = user_numeric(is_scalar($tax) ? $tax : null);
+		}
 	}
 }
 
 //---------------------------------------------------------------------------------------------------
 
-function create_new_po(?int $trans_type, string|int|null $trans_no): void
+function create_new_po(int $trans_type, string|int|null $trans_no): void
 {
 
 	if (isset($_SESSION['PO']))
@@ -123,12 +136,18 @@ function display_po_header(purch_order &$order): void
 		$_POST['due_date'] = $order->due_date;
 
 		// supplier default price update
+		// UnsupportedPropertyReferenceUsage below is a known Psalm limitation
+		// (per doc/PSALM_MIGRATION.md's reference-usage category), not a real bug --
+		// taking a reference into an object property's array offset like this is
+		// valid PHP, just outside what Psalm's reference analysis can follow
 		foreach ($order->line_items as $line_no=>$item) {
 			$line = &$order->line_items[$line_no];
 			$line->price =  get_purchase_price ($order->supplier_id, $line->stock_id);
+			$old_factor = get_purchase_conversion_factor($old_supp, $line->stock_id);
+			$new_factor = get_purchase_conversion_factor($order->supplier_id, $line->stock_id);
 			$line->quantity =
-				(float)$line->quantity/(float)get_purchase_conversion_factor ($old_supp, $line->stock_id)
-					*get_purchase_conversion_factor ($order->supplier_id, $line->stock_id);
+				(float)$line->quantity/(float)(is_numeric($old_factor) ? $old_factor : 1)
+					*(float)(is_numeric($new_factor) ? $new_factor : 1);
 		}
 	    ajax()->activate('items_table');
 	    ajax()->activate('due_date');
@@ -140,7 +159,8 @@ function display_po_header(purch_order &$order): void
 		'OrderDate', '', true, 0, 0, 0, null, true);
 
 	if (isset($_POST['_OrderDate_changed'])) {
-		$order->orig_order_date = $_POST['OrderDate'];
+		$order_date_post = $_POST['OrderDate'] ?? null;
+		$order->orig_order_date = is_scalar($order_date_post) ? (string) $order_date_post : '';
 	    get_duedate_from_terms($order);
 	    $_POST['due_date'] = $order->due_date;
 		ajax()->activate('due_date');
@@ -171,7 +191,7 @@ function display_po_header(purch_order &$order): void
 
   	text_row(_("Supplier's Reference:"), 'supp_ref', null, 20, 60);
 
-	if (get_company_pref('use_dimension'))
+	if ((bool) get_company_pref('use_dimension'))
 		dimensions_list_row(_('Dimension').':', 'dimension', null, true, _('Default'), false, 1);
 	if (get_company_pref('use_dimension') == 2)
 		dimensions_list_row(_('Dimension 2').':', 'dimension2', null, true, _('Default'), false, 2);
@@ -185,13 +205,15 @@ function display_po_header(purch_order &$order): void
     {
     	/*If this is the first time the form loaded set up defaults */
 
-		$loc_row = row_or_empty(get_item_location(get_post('StkLocation')));
+		$stk_location_post = get_post('StkLocation');
+		$loc_row = row_or_empty(get_item_location(is_scalar($stk_location_post) ? $stk_location_post : null));
         if ($loc_row)
         {
     	  	$_POST['delivery_address'] = $loc_row["delivery_address"];
 			ajax()->activate('delivery_address');
-    	  	session_obj('PO')->Location = $_POST['StkLocation'];
-    	  	session_obj('PO')->delivery_address = $_POST['delivery_address'];
+			$delivery_address_post = $_POST['delivery_address'] ?? null;
+    	  	session_obj('PO')->Location = is_scalar($stk_location_post) ? $stk_location_post : '';
+    	  	session_obj('PO')->delivery_address = is_scalar($delivery_address_post) ? $delivery_address_post : '';
 
         }
         else
@@ -233,7 +255,7 @@ function display_po_items(purch_order &$order, bool $editable=true): void
 	$k = 0;
    	foreach ($order->line_items as $line_no => $po_line)
    	{
-    	$line_total =	round((float)$po_line->quantity * (float)$po_line->price,  (int) user_price_dec());
+    	$line_total =	round((float)$po_line->quantity * $po_line->price,  (int) user_price_dec());
     	if (!$editable || ($id != $line_no))
 		{
     		alt_table_row_color($k);
@@ -278,11 +300,13 @@ function display_po_items(purch_order &$order, bool $editable=true): void
 
 	label_row(_("Sub-total"), $display_sub_total, "colspan=$colspan align=right","align=right", 2);
 
-	$taxes = $order->get_taxes(input_num('freight_cost'));
-	
+	$freight_cost = input_num('freight_cost');
+	$freight_cost = $freight_cost === false ? 0.0 : (float) $freight_cost;
+	$taxes = $order->get_taxes($freight_cost);
+
 	$tax_total = display_edit_tax_items($taxes, $colspan, $order->tax_included, 2, $order->trans_type==ST_SUPPINVOICE);
 
-	$display_total = price_format(($total + (float)input_num('freight_cost') + $tax_total));
+	$display_total = price_format(($total + $freight_cost + (float) $tax_total));
 
 	start_row();
 	label_cells(_("Amount Total"), $display_total, "colspan=$colspan align='right'","align='right'");
@@ -362,12 +386,13 @@ function po_item_controls(purch_order &$order, int|string|null &$rowcounter, str
 	$new = $order->order_no == 0;
 
 	$dec2 = 6;
-	$id = find_submit('Edit');
+	$id = (int) find_submit('Edit');
 	if (($id != -1) && $line_no == $id)
 	{
 
 		$_POST['stock_id'] = $order->line_items[$id]->stock_id;
-		$dec = get_qty_dec(post_scalar('stock_id'));
+		$stock_id_post = post_scalar('stock_id');
+		$dec = get_qty_dec(is_string($stock_id_post) ? $stock_id_post : null);
 		$_POST['qty'] = qty_format($order->line_items[$id]->quantity, $_POST['stock_id'], $dec);
 		$_POST['price'] = price_decimal_format($order->line_items[$id]->price, $dec2);
 		if ($order->trans_type == ST_PURCHORDER)
@@ -407,10 +432,12 @@ function po_item_controls(purch_order &$order, int|string|null &$rowcounter, str
 		}
 
 		$dec = 0; $_POST['units'] = '';
-    	$item_info = row_or_empty(get_item_edit_info(post_scalar('stock_id')));
+		$stock_id_post2 = post_scalar('stock_id');
+    	$item_info = row_or_empty(get_item_edit_info(is_string($stock_id_post2) ? $stock_id_post2 : null));
     	if ($item_info) {
 			$_POST['units'] = $item_info["units"];
-	   		$dec = $item_info["decimals"];
+	   		$item_decimals = $item_info["decimals"] ?? null;
+	   		$dec = is_int($item_decimals) || is_string($item_decimals) ? $item_decimals : 0;
 	   	}
    		$_POST['qty'] =	number_format2(get_purchase_conversion_factor ($order->supplier_id, post_scalar('stock_id')), $dec);
 		$_POST['price'] = price_decimal_format(get_purchase_price ($order->supplier_id, post_scalar('stock_id')), $dec2);

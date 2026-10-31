@@ -505,7 +505,7 @@ function display_supp_trans_tax_details(bool|mysqli_result $tax_items, ?int $col
 //--------------------------------------------------------------------------------------
 
 /**
- * @param array<array-key, array{Net?: null|scalar, Value?: null|scalar, Override?: null|scalar, included_in_price?: null|scalar, purchasing_gl_code?: null|scalar, rate?: null|scalar, sales_gl_code?: null|scalar, tax_type_id?: array-key, tax_type_name?: null|scalar, ...<array-key, null|scalar>}> $taxes
+ * @param array<array-key, array{Net?: null|scalar, Value?: null|scalar, Override?: null|scalar, included_in_price?: null|scalar, purchasing_gl_code?: null|scalar, rate?: null|scalar, sales_gl_code?: null|scalar, tax_type_id?: array-key|scalar|null, tax_type_name?: null|scalar, ...<array-key, null|scalar>}> $taxes
  */
 function display_edit_tax_items(array $taxes, ?int $columns, string|int|float|bool|null $tax_included, ?int $rightspan=0, bool $editable=false): int|float
 {
