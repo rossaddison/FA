@@ -312,7 +312,7 @@ $reports->addReport(RC_INVENTORY, 310, _('Inventory Purchasing - &Transaction Ba
 			_('Comments') => 'TEXTBOX',
 			_('Orientation') => 'ORIENTATION',
 			_('Destination') => 'DESTINATION'));
-if (get_company_pref('use_manufacturing'))
+if ((bool) get_company_pref('use_manufacturing'))
 {
 	$reports->addReportClass(_('Manufacturing'), RC_MANUFACTURE);
 	$reports->addReport(RC_MANUFACTURE, 401, _('&Bill of Material Listing'),
@@ -336,7 +336,7 @@ if (get_company_pref('use_manufacturing'))
 				_('Comments') => 'TEXTBOX',
 				_('Orientation') => 'ORIENTATION'));
 }
-if (get_company_pref('use_fixed_assets'))
+if ((bool) get_company_pref('use_fixed_assets'))
 {
 	$reports->addReportClass(_('Fixed Assets'), RC_FIXEDASSETS);
 	$reports->addReport(RC_FIXEDASSETS, 451, _('&Fixed Assets Valuation'),

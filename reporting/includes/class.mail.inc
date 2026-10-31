@@ -73,7 +73,7 @@ final class email
 		$this->headers['From'] = $this->encode($name)." <$mail>";
 
 		$bcc = get_company_pref('bcc_email');
-		if ($bcc)
+		if ((bool) $bcc)
 			$this->bcc[] = (string) $bcc;
     }
 

@@ -44,7 +44,7 @@ final class BoxReports
 	 */
 	function addReportClass($class_name, $class_id=null)
 	{
-		if (!$class_id)
+		if ($class_id === null)
 			$class_id = count_array($this->ar_classes);
 		$this->ar_classes[$class_id] = $class_name;
 
@@ -217,7 +217,7 @@ final class BoxReports
 	{
 		global $path_to_root, $type_shortcuts;
 		$day_range = get_company_pref("max_days_in_docs");
-		if (!$day_range)
+		if (!(bool) $day_range)
 			$day_range = 180;
 		$st = '';
 			switch ($type)
@@ -551,7 +551,7 @@ final class Report
 	{
 		$this->id = $id;
 		$this->name = $name;
-		if ($ar_params) $this->set_controls($ar_params);
+		if ($ar_params !== null) $this->set_controls($ar_params);
 	}
 
 	/**
