@@ -33,7 +33,7 @@ print_salesman_list();
 //----------------------------------------------------------------------------------------------------
 
 /**
- * @return mysqli_result
+ * @return bool|mysqli_result
  */
 function GetSalesmanTrans(string|null $from, string|null $to)
 {

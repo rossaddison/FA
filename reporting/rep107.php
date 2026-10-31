@@ -29,7 +29,7 @@ include_once(dirname(__DIR__) . "/sales/includes/sales_db.inc");
 
 //----------------------------------------------------------------------------------------------------
 /**
- * @return mysqli_result
+ * @return bool|mysqli_result
  */
 function get_invoice_range(?string $from, ?string $to, string|bool|null $currency=false)
 {
@@ -154,7 +154,7 @@ function print_invoices(): void
 				$rep->title = _('INVOICE');
 				$rep->filename = "Invoice" . (string)$myrow['reference'] . ".pdf";
 			}	
-			$rep->currency = $cur;
+			$rep->currency = ($cur == null ? "USD" : (string) $cur);
 			$rep->Font();
 			$rep->Info($params, $cols, null, $aligns);
 

@@ -36,7 +36,7 @@ if (get_scalar('trans_no') != "")
 }
 
 //-------------------------------------------------------------------------------------------------
-function print_gl_rows(mysqli_result $result, ?string $title): void
+function print_gl_rows_wo_costs(mysqli_result $result, ?string $title): void
 {
 	global $systypes_array;
 
@@ -66,16 +66,16 @@ function display_wo_costs(string|int|float|bool|null $prod_id): void
    	table_header($th);
 
 	$productions = get_gl_wo_productions($prod_id, true);
-	print_gl_rows($productions, _("Finished Product Requirements"));
+	print_gl_rows_wo_costs($productions, _("Finished Product Requirements"));
 
 	$issues = get_gl_wo_issue_trans($prod_id, -1, true);
-	print_gl_rows($issues, _("Additional Material Issues"));
+	print_gl_rows_wo_costs($issues, _("Additional Material Issues"));
 
     $costs = get_gl_wo_cost_trans($prod_id, -1, true);
-	print_gl_rows($costs, _("Additional Costs"));
+	print_gl_rows_wo_costs($costs, _("Additional Costs"));
 
 	$wo = get_gl_trans(ST_WORKORDER, $prod_id);
-	print_gl_rows($wo, _("Finished Product Receival"));
+	print_gl_rows_wo_costs($wo, _("Finished Product Receival"));
 	end_table(1);
 }
 

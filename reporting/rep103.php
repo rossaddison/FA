@@ -31,7 +31,7 @@ include_once(dirname(__DIR__) . "/gl/includes/gl_db.inc");
 print_customer_details_listing();
 
 /**
- * @return mysqli_result
+ * @return bool|mysqli_result
  */
 function get_customer_details_for_report(string|int|null $area=0, string|int|null $salesid=0)
 {

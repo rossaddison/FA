@@ -119,7 +119,7 @@ function print_remittances(): void
 				$rep->title = _('REMITTANCE');
 				$rep->filename = "Remittance" . $i . ".pdf";
 			}
-			$rep->currency = $cur;
+			$rep->currency = ($cur == null ? "USD" : (string) $cur);
 			$rep->Font();
 			$rep->Info($params, $cols, null, $aligns);
 

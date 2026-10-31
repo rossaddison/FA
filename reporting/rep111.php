@@ -90,7 +90,7 @@ function print_sales_quotations(): void
 			else	
 				$rep->filename = "SalesQuotation" . (string)$myrow['reference'] . ".pdf";
 		}
-		$rep->currency = $cur;
+		$rep->currency = ($cur == null ? "USD" : (string) $cur);
 		$rep->Font();
 		$rep->Info($params, $cols, null, $aligns);
 

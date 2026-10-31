@@ -95,7 +95,7 @@ function print_credits(): void
 			$rep->title = _('CREDIT NOTE');
 			$rep->filename = "CreditNote" . (string)$myrow['reference'] . ".pdf";
 		}
-		$rep->currency = $cur;
+		$rep->currency = ($cur == null ? "USD" : (string) $cur);
 		$rep->Font();
 		$rep->Info($params, $cols, null, $aligns);
 

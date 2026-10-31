@@ -21,6 +21,12 @@ declare(strict_types=1);
 	$this->title - report title
 	$this->formData - some other info
 ***/
+// InvalidScope ($this used outside a class) below is a confirmed-safe pattern, not a
+// real bug: this file is only ever include()'d from inside FrontReport::Header2()
+// (reporting/includes/pdf_report.inc), so $this resolves to that FrontReport instance
+// at runtime via PHP's include-executes-in-caller-scope behavior. Same "Psalm can't
+// trace a dynamic include's effective scope" category already documented elsewhere in
+// this migration for $path_to_root-based includes.
 
 		$this->row = $this->pageHeight - $this->topMargin;
 

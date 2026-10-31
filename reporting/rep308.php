@@ -60,7 +60,7 @@ function get_domestic_price(?array $myrow, ?string $stock_id)
 }
 
 /**
- * @return mysqli_result
+ * @return bool|mysqli_result
  */
 function fetch_items(string|int|null $category=0)
 {

@@ -47,7 +47,7 @@ function get_bank_balance_to(string|null $to, ?string $account)
 }
 
 /**
- * @return mysqli_result
+ * @return bool|mysqli_result
  */
 function get_bank_transactions(string|null $from, string|null $to, ?string $account)
 {

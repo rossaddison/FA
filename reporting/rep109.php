@@ -91,7 +91,7 @@ function print_sales_orders(): void
             $rep->filename = "SalesOrder" . $i . ".pdf";
         }		
 		$rep->SetHeaderType('Header2');
-		$rep->currency = $cur;
+		$rep->currency = ($cur == null ? "USD" : (string) $cur);
 		$rep->Font();
 		$rep->Info($params, $cols, null, $aligns);
 

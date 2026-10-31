@@ -33,7 +33,7 @@ print_aged_supplier_analysis();
 //----------------------------------------------------------------------------------------------------
 
 /**
- * @return mysqli_result
+ * @return bool|mysqli_result
  */
 function get_invoices(?string $supplier_id, string|null $to, string|bool|array|null $all=true)
 {

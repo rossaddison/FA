@@ -54,7 +54,7 @@ function get_supp_po(string|null $order_no)
 }
 
 /**
- * @return mysqli_result
+ * @return bool|mysqli_result
  */
 function get_po_details(string|null $order_no)
 {
@@ -118,7 +118,7 @@ function print_po(): void
 			$rep->title = _('PURCHASE ORDER');
 			$rep->filename = "PurchaseOrder" . $i . ".pdf";
 		}	
-		$rep->currency = $cur;
+		$rep->currency = ($cur == null ? "USD" : (string) $cur);
 		$rep->Font();
 		$rep->Info($params, $cols, null, $aligns);
 

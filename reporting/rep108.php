@@ -134,7 +134,7 @@ function print_statements(): void
 		}
 
 		$contacts = get_customer_contacts($myrow['debtor_no'], 'invoice');
-		$rep->currency = $cur;
+		$rep->currency = ($cur == null ? "USD" : (string) $cur);
 		$rep->Font();
 		$rep->Info($params, $cols, null, $aligns);
 

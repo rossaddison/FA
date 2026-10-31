@@ -33,7 +33,7 @@ print_order_status_list();
 //----------------------------------------------------------------------------------------------------
 
 /**
- * @return mysqli_result
+ * @return bool|mysqli_result
  */
 function GetSalesOrders(string|null $from, string|null $to, string|int|null $category=0, string|null $location=null, string|int|array|null $backorder=0)
 {

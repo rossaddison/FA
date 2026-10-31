@@ -88,6 +88,7 @@
         <directory name="inventory"/>
         <directory name="manufacturing"/>
         <directory name="purchasing"/>
+        <directory name="reporting"/>
         <directory name="sales"/>
         <directory name="src"/>
         <directory name="taxes"/>
@@ -102,8 +103,6 @@
             <directory name="lang"/>
             <directory name="themes"/>
             <directory name="js"/>
-            <!-- revisit later: parked while focusing elsewhere -->
-            <directory name="reporting"/>
             <!-- bundled third-party libraries -->
             <file name="reporting/includes/tcpdf.php"/>
             <file name="reporting/includes/Workbook.php"/>

@@ -32,7 +32,7 @@ include_once(dirname(__DIR__) . "/includes/ui/ui_view.inc");
 print_audit_trail();
 
 /**
- * @return mysqli_result
+ * @return bool|mysqli_result
  */
 function getTransactions(string|int|array|null $from, string|array|null $to, string|array|null $type, string|array|null $user)
 {

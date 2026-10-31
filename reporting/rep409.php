@@ -75,7 +75,7 @@ function print_workorders(): void
 			$rep->title = _('WORK ORDER');
 			$rep->filename = "WorkOrder" . (string)$myrow['wo_ref'] . ".pdf";
 		}
-		$rep->currency = $cur;
+		$rep->currency = ($cur == null ? "USD" : (string) $cur);
 		$rep->Font();
 		$rep->Info($params, $cols, null, $aligns);
 

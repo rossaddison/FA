@@ -120,7 +120,7 @@ function print_receipts(): void
 				$rep->title = _('RECEIPT');
 				$rep->filename = "Receipt" . $i . ".pdf";
 			}
-			$rep->currency = $cur;
+			$rep->currency = ($cur == null ? "USD" : (string) $cur);
 			$rep->Font();
 			$rep->Info($params, $cols, null, $aligns);
 
