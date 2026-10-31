@@ -15,6 +15,11 @@ declare(strict_types=1);
 *	Set document type dependent elements of common page layout.
 *
 */
+// InvalidScope below is a Psalm false positive: this file is only ever
+// include()'d from inside FrontReport's own method, right alongside
+// includes/header2.inc (see reporting/includes/pdf_report.inc), which this
+// migration already confirmed is a safe dynamic-include-in-method pattern --
+// $this resolves correctly at runtime.
 
 	$Addr1 = array(
 			'title' => _("Charge To"),
