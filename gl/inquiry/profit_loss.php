@@ -57,7 +57,7 @@ if (isset($_GET["AccGrp"]))
 //----------------------------------------------------------------------------------------------------
 
 /** @return array{0: float, 1: float} */
-function display_type (?string $type, ?string $typename, string|int|float|bool|null $from, string|int|float|bool|null $to, string|int|float|bool|null $begin, string|int|float|bool|null $end, string|int|float|bool|array|null $compare, int $convert,
+function display_type_profit_loss (?string $type, ?string $typename, string|int|float|bool|null $from, string|int|float|bool|null $to, string|int|float|bool|null $begin, string|int|float|bool|null $end, string|int|float|bool|array|null $compare, int $convert,
 	string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2, string|int|float|bool|null $drilldown)
 {
 	global $path_to_root, $levelptr, $k;
@@ -107,7 +107,7 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|n
 	$result = get_account_types(false, false, $type);
 	while ($accounttype=db_fetch($result))
 	{	
-		$totals_arr = display_type($accounttype["id"], $accounttype["name"], $from, $to, $begin, $end, 
+		$totals_arr = display_type_profit_loss($accounttype["id"], $accounttype["name"], $from, $to, $begin, $end,
 			$compare, $convert, $dimension, $dimension2, $drilldown);
 		$per_balance_total += $totals_arr[0];
 		$acc_balance_total += $totals_arr[1];
@@ -271,7 +271,7 @@ function display_profit_and_loss(string|int|array|null $compare): void
 			$k = 0; // row color
 			while ($accounttype=db_fetch($typeresult))
 			{
-				$TypeTotal = display_type($accounttype["id"], $accounttype["name"], $from, $to, $begin, $end, 
+				$TypeTotal = display_type_profit_loss($accounttype["id"], $accounttype["name"], $from, $to, $begin, $end,
 					$compare, $convert, $dimension, $dimension2, $drilldown);
 				$class_per_total += $TypeTotal[0];
 				$class_acc_total += $TypeTotal[1];	
@@ -327,7 +327,7 @@ function display_profit_and_loss(string|int|array|null $compare): void
 		table_section_title($accgrp . " " . (string) (get_account_type_name($accgrp) ?? ''),4);
 		echo $tableheader;
 		
-		$classtotal = display_type($accounttype["id"], $accounttype["name"], $from, $to, $begin, $end, 
+		$classtotal = display_type_profit_loss($accounttype["id"], $accounttype["name"], $from, $to, $begin, $end,
 			$compare, $convert, $dimension, $dimension2, $drilldown);
 		
 	}

@@ -32,7 +32,7 @@ $pdeb = $pcre = $cdeb = $ccre = $tdeb = $tcre = $pbal = $cbal = $tbal = 0.0;
 
 //----------------------------------------------------------------------------------------------------
 
-function display_type (?string $type, ?string $typename, int|string|null &$dec, FrontReport &$rep, string|int|float|bool|array|null $from, string|int|float|bool|array|null $to, string|int|float|bool|array|FrontReport|null $zero, string|int|float|bool|array|null $balances, string|int|float|bool|array|null $dimension, string|int|float|bool|null $dimension2): void
+function display_type_rep708 (?string $type, ?string $typename, int|string|null &$dec, FrontReport &$rep, string|int|float|bool|array|null $from, string|int|float|bool|array|null $to, string|int|float|bool|array|FrontReport|null $zero, string|int|float|bool|array|null $balances, string|int|float|bool|array|null $dimension, string|int|float|bool|null $dimension2): void
 {
 	global $pdeb, $pcre, $cdeb, $ccre, $tdeb, $tcre, $pbal, $cbal, $tbal;
 	
@@ -132,7 +132,7 @@ function display_type (?string $type, ?string $typename, int|string|null &$dec, 
 			$rep->Line($rep->row);
 			$rep->NewLine();		
 		}
-		display_type($accounttype["id"], (string)$accounttype["name"].' ('.$typename.')', $dec, $rep, $from, $to, $zero, $balances, $dimension, $dimension2);
+		display_type_rep708($accounttype["id"], (string)$accounttype["name"].' ('.$typename.')', $dec, $rep, $from, $to, $zero, $balances, $dimension, $dimension2);
 	}
 }
 
@@ -254,7 +254,7 @@ function print_trial_balance(): void
 		$typeresult = get_account_types(false, $class['cid'], -1);
 		while ($accounttype=db_fetch($typeresult))
 		{
-			display_type($accounttype["id"], $accounttype["name"], $dec, $rep, $from, $to,	$zero, $balances, $dimension, $dimension2);
+			display_type_rep708($accounttype["id"], $accounttype["name"], $dec, $rep, $from, $to,	$zero, $balances, $dimension, $dimension2);
 		}
 		$rep->NewLine();
 	}

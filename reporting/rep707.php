@@ -29,7 +29,7 @@ include_once(dirname(__DIR__) . "/admin/db/tags_db.inc");
 
 //----------------------------------------------------------------------------------------------------
 
-function display_type (?string $type, ?string $typename, string|int|float|bool|array|null $from, string|int|float|bool|array|FrontReport|null $to, string|int|float|bool|null $begin, string|int|float|bool|array|null $end, string|int|float|bool|array|FrontReport|null $compare, string|int|float|bool|array|null $convert, int|string|null &$dec, int|string|null &$pdec, FrontReport &$rep, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2, mixed $tags, object &$pg, mixed $graphics, array &$labels, array &$serie1, array &$serie2): array
+function display_type_rep707 (?string $type, ?string $typename, string|int|float|bool|array|null $from, string|int|float|bool|array|FrontReport|null $to, string|int|float|bool|null $begin, string|int|float|bool|array|null $end, string|int|float|bool|array|FrontReport|null $compare, string|int|float|bool|array|null $convert, int|string|null &$dec, int|string|null &$pdec, FrontReport &$rep, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2, mixed $tags, object &$pg, mixed $graphics, array &$labels, array &$serie1, array &$serie2): array
 {
 	$convert_f = is_array($convert) ? 0.0 : (float) $convert;
 	$code_per_balance = 0.0;
@@ -103,7 +103,7 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 			$rep->NewLine();		
 		}
 
-		$totals_arr = display_type($accounttype["id"], $accounttype["name"], $from, $to, $begin, $end, $compare, $convert, $dec, 
+		$totals_arr = display_type_rep707($accounttype["id"], $accounttype["name"], $from, $to, $begin, $end, $compare, $convert, $dec,
 			$pdec, $rep, $dimension, $dimension2, $tags, $pg, $graphics, $labels, $serie1, $serie2);
 		$per_balance_total += $totals_arr[0];
 		$acc_balance_total += $totals_arr[1];
@@ -303,7 +303,7 @@ function print_profit_and_loss_statement(): void
 		$typeresult = get_account_types(false, $class['cid'], -1);
 		while ($accounttype=db_fetch($typeresult))
 		{
-			$classtotal = display_type($accounttype["id"], $accounttype["name"], $from, $to, $begin, $end, $compare, $convert, $dec, $pdec, $rep, $dimension, $dimension2, $tags, $pg, $graphics, $labels, $serie1, $serie2);
+			$classtotal = display_type_rep707($accounttype["id"], $accounttype["name"], $from, $to, $begin, $end, $compare, $convert, $dec, $pdec, $rep, $dimension, $dimension2, $tags, $pg, $graphics, $labels, $serie1, $serie2);
 			$class_per_total += $classtotal[0];
 			$class_acc_total += $classtotal[1];			
 		}

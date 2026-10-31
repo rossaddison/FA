@@ -29,7 +29,14 @@ include_once(dirname(__DIR__) . "/admin/db/tags_db.inc");
 
 //----------------------------------------------------------------------------------------------------
 
-function display_type (?string $type, ?string $typename, string|int|float|bool|array|null $from, string|int|float|bool|array|FrontReport|null $to, string|int|float|bool|array|null $convert, int|string|null &$dec, FrontReport &$rep, string|int|float|bool|null $dimension, string|int|float|bool|array|null $dimension2, mixed $tags, object &$pg, mixed $graphics, array &$labels, array &$serie1, array &$serie2): array
+/**
+ * @param array<int, string> $labels
+ * @param array<int, float> $serie1
+ * @param array<int, float> $serie2
+ * @param array<array-key, string|int|float|bool|null>|int|string|null $tags
+ * @return array{0: float, 1: float}
+ */
+function display_type_rep706 (?string $type, ?string $typename, string|int|float|bool|null $from, string|int|float|bool|null $to, string|int|float|bool|array|null $convert, int|string|null &$dec, FrontReport &$rep, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2, array|int|string|null $tags, Chart &$pg, mixed $graphics, array &$labels, array &$serie1, array &$serie2): array
 {
 	$convert_f = is_array($convert) ? 0.0 : (float) $convert;
 	$code_open_balance = 0.0;
@@ -95,7 +102,7 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 			$rep->NewLine();		
 		}
 
-		$totals_arr = display_type($accounttype["id"], $accounttype["name"], $from, $to, $convert, $dec, 
+		$totals_arr = display_type_rep706($accounttype["id"], $accounttype["name"], $from, $to, $convert, $dec,
 			$rep, $dimension, $dimension2, $tags, $pg, $graphics, $labels, $serie1, $serie2);
 		$open_balance_total += $totals_arr[0];
 		$period_balance_total += $totals_arr[1];
@@ -107,13 +114,13 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|a
 		$rep->row += 6.0;
 		$rep->Line($rep->row);
 		$rep->NewLine();
-		$rep->TextCol(0, 2,	_('Total') . " " . $typename);
+		$rep->TextCol(0, 2,	_('Total') . " " . (string) $typename);
 		$rep->AmountCol(2, 3, ($code_open_balance + $open_balance_total) * $convert_f, $dec);
 		$rep->AmountCol(3, 4, ($code_period_balance + $period_balance_total) * $convert_f, $dec);
 		$rep->AmountCol(4, 5, ($code_open_balance + $open_balance_total + $code_period_balance + $period_balance_total) * $convert_f, $dec);
 		if ($graphics)
 		{
-			$labels[] = $typename;
+			$labels[] = (string) $typename;
 			$serie1[] = abs(($code_period_balance + $period_balance_total) * $convert_f);
 			$serie2[] = abs(($code_open_balance + $open_balance_total + $code_period_balance + $period_balance_total) * $convert_f);
 		}
@@ -168,6 +175,7 @@ function print_balance_sheet(): void
 		$orientation = post_scalar('PARAM_6');
 		$destination = post_scalar('PARAM_7');
 	}
+	/** @var array<array-key, string|int|float|bool|null>|string|int|float|bool|null $tags */
 	if (!is_array($tags))
 	{
 		if (is_bool($tags) || is_float($tags))
@@ -254,7 +262,7 @@ function print_balance_sheet(): void
 		$typeresult = get_account_types(false, $class['cid'], -1);
 		while ($accounttype=db_fetch($typeresult))
 		{
-			$classtotal = display_type($accounttype["id"], $accounttype["name"], $from, $to, $convert, $dec, $rep, $dimension, $dimension2, $tags, $pg, $graphics, $labels, $serie1, $serie2);
+			$classtotal = display_type_rep706($accounttype["id"], $accounttype["name"], $from, $to, $convert, $dec, $rep, $dimension, $dimension2, $tags, $pg, $graphics, $labels, $serie1, $serie2);
 			$class_open_total += $classtotal[0];
 			$class_period_total += $classtotal[1];			
 		}
@@ -265,9 +273,9 @@ function print_balance_sheet(): void
 		$rep->NewLine();
 		$rep->Font('bold');
 		$rep->TextCol(0, 2,	_('Total') . " " . (string)$class["class_name"]);
-		$rep->AmountCol(2, 3, $class_open_total * $convert, $dec);
-		$rep->AmountCol(3, 4, $class_period_total * $convert, $dec);
-		$rep->AmountCol(4, 5, ($class_open_total + $class_period_total) * $convert, $dec);
+		$rep->AmountCol(2, 3, $class_open_total * (float) $convert, $dec);
+		$rep->AmountCol(3, 4, $class_period_total * (float) $convert, $dec);
+		$rep->AmountCol(4, 5, ($class_open_total + $class_period_total) * (float) $convert, $dec);
 		$rep->Font();
 		$rep->NewLine(2);	
 
@@ -290,9 +298,9 @@ function print_balance_sheet(): void
 	$rep->TextCol(0, 2,	_('Calculated Return'));
 	if ($lconvert == 1)
 	{
-		$calc_open *= -1;
-		$calc_period *= -1;
-	}	
+		$calc_open *= -1.0;
+		$calc_period *= -1.0;
+	}
 	$rep->AmountCol(2, 3, $calc_open, $dec); // never convert
 	$rep->AmountCol(3, 4, $calc_period, $dec);
 	$rep->AmountCol(4, 5, $calc_open + $calc_period, $dec);
@@ -300,8 +308,8 @@ function print_balance_sheet(): void
 
 	$rep->Font('bold');	
 	$rep->TextCol(0, 2,	_('Total') . " " . _('Liabilities') . _(' and ') . _('Equities'));
-	$topen = (float)$equity_open * (float)$econvert + (float)$liability_open * (float)$lconvert + $calc_open;
-	$tperiod = (float)$equity_period * (float)$econvert + (float)$liability_period * (float)$lconvert + $calc_period;
+	$topen = $equity_open * (float)$econvert + $liability_open * (float)$lconvert + $calc_open;
+	$tperiod = $equity_period * (float)$econvert + $liability_period * (float)$lconvert + $calc_period;
 	$tclose = $topen + $tperiod;
 	$rep->AmountCol(2, 3, $topen, $dec);
 	$rep->AmountCol(3, 4, $tperiod, $dec);

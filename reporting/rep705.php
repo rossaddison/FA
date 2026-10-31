@@ -81,7 +81,7 @@ function getPeriods(string|int|float|bool|null $yr, string|int|float|bool|null $
 
 //----------------------------------------------------------------------------------------------------
 
-function display_type (?string $type, ?string $typename, string|int|float|bool|null $yr, string|int|float|bool|array|FrontReport|null $mo, string|int|float|bool|array|null $convert, int|string|null &$dec, FrontReport &$rep, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2,
+function display_type_rep705 (?string $type, ?string $typename, string|int|float|bool|null $yr, string|int|float|bool|array|FrontReport|null $mo, string|int|float|bool|array|null $convert, int|string|null &$dec, FrontReport &$rep, string|int|float|bool|null $dimension, string|int|float|bool|null $dimension2,
 								mixed $tags, string|int|float|bool|FrontReport|null $thousands): array
 {
 	$ctotal = array(1 => 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0);
@@ -147,7 +147,7 @@ function display_type (?string $type, ?string $typename, string|int|float|bool|n
 			$rep->NewLine();
 		}
 
-		$totals_arr = display_type($accounttype["id"], $accounttype["name"], $yr, $mo, $convert, $dec, $rep,
+		$totals_arr = display_type_rep705($accounttype["id"], $accounttype["name"], $yr, $mo, $convert, $dec, $rep,
 											$dimension, $dimension2, $tags, $thousands);
 		for ($i = 1; $i <= 13; $i++)
 		{
@@ -337,7 +337,7 @@ function print_annual_expense_breakdown(): void
 		$typeresult = get_account_types(false, $class['cid'], -1);
 		while ($accounttype=db_fetch($typeresult))
 		{
-			$classtotal = display_type($accounttype["id"], $accounttype["name"], $yr, $mo, $convert, $dec, $rep,
+			$classtotal = display_type_rep705($accounttype["id"], $accounttype["name"], $yr, $mo, $convert, $dec, $rep,
 												$dimension,	$dimension2, $tags, $thousands);
 			for ($i = 1; $i <= 13; $i++)
 				$ctotal[$i] += $classtotal[$i];

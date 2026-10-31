@@ -28,7 +28,7 @@ include_once(dirname(__DIR__) . "/gl/includes/gl_db.inc");
 
 //----------------------------------------------------------------------------------------------------
 
-function display_type (?string $type, ?string $typename, int|string|null &$dec, FrontReport &$rep, string|int|float|bool|array|null $showbalance, string|int|float|bool|array|null $level): void
+function display_type_rep701 (?string $type, ?string $typename, int|string|null &$dec, FrontReport &$rep, string|int|float|bool|array|null $showbalance, string|int|float|bool|array|null $level): void
 {
 	$printtitle = 0; //Flag for printing type name
 	$prefix = '';
@@ -85,7 +85,7 @@ function display_type (?string $type, ?string $typename, int|string|null &$dec, 
 			$rep->NewLine();		
 		}
 		$nextlevel = $level + 1;
-		display_type($accounttype["id"], (string)$accounttype["name"].' ('.$typename.')', $dec, $rep, $showbalance, $nextlevel);
+		display_type_rep701($accounttype["id"], (string)$accounttype["name"].' ('.$typename.')', $dec, $rep, $showbalance, $nextlevel);
 	}
 }
 
@@ -140,7 +140,7 @@ function print_Chart_of_Accounts(): void
 		$typeresult = get_account_types(false, $class['cid'], -1);
 		while ($accounttype=db_fetch($typeresult))
 		{
-			display_type($accounttype["id"], $accounttype["name"], $dec, $rep, $showbalance, 0);
+			display_type_rep701($accounttype["id"], $accounttype["name"], $dec, $rep, $showbalance, 0);
 		}
 		$rep->NewLine();
 	}
