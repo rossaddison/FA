@@ -43,11 +43,13 @@ if (isset($_GET['New']))
 	$_SESSION['supp_trans'] = new supp_trans(ST_SUPPINVOICE);
 } else if(isset($_GET['ModifyInvoice'])) {
 	$help_context = 'Modifying Purchase Invoice';
-	$_SESSION['page_title'] = sprintf( _("Modifying Purchase Invoice # %d"), $_GET['ModifyInvoice']);
+	$modify_invoice = $_GET['ModifyInvoice'] ?? null;
+	$_SESSION['page_title'] = sprintf( _("Modifying Purchase Invoice # %d"), is_numeric($modify_invoice) ? (int) $modify_invoice : 0);
 	$_SESSION['supp_trans'] = new supp_trans(ST_SUPPINVOICE, $_GET['ModifyInvoice']);
 }
 
-page($_SESSION['page_title'] ?? _("Supplier Invoice Entry"), false, false, "", $js);
+$page_title = $_SESSION['page_title'] ?? _("Supplier Invoice Entry");
+page(is_string($page_title) ? $page_title : _("Supplier Invoice Entry"), false, false, "", $js);
 
 if (isset($_GET['ModifyInvoice']))
 	check_is_editable(ST_SUPPINVOICE, get_scalar('ModifyInvoice'));
@@ -56,9 +58,10 @@ check_db_has_suppliers(_("There are no suppliers defined in the system."));
 
 //---------------------------------------------------------------------------------------------------------------
 
-if (isset($_GET['AddedID'])) 
+if (isset($_GET['AddedID']))
 {
-	$invoice_no = $_GET['AddedID'];
+	$added_id = $_GET['AddedID'] ?? null;
+	$invoice_no = is_scalar($added_id) ? $added_id : '';
 	$trans_type = ST_SUPPINVOICE;
 
 
@@ -69,9 +72,9 @@ if (isset($_GET['AddedID']))
 	display_note(get_gl_view_str($trans_type, $invoice_no, _("View the GL Journal Entries for this Invoice")), 1);
 
 	hyperlink_params("$path_to_root/purchasing/supplier_payment.php", _("Entry supplier &payment for this invoice"),
-		"PInvoice=". (string) $invoice_no."&trans_type=".$trans_type);
+		"PInvoice=". $invoice_no."&trans_type=".$trans_type);
 
-	hyperlink_params($_SERVER['PHP_SELF'], _("Enter Another Invoice"), "New=1");
+	hyperlink_params($_SERVER['PHP_SELF'] ?? '', _("Enter Another Invoice"), "New=1");
 
 	hyperlink_params("$path_to_root/admin/attachments.php", _("Add an Attachment"), "filterType=$trans_type&trans_no=$invoice_no");
 	
@@ -137,8 +140,10 @@ if (isset($_POST['AddGLCodeToTrans'])){
 
 	ajax()->activate('gl_items');
 	$input_error = false;
+	$gl_act_name = null;
+	$gl_code_post = post_scalar('gl_code');
 
-	$result = get_gl_account_info(post_scalar('gl_code'));
+	$result = get_gl_account_info(is_string($gl_code_post) ? $gl_code_post : null);
 	if (db_num_rows($result) == 0)
 	{
 		display_error(_("The account code entered is not a valid code, this line cannot be added to the transaction."));
@@ -148,7 +153,7 @@ if (isset($_POST['AddGLCodeToTrans'])){
 	else
 	{
 		$myrow = row_or_empty(db_fetch_row($result));
-		$gl_act_name = $myrow[1];
+		$gl_act_name = $myrow[1] ?? null;
 		if (!check_num('amount'))
 		{
 			display_error(_("The amount entered is not numeric. This line cannot be added to the transaction."));
@@ -165,9 +170,12 @@ if (isset($_POST['AddGLCodeToTrans'])){
 
 	if ($input_error == false)
 	{
-		session_obj('supp_trans')->add_gl_codes_to_trans($_POST['gl_code'], $gl_act_name,
-			$_POST['dimension_id'], $_POST['dimension2_id'], 
-			input_num('amount'), $_POST['memo_']);
+		$dimension_id = $_POST['dimension_id'] ?? null;
+		$dimension2_id = $_POST['dimension2_id'] ?? null;
+		$memo = $_POST['memo_'] ?? null;
+		session_obj('supp_trans')->add_gl_codes_to_trans($gl_code_post, $gl_act_name,
+			is_scalar($dimension_id) ? $dimension_id : null, is_scalar($dimension2_id) ? $dimension2_id : null,
+			input_num('amount'), is_scalar($memo) ? $memo : null);
 		reset_tax_input();
 		set_focus('gl_code');
 	}
@@ -218,16 +226,20 @@ function check_data(): bool
 		return false;
 	}
 
-	if (trim(get_post('supp_reference')) == false)
+	$supp_reference_post = get_post('supp_reference');
+	if (trim(is_scalar($supp_reference_post) ? $supp_reference_post : '') == false)
 	{
 		display_error(_("You must enter a supplier's invoice reference."));
 		set_focus('supp_reference');
 		return false;
 	}
 
-	if (is_reference_already_there(session_obj('supp_trans')->supplier_id, post_scalar('supp_reference'), session_obj('supp_trans')->trans_no))
+	$supp_reference_scalar = post_scalar('supp_reference');
+	$supp_reference_str = is_string($supp_reference_scalar) ? $supp_reference_scalar : null;
+	$supp_trans_no = session_obj('supp_trans')->trans_no;
+	if (is_reference_already_there(session_obj('supp_trans')->supplier_id, $supp_reference_str, is_scalar($supp_trans_no) ? $supp_trans_no : 0))
 	{ 	/*Transaction reference already entered */
-		display_error(_("This invoice number has already been entered. It cannot be entered again.") . " (" . (string)$_POST['supp_reference'] . ")");
+		display_error(_("This invoice number has already been entered. It cannot be entered again.") . " (" . (is_scalar($supp_reference_post) ? $supp_reference_post : '') . ")");
 		set_focus('supp_reference');
 		return false;
 	}
@@ -239,19 +251,17 @@ function check_data(): bool
 
 function handle_commit_invoice(): void
 {
-	/** @var supp_trans $trans */
-	$trans = $_SESSION['supp_trans'];
+	$trans = session_obj('supp_trans');
 	copy_to_trans($trans);
 
 	if (!check_data())
 		return;
-	$inv = $_SESSION['supp_trans'];
-	$invoice_no = add_supp_invoice($inv);
+	$invoice_no = add_supp_invoice($trans);
 
     session_obj('supp_trans')->clear_items();
     unset($_SESSION['supp_trans']);
 
-	meta_forward($_SERVER['PHP_SELF'], "AddedID=$invoice_no");
+	meta_forward($_SERVER['PHP_SELF'] ?? '', "AddedID=$invoice_no");
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -261,7 +271,14 @@ if (isset($_POST['PostInvoice']))
 	handle_commit_invoice();
 }
 
-function check_item_data(string|int|null $n): bool
+// Named check_item_data_invoice(), not check_item_data(), to avoid the function-name
+// collision with the 6 other same-named check_item_data() declarations across the
+// codebase (inventory/transfers.php, inventory/adjustments.php, sales/sales_order_entry.php,
+// sales/credit_note_entry.php, manufacturing/work_order_issue.php) -- matches the existing
+// disambiguation already used for this exact situation in gl/gl_bank.php
+// (check_item_data_bank), gl/gl_journal.php (check_item_data_journal), and
+// purchasing/supplier_credit.php (check_item_data_credit)
+function check_item_data_invoice(string|int|null $n): bool
 {
 
 	if (!check_num('this_quantity_inv'.(string) $n, 0) || input_num('this_quantity_inv'.(string) $n)==0)
@@ -278,13 +295,18 @@ function check_item_data(string|int|null $n): bool
 		return false;
 	}
 
-	$margin = sysprefs()->over_charge_allowance();
+	$margin_raw = sysprefs()->over_charge_allowance();
+	$margin = is_numeric($margin_raw) ? (float) $margin_raw : 0.0;
+	$order_price_post = $_POST['order_price'.(string) $n] ?? null;
+	$order_price = is_numeric($order_price_post) ? (float) $order_price_post : 0.0;
 	if (sysprefs()->check_price_charged_vs_order_price == True)
 	{
-		if ($_POST['order_price'.(string) $n]!=input_num('ChgPrice'.(string) $n)) {
-		     if ($_POST['order_price'.(string) $n]==0 ||
-				input_num('ChgPrice'.(string) $n)/$_POST['order_price'.(string) $n] >
-			    (1 + ($margin/ 100)))
+		$chg_price = input_num('ChgPrice'.(string) $n);
+		$chg_price = (float) ($chg_price === false ? 0 : $chg_price);
+		if ($order_price!=$chg_price) {
+		     if ($order_price==0 ||
+				$chg_price/$order_price >
+			    (1.0 + ($margin/ 100.0)))
 		    {
 			display_error(_("The price being invoiced is more than the purchase order price by more than the allowed over-charge percentage. The system is set up to prohibit this. See the system administrator to modify the set up parameters if necessary.") .
 			_("The over-charge percentage allowance is :") . (string) $margin . "%");
@@ -294,11 +316,15 @@ function check_item_data(string|int|null $n): bool
 		}
 	}
 
-	if (sysprefs()->check_qty_charged_vs_del_qty == true && ($_POST['qty_recd'.(string) $n] != $_POST['prev_quantity_inv'.(string) $n])
-		&& (bool)($_POST['prev_quantity_inv'.(string) $n] ?? null))
+	$qty_recd_post = $_POST['qty_recd'.(string) $n] ?? null;
+	$prev_quantity_inv_post = $_POST['prev_quantity_inv'.(string) $n] ?? null;
+	if (sysprefs()->check_qty_charged_vs_del_qty == true && ($qty_recd_post != $prev_quantity_inv_post)
+		&& (bool) $prev_quantity_inv_post)
 	{
-		if ((float)input_num('this_quantity_inv'.(string) $n) / ((float)($_POST['qty_recd'.(string) $n] - $_POST['prev_quantity_inv'.(string) $n])) >
-			(1+ ($margin / 100)))
+		$qty_recd = is_numeric($qty_recd_post) ? (float) $qty_recd_post : 0.0;
+		$prev_quantity_inv = is_numeric($prev_quantity_inv_post) ? (float) $prev_quantity_inv_post : 0.0;
+		if ((float)input_num('this_quantity_inv'.(string) $n) / ($qty_recd - $prev_quantity_inv) >
+			(1.0 + ($margin / 100.0)))
 		{
 			display_error( _("The quantity being invoiced is more than the outstanding quantity by more than the allowed over-charge percentage. The system is set up to prohibit this. See the system administrator to modify the set up parameters if necessary.")
 			. _("The over-charge percentage allowance is :") . (string) $margin . "%");
@@ -312,12 +338,19 @@ function check_item_data(string|int|null $n): bool
 
 function commit_item_data(string|int|null $n): void
 {
-	if (check_item_data($n))
+	if (check_item_data_invoice($n))
 	{
-		session_obj('supp_trans')->add_grn_to_trans((string) $n, $_POST['po_detail_item'.(string) $n],
-			$_POST['item_code'.(string) $n], $_POST['item_description'.(string) $n], $_POST['qty_recd'.(string) $n],
-			$_POST['prev_quantity_inv'.(string) $n], input_num('this_quantity_inv'.(string) $n),
-			$_POST['order_price'.(string) $n], input_num('ChgPrice'.(string) $n));
+		$po_detail_item = $_POST['po_detail_item'.(string) $n] ?? null;
+		$item_code = $_POST['item_code'.(string) $n] ?? null;
+		$item_description = $_POST['item_description'.(string) $n] ?? null;
+		$qty_recd = $_POST['qty_recd'.(string) $n] ?? null;
+		$prev_quantity_inv = $_POST['prev_quantity_inv'.(string) $n] ?? null;
+		$order_price = $_POST['order_price'.(string) $n] ?? null;
+		session_obj('supp_trans')->add_grn_to_trans((string) $n, is_scalar($po_detail_item) ? $po_detail_item : null,
+			is_scalar($item_code) ? $item_code : null, is_scalar($item_description) ? $item_description : null,
+			is_scalar($qty_recd) ? $qty_recd : null,
+			is_scalar($prev_quantity_inv) ? $prev_quantity_inv : null, input_num('this_quantity_inv'.(string) $n),
+			is_scalar($order_price) ? $order_price : null, input_num('ChgPrice'.(string) $n));
 		reset_tax_input();
 	}
 }
@@ -389,26 +422,26 @@ if (session_obj('wa_current_user')->can_access('SA_GRNDELETE'))
 if (isset($_POST['go']))
 {
 	ajax()->activate('gl_items');
-	display_quick_entries($_SESSION['supp_trans'], post_scalar('qid'), input_num('totamount'), QE_SUPPINV);
+	$trans_for_quick_entry = session_obj('supp_trans');
+	display_quick_entries($trans_for_quick_entry, post_scalar('qid'), input_num('totamount'), QE_SUPPINV);
 	$_POST['totamount'] = price_format(0); ajax()->activate('totamount');
 	reset_tax_input();
 }
 
 start_form();
 
-/** @var supp_trans $trans */
-$trans = $_SESSION['supp_trans'];
+$trans = session_obj('supp_trans');
 invoice_header($trans);
 
-if ($_POST['supplier_id']=='') 
+if ($_POST['supplier_id']=='')
 		display_error(_("There is no supplier selected."));
 else {
-	display_grn_items($_SESSION['supp_trans'], 1);
+	display_grn_items($trans, 1);
 
-	display_gl_items($_SESSION['supp_trans'], 1);
+	display_gl_items($trans, 1);
 
 	div_start('inv_tot');
-	invoice_totals($_SESSION['supp_trans']);
+	invoice_totals($trans);
 	div_end();
 
 }
