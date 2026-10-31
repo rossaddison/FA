@@ -53,8 +53,10 @@ function get_domestic_price(?array $myrow, ?string $stock_id)
             $price = (float) $price * (float) $ex_rate;
         }
     }
-    else
+    else {
+        /** @var string|int|float|null $price */
         $price = $myrow['standard_cost']; //pick standard_cost for sales deliveries
+    }
 
     return $price;
 }
@@ -257,11 +259,11 @@ function inventory_movements(): void
     $rep->NewPage();
 
 	$totval_open = $totval_in = $totval_out = $totval_close = 0.0;
-	$result = fetch_items($category);
+	$result = fetch_items($category === null ? null : (string) $category);
 
 	$dec = user_price_dec();
 	$catgor = '';
-	while ($myrow=db_fetch($result))
+	while ($result instanceof mysqli_result && ($myrow=db_fetch($result)))
 	{
 		if ($catgor != $myrow['description'])
 		{
