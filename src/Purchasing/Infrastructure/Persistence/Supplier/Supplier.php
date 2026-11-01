@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace FrontAccounting\Purchasing\Infrastructure\Persistence\Supplier;
 
+use FrontAccounting\Currency\Infrastructure\Persistence\Currencie\Currencie;
 use FrontAccounting\Infrastructure\Persistence\Trait\RequireId;
 use Cycle\Annotated\Annotation\Column;
 use Cycle\Annotated\Annotation\Entity;
@@ -20,6 +21,9 @@ use Cycle\Annotated\Annotation\Relation\BelongsTo;
 class Supplier
 {
     use RequireId;
+
+    #[BelongsTo(target:Currencie::class, innerKey: 'curr_code', outerKey: 'curr_abrev', nullable: false, fkAction:'NO ACTION')]
+    private ?Currencie $currencie = null;
 
     #[Column(type: 'primary', name: 'supplier_id')]
     private ?int $id = null;
@@ -109,6 +113,17 @@ class Supplier
         $this->id = $id;
     }
 
+
+    public function getCurrencie(): ?Currencie
+    {
+        return $this->currencie;
+    }
+
+    /** @psalm-external-mutation-free */
+    public function setCurrencie(?Currencie $currencie): void
+    {
+        $this->currencie = $currencie;
+    }
 
 
     public function getSuppName(): string
