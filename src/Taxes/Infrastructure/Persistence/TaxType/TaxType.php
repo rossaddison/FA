@@ -21,7 +21,7 @@ class TaxType
 {
     use RequireId;
 
-    #[Column(type: 'primary')]
+    #[Column(type: 'primary', name: 'id')]
     private ?int $id = null;
 
     /** @psalm-mutation-free */
