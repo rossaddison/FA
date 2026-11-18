@@ -8,12 +8,21 @@ cleanup has turned up.
 
 ## Snapshot
 
-Full project scan, 2026-10-14: **4,834** Psalm errors (errorLevel=1), down
-from 5,211 on 2026-10-12, 6,102 the day before that, 6,652 the day before
-that, 6,968 earlier that same day, 7,220 before that same day, 10,158 on
-2026-09-27, and 13,353 at the start of this migration. Tracked
-at the top of [README.md](../README.md) via a hand-updated badge, same as
-this project's other static badges (not wired to CI).
+Full project scan, 2026-11-18: **325** Psalm errors (errorLevel=1), down
+from 2,180 on 2026-10-18, 4,834 on 2026-10-14, 5,211 on 2026-10-12, 6,102
+the day before that, 6,652 the day before that, 6,968 earlier that same
+day, 7,220 before that same day, 10,158 on 2026-09-27, and 13,353 at the
+start of this migration. In between, the cleanup's own commit messages
+record about 1,500 on 2026-10-24 and 1,116 falling to 317 on 2026-10-31.
+Tracked at the top of [README.md](../README.md) via a hand-updated badge,
+same as this project's other static badges (not wired to CI).
+
+The 325 is a `vendor/bin/psalm --no-cache` run on commit `00f1dfff`
+(1 November 2026). The eight added since the 317 are the first four Cycle
+ORM classes under `src/` (`Taxes\TaxType`, `Purchasing\Supplier`,
+`Purchasing\GrnBatch` and `Currency\Currencie`): each reports a
+`ClassMustBeFinal` and a `MissingImmutableAnnotation` finding. The rest of
+the code is where it was.
 
 ## `declare(strict_types=1)` rollout
 
